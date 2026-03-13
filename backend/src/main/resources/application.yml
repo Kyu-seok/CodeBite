@@ -1,0 +1,15 @@
+server:
+  port: 8080
+
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  flyway:
+    enabled: true
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:default-dev-secret-key-that-is-at-least-256-bits-long-for-hmac-sha256}
+    expiration-ms: 86400000  # 24 hours

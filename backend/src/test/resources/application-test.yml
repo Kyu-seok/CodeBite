@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:codebite;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+  flyway:
+    enabled: true
+
+app:
+  jwt:
+    secret: test-secret-key-that-is-at-least-256-bits-long-for-hmac-sha256-testing
+    expiration-ms: 60000  # 1 minute
