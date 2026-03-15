@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import Editor from "@monaco-editor/react";
 import { useProblem } from "../hooks/useProblem";
+import { useSubmissions } from "../hooks/useSubmissions";
 import { useAuth } from "../context/AuthContext";
 import { submitCode } from "../api/submissions";
 import DifficultyBadge from "../components/ui/DifficultyBadge";
@@ -25,6 +26,7 @@ export default function ProblemDetailPage() {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
   const { problem, loading, error } = useProblem(slug!);
+  const { submissions, refetch: refetchSubmissions } = useSubmissions(slug!, isAuthenticated);
   const [language, setLanguage] = useState<string>("");
   const [codeByLang, setCodeByLang] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
@@ -61,6 +63,7 @@ export default function ProblemDetailPage() {
     try {
       const res = await submitCode(slug!, { language: activeLang, sourceCode: code });
       setResult(res.data);
+      refetchSubmissions();
     } catch (err) {
       if (err instanceof AxiosError && err.response?.data) {
         setSubmitError((err.response.data as ApiError).message);
@@ -208,6 +211,35 @@ export default function ProblemDetailPage() {
               )}
             </div>
           )}
+
+          {/* Submission History */}
+          <div className="bg-white rounded-lg shadow p-4">
+            <h3 className="text-sm font-semibold text-gray-700 mb-3">Submission History</h3>
+            {!isAuthenticated ? (
+              <p className="text-sm text-gray-400">Log in to see submission history</p>
+            ) : submissions.length === 0 ? (
+              <p className="text-sm text-gray-400">No submissions yet</p>
+            ) : (
+              <div className="space-y-2">
+                {submissions.map((s) => (
+                  <div
+                    key={s.id}
+                    className="flex items-center justify-between bg-gray-50 rounded p-2 text-sm"
+                  >
+                    <div className="flex items-center gap-3">
+                      <StatusBadge status={s.status} />
+                      <span className="text-gray-500">{s.language}</span>
+                    </div>
+                    <div className="flex items-center gap-3 text-xs text-gray-400">
+                      {s.runtimeMs != null && <span>{s.runtimeMs}ms</span>}
+                      {s.memoryKb != null && <span>{s.memoryKb}KB</span>}
+                      <span>{new Date(s.createdAt).toLocaleString()}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
