@@ -7,7 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 **CodeBite** — a code practice platform. The repository has the following top-level directories:
 
 - `backend/` — Spring Boot 3.2.5 REST API (Java 17, Gradle 8.5)
-- `frontend/` — client-side application (TBD)
+- `frontend/` — React SPA (Vite + TypeScript + Tailwind CSS)
 - `worker/` — background job/task processing (TBD)
 - `infra/` — Docker Compose (PostgreSQL 15)
 - `docs/` — project documentation
@@ -58,3 +58,38 @@ docker compose -f infra/docker-compose.yml up -d   # start PostgreSQL
 | POST | `/api/problems/{slug}/submit` | JWT | 201 + `{id, problemSlug, language, status, runtimeMs, memoryKb, results, createdAt}` |
 | GET | `/api/submissions/{id}` | JWT | 200 + submission detail (input/expectedOutput only for sample cases) |
 | GET | `/api/problems/{slug}/submissions` | JWT | 200 + `[{id, status, language, runtimeMs, memoryKb, createdAt}]` |
+
+## Frontend
+
+### Tech Stack
+- React 19, TypeScript, Vite
+- Tailwind CSS v4 with `@tailwindcss/typography`
+- Axios (HTTP client with JWT interceptor)
+- Monaco Editor (`@monaco-editor/react`)
+- React Router v6, React Context for auth state
+
+### Common Commands
+```bash
+cd frontend
+npm run dev      # dev server at http://localhost:5173
+npm run build    # production build (includes tsc type check)
+```
+
+### Directory Structure (`frontend/src/`)
+- `api/` — Axios client and API modules (auth, problems, submissions)
+- `types/` — TypeScript interfaces matching backend DTOs
+- `context/` — AuthContext (JWT auth state + localStorage persistence)
+- `components/layout/` — Layout (nav bar), ProtectedRoute
+- `components/ui/` — DifficultyBadge, StatusBadge, Spinner
+- `pages/` — LoginPage, RegisterPage, ProblemListPage, ProblemDetailPage, NotFoundPage
+- `hooks/` — useProblems, useProblem, useSubmissions
+
+### Routing
+| Path | Page | Auth |
+|------|------|------|
+| `/login` | LoginPage | No |
+| `/register` | RegisterPage | No |
+| `/` | Redirect to `/problems` | No |
+| `/problems` | ProblemListPage | No |
+| `/problems/:slug` | ProblemDetailPage | No (submit requires auth) |
+| `*` | NotFoundPage | No |

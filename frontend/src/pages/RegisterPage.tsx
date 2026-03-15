@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { AxiosError } from "axios";
@@ -12,6 +12,10 @@ export default function RegisterPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    document.title = "Register | CodeBite";
+  }, []);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();

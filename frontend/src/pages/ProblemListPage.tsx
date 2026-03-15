@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useProblems } from "../hooks/useProblems";
 import DifficultyBadge from "../components/ui/DifficultyBadge";
@@ -11,6 +12,10 @@ export default function ProblemListPage() {
   const page = Number(searchParams.get("page") || "0");
   const difficulty = (searchParams.get("difficulty") as Difficulty) || undefined;
   const { data, loading, error } = useProblems(page, 20, difficulty);
+
+  useEffect(() => {
+    document.title = "Problems | CodeBite";
+  }, []);
 
   const setPage = (p: number) => {
     const params = new URLSearchParams(searchParams);

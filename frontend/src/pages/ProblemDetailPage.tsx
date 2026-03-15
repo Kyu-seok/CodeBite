@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import Editor from "@monaco-editor/react";
@@ -32,6 +32,10 @@ export default function ProblemDetailPage() {
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<SubmissionResponse | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (problem) document.title = `${problem.title} | CodeBite`;
+  }, [problem]);
 
   if (loading) return <Spinner />;
   if (error || !problem) {

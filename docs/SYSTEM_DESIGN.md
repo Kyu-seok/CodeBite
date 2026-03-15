@@ -497,19 +497,24 @@ CodeBite/
 ├── frontend/
 │   ├── public/
 │   ├── src/
+│   │   ├── api/                         # Axios client + API modules
+│   │   │   ├── client.ts
+│   │   │   ├── auth.ts
+│   │   │   ├── problems.ts
+│   │   │   └── submissions.ts
+│   │   ├── types/                       # TypeScript interfaces
+│   │   ├── context/
+│   │   │   └── AuthContext.tsx
 │   │   ├── components/
-│   │   │   ├── CodeEditor/              # Monaco wrapper
-│   │   │   ├── ProblemList/
-│   │   │   ├── ProblemDetail/
-│   │   │   └── SubmissionResult/
+│   │   │   ├── layout/                  # Layout, ProtectedRoute
+│   │   │   └── ui/                      # DifficultyBadge, StatusBadge, Spinner
 │   │   ├── pages/
-│   │   │   ├── HomePage.tsx
-│   │   │   ├── ProblemPage.tsx
 │   │   │   ├── LoginPage.tsx
-│   │   │   └── RegisterPage.tsx
-│   │   ├── api/                         # Axios/fetch wrappers
-│   │   ├── hooks/
-│   │   ├── context/                     # Auth context
+│   │   │   ├── RegisterPage.tsx
+│   │   │   ├── ProblemListPage.tsx
+│   │   │   ├── ProblemDetailPage.tsx     # Monaco editor + submissions
+│   │   │   └── NotFoundPage.tsx
+│   │   ├── hooks/                       # useProblems, useProblem, useSubmissions
 │   │   └── App.tsx
 │   ├── package.json
 │   └── Dockerfile
@@ -575,13 +580,13 @@ CodeBite/
 **Deliverable:** Users can submit code, get ACCEPTED/WRONG_ANSWER/ERROR results.
 
 ### Milestone 4: Frontend MVP
-- [ ] Initialize React project (Vite)
-- [ ] Auth pages (register, login) with JWT storage
-- [ ] Problem list page with difficulty badges
-- [ ] Problem detail page with description panel + Monaco editor
-- [ ] Language selector dropdown
-- [ ] Submit button → show result (pass/fail per test case)
-- [ ] Submission history for a problem
+- [x] Initialize React project (Vite)
+- [x] Auth pages (register, login) with JWT storage
+- [x] Problem list page with difficulty badges
+- [x] Problem detail page with description panel + Monaco editor
+- [x] Language selector dropdown
+- [x] Submit button → show result (pass/fail per test case)
+- [x] Submission history for a problem
 
 **Deliverable:** Fully functional end-to-end flow in browser.
 
