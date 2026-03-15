@@ -40,6 +40,7 @@ docker compose -f infra/docker-compose.yml up -d   # start PostgreSQL
 - `common/exception/` — GlobalExceptionHandler, ApiError, custom exceptions
 - `auth/` — JWT auth (controller, service, DTOs, filter, token provider)
 - `user/` — User entity, repository, service, DTOs
+- `problem/` — Problem CRUD (entities, repositories, service, controllers, DTOs)
 
 ### API Endpoints
 | Method | Path | Auth | Response |
@@ -47,3 +48,8 @@ docker compose -f infra/docker-compose.yml up -d   # start PostgreSQL
 | POST | `/api/auth/register` | No | 201 + `{token, tokenType, user}` |
 | POST | `/api/auth/login` | No | 200 + `{token, tokenType, user}` |
 | GET | `/api/auth/me` | JWT | 200 + `{id, username, email, role, createdAt}` |
+| GET | `/api/problems` | No | 200 + paginated `{id, title, slug, difficulty}` |
+| GET | `/api/problems/{slug}` | No | 200 + `{id, title, slug, description, difficulty, starterCode, constraints, published, sampleTestCases, createdAt, updatedAt}` |
+| POST | `/api/admin/problems` | ADMIN | 201 + problem detail |
+| PUT | `/api/admin/problems/{id}` | ADMIN | 200 + problem detail |
+| POST | `/api/admin/problems/{id}/test-cases` | ADMIN | 201 + test case |
