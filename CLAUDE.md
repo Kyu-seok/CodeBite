@@ -35,12 +35,14 @@ docker compose -f infra/docker-compose.yml up -d   # start PostgreSQL
 ```
 
 ### Package Structure (`backend/src/main/java/com/codebite/`)
-- `config/` — SecurityConfig, WebConfig
+- `config/` — SecurityConfig, WebConfig, JudgeClientConfig
 - `common/base/` — BaseEntity (id, createdAt, updatedAt)
 - `common/exception/` — GlobalExceptionHandler, ApiError, custom exceptions
 - `auth/` — JWT auth (controller, service, DTOs, filter, token provider)
 - `user/` — User entity, repository, service, DTOs
 - `problem/` — Problem CRUD (entities, repositories, service, controllers, DTOs)
+- `submission/` — Submission flow (entities, repositories, service, controller, DTOs)
+- `judge/` — Judge0 integration (client interface/impl, service, DTOs)
 
 ### API Endpoints
 | Method | Path | Auth | Response |
@@ -53,3 +55,6 @@ docker compose -f infra/docker-compose.yml up -d   # start PostgreSQL
 | POST | `/api/admin/problems` | ADMIN | 201 + problem detail |
 | PUT | `/api/admin/problems/{id}` | ADMIN | 200 + problem detail |
 | POST | `/api/admin/problems/{id}/test-cases` | ADMIN | 201 + test case |
+| POST | `/api/problems/{slug}/submit` | JWT | 201 + `{id, problemSlug, language, status, runtimeMs, memoryKb, results, createdAt}` |
+| GET | `/api/submissions/{id}` | JWT | 200 + submission detail (input/expectedOutput only for sample cases) |
+| GET | `/api/problems/{slug}/submissions` | JWT | 200 + `[{id, status, language, runtimeMs, memoryKb, createdAt}]` |

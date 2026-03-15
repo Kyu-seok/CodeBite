@@ -564,13 +564,13 @@ CodeBite/
 **Deliverable:** API serves problem list and detail. Admin can manage problems.
 
 ### Milestone 3: Judge0 Integration & Submissions
-- [ ] Set up Judge0 via Docker (self-hosted) or use Judge0 CE API
-- [ ] Implement JudgeClient (HTTP calls to Judge0)
-- [ ] Implement code wrapping logic per language
-- [ ] Implement submission flow: save → execute → compare → store result
-- [ ] Submission endpoints (submit, get result, list by problem)
-- [ ] Handle Judge0 statuses → map to internal statuses
-- [ ] Test with seeded problems
+- [x] Set up Judge0 via Docker (self-hosted) or use Judge0 CE API
+- [x] Implement JudgeClient (HTTP calls to Judge0)
+- [x] Implement code wrapping logic per language
+- [x] Implement submission flow: save → execute → compare → store result
+- [x] Submission endpoints (submit, get result, list by problem)
+- [x] Handle Judge0 statuses → map to internal statuses
+- [x] Test with seeded problems
 
 **Deliverable:** Users can submit code, get ACCEPTED/WRONG_ANSWER/ERROR results.
 
