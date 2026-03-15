@@ -11,6 +11,7 @@ public record CreateProblemRequest(
         @NotBlank String description,
         @NotNull Difficulty difficulty,
         Map<String, String> starterCode,
+        Map<String, String> driverCode,
         String constraints,
         Boolean published
 ) {

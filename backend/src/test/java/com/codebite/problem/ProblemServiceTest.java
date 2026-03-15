@@ -121,7 +121,7 @@ class ProblemServiceTest {
 
         CreateProblemRequest request = new CreateProblemRequest(
                 "Two Sum", "Description", Difficulty.EASY,
-                Map.of("java", "code"), "constraints", true);
+                Map.of("java", "code"), null, "constraints", true);
 
         ProblemDetail result = problemService.createProblem(request);
         assertEquals("two-sum", result.slug());
@@ -138,7 +138,7 @@ class ProblemServiceTest {
         });
 
         CreateProblemRequest request = new CreateProblemRequest(
-                "Two Sum", "Description", Difficulty.EASY, null, null, false);
+                "Two Sum", "Description", Difficulty.EASY, null, null, null, false);
 
         ProblemDetail result = problemService.createProblem(request);
         assertEquals("two-sum-2", result.slug());
@@ -152,7 +152,7 @@ class ProblemServiceTest {
         when(testCaseRepository.findByProblemIdAndSampleTrueOrderByOrderIndexAsc(1L)).thenReturn(List.of());
 
         UpdateProblemRequest request = new UpdateProblemRequest(
-                null, null, null, null, null, true);
+                null, null, null, null, null, null, true);
 
         ProblemDetail result = problemService.updateProblem(1L, request);
         assertTrue(result.published());
@@ -165,7 +165,7 @@ class ProblemServiceTest {
 
         assertThrows(ResourceNotFoundException.class,
                 () -> problemService.updateProblem(99L, new UpdateProblemRequest(
-                        null, null, null, null, null, null)));
+                        null, null, null, null, null, null, null)));
     }
 
     @Test

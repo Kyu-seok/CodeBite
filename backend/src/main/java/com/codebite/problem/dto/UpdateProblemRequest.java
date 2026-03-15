@@ -9,6 +9,7 @@ public record UpdateProblemRequest(
         String description,
         Difficulty difficulty,
         Map<String, String> starterCode,
+        Map<String, String> driverCode,
         String constraints,
         Boolean published
 ) {

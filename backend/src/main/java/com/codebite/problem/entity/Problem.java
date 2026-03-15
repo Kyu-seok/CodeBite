@@ -35,6 +35,10 @@ public class Problem extends BaseEntity {
     @Column(name = "starter_code", columnDefinition = "TEXT")
     private Map<String, String> starterCode;
 
+    @Convert(converter = StarterCodeConverter.class)
+    @Column(name = "driver_code", columnDefinition = "TEXT")
+    private Map<String, String> driverCode;
+
     @Column(columnDefinition = "TEXT")
     private String constraints;
 
@@ -82,6 +86,14 @@ public class Problem extends BaseEntity {
 
     public void setStarterCode(Map<String, String> starterCode) {
         this.starterCode = starterCode;
+    }
+
+    public Map<String, String> getDriverCode() {
+        return driverCode;
+    }
+
+    public void setDriverCode(Map<String, String> driverCode) {
+        this.driverCode = driverCode;
     }
 
     public String getConstraints() {

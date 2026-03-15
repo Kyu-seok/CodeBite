@@ -128,7 +128,7 @@ class ProblemIntegrationTest {
     void adminCreateProblem_withAdminToken_returns201() throws Exception {
         CreateProblemRequest request = new CreateProblemRequest(
                 "Binary Search", "Find target in sorted array", Difficulty.MEDIUM,
-                Map.of("java", "class Solution {}"), "1 <= n <= 10^5", true);
+                Map.of("java", "class Solution {}"), null, "1 <= n <= 10^5", true);
 
         mockMvc.perform(post("/api/admin/problems")
                         .header("Authorization", "Bearer " + adminToken)
@@ -143,7 +143,7 @@ class ProblemIntegrationTest {
     @Test
     void adminCreateProblem_withoutToken_returns401() throws Exception {
         CreateProblemRequest request = new CreateProblemRequest(
-                "Test", "Desc", Difficulty.EASY, null, null, false);
+                "Test", "Desc", Difficulty.EASY, null, null, null, false);
 
         mockMvc.perform(post("/api/admin/problems")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -154,7 +154,7 @@ class ProblemIntegrationTest {
     @Test
     void adminCreateProblem_withUserToken_returns403() throws Exception {
         CreateProblemRequest request = new CreateProblemRequest(
-                "Test", "Desc", Difficulty.EASY, null, null, false);
+                "Test", "Desc", Difficulty.EASY, null, null, null, false);
 
         mockMvc.perform(post("/api/admin/problems")
                         .header("Authorization", "Bearer " + userToken)
@@ -166,7 +166,7 @@ class ProblemIntegrationTest {
     @Test
     void adminCreateProblem_invalidInput_returns400() throws Exception {
         CreateProblemRequest request = new CreateProblemRequest(
-                "", "", null, null, null, null);
+                "", "", null, null, null, null, null);
 
         mockMvc.perform(post("/api/admin/problems")
                         .header("Authorization", "Bearer " + adminToken)
@@ -179,7 +179,7 @@ class ProblemIntegrationTest {
     void adminUpdateProblem_withAdminToken_returns200() throws Exception {
         // First create a problem
         CreateProblemRequest create = new CreateProblemRequest(
-                "To Update", "Original desc", Difficulty.EASY, null, null, false);
+                "To Update", "Original desc", Difficulty.EASY, null, null, null, false);
         MvcResult createResult = mockMvc.perform(post("/api/admin/problems")
                         .header("Authorization", "Bearer " + adminToken)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -191,7 +191,7 @@ class ProblemIntegrationTest {
                 .get("id").asLong();
 
         UpdateProblemRequest update = new UpdateProblemRequest(
-                null, "Updated desc", null, null, null, true);
+                null, "Updated desc", null, null, null, null, true);
 
         mockMvc.perform(put("/api/admin/problems/" + id)
                         .header("Authorization", "Bearer " + adminToken)
@@ -207,7 +207,7 @@ class ProblemIntegrationTest {
     void adminAddTestCase_withAdminToken_returns201() throws Exception {
         // First create a problem
         CreateProblemRequest create = new CreateProblemRequest(
-                "TC Problem", "Desc", Difficulty.EASY, null, null, true);
+                "TC Problem", "Desc", Difficulty.EASY, null, null, null, true);
         MvcResult createResult = mockMvc.perform(post("/api/admin/problems")
                         .header("Authorization", "Bearer " + adminToken)
                         .contentType(MediaType.APPLICATION_JSON)

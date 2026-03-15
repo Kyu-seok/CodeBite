@@ -61,6 +61,7 @@ public class ProblemService {
         problem.setDescription(request.description());
         problem.setDifficulty(request.difficulty());
         problem.setStarterCode(request.starterCode());
+        problem.setDriverCode(request.driverCode());
         problem.setConstraints(request.constraints());
         problem.setPublished(request.published() != null && request.published());
 
@@ -85,6 +86,9 @@ public class ProblemService {
         }
         if (request.starterCode() != null) {
             problem.setStarterCode(request.starterCode());
+        }
+        if (request.driverCode() != null) {
+            problem.setDriverCode(request.driverCode());
         }
         if (request.constraints() != null) {
             problem.setConstraints(request.constraints());
