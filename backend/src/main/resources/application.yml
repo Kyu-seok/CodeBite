@@ -13,3 +13,5 @@ app:
   jwt:
     secret: ${JWT_SECRET:default-dev-secret-key-that-is-at-least-256-bits-long-for-hmac-sha256}
     expiration-ms: 86400000  # 24 hours
+  judge0:
+    url: ${JUDGE0_URL:http://localhost:2358}

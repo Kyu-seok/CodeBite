@@ -15,3 +15,5 @@ app:
   jwt:
     secret: test-secret-key-that-is-at-least-256-bits-long-for-hmac-sha256-testing
     expiration-ms: 60000  # 1 minute
+  judge0:
+    url: http://localhost:2358
