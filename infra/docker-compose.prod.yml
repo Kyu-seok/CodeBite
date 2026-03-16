@@ -42,6 +42,8 @@ services:
     image: judge0/judge0:1.13.1
     container_name: codebite-judge0
     restart: unless-stopped
+    ports:
+      - "2358:2358"
     depends_on:
       - judge0-db
       - judge0-redis
