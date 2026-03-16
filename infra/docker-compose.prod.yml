@@ -1,0 +1,45 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: codebite-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: codebite
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - codebite-pgdata:/var/lib/postgresql/data
+    networks:
+      - codebite
+
+  backend:
+    build: ../backend
+    container_name: codebite-backend
+    restart: unless-stopped
+    depends_on:
+      - postgres
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/codebite
+      SPRING_DATASOURCE_USERNAME: ${DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      JUDGE0_URL: ${JUDGE0_URL:-http://judge0:2358}
+    networks:
+      - codebite
+
+  frontend:
+    build: ../frontend
+    container_name: codebite-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+    networks:
+      - codebite
+
+volumes:
+  codebite-pgdata:
+
+networks:
+  codebite:

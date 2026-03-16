@@ -1,11 +1,10 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/codebite
+    url: jdbc:postgresql://localhost:5433/codebite
     username: codebite
     password: codebite
   jpa:
     show-sql: true
-
 logging:
   level:
     com.codebite: DEBUG

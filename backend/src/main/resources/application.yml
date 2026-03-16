@@ -2,6 +2,12 @@ server:
   port: 8080
 
 spring:
+  # datasource wasn't there originally.
+  datasource:
+    url: jdbc:postgresql://localhost:5432/codebite
+    username: codebite
+    password: codebite
+    driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: validate
