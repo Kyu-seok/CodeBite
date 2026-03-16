@@ -38,8 +38,68 @@ services:
     networks:
       - codebite
 
+  judge0:
+    image: judge0/judge0:1.13.1
+    container_name: codebite-judge0
+    restart: unless-stopped
+    depends_on:
+      - judge0-db
+      - judge0-redis
+    environment:
+      REDIS_HOST: judge0-redis
+      POSTGRES_HOST: judge0-db
+      POSTGRES_DB: judge0
+      POSTGRES_USER: judge0
+      POSTGRES_PASSWORD: ${JUDGE0_DB_PASSWORD}
+    networks:
+      - codebite
+
+  judge0-workers:
+    image: judge0/judge0:1.13.1
+    container_name: codebite-judge0-workers
+    command: ["./scripts/workers"]
+    restart: unless-stopped
+    privileged: true
+    depends_on:
+      - judge0
+      - judge0-db
+      - judge0-redis
+    environment:
+      REDIS_HOST: judge0-redis
+      POSTGRES_HOST: judge0-db
+      POSTGRES_DB: judge0
+      POSTGRES_USER: judge0
+      POSTGRES_PASSWORD: ${JUDGE0_DB_PASSWORD}
+    networks:
+      - codebite
+
+  judge0-db:
+    image: postgres:13
+    container_name: codebite-judge0-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: judge0
+      POSTGRES_USER: judge0
+      POSTGRES_PASSWORD: ${JUDGE0_DB_PASSWORD}
+    volumes:
+      - judge0-pgdata:/var/lib/postgresql/data
+    networks:
+      - codebite
+
+  judge0-redis:
+    image: redis:7
+    container_name: codebite-judge0-redis
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - judge0-redis:/data
+    networks:
+      - codebite
+
 volumes:
   codebite-pgdata:
+  judge0-pgdata:
+  judge0-redis:
 
 networks:
   codebite:

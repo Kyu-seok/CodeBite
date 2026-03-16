@@ -30,7 +30,10 @@ Mini PC (Linux)
 │   ├── postgres       (PostgreSQL 15, persistent volume)
 │   ├── backend        (Spring Boot JAR, Java 17)
 │   ├── frontend       (Nginx serving Vite build)
-│   └── judge0         (Judge0 CE — future)
+│   ├── judge0         (Judge0 CE API server)
+│   ├── judge0-workers (Judge0 CE workers, privileged)
+│   ├── judge0-db      (PostgreSQL 13 for Judge0)
+│   └── judge0-redis   (Redis 7 for Judge0)
 ├── Caddy / Nginx      (reverse proxy, optional HTTPS)
 └── GitHub Actions      (self-hosted runner OR SSH deploy)
 ```
@@ -382,11 +385,15 @@ caddy:
 
 Then the frontend container removes its port mapping and Caddy handles routing.
 
-### 4.2 Judge0 Integration
+### 4.2 Judge0 Integration — COMPLETED
 
-Judge0 CE runs as a separate Docker Compose stack (it has its own Redis, Postgres, workers). Plan to either:
-- Run Judge0 CE on the same mini PC with a separate compose file
-- Use the hosted Judge0 API (if resource-constrained)
+Judge0 CE is integrated directly into `infra/docker-compose.prod.yml` with 4 services:
+- `judge0` — API server (internal only, no exposed ports; backend reaches it at `judge0:2358`)
+- `judge0-workers` — execution workers (privileged mode for `isolate` sandbox)
+- `judge0-db` — dedicated PostgreSQL 13 instance (separate from CodeBite's)
+- `judge0-redis` — Redis 7 with append-only persistence
+
+The backend's `JUDGE0_URL` already defaults to `http://judge0:2358`. No backend code changes were needed.
 
 ### 4.3 Monitoring
 
@@ -416,5 +423,5 @@ Judge0 CE runs as a separate Docker Compose stack (it has its own Redis, Postgre
 - [ ] Configure GitHub secrets and SSH keys
 - [ ] Push and verify CI/CD pipeline runs end-to-end
 - [ ] (Optional) Add Caddy for HTTPS
-- [ ] (Optional) Add Judge0 CE
+- [x] (Optional) Add Judge0 CE
 - [ ] (Optional) Add Postgres backup cron
