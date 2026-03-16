@@ -1,5 +1,5 @@
-import { Link, Outlet } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
+import { Link, Outlet } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 export default function Layout() {
   const { user, isAuthenticated, logout } = useAuth();
@@ -10,11 +10,9 @@ export default function Layout() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
           <div className="flex items-center gap-6">
             <Link to="/problems" className="text-lg font-bold">
-              CodeBiteTEST
+              CodeBite
             </Link>
-            <Link
-              to="/problems"
-              className="text-sm text-gray-300 hover:text-white">
+            <Link to="/problems" className="text-sm text-gray-300 hover:text-white">
               Problems
             </Link>
           </div>
@@ -24,7 +22,8 @@ export default function Layout() {
                 <span className="text-gray-300">{user?.username}</span>
                 <button
                   onClick={logout}
-                  className="text-gray-400 hover:text-white">
+                  className="text-gray-400 hover:text-white"
+                >
                   Logout
                 </button>
               </>
