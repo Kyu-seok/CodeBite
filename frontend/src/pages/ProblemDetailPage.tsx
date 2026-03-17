@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import Editor from "@monaco-editor/react";
 import { useProblem } from "../hooks/useProblem";
 import { useSubmissions } from "../hooks/useSubmissions";
 import { useAuth } from "../context/AuthContext";
-import { submitCode } from "../api/submissions";
+import { submitCode, getSubmission } from "../api/submissions";
 import DifficultyBadge from "../components/ui/DifficultyBadge";
 import StatusBadge from "../components/ui/StatusBadge";
 import Spinner from "../components/ui/Spinner";
@@ -32,6 +32,13 @@ export default function ProblemDetailPage() {
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<SubmissionResponse | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const pollIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
+    };
+  }, []);
 
   useEffect(() => {
     if (problem) document.title = `${problem.title} | CodeBite`;
@@ -56,25 +63,46 @@ export default function ProblemDetailPage() {
     }
   };
 
+  const pollForResult = (submissionId: number) => {
+    const interval = setInterval(async () => {
+      try {
+        const res = await getSubmission(submissionId);
+        if (res.data.status !== "PENDING") {
+          clearInterval(interval);
+          pollIntervalRef.current = null;
+          setResult(res.data);
+          setSubmitting(false);
+          refetchSubmissions();
+        }
+      } catch {
+        clearInterval(interval);
+        pollIntervalRef.current = null;
+        setSubmitError("Failed to fetch results.");
+        setSubmitting(false);
+      }
+    }, 2000);
+    pollIntervalRef.current = interval;
+  };
+
   const handleSubmit = async () => {
     if (!isAuthenticated) {
       navigate("/login");
       return;
     }
+    if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
     setSubmitting(true);
     setSubmitError(null);
     setResult(null);
     try {
       const res = await submitCode(slug!, { language: activeLang, sourceCode: code });
       setResult(res.data);
-      refetchSubmissions();
+      pollForResult(res.data.id);
     } catch (err) {
       if (err instanceof AxiosError && err.response?.data) {
         setSubmitError((err.response.data as ApiError).message);
       } else {
         setSubmitError("Submission failed. Please try again.");
       }
-    } finally {
       setSubmitting(false);
     }
   };
