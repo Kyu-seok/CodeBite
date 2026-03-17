@@ -1,5 +1,7 @@
 package com.codebite.common.exception;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -10,6 +12,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ApiError> handleNotFound(ResourceNotFoundException ex) {
@@ -47,6 +51,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(JudgeExecutionException.class)
     public ResponseEntity<ApiError> handleJudgeExecution(JudgeExecutionException ex) {
+        log.error("Judge0 execution failed: {}", ex.getMessage(), ex);
         return buildResponse(HttpStatus.BAD_GATEWAY, "Code execution service error");
     }
 
