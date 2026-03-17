@@ -90,22 +90,22 @@ class SubmissionServiceTest {
 
     private JudgeResponse acceptedResponse() {
         return new JudgeResponse(
-                new JudgeResponse.Status(3, "Accepted"), "[0,1]\n", null, null, "0.012", 9400);
+                null, new JudgeResponse.Status(3, "Accepted"), "[0,1]\n", null, null, "0.012", 9400);
     }
 
     private JudgeResponse wrongAnswerResponse() {
         return new JudgeResponse(
-                new JudgeResponse.Status(3, "Accepted"), "[1,2]\n", null, null, "0.010", 9200);
+                null, new JudgeResponse.Status(3, "Accepted"), "[1,2]\n", null, null, "0.010", 9200);
     }
 
     private JudgeResponse compilationErrorResponse() {
         return new JudgeResponse(
-                new JudgeResponse.Status(6, "Compilation Error"), null, null, "syntax error", null, null);
+                null, new JudgeResponse.Status(6, "Compilation Error"), null, null, "syntax error", null, null);
     }
 
     private JudgeResponse runtimeErrorResponse() {
         return new JudgeResponse(
-                new JudgeResponse.Status(11, "Runtime Error (NZEC)"), null, "Exception", null, "0.005", 8000);
+                null, new JudgeResponse.Status(11, "Runtime Error (NZEC)"), null, "Exception", null, "0.005", 8000);
     }
 
     private void setupCommonMocks() {
@@ -287,7 +287,7 @@ class SubmissionServiceTest {
         TestCase tc = buildTestCase(1L, true, 1);
         when(testCaseRepository.findByProblemIdOrderByOrderIndexAsc(1L)).thenReturn(List.of(tc));
         JudgeResponse response = new JudgeResponse(
-                new JudgeResponse.Status(3, "Accepted"), "  [0,1]  \n", null, null, "0.01", 9400);
+                null, new JudgeResponse.Status(3, "Accepted"), "  [0,1]  \n", null, null, "0.01", 9400);
         when(judgeService.execute(anyString(), anyInt(), anyString())).thenReturn(response);
         when(judgeService.mapStatus(any(), anyString())).thenReturn(SubmissionStatus.ACCEPTED);
 

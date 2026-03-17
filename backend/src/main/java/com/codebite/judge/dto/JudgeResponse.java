@@ -3,6 +3,7 @@ package com.codebite.judge.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public record JudgeResponse(
+        String token,
         Status status,
         String stdout,
         String stderr,

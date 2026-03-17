@@ -90,13 +90,13 @@ class SubmissionIntegrationTest {
             JudgeRequest req = inv.getArgument(0);
             String expectedOutput = TWO_SUM_EXPECTED.getOrDefault(req.stdin(), "unknown");
             return new JudgeResponse(
-                    new JudgeResponse.Status(3, "Accepted"), expectedOutput + "\n", null, null, "0.012", 9400);
+                    null, new JudgeResponse.Status(3, "Accepted"), expectedOutput + "\n", null, null, "0.012", 9400);
         });
     }
 
     private void mockJudgeWrongAnswer() {
         when(judgeClient.submit(any())).thenReturn(new JudgeResponse(
-                new JudgeResponse.Status(3, "Accepted"), "WRONG\n", null, null, "0.010", 9200));
+                null, new JudgeResponse.Status(3, "Accepted"), "WRONG\n", null, null, "0.010", 9200));
     }
 
     // --- Submit: accepted ---
