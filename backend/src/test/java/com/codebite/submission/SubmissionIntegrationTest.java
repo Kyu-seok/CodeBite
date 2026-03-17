@@ -2,7 +2,6 @@ package com.codebite.submission;
 
 import com.codebite.auth.jwt.JwtTokenProvider;
 import com.codebite.judge.client.JudgeClient;
-import com.codebite.judge.dto.JudgeRequest;
 import com.codebite.judge.dto.JudgeResponse;
 import com.codebite.submission.dto.SubmitRequest;
 import com.codebite.user.entity.Role;
@@ -22,9 +21,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Map;
-
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -77,33 +75,20 @@ class SubmissionIntegrationTest {
         otherUserToken = jwtTokenProvider.generateToken(other);
     }
 
-    // Map test case inputs to their expected outputs for Two Sum
-    private static final Map<String, String> TWO_SUM_EXPECTED = Map.of(
-            "[2,7,11,15]\n9", "[0,1]",
-            "[3,2,4]\n6", "[1,2]",
-            "[3,3]\n6", "[0,1]",
-            "[1,5,3,7,2]\n9", "[1,4]"
-    );
-
-    private void mockJudgeAccepted() {
-        when(judgeClient.submit(any())).thenAnswer(inv -> {
-            JudgeRequest req = inv.getArgument(0);
-            String expectedOutput = TWO_SUM_EXPECTED.getOrDefault(req.stdin(), "unknown");
-            return new JudgeResponse(
-                    null, new JudgeResponse.Status(3, "Accepted"), expectedOutput + "\n", null, null, "0.012", 9400);
-        });
-    }
-
-    private void mockJudgeWrongAnswer() {
+    private void mockJudgeAsync() {
+        // submit returns a token (async mode)
         when(judgeClient.submit(any())).thenReturn(new JudgeResponse(
-                null, new JudgeResponse.Status(3, "Accepted"), "WRONG\n", null, null, "0.010", 9200));
+                "test-token", null, null, null, null, null, null));
+        // getSubmission returns a completed result
+        when(judgeClient.getSubmission(anyString())).thenReturn(new JudgeResponse(
+                null, new JudgeResponse.Status(3, "Accepted"), "[0,1]\n", null, null, "0.012", 9400));
     }
 
-    // --- Submit: accepted ---
+    // --- Submit: returns 201 with PENDING status ---
 
     @Test
-    void submit_accepted_returns201() throws Exception {
-        mockJudgeAccepted();
+    void submit_returns201WithPending() throws Exception {
+        mockJudgeAsync();
 
         SubmitRequest request = new SubmitRequest("java",
                 "class Solution { public int[] twoSum(int[] nums, int target) { return new int[]{0,1}; } }");
@@ -113,26 +98,11 @@ class SubmissionIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.status").value("ACCEPTED"))
+                .andExpect(jsonPath("$.status").value("PENDING"))
                 .andExpect(jsonPath("$.problemSlug").value("two-sum"))
                 .andExpect(jsonPath("$.language").value("java"))
-                .andExpect(jsonPath("$.results").isArray());
-    }
-
-    // --- Submit: wrong answer ---
-
-    @Test
-    void submit_wrongAnswer_returns201WithWrongAnswer() throws Exception {
-        mockJudgeWrongAnswer();
-
-        SubmitRequest request = new SubmitRequest("java", "class Solution { public int[] twoSum(int[] nums, int target) { return new int[]{1,2}; } }");
-
-        mockMvc.perform(post("/api/problems/two-sum/submit")
-                        .header("Authorization", "Bearer " + userToken)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.status").value("WRONG_ANSWER"));
+                .andExpect(jsonPath("$.results").isArray())
+                .andExpect(jsonPath("$.results").isEmpty());
     }
 
     // --- Submit: 401 without token ---
@@ -173,13 +143,14 @@ class SubmissionIntegrationTest {
                 .andExpect(status().isBadRequest());
     }
 
-    // --- Get submission ---
+    // --- Get submission: returns PENDING immediately after submit ---
 
     @Test
-    void getSubmission_afterSubmit_returns200() throws Exception {
-        mockJudgeAccepted();
+    void getSubmission_afterSubmit_returnsPending() throws Exception {
+        mockJudgeAsync();
 
-        SubmitRequest request = new SubmitRequest("java", "class Solution { public int[] twoSum(int[] nums, int target) { return new int[]{0,1}; } }");
+        SubmitRequest request = new SubmitRequest("java",
+                "class Solution { public int[] twoSum(int[] nums, int target) { return new int[]{0,1}; } }");
 
         MvcResult submitResult = mockMvc.perform(post("/api/problems/two-sum/submit")
                         .header("Authorization", "Bearer " + userToken)
@@ -191,20 +162,22 @@ class SubmissionIntegrationTest {
         Long submissionId = objectMapper.readTree(submitResult.getResponse().getContentAsString())
                 .get("id").asLong();
 
+        // Immediately after submit, status is PENDING (async processing hasn't committed yet in test tx)
         mockMvc.perform(get("/api/submissions/" + submissionId)
                         .header("Authorization", "Bearer " + userToken))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(submissionId))
-                .andExpect(jsonPath("$.status").value("ACCEPTED"));
+                .andExpect(jsonPath("$.status").value("PENDING"));
     }
 
     // --- Get submission: ownership enforcement ---
 
     @Test
     void getSubmission_otherUser_returns404() throws Exception {
-        mockJudgeAccepted();
+        mockJudgeAsync();
 
-        SubmitRequest request = new SubmitRequest("java", "class Solution { public int[] twoSum(int[] nums, int target) { return new int[]{0,1}; } }");
+        SubmitRequest request = new SubmitRequest("java",
+                "class Solution { public int[] twoSum(int[] nums, int target) { return new int[]{0,1}; } }");
 
         MvcResult submitResult = mockMvc.perform(post("/api/problems/two-sum/submit")
                         .header("Authorization", "Bearer " + userToken)
@@ -226,9 +199,10 @@ class SubmissionIntegrationTest {
 
     @Test
     void listSubmissions_returns200() throws Exception {
-        mockJudgeAccepted();
+        mockJudgeAsync();
 
-        SubmitRequest request = new SubmitRequest("java", "class Solution { public int[] twoSum(int[] nums, int target) { return new int[]{0,1}; } }");
+        SubmitRequest request = new SubmitRequest("java",
+                "class Solution { public int[] twoSum(int[] nums, int target) { return new int[]{0,1}; } }");
 
         mockMvc.perform(post("/api/problems/two-sum/submit")
                         .header("Authorization", "Bearer " + userToken)
@@ -240,8 +214,7 @@ class SubmissionIntegrationTest {
                         .header("Authorization", "Bearer " + userToken))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
-                .andExpect(jsonPath("$.length()").value(1))
-                .andExpect(jsonPath("$[0].status").value("ACCEPTED"));
+                .andExpect(jsonPath("$.length()").value(1));
     }
 
     // --- List submissions: 401 without token ---

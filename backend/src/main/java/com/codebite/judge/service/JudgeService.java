@@ -1,9 +1,13 @@
 package com.codebite.judge.service;
 
+import com.codebite.common.exception.JudgeExecutionException;
 import com.codebite.judge.client.JudgeClient;
 import com.codebite.judge.dto.JudgeRequest;
 import com.codebite.judge.dto.JudgeResponse;
 import com.codebite.submission.entity.SubmissionStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -11,15 +15,23 @@ import java.util.Map;
 @Service
 public class JudgeService {
 
+    private static final Logger log = LoggerFactory.getLogger(JudgeService.class);
+
     private static final Map<String, Integer> LANGUAGE_IDS = Map.of(
             "java", 62,
             "python", 71
     );
 
     private final JudgeClient judgeClient;
+    private final long pollIntervalMs;
+    private final long pollTimeoutMs;
 
-    public JudgeService(JudgeClient judgeClient) {
+    public JudgeService(JudgeClient judgeClient,
+                        @Value("${app.judge0.poll-interval-ms:500}") long pollIntervalMs,
+                        @Value("${app.judge0.poll-timeout-ms:30000}") long pollTimeoutMs) {
         this.judgeClient = judgeClient;
+        this.pollIntervalMs = pollIntervalMs;
+        this.pollTimeoutMs = pollTimeoutMs;
     }
 
     public String buildSourceCode(String driverTemplate, String userCode) {
@@ -40,7 +52,25 @@ public class JudgeService {
 
     public JudgeResponse execute(String sourceCode, int languageId, String stdin) {
         JudgeRequest request = new JudgeRequest(sourceCode, languageId, stdin);
-        return judgeClient.submit(request);
+        JudgeResponse submitResponse = judgeClient.submit(request);
+        String token = submitResponse.token();
+
+        long start = System.currentTimeMillis();
+        while (true) {
+            JudgeResponse result = judgeClient.getSubmission(token);
+            if (result.status() != null && result.status().id() != 1 && result.status().id() != 2) {
+                return result;
+            }
+            if (System.currentTimeMillis() - start > pollTimeoutMs) {
+                throw new JudgeExecutionException("Judge0 timed out after " + pollTimeoutMs + "ms", null);
+            }
+            try {
+                Thread.sleep(pollIntervalMs);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new JudgeExecutionException("Judge0 polling interrupted", e);
+            }
+        }
     }
 
     public SubmissionStatus mapStatus(JudgeResponse response, String expectedOutput) {

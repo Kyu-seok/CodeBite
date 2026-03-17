@@ -21,3 +21,5 @@ app:
     expiration-ms: 86400000  # 24 hours
   judge0:
     url: ${JUDGE0_URL:http://localhost:2358}
+    poll-interval-ms: ${JUDGE0_POLL_INTERVAL_MS:500}
+    poll-timeout-ms: ${JUDGE0_POLL_TIMEOUT_MS:30000}

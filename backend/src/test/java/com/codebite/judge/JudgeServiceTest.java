@@ -25,7 +25,7 @@ class JudgeServiceTest {
 
     @BeforeEach
     void setUp() {
-        judgeService = new JudgeService(judgeClient);
+        judgeService = new JudgeService(judgeClient, 100, 5000);
     }
 
     // --- buildSourceCode ---

@@ -1,7 +1,6 @@
 package com.codebite.submission.service;
 
 import com.codebite.common.exception.ResourceNotFoundException;
-import com.codebite.judge.dto.JudgeResponse;
 import com.codebite.judge.service.JudgeService;
 import com.codebite.problem.entity.Problem;
 import com.codebite.problem.entity.TestCase;
@@ -21,7 +20,6 @@ import com.codebite.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -34,19 +32,22 @@ public class SubmissionService {
     private final TestCaseRepository testCaseRepository;
     private final UserRepository userRepository;
     private final JudgeService judgeService;
+    private final SubmissionJudgeProcessor submissionJudgeProcessor;
 
     public SubmissionService(SubmissionRepository submissionRepository,
                              SubmissionResultRepository submissionResultRepository,
                              ProblemRepository problemRepository,
                              TestCaseRepository testCaseRepository,
                              UserRepository userRepository,
-                             JudgeService judgeService) {
+                             JudgeService judgeService,
+                             SubmissionJudgeProcessor submissionJudgeProcessor) {
         this.submissionRepository = submissionRepository;
         this.submissionResultRepository = submissionResultRepository;
         this.problemRepository = problemRepository;
         this.testCaseRepository = testCaseRepository;
         this.userRepository = userRepository;
         this.judgeService = judgeService;
+        this.submissionJudgeProcessor = submissionJudgeProcessor;
     }
 
     public SubmissionResponse submit(String slug, SubmitRequest request, Long userId) {
@@ -63,54 +64,16 @@ public class SubmissionService {
             throw new IllegalArgumentException("No driver code available for language: " + language);
         }
 
-        // Save submission (transaction 1)
+        // Save submission as PENDING
         Submission submission = saveSubmission(userId, problem, request);
 
-        // Execute against Judge0 (not transactional — external I/O)
-        List<TestCase> testCases = testCaseRepository.findByProblemIdOrderByOrderIndexAsc(problem.getId());
+        // Build source code and kick off async processing
         String sourceCode = judgeService.buildSourceCode(driverCode.get(language), request.sourceCode());
         int languageId = judgeService.mapLanguageToId(language);
+        submissionJudgeProcessor.processAsync(submission.getId(), sourceCode, languageId, problem.getId());
 
-        List<SubmissionResult> results = new ArrayList<>();
-        SubmissionStatus overallStatus = SubmissionStatus.ACCEPTED;
-        Integer maxRuntimeMs = null;
-        Integer maxMemoryKb = null;
-
-        for (TestCase testCase : testCases) {
-            JudgeResponse response = judgeService.execute(sourceCode, languageId, testCase.getInput());
-            SubmissionStatus caseStatus = judgeService.mapStatus(response, testCase.getExpectedOutput());
-
-            SubmissionResult result = new SubmissionResult();
-            result.setSubmission(submission);
-            result.setTestCase(testCase);
-            result.setStatus(caseStatus);
-            result.setActualOutput(response.stdout() != null ? response.stdout().trim() : null);
-            result.setStderr(response.stderr());
-
-            Integer runtimeMs = parseTimeToMs(response.time());
-            result.setRuntimeMs(runtimeMs);
-            result.setMemoryKb(response.memory());
-
-            if (runtimeMs != null) {
-                maxRuntimeMs = maxRuntimeMs == null ? runtimeMs : Math.max(maxRuntimeMs, runtimeMs);
-            }
-            if (response.memory() != null) {
-                maxMemoryKb = maxMemoryKb == null ? response.memory() : Math.max(maxMemoryKb, response.memory());
-            }
-
-            results.add(result);
-
-            // Early exit on failure
-            if (caseStatus != SubmissionStatus.ACCEPTED) {
-                overallStatus = caseStatus;
-                break;
-            }
-        }
-
-        // Save results and update status (transaction 2)
-        saveResultsAndUpdateStatus(submission, results, overallStatus, maxRuntimeMs, maxMemoryKb);
-
-        return toResponse(submission, results, problem.getSlug(), testCases);
+        // Return immediately with PENDING status
+        return toResponse(submission, List.of(), problem.getSlug(), List.of());
     }
 
     @Transactional(readOnly = true)
@@ -152,25 +115,6 @@ public class SubmissionService {
         submission.setSourceCode(request.sourceCode());
         submission.setStatus(SubmissionStatus.PENDING);
         return submissionRepository.save(submission);
-    }
-
-    @Transactional
-    protected void saveResultsAndUpdateStatus(Submission submission, List<SubmissionResult> results,
-                                              SubmissionStatus status, Integer runtimeMs, Integer memoryKb) {
-        submissionResultRepository.saveAll(results);
-        submission.setStatus(status);
-        submission.setRuntimeMs(runtimeMs);
-        submission.setMemoryKb(memoryKb);
-        submissionRepository.save(submission);
-    }
-
-    private Integer parseTimeToMs(String time) {
-        if (time == null) return null;
-        try {
-            return (int) (Double.parseDouble(time) * 1000);
-        } catch (NumberFormatException e) {
-            return null;
-        }
     }
 
     private SubmissionResponse toResponse(Submission submission, List<SubmissionResult> results,

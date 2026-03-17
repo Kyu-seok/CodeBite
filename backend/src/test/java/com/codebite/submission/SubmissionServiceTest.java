@@ -1,7 +1,6 @@
 package com.codebite.submission;
 
 import com.codebite.common.exception.ResourceNotFoundException;
-import com.codebite.judge.dto.JudgeResponse;
 import com.codebite.judge.service.JudgeService;
 import com.codebite.problem.entity.Difficulty;
 import com.codebite.problem.entity.Problem;
@@ -15,6 +14,7 @@ import com.codebite.submission.entity.SubmissionResult;
 import com.codebite.submission.entity.SubmissionStatus;
 import com.codebite.submission.repository.SubmissionRepository;
 import com.codebite.submission.repository.SubmissionResultRepository;
+import com.codebite.submission.service.SubmissionJudgeProcessor;
 import com.codebite.submission.service.SubmissionService;
 import com.codebite.user.entity.User;
 import com.codebite.user.repository.UserRepository;
@@ -32,8 +32,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
@@ -49,6 +51,7 @@ class SubmissionServiceTest {
     @Mock private TestCaseRepository testCaseRepository;
     @Mock private UserRepository userRepository;
     @Mock private JudgeService judgeService;
+    @Mock private SubmissionJudgeProcessor submissionJudgeProcessor;
 
     private SubmissionService submissionService;
 
@@ -59,7 +62,8 @@ class SubmissionServiceTest {
     void setUp() {
         submissionService = new SubmissionService(
                 submissionRepository, submissionResultRepository,
-                problemRepository, testCaseRepository, userRepository, judgeService);
+                problemRepository, testCaseRepository, userRepository,
+                judgeService, submissionJudgeProcessor);
 
         problem = new Problem();
         problem.setId(1L);
@@ -77,37 +81,6 @@ class SubmissionServiceTest {
         user.setPasswordHash("hash");
     }
 
-    private TestCase buildTestCase(Long id, boolean sample, int orderIndex) {
-        TestCase tc = new TestCase();
-        tc.setId(id);
-        tc.setProblem(problem);
-        tc.setInput("[2,7,11,15]\n9");
-        tc.setExpectedOutput("[0,1]");
-        tc.setSample(sample);
-        tc.setOrderIndex(orderIndex);
-        return tc;
-    }
-
-    private JudgeResponse acceptedResponse() {
-        return new JudgeResponse(
-                null, new JudgeResponse.Status(3, "Accepted"), "[0,1]\n", null, null, "0.012", 9400);
-    }
-
-    private JudgeResponse wrongAnswerResponse() {
-        return new JudgeResponse(
-                null, new JudgeResponse.Status(3, "Accepted"), "[1,2]\n", null, null, "0.010", 9200);
-    }
-
-    private JudgeResponse compilationErrorResponse() {
-        return new JudgeResponse(
-                null, new JudgeResponse.Status(6, "Compilation Error"), null, null, "syntax error", null, null);
-    }
-
-    private JudgeResponse runtimeErrorResponse() {
-        return new JudgeResponse(
-                null, new JudgeResponse.Status(11, "Runtime Error (NZEC)"), null, "Exception", null, "0.005", 8000);
-    }
-
     private void setupCommonMocks() {
         when(problemRepository.findBySlug("two-sum")).thenReturn(Optional.of(problem));
         when(judgeService.isLanguageSupported("java")).thenReturn(true);
@@ -121,69 +94,18 @@ class SubmissionServiceTest {
         });
     }
 
-    // --- submit: all accepted ---
+    // --- submit: returns PENDING immediately and kicks off async ---
 
     @Test
-    void submit_allAccepted() {
+    void submit_returnsPendingAndStartsAsync() {
         setupCommonMocks();
-        TestCase tc1 = buildTestCase(1L, true, 1);
-        TestCase tc2 = buildTestCase(2L, false, 2);
-        when(testCaseRepository.findByProblemIdOrderByOrderIndexAsc(1L)).thenReturn(List.of(tc1, tc2));
-        when(judgeService.execute(anyString(), anyInt(), anyString())).thenReturn(acceptedResponse());
-        when(judgeService.mapStatus(any(), anyString())).thenReturn(SubmissionStatus.ACCEPTED);
 
         SubmissionResponse response = submissionService.submit("two-sum", new SubmitRequest("java", "code"), 1L);
 
-        assertEquals(SubmissionStatus.ACCEPTED, response.status());
-        assertEquals(2, response.results().size());
+        assertEquals(SubmissionStatus.PENDING, response.status());
+        assertTrue(response.results().isEmpty());
         assertEquals("two-sum", response.problemSlug());
-    }
-
-    // --- submit: wrong answer with early exit ---
-
-    @Test
-    void submit_wrongAnswer_earlyExit() {
-        setupCommonMocks();
-        TestCase tc1 = buildTestCase(1L, true, 1);
-        TestCase tc2 = buildTestCase(2L, false, 2);
-        when(testCaseRepository.findByProblemIdOrderByOrderIndexAsc(1L)).thenReturn(List.of(tc1, tc2));
-        when(judgeService.execute(anyString(), anyInt(), anyString())).thenReturn(wrongAnswerResponse());
-        when(judgeService.mapStatus(any(), anyString())).thenReturn(SubmissionStatus.WRONG_ANSWER);
-
-        SubmissionResponse response = submissionService.submit("two-sum", new SubmitRequest("java", "code"), 1L);
-
-        assertEquals(SubmissionStatus.WRONG_ANSWER, response.status());
-        assertEquals(1, response.results().size()); // early exit after first failure
-    }
-
-    // --- submit: compilation error ---
-
-    @Test
-    void submit_compilationError() {
-        setupCommonMocks();
-        TestCase tc1 = buildTestCase(1L, true, 1);
-        when(testCaseRepository.findByProblemIdOrderByOrderIndexAsc(1L)).thenReturn(List.of(tc1));
-        when(judgeService.execute(anyString(), anyInt(), anyString())).thenReturn(compilationErrorResponse());
-        when(judgeService.mapStatus(any(), anyString())).thenReturn(SubmissionStatus.COMPILATION_ERROR);
-
-        SubmissionResponse response = submissionService.submit("two-sum", new SubmitRequest("java", "code"), 1L);
-
-        assertEquals(SubmissionStatus.COMPILATION_ERROR, response.status());
-    }
-
-    // --- submit: runtime error ---
-
-    @Test
-    void submit_runtimeError() {
-        setupCommonMocks();
-        TestCase tc1 = buildTestCase(1L, true, 1);
-        when(testCaseRepository.findByProblemIdOrderByOrderIndexAsc(1L)).thenReturn(List.of(tc1));
-        when(judgeService.execute(anyString(), anyInt(), anyString())).thenReturn(runtimeErrorResponse());
-        when(judgeService.mapStatus(any(), anyString())).thenReturn(SubmissionStatus.RUNTIME_ERROR);
-
-        SubmissionResponse response = submissionService.submit("two-sum", new SubmitRequest("java", "code"), 1L);
-
-        assertEquals(SubmissionStatus.RUNTIME_ERROR, response.status());
+        verify(submissionJudgeProcessor).processAsync(eq(1L), eq("full source"), eq(62), eq(1L));
     }
 
     // --- submit: problem not found ---
@@ -194,6 +116,7 @@ class SubmissionServiceTest {
 
         assertThrows(ResourceNotFoundException.class,
                 () -> submissionService.submit("missing", new SubmitRequest("java", "code"), 1L));
+        verify(submissionJudgeProcessor, never()).processAsync(anyLong(), anyString(), anyInt(), anyLong());
     }
 
     // --- submit: unsupported language ---
@@ -205,6 +128,7 @@ class SubmissionServiceTest {
 
         assertThrows(IllegalArgumentException.class,
                 () -> submissionService.submit("two-sum", new SubmitRequest("rust", "code"), 1L));
+        verify(submissionJudgeProcessor, never()).processAsync(anyLong(), anyString(), anyInt(), anyLong());
     }
 
     // --- getSubmission: ownership ---
@@ -247,52 +171,5 @@ class SubmissionServiceTest {
 
         assertThrows(ResourceNotFoundException.class,
                 () -> submissionService.getSubmission(99L, 1L));
-    }
-
-    // --- sample vs hidden test case visibility ---
-
-    @Test
-    void submit_sampleTestCase_showsInputAndExpected() {
-        setupCommonMocks();
-        TestCase sampleTc = buildTestCase(1L, true, 1);
-        when(testCaseRepository.findByProblemIdOrderByOrderIndexAsc(1L)).thenReturn(List.of(sampleTc));
-        when(judgeService.execute(anyString(), anyInt(), anyString())).thenReturn(acceptedResponse());
-        when(judgeService.mapStatus(any(), anyString())).thenReturn(SubmissionStatus.ACCEPTED);
-
-        SubmissionResponse response = submissionService.submit("two-sum", new SubmitRequest("java", "code"), 1L);
-
-        assertNotNull(response.results().get(0).input());
-        assertNotNull(response.results().get(0).expectedOutput());
-    }
-
-    @Test
-    void submit_hiddenTestCase_hidesInputAndExpected() {
-        setupCommonMocks();
-        TestCase hiddenTc = buildTestCase(2L, false, 1);
-        when(testCaseRepository.findByProblemIdOrderByOrderIndexAsc(1L)).thenReturn(List.of(hiddenTc));
-        when(judgeService.execute(anyString(), anyInt(), anyString())).thenReturn(acceptedResponse());
-        when(judgeService.mapStatus(any(), anyString())).thenReturn(SubmissionStatus.ACCEPTED);
-
-        SubmissionResponse response = submissionService.submit("two-sum", new SubmitRequest("java", "code"), 1L);
-
-        assertNull(response.results().get(0).input());
-        assertNull(response.results().get(0).expectedOutput());
-    }
-
-    // --- output trimming ---
-
-    @Test
-    void submit_outputIsTrimmed() {
-        setupCommonMocks();
-        TestCase tc = buildTestCase(1L, true, 1);
-        when(testCaseRepository.findByProblemIdOrderByOrderIndexAsc(1L)).thenReturn(List.of(tc));
-        JudgeResponse response = new JudgeResponse(
-                null, new JudgeResponse.Status(3, "Accepted"), "  [0,1]  \n", null, null, "0.01", 9400);
-        when(judgeService.execute(anyString(), anyInt(), anyString())).thenReturn(response);
-        when(judgeService.mapStatus(any(), anyString())).thenReturn(SubmissionStatus.ACCEPTED);
-
-        SubmissionResponse result = submissionService.submit("two-sum", new SubmitRequest("java", "code"), 1L);
-
-        assertEquals("[0,1]", result.results().get(0).actualOutput());
     }
 }

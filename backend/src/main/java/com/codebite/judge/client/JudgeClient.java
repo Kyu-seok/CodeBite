@@ -6,4 +6,6 @@ import com.codebite.judge.dto.JudgeResponse;
 public interface JudgeClient {
 
     JudgeResponse submit(JudgeRequest request);
+
+    JudgeResponse getSubmission(String token);
 }
