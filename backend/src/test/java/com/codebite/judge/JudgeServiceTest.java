@@ -54,6 +54,16 @@ class JudgeServiceTest {
     }
 
     @Test
+    void mapLanguageToId_javascript() {
+        assertEquals(63, judgeService.mapLanguageToId("javascript"));
+    }
+
+    @Test
+    void mapLanguageToId_cpp() {
+        assertEquals(54, judgeService.mapLanguageToId("cpp"));
+    }
+
+    @Test
     void mapLanguageToId_caseInsensitive() {
         assertEquals(62, judgeService.mapLanguageToId("Java"));
         assertEquals(71, judgeService.mapLanguageToId("Python"));
@@ -69,6 +79,8 @@ class JudgeServiceTest {
     void isLanguageSupported_true() {
         assertTrue(judgeService.isLanguageSupported("java"));
         assertTrue(judgeService.isLanguageSupported("python"));
+        assertTrue(judgeService.isLanguageSupported("javascript"));
+        assertTrue(judgeService.isLanguageSupported("cpp"));
     }
 
     @Test

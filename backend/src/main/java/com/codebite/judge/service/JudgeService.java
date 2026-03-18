@@ -19,7 +19,9 @@ public class JudgeService {
 
     private static final Map<String, Integer> LANGUAGE_IDS = Map.of(
             "java", 62,
-            "python", 71
+            "python", 71,
+            "javascript", 63,
+            "cpp", 54
     );
 
     private final JudgeClient judgeClient;
