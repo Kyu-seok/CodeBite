@@ -1,14 +1,12 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import type { User } from "../types/auth";
-import type { LoginRequest, RegisterRequest } from "../types/auth";
 import * as authApi from "../api/auth";
 
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   loading: boolean;
-  login: (data: LoginRequest) => Promise<void>;
-  register: (data: RegisterRequest) => Promise<void>;
+  loginWithOAuth: (provider: string, code: string, state: string) => Promise<void>;
   logout: () => void;
 }
 
@@ -31,14 +29,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .finally(() => setLoading(false));
   }, []);
 
-  const login = async (data: LoginRequest) => {
-    const res = await authApi.login(data);
-    localStorage.setItem("token", res.data.token);
-    setUser(res.data.user);
-  };
-
-  const register = async (data: RegisterRequest) => {
-    const res = await authApi.register(data);
+  const loginWithOAuth = async (provider: string, code: string, state: string) => {
+    const res = await authApi.oauthCallback(provider, code, state);
     localStorage.setItem("token", res.data.token);
     setUser(res.data.user);
   };
@@ -50,7 +42,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, isAuthenticated: !!user, loading, login, register, logout }}
+      value={{ user, isAuthenticated: !!user, loading, loginWithOAuth, logout }}
     >
       {children}
     </AuthContext.Provider>

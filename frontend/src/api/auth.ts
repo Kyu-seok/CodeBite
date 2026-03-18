@@ -1,12 +1,12 @@
 import client from "./client";
-import type { AuthResponse, LoginRequest, RegisterRequest, User } from "../types/auth";
+import type { AuthResponse, OAuthUrlResponse, User } from "../types/auth";
 
-export function login(data: LoginRequest) {
-  return client.post<AuthResponse>("/auth/login", data);
+export function getOAuthUrl(provider: string) {
+  return client.get<OAuthUrlResponse>(`/auth/oauth/${provider}`);
 }
 
-export function register(data: RegisterRequest) {
-  return client.post<AuthResponse>("/auth/register", data);
+export function oauthCallback(provider: string, code: string, state: string) {
+  return client.post<AuthResponse>(`/auth/oauth/${provider}/callback`, { code, state });
 }
 
 export function getMe() {
