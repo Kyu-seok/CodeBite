@@ -23,3 +23,12 @@ app:
     url: ${JUDGE0_URL:http://localhost:2358}
     poll-interval-ms: ${JUDGE0_POLL_INTERVAL_MS:500}
     poll-timeout-ms: ${JUDGE0_POLL_TIMEOUT_MS:30000}
+  oauth:
+    google:
+      client-id: ${GOOGLE_CLIENT_ID:}
+      client-secret: ${GOOGLE_CLIENT_SECRET:}
+    github:
+      client-id: ${GITHUB_CLIENT_ID:}
+      client-secret: ${GITHUB_CLIENT_SECRET:}
+    redirect-base-uri: ${OAUTH_REDIRECT_BASE_URI:http://localhost:5173/auth/callback}
+    state-expiration-ms: 300000

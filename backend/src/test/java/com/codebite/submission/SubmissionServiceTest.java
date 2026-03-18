@@ -1,6 +1,7 @@
 package com.codebite.submission;
 
 import com.codebite.common.exception.ResourceNotFoundException;
+import com.codebite.judge.service.DriverCodeLoader;
 import com.codebite.judge.service.JudgeService;
 import com.codebite.problem.entity.Difficulty;
 import com.codebite.problem.entity.Problem;
@@ -25,7 +26,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -51,6 +51,7 @@ class SubmissionServiceTest {
     @Mock private TestCaseRepository testCaseRepository;
     @Mock private UserRepository userRepository;
     @Mock private JudgeService judgeService;
+    @Mock private DriverCodeLoader driverCodeLoader;
     @Mock private SubmissionJudgeProcessor submissionJudgeProcessor;
 
     private SubmissionService submissionService;
@@ -63,7 +64,7 @@ class SubmissionServiceTest {
         submissionService = new SubmissionService(
                 submissionRepository, submissionResultRepository,
                 problemRepository, testCaseRepository, userRepository,
-                judgeService, submissionJudgeProcessor);
+                judgeService, driverCodeLoader, submissionJudgeProcessor);
 
         problem = new Problem();
         problem.setId(1L);
@@ -72,7 +73,6 @@ class SubmissionServiceTest {
         problem.setDescription("Description");
         problem.setDifficulty(Difficulty.EASY);
         problem.setPublished(true);
-        problem.setDriverCode(Map.of("java", "template {USER_CODE}", "python", "template {USER_CODE}"));
 
         user = new User();
         user.setId(1L);
@@ -84,6 +84,7 @@ class SubmissionServiceTest {
     private void setupCommonMocks() {
         when(problemRepository.findBySlug("two-sum")).thenReturn(Optional.of(problem));
         when(judgeService.isLanguageSupported("java")).thenReturn(true);
+        when(driverCodeLoader.getDriverCode("two-sum", "java")).thenReturn("template {USER_CODE}");
         when(judgeService.mapLanguageToId("java")).thenReturn(62);
         when(judgeService.buildSourceCode(anyString(), anyString())).thenReturn("full source");
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));

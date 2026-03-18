@@ -19,3 +19,12 @@ app:
     url: http://localhost:2358
     poll-interval-ms: 100
     poll-timeout-ms: 5000
+  oauth:
+    google:
+      client-id: test-google-client-id
+      client-secret: test-google-client-secret
+    github:
+      client-id: test-github-client-id
+      client-secret: test-github-client-secret
+    redirect-base-uri: http://localhost:5173/auth/callback
+    state-expiration-ms: 300000

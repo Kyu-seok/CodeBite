@@ -15,7 +15,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -45,9 +44,6 @@ class SubmissionIntegrationTest {
     private UserRepository userRepository;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
     private JwtTokenProvider jwtTokenProvider;
 
     @MockBean
@@ -61,7 +57,6 @@ class SubmissionIntegrationTest {
         User user = new User();
         user.setUsername("submitter");
         user.setEmail("submitter@test.com");
-        user.setPasswordHash(passwordEncoder.encode("password123"));
         user.setRole(Role.USER);
         user = userRepository.save(user);
         userToken = jwtTokenProvider.generateToken(user);
@@ -69,7 +64,6 @@ class SubmissionIntegrationTest {
         User other = new User();
         other.setUsername("otheruser");
         other.setEmail("other@test.com");
-        other.setPasswordHash(passwordEncoder.encode("password123"));
         other.setRole(Role.USER);
         other = userRepository.save(other);
         otherUserToken = jwtTokenProvider.generateToken(other);

@@ -1,6 +1,7 @@
 package com.codebite.submission.service;
 
 import com.codebite.common.exception.ResourceNotFoundException;
+import com.codebite.judge.service.DriverCodeLoader;
 import com.codebite.judge.service.JudgeService;
 import com.codebite.problem.entity.Problem;
 import com.codebite.problem.entity.TestCase;
@@ -21,7 +22,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class SubmissionService {
@@ -32,6 +32,7 @@ public class SubmissionService {
     private final TestCaseRepository testCaseRepository;
     private final UserRepository userRepository;
     private final JudgeService judgeService;
+    private final DriverCodeLoader driverCodeLoader;
     private final SubmissionJudgeProcessor submissionJudgeProcessor;
 
     public SubmissionService(SubmissionRepository submissionRepository,
@@ -40,6 +41,7 @@ public class SubmissionService {
                              TestCaseRepository testCaseRepository,
                              UserRepository userRepository,
                              JudgeService judgeService,
+                             DriverCodeLoader driverCodeLoader,
                              SubmissionJudgeProcessor submissionJudgeProcessor) {
         this.submissionRepository = submissionRepository;
         this.submissionResultRepository = submissionResultRepository;
@@ -47,6 +49,7 @@ public class SubmissionService {
         this.testCaseRepository = testCaseRepository;
         this.userRepository = userRepository;
         this.judgeService = judgeService;
+        this.driverCodeLoader = driverCodeLoader;
         this.submissionJudgeProcessor = submissionJudgeProcessor;
     }
 
@@ -59,16 +62,13 @@ public class SubmissionService {
             throw new IllegalArgumentException("Unsupported language: " + language);
         }
 
-        Map<String, String> driverCode = problem.getDriverCode();
-        if (driverCode == null || !driverCode.containsKey(language)) {
-            throw new IllegalArgumentException("No driver code available for language: " + language);
-        }
+        String driverTemplate = driverCodeLoader.getDriverCode(problem.getSlug(), language);
 
         // Save submission as PENDING
         Submission submission = saveSubmission(userId, problem, request);
 
         // Build source code and kick off async processing
-        String sourceCode = judgeService.buildSourceCode(driverCode.get(language), request.sourceCode());
+        String sourceCode = judgeService.buildSourceCode(driverTemplate, request.sourceCode());
         int languageId = judgeService.mapLanguageToId(language);
         submissionJudgeProcessor.processAsync(submission.getId(), sourceCode, languageId, problem.getId());
 
