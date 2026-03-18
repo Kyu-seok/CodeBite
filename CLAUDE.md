@@ -16,7 +16,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### Tech Stack
 - Java 17, Spring Boot 3.2.5, Gradle 8.5 (wrapper)
-- Spring Security (stateless JWT auth, BCrypt passwords)
+- Spring Security (stateless JWT auth, OAuth via Google/GitHub)
 - Spring Data JPA + Flyway migrations
 - PostgreSQL 15 (dev/prod), H2 in PostgreSQL mode (tests)
 - jjwt 0.12.5 for JWT token handling
@@ -26,7 +26,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 cd backend
 ./gradlew compileJava          # compile
 ./gradlew test                 # run tests (uses H2, no Docker needed)
-SPRING_PROFILES_ACTIVE=dev ./gradlew bootRun  # run locally (needs Postgres)
+GOOGLE_CLIENT_ID=xxx GOOGLE_CLIENT_SECRET=xxx \
+  GITHUB_CLIENT_ID=xxx GITHUB_CLIENT_SECRET=xxx \
+  SPRING_PROFILES_ACTIVE=dev ./gradlew bootRun  # run locally (needs Postgres + OAuth env vars)
 ```
 
 ### Infrastructure
@@ -35,10 +37,10 @@ docker compose -f infra/docker-compose.yml up -d   # start PostgreSQL
 ```
 
 ### Package Structure (`backend/src/main/java/com/codebite/`)
-- `config/` — SecurityConfig, WebConfig, JudgeClientConfig
+- `config/` — SecurityConfig, WebConfig, JudgeClientConfig, OAuthProperties
 - `common/base/` — BaseEntity (id, createdAt, updatedAt)
 - `common/exception/` — GlobalExceptionHandler, ApiError, custom exceptions
-- `auth/` — JWT auth (controller, service, DTOs, filter, token provider)
+- `auth/` — JWT auth + OAuth (controller, service, DTOs, filter, token provider, oauth clients)
 - `user/` — User entity, repository, service, DTOs
 - `problem/` — Problem CRUD (entities, repositories, service, controllers, DTOs)
 - `submission/` — Submission flow (entities, repositories, service, controller, DTOs)
@@ -47,8 +49,8 @@ docker compose -f infra/docker-compose.yml up -d   # start PostgreSQL
 ### API Endpoints
 | Method | Path | Auth | Response |
 |--------|------|------|----------|
-| POST | `/api/auth/register` | No | 201 + `{token, tokenType, user}` |
-| POST | `/api/auth/login` | No | 200 + `{token, tokenType, user}` |
+| GET | `/api/auth/oauth/{provider}` | No | 200 + `{authorizationUrl}` |
+| POST | `/api/auth/oauth/{provider}/callback` | No | 200 + `{token, tokenType, user}` |
 | GET | `/api/auth/me` | JWT | 200 + `{id, username, email, role, createdAt}` |
 | GET | `/api/problems` | No | 200 + paginated `{id, title, slug, difficulty}` |
 | GET | `/api/problems/{slug}` | No | 200 + `{id, title, slug, description, difficulty, starterCode, constraints, published, sampleTestCases, createdAt, updatedAt}` |
@@ -81,14 +83,14 @@ npm run build    # production build (includes tsc type check)
 - `context/` — AuthContext (JWT auth state + localStorage persistence)
 - `components/layout/` — Layout (nav bar), ProtectedRoute
 - `components/ui/` — DifficultyBadge, StatusBadge, Spinner
-- `pages/` — LoginPage, RegisterPage, ProblemListPage, ProblemDetailPage, NotFoundPage
+- `pages/` — LoginPage, OAuthCallbackPage, ProblemListPage, ProblemDetailPage, NotFoundPage
 - `hooks/` — useProblems, useProblem, useSubmissions
 
 ### Routing
 | Path | Page | Auth |
 |------|------|------|
 | `/login` | LoginPage | No |
-| `/register` | RegisterPage | No |
+| `/auth/callback/:provider` | OAuthCallbackPage | No |
 | `/` | Redirect to `/problems` | No |
 | `/problems` | ProblemListPage | No |
 | `/problems/:slug` | ProblemDetailPage | No (submit requires auth) |

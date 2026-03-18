@@ -153,6 +153,11 @@ services:
       SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
       JWT_SECRET: ${JWT_SECRET}
       JUDGE0_URL: ${JUDGE0_URL:-http://judge0:2358}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID}
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
+      OAUTH_REDIRECT_BASE_URI: ${OAUTH_REDIRECT_BASE_URI:-http://localhost:5173/auth/callback}
     networks:
       - codebite
 
@@ -185,19 +190,27 @@ Key points:
 Create `infra/.env.example` (commit this, but NOT the real `.env`):
 
 ```env
+# Database
 DB_USER=codebite
-DB_PASSWORD=<generate-a-strong-password>
-JWT_SECRET=<generate-a-256-bit-secret>
+DB_PASSWORD=<generate-with: openssl rand -base64 16>
+
+# JWT
+JWT_SECRET=<generate-with: openssl rand -base64 32>
+
+# Judge0
 JUDGE0_URL=http://judge0:2358
-```
+JUDGE0_DB_PASSWORD=<generate-with: openssl rand -base64 16>
 
-Generate secrets:
-```bash
-# JWT secret
-openssl rand -base64 32
+# OAuth — Google (https://console.cloud.google.com/apis/credentials)
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
 
-# DB password
-openssl rand -base64 16
+# OAuth — GitHub (https://github.com/settings/developers)
+GITHUB_CLIENT_ID=
+GITHUB_CLIENT_SECRET=
+
+# OAuth redirect (your production frontend URL)
+OAUTH_REDIRECT_BASE_URI=http://localhost:5173/auth/callback
 ```
 
 ---

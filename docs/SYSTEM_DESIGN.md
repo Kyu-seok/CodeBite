@@ -77,24 +77,36 @@ com.codebite
 │   ├── KafkaConfig          # Kafka producer/consumer, topic config
 │   └── RedisConfig          # Redis connection, rate limiter beans
 │
-├── auth/                    # Authentication module
+├── auth/                    # Authentication module (OAuth via Google/GitHub)
 │   ├── controller/
-│   │   └── AuthController          # POST /api/auth/register, /login, /me
+│   │   └── AuthController          # GET /api/auth/oauth/{provider}, POST .../callback, /me
 │   ├── dto/
-│   │   ├── RegisterRequest
-│   │   ├── LoginRequest
+│   │   ├── OAuthCallbackRequest
+│   │   ├── OAuthUrlResponse
 │   │   └── AuthResponse
 │   ├── service/
 │   │   └── AuthService
+│   ├── oauth/
+│   │   ├── OAuthProviderClient     # Interface for OAuth providers
+│   │   ├── GoogleOAuthClient
+│   │   ├── GitHubOAuthClient
+│   │   ├── OAuthClientFactory
+│   │   ├── OAuthStateService       # Stateless CSRF via signed JWT state
+│   │   └── dto/
+│   │       ├── OAuthTokenResponse
+│   │       └── OAuthUserInfo
 │   └── jwt/
 │       ├── JwtTokenProvider
 │       └── JwtAuthenticationFilter
 │
 ├── user/                    # User module
 │   ├── entity/
-│   │   └── User
+│   │   ├── User
+│   │   ├── UserOAuthAccount
+│   │   └── OAuthProvider           # GOOGLE, GITHUB
 │   ├── repository/
-│   │   └── UserRepository
+│   │   ├── UserRepository
+│   │   └── UserOAuthAccountRepository
 │   ├── dto/
 │   │   └── UserProfile
 │   └── service/
@@ -169,11 +181,23 @@ CREATE TABLE users (
     id              BIGSERIAL PRIMARY KEY,
     username        VARCHAR(50)  NOT NULL UNIQUE,
     email           VARCHAR(255) NOT NULL UNIQUE,
-    password_hash   VARCHAR(255) NOT NULL,
-    role            VARCHAR(20)  NOT NULL DEFAULT 'USER',  -- USER, ADMIN
+    password_hash   VARCHAR(255),                           -- nullable (OAuth users have no password)
+    role            VARCHAR(20)  NOT NULL DEFAULT 'USER',   -- USER, ADMIN
+    avatar_url      VARCHAR(500),
     created_at      TIMESTAMP    NOT NULL DEFAULT NOW(),
     updated_at      TIMESTAMP    NOT NULL DEFAULT NOW()
 );
+
+-- OAuth Accounts (links users to Google/GitHub)
+CREATE TABLE user_oauth_accounts (
+    id              BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    user_id         BIGINT       NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    provider        VARCHAR(20)  NOT NULL,                  -- GOOGLE, GITHUB
+    provider_id     VARCHAR(255) NOT NULL,
+    created_at      TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (provider, provider_id)
+);
+CREATE INDEX idx_user_oauth_accounts_user_id ON user_oauth_accounts(user_id);
 
 -- Problems
 CREATE TABLE problems (
@@ -182,7 +206,6 @@ CREATE TABLE problems (
     slug            VARCHAR(255) NOT NULL UNIQUE,         -- url-friendly identifier
     description     TEXT         NOT NULL,                 -- markdown content
     difficulty      VARCHAR(10)  NOT NULL,                 -- EASY, MEDIUM, HARD
-    starter_code    JSONB        NOT NULL DEFAULT '{}',    -- {"java": "...", "python": "..."}
     constraints     TEXT,
     is_published    BOOLEAN      NOT NULL DEFAULT FALSE,
     created_at      TIMESTAMP    NOT NULL DEFAULT NOW(),
@@ -240,22 +263,23 @@ CREATE INDEX idx_submission_results_submission_id ON submission_results(submissi
 
 ```
 users 1──────▶ N submissions N ◀────── 1 problems
-                    │                        │
-                    │ 1                      │ 1
-                    ▼ N                      ▼ N
-            submission_results ◀──────▶ test_cases
+  │                 │                        │
+  │ 1               │ 1                      │ 1
+  ▼ N               ▼ N                      ▼ N
+user_oauth    submission_results ◀──────▶ test_cases
+_accounts
 ```
 
 ---
 
 ## 5. API Endpoints
 
-### Authentication
-| Method | Path                | Description         | Auth |
-|--------|---------------------|---------------------|------|
-| POST   | /api/auth/register  | Register new user   | No   |
-| POST   | /api/auth/login     | Login, returns JWT  | No   |
-| GET    | /api/auth/me        | Get current user    | Yes  |
+### Authentication (OAuth only — Google & GitHub)
+| Method | Path                                   | Description              | Auth |
+|--------|----------------------------------------|--------------------------|------|
+| GET    | /api/auth/oauth/{provider}             | Get authorization URL    | No   |
+| POST   | /api/auth/oauth/{provider}/callback    | Exchange code for JWT    | No   |
+| GET    | /api/auth/me                           | Get current user         | Yes  |
 
 ### Problems
 | Method | Path                          | Description                  | Auth  |
@@ -326,9 +350,10 @@ Judge0 is a self-hosted or cloud API that compiles and runs code in a sandboxed 
 ### Language ID mapping
 Judge0 uses numeric IDs. Maintain a mapping:
 ```
-java    → 62 (Java OpenJDK 13)
-python  → 71 (Python 3)
+java       → 62 (Java OpenJDK 13)
+python     → 71 (Python 3)
 javascript → 63 (Node.js 12)
+cpp        → 54 (GCC 9.2)
 ```
 
 ### MVP flow (synchronous)
@@ -357,7 +382,7 @@ SubmissionService
 
 ### Key implementation details
 
-**Code wrapping:** Users write a solution function. The backend wraps it with a main method that reads stdin (test input) and prints stdout (output). This wrapper is language-specific.
+**Code wrapping:** Users write a solution function. The backend wraps it with driver code that reads stdin (test input) and prints stdout (output). Driver templates are stored as per-problem, per-language files under `src/main/resources/drivers/{slug}/{language}.{ext}` and loaded at startup by `DriverCodeLoader`. Each template contains a `{USER_CODE}` placeholder that gets replaced with the user's code via `String.replace()`. See `docs/DRIVER_CODE.md` for full details.
 
 Example for Java:
 ```
@@ -366,7 +391,7 @@ class Solution {
     public int[] twoSum(int[] nums, int target) { ... }
 }
 
-// wrapper appended by backend
+// driver template wraps it into a runnable program
 public class Main {
     public static void main(String[] args) {
         // parse stdin into method arguments
@@ -509,8 +534,8 @@ CodeBite/
 │   │   │   ├── layout/                  # Layout, ProtectedRoute
 │   │   │   └── ui/                      # DifficultyBadge, StatusBadge, Spinner
 │   │   ├── pages/
-│   │   │   ├── LoginPage.tsx
-│   │   │   ├── RegisterPage.tsx
+│   │   │   ├── LoginPage.tsx             # OAuth buttons (Google + GitHub)
+│   │   │   ├── OAuthCallbackPage.tsx     # Handles OAuth redirect
 │   │   │   ├── ProblemListPage.tsx
 │   │   │   ├── ProblemDetailPage.tsx     # Monaco editor + submissions
 │   │   │   └── NotFoundPage.tsx
@@ -551,12 +576,12 @@ CodeBite/
 - [x] Initialize Spring Boot project (Gradle, Java 17+)
 - [x] Configure PostgreSQL with Flyway migrations
 - [x] Set up docker-compose for local Postgres
-- [x] Implement User entity and registration
-- [x] Implement JWT authentication (login, token validation, filter)
+- [x] Implement User entity and OAuth user creation/linking
+- [x] Implement OAuth authentication (Google + GitHub) with stateless JWT
 - [x] Add Spring Security config
 - [x] Write auth integration tests
 
-**Deliverable:** Users can register and login. Protected endpoints require JWT.
+**Deliverable:** Users can sign in via Google or GitHub. Protected endpoints require JWT.
 
 ### Milestone 2: Problem CRUD
 - [x] Create Problem and TestCase entities
@@ -581,7 +606,7 @@ CodeBite/
 
 ### Milestone 4: Frontend MVP
 - [x] Initialize React project (Vite)
-- [x] Auth pages (register, login) with JWT storage
+- [x] Auth pages (OAuth login via Google/GitHub) with JWT storage
 - [x] Problem list page with difficulty badges
 - [x] Problem detail page with description panel + Monaco editor
 - [x] Language selector dropdown
@@ -630,7 +655,7 @@ CodeBite/
 
 | Decision | Choice | Rationale |
 |----------|--------|-----------|
-| Auth mechanism | JWT (stateless) | Scales across multiple backend instances without session store |
+| Auth mechanism | OAuth (Google/GitHub) + JWT | No passwords to manage; stateless JWT scales across instances; manual OAuth flow avoids Spring OAuth2 Client session conflicts |
 | DB migrations | Flyway | Version-controlled, repeatable schema evolution |
 | Package structure | By feature | Cohesive modules, easy to extract into services later |
 | Code execution | Judge0 (self-hosted) | Battle-tested sandboxing, supports 40+ languages |
@@ -639,4 +664,5 @@ CodeBite/
 | Rate limiting | Redis sliding window | Atomic counters across multiple backend instances; low latency |
 | Caching | Redis (cache-aside) | Same Redis instance used for rate limiting; avoids adding another dependency |
 | API style | REST + JSON | Standard, well-understood, sufficient for this use case |
-| Starter code storage | JSONB column | Flexible per-language templates without extra tables |
+| Starter code storage | Classpath files | Readable, diffable, syntax-highlighted; loaded by `StarterCodeLoader` at startup (same pattern as driver code) |
+| Driver code storage | Classpath files | Readable, diffable, syntax-highlighted; loaded by `DriverCodeLoader` at startup |
