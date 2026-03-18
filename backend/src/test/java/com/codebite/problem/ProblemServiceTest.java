@@ -13,6 +13,7 @@ import com.codebite.problem.entity.TestCase;
 import com.codebite.problem.repository.ProblemRepository;
 import com.codebite.problem.repository.TestCaseRepository;
 import com.codebite.problem.service.ProblemService;
+import com.codebite.problem.service.StarterCodeLoader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -43,11 +44,14 @@ class ProblemServiceTest {
     @Mock
     private TestCaseRepository testCaseRepository;
 
+    @Mock
+    private StarterCodeLoader starterCodeLoader;
+
     private ProblemService problemService;
 
     @BeforeEach
     void setUp() {
-        problemService = new ProblemService(problemRepository, testCaseRepository);
+        problemService = new ProblemService(problemRepository, testCaseRepository, starterCodeLoader);
     }
 
     private Problem buildProblem(Long id, String title, String slug, boolean published) {
@@ -87,10 +91,12 @@ class ProblemServiceTest {
         Problem problem = buildProblem(1L, "Two Sum", "two-sum", true);
         when(problemRepository.findBySlug("two-sum")).thenReturn(Optional.of(problem));
         when(testCaseRepository.findByProblemIdAndSampleTrueOrderByOrderIndexAsc(1L)).thenReturn(List.of());
+        when(starterCodeLoader.getStarterCode("two-sum")).thenReturn(Map.of("java", "class Solution {}"));
 
         ProblemDetail detail = problemService.getProblemBySlug("two-sum");
         assertEquals("Two Sum", detail.title());
         assertEquals("two-sum", detail.slug());
+        assertEquals(Map.of("java", "class Solution {}"), detail.starterCode());
     }
 
     @Test
@@ -121,7 +127,7 @@ class ProblemServiceTest {
 
         CreateProblemRequest request = new CreateProblemRequest(
                 "Two Sum", "Description", Difficulty.EASY,
-                Map.of("java", "code"), null, "constraints", true);
+                "constraints", true);
 
         ProblemDetail result = problemService.createProblem(request);
         assertEquals("two-sum", result.slug());
@@ -138,7 +144,7 @@ class ProblemServiceTest {
         });
 
         CreateProblemRequest request = new CreateProblemRequest(
-                "Two Sum", "Description", Difficulty.EASY, null, null, null, false);
+                "Two Sum", "Description", Difficulty.EASY, null, false);
 
         ProblemDetail result = problemService.createProblem(request);
         assertEquals("two-sum-2", result.slug());
@@ -152,7 +158,7 @@ class ProblemServiceTest {
         when(testCaseRepository.findByProblemIdAndSampleTrueOrderByOrderIndexAsc(1L)).thenReturn(List.of());
 
         UpdateProblemRequest request = new UpdateProblemRequest(
-                null, null, null, null, null, null, true);
+                null, null, null, null, true);
 
         ProblemDetail result = problemService.updateProblem(1L, request);
         assertTrue(result.published());
@@ -165,7 +171,7 @@ class ProblemServiceTest {
 
         assertThrows(ResourceNotFoundException.class,
                 () -> problemService.updateProblem(99L, new UpdateProblemRequest(
-                        null, null, null, null, null, null, null)));
+                        null, null, null, null, null)));
     }
 
     @Test

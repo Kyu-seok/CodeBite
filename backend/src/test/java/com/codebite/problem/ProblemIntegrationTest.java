@@ -15,13 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Map;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -45,9 +42,6 @@ class ProblemIntegrationTest {
     private UserRepository userRepository;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
     private JwtTokenProvider jwtTokenProvider;
 
     private String adminToken;
@@ -58,7 +52,6 @@ class ProblemIntegrationTest {
         User admin = new User();
         admin.setUsername("problemadmin");
         admin.setEmail("problemadmin@test.com");
-        admin.setPasswordHash(passwordEncoder.encode("password123"));
         admin.setRole(Role.ADMIN);
         admin = userRepository.save(admin);
         adminToken = jwtTokenProvider.generateToken(admin);
@@ -66,7 +59,6 @@ class ProblemIntegrationTest {
         User user = new User();
         user.setUsername("problemuser");
         user.setEmail("problemuser@test.com");
-        user.setPasswordHash(passwordEncoder.encode("password123"));
         user.setRole(Role.USER);
         user = userRepository.save(user);
         userToken = jwtTokenProvider.generateToken(user);
@@ -112,6 +104,8 @@ class ProblemIntegrationTest {
                 .andExpect(jsonPath("$.difficulty").value("EASY"))
                 .andExpect(jsonPath("$.starterCode.java").isNotEmpty())
                 .andExpect(jsonPath("$.starterCode.python").isNotEmpty())
+                .andExpect(jsonPath("$.starterCode.javascript").isNotEmpty())
+                .andExpect(jsonPath("$.starterCode.cpp").isNotEmpty())
                 .andExpect(jsonPath("$.sampleTestCases").isArray())
                 .andExpect(jsonPath("$.sampleTestCases.length()").value(2));
     }
@@ -128,7 +122,7 @@ class ProblemIntegrationTest {
     void adminCreateProblem_withAdminToken_returns201() throws Exception {
         CreateProblemRequest request = new CreateProblemRequest(
                 "Binary Search", "Find target in sorted array", Difficulty.MEDIUM,
-                Map.of("java", "class Solution {}"), null, "1 <= n <= 10^5", true);
+                "1 <= n <= 10^5", true);
 
         mockMvc.perform(post("/api/admin/problems")
                         .header("Authorization", "Bearer " + adminToken)
@@ -143,7 +137,7 @@ class ProblemIntegrationTest {
     @Test
     void adminCreateProblem_withoutToken_returns401() throws Exception {
         CreateProblemRequest request = new CreateProblemRequest(
-                "Test", "Desc", Difficulty.EASY, null, null, null, false);
+                "Test", "Desc", Difficulty.EASY, null, false);
 
         mockMvc.perform(post("/api/admin/problems")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -154,7 +148,7 @@ class ProblemIntegrationTest {
     @Test
     void adminCreateProblem_withUserToken_returns403() throws Exception {
         CreateProblemRequest request = new CreateProblemRequest(
-                "Test", "Desc", Difficulty.EASY, null, null, null, false);
+                "Test", "Desc", Difficulty.EASY, null, false);
 
         mockMvc.perform(post("/api/admin/problems")
                         .header("Authorization", "Bearer " + userToken)
@@ -166,7 +160,7 @@ class ProblemIntegrationTest {
     @Test
     void adminCreateProblem_invalidInput_returns400() throws Exception {
         CreateProblemRequest request = new CreateProblemRequest(
-                "", "", null, null, null, null, null);
+                "", "", null, null, null);
 
         mockMvc.perform(post("/api/admin/problems")
                         .header("Authorization", "Bearer " + adminToken)
@@ -179,7 +173,7 @@ class ProblemIntegrationTest {
     void adminUpdateProblem_withAdminToken_returns200() throws Exception {
         // First create a problem
         CreateProblemRequest create = new CreateProblemRequest(
-                "To Update", "Original desc", Difficulty.EASY, null, null, null, false);
+                "To Update", "Original desc", Difficulty.EASY, null, false);
         MvcResult createResult = mockMvc.perform(post("/api/admin/problems")
                         .header("Authorization", "Bearer " + adminToken)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -191,7 +185,7 @@ class ProblemIntegrationTest {
                 .get("id").asLong();
 
         UpdateProblemRequest update = new UpdateProblemRequest(
-                null, "Updated desc", null, null, null, null, true);
+                null, "Updated desc", null, null, true);
 
         mockMvc.perform(put("/api/admin/problems/" + id)
                         .header("Authorization", "Bearer " + adminToken)
@@ -207,7 +201,7 @@ class ProblemIntegrationTest {
     void adminAddTestCase_withAdminToken_returns201() throws Exception {
         // First create a problem
         CreateProblemRequest create = new CreateProblemRequest(
-                "TC Problem", "Desc", Difficulty.EASY, null, null, null, true);
+                "TC Problem", "Desc", Difficulty.EASY, null, true);
         MvcResult createResult = mockMvc.perform(post("/api/admin/problems")
                         .header("Authorization", "Bearer " + adminToken)
                         .contentType(MediaType.APPLICATION_JSON)

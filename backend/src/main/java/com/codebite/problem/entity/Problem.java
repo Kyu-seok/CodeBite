@@ -3,7 +3,6 @@ package com.codebite.problem.entity;
 import com.codebite.common.base.BaseEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -12,7 +11,6 @@ import jakarta.persistence.Table;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Entity
 @Table(name = "problems")
@@ -30,14 +28,6 @@ public class Problem extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private Difficulty difficulty;
-
-    @Convert(converter = StarterCodeConverter.class)
-    @Column(name = "starter_code", columnDefinition = "TEXT")
-    private Map<String, String> starterCode;
-
-    @Convert(converter = StarterCodeConverter.class)
-    @Column(name = "driver_code", columnDefinition = "TEXT")
-    private Map<String, String> driverCode;
 
     @Column(columnDefinition = "TEXT")
     private String constraints;
@@ -78,22 +68,6 @@ public class Problem extends BaseEntity {
 
     public void setDifficulty(Difficulty difficulty) {
         this.difficulty = difficulty;
-    }
-
-    public Map<String, String> getStarterCode() {
-        return starterCode;
-    }
-
-    public void setStarterCode(Map<String, String> starterCode) {
-        this.starterCode = starterCode;
-    }
-
-    public Map<String, String> getDriverCode() {
-        return driverCode;
-    }
-
-    public void setDriverCode(Map<String, String> driverCode) {
-        this.driverCode = driverCode;
     }
 
     public String getConstraints() {

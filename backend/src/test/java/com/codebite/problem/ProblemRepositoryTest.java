@@ -13,7 +13,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 
-import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -102,18 +101,4 @@ class ProblemRepositoryTest {
         assertFalse(problemRepository.findById(problemId).isPresent());
     }
 
-    @Test
-    void starterCodeConverter_roundTrip() {
-        Problem problem = createProblem("Converter", "converter", Difficulty.EASY, true);
-        problem.setStarterCode(Map.of("java", "class Solution {}", "python", "class Solution:\n    pass"));
-        problem = problemRepository.save(problem);
-
-        entityManager.flush();
-        entityManager.clear();
-
-        Problem found = problemRepository.findById(problem.getId()).orElseThrow();
-        assertNotNull(found.getStarterCode());
-        assertEquals("class Solution {}", found.getStarterCode().get("java"));
-        assertEquals("class Solution:\n    pass", found.getStarterCode().get("python"));
-    }
 }

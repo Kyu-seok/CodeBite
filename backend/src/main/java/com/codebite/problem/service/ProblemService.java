@@ -24,10 +24,13 @@ public class ProblemService {
 
     private final ProblemRepository problemRepository;
     private final TestCaseRepository testCaseRepository;
+    private final StarterCodeLoader starterCodeLoader;
 
-    public ProblemService(ProblemRepository problemRepository, TestCaseRepository testCaseRepository) {
+    public ProblemService(ProblemRepository problemRepository, TestCaseRepository testCaseRepository,
+                          StarterCodeLoader starterCodeLoader) {
         this.problemRepository = problemRepository;
         this.testCaseRepository = testCaseRepository;
+        this.starterCodeLoader = starterCodeLoader;
     }
 
     @Transactional(readOnly = true)
@@ -60,8 +63,6 @@ public class ProblemService {
         problem.setSlug(slugify(request.title()));
         problem.setDescription(request.description());
         problem.setDifficulty(request.difficulty());
-        problem.setStarterCode(request.starterCode());
-        problem.setDriverCode(request.driverCode());
         problem.setConstraints(request.constraints());
         problem.setPublished(request.published() != null && request.published());
 
@@ -83,12 +84,6 @@ public class ProblemService {
         }
         if (request.difficulty() != null) {
             problem.setDifficulty(request.difficulty());
-        }
-        if (request.starterCode() != null) {
-            problem.setStarterCode(request.starterCode());
-        }
-        if (request.driverCode() != null) {
-            problem.setDriverCode(request.driverCode());
         }
         if (request.constraints() != null) {
             problem.setConstraints(request.constraints());
@@ -151,7 +146,7 @@ public class ProblemService {
                 problem.getSlug(),
                 problem.getDescription(),
                 problem.getDifficulty(),
-                problem.getStarterCode(),
+                starterCodeLoader.getStarterCode(problem.getSlug()),
                 problem.getConstraints(),
                 problem.isPublished(),
                 sampleCases.stream().map(this::toTestCaseDto).toList(),
