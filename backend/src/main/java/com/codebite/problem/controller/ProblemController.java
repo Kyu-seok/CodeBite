@@ -5,7 +5,9 @@ import com.codebite.problem.dto.ProblemListItem;
 import com.codebite.problem.entity.Difficulty;
 import com.codebite.problem.service.ProblemService;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,6 +29,9 @@ public class ProblemController {
     public ResponseEntity<Page<ProblemListItem>> listProblems(
             @RequestParam(required = false) Difficulty difficulty,
             Pageable pageable) {
+        if (pageable.getSort().isUnsorted()) {
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("id").ascending());
+        }
         return ResponseEntity.ok(problemService.listPublishedProblems(difficulty, pageable));
     }
 
