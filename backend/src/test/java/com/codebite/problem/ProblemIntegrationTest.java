@@ -71,7 +71,7 @@ class ProblemIntegrationTest {
         mockMvc.perform(get("/api/problems"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").isArray())
-                .andExpect(jsonPath("$.content.length()").value(5))
+                .andExpect(jsonPath("$.content.length()").value(11))
                 .andExpect(jsonPath("$.content[0].title").isNotEmpty())
                 .andExpect(jsonPath("$.content[0].slug").isNotEmpty())
                 .andExpect(jsonPath("$.content[0].difficulty").isNotEmpty());
@@ -82,7 +82,7 @@ class ProblemIntegrationTest {
         mockMvc.perform(get("/api/problems?difficulty=EASY"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").isArray())
-                .andExpect(jsonPath("$.totalElements").value(5));
+                .andExpect(jsonPath("$.totalElements").value(10));
     }
 
     @Test
@@ -90,8 +90,8 @@ class ProblemIntegrationTest {
         mockMvc.perform(get("/api/problems?page=0&size=2"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.length()").value(2))
-                .andExpect(jsonPath("$.totalElements").value(5))
-                .andExpect(jsonPath("$.totalPages").value(3));
+                .andExpect(jsonPath("$.totalElements").value(11))
+                .andExpect(jsonPath("$.totalPages").value(6));
     }
 
     @Test
