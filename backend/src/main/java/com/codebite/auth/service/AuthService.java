@@ -65,7 +65,11 @@ public class AuthService {
 
         User user = userService.findOrCreateOAuthUser(userInfo, provider);
         String jwt = tokenProvider.generateToken(user);
-        return new AuthResponse(jwt, UserService.toProfile(user));
+        UserProfile profile = UserService.toProfile(user);
+        if (userCacheService != null) {
+            userCacheService.cacheProfile(user.getId(), profile);
+        }
+        return new AuthResponse(jwt, profile);
     }
 
     public UserProfile getCurrentUser(Long userId) {
