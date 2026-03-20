@@ -1,9 +1,11 @@
 package com.codebite.auth.jwt;
 
+import com.codebite.auth.service.TokenBlacklistService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,6 +21,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider tokenProvider;
 
+    @Autowired(required = false)
+    private TokenBlacklistService tokenBlacklistService;
+
     public JwtAuthenticationFilter(JwtTokenProvider tokenProvider) {
         this.tokenProvider = tokenProvider;
     }
@@ -31,6 +36,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if (token != null && tokenProvider.validateToken(token)) {
             JwtUserPrincipal principal = tokenProvider.parseToken(token);
+
+            if (tokenBlacklistService != null
+                    && principal.tokenId() != null
+                    && tokenBlacklistService.isBlacklisted(principal.tokenId())) {
+                filterChain.doFilter(request, response);
+                return;
+            }
 
             var authorities = List.of(new SimpleGrantedAuthority("ROLE_" + principal.role().name()));
             var authentication = new UsernamePasswordAuthenticationToken(principal, null, authorities);
