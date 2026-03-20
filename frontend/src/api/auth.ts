@@ -12,3 +12,7 @@ export function oauthCallback(provider: string, code: string, state: string) {
 export function getMe() {
   return client.get<User>("/auth/me");
 }
+
+export function logout() {
+  return client.post("/auth/logout");
+}
