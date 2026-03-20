@@ -34,7 +34,7 @@ GOOGLE_CLIENT_ID=xxx GOOGLE_CLIENT_SECRET=xxx \
 
 ### Infrastructure
 ```bash
-docker compose -f infra/docker-compose.yml up -d   # start PostgreSQL
+docker compose -f infra/docker-compose.yml up -d   # start PostgreSQL + Redis
 ```
 
 ### Package Structure (`backend/src/main/java/com/codebite/`)
