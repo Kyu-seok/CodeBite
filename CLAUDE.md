@@ -9,7 +9,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `backend/` — Spring Boot 3.2.5 REST API (Java 17, Gradle 8.5)
 - `frontend/` — React SPA (Vite + TypeScript + Tailwind CSS)
 - `worker/` — background job/task processing (TBD)
-- `infra/` — Docker Compose (PostgreSQL 15)
+- `infra/` — Docker Compose (PostgreSQL 15, Redis 7, Nginx LB)
 - `docs/` — project documentation
 
 ## Backend
@@ -19,6 +19,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Spring Security (stateless JWT auth, OAuth via Google/GitHub)
 - Spring Data JPA + Flyway migrations
 - PostgreSQL 15 (dev/prod), H2 in PostgreSQL mode (tests)
+- Redis 7 (JWT token blacklist, user profile cache)
 - jjwt 0.12.5 for JWT token handling
 
 ### Common Commands
@@ -52,6 +53,8 @@ docker compose -f infra/docker-compose.yml up -d   # start PostgreSQL
 | GET | `/api/auth/oauth/{provider}` | No | 200 + `{authorizationUrl}` |
 | POST | `/api/auth/oauth/{provider}/callback` | No | 200 + `{token, tokenType, user}` |
 | GET | `/api/auth/me` | JWT | 200 + `{id, username, email, role, createdAt}` |
+| POST | `/api/auth/logout` | JWT | 204 No Content |
+| GET | `/api/health` | No | 200 + `{status: "UP"}` |
 | GET | `/api/problems` | No | 200 + paginated `{id, title, slug, difficulty}` |
 | GET | `/api/problems/{slug}` | No | 200 + `{id, title, slug, description, difficulty, starterCode, constraints, published, sampleTestCases, createdAt, updatedAt}` |
 | POST | `/api/admin/problems` | ADMIN | 201 + problem detail |

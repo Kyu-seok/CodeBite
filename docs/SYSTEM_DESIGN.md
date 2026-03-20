@@ -639,13 +639,18 @@ CodeBite/
 **Deliverable:** Submission execution is decoupled via Kafka. Multiple workers can consume in parallel.
 
 ### Milestone 7: Scaling Simulation
-- [ ] docker-compose.prod.yml with multiple backend + worker instances
-- [ ] Nginx load balancer in front of backend instances
+- [x] docker-compose.prod.yml with multiple backend instances (3 replicas)
+- [x] Nginx load balancer in front of backend instances (least_conn)
 - [ ] PostgreSQL read replica (primary for writes, replica for reads)
 - [ ] Configure Spring to route read queries to replica
-- [ ] Redis caching for problem detail (cache-aside pattern)
+- [x] Redis for auth: JWT token blacklist (logout/revocation) + user profile caching
 - [ ] Scale Kafka consumers by adding workers to consumer group
-- [ ] Document the architecture and scaling decisions
+- [x] Document the architecture and scaling decisions
+
+#### Redis Auth Cache Details
+- **Token blacklist:** On logout, the JWT's `jti` claim is stored in Redis key `blacklist:{jti}` with TTL matching the token's remaining lifetime. The `JwtAuthenticationFilter` checks blacklist before authenticating requests. Fail-open on Redis errors.
+- **User profile cache:** `GET /api/auth/me` checks Redis key `user:{id}:profile` before hitting the DB. Cached for 5 minutes (configurable via `app.cache.user-profile-ttl-seconds`). Fail-open on Redis errors.
+- Both services use `@ConditionalOnBean` — when Redis is unavailable (e.g., in tests), they are not created and the system degrades gracefully.
 
 **Deliverable:** Dockerized multi-instance deployment demonstrating horizontal scaling.
 
