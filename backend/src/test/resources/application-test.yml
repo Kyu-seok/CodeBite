@@ -1,4 +1,6 @@
 spring:
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
   datasource:
     url: jdbc:h2:mem:codebite;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH
     username: sa

@@ -2,6 +2,10 @@ server:
   port: 8080
 
 spring:
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
   # datasource wasn't there originally.
   datasource:
     url: jdbc:postgresql://localhost:5432/codebite
@@ -16,6 +20,8 @@ spring:
     enabled: true
 
 app:
+  cache:
+    user-profile-ttl-seconds: 300
   cors:
     allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173,http://localhost:5174,http://localhost:3000}
   jwt:
