@@ -12,7 +12,10 @@ import com.codebite.user.dto.UserProfile;
 import com.codebite.user.entity.OAuthProvider;
 import com.codebite.user.entity.User;
 import com.codebite.user.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class AuthService {
@@ -22,6 +25,9 @@ public class AuthService {
     private final OAuthClientFactory clientFactory;
     private final OAuthStateService stateService;
     private final OAuthProperties oauthProperties;
+
+    @Autowired(required = false)
+    private UserCacheService userCacheService;
 
     public AuthService(UserService userService,
                        JwtTokenProvider tokenProvider,
@@ -63,7 +69,17 @@ public class AuthService {
     }
 
     public UserProfile getCurrentUser(Long userId) {
-        return userService.getUserProfile(userId);
+        if (userCacheService != null) {
+            Optional<UserProfile> cached = userCacheService.getCachedProfile(userId);
+            if (cached.isPresent()) {
+                return cached.get();
+            }
+        }
+        UserProfile profile = userService.getUserProfile(userId);
+        if (userCacheService != null) {
+            userCacheService.cacheProfile(userId, profile);
+        }
+        return profile;
     }
 
     private OAuthProvider parseProvider(String providerName) {
