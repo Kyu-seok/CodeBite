@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +14,7 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 @Service
-@ConditionalOnBean(StringRedisTemplate.class)
+@ConditionalOnProperty(name = "app.cache.enabled", havingValue = "true", matchIfMissing = false)
 public class UserCacheService {
 
     private static final Logger log = LoggerFactory.getLogger(UserCacheService.class);
