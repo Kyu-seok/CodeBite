@@ -61,6 +61,27 @@ class JwtTokenProviderTest {
         assertEquals(1L, principal.id());
         assertEquals("testuser", principal.username());
         assertEquals(Role.USER, principal.role());
+        assertNotNull(principal.tokenId());
+    }
+
+    @Test
+    void generateToken_includesUniqueJti() {
+        User user = createTestUser();
+        String token1 = tokenProvider.generateToken(user);
+        String token2 = tokenProvider.generateToken(user);
+
+        String jti1 = tokenProvider.getTokenId(token1);
+        String jti2 = tokenProvider.getTokenId(token2);
+
+        assertNotNull(jti1);
+        assertNotNull(jti2);
+        assertNotEquals(jti1, jti2);
+    }
+
+    @Test
+    void getExpiration_returnsNonNullDate() {
+        String token = tokenProvider.generateToken(createTestUser());
+        assertNotNull(tokenProvider.getExpiration(token));
     }
 
     @Test
