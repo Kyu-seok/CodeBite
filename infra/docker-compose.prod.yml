@@ -172,9 +172,36 @@ services:
     networks:
       - codebite
 
+  prometheus:
+    image: prom/prometheus:v2.51.0
+    container_name: codebite-prometheus
+    restart: unless-stopped
+    volumes:
+      - ./prometheus/prometheus-prod.yml:/etc/prometheus/prometheus.yml:ro
+      - codebite-prometheus:/prometheus
+    networks:
+      - codebite
+
+  grafana:
+    image: grafana/grafana:10.4.0
+    container_name: codebite-grafana
+    restart: unless-stopped
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
+      GF_SERVER_ROOT_URL: ${GRAFANA_ROOT_URL:-http://localhost/grafana}
+      GF_SERVER_SERVE_FROM_SUB_PATH: "true"
+    volumes:
+      - codebite-grafana:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+    networks:
+      - codebite
+
 volumes:
   codebite-pgdata:
   codebite-redis:
+  codebite-prometheus:
+  codebite-grafana:
   judge0-pgdata:
   judge0-redis:
 

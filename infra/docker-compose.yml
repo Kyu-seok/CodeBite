@@ -38,6 +38,27 @@ services:
       KAFKA_LOG_DIRS: /tmp/kraft-combined-logs
       CLUSTER_ID: codebite-kafka-cluster-id-01
 
+  prometheus:
+    image: prom/prometheus:v2.51.0
+    container_name: codebite-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus-dev.yml:/etc/prometheus/prometheus.yml:ro
+
+  grafana:
+    image: grafana/grafana:10.4.0
+    container_name: codebite-grafana
+    ports:
+      - "3001:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    volumes:
+      - codebite-grafana:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+
 volumes:
   codebite-pgdata:
   codebite-redis:
+  codebite-grafana:

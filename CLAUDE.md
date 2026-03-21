@@ -49,6 +49,7 @@ Root `settings.gradle` includes three modules: `common`, `backend`, `worker`. Th
 - PostgreSQL 15 (dev/prod), H2 in PostgreSQL mode (tests)
 - Redis 7 (JWT token blacklist, user profile cache)
 - Spring Kafka (submission event producer)
+- Spring Boot Actuator + Micrometer Prometheus (metrics)
 - jjwt 0.12.5 for JWT token handling
 
 ### Common Commands
@@ -62,7 +63,7 @@ GOOGLE_CLIENT_ID=xxx GOOGLE_CLIENT_SECRET=xxx \
 
 ### Infrastructure
 ```bash
-docker compose -f infra/docker-compose.yml up -d   # start PostgreSQL + Redis + Kafka
+docker compose -f infra/docker-compose.yml up -d   # start PostgreSQL + Redis + Kafka + Prometheus + Grafana
 ```
 
 ### Package Structure (`backend/src/main/java/com/codebite/`)
@@ -99,9 +100,10 @@ docker compose -f infra/docker-compose.yml up -d   # start PostgreSQL + Redis + 
 ## Worker
 
 ### Tech Stack
-- Java 17, Spring Boot 3.2.5 (no web server)
+- Java 17, Spring Boot 3.2.5 (no main web server; management server on port 8081 for metrics)
 - Spring Kafka (consumer)
 - Spring Data JPA
+- Spring Boot Actuator + Micrometer Prometheus (metrics on port 8081)
 - Shares entities, repositories, and Judge0 client from `common` module
 
 ### Common Commands
@@ -150,3 +152,23 @@ npm run build    # production build (includes tsc type check)
 | `/problems` | ProblemListPage | No |
 | `/problems/:slug` | ProblemDetailPage | No (submit requires auth) |
 | `*` | NotFoundPage | No |
+
+## Monitoring
+
+### Prometheus + Grafana
+- **Prometheus**: Scrapes metrics from backend (`:8080/actuator/prometheus`) and worker (`:8081/actuator/prometheus`) every 15s
+- **Grafana**: `http://localhost:3001` (admin/admin) — auto-provisioned with Prometheus datasource and CodeBite Overview dashboard
+- **Config**: `infra/prometheus/` (scrape configs), `infra/grafana/provisioning/` (datasource + dashboards)
+
+### Custom Metrics
+| Metric | Type | Source | Description |
+|--------|------|--------|-------------|
+| `codebite.submissions.created` | Counter | Backend | Total submissions created |
+| `codebite.submissions.completed` | Counter | Worker | Submissions completed (tags: `status`, `language`) |
+| `codebite.submissions.processing.duration` | Timer | Worker | Time to process a submission through Judge0 |
+
+### Built-in Metrics (via Actuator)
+- `http_server_requests_seconds` — HTTP request rate, latency, status codes per endpoint
+- `jvm_memory_used_bytes` — JVM heap/non-heap memory
+- `hikaricp_connections_*` — Database connection pool (active, idle, pending)
+- `kafka_consumer_fetch_manager_records_lag` — Kafka consumer lag per partition
