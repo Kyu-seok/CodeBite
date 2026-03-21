@@ -13,9 +13,10 @@ import com.codebite.submission.dto.SubmitRequest;
 import com.codebite.submission.entity.Submission;
 import com.codebite.submission.entity.SubmissionResult;
 import com.codebite.submission.entity.SubmissionStatus;
+import com.codebite.submission.event.SubmissionEvent;
+import com.codebite.submission.kafka.SubmissionEventProducer;
 import com.codebite.submission.repository.SubmissionRepository;
 import com.codebite.submission.repository.SubmissionResultRepository;
-import com.codebite.submission.service.SubmissionJudgeProcessor;
 import com.codebite.submission.service.SubmissionService;
 import com.codebite.user.entity.User;
 import com.codebite.user.repository.UserRepository;
@@ -34,10 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -52,7 +50,7 @@ class SubmissionServiceTest {
     @Mock private UserRepository userRepository;
     @Mock private JudgeService judgeService;
     @Mock private DriverCodeLoader driverCodeLoader;
-    @Mock private SubmissionJudgeProcessor submissionJudgeProcessor;
+    @Mock private SubmissionEventProducer submissionEventProducer;
 
     private SubmissionService submissionService;
 
@@ -64,7 +62,7 @@ class SubmissionServiceTest {
         submissionService = new SubmissionService(
                 submissionRepository, submissionResultRepository,
                 problemRepository, testCaseRepository, userRepository,
-                judgeService, driverCodeLoader, submissionJudgeProcessor);
+                judgeService, driverCodeLoader, submissionEventProducer);
 
         problem = new Problem();
         problem.setId(1L);
@@ -106,7 +104,7 @@ class SubmissionServiceTest {
         assertEquals(SubmissionStatus.PENDING, response.status());
         assertTrue(response.results().isEmpty());
         assertEquals("two-sum", response.problemSlug());
-        verify(submissionJudgeProcessor).processAsync(eq(1L), eq("full source"), eq(62), eq(1L));
+        verify(submissionEventProducer).send(any(SubmissionEvent.class));
     }
 
     // --- submit: problem not found ---
@@ -117,7 +115,7 @@ class SubmissionServiceTest {
 
         assertThrows(ResourceNotFoundException.class,
                 () -> submissionService.submit("missing", new SubmitRequest("java", "code"), 1L));
-        verify(submissionJudgeProcessor, never()).processAsync(anyLong(), anyString(), anyInt(), anyLong());
+        verify(submissionEventProducer, never()).send(any(SubmissionEvent.class));
     }
 
     // --- submit: unsupported language ---
@@ -129,7 +127,7 @@ class SubmissionServiceTest {
 
         assertThrows(IllegalArgumentException.class,
                 () -> submissionService.submit("two-sum", new SubmitRequest("rust", "code"), 1L));
-        verify(submissionJudgeProcessor, never()).processAsync(anyLong(), anyString(), anyInt(), anyLong());
+        verify(submissionEventProducer, never()).send(any(SubmissionEvent.class));
     }
 
     // --- getSubmission: ownership ---

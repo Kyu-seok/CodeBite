@@ -1,9 +1,8 @@
 package com.codebite.submission;
 
 import com.codebite.auth.jwt.JwtTokenProvider;
-import com.codebite.judge.client.JudgeClient;
-import com.codebite.judge.dto.JudgeResponse;
 import com.codebite.submission.dto.SubmitRequest;
+import com.codebite.submission.kafka.SubmissionEventProducer;
 import com.codebite.user.entity.Role;
 import com.codebite.user.entity.User;
 import com.codebite.user.repository.UserRepository;
@@ -20,9 +19,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -47,7 +43,7 @@ class SubmissionIntegrationTest {
     private JwtTokenProvider jwtTokenProvider;
 
     @MockBean
-    private JudgeClient judgeClient;
+    private SubmissionEventProducer submissionEventProducer;
 
     private String userToken;
     private String otherUserToken;
@@ -69,21 +65,10 @@ class SubmissionIntegrationTest {
         otherUserToken = jwtTokenProvider.generateToken(other);
     }
 
-    private void mockJudgeAsync() {
-        // submit returns a token (async mode)
-        when(judgeClient.submit(any())).thenReturn(new JudgeResponse(
-                "test-token", null, null, null, null, null, null));
-        // getSubmission returns a completed result
-        when(judgeClient.getSubmission(anyString())).thenReturn(new JudgeResponse(
-                null, new JudgeResponse.Status(3, "Accepted"), "[0,1]\n", null, null, "0.012", 9400));
-    }
-
     // --- Submit: returns 201 with PENDING status ---
 
     @Test
     void submit_returns201WithPending() throws Exception {
-        mockJudgeAsync();
-
         SubmitRequest request = new SubmitRequest("java",
                 "class Solution { public int[] twoSum(int[] nums, int target) { return new int[]{0,1}; } }");
 
@@ -141,8 +126,6 @@ class SubmissionIntegrationTest {
 
     @Test
     void getSubmission_afterSubmit_returnsPending() throws Exception {
-        mockJudgeAsync();
-
         SubmitRequest request = new SubmitRequest("java",
                 "class Solution { public int[] twoSum(int[] nums, int target) { return new int[]{0,1}; } }");
 
@@ -168,8 +151,6 @@ class SubmissionIntegrationTest {
 
     @Test
     void getSubmission_otherUser_returns404() throws Exception {
-        mockJudgeAsync();
-
         SubmitRequest request = new SubmitRequest("java",
                 "class Solution { public int[] twoSum(int[] nums, int target) { return new int[]{0,1}; } }");
 
@@ -193,8 +174,6 @@ class SubmissionIntegrationTest {
 
     @Test
     void listSubmissions_returns200() throws Exception {
-        mockJudgeAsync();
-
         SubmitRequest request = new SubmitRequest("java",
                 "class Solution { public int[] twoSum(int[] nums, int target) { return new int[]{0,1}; } }");
 

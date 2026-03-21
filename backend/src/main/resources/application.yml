@@ -18,8 +18,17 @@ spring:
     open-in-view: false
   flyway:
     enabled: true
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 
 app:
+  kafka:
+    enabled: ${KAFKA_ENABLED:true}
+    topic:
+      submission: submission-events
   cache:
     enabled: true
     user-profile-ttl-seconds: 300

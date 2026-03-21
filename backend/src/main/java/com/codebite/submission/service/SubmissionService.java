@@ -14,6 +14,8 @@ import com.codebite.submission.dto.SubmitRequest;
 import com.codebite.submission.entity.Submission;
 import com.codebite.submission.entity.SubmissionResult;
 import com.codebite.submission.entity.SubmissionStatus;
+import com.codebite.submission.event.SubmissionEvent;
+import com.codebite.submission.kafka.SubmissionEventProducer;
 import com.codebite.submission.repository.SubmissionRepository;
 import com.codebite.submission.repository.SubmissionResultRepository;
 import com.codebite.user.entity.User;
@@ -33,7 +35,7 @@ public class SubmissionService {
     private final UserRepository userRepository;
     private final JudgeService judgeService;
     private final DriverCodeLoader driverCodeLoader;
-    private final SubmissionJudgeProcessor submissionJudgeProcessor;
+    private final SubmissionEventProducer submissionEventProducer;
 
     public SubmissionService(SubmissionRepository submissionRepository,
                              SubmissionResultRepository submissionResultRepository,
@@ -42,7 +44,7 @@ public class SubmissionService {
                              UserRepository userRepository,
                              JudgeService judgeService,
                              DriverCodeLoader driverCodeLoader,
-                             SubmissionJudgeProcessor submissionJudgeProcessor) {
+                             SubmissionEventProducer submissionEventProducer) {
         this.submissionRepository = submissionRepository;
         this.submissionResultRepository = submissionResultRepository;
         this.problemRepository = problemRepository;
@@ -50,7 +52,7 @@ public class SubmissionService {
         this.userRepository = userRepository;
         this.judgeService = judgeService;
         this.driverCodeLoader = driverCodeLoader;
-        this.submissionJudgeProcessor = submissionJudgeProcessor;
+        this.submissionEventProducer = submissionEventProducer;
     }
 
     public SubmissionResponse submit(String slug, SubmitRequest request, Long userId) {
@@ -67,10 +69,11 @@ public class SubmissionService {
         // Save submission as PENDING
         Submission submission = saveSubmission(userId, problem, request);
 
-        // Build source code and kick off async processing
+        // Build source code and publish to Kafka for worker processing
         String sourceCode = judgeService.buildSourceCode(driverTemplate, request.sourceCode());
         int languageId = judgeService.mapLanguageToId(language);
-        submissionJudgeProcessor.processAsync(submission.getId(), sourceCode, languageId, problem.getId());
+        submissionEventProducer.send(new SubmissionEvent(
+                submission.getId(), sourceCode, languageId, problem.getId()));
 
         // Return immediately with PENDING status
         return toResponse(submission, List.of(), problem.getSlug(), List.of());
