@@ -1,0 +1,32 @@
+spring:
+  main:
+    web-application-type: none
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5433/codebite}
+    username: ${SPRING_DATASOURCE_USERNAME:codebite}
+    password: ${SPRING_DATASOURCE_PASSWORD:codebite}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  flyway:
+    enabled: false
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    consumer:
+      group-id: codebite-worker
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: com.codebite.submission.event
+
+app:
+  kafka:
+    topic:
+      submission: submission-events
+  judge0:
+    url: ${JUDGE0_URL:http://192.168.219.200:2358}
+    poll-interval-ms: ${JUDGE0_POLL_INTERVAL_MS:500}
+    poll-timeout-ms: ${JUDGE0_POLL_TIMEOUT_MS:30000}

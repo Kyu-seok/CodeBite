@@ -4,13 +4,41 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**CodeBite** — a code practice platform. The repository has the following top-level directories:
+**CodeBite** — a code practice platform. The repository is a **Gradle multi-module project** with the following top-level directories:
 
 - `backend/` — Spring Boot 3.2.5 REST API (Java 17, Gradle 8.5)
+- `common/` — Shared Java library (JPA entities, repositories, Judge0 client/service)
+- `worker/` — Kafka consumer that processes submissions against Judge0
 - `frontend/` — React SPA (Vite + TypeScript + Tailwind CSS)
-- `worker/` — background job/task processing (TBD)
-- `infra/` — Docker Compose (PostgreSQL 15, Redis 7, Nginx LB)
+- `infra/` — Docker Compose (PostgreSQL 15, Redis 7, Kafka 3.7, Nginx LB)
 - `docs/` — project documentation
+
+### Gradle Multi-Module Structure
+
+Root `settings.gradle` includes three modules: `common`, `backend`, `worker`. The Gradle wrapper (`gradlew`) lives at the project root.
+
+- **`common`** — Plain Java library (no Spring Boot plugin). Contains: JPA entities, Spring Data repositories, Judge0 client/service, Flyway migrations, driver templates, base classes, and shared exceptions.
+- **`backend`** — Spring Boot web app. Depends on `common`. Contains: REST controllers, services, DTOs, security/auth, Redis caching, Kafka producer.
+- **`worker`** — Spring Boot app (no web server). Depends on `common`. Contains: Kafka consumer that processes submissions via Judge0.
+
+## Common Module
+
+### Package Structure (`common/src/main/java/com/codebite/`)
+- `common/base/` — BaseEntity (id, createdAt, updatedAt)
+- `common/exception/` — ApiError, custom exceptions (ResourceNotFoundException, JudgeExecutionException, etc.)
+- `user/entity/` — User, Role, OAuthProvider, UserOAuthAccount
+- `user/repository/` — UserRepository, UserOAuthAccountRepository
+- `problem/entity/` — Problem, TestCase, Difficulty
+- `problem/repository/` — ProblemRepository, TestCaseRepository
+- `submission/entity/` — Submission, SubmissionResult, SubmissionStatus
+- `submission/repository/` — SubmissionRepository, SubmissionResultRepository
+- `submission/event/` — SubmissionEvent (Kafka message DTO)
+- `judge/` — JudgeClient, JudgeClientImpl, JudgeService, DriverCodeLoader, DTOs
+- `config/` — JudgeClientConfig
+
+### Resources (`common/src/main/resources/`)
+- `db/migration/` — Flyway SQL migrations
+- `drivers/` — Driver code templates per problem/language
 
 ## Backend
 
@@ -20,32 +48,36 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Spring Data JPA + Flyway migrations
 - PostgreSQL 15 (dev/prod), H2 in PostgreSQL mode (tests)
 - Redis 7 (JWT token blacklist, user profile cache)
+- Spring Kafka (submission event producer)
 - jjwt 0.12.5 for JWT token handling
 
 ### Common Commands
 ```bash
-cd backend
-./gradlew compileJava          # compile
-./gradlew test                 # run tests (uses H2, no Docker needed)
+./gradlew :backend:compileJava     # compile backend
+./gradlew :backend:test            # run backend tests (uses H2, no Docker needed)
 GOOGLE_CLIENT_ID=xxx GOOGLE_CLIENT_SECRET=xxx \
   GITHUB_CLIENT_ID=xxx GITHUB_CLIENT_SECRET=xxx \
-  SPRING_PROFILES_ACTIVE=dev ./gradlew bootRun  # run locally (needs Postgres + OAuth env vars)
+  SPRING_PROFILES_ACTIVE=dev ./gradlew :backend:bootRun  # run locally
 ```
 
 ### Infrastructure
 ```bash
-docker compose -f infra/docker-compose.yml up -d   # start PostgreSQL + Redis
+docker compose -f infra/docker-compose.yml up -d   # start PostgreSQL + Redis + Kafka
 ```
 
 ### Package Structure (`backend/src/main/java/com/codebite/`)
-- `config/` — SecurityConfig, WebConfig, JudgeClientConfig, OAuthProperties
-- `common/base/` — BaseEntity (id, createdAt, updatedAt)
-- `common/exception/` — GlobalExceptionHandler, ApiError, custom exceptions
+- `config/` — SecurityConfig, WebConfig, OAuthProperties, RedisConfig, KafkaTopicConfig
+- `common/controller/` — HealthController
+- `common/exception/` — GlobalExceptionHandler
 - `auth/` — JWT auth + OAuth (controller, service, DTOs, filter, token provider, oauth clients)
-- `user/` — User entity, repository, service, DTOs
-- `problem/` — Problem CRUD (entities, repositories, service, controllers, DTOs)
-- `submission/` — Submission flow (entities, repositories, service, controller, DTOs)
-- `judge/` — Judge0 integration (client interface/impl, service, DTOs)
+- `user/` — UserService, DTOs
+- `problem/` — Problem CRUD (controllers, service, DTOs)
+- `submission/` — Submission flow (controller, service, DTOs, Kafka producer)
+
+### Submission Flow (Kafka-based)
+1. `POST /api/problems/{slug}/submit` → `SubmissionService.submit()` saves PENDING submission, publishes `SubmissionEvent` to Kafka topic `submission-events`
+2. Worker consumes event, runs code against Judge0 for each test case, writes results to DB
+3. Frontend polls `GET /api/submissions/{id}` every 2s until status != PENDING
 
 ### API Endpoints
 | Method | Path | Auth | Response |
@@ -63,6 +95,26 @@ docker compose -f infra/docker-compose.yml up -d   # start PostgreSQL + Redis
 | POST | `/api/problems/{slug}/submit` | JWT | 201 + `{id, problemSlug, language, status, runtimeMs, memoryKb, results, createdAt}` |
 | GET | `/api/submissions/{id}` | JWT | 200 + submission detail (input/expectedOutput only for sample cases) |
 | GET | `/api/problems/{slug}/submissions` | JWT | 200 + `[{id, status, language, runtimeMs, memoryKb, createdAt}]` |
+
+## Worker
+
+### Tech Stack
+- Java 17, Spring Boot 3.2.5 (no web server)
+- Spring Kafka (consumer)
+- Spring Data JPA
+- Shares entities, repositories, and Judge0 client from `common` module
+
+### Common Commands
+```bash
+./gradlew :worker:compileJava     # compile worker
+./gradlew :worker:test            # run worker tests
+./gradlew :worker:bootRun         # run worker locally (needs Postgres + Kafka + Judge0)
+```
+
+### Package Structure (`worker/src/main/java/com/codebite/worker/`)
+- `WorkerApplication` — Spring Boot entry point (no web server, excludes Security/Redis)
+- `consumer/SubmissionConsumer` — Kafka listener that processes submissions against Judge0
+- `config/KafkaConsumerConfig` — Error handler with retry (3 retries, 1s backoff)
 
 ## Frontend
 
