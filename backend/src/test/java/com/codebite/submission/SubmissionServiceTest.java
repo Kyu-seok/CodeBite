@@ -20,6 +20,7 @@ import com.codebite.submission.repository.SubmissionResultRepository;
 import com.codebite.submission.service.SubmissionService;
 import com.codebite.user.entity.User;
 import com.codebite.user.repository.UserRepository;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -62,7 +63,8 @@ class SubmissionServiceTest {
         submissionService = new SubmissionService(
                 submissionRepository, submissionResultRepository,
                 problemRepository, testCaseRepository, userRepository,
-                judgeService, driverCodeLoader, submissionEventProducer);
+                judgeService, driverCodeLoader, submissionEventProducer,
+                new SimpleMeterRegistry());
 
         problem = new Problem();
         problem.setId(1L);

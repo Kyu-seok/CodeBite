@@ -10,6 +10,9 @@ import com.codebite.submission.entity.SubmissionStatus;
 import com.codebite.submission.event.SubmissionEvent;
 import com.codebite.submission.repository.SubmissionRepository;
 import com.codebite.submission.repository.SubmissionResultRepository;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -18,25 +21,36 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class SubmissionConsumer {
 
     private static final Logger log = LoggerFactory.getLogger(SubmissionConsumer.class);
 
+    private static final Map<Integer, String> LANGUAGE_NAMES = Map.of(
+            62, "java", 71, "python", 63, "javascript", 54, "cpp");
+
     private final JudgeService judgeService;
     private final TestCaseRepository testCaseRepository;
     private final SubmissionResultRepository submissionResultRepository;
     private final SubmissionRepository submissionRepository;
+    private final MeterRegistry meterRegistry;
+    private final Timer processingTimer;
 
     public SubmissionConsumer(JudgeService judgeService,
                               TestCaseRepository testCaseRepository,
                               SubmissionResultRepository submissionResultRepository,
-                              SubmissionRepository submissionRepository) {
+                              SubmissionRepository submissionRepository,
+                              MeterRegistry meterRegistry) {
         this.judgeService = judgeService;
         this.testCaseRepository = testCaseRepository;
         this.submissionResultRepository = submissionResultRepository;
         this.submissionRepository = submissionRepository;
+        this.meterRegistry = meterRegistry;
+        this.processingTimer = Timer.builder("codebite.submissions.processing.duration")
+                .description("Time to process a submission through Judge0")
+                .register(meterRegistry);
     }
 
     @KafkaListener(topics = "${app.kafka.topic.submission}", groupId = "codebite-worker")
@@ -44,6 +58,8 @@ public class SubmissionConsumer {
     public void consume(SubmissionEvent event) {
         Long submissionId = event.submissionId();
         log.info("Processing submission: {}", submissionId);
+
+        Timer.Sample sample = Timer.start(meterRegistry);
 
         try {
             Submission submission = submissionRepository.findById(submissionId).orElse(null);
@@ -95,6 +111,13 @@ public class SubmissionConsumer {
             submission.setRuntimeMs(maxRuntimeMs);
             submission.setMemoryKb(maxMemoryKb);
             submissionRepository.save(submission);
+
+            sample.stop(processingTimer);
+            String language = LANGUAGE_NAMES.getOrDefault(event.languageId(), "unknown");
+            Counter.builder("codebite.submissions.completed")
+                    .tag("status", overallStatus.name())
+                    .tag("language", language)
+                    .register(meterRegistry).increment();
 
             log.info("Submission {} completed with status: {}", submissionId, overallStatus);
         } catch (Exception e) {

@@ -20,6 +20,8 @@ import com.codebite.submission.repository.SubmissionRepository;
 import com.codebite.submission.repository.SubmissionResultRepository;
 import com.codebite.user.entity.User;
 import com.codebite.user.repository.UserRepository;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,6 +38,7 @@ public class SubmissionService {
     private final JudgeService judgeService;
     private final DriverCodeLoader driverCodeLoader;
     private final SubmissionEventProducer submissionEventProducer;
+    private final Counter submissionsCreatedCounter;
 
     public SubmissionService(SubmissionRepository submissionRepository,
                              SubmissionResultRepository submissionResultRepository,
@@ -44,7 +47,8 @@ public class SubmissionService {
                              UserRepository userRepository,
                              JudgeService judgeService,
                              DriverCodeLoader driverCodeLoader,
-                             SubmissionEventProducer submissionEventProducer) {
+                             SubmissionEventProducer submissionEventProducer,
+                             MeterRegistry meterRegistry) {
         this.submissionRepository = submissionRepository;
         this.submissionResultRepository = submissionResultRepository;
         this.problemRepository = problemRepository;
@@ -53,6 +57,9 @@ public class SubmissionService {
         this.judgeService = judgeService;
         this.driverCodeLoader = driverCodeLoader;
         this.submissionEventProducer = submissionEventProducer;
+        this.submissionsCreatedCounter = Counter.builder("codebite.submissions.created")
+                .description("Total submissions created")
+                .register(meterRegistry);
     }
 
     public SubmissionResponse submit(String slug, SubmitRequest request, Long userId) {
@@ -74,6 +81,7 @@ public class SubmissionService {
         int languageId = judgeService.mapLanguageToId(language);
         submissionEventProducer.send(new SubmissionEvent(
                 submission.getId(), sourceCode, languageId, problem.getId()));
+        submissionsCreatedCounter.increment();
 
         // Return immediately with PENDING status
         return toResponse(submission, List.of(), problem.getSlug(), List.of());
