@@ -22,6 +22,17 @@ spring:
       properties:
         spring.json.trusted.packages: com.codebite.submission.event
 
+management:
+  server:
+    port: ${MANAGEMENT_SERVER_PORT:8081}
+  endpoints:
+    web:
+      exposure:
+        include: health,prometheus
+  metrics:
+    tags:
+      application: codebite-worker
+
 app:
   kafka:
     topic:
