@@ -1,0 +1,3 @@
+rootProject.name = 'codebite'
+
+include 'common', 'backend', 'worker'
