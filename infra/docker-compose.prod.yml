@@ -41,8 +41,6 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_LOG_DIRS: /tmp/kraft-combined-logs
       CLUSTER_ID: codebite-kafka-cluster-id-01
-    volumes:
-      - codebite-kafka:/tmp/kraft-combined-logs
     networks:
       - codebite
 
@@ -177,7 +175,6 @@ services:
 volumes:
   codebite-pgdata:
   codebite-redis:
-  codebite-kafka:
   judge0-pgdata:
   judge0-redis:
 
