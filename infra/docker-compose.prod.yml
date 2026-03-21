@@ -24,8 +24,32 @@ services:
     networks:
       - codebite
 
+  kafka:
+    image: apache/kafka:3.7.0
+    container_name: codebite-kafka
+    restart: unless-stopped
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@localhost:9093
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_LOG_DIRS: /tmp/kraft-combined-logs
+      CLUSTER_ID: codebite-kafka-cluster-id-01
+    volumes:
+      - codebite-kafka:/tmp/kraft-combined-logs
+    networks:
+      - codebite
+
   backend:
-    build: ../backend
+    build:
+      context: ..
+      dockerfile: backend/Dockerfile
     image: codebite-backend
     restart: unless-stopped
     deploy:
@@ -33,6 +57,7 @@ services:
     depends_on:
       - postgres
       - redis
+      - kafka
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/codebite
       SPRING_DATASOURCE_USERNAME: ${DB_USER}
@@ -41,6 +66,7 @@ services:
       JUDGE0_URL: ${JUDGE0_URL:-http://judge0:2358}
       REDIS_HOST: redis
       REDIS_PORT: 6379
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
       GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID}
@@ -53,6 +79,24 @@ services:
       timeout: 5s
       retries: 3
       start_period: 30s
+    networks:
+      - codebite
+
+  worker:
+    build:
+      context: ..
+      dockerfile: worker/Dockerfile
+    image: codebite-worker
+    restart: unless-stopped
+    depends_on:
+      - postgres
+      - kafka
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/codebite
+      SPRING_DATASOURCE_USERNAME: ${DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      JUDGE0_URL: ${JUDGE0_URL:-http://judge0:2358}
     networks:
       - codebite
 
@@ -133,6 +177,7 @@ services:
 volumes:
   codebite-pgdata:
   codebite-redis:
+  codebite-kafka:
   judge0-pgdata:
   judge0-redis:
 

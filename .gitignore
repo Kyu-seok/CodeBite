@@ -1,3 +1,7 @@
+# Gradle
+build/
+.gradle/
+
 # Environment secrets
 infra/.env
 
