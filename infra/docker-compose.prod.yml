@@ -197,11 +197,36 @@ services:
     networks:
       - codebite
 
+  loki:
+    image: grafana/loki:2.9.5
+    container_name: codebite-loki
+    restart: unless-stopped
+    volumes:
+      - ./loki/loki-config.yml:/etc/loki/local-config.yaml:ro
+      - codebite-loki:/loki
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - codebite
+
+  promtail:
+    image: grafana/promtail:2.9.5
+    container_name: codebite-promtail
+    restart: unless-stopped
+    volumes:
+      - ./promtail/promtail-prod.yml:/etc/promtail/config.yml:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    command: -config.file=/etc/promtail/config.yml
+    depends_on:
+      - loki
+    networks:
+      - codebite
+
 volumes:
   codebite-pgdata:
   codebite-redis:
   codebite-prometheus:
   codebite-grafana:
+  codebite-loki:
   judge0-pgdata:
   judge0-redis:
 
