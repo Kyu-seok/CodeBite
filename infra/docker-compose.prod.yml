@@ -186,6 +186,8 @@ services:
     image: grafana/grafana:10.4.0
     container_name: codebite-grafana
     restart: unless-stopped
+    depends_on:
+      - loki
     environment:
       GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
       GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
