@@ -32,6 +32,9 @@ management:
   metrics:
     tags:
       application: codebite-backend
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
 
 app:
   kafka:

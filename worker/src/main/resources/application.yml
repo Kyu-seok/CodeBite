@@ -33,6 +33,9 @@ management:
   metrics:
     tags:
       application: codebite-worker
+    distribution:
+      percentiles-histogram:
+        codebite.submissions.processing.duration: true
 
 app:
   kafka:
