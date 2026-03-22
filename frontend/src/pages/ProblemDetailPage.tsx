@@ -5,11 +5,11 @@ import Editor from "@monaco-editor/react";
 import { useProblem } from "../hooks/useProblem";
 import { useSubmissions } from "../hooks/useSubmissions";
 import { useAuth } from "../context/AuthContext";
-import { submitCode, getSubmission } from "../api/submissions";
+import { submitCode, getSubmission, runCode } from "../api/submissions";
 import DifficultyBadge from "../components/ui/DifficultyBadge";
 import StatusBadge from "../components/ui/StatusBadge";
 import Spinner from "../components/ui/Spinner";
-import type { SubmissionResponse } from "../types/submission";
+import type { SubmissionResponse, RunResponse } from "../types/submission";
 import { AxiosError } from "axios";
 import type { ApiError } from "../types/api";
 
@@ -32,6 +32,9 @@ export default function ProblemDetailPage() {
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<SubmissionResponse | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [running, setRunning] = useState(false);
+  const [runResult, setRunResult] = useState<RunResponse | null>(null);
+  const [runError, setRunError] = useState<string | null>(null);
   const pollIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
@@ -84,6 +87,26 @@ export default function ProblemDetailPage() {
     pollIntervalRef.current = interval;
   };
 
+  const handleRun = async () => {
+    setRunning(true);
+    setRunError(null);
+    setRunResult(null);
+    setResult(null);
+    setSubmitError(null);
+    try {
+      const res = await runCode(slug!, { language: activeLang, sourceCode: code });
+      setRunResult(res.data);
+    } catch (err) {
+      if (err instanceof AxiosError && err.response?.data) {
+        setRunError((err.response.data as ApiError).message);
+      } else {
+        setRunError("Run failed. Please try again.");
+      }
+    } finally {
+      setRunning(false);
+    }
+  };
+
   const handleSubmit = async () => {
     if (!isAuthenticated) {
       navigate("/login");
@@ -93,6 +116,8 @@ export default function ProblemDetailPage() {
     setSubmitting(true);
     setSubmitError(null);
     setResult(null);
+    setRunResult(null);
+    setRunError(null);
     try {
       const res = await submitCode(slug!, { language: activeLang, sourceCode: code });
       setResult(res.data);
@@ -184,17 +209,71 @@ export default function ProblemDetailPage() {
             />
           </div>
 
-          <button
-            onClick={handleSubmit}
-            disabled={submitting}
-            className="w-full py-2 px-4 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50 font-medium"
-          >
-            {submitting ? "Submitting..." : "Submit"}
-          </button>
+          <div className="flex gap-3">
+            <button
+              onClick={handleRun}
+              disabled={running || submitting}
+              className="flex-1 py-2 px-4 bg-gray-700 text-white rounded-md hover:bg-gray-800 disabled:opacity-50 font-medium"
+            >
+              {running ? "Running..." : "Run"}
+            </button>
+            <button
+              onClick={handleSubmit}
+              disabled={submitting || running}
+              className="flex-1 py-2 px-4 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50 font-medium"
+            >
+              {submitting ? "Submitting..." : "Submit"}
+            </button>
+          </div>
 
-          {submitError && (
+          {(submitError || runError) && (
             <div className="bg-red-50 border border-red-200 text-red-700 rounded p-3 text-sm">
-              {submitError}
+              {submitError || runError}
+            </div>
+          )}
+
+          {runResult && (
+            <div className="bg-white rounded-lg shadow p-4">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-sm font-semibold text-gray-700">Run Results</span>
+                <StatusBadge status={runResult.overallStatus} />
+              </div>
+              <div className="space-y-2">
+                {runResult.results.map((r, i) => (
+                  <div key={i} className="bg-gray-50 rounded p-3 text-sm">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="font-medium text-gray-600">Sample {i + 1}</span>
+                      <StatusBadge status={r.status} />
+                    </div>
+                    <p>
+                      <span className="text-gray-500">Input: </span>
+                      <code className="bg-gray-200 px-1 rounded">{r.input}</code>
+                    </p>
+                    <p>
+                      <span className="text-gray-500">Expected: </span>
+                      <code className="bg-gray-200 px-1 rounded">{r.expectedOutput}</code>
+                    </p>
+                    {r.actualOutput && (
+                      <p>
+                        <span className="text-gray-500">Output: </span>
+                        <code className="bg-gray-200 px-1 rounded">{r.actualOutput}</code>
+                      </p>
+                    )}
+                    {r.stderr && (
+                      <div className="mt-1">
+                        <span className="text-gray-500 text-xs">Stderr:</span>
+                        <pre className="bg-red-50 text-red-700 p-2 rounded text-xs mt-1 overflow-auto">{r.stderr}</pre>
+                      </div>
+                    )}
+                    {r.compileOutput && (
+                      <div className="mt-1">
+                        <span className="text-gray-500 text-xs">Compilation Error:</span>
+                        <pre className="bg-yellow-50 text-yellow-800 p-2 rounded text-xs mt-1 overflow-auto">{r.compileOutput}</pre>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
           )}
 

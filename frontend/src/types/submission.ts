@@ -41,3 +41,17 @@ export interface SubmitRequest {
   language: string;
   sourceCode: string;
 }
+
+export interface RunTestCaseResult {
+  input: string;
+  expectedOutput: string;
+  actualOutput: string | null;
+  status: SubmissionStatus;
+  stderr: string | null;
+  compileOutput: string | null;
+}
+
+export interface RunResponse {
+  overallStatus: SubmissionStatus;
+  results: RunTestCaseResult[];
+}

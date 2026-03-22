@@ -74,6 +74,10 @@ docker compose -f infra/docker-compose.yml up -d   # start PostgreSQL + Redis + 
 - `user/` — UserService, DTOs
 - `problem/` — Problem CRUD (controllers, service, DTOs)
 - `submission/` — Submission flow (controller, service, DTOs, Kafka producer)
+- `run/` — Run flow (controller, service, DTOs — synchronous Judge0 execution, sample test cases only)
+
+### Run Flow (Synchronous)
+`POST /api/problems/{slug}/run` → `RunService.run()` executes only sample test cases synchronously via JudgeService, returns results immediately. No data is persisted. No auth required.
 
 ### Submission Flow (Kafka-based)
 1. `POST /api/problems/{slug}/submit` → `SubmissionService.submit()` saves PENDING submission, publishes `SubmissionEvent` to Kafka topic `submission-events`
@@ -93,6 +97,7 @@ docker compose -f infra/docker-compose.yml up -d   # start PostgreSQL + Redis + 
 | POST | `/api/admin/problems` | ADMIN | 201 + problem detail |
 | PUT | `/api/admin/problems/{id}` | ADMIN | 200 + problem detail |
 | POST | `/api/admin/problems/{id}/test-cases` | ADMIN | 201 + test case |
+| POST | `/api/problems/{slug}/run` | No | 200 + `{overallStatus, results}` |
 | POST | `/api/problems/{slug}/submit` | JWT | 201 + `{id, problemSlug, language, status, runtimeMs, memoryKb, results, createdAt}` |
 | GET | `/api/submissions/{id}` | JWT | 200 + submission detail (input/expectedOutput only for sample cases) |
 | GET | `/api/problems/{slug}/submissions` | JWT | 200 + `[{id, status, language, runtimeMs, memoryKb, createdAt}]` |
