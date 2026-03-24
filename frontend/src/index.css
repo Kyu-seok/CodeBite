@@ -1,2 +1,94 @@
 @import "tailwindcss";
+@config "../tailwind.config.ts";
 @plugin "@tailwindcss/typography";
+
+/* ── Light mode ── */
+:root {
+  --background: #ffffff;
+  --foreground: #18212d;
+
+  --card: #ffffff;
+  --card-foreground: #18212d;
+
+  --popover: #ffffff;
+  --popover-foreground: #18212d;
+
+  --primary: #27384c;
+  --primary-foreground: #f1f4f8;
+
+  --secondary: #f1f3f6;
+  --secondary-foreground: #27384c;
+
+  --muted: #f1f3f6;
+  --muted-foreground: #6b7685;
+
+  --accent: #fe7403;
+  --accent-foreground: #ffffff;
+
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+
+  --success: #22c55e;
+  --success-foreground: #ffffff;
+
+  --warning: #f59e0b;
+  --warning-foreground: #ffffff;
+
+  --border: #e8ebef;
+  --input: #e8ebef;
+  --ring: #fe7403;
+
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius: 0.5rem;
+}
+
+/* ── Dark mode ── */
+.dark {
+  --background: #0f1318;
+  --foreground: #f1f3f6;
+
+  --card: #1a1f27;
+  --card-foreground: #f1f3f6;
+
+  --popover: #1a1f27;
+  --popover-foreground: #f1f3f6;
+
+  --primary: #f1f4f8;
+  --primary-foreground: #27384c;
+
+  --secondary: #272e39;
+  --secondary-foreground: #f1f3f6;
+
+  --muted: #272e39;
+  --muted-foreground: #a1aab6;
+
+  --accent: #fe7403;
+  --accent-foreground: #ffffff;
+
+  --destructive: #f87171;
+  --destructive-foreground: #ffffff;
+
+  --success: #4ade80;
+  --success-foreground: #052e16;
+
+  --warning: #fbbf24;
+  --warning-foreground: #451a03;
+
+  --border: #272e39;
+  --input: #272e39;
+  --ring: #fe7403;
+}
+
+/* ── Base styles ── */
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+}

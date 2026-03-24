@@ -1,15 +1,12 @@
-import type { Difficulty } from "../../types/problem";
+import { Badge, type BadgeProps } from "@/components/ui/Badge"
+import type { Difficulty } from "@/types/problem"
 
-const styles: Record<Difficulty, string> = {
-  EASY: "bg-green-100 text-green-700",
-  MEDIUM: "bg-yellow-100 text-yellow-700",
-  HARD: "bg-red-100 text-red-700",
-};
+const variantMap: Record<Difficulty, BadgeProps["variant"]> = {
+  EASY: "success",
+  MEDIUM: "warning",
+  HARD: "destructive",
+}
 
 export default function DifficultyBadge({ difficulty }: { difficulty: Difficulty }) {
-  return (
-    <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${styles[difficulty]}`}>
-      {difficulty}
-    </span>
-  );
+  return <Badge variant={variantMap[difficulty]}>{difficulty}</Badge>
 }

@@ -4,7 +4,7 @@ import Layout from "./components/layout/Layout";
 import LoginPage from "./pages/LoginPage";
 import OAuthCallbackPage from "./pages/OAuthCallbackPage";
 import ProblemListPage from "./pages/ProblemListPage";
-import ProblemDetailPage from "./pages/ProblemDetailPage";
+import ProblemDetailPage from "./pages/problem";
 import NotFoundPage from "./pages/NotFoundPage";
 
 function App() {
