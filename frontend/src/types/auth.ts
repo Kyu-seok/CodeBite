@@ -4,6 +4,8 @@ export interface User {
   email: string;
   role: "USER" | "ADMIN";
   avatarUrl: string | null;
+  recentLanguage: string | null;
+  editorSettings: string | null;
   createdAt: string;
 }
 

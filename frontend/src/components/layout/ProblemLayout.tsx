@@ -1,20 +1,23 @@
-import { type ReactNode } from "react"
+import { type ReactNode, type RefObject } from 'react';
 import {
   ResizablePanelGroup,
   ResizablePanel,
   ResizableHandle,
-} from "@/components/ui/Resizable"
-import { PageLayout } from "./PageLayout"
-import { cn } from "@/lib/utils"
+} from '@/components/ui/Resizable';
+import { useGroupRef } from 'react-resizable-panels';
+import { PageLayout } from './PageLayout';
+import { cn } from '@/lib/utils';
 
 interface ProblemLayoutProps {
   /** Left panel: tabbed content (description, submissions, solutions) */
-  leftPanel: ReactNode
+  leftPanel: ReactNode;
   /** Upper-right panel: code editor with language selector */
-  editor: ReactNode
+  editor: ReactNode;
   /** Lower-right panel: test cases, run/submit results */
-  testPanel: ReactNode
-  className?: string
+  testPanel: ReactNode;
+  /** Ref to expose a resetLayout() function to the parent */
+  resetLayoutRef?: RefObject<(() => void) | null>;
+  className?: string;
 }
 
 /**
@@ -36,15 +39,26 @@ export function ProblemLayout({
   leftPanel,
   editor,
   testPanel,
+  resetLayoutRef,
   className,
 }: ProblemLayoutProps) {
+  const hGroupRef = useGroupRef();
+  const vGroupRef = useGroupRef();
+
+  if (resetLayoutRef) {
+    resetLayoutRef.current = () => {
+      hGroupRef.current?.setLayout({ left: 50, right: 50 });
+      vGroupRef.current?.setLayout({ editor: 60, tests: 40 });
+    };
+  }
+
   return (
-    <PageLayout variant="workspace" className={cn("p-2", className)}>
+    <PageLayout variant="workspace" className={cn('px-2 pb-2', className)}>
       {/* Desktop: resizable panels */}
       <div className="hidden md:flex h-full">
-        <ResizablePanelGroup orientation="horizontal" id="problem-h">
+        <ResizablePanelGroup orientation="horizontal" id="problem-h" groupRef={hGroupRef}>
           {/* Left — Description */}
-          <ResizablePanel defaultSize={50} minSize={25}>
+          <ResizablePanel id="left" defaultSize={50} minSize={25}>
             <div className="h-full overflow-auto rounded-lg border border-border bg-card">
               {leftPanel}
             </div>
@@ -53,10 +67,10 @@ export function ProblemLayout({
           <ResizableHandle withHandle />
 
           {/* Right — Editor + Test panel */}
-          <ResizablePanel defaultSize={50} minSize={20}>
-            <ResizablePanelGroup orientation="vertical" id="problem-v">
+          <ResizablePanel id="right" defaultSize={50} minSize={20}>
+            <ResizablePanelGroup orientation="vertical" id="problem-v" groupRef={vGroupRef}>
               {/* Upper-right — Editor */}
-              <ResizablePanel defaultSize={60} minSize={20}>
+              <ResizablePanel id="editor" defaultSize={60} minSize={20}>
                 <div className="h-full overflow-hidden rounded-lg border border-border bg-card">
                   {editor}
                 </div>
@@ -65,7 +79,7 @@ export function ProblemLayout({
               <ResizableHandle withHandle />
 
               {/* Lower-right — Test cases / Results */}
-              <ResizablePanel defaultSize={40} minSize={15}>
+              <ResizablePanel id="tests" defaultSize={40} minSize={15}>
                 <div className="h-full overflow-auto rounded-lg border border-border bg-card">
                   {testPanel}
                 </div>
@@ -88,5 +102,5 @@ export function ProblemLayout({
         </div>
       </div>
     </PageLayout>
-  )
+  );
 }

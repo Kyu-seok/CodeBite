@@ -16,7 +16,7 @@ import type { ApiError } from "@/types/api"
 export default function ProblemDetailPage() {
   const { slug } = useParams<{ slug: string }>()
   const navigate = useNavigate()
-  const { isAuthenticated } = useAuth()
+  const { user, isAuthenticated, updateUser } = useAuth()
   const { problem, loading, error } = useProblem(slug!)
   const { submissions, refetch: refetchSubmissions } = useSubmissions(
     slug!,
@@ -33,6 +33,7 @@ export default function ProblemDetailPage() {
   const [runError, setRunError] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState("testcases")
   const pollIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const resetLayoutRef = useRef<(() => void) | null>(null)
 
   useEffect(() => {
     return () => {
@@ -61,9 +62,23 @@ export default function ProblemDetailPage() {
   }
 
   const languages = Object.keys(problem.starterCode)
-  const activeLang = language || languages[0] || ""
+  const recentLang = user?.recentLanguage
+  const activeLang = language || (recentLang && languages.includes(recentLang) ? recentLang : languages[0]) || ""
   const code =
     codeByLang[activeLang] ?? problem.starterCode[activeLang] ?? ""
+
+  const handleLanguageChange = (lang: string) => {
+    setLanguage(lang)
+    updateUser({ recentLanguage: lang })
+  }
+
+  const handleResetCode = () => {
+    setCodeByLang((prev) => {
+      const next = { ...prev }
+      delete next[activeLang]
+      return next
+    })
+  }
 
   const handleCodeChange = (value: string | undefined) => {
     if (value !== undefined) {
@@ -147,6 +162,7 @@ export default function ProblemDetailPage() {
 
   return (
     <ProblemLayout
+      resetLayoutRef={resetLayoutRef}
       leftPanel={
         <LeftPanel
           title={problem.title}
@@ -163,12 +179,10 @@ export default function ProblemDetailPage() {
           languages={languages}
           activeLanguage={activeLang}
           code={code}
-          onLanguageChange={setLanguage}
+          onLanguageChange={handleLanguageChange}
           onCodeChange={handleCodeChange}
-          onRun={handleRun}
-          onSubmit={handleSubmit}
-          running={running}
-          submitting={submitting}
+          onResetCode={handleResetCode}
+          onResetLayout={() => resetLayoutRef.current?.()}
         />
       }
       testPanel={
@@ -182,6 +196,8 @@ export default function ProblemDetailPage() {
           submitting={submitting}
           activeTab={activeTab}
           onTabChange={setActiveTab}
+          onRun={handleRun}
+          onSubmit={handleSubmit}
         />
       }
     />
