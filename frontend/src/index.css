@@ -108,3 +108,31 @@
   border-radius: 0.25rem;
   font-weight: 500;
 }
+
+/* ── Scrollbar styling ── */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+.dark * {
+  scrollbar-color: #3a4250 transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: var(--border);
+  border-radius: 4px;
+}
+
+.dark *::-webkit-scrollbar-thumb {
+  background-color: #3a4250;
+}
