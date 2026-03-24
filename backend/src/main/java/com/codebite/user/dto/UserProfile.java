@@ -4,5 +4,5 @@ import com.codebite.user.entity.Role;
 
 import java.time.Instant;
 
-public record UserProfile(Long id, String username, String email, Role role, String avatarUrl, Instant createdAt) {
+public record UserProfile(Long id, String username, String email, Role role, String avatarUrl, String recentLanguage, String editorSettings, Instant createdAt) {
 }

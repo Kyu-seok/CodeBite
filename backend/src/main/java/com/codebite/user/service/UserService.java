@@ -67,8 +67,18 @@ public class UserService {
                 user.getEmail(),
                 user.getRole(),
                 user.getAvatarUrl(),
+                user.getRecentLanguage(),
+                user.getEditorSettings(),
                 user.getCreatedAt()
         );
+    }
+
+    @Transactional
+    public void updateEditorSettings(Long userId, String editorSettings) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        user.setEditorSettings(editorSettings);
+        userRepository.save(user);
     }
 
     private void createOAuthAccount(User user, OAuthProvider provider, String providerId) {

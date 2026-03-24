@@ -27,6 +27,12 @@ public class User extends BaseEntity {
     @Column(name = "avatar_url", length = 500)
     private String avatarUrl;
 
+    @Column(name = "recent_language", length = 20)
+    private String recentLanguage;
+
+    @Column(name = "editor_settings", columnDefinition = "TEXT")
+    private String editorSettings;
+
     public String getUsername() {
         return username;
     }
@@ -65,5 +71,21 @@ public class User extends BaseEntity {
 
     public void setAvatarUrl(String avatarUrl) {
         this.avatarUrl = avatarUrl;
+    }
+
+    public String getRecentLanguage() {
+        return recentLanguage;
+    }
+
+    public void setRecentLanguage(String recentLanguage) {
+        this.recentLanguage = recentLanguage;
+    }
+
+    public String getEditorSettings() {
+        return editorSettings;
+    }
+
+    public void setEditorSettings(String editorSettings) {
+        this.editorSettings = editorSettings;
     }
 }

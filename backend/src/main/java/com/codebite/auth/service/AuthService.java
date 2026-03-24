@@ -8,6 +8,7 @@ import com.codebite.auth.oauth.OAuthStateService;
 import com.codebite.auth.oauth.dto.OAuthTokenResponse;
 import com.codebite.auth.oauth.dto.OAuthUserInfo;
 import com.codebite.config.OAuthProperties;
+import com.codebite.submission.repository.SubmissionRepository;
 import com.codebite.user.dto.UserProfile;
 import com.codebite.user.entity.OAuthProvider;
 import com.codebite.user.entity.User;
@@ -25,6 +26,7 @@ public class AuthService {
     private final OAuthClientFactory clientFactory;
     private final OAuthStateService stateService;
     private final OAuthProperties oauthProperties;
+    private final SubmissionRepository submissionRepository;
 
     @Autowired(required = false)
     private UserCacheService userCacheService;
@@ -33,12 +35,14 @@ public class AuthService {
                        JwtTokenProvider tokenProvider,
                        OAuthClientFactory clientFactory,
                        OAuthStateService stateService,
-                       OAuthProperties oauthProperties) {
+                       OAuthProperties oauthProperties,
+                       SubmissionRepository submissionRepository) {
         this.userService = userService;
         this.tokenProvider = tokenProvider;
         this.clientFactory = clientFactory;
         this.stateService = stateService;
         this.oauthProperties = oauthProperties;
+        this.submissionRepository = submissionRepository;
     }
 
     public String getAuthorizationUrl(String providerName) {
@@ -64,6 +68,8 @@ public class AuthService {
         OAuthUserInfo userInfo = client.getUserInfo(tokenResponse.accessToken());
 
         User user = userService.findOrCreateOAuthUser(userInfo, provider);
+        submissionRepository.findFirstByUserIdOrderByCreatedAtDesc(user.getId())
+                .ifPresent(s -> user.setRecentLanguage(s.getLanguage()));
         String jwt = tokenProvider.generateToken(user);
         UserProfile profile = UserService.toProfile(user);
         if (userCacheService != null) {
