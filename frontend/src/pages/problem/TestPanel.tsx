@@ -1,22 +1,23 @@
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/Tabs"
-import StatusBadge from "@/components/ui/StatusBadge"
-import Spinner from "@/components/ui/Spinner"
-import type { TestCase } from "@/types/problem"
-import type {
-  RunResponse,
-  SubmissionResponse,
-} from "@/types/submission"
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/Tabs';
+import { Button } from '@/components/ui/Button';
+import { Stack } from '@/components/layout/Stack';
+import StatusBadge from '@/components/ui/StatusBadge';
+import Spinner from '@/components/ui/Spinner';
+import type { TestCase } from '@/types/problem';
+import type { RunResponse, SubmissionResponse } from '@/types/submission';
 
 interface TestPanelProps {
-  sampleTestCases: TestCase[]
-  runResult: RunResponse | null
-  runError: string | null
-  submitResult: SubmissionResponse | null
-  submitError: string | null
-  running: boolean
-  submitting: boolean
-  activeTab: string
-  onTabChange: (tab: string) => void
+  sampleTestCases: TestCase[];
+  runResult: RunResponse | null;
+  runError: string | null;
+  submitResult: SubmissionResponse | null;
+  submitError: string | null;
+  running: boolean;
+  submitting: boolean;
+  activeTab: string;
+  onTabChange: (tab: string) => void;
+  onRun: () => void;
+  onSubmit: () => void;
 }
 
 export function TestPanel({
@@ -29,6 +30,8 @@ export function TestPanel({
   submitting,
   activeTab,
   onTabChange,
+  onRun,
+  onSubmit,
 }: TestPanelProps) {
   return (
     <div className="flex h-full flex-col">
@@ -36,9 +39,8 @@ export function TestPanel({
         defaultValue="testcases"
         value={activeTab}
         onValueChange={onTabChange}
-        className="flex h-full flex-col"
-      >
-        <div className="border-b border-border px-3 pt-2">
+        className="flex min-h-0 flex-1 flex-col">
+        <div className="border-b border-border bg-muted">
           <TabsList>
             <TabsTrigger value="testcases">Test Cases</TabsTrigger>
             <TabsTrigger value="output">Output</TabsTrigger>
@@ -90,8 +92,29 @@ export function TestPanel({
           </TabsContent>
         </div>
       </Tabs>
+
+      {/* Bottom bar with Run / Submit */}
+      <div className="flex items-center justify-between border-t border-border px-3 py-2">
+        <div />
+        <Stack direction="horizontal" gap="sm">
+          <Button
+            variant="secondary"
+            size="lg"
+            onClick={onRun}
+            disabled={running || submitting}>
+            {running ? 'Running...' : 'Run'}
+          </Button>
+          <Button
+            variant="accent"
+            size="lg"
+            onClick={onSubmit}
+            disabled={submitting || running}>
+            {submitting ? 'Submitting...' : 'Submit'}
+          </Button>
+        </Stack>
+      </div>
     </div>
-  )
+  );
 }
 
 /* ── Output tab content ── */
@@ -105,12 +128,12 @@ function OutputContent({
   submitError,
 }: Pick<
   TestPanelProps,
-  | "running"
-  | "submitting"
-  | "runResult"
-  | "runError"
-  | "submitResult"
-  | "submitError"
+  | 'running'
+  | 'submitting'
+  | 'runResult'
+  | 'runError'
+  | 'submitResult'
+  | 'submitError'
 >) {
   if (running) {
     return (
@@ -118,7 +141,7 @@ function OutputContent({
         <Spinner />
         <p className="text-sm text-muted-foreground">Running...</p>
       </div>
-    )
+    );
   }
 
   if (submitting) {
@@ -127,7 +150,7 @@ function OutputContent({
         <Spinner />
         <p className="text-sm text-muted-foreground">Judging...</p>
       </div>
-    )
+    );
   }
 
   if (runError || submitError) {
@@ -135,7 +158,7 @@ function OutputContent({
       <div className="rounded-lg border border-error-200 bg-error-100 p-3 text-sm text-error-700">
         {runError || submitError}
       </div>
-    )
+    );
   }
 
   if (runResult) {
@@ -178,9 +201,7 @@ function OutputContent({
               )}
               {r.stderr && (
                 <div className="mt-1">
-                  <span className="text-xs text-muted-foreground">
-                    Stderr:
-                  </span>
+                  <span className="text-xs text-muted-foreground">Stderr:</span>
                   <pre className="mt-1 overflow-auto rounded bg-error-100 p-2 text-xs text-error-700">
                     {r.stderr}
                   </pre>
@@ -200,7 +221,7 @@ function OutputContent({
           ))}
         </div>
       </div>
-    )
+    );
   }
 
   if (submitResult) {
@@ -225,8 +246,7 @@ function OutputContent({
             {submitResult.results.map((r, i) => (
               <div
                 key={r.testCaseId}
-                className="rounded-lg bg-muted p-3 text-sm"
-              >
+                className="rounded-lg bg-muted p-3 text-sm">
                 <div className="mb-1 flex items-center justify-between">
                   <span className="font-medium text-muted-foreground">
                     Test {i + 1}
@@ -262,12 +282,12 @@ function OutputContent({
           </div>
         )}
       </div>
-    )
+    );
   }
 
   return (
     <p className="py-8 text-center text-sm text-muted-foreground">
       Run or submit your code to see results
     </p>
-  )
+  );
 }
