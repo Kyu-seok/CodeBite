@@ -34,21 +34,21 @@ export default function WorkspaceLayout() {
   const userInitial = user?.username?.charAt(0).toUpperCase() ?? "?";
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <nav className="bg-gray-900 text-white border-b border-gray-800">
+    <div className="min-h-screen bg-background">
+      <nav className="bg-muted text-foreground border-b border-border">
         <div className="px-3 h-12 flex items-center justify-between">
           <div className="flex items-center gap-1">
             <Link
               to="/problems"
-              className="flex items-center justify-center w-8 h-8 rounded-md text-orange-400 hover:bg-gray-800 transition-colors font-bold text-lg"
+              className="flex items-center justify-center w-8 h-8 rounded-md text-accent hover:bg-secondary transition-colors font-bold text-lg"
               title="CodeBite Home"
             >
               C
             </Link>
-            <div className="w-px h-5 bg-gray-700 mx-1" />
+            <div className="w-px h-5 bg-border mx-1" />
             <Link
               to="/problems"
-              className="flex items-center gap-1.5 px-2 py-1.5 rounded-md text-sm text-gray-300 hover:text-white hover:bg-gray-800 transition-colors"
+              className="flex items-center gap-1.5 px-2 py-1.5 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
             >
               <ListIcon />
               <span>Problem List</span>
@@ -56,14 +56,14 @@ export default function WorkspaceLayout() {
             <div className="flex items-center">
               <button
                 onClick={() => navigate(-1)}
-                className="flex items-center justify-center w-7 h-7 rounded-md text-gray-400 hover:text-white hover:bg-gray-800 transition-colors"
+                className="flex items-center justify-center w-7 h-7 rounded-md text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
                 title="Go back"
               >
                 <ChevronLeft />
               </button>
               <button
                 onClick={() => navigate(1)}
-                className="flex items-center justify-center w-7 h-7 rounded-md text-gray-400 hover:text-white hover:bg-gray-800 transition-colors"
+                className="flex items-center justify-center w-7 h-7 rounded-md text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
                 title="Go forward"
               >
                 <ChevronRight />
@@ -75,7 +75,7 @@ export default function WorkspaceLayout() {
               <>
                 <button
                   onClick={logout}
-                  className="px-2.5 py-1 rounded-md text-xs text-gray-400 hover:text-white hover:bg-gray-800 transition-colors"
+                  className="px-2.5 py-1 rounded-md text-xs text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
                 >
                   Logout
                 </button>
@@ -99,7 +99,7 @@ export default function WorkspaceLayout() {
             ) : (
               <Link
                 to="/login"
-                className="px-3 py-1 rounded-md text-sm text-gray-300 hover:text-white hover:bg-gray-800 transition-colors"
+                className="px-3 py-1 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
               >
                 Login
               </Link>

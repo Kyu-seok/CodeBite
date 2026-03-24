@@ -5,14 +5,14 @@ export default function Layout() {
   const { user, isAuthenticated, logout } = useAuth();
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <nav className="bg-gray-900 text-white">
+    <div className="min-h-screen bg-background">
+      <nav className="bg-muted text-foreground border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
           <div className="flex items-center gap-6">
             <Link to="/problems" className="text-lg font-bold">
               CodeBite
             </Link>
-            <Link to="/problems" className="text-sm text-gray-300 hover:text-white">
+            <Link to="/problems" className="text-sm text-muted-foreground hover:text-foreground">
               Problems
             </Link>
           </div>
@@ -21,7 +21,7 @@ export default function Layout() {
               <>
                 <button
                   onClick={logout}
-                  className="text-gray-400 hover:text-white"
+                  className="text-muted-foreground hover:text-foreground"
                 >
                   Logout
                 </button>
@@ -39,7 +39,7 @@ export default function Layout() {
                 )}
               </>
             ) : (
-              <Link to="/login" className="text-gray-300 hover:text-white">
+              <Link to="/login" className="text-muted-foreground hover:text-foreground">
                 Login
               </Link>
             )}

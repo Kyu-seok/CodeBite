@@ -77,7 +77,7 @@ export function EditorPanel({
           language={LANGUAGE_MAP[activeLanguage] || activeLanguage}
           value={code}
           onChange={onCodeChange}
-          theme="vs-dark"
+          theme="light"
           loading={<Spinner />}
           options={{
             minimap: { enabled: false },

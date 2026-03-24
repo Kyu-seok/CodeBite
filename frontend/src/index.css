@@ -92,3 +92,19 @@
     @apply bg-background text-foreground font-sans antialiased;
   }
 }
+
+/* Override Tailwind Typography prose code block colors */
+.prose pre {
+  --tw-prose-pre-bg: var(--muted);
+  --tw-prose-pre-code: var(--foreground);
+  background-color: var(--muted);
+  color: var(--foreground);
+}
+
+.prose :where(code):not(:where(pre *)) {
+  background-color: var(--muted);
+  color: var(--foreground);
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
+  font-weight: 500;
+}
