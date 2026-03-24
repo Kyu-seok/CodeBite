@@ -66,6 +66,7 @@ public class UserService {
                 user.getUsername(),
                 user.getEmail(),
                 user.getRole(),
+                user.getAvatarUrl(),
                 user.getCreatedAt()
         );
     }

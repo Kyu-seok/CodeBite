@@ -79,12 +79,22 @@ export default function WorkspaceLayout() {
                 >
                   Logout
                 </button>
-                <span
-                  className="flex items-center justify-center w-7 h-7 rounded-full bg-gradient-to-br from-orange-400 to-amber-600 text-xs font-semibold text-white"
-                  title={user?.username}
-                >
-                  {userInitial}
-                </span>
+                {user?.avatarUrl ? (
+                  <img
+                    src={user.avatarUrl}
+                    alt={user?.username}
+                    className="w-7 h-7 rounded-full object-cover"
+                    referrerPolicy="no-referrer"
+                    title={user?.username}
+                  />
+                ) : (
+                  <span
+                    className="flex items-center justify-center w-7 h-7 rounded-full bg-gradient-to-br from-orange-400 to-amber-600 text-xs font-semibold text-white"
+                    title={user?.username}
+                  >
+                    {userInitial}
+                  </span>
+                )}
               </>
             ) : (
               <Link
