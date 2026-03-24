@@ -8,8 +8,8 @@ import { PageLayout } from "./PageLayout"
 import { cn } from "@/lib/utils"
 
 interface ProblemLayoutProps {
-  /** Left panel: problem description, examples, constraints */
-  description: ReactNode
+  /** Left panel: tabbed content (description, submissions, solutions) */
+  leftPanel: ReactNode
   /** Upper-right panel: code editor with language selector */
   editor: ReactNode
   /** Lower-right panel: test cases, run/submit results */
@@ -27,13 +27,13 @@ interface ProblemLayoutProps {
  * │              │   Results          │
  * └──────────────┴────────────────────┘
  *
- * - Horizontal split: description | editor+tests (default 50/50)
+ * - Horizontal split: leftPanel | editor+tests (default 50/50)
  * - Vertical split on right: editor | tests (default 60/40)
  * - All panels resizable with drag handles
  * - Falls back to stacked layout on small screens
  */
 export function ProblemLayout({
-  description,
+  leftPanel,
   editor,
   testPanel,
   className,
@@ -46,7 +46,7 @@ export function ProblemLayout({
           {/* Left — Description */}
           <ResizablePanel defaultSize={50} minSize={25}>
             <div className="h-full overflow-auto rounded-lg border border-border bg-card">
-              {description}
+              {leftPanel}
             </div>
           </ResizablePanel>
 
@@ -78,7 +78,7 @@ export function ProblemLayout({
       {/* Mobile: stacked layout */}
       <div className="flex flex-col gap-2 md:hidden h-full overflow-auto">
         <div className="rounded-lg border border-border bg-card">
-          {description}
+          {leftPanel}
         </div>
         <div className="min-h-[50vh] rounded-lg border border-border bg-card overflow-hidden">
           {editor}

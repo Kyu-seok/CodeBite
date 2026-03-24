@@ -6,7 +6,7 @@ import { useAuth } from "@/context/AuthContext"
 import { submitCode, getSubmission, runCode } from "@/api/submissions"
 import { ProblemLayout } from "@/components/layout/ProblemLayout"
 import Spinner from "@/components/ui/Spinner"
-import { DescriptionPanel } from "./DescriptionPanel"
+import { LeftPanel } from "./LeftPanel"
 import { EditorPanel } from "./EditorPanel"
 import { TestPanel } from "./TestPanel"
 import type { SubmissionResponse, RunResponse } from "@/types/submission"
@@ -147,13 +147,15 @@ export default function ProblemDetailPage() {
 
   return (
     <ProblemLayout
-      description={
-        <DescriptionPanel
+      leftPanel={
+        <LeftPanel
           title={problem.title}
           difficulty={problem.difficulty}
           description={problem.description}
           constraints={problem.constraints}
           sampleTestCases={problem.sampleTestCases}
+          isAuthenticated={isAuthenticated}
+          submissions={submissions}
         />
       }
       editor={
@@ -178,8 +180,6 @@ export default function ProblemDetailPage() {
           submitError={submitError}
           running={running}
           submitting={submitting}
-          isAuthenticated={isAuthenticated}
-          submissions={submissions}
           activeTab={activeTab}
           onTabChange={setActiveTab}
         />

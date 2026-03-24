@@ -5,7 +5,6 @@ import type { TestCase } from "@/types/problem"
 import type {
   RunResponse,
   SubmissionResponse,
-  SubmissionListItem,
 } from "@/types/submission"
 
 interface TestPanelProps {
@@ -16,8 +15,6 @@ interface TestPanelProps {
   submitError: string | null
   running: boolean
   submitting: boolean
-  isAuthenticated: boolean
-  submissions: SubmissionListItem[]
   activeTab: string
   onTabChange: (tab: string) => void
 }
@@ -30,8 +27,6 @@ export function TestPanel({
   submitError,
   running,
   submitting,
-  isAuthenticated,
-  submissions,
   activeTab,
   onTabChange,
 }: TestPanelProps) {
@@ -47,7 +42,6 @@ export function TestPanel({
           <TabsList>
             <TabsTrigger value="testcases">Test Cases</TabsTrigger>
             <TabsTrigger value="output">Output</TabsTrigger>
-            <TabsTrigger value="history">History</TabsTrigger>
           </TabsList>
         </div>
 
@@ -92,14 +86,6 @@ export function TestPanel({
               runError={runError}
               submitResult={submitResult}
               submitError={submitError}
-            />
-          </TabsContent>
-
-          {/* History Tab */}
-          <TabsContent value="history" className="mt-0">
-            <HistoryContent
-              isAuthenticated={isAuthenticated}
-              submissions={submissions}
             />
           </TabsContent>
         </div>
@@ -283,47 +269,5 @@ function OutputContent({
     <p className="py-8 text-center text-sm text-muted-foreground">
       Run or submit your code to see results
     </p>
-  )
-}
-
-/* ── History tab content ── */
-
-function HistoryContent({
-  isAuthenticated,
-  submissions,
-}: Pick<TestPanelProps, "isAuthenticated" | "submissions">) {
-  if (!isAuthenticated) {
-    return (
-      <p className="text-sm text-muted-foreground">
-        Log in to see submission history
-      </p>
-    )
-  }
-
-  if (submissions.length === 0) {
-    return (
-      <p className="text-sm text-muted-foreground">No submissions yet</p>
-    )
-  }
-
-  return (
-    <div className="space-y-2">
-      {submissions.map((s) => (
-        <div
-          key={s.id}
-          className="flex items-center justify-between rounded-lg bg-muted p-2 text-sm"
-        >
-          <div className="flex items-center gap-3">
-            <StatusBadge status={s.status} />
-            <span className="text-muted-foreground">{s.language}</span>
-          </div>
-          <div className="flex items-center gap-3 text-xs text-muted-foreground">
-            {s.runtimeMs != null && <span>{s.runtimeMs}ms</span>}
-            {s.memoryKb != null && <span>{s.memoryKb}KB</span>}
-            <span>{new Date(s.createdAt).toLocaleString()}</span>
-          </div>
-        </div>
-      ))}
-    </div>
   )
 }
