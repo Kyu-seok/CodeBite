@@ -6,6 +6,8 @@ export interface ProblemListItem {
   slug: string;
   difficulty: Difficulty;
   tags: string[];
+  status: "SOLVED" | "ATTEMPTED" | null;
+  acceptanceRate: number | null;
 }
 
 export interface TagDto {

@@ -12,13 +12,16 @@ import com.codebite.problem.entity.Problem;
 import com.codebite.problem.entity.TestCase;
 import com.codebite.problem.repository.ProblemRepository;
 import com.codebite.problem.repository.TestCaseRepository;
+import com.codebite.submission.repository.SubmissionRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ProblemService {
@@ -26,16 +29,18 @@ public class ProblemService {
     private final ProblemRepository problemRepository;
     private final TestCaseRepository testCaseRepository;
     private final StarterCodeLoader starterCodeLoader;
+    private final SubmissionRepository submissionRepository;
 
     public ProblemService(ProblemRepository problemRepository, TestCaseRepository testCaseRepository,
-                          StarterCodeLoader starterCodeLoader) {
+                          StarterCodeLoader starterCodeLoader, SubmissionRepository submissionRepository) {
         this.problemRepository = problemRepository;
         this.testCaseRepository = testCaseRepository;
         this.starterCodeLoader = starterCodeLoader;
+        this.submissionRepository = submissionRepository;
     }
 
     @Transactional(readOnly = true)
-    public Page<ProblemListItem> listPublishedProblems(Difficulty difficulty, String search, String tag, Pageable pageable) {
+    public Page<ProblemListItem> listPublishedProblems(Difficulty difficulty, String search, String tag, Long userId, Pageable pageable) {
         Specification<Problem> spec = Specification.where(ProblemSpecifications.isPublished());
         if (difficulty != null) {
             spec = spec.and(ProblemSpecifications.hasDifficulty(difficulty));
@@ -47,7 +52,29 @@ public class ProblemService {
             spec = spec.and(ProblemSpecifications.hasTag(tag));
         }
 
-        return problemRepository.findAll(spec, pageable).map(this::toListItem);
+        Map<Long, String> statusMap = userId != null ? buildStatusMap(userId) : Map.of();
+        Map<Long, Double> acceptanceMap = buildAcceptanceMap();
+
+        return problemRepository.findAll(spec, pageable).map(p -> toListItem(p, statusMap, acceptanceMap));
+    }
+
+    private Map<Long, String> buildStatusMap(Long userId) {
+        Map<Long, String> map = new HashMap<>();
+        for (Object[] row : submissionRepository.findProblemStatusesByUserId(userId)) {
+            map.put((Long) row[0], (String) row[1]);
+        }
+        return map;
+    }
+
+    private Map<Long, Double> buildAcceptanceMap() {
+        Map<Long, Double> map = new HashMap<>();
+        for (Object[] row : submissionRepository.findAcceptanceRates()) {
+            Long problemId = (Long) row[0];
+            long total = (Long) row[1];
+            long accepted = (Long) row[2];
+            map.put(problemId, total > 0 ? Math.round(accepted * 1000.0 / total) / 10.0 : 0.0);
+        }
+        return map;
     }
 
     @Transactional(readOnly = true)
@@ -136,7 +163,7 @@ public class ProblemService {
         return slug;
     }
 
-    private ProblemListItem toListItem(Problem problem) {
+    private ProblemListItem toListItem(Problem problem, Map<Long, String> statusMap, Map<Long, Double> acceptanceMap) {
         List<String> tagNames = problem.getTags().stream()
                 .map(com.codebite.problem.entity.Tag::getName)
                 .sorted()
@@ -146,7 +173,9 @@ public class ProblemService {
                 problem.getTitle(),
                 problem.getSlug(),
                 problem.getDifficulty(),
-                tagNames
+                tagNames,
+                statusMap.getOrDefault(problem.getId(), null),
+                acceptanceMap.getOrDefault(problem.getId(), null)
         );
     }
 

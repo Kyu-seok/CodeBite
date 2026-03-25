@@ -56,6 +56,20 @@ function SortableHeader({
   )
 }
 
+function StatusIcon({ status }: { status: "SOLVED" | "ATTEMPTED" | null }) {
+  if (status === "SOLVED") {
+    return (
+      <svg className="w-4 h-4 text-success-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M20 6 9 17l-5-5" />
+      </svg>
+    )
+  }
+  if (status === "ATTEMPTED") {
+    return <span className="inline-block w-2.5 h-2.5 rounded-full bg-warning-500" />
+  }
+  return null
+}
+
 export default function ProblemListPage() {
   const [searchParams, setSearchParams] = useSearchParams()
   const page = Number(searchParams.get("page") || "0")
@@ -189,9 +203,15 @@ export default function ProblemListPage() {
             <table className="w-full">
               <thead className="bg-muted border-b border-border">
                 <tr>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase w-12">
+                    &nbsp;
+                  </th>
                   <SortableHeader label="#" field="id" currentSort={sort} onSort={setSort} className="w-16" />
                   <SortableHeader label="Title" field="title" currentSort={sort} onSort={setSort} />
                   <SortableHeader label="Difficulty" field="difficulty" currentSort={sort} onSort={setSort} className="w-28" />
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase w-28">
+                    Acceptance
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
@@ -200,6 +220,9 @@ export default function ProblemListPage() {
                     key={problem.id}
                     className="hover:bg-muted/50 transition-colors"
                   >
+                    <td className="px-4 py-3 text-center">
+                      <StatusIcon status={problem.status} />
+                    </td>
                     <td className="px-4 py-3 text-sm text-muted-foreground">
                       {problem.id}
                     </td>
@@ -224,6 +247,11 @@ export default function ProblemListPage() {
                     </td>
                     <td className="px-4 py-3">
                       <DifficultyBadge difficulty={problem.difficulty} />
+                    </td>
+                    <td className="px-4 py-3 text-sm text-muted-foreground">
+                      {problem.acceptanceRate != null
+                        ? `${problem.acceptanceRate.toFixed(1)}%`
+                        : "—"}
                     </td>
                   </tr>
                 ))}

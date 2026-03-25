@@ -14,6 +14,7 @@ import com.codebite.problem.repository.ProblemRepository;
 import com.codebite.problem.repository.TestCaseRepository;
 import com.codebite.problem.service.ProblemService;
 import com.codebite.problem.service.StarterCodeLoader;
+import com.codebite.submission.repository.SubmissionRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -47,11 +48,14 @@ class ProblemServiceTest {
     @Mock
     private StarterCodeLoader starterCodeLoader;
 
+    @Mock
+    private SubmissionRepository submissionRepository;
+
     private ProblemService problemService;
 
     @BeforeEach
     void setUp() {
-        problemService = new ProblemService(problemRepository, testCaseRepository, starterCodeLoader);
+        problemService = new ProblemService(problemRepository, testCaseRepository, starterCodeLoader, submissionRepository);
     }
 
     private Problem buildProblem(Long id, String title, String slug, boolean published) {
@@ -70,8 +74,9 @@ class ProblemServiceTest {
         Problem p1 = buildProblem(1L, "Two Sum", "two-sum", true);
         Page<Problem> page = new PageImpl<>(List.of(p1));
         when(problemRepository.findAll(any(org.springframework.data.jpa.domain.Specification.class), any(PageRequest.class))).thenReturn(page);
+        when(submissionRepository.findAcceptanceRates()).thenReturn(List.of());
 
-        Page<ProblemListItem> result = problemService.listPublishedProblems(null, null, null, PageRequest.of(0, 10));
+        Page<ProblemListItem> result = problemService.listPublishedProblems(null, null, null, null, PageRequest.of(0, 10));
         assertEquals(1, result.getTotalElements());
         assertEquals("Two Sum", result.getContent().get(0).title());
     }
@@ -81,8 +86,9 @@ class ProblemServiceTest {
         Problem p1 = buildProblem(1L, "Easy One", "easy-one", true);
         Page<Problem> page = new PageImpl<>(List.of(p1));
         when(problemRepository.findAll(any(org.springframework.data.jpa.domain.Specification.class), any(PageRequest.class))).thenReturn(page);
+        when(submissionRepository.findAcceptanceRates()).thenReturn(List.of());
 
-        Page<ProblemListItem> result = problemService.listPublishedProblems(Difficulty.EASY, null, null, PageRequest.of(0, 10));
+        Page<ProblemListItem> result = problemService.listPublishedProblems(Difficulty.EASY, null, null, null, PageRequest.of(0, 10));
         assertEquals(1, result.getTotalElements());
     }
 

@@ -1,5 +1,6 @@
 package com.codebite.problem.controller;
 
+import com.codebite.auth.jwt.JwtUserPrincipal;
 import com.codebite.problem.dto.ProblemDetail;
 import com.codebite.problem.dto.ProblemListItem;
 import com.codebite.problem.entity.Difficulty;
@@ -9,6 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,6 +36,7 @@ public class ProblemController {
             @RequestParam(required = false) Difficulty difficulty,
             @RequestParam(required = false) String search,
             @RequestParam(required = false) String tag,
+            @AuthenticationPrincipal JwtUserPrincipal principal,
             Pageable pageable) {
         if (pageable.getSort().isUnsorted()) {
             pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("id").ascending());
@@ -45,7 +48,8 @@ public class ProblemController {
                 }
             }
         }
-        return ResponseEntity.ok(problemService.listPublishedProblems(difficulty, search, tag, pageable));
+        Long userId = principal != null ? principal.id() : null;
+        return ResponseEntity.ok(problemService.listPublishedProblems(difficulty, search, tag, userId, pageable));
     }
 
     @GetMapping("/{slug}")
