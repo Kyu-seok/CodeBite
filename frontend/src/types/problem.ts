@@ -23,6 +23,15 @@ export interface TestCase {
   orderIndex: number;
 }
 
+export interface ProblemStats {
+  totalEasy: number;
+  totalMedium: number;
+  totalHard: number;
+  solvedEasy: number;
+  solvedMedium: number;
+  solvedHard: number;
+}
+
 export interface ProblemDetail {
   id: number;
   title: string;

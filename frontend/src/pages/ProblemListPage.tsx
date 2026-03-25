@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
-import { Link, useSearchParams } from "react-router-dom"
+import { Link, useNavigate, useSearchParams } from "react-router-dom"
 import { useProblems } from "../hooks/useProblems"
+import { useProblemStats } from "../hooks/useProblemStats"
 import { useTags } from "../hooks/useTags"
 import DifficultyBadge from "../components/ui/DifficultyBadge"
 import { Badge } from "../components/ui/Badge"
@@ -14,6 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/Select"
+import { getRandomProblem } from "../api/problems"
 import type { Difficulty } from "../types/problem"
 
 const DIFFICULTIES: Difficulty[] = ["EASY", "MEDIUM", "HARD"]
@@ -71,6 +73,7 @@ function StatusIcon({ status }: { status: "SOLVED" | "ATTEMPTED" | null }) {
 }
 
 export default function ProblemListPage() {
+  const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
   const page = Number(searchParams.get("page") || "0")
   const difficulty = (searchParams.get("difficulty") as Difficulty) || undefined
@@ -78,7 +81,9 @@ export default function ProblemListPage() {
   const sort = searchParams.get("sort") || "id,asc"
   const tag = searchParams.get("tag") || ""
   const [searchInput, setSearchInput] = useState(search)
+  const [randomLoading, setRandomLoading] = useState(false)
   const { tags } = useTags()
+  const { stats } = useProblemStats()
   const { data, loading, error } = useProblems(
     page, 20, difficulty, search || undefined, sort, tag || undefined
   )
@@ -128,6 +133,18 @@ export default function ProblemListPage() {
     setSearchParams(params)
   }
 
+  const handleRandom = async () => {
+    setRandomLoading(true)
+    try {
+      const res = await getRandomProblem(difficulty)
+      navigate(`/problems/${res.data.slug}`)
+    } catch {
+      // ignore
+    } finally {
+      setRandomLoading(false)
+    }
+  }
+
   const toggleTag = (slug: string) => {
     const params = new URLSearchParams(searchParams)
     if (tag === slug) {
@@ -144,6 +161,17 @@ export default function ProblemListPage() {
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-2xl font-bold text-foreground">Problems</h1>
         <div className="flex items-center gap-3">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleRandom}
+            disabled={randomLoading}
+          >
+            <svg className="w-4 h-4 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M16 3h5v5" /><path d="M4 20 21 3" /><path d="M21 16v5h-5" /><path d="m15 15 6 6" /><path d="M4 4l5 5" />
+            </svg>
+            Random
+          </Button>
           <Input
             placeholder="Search problems..."
             value={searchInput}
@@ -185,6 +213,48 @@ export default function ProblemListPage() {
               {t.name}
             </button>
           ))}
+        </div>
+      )}
+
+      {stats && (
+        <div className="flex items-center gap-6 mb-4 p-4 rounded-lg border border-border bg-card">
+          <div className="text-sm font-medium text-foreground">
+            {stats.solvedEasy + stats.solvedMedium + stats.solvedHard}
+            <span className="text-muted-foreground"> / {stats.totalEasy + stats.totalMedium + stats.totalHard} Solved</span>
+          </div>
+          <div className="flex items-center gap-4 text-xs">
+            <span className="text-success-600 dark:text-success-400">
+              Easy {stats.solvedEasy}/{stats.totalEasy}
+            </span>
+            <span className="text-warning-600 dark:text-warning-400">
+              Medium {stats.solvedMedium}/{stats.totalMedium}
+            </span>
+            <span className="text-error-600 dark:text-error-400">
+              Hard {stats.solvedHard}/{stats.totalHard}
+            </span>
+          </div>
+          {(stats.totalEasy + stats.totalMedium + stats.totalHard) > 0 && (
+            <div className="flex-1 h-2 rounded-full bg-muted overflow-hidden flex">
+              {stats.totalEasy > 0 && (
+                <div
+                  className="h-full bg-success-500"
+                  style={{ width: `${(stats.solvedEasy / (stats.totalEasy + stats.totalMedium + stats.totalHard)) * 100}%` }}
+                />
+              )}
+              {stats.totalMedium > 0 && (
+                <div
+                  className="h-full bg-warning-500"
+                  style={{ width: `${(stats.solvedMedium / (stats.totalEasy + stats.totalMedium + stats.totalHard)) * 100}%` }}
+                />
+              )}
+              {stats.totalHard > 0 && (
+                <div
+                  className="h-full bg-error-500"
+                  style={{ width: `${(stats.solvedHard / (stats.totalEasy + stats.totalMedium + stats.totalHard)) * 100}%` }}
+                />
+              )}
+            </div>
+          )}
         </div>
       )}
 

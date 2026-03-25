@@ -5,6 +5,7 @@ import com.codebite.problem.dto.CreateProblemRequest;
 import com.codebite.problem.dto.CreateTestCaseRequest;
 import com.codebite.problem.dto.ProblemDetail;
 import com.codebite.problem.dto.ProblemListItem;
+import com.codebite.problem.dto.ProblemStats;
 import com.codebite.problem.dto.TestCaseDto;
 import com.codebite.problem.dto.UpdateProblemRequest;
 import com.codebite.problem.entity.Difficulty;
@@ -14,6 +15,7 @@ import com.codebite.problem.repository.ProblemRepository;
 import com.codebite.problem.repository.TestCaseRepository;
 import com.codebite.submission.repository.SubmissionRepository;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -75,6 +77,54 @@ public class ProblemService {
             map.put(problemId, total > 0 ? Math.round(accepted * 1000.0 / total) / 10.0 : 0.0);
         }
         return map;
+    }
+
+    @Transactional(readOnly = true)
+    public ProblemStats getStats(Long userId) {
+        Map<String, Integer> totals = new HashMap<>();
+        for (Object[] row : problemRepository.countPublishedByDifficulty()) {
+            totals.put(((Difficulty) row[0]).name(), ((Long) row[1]).intValue());
+        }
+
+        Map<String, Integer> solved = new HashMap<>();
+        if (userId != null) {
+            for (Object[] row : submissionRepository.countSolvedByDifficultyAndUserId(userId)) {
+                solved.put(((Difficulty) row[0]).name(), ((Long) row[1]).intValue());
+            }
+        }
+
+        return new ProblemStats(
+                totals.getOrDefault("EASY", 0),
+                totals.getOrDefault("MEDIUM", 0),
+                totals.getOrDefault("HARD", 0),
+                solved.getOrDefault("EASY", 0),
+                solved.getOrDefault("MEDIUM", 0),
+                solved.getOrDefault("HARD", 0)
+        );
+    }
+
+    @Transactional(readOnly = true)
+    public String getRandomProblemSlug(Difficulty difficulty, Long userId) {
+        Pageable one = PageRequest.of(0, 1);
+        List<String> slugs;
+
+        if (userId != null) {
+            // Try unsolved first
+            slugs = difficulty != null
+                    ? problemRepository.findRandomUnsolvedSlugsByDifficulty(difficulty, userId, one)
+                    : problemRepository.findRandomUnsolvedSlugs(userId, one);
+            if (!slugs.isEmpty()) return slugs.get(0);
+        }
+
+        // Fall back to any random
+        slugs = difficulty != null
+                ? problemRepository.findRandomPublishedSlugsByDifficulty(difficulty, one)
+                : problemRepository.findRandomPublishedSlugs(one);
+
+        if (slugs.isEmpty()) {
+            throw new ResourceNotFoundException("No problems found");
+        }
+        return slugs.get(0);
     }
 
     @Transactional(readOnly = true)

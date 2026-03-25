@@ -3,6 +3,7 @@ package com.codebite.problem.controller;
 import com.codebite.auth.jwt.JwtUserPrincipal;
 import com.codebite.problem.dto.ProblemDetail;
 import com.codebite.problem.dto.ProblemListItem;
+import com.codebite.problem.dto.ProblemStats;
 import com.codebite.problem.entity.Difficulty;
 import com.codebite.problem.service.ProblemService;
 import org.springframework.data.domain.Page;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
 import java.util.Set;
 
 @RestController
@@ -50,6 +52,21 @@ public class ProblemController {
         }
         Long userId = principal != null ? principal.id() : null;
         return ResponseEntity.ok(problemService.listPublishedProblems(difficulty, search, tag, userId, pageable));
+    }
+
+    @GetMapping("/random")
+    public ResponseEntity<Map<String, String>> getRandomProblem(
+            @RequestParam(required = false) Difficulty difficulty,
+            @AuthenticationPrincipal JwtUserPrincipal principal) {
+        Long userId = principal != null ? principal.id() : null;
+        String slug = problemService.getRandomProblemSlug(difficulty, userId);
+        return ResponseEntity.ok(Map.of("slug", slug));
+    }
+
+    @GetMapping("/stats")
+    public ResponseEntity<ProblemStats> getStats(@AuthenticationPrincipal JwtUserPrincipal principal) {
+        Long userId = principal != null ? principal.id() : null;
+        return ResponseEntity.ok(problemService.getStats(userId));
     }
 
     @GetMapping("/{slug}")
