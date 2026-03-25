@@ -14,6 +14,7 @@ import com.codebite.problem.repository.ProblemRepository;
 import com.codebite.problem.repository.TestCaseRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,14 +35,19 @@ public class ProblemService {
     }
 
     @Transactional(readOnly = true)
-    public Page<ProblemListItem> listPublishedProblems(Difficulty difficulty, Pageable pageable) {
-        Page<Problem> page;
+    public Page<ProblemListItem> listPublishedProblems(Difficulty difficulty, String search, String tag, Pageable pageable) {
+        Specification<Problem> spec = Specification.where(ProblemSpecifications.isPublished());
         if (difficulty != null) {
-            page = problemRepository.findByPublishedTrueAndDifficulty(difficulty, pageable);
-        } else {
-            page = problemRepository.findByPublishedTrue(pageable);
+            spec = spec.and(ProblemSpecifications.hasDifficulty(difficulty));
         }
-        return page.map(this::toListItem);
+        if (search != null && !search.isBlank()) {
+            spec = spec.and(ProblemSpecifications.titleContains(search));
+        }
+        if (tag != null && !tag.isBlank()) {
+            spec = spec.and(ProblemSpecifications.hasTag(tag));
+        }
+
+        return problemRepository.findAll(spec, pageable).map(this::toListItem);
     }
 
     @Transactional(readOnly = true)
@@ -131,11 +137,16 @@ public class ProblemService {
     }
 
     private ProblemListItem toListItem(Problem problem) {
+        List<String> tagNames = problem.getTags().stream()
+                .map(com.codebite.problem.entity.Tag::getName)
+                .sorted()
+                .toList();
         return new ProblemListItem(
                 problem.getId(),
                 problem.getTitle(),
                 problem.getSlug(),
-                problem.getDifficulty()
+                problem.getDifficulty(),
+                tagNames
         );
     }
 

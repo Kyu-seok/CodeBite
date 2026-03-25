@@ -69,9 +69,9 @@ class ProblemServiceTest {
     void listPublishedProblems_returnsPage() {
         Problem p1 = buildProblem(1L, "Two Sum", "two-sum", true);
         Page<Problem> page = new PageImpl<>(List.of(p1));
-        when(problemRepository.findByPublishedTrue(any())).thenReturn(page);
+        when(problemRepository.findAll(any(org.springframework.data.jpa.domain.Specification.class), any(PageRequest.class))).thenReturn(page);
 
-        Page<ProblemListItem> result = problemService.listPublishedProblems(null, PageRequest.of(0, 10));
+        Page<ProblemListItem> result = problemService.listPublishedProblems(null, null, null, PageRequest.of(0, 10));
         assertEquals(1, result.getTotalElements());
         assertEquals("Two Sum", result.getContent().get(0).title());
     }
@@ -80,9 +80,9 @@ class ProblemServiceTest {
     void listPublishedProblems_withDifficultyFilter() {
         Problem p1 = buildProblem(1L, "Easy One", "easy-one", true);
         Page<Problem> page = new PageImpl<>(List.of(p1));
-        when(problemRepository.findByPublishedTrueAndDifficulty(eq(Difficulty.EASY), any())).thenReturn(page);
+        when(problemRepository.findAll(any(org.springframework.data.jpa.domain.Specification.class), any(PageRequest.class))).thenReturn(page);
 
-        Page<ProblemListItem> result = problemService.listPublishedProblems(Difficulty.EASY, PageRequest.of(0, 10));
+        Page<ProblemListItem> result = problemService.listPublishedProblems(Difficulty.EASY, null, null, PageRequest.of(0, 10));
         assertEquals(1, result.getTotalElements());
     }
 

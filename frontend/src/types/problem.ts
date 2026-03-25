@@ -5,6 +5,12 @@ export interface ProblemListItem {
   title: string;
   slug: string;
   difficulty: Difficulty;
+  tags: string[];
+}
+
+export interface TagDto {
+  name: string;
+  slug: string;
 }
 
 export interface TestCase {
