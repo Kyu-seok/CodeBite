@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
-import { Link, Outlet, useNavigate } from 'react-router-dom';
+import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
+import { updateThemePreference } from '../../api/user';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -104,6 +105,15 @@ export default function WorkspaceLayout() {
   const { user, isAuthenticated, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleToggleTheme = () => {
+    const newTheme = theme === "light" ? "dark" : "light";
+    toggleTheme();
+    if (isAuthenticated) {
+      updateThemePreference(newTheme).catch(() => {});
+    }
+  };
 
   const [timerActive, setTimerActive] = useState(false);
   const [elapsed, setElapsed] = useState(0);
@@ -137,7 +147,7 @@ export default function WorkspaceLayout() {
           {/* Left section */}
           <div className="flex items-center gap-1">
             <Link
-              to="/problems"
+              to="/"
               className="flex items-center justify-center w-8 h-8 rounded-md text-accent hover:bg-secondary transition-colors font-bold text-lg"
               title="CodeBite Home">
               C
@@ -180,7 +190,7 @@ export default function WorkspaceLayout() {
               )}
             </button>
             <button
-              onClick={toggleTheme}
+              onClick={handleToggleTheme}
               className="flex items-center justify-center w-7 h-7 rounded-md text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
               title={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}>
               {theme === 'light' ? <MoonIcon /> : <SunIcon />}
@@ -234,11 +244,14 @@ export default function WorkspaceLayout() {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <Link
-                to="/login"
+              <button
+                onClick={() => {
+                  sessionStorage.setItem("returnUrl", location.pathname);
+                  navigate("/login");
+                }}
                 className="px-3 py-1 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors">
                 Login
-              </Link>
+              </button>
             )}
           </div>
         </div>

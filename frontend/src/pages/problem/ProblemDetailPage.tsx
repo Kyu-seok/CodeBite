@@ -16,15 +16,22 @@ import type { ApiError } from "@/types/api"
 export default function ProblemDetailPage() {
   const { slug } = useParams<{ slug: string }>()
   const navigate = useNavigate()
-  const { user, isAuthenticated, updateUser } = useAuth()
+  const { user, isAuthenticated, loading: authLoading, updateUser } = useAuth()
   const { problem, loading, error } = useProblem(slug!)
-  const { submissions, refetch: refetchSubmissions } = useSubmissions(
+  const { submissions, refetch: refetchSubmissions, updateNote } = useSubmissions(
     slug!,
     isAuthenticated,
   )
 
   const [language, setLanguage] = useState<string>("")
-  const [codeByLang, setCodeByLang] = useState<Record<string, string>>({})
+  const [codeByLang, setCodeByLang] = useState<Record<string, string>>(() => {
+    try {
+      const stored = localStorage.getItem(`code-draft:${slug}`)
+      return stored ? JSON.parse(stored) : {}
+    } catch {
+      return {}
+    }
+  })
   const [submitting, setSubmitting] = useState(false)
   const [result, setResult] = useState<SubmissionResponse | null>(null)
   const [submitError, setSubmitError] = useState<string | null>(null)
@@ -45,7 +52,7 @@ export default function ProblemDetailPage() {
     if (problem) document.title = `${problem.title} | CodeBite`
   }, [problem])
 
-  if (loading) {
+  if (loading || authLoading) {
     return (
       <div className="flex h-[calc(100vh-3.5rem)] items-center justify-center">
         <Spinner />
@@ -76,13 +83,18 @@ export default function ProblemDetailPage() {
     setCodeByLang((prev) => {
       const next = { ...prev }
       delete next[activeLang]
+      localStorage.setItem(`code-draft:${slug}`, JSON.stringify(next))
       return next
     })
   }
 
   const handleCodeChange = (value: string | undefined) => {
     if (value !== undefined) {
-      setCodeByLang((prev) => ({ ...prev, [activeLang]: value }))
+      setCodeByLang((prev) => {
+        const next = { ...prev, [activeLang]: value }
+        localStorage.setItem(`code-draft:${slug}`, JSON.stringify(next))
+        return next
+      })
     }
   }
 
@@ -133,6 +145,7 @@ export default function ProblemDetailPage() {
 
   const handleSubmit = async () => {
     if (!isAuthenticated) {
+      sessionStorage.setItem("returnUrl", `/problems/${slug}`)
       navigate("/login")
       return
     }
@@ -172,6 +185,7 @@ export default function ProblemDetailPage() {
           sampleTestCases={problem.sampleTestCases}
           isAuthenticated={isAuthenticated}
           submissions={submissions}
+          onUpdateNote={updateNote}
         />
       }
       editor={

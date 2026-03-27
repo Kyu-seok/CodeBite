@@ -23,7 +23,11 @@ export default function OAuthCallbackPage() {
     }
 
     loginWithOAuth(provider, code, state)
-      .then(() => navigate("/problems", { replace: true }))
+      .then(() => {
+        const returnUrl = sessionStorage.getItem("returnUrl")
+        sessionStorage.removeItem("returnUrl")
+        navigate(returnUrl || "/problems", { replace: true })
+      })
       .catch(() => {
         setError("Authentication failed. Please try again.");
         setTimeout(() => navigate("/login", { replace: true }), 2000);

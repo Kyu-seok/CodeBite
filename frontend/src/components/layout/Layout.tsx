@@ -1,6 +1,7 @@
-import { Link, Outlet, useNavigate } from 'react-router-dom';
+import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
+import { updateThemePreference } from '../../api/user';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -33,28 +34,39 @@ export default function Layout() {
   const { user, isAuthenticated, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleToggleTheme = () => {
+    const newTheme = theme === "light" ? "dark" : "light";
+    toggleTheme();
+    if (isAuthenticated) {
+      updateThemePreference(newTheme).catch(() => {});
+    }
+  };
 
   const userInitial = user?.username?.charAt(0).toUpperCase() ?? '?';
 
   return (
     <div className="min-h-screen bg-background">
-      <nav className="bg-muted text-foreground border-b border-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
+      <nav className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-md">
+        <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:px-6">
           <div className="flex items-center gap-6">
-            <Link to="/problems" className="text-lg font-bold">
+            <Link to="/" className="text-lg font-bold text-foreground">
               CodeBite
             </Link>
             <Link
               to="/problems"
-              className="text-sm text-muted-foreground hover:text-foreground">
+              className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+            >
               Problems
             </Link>
           </div>
           <div className="flex items-center gap-4 text-sm">
             <button
-              onClick={toggleTheme}
-              className="flex items-center justify-center w-7 h-7 rounded-md text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
-              title={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}>
+              onClick={handleToggleTheme}
+              className="flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+              title={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
+            >
               {theme === 'light' ? <MoonIcon /> : <SunIcon />}
             </button>
             {isAuthenticated ? (
@@ -65,11 +77,11 @@ export default function Layout() {
                       <img
                         src={user.avatarUrl}
                         alt={user?.username}
-                        className="w-7 h-7 rounded-full object-cover"
+                        className="h-7 w-7 rounded-full object-cover"
                         referrerPolicy="no-referrer"
                       />
                     ) : (
-                      <span className="flex items-center justify-center w-7 h-7 rounded-full bg-gradient-to-br from-orange-400 to-amber-600 text-xs font-semibold text-white">
+                      <span className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-orange-400 to-amber-600 text-xs font-semibold text-white">
                         {userInitial}
                       </span>
                     )}
@@ -81,17 +93,17 @@ export default function Layout() {
                       <img
                         src={user.avatarUrl}
                         alt={user?.username}
-                        className="w-10 h-10 rounded-full object-cover"
+                        className="h-10 w-10 rounded-full object-cover"
                         referrerPolicy="no-referrer"
                       />
                     ) : (
-                      <span className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-amber-600 text-sm font-semibold text-white">
+                      <span className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-orange-400 to-amber-600 text-sm font-semibold text-white">
                         {userInitial}
                       </span>
                     )}
-                    <div className="flex flex-col min-w-0">
-                      <span className="text-sm font-semibold truncate">{user?.username}</span>
-                      <span className="text-xs text-muted-foreground truncate">{user?.email}</span>
+                    <div className="flex min-w-0 flex-col">
+                      <span className="truncate text-sm font-semibold">{user?.username}</span>
+                      <span className="truncate text-xs text-muted-foreground">{user?.email}</span>
                     </div>
                   </div>
                   <DropdownMenuSeparator />
@@ -104,11 +116,15 @@ export default function Layout() {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <Link
-                to="/login"
-                className="text-muted-foreground hover:text-foreground">
+              <button
+                onClick={() => {
+                  sessionStorage.setItem("returnUrl", location.pathname);
+                  navigate("/login");
+                }}
+                className="text-muted-foreground transition-colors hover:text-foreground"
+              >
                 Login
-              </Link>
+              </button>
             )}
           </div>
         </div>
