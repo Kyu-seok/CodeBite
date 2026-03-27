@@ -157,7 +157,7 @@ export default function ProblemListPage() {
   }
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-8">
+    <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-2xl font-bold text-foreground">Problems</h1>
         <div className="flex items-center gap-3">
