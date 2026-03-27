@@ -6,6 +6,7 @@ export interface User {
   avatarUrl: string | null;
   recentLanguage: string | null;
   editorSettings: string | null;
+  themePreference: string | null;
   createdAt: string;
 }
 

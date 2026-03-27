@@ -69,6 +69,7 @@ public class UserService {
                 user.getAvatarUrl(),
                 user.getRecentLanguage(),
                 user.getEditorSettings(),
+                user.getThemePreference(),
                 user.getCreatedAt()
         );
     }
@@ -78,6 +79,14 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         user.setEditorSettings(editorSettings);
+        userRepository.save(user);
+    }
+
+    @Transactional
+    public void updateThemePreference(Long userId, String themePreference) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        user.setThemePreference(themePreference);
         userRepository.save(user);
     }
 

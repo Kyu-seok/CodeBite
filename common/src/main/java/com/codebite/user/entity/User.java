@@ -33,6 +33,9 @@ public class User extends BaseEntity {
     @Column(name = "editor_settings", columnDefinition = "TEXT")
     private String editorSettings;
 
+    @Column(name = "theme_preference", length = 10)
+    private String themePreference;
+
     public String getUsername() {
         return username;
     }
@@ -87,5 +90,13 @@ public class User extends BaseEntity {
 
     public void setEditorSettings(String editorSettings) {
         this.editorSettings = editorSettings;
+    }
+
+    public String getThemePreference() {
+        return themePreference;
+    }
+
+    public void setThemePreference(String themePreference) {
+        this.themePreference = themePreference;
     }
 }

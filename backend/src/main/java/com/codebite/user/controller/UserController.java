@@ -22,11 +22,15 @@ public class UserController {
     }
 
     @PatchMapping("/settings")
-    public ResponseEntity<Void> updateEditorSettings(
+    public ResponseEntity<Void> updateSettings(
             @AuthenticationPrincipal JwtUserPrincipal principal,
             @RequestBody Map<String, String> body) {
-        String editorSettings = body.get("editorSettings");
-        userService.updateEditorSettings(principal.id(), editorSettings);
+        if (body.containsKey("editorSettings")) {
+            userService.updateEditorSettings(principal.id(), body.get("editorSettings"));
+        }
+        if (body.containsKey("themePreference")) {
+            userService.updateThemePreference(principal.id(), body.get("themePreference"));
+        }
         return ResponseEntity.noContent().build();
     }
 }

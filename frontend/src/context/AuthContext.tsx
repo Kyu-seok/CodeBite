@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from "
 import type { User } from "../types/auth";
 import * as authApi from "../api/auth";
 import { useEditorSettings } from "./EditorSettingsContext";
+import { useTheme, type Theme } from "./ThemeContext";
 
 interface AuthContextType {
   user: User | null;
@@ -18,6 +19,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const { initFromUser } = useEditorSettings();
+  const { setTheme } = useTheme();
+
+  const applyThemeFromUser = (themePreference: string | null) => {
+    if (themePreference === "light" || themePreference === "dark") {
+      setTheme(themePreference as Theme);
+    }
+  };
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -30,6 +38,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .then((res) => {
         setUser(res.data);
         initFromUser(res.data.editorSettings);
+        applyThemeFromUser(res.data.themePreference);
       })
       .catch(() => localStorage.removeItem("token"))
       .finally(() => setLoading(false));
@@ -40,6 +49,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.setItem("token", res.data.token);
     setUser(res.data.user);
     initFromUser(res.data.user.editorSettings);
+    applyThemeFromUser(res.data.user.themePreference);
   };
 
   const updateUser = (patch: Partial<User>) => {
