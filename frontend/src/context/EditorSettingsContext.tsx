@@ -58,12 +58,10 @@ export function EditorSettingsProvider({ children }: { children: ReactNode }) {
   };
 
   const updateSettings = (patch: Partial<EditorSettings>) => {
-    setSettings((prev) => {
-      const next = { ...prev, ...patch };
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-      syncToBackend(next);
-      return next;
-    });
+    const next = { ...settings, ...patch };
+    setSettings(next);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+    syncToBackend(next);
   };
 
   const initFromUser = (editorSettings: string | null) => {

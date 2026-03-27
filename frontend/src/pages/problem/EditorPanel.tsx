@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import Editor from '@monaco-editor/react';
 import type { editor as monacoEditor } from 'monaco-editor';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/Tabs';
@@ -81,9 +81,11 @@ export function EditorPanel({
   const editorRef = useRef<monacoEditor.IStandaloneCodeEditor | null>(null);
   const modeRef = useRef<{ dispose: () => void } | null>(null);
   const statusBarRef = useRef<HTMLDivElement | null>(null);
+  const [editorMounted, setEditorMounted] = useState(false);
 
   const handleMount = (editor: monacoEditor.IStandaloneCodeEditor) => {
     editorRef.current = editor;
+    setEditorMounted(true);
   };
 
   useEffect(() => {
@@ -113,7 +115,7 @@ export function EditorPanel({
       modeRef.current?.dispose();
       modeRef.current = null;
     };
-  }, [settings.keyBindings]);
+  }, [settings.keyBindings, editorMounted]);
 
   return (
     <div className="flex h-full flex-col">
@@ -121,7 +123,7 @@ export function EditorPanel({
         <div className="flex items-center justify-between border-b border-border bg-muted">
           <div className="flex items-center gap-1">
             <TabsList>
-              <TabsTrigger value="code" className="gap-1.5">
+              <TabsTrigger value="code" className="gap-1.5 cursor-default">
                 <CodeIcon />
                 Code
               </TabsTrigger>
