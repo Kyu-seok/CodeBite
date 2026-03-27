@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { getSubmissionsByProblem } from "../api/submissions";
+import { getSubmissionsByProblem, updateSubmissionNote } from "../api/submissions";
 import type { SubmissionListItem } from "../types/submission";
 
 export function useSubmissions(slug: string, enabled: boolean) {
@@ -19,5 +19,16 @@ export function useSubmissions(slug: string, enabled: boolean) {
     fetch();
   }, [fetch]);
 
-  return { submissions, loading, refetch: fetch };
+  const updateNote = useCallback(async (id: number, notes: string) => {
+    setSubmissions((prev) =>
+      prev.map((s) => (s.id === id ? { ...s, notes } : s))
+    );
+    try {
+      await updateSubmissionNote(id, notes);
+    } catch {
+      fetch();
+    }
+  }, [fetch]);
+
+  return { submissions, loading, refetch: fetch, updateNote };
 }

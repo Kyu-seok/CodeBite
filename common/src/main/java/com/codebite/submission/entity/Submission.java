@@ -45,6 +45,9 @@ public class Submission extends BaseEntity {
     @Column(name = "memory_kb")
     private Integer memoryKb;
 
+    @Column(length = 500)
+    private String notes;
+
     @OneToMany(mappedBy = "submission", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SubmissionResult> results = new ArrayList<>();
 
@@ -102,6 +105,14 @@ public class Submission extends BaseEntity {
 
     public void setMemoryKb(Integer memoryKb) {
         this.memoryKb = memoryKb;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
     }
 
     public List<SubmissionResult> getResults() {

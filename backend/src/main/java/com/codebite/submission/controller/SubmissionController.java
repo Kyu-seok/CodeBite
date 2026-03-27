@@ -4,6 +4,7 @@ import com.codebite.auth.jwt.JwtUserPrincipal;
 import com.codebite.submission.dto.SubmissionListItem;
 import com.codebite.submission.dto.SubmissionResponse;
 import com.codebite.submission.dto.SubmitRequest;
+import com.codebite.submission.dto.UpdateNoteRequest;
 import com.codebite.submission.service.SubmissionService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -51,5 +53,14 @@ public class SubmissionController {
             @AuthenticationPrincipal JwtUserPrincipal principal) {
         List<SubmissionListItem> submissions = submissionService.getUserSubmissions(slug, principal.id());
         return ResponseEntity.ok(submissions);
+    }
+
+    @PatchMapping("/submissions/{id}/note")
+    public ResponseEntity<Void> updateNote(
+            @PathVariable Long id,
+            @Valid @RequestBody UpdateNoteRequest request,
+            @AuthenticationPrincipal JwtUserPrincipal principal) {
+        submissionService.updateNote(id, request.notes(), principal.id());
+        return ResponseEntity.ok().build();
     }
 }

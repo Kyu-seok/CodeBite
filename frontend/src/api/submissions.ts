@@ -16,3 +16,7 @@ export function getSubmissionsByProblem(slug: string) {
 export function runCode(slug: string, data: SubmitRequest) {
   return client.post<RunResponse>(`/problems/${slug}/run`, data);
 }
+
+export function updateSubmissionNote(id: number, notes: string) {
+  return client.patch(`/submissions/${id}/note`, { notes });
+}

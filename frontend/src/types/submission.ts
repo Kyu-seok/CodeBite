@@ -26,6 +26,7 @@ export interface SubmissionResponse {
   memoryKb: number | null;
   results: SubmissionResult[];
   createdAt: string;
+  notes: string | null;
 }
 
 export interface SubmissionListItem {
@@ -35,6 +36,7 @@ export interface SubmissionListItem {
   runtimeMs: number | null;
   memoryKb: number | null;
   createdAt: string;
+  notes: string | null;
 }
 
 export interface SubmitRequest {

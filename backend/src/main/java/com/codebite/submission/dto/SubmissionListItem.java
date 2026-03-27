@@ -10,6 +10,7 @@ public record SubmissionListItem(
         String language,
         Integer runtimeMs,
         Integer memoryKb,
-        Instant createdAt
+        Instant createdAt,
+        String notes
 ) {
 }

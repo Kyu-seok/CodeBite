@@ -68,6 +68,7 @@ interface LeftPanelProps {
   sampleTestCases: TestCase[];
   isAuthenticated: boolean;
   submissions: SubmissionListItem[];
+  onUpdateNote?: (id: number, notes: string) => void;
 }
 
 export function LeftPanel({
@@ -78,6 +79,7 @@ export function LeftPanel({
   sampleTestCases,
   isAuthenticated,
   submissions,
+  onUpdateNote,
 }: LeftPanelProps) {
   return (
     <div className="flex h-full flex-col">
@@ -114,6 +116,7 @@ export function LeftPanel({
             <SubmissionsPanel
               isAuthenticated={isAuthenticated}
               submissions={submissions}
+              onUpdateNote={onUpdateNote}
             />
           </TabsContent>
 

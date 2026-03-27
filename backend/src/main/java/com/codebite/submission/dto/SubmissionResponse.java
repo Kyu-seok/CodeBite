@@ -13,6 +13,7 @@ public record SubmissionResponse(
         Integer runtimeMs,
         Integer memoryKb,
         List<SubmissionResultDto> results,
-        Instant createdAt
+        Instant createdAt,
+        String notes
 ) {
 }

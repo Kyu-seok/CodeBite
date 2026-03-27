@@ -152,7 +152,8 @@ public class SubmissionService {
                 submission.getRuntimeMs(),
                 submission.getMemoryKb(),
                 resultDtos,
-                submission.getCreatedAt()
+                submission.getCreatedAt(),
+                submission.getNotes()
         );
     }
 
@@ -163,7 +164,21 @@ public class SubmissionService {
                 submission.getLanguage(),
                 submission.getRuntimeMs(),
                 submission.getMemoryKb(),
-                submission.getCreatedAt()
+                submission.getCreatedAt(),
+                submission.getNotes()
         );
+    }
+
+    @Transactional
+    public void updateNote(Long id, String notes, Long userId) {
+        Submission submission = submissionRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Submission not found: " + id));
+
+        if (!submission.getUser().getId().equals(userId)) {
+            throw new ResourceNotFoundException("Submission not found: " + id);
+        }
+
+        submission.setNotes(notes);
+        submissionRepository.save(submission);
     }
 }
