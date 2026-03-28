@@ -4,7 +4,6 @@ import { useProblems } from "../hooks/useProblems"
 import { useProblemStats } from "../hooks/useProblemStats"
 import { useTags } from "../hooks/useTags"
 import DifficultyBadge from "../components/ui/DifficultyBadge"
-import { Badge } from "../components/ui/Badge"
 import Spinner from "../components/ui/Spinner"
 import { Button } from "@/components/ui/Button"
 import { Input } from "@/components/ui/Input"
@@ -48,7 +47,7 @@ function SortableHeader({
   return (
     <th
       className={`px-4 py-3 text-left text-xs font-medium uppercase cursor-pointer select-none hover:text-foreground transition-colors ${
-        isActive ? "text-foreground" : "text-muted-foreground"
+        isActive ? "text-accent-500" : "text-muted-foreground"
       } ${className || ""}`}
       onClick={handleClick}
     >
@@ -166,6 +165,7 @@ export default function ProblemListPage() {
             size="sm"
             onClick={handleRandom}
             disabled={randomLoading}
+            className="border-accent-500/40 text-accent-500 hover:bg-accent-500/10 hover:border-accent-500"
           >
             <svg className="w-4 h-4 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M16 3h5v5" /><path d="M4 20 21 3" /><path d="M21 16v5h-5" /><path d="m15 15 6 6" /><path d="M4 4l5 5" />
@@ -204,10 +204,10 @@ export default function ProblemListPage() {
             <button
               key={t.slug}
               onClick={() => toggleTag(t.slug)}
-              className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium transition-colors cursor-pointer ${
+              className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium transition-colors cursor-pointer border ${
                 tag === t.slug
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+                  ? "bg-accent-500 text-white border-accent-500"
+                  : "bg-secondary text-secondary-foreground border-border hover:bg-accent-500/10 hover:text-accent-500 hover:border-accent-500/30"
               }`}
             >
               {t.name}
@@ -288,7 +288,11 @@ export default function ProblemListPage() {
                 {data.content.map((problem) => (
                   <tr
                     key={problem.id}
-                    className="hover:bg-muted/50 transition-colors"
+                    className={`transition-colors ${
+                      problem.status === "SOLVED"
+                        ? "bg-success-500/5 hover:bg-success-500/10"
+                        : "hover:bg-accent-500/5"
+                    }`}
                   >
                     <td className="px-4 py-3 text-center">
                       <StatusIcon status={problem.status} />
@@ -297,23 +301,12 @@ export default function ProblemListPage() {
                       {problem.id}
                     </td>
                     <td className="px-4 py-3">
-                      <div className="flex items-center gap-2">
-                        <Link
-                          to={`/problems/${problem.slug}`}
-                          className="text-primary hover:underline font-medium"
-                        >
-                          {problem.title}
-                        </Link>
-                        {problem.tags.length > 0 && (
-                          <div className="flex gap-1">
-                            {problem.tags.map((t) => (
-                              <Badge key={t} variant="secondary" className="text-[10px] px-1.5 py-0">
-                                {t}
-                              </Badge>
-                            ))}
-                          </div>
-                        )}
-                      </div>
+                      <Link
+                        to={`/problems/${problem.slug}`}
+                        className="text-foreground hover:text-accent-500 hover:underline font-medium"
+                      >
+                        {problem.title}
+                      </Link>
                     </td>
                     <td className="px-4 py-3">
                       <DifficultyBadge difficulty={problem.difficulty} />

@@ -3,8 +3,16 @@ import { Button } from '@/components/ui/Button';
 import { Stack } from '@/components/layout/Stack';
 import StatusBadge from '@/components/ui/StatusBadge';
 import Spinner from '@/components/ui/Spinner';
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from '@/components/ui/Tooltip';
 import type { TestCase } from '@/types/problem';
 import type { RunResponse, SubmissionResponse } from '@/types/submission';
+
+const isMac =
+  typeof navigator !== 'undefined' && /Mac/.test(navigator.userAgent);
 
 interface TestPanelProps {
   sampleTestCases: TestCase[];
@@ -97,20 +105,41 @@ export function TestPanel({
       <div className="flex items-center justify-between border-t border-border px-3 py-2">
         <div />
         <Stack direction="horizontal" gap="sm">
-          <Button
-            variant="secondary"
-            size="lg"
-            onClick={onRun}
-            disabled={running || submitting}>
-            {running ? 'Running...' : 'Run'}
-          </Button>
-          <Button
-            variant="accent"
-            size="lg"
-            onClick={onSubmit}
-            disabled={submitting || running}>
-            {submitting ? 'Submitting...' : 'Submit'}
-          </Button>
+          <Tooltip>
+            <TooltipTrigger>
+              <Button
+                variant="outline"
+                size="lg"
+                onClick={onRun}
+                disabled={running || submitting}
+                className="border-accent-500/40 text-accent-500 hover:bg-accent-500/10 hover:border-accent-500">
+                {running ? 'Running...' : 'Run'}
+                <kbd className="ml-1.5 text-lg opacity-60">
+                  {isMac ? "⌘+'" : "Ctrl+'"}
+                </kbd>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="top">
+              {isMac ? "⌘+'" : "Ctrl+'"} to run
+            </TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger>
+              <Button
+                variant="accent"
+                size="lg"
+                onClick={onSubmit}
+                disabled={submitting || running}>
+                {submitting ? 'Submitting...' : 'Submit'}
+                <kbd className="ml-1.5 text-lg opacity-60">
+                  {isMac ? '⌘+↵' : 'Ctrl+↵'}
+                </kbd>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="top">
+              {isMac ? '⌘+↵' : 'Ctrl+Enter'} to submit
+            </TooltipContent>
+          </Tooltip>
         </Stack>
       </div>
     </div>
