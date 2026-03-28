@@ -167,3 +167,13 @@ html {
 .dark *::-webkit-scrollbar-thumb {
   background-color: #3a4250;
 }
+
+/* ── React Flow theme overrides ── */
+.react-flow {
+  --xy-background-color: var(--background);
+  --xy-node-border-radius: var(--radius-lg);
+  --xy-controls-button-background-color: var(--card);
+  --xy-controls-button-border-color: var(--border);
+  --xy-controls-button-color: var(--foreground);
+  --xy-background-pattern-color: var(--border);
+}

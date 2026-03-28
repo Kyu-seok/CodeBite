@@ -60,6 +60,12 @@ export default function Layout() {
             >
               Problems
             </Link>
+            <Link
+              to="/roadmap"
+              className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+            >
+              Roadmap
+            </Link>
           </div>
           <div className="flex items-center gap-4 text-sm">
             <button

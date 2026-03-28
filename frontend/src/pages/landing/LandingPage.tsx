@@ -84,6 +84,12 @@ export default function LandingPage() {
               >
                 Problems
               </Link>
+              <Link
+                to="/roadmap"
+                className="text-muted-foreground transition-colors hover:text-foreground"
+              >
+                Roadmap
+              </Link>
             </div>
           </div>
 

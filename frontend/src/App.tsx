@@ -9,6 +9,7 @@ import LoginPage from "./pages/LoginPage";
 import OAuthCallbackPage from "./pages/OAuthCallbackPage";
 import ProblemListPage from "./pages/ProblemListPage";
 import ProblemDetailPage from "./pages/problem";
+import RoadmapPage from "./pages/roadmap";
 import NotFoundPage from "./pages/NotFoundPage";
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
               <Route index element={<LandingPage />} />
               <Route element={<Layout />}>
                 <Route path="problems" element={<ProblemListPage />} />
+                <Route path="roadmap" element={<RoadmapPage />} />
                 <Route path="*" element={<NotFoundPage />} />
               </Route>
             </Routes>
