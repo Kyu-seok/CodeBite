@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react"
-import { useParams, useNavigate } from "react-router-dom"
+import { useCallback, useEffect, useRef, useState } from "react"
+import { useParams, useNavigate, useOutletContext } from "react-router-dom"
 import { useProblem } from "@/hooks/useProblem"
 import { useSubmissions } from "@/hooks/useSubmissions"
 import { useAuth } from "@/context/AuthContext"
@@ -12,10 +12,14 @@ import { TestPanel } from "./TestPanel"
 import type { SubmissionResponse, RunResponse } from "@/types/submission"
 import { AxiosError } from "axios"
 import type { ApiError } from "@/types/api"
+import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts"
+import type { WorkspaceOutletContext } from "@/components/layout/WorkspaceLayout"
+import { formatElapsed } from "@/components/layout/WorkspaceLayout"
 
 export default function ProblemDetailPage() {
   const { slug } = useParams<{ slug: string }>()
   const navigate = useNavigate()
+  const { timerActive, elapsed } = useOutletContext<WorkspaceOutletContext>()
   const { user, isAuthenticated, loading: authLoading, updateUser } = useAuth()
   const { problem, loading, error } = useProblem(slug!)
   const { submissions, refetch: refetchSubmissions, updateNote } = useSubmissions(
@@ -41,6 +45,15 @@ export default function ProblemDetailPage() {
   const [activeTab, setActiveTab] = useState("testcases")
   const pollIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const resetLayoutRef = useRef<(() => void) | null>(null)
+  const runRef = useRef<() => void>(() => {})
+  const submitRef = useRef<() => void>(() => {})
+  const timerSnapshotRef = useRef<number | null>(null)
+
+  useKeyboardShortcuts(
+    useCallback(() => runRef.current(), []),
+    useCallback(() => submitRef.current(), []),
+    running || submitting,
+  )
 
   useEffect(() => {
     return () => {
@@ -107,6 +120,11 @@ export default function ProblemDetailPage() {
           pollIntervalRef.current = null
           setResult(res.data)
           setSubmitting(false)
+          if (timerSnapshotRef.current != null) {
+            const note = `Completion time: ${formatElapsed(timerSnapshotRef.current)}`
+            updateNote(submissionId, note)
+            timerSnapshotRef.current = null
+          }
           refetchSubmissions()
         }
       } catch {
@@ -149,6 +167,7 @@ export default function ProblemDetailPage() {
       navigate("/login")
       return
     }
+    timerSnapshotRef.current = timerActive ? elapsed : null
     if (pollIntervalRef.current) clearInterval(pollIntervalRef.current)
     setSubmitting(true)
     setSubmitError(null)
@@ -172,6 +191,9 @@ export default function ProblemDetailPage() {
       setSubmitting(false)
     }
   }
+
+  runRef.current = handleRun
+  submitRef.current = handleSubmit
 
   return (
     <ProblemLayout
@@ -197,6 +219,8 @@ export default function ProblemDetailPage() {
           onCodeChange={handleCodeChange}
           onResetCode={handleResetCode}
           onResetLayout={() => resetLayoutRef.current?.()}
+          onRun={handleRun}
+          onSubmit={handleSubmit}
         />
       }
       testPanel={
