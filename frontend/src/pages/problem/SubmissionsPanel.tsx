@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Badge } from "@/components/ui/Badge"
 import { Button } from "@/components/ui/Button"
 import {
@@ -56,12 +56,15 @@ function NoteModal({
 }) {
   const [draft, setDraft] = useState("")
 
+  useEffect(() => {
+    if (open) setDraft(value || "")
+  }, [open, value])
+
   return (
     <Dialog
       open={open}
       onOpenChange={(isOpen) => {
-        if (isOpen) setDraft(value || "")
-        else onClose()
+        if (!isOpen) onClose()
       }}
     >
       <DialogContent className="max-w-md">
