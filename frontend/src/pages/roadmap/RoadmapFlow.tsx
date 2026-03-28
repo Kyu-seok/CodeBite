@@ -10,6 +10,7 @@ import {
 import '@xyflow/react/dist/style.css';
 
 import type { RoadmapCategory } from '@/types/roadmap';
+import { useAuth } from '@/context/AuthContext';
 import {
   buildFlowNodes,
   buildFlowEdges,
@@ -25,10 +26,11 @@ interface RoadmapFlowProps {
 }
 
 export default function RoadmapFlow({ categories }: RoadmapFlowProps) {
+  const { isAuthenticated } = useAuth();
   const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
 
-  const nodes = useMemo(() => buildFlowNodes(categories), [categories]);
-  const edges = useMemo(() => buildFlowEdges(categories), [categories]);
+  const nodes = useMemo(() => buildFlowNodes(categories, isAuthenticated), [categories, isAuthenticated]);
+  const edges = useMemo(() => buildFlowEdges(categories, isAuthenticated), [categories, isAuthenticated]);
 
   const categoryMap = useMemo(
     () => new Map(categories.map((c) => [c.slug, c])),
