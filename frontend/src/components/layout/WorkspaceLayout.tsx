@@ -257,7 +257,7 @@ export default function WorkspaceLayout() {
                   <DropdownMenuItem onSelect={() => navigate('/profile')}>
                     Profile
                   </DropdownMenuItem>
-                  <DropdownMenuItem onSelect={logout}>Log out</DropdownMenuItem>
+                  <DropdownMenuItem onSelect={() => { logout(); navigate('/'); }}>Log out</DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
