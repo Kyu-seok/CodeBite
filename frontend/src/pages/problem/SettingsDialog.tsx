@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/Select";
 import { Switch } from "@/components/ui/Switch";
 import { Button } from "@/components/ui/Button";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/Tooltip";
 import { Settings } from "lucide-react";
 import { useEditorSettings } from "@/context/EditorSettingsContext";
 
@@ -27,11 +28,16 @@ export function SettingsDialog() {
 
   return (
     <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="ghost" size="icon" className="h-7 w-7" title="Settings">
-          <Settings className="h-3.5 w-3.5" />
-        </Button>
-      </DialogTrigger>
+      <Tooltip>
+        <TooltipTrigger>
+          <DialogTrigger asChild>
+            <Button variant="ghost" size="icon" className="h-7 w-7">
+              <Settings className="h-3.5 w-3.5" />
+            </Button>
+          </DialogTrigger>
+        </TooltipTrigger>
+        <TooltipContent>Settings</TooltipContent>
+      </Tooltip>
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle className="text-center">Editor Settings</DialogTitle>

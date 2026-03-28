@@ -2,6 +2,7 @@ import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { updateThemePreference } from '../../api/user';
+import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/Tooltip';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -68,13 +69,17 @@ export default function Layout() {
             </Link>
           </div>
           <div className="flex items-center gap-4 text-sm">
-            <button
-              onClick={handleToggleTheme}
-              className="flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
-              title={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
-            >
-              {theme === 'light' ? <MoonIcon /> : <SunIcon />}
-            </button>
+            <Tooltip>
+              <TooltipTrigger>
+                <button
+                  onClick={handleToggleTheme}
+                  className="flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+                >
+                  {theme === 'light' ? <MoonIcon /> : <SunIcon />}
+                </button>
+              </TooltipTrigger>
+              <TooltipContent>{theme === 'light' ? 'Dark mode' : 'Light mode'}</TooltipContent>
+            </Tooltip>
             {isAuthenticated ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>

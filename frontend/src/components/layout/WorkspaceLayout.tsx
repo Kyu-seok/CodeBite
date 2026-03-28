@@ -3,6 +3,7 @@ import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { updateThemePreference } from '../../api/user';
+import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/Tooltip';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -101,6 +102,18 @@ function formatTime(seconds: number) {
   return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
 }
 
+export function formatElapsed(seconds: number) {
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  if (m > 0) return `${m}m ${s}s`;
+  return `${s}s`;
+}
+
+export interface WorkspaceOutletContext {
+  timerActive: boolean;
+  elapsed: number;
+}
+
 export default function WorkspaceLayout() {
   const { user, isAuthenticated, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
@@ -189,12 +202,16 @@ export default function WorkspaceLayout() {
                 <span className="text-xs font-mono tabular-nums">{formatTime(elapsed)}</span>
               )}
             </button>
-            <button
-              onClick={handleToggleTheme}
-              className="flex items-center justify-center w-7 h-7 rounded-md text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
-              title={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}>
-              {theme === 'light' ? <MoonIcon /> : <SunIcon />}
-            </button>
+            <Tooltip>
+              <TooltipTrigger>
+                <button
+                  onClick={handleToggleTheme}
+                  className="flex items-center justify-center w-7 h-7 rounded-md text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors">
+                  {theme === 'light' ? <MoonIcon /> : <SunIcon />}
+                </button>
+              </TooltipTrigger>
+              <TooltipContent>{theme === 'light' ? 'Dark mode' : 'Light mode'}</TooltipContent>
+            </Tooltip>
             {isAuthenticated ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -257,7 +274,7 @@ export default function WorkspaceLayout() {
         </div>
       </nav>
       <main>
-        <Outlet />
+        <Outlet context={{ timerActive, elapsed }} />
       </main>
     </div>
   );

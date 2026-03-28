@@ -1,6 +1,7 @@
 import { useRef, useEffect, useState } from 'react';
 import Editor from '@monaco-editor/react';
 import type { editor as monacoEditor } from 'monaco-editor';
+import { KeyMod, KeyCode } from 'monaco-editor';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/Tabs';
 import {
   Select,
@@ -12,6 +13,14 @@ import {
   SelectItem,
 } from '@/components/ui/Select';
 import { Button } from '@/components/ui/Button';
+import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/Tooltip';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from '@/components/ui/Dialog';
 import Spinner from '@/components/ui/Spinner';
 import { useTheme } from '@/context/ThemeContext';
 import { useEditorSettings } from '@/context/EditorSettingsContext';
@@ -57,6 +66,108 @@ const LANGUAGE_LABELS: Record<string, string> = {
   c: 'C',
 };
 
+const BUG_CATEGORIES = [
+  'Wrong test case',
+  'Wrong expected output',
+  'Description unclear',
+  'Starter code issue',
+  'Other',
+];
+
+function BugReportDialog({
+  open,
+  onClose,
+}: {
+  open: boolean;
+  onClose: () => void;
+}) {
+  const [category, setCategory] = useState(BUG_CATEGORIES[0]);
+  const [description, setDescription] = useState('');
+  const [submitted, setSubmitted] = useState(false);
+
+  useEffect(() => {
+    if (open) {
+      setCategory(BUG_CATEGORIES[0]);
+      setDescription('');
+      setSubmitted(false);
+    }
+  }, [open]);
+
+  const handleSubmit = () => {
+    // TODO: send bug report to backend
+    setSubmitted(true);
+    setTimeout(() => onClose(), 1500);
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={(isOpen) => { if (!isOpen) onClose(); }}>
+      <DialogContent className="max-w-md">
+        <DialogHeader>
+          <DialogTitle>Report a Bug</DialogTitle>
+          <DialogDescription>
+            Help us improve by reporting issues with this problem.
+          </DialogDescription>
+        </DialogHeader>
+        {submitted ? (
+          <div className="py-6 text-center">
+            <div className="mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-success-500/10">
+              <svg className="h-5 w-5 text-success-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M20 6 9 17l-5-5" />
+              </svg>
+            </div>
+            <p className="text-sm font-medium text-foreground">Thanks for your report!</p>
+            <p className="mt-1 text-xs text-muted-foreground">We'll look into it.</p>
+          </div>
+        ) : (
+          <>
+            <div className="mt-2 space-y-4">
+              <div>
+                <label className="mb-1.5 block text-sm font-medium text-foreground">
+                  Category
+                </label>
+                <select
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                >
+                  {BUG_CATEGORIES.map((c) => (
+                    <option key={c} value={c}>{c}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="mb-1.5 block text-sm font-medium text-foreground">
+                  Description
+                </label>
+                <textarea
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  maxLength={1000}
+                  rows={4}
+                  placeholder="Describe the issue..."
+                  className="w-full resize-none rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                />
+              </div>
+            </div>
+            <div className="mt-4 flex justify-end gap-2">
+              <Button variant="outline" size="sm" onClick={onClose}>
+                Cancel
+              </Button>
+              <Button
+                size="sm"
+                onClick={handleSubmit}
+                disabled={!description.trim()}
+              >
+                Submit Report
+              </Button>
+            </div>
+          </>
+        )}
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 interface EditorPanelProps {
   languages: string[];
   activeLanguage: string;
@@ -65,6 +176,8 @@ interface EditorPanelProps {
   onCodeChange: (value: string | undefined) => void;
   onResetCode?: () => void;
   onResetLayout?: () => void;
+  onRun?: () => void;
+  onSubmit?: () => void;
 }
 
 export function EditorPanel({
@@ -75,6 +188,8 @@ export function EditorPanel({
   onCodeChange,
   onResetCode,
   onResetLayout,
+  onRun,
+  onSubmit,
 }: EditorPanelProps) {
   const { theme } = useTheme();
   const { settings } = useEditorSettings();
@@ -82,6 +197,7 @@ export function EditorPanel({
   const modeRef = useRef<{ dispose: () => void } | null>(null);
   const statusBarRef = useRef<HTMLDivElement | null>(null);
   const [editorMounted, setEditorMounted] = useState(false);
+  const [bugReportOpen, setBugReportOpen] = useState(false);
 
   const handleMount = (editor: monacoEditor.IStandaloneCodeEditor) => {
     editorRef.current = editor;
@@ -117,6 +233,28 @@ export function EditorPanel({
     };
   }, [settings.keyBindings, editorMounted]);
 
+  // Register Run/Submit keyboard shortcuts in Monaco
+  useEffect(() => {
+    const editor = editorRef.current;
+    if (!editor) return;
+
+    // Cmd/Ctrl + ' → Run
+    editor.addAction({
+      id: 'codebite-run',
+      label: 'Run Code',
+      keybindings: [KeyMod.CtrlCmd | KeyCode.Quote],
+      run: () => onRun?.(),
+    });
+
+    // Cmd/Ctrl + Enter → Submit
+    editor.addAction({
+      id: 'codebite-submit',
+      label: 'Submit Code',
+      keybindings: [KeyMod.CtrlCmd | KeyCode.Enter],
+      run: () => onSubmit?.(),
+    });
+  }, [editorMounted, onRun, onSubmit]);
+
   return (
     <div className="flex h-full flex-col">
       <Tabs defaultValue="code" className="flex h-full flex-col">
@@ -145,18 +283,38 @@ export function EditorPanel({
             </Select>
           </div>
           <div className="flex items-center">
-            <Button variant="ghost" size="icon" className="h-7 w-7" title="Notes">
-              <StickyNote className="h-3.5 w-3.5" />
-            </Button>
-            <Button variant="ghost" size="icon" className="h-7 w-7" title="Report Bug">
-              <Bug className="h-3.5 w-3.5" />
-            </Button>
-            <Button variant="ghost" size="icon" className="h-7 w-7" title="Reset Code" onClick={onResetCode}>
-              <RotateCcw className="h-3.5 w-3.5" />
-            </Button>
-            <Button variant="ghost" size="icon" className="h-7 w-7" title="Reset Layout" onClick={onResetLayout}>
-              <Columns2 className="h-3.5 w-3.5" />
-            </Button>
+            <Tooltip>
+              <TooltipTrigger>
+                <Button variant="ghost" size="icon" className="h-7 w-7">
+                  <StickyNote className="h-3.5 w-3.5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Notes</TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger>
+                <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setBugReportOpen(true)}>
+                  <Bug className="h-3.5 w-3.5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Report Bug</TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger>
+                <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onResetCode}>
+                  <RotateCcw className="h-3.5 w-3.5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Reset Code</TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger>
+                <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onResetLayout}>
+                  <Columns2 className="h-3.5 w-3.5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Reset Layout</TooltipContent>
+            </Tooltip>
             <SettingsDialog />
           </div>
         </div>
@@ -190,6 +348,7 @@ export function EditorPanel({
           />
         )}
       </Tabs>
+      <BugReportDialog open={bugReportOpen} onClose={() => setBugReportOpen(false)} />
     </div>
   );
 }
