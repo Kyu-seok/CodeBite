@@ -23,10 +23,12 @@
     "monaco-emacs": "^0.3.0",
     "monaco-vim": "^0.4.4",
     "react": "^19.2.4",
+    "react-activity-calendar": "^3.1.1",
     "react-dom": "^19.2.4",
     "react-markdown": "^10.1.0",
     "react-resizable-panels": "^4.7.5",
     "react-router-dom": "^7.13.1",
+    "recharts": "^3.8.1",
     "tailwind-merge": "^3.5.0",
     "tailwindcss-animate": "^1.0.7"
   },
