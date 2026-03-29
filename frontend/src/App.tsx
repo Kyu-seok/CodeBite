@@ -10,6 +10,13 @@ import OAuthCallbackPage from "./pages/OAuthCallbackPage";
 import ProblemListPage from "./pages/ProblemListPage";
 import ProblemDetailPage from "./pages/problem";
 import RoadmapPage from "./pages/roadmap";
+import ProfilePage from "./pages/profile/ProfilePage";
+import ProtectedRoute from "./components/layout/ProtectedRoute";
+import AdminLayout from "./pages/admin/AdminLayout";
+import AdminDashboardPage from "./pages/admin/DashboardPage";
+import AdminProblemListPage from "./pages/admin/ProblemListPage";
+import AdminProblemEditPage from "./pages/admin/ProblemEditPage";
+import AdminUserListPage from "./pages/admin/UserListPage";
 import NotFoundPage from "./pages/NotFoundPage";
 
 function App() {
@@ -24,10 +31,17 @@ function App() {
               <Route element={<WorkspaceLayout />}>
                 <Route path="problems/:slug" element={<ProblemDetailPage />} />
               </Route>
+              <Route element={<AdminLayout />}>
+                <Route path="admin/dashboard" element={<AdminDashboardPage />} />
+                <Route path="admin/problems" element={<AdminProblemListPage />} />
+                <Route path="admin/problems/:id" element={<AdminProblemEditPage />} />
+                <Route path="admin/users" element={<AdminUserListPage />} />
+              </Route>
               <Route index element={<LandingPage />} />
               <Route element={<Layout />}>
                 <Route path="problems" element={<ProblemListPage />} />
                 <Route path="roadmap" element={<RoadmapPage />} />
+                <Route path="profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
                 <Route path="*" element={<NotFoundPage />} />
               </Route>
             </Routes>
