@@ -10,8 +10,10 @@ import com.codebite.problem.dto.TestCaseDto;
 import com.codebite.problem.dto.UpdateProblemRequest;
 import com.codebite.problem.entity.Difficulty;
 import com.codebite.problem.entity.Problem;
+import com.codebite.problem.entity.Tag;
 import com.codebite.problem.entity.TestCase;
 import com.codebite.problem.repository.ProblemRepository;
+import com.codebite.problem.repository.TagRepository;
 import com.codebite.problem.repository.TestCaseRepository;
 import com.codebite.submission.repository.SubmissionRepository;
 import org.springframework.data.domain.Page;
@@ -22,21 +24,26 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Service
 public class ProblemService {
 
     private final ProblemRepository problemRepository;
     private final TestCaseRepository testCaseRepository;
+    private final TagRepository tagRepository;
     private final StarterCodeLoader starterCodeLoader;
     private final SubmissionRepository submissionRepository;
 
     public ProblemService(ProblemRepository problemRepository, TestCaseRepository testCaseRepository,
-                          StarterCodeLoader starterCodeLoader, SubmissionRepository submissionRepository) {
+                          TagRepository tagRepository, StarterCodeLoader starterCodeLoader,
+                          SubmissionRepository submissionRepository) {
         this.problemRepository = problemRepository;
         this.testCaseRepository = testCaseRepository;
+        this.tagRepository = tagRepository;
         this.starterCodeLoader = starterCodeLoader;
         this.submissionRepository = submissionRepository;
     }
@@ -195,6 +202,95 @@ public class ProblemService {
 
         testCase = testCaseRepository.save(testCase);
         return toTestCaseDto(testCase);
+    }
+
+    // ── Admin methods ──
+
+    @Transactional(readOnly = true)
+    public Page<ProblemListItem> listAllProblems(Difficulty difficulty, String search, Boolean published, Pageable pageable) {
+        Specification<Problem> spec = Specification.where(null);
+        if (published != null) {
+            if (published) {
+                spec = spec.and(ProblemSpecifications.isPublished());
+            } else {
+                spec = spec.and((root, query, cb) -> cb.isFalse(root.get("published")));
+            }
+        }
+        if (difficulty != null) {
+            spec = spec.and(ProblemSpecifications.hasDifficulty(difficulty));
+        }
+        if (search != null && !search.isBlank()) {
+            spec = spec.and(ProblemSpecifications.titleContains(search));
+        }
+
+        Map<Long, Double> acceptanceMap = buildAcceptanceMap();
+        return problemRepository.findAll(spec, pageable).map(p -> toListItem(p, Map.of(), acceptanceMap));
+    }
+
+    @Transactional(readOnly = true)
+    public ProblemDetail getAdminProblemById(Long id) {
+        Problem problem = problemRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Problem not found with id: " + id));
+        List<TestCase> sampleCases = testCaseRepository
+                .findByProblemIdAndSampleTrueOrderByOrderIndexAsc(problem.getId());
+        return toDetail(problem, sampleCases);
+    }
+
+    @Transactional
+    public void deleteProblem(Long id) {
+        Problem problem = problemRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Problem not found with id: " + id));
+        problemRepository.delete(problem);
+    }
+
+    @Transactional(readOnly = true)
+    public List<TestCaseDto> getTestCases(Long problemId) {
+        if (!problemRepository.existsById(problemId)) {
+            throw new ResourceNotFoundException("Problem not found with id: " + problemId);
+        }
+        return testCaseRepository.findByProblemIdOrderByOrderIndexAsc(problemId)
+                .stream().map(this::toTestCaseDto).toList();
+    }
+
+    @Transactional
+    public TestCaseDto updateTestCase(Long problemId, Long testCaseId, CreateTestCaseRequest request) {
+        TestCase testCase = testCaseRepository.findById(testCaseId)
+                .orElseThrow(() -> new ResourceNotFoundException("Test case not found: " + testCaseId));
+        if (!testCase.getProblem().getId().equals(problemId)) {
+            throw new ResourceNotFoundException("Test case not found: " + testCaseId);
+        }
+        testCase.setInput(request.input());
+        testCase.setExpectedOutput(request.expectedOutput());
+        if (request.sample() != null) testCase.setSample(request.sample());
+        if (request.orderIndex() != null) testCase.setOrderIndex(request.orderIndex());
+        return toTestCaseDto(testCaseRepository.save(testCase));
+    }
+
+    @Transactional
+    public void deleteTestCase(Long problemId, Long testCaseId) {
+        TestCase testCase = testCaseRepository.findById(testCaseId)
+                .orElseThrow(() -> new ResourceNotFoundException("Test case not found: " + testCaseId));
+        if (!testCase.getProblem().getId().equals(problemId)) {
+            throw new ResourceNotFoundException("Test case not found: " + testCaseId);
+        }
+        testCaseRepository.delete(testCase);
+    }
+
+    @Transactional(readOnly = true)
+    public List<String> getProblemTags(Long problemId) {
+        Problem problem = problemRepository.findById(problemId)
+                .orElseThrow(() -> new ResourceNotFoundException("Problem not found with id: " + problemId));
+        return problem.getTags().stream().map(Tag::getName).sorted().toList();
+    }
+
+    @Transactional
+    public List<String> updateProblemTags(Long problemId, List<Long> tagIds) {
+        Problem problem = problemRepository.findById(problemId)
+                .orElseThrow(() -> new ResourceNotFoundException("Problem not found with id: " + problemId));
+        Set<Tag> tags = new HashSet<>(tagRepository.findAllById(tagIds));
+        problem.setTags(tags);
+        problemRepository.save(problem);
+        return problem.getTags().stream().map(Tag::getName).sorted().toList();
     }
 
     private String slugify(String title) {

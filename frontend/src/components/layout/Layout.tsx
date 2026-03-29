@@ -121,6 +121,11 @@ export default function Layout() {
                   <DropdownMenuItem onSelect={() => navigate('/profile')}>
                     Profile
                   </DropdownMenuItem>
+                  {user?.role === 'ADMIN' && (
+                    <DropdownMenuItem onSelect={() => navigate('/admin/problems')}>
+                      Admin
+                    </DropdownMenuItem>
+                  )}
                   <DropdownMenuItem onSelect={() => { logout(); navigate('/'); }}>
                     Log out
                   </DropdownMenuItem>

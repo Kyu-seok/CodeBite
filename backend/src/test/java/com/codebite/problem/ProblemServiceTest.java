@@ -11,6 +11,7 @@ import com.codebite.problem.entity.Difficulty;
 import com.codebite.problem.entity.Problem;
 import com.codebite.problem.entity.TestCase;
 import com.codebite.problem.repository.ProblemRepository;
+import com.codebite.problem.repository.TagRepository;
 import com.codebite.problem.repository.TestCaseRepository;
 import com.codebite.problem.service.ProblemService;
 import com.codebite.problem.service.StarterCodeLoader;
@@ -49,13 +50,16 @@ class ProblemServiceTest {
     private StarterCodeLoader starterCodeLoader;
 
     @Mock
+    private TagRepository tagRepository;
+
+    @Mock
     private SubmissionRepository submissionRepository;
 
     private ProblemService problemService;
 
     @BeforeEach
     void setUp() {
-        problemService = new ProblemService(problemRepository, testCaseRepository, starterCodeLoader, submissionRepository);
+        problemService = new ProblemService(problemRepository, testCaseRepository, tagRepository, starterCodeLoader, submissionRepository);
     }
 
     private Problem buildProblem(Long id, String title, String slug, boolean published) {

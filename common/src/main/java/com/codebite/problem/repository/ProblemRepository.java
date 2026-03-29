@@ -46,4 +46,8 @@ public interface ProblemRepository extends JpaRepository<Problem, Long>, JpaSpec
 
     @Query("SELECT p FROM Problem p WHERE p.published = true AND p.difficulty = :difficulty AND LOWER(p.title) LIKE LOWER(CONCAT('%', :search, '%'))")
     Page<Problem> findByPublishedTrueAndDifficultyAndTitleSearch(@Param("difficulty") Difficulty difficulty, @Param("search") String search, Pageable pageable);
+
+    // Profile: count published problems per tag
+    @Query("SELECT t.name, t.slug, COUNT(p) FROM Problem p JOIN p.tags t WHERE p.published = true GROUP BY t.name, t.slug")
+    List<Object[]> countPublishedByTag();
 }
