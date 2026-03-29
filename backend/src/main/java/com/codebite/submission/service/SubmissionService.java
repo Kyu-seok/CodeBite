@@ -151,6 +151,7 @@ public class SubmissionService {
                 submission.getStatus(),
                 submission.getRuntimeMs(),
                 submission.getMemoryKb(),
+                submission.getSourceCode(),
                 resultDtos,
                 submission.getCreatedAt(),
                 submission.getNotes()

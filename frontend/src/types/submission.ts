@@ -24,6 +24,7 @@ export interface SubmissionResponse {
   status: SubmissionStatus;
   runtimeMs: number | null;
   memoryKb: number | null;
+  sourceCode: string;
   results: SubmissionResult[];
   createdAt: string;
   notes: string | null;

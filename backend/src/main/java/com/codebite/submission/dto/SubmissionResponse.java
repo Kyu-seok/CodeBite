@@ -12,6 +12,7 @@ public record SubmissionResponse(
         SubmissionStatus status,
         Integer runtimeMs,
         Integer memoryKb,
+        String sourceCode,
         List<SubmissionResultDto> results,
         Instant createdAt,
         String notes

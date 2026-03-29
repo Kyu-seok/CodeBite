@@ -9,6 +9,7 @@ import {
   DialogDescription,
 } from "@/components/ui/Dialog"
 import type { SubmissionListItem, SubmissionStatus } from "@/types/submission"
+import { SubmissionDetail } from "./SubmissionDetail"
 
 const statusColorMap: Record<SubmissionStatus, string> = {
   ACCEPTED: "text-success-500",
@@ -113,9 +114,20 @@ export function SubmissionsPanel({
   onUpdateNote,
 }: SubmissionsPanelProps) {
   const [editingId, setEditingId] = useState<number | null>(null)
+  const [selectedId, setSelectedId] = useState<number | null>(null)
   const editingSubmission = editingId != null
     ? submissions.find((s) => s.id === editingId) ?? null
     : null
+
+  if (selectedId != null) {
+    return (
+      <SubmissionDetail
+        submissionId={selectedId}
+        onBack={() => setSelectedId(null)}
+        onUpdateNote={onUpdateNote}
+      />
+    )
+  }
 
   if (!isAuthenticated) {
     return (
@@ -151,7 +163,8 @@ export function SubmissionsPanel({
       {submissions.map((s, i) => (
         <div
           key={s.id}
-          className="grid grid-cols-[2rem_1fr_4.5rem_5rem_5rem_minmax(4rem,1fr)] items-center gap-2 px-4 py-2.5 text-sm border-b border-border hover:bg-muted/50 transition-colors"
+          onClick={() => setSelectedId(s.id)}
+          className="grid grid-cols-[2rem_1fr_4.5rem_5rem_5rem_minmax(4rem,1fr)] items-center gap-2 px-4 py-2.5 text-sm border-b border-border hover:bg-muted/50 transition-colors cursor-pointer"
         >
           {/* Row number */}
           <span className="text-xs text-muted-foreground">
@@ -210,7 +223,7 @@ export function SubmissionsPanel({
           {/* Notes */}
           <div className="min-w-0">
             <span
-              onClick={() => setEditingId(s.id)}
+              onClick={(e) => { e.stopPropagation(); setEditingId(s.id); }}
               className="text-xs text-muted-foreground truncate block cursor-pointer hover:text-foreground transition-colors"
               title={s.notes || "Add a note..."}
             >
