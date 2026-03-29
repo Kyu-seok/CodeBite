@@ -26,7 +26,6 @@ import { useTheme } from '@/context/ThemeContext';
 import { useEditorSettings } from '@/context/EditorSettingsContext';
 import { SettingsDialog } from './SettingsDialog';
 import {
-  StickyNote,
   Bug,
   RotateCcw,
   Columns2,
@@ -283,14 +282,6 @@ export function EditorPanel({
             </Select>
           </div>
           <div className="flex items-center">
-            <Tooltip>
-              <TooltipTrigger>
-                <Button variant="ghost" size="icon" className="h-7 w-7">
-                  <StickyNote className="h-3.5 w-3.5" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>Notes</TooltipContent>
-            </Tooltip>
             <Tooltip>
               <TooltipTrigger>
                 <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setBugReportOpen(true)}>
