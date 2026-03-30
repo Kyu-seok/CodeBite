@@ -5,8 +5,11 @@ import com.codebite.submission.dto.SubmissionListItem;
 import com.codebite.submission.dto.SubmissionResponse;
 import com.codebite.submission.dto.SubmitRequest;
 import com.codebite.submission.dto.UpdateNoteRequest;
+import com.codebite.common.exception.RateLimitExceededException;
+import com.codebite.common.service.RateLimiterService;
 import com.codebite.submission.service.SubmissionService;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -26,6 +29,9 @@ public class SubmissionController {
 
     private final SubmissionService submissionService;
 
+    @Autowired(required = false)
+    private RateLimiterService rateLimiterService;
+
     public SubmissionController(SubmissionService submissionService) {
         this.submissionService = submissionService;
     }
@@ -35,6 +41,10 @@ public class SubmissionController {
             @PathVariable String slug,
             @Valid @RequestBody SubmitRequest request,
             @AuthenticationPrincipal JwtUserPrincipal principal) {
+        if (rateLimiterService != null
+                && rateLimiterService.isRateLimited("submit", String.valueOf(principal.id()), 10)) {
+            throw new RateLimitExceededException("Too many requests. Please wait before submitting again.");
+        }
         SubmissionResponse response = submissionService.submit(slug, request, principal.id());
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
