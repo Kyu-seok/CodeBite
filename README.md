@@ -10,8 +10,14 @@ CodeBite는 **선행 토픽 순서에 따른 학습 로드맵**을 제공하고,
 
 ## 스크린샷
 
-<!-- 스크린샷 추가 예정 -->
-<!-- 예: 문제 목록, 코드 에디터, 제출 결과, 어드민 대시보드 -->
+### 문제 목록
+![문제 목록](docs/screenshots/problems.jpg)
+
+### 학습 로드맵
+![학습 로드맵](docs/screenshots/roadmap.jpg)
+
+### 코드 에디터
+![코드 에디터](docs/screenshots/editor.jpg)
 
 ## 주요 기능
 
