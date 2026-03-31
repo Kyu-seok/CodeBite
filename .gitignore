@@ -11,3 +11,6 @@ infra/.env
 
 # OS
 .DS_Store
+
+# Personal
+doc_resume/
