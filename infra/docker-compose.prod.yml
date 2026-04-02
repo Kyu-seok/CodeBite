@@ -9,6 +9,12 @@ services:
       POSTGRES_DB: codebite
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d codebite"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
     volumes:
       - codebite-pgdata:/var/lib/postgresql/data
     networks:
@@ -19,6 +25,12 @@ services:
     container_name: codebite-redis
     restart: unless-stopped
     command: ["redis-server", "--appendonly", "yes", "--maxmemory", "128mb", "--maxmemory-policy", "volatile-ttl"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
     volumes:
       - codebite-redis:/data
     networks:
@@ -41,6 +53,12 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_LOG_DIRS: /tmp/kraft-combined-logs
       CLUSTER_ID: codebite-kafka-cluster-id-01
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --list"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
     networks:
       - codebite
 
@@ -52,10 +70,14 @@ services:
     restart: unless-stopped
     deploy:
       replicas: 3
+    stop_grace_period: 30s
     depends_on:
-      - postgres
-      - redis
-      - kafka
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/codebite
       SPRING_DATASOURCE_USERNAME: ${DB_USER}
@@ -86,9 +108,18 @@ services:
       dockerfile: worker/Dockerfile
     image: codebite-worker
     restart: unless-stopped
+    stop_grace_period: 30s
     depends_on:
-      - postgres
-      - kafka
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "-O", "/dev/null", "http://localhost:8081/actuator/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/codebite
       SPRING_DATASOURCE_USERNAME: ${DB_USER}
@@ -104,7 +135,8 @@ services:
     container_name: codebite-nginx
     restart: unless-stopped
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     ports:
       - "80:80"
     volumes:

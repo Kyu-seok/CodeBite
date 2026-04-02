@@ -19,11 +19,42 @@ jobs:
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_SSH_KEY }}
           script: |
+            set -e
             cd ~/CodeBite
+            COMPOSE="docker compose -f infra/docker-compose.prod.yml"
+
+            # Save current commit for rollback
+            PREV_COMMIT=$(git rev-parse HEAD)
+            echo "--- Previous commit: $PREV_COMMIT ---"
+
+            # Pull latest code and rebuild
             git pull origin master
-            docker compose -f infra/docker-compose.prod.yml up -d --build --remove-orphans
+            $COMPOSE up -d --build --remove-orphans
+
+            # Health check loop (max 60s, every 5s)
+            echo "--- Waiting for services to become healthy ---"
+            HEALTHY=false
+            for i in $(seq 1 12); do
+              sleep 5
+              if curl -sf http://localhost/api/health > /dev/null 2>&1; then
+                echo "--- Health check passed (attempt $i) ---"
+                HEALTHY=true
+                break
+              fi
+              echo "--- Health check attempt $i failed, retrying... ---"
+            done
+
+            if [ "$HEALTHY" = false ]; then
+              echo "--- HEALTH CHECK FAILED — Rolling back to $PREV_COMMIT ---"
+              git checkout $PREV_COMMIT
+              $COMPOSE up -d --build --remove-orphans
+              echo "--- Rollback complete, waiting for recovery ---"
+              sleep 30
+              curl -sf http://localhost/api/health > /dev/null 2>&1 && echo "--- Rollback healthy ---" || echo "--- WARNING: Rollback also unhealthy ---"
+              exit 1
+            fi
+
+            # Cleanup
             docker image prune -f
             echo "--- Post-deploy status ---"
-            docker compose -f infra/docker-compose.prod.yml ps
-            sleep 35
-            curl -f http://localhost/api/health || echo "HEALTH CHECK FAILED"
+            $COMPOSE ps
