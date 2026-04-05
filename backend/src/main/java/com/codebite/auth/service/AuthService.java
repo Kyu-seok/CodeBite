@@ -57,7 +57,7 @@ public class AuthService {
         String stateProvider = stateService.validateState(state);
         if (!providerName.equalsIgnoreCase(stateProvider)) {
             throw new com.codebite.common.exception.InvalidOAuthStateException(
-                    "State provider mismatch");
+                    "error.oauth.stateMismatch");
         }
 
         OAuthProvider provider = parseProvider(providerName);
@@ -96,7 +96,7 @@ public class AuthService {
         try {
             return OAuthProvider.valueOf(providerName.toUpperCase());
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Unsupported OAuth provider: " + providerName);
+            throw new com.codebite.common.exception.UnsupportedValueException("error.oauth.providerUnsupported", providerName);
         }
     }
 }

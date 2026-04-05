@@ -49,7 +49,7 @@ public class OAuthStateService {
 
             return claims.get("provider", String.class);
         } catch (JwtException | IllegalArgumentException e) {
-            throw new InvalidOAuthStateException("Invalid or expired OAuth state");
+            throw new InvalidOAuthStateException("error.oauth.stateInvalid");
         }
     }
 }

@@ -56,7 +56,7 @@ public class UserService {
     @Transactional(readOnly = true)
     public UserProfile getUserProfile(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("error.user.notFound", userId));
         return toProfile(user);
     }
 
@@ -70,6 +70,7 @@ public class UserService {
                 user.getRecentLanguage(),
                 user.getEditorSettings(),
                 user.getThemePreference(),
+                user.getLocale(),
                 user.getCreatedAt()
         );
     }
@@ -77,7 +78,7 @@ public class UserService {
     @Transactional
     public void updateEditorSettings(Long userId, String editorSettings) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("error.user.notFound", userId));
         user.setEditorSettings(editorSettings);
         userRepository.save(user);
     }
@@ -85,8 +86,16 @@ public class UserService {
     @Transactional
     public void updateThemePreference(Long userId, String themePreference) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("error.user.notFound", userId));
         user.setThemePreference(themePreference);
+        userRepository.save(user);
+    }
+
+    @Transactional
+    public void updateLocale(Long userId, String locale) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("error.user.notFound", userId));
+        user.setLocale(locale);
         userRepository.save(user);
     }
 

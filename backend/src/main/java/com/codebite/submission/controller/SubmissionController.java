@@ -43,7 +43,7 @@ public class SubmissionController {
             @AuthenticationPrincipal JwtUserPrincipal principal) {
         if (rateLimiterService != null
                 && rateLimiterService.isRateLimited("submit", String.valueOf(principal.id()), 10)) {
-            throw new RateLimitExceededException("Too many requests. Please wait before submitting again.");
+            throw new RateLimitExceededException("error.ratelimit.submit");
         }
         SubmissionResponse response = submissionService.submit(slug, request, principal.id());
         return ResponseEntity.status(HttpStatus.CREATED).body(response);

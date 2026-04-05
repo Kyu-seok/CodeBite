@@ -159,7 +159,7 @@ class RunServiceTest {
         when(problemRepository.findBySlug("two-sum")).thenReturn(Optional.of(problem));
         when(judgeService.isLanguageSupported("rust")).thenReturn(false);
 
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(com.codebite.common.exception.UnsupportedValueException.class,
                 () -> runService.run("two-sum", new SubmitRequest("rust", "code")));
     }
 }

@@ -127,7 +127,7 @@ class SubmissionServiceTest {
         when(problemRepository.findBySlug("two-sum")).thenReturn(Optional.of(problem));
         when(judgeService.isLanguageSupported("rust")).thenReturn(false);
 
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(com.codebite.common.exception.UnsupportedValueException.class,
                 () -> submissionService.submit("two-sum", new SubmitRequest("rust", "code"), 1L));
         verify(submissionEventProducer, never()).send(any(SubmissionEvent.class));
     }

@@ -2,7 +2,14 @@ package com.codebite.common.exception;
 
 public class InvalidOAuthStateException extends RuntimeException {
 
-    public InvalidOAuthStateException(String message) {
-        super(message);
+    private final String messageCode;
+
+    public InvalidOAuthStateException(String messageCode) {
+        super(messageCode);
+        this.messageCode = messageCode;
+    }
+
+    public String getMessageCode() {
+        return messageCode;
     }
 }

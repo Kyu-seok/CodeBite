@@ -1,5 +1,6 @@
 package com.codebite.auth.oauth;
 
+import com.codebite.common.exception.UnsupportedValueException;
 import com.codebite.user.entity.OAuthProvider;
 import org.springframework.stereotype.Component;
 
@@ -20,7 +21,7 @@ public class OAuthClientFactory {
     public OAuthProviderClient getClient(OAuthProvider provider) {
         OAuthProviderClient client = clients.get(provider);
         if (client == null) {
-            throw new IllegalArgumentException("Unsupported OAuth provider: " + provider);
+            throw new UnsupportedValueException("error.oauth.providerUnsupported", provider);
         }
         return client;
     }

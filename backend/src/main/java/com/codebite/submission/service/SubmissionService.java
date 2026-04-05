@@ -1,6 +1,7 @@
 package com.codebite.submission.service;
 
 import com.codebite.common.exception.ResourceNotFoundException;
+import com.codebite.common.exception.UnsupportedValueException;
 import com.codebite.judge.service.DriverCodeLoader;
 import com.codebite.judge.service.JudgeService;
 import com.codebite.problem.entity.Problem;
@@ -64,11 +65,11 @@ public class SubmissionService {
 
     public SubmissionResponse submit(String slug, SubmitRequest request, Long userId) {
         Problem problem = problemRepository.findBySlug(slug)
-                .orElseThrow(() -> new ResourceNotFoundException("Problem not found: " + slug));
+                .orElseThrow(() -> new ResourceNotFoundException("error.problem.notFound", slug));
 
         String language = request.language().toLowerCase();
         if (!judgeService.isLanguageSupported(language)) {
-            throw new IllegalArgumentException("Unsupported language: " + language);
+            throw new UnsupportedValueException("error.language.unsupported", language);
         }
 
         String driverTemplate = driverCodeLoader.getDriverCode(problem.getSlug(), language);
@@ -90,10 +91,10 @@ public class SubmissionService {
     @Transactional(readOnly = true)
     public SubmissionResponse getSubmission(Long id, Long userId) {
         Submission submission = submissionRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Submission not found: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("error.submission.notFound", id));
 
         if (!submission.getUser().getId().equals(userId)) {
-            throw new ResourceNotFoundException("Submission not found: " + id);
+            throw new ResourceNotFoundException("error.submission.notFound", id);
         }
 
         List<SubmissionResult> results = submissionResultRepository.findBySubmissionIdOrderById(id);
@@ -106,7 +107,7 @@ public class SubmissionService {
     @Transactional(readOnly = true)
     public List<SubmissionListItem> getUserSubmissions(String slug, Long userId) {
         Problem problem = problemRepository.findBySlug(slug)
-                .orElseThrow(() -> new ResourceNotFoundException("Problem not found: " + slug));
+                .orElseThrow(() -> new ResourceNotFoundException("error.problem.notFound", slug));
 
         List<Submission> submissions = submissionRepository
                 .findByUserIdAndProblemIdOrderByCreatedAtDesc(userId, problem.getId());
@@ -117,7 +118,7 @@ public class SubmissionService {
     @Transactional
     protected Submission saveSubmission(Long userId, Problem problem, SubmitRequest request) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + userId));
+                .orElseThrow(() -> new ResourceNotFoundException("error.user.notFound", userId));
 
         Submission submission = new Submission();
         submission.setUser(user);
@@ -173,10 +174,10 @@ public class SubmissionService {
     @Transactional
     public void updateNote(Long id, String notes, Long userId) {
         Submission submission = submissionRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Submission not found: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("error.submission.notFound", id));
 
         if (!submission.getUser().getId().equals(userId)) {
-            throw new ResourceNotFoundException("Submission not found: " + id);
+            throw new ResourceNotFoundException("error.submission.notFound", id);
         }
 
         submission.setNotes(notes);

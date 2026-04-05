@@ -35,7 +35,7 @@ public class RunController {
             HttpServletRequest httpRequest) {
         if (rateLimiterService != null
                 && rateLimiterService.isRateLimited("run", getClientIp(httpRequest), 5)) {
-            throw new RateLimitExceededException("Too many requests. Please wait before running again.");
+            throw new RateLimitExceededException("error.ratelimit.run");
         }
         RunResponse response = runService.run(slug, request);
         return ResponseEntity.ok(response);

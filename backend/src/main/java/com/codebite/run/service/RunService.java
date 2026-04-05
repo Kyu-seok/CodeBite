@@ -1,6 +1,7 @@
 package com.codebite.run.service;
 
 import com.codebite.common.exception.ResourceNotFoundException;
+import com.codebite.common.exception.UnsupportedValueException;
 import com.codebite.judge.dto.JudgeResponse;
 import com.codebite.judge.service.DriverCodeLoader;
 import com.codebite.judge.service.JudgeService;
@@ -37,11 +38,11 @@ public class RunService {
 
     public RunResponse run(String slug, SubmitRequest request) {
         Problem problem = problemRepository.findBySlug(slug)
-                .orElseThrow(() -> new ResourceNotFoundException("Problem not found: " + slug));
+                .orElseThrow(() -> new ResourceNotFoundException("error.problem.notFound", slug));
 
         String language = request.language().toLowerCase();
         if (!judgeService.isLanguageSupported(language)) {
-            throw new IllegalArgumentException("Unsupported language: " + language);
+            throw new UnsupportedValueException("error.language.unsupported", language);
         }
 
         String driverTemplate = driverCodeLoader.getDriverCode(problem.getSlug(), language);
