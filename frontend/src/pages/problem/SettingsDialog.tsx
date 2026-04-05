@@ -18,12 +18,15 @@ import { Switch } from "@/components/ui/Switch";
 import { Button } from "@/components/ui/Button";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/Tooltip";
 import { Settings } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useEditorSettings } from "@/context/EditorSettingsContext";
 
 const FONT_SIZES = [12, 14, 16, 18, 20];
 const TAB_SIZES = [2, 4, 8];
 
 export function SettingsDialog() {
+  const { t } = useTranslation("problem");
+  const { t: tc } = useTranslation("common");
   const { settings, updateSettings } = useEditorSettings();
 
   return (
@@ -36,20 +39,20 @@ export function SettingsDialog() {
             </Button>
           </DialogTrigger>
         </TooltipTrigger>
-        <TooltipContent>Settings</TooltipContent>
+        <TooltipContent>{t("settings.title")}</TooltipContent>
       </Tooltip>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-center">Editor Settings</DialogTitle>
+          <DialogTitle className="text-center">{t("settings.editorSettings")}</DialogTitle>
         </DialogHeader>
 
         <div className="mt-4 space-y-6">
           {/* Font Size */}
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium">Font Size</p>
+              <p className="text-sm font-medium">{t("settings.fontSize")}</p>
               <p className="text-xs text-muted-foreground">
-                Choose the font size of the editor.
+                {t("settings.fontSizeDescription")}
               </p>
             </div>
             <Select
@@ -72,9 +75,9 @@ export function SettingsDialog() {
           {/* Tab Size */}
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium">Tab Size</p>
+              <p className="text-sm font-medium">{t("settings.tabSize")}</p>
               <p className="text-xs text-muted-foreground">
-                Update the default tab size of the editor.
+                {t("settings.tabSizeDescription")}
               </p>
             </div>
             <Select
@@ -87,7 +90,7 @@ export function SettingsDialog() {
               <SelectContent>
                 {TAB_SIZES.map((size) => (
                   <SelectItem key={size} value={String(size)}>
-                    {size} Spaces
+                    {t("settings.spaces", { n: size })}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -97,9 +100,9 @@ export function SettingsDialog() {
           {/* Editor Key Bindings */}
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium">Editor Key Bindings</p>
+              <p className="text-sm font-medium">{t("settings.keyBindings")}</p>
               <p className="text-xs text-muted-foreground">
-                Switch to Vim key bindings.
+                {t("settings.keyBindingsDescription")}
               </p>
             </div>
             <Select
@@ -112,7 +115,7 @@ export function SettingsDialog() {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="normal">Normal</SelectItem>
+                <SelectItem value="normal">{t("settings.normal")}</SelectItem>
                 <SelectItem value="vim">Vim</SelectItem>
                 <SelectItem value="emacs">Emacs</SelectItem>
               </SelectContent>
@@ -122,9 +125,9 @@ export function SettingsDialog() {
           {/* IntelliSense */}
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium">IntelliSense</p>
+              <p className="text-sm font-medium">{t("settings.intelliSense")}</p>
               <p className="text-xs text-muted-foreground">
-                Type-aware completions, signature help, and error highlighting.
+                {t("settings.intelliSenseDescription")}
               </p>
             </div>
             <Switch
@@ -136,7 +139,7 @@ export function SettingsDialog() {
 
         <DialogFooter className="mt-6">
           <DialogClose asChild>
-            <Button variant="outline">Close</Button>
+            <Button variant="outline">{tc("button.close")}</Button>
           </DialogClose>
         </DialogFooter>
       </DialogContent>

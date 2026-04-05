@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { Link, useNavigate, useSearchParams } from "react-router-dom"
+import { useTranslation } from "react-i18next"
 import { useProblems } from "../hooks/useProblems"
 import { useProblemStats } from "../hooks/useProblemStats"
 import { useTags } from "../hooks/useTags"
@@ -72,6 +73,8 @@ function StatusIcon({ status }: { status: "SOLVED" | "ATTEMPTED" | null }) {
 }
 
 export default function ProblemListPage() {
+  const { t } = useTranslation("problem")
+  const { t: tc } = useTranslation("common")
   const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
   const page = Number(searchParams.get("page") || "0")
@@ -88,7 +91,7 @@ export default function ProblemListPage() {
   )
 
   useEffect(() => {
-    document.title = "Problems | CodeBite"
+    document.title = t("list.title")
   }, [])
 
   // Debounce search input → URL param
@@ -158,7 +161,7 @@ export default function ProblemListPage() {
   return (
     <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
       <div className="flex items-center justify-between mb-4">
-        <h1 className="text-2xl font-bold text-foreground">Problems</h1>
+        <h1 className="text-2xl font-bold text-foreground">{t("list.heading")}</h1>
         <div className="flex items-center gap-3">
           <Button
             variant="outline"
@@ -170,10 +173,10 @@ export default function ProblemListPage() {
             <svg className="w-4 h-4 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M16 3h5v5" /><path d="M4 20 21 3" /><path d="M21 16v5h-5" /><path d="m15 15 6 6" /><path d="M4 4l5 5" />
             </svg>
-            Random
+            {t("list.random")}
           </Button>
           <Input
-            placeholder="Search problems..."
+            placeholder={t("list.search")}
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             inputSize="sm"
@@ -187,10 +190,10 @@ export default function ProblemListPage() {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="ALL">All Difficulties</SelectItem>
+              <SelectItem value="ALL">{t("list.allDifficulties")}</SelectItem>
               {DIFFICULTIES.map((d) => (
                 <SelectItem key={d} value={d}>
-                  {d}
+                  {tc(`difficulty.${d.toLowerCase()}`)}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -220,17 +223,17 @@ export default function ProblemListPage() {
         <div className="flex items-center gap-6 mb-4 p-4 rounded-lg border border-border bg-card">
           <div className="text-sm font-medium text-foreground">
             {stats.solvedEasy + stats.solvedMedium + stats.solvedHard}
-            <span className="text-muted-foreground"> / {stats.totalEasy + stats.totalMedium + stats.totalHard} Solved</span>
+            <span className="text-muted-foreground"> / {stats.totalEasy + stats.totalMedium + stats.totalHard} {t("list.solved")}</span>
           </div>
           <div className="flex items-center gap-4 text-xs">
             <span className="text-success-600 dark:text-success-400">
-              Easy {stats.solvedEasy}/{stats.totalEasy}
+              {tc("difficulty.easy")} {stats.solvedEasy}/{stats.totalEasy}
             </span>
             <span className="text-warning-600 dark:text-warning-400">
-              Medium {stats.solvedMedium}/{stats.totalMedium}
+              {tc("difficulty.medium")} {stats.solvedMedium}/{stats.totalMedium}
             </span>
             <span className="text-error-600 dark:text-error-400">
-              Hard {stats.solvedHard}/{stats.totalHard}
+              {tc("difficulty.hard")} {stats.solvedHard}/{stats.totalHard}
             </span>
           </div>
           {(stats.totalEasy + stats.totalMedium + stats.totalHard) > 0 && (
@@ -263,7 +266,7 @@ export default function ProblemListPage() {
 
       {data && data.content.length === 0 && (
         <p className="text-muted-foreground text-center py-12">
-          No problems found.
+          {t("list.noProblems")}
         </p>
       )}
 
@@ -276,11 +279,11 @@ export default function ProblemListPage() {
                   <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase w-12">
                     &nbsp;
                   </th>
-                  <SortableHeader label="#" field="id" currentSort={sort} onSort={setSort} className="w-16" />
-                  <SortableHeader label="Title" field="title" currentSort={sort} onSort={setSort} />
-                  <SortableHeader label="Difficulty" field="difficulty" currentSort={sort} onSort={setSort} className="w-28" />
+                  <SortableHeader label={t("list.columnNumber")} field="id" currentSort={sort} onSort={setSort} className="w-16" />
+                  <SortableHeader label={t("list.columnTitle")} field="title" currentSort={sort} onSort={setSort} />
+                  <SortableHeader label={t("list.columnDifficulty")} field="difficulty" currentSort={sort} onSort={setSort} className="w-28" />
                   <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase w-28">
-                    Acceptance
+                    {t("list.columnAcceptance")}
                   </th>
                 </tr>
               </thead>
@@ -330,10 +333,10 @@ export default function ProblemListPage() {
                 onClick={() => setPage(page - 1)}
                 disabled={data.first}
               >
-                Previous
+                {tc("button.previous")}
               </Button>
               <span className="text-sm text-muted-foreground">
-                Page {data.number + 1} of {data.totalPages}
+                {tc("pagination.pageOf", { current: data.number + 1, total: data.totalPages })}
               </span>
               <Button
                 variant="outline"
@@ -341,7 +344,7 @@ export default function ProblemListPage() {
                 onClick={() => setPage(page + 1)}
                 disabled={data.last}
               >
-                Next
+                {tc("button.next")}
               </Button>
             </div>
           )}

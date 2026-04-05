@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 import type { ProfileStats } from '@/types/profile';
 
@@ -12,6 +13,7 @@ const DIFFICULTIES = [
 ];
 
 export function SolveProgressCard({ stats }: SolveProgressCardProps) {
+  const { t } = useTranslation('profile');
   const counts = {
     Easy: { solved: stats.solvedEasy, total: stats.totalEasy },
     Medium: { solved: stats.solvedMedium, total: stats.totalMedium },
@@ -27,7 +29,7 @@ export function SolveProgressCard({ stats }: SolveProgressCardProps) {
 
   return (
     <div className="rounded-xl border border-border bg-card p-5">
-      <h3 className="mb-4 text-sm font-medium text-foreground">Solve Progress</h3>
+      <h3 className="mb-4 text-sm font-medium text-foreground">{t('progress.title')}</h3>
 
       <div className="flex items-center gap-8">
         {/* Donut */}
@@ -58,7 +60,7 @@ export function SolveProgressCard({ stats }: SolveProgressCardProps) {
             <span className="text-2xl font-bold tabular-nums text-foreground">
               {stats.totalSolved}
             </span>
-            <span className="text-[11px] text-muted-foreground">Solved</span>
+            <span className="text-[11px] text-muted-foreground">{t('progress.solved')}</span>
           </div>
         </div>
 

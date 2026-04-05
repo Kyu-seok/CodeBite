@@ -1,4 +1,5 @@
 import { useRef, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import Editor from '@monaco-editor/react';
 import type { editor as monacoEditor } from 'monaco-editor';
 import { KeyMod, KeyCode } from 'monaco-editor';
@@ -65,13 +66,15 @@ const LANGUAGE_LABELS: Record<string, string> = {
   c: 'C',
 };
 
-const BUG_CATEGORIES = [
-  'Wrong test case',
-  'Wrong expected output',
-  'Description unclear',
-  'Starter code issue',
-  'Other',
-];
+const BUG_CATEGORY_KEYS = [
+  'wrongTestCase',
+  'wrongExpectedOutput',
+  'descriptionUnclear',
+  'starterCodeIssue',
+  'other',
+] as const;
+
+type BugCategoryKey = typeof BUG_CATEGORY_KEYS[number];
 
 function BugReportDialog({
   open,
@@ -80,13 +83,15 @@ function BugReportDialog({
   open: boolean;
   onClose: () => void;
 }) {
-  const [category, setCategory] = useState(BUG_CATEGORIES[0]);
+  const { t } = useTranslation('problem');
+  const { t: tc } = useTranslation('common');
+  const [category, setCategory] = useState<BugCategoryKey>(BUG_CATEGORY_KEYS[0]);
   const [description, setDescription] = useState('');
   const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
     if (open) {
-      setCategory(BUG_CATEGORIES[0]);
+      setCategory(BUG_CATEGORY_KEYS[0]);
       setDescription('');
       setSubmitted(false);
     }
@@ -102,9 +107,9 @@ function BugReportDialog({
     <Dialog open={open} onOpenChange={(isOpen) => { if (!isOpen) onClose(); }}>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>Report a Bug</DialogTitle>
+          <DialogTitle>{t('bugReport.title')}</DialogTitle>
           <DialogDescription>
-            Help us improve by reporting issues with this problem.
+            {t('bugReport.description')}
           </DialogDescription>
         </DialogHeader>
         {submitted ? (
@@ -114,50 +119,50 @@ function BugReportDialog({
                 <path d="M20 6 9 17l-5-5" />
               </svg>
             </div>
-            <p className="text-sm font-medium text-foreground">Thanks for your report!</p>
-            <p className="mt-1 text-xs text-muted-foreground">We'll look into it.</p>
+            <p className="text-sm font-medium text-foreground">{t('bugReport.thanks')}</p>
+            <p className="mt-1 text-xs text-muted-foreground">{t('bugReport.willLookInto')}</p>
           </div>
         ) : (
           <>
             <div className="mt-2 space-y-4">
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-foreground">
-                  Category
+                  {t('bugReport.category')}
                 </label>
                 <select
                   value={category}
-                  onChange={(e) => setCategory(e.target.value)}
+                  onChange={(e) => setCategory(e.target.value as BugCategoryKey)}
                   className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                 >
-                  {BUG_CATEGORIES.map((c) => (
-                    <option key={c} value={c}>{c}</option>
+                  {BUG_CATEGORY_KEYS.map((c) => (
+                    <option key={c} value={c}>{t(`bugReport.${c}`)}</option>
                   ))}
                 </select>
               </div>
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-foreground">
-                  Description
+                  {t('bugReport.descriptionLabel')}
                 </label>
                 <textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   maxLength={1000}
                   rows={4}
-                  placeholder="Describe the issue..."
+                  placeholder={t('bugReport.placeholder')}
                   className="w-full resize-none rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                 />
               </div>
             </div>
             <div className="mt-4 flex justify-end gap-2">
               <Button variant="outline" size="sm" onClick={onClose}>
-                Cancel
+                {tc('button.cancel')}
               </Button>
               <Button
                 size="sm"
                 onClick={handleSubmit}
                 disabled={!description.trim()}
               >
-                Submit Report
+                {t('bugReport.submit')}
               </Button>
             </div>
           </>
@@ -190,6 +195,7 @@ export function EditorPanel({
   onRun,
   onSubmit,
 }: EditorPanelProps) {
+  const { t } = useTranslation('problem');
   const { theme } = useTheme();
   const { settings } = useEditorSettings();
   const editorRef = useRef<monacoEditor.IStandaloneCodeEditor | null>(null);
@@ -262,7 +268,7 @@ export function EditorPanel({
             <TabsList>
               <TabsTrigger value="code" className="gap-1.5 cursor-default">
                 <CodeIcon />
-                Code
+                {t('editor.code')}
               </TabsTrigger>
             </TabsList>
             <Select value={activeLanguage} onValueChange={onLanguageChange}>
@@ -271,7 +277,7 @@ export function EditorPanel({
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectLabel>Languages</SelectLabel>
+                  <SelectLabel>{t('editor.languages')}</SelectLabel>
                   {languages.map((lang) => (
                     <SelectItem key={lang} value={lang}>
                       {LANGUAGE_LABELS[lang] || lang}
@@ -288,7 +294,7 @@ export function EditorPanel({
                   <Bug className="h-3.5 w-3.5" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>Report Bug</TooltipContent>
+              <TooltipContent>{t('editor.reportBug')}</TooltipContent>
             </Tooltip>
             <Tooltip>
               <TooltipTrigger>
@@ -296,7 +302,7 @@ export function EditorPanel({
                   <RotateCcw className="h-3.5 w-3.5" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>Reset Code</TooltipContent>
+              <TooltipContent>{t('editor.resetCode')}</TooltipContent>
             </Tooltip>
             <Tooltip>
               <TooltipTrigger>
@@ -304,7 +310,7 @@ export function EditorPanel({
                   <Columns2 className="h-3.5 w-3.5" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>Reset Layout</TooltipContent>
+              <TooltipContent>{t('editor.resetLayout')}</TooltipContent>
             </Tooltip>
             <SettingsDialog />
           </div>

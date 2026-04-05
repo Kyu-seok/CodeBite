@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Badge } from '@/components/ui/Badge';
@@ -21,6 +22,8 @@ import type { Difficulty } from '@/types/problem';
 const DIFFICULTIES: Difficulty[] = ['EASY', 'MEDIUM', 'HARD'];
 
 export default function ProblemEditPage() {
+  const { t } = useTranslation('admin');
+  const { t: tc } = useTranslation('common');
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const isNew = id === 'new';
@@ -162,16 +165,16 @@ export default function ProblemEditPage() {
             </svg>
           </button>
           <h1 className="text-xl font-bold text-foreground">
-            {isNew ? 'New Problem' : 'Edit Problem'}
+            {isNew ? t('edit.newProblem') : t('edit.editProblem')}
           </h1>
           {!isNew && (
             <Badge variant={published ? 'success' : 'secondary'} className="text-[10px]">
-              {published ? 'Published' : 'Draft'}
+              {published ? t('edit.published') : t('edit.draft')}
             </Badge>
           )}
         </div>
         <Button onClick={handleSave} disabled={saving || !title || !description}>
-          {saving ? 'Saving...' : 'Save'}
+          {saving ? t('edit.saving') : t('edit.save')}
         </Button>
       </div>
 
@@ -179,28 +182,28 @@ export default function ProblemEditPage() {
         {/* Main form */}
         <div className="lg:col-span-2 space-y-4">
           <div>
-            <label className="mb-1 block text-xs font-medium text-muted-foreground">Title</label>
-            <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Problem title" />
+            <label className="mb-1 block text-xs font-medium text-muted-foreground">{t('edit.title')}</label>
+            <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder={t('edit.titlePlaceholder')} />
           </div>
 
           <div>
-            <label className="mb-1 block text-xs font-medium text-muted-foreground">Description (Markdown)</label>
+            <label className="mb-1 block text-xs font-medium text-muted-foreground">{t('edit.description')}</label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={12}
-              placeholder="Write problem description in markdown..."
+              placeholder={t('edit.descriptionPlaceholder')}
               className="w-full resize-y rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground font-mono placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
             />
           </div>
 
           <div>
-            <label className="mb-1 block text-xs font-medium text-muted-foreground">Constraints</label>
+            <label className="mb-1 block text-xs font-medium text-muted-foreground">{t('edit.constraints')}</label>
             <textarea
               value={constraints}
               onChange={(e) => setConstraints(e.target.value)}
               rows={3}
-              placeholder="e.g. 1 <= nums.length <= 10^4"
+              placeholder={t('edit.constraintsPlaceholder')}
               className="w-full resize-y rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground font-mono placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
             />
           </div>
@@ -210,58 +213,58 @@ export default function ProblemEditPage() {
             <div>
               <div className="mb-2 flex items-center justify-between">
                 <label className="text-xs font-medium text-muted-foreground">
-                  Test Cases ({testCases.length})
+                  {t('edit.testCases', { count: testCases.length })}
                 </label>
                 <button
                   onClick={() => setEditingTc({ input: '', expectedOutput: '', sample: false, orderIndex: testCases.length })}
                   className="text-xs text-accent hover:text-accent/80 transition-colors"
                 >
-                  + Add Test Case
+                  + {t('edit.addTestCase')}
                 </button>
               </div>
 
               <div className="space-y-2">
-                {testCases.map((tc) => (
-                  <div key={tc.id} className="rounded-lg border border-border p-3">
+                {testCases.map((testCase) => (
+                  <div key={testCase.id} className="rounded-lg border border-border p-3">
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
-                        <span className="text-xs font-medium text-foreground">#{tc.orderIndex}</span>
-                        {tc.sample && (
-                          <Badge variant="outline" className="text-[10px]">Sample</Badge>
+                        <span className="text-xs font-medium text-foreground">#{testCase.orderIndex}</span>
+                        {testCase.sample && (
+                          <Badge variant="outline" className="text-[10px]">{t('edit.sample')}</Badge>
                         )}
                       </div>
                       <div className="flex gap-1">
                         <button
                           onClick={() => setEditingTc({
-                            id: tc.id,
-                            input: tc.input,
-                            expectedOutput: tc.expectedOutput,
-                            sample: tc.sample,
-                            orderIndex: tc.orderIndex,
+                            id: testCase.id,
+                            input: testCase.input,
+                            expectedOutput: testCase.expectedOutput,
+                            sample: testCase.sample,
+                            orderIndex: testCase.orderIndex,
                           })}
                           className="rounded px-2 py-0.5 text-xs text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
                         >
-                          Edit
+                          {tc('button.edit')}
                         </button>
                         <button
-                          onClick={() => handleDeleteTestCase(tc.id)}
+                          onClick={() => handleDeleteTestCase(testCase.id)}
                           className="rounded px-2 py-0.5 text-xs text-destructive hover:bg-destructive/10 transition-colors"
                         >
-                          Delete
+                          {tc('button.delete')}
                         </button>
                       </div>
                     </div>
                     <div className="grid grid-cols-2 gap-2 text-xs">
                       <div>
-                        <span className="text-muted-foreground">Input:</span>
+                        <span className="text-muted-foreground">{t('edit.input')}:</span>
                         <pre className="mt-0.5 rounded bg-muted px-2 py-1 text-foreground whitespace-pre-wrap break-all">
-                          {tc.input}
+                          {testCase.input}
                         </pre>
                       </div>
                       <div>
-                        <span className="text-muted-foreground">Expected:</span>
+                        <span className="text-muted-foreground">{t('edit.expected')}:</span>
                         <pre className="mt-0.5 rounded bg-muted px-2 py-1 text-foreground whitespace-pre-wrap break-all">
-                          {tc.expectedOutput}
+                          {testCase.expectedOutput}
                         </pre>
                       </div>
                     </div>
@@ -274,7 +277,7 @@ export default function ProblemEditPage() {
                 <div className="mt-3 rounded-lg border border-accent/30 bg-accent/5 p-3 space-y-2">
                   <div className="grid grid-cols-2 gap-2">
                     <div>
-                      <label className="mb-0.5 block text-xs text-muted-foreground">Input</label>
+                      <label className="mb-0.5 block text-xs text-muted-foreground">{t('edit.inputLabel')}</label>
                       <textarea
                         value={editingTc.input || ''}
                         onChange={(e) => setEditingTc({ ...editingTc, input: e.target.value })}
@@ -283,7 +286,7 @@ export default function ProblemEditPage() {
                       />
                     </div>
                     <div>
-                      <label className="mb-0.5 block text-xs text-muted-foreground">Expected Output</label>
+                      <label className="mb-0.5 block text-xs text-muted-foreground">{t('edit.expectedOutputLabel')}</label>
                       <textarea
                         value={editingTc.expectedOutput || ''}
                         onChange={(e) => setEditingTc({ ...editingTc, expectedOutput: e.target.value })}
@@ -300,10 +303,10 @@ export default function ProblemEditPage() {
                         onChange={(e) => setEditingTc({ ...editingTc, sample: e.target.checked })}
                         className="rounded"
                       />
-                      Sample (visible to users)
+                      {t('edit.sampleVisible')}
                     </label>
                     <div className="flex items-center gap-1.5">
-                      <label className="text-xs text-muted-foreground">Order:</label>
+                      <label className="text-xs text-muted-foreground">{t('edit.order')}:</label>
                       <input
                         type="number"
                         value={editingTc.orderIndex ?? 0}
@@ -317,14 +320,14 @@ export default function ProblemEditPage() {
                       onClick={() => setEditingTc(null)}
                       className="rounded px-3 py-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
                     >
-                      Cancel
+                      {tc('button.cancel')}
                     </button>
                     <button
                       onClick={handleAddTestCase}
                       disabled={!editingTc.input || !editingTc.expectedOutput}
                       className="rounded bg-accent px-3 py-1 text-xs font-medium text-white hover:bg-accent/90 transition-colors disabled:opacity-50"
                     >
-                      {editingTc.id ? 'Update' : 'Add'}
+                      {editingTc.id ? tc('button.update') : tc('button.add')}
                     </button>
                   </div>
                 </div>
@@ -336,7 +339,7 @@ export default function ProblemEditPage() {
         {/* Sidebar */}
         <div className="space-y-4">
           <div className="rounded-lg border border-border p-4">
-            <label className="mb-2 block text-xs font-medium text-muted-foreground">Difficulty</label>
+            <label className="mb-2 block text-xs font-medium text-muted-foreground">{t('edit.difficulty')}</label>
             <div className="flex gap-2">
               {DIFFICULTIES.map((d) => (
                 <button
@@ -359,7 +362,7 @@ export default function ProblemEditPage() {
           </div>
 
           <div className="rounded-lg border border-border p-4">
-            <label className="mb-2 block text-xs font-medium text-muted-foreground">Visibility</label>
+            <label className="mb-2 block text-xs font-medium text-muted-foreground">{t('edit.visibility')}</label>
             <label className="flex items-center gap-2 text-sm text-foreground cursor-pointer">
               <input
                 type="checkbox"
@@ -367,16 +370,16 @@ export default function ProblemEditPage() {
                 onChange={(e) => setPublished(e.target.checked)}
                 className="rounded"
               />
-              Published
+              {t('edit.published')}
             </label>
             <p className="mt-1 text-[11px] text-muted-foreground">
-              {published ? 'Visible to all users' : 'Only visible to admins'}
+              {published ? t('edit.visibleToAll') : t('edit.adminOnly')}
             </p>
           </div>
 
           <div className="rounded-lg border border-border p-4">
             <label className="mb-2 block text-xs font-medium text-muted-foreground">
-              Tags ({selectedTagIds.size} selected)
+              {t('edit.tagsSelected', { count: selectedTagIds.size })}
             </label>
             <div className="flex flex-wrap gap-1.5">
               {allTags.map((tag) => (

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import { useTranslation } from "react-i18next"
 import { Badge } from "@/components/ui/Badge"
 import { Button } from "@/components/ui/Button"
 import {
@@ -21,14 +22,14 @@ const statusColorMap: Record<SubmissionStatus, string> = {
   INTERNAL_ERROR: "text-muted-foreground",
 }
 
-const statusLabels: Record<SubmissionStatus, string> = {
-  ACCEPTED: "Accepted",
-  WRONG_ANSWER: "Wrong Answer",
-  TIME_LIMIT_EXCEEDED: "Time Limit Exceeded",
-  RUNTIME_ERROR: "Runtime Error",
-  COMPILATION_ERROR: "Compile Error",
-  PENDING: "Pending",
-  INTERNAL_ERROR: "Internal Error",
+const statusKeys: Record<SubmissionStatus, string> = {
+  ACCEPTED: "status.accepted",
+  WRONG_ANSWER: "status.wrongAnswer",
+  TIME_LIMIT_EXCEEDED: "status.timeLimitExceeded",
+  RUNTIME_ERROR: "status.runtimeError",
+  COMPILATION_ERROR: "status.compilationError",
+  PENDING: "status.pending",
+  INTERNAL_ERROR: "status.internalError",
 }
 
 function formatDate(dateStr: string) {
@@ -55,6 +56,8 @@ function NoteModal({
   onClose: () => void
   onSave: (notes: string) => void
 }) {
+  const { t } = useTranslation("problem")
+  const { t: tc } = useTranslation("common")
   const [draft, setDraft] = useState("")
 
   useEffect(() => {
@@ -70,9 +73,9 @@ function NoteModal({
     >
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>Notes</DialogTitle>
+          <DialogTitle>{t("submissions.notesDialog")}</DialogTitle>
           <DialogDescription className="sr-only">
-            Add or edit a note for this submission
+            {t("submissions.notesDescription")}
           </DialogDescription>
         </DialogHeader>
         <textarea
@@ -80,12 +83,12 @@ function NoteModal({
           onChange={(e) => setDraft(e.target.value)}
           maxLength={500}
           rows={5}
-          placeholder="Write your note here..."
+          placeholder={t("submissions.notesPlaceholder")}
           className="mt-2 w-full resize-none rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
         />
         <div className="mt-4 flex justify-end gap-2">
           <Button variant="outline" size="sm" onClick={onClose}>
-            Cancel
+            {tc("button.cancel")}
           </Button>
           <Button
             size="sm"
@@ -94,7 +97,7 @@ function NoteModal({
               onClose()
             }}
           >
-            Save
+            {tc("button.save")}
           </Button>
         </div>
       </DialogContent>
@@ -113,6 +116,8 @@ export function SubmissionsPanel({
   submissions,
   onUpdateNote,
 }: SubmissionsPanelProps) {
+  const { t } = useTranslation("problem")
+  const { t: tc } = useTranslation("common")
   const [editingId, setEditingId] = useState<number | null>(null)
   const [selectedId, setSelectedId] = useState<number | null>(null)
   const editingSubmission = editingId != null
@@ -133,7 +138,7 @@ export function SubmissionsPanel({
     return (
       <div className="p-6">
         <p className="text-sm text-muted-foreground">
-          Log in to see submission history
+          {t("submissions.loginRequired")}
         </p>
       </div>
     )
@@ -142,7 +147,7 @@ export function SubmissionsPanel({
   if (submissions.length === 0) {
     return (
       <div className="p-6">
-        <p className="text-sm text-muted-foreground">No submissions yet</p>
+        <p className="text-sm text-muted-foreground">{t("submissions.noSubmissions")}</p>
       </div>
     )
   }
@@ -152,11 +157,11 @@ export function SubmissionsPanel({
       {/* Header */}
       <div className="sticky top-0 grid grid-cols-[2rem_1fr_4.5rem_5rem_5rem_minmax(4rem,1fr)] items-center gap-2 px-4 py-2 text-xs font-medium text-muted-foreground border-b border-border bg-background">
         <span />
-        <span>Status</span>
-        <span>Language</span>
-        <span>Runtime</span>
-        <span>Memory</span>
-        <span>Notes</span>
+        <span>{tc("label.status")}</span>
+        <span>{tc("label.language")}</span>
+        <span>{tc("label.runtime")}</span>
+        <span>{tc("label.memory")}</span>
+        <span>{t("submissions.notes")}</span>
       </div>
 
       {/* Rows */}
@@ -174,7 +179,7 @@ export function SubmissionsPanel({
           {/* Status + date */}
           <div className="min-w-0">
             <div className={`font-medium ${statusColorMap[s.status]}`}>
-              {statusLabels[s.status]}
+              {tc(statusKeys[s.status])}
             </div>
             <div className="text-xs text-muted-foreground">
               {formatDate(s.createdAt)}
@@ -199,7 +204,7 @@ export function SubmissionsPanel({
                 <span>{s.runtimeMs} ms</span>
               </>
             ) : (
-              <span>N/A</span>
+              <span>{tc("label.na")}</span>
             )}
           </div>
 
@@ -216,7 +221,7 @@ export function SubmissionsPanel({
                 <span>{formatMemory(s.memoryKb)}</span>
               </>
             ) : (
-              <span>N/A</span>
+              <span>{tc("label.na")}</span>
             )}
           </div>
 
@@ -225,10 +230,10 @@ export function SubmissionsPanel({
             <span
               onClick={(e) => { e.stopPropagation(); setEditingId(s.id); }}
               className="text-xs text-muted-foreground truncate block cursor-pointer hover:text-foreground transition-colors"
-              title={s.notes || "Add a note..."}
+              title={s.notes || t("submissions.addNote")}
             >
               {s.notes || (
-                <span className="italic opacity-50">Add note</span>
+                <span className="italic opacity-50">{t("submissions.addNote")}</span>
               )}
             </span>
           </div>

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next"
 import { Card, CardContent } from "@/components/ui/Card"
 
 /* ── Mini SVG Charts ── */
@@ -124,52 +125,51 @@ function FeedbackChart() {
   )
 }
 
-/* ── Section Data ── */
-
-const insights = [
-  {
-    stat: "Most developers plateau after 1–2 years",
-    chart: PlateauChart,
-    description:
-      "Ericsson found that experience alone doesn't equal expertise. Without deliberate challenge, skills stagnate. CodeBite keeps you at your growth edge.",
-    source: "Peak, Chapter 1",
-  },
-  {
-    stat: "You forget 70% within 24 hours",
-    chart: ForgettingCurveChart,
-    description:
-      "Without review, knowledge fades fast. Our spaced repetition engine resurfaces problems at optimal intervals — turning short-term solving into long-term mastery.",
-    source: "Ebbinghaus, 1885 / Peak, Chapter 4",
-  },
-  {
-    stat: "3.5× faster improvement with immediate feedback",
-    chart: FeedbackChart,
-    description:
-      "Ericsson's research shows that immediate, targeted feedback is the single biggest accelerator of skill development. Every submission gives you instant, detailed results.",
-    source: "Peak, Chapter 3",
-  },
-]
-
 /* ── Component ── */
 
 export function ScienceSection() {
+  const { t } = useTranslation("landing")
+
+  const insights = [
+    {
+      key: "plateau",
+      stat: t("science.plateau.title"),
+      chart: PlateauChart,
+      description: t("science.plateau.description"),
+      source: t("science.plateau.source"),
+    },
+    {
+      key: "forgetting",
+      stat: t("science.forgetting.title"),
+      chart: ForgettingCurveChart,
+      description: t("science.forgetting.description"),
+      source: t("science.forgetting.source"),
+    },
+    {
+      key: "feedback",
+      stat: t("science.feedback.title"),
+      chart: FeedbackChart,
+      description: t("science.feedback.description"),
+      source: t("science.feedback.source"),
+    },
+  ]
+
   return (
     <section id="features" className="py-20 lg:py-28">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="mb-14 text-center">
           <h2 className="text-3xl font-bold tracking-tight text-foreground">
-            The Science Behind CodeBite
+            {t("science.title")}
           </h2>
           <p className="mt-3 max-w-2xl mx-auto text-muted-foreground">
-            Every feature is grounded in decades of research on how humans
-            actually develop expertise.
+            {t("science.subtitle")}
           </p>
         </div>
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
           {insights.map((insight, i) => (
             <Card
-              key={insight.stat}
+              key={insight.key}
               className="animate-fade-up overflow-hidden border border-border transition-all duration-300 hover:-translate-y-0.5 hover:border-accent-500/50 hover:shadow-md"
               style={{ animationDelay: `${i * 150}ms` }}
             >

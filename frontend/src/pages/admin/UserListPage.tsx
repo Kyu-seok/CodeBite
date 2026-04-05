@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { getUsers } from '@/api/admin';
 import type { AdminUser } from '@/types/admin';
 import Spinner from '@/components/ui/Spinner';
@@ -27,6 +28,8 @@ function timeAgo(dateStr: string | null) {
 }
 
 export default function UserListPage() {
+  const { t } = useTranslation('admin');
+  const { t: tc } = useTranslation('common');
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
@@ -55,19 +58,19 @@ export default function UserListPage() {
   return (
     <div className="space-y-4 p-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-foreground">Users</h1>
-        <span className="text-sm text-muted-foreground">{totalElements} total</span>
+        <h1 className="text-2xl font-bold text-foreground">{t('users.heading')}</h1>
+        <span className="text-sm text-muted-foreground">{t('users.total', { count: totalElements })}</span>
       </div>
 
       <div className="overflow-auto rounded-xl border border-border bg-card">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-border text-left text-xs text-muted-foreground">
-              <th className="px-4 py-3">User</th>
-              <th className="px-4 py-3">Role</th>
-              <th className="px-4 py-3">Solved</th>
-              <th className="px-4 py-3">Last Active</th>
-              <th className="px-4 py-3">Joined</th>
+              <th className="px-4 py-3">{t('users.user')}</th>
+              <th className="px-4 py-3">{t('users.role')}</th>
+              <th className="px-4 py-3">{t('users.solved')}</th>
+              <th className="px-4 py-3">{t('users.lastActive')}</th>
+              <th className="px-4 py-3">{t('users.joined')}</th>
             </tr>
           </thead>
           <tbody>
@@ -114,17 +117,17 @@ export default function UserListPage() {
             disabled={page === 0}
             className="rounded-md border border-border px-3 py-1.5 text-sm text-foreground transition-colors hover:bg-muted disabled:opacity-40"
           >
-            Previous
+            {tc('button.previous')}
           </button>
           <span className="text-sm text-muted-foreground">
-            Page {page + 1} of {totalPages}
+            {tc('pagination.pageOf', { current: page + 1, total: totalPages })}
           </span>
           <button
             onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
             disabled={page >= totalPages - 1}
             className="rounded-md border border-border px-3 py-1.5 text-sm text-foreground transition-colors hover:bg-muted disabled:opacity-40"
           >
-            Next
+            {tc('button.next')}
           </button>
         </div>
       )}

@@ -1,7 +1,9 @@
 import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import i18n from '@/lib/i18n';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
-import { updateThemePreference } from '../../api/user';
+import { updateThemePreference, updateLocale } from '../../api/user';
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/Tooltip';
 import {
   DropdownMenu,
@@ -32,6 +34,7 @@ function MoonIcon() {
 }
 
 export default function Layout() {
+  const { t } = useTranslation('nav');
   const { user, isAuthenticated, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
@@ -53,22 +56,39 @@ export default function Layout() {
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:px-6">
           <div className="flex items-center gap-6">
             <Link to="/" className="text-lg font-bold text-foreground">
-              CodeBite
+              {t('brand')}
             </Link>
             <Link
               to="/problems"
               className="text-sm text-muted-foreground transition-colors hover:text-foreground"
             >
-              Problems
+              {t('problems')}
             </Link>
             <Link
               to="/roadmap"
               className="text-sm text-muted-foreground transition-colors hover:text-foreground"
             >
-              Roadmap
+              {t('roadmap')}
             </Link>
           </div>
           <div className="flex items-center gap-4 text-sm">
+            <Tooltip>
+              <TooltipTrigger>
+                <button
+                  onClick={() => {
+                    const newLang = i18n.language === 'ko' ? 'en' : 'ko';
+                    i18n.changeLanguage(newLang);
+                    if (isAuthenticated) {
+                      updateLocale(newLang).catch(() => {});
+                    }
+                  }}
+                  className="flex h-7 items-center justify-center rounded-md px-1.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+                >
+                  {i18n.language === 'ko' ? 'EN' : '한'}
+                </button>
+              </TooltipTrigger>
+              <TooltipContent>{t('language')}</TooltipContent>
+            </Tooltip>
             <Tooltip>
               <TooltipTrigger>
                 <button
@@ -78,7 +98,7 @@ export default function Layout() {
                   {theme === 'light' ? <MoonIcon /> : <SunIcon />}
                 </button>
               </TooltipTrigger>
-              <TooltipContent>{theme === 'light' ? 'Dark mode' : 'Light mode'}</TooltipContent>
+              <TooltipContent>{theme === 'light' ? t('darkMode') : t('lightMode')}</TooltipContent>
             </Tooltip>
             {isAuthenticated ? (
               <DropdownMenu>
@@ -119,15 +139,15 @@ export default function Layout() {
                   </div>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onSelect={() => navigate('/profile')}>
-                    Profile
+                    {t('profile')}
                   </DropdownMenuItem>
                   {user?.role === 'ADMIN' && (
                     <DropdownMenuItem onSelect={() => navigate('/admin/problems')}>
-                      Admin
+                      {t('admin')}
                     </DropdownMenuItem>
                   )}
                   <DropdownMenuItem onSelect={() => { logout(); navigate('/'); }}>
-                    Log out
+                    {t('logout')}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -139,7 +159,7 @@ export default function Layout() {
                 }}
                 className="text-muted-foreground transition-colors hover:text-foreground"
               >
-                Login
+                {t('login')}
               </button>
             )}
           </div>

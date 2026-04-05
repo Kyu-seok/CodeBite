@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -9,6 +10,8 @@ import type { AdminProblemListItem } from '@/types/admin';
 import type { Difficulty } from '@/types/problem';
 
 export default function AdminProblemListPage() {
+  const { t } = useTranslation('admin');
+  const { t: tc } = useTranslation('common');
   const navigate = useNavigate();
   const [problems, setProblems] = useState<AdminProblemListItem[]>([]);
   const [totalElements, setTotalElements] = useState(0);
@@ -45,17 +48,17 @@ export default function AdminProblemListPage() {
     <div className="p-6">
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold text-foreground">Problems</h1>
-          <p className="text-sm text-muted-foreground">{totalElements} total</p>
+          <h1 className="text-xl font-bold text-foreground">{t('problems.heading')}</h1>
+          <p className="text-sm text-muted-foreground">{t('problems.total', { count: totalElements })}</p>
         </div>
         <Button onClick={() => navigate('/admin/problems/new')}>
-          + New Problem
+          + {t('problems.newProblem')}
         </Button>
       </div>
 
       <div className="mb-4">
         <Input
-          placeholder="Search problems..."
+          placeholder={t('problems.search')}
           value={search}
           onChange={(e) => {
             setSearch(e.target.value);
@@ -74,13 +77,13 @@ export default function AdminProblemListPage() {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border bg-muted/50 text-left text-xs text-muted-foreground">
-                <th className="px-4 py-2.5 font-medium w-12">ID</th>
-                <th className="px-4 py-2.5 font-medium">Title</th>
-                <th className="px-4 py-2.5 font-medium w-24">Difficulty</th>
-                <th className="px-4 py-2.5 font-medium w-20">Status</th>
-                <th className="px-4 py-2.5 font-medium w-24">Acceptance</th>
-                <th className="px-4 py-2.5 font-medium w-28">Tags</th>
-                <th className="px-4 py-2.5 font-medium w-24 text-right">Actions</th>
+                <th className="px-4 py-2.5 font-medium w-12">{t('problems.id')}</th>
+                <th className="px-4 py-2.5 font-medium">{t('problems.title')}</th>
+                <th className="px-4 py-2.5 font-medium w-24">{tc('difficulty.easy').replace(/./, '') && 'Difficulty'}</th>
+                <th className="px-4 py-2.5 font-medium w-20">{t('problems.status')}</th>
+                <th className="px-4 py-2.5 font-medium w-24">{t('problems.accepted')}</th>
+                <th className="px-4 py-2.5 font-medium w-28">{t('problems.tags')}</th>
+                <th className="px-4 py-2.5 font-medium w-24 text-right">{t('problems.actions')}</th>
               </tr>
             </thead>
             <tbody>
@@ -100,7 +103,7 @@ export default function AdminProblemListPage() {
                   </td>
                   <td className="px-4 py-2.5">
                     <Badge variant={p.status === 'ACCEPTED' ? 'success' : 'secondary'} className="text-[10px]">
-                      {p.status ?? 'Draft'}
+                      {p.status === 'ACCEPTED' ? t('problems.accepted') : t('problems.draft')}
                     </Badge>
                   </td>
                   <td className="px-4 py-2.5 text-muted-foreground">
@@ -124,13 +127,13 @@ export default function AdminProblemListPage() {
                         to={`/problems/${p.slug}`}
                         className="rounded px-2 py-1 text-xs text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
                       >
-                        View
+                        {t('problems.view')}
                       </Link>
                       <button
                         onClick={() => handleDelete(p.id, p.title)}
                         className="rounded px-2 py-1 text-xs text-destructive hover:bg-destructive/10 transition-colors"
                       >
-                        Delete
+                        {t('problems.delete')}
                       </button>
                     </div>
                   </td>
@@ -143,7 +146,7 @@ export default function AdminProblemListPage() {
 
       {!loading && problems.length === 0 && (
         <div className="py-12 text-center text-sm text-muted-foreground">
-          No problems found.
+          {t('problems.noProblems')}
         </div>
       )}
     </div>

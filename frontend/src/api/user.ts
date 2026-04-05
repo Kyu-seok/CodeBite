@@ -7,3 +7,7 @@ export function updateEditorSettings(editorSettings: string) {
 export function updateThemePreference(themePreference: string) {
   return client.patch("/users/settings", { themePreference });
 }
+
+export function updateLocale(locale: string) {
+  return client.patch("/users/settings", { locale });
+}

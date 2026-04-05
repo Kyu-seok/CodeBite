@@ -1,0 +1,74 @@
+{
+  "meta": {
+    "title": "CodeBite — 더 효과적으로 코딩 실력을 키우는 방법"
+  },
+  "hero": {
+    "badge": "《1만 시간의 재발견》 기반 학습 설계",
+    "headingPrefix": "연습은 양이 아니라",
+    "headingHighlight": "질이다",
+    "description": "에릭슨의 30년 연구에 따르면, 실력의 차이는 연습량이 아니라 연습 방법에서 갈립니다. CodeBite는 그 '의도적 연습'의 원리로 여러분의 성장을 도와드립니다.",
+    "startPracticing": "연습 시작하기",
+    "seeMethod": "어떻게 다른지 보기",
+    "chartLabel": "시간 대비 실력 변화"
+  },
+  "method": {
+    "title": "작은 차이가 큰 결과를 만듭니다",
+    "subtitle": "연습 방법을 조금만 바꿔도 같은 시간에 훨씬 많이 성장할 수 있어요.",
+    "naive": "흔한 연습 방식",
+    "codebite": "CodeBite와 함께하는 연습",
+    "naivePoints": [
+      "눈에 보이는 문제부터 아무거나 풀기",
+      "익숙한 문제만 반복하게 되기",
+      "한 번 풀면 다시 안 보게 되기",
+      "어디가 부족한지 파악이 어려움",
+      "노력에 비해 성장이 느려질 수 있음"
+    ],
+    "codebitePoints": [
+      "지금 수준에 맞는 적절한 난이도 추천",
+      "조금씩 도전하며 자연스럽게 성장",
+      "제출하면 바로 결과를 확인할 수 있어요",
+      "간격 반복으로 잊힐 때쯤 다시 복습",
+      "부족한 부분을 함께 찾아 집중 연습"
+    ]
+  },
+  "science": {
+    "title": "검증된 학습 원리를 담았습니다",
+    "subtitle": "CodeBite의 기능들은 에릭슨의 전문성 연구와 인지심리학에 기반해 설계되었어요.",
+    "plateau": {
+      "title": "노력해도 실력이 그대로인 느낌, 받아본 적 있으신가요?",
+      "description": "《1만 시간의 재발견》에서 에릭슨은 말합니다 — 익숙한 방식만 반복하면 성장이 멈출 수 있다고. CodeBite는 여러분이 '학습 지대'에서 연습할 수 있도록 도와드려요.",
+      "source": "1만 시간의 재발견, 1장",
+      "label": "정체기"
+    },
+    "forgetting": {
+      "title": "어제 풀었던 문제, 오늘 70%가 흐려집니다",
+      "description": "한 번 풀었다고 완전히 내 것이 되진 않아요. CodeBite의 간격 반복이 기억이 흐려지기 전에 다시 꺼내줘서, 풀이가 자연스럽게 장기 기억으로 자리 잡도록 도와줍니다.",
+      "source": "Ebbinghaus, 1885 / 1만 시간의 재발견, 4장",
+      "noReview": "복습 없음",
+      "spacedReview": "간격 반복",
+      "daysAfter": "학습 후 경과일"
+    },
+    "feedback": {
+      "title": "즉각적인 피드백이 성장 속도를 3.5배 높여줍니다",
+      "description": "에릭슨의 연구에서 빠짐없이 등장하는 공통점 — 효과적인 연습에는 항상 빠른 피드백이 함께했습니다. CodeBite는 제출 즉시 결과를 알려드려요.",
+      "source": "1만 시간의 재발견, 3장",
+      "withoutFeedback": "피드백 없음",
+      "withFeedback": "즉각 피드백",
+      "sessions": "연습 횟수"
+    },
+    "year": "{{n}}년 차"
+  },
+  "cta": {
+    "quote": "체스, 음악, 의학, 스포츠 — 에릭슨이 30년간 모든 분야에서 발견한 공통점. 꾸준히 성장하는 사람들에겐 언제나 의도적 연습이 있었습니다.",
+    "quoteHighlight": "의도적 연습이 있었습니다",
+    "source": "— 1만 시간의 재발견 (Peak: Secrets from the New Science of Expertise)",
+    "heading": "더 효과적인 연습,\nCodeBite와 함께 시작해보세요.",
+    "subtitle": "여러분의 노력이 실력으로 이어지도록 도와드릴게요.",
+    "startSolving": "문제 풀러 가기"
+  },
+  "footer": {
+    "copyright": "© {{year}} CodeBite",
+    "problems": "문제",
+    "github": "GitHub"
+  }
+}

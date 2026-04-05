@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/Tabs';
 import { DescriptionPanel } from './DescriptionPanel';
 import { SubmissionsPanel } from './SubmissionsPanel';
@@ -81,6 +82,7 @@ export function LeftPanel({
   submissions,
   onUpdateNote,
 }: LeftPanelProps) {
+  const { t } = useTranslation('problem');
   return (
     <div className="flex h-full flex-col">
       <Tabs defaultValue="description" className="flex h-full flex-col">
@@ -88,15 +90,15 @@ export function LeftPanel({
           <TabsList>
             <TabsTrigger value="description" className="gap-1.5">
               <DescriptionIcon />
-              Description
+              {t('tabs.description')}
             </TabsTrigger>
             <TabsTrigger value="submissions" className="gap-1.5">
               <HistoryIcon />
-              Submissions
+              {t('tabs.submissions')}
             </TabsTrigger>
             <TabsTrigger value="solutions" className="gap-1.5">
               <LightbulbIcon />
-              Solutions
+              {t('tabs.solutions')}
             </TabsTrigger>
           </TabsList>
         </div>
@@ -123,7 +125,7 @@ export function LeftPanel({
           <TabsContent value="solutions" className="mt-0">
             <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
               <LightbulbIcon />
-              <p className="mt-2 text-sm">Solutions coming soon</p>
+              <p className="mt-2 text-sm">{t('tabs.solutionsComingSoon')}</p>
             </div>
           </TabsContent>
         </div>

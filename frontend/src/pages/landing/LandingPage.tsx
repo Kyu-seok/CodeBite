@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react"
+import { useTranslation } from 'react-i18next'
+import i18n from '@/lib/i18n'
 import { Link, useNavigate } from "react-router-dom"
 import { useAuth } from "@/context/AuthContext"
 import { useTheme } from "@/context/ThemeContext"
-import { updateThemePreference } from "@/api/user"
+import { updateThemePreference, updateLocale } from "@/api/user"
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -37,13 +39,15 @@ function MoonIcon() {
 }
 
 export default function LandingPage() {
+  const { t } = useTranslation('landing')
+  const { t: tn } = useTranslation('nav')
   const { user, isAuthenticated, logout } = useAuth()
   const { theme, toggleTheme } = useTheme()
   const navigate = useNavigate()
   const [scrolled, setScrolled] = useState(false)
 
   useEffect(() => {
-    document.title = "CodeBite — Master Coding Through Deliberate Practice"
+    document.title = t('meta.title')
   }, [])
 
   useEffect(() => {
@@ -75,32 +79,45 @@ export default function LandingPage() {
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:px-6">
           <div className="flex items-center gap-6">
             <Link to="/" className="text-lg font-bold text-foreground">
-              CodeBite
+              {tn('brand')}
             </Link>
             <div className="hidden items-center gap-4 text-sm sm:flex">
               <Link
                 to="/problems"
                 className="text-muted-foreground transition-colors hover:text-foreground"
               >
-                Problems
+                {tn('problems')}
               </Link>
               <Link
                 to="/roadmap"
                 className="text-muted-foreground transition-colors hover:text-foreground"
               >
-                Roadmap
+                {tn('roadmap')}
               </Link>
             </div>
           </div>
 
           <div className="flex items-center gap-4 text-sm">
             <button
+              onClick={() => {
+                const newLang = i18n.language === 'ko' ? 'en' : 'ko';
+                i18n.changeLanguage(newLang);
+                if (isAuthenticated) {
+                  updateLocale(newLang).catch(() => {});
+                }
+              }}
+              className="flex h-7 items-center justify-center rounded-md px-1.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+              title={tn('language')}
+            >
+              {i18n.language === 'ko' ? 'EN' : '한'}
+            </button>
+            <button
               onClick={handleToggleTheme}
               className="flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
               title={
                 theme === "light"
-                  ? "Switch to dark mode"
-                  : "Switch to light mode"
+                  ? tn("darkMode")
+                  : tn("lightMode")
               }
             >
               {theme === "light" ? <MoonIcon /> : <SunIcon />}
@@ -148,10 +165,10 @@ export default function LandingPage() {
                   </div>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onSelect={() => navigate("/profile")}>
-                    Profile
+                    {tn('profile')}
                   </DropdownMenuItem>
                   <DropdownMenuItem onSelect={logout}>
-                    Log out
+                    {tn('logout')}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -163,7 +180,7 @@ export default function LandingPage() {
                 }}
                 className="text-muted-foreground transition-colors hover:text-foreground"
               >
-                Login
+                {tn('login')}
               </button>
             )}
           </div>

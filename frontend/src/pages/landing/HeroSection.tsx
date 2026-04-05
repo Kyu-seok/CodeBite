@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next"
 import { Link } from "react-router-dom"
 import { buttonVariants } from "@/components/ui/Button"
 import { Button } from "@/components/ui/Button"
@@ -72,6 +73,7 @@ function GrowthChart() {
 }
 
 export function HeroSection() {
+  const { t } = useTranslation("landing")
   return (
     <section className="relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-b from-accent-50/50 via-accent-50/20 to-transparent dark:from-accent-950/20 dark:via-accent-950/10 dark:to-transparent" />
@@ -82,7 +84,7 @@ export function HeroSection() {
           <div className="text-center lg:text-left">
             <div className="animate-fade-up">
               <Badge variant="accent" className="mb-6">
-                Backed by expertise research
+                {t("hero.badge")}
               </Badge>
             </div>
 
@@ -90,17 +92,15 @@ export function HeroSection() {
               className="animate-fade-up text-4xl font-bold tracking-tight text-foreground sm:text-5xl"
               style={{ animationDelay: "100ms" }}
             >
-              10,000 Hours Won't Help If You{" "}
-              <span className="text-accent-500">Practice Wrong</span>
+              {t("hero.headingPrefix")}{" "}
+              <span className="text-accent-500">{t("hero.headingHighlight")}</span>
             </h1>
 
             <p
               className="animate-fade-up mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground"
               style={{ animationDelay: "200ms" }}
             >
-              Anders Ericsson's research shows that experts don't just practice
-              more — they practice <em>differently</em>. CodeBite applies those
-              principles to coding interviews.
+              {t("hero.description")}
             </p>
 
             <div
@@ -111,7 +111,7 @@ export function HeroSection() {
                 to="/problems"
                 className={buttonVariants({ variant: "accent", size: "lg" })}
               >
-                Start Practicing
+                {t("hero.startPracticing")}
               </Link>
               <Button
                 variant="outline"
@@ -122,7 +122,7 @@ export function HeroSection() {
                     ?.scrollIntoView({ behavior: "smooth" })
                 }
               >
-                See the Method
+                {t("hero.seeMethod")}
               </Button>
             </div>
           </div>
@@ -134,7 +134,7 @@ export function HeroSection() {
           >
             <div className="w-full rounded-xl border border-border bg-card p-4 shadow-sm sm:p-6">
               <p className="mb-3 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                Skill growth over time
+                {t("hero.chartLabel")}
               </p>
               <GrowthChart />
             </div>

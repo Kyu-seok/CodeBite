@@ -1,0 +1,18 @@
+{
+  "header": {
+    "memberSince": "{{year}}년 {{month}}월 가입",
+    "solved": "/ {{total}} 풀이 완료",
+    "currentStreak": "연속 풀이",
+    "bestStreak": "최고 연속",
+    "activeDays": "활동일"
+  },
+  "heatmap": {
+    "title": "제출 활동",
+    "submissions": "지난 1년간 {{count}}회 제출"
+  },
+  "progress": {
+    "title": "풀이 현황",
+    "solved": "풀이 완료",
+    "unsolved": "미풀이"
+  }
+}

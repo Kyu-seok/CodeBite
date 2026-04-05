@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { ActivityCalendar } from 'react-activity-calendar';
 import type { ActivityDay } from '@/types/profile';
 import { useTheme } from '@/context/ThemeContext';
@@ -7,6 +8,7 @@ interface ActivityHeatmapProps {
 }
 
 export function ActivityHeatmap({ activity }: ActivityHeatmapProps) {
+  const { t } = useTranslation('profile');
   const { theme } = useTheme();
 
   const maxCount = Math.max(1, ...activity.map((d) => d.count));
@@ -41,9 +43,9 @@ export function ActivityHeatmap({ activity }: ActivityHeatmapProps) {
   return (
     <div className="rounded-xl border border-border bg-card p-5">
       <div className="mb-4 flex items-center justify-between">
-        <h3 className="text-sm font-medium text-foreground">Submission Activity</h3>
+        <h3 className="text-sm font-medium text-foreground">{t('heatmap.title')}</h3>
         <span className="text-xs text-muted-foreground">
-          {totalSubmissions} submissions in the last year
+          {t('heatmap.submissions', { count: totalSubmissions })}
         </span>
       </div>
       <ActivityCalendar

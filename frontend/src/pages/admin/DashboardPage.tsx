@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { getOverviewStats, getDailySubmissions, getProblemAnalytics, getRecentSubmissions } from '@/api/admin';
 import type { OverviewStats, DailySubmission, ProblemAnalytics, AdminRecentSubmission } from '@/types/admin';
@@ -19,32 +20,8 @@ function timeAgo(dateStr: string) {
   return `${days}d ago`;
 }
 
-const STAT_CARDS = [
-  { key: 'totalUsers' as const, label: 'Total Users', icon: (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" />
-      <path d="M22 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" />
-    </svg>
-  )},
-  { key: 'totalProblems' as const, label: 'Total Problems', icon: (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
-      <path d="M14 2v4a2 2 0 0 0 2 2h4" />
-    </svg>
-  )},
-  { key: 'totalSubmissions' as const, label: 'Total Submissions', icon: (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
-    </svg>
-  )},
-  { key: 'submissionsToday' as const, label: 'Today', icon: (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
-    </svg>
-  )},
-];
-
 export default function DashboardPage() {
+  const { t } = useTranslation('admin');
   const [stats, setStats] = useState<OverviewStats | null>(null);
   const [daily, setDaily] = useState<DailySubmission[]>([]);
   const [problems, setProblems] = useState<ProblemAnalytics[]>([]);
@@ -52,6 +29,31 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [sortField, setSortField] = useState<'totalSubmissions' | 'acceptanceRate'>('totalSubmissions');
   const [sortAsc, setSortAsc] = useState(false);
+
+  const STAT_CARDS = [
+    { key: 'totalUsers' as const, label: t('dashboard.totalUsers'), icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" />
+        <path d="M22 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" />
+      </svg>
+    )},
+    { key: 'totalProblems' as const, label: t('dashboard.totalProblems'), icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
+        <path d="M14 2v4a2 2 0 0 0 2 2h4" />
+      </svg>
+    )},
+    { key: 'totalSubmissions' as const, label: t('dashboard.totalSubmissions'), icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+      </svg>
+    )},
+    { key: 'submissionsToday' as const, label: t('dashboard.today'), icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
+      </svg>
+    )},
+  ];
 
   useEffect(() => {
     Promise.all([
@@ -94,7 +96,7 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6 p-6">
-      <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
+      <h1 className="text-2xl font-bold text-foreground">{t('dashboard.title')}</h1>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
@@ -117,7 +119,7 @@ export default function DashboardPage() {
 
       {/* Submission Trend Chart */}
       <div className="rounded-xl border border-border bg-card p-4">
-        <h2 className="mb-4 text-sm font-semibold text-foreground">Submissions (Last 30 Days)</h2>
+        <h2 className="mb-4 text-sm font-semibold text-foreground">{t('dashboard.submissionsChart')}</h2>
         <ResponsiveContainer width="100%" height={240}>
           <AreaChart data={daily}>
             <defs>
@@ -163,24 +165,24 @@ export default function DashboardPage() {
       <div className="grid gap-6 lg:grid-cols-5">
         {/* Problem Analytics */}
         <div className="rounded-xl border border-border bg-card p-4 lg:col-span-3">
-          <h2 className="mb-3 text-sm font-semibold text-foreground">Problem Analytics</h2>
+          <h2 className="mb-3 text-sm font-semibold text-foreground">{t('dashboard.problemAnalytics')}</h2>
           <div className="overflow-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border text-left text-xs text-muted-foreground">
-                  <th className="pb-2 pr-3">Problem</th>
+                  <th className="pb-2 pr-3">{t('dashboard.problem')}</th>
                   <th className="pb-2 pr-3">Difficulty</th>
                   <th
                     className="cursor-pointer pb-2 pr-3 hover:text-foreground"
                     onClick={() => handleSort('totalSubmissions')}
                   >
-                    Submissions{sortIndicator('totalSubmissions')}
+                    {t('dashboard.submissions')}{sortIndicator('totalSubmissions')}
                   </th>
                   <th
                     className="cursor-pointer pb-2 hover:text-foreground"
                     onClick={() => handleSort('acceptanceRate')}
                   >
-                    Acceptance{sortIndicator('acceptanceRate')}
+                    {t('dashboard.acceptance')}{sortIndicator('acceptanceRate')}
                   </th>
                 </tr>
               </thead>
@@ -208,7 +210,7 @@ export default function DashboardPage() {
                 {sortedProblems.length === 0 && (
                   <tr>
                     <td colSpan={4} className="py-8 text-center text-muted-foreground">
-                      No problems yet
+                      {t('dashboard.noProblems')}
                     </td>
                   </tr>
                 )}
@@ -219,7 +221,7 @@ export default function DashboardPage() {
 
         {/* Recent Submissions */}
         <div className="rounded-xl border border-border bg-card p-4 lg:col-span-2">
-          <h2 className="mb-3 text-sm font-semibold text-foreground">Recent Submissions</h2>
+          <h2 className="mb-3 text-sm font-semibold text-foreground">{t('dashboard.recentSubmissions')}</h2>
           <div className="space-y-3">
             {recent.map((s) => (
               <div key={s.id} className="flex items-start justify-between gap-2">
@@ -236,7 +238,7 @@ export default function DashboardPage() {
               </div>
             ))}
             {recent.length === 0 && (
-              <p className="py-8 text-center text-sm text-muted-foreground">No submissions yet</p>
+              <p className="py-8 text-center text-sm text-muted-foreground">{t('dashboard.noSubmissions')}</p>
             )}
           </div>
         </div>

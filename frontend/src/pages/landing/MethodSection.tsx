@@ -1,20 +1,5 @@
+import { useTranslation } from "react-i18next"
 import { Card, CardContent } from "@/components/ui/Card"
-
-const antiPatterns = [
-  "Pick random problems from a list",
-  "Solve easy ones to feel productive",
-  "Never revisit solved problems",
-  "No structure, no feedback loop",
-  "Hit a plateau and give up",
-]
-
-const deliberatePatterns = [
-  "Follow a structured difficulty progression",
-  "Work at the edge of your ability",
-  "Get immediate feedback on every attempt",
-  "Revisit problems with spaced repetition",
-  "Continuously target weak areas",
-]
 
 function XIcon() {
   return (
@@ -58,15 +43,18 @@ function CheckIcon() {
 }
 
 export function MethodSection() {
+  const { t } = useTranslation("landing")
+  const naivePoints = t("method.naivePoints", { returnObjects: true }) as string[]
+  const codebitePoints = t("method.codebitePoints", { returnObjects: true }) as string[]
   return (
     <section id="method" className="py-20 lg:py-28 bg-muted/30">
       <div className="mx-auto max-w-5xl px-4 sm:px-6">
         <div className="mb-14 text-center">
           <h2 className="text-3xl font-bold tracking-tight text-foreground">
-            Two Ways to Practice
+            {t("method.title")}
           </h2>
           <p className="mt-3 max-w-2xl mx-auto text-muted-foreground">
-            Most people default to the left. Experts choose the right.
+            {t("method.subtitle")}
           </p>
         </div>
 
@@ -75,10 +63,10 @@ export function MethodSection() {
           <Card className="animate-fade-up border-border/50">
             <CardContent className="p-6">
               <p className="mb-5 text-lg font-semibold text-muted-foreground">
-                How most people practice
+                {t("method.naive")}
               </p>
               <ul className="space-y-3">
-                {antiPatterns.map((item) => (
+                {naivePoints.map((item) => (
                   <li
                     key={item}
                     className="flex items-start gap-3 text-sm text-muted-foreground/70"
@@ -97,10 +85,10 @@ export function MethodSection() {
           <Card className="animate-fade-up border-accent-500/30 shadow-md" style={{ animationDelay: "150ms" }}>
             <CardContent className="p-6">
               <p className="mb-5 text-lg font-semibold text-accent-500">
-                The CodeBite Method
+                {t("method.codebite")}
               </p>
               <ul className="space-y-3">
-                {deliberatePatterns.map((item) => (
+                {codebitePoints.map((item) => (
                   <li
                     key={item}
                     className="flex items-start gap-3 text-sm text-foreground"

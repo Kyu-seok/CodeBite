@@ -7,6 +7,7 @@ export interface User {
   recentLanguage: string | null;
   editorSettings: string | null;
   themePreference: string | null;
+  locale: string | null;
   createdAt: string;
 }
 

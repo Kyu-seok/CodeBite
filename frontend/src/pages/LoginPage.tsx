@@ -1,15 +1,17 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { getOAuthUrl } from "../api/auth";
 import { AxiosError } from "axios";
 import type { ApiError } from "../types/api";
 
 export default function LoginPage() {
+  const { t } = useTranslation("auth");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState("");
 
   useEffect(() => {
-    document.title = "Login | CodeBite";
-  }, []);
+    document.title = t("login.title");
+  }, [t]);
 
   const handleOAuth = async (provider: string) => {
     setError("");
@@ -21,7 +23,7 @@ export default function LoginPage() {
       if (err instanceof AxiosError && err.response?.data) {
         setError((err.response.data as ApiError).message);
       } else {
-        setError("Failed to start login. Please try again.");
+        setError(t("login.failed"));
       }
       setLoading("");
     }
@@ -31,10 +33,10 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="w-full max-w-md bg-white rounded-lg shadow p-8">
         <h1 className="text-2xl font-bold text-gray-900 text-center mb-2">
-          Sign in to CodeBite
+          {t("login.heading")}
         </h1>
         <p className="text-center text-sm text-gray-500 mb-6">
-          Continue with your Google or GitHub account
+          {t("login.subtitle")}
         </p>
         {error && (
           <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded text-sm">
@@ -65,7 +67,7 @@ export default function LoginPage() {
                 fill="#EA4335"
               />
             </svg>
-            {loading === "google" ? "Redirecting..." : "Continue with Google"}
+            {loading === "google" ? t("login.redirecting") : t("login.google")}
           </button>
           <button
             onClick={() => handleOAuth("github")}
@@ -79,7 +81,7 @@ export default function LoginPage() {
                 clipRule="evenodd"
               />
             </svg>
-            {loading === "github" ? "Redirecting..." : "Continue with GitHub"}
+            {loading === "github" ? t("login.redirecting") : t("login.github")}
           </button>
         </div>
       </div>

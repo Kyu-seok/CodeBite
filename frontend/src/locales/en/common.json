@@ -1,0 +1,37 @@
+{
+  "difficulty": {
+    "easy": "Easy",
+    "medium": "Medium",
+    "hard": "Hard"
+  },
+  "status": {
+    "accepted": "Accepted",
+    "wrongAnswer": "Wrong Answer",
+    "timeLimitExceeded": "Time Limit Exceeded",
+    "runtimeError": "Runtime Error",
+    "compilationError": "Compilation Error",
+    "pending": "Pending",
+    "internalError": "Internal Error"
+  },
+  "button": {
+    "cancel": "Cancel",
+    "save": "Save",
+    "close": "Close",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "update": "Update",
+    "previous": "Previous",
+    "next": "Next"
+  },
+  "label": {
+    "status": "Status",
+    "language": "Language",
+    "runtime": "Runtime",
+    "memory": "Memory",
+    "na": "N/A"
+  },
+  "pagination": {
+    "pageOf": "Page {{current}} of {{total}}"
+  }
+}

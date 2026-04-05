@@ -1,0 +1,18 @@
+{
+  "header": {
+    "memberSince": "Member since {{month}} {{year}}",
+    "solved": "/ {{total}} solved",
+    "currentStreak": "Current Streak",
+    "bestStreak": "Best Streak",
+    "activeDays": "Active Days"
+  },
+  "heatmap": {
+    "title": "Submission Activity",
+    "submissions": "{{count}} submissions in the last year"
+  },
+  "progress": {
+    "title": "Solve Progress",
+    "solved": "Solved",
+    "unsolved": "Unsolved"
+  }
+}

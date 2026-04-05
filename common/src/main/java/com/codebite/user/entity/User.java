@@ -36,6 +36,9 @@ public class User extends BaseEntity {
     @Column(name = "theme_preference", length = 10)
     private String themePreference;
 
+    @Column(length = 10)
+    private String locale = "ko";
+
     public String getUsername() {
         return username;
     }
@@ -98,5 +101,13 @@ public class User extends BaseEntity {
 
     public void setThemePreference(String themePreference) {
         this.themePreference = themePreference;
+    }
+
+    public String getLocale() {
+        return locale;
+    }
+
+    public void setLocale(String locale) {
+        this.locale = locale;
     }
 }

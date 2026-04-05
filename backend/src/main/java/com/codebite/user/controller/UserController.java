@@ -31,6 +31,9 @@ public class UserController {
         if (body.containsKey("themePreference")) {
             userService.updateThemePreference(principal.id(), body.get("themePreference"));
         }
+        if (body.containsKey("locale")) {
+            userService.updateLocale(principal.id(), body.get("locale"));
+        }
         return ResponseEntity.noContent().build();
     }
 }

@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import type { User } from '@/types/auth';
 import type { ProfileStats } from '@/types/profile';
 
@@ -7,9 +8,11 @@ interface ProfileHeaderProps {
 }
 
 export function ProfileHeader({ user, stats }: ProfileHeaderProps) {
-  const memberSince = new Date(stats.memberSince).toLocaleDateString('en-US', {
-    month: 'long',
-    year: 'numeric',
+  const { t } = useTranslation('profile');
+  const d = new Date(stats.memberSince);
+  const memberSince = t('header.memberSince', {
+    month: d.getMonth() + 1,
+    year: d.getFullYear(),
   });
 
   const solvedPct =
@@ -39,13 +42,13 @@ export function ProfileHeader({ user, stats }: ProfileHeaderProps) {
             )}
             <div>
               <h1 className="text-xl font-bold text-foreground">{user.username}</h1>
-              <p className="text-xs text-muted-foreground">Member since {memberSince}</p>
+              <p className="text-xs text-muted-foreground">{memberSince}</p>
               <div className="mt-1.5 flex items-center gap-1.5">
                 <span className="text-sm font-semibold text-accent">
                   {stats.totalSolved}
                 </span>
                 <span className="text-sm text-muted-foreground">
-                  / {stats.totalProblems} solved
+                  {t('header.solved', { total: stats.totalProblems })}
                 </span>
                 <span className="ml-1 rounded-full bg-accent/10 px-2 py-0.5 text-xs font-medium text-accent">
                   {solvedPct}%
@@ -58,7 +61,7 @@ export function ProfileHeader({ user, stats }: ProfileHeaderProps) {
           <div className="flex gap-6 sm:gap-8">
             <StatCounter
               value={stats.currentStreak}
-              label="Current Streak"
+              label={t('header.currentStreak')}
               icon={
                 <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
@@ -67,7 +70,7 @@ export function ProfileHeader({ user, stats }: ProfileHeaderProps) {
             />
             <StatCounter
               value={stats.longestStreak}
-              label="Best Streak"
+              label={t('header.bestStreak')}
               icon={
                 <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
@@ -76,7 +79,7 @@ export function ProfileHeader({ user, stats }: ProfileHeaderProps) {
             />
             <StatCounter
               value={stats.totalActiveDays}
-              label="Active Days"
+              label={t('header.activeDays')}
               icon={
                 <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next"
 import { Badge, type BadgeProps } from "@/components/ui/Badge"
 import type { SubmissionStatus } from "@/types/submission"
 
@@ -11,16 +12,17 @@ const variantMap: Record<SubmissionStatus, BadgeProps["variant"]> = {
   INTERNAL_ERROR: "outline",
 }
 
-const labels: Record<SubmissionStatus, string> = {
-  ACCEPTED: "Accepted",
-  WRONG_ANSWER: "Wrong Answer",
-  TIME_LIMIT_EXCEEDED: "Time Limit Exceeded",
-  RUNTIME_ERROR: "Runtime Error",
-  COMPILATION_ERROR: "Compilation Error",
-  PENDING: "Pending",
-  INTERNAL_ERROR: "Internal Error",
+const keyMap: Record<SubmissionStatus, string> = {
+  ACCEPTED: "status.accepted",
+  WRONG_ANSWER: "status.wrongAnswer",
+  TIME_LIMIT_EXCEEDED: "status.timeLimitExceeded",
+  RUNTIME_ERROR: "status.runtimeError",
+  COMPILATION_ERROR: "status.compilationError",
+  PENDING: "status.pending",
+  INTERNAL_ERROR: "status.internalError",
 }
 
 export default function StatusBadge({ status }: { status: SubmissionStatus }) {
-  return <Badge variant={variantMap[status]}>{labels[status]}</Badge>
+  const { t } = useTranslation("common")
+  return <Badge variant={variantMap[status]}>{t(keyMap[status])}</Badge>
 }

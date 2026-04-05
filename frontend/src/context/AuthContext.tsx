@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import i18n from "@/lib/i18n";
 import type { User } from "../types/auth";
 import * as authApi from "../api/auth";
 import { useEditorSettings } from "./EditorSettingsContext";
@@ -27,6 +28,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const applyLocaleFromUser = (locale: string | null) => {
+    if (locale && (locale === "ko" || locale === "en")) {
+      i18n.changeLanguage(locale);
+    }
+  };
+
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -39,6 +46,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUser(res.data);
         initFromUser(res.data.editorSettings);
         applyThemeFromUser(res.data.themePreference);
+        applyLocaleFromUser(res.data.locale);
       })
       .catch(() => localStorage.removeItem("token"))
       .finally(() => setLoading(false));
@@ -50,6 +58,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(res.data.user);
     initFromUser(res.data.user.editorSettings);
     applyThemeFromUser(res.data.user.themePreference);
+    applyLocaleFromUser(res.data.user.locale);
   };
 
   const updateUser = (patch: Partial<User>) => {
