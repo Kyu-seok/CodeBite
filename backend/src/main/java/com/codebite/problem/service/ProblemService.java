@@ -10,12 +10,15 @@ import com.codebite.problem.dto.TestCaseDto;
 import com.codebite.problem.dto.UpdateProblemRequest;
 import com.codebite.problem.entity.Difficulty;
 import com.codebite.problem.entity.Problem;
+import com.codebite.problem.entity.ProblemTranslation;
 import com.codebite.problem.entity.Tag;
 import com.codebite.problem.entity.TestCase;
 import com.codebite.problem.repository.ProblemRepository;
+import com.codebite.problem.repository.ProblemTranslationRepository;
 import com.codebite.problem.repository.TagRepository;
 import com.codebite.problem.repository.TestCaseRepository;
 import com.codebite.submission.repository.SubmissionRepository;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -28,20 +31,25 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class ProblemService {
 
     private final ProblemRepository problemRepository;
+    private final ProblemTranslationRepository translationRepository;
     private final TestCaseRepository testCaseRepository;
     private final TagRepository tagRepository;
     private final StarterCodeLoader starterCodeLoader;
     private final SubmissionRepository submissionRepository;
 
-    public ProblemService(ProblemRepository problemRepository, TestCaseRepository testCaseRepository,
+    public ProblemService(ProblemRepository problemRepository,
+                          ProblemTranslationRepository translationRepository,
+                          TestCaseRepository testCaseRepository,
                           TagRepository tagRepository, StarterCodeLoader starterCodeLoader,
                           SubmissionRepository submissionRepository) {
         this.problemRepository = problemRepository;
+        this.translationRepository = translationRepository;
         this.testCaseRepository = testCaseRepository;
         this.tagRepository = tagRepository;
         this.starterCodeLoader = starterCodeLoader;
@@ -64,7 +72,10 @@ public class ProblemService {
         Map<Long, String> statusMap = userId != null ? buildStatusMap(userId) : Map.of();
         Map<Long, Double> acceptanceMap = buildAcceptanceMap();
 
-        return problemRepository.findAll(spec, pageable).map(p -> toListItem(p, statusMap, acceptanceMap));
+        Page<Problem> page = problemRepository.findAll(spec, pageable);
+        Map<Long, ProblemTranslation> translationMap = fetchTranslationMap(
+                page.getContent().stream().map(Problem::getId).toList());
+        return page.map(p -> toListItem(p, statusMap, acceptanceMap, translationMap));
     }
 
     private Map<Long, String> buildStatusMap(Long userId) {
@@ -129,7 +140,7 @@ public class ProblemService {
                 : problemRepository.findRandomPublishedSlugs(one);
 
         if (slugs.isEmpty()) {
-            throw new ResourceNotFoundException("No problems found");
+            throw new ResourceNotFoundException("error.noproblems");
         }
         return slugs.get(0);
     }
@@ -137,13 +148,14 @@ public class ProblemService {
     @Transactional(readOnly = true)
     public ProblemDetail getProblemBySlug(String slug) {
         Problem problem = problemRepository.findBySlug(slug)
-                .orElseThrow(() -> new ResourceNotFoundException("Problem not found: " + slug));
+                .orElseThrow(() -> new ResourceNotFoundException("error.problem.notFound", slug));
         if (!problem.isPublished()) {
-            throw new ResourceNotFoundException("Problem not found: " + slug);
+            throw new ResourceNotFoundException("error.problem.notFound", slug);
         }
         List<TestCase> sampleCases = testCaseRepository
                 .findByProblemIdAndSampleTrueOrderByOrderIndexAsc(problem.getId());
-        return toDetail(problem, sampleCases);
+        ProblemTranslation translation = fetchTranslation(problem.getId());
+        return toDetail(problem, sampleCases, translation);
     }
 
     @Transactional
@@ -157,13 +169,13 @@ public class ProblemService {
         problem.setPublished(request.published() != null && request.published());
 
         problem = problemRepository.save(problem);
-        return toDetail(problem, List.of());
+        return toDetail(problem, List.of(), null);
     }
 
     @Transactional
     public ProblemDetail updateProblem(Long id, UpdateProblemRequest request) {
         Problem problem = problemRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Problem not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("error.problem.notFoundById",id));
 
         if (request.title() != null) {
             problem.setTitle(request.title());
@@ -185,13 +197,13 @@ public class ProblemService {
         problem = problemRepository.save(problem);
         List<TestCase> sampleCases = testCaseRepository
                 .findByProblemIdAndSampleTrueOrderByOrderIndexAsc(problem.getId());
-        return toDetail(problem, sampleCases);
+        return toDetail(problem, sampleCases, null);
     }
 
     @Transactional
     public TestCaseDto addTestCase(Long problemId, CreateTestCaseRequest request) {
         Problem problem = problemRepository.findById(problemId)
-                .orElseThrow(() -> new ResourceNotFoundException("Problem not found with id: " + problemId));
+                .orElseThrow(() -> new ResourceNotFoundException("error.problem.notFoundById",problemId));
 
         TestCase testCase = new TestCase();
         testCase.setProblem(problem);
@@ -224,29 +236,29 @@ public class ProblemService {
         }
 
         Map<Long, Double> acceptanceMap = buildAcceptanceMap();
-        return problemRepository.findAll(spec, pageable).map(p -> toListItem(p, Map.of(), acceptanceMap));
+        return problemRepository.findAll(spec, pageable).map(p -> toListItem(p, Map.of(), acceptanceMap, Map.of()));
     }
 
     @Transactional(readOnly = true)
     public ProblemDetail getAdminProblemById(Long id) {
         Problem problem = problemRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Problem not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("error.problem.notFoundById",id));
         List<TestCase> sampleCases = testCaseRepository
                 .findByProblemIdAndSampleTrueOrderByOrderIndexAsc(problem.getId());
-        return toDetail(problem, sampleCases);
+        return toDetail(problem, sampleCases, null);
     }
 
     @Transactional
     public void deleteProblem(Long id) {
         Problem problem = problemRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Problem not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("error.problem.notFoundById",id));
         problemRepository.delete(problem);
     }
 
     @Transactional(readOnly = true)
     public List<TestCaseDto> getTestCases(Long problemId) {
         if (!problemRepository.existsById(problemId)) {
-            throw new ResourceNotFoundException("Problem not found with id: " + problemId);
+            throw new ResourceNotFoundException("error.problem.notFoundById",problemId);
         }
         return testCaseRepository.findByProblemIdOrderByOrderIndexAsc(problemId)
                 .stream().map(this::toTestCaseDto).toList();
@@ -255,9 +267,9 @@ public class ProblemService {
     @Transactional
     public TestCaseDto updateTestCase(Long problemId, Long testCaseId, CreateTestCaseRequest request) {
         TestCase testCase = testCaseRepository.findById(testCaseId)
-                .orElseThrow(() -> new ResourceNotFoundException("Test case not found: " + testCaseId));
+                .orElseThrow(() -> new ResourceNotFoundException("error.testcase.notFound",testCaseId));
         if (!testCase.getProblem().getId().equals(problemId)) {
-            throw new ResourceNotFoundException("Test case not found: " + testCaseId);
+            throw new ResourceNotFoundException("error.testcase.notFound",testCaseId);
         }
         testCase.setInput(request.input());
         testCase.setExpectedOutput(request.expectedOutput());
@@ -269,9 +281,9 @@ public class ProblemService {
     @Transactional
     public void deleteTestCase(Long problemId, Long testCaseId) {
         TestCase testCase = testCaseRepository.findById(testCaseId)
-                .orElseThrow(() -> new ResourceNotFoundException("Test case not found: " + testCaseId));
+                .orElseThrow(() -> new ResourceNotFoundException("error.testcase.notFound",testCaseId));
         if (!testCase.getProblem().getId().equals(problemId)) {
-            throw new ResourceNotFoundException("Test case not found: " + testCaseId);
+            throw new ResourceNotFoundException("error.testcase.notFound",testCaseId);
         }
         testCaseRepository.delete(testCase);
     }
@@ -279,14 +291,14 @@ public class ProblemService {
     @Transactional(readOnly = true)
     public List<String> getProblemTags(Long problemId) {
         Problem problem = problemRepository.findById(problemId)
-                .orElseThrow(() -> new ResourceNotFoundException("Problem not found with id: " + problemId));
+                .orElseThrow(() -> new ResourceNotFoundException("error.problem.notFoundById",problemId));
         return problem.getTags().stream().map(Tag::getName).sorted().toList();
     }
 
     @Transactional
     public List<String> updateProblemTags(Long problemId, List<Long> tagIds) {
         Problem problem = problemRepository.findById(problemId)
-                .orElseThrow(() -> new ResourceNotFoundException("Problem not found with id: " + problemId));
+                .orElseThrow(() -> new ResourceNotFoundException("error.problem.notFoundById",problemId));
         Set<Tag> tags = new HashSet<>(tagRepository.findAllById(tagIds));
         problem.setTags(tags);
         problemRepository.save(problem);
@@ -309,14 +321,37 @@ public class ProblemService {
         return slug;
     }
 
-    private ProblemListItem toListItem(Problem problem, Map<Long, String> statusMap, Map<Long, Double> acceptanceMap) {
+    private String currentLocale() {
+        return LocaleContextHolder.getLocale().getLanguage();
+    }
+
+    private ProblemTranslation fetchTranslation(Long problemId) {
+        String locale = currentLocale();
+        if ("en".equals(locale)) return null;
+        return translationRepository.findByProblemIdAndLocale(problemId, locale).orElse(null);
+    }
+
+    private Map<Long, ProblemTranslation> fetchTranslationMap(List<Long> problemIds) {
+        String locale = currentLocale();
+        if ("en".equals(locale) || problemIds.isEmpty()) return Map.of();
+        return translationRepository.findByProblemIdInAndLocale(problemIds, locale)
+                .stream().collect(Collectors.toMap(t -> t.getProblem().getId(), t -> t));
+    }
+
+    private ProblemListItem toListItem(Problem problem, Map<Long, String> statusMap,
+                                       Map<Long, Double> acceptanceMap,
+                                       Map<Long, ProblemTranslation> translationMap) {
+        String title = problem.getTitle();
+        ProblemTranslation t = translationMap.get(problem.getId());
+        if (t != null) title = t.getTitle();
+
         List<String> tagNames = problem.getTags().stream()
                 .map(com.codebite.problem.entity.Tag::getName)
                 .sorted()
                 .toList();
         return new ProblemListItem(
                 problem.getId(),
-                problem.getTitle(),
+                title,
                 problem.getSlug(),
                 problem.getDifficulty(),
                 tagNames,
@@ -325,15 +360,27 @@ public class ProblemService {
         );
     }
 
-    private ProblemDetail toDetail(Problem problem, List<TestCase> sampleCases) {
+    private ProblemDetail toDetail(Problem problem, List<TestCase> sampleCases, ProblemTranslation translation) {
+        String title = problem.getTitle();
+        String description = problem.getDescription();
+        String constraints = problem.getConstraints();
+
+        if (translation != null) {
+            title = translation.getTitle();
+            description = translation.getDescription();
+            if (translation.getConstraints() != null) {
+                constraints = translation.getConstraints();
+            }
+        }
+
         return new ProblemDetail(
                 problem.getId(),
-                problem.getTitle(),
+                title,
                 problem.getSlug(),
-                problem.getDescription(),
+                description,
                 problem.getDifficulty(),
                 starterCodeLoader.getStarterCode(problem.getSlug()),
-                problem.getConstraints(),
+                constraints,
                 problem.isPublished(),
                 sampleCases.stream().map(this::toTestCaseDto).toList(),
                 problem.getCreatedAt(),
