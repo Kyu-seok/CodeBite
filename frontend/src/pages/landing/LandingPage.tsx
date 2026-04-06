@@ -12,6 +12,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from "@/components/ui/DropdownMenu"
+import { NavbarLogo } from "@/components/ui/NavbarLogo"
 import { HeroSection } from "./HeroSection"
 import { ScienceSection } from "./ScienceSection"
 import { MethodSection } from "./MethodSection"
@@ -78,8 +79,8 @@ export default function LandingPage() {
       >
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:px-6">
           <div className="flex items-center gap-6">
-            <Link to="/" className="text-lg font-bold text-foreground">
-              {tn('brand')}
+            <Link to="/" className="flex items-center text-foreground">
+              <NavbarLogo className="h-6" />
             </Link>
             <div className="hidden items-center gap-4 text-sm sm:flex">
               <Link

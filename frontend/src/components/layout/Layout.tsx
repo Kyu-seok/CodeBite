@@ -4,6 +4,7 @@ import i18n from '@/lib/i18n';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { updateThemePreference, updateLocale } from '../../api/user';
+import { NavbarLogo } from '@/components/ui/NavbarLogo';
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/Tooltip';
 import {
   DropdownMenu,
@@ -55,8 +56,8 @@ export default function Layout() {
       <nav className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-md">
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:px-6">
           <div className="flex items-center gap-6">
-            <Link to="/" className="text-lg font-bold text-foreground">
-              {t('brand')}
+            <Link to="/" className="flex items-center text-foreground">
+              <NavbarLogo className="h-6" />
             </Link>
             <Link
               to="/problems"
