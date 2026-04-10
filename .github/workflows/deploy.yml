@@ -27,18 +27,56 @@ jobs:
             PREV_COMMIT=$(git rev-parse HEAD)
             echo "--- Previous commit: $PREV_COMMIT ---"
 
-            # Pull latest code and rebuild
+            # Pull latest code
             git pull origin master
-            $COMPOSE up -d --build --remove-orphans
 
-            # Health check loop (max 60s, every 5s)
-            echo "--- Waiting for services to become healthy ---"
+            # 1. Build new images without restarting anything
+            echo "--- Building new images ---"
+            $COMPOSE build
+
+            # 2. Record old backend container IDs
+            OLD_IDS=$($COMPOSE ps -q backend | tr '\n' ' ')
+            echo "--- Old backend containers: $OLD_IDS ---"
+
+            # 3. Scale to 6: start 3 NEW containers alongside 3 OLD ones
+            echo "--- Starting new replicas alongside old ones ---"
+            $COMPOSE up -d --no-deps --scale backend=6 --no-recreate backend
+
+            # 4. Wait for new containers to become healthy
+            echo "--- Waiting for new replicas to be healthy ---"
+            sleep 20
+            for i in $(seq 1 12); do
+              if curl -sf http://localhost/api/health > /dev/null 2>&1; then
+                echo "--- New replicas healthy (attempt $i) ---"
+                break
+              fi
+              echo "--- Health check attempt $i failed, retrying... ---"
+              sleep 5
+            done
+
+            # 5. Drain and remove old containers one by one (graceful shutdown)
+            for id in $OLD_IDS; do
+              echo "--- Stopping old container $id ---"
+              docker stop --time 30 "$id"
+              docker rm "$id" 2>/dev/null || true
+              sleep 5
+            done
+
+            # 6. Scale back to 3 and update remaining services
+            $COMPOSE up -d --no-deps --scale backend=3 backend
+            $COMPOSE up -d --remove-orphans
+
+            # 7. Reload nginx to pick up new backend IPs
+            docker exec codebite-nginx nginx -s reload
+
+            # 8. Final health check with rollback
+            echo "--- Final health check ---"
             HEALTHY=false
             for i in $(seq 1 12); do
               sleep 5
               if curl -sf http://localhost/api/health > /dev/null 2>&1; then
-                echo "--- Health check passed (attempt $i) ---"
                 HEALTHY=true
+                echo "--- Deploy healthy (attempt $i) ---"
                 break
               fi
               echo "--- Health check attempt $i failed, retrying... ---"
@@ -46,7 +84,7 @@ jobs:
 
             if [ "$HEALTHY" = false ]; then
               echo "--- HEALTH CHECK FAILED — Rolling back to $PREV_COMMIT ---"
-              git checkout $PREV_COMMIT
+              git checkout "$PREV_COMMIT"
               $COMPOSE up -d --build --remove-orphans
               echo "--- Rollback complete, waiting for recovery ---"
               sleep 30
