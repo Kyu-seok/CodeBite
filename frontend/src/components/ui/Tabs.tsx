@@ -28,7 +28,7 @@ function useTabsContext() {
 /* ── Tabs root ── */
 
 interface TabsProps extends HTMLAttributes<HTMLDivElement> {
-  defaultValue: string;
+  defaultValue?: string;
   value?: string;
   onValueChange?: (value: string) => void;
 }
@@ -44,7 +44,7 @@ const Tabs = forwardRef<HTMLDivElement, TabsProps>(
     },
     ref,
   ) => {
-    const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);
+    const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue ?? '');
     const value = controlledValue ?? uncontrolledValue;
     const handleChange = onValueChange ?? setUncontrolledValue;
 

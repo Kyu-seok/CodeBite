@@ -10,7 +10,8 @@
     "columnDifficulty": "난이도",
     "columnAcceptance": "정답률",
     "noProblems": "문제가 없습니다.",
-    "random": "랜덤"
+    "random": "랜덤",
+    "allProblems": "전체"
   },
   "tabs": {
     "description": "설명",

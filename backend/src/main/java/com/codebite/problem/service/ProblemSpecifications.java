@@ -30,4 +30,8 @@ public final class ProblemSpecifications {
             return cb.equal(tags.get("slug"), tagSlug);
         };
     }
+
+    public static Specification<Problem> problemNumberAtMost(int max) {
+        return (root, query, cb) -> cb.lessThanOrEqualTo(root.get("problemNumber"), max);
+    }
 }

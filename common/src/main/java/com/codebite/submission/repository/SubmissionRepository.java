@@ -28,6 +28,11 @@ public interface SubmissionRepository extends JpaRepository<Submission, Long> {
            "GROUP BY p.difficulty")
     List<Object[]> countSolvedByDifficultyAndUserId(@Param("userId") Long userId);
 
+    @Query("SELECT p.difficulty, COUNT(DISTINCT p.id) FROM Submission s JOIN s.problem p " +
+           "WHERE s.user.id = :userId AND s.status = com.codebite.submission.entity.SubmissionStatus.ACCEPTED AND p.published = true " +
+           "AND p.problemNumber <= :maxNumber GROUP BY p.difficulty")
+    List<Object[]> countSolvedByDifficultyAndUserIdAndCuration(@Param("userId") Long userId, @Param("maxNumber") int maxNumber);
+
     @Query("SELECT s.problem.id, COUNT(s), " +
            "SUM(CASE WHEN s.status = com.codebite.submission.entity.SubmissionStatus.ACCEPTED THEN 1 ELSE 0 END) " +
            "FROM Submission s WHERE s.status != com.codebite.submission.entity.SubmissionStatus.PENDING " +

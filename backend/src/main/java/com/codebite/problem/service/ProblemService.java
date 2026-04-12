@@ -57,7 +57,7 @@ public class ProblemService {
     }
 
     @Transactional(readOnly = true)
-    public Page<ProblemListItem> listPublishedProblems(Difficulty difficulty, String search, String tag, Long userId, Pageable pageable) {
+    public Page<ProblemListItem> listPublishedProblems(Difficulty difficulty, String search, String tag, String curation, Long userId, Pageable pageable) {
         Specification<Problem> spec = Specification.where(ProblemSpecifications.isPublished());
         if (difficulty != null) {
             spec = spec.and(ProblemSpecifications.hasDifficulty(difficulty));
@@ -67,6 +67,10 @@ public class ProblemService {
         }
         if (tag != null && !tag.isBlank()) {
             spec = spec.and(ProblemSpecifications.hasTag(tag));
+        }
+        Integer maxNumber = parseCuration(curation);
+        if (maxNumber != null) {
+            spec = spec.and(ProblemSpecifications.problemNumberAtMost(maxNumber));
         }
 
         Map<Long, String> statusMap = userId != null ? buildStatusMap(userId) : Map.of();
@@ -98,15 +102,22 @@ public class ProblemService {
     }
 
     @Transactional(readOnly = true)
-    public ProblemStats getStats(Long userId) {
+    public ProblemStats getStats(Long userId, String curation) {
+        Integer maxNumber = parseCuration(curation);
         Map<String, Integer> totals = new HashMap<>();
-        for (Object[] row : problemRepository.countPublishedByDifficulty()) {
+        List<Object[]> totalRows = maxNumber != null
+                ? problemRepository.countPublishedByDifficultyAndCuration(maxNumber)
+                : problemRepository.countPublishedByDifficulty();
+        for (Object[] row : totalRows) {
             totals.put(((Difficulty) row[0]).name(), ((Long) row[1]).intValue());
         }
 
         Map<String, Integer> solved = new HashMap<>();
         if (userId != null) {
-            for (Object[] row : submissionRepository.countSolvedByDifficultyAndUserId(userId)) {
+            List<Object[]> solvedRows = maxNumber != null
+                    ? submissionRepository.countSolvedByDifficultyAndUserIdAndCuration(userId, maxNumber)
+                    : submissionRepository.countSolvedByDifficultyAndUserId(userId);
+            for (Object[] row : solvedRows) {
                 solved.put(((Difficulty) row[0]).name(), ((Long) row[1]).intValue());
             }
         }
@@ -303,6 +314,15 @@ public class ProblemService {
         problem.setTags(tags);
         problemRepository.save(problem);
         return problem.getTags().stream().map(Tag::getName).sorted().toList();
+    }
+
+    private static final Map<String, Integer> CURATION_LIMITS = Map.of(
+            "CB50", 50, "CB100", 100, "CB200", 200
+    );
+
+    private Integer parseCuration(String curation) {
+        if (curation == null || curation.isBlank()) return null;
+        return CURATION_LIMITS.get(curation.toUpperCase());
     }
 
     private String slugify(String title) {

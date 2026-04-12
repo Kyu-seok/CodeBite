@@ -16,9 +16,6 @@ import {
   SelectValue,
 } from "@/components/ui/Select"
 import { getRandomProblem } from "../api/problems"
-import type { Difficulty } from "../types/problem"
-
-const DIFFICULTIES: Difficulty[] = ["EASY", "MEDIUM", "HARD"]
 
 function SortableHeader({
   label,
@@ -78,16 +75,16 @@ export default function ProblemListPage() {
   const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
   const page = Number(searchParams.get("page") || "0")
-  const difficulty = (searchParams.get("difficulty") as Difficulty) || undefined
   const search = searchParams.get("search") || ""
   const sort = searchParams.get("sort") || "problemNumber,asc"
   const tag = searchParams.get("tag") || ""
+  const curation = searchParams.get("curation") || "CB50"
   const [searchInput, setSearchInput] = useState(search)
   const [randomLoading, setRandomLoading] = useState(false)
   const { tags } = useTags()
-  const { stats } = useProblemStats()
+  const { stats } = useProblemStats(curation)
   const { data, loading, error } = useProblems(
-    page, 20, difficulty, search || undefined, sort, tag || undefined
+    page, 20, undefined, search || undefined, sort, tag || undefined, curation
   )
 
   useEffect(() => {
@@ -117,17 +114,6 @@ export default function ProblemListPage() {
     setSearchParams(params)
   }
 
-  const setDifficulty = (value: string) => {
-    const params = new URLSearchParams(searchParams)
-    if (value && value !== "ALL") {
-      params.set("difficulty", value)
-    } else {
-      params.delete("difficulty")
-    }
-    params.set("page", "0")
-    setSearchParams(params)
-  }
-
   const setSort = (value: string) => {
     const params = new URLSearchParams(searchParams)
     params.set("sort", value)
@@ -138,13 +124,20 @@ export default function ProblemListPage() {
   const handleRandom = async () => {
     setRandomLoading(true)
     try {
-      const res = await getRandomProblem(difficulty)
+      const res = await getRandomProblem()
       navigate(`/problems/${res.data.slug}`)
     } catch {
       // ignore
     } finally {
       setRandomLoading(false)
     }
+  }
+
+  const setCuration = (value: string) => {
+    const params = new URLSearchParams(searchParams)
+    params.set("curation", value)
+    params.set("page", "0")
+    setSearchParams(params)
   }
 
   const toggleTag = (slug: string) => {
@@ -183,19 +176,16 @@ export default function ProblemListPage() {
             className="w-[200px]"
           />
           <Select
-            value={difficulty || "ALL"}
-            onValueChange={setDifficulty}
+            value={curation}
+            onValueChange={setCuration}
           >
             <SelectTrigger className="w-[160px]">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="ALL">{t("list.allDifficulties")}</SelectItem>
-              {DIFFICULTIES.map((d) => (
-                <SelectItem key={d} value={d}>
-                  {tc(`difficulty.${d.toLowerCase()}`)}
-                </SelectItem>
-              ))}
+              <SelectItem value="CB50">CodeBite 50</SelectItem>
+              <SelectItem value="CB100">CodeBite 100</SelectItem>
+              <SelectItem value="CB200">CodeBite 200</SelectItem>
             </SelectContent>
           </Select>
         </div>

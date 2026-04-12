@@ -84,7 +84,7 @@ class ProblemServiceTest {
         when(problemRepository.findAll(any(org.springframework.data.jpa.domain.Specification.class), any(PageRequest.class))).thenReturn(page);
         when(submissionRepository.findAcceptanceRates()).thenReturn(List.of());
 
-        Page<ProblemListItem> result = problemService.listPublishedProblems(null, null, null, null, PageRequest.of(0, 10));
+        Page<ProblemListItem> result = problemService.listPublishedProblems(null, null, null, null, null, PageRequest.of(0, 10));
         assertEquals(1, result.getTotalElements());
         assertEquals("Two Sum", result.getContent().get(0).title());
     }
@@ -96,7 +96,7 @@ class ProblemServiceTest {
         when(problemRepository.findAll(any(org.springframework.data.jpa.domain.Specification.class), any(PageRequest.class))).thenReturn(page);
         when(submissionRepository.findAcceptanceRates()).thenReturn(List.of());
 
-        Page<ProblemListItem> result = problemService.listPublishedProblems(Difficulty.EASY, null, null, null, PageRequest.of(0, 10));
+        Page<ProblemListItem> result = problemService.listPublishedProblems(Difficulty.EASY, null, null, null, null, PageRequest.of(0, 10));
         assertEquals(1, result.getTotalElements());
     }
 

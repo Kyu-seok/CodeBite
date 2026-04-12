@@ -10,7 +10,8 @@
     "columnDifficulty": "Difficulty",
     "columnAcceptance": "Acceptance",
     "noProblems": "No problems found.",
-    "random": "Random"
+    "random": "Random",
+    "allProblems": "All"
   },
   "tabs": {
     "description": "Description",

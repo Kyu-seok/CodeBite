@@ -25,6 +25,9 @@ public interface ProblemRepository extends JpaRepository<Problem, Long>, JpaSpec
     @Query("SELECT p.difficulty, COUNT(p) FROM Problem p WHERE p.published = true GROUP BY p.difficulty")
     List<Object[]> countPublishedByDifficulty();
 
+    @Query("SELECT p.difficulty, COUNT(p) FROM Problem p WHERE p.published = true AND p.problemNumber <= :maxNumber GROUP BY p.difficulty")
+    List<Object[]> countPublishedByDifficultyAndCuration(@Param("maxNumber") int maxNumber);
+
     @Query("SELECT p.slug FROM Problem p WHERE p.published = true ORDER BY RANDOM()")
     List<String> findRandomPublishedSlugs(Pageable pageable);
 

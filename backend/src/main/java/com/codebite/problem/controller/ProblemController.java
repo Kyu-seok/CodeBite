@@ -38,6 +38,7 @@ public class ProblemController {
             @RequestParam(required = false) Difficulty difficulty,
             @RequestParam(required = false) String search,
             @RequestParam(required = false) String tag,
+            @RequestParam(required = false) String curation,
             @AuthenticationPrincipal JwtUserPrincipal principal,
             Pageable pageable) {
         if (pageable.getSort().isUnsorted()) {
@@ -51,7 +52,7 @@ public class ProblemController {
             }
         }
         Long userId = principal != null ? principal.id() : null;
-        return ResponseEntity.ok(problemService.listPublishedProblems(difficulty, search, tag, userId, pageable));
+        return ResponseEntity.ok(problemService.listPublishedProblems(difficulty, search, tag, curation, userId, pageable));
     }
 
     @GetMapping("/random")
@@ -64,9 +65,11 @@ public class ProblemController {
     }
 
     @GetMapping("/stats")
-    public ResponseEntity<ProblemStats> getStats(@AuthenticationPrincipal JwtUserPrincipal principal) {
+    public ResponseEntity<ProblemStats> getStats(
+            @RequestParam(required = false) String curation,
+            @AuthenticationPrincipal JwtUserPrincipal principal) {
         Long userId = principal != null ? principal.id() : null;
-        return ResponseEntity.ok(problemService.getStats(userId));
+        return ResponseEntity.ok(problemService.getStats(userId, curation));
     }
 
     @GetMapping("/{slug}")
