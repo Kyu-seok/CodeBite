@@ -80,7 +80,7 @@ export default function ProblemListPage() {
   const page = Number(searchParams.get("page") || "0")
   const difficulty = (searchParams.get("difficulty") as Difficulty) || undefined
   const search = searchParams.get("search") || ""
-  const sort = searchParams.get("sort") || "id,asc"
+  const sort = searchParams.get("sort") || "problemNumber,asc"
   const tag = searchParams.get("tag") || ""
   const [searchInput, setSearchInput] = useState(search)
   const [randomLoading, setRandomLoading] = useState(false)
@@ -279,7 +279,7 @@ export default function ProblemListPage() {
                   <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase w-12">
                     &nbsp;
                   </th>
-                  <SortableHeader label={t("list.columnNumber")} field="id" currentSort={sort} onSort={setSort} className="w-16" />
+                  <SortableHeader label={t("list.columnNumber")} field="problemNumber" currentSort={sort} onSort={setSort} className="w-16" />
                   <SortableHeader label={t("list.columnTitle")} field="title" currentSort={sort} onSort={setSort} />
                   <SortableHeader label={t("list.columnDifficulty")} field="difficulty" currentSort={sort} onSort={setSort} className="w-28" />
                   <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase w-28">
@@ -301,7 +301,7 @@ export default function ProblemListPage() {
                       <StatusIcon status={problem.status} />
                     </td>
                     <td className="px-4 py-3 text-sm text-muted-foreground">
-                      {problem.id}
+                      {problem.problemNumber ?? problem.id}
                     </td>
                     <td className="px-4 py-3">
                       <Link

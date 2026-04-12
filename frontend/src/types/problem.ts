@@ -2,6 +2,7 @@ export type Difficulty = "EASY" | "MEDIUM" | "HARD";
 
 export interface ProblemListItem {
   id: number;
+  problemNumber: number | null;
   title: string;
   slug: string;
   difficulty: Difficulty;
@@ -34,6 +35,7 @@ export interface ProblemStats {
 
 export interface ProblemDetail {
   id: number;
+  problemNumber: number | null;
   title: string;
   slug: string;
   description: string;

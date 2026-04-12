@@ -8,6 +8,7 @@ import java.util.Map;
 
 public record ProblemDetail(
         Long id,
+        Integer problemNumber,
         String title,
         String slug,
         String description,

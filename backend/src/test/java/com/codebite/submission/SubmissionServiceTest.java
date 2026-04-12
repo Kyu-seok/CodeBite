@@ -69,7 +69,7 @@ class SubmissionServiceTest {
         problem = new Problem();
         problem.setId(1L);
         problem.setTitle("Two Sum");
-        problem.setSlug("two-sum");
+        problem.setSlug("pair-sum");
         problem.setDescription("Description");
         problem.setDifficulty(Difficulty.EASY);
         problem.setPublished(true);
@@ -82,9 +82,9 @@ class SubmissionServiceTest {
     }
 
     private void setupCommonMocks() {
-        when(problemRepository.findBySlug("two-sum")).thenReturn(Optional.of(problem));
+        when(problemRepository.findBySlug("pair-sum")).thenReturn(Optional.of(problem));
         when(judgeService.isLanguageSupported("java")).thenReturn(true);
-        when(driverCodeLoader.getDriverCode("two-sum", "java")).thenReturn("template {USER_CODE}");
+        when(driverCodeLoader.getDriverCode("pair-sum", "java")).thenReturn("template {USER_CODE}");
         when(judgeService.mapLanguageToId("java")).thenReturn(62);
         when(judgeService.buildSourceCode(anyString(), anyString())).thenReturn("full source");
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
@@ -101,11 +101,11 @@ class SubmissionServiceTest {
     void submit_returnsPendingAndStartsAsync() {
         setupCommonMocks();
 
-        SubmissionResponse response = submissionService.submit("two-sum", new SubmitRequest("java", "code"), 1L);
+        SubmissionResponse response = submissionService.submit("pair-sum", new SubmitRequest("java", "code"), 1L);
 
         assertEquals(SubmissionStatus.PENDING, response.status());
         assertTrue(response.results().isEmpty());
-        assertEquals("two-sum", response.problemSlug());
+        assertEquals("pair-sum", response.problemSlug());
         verify(submissionEventProducer).send(any(SubmissionEvent.class));
     }
 
@@ -124,11 +124,11 @@ class SubmissionServiceTest {
 
     @Test
     void submit_unsupportedLanguage() {
-        when(problemRepository.findBySlug("two-sum")).thenReturn(Optional.of(problem));
+        when(problemRepository.findBySlug("pair-sum")).thenReturn(Optional.of(problem));
         when(judgeService.isLanguageSupported("rust")).thenReturn(false);
 
         assertThrows(com.codebite.common.exception.UnsupportedValueException.class,
-                () -> submissionService.submit("two-sum", new SubmitRequest("rust", "code"), 1L));
+                () -> submissionService.submit("pair-sum", new SubmitRequest("rust", "code"), 1L));
         verify(submissionEventProducer, never()).send(any(SubmissionEvent.class));
     }
 

@@ -22,7 +22,7 @@ class StarterCodeLoaderTest {
 
     @Test
     void loadsAllStarterCodeEntries() {
-        String[] slugs = {"two-sum", "fizzbuzz", "reverse-string", "valid-parentheses", "palindrome-number"};
+        String[] slugs = {"pair-sum", "bracket-validator", "three-sum", "anagram-groups", "overlap-merge"};
         String[] languages = {"java", "python", "javascript", "cpp"};
 
         for (String slug : slugs) {
@@ -35,8 +35,8 @@ class StarterCodeLoaderTest {
     }
 
     @Test
-    void twoSum_containsExpectedMethodSignatures() {
-        Map<String, String> code = loader.getStarterCode("two-sum");
+    void pairSum_containsExpectedMethodSignatures() {
+        Map<String, String> code = loader.getStarterCode("pair-sum");
         assertTrue(code.get("java").contains("twoSum"));
         assertTrue(code.get("python").contains("twoSum"));
         assertTrue(code.get("javascript").contains("twoSum"));
@@ -44,26 +44,8 @@ class StarterCodeLoaderTest {
     }
 
     @Test
-    void fizzbuzz_containsExpectedMethodSignatures() {
-        Map<String, String> code = loader.getStarterCode("fizzbuzz");
-        assertTrue(code.get("java").contains("fizzBuzz"));
-        assertTrue(code.get("python").contains("fizzBuzz"));
-        assertTrue(code.get("javascript").contains("fizzBuzz"));
-        assertTrue(code.get("cpp").contains("fizzBuzz"));
-    }
-
-    @Test
-    void reverseString_containsExpectedMethodSignatures() {
-        Map<String, String> code = loader.getStarterCode("reverse-string");
-        assertTrue(code.get("java").contains("reverseString"));
-        assertTrue(code.get("python").contains("reverseString"));
-        assertTrue(code.get("javascript").contains("reverseString"));
-        assertTrue(code.get("cpp").contains("reverseString"));
-    }
-
-    @Test
-    void validParentheses_containsExpectedMethodSignatures() {
-        Map<String, String> code = loader.getStarterCode("valid-parentheses");
+    void bracketValidator_containsExpectedMethodSignatures() {
+        Map<String, String> code = loader.getStarterCode("bracket-validator");
         assertTrue(code.get("java").contains("isValid"));
         assertTrue(code.get("python").contains("isValid"));
         assertTrue(code.get("javascript").contains("isValid"));
@@ -71,12 +53,12 @@ class StarterCodeLoaderTest {
     }
 
     @Test
-    void palindromeNumber_containsExpectedMethodSignatures() {
-        Map<String, String> code = loader.getStarterCode("palindrome-number");
-        assertTrue(code.get("java").contains("isPalindrome"));
-        assertTrue(code.get("python").contains("isPalindrome"));
-        assertTrue(code.get("javascript").contains("isPalindrome"));
-        assertTrue(code.get("cpp").contains("isPalindrome"));
+    void threeSum_containsExpectedMethodSignatures() {
+        Map<String, String> code = loader.getStarterCode("three-sum");
+        assertTrue(code.get("java").contains("threeSum"));
+        assertTrue(code.get("python").contains("threeSum"));
+        assertTrue(code.get("javascript").contains("threeSum"));
+        assertTrue(code.get("cpp").contains("threeSum"));
     }
 
     @Test

@@ -79,7 +79,7 @@ class ProblemServiceTest {
 
     @Test
     void listPublishedProblems_returnsPage() {
-        Problem p1 = buildProblem(1L, "Two Sum", "two-sum", true);
+        Problem p1 = buildProblem(1L, "Two Sum", "pair-sum", true);
         Page<Problem> page = new PageImpl<>(List.of(p1));
         when(problemRepository.findAll(any(org.springframework.data.jpa.domain.Specification.class), any(PageRequest.class))).thenReturn(page);
         when(submissionRepository.findAcceptanceRates()).thenReturn(List.of());
@@ -102,14 +102,14 @@ class ProblemServiceTest {
 
     @Test
     void getProblemBySlug_returnsDetail() {
-        Problem problem = buildProblem(1L, "Two Sum", "two-sum", true);
-        when(problemRepository.findBySlug("two-sum")).thenReturn(Optional.of(problem));
+        Problem problem = buildProblem(1L, "Two Sum", "pair-sum", true);
+        when(problemRepository.findBySlug("pair-sum")).thenReturn(Optional.of(problem));
         when(testCaseRepository.findByProblemIdAndSampleTrueOrderByOrderIndexAsc(1L)).thenReturn(List.of());
-        when(starterCodeLoader.getStarterCode("two-sum")).thenReturn(Map.of("java", "class Solution {}"));
+        when(starterCodeLoader.getStarterCode("pair-sum")).thenReturn(Map.of("java", "class Solution {}"));
 
-        ProblemDetail detail = problemService.getProblemBySlug("two-sum");
+        ProblemDetail detail = problemService.getProblemBySlug("pair-sum");
         assertEquals("Two Sum", detail.title());
-        assertEquals("two-sum", detail.slug());
+        assertEquals("pair-sum", detail.slug());
         assertEquals(Map.of("java", "class Solution {}"), detail.starterCode());
     }
 

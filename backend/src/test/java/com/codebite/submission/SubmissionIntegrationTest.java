@@ -72,13 +72,13 @@ class SubmissionIntegrationTest {
         SubmitRequest request = new SubmitRequest("java",
                 "class Solution { public int[] twoSum(int[] nums, int target) { return new int[]{0,1}; } }");
 
-        mockMvc.perform(post("/api/problems/two-sum/submit")
+        mockMvc.perform(post("/api/problems/pair-sum/submit")
                         .header("Authorization", "Bearer " + userToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.status").value("PENDING"))
-                .andExpect(jsonPath("$.problemSlug").value("two-sum"))
+                .andExpect(jsonPath("$.problemSlug").value("pair-sum"))
                 .andExpect(jsonPath("$.language").value("java"))
                 .andExpect(jsonPath("$.results").isArray())
                 .andExpect(jsonPath("$.results").isEmpty());
@@ -90,7 +90,7 @@ class SubmissionIntegrationTest {
     void submit_withoutToken_returns401() throws Exception {
         SubmitRequest request = new SubmitRequest("java", "code");
 
-        mockMvc.perform(post("/api/problems/two-sum/submit")
+        mockMvc.perform(post("/api/problems/pair-sum/submit")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isUnauthorized());
@@ -115,7 +115,7 @@ class SubmissionIntegrationTest {
     void submit_unsupportedLanguage_returns400() throws Exception {
         SubmitRequest request = new SubmitRequest("rust", "fn main() {}");
 
-        mockMvc.perform(post("/api/problems/two-sum/submit")
+        mockMvc.perform(post("/api/problems/pair-sum/submit")
                         .header("Authorization", "Bearer " + userToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
@@ -129,7 +129,7 @@ class SubmissionIntegrationTest {
         SubmitRequest request = new SubmitRequest("java",
                 "class Solution { public int[] twoSum(int[] nums, int target) { return new int[]{0,1}; } }");
 
-        MvcResult submitResult = mockMvc.perform(post("/api/problems/two-sum/submit")
+        MvcResult submitResult = mockMvc.perform(post("/api/problems/pair-sum/submit")
                         .header("Authorization", "Bearer " + userToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
@@ -154,7 +154,7 @@ class SubmissionIntegrationTest {
         SubmitRequest request = new SubmitRequest("java",
                 "class Solution { public int[] twoSum(int[] nums, int target) { return new int[]{0,1}; } }");
 
-        MvcResult submitResult = mockMvc.perform(post("/api/problems/two-sum/submit")
+        MvcResult submitResult = mockMvc.perform(post("/api/problems/pair-sum/submit")
                         .header("Authorization", "Bearer " + userToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
@@ -177,13 +177,13 @@ class SubmissionIntegrationTest {
         SubmitRequest request = new SubmitRequest("java",
                 "class Solution { public int[] twoSum(int[] nums, int target) { return new int[]{0,1}; } }");
 
-        mockMvc.perform(post("/api/problems/two-sum/submit")
+        mockMvc.perform(post("/api/problems/pair-sum/submit")
                         .header("Authorization", "Bearer " + userToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated());
 
-        mockMvc.perform(get("/api/problems/two-sum/submissions")
+        mockMvc.perform(get("/api/problems/pair-sum/submissions")
                         .header("Authorization", "Bearer " + userToken))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
@@ -194,7 +194,7 @@ class SubmissionIntegrationTest {
 
     @Test
     void listSubmissions_withoutToken_returns401() throws Exception {
-        mockMvc.perform(get("/api/problems/two-sum/submissions"))
+        mockMvc.perform(get("/api/problems/pair-sum/submissions"))
                 .andExpect(status().isUnauthorized());
     }
 
@@ -202,9 +202,9 @@ class SubmissionIntegrationTest {
 
     @Test
     void getProblemsSlug_remainsPublic() throws Exception {
-        mockMvc.perform(get("/api/problems/two-sum"))
+        mockMvc.perform(get("/api/problems/pair-sum"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.slug").value("two-sum"));
+                .andExpect(jsonPath("$.slug").value("pair-sum"));
     }
 
     // --- GET problems list still works publicly ---

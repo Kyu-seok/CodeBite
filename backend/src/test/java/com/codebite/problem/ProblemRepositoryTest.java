@@ -43,10 +43,10 @@ class ProblemRepositoryTest {
 
     @Test
     void save_and_findBySlug() {
-        Problem problem = createProblem("Two Sum", "two-sum", Difficulty.EASY, true);
+        Problem problem = createProblem("Two Sum", "pair-sum", Difficulty.EASY, true);
         problemRepository.save(problem);
 
-        Optional<Problem> found = problemRepository.findBySlug("two-sum");
+        Optional<Problem> found = problemRepository.findBySlug("pair-sum");
         assertTrue(found.isPresent());
         assertEquals("Two Sum", found.get().getTitle());
     }

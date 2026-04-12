@@ -50,7 +50,7 @@ class RunServiceTest {
         problem = new Problem();
         problem.setId(1L);
         problem.setTitle("Two Sum");
-        problem.setSlug("two-sum");
+        problem.setSlug("pair-sum");
         problem.setDescription("Description");
         problem.setDifficulty(Difficulty.EASY);
         problem.setPublished(true);
@@ -80,9 +80,9 @@ class RunServiceTest {
     }
 
     private void setupCommonMocks() {
-        when(problemRepository.findBySlug("two-sum")).thenReturn(Optional.of(problem));
+        when(problemRepository.findBySlug("pair-sum")).thenReturn(Optional.of(problem));
         when(judgeService.isLanguageSupported("java")).thenReturn(true);
-        when(driverCodeLoader.getDriverCode("two-sum", "java")).thenReturn("template {USER_CODE}");
+        when(driverCodeLoader.getDriverCode("pair-sum", "java")).thenReturn("template {USER_CODE}");
         when(judgeService.buildSourceCode(anyString(), anyString())).thenReturn("full source");
         when(judgeService.mapLanguageToId("java")).thenReturn(62);
     }
@@ -101,7 +101,7 @@ class RunServiceTest {
         when(judgeService.mapStatus(any(JudgeResponse.class), anyString()))
                 .thenReturn(SubmissionStatus.ACCEPTED);
 
-        RunResponse response = runService.run("two-sum", new SubmitRequest("java", "code"));
+        RunResponse response = runService.run("pair-sum", new SubmitRequest("java", "code"));
 
         assertEquals(SubmissionStatus.ACCEPTED, response.overallStatus());
         assertEquals(2, response.results().size());
@@ -121,7 +121,7 @@ class RunServiceTest {
         when(judgeService.mapStatus(any(JudgeResponse.class), anyString()))
                 .thenReturn(SubmissionStatus.WRONG_ANSWER);
 
-        RunResponse response = runService.run("two-sum", new SubmitRequest("java", "code"));
+        RunResponse response = runService.run("pair-sum", new SubmitRequest("java", "code"));
 
         assertEquals(SubmissionStatus.WRONG_ANSWER, response.overallStatus());
         assertEquals(1, response.results().size());
@@ -139,7 +139,7 @@ class RunServiceTest {
         when(judgeService.mapStatus(any(JudgeResponse.class), anyString()))
                 .thenReturn(SubmissionStatus.COMPILATION_ERROR);
 
-        RunResponse response = runService.run("two-sum", new SubmitRequest("java", "code"));
+        RunResponse response = runService.run("pair-sum", new SubmitRequest("java", "code"));
 
         assertEquals(SubmissionStatus.COMPILATION_ERROR, response.overallStatus());
         assertEquals(1, response.results().size());
@@ -156,10 +156,10 @@ class RunServiceTest {
 
     @Test
     void run_unsupportedLanguage_throwsIllegalArgumentException() {
-        when(problemRepository.findBySlug("two-sum")).thenReturn(Optional.of(problem));
+        when(problemRepository.findBySlug("pair-sum")).thenReturn(Optional.of(problem));
         when(judgeService.isLanguageSupported("rust")).thenReturn(false);
 
         assertThrows(com.codebite.common.exception.UnsupportedValueException.class,
-                () -> runService.run("two-sum", new SubmitRequest("rust", "code")));
+                () -> runService.run("pair-sum", new SubmitRequest("rust", "code")));
     }
 }

@@ -2,6 +2,7 @@ import type { Difficulty } from './problem';
 
 export interface AdminProblemListItem {
   id: number;
+  problemNumber: number | null;
   title: string;
   slug: string;
   difficulty: Difficulty;
@@ -12,6 +13,7 @@ export interface AdminProblemListItem {
 
 export interface AdminProblemDetail {
   id: number;
+  problemNumber: number | null;
   title: string;
   slug: string;
   description: string;

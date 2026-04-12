@@ -93,7 +93,7 @@ export default function AdminProblemListPage() {
                   className="border-b border-border/50 last:border-0 hover:bg-muted/30 transition-colors cursor-pointer"
                   onClick={() => navigate(`/admin/problems/${p.id}`)}
                 >
-                  <td className="px-4 py-2.5 text-muted-foreground">{p.id}</td>
+                  <td className="px-4 py-2.5 text-muted-foreground">{p.problemNumber ?? p.id}</td>
                   <td className="px-4 py-2.5">
                     <span className="font-medium text-foreground">{p.title}</span>
                     <span className="ml-2 text-xs text-muted-foreground">/{p.slug}</span>

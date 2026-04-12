@@ -21,38 +21,38 @@ class DriverCodeLoaderTest {
 
     @Test
     void loadsAllJavaTemplates() {
-        assertNotNull(loader.getDriverCode("two-sum", "java"));
-        assertNotNull(loader.getDriverCode("fizzbuzz", "java"));
-        assertNotNull(loader.getDriverCode("reverse-string", "java"));
-        assertNotNull(loader.getDriverCode("valid-parentheses", "java"));
-        assertNotNull(loader.getDriverCode("palindrome-number", "java"));
+        assertNotNull(loader.getDriverCode("pair-sum", "java"));
+        assertNotNull(loader.getDriverCode("string-codec", "java"));
+        assertNotNull(loader.getDriverCode("k-most-frequent", "java"));
+        assertNotNull(loader.getDriverCode("bracket-validator", "java"));
+        assertNotNull(loader.getDriverCode("find-duplicates", "java"));
     }
 
     @Test
     void loadsAllPythonTemplates() {
-        assertNotNull(loader.getDriverCode("two-sum", "python"));
-        assertNotNull(loader.getDriverCode("fizzbuzz", "python"));
-        assertNotNull(loader.getDriverCode("reverse-string", "python"));
-        assertNotNull(loader.getDriverCode("valid-parentheses", "python"));
-        assertNotNull(loader.getDriverCode("palindrome-number", "python"));
+        assertNotNull(loader.getDriverCode("pair-sum", "python"));
+        assertNotNull(loader.getDriverCode("string-codec", "python"));
+        assertNotNull(loader.getDriverCode("k-most-frequent", "python"));
+        assertNotNull(loader.getDriverCode("bracket-validator", "python"));
+        assertNotNull(loader.getDriverCode("find-duplicates", "python"));
     }
 
     @Test
     void templateContainsUserCodePlaceholder() {
-        String template = loader.getDriverCode("two-sum", "java");
+        String template = loader.getDriverCode("pair-sum", "java");
         assertTrue(template.contains("{USER_CODE}"));
     }
 
     @Test
     void hasDriverCode_returnsTrueForExisting() {
-        assertTrue(loader.hasDriverCode("two-sum", "java"));
-        assertTrue(loader.hasDriverCode("two-sum", "python"));
+        assertTrue(loader.hasDriverCode("pair-sum", "java"));
+        assertTrue(loader.hasDriverCode("pair-sum", "python"));
     }
 
     @Test
     void hasDriverCode_returnsFalseForMissing() {
         assertFalse(loader.hasDriverCode("nonexistent", "java"));
-        assertFalse(loader.hasDriverCode("two-sum", "rust"));
+        assertFalse(loader.hasDriverCode("pair-sum", "rust"));
     }
 
     @Test
@@ -77,86 +77,86 @@ class DriverCodeLoaderTest {
     }
 
     @Test
-    void javaFizzbuzzDriver_usesJsonOutput() {
-        String template = loader.getDriverCode("fizzbuzz", "java");
+    void javaStringCodecDriver_usesJsonOutput() {
+        String template = loader.getDriverCode("string-codec", "java");
         assertTrue(template.contains("JsonOutput.stringList("));
         assertTrue(template.contains("class JsonOutput"));
     }
 
     @Test
     void javaTwoSumDriver_usesJsonOutput() {
-        String template = loader.getDriverCode("two-sum", "java");
+        String template = loader.getDriverCode("pair-sum", "java");
         assertTrue(template.contains("JsonOutput.intArray("));
         assertTrue(template.contains("class JsonOutput"));
     }
 
     @Test
-    void javaReverseStringDriver_usesJsonOutput() {
-        String template = loader.getDriverCode("reverse-string", "java");
-        assertTrue(template.contains("JsonOutput.charArray("));
+    void javaKMostFrequentDriver_usesJsonOutput() {
+        String template = loader.getDriverCode("k-most-frequent", "java");
+        assertTrue(template.contains("JsonOutput.intArray("));
         assertTrue(template.contains("class JsonOutput"));
     }
 
     @Test
     void loadsAllJavascriptTemplates() {
-        assertNotNull(loader.getDriverCode("two-sum", "javascript"));
-        assertNotNull(loader.getDriverCode("fizzbuzz", "javascript"));
-        assertNotNull(loader.getDriverCode("reverse-string", "javascript"));
-        assertNotNull(loader.getDriverCode("valid-parentheses", "javascript"));
-        assertNotNull(loader.getDriverCode("palindrome-number", "javascript"));
+        assertNotNull(loader.getDriverCode("pair-sum", "javascript"));
+        assertNotNull(loader.getDriverCode("string-codec", "javascript"));
+        assertNotNull(loader.getDriverCode("k-most-frequent", "javascript"));
+        assertNotNull(loader.getDriverCode("bracket-validator", "javascript"));
+        assertNotNull(loader.getDriverCode("find-duplicates", "javascript"));
     }
 
     @Test
     void loadsAllCppTemplates() {
-        assertNotNull(loader.getDriverCode("two-sum", "cpp"));
-        assertNotNull(loader.getDriverCode("fizzbuzz", "cpp"));
-        assertNotNull(loader.getDriverCode("reverse-string", "cpp"));
-        assertNotNull(loader.getDriverCode("valid-parentheses", "cpp"));
-        assertNotNull(loader.getDriverCode("palindrome-number", "cpp"));
+        assertNotNull(loader.getDriverCode("pair-sum", "cpp"));
+        assertNotNull(loader.getDriverCode("string-codec", "cpp"));
+        assertNotNull(loader.getDriverCode("k-most-frequent", "cpp"));
+        assertNotNull(loader.getDriverCode("bracket-validator", "cpp"));
+        assertNotNull(loader.getDriverCode("find-duplicates", "cpp"));
     }
 
     @Test
     void javascriptDrivers_useJsonStringify() {
-        String twoSum = loader.getDriverCode("two-sum", "javascript");
+        String twoSum = loader.getDriverCode("pair-sum", "javascript");
         assertTrue(twoSum.contains("JSON.stringify("));
 
-        String fizzbuzz = loader.getDriverCode("fizzbuzz", "javascript");
-        assertTrue(fizzbuzz.contains("JSON.stringify("));
+        String stringCodec = loader.getDriverCode("string-codec", "javascript");
+        assertTrue(stringCodec.contains("JSON.stringify("));
 
-        String reverseString = loader.getDriverCode("reverse-string", "javascript");
-        assertTrue(reverseString.contains("JSON.stringify("));
+        String kMostFrequent = loader.getDriverCode("k-most-frequent", "javascript");
+        assertTrue(kMostFrequent.contains("JSON.stringify("));
     }
 
     @Test
     void cppTwoSumDriver_usesJsonOutput() {
-        String template = loader.getDriverCode("two-sum", "cpp");
+        String template = loader.getDriverCode("pair-sum", "cpp");
         assertTrue(template.contains("JsonOutput::intVector("));
         assertTrue(template.contains("class JsonOutput"));
     }
 
     @Test
-    void cppFizzbuzzDriver_usesJsonOutput() {
-        String template = loader.getDriverCode("fizzbuzz", "cpp");
+    void cppStringCodecDriver_usesJsonOutput() {
+        String template = loader.getDriverCode("string-codec", "cpp");
         assertTrue(template.contains("JsonOutput::stringVector("));
         assertTrue(template.contains("class JsonOutput"));
     }
 
     @Test
-    void cppReverseStringDriver_usesJsonOutput() {
-        String template = loader.getDriverCode("reverse-string", "cpp");
-        assertTrue(template.contains("JsonOutput::charVector("));
+    void cppKMostFrequentDriver_usesJsonOutput() {
+        String template = loader.getDriverCode("k-most-frequent", "cpp");
+        assertTrue(template.contains("JsonOutput::intVector("));
         assertTrue(template.contains("class JsonOutput"));
     }
 
     @Test
     void pythonDrivers_useJsonDumps() {
-        String twoSum = loader.getDriverCode("two-sum", "python");
+        String twoSum = loader.getDriverCode("pair-sum", "python");
         assertTrue(twoSum.contains("json.dumps("));
 
-        String fizzbuzz = loader.getDriverCode("fizzbuzz", "python");
-        assertTrue(fizzbuzz.contains("json.dumps("));
+        String stringCodec = loader.getDriverCode("string-codec", "python");
+        assertTrue(stringCodec.contains("json.dumps("));
 
-        String reverseString = loader.getDriverCode("reverse-string", "python");
-        assertTrue(reverseString.contains("json.dumps("));
+        String kMostFrequent = loader.getDriverCode("k-most-frequent", "python");
+        assertTrue(kMostFrequent.contains("json.dumps("));
     }
 }

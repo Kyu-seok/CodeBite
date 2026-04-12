@@ -38,6 +38,9 @@ public class Problem extends BaseEntity {
     @Column(columnDefinition = "TEXT")
     private String constraints;
 
+    @Column(name = "problem_number")
+    private Integer problemNumber;
+
     @Column(name = "is_published", nullable = false)
     private boolean published;
 
@@ -88,6 +91,14 @@ public class Problem extends BaseEntity {
 
     public void setConstraints(String constraints) {
         this.constraints = constraints;
+    }
+
+    public Integer getProblemNumber() {
+        return problemNumber;
+    }
+
+    public void setProblemNumber(Integer problemNumber) {
+        this.problemNumber = problemNumber;
     }
 
     public boolean isPublished() {

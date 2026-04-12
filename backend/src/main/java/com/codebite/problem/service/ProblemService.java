@@ -351,6 +351,7 @@ public class ProblemService {
                 .toList();
         return new ProblemListItem(
                 problem.getId(),
+                problem.getProblemNumber(),
                 title,
                 problem.getSlug(),
                 problem.getDifficulty(),
@@ -375,6 +376,7 @@ public class ProblemService {
 
         return new ProblemDetail(
                 problem.getId(),
+                problem.getProblemNumber(),
                 title,
                 problem.getSlug(),
                 description,
