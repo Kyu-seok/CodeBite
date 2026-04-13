@@ -4,42 +4,36 @@ export interface NodePosition {
 }
 
 // Horizontal layout: left-to-right flow
-// col = depth level (1=start, 9=end), row = vertical spread within a level
+// col = depth level (1=start, 6=end), row = vertical spread within a level
 export const ROADMAP_LAYOUT: Record<string, NodePosition> = {
-  "foundations":          { col: 1, row: 3 },
-  "hash-maps":           { col: 2, row: 1 },
+  "arrays-and-hashing":  { col: 1, row: 2 },
+  "two-pointers":        { col: 2, row: 1 },
   "stacks":              { col: 2, row: 3 },
-  "sorting":             { col: 2, row: 5 },
-  "two-pointers":        { col: 3, row: 1 },
+  "sliding-window":      { col: 3, row: 1 },
+  "binary-search":       { col: 3, row: 2 },
   "linked-lists":        { col: 3, row: 3 },
-  "binary-search":       { col: 3, row: 5 },
-  "recursion":           { col: 4, row: 3 },
-  "trees":               { col: 5, row: 2 },
-  "backtracking":        { col: 5, row: 4 },
-  "tries":               { col: 6, row: 1 },
-  "heaps":               { col: 6, row: 3 },
-  "graphs":              { col: 6, row: 5 },
-  "greedy":              { col: 7, row: 4 },
-  "dynamic-programming": { col: 8, row: 3 },
-  "math-and-bits":       { col: 9, row: 3 },
+  "trees":               { col: 4, row: 2 },
+  "tries":               { col: 5, row: 1 },
+  "backtracking":        { col: 5, row: 2 },
+  "heaps":               { col: 5, row: 3 },
+  "graphs":              { col: 6, row: 1 },
+  "dynamic-programming": { col: 6, row: 2 },
+  "greedy":              { col: 6, row: 3 },
 }
 
 // Topological order for the mobile list view
 export const TOPOLOGICAL_ORDER: string[] = [
-  "foundations",
-  "hash-maps",
-  "stacks",
-  "sorting",
+  "arrays-and-hashing",
   "two-pointers",
-  "linked-lists",
+  "stacks",
+  "sliding-window",
   "binary-search",
-  "recursion",
+  "linked-lists",
   "trees",
-  "backtracking",
   "tries",
+  "backtracking",
   "heaps",
   "graphs",
-  "greedy",
   "dynamic-programming",
-  "math-and-bits",
+  "greedy",
 ]
