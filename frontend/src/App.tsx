@@ -38,8 +38,8 @@ function App() {
                 <Route path="admin/problems/:id" element={<AdminProblemEditPage />} />
                 <Route path="admin/users" element={<AdminUserListPage />} />
               </Route>
-              <Route index element={<LandingPage />} />
               <Route element={<Layout />}>
+                <Route index element={<LandingPage />} />
                 <Route path="problems" element={<ProblemListPage />} />
                 <Route path="roadmap" element={<RoadmapPage />} />
                 <Route path="profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />

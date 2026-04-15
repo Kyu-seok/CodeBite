@@ -78,7 +78,7 @@ export default function ProblemListPage() {
   const search = searchParams.get("search") || ""
   const sort = searchParams.get("sort") || "problemNumber,asc"
   const tag = searchParams.get("tag") || ""
-  const curation = searchParams.get("curation") || "CB50"
+  const curation = searchParams.get("curation") || "CB100"
   const [searchInput, setSearchInput] = useState(search)
   const [randomLoading, setRandomLoading] = useState(false)
   const { tags } = useTags()
