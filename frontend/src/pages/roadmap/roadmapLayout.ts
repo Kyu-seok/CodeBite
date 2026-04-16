@@ -20,9 +20,11 @@ export const ROADMAP_LAYOUT: Record<string, NodePosition> = {
   "graphs":                { col: 6, row: 1 },
   "dynamic-programming":   { col: 6, row: 2 },
   "greedy":                { col: 6, row: 3 },
-  "bit-manipulation":      { col: 7, row: 1 },
+  "advanced-graphs":       { col: 7, row: 1 },
   "2d-dynamic-programming":{ col: 7, row: 2 },
   "intervals":             { col: 7, row: 3 },
+  "bit-manipulation":      { col: 8, row: 1 },
+  "design":                { col: 8, row: 2 },
 }
 
 // Topological order for the mobile list view
@@ -41,7 +43,9 @@ export const TOPOLOGICAL_ORDER: string[] = [
   "graphs",
   "dynamic-programming",
   "greedy",
+  "advanced-graphs",
   "intervals",
   "2d-dynamic-programming",
   "bit-manipulation",
+  "design",
 ]
