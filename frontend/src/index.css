@@ -140,6 +140,11 @@ html {
   font-weight: 500;
 }
 
+.prose :where(code):not(:where(pre *))::before,
+.prose :where(code):not(:where(pre *))::after {
+  content: none;
+}
+
 /* ── Scrollbar styling ── */
 * {
   scrollbar-width: thin;

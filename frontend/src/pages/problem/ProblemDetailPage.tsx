@@ -204,7 +204,6 @@ export default function ProblemDetailPage() {
           difficulty={problem.difficulty}
           description={problem.description}
           constraints={problem.constraints}
-          sampleTestCases={problem.sampleTestCases}
           isAuthenticated={isAuthenticated}
           submissions={submissions}
           onUpdateNote={updateNote}

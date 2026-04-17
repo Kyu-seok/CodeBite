@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/Tabs';
 import { DescriptionPanel } from './DescriptionPanel';
 import { SubmissionsPanel } from './SubmissionsPanel';
-import type { Difficulty, TestCase } from '@/types/problem';
+import type { Difficulty } from '@/types/problem';
 import type { SubmissionListItem } from '@/types/submission';
 
 function DescriptionIcon() {
@@ -66,7 +66,6 @@ interface LeftPanelProps {
   difficulty: Difficulty;
   description: string;
   constraints: string | null;
-  sampleTestCases: TestCase[];
   isAuthenticated: boolean;
   submissions: SubmissionListItem[];
   onUpdateNote?: (id: number, notes: string) => void;
@@ -77,7 +76,6 @@ export function LeftPanel({
   difficulty,
   description,
   constraints,
-  sampleTestCases,
   isAuthenticated,
   submissions,
   onUpdateNote,
@@ -110,7 +108,6 @@ export function LeftPanel({
               difficulty={difficulty}
               description={description}
               constraints={constraints}
-              sampleTestCases={sampleTestCases}
             />
           </TabsContent>
 
