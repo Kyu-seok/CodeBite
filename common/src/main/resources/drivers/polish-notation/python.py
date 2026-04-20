@@ -2,5 +2,5 @@
 
 import json
 tokens = json.loads(input())
-result = Solution().eval_rpn(tokens)
+result = Solution().evalRPN(tokens)
 print(result)

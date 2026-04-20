@@ -20,5 +20,5 @@ def _list_to_array(head):
 arr = json.loads(input())
 n = int(input())
 head = _build_list(arr)
-head = Solution().remove_nth_from_end(head, n)
+head = Solution().removeNthFromEnd(head, n)
 print(json.dumps(_list_to_array(head), separators=(',', ':')))

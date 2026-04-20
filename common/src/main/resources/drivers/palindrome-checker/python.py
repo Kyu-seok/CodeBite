@@ -1,5 +1,5 @@
 {USER_CODE}
 
 s = input().strip()
-result = Solution().is_palindrome(s)
+result = Solution().isPalindrome(s)
 print(str(result).lower())

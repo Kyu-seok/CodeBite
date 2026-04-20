@@ -2,6 +2,6 @@
 
 import json
 n = int(input())
-result = Solution().generate_parenthesis(n)
+result = Solution().generateParenthesis(n)
 result.sort()
 print(json.dumps(result, separators=(',', ':')))

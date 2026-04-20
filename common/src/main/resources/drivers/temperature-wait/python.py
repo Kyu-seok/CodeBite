@@ -2,5 +2,5 @@
 
 import json
 temperatures = eval(input())
-result = Solution().daily_temperatures(temperatures)
+result = Solution().dailyTemperatures(temperatures)
 print(json.dumps(result, separators=(',', ':')))

@@ -2,5 +2,5 @@
 
 s = input().strip()
 t = input().strip()
-result = Solution().min_window(s, t)
+result = Solution().minWindow(s, t)
 print(result)

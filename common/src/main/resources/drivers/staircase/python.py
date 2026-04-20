@@ -1,5 +1,5 @@
 {USER_CODE}
 
 n = int(input())
-result = Solution().climb_stairs(n)
+result = Solution().climbStairs(n)
 print(result)

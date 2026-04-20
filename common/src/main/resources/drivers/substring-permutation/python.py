@@ -2,5 +2,5 @@
 
 s1 = input().strip()
 s2 = input().strip()
-result = Solution().check_inclusion(s1, s2)
+result = Solution().checkInclusion(s1, s2)
 print(str(result).lower())
