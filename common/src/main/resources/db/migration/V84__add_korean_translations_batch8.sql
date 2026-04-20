@@ -28,12 +28,7 @@ Output: 1
 ```',
     '- 트리의 노드 수는 `[1, 10^4]` 범위입니다.
 - `-100 <= Node.val <= 100`'
-)
-ON CONFLICT (problem_id, locale) DO UPDATE SET
-    title = EXCLUDED.title,
-    description = EXCLUDED.description,
-    constraints = EXCLUDED.constraints,
-    updated_at = CURRENT_TIMESTAMP;
+);
 
 ------------------------------------------------------------
 -- #72 max-path-sum
@@ -64,12 +59,7 @@ Explanation: 최적 경로는 15 -> 20 -> 7이며, 경로 합은 15 + 20 + 7 = 4
 ```',
     '- 트리의 노드 수는 `[1, 3 * 10^4]` 범위입니다.
 - `-1000 <= Node.val <= 1000`'
-)
-ON CONFLICT (problem_id, locale) DO UPDATE SET
-    title = EXCLUDED.title,
-    description = EXCLUDED.description,
-    constraints = EXCLUDED.constraints,
-    updated_at = CURRENT_TIMESTAMP;
+);
 
 ------------------------------------------------------------
 -- #73 prefix-tree
@@ -98,12 +88,7 @@ Output: [null, null, true, false, true, null, true]
     '- `1 <= word.length, prefix.length <= 2000`
 - `word`와 `prefix`는 소문자 영어 글자로만 구성됩니다.
 - `insert`, `search`, `startsWith` 호출 횟수의 합은 최대 `3 * 10^4`입니다.'
-)
-ON CONFLICT (problem_id, locale) DO UPDATE SET
-    title = EXCLUDED.title,
-    description = EXCLUDED.description,
-    constraints = EXCLUDED.constraints,
-    updated_at = CURRENT_TIMESTAMP;
+);
 
 ------------------------------------------------------------
 -- #74 word-dictionary
@@ -132,12 +117,7 @@ Output: [null,null,null,null,false,true,true,true]
 - `addWord`의 `word`는 소문자 영어 글자로 구성됩니다.
 - `search`의 `word`는 `''.''` 또는 소문자 영어 글자로 구성됩니다.
 - `addWord`와 `search` 호출은 최대 `10^4`번입니다.'
-)
-ON CONFLICT (problem_id, locale) DO UPDATE SET
-    title = EXCLUDED.title,
-    description = EXCLUDED.description,
-    constraints = EXCLUDED.constraints,
-    updated_at = CURRENT_TIMESTAMP;
+);
 
 ------------------------------------------------------------
 -- #75 word-finder
@@ -172,12 +152,7 @@ Output: []
 - `1 <= words[i].length <= 10`
 - `words[i]`는 소문자 영어 글자로 구성됩니다.
 - `words`의 모든 문자열은 고유합니다.'
-)
-ON CONFLICT (problem_id, locale) DO UPDATE SET
-    title = EXCLUDED.title,
-    description = EXCLUDED.description,
-    constraints = EXCLUDED.constraints,
-    updated_at = CURRENT_TIMESTAMP;
+);
 
 ------------------------------------------------------------
 -- #76 last-stone
@@ -214,12 +189,7 @@ Output: 1
 ```',
     '- `1 <= stones.length <= 30`
 - `1 <= stones[i] <= 1000`'
-)
-ON CONFLICT (problem_id, locale) DO UPDATE SET
-    title = EXCLUDED.title,
-    description = EXCLUDED.description,
-    constraints = EXCLUDED.constraints,
-    updated_at = CURRENT_TIMESTAMP;
+);
 
 ------------------------------------------------------------
 -- #77 k-closest-points
@@ -249,12 +219,7 @@ Output: [[3,3],[-2,4]]
 ```',
     '- `1 <= k <= points.length <= 10^4`
 - `-10^4 <= x, y <= 10^4`'
-)
-ON CONFLICT (problem_id, locale) DO UPDATE SET
-    title = EXCLUDED.title,
-    description = EXCLUDED.description,
-    constraints = EXCLUDED.constraints,
-    updated_at = CURRENT_TIMESTAMP;
+);
 
 ------------------------------------------------------------
 -- #78 array-kth-largest
@@ -287,12 +252,7 @@ Output: 1
 ```',
     '- `1 <= k <= nums.length <= 10^5`
 - `-10^4 <= nums[i] <= 10^4`'
-)
-ON CONFLICT (problem_id, locale) DO UPDATE SET
-    title = EXCLUDED.title,
-    description = EXCLUDED.description,
-    constraints = EXCLUDED.constraints,
-    updated_at = CURRENT_TIMESTAMP;
+);
 
 ------------------------------------------------------------
 -- #79 queen-placement
@@ -320,12 +280,7 @@ Input: n = 1
 Output: [["Q"]]
 ```',
     '- `1 <= n <= 9`'
-)
-ON CONFLICT (problem_id, locale) DO UPDATE SET
-    title = EXCLUDED.title,
-    description = EXCLUDED.description,
-    constraints = EXCLUDED.constraints,
-    updated_at = CURRENT_TIMESTAMP;
+);
 
 ------------------------------------------------------------
 -- #80 word-search
@@ -361,9 +316,4 @@ Output: false
 - `1 <= m, n <= 6`
 - `1 <= word.length <= 15`
 - `board`와 `word`는 소문자 및 대문자 영어 글자로만 구성됩니다.'
-)
-ON CONFLICT (problem_id, locale) DO UPDATE SET
-    title = EXCLUDED.title,
-    description = EXCLUDED.description,
-    constraints = EXCLUDED.constraints,
-    updated_at = CURRENT_TIMESTAMP;
+);

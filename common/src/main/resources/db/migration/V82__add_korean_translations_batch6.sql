@@ -32,12 +32,7 @@ Output: [0]
 ```',
     '- `1 <= nums.length <= 300`
 - `nums[i]`는 `0`, `1`, 또는 `2`입니다.'
-)
-ON CONFLICT (problem_id, locale) DO UPDATE SET
-    title = EXCLUDED.title,
-    description = EXCLUDED.description,
-    constraints = EXCLUDED.constraints,
-    updated_at = CURRENT_TIMESTAMP;
+);
 
 ------------------------------------------------------------
 -- #52 next-arrangement
@@ -74,12 +69,7 @@ Output: [1,5,1]
 ```',
     '- `1 <= nums.length <= 100`
 - `0 <= nums[i] <= 100`'
-)
-ON CONFLICT (problem_id, locale) DO UPDATE SET
-    title = EXCLUDED.title,
-    description = EXCLUDED.description,
-    constraints = EXCLUDED.constraints,
-    updated_at = CURRENT_TIMESTAMP;
+);
 
 ------------------------------------------------------------
 -- #53 first-missing-positive
@@ -115,12 +105,7 @@ Explanation: 가장 작은 양수인 1이 배열에 없습니다.
 ```',
     '- `1 <= nums.length <= 10^5`
 - `-2^31 <= nums[i] <= 2^31 - 1`'
-)
-ON CONFLICT (problem_id, locale) DO UPDATE SET
-    title = EXCLUDED.title,
-    description = EXCLUDED.description,
-    constraints = EXCLUDED.constraints,
-    updated_at = CURRENT_TIMESTAMP;
+);
 
 ------------------------------------------------------------
 -- #54 rain-collector
@@ -149,12 +134,7 @@ Output: 9
     '- `n == height.length`
 - `1 <= n <= 2 * 10^4`
 - `0 <= height[i] <= 10^5`'
-)
-ON CONFLICT (problem_id, locale) DO UPDATE SET
-    title = EXCLUDED.title,
-    description = EXCLUDED.description,
-    constraints = EXCLUDED.constraints,
-    updated_at = CURRENT_TIMESTAMP;
+);
 
 ------------------------------------------------------------
 -- #55 move-zeroes
@@ -182,12 +162,7 @@ Output: [0]
 ```',
     '- `1 <= nums.length <= 10^4`
 - `-2^31 <= nums[i] <= 2^31 - 1`'
-)
-ON CONFLICT (problem_id, locale) DO UPDATE SET
-    title = EXCLUDED.title,
-    description = EXCLUDED.description,
-    constraints = EXCLUDED.constraints,
-    updated_at = CURRENT_TIMESTAMP;
+);
 
 ------------------------------------------------------------
 -- #56 substring-permutation
@@ -216,12 +191,7 @@ Explanation: s2의 어떤 연속 부분 문자열도 s1의 순열이 아닙니�
 ```',
     '- `1 <= s1.length, s2.length <= 10^4`
 - `s1`과 `s2`는 소문자 영어 알파벳으로 구성됩니다.'
-)
-ON CONFLICT (problem_id, locale) DO UPDATE SET
-    title = EXCLUDED.title,
-    description = EXCLUDED.description,
-    constraints = EXCLUDED.constraints,
-    updated_at = CURRENT_TIMESTAMP;
+);
 
 ------------------------------------------------------------
 -- #57 window-maximum
@@ -258,12 +228,7 @@ Output: [1]
     '- `1 <= nums.length <= 10^5`
 - `-10^4 <= nums[i] <= 10^4`
 - `1 <= k <= nums.length`'
-)
-ON CONFLICT (problem_id, locale) DO UPDATE SET
-    title = EXCLUDED.title,
-    description = EXCLUDED.description,
-    constraints = EXCLUDED.constraints,
-    updated_at = CURRENT_TIMESTAMP;
+);
 
 ------------------------------------------------------------
 -- #58 polish-notation
@@ -301,12 +266,7 @@ Explanation: ((10 * (6 / ((9 + 3) * -11))) + 17) + 5 = 22
 ```',
     '- `1 <= tokens.length <= 10^4`
 - `tokens[i]`는 연산자(`+`, `-`, `*`, `/`) 또는 `[-200, 200]` 범위의 정수입니다.'
-)
-ON CONFLICT (problem_id, locale) DO UPDATE SET
-    title = EXCLUDED.title,
-    description = EXCLUDED.description,
-    constraints = EXCLUDED.constraints,
-    updated_at = CURRENT_TIMESTAMP;
+);
 
 ------------------------------------------------------------
 -- #59 parentheses-generator
@@ -333,12 +293,7 @@ Input: n = 1
 Output: ["()"]
 ```',
     '- `1 <= n <= 8`'
-)
-ON CONFLICT (problem_id, locale) DO UPDATE SET
-    title = EXCLUDED.title,
-    description = EXCLUDED.description,
-    constraints = EXCLUDED.constraints,
-    updated_at = CURRENT_TIMESTAMP;
+);
 
 ------------------------------------------------------------
 -- #60 temperature-wait
@@ -373,9 +328,4 @@ Output: [1,1,0]
 ```',
     '- `1 <= temperatures.length <= 10^5`
 - `30 <= temperatures[i] <= 100`'
-)
-ON CONFLICT (problem_id, locale) DO UPDATE SET
-    title = EXCLUDED.title,
-    description = EXCLUDED.description,
-    constraints = EXCLUDED.constraints,
-    updated_at = CURRENT_TIMESTAMP;
+);

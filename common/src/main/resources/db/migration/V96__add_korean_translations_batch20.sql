@@ -34,12 +34,7 @@ Output: 8
     '- `1 <= nums.length <= 10000`
 - `0 <= nums[i] <= n`
 - nums의 모든 값은 고유합니다'
-)
-ON CONFLICT (problem_id, locale) DO UPDATE SET
-    title = EXCLUDED.title,
-    description = EXCLUDED.description,
-    constraints = EXCLUDED.constraints,
-    updated_at = CURRENT_TIMESTAMP;
+);
 
 ------------------------------------------------------------
 -- #192 bitwise-sum
@@ -71,12 +66,7 @@ Input: a = 0, b = 0
 Output: 0
 ```',
     '- `-1000 <= a, b <= 1000`'
-)
-ON CONFLICT (problem_id, locale) DO UPDATE SET
-    title = EXCLUDED.title,
-    description = EXCLUDED.description,
-    constraints = EXCLUDED.constraints,
-    updated_at = CURRENT_TIMESTAMP;
+);
 
 ------------------------------------------------------------
 -- #193 power-check
@@ -110,12 +100,7 @@ Input: n = 6
 Output: false
 ```',
     '- `-2^31 <= n <= 2^31 - 1`'
-)
-ON CONFLICT (problem_id, locale) DO UPDATE SET
-    title = EXCLUDED.title,
-    description = EXCLUDED.description,
-    constraints = EXCLUDED.constraints,
-    updated_at = CURRENT_TIMESTAMP;
+);
 
 ------------------------------------------------------------
 -- #194 bit-distance
@@ -150,12 +135,7 @@ Output: 0
 Explanation: 두 값이 동일하므로 다른 비트가 없습니다.
 ```',
     '- `0 <= x, y <= 2^31 - 1`'
-)
-ON CONFLICT (problem_id, locale) DO UPDATE SET
-    title = EXCLUDED.title,
-    description = EXCLUDED.description,
-    constraints = EXCLUDED.constraints,
-    updated_at = CURRENT_TIMESTAMP;
+);
 
 ------------------------------------------------------------
 -- #195 stack-queue
@@ -205,12 +185,7 @@ Explanation: 42를 push한 뒤 pop하면 큐가 비어 있게 됩니다.
     '- `1 <= x <= 9`
 - push, pop, peek, empty 호출은 최대 100회입니다
 - pop과 peek 호출 시 큐가 비어있지 않음이 보장됩니다'
-)
-ON CONFLICT (problem_id, locale) DO UPDATE SET
-    title = EXCLUDED.title,
-    description = EXCLUDED.description,
-    constraints = EXCLUDED.constraints,
-    updated_at = CURRENT_TIMESTAMP;
+);
 
 ------------------------------------------------------------
 -- #196 ring-buffer
@@ -260,12 +235,7 @@ Explanation: 새 버퍼는 비어 있습니다. 원소 하나를 추가하면 �
     '- `1 <= k <= 1000`
 - `0 <= value <= 1000`
 - enQueue, deQueue, front, rear, isEmpty, isFull 호출은 최대 3000회입니다'
-)
-ON CONFLICT (problem_id, locale) DO UPDATE SET
-    title = EXCLUDED.title,
-    description = EXCLUDED.description,
-    constraints = EXCLUDED.constraints,
-    updated_at = CURRENT_TIMESTAMP;
+);
 
 ------------------------------------------------------------
 -- #197 hash-table
@@ -304,12 +274,7 @@ Explanation: 빈 맵에서 get과 remove를 호출하면 각각 -1을 반환하�
 ```',
     '- `0 <= key, value <= 10^6`
 - put, get, remove 호출은 최대 `10^4`회입니다'
-)
-ON CONFLICT (problem_id, locale) DO UPDATE SET
-    title = EXCLUDED.title,
-    description = EXCLUDED.description,
-    constraints = EXCLUDED.constraints,
-    updated_at = CURRENT_TIMESTAMP;
+);
 
 ------------------------------------------------------------
 -- #198 random-set
@@ -350,12 +315,7 @@ Explanation: insert(7) 후 remove(7)으로 집합이 비워집니다. 두 번째
     '- `-2^31 <= val <= 2^31 - 1`
 - insert, remove, getRandom 호출은 최대 `2 * 10^5`회입니다
 - getRandom 호출 시 집합에 원소가 하나 이상 있음이 보장됩니다'
-)
-ON CONFLICT (problem_id, locale) DO UPDATE SET
-    title = EXCLUDED.title,
-    description = EXCLUDED.description,
-    constraints = EXCLUDED.constraints,
-    updated_at = CURRENT_TIMESTAMP;
+);
 
 ------------------------------------------------------------
 -- #199 state-snapshots
@@ -404,12 +364,7 @@ Explanation: 스냅샷 0은 즉시 찍혀 모두 0입니다. 인덱스 0을 7로
 - `0 <= val <= 10^9`
 - `0 <= snapId < (snap() 호출 횟수)`
 - set, snap, get 호출은 총 최대 50000회입니다'
-)
-ON CONFLICT (problem_id, locale) DO UPDATE SET
-    title = EXCLUDED.title,
-    description = EXCLUDED.description,
-    constraints = EXCLUDED.constraints,
-    updated_at = CURRENT_TIMESTAMP;
+);
 
 ------------------------------------------------------------
 -- #200 click-counter
@@ -451,9 +406,4 @@ Explanation: 히트가 없을 때 조회하면 0을 반환합니다. 타임스�
     '- `1 <= timestamp <= 2 * 10^9`
 - 각 타임스탬프는 이전 타임스탬프 이상입니다
 - hit과 getHits 호출은 최대 300회입니다'
-)
-ON CONFLICT (problem_id, locale) DO UPDATE SET
-    title = EXCLUDED.title,
-    description = EXCLUDED.description,
-    constraints = EXCLUDED.constraints,
-    updated_at = CURRENT_TIMESTAMP;
+);

@@ -30,12 +30,7 @@ Explanation: 왼쪽 상단에서 오른쪽 하단까지 정확히 3가지 경로
 3. Down -> Right -> Down
 ```',
     '- `1 <= m, n <= 100`'
-)
-ON CONFLICT (problem_id, locale) DO UPDATE SET
-    title = EXCLUDED.title,
-    description = EXCLUDED.description,
-    constraints = EXCLUDED.constraints,
-    updated_at = CURRENT_TIMESTAMP;
+);
 
 ------------------------------------------------------------
 -- #92 longest-common-subseq
@@ -71,12 +66,7 @@ Explanation: 공통 부분 수열이 없으므로 결과는 0입니다.
 ```',
     '- `1 <= text1.length, text2.length <= 1000`
 - `text1`과 `text2`는 소문자 영어 문자로만 구성됩니다.'
-)
-ON CONFLICT (problem_id, locale) DO UPDATE SET
-    title = EXCLUDED.title,
-    description = EXCLUDED.description,
-    constraints = EXCLUDED.constraints,
-    updated_at = CURRENT_TIMESTAMP;
+);
 
 ------------------------------------------------------------
 -- #93 edit-distance
@@ -118,12 +108,7 @@ exection -> execution (''u'' 삽입)
 ```',
     '- `0 <= word1.length, word2.length <= 500`
 - `word1`과 `word2`는 소문자 영어 문자로 구성됩니다.'
-)
-ON CONFLICT (problem_id, locale) DO UPDATE SET
-    title = EXCLUDED.title,
-    description = EXCLUDED.description,
-    constraints = EXCLUDED.constraints,
-    updated_at = CURRENT_TIMESTAMP;
+);
 
 ------------------------------------------------------------
 -- #94 jump-game-ii
@@ -154,12 +139,7 @@ Output: 2
     '- `1 <= nums.length <= 10^4`
 - `0 <= nums[i] <= 1000`
 - `nums[n - 1]`에 도달할 수 있음이 보장됩니다.'
-)
-ON CONFLICT (problem_id, locale) DO UPDATE SET
-    title = EXCLUDED.title,
-    description = EXCLUDED.description,
-    constraints = EXCLUDED.constraints,
-    updated_at = CURRENT_TIMESTAMP;
+);
 
 ------------------------------------------------------------
 -- #95 gas-station
@@ -191,12 +171,7 @@ Output: -1
     '- `n == gas.length == cost.length`
 - `1 <= n <= 10^5`
 - `0 <= gas[i], cost[i] <= 10^4`'
-)
-ON CONFLICT (problem_id, locale) DO UPDATE SET
-    title = EXCLUDED.title,
-    description = EXCLUDED.description,
-    constraints = EXCLUDED.constraints,
-    updated_at = CURRENT_TIMESTAMP;
+);
 
 ------------------------------------------------------------
 -- #96 insert-interval
@@ -229,12 +204,7 @@ Output: [[1,2],[3,10],[12,16]]
 - `intervals`는 `start` 기준 오름차순 정렬되어 있습니다.
 - `newInterval.length == 2`
 - `0 <= start <= end <= 10^5`'
-)
-ON CONFLICT (problem_id, locale) DO UPDATE SET
-    title = EXCLUDED.title,
-    description = EXCLUDED.description,
-    constraints = EXCLUDED.constraints,
-    updated_at = CURRENT_TIMESTAMP;
+);
 
 ------------------------------------------------------------
 -- #97 non-overlapping
@@ -271,12 +241,7 @@ Explanation: 이미 겹치지 않으므로 제거할 필요가 없습니다.
     '- `1 <= intervals.length <= 10^5`
 - `intervals[i].length == 2`
 - `-5 * 10^4 <= start < end <= 5 * 10^4`'
-)
-ON CONFLICT (problem_id, locale) DO UPDATE SET
-    title = EXCLUDED.title,
-    description = EXCLUDED.description,
-    constraints = EXCLUDED.constraints,
-    updated_at = CURRENT_TIMESTAMP;
+);
 
 ------------------------------------------------------------
 -- #98 meeting-rooms
@@ -305,12 +270,7 @@ Explanation: 두 회의가 겹치지 않으므로 회의실 1개면 됩니다.
 ```',
     '- `1 <= intervals.length <= 10^4`
 - `0 <= start < end <= 10^6`'
-)
-ON CONFLICT (problem_id, locale) DO UPDATE SET
-    title = EXCLUDED.title,
-    description = EXCLUDED.description,
-    constraints = EXCLUDED.constraints,
-    updated_at = CURRENT_TIMESTAMP;
+);
 
 ------------------------------------------------------------
 -- #99 spiral-matrix
@@ -339,12 +299,7 @@ Output: [1,2,3,4,8,12,11,10,9,5,6,7]
 - `n == matrix[i].length`
 - `1 <= m, n <= 10`
 - `-100 <= matrix[i][j] <= 100`'
-)
-ON CONFLICT (problem_id, locale) DO UPDATE SET
-    title = EXCLUDED.title,
-    description = EXCLUDED.description,
-    constraints = EXCLUDED.constraints,
-    updated_at = CURRENT_TIMESTAMP;
+);
 
 ------------------------------------------------------------
 -- #100 count-bits
@@ -376,9 +331,4 @@ Input: n = 2147483645
 Output: 30
 ```',
     '- `1 <= n <= 2^31 - 1`'
-)
-ON CONFLICT (problem_id, locale) DO UPDATE SET
-    title = EXCLUDED.title,
-    description = EXCLUDED.description,
-    constraints = EXCLUDED.constraints,
-    updated_at = CURRENT_TIMESTAMP;
+);

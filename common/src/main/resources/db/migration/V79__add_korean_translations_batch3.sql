@@ -34,12 +34,7 @@ Explanation: 행렬 어디에도 13이 존재하지 않습니다.
 - `n == matrix[i].length`
 - `1 <= m, n <= 100`
 - `-10^4 <= matrix[i][j], target <= 10^4`'
-)
-ON CONFLICT (problem_id, locale) DO UPDATE SET
-    title = EXCLUDED.title,
-    description = EXCLUDED.description,
-    constraints = EXCLUDED.constraints,
-    updated_at = CURRENT_TIMESTAMP;
+);
 
 ------------------------------------------------------------
 -- #22 rotated-array-min
@@ -79,12 +74,7 @@ Explanation: 회전이 이루어지지 않은 배열입니다.
 - `-5000 <= nums[i] <= 5000`
 - `nums`의 모든 원소는 고유합니다.
 - `nums`는 정렬된 상태에서 `1`~`n`번 회전된 배열입니다.'
-)
-ON CONFLICT (problem_id, locale) DO UPDATE SET
-    title = EXCLUDED.title,
-    description = EXCLUDED.description,
-    constraints = EXCLUDED.constraints,
-    updated_at = CURRENT_TIMESTAMP;
+);
 
 ------------------------------------------------------------
 -- #23 reverse-list
@@ -118,12 +108,7 @@ Output: []
 ```',
     '- 리스트의 노드 수는 `[0, 5000]` 범위입니다.
 - `-5000 <= Node.val <= 5000`'
-)
-ON CONFLICT (problem_id, locale) DO UPDATE SET
-    title = EXCLUDED.title,
-    description = EXCLUDED.description,
-    constraints = EXCLUDED.constraints,
-    updated_at = CURRENT_TIMESTAMP;
+);
 
 ------------------------------------------------------------
 -- #24 merge-sorted-lists
@@ -159,12 +144,7 @@ Explanation: list1이 비어 있으므로 결과는 list2 그대로입니다.
     '- 두 리스트의 노드 수는 각각 `[0, 50]` 범위입니다.
 - `-100 <= Node.val <= 100`
 - `list1`과 `list2`는 오름차순으로 정렬되어 있습니다.'
-)
-ON CONFLICT (problem_id, locale) DO UPDATE SET
-    title = EXCLUDED.title,
-    description = EXCLUDED.description,
-    constraints = EXCLUDED.constraints,
-    updated_at = CURRENT_TIMESTAMP;
+);
 
 ------------------------------------------------------------
 -- #25 cycle-detection
@@ -203,12 +183,7 @@ Explanation: 순환이 없는 연결 리스트입니다.
     '- 리스트의 노드 수는 `[0, 10^4]` 범위입니다.
 - `-10^5 <= Node.val <= 10^5`
 - `pos`는 `-1`이거나 연결 리스트의 유효한 인덱스입니다.'
-)
-ON CONFLICT (problem_id, locale) DO UPDATE SET
-    title = EXCLUDED.title,
-    description = EXCLUDED.description,
-    constraints = EXCLUDED.constraints,
-    updated_at = CURRENT_TIMESTAMP;
+);
 
 ------------------------------------------------------------
 -- #26 remove-from-end
@@ -243,12 +218,7 @@ Output: [1]
 - `1 <= sz <= 30`
 - `0 <= Node.val <= 100`
 - `1 <= n <= sz`'
-)
-ON CONFLICT (problem_id, locale) DO UPDATE SET
-    title = EXCLUDED.title,
-    description = EXCLUDED.description,
-    constraints = EXCLUDED.constraints,
-    updated_at = CURRENT_TIMESTAMP;
+);
 
 ------------------------------------------------------------
 -- #27 mirror-tree
@@ -282,12 +252,7 @@ Output: []
 ```',
     '- 트리의 노드 수는 `[0, 100]` 범위입니다.
 - `-100 <= Node.val <= 100`'
-)
-ON CONFLICT (problem_id, locale) DO UPDATE SET
-    title = EXCLUDED.title,
-    description = EXCLUDED.description,
-    constraints = EXCLUDED.constraints,
-    updated_at = CURRENT_TIMESTAMP;
+);
 
 ------------------------------------------------------------
 -- #28 tree-depth
@@ -316,12 +281,7 @@ Explanation: 루트에 왼쪽 자식이 없습니다. root(1) -> right(2) 경로
 ```',
     '- 트리의 노드 수는 `[0, 10^4]` 범위입니다.
 - `-100 <= Node.val <= 100`'
-)
-ON CONFLICT (problem_id, locale) DO UPDATE SET
-    title = EXCLUDED.title,
-    description = EXCLUDED.description,
-    constraints = EXCLUDED.constraints,
-    updated_at = CURRENT_TIMESTAMP;
+);
 
 ------------------------------------------------------------
 -- #29 identical-trees
@@ -357,12 +317,7 @@ Explanation: 구조는 같지만 노드 값이 다릅니다. 트리 p는 왼쪽 
 ```',
     '- 두 트리의 노드 수는 각각 `[0, 100]` 범위입니다.
 - `-10^4 <= Node.val <= 10^4`'
-)
-ON CONFLICT (problem_id, locale) DO UPDATE SET
-    title = EXCLUDED.title,
-    description = EXCLUDED.description,
-    constraints = EXCLUDED.constraints,
-    updated_at = CURRENT_TIMESTAMP;
+);
 
 ------------------------------------------------------------
 -- #30 tree-within-tree
@@ -393,9 +348,4 @@ Explanation: root에서 노드 4의 서브트리에는 노드 2 아래에 추가
 - `subRoot` 트리의 노드 수는 `[1, 1000]` 범위입니다.
 - `-10^4 <= root.val <= 10^4`
 - `-10^4 <= subRoot.val <= 10^4`'
-)
-ON CONFLICT (problem_id, locale) DO UPDATE SET
-    title = EXCLUDED.title,
-    description = EXCLUDED.description,
-    constraints = EXCLUDED.constraints,
-    updated_at = CURRENT_TIMESTAMP;
+);

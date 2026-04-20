@@ -36,12 +36,7 @@ Explanation: 0이 없으므로 행렬이 그대로 유지됩니다.
 - `n == matrix[0].length`
 - `1 <= m, n <= 200`
 - `-2^31 <= matrix[i][j] <= 2^31 - 1`'
-)
-ON CONFLICT (problem_id, locale) DO UPDATE SET
-    title = EXCLUDED.title,
-    description = EXCLUDED.description,
-    constraints = EXCLUDED.constraints,
-    updated_at = CURRENT_TIMESTAMP;
+);
 
 ------------------------------------------------------------
 -- #182 power-function
@@ -82,12 +77,7 @@ Explanation: 2^-2 = 1 / (2^2) = 1/4 = 0.25
 - `n`은 정수
 - `x`가 0이 아니거나 `n > 0`
 - `-10^4 <= x^n <= 10^4`'
-)
-ON CONFLICT (problem_id, locale) DO UPDATE SET
-    title = EXCLUDED.title,
-    description = EXCLUDED.description,
-    constraints = EXCLUDED.constraints,
-    updated_at = CURRENT_TIMESTAMP;
+);
 
 ------------------------------------------------------------
 -- #183 string-multiply
@@ -122,12 +112,7 @@ Explanation: 어떤 수든 0을 곱하면 0입니다.
     '- `1 <= num1.length, num2.length <= 200`
 - num1과 num2는 숫자로만 구성됩니다
 - 숫자 0 자체를 제외하면 num1과 num2에 선행 0이 없습니다'
-)
-ON CONFLICT (problem_id, locale) DO UPDATE SET
-    title = EXCLUDED.title,
-    description = EXCLUDED.description,
-    constraints = EXCLUDED.constraints,
-    updated_at = CURRENT_TIMESTAMP;
+);
 
 ------------------------------------------------------------
 -- #184 joyful-number
@@ -163,12 +148,7 @@ Input: n = 1
 Output: true
 ```',
     '- `1 <= n <= 2^31 - 1`'
-)
-ON CONFLICT (problem_id, locale) DO UPDATE SET
-    title = EXCLUDED.title,
-    description = EXCLUDED.description,
-    constraints = EXCLUDED.constraints,
-    updated_at = CURRENT_TIMESTAMP;
+);
 
 ------------------------------------------------------------
 -- #185 increment-digits
@@ -204,12 +184,7 @@ Output: [1]
     '- `1 <= digits.length <= 100`
 - `0 <= digits[i] <= 9`
 - 숫자 0 자체를 제외하면 입력 배열에 선행 0이 없습니다'
-)
-ON CONFLICT (problem_id, locale) DO UPDATE SET
-    title = EXCLUDED.title,
-    description = EXCLUDED.description,
-    constraints = EXCLUDED.constraints,
-    updated_at = CURRENT_TIMESTAMP;
+);
 
 ------------------------------------------------------------
 -- #186 fizz-buzz-game
@@ -246,12 +221,7 @@ Input: n = 15
 Output: ["1","2","Fizz","4","Buzz","Fizz","7","8","Fizz","Buzz","11","Fizz","13","14","FizzBuzz"]
 ```',
     '- `1 <= n <= 10^4`'
-)
-ON CONFLICT (problem_id, locale) DO UPDATE SET
-    title = EXCLUDED.title,
-    description = EXCLUDED.description,
-    constraints = EXCLUDED.constraints,
-    updated_at = CURRENT_TIMESTAMP;
+);
 
 ------------------------------------------------------------
 -- #187 mirror-number
@@ -286,12 +256,7 @@ Output: false
 Explanation: 10을 뒤집으면 01이 되어 10과 다릅니다.
 ```',
     '- `-2^31 <= x <= 2^31 - 1`'
-)
-ON CONFLICT (problem_id, locale) DO UPDATE SET
-    title = EXCLUDED.title,
-    description = EXCLUDED.description,
-    constraints = EXCLUDED.constraints,
-    updated_at = CURRENT_TIMESTAMP;
+);
 
 ------------------------------------------------------------
 -- #188 numeral-converter
@@ -338,12 +303,7 @@ Explanation: M + CM + XC + IV = 1000 + 900 + 90 + 4 = 1994.
     '- `1 <= s.length <= 15`
 - s는 I, V, X, L, C, D, M 문자로만 구성됩니다
 - 입력은 `[1, 3999]` 범위의 유효한 로마 숫자입니다'
-)
-ON CONFLICT (problem_id, locale) DO UPDATE SET
-    title = EXCLUDED.title,
-    description = EXCLUDED.description,
-    constraints = EXCLUDED.constraints,
-    updated_at = CURRENT_TIMESTAMP;
+);
 
 ------------------------------------------------------------
 -- #189 bit-tracker
@@ -377,12 +337,7 @@ Input: n = 0
 Output: [0]
 ```',
     '- `0 <= n <= 10^5`'
-)
-ON CONFLICT (problem_id, locale) DO UPDATE SET
-    title = EXCLUDED.title,
-    description = EXCLUDED.description,
-    constraints = EXCLUDED.constraints,
-    updated_at = CURRENT_TIMESTAMP;
+);
 
 ------------------------------------------------------------
 -- #190 flip-bits
@@ -417,9 +372,4 @@ Output: 2147483648
 Explanation: 비트 0만 1입니다. 뒤집으면 비트 31로 이동하여 2147483648이 됩니다.
 ```',
     '- 입력은 32비트 부호 없는 정수입니다 (`0 <= n <= 2^32 - 1`)'
-)
-ON CONFLICT (problem_id, locale) DO UPDATE SET
-    title = EXCLUDED.title,
-    description = EXCLUDED.description,
-    constraints = EXCLUDED.constraints,
-    updated_at = CURRENT_TIMESTAMP;
+);
