@@ -4,9 +4,9 @@ using namespace std;
 {USER_CODE}
 
 int main() {
-    int n;
+    unsigned int n;
     cin >> n;
-    int result = Solution().hammingWeight(n);
+    int result = Solution().hammingWeight((int)n);
     cout << result << endl;
     return 0;
 }

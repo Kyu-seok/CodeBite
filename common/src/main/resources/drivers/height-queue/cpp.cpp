@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include <sstream>
+#include <algorithm>
 using namespace std;
 
 // {{LIB:JsonOutput}}
@@ -31,6 +32,6 @@ int main() {
         }
     }
     vector<vector<int>> result = Solution().reconstructQueue(people);
-    cout << JsonOutput::int2DVector(result) << endl;
+    cout << JsonOutput::intVector2D(result) << endl;
     return 0;
 }

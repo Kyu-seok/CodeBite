@@ -31,6 +31,6 @@ int main() {
         }
     }
     Solution().setZeroes(matrix);
-    cout << JsonOutput::int2DVector(matrix) << endl;
+    cout << JsonOutput::intVector2D(matrix) << endl;
     return 0;
 }

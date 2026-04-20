@@ -2,6 +2,7 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#include <queue>
 using namespace std;
 
 // {{LIB:ListNode}}

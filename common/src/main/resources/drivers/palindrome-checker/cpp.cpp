@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include <sstream>
+#include <cctype>
 using namespace std;
 
 {USER_CODE}

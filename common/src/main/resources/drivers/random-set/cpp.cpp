@@ -2,6 +2,8 @@
 #include <vector>
 #include <string>
 #include <sstream>
+#include <unordered_map>
+#include <cstdlib>
 using namespace std;
 
 {USER_CODE}

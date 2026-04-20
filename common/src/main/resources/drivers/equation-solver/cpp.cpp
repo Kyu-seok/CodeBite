@@ -11,7 +11,7 @@ vector<vector<string>> parse2DStringArray(const string& line) {
     vector<vector<string>> result;
     int i = 0;
     while (i < (int)line.size()) {
-        if (line[i] == '[' && (i == 0 || result.empty())) { i++; continue; }
+        if (line[i] == '[' && i == 0) { i++; continue; }
         if (line[i] == '[') {
             int j = line.find(']', i);
             string inner = line.substr(i + 1, j - i - 1);
