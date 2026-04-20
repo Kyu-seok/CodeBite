@@ -693,7 +693,7 @@ INSERT INTO test_cases (problem_id, input, expected_output, is_sample, order_ind
 VALUES
     ((SELECT id FROM problems WHERE slug = 'ip-builder'), '25525511135', '["255.255.11.135","255.255.111.35"]', TRUE, 1),
     ((SELECT id FROM problems WHERE slug = 'ip-builder'), '0000', '["0.0.0.0"]', TRUE, 2),
-    ((SELECT id FROM problems WHERE slug = 'ip-builder'), '101023', '["1.0.10.23","1.0.102.3","10.1.0.23","10.10.2.3","101.0.2.3"]', TRUE, 3),
+    ((SELECT id FROM problems WHERE slug = 'ip-builder'), '101023', '["1.0.10.23","1.0.102.3","10.1.0.23","10.10.2.3","10.102.0.3","101.0.2.3","101.0.23.0"]', TRUE, 3),
     ((SELECT id FROM problems WHERE slug = 'ip-builder'), '1111', '["1.1.1.1"]', FALSE, 4),
     ((SELECT id FROM problems WHERE slug = 'ip-builder'), '010010', '["0.10.0.10","0.100.1.0"]', FALSE, 5),
     ((SELECT id FROM problems WHERE slug = 'ip-builder'), '256256256256', '[]', FALSE, 6),

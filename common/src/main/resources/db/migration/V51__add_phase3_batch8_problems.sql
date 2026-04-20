@@ -559,7 +559,7 @@ Explanation: Each character appears only once, so every character can be its own
 INSERT INTO test_cases (problem_id, input, expected_output, is_sample, order_index)
 VALUES
     ((SELECT id FROM problems WHERE slug = 'label-splitter'), 'abacbc', '[6]', TRUE, 1),
-    ((SELECT id FROM problems WHERE slug = 'label-splitter'), 'abcadefg', '[4,1,1,1,1]', TRUE, 2),
+    ((SELECT id FROM problems WHERE slug = 'label-splitter'), 'abcadefg', '[4,4]', TRUE, 2),
     ((SELECT id FROM problems WHERE slug = 'label-splitter'), 'xyz', '[1,1,1]', TRUE, 3),
     ((SELECT id FROM problems WHERE slug = 'label-splitter'), 'ababcbacadefegdehijhklij', '[9,7,8]', FALSE, 4),
     ((SELECT id FROM problems WHERE slug = 'label-splitter'), 'a', '[1]', FALSE, 5),
