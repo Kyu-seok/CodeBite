@@ -5,7 +5,7 @@ import java.util.*;
 public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        String digits = sc.nextLine().trim();
+        String digits = sc.hasNextLine() ? sc.nextLine().trim() : "";
         List<String> result = new Solution().letterCombinations(digits);
         Collections.sort(result);
         StringBuilder sb = new StringBuilder("[");

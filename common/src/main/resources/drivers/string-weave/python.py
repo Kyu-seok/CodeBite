@@ -1,7 +1,13 @@
 {USER_CODE}
 
-s1 = input()
-s2 = input()
-s3 = input()
+def _safe_input():
+    try:
+        return input()
+    except EOFError:
+        return ''
+
+s1 = _safe_input()
+s2 = _safe_input()
+s3 = _safe_input()
 result = Solution().isWeave(s1, s2, s3)
 print(str(result).lower())

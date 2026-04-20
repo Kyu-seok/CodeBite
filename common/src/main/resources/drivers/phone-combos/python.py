@@ -2,6 +2,9 @@
 
 import json
 
-digits = input().strip()
+try:
+    digits = input().strip()
+except EOFError:
+    digits = ''
 result = sorted(Solution().letter_combinations(digits))
 print(json.dumps(result, separators=(',', ':')))
