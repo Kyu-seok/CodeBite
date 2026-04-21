@@ -16,6 +16,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+
 @Component
 public class JudgeClientImpl implements JudgeClient {
 
@@ -34,14 +37,22 @@ public class JudgeClientImpl implements JudgeClient {
 
     @Override
     public JudgeResponse submit(JudgeRequest request) {
-        String url = baseUrl + "/submissions?base64_encoded=false";
+        // base64_encoded=true is required: g++ can emit non-UTF-8 bytes in
+        // compile_output (locale-dependent quote characters), which Judge0
+        // refuses to serialize as plain text.
+        String url = baseUrl + "/submissions?base64_encoded=true";
         try {
             log.debug("Judge0 request: sourceCode.length={}, languageId={}, stdin.length={}",
                     request.sourceCode() != null ? request.sourceCode().length() : 0,
                     request.languageId(),
                     request.stdin() != null ? request.stdin().length() : 0);
 
-            byte[] body = judgeObjectMapper.writeValueAsBytes(request);
+            JudgeRequest encoded = new JudgeRequest(
+                    encode(request.sourceCode()),
+                    request.languageId(),
+                    encode(request.stdin())
+            );
+            byte[] body = judgeObjectMapper.writeValueAsBytes(encoded);
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
@@ -51,6 +62,7 @@ public class JudgeClientImpl implements JudgeClient {
 
             JudgeResponse response = judgeRestTemplate.postForObject(url, entity, JudgeResponse.class);
             log.debug("Judge0 response: {}", response);
+            // POST only returns {token}; no output fields to decode yet.
             return response;
         } catch (JsonProcessingException e) {
             throw new JudgeExecutionException("Failed to serialize Judge0 request: " + e.getMessage(), e);
@@ -61,13 +73,45 @@ public class JudgeClientImpl implements JudgeClient {
 
     @Override
     public JudgeResponse getSubmission(String token) {
-        String url = baseUrl + "/submissions/" + token + "?base64_encoded=false";
+        String url = baseUrl + "/submissions/" + token + "?base64_encoded=true";
         try {
             JudgeResponse response = judgeRestTemplate.getForObject(url, JudgeResponse.class);
-            log.debug("Judge0 poll response for token {}: {}", token, response);
-            return response;
+            JudgeResponse decoded = decodeResponse(response);
+            log.debug("Judge0 poll response for token {}: {}", token, decoded);
+            return decoded;
         } catch (RestClientException e) {
             throw new JudgeExecutionException("Failed to poll Judge0 submission: " + e.getMessage(), e);
         }
+    }
+
+    private static String encode(String s) {
+        if (s == null) return null;
+        return Base64.getEncoder().encodeToString(s.getBytes(StandardCharsets.UTF_8));
+    }
+
+    private static String decode(String s) {
+        if (s == null) return null;
+        try {
+            // MIME decoder tolerates embedded whitespace/newlines that Judge0
+            // occasionally inserts into long base64 strings.
+            byte[] bytes = Base64.getMimeDecoder().decode(s);
+            return new String(bytes, StandardCharsets.UTF_8);
+        } catch (IllegalArgumentException e) {
+            log.warn("Failed to base64-decode Judge0 field, returning raw: {}", e.getMessage());
+            return s;
+        }
+    }
+
+    private static JudgeResponse decodeResponse(JudgeResponse r) {
+        if (r == null) return null;
+        return new JudgeResponse(
+                r.token(),
+                r.status(),
+                decode(r.stdout()),
+                decode(r.stderr()),
+                decode(r.compileOutput()),
+                r.time(),
+                r.memory()
+        );
     }
 }

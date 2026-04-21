@@ -82,7 +82,7 @@ class JudgeClientContentLengthTest {
 
         HttpEntity<byte[]> entity = new HttpEntity<>(body, headers);
 
-        String url = "http://localhost:" + port + "/submissions?base64_encoded=false";
+        String url = "http://localhost:" + port + "/submissions?base64_encoded=true";
         try {
             restTemplate.postForObject(url, entity, String.class);
         } catch (Exception ignored) {
