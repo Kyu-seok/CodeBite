@@ -264,6 +264,7 @@ export default function ProblemDetailPage() {
           running={running}
           submitting={submitting}
           activeTab={activeTab}
+          userSource={code}
           onTabChange={setActiveTab}
           onRun={handleRun}
           onSubmit={handleSubmit}

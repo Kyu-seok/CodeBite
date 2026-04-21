@@ -37,9 +37,47 @@ interface TestPanelProps {
   running: boolean;
   submitting: boolean;
   activeTab: string;
+  userSource: string;
   onTabChange: (tab: string) => void;
   onRun: () => void;
   onSubmit: () => void;
+}
+
+function renderableErrors(errors?: CodeError[] | null): CodeError[] {
+  return (errors ?? []).filter((e) => e.inUserCode && e.line != null);
+}
+
+function ErrorDisplay({
+  errors,
+  userSource,
+}: {
+  errors: CodeError[];
+  userSource: string;
+}) {
+  const sourceLines = userSource.split('\n');
+  return (
+    <div className="mt-1 space-y-2 rounded bg-error-100 p-2 text-xs text-error-700">
+      {errors.map((e, i) => {
+        const snippet = e.line != null ? sourceLines[e.line - 1] : undefined;
+        const caret =
+          e.column != null && e.column >= 1
+            ? ' '.repeat(e.column - 1) + '^'
+            : null;
+        const label = e.severity === 'WARNING' ? 'warning' : 'error';
+        return (
+          <div key={i} className="font-mono">
+            <div>
+              Line {e.line}: {label}: {e.message}
+            </div>
+            {snippet !== undefined && (
+              <pre className="mt-0.5 whitespace-pre">    {snippet}</pre>
+            )}
+            {caret && <pre className="whitespace-pre">    {caret}</pre>}
+          </div>
+        );
+      })}
+    </div>
+  );
 }
 
 export function TestPanel({
@@ -51,6 +89,7 @@ export function TestPanel({
   running,
   submitting,
   activeTab,
+  userSource,
   onTabChange,
   onRun,
   onSubmit,
@@ -116,6 +155,7 @@ export function TestPanel({
               runError={runError}
               submitResult={submitResult}
               submitError={submitError}
+              userSource={userSource}
             />
           </TabsContent>
         </div>
@@ -175,6 +215,7 @@ function OutputContent({
   runError,
   submitResult,
   submitError,
+  userSource,
 }: Pick<
   TestPanelProps,
   | 'running'
@@ -183,6 +224,7 @@ function OutputContent({
   | 'runError'
   | 'submitResult'
   | 'submitError'
+  | 'userSource'
 >) {
   const { t } = useTranslation('problem');
   const { t: tc } = useTranslation('common');
@@ -251,24 +293,43 @@ function OutputContent({
                   </code>
                 </p>
               )}
-              {r.stderr && (
-                <div className="mt-1">
-                  <span className="text-xs text-muted-foreground">{t('test.stderr')}</span>
-                  <pre className="mt-1 overflow-auto rounded bg-error-100 p-2 text-xs text-error-700">
-                    {r.stderr}
-                  </pre>
-                </div>
-              )}
-              {r.compileOutput && (
-                <div className="mt-1">
-                  <span className="text-xs text-muted-foreground">
-                    {t('test.compilationError')}
-                  </span>
-                  <pre className="mt-1 overflow-auto rounded bg-warning-100 p-2 text-xs text-warning-700">
-                    {r.compileOutput}
-                  </pre>
-                </div>
-              )}
+              {(() => {
+                const visible = renderableErrors(r.errors);
+                const label = r.compileOutput
+                  ? t('test.compilationError')
+                  : t('test.stderr');
+                if (visible.length > 0) {
+                  return (
+                    <div className="mt-1">
+                      <span className="text-xs text-muted-foreground">{label}</span>
+                      <ErrorDisplay errors={visible} userSource={userSource} />
+                    </div>
+                  );
+                }
+                if (r.stderr) {
+                  return (
+                    <div className="mt-1">
+                      <span className="text-xs text-muted-foreground">{t('test.stderr')}</span>
+                      <pre className="mt-1 overflow-auto rounded bg-error-100 p-2 text-xs text-error-700">
+                        {r.stderr}
+                      </pre>
+                    </div>
+                  );
+                }
+                if (r.compileOutput) {
+                  return (
+                    <div className="mt-1">
+                      <span className="text-xs text-muted-foreground">
+                        {t('test.compilationError')}
+                      </span>
+                      <pre className="mt-1 overflow-auto rounded bg-warning-100 p-2 text-xs text-warning-700">
+                        {r.compileOutput}
+                      </pre>
+                    </div>
+                  );
+                }
+                return null;
+              })()}
             </div>
           ))}
         </div>
@@ -329,6 +390,18 @@ function OutputContent({
                     </code>
                   </p>
                 )}
+                {(() => {
+                  const visible = renderableErrors(r.errors);
+                  if (visible.length === 0) return null;
+                  return (
+                    <div className="mt-1">
+                      <span className="text-xs text-muted-foreground">
+                        {t('test.compilationError')}
+                      </span>
+                      <ErrorDisplay errors={visible} userSource={userSource} />
+                    </div>
+                  );
+                })()}
               </div>
             ))}
           </div>
