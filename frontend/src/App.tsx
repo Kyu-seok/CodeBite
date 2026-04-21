@@ -4,7 +4,6 @@ import { AuthProvider } from "./context/AuthContext";
 import { ThemeProvider } from "./context/ThemeContext";
 import { EditorSettingsProvider } from "./context/EditorSettingsContext";
 import Layout from "./components/layout/Layout";
-import WorkspaceLayout from "./components/layout/WorkspaceLayout";
 import LandingPage from "./pages/landing";
 import LoginPage from "./pages/LoginPage";
 import OAuthCallbackPage from "./pages/OAuthCallbackPage";
@@ -29,9 +28,6 @@ function App() {
             <Routes>
               <Route path="/login" element={<LoginPage />} />
               <Route path="/auth/callback/:provider" element={<OAuthCallbackPage />} />
-              <Route element={<WorkspaceLayout />}>
-                <Route path="problems/:slug" element={<ProblemDetailPage />} />
-              </Route>
               <Route element={<AdminLayout />}>
                 <Route path="admin/dashboard" element={<AdminDashboardPage />} />
                 <Route path="admin/problems" element={<AdminProblemListPage />} />
@@ -41,6 +37,7 @@ function App() {
               <Route element={<Layout />}>
                 <Route index element={<LandingPage />} />
                 <Route path="problems" element={<ProblemListPage />} />
+                <Route path="problems/:slug" element={<ProblemDetailPage />} />
                 <Route path="roadmap" element={<RoadmapPage />} />
                 <Route path="profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
                 <Route path="*" element={<NotFoundPage />} />

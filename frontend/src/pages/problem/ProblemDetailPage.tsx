@@ -13,13 +13,13 @@ import type { SubmissionResponse, RunResponse } from "@/types/submission"
 import { AxiosError } from "axios"
 import type { ApiError } from "@/types/api"
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts"
-import type { WorkspaceOutletContext } from "@/components/layout/WorkspaceLayout"
-import { formatElapsed } from "@/components/layout/WorkspaceLayout"
+import type { WorkspaceOutletContext } from "@/components/layout/Layout"
+import { formatElapsed } from "@/components/layout/Layout"
 
 export default function ProblemDetailPage() {
   const { slug } = useParams<{ slug: string }>()
   const navigate = useNavigate()
-  const { timerActive, elapsed } = useOutletContext<WorkspaceOutletContext>()
+  const { timerActive, elapsed, stopTimer } = useOutletContext<WorkspaceOutletContext>()
   const { user, isAuthenticated, loading: authLoading, updateUser } = useAuth()
   const { problem, loading, error } = useProblem(slug!)
   const { submissions, refetch: refetchSubmissions, updateNote } = useSubmissions(
@@ -120,11 +120,12 @@ export default function ProblemDetailPage() {
           pollIntervalRef.current = null
           setResult(res.data)
           setSubmitting(false)
-          if (timerSnapshotRef.current != null) {
+          if (timerSnapshotRef.current != null && res.data.status === "ACCEPTED") {
+            stopTimer(timerSnapshotRef.current)
             const note = `Completion time: ${formatElapsed(timerSnapshotRef.current)}`
-            updateNote(submissionId, note)
-            timerSnapshotRef.current = null
+            await updateNote(submissionId, note)
           }
+          timerSnapshotRef.current = null
           refetchSubmissions()
         }
       } catch {

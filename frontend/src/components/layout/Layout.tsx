@@ -1,4 +1,5 @@
-import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
+import { useState, useEffect, useRef } from 'react';
+import { Link, Outlet, useNavigate, useLocation, useMatch } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import i18n from '@/lib/i18n';
 import { useAuth } from '../../context/AuthContext';
@@ -34,12 +35,86 @@ function MoonIcon() {
   );
 }
 
+function PlayIcon() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+      <polygon points="6,3 20,12 6,21" />
+    </svg>
+  );
+}
+
+function PauseIcon() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+      <rect x="5" y="3" width="5" height="18" rx="1" />
+      <rect x="14" y="3" width="5" height="18" rx="1" />
+    </svg>
+  );
+}
+
+function ResetIcon() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+      <path d="M3 3v5h5" />
+    </svg>
+  );
+}
+
+function formatTime(seconds: number) {
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+}
+
+export function formatElapsed(seconds: number) {
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  if (m > 0) return `${m}m ${s}s`;
+  return `${s}s`;
+}
+
+export interface WorkspaceOutletContext {
+  timerActive: boolean;
+  elapsed: number;
+  stopTimer: (freezeAt: number) => void;
+}
+
 export default function Layout() {
   const { t } = useTranslation('nav');
   const { user, isAuthenticated, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
+  const isWorkspace = useMatch('problems/:slug');
+
+  const [timerActive, setTimerActive] = useState(false);
+  const [elapsed, setElapsed] = useState(0);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => {
+    if (timerActive) {
+      intervalRef.current = setInterval(() => setElapsed((e) => e + 1), 1000);
+    } else if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+    return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
+  }, [timerActive]);
+
+  const handleTimerToggle = () => {
+    setTimerActive((prev) => !prev);
+  };
+
+  const handleTimerReset = () => {
+    setTimerActive(false);
+    setElapsed(0);
+  };
+
+  const stopTimer = (freezeAt: number) => {
+    setTimerActive(false);
+    setElapsed(freezeAt);
+  };
 
   const handleToggleTheme = () => {
     const newTheme = theme === "light" ? "dark" : "light";
@@ -73,6 +148,28 @@ export default function Layout() {
             </Link>
           </div>
           <div className="flex items-center gap-4 text-sm">
+            {isWorkspace && (
+              <div className="flex items-center rounded-md border border-border">
+                <button
+                  onClick={handleTimerToggle}
+                  className="flex items-center gap-1.5 rounded-l-md px-2 py-1 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+                >
+                  {timerActive ? <PauseIcon /> : <PlayIcon />}
+                  <span className="text-xs font-mono tabular-nums">{formatTime(elapsed)}</span>
+                </button>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <button
+                      onClick={handleTimerReset}
+                      className="flex items-center justify-center rounded-r-md border-l border-border px-1.5 py-1 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+                    >
+                      <ResetIcon />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent>Reset timer</TooltipContent>
+                </Tooltip>
+              </div>
+            )}
             <Tooltip>
               <TooltipTrigger>
                 <button
@@ -167,7 +264,7 @@ export default function Layout() {
         </div>
       </nav>
       <main>
-        <Outlet />
+        <Outlet context={{ timerActive, elapsed, stopTimer } satisfies WorkspaceOutletContext} />
       </main>
     </div>
   );

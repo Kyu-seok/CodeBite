@@ -8,7 +8,7 @@ const pageLayoutVariants = cva('w-full', {
       /** Standard page with scrollable content and padding */
       default: 'py-6',
       /** Full-height workspace that fills viewport below the navbar (no scroll on body) */
-      workspace: 'h-[calc(100vh-3rem)] overflow-hidden',
+      workspace: 'h-[calc(100vh-3.5rem)] overflow-hidden',
     },
   },
   defaultVariants: {
