@@ -11,7 +11,8 @@
     "columnAcceptance": "Acceptance",
     "noProblems": "No problems found.",
     "random": "Random",
-    "allProblems": "All"
+    "allProblems": "All",
+    "singlePage": "Single page"
   },
   "tabs": {
     "description": "Description",

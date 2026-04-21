@@ -34,6 +34,12 @@ public class UserController {
         if (body.containsKey("locale")) {
             userService.updateLocale(principal.id(), body.get("locale"));
         }
+        if (body.containsKey("curation")) {
+            userService.updateCuration(principal.id(), body.get("curation"));
+        }
+        if (body.containsKey("singlePage")) {
+            userService.updateSinglePage(principal.id(), Boolean.valueOf(body.get("singlePage")));
+        }
         return ResponseEntity.noContent().build();
     }
 }

@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react"
 import { Link, useNavigate, useSearchParams } from "react-router-dom"
 import { useTranslation } from "react-i18next"
+import { useAuth } from "@/context/AuthContext"
+import { updateCuration as saveCuration, updateSinglePage as saveSinglePage } from "@/api/user"
 import { useProblems } from "../hooks/useProblems"
 import { useProblemStats } from "../hooks/useProblemStats"
 import { useTags } from "../hooks/useTags"
@@ -15,6 +17,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/Select"
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationButton,
+  PaginationPrevious,
+  PaginationNext,
+  PaginationEllipsis,
+} from "@/components/ui/Pagination"
+import { Switch } from "@/components/ui/Switch"
 import { getRandomProblem } from "../api/problems"
 
 function SortableHeader({
@@ -69,22 +81,39 @@ function StatusIcon({ status }: { status: "SOLVED" | "ATTEMPTED" | null }) {
   return null
 }
 
+function generatePageNumbers(current: number, total: number): (number | "ellipsis")[] {
+  if (total <= 7) {
+    return Array.from({ length: total }, (_, i) => i)
+  }
+  const pages: (number | "ellipsis")[] = [0]
+  if (current > 2) pages.push("ellipsis")
+  for (let i = Math.max(1, current - 1); i <= Math.min(total - 2, current + 1); i++) {
+    pages.push(i)
+  }
+  if (current < total - 3) pages.push("ellipsis")
+  pages.push(total - 1)
+  return pages
+}
+
 export default function ProblemListPage() {
   const { t } = useTranslation("problem")
   const { t: tc } = useTranslation("common")
+  const { user, isAuthenticated, updateUser } = useAuth()
   const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
   const page = Number(searchParams.get("page") || "0")
   const search = searchParams.get("search") || ""
   const sort = searchParams.get("sort") || "problemNumber,asc"
   const tag = searchParams.get("tag") || ""
-  const curation = searchParams.get("curation") || "CB100"
+  const curation = searchParams.get("curation") || user?.curation || "CB100"
   const [searchInput, setSearchInput] = useState(search)
   const [randomLoading, setRandomLoading] = useState(false)
+  const [showAll, setShowAll] = useState(user?.singlePage ?? true)
   const { tags } = useTags()
   const { stats } = useProblemStats(curation)
+  const pageSize = showAll ? 200 : 20
   const { data, loading, error } = useProblems(
-    page, 20, undefined, search || undefined, sort, tag || undefined, curation
+    showAll ? 0 : page, pageSize, undefined, search || undefined, sort, tag || undefined, curation
   )
 
   useEffect(() => {
@@ -138,6 +167,18 @@ export default function ProblemListPage() {
     params.set("curation", value)
     params.set("page", "0")
     setSearchParams(params)
+    if (isAuthenticated) {
+      updateUser({ curation: value })
+      saveCuration(value).catch(() => {})
+    }
+  }
+
+  const handleSinglePageChange = (checked: boolean) => {
+    setShowAll(checked)
+    if (isAuthenticated) {
+      updateUser({ singlePage: checked })
+      saveSinglePage(checked).catch(() => {})
+    }
   }
 
   const toggleTag = (slug: string) => {
@@ -186,8 +227,13 @@ export default function ProblemListPage() {
               <SelectItem value="CB50">CodeBite 50</SelectItem>
               <SelectItem value="CB100">CodeBite 100</SelectItem>
               <SelectItem value="CB200">CodeBite 200</SelectItem>
+
             </SelectContent>
           </Select>
+          <label className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <Switch checked={showAll} onCheckedChange={handleSinglePageChange} />
+            {t("list.singlePage")}
+          </label>
         </div>
       </div>
 
@@ -315,28 +361,39 @@ export default function ProblemListPage() {
             </table>
           </div>
 
-          {data.totalPages > 1 && (
-            <div className="flex items-center justify-center gap-4 mt-6">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setPage(page - 1)}
-                disabled={data.first}
-              >
-                {tc("button.previous")}
-              </Button>
-              <span className="text-sm text-muted-foreground">
-                {tc("pagination.pageOf", { current: data.number + 1, total: data.totalPages })}
-              </span>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setPage(page + 1)}
-                disabled={data.last}
-              >
-                {tc("button.next")}
-              </Button>
-            </div>
+          {!showAll && data.totalPages > 1 && (
+            <Pagination className="mt-6">
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    onClick={() => setPage(page - 1)}
+                    disabled={data.first}
+                  />
+                </PaginationItem>
+                {generatePageNumbers(data.number, data.totalPages).map((item, i) =>
+                  item === "ellipsis" ? (
+                    <PaginationItem key={`e${i}`}>
+                      <PaginationEllipsis />
+                    </PaginationItem>
+                  ) : (
+                    <PaginationItem key={item}>
+                      <PaginationButton
+                        isActive={item === data.number}
+                        onClick={() => setPage(item)}
+                      >
+                        {item + 1}
+                      </PaginationButton>
+                    </PaginationItem>
+                  )
+                )}
+                <PaginationItem>
+                  <PaginationNext
+                    onClick={() => setPage(page + 1)}
+                    disabled={data.last}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
           )}
         </>
       )}

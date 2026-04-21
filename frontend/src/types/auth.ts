@@ -8,6 +8,8 @@ export interface User {
   editorSettings: string | null;
   themePreference: string | null;
   locale: string | null;
+  curation: string | null;
+  singlePage: boolean | null;
   createdAt: string;
 }
 

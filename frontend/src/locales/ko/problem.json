@@ -11,7 +11,8 @@
     "columnAcceptance": "정답률",
     "noProblems": "문제가 없습니다.",
     "random": "랜덤",
-    "allProblems": "전체"
+    "allProblems": "전체",
+    "singlePage": "한 페이지"
   },
   "tabs": {
     "description": "설명",

@@ -71,6 +71,8 @@ public class UserService {
                 user.getEditorSettings(),
                 user.getThemePreference(),
                 user.getLocale(),
+                user.getCuration(),
+                user.getSinglePage(),
                 user.getCreatedAt()
         );
     }
@@ -96,6 +98,22 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("error.user.notFound", userId));
         user.setLocale(locale);
+        userRepository.save(user);
+    }
+
+    @Transactional
+    public void updateCuration(Long userId, String curation) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("error.user.notFound", userId));
+        user.setCuration(curation);
+        userRepository.save(user);
+    }
+
+    @Transactional
+    public void updateSinglePage(Long userId, Boolean singlePage) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("error.user.notFound", userId));
+        user.setSinglePage(singlePage);
         userRepository.save(user);
     }
 

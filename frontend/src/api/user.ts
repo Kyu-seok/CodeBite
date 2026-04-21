@@ -11,3 +11,11 @@ export function updateThemePreference(themePreference: string) {
 export function updateLocale(locale: string) {
   return client.patch("/users/settings", { locale });
 }
+
+export function updateCuration(curation: string) {
+  return client.patch("/users/settings", { curation });
+}
+
+export function updateSinglePage(singlePage: boolean) {
+  return client.patch("/users/settings", { singlePage: String(singlePage) });
+}

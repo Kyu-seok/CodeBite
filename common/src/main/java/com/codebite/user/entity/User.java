@@ -39,6 +39,12 @@ public class User extends BaseEntity {
     @Column(length = 10)
     private String locale = "ko";
 
+    @Column(length = 10)
+    private String curation = "CB100";
+
+    @Column(name = "single_page")
+    private Boolean singlePage = true;
+
     public String getUsername() {
         return username;
     }
@@ -109,5 +115,21 @@ public class User extends BaseEntity {
 
     public void setLocale(String locale) {
         this.locale = locale;
+    }
+
+    public String getCuration() {
+        return curation;
+    }
+
+    public void setCuration(String curation) {
+        this.curation = curation;
+    }
+
+    public Boolean getSinglePage() {
+        return singlePage;
+    }
+
+    public void setSinglePage(Boolean singlePage) {
+        this.singlePage = singlePage;
     }
 }
