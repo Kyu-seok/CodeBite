@@ -1,0 +1,7 @@
+/box/script.js:5
+    return x.length;
+             ^
+
+TypeError: Cannot read properties of null (reading 'length')
+    at solve (/box/script.js:5:14)
+    at Object.<anonymous> (/box/script.js:10:13)

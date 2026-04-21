@@ -34,7 +34,8 @@
     "resetLayout": "Reset Layout",
     "settings": "Settings",
     "runCode": "Run Code",
-    "submitCode": "Submit Code"
+    "submitCode": "Submit Code",
+    "templateErrorBanner": "This looks like a bug in our test harness — please use the Report Bug button."
   },
   "bugReport": {
     "title": "Report a Bug",

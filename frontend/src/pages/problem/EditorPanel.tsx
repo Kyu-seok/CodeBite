@@ -1,8 +1,8 @@
 import { useRef, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Editor from '@monaco-editor/react';
-import type { editor as monacoEditor } from 'monaco-editor';
-import { KeyMod, KeyCode } from 'monaco-editor';
+import { KeyMod, KeyCode, MarkerSeverity, editor as monacoEditor } from 'monaco-editor';
+import type { CodeError } from '@/types/submission';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/Tabs';
 import {
   Select,
@@ -176,6 +176,7 @@ interface EditorPanelProps {
   languages: string[];
   activeLanguage: string;
   code: string;
+  errors?: CodeError[];
   onLanguageChange: (lang: string) => void;
   onCodeChange: (value: string | undefined) => void;
   onResetCode?: () => void;
@@ -184,10 +185,13 @@ interface EditorPanelProps {
   onSubmit?: () => void;
 }
 
+const MARKER_OWNER = 'codebite-judge';
+
 export function EditorPanel({
   languages,
   activeLanguage,
   code,
+  errors,
   onLanguageChange,
   onCodeChange,
   onResetCode,
@@ -268,6 +272,45 @@ export function EditorPanel({
       submitAction.dispose();
     };
   }, [editorMounted]);
+
+  // Paint Judge0 errors as red underlines. Clear on edit so the
+  // underline disappears the moment the user starts fixing.
+  useEffect(() => {
+    const editor = editorRef.current;
+    if (!editor) return;
+    const model = editor.getModel();
+    if (!model) return;
+
+    const markers = (errors ?? [])
+      .filter((e) => e.inUserCode && e.line != null)
+      .map((e) => ({
+        startLineNumber: e.line!,
+        startColumn: e.column ?? 1,
+        endLineNumber: e.endLine ?? e.line!,
+        endColumn: e.endColumn ?? Number.MAX_SAFE_INTEGER,
+        message: e.message,
+        severity:
+          e.severity === 'WARNING'
+            ? MarkerSeverity.Warning
+            : MarkerSeverity.Error,
+      }));
+
+    monacoEditor.setModelMarkers(model, MARKER_OWNER, markers);
+
+    let changeSub: { dispose: () => void } | null = null;
+    if (markers.length > 0) {
+      changeSub = model.onDidChangeContent(() => {
+        monacoEditor.setModelMarkers(model, MARKER_OWNER, []);
+        changeSub?.dispose();
+        changeSub = null;
+      });
+    }
+
+    return () => {
+      changeSub?.dispose();
+      monacoEditor.setModelMarkers(model, MARKER_OWNER, []);
+    };
+  }, [errors, activeLanguage, editorMounted]);
 
   return (
     <div className="flex h-full flex-col">

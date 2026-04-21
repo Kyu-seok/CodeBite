@@ -1,0 +1,4 @@
+Main.java:5: error: ';' expected
+        int x = 1
+                 ^
+1 error

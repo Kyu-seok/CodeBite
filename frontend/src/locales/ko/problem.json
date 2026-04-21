@@ -34,7 +34,8 @@
     "resetLayout": "레이아웃 초기화",
     "settings": "설정",
     "runCode": "코드 실행",
-    "submitCode": "코드 제출"
+    "submitCode": "코드 제출",
+    "templateErrorBanner": "테스트 환경 자체의 문제로 보입니다. 버그 신고 버튼을 이용해 주세요."
   },
   "bugReport": {
     "title": "버그 신고",

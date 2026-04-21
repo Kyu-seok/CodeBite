@@ -45,6 +45,9 @@ public class SubmissionResult {
     @Column(columnDefinition = "TEXT")
     private String stderr;
 
+    @Column(name = "compile_output", columnDefinition = "TEXT")
+    private String compileOutput;
+
     public Long getId() {
         return id;
     }
@@ -107,5 +110,13 @@ public class SubmissionResult {
 
     public void setStderr(String stderr) {
         this.stderr = stderr;
+    }
+
+    public String getCompileOutput() {
+        return compileOutput;
+    }
+
+    public void setCompileOutput(String compileOutput) {
+        this.compileOutput = compileOutput;
     }
 }

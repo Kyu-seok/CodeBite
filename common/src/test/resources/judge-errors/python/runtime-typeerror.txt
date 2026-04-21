@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "script.py", line 12, in <module>
+    print(solve(None))
+  File "script.py", line 4, in solve
+    return x + 1
+TypeError: unsupported operand type(s) for +: 'NoneType' and 'int'

@@ -1,6 +1,9 @@
 package com.codebite.submission.dto;
 
+import com.codebite.judge.dto.CodeError;
 import com.codebite.submission.entity.SubmissionStatus;
+
+import java.util.List;
 
 public record SubmissionResultDto(
         Long testCaseId,
@@ -9,6 +12,7 @@ public record SubmissionResultDto(
         String expectedOutput,
         String actualOutput,
         Integer runtimeMs,
-        Integer memoryKb
+        Integer memoryKb,
+        List<CodeError> errors
 ) {
 }

@@ -10,7 +10,20 @@ import {
   TooltipContent,
 } from '@/components/ui/Tooltip';
 import type { TestCase } from '@/types/problem';
-import type { RunResponse, SubmissionResponse } from '@/types/submission';
+import type { CodeError, RunResponse, SubmissionResponse } from '@/types/submission';
+
+function hasTemplateError(errs?: CodeError[] | null): boolean {
+  return !!errs?.some((e) => !e.inUserCode);
+}
+
+function collectTemplateError(
+  runResult: RunResponse | null,
+  submitResult: SubmissionResponse | null,
+): boolean {
+  if (runResult?.results.some((r) => hasTemplateError(r.errors))) return true;
+  if (submitResult?.results.some((r) => hasTemplateError(r.errors))) return true;
+  return false;
+}
 
 const isMac =
   typeof navigator !== 'undefined' && /Mac/.test(navigator.userAgent);
@@ -58,6 +71,11 @@ export function TestPanel({
         </div>
 
         <div className="flex-1 overflow-auto p-3">
+          {collectTemplateError(runResult, submitResult) && (
+            <div className="mb-3 rounded-lg border border-warning-200 bg-warning-100 p-3 text-sm text-warning-700">
+              {t('editor.templateErrorBanner')}
+            </div>
+          )}
           {/* Test Cases Tab */}
           <TabsContent value="testcases" className="mt-0">
             {sampleTestCases.length === 0 ? (

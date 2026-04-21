@@ -2,6 +2,9 @@ package com.codebite.submission.service;
 
 import com.codebite.common.exception.ResourceNotFoundException;
 import com.codebite.common.exception.UnsupportedValueException;
+import com.codebite.judge.dto.CodeError;
+import com.codebite.judge.parser.JudgeErrorParsers;
+import com.codebite.judge.parser.UserCodeLineMapper;
 import com.codebite.judge.service.DriverCodeLoader;
 import com.codebite.judge.service.JudgeService;
 import com.codebite.problem.entity.Problem;
@@ -39,6 +42,8 @@ public class SubmissionService {
     private final JudgeService judgeService;
     private final DriverCodeLoader driverCodeLoader;
     private final SubmissionEventProducer submissionEventProducer;
+    private final JudgeErrorParsers errorParsers;
+    private final UserCodeLineMapper lineMapper;
     private final Counter submissionsCreatedCounter;
 
     public SubmissionService(SubmissionRepository submissionRepository,
@@ -49,6 +54,8 @@ public class SubmissionService {
                              JudgeService judgeService,
                              DriverCodeLoader driverCodeLoader,
                              SubmissionEventProducer submissionEventProducer,
+                             JudgeErrorParsers errorParsers,
+                             UserCodeLineMapper lineMapper,
                              MeterRegistry meterRegistry) {
         this.submissionRepository = submissionRepository;
         this.submissionResultRepository = submissionResultRepository;
@@ -58,6 +65,8 @@ public class SubmissionService {
         this.judgeService = judgeService;
         this.driverCodeLoader = driverCodeLoader;
         this.submissionEventProducer = submissionEventProducer;
+        this.errorParsers = errorParsers;
+        this.lineMapper = lineMapper;
         this.submissionsCreatedCounter = Counter.builder("codebite.submissions.created")
                 .description("Total submissions created")
                 .register(meterRegistry);
@@ -85,7 +94,7 @@ public class SubmissionService {
         submissionsCreatedCounter.increment();
 
         // Return immediately with PENDING status
-        return toResponse(submission, List.of(), problem.getSlug(), List.of());
+        return toResponse(submission, List.of(), problem.getSlug(), List.of(), 0);
     }
 
     @Transactional(readOnly = true)
@@ -101,7 +110,14 @@ public class SubmissionService {
         List<TestCase> testCases = testCaseRepository.findByProblemIdOrderByOrderIndexAsc(
                 submission.getProblem().getId());
 
-        return toResponse(submission, results, submission.getProblem().getSlug(), testCases);
+        int userCodeStartLine = driverCodeLoader.hasDriverCode(
+                submission.getProblem().getSlug(), submission.getLanguage())
+                ? driverCodeLoader.getUserCodeStartLine(
+                        submission.getProblem().getSlug(), submission.getLanguage())
+                : 1;
+
+        return toResponse(submission, results, submission.getProblem().getSlug(),
+                testCases, userCodeStartLine);
     }
 
     @Transactional(readOnly = true)
@@ -130,10 +146,21 @@ public class SubmissionService {
     }
 
     private SubmissionResponse toResponse(Submission submission, List<SubmissionResult> results,
-                                          String problemSlug, List<TestCase> allTestCases) {
+                                          String problemSlug, List<TestCase> allTestCases,
+                                          int userCodeStartLine) {
+        int userCodeLineCount = countLines(submission.getSourceCode());
+        String language = submission.getLanguage();
+
         List<SubmissionResultDto> resultDtos = results.stream().map(r -> {
             TestCase tc = r.getTestCase();
             boolean isSample = tc.isSample();
+
+            List<CodeError> combined = errorParsers.parse(
+                    language, r.getCompileOutput(), r.getStderr());
+            List<CodeError> errors = userCodeStartLine > 0
+                    ? lineMapper.mapToUserSpace(combined, userCodeStartLine, userCodeLineCount)
+                    : List.of();
+
             return new SubmissionResultDto(
                     tc.getId(),
                     r.getStatus(),
@@ -141,7 +168,8 @@ public class SubmissionService {
                     isSample ? tc.getExpectedOutput() : null,
                     r.getActualOutput(),
                     r.getRuntimeMs(),
-                    r.getMemoryKb()
+                    r.getMemoryKb(),
+                    errors
             );
         }).toList();
 
@@ -157,6 +185,15 @@ public class SubmissionService {
                 submission.getCreatedAt(),
                 submission.getNotes()
         );
+    }
+
+    private static int countLines(String source) {
+        if (source == null || source.isEmpty()) return 0;
+        int count = 1;
+        for (int i = 0; i < source.length(); i++) {
+            if (source.charAt(i) == '\n') count++;
+        }
+        return count;
     }
 
     private SubmissionListItem toListItem(Submission submission) {

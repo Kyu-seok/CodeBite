@@ -1,6 +1,9 @@
 package com.codebite.run.dto;
 
+import com.codebite.judge.dto.CodeError;
 import com.codebite.submission.entity.SubmissionStatus;
+
+import java.util.List;
 
 public record RunTestCaseResult(
         String input,
@@ -8,6 +11,7 @@ public record RunTestCaseResult(
         String actualOutput,
         SubmissionStatus status,
         String stderr,
-        String compileOutput
+        String compileOutput,
+        List<CodeError> errors
 ) {
 }

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useParams, useNavigate, useOutletContext } from "react-router-dom"
 import { useProblem } from "@/hooks/useProblem"
 import { useSubmissions } from "@/hooks/useSubmissions"
@@ -9,7 +9,7 @@ import Spinner from "@/components/ui/Spinner"
 import { LeftPanel } from "./LeftPanel"
 import { EditorPanel } from "./EditorPanel"
 import { TestPanel } from "./TestPanel"
-import type { SubmissionResponse, RunResponse } from "@/types/submission"
+import type { CodeError, SubmissionResponse, RunResponse } from "@/types/submission"
 import { AxiosError } from "axios"
 import type { ApiError } from "@/types/api"
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts"
@@ -113,6 +113,14 @@ export default function ProblemDetailPage() {
   const activeLang = language || (recentLang && languages.includes(recentLang) ? recentLang : languages[0]) || ""
   const code =
     codeByLang[activeLang] ?? problem.starterCode[activeLang] ?? ""
+
+  const editorErrors = useMemo<CodeError[]>(() => {
+    const results = runResult?.results ?? result?.results ?? []
+    for (const r of results) {
+      if (r.errors && r.errors.length > 0) return r.errors
+    }
+    return []
+  }, [runResult, result])
 
   const handleLanguageChange = (lang: string) => {
     setLanguage(lang)
@@ -237,6 +245,7 @@ export default function ProblemDetailPage() {
           languages={languages}
           activeLanguage={activeLang}
           code={code}
+          errors={editorErrors}
           onLanguageChange={handleLanguageChange}
           onCodeChange={handleCodeChange}
           onResetCode={handleResetCode}

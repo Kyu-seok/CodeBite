@@ -52,6 +52,25 @@ public class DriverCodeLoader {
         return templateCache.containsKey(slug + ":" + language);
     }
 
+    /**
+     * Line (1-based) in the combined source where the user's code begins.
+     * Judge0 reports line numbers in the combined file; callers need this
+     * offset to translate those back to user-buffer lines.
+     */
+    public int getUserCodeStartLine(String slug, String language) {
+        String template = getDriverCode(slug, language);
+        int placeholderIdx = template.indexOf("{USER_CODE}");
+        if (placeholderIdx < 0) {
+            throw new IllegalStateException(
+                    "Driver template missing {USER_CODE} placeholder: " + slug + ":" + language);
+        }
+        int newlines = 0;
+        for (int i = 0; i < placeholderIdx; i++) {
+            if (template.charAt(i) == '\n') newlines++;
+        }
+        return newlines + 1;
+    }
+
     private void loadLibraries() throws IOException {
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
         for (Map.Entry<String, String> entry : LANGUAGE_EXTENSIONS.entrySet()) {

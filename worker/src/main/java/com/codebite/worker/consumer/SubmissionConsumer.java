@@ -86,6 +86,7 @@ public class SubmissionConsumer {
                 result.setStatus(caseStatus);
                 result.setActualOutput(response.stdout() != null ? response.stdout().trim() : null);
                 result.setStderr(response.stderr());
+                result.setCompileOutput(response.compileOutput());
 
                 Integer runtimeMs = parseTimeToMs(response.time());
                 result.setRuntimeMs(runtimeMs);

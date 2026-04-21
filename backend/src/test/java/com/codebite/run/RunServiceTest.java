@@ -2,6 +2,8 @@ package com.codebite.run;
 
 import com.codebite.common.exception.ResourceNotFoundException;
 import com.codebite.judge.dto.JudgeResponse;
+import com.codebite.judge.parser.JudgeErrorParsers;
+import com.codebite.judge.parser.UserCodeLineMapper;
 import com.codebite.judge.service.DriverCodeLoader;
 import com.codebite.judge.service.JudgeService;
 import com.codebite.problem.entity.Difficulty;
@@ -45,7 +47,9 @@ class RunServiceTest {
 
     @BeforeEach
     void setUp() {
-        runService = new RunService(problemRepository, testCaseRepository, judgeService, driverCodeLoader);
+        runService = new RunService(
+                problemRepository, testCaseRepository, judgeService, driverCodeLoader,
+                new JudgeErrorParsers(), new UserCodeLineMapper());
 
         problem = new Problem();
         problem.setId(1L);

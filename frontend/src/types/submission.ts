@@ -7,6 +7,18 @@ export type SubmissionStatus =
   | "COMPILATION_ERROR"
   | "INTERNAL_ERROR";
 
+export type ErrorSeverity = "ERROR" | "WARNING";
+
+export interface CodeError {
+  line: number | null;
+  column: number | null;
+  endLine: number | null;
+  endColumn: number | null;
+  message: string;
+  severity: ErrorSeverity;
+  inUserCode: boolean;
+}
+
 export interface SubmissionResult {
   testCaseId: number;
   status: SubmissionStatus;
@@ -15,6 +27,7 @@ export interface SubmissionResult {
   actualOutput: string | null;
   runtimeMs: number | null;
   memoryKb: number | null;
+  errors: CodeError[];
 }
 
 export interface SubmissionResponse {
@@ -52,6 +65,7 @@ export interface RunTestCaseResult {
   status: SubmissionStatus;
   stderr: string | null;
   compileOutput: string | null;
+  errors: CodeError[];
 }
 
 export interface RunResponse {

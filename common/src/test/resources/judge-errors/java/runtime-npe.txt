@@ -1,0 +1,3 @@
+Exception in thread "main" java.lang.NullPointerException: Cannot invoke "String.length()" because "s" is null
+	at Solution.solve(Main.java:7)
+	at Main.main(Main.java:14)

@@ -1,6 +1,8 @@
 package com.codebite.submission;
 
 import com.codebite.common.exception.ResourceNotFoundException;
+import com.codebite.judge.parser.JudgeErrorParsers;
+import com.codebite.judge.parser.UserCodeLineMapper;
 import com.codebite.judge.service.DriverCodeLoader;
 import com.codebite.judge.service.JudgeService;
 import com.codebite.problem.entity.Difficulty;
@@ -64,6 +66,7 @@ class SubmissionServiceTest {
                 submissionRepository, submissionResultRepository,
                 problemRepository, testCaseRepository, userRepository,
                 judgeService, driverCodeLoader, submissionEventProducer,
+                new JudgeErrorParsers(), new UserCodeLineMapper(),
                 new SimpleMeterRegistry());
 
         problem = new Problem();
