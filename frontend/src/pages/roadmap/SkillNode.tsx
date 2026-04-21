@@ -1,6 +1,7 @@
 import { memo } from "react"
 import { Handle, Position, type NodeProps } from "@xyflow/react"
 import { Lock, Check } from "lucide-react"
+import { useTranslation } from "react-i18next"
 import type { SkillNodeData, NodeState } from "./flowUtils"
 
 const stateStyles: Record<NodeState, string> = {
@@ -21,6 +22,7 @@ const handleStyle = {
 }
 
 function SkillNode({ data }: NodeProps) {
+  const { t } = useTranslation("roadmap")
   const { category, state, solvedCount, totalCount } = data as SkillNodeData
 
   return (
@@ -36,19 +38,19 @@ function SkillNode({ data }: NodeProps) {
       >
         <div className="flex items-start justify-between gap-2">
           <h3 className="text-xl font-bold leading-tight text-foreground">
-            {category.name}
+            {t(`categories.${category.slug}.name`)}
           </h3>
           {state === "locked" && <Lock className="h-4.5 w-4.5 flex-shrink-0 text-muted-foreground" />}
           {state === "complete" && <Check className="h-5 w-5 flex-shrink-0 text-success-500" />}
         </div>
 
         <p className="mt-1.5 text-sm leading-snug text-muted-foreground italic">
-          &ldquo;{category.description}&rdquo;
+          &ldquo;{t(`categories.${category.slug}.description`)}&rdquo;
         </p>
 
         {state === "coming-soon" ? (
           <span className="mt-3 inline-block text-xs font-medium uppercase tracking-wider text-muted-foreground/60">
-            Coming Soon
+            {t('comingSoon')}
           </span>
         ) : (
           <div className="mt-3 flex items-center gap-2.5">

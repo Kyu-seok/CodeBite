@@ -1,0 +1,82 @@
+{
+  "title": "Roadmap — CodeBite",
+  "comingSoon": "Coming Soon",
+  "categories": {
+    "arrays-and-hashing": {
+      "name": "Arrays & Hashing",
+      "description": "Map keys to values, manipulate arrays for O(1) lookups"
+    },
+    "two-pointers": {
+      "name": "Two Pointers",
+      "description": "Converge from both ends to find your answer"
+    },
+    "sliding-window": {
+      "name": "Sliding Window",
+      "description": "Optimize with a moving window over your data"
+    },
+    "stacks": {
+      "name": "Stack",
+      "description": "Last in, first out — track state as you go"
+    },
+    "binary-search": {
+      "name": "Binary Search",
+      "description": "Halve the search space with every step"
+    },
+    "linked-lists": {
+      "name": "Linked Lists",
+      "description": "Chain nodes together, think in pointers"
+    },
+    "trees": {
+      "name": "Trees",
+      "description": "Navigate hierarchies with DFS and BFS"
+    },
+    "tries": {
+      "name": "Tries",
+      "description": "Store strings character by character"
+    },
+    "heaps": {
+      "name": "Heap / Priority Queue",
+      "description": "Always know your min or max in O(1)"
+    },
+    "backtracking": {
+      "name": "Backtracking",
+      "description": "Explore all paths, prune the dead ends"
+    },
+    "graphs": {
+      "name": "Graphs",
+      "description": "Model connections and traverse them"
+    },
+    "greedy": {
+      "name": "Greedy",
+      "description": "Make the locally optimal choice at each step"
+    },
+    "dynamic-programming": {
+      "name": "Dynamic Programming",
+      "description": "Remember past answers to build new ones"
+    },
+    "math-and-geometry": {
+      "name": "Math & Geometry",
+      "description": "Apply mathematical patterns and spatial reasoning"
+    },
+    "advanced-graphs": {
+      "name": "Advanced Graphs",
+      "description": "Shortest paths, minimum spanning trees, and topological ordering"
+    },
+    "intervals": {
+      "name": "Intervals",
+      "description": "Merge, insert, and schedule overlapping ranges"
+    },
+    "2d-dynamic-programming": {
+      "name": "2-D Dynamic Programming",
+      "description": "Solve problems on grids and two-sequence comparisons"
+    },
+    "bit-manipulation": {
+      "name": "Bit Manipulation",
+      "description": "Leverage binary representation for efficient solutions"
+    },
+    "design": {
+      "name": "Design",
+      "description": "Implement data structures and system components from scratch"
+    }
+  }
+}

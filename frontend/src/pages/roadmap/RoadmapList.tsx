@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { Link } from "react-router-dom"
+import { useTranslation } from "react-i18next"
 import type { RoadmapCategory } from "@/types/roadmap"
 import { TOPOLOGICAL_ORDER } from "./roadmapLayout"
 import DifficultyBadge from "@/components/ui/DifficultyBadge"
@@ -29,6 +30,7 @@ interface RoadmapListProps {
 }
 
 export default function RoadmapList({ categories }: RoadmapListProps) {
+  const { t } = useTranslation("roadmap")
   const [expandedSlug, setExpandedSlug] = useState<string | null>(null)
 
   const categoryMap = new Map(categories.map((c) => [c.slug, c]))
@@ -60,15 +62,15 @@ export default function RoadmapList({ categories }: RoadmapListProps) {
             >
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
-                  <h3 className="text-sm font-semibold text-foreground">{category.name}</h3>
+                  <h3 className="text-sm font-semibold text-foreground">{t(`categories.${category.slug}.name`)}</h3>
                   {isEmpty && (
                     <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground/60">
-                      Coming Soon
+                      {t('comingSoon')}
                     </span>
                   )}
                 </div>
                 <p className="mt-0.5 text-[11px] text-muted-foreground italic truncate">
-                  "{category.description}"
+                  "{t(`categories.${category.slug}.description`)}"
                 </p>
               </div>
               {!isEmpty && (

@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom"
 import { X, Check } from "lucide-react"
+import { useTranslation } from "react-i18next"
 import type { RoadmapCategory } from "@/types/roadmap"
 import DifficultyBadge from "@/components/ui/DifficultyBadge"
 
@@ -9,6 +10,7 @@ interface ProblemPanelProps {
 }
 
 export default function ProblemPanel({ category, onClose }: ProblemPanelProps) {
+  const { t } = useTranslation("roadmap")
   const isOpen = category !== null
 
   const solvedCount = category?.problems.filter((p) => p.status === "SOLVED").length ?? 0
@@ -27,10 +29,10 @@ export default function ProblemPanel({ category, onClose }: ProblemPanelProps) {
             <div className="flex items-start justify-between gap-2">
               <div className="min-w-0">
                 <h2 className="text-base font-semibold text-foreground">
-                  {category.name}
+                  {t(`categories.${category.slug}.name`)}
                 </h2>
                 <p className="mt-1 text-xs text-muted-foreground italic">
-                  &ldquo;{category.description}&rdquo;
+                  &ldquo;{t(`categories.${category.slug}.description`)}&rdquo;
                 </p>
               </div>
               <button

@@ -1,15 +1,17 @@
 import { useEffect } from "react"
+import { useTranslation } from "react-i18next"
 import { useRoadmap } from "@/hooks/useRoadmap"
 import Spinner from "@/components/ui/Spinner"
 import RoadmapFlow from "./RoadmapFlow"
 import RoadmapList from "./RoadmapList"
 
 export default function RoadmapPage() {
+  const { t } = useTranslation("roadmap")
   const { categories, loading, error } = useRoadmap()
 
   useEffect(() => {
-    document.title = "Roadmap — CodeBite"
-  }, [])
+    document.title = t("title")
+  }, [t])
 
   if (loading) return <Spinner />
 

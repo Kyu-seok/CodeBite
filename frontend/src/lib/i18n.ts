@@ -9,6 +9,7 @@ import koAuth from "@/locales/ko/auth.json";
 import koProfile from "@/locales/ko/profile.json";
 import koAdmin from "@/locales/ko/admin.json";
 import koLanding from "@/locales/ko/landing.json";
+import koRoadmap from "@/locales/ko/roadmap.json";
 
 import enCommon from "@/locales/en/common.json";
 import enNav from "@/locales/en/nav.json";
@@ -17,6 +18,7 @@ import enAuth from "@/locales/en/auth.json";
 import enProfile from "@/locales/en/profile.json";
 import enAdmin from "@/locales/en/admin.json";
 import enLanding from "@/locales/en/landing.json";
+import enRoadmap from "@/locales/en/roadmap.json";
 
 i18n
   .use(LanguageDetector)
@@ -31,6 +33,7 @@ i18n
         profile: koProfile,
         admin: koAdmin,
         landing: koLanding,
+        roadmap: koRoadmap,
       },
       en: {
         common: enCommon,
@@ -40,11 +43,12 @@ i18n
         profile: enProfile,
         admin: enAdmin,
         landing: enLanding,
+        roadmap: enRoadmap,
       },
     },
     fallbackLng: "en",
     defaultNS: "common",
-    ns: ["common", "nav", "problem", "auth", "profile", "admin", "landing"],
+    ns: ["common", "nav", "problem", "auth", "profile", "admin", "landing", "roadmap"],
     detection: {
       order: ["localStorage", "navigator"],
       lookupLocalStorage: "i18nextLng",

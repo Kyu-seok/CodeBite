@@ -1,0 +1,82 @@
+{
+  "title": "로드맵 — CodeBite",
+  "comingSoon": "준비 중",
+  "categories": {
+    "arrays-and-hashing": {
+      "name": "배열 & 해시",
+      "description": "키-값 매핑과 배열 조작으로 O(1) 탐색하기"
+    },
+    "two-pointers": {
+      "name": "투 포인터",
+      "description": "양쪽 끝에서 좁혀가며 답 찾기"
+    },
+    "sliding-window": {
+      "name": "슬라이딩 윈도우",
+      "description": "움직이는 윈도우로 최적화하기"
+    },
+    "stacks": {
+      "name": "스택",
+      "description": "후입선출 — 상태를 추적하며 풀기"
+    },
+    "binary-search": {
+      "name": "이진 탐색",
+      "description": "매 단계마다 탐색 범위를 절반으로 줄이기"
+    },
+    "linked-lists": {
+      "name": "연결 리스트",
+      "description": "노드를 연결하고 포인터로 사고하기"
+    },
+    "trees": {
+      "name": "트리",
+      "description": "DFS와 BFS로 계층 구조 탐색하기"
+    },
+    "tries": {
+      "name": "트라이",
+      "description": "문자열을 한 글자씩 저장하기"
+    },
+    "heaps": {
+      "name": "힙 / 우선순위 큐",
+      "description": "최솟값 또는 최댓값을 O(1)에 알기"
+    },
+    "backtracking": {
+      "name": "백트래킹",
+      "description": "모든 경로를 탐색하고 막다른 길은 가지치기"
+    },
+    "graphs": {
+      "name": "그래프",
+      "description": "연결 관계를 모델링하고 순회하기"
+    },
+    "greedy": {
+      "name": "그리디",
+      "description": "매 단계에서 지역 최적 선택하기"
+    },
+    "dynamic-programming": {
+      "name": "동적 프로그래밍",
+      "description": "이전 답을 기억해서 새로운 답 만들기"
+    },
+    "math-and-geometry": {
+      "name": "수학 & 기하학",
+      "description": "수학적 패턴과 공간 추론 활용하기"
+    },
+    "advanced-graphs": {
+      "name": "고급 그래프",
+      "description": "최단 경로, 최소 신장 트리, 위상 정렬"
+    },
+    "intervals": {
+      "name": "구간",
+      "description": "겹치는 범위를 병합, 삽입, 스케줄링하기"
+    },
+    "2d-dynamic-programming": {
+      "name": "2차원 DP",
+      "description": "격자와 두 수열 비교 문제 풀기"
+    },
+    "bit-manipulation": {
+      "name": "비트 조작",
+      "description": "이진 표현을 활용한 효율적인 풀이"
+    },
+    "design": {
+      "name": "설계",
+      "description": "자료구조와 시스템 컴포넌트 직접 구현하기"
+    }
+  }
+}
