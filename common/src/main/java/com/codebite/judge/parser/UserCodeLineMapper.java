@@ -55,8 +55,22 @@ public class UserCodeLineMapper {
                         true
                 ));
                 anyInUserCode = true;
+            } else if (userLine > userCodeLineCount && userCodeLineCount > 0) {
+                // Error reported past user code — almost always a cascade from
+                // unbalanced braces / unclosed strings in user code, since the
+                // driver suffix is known-good. Pin to the last user line.
+                mapped.add(new CodeError(
+                        userCodeLineCount,
+                        null,
+                        null,
+                        null,
+                        error.message(),
+                        error.severity(),
+                        true
+                ));
+                anyInUserCode = true;
             }
-            // else: dropped — inside driver code, no meaningful user-line mapping
+            // else: above user code — driver prefix, genuinely not our problem.
         }
 
         if (!anyInUserCode) {

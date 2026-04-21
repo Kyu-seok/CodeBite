@@ -56,10 +56,27 @@ class UserCodeLineMapperTest {
     }
 
     @Test
-    void treatsErrorBeyondUserCodeAsDriver() {
-        CodeError beyond = new CodeError(100, null, null, null, "late", CodeError.Severity.ERROR, true);
+    void pinsPostUserCodeErrorToLastUserLine() {
+        // javac "reached end of file while parsing" lands on the last driver-suffix
+        // line when the user's braces are unbalanced. It must surface on user code,
+        // not as a template-bug banner.
+        CodeError beyond = new CodeError(
+                100, null, null, null, "reached end of file while parsing",
+                CodeError.Severity.ERROR, true);
 
         List<CodeError> out = mapper.mapToUserSpace(List.of(beyond), 3, 10);
+
+        assertThat(out).hasSize(1);
+        assertThat(out.get(0).inUserCode()).isTrue();
+        assertThat(out.get(0).line()).isEqualTo(10);
+        assertThat(out.get(0).message()).contains("reached end of file");
+    }
+
+    @Test
+    void errorAboveUserCodeIsStillTreatedAsDriver() {
+        CodeError above = new CodeError(1, null, null, null, "driver", CodeError.Severity.ERROR, true);
+
+        List<CodeError> out = mapper.mapToUserSpace(List.of(above), 3, 10);
 
         assertThat(out).hasSize(1);
         assertThat(out.get(0).inUserCode()).isFalse();
