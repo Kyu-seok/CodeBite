@@ -13,7 +13,9 @@ import { Input } from "@/components/ui/Input"
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/Select"
@@ -224,10 +226,27 @@ export default function ProblemListPage() {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="CB50">CodeBite 50</SelectItem>
-              <SelectItem value="CB100">CodeBite 100</SelectItem>
-              <SelectItem value="CB200">CodeBite 200</SelectItem>
-
+              <SelectGroup>
+                <SelectLabel>{t("list.curationLabel")}</SelectLabel>
+                <SelectItem
+                  value="CB50"
+                  description={t("list.curationDescription.CB50")}
+                >
+                  CodeBite 50
+                </SelectItem>
+                <SelectItem
+                  value="CB100"
+                  description={t("list.curationDescription.CB100")}
+                >
+                  CodeBite 100
+                </SelectItem>
+                <SelectItem
+                  value="CB200"
+                  description={t("list.curationDescription.CB200")}
+                >
+                  CodeBite 200
+                </SelectItem>
+              </SelectGroup>
             </SelectContent>
           </Select>
           <label className="flex items-center gap-1.5 text-xs text-muted-foreground">

@@ -12,7 +12,13 @@
     "noProblems": "No problems found.",
     "random": "Random",
     "allProblems": "All",
-    "singlePage": "Single page"
+    "singlePage": "Single page",
+    "curationLabel": "Curations",
+    "curationDescription": {
+      "CB50": "50 essentials to get started",
+      "CB100": "100 problems covering core patterns",
+      "CB200": "200 problems for deeper prep"
+    }
   },
   "tabs": {
     "description": "Description",

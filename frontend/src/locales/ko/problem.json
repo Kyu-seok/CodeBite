@@ -12,7 +12,13 @@
     "noProblems": "문제가 없습니다.",
     "random": "랜덤",
     "allProblems": "전체",
-    "singlePage": "한 페이지"
+    "singlePage": "한 페이지",
+    "curationLabel": "큐레이션",
+    "curationDescription": {
+      "CB50": "입문자를 위한 핵심 50문제",
+      "CB100": "핵심 패턴을 다루는 100문제",
+      "CB200": "심화 학습을 위한 200문제"
+    }
   },
   "tabs": {
     "description": "설명",
