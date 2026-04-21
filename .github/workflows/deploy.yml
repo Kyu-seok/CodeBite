@@ -43,28 +43,55 @@ jobs:
             echo "--- Starting new replicas alongside old ones ---"
             $COMPOSE up -d --no-deps --scale backend=6 --no-recreate backend
 
-            # 4. Wait for new containers to become healthy.
-            # Budget ~5 min: Spring Boot cold start on the mini PC is ~90-100s
-            # plus classpath resource loading, so give ~4x headroom.
+            # 4. Compute NEW container IDs = all backends - OLD_IDS, then wait
+            # for each NEW container's own healthcheck to report healthy.
+            # Going direct to docker inspect (not through nginx) insulates this
+            # step from nginx being down or pointing at stale DNS.
+            ALL_IDS=$($COMPOSE ps -q backend | tr '\n' ' ')
+            NEW_IDS=""
+            for id in $ALL_IDS; do
+              case " $OLD_IDS " in
+                *" $id "*) ;;
+                *) NEW_IDS="$NEW_IDS $id" ;;
+              esac
+            done
+            echo "--- New backend containers:$NEW_IDS ---"
+
+            # Budget ~5 min: Spring Boot cold start on the mini PC is ~30-100s
+            # depending on JVM warm-up / disk cache, so give generous headroom.
             echo "--- Waiting for new replicas to be healthy ---"
             sleep 30
             NEW_HEALTHY=false
             for i in $(seq 1 30); do
-              if curl -sf http://localhost/api/health > /dev/null 2>&1; then
+              ALL_HEALTHY=true
+              for id in $NEW_IDS; do
+                status=$(docker inspect -f '{{.State.Health.Status}}' "$id" 2>/dev/null || echo "missing")
+                if [ "$status" != "healthy" ]; then
+                  ALL_HEALTHY=false
+                  echo "--- attempt $i: $id -> $status ---"
+                fi
+              done
+              if [ "$ALL_HEALTHY" = true ]; then
                 echo "--- New replicas healthy (attempt $i) ---"
                 NEW_HEALTHY=true
                 break
               fi
-              echo "--- Health check attempt $i failed, retrying... ---"
               sleep 10
             done
 
-            # Bail out before touching old containers if new ones never came up
+            # Bail out before touching old containers if new ones never came up.
+            # Remove ONLY the new containers by ID (no --remove-orphans, which
+            # can nuke nginx) and leave the old healthy replicas serving traffic.
             if [ "$NEW_HEALTHY" = false ]; then
               echo "--- NEW REPLICAS NEVER HEALTHY — Rolling back to $PREV_COMMIT ---"
+              for id in $NEW_IDS; do
+                echo "--- Removing unhealthy new container $id ---"
+                docker stop --time 15 "$id" 2>/dev/null || true
+                docker rm -f "$id" 2>/dev/null || true
+              done
               git checkout "$PREV_COMMIT"
-              $COMPOSE up -d --no-deps --scale backend=3 --remove-orphans backend
-              docker exec codebite-nginx nginx -s reload || true
+              $COMPOSE up -d --no-deps --scale backend=3 backend
+              docker exec codebite-nginx nginx -s reload 2>/dev/null || true
               exit 1
             fi
 
