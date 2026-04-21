@@ -48,6 +48,8 @@ export default function ProblemDetailPage() {
   const runRef = useRef<() => void>(() => {})
   const submitRef = useRef<() => void>(() => {})
   const timerSnapshotRef = useRef<number | null>(null)
+  const codeByLangRef = useRef(codeByLang)
+  codeByLangRef.current = codeByLang
 
   useKeyboardShortcuts(
     useCallback(() => runRef.current(), []),
@@ -64,6 +66,31 @@ export default function ProblemDetailPage() {
   useEffect(() => {
     if (problem) document.title = `${problem.title} | CodeBite`
   }, [problem])
+
+  // Debounced draft persistence — avoid synchronous localStorage I/O on every keystroke.
+  useEffect(() => {
+    if (!slug) return
+    const handle = setTimeout(() => {
+      try {
+        localStorage.setItem(`code-draft:${slug}`, JSON.stringify(codeByLangRef.current))
+      } catch {
+        // storage full / disabled — ignore
+      }
+    }, 300)
+    return () => clearTimeout(handle)
+  }, [codeByLang, slug])
+
+  // Flush latest draft on slug change or unmount so a quick nav-away doesn't drop keystrokes.
+  useEffect(() => {
+    return () => {
+      if (!slug) return
+      try {
+        localStorage.setItem(`code-draft:${slug}`, JSON.stringify(codeByLangRef.current))
+      } catch {
+        // ignore
+      }
+    }
+  }, [slug])
 
   if (loading || authLoading) {
     return (
@@ -96,18 +123,13 @@ export default function ProblemDetailPage() {
     setCodeByLang((prev) => {
       const next = { ...prev }
       delete next[activeLang]
-      localStorage.setItem(`code-draft:${slug}`, JSON.stringify(next))
       return next
     })
   }
 
   const handleCodeChange = (value: string | undefined) => {
     if (value !== undefined) {
-      setCodeByLang((prev) => {
-        const next = { ...prev, [activeLang]: value }
-        localStorage.setItem(`code-draft:${slug}`, JSON.stringify(next))
-        return next
-      })
+      setCodeByLang((prev) => ({ ...prev, [activeLang]: value }))
     }
   }
 
