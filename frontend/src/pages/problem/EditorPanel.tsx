@@ -1,7 +1,7 @@
 import { useRef, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Editor from '@monaco-editor/react';
-import { KeyMod, KeyCode, MarkerSeverity, editor as monacoEditor } from 'monaco-editor';
+import { KeyMod, KeyCode, Range as MonacoRange, editor as monacoEditor } from 'monaco-editor';
 import type { CodeError } from '@/types/submission';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/Tabs';
 import {
@@ -185,8 +185,6 @@ interface EditorPanelProps {
   onSubmit?: () => void;
 }
 
-const MARKER_OWNER = 'codebite-judge';
-
 export function EditorPanel({
   languages,
   activeLanguage,
@@ -203,6 +201,7 @@ export function EditorPanel({
   const { theme } = useTheme();
   const { settings } = useEditorSettings();
   const editorRef = useRef<monacoEditor.IStandaloneCodeEditor | null>(null);
+  const decorationsRef = useRef<string[]>([]);
   const modeRef = useRef<{ dispose: () => void } | null>(null);
   const statusBarRef = useRef<HTMLDivElement | null>(null);
   const onRunRef = useRef(onRun);
@@ -273,34 +272,58 @@ export function EditorPanel({
     };
   }, [editorMounted]);
 
-  // Paint Judge0 errors as red underlines. Clear on edit so the
-  // underline disappears the moment the user starts fixing.
+  // Paint Judge0 errors as red wavy underlines via deltaDecorations.
+  // Decorations are rendered unconditionally by Monaco's view layer, unlike
+  // setModelMarkers which is gated on the language service's worker state.
   useEffect(() => {
     const editor = editorRef.current;
     if (!editor) return;
     const model = editor.getModel();
     if (!model) return;
 
-    const markers = (errors ?? [])
+    const decos = (errors ?? [])
       .filter((e) => e.inUserCode && e.line != null)
-      .map((e) => ({
-        startLineNumber: e.line!,
-        startColumn: e.column ?? 1,
-        endLineNumber: e.endLine ?? e.line!,
-        endColumn: e.endColumn ?? Number.MAX_SAFE_INTEGER,
-        message: e.message,
-        severity:
-          e.severity === 'WARNING'
-            ? MarkerSeverity.Warning
-            : MarkerSeverity.Error,
-      }));
+      .map((e) => {
+        const line = e.line!;
+        const lineContent = model.getLineContent(line);
+        const lineLen = lineContent.length;
+        const firstNonWs = lineContent.search(/\S/);
+        // Underline from first non-whitespace char to end of line when the
+        // column is unknown (Java/Python parsers capture only line). Otherwise
+        // honor the column from the parser.
+        const startCol = e.column ?? (firstNonWs >= 0 ? firstNonWs + 1 : 1);
+        const endCol = e.endColumn ?? lineLen + 1;
+        const isWarning = e.severity === 'WARNING';
+        return {
+          range: new MonacoRange(
+            line,
+            startCol,
+            e.endLine ?? line,
+            endCol,
+          ),
+          options: {
+            inlineClassName: isWarning
+              ? 'cb-editor-warning-squiggly'
+              : 'cb-editor-error-squiggly',
+            hoverMessage: { value: e.message },
+            minimap: {
+              position: monacoEditor.MinimapPosition.Inline,
+              color: isWarning ? '#f59e0b' : '#ef4444',
+            },
+            overviewRuler: {
+              position: monacoEditor.OverviewRulerLane.Right,
+              color: isWarning ? '#f59e0b' : '#ef4444',
+            },
+          },
+        };
+      });
 
-    monacoEditor.setModelMarkers(model, MARKER_OWNER, markers);
+    decorationsRef.current = editor.deltaDecorations(decorationsRef.current, decos);
 
     let changeSub: { dispose: () => void } | null = null;
-    if (markers.length > 0) {
+    if (decos.length > 0) {
       changeSub = model.onDidChangeContent(() => {
-        monacoEditor.setModelMarkers(model, MARKER_OWNER, []);
+        decorationsRef.current = editor.deltaDecorations(decorationsRef.current, []);
         changeSub?.dispose();
         changeSub = null;
       });
@@ -308,7 +331,7 @@ export function EditorPanel({
 
     return () => {
       changeSub?.dispose();
-      monacoEditor.setModelMarkers(model, MARKER_OWNER, []);
+      decorationsRef.current = editor.deltaDecorations(decorationsRef.current, []);
     };
   }, [errors, activeLanguage, editorMounted]);
 

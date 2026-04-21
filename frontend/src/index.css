@@ -173,6 +173,17 @@ html {
   background-color: #3a4250;
 }
 
+/* ── Monaco judge-error underline ── */
+.cb-editor-error-squiggly {
+  text-decoration: underline wavy #ef4444;
+  text-decoration-skip-ink: none;
+}
+
+.cb-editor-warning-squiggly {
+  text-decoration: underline wavy #f59e0b;
+  text-decoration-skip-ink: none;
+}
+
 /* ── React Flow theme overrides ── */
 .react-flow {
   --xy-background-color: var(--background);
