@@ -92,6 +92,14 @@ export default function ProblemDetailPage() {
     }
   }, [slug])
 
+  const editorErrors = useMemo<CodeError[]>(() => {
+    const results = runResult?.results ?? result?.results ?? []
+    for (const r of results) {
+      if (r.errors && r.errors.length > 0) return r.errors
+    }
+    return []
+  }, [runResult, result])
+
   if (loading || authLoading) {
     return (
       <div className="flex h-[calc(100vh-3.5rem)] items-center justify-center">
@@ -113,14 +121,6 @@ export default function ProblemDetailPage() {
   const activeLang = language || (recentLang && languages.includes(recentLang) ? recentLang : languages[0]) || ""
   const code =
     codeByLang[activeLang] ?? problem.starterCode[activeLang] ?? ""
-
-  const editorErrors = useMemo<CodeError[]>(() => {
-    const results = runResult?.results ?? result?.results ?? []
-    for (const r of results) {
-      if (r.errors && r.errors.length > 0) return r.errors
-    }
-    return []
-  }, [runResult, result])
 
   const handleLanguageChange = (lang: string) => {
     setLanguage(lang)
