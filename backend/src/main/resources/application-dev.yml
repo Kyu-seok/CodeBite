@@ -7,7 +7,7 @@ spring:
     show-sql: true
 app:
   judge0:
-    url: http://192.168.219.200:2358
+    url: ${JUDGE0_URL:http://192.168.219.200:2358}
 logging:
   level:
     com.codebite: DEBUG
