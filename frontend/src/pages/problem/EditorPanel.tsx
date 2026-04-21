@@ -201,6 +201,10 @@ export function EditorPanel({
   const editorRef = useRef<monacoEditor.IStandaloneCodeEditor | null>(null);
   const modeRef = useRef<{ dispose: () => void } | null>(null);
   const statusBarRef = useRef<HTMLDivElement | null>(null);
+  const onRunRef = useRef(onRun);
+  const onSubmitRef = useRef(onSubmit);
+  onRunRef.current = onRun;
+  onSubmitRef.current = onSubmit;
   const [editorMounted, setEditorMounted] = useState(false);
   const [bugReportOpen, setBugReportOpen] = useState(false);
 
@@ -238,27 +242,32 @@ export function EditorPanel({
     };
   }, [settings.keyBindings, editorMounted]);
 
-  // Register Run/Submit keyboard shortcuts in Monaco
+  // Register Run/Submit keyboard shortcuts in Monaco.
+  // Handlers are read through refs so prop identity changes don't
+  // re-run this effect on every keystroke.
   useEffect(() => {
     const editor = editorRef.current;
     if (!editor) return;
 
-    // Cmd/Ctrl + ' → Run
-    editor.addAction({
+    const runAction = editor.addAction({
       id: 'codebite-run',
       label: 'Run Code',
       keybindings: [KeyMod.CtrlCmd | KeyCode.Quote],
-      run: () => onRun?.(),
+      run: () => onRunRef.current?.(),
     });
 
-    // Cmd/Ctrl + Enter → Submit
-    editor.addAction({
+    const submitAction = editor.addAction({
       id: 'codebite-submit',
       label: 'Submit Code',
       keybindings: [KeyMod.CtrlCmd | KeyCode.Enter],
-      run: () => onSubmit?.(),
+      run: () => onSubmitRef.current?.(),
     });
-  }, [editorMounted, onRun, onSubmit]);
+
+    return () => {
+      runAction.dispose();
+      submitAction.dispose();
+    };
+  }, [editorMounted]);
 
   return (
     <div className="flex h-full flex-col">
