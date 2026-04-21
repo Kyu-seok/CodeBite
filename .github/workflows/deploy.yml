@@ -18,6 +18,7 @@ jobs:
           host: ${{ secrets.DEPLOY_HOST }}
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_SSH_KEY }}
+          command_timeout: 20m
           script: |
             set -e
             cd ~/CodeBite
@@ -42,17 +43,30 @@ jobs:
             echo "--- Starting new replicas alongside old ones ---"
             $COMPOSE up -d --no-deps --scale backend=6 --no-recreate backend
 
-            # 4. Wait for new containers to become healthy
+            # 4. Wait for new containers to become healthy.
+            # Budget ~5 min: Spring Boot cold start on the mini PC is ~90-100s
+            # plus classpath resource loading, so give ~4x headroom.
             echo "--- Waiting for new replicas to be healthy ---"
-            sleep 20
-            for i in $(seq 1 12); do
+            sleep 30
+            NEW_HEALTHY=false
+            for i in $(seq 1 30); do
               if curl -sf http://localhost/api/health > /dev/null 2>&1; then
                 echo "--- New replicas healthy (attempt $i) ---"
+                NEW_HEALTHY=true
                 break
               fi
               echo "--- Health check attempt $i failed, retrying... ---"
-              sleep 5
+              sleep 10
             done
+
+            # Bail out before touching old containers if new ones never came up
+            if [ "$NEW_HEALTHY" = false ]; then
+              echo "--- NEW REPLICAS NEVER HEALTHY — Rolling back to $PREV_COMMIT ---"
+              git checkout "$PREV_COMMIT"
+              $COMPOSE up -d --no-deps --scale backend=3 --remove-orphans backend
+              docker exec codebite-nginx nginx -s reload || true
+              exit 1
+            fi
 
             # 5. Drain and remove old containers one by one (graceful shutdown)
             for id in $OLD_IDS; do
@@ -72,7 +86,7 @@ jobs:
             # 8. Final health check with rollback
             echo "--- Final health check ---"
             HEALTHY=false
-            for i in $(seq 1 12); do
+            for i in $(seq 1 24); do
               sleep 5
               if curl -sf http://localhost/api/health > /dev/null 2>&1; then
                 HEALTHY=true
