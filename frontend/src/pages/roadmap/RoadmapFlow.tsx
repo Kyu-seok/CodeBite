@@ -10,7 +10,6 @@ import {
 import '@xyflow/react/dist/style.css';
 
 import type { RoadmapCategory } from '@/types/roadmap';
-import { useAuth } from '@/context/AuthContext';
 import {
   buildFlowNodes,
   buildFlowEdges,
@@ -26,11 +25,10 @@ interface RoadmapFlowProps {
 }
 
 export default function RoadmapFlow({ categories }: RoadmapFlowProps) {
-  const { isAuthenticated } = useAuth();
   const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
 
-  const nodes = useMemo(() => buildFlowNodes(categories, isAuthenticated), [categories, isAuthenticated]);
-  const edges = useMemo(() => buildFlowEdges(categories, isAuthenticated), [categories, isAuthenticated]);
+  const nodes = useMemo(() => buildFlowNodes(categories), [categories]);
+  const edges = useMemo(() => buildFlowEdges(categories), [categories]);
 
   const categoryMap = useMemo(
     () => new Map(categories.map((c) => [c.slug, c])),
@@ -44,7 +42,7 @@ export default function RoadmapFlow({ categories }: RoadmapFlowProps) {
   const onNodeClick: NodeMouseHandler<Node<SkillNodeData>> = useCallback(
     (_event, node) => {
       const data = node.data as SkillNodeData;
-      if (data.state === 'locked' || data.state === 'coming-soon') return;
+      if (data.state === 'coming-soon') return;
       setSelectedSlug((prev) => (prev === node.id ? null : node.id));
     },
     [],

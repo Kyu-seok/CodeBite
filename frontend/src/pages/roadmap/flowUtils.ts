@@ -5,7 +5,6 @@ import { ROADMAP_LAYOUT } from './roadmapLayout';
 // ── Node state ──
 
 export type NodeState =
-  | 'locked'
   | 'not-started'
   | 'in-progress'
   | 'complete'
@@ -19,26 +18,9 @@ export interface SkillNodeData {
   [key: string]: unknown;
 }
 
-function hasSolvedAny(category: RoadmapCategory): boolean {
-  return category.problems.some((p) => p.status === 'SOLVED');
-}
-
-export function computeNodeState(
-  category: RoadmapCategory,
-  categoryMap: Map<string, RoadmapCategory>,
-  isAuthenticated: boolean,
-): NodeState {
+export function computeNodeState(category: RoadmapCategory): NodeState {
   const total = category.problems.length;
   if (total === 0) return 'coming-soon';
-
-  // Skip prerequisite gating for unauthenticated users
-  if (isAuthenticated) {
-    const allPrereqsMet = category.prerequisiteSlugs.every((slug) => {
-      const prereq = categoryMap.get(slug);
-      return prereq ? hasSolvedAny(prereq) : true;
-    });
-    if (!allPrereqsMet) return 'locked';
-  }
 
   const solved = category.problems.filter((p) => p.status === 'SOLVED').length;
   if (solved === 0) return 'not-started';
@@ -53,7 +35,6 @@ const ROW_GAP = 200; // vertical spacing (spread within a level)
 
 export function buildFlowNodes(
   categories: RoadmapCategory[],
-  isAuthenticated: boolean,
 ): Node<SkillNodeData>[] {
   const categoryMap = new Map(categories.map((c) => [c.slug, c]));
   const nodes: Node<SkillNodeData>[] = [];
@@ -62,7 +43,7 @@ export function buildFlowNodes(
     const category = categoryMap.get(slug);
     if (!category) continue;
 
-    const state = computeNodeState(category, categoryMap, isAuthenticated);
+    const state = computeNodeState(category);
     const solvedCount = category.problems.filter(
       (p) => p.status === 'SOLVED',
     ).length;
@@ -107,7 +88,6 @@ function getEdgeColors(): Record<
   const success = isDark ? '#4ade80' : '#22c55e';
 
   return {
-    locked: { stroke: neutral, dashed: true, opacity: 0.7, animated: false },
     'not-started': {
       stroke: muted,
       dashed: false,
@@ -130,20 +110,12 @@ function getEdgeColors(): Record<
   };
 }
 
-export function buildFlowEdges(
-  categories: RoadmapCategory[],
-  isAuthenticated: boolean,
-): Edge[] {
-  const categoryMap = new Map(categories.map((c) => [c.slug, c]));
+export function buildFlowEdges(categories: RoadmapCategory[]): Edge[] {
   const colors = getEdgeColors();
 
   const edges: Edge[] = [];
   for (const category of categories) {
-    const targetState = computeNodeState(
-      category,
-      categoryMap,
-      isAuthenticated,
-    );
+    const targetState = computeNodeState(category);
     const style = colors[targetState];
 
     for (const prereqSlug of category.prerequisiteSlugs) {

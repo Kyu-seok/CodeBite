@@ -1,11 +1,10 @@
 import { memo } from "react"
 import { Handle, Position, type NodeProps } from "@xyflow/react"
-import { Lock, Check } from "lucide-react"
+import { Check } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import type { SkillNodeData, NodeState } from "./flowUtils"
 
 const stateStyles: Record<NodeState, string> = {
-  "locked":      "opacity-60 border-gray-300 dark:border-gray-600 bg-card cursor-not-allowed",
   "not-started": "border-gray-300 dark:border-gray-500 bg-card cursor-pointer hover:border-gray-400 dark:hover:border-gray-400 hover:shadow-md",
   "in-progress": "border-accent-500 bg-card ring-2 ring-accent-500/25 cursor-pointer hover:shadow-md",
   "complete":    "border-success-500 bg-card ring-2 ring-success-500/25 cursor-pointer hover:shadow-md",
@@ -40,7 +39,6 @@ function SkillNode({ data }: NodeProps) {
           <h3 className="text-xl font-bold leading-tight text-foreground">
             {t(`categories.${category.slug}.name`)}
           </h3>
-          {state === "locked" && <Lock className="h-4.5 w-4.5 flex-shrink-0 text-muted-foreground" />}
           {state === "complete" && <Check className="h-5 w-5 flex-shrink-0 text-success-500" />}
         </div>
 
