@@ -89,8 +89,7 @@
     {"pattern": "aabb"},
     {"pattern": "2+2*2"},
     {"pattern": "3+2*2"},
-    {"pattern": "(1+(4+5+2)-3)+(6+8)"},
-    {"pattern": "1 + 1"}
+    {"pattern": "(1+(4+5+2)-3)+(6+8)"}
   ],
   "structured": [
     {"pattern": "[\"MUC\",\"LHR\"]"},
