@@ -1,6 +1,6 @@
 class Solution {
 public:
-    vector<int> findPairIndices(vector<int>& stock, int target) {
+    vector<int> findPairIndices(vector<int>& snacks, int target) {
         // Write your solution here
     }
 };
