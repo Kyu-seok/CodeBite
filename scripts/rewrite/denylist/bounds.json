@@ -5,19 +5,19 @@
   },
   "forbidden_regex": [
     {
-      "regex": "10\\s*\\^\\s*4",
-      "rationale": "Very common small-array bound in well-known problem sets. Replace with 2x10^3 / 5x10^4 / 2x10^5 per CodeBite doctrine."
+      "regex": "(?<![\\d*]\\s)10\\s*\\^\\s*4",
+      "rationale": "Very common small-array bound in well-known problem sets. Replace with 2x10^3 / 8x10^4 / 2x10^5 per CodeBite doctrine."
     },
     {
-      "regex": "10\\s*\\^\\s*5",
-      "rationale": "Common medium-array bound. Replace with 5x10^4 or 2x10^5 per doctrine."
+      "regex": "(?<![\\d*]\\s)10\\s*\\^\\s*5",
+      "rationale": "Common medium-array bound. Replace with 8x10^4 or 2x10^5 per doctrine."
     },
     {
-      "regex": "10\\s*\\^\\s*9",
+      "regex": "(?<![\\d*]\\s)10\\s*\\^\\s*9",
       "rationale": "Common value bound (-10^9 to 10^9). Replace with 10^8 per doctrine."
     },
     {
-      "regex": "10\\s*\\^\\s*6",
+      "regex": "(?<![\\d*]\\s)10\\s*\\^\\s*6",
       "rationale": "Common value/length bound. Replace with context-appropriate doctrine bound."
     },
     {
