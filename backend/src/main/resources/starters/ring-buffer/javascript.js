@@ -1,4 +1,4 @@
-class RingBuffer {
+class FixedRing {
     /**
      * @param {number} k
      */
@@ -10,14 +10,14 @@ class RingBuffer {
      * @param {number} value
      * @return {boolean}
      */
-    enQueue(value) {
+    push(value) {
         // Write your solution here
     }
 
     /**
      * @return {boolean}
      */
-    deQueue() {
+    pull() {
         // Write your solution here
     }
 

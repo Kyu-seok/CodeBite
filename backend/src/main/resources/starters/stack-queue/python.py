@@ -1,4 +1,4 @@
-class StackQueue:
+class QueueFromStacks:
     def __init__(self):
         # Write your solution here
         pass

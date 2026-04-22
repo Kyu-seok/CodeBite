@@ -12,7 +12,7 @@ int main() {
     getline(cin, opsLine);
     getline(cin, argsLine);
 
-    // Parse operations: ["SnapshotArray","set",...]
+    // Parse operations: ["VersionedCells","set",...]
     vector<string> ops;
     string opsInner = opsLine.substr(1, opsLine.size() - 2);
     stringstream oss(opsInner);
@@ -49,20 +49,20 @@ int main() {
     }
 
     cout << "[";
-    SnapshotArray* snapArr = nullptr;
+    VersionedCells* snapArr = nullptr;
     for (size_t idx = 0; idx < ops.size(); idx++) {
         if (idx > 0) cout << ",";
         string op = ops[idx];
-        if (op == "SnapshotArray") {
-            snapArr = new SnapshotArray(argsList[idx][0]);
+        if (op == "VersionedCells") {
+            snapArr = new VersionedCells(argsList[idx][0]);
             cout << "null";
         } else if (op == "set") {
             snapArr->set(argsList[idx][0], argsList[idx][1]);
             cout << "null";
-        } else if (op == "snap") {
-            cout << snapArr->snap();
-        } else if (op == "get") {
-            cout << snapArr->get(argsList[idx][0], argsList[idx][1]);
+        } else if (op == "commit") {
+            cout << snapArr->commit();
+        } else if (op == "readAt") {
+            cout << snapArr->readAt(argsList[idx][0], argsList[idx][1]);
         }
     }
     cout << "]" << endl;

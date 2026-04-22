@@ -11,7 +11,7 @@ int main() {
     getline(cin, opsLine);
     getline(cin, argsLine);
 
-    // Parse operations: ["MinStack","push",...]
+    // Parse operations: ["LowTrackStack","push",...]
     vector<string> ops;
     string opsInner = opsLine.substr(1, opsLine.size() - 2);
     stringstream oss(opsInner);
@@ -48,12 +48,12 @@ int main() {
     }
 
     cout << "[";
-    MinStack* stack = nullptr;
+    LowTrackStack* stack = nullptr;
     for (size_t idx = 0; idx < ops.size(); idx++) {
         if (idx > 0) cout << ",";
         string op = ops[idx];
-        if (op == "MinStack") {
-            stack = new MinStack();
+        if (op == "LowTrackStack") {
+            stack = new LowTrackStack();
             cout << "null";
         } else if (op == "push") {
             stack->push(argsList[idx][0]);

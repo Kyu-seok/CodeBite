@@ -1,4 +1,4 @@
-class Trie:
+class PrefixIndex:
     def __init__(self):
         # Initialize your data structure here
         pass

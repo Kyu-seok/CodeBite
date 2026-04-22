@@ -15,9 +15,9 @@ public class Main {
             String[] parts = inner.split(",");
             for (String part : parts) strs.add(part.trim().replaceAll("\"", ""));
         }
-        Codec codec = new Codec();
-        String encoded = codec.encode(strs);
-        List<String> result = codec.decode(encoded);
+        ListCoder codec = new ListCoder();
+        String encoded = codec.pack(strs);
+        List<String> result = codec.unpack(encoded);
         System.out.println(JsonOutput.stringList(result));
     }
 }

@@ -8,19 +8,19 @@ args = json.loads(input())
 obj = None
 result = []
 for op, arg in zip(ops, args):
-    if op == "FeedDesigner":
-        obj = FeedDesigner()
+    if op == "MicroFeed":
+        obj = MicroFeed()
         result.append(None)
-    elif op == "postMessage":
-        obj.postMessage(arg[0], arg[1])
+    elif op == "publishPost":
+        obj.publishPost(arg[0], arg[1])
         result.append(None)
-    elif op == "getNewsFeed":
-        result.append(obj.getNewsFeed(arg[0]))
-    elif op == "follow":
-        obj.follow(arg[0], arg[1])
+    elif op == "latestFeed":
+        result.append(obj.latestFeed(arg[0]))
+    elif op == "subscribe":
+        obj.subscribe(arg[0], arg[1])
         result.append(None)
-    elif op == "unfollow":
-        obj.unfollow(arg[0], arg[1])
+    elif op == "unsubscribe":
+        obj.unsubscribe(arg[0], arg[1])
         result.append(None)
 
 print(json.dumps(result, separators=(',', ':')))

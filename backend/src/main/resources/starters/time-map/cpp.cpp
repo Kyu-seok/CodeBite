@@ -3,17 +3,17 @@
 #include <vector>
 using namespace std;
 
-class TimeMap {
+class TimestampedStore {
 public:
-    TimeMap() {
+    TimestampedStore() {
         // Initialize your data structure here
     }
 
-    void set(string key, string value, int timestamp) {
+    void write(string key, string value, int timestamp) {
         // Write your solution here
     }
 
-    string get(string key, int timestamp) {
+    string readAt(string key, int timestamp) {
         // Write your solution here
         return "";
     }

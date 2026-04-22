@@ -1,7 +1,7 @@
 import java.util.*;
 
-class RandomSet {
-    public RandomSet() {
+class RandomBag {
+    public RandomBag() {
         // Write your solution here
     }
 
@@ -13,7 +13,7 @@ class RandomSet {
         // Write your solution here
     }
 
-    public int getRandom() {
+    public int drawRandom() {
         // Write your solution here
     }
 }

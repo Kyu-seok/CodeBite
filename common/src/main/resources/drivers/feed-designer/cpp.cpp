@@ -55,29 +55,29 @@ int main() {
     vector<string> ops = parseOps(opsLine);
     vector<vector<int>> args = parseArgs(argsLine);
 
-    FeedDesigner* obj = nullptr;
+    MicroFeed* obj = nullptr;
     cout << "[";
     for (int i = 0; i < (int)ops.size(); i++) {
         if (i > 0) cout << ",";
-        if (ops[i] == "FeedDesigner") {
-            obj = new FeedDesigner();
+        if (ops[i] == "MicroFeed") {
+            obj = new MicroFeed();
             cout << "null";
-        } else if (ops[i] == "postMessage") {
-            obj->postMessage(args[i][0], args[i][1]);
+        } else if (ops[i] == "publishPost") {
+            obj->publishPost(args[i][0], args[i][1]);
             cout << "null";
-        } else if (ops[i] == "getNewsFeed") {
-            vector<int> feed = obj->getNewsFeed(args[i][0]);
+        } else if (ops[i] == "latestFeed") {
+            vector<int> feed = obj->latestFeed(args[i][0]);
             cout << "[";
             for (int j = 0; j < (int)feed.size(); j++) {
                 if (j > 0) cout << ",";
                 cout << feed[j];
             }
             cout << "]";
-        } else if (ops[i] == "follow") {
-            obj->follow(args[i][0], args[i][1]);
+        } else if (ops[i] == "subscribe") {
+            obj->subscribe(args[i][0], args[i][1]);
             cout << "null";
-        } else if (ops[i] == "unfollow") {
-            obj->unfollow(args[i][0], args[i][1]);
+        } else if (ops[i] == "unsubscribe") {
+            obj->unsubscribe(args[i][0], args[i][1]);
             cout << "null";
         }
     }

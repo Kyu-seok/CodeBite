@@ -1,17 +1,17 @@
 #include <string>
 using namespace std;
 
-class WordDictionary {
+class WildcardLexicon {
 public:
-    WordDictionary() {
+    WildcardLexicon() {
         // Initialize your data structure here
     }
 
-    void addWord(string word) {
+    void enroll(string word) {
         // Write your solution here
     }
 
-    bool search(string word) {
+    bool match(string word) {
         // Write your solution here
     }
 };

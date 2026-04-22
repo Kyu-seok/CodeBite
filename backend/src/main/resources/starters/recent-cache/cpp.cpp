@@ -2,18 +2,18 @@
 #include <list>
 using namespace std;
 
-class RecentCache {
+class RecentRegistry {
 public:
-    RecentCache(int capacity) {
+    RecentRegistry(int capacity) {
         // Initialize your data structure here
     }
 
-    int get(int key) {
+    int lookup(int key) {
         // Write your solution here
         return -1;
     }
 
-    void put(int key, int value) {
+    void store(int key, int value) {
         // Write your solution here
     }
 };

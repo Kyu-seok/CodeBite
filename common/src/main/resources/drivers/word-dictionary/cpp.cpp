@@ -43,18 +43,18 @@ int main() {
     vector<string> cmds = parseCmds(cmdsLine);
     vector<string> args = parseArgs(argsLine);
 
-    WordDictionary* dict = nullptr;
+    WildcardLexicon* dict = nullptr;
     cout << "[";
     for (int i = 0; i < (int)cmds.size(); i++) {
         if (i > 0) cout << ",";
-        if (cmds[i] == "WordDictionary") {
-            dict = new WordDictionary();
+        if (cmds[i] == "WildcardLexicon") {
+            dict = new WildcardLexicon();
             cout << "null";
-        } else if (cmds[i] == "addWord") {
-            dict->addWord(args[i]);
+        } else if (cmds[i] == "enroll") {
+            dict->enroll(args[i]);
             cout << "null";
-        } else if (cmds[i] == "search") {
-            cout << (dict->search(args[i]) ? "true" : "false");
+        } else if (cmds[i] == "match") {
+            cout << (dict->match(args[i]) ? "true" : "false");
         }
     }
     cout << "]" << endl;

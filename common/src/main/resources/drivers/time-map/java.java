@@ -8,7 +8,7 @@ public class Main {
         String opsLine = sc.nextLine().trim();
         String argsLine = sc.nextLine().trim();
 
-        // Parse operations: ["TimeMap","set","get",...]
+        // Parse operations: ["TimestampedStore","write","readAt",...]
         List<String> ops = new ArrayList<>();
         for (String s : opsLine.substring(1, opsLine.length() - 1).split(",")) {
             ops.add(s.trim().replace("\"", ""));
@@ -32,30 +32,30 @@ public class Main {
             }
         }
 
-        TimeMap obj = null;
+        TimestampedStore obj = null;
         StringBuilder sb = new StringBuilder("[");
         for (int i = 0; i < ops.size(); i++) {
             if (i > 0) sb.append(",");
-            String op = ops.get(i);
-            String raw = rawArgs.get(i);
+            String op = ops.readAt(i);
+            String raw = rawArgs.readAt(i);
 
-            if (op.equals("TimeMap")) {
-                obj = new TimeMap();
+            if (op.equals("TimestampedStore")) {
+                obj = new TimestampedStore();
                 sb.append("null");
-            } else if (op.equals("set")) {
+            } else if (op.equals("write")) {
                 // Parse "foo","bar",1
                 String[] parts = splitArgs(raw);
                 String key = parts[0].replace("\"", "");
                 String value = parts[1].replace("\"", "");
                 int timestamp = Integer.parseInt(parts[2].trim());
-                obj.set(key, value, timestamp);
+                obj.write(key, value, timestamp);
                 sb.append("null");
-            } else if (op.equals("get")) {
+            } else if (op.equals("readAt")) {
                 // Parse "foo",1
                 String[] parts = splitArgs(raw);
                 String key = parts[0].replace("\"", "");
                 int timestamp = Integer.parseInt(parts[1].trim());
-                String result = obj.get(key, timestamp);
+                String result = obj.readAt(key, timestamp);
                 sb.append("\"").append(result).append("\"");
             }
         }

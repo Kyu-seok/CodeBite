@@ -10,7 +10,7 @@ public class Main {
         String opsLine = sc.nextLine().trim();
         String argsLine = sc.nextLine().trim();
 
-        // Parse operations: ["MinStack","push",...]
+        // Parse operations: ["LowTrackStack","push",...]
         List<String> ops = new ArrayList<>();
         for (String s : opsLine.substring(1, opsLine.length() - 1).split(",")) {
             ops.add(s.trim().replaceAll("\"", ""));
@@ -39,14 +39,14 @@ public class Main {
         }
 
         StringBuilder sb = new StringBuilder("[");
-        MinStack stack = null;
+        LowTrackStack stack = null;
         for (int idx = 0; idx < ops.size(); idx++) {
             if (idx > 0) sb.append(",");
             String op = ops.get(idx);
             int[] opArgs = argsList.get(idx);
             switch (op) {
-                case "MinStack":
-                    stack = new MinStack();
+                case "LowTrackStack":
+                    stack = new LowTrackStack();
                     sb.append("null");
                     break;
                 case "push":

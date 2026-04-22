@@ -1,15 +1,15 @@
 import java.util.*;
 
-class TimeMap {
-    public TimeMap() {
+class TimestampedStore {
+    public TimestampedStore() {
         // Initialize your data structure here
     }
 
-    public void set(String key, String value, int timestamp) {
+    public void write(String key, String value, int timestamp) {
         // Write your solution here
     }
 
-    public String get(String key, int timestamp) {
+    public String readAt(String key, int timestamp) {
         // Write your solution here
         return "";
     }

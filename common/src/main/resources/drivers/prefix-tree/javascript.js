@@ -7,8 +7,8 @@ const args = JSON.parse(lines[1]);
 let trie = null;
 const result = [];
 for (let i = 0; i < cmds.length; i++) {
-    if (cmds[i] === "Trie") {
-        trie = new Trie();
+    if (cmds[i] === "PrefixIndex") {
+        trie = new PrefixIndex();
         result.push(null);
     } else if (cmds[i] === "insert") {
         trie.insert(args[i][0]);

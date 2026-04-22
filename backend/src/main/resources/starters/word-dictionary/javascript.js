@@ -1,4 +1,4 @@
-class WordDictionary {
+class WildcardLexicon {
     constructor() {
         // Initialize your data structure here
     }
@@ -7,7 +7,7 @@ class WordDictionary {
      * @param {string} word
      * @return {void}
      */
-    addWord(word) {
+    enroll(word) {
         // Write your solution here
     }
 
@@ -15,7 +15,7 @@ class WordDictionary {
      * @param {string} word
      * @return {boolean}
      */
-    search(word) {
+    match(word) {
         // Write your solution here
     }
 }

@@ -8,7 +8,7 @@ public class Main {
         String opsLine = sc.nextLine().trim();
         String argsLine = sc.nextLine().trim();
 
-        // Parse operations: ["RandomSet","insert",...]
+        // Parse operations: ["RandomBag","insert",...]
         List<String> ops = new ArrayList<>();
         for (String s : opsLine.substring(1, opsLine.length() - 1).split(",")) {
             ops.add(s.trim().replaceAll("\"", ""));
@@ -37,14 +37,14 @@ public class Main {
         }
 
         StringBuilder sb = new StringBuilder("[");
-        RandomSet set = null;
+        RandomBag set = null;
         for (int idx = 0; idx < ops.size(); idx++) {
             if (idx > 0) sb.append(",");
             String op = ops.get(idx);
             int[] opArgs = argsList.get(idx);
             switch (op) {
-                case "RandomSet":
-                    set = new RandomSet();
+                case "RandomBag":
+                    set = new RandomBag();
                     sb.append("null");
                     break;
                 case "insert":
@@ -53,8 +53,8 @@ public class Main {
                 case "remove":
                     sb.append(set.remove(opArgs[0]));
                     break;
-                case "getRandom":
-                    sb.append(set.getRandom());
+                case "drawRandom":
+                    sb.append(set.drawRandom());
                     break;
             }
         }

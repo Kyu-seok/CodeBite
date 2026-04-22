@@ -57,18 +57,18 @@ int main() {
     vector<string> ops = parseOps(opsLine);
     vector<vector<int>> args = parseArgs(argsLine);
 
-    RecentCache* obj = nullptr;
+    RecentRegistry* obj = nullptr;
     cout << "[";
     for (int i = 0; i < (int)ops.size(); i++) {
         if (i > 0) cout << ",";
-        if (ops[i] == "RecentCache") {
-            obj = new RecentCache(args[i][0]);
+        if (ops[i] == "RecentRegistry") {
+            obj = new RecentRegistry(args[i][0]);
             cout << "null";
-        } else if (ops[i] == "put") {
-            obj->put(args[i][0], args[i][1]);
+        } else if (ops[i] == "store") {
+            obj->store(args[i][0], args[i][1]);
             cout << "null";
-        } else if (ops[i] == "get") {
-            cout << obj->get(args[i][0]);
+        } else if (ops[i] == "lookup") {
+            cout << obj->lookup(args[i][0]);
         }
     }
     cout << "]" << endl;

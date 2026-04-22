@@ -1,4 +1,4 @@
-class SnapshotArray {
+class VersionedCells {
     /**
      * @param {number} length
      */
@@ -18,7 +18,7 @@ class SnapshotArray {
     /**
      * @return {number}
      */
-    snap() {
+    commit() {
         // Write your solution here
     }
 
@@ -27,7 +27,7 @@ class SnapshotArray {
      * @param {number} snapId
      * @return {number}
      */
-    get(index, snapId) {
+    readAt(index, snapId) {
         // Write your solution here
     }
 }

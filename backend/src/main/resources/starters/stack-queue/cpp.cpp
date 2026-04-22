@@ -1,9 +1,9 @@
 #include <stack>
 using namespace std;
 
-class StackQueue {
+class QueueFromStacks {
 public:
-    StackQueue() {
+    QueueFromStacks() {
         // Write your solution here
     }
 

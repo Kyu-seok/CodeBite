@@ -9,8 +9,8 @@ let queue = null;
 for (let i = 0; i < ops.length; i++) {
     const op = ops[i];
     const arg = args[i];
-    if (op === "StackQueue") {
-        queue = new StackQueue();
+    if (op === "QueueFromStacks") {
+        queue = new QueueFromStacks();
         result.push(null);
     } else if (op === "push") {
         queue.push(arg[0]);

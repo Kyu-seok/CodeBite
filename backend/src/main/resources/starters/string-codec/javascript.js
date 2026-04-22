@@ -1,9 +1,9 @@
-class Codec {
+class ListCoder {
     /**
      * @param {string[]} strs
      * @return {string}
      */
-    encode(strs) {
+    pack(strs) {
         // Write your solution here
     }
 
@@ -11,7 +11,7 @@ class Codec {
      * @param {string} s
      * @return {string[]}
      */
-    decode(s) {
+    unpack(s) {
         // Write your solution here
     }
 }

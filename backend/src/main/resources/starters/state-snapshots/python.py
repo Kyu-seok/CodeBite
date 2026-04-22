@@ -1,4 +1,4 @@
-class SnapshotArray:
+class VersionedCells:
     def __init__(self, length: int):
         # Write your solution here
         pass
@@ -7,10 +7,10 @@ class SnapshotArray:
         # Write your solution here
         pass
 
-    def snap(self) -> int:
+    def commit(self) -> int:
         # Write your solution here
         pass
 
-    def get(self, index: int, snap_id: int) -> int:
+    def readAt(self, index: int, snap_id: int) -> int:
         # Write your solution here
         pass

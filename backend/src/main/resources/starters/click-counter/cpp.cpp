@@ -2,17 +2,17 @@
 #include <vector>
 using namespace std;
 
-class HitCounter {
+class ClickTally {
 public:
-    HitCounter() {
+    ClickTally() {
         // Initialize your data structure here
     }
 
-    void hit(int timestamp) {
+    void record(int timestamp) {
         // Write your solution here
     }
 
-    int getHits(int timestamp) {
+    int countSince(int timestamp) {
         // Write your solution here
         return 0;
     }

@@ -1,4 +1,4 @@
-class MedianTracker {
+class StreamMedian {
     constructor() {
         // Initialize your data structure here
     }
@@ -7,14 +7,14 @@ class MedianTracker {
      * @param {number} num
      * @return {void}
      */
-    addNum(num) {
+    record(num) {
         // Write your solution here
     }
 
     /**
      * @return {number}
      */
-    findMedian() {
+    median() {
         // Write your solution here
         return 0.0;
     }

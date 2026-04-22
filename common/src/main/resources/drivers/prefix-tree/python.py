@@ -8,8 +8,8 @@ args = json.loads(input())
 trie = None
 result = []
 for cmd, arg in zip(cmds, args):
-    if cmd == "Trie":
-        trie = Trie()
+    if cmd == "PrefixIndex":
+        trie = PrefixIndex()
         result.append(None)
     elif cmd == "insert":
         trie.insert(arg[0])

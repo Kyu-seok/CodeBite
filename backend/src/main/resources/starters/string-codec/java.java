@@ -1,9 +1,9 @@
-class Codec {
-    public String encode(List<String> strs) {
+class ListCoder {
+    public String pack(List<String> strs) {
         // Write your solution here
     }
 
-    public List<String> decode(String s) {
+    public List<String> unpack(String s) {
         // Write your solution here
     }
 }

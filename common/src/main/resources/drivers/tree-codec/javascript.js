@@ -50,7 +50,7 @@ function _formatTree(arr) {
 const input = require('fs').readFileSync('/dev/stdin', 'utf8').trim();
 const arr = JSON.parse(input);
 const root = _buildTree(arr);
-const codec = new Codec();
-const serialized = codec.serialize(root);
-const result = codec.deserialize(serialized);
+const codec = new TreeSerializer();
+const serialized = codec.pack(root);
+const result = codec.unpack(serialized);
 console.log(_formatTree(_treeToArray(result)));

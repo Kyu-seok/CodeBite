@@ -6,13 +6,13 @@ args = json.loads(input())
 result = []
 buf = None
 for op, arg in zip(ops, args):
-    if op == "RingBuffer":
-        buf = RingBuffer(arg[0])
+    if op == "FixedRing":
+        buf = FixedRing(arg[0])
         result.append(None)
-    elif op == "enQueue":
-        result.append(buf.enQueue(arg[0]))
-    elif op == "deQueue":
-        result.append(buf.deQueue())
+    elif op == "push":
+        result.append(buf.push(arg[0]))
+    elif op == "pull":
+        result.append(buf.pull())
     elif op == "front":
         result.append(buf.front())
     elif op == "rear":

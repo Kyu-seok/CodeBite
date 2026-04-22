@@ -30,7 +30,7 @@ public class Main {
         }
         argsList.add(argsLine.substring(start).trim());
 
-        Trie trie = null;
+        PrefixIndex trie = null;
         StringBuilder sb = new StringBuilder("[");
         for (int i = 0; i < cmds.size(); i++) {
             if (i > 0) sb.append(",");
@@ -42,8 +42,8 @@ public class Main {
                 word = arg.substring(1, arg.length() - 1).replace("\"", "");
             }
 
-            if (cmd.equals("Trie")) {
-                trie = new Trie();
+            if (cmd.equals("PrefixIndex")) {
+                trie = new PrefixIndex();
                 sb.append("null");
             } else if (cmd.equals("insert")) {
                 trie.insert(word);

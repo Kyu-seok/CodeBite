@@ -1,13 +1,13 @@
-class RingBuffer:
+class FixedRing:
     def __init__(self, k: int):
         # Write your solution here
         pass
 
-    def enQueue(self, value: int) -> bool:
+    def push(self, value: int) -> bool:
         # Write your solution here
         pass
 
-    def deQueue(self) -> bool:
+    def pull(self) -> bool:
         # Write your solution here
         pass
 

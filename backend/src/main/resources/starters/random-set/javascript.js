@@ -1,4 +1,4 @@
-class RandomSet {
+class RandomBag {
     constructor() {
         // Write your solution here
     }
@@ -22,7 +22,7 @@ class RandomSet {
     /**
      * @return {number}
      */
-    getRandom() {
+    drawRandom() {
         // Write your solution here
     }
 }

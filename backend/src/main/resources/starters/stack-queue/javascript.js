@@ -1,4 +1,4 @@
-class StackQueue {
+class QueueFromStacks {
     constructor() {
         // Write your solution here
     }

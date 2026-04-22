@@ -74,25 +74,25 @@ int main() {
     vector<string> ops = parseOps(opsLine);
     vector<string> rawArgs = parseRawArgs(argsLine);
 
-    TimeMap* obj = nullptr;
+    TimestampedStore* obj = nullptr;
     cout << "[";
     for (int i = 0; i < (int)ops.size(); i++) {
         if (i > 0) cout << ",";
-        if (ops[i] == "TimeMap") {
-            obj = new TimeMap();
+        if (ops[i] == "TimestampedStore") {
+            obj = new TimestampedStore();
             cout << "null";
-        } else if (ops[i] == "set") {
+        } else if (ops[i] == "write") {
             vector<string> parts = splitArgs(rawArgs[i]);
             string key = stripQuotes(parts[0]);
             string value = stripQuotes(parts[1]);
             int timestamp = stoi(stripQuotes(parts[2]));
-            obj->set(key, value, timestamp);
+            obj->write(key, value, timestamp);
             cout << "null";
-        } else if (ops[i] == "get") {
+        } else if (ops[i] == "readAt") {
             vector<string> parts = splitArgs(rawArgs[i]);
             string key = stripQuotes(parts[0]);
             int timestamp = stoi(stripQuotes(parts[1]));
-            string result = obj->get(key, timestamp);
+            string result = obj->readAt(key, timestamp);
             cout << "\"" << result << "\"";
         }
     }

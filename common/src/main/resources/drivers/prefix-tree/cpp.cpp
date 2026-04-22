@@ -44,12 +44,12 @@ int main() {
     vector<string> cmds = parseCmds(cmdsLine);
     vector<string> args = parseArgs(argsLine);
 
-    Trie* trie = nullptr;
+    PrefixIndex* trie = nullptr;
     cout << "[";
     for (int i = 0; i < (int)cmds.size(); i++) {
         if (i > 0) cout << ",";
-        if (cmds[i] == "Trie") {
-            trie = new Trie();
+        if (cmds[i] == "PrefixIndex") {
+            trie = new PrefixIndex();
             cout << "null";
         } else if (cmds[i] == "insert") {
             trie->insert(args[i]);

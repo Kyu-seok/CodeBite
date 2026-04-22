@@ -1,5 +1,5 @@
-class MinStack {
-    public MinStack() {
+class LowTrackStack {
+    public LowTrackStack() {
         // Write your solution here
     }
 

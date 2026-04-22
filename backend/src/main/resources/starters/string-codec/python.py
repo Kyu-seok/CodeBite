@@ -1,10 +1,10 @@
 from typing import List
 
-class Codec:
-    def encode(self, strs: List[str]) -> str:
+class ListCoder:
+    def pack(self, strs: List[str]) -> str:
         # Write your solution here
         pass
 
-    def decode(self, s: str) -> List[str]:
+    def unpack(self, s: str) -> List[str]:
         # Write your solution here
         pass

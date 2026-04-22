@@ -11,7 +11,7 @@ int main() {
     getline(cin, opsLine);
     getline(cin, argsLine);
 
-    // Parse operations: ["StackQueue","push",...]
+    // Parse operations: ["QueueFromStacks","push",...]
     vector<string> ops;
     string opsInner = opsLine.substr(1, opsLine.size() - 2);
     stringstream oss(opsInner);
@@ -48,12 +48,12 @@ int main() {
     }
 
     cout << "[";
-    StackQueue* queue = nullptr;
+    QueueFromStacks* queue = nullptr;
     for (size_t idx = 0; idx < ops.size(); idx++) {
         if (idx > 0) cout << ",";
         string op = ops[idx];
-        if (op == "StackQueue") {
-            queue = new StackQueue();
+        if (op == "QueueFromStacks") {
+            queue = new QueueFromStacks();
             cout << "null";
         } else if (op == "push") {
             queue->push(argsList[idx][0]);

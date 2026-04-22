@@ -1,12 +1,12 @@
-class HitCounter:
+class ClickTally:
     def __init__(self):
         # Initialize your data structure here
         pass
 
-    def hit(self, timestamp: int) -> None:
+    def record(self, timestamp: int) -> None:
         # Write your solution here
         pass
 
-    def getHits(self, timestamp: int) -> int:
+    def countSince(self, timestamp: int) -> int:
         # Write your solution here
         return 0

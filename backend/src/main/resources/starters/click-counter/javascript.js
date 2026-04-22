@@ -1,4 +1,4 @@
-class HitCounter {
+class ClickTally {
     constructor() {
         // Initialize your data structure here
     }
@@ -7,7 +7,7 @@ class HitCounter {
      * @param {number} timestamp
      * @return {void}
      */
-    hit(timestamp) {
+    record(timestamp) {
         // Write your solution here
     }
 
@@ -15,7 +15,7 @@ class HitCounter {
      * @param {number} timestamp
      * @return {number}
      */
-    getHits(timestamp) {
+    countSince(timestamp) {
         // Write your solution here
         return 0;
     }

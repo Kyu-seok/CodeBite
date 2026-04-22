@@ -9,11 +9,11 @@ let obj = null;
 for (let i = 0; i < ops.length; i++) {
     const op = ops[i];
     const arg = args[i];
-    if (op === "KthLargest") {
-        obj = new KthLargest(arg[0], arg[1]);
+    if (op === "TopKStream") {
+        obj = new TopKStream(arg[0], arg[1]);
         result.push(null);
-    } else if (op === "add") {
-        result.push(obj.add(arg[0]));
+    } else if (op === "record") {
+        result.push(obj.record(arg[0]));
     }
 }
 console.log(JSON.stringify(result));

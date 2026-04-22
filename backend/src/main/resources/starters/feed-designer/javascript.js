@@ -1,4 +1,4 @@
-class FeedDesigner {
+class MicroFeed {
     constructor() {
         // Initialize your data structure here
     }
@@ -8,7 +8,7 @@ class FeedDesigner {
      * @param {number} messageId
      * @return {void}
      */
-    postMessage(userId, messageId) {
+    publishPost(userId, messageId) {
         // Write your solution here
     }
 
@@ -16,7 +16,7 @@ class FeedDesigner {
      * @param {number} userId
      * @return {number[]}
      */
-    getNewsFeed(userId) {
+    latestFeed(userId) {
         // Write your solution here
         return [];
     }
@@ -26,7 +26,7 @@ class FeedDesigner {
      * @param {number} followeeId
      * @return {void}
      */
-    follow(followerId, followeeId) {
+    subscribe(followerId, followeeId) {
         // Write your solution here
     }
 
@@ -35,7 +35,7 @@ class FeedDesigner {
      * @param {number} followeeId
      * @return {void}
      */
-    unfollow(followerId, followeeId) {
+    unsubscribe(followerId, followeeId) {
         // Write your solution here
     }
 }

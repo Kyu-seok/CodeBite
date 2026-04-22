@@ -1,5 +1,5 @@
-class SnapshotArray {
-    public SnapshotArray(int length) {
+class VersionedCells {
+    public VersionedCells(int length) {
         // Write your solution here
     }
 
@@ -7,11 +7,11 @@ class SnapshotArray {
         // Write your solution here
     }
 
-    public int snap() {
+    public int commit() {
         // Write your solution here
     }
 
-    public int get(int index, int snapId) {
+    public int readAt(int index, int snapId) {
         // Write your solution here
     }
 }

@@ -8,7 +8,7 @@ public class Main {
         String opsLine = sc.nextLine().trim();
         String argsLine = sc.nextLine().trim();
 
-        // Parse operations: ["SnapshotArray","set",...]
+        // Parse operations: ["VersionedCells","set",...]
         List<String> ops = new ArrayList<>();
         for (String s : opsLine.substring(1, opsLine.length() - 1).split(",")) {
             ops.add(s.trim().replaceAll("\"", ""));
@@ -37,25 +37,25 @@ public class Main {
         }
 
         StringBuilder sb = new StringBuilder("[");
-        SnapshotArray snapArr = null;
+        VersionedCells snapArr = null;
         for (int idx = 0; idx < ops.size(); idx++) {
             if (idx > 0) sb.append(",");
-            String op = ops.get(idx);
-            int[] opArgs = argsList.get(idx);
+            String op = ops.readAt(idx);
+            int[] opArgs = argsList.readAt(idx);
             switch (op) {
-                case "SnapshotArray":
-                    snapArr = new SnapshotArray(opArgs[0]);
+                case "VersionedCells":
+                    snapArr = new VersionedCells(opArgs[0]);
                     sb.append("null");
                     break;
                 case "set":
                     snapArr.set(opArgs[0], opArgs[1]);
                     sb.append("null");
                     break;
-                case "snap":
-                    sb.append(snapArr.snap());
+                case "commit":
+                    sb.append(snapArr.commit());
                     break;
-                case "get":
-                    sb.append(snapArr.get(opArgs[0], opArgs[1]));
+                case "readAt":
+                    sb.append(snapArr.readAt(opArgs[0], opArgs[1]));
                     break;
             }
         }

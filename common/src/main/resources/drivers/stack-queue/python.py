@@ -6,8 +6,8 @@ args = json.loads(input())
 result = []
 queue = None
 for op, arg in zip(ops, args):
-    if op == "StackQueue":
-        queue = StackQueue()
+    if op == "QueueFromStacks":
+        queue = QueueFromStacks()
         result.append(None)
     elif op == "push":
         queue.push(arg[0])

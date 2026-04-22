@@ -1,7 +1,7 @@
 import java.util.*;
 
-class StackQueue {
-    public StackQueue() {
+class QueueFromStacks {
+    public QueueFromStacks() {
         // Write your solution here
     }
 

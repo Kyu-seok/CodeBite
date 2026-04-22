@@ -9,13 +9,13 @@ let buf = null;
 for (let i = 0; i < ops.length; i++) {
     const op = ops[i];
     const arg = args[i];
-    if (op === "RingBuffer") {
-        buf = new RingBuffer(arg[0]);
+    if (op === "FixedRing") {
+        buf = new FixedRing(arg[0]);
         result.push(null);
-    } else if (op === "enQueue") {
-        result.push(buf.enQueue(arg[0]));
-    } else if (op === "deQueue") {
-        result.push(buf.deQueue());
+    } else if (op === "push") {
+        result.push(buf.push(arg[0]));
+    } else if (op === "pull") {
+        result.push(buf.pull());
     } else if (op === "front") {
         result.push(buf.front());
     } else if (op === "rear") {

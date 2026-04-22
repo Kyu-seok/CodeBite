@@ -8,7 +8,7 @@ public class Main {
         String opsLine = sc.nextLine().trim();
         String argsLine = sc.nextLine().trim();
 
-        // Parse operations: ["HitCounter","hit","getHits",...]
+        // Parse operations: ["ClickTally","record","countSince",...]
         List<String> ops = new ArrayList<>();
         for (String s : opsLine.substring(1, opsLine.length() - 1).split(",")) {
             ops.add(s.trim().replace("\"", ""));
@@ -32,23 +32,23 @@ public class Main {
             }
         }
 
-        HitCounter obj = null;
+        ClickTally obj = null;
         StringBuilder sb = new StringBuilder("[");
         for (int i = 0; i < ops.size(); i++) {
             if (i > 0) sb.append(",");
             String op = ops.get(i);
             String raw = rawArgs.get(i).trim();
 
-            if (op.equals("HitCounter")) {
-                obj = new HitCounter();
+            if (op.equals("ClickTally")) {
+                obj = new ClickTally();
                 sb.append("null");
-            } else if (op.equals("hit")) {
+            } else if (op.equals("record")) {
                 int timestamp = Integer.parseInt(raw);
-                obj.hit(timestamp);
+                obj.record(timestamp);
                 sb.append("null");
-            } else if (op.equals("getHits")) {
+            } else if (op.equals("countSince")) {
                 int timestamp = Integer.parseInt(raw);
-                int result = obj.getHits(timestamp);
+                int result = obj.countSince(timestamp);
                 sb.append(result);
             }
         }

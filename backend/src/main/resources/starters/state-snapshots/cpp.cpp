@@ -1,6 +1,6 @@
-class SnapshotArray {
+class VersionedCells {
 public:
-    SnapshotArray(int length) {
+    VersionedCells(int length) {
         // Write your solution here
     }
 
@@ -8,11 +8,11 @@ public:
         // Write your solution here
     }
 
-    int snap() {
+    int commit() {
         // Write your solution here
     }
 
-    int get(int index, int snapId) {
+    int readAt(int index, int snapId) {
         // Write your solution here
     }
 };

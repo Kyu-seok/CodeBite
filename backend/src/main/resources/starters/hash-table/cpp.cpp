@@ -1,18 +1,18 @@
-class SimpleHashMap {
+class ChainedMap {
 public:
-    SimpleHashMap() {
+    ChainedMap() {
         // Write your solution here
     }
 
-    void put(int key, int value) {
+    void set(int key, int value) {
         // Write your solution here
     }
 
-    int get(int key) {
+    int lookup(int key) {
         // Write your solution here
     }
 
-    void remove(int key) {
+    void erase(int key) {
         // Write your solution here
     }
 };

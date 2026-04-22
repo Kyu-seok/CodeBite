@@ -43,10 +43,10 @@ int main() {
     }
 
     cout << "[";
-    KthLargest* obj = nullptr;
+    TopKStream* obj = nullptr;
     for (size_t idx = 0; idx < ops.size(); idx++) {
         if (idx > 0) cout << ",";
-        if (ops[idx] == "KthLargest") {
+        if (ops[idx] == "TopKStream") {
             // Parse "3,[4,5,8,2]"
             string raw = rawArgs[idx];
             int commaIdx = raw.find(',');
@@ -62,11 +62,11 @@ int main() {
                     nums.push_back(stoi(num));
                 }
             }
-            obj = new KthLargest(k, nums);
+            obj = new TopKStream(k, nums);
             cout << "null";
-        } else if (ops[idx] == "add") {
+        } else if (ops[idx] == "record") {
             int val = stoi(rawArgs[idx]);
-            cout << obj->add(val);
+            cout << obj->record(val);
         }
     }
     cout << "]" << endl;

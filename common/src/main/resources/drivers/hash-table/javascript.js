@@ -9,16 +9,16 @@ let m = null;
 for (let i = 0; i < ops.length; i++) {
     const op = ops[i];
     const arg = args[i];
-    if (op === "SimpleHashMap") {
-        m = new SimpleHashMap();
+    if (op === "ChainedMap") {
+        m = new ChainedMap();
         result.push(null);
-    } else if (op === "put") {
-        m.put(arg[0], arg[1]);
+    } else if (op === "set") {
+        m.set(arg[0], arg[1]);
         result.push(null);
-    } else if (op === "get") {
-        result.push(m.get(arg[0]));
-    } else if (op === "remove") {
-        m.remove(arg[0]);
+    } else if (op === "lookup") {
+        result.push(m.lookup(arg[0]));
+    } else if (op === "erase") {
+        m.erase(arg[0]);
         result.push(null);
     }
 }

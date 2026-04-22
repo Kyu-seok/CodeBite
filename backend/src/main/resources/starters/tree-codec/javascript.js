@@ -9,12 +9,12 @@ class TreeNode {
     }
 }
 
-class Codec {
+class TreeSerializer {
     /**
      * @param {TreeNode} root
      * @return {string}
      */
-    serialize(root) {
+    pack(root) {
         // Write your solution here
     }
 
@@ -22,7 +22,7 @@ class Codec {
      * @param {string} data
      * @return {TreeNode}
      */
-    deserialize(data) {
+    unpack(data) {
         // Write your solution here
     }
 }

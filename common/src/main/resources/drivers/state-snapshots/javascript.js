@@ -9,16 +9,16 @@ let snapArr = null;
 for (let i = 0; i < ops.length; i++) {
     const op = ops[i];
     const arg = args[i];
-    if (op === "SnapshotArray") {
-        snapArr = new SnapshotArray(arg[0]);
+    if (op === "VersionedCells") {
+        snapArr = new VersionedCells(arg[0]);
         result.push(null);
     } else if (op === "set") {
         snapArr.set(arg[0], arg[1]);
         result.push(null);
-    } else if (op === "snap") {
-        result.push(snapArr.snap());
-    } else if (op === "get") {
-        result.push(snapArr.get(arg[0], arg[1]));
+    } else if (op === "commit") {
+        result.push(snapArr.commit());
+    } else if (op === "readAt") {
+        result.push(snapArr.readAt(arg[0], arg[1]));
     }
 }
 console.log(JSON.stringify(result));

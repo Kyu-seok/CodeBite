@@ -1,4 +1,4 @@
-class MinStack {
+class LowTrackStack {
     constructor() {
         // Write your solution here
     }

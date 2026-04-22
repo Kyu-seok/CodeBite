@@ -9,15 +9,15 @@ let rs = null;
 for (let i = 0; i < ops.length; i++) {
     const op = ops[i];
     const arg = args[i];
-    if (op === "RandomSet") {
-        rs = new RandomSet();
+    if (op === "RandomBag") {
+        rs = new RandomBag();
         result.push(null);
     } else if (op === "insert") {
         result.push(rs.insert(arg[0]));
     } else if (op === "remove") {
         result.push(rs.remove(arg[0]));
-    } else if (op === "getRandom") {
-        result.push(rs.getRandom());
+    } else if (op === "drawRandom") {
+        result.push(rs.drawRandom());
     }
 }
 console.log(JSON.stringify(result));

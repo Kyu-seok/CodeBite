@@ -8,7 +8,7 @@ public class Main {
         String opsLine = sc.nextLine().trim();
         String argsLine = sc.nextLine().trim();
 
-        // Parse operations: ["FeedDesigner","postMessage","follow",...]
+        // Parse operations: ["MicroFeed","publishPost","subscribe",...]
         List<String> ops = new ArrayList<>();
         for (String s : opsLine.substring(1, opsLine.length() - 1).split(",")) {
             ops.add(s.trim().replace("\"", ""));
@@ -42,32 +42,32 @@ public class Main {
             }
         }
 
-        FeedDesigner obj = null;
+        MicroFeed obj = null;
         StringBuilder sb = new StringBuilder("[");
         for (int i = 0; i < ops.size(); i++) {
             if (i > 0) sb.append(",");
             String op = ops.get(i);
             int[] arg = argsList.get(i);
 
-            if (op.equals("FeedDesigner")) {
-                obj = new FeedDesigner();
+            if (op.equals("MicroFeed")) {
+                obj = new MicroFeed();
                 sb.append("null");
-            } else if (op.equals("postMessage")) {
-                obj.postMessage(arg[0], arg[1]);
+            } else if (op.equals("publishPost")) {
+                obj.publishPost(arg[0], arg[1]);
                 sb.append("null");
-            } else if (op.equals("getNewsFeed")) {
-                List<Integer> feed = obj.getNewsFeed(arg[0]);
+            } else if (op.equals("latestFeed")) {
+                List<Integer> feed = obj.latestFeed(arg[0]);
                 sb.append("[");
                 for (int j = 0; j < feed.size(); j++) {
                     if (j > 0) sb.append(",");
                     sb.append(feed.get(j));
                 }
                 sb.append("]");
-            } else if (op.equals("follow")) {
-                obj.follow(arg[0], arg[1]);
+            } else if (op.equals("subscribe")) {
+                obj.subscribe(arg[0], arg[1]);
                 sb.append("null");
-            } else if (op.equals("unfollow")) {
-                obj.unfollow(arg[0], arg[1]);
+            } else if (op.equals("unsubscribe")) {
+                obj.unsubscribe(arg[0], arg[1]);
                 sb.append("null");
             }
         }

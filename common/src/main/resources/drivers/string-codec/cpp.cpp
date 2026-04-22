@@ -23,9 +23,9 @@ int main() {
             pos++;
         }
     }
-    Codec codec;
-    string encoded = codec.encode(strs);
-    vector<string> result = codec.decode(encoded);
+    ListCoder codec;
+    string encoded = codec.pack(strs);
+    vector<string> result = codec.unpack(encoded);
     cout << JsonOutput::stringVector(result) << endl;
     return 0;
 }

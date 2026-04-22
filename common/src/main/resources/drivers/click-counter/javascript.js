@@ -10,14 +10,14 @@ const result = [];
 for (let i = 0; i < ops.length; i++) {
     const op = ops[i];
     const arg = args[i];
-    if (op === "HitCounter") {
-        obj = new HitCounter();
+    if (op === "ClickTally") {
+        obj = new ClickTally();
         result.push(null);
-    } else if (op === "hit") {
-        obj.hit(arg[0]);
+    } else if (op === "record") {
+        obj.record(arg[0]);
         result.push(null);
-    } else if (op === "getHits") {
-        result.push(obj.getHits(arg[0]));
+    } else if (op === "countSince") {
+        result.push(obj.countSince(arg[0]));
     }
 }
 console.log(JSON.stringify(result));

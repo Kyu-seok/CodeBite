@@ -11,7 +11,7 @@ int main() {
     getline(cin, opsLine);
     getline(cin, argsLine);
 
-    // Parse operations: ["RingBuffer","enQueue",...]
+    // Parse operations: ["FixedRing","push",...]
     vector<string> ops;
     string opsInner = opsLine.substr(1, opsLine.size() - 2);
     stringstream oss(opsInner);
@@ -48,17 +48,17 @@ int main() {
     }
 
     cout << "[";
-    RingBuffer* buf = nullptr;
+    FixedRing* buf = nullptr;
     for (size_t idx = 0; idx < ops.size(); idx++) {
         if (idx > 0) cout << ",";
         string op = ops[idx];
-        if (op == "RingBuffer") {
-            buf = new RingBuffer(argsList[idx][0]);
+        if (op == "FixedRing") {
+            buf = new FixedRing(argsList[idx][0]);
             cout << "null";
-        } else if (op == "enQueue") {
-            cout << (buf->enQueue(argsList[idx][0]) ? "true" : "false");
-        } else if (op == "deQueue") {
-            cout << (buf->deQueue() ? "true" : "false");
+        } else if (op == "push") {
+            cout << (buf->push(argsList[idx][0]) ? "true" : "false");
+        } else if (op == "pull") {
+            cout << (buf->pull() ? "true" : "false");
         } else if (op == "front") {
             cout << buf->front();
         } else if (op == "rear") {

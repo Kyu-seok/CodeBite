@@ -9,9 +9,9 @@ public class Main {
         Scanner sc = new Scanner(System.in);
         String line = sc.nextLine().trim();
         TreeNode root = TreeNode.fromArray(line);
-        Codec codec = new Codec();
-        String serialized = codec.serialize(root);
-        TreeNode result = codec.deserialize(serialized);
+        TreeSerializer codec = new TreeSerializer();
+        String serialized = codec.pack(root);
+        TreeNode result = codec.unpack(serialized);
         System.out.println(TreeNode.toJsonArray(result));
     }
 }

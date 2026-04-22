@@ -1,4 +1,4 @@
-class KthLargest {
+class TopKStream {
     /**
      * @param {number} k
      * @param {number[]} nums
@@ -11,7 +11,7 @@ class KthLargest {
      * @param {number} val
      * @return {number}
      */
-    add(val) {
+    record(val) {
         // Write your solution here
     }
 }

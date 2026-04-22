@@ -10,14 +10,14 @@ const parts = [];
 for (let i = 0; i < ops.length; i++) {
     const op = ops[i];
     const arg = args[i];
-    if (op === "MedianTracker") {
-        obj = new MedianTracker();
+    if (op === "StreamMedian") {
+        obj = new StreamMedian();
         parts.push("null");
-    } else if (op === "addNum") {
-        obj.addNum(arg[0]);
+    } else if (op === "record") {
+        obj.record(arg[0]);
         parts.push("null");
-    } else if (op === "findMedian") {
-        const median = obj.findMedian();
+    } else if (op === "median") {
+        const median = obj.median();
         if (Number.isInteger(median)) {
             parts.push(median.toFixed(1));
         } else {

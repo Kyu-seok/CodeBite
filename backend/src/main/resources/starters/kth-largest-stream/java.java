@@ -1,9 +1,9 @@
-class KthLargest {
-    public KthLargest(int k, int[] nums) {
+class TopKStream {
+    public TopKStream(int k, int[] nums) {
         // Write your solution here
     }
 
-    public int add(int val) {
+    public int record(int val) {
         // Write your solution here
     }
 }

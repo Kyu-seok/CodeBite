@@ -8,13 +8,13 @@ args = json.loads(input())
 obj = None
 result = []
 for op, arg in zip(ops, args):
-    if op == "RecentCache":
-        obj = RecentCache(arg[0])
+    if op == "RecentRegistry":
+        obj = RecentRegistry(arg[0])
         result.append(None)
-    elif op == "put":
-        obj.put(arg[0], arg[1])
+    elif op == "store":
+        obj.store(arg[0], arg[1])
         result.append(None)
-    elif op == "get":
-        result.append(obj.get(arg[0]))
+    elif op == "lookup":
+        result.append(obj.lookup(arg[0]))
 
 print(json.dumps(result, separators=(',', ':')))

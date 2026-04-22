@@ -28,7 +28,7 @@ public class Main {
         }
         argsList.add(argsLine.substring(start).trim());
 
-        WordDictionary dict = null;
+        WildcardLexicon dict = null;
         StringBuilder sb = new StringBuilder("[");
         for (int i = 0; i < cmds.size(); i++) {
             if (i > 0) sb.append(",");
@@ -39,14 +39,14 @@ public class Main {
                 word = arg.substring(1, arg.length() - 1).replace("\"", "");
             }
 
-            if (cmd.equals("WordDictionary")) {
-                dict = new WordDictionary();
+            if (cmd.equals("WildcardLexicon")) {
+                dict = new WildcardLexicon();
                 sb.append("null");
-            } else if (cmd.equals("addWord")) {
-                dict.addWord(word);
+            } else if (cmd.equals("enroll")) {
+                dict.enroll(word);
                 sb.append("null");
-            } else if (cmd.equals("search")) {
-                sb.append(dict.search(word));
+            } else if (cmd.equals("match")) {
+                sb.append(dict.match(word));
             }
         }
         sb.append("]");

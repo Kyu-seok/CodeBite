@@ -1,17 +1,17 @@
-class SimpleHashMap {
-    public SimpleHashMap() {
+class ChainedMap {
+    public ChainedMap() {
         // Write your solution here
     }
 
-    public void put(int key, int value) {
+    public void set(int key, int value) {
         // Write your solution here
     }
 
-    public int get(int key) {
+    public int lookup(int key) {
         // Write your solution here
     }
 
-    public void remove(int key) {
+    public void erase(int key) {
         // Write your solution here
     }
 }

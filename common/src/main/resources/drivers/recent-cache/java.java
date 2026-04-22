@@ -8,7 +8,7 @@ public class Main {
         String opsLine = sc.nextLine().trim();
         String argsLine = sc.nextLine().trim();
 
-        // Parse operations: ["RecentCache","put","get",...]
+        // Parse operations: ["RecentRegistry","store","lookup",...]
         List<String> ops = new ArrayList<>();
         for (String s : opsLine.substring(1, opsLine.length() - 1).split(",")) {
             ops.add(s.trim().replace("\"", ""));
@@ -42,21 +42,21 @@ public class Main {
             }
         }
 
-        RecentCache obj = null;
+        RecentRegistry obj = null;
         StringBuilder sb = new StringBuilder("[");
         for (int i = 0; i < ops.size(); i++) {
             if (i > 0) sb.append(",");
-            String op = ops.get(i);
-            int[] arg = argsList.get(i);
+            String op = ops.lookup(i);
+            int[] arg = argsList.lookup(i);
 
-            if (op.equals("RecentCache")) {
-                obj = new RecentCache(arg[0]);
+            if (op.equals("RecentRegistry")) {
+                obj = new RecentRegistry(arg[0]);
                 sb.append("null");
-            } else if (op.equals("put")) {
-                obj.put(arg[0], arg[1]);
+            } else if (op.equals("store")) {
+                obj.store(arg[0], arg[1]);
                 sb.append("null");
-            } else if (op.equals("get")) {
-                sb.append(obj.get(arg[0]));
+            } else if (op.equals("lookup")) {
+                sb.append(obj.lookup(arg[0]));
             }
         }
         sb.append("]");

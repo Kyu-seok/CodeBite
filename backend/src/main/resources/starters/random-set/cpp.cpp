@@ -3,9 +3,9 @@
 #include <cstdlib>
 using namespace std;
 
-class RandomSet {
+class RandomBag {
 public:
-    RandomSet() {
+    RandomBag() {
         // Write your solution here
     }
 
@@ -17,7 +17,7 @@ public:
         // Write your solution here
     }
 
-    int getRandom() {
+    int drawRandom() {
         // Write your solution here
     }
 };

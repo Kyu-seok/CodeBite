@@ -1,4 +1,4 @@
-class RecentCache {
+class RecentRegistry {
     /**
      * @param {number} capacity
      */
@@ -10,7 +10,7 @@ class RecentCache {
      * @param {number} key
      * @return {number}
      */
-    get(key) {
+    lookup(key) {
         // Write your solution here
         return -1;
     }
@@ -20,7 +20,7 @@ class RecentCache {
      * @param {number} value
      * @return {void}
      */
-    put(key, value) {
+    store(key, value) {
         // Write your solution here
     }
 }

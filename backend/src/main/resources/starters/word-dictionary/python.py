@@ -1,4 +1,4 @@
-class WordDictionary:
+class WildcardLexicon:
     def __init__(self):
         # Initialize your data structure here
         pass
@@ -7,6 +7,6 @@ class WordDictionary:
         # Write your solution here
         pass
 
-    def search(self, word: str) -> bool:
+    def match(self, word: str) -> bool:
         # Write your solution here
         pass

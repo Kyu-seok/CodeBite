@@ -9,12 +9,12 @@
  *     TreeNode(int val, TreeNode left, TreeNode right) { this.val = val; this.left = left; this.right = right; }
  * }
  */
-class Codec {
-    public String serialize(TreeNode root) {
+class TreeSerializer {
+    public String pack(TreeNode root) {
         // Write your solution here
     }
 
-    public TreeNode deserialize(String data) {
+    public TreeNode unpack(String data) {
         // Write your solution here
     }
 }

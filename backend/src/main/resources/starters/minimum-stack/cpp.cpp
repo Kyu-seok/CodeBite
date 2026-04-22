@@ -1,6 +1,6 @@
-class MinStack {
+class LowTrackStack {
 public:
-    MinStack() {
+    LowTrackStack() {
         // Write your solution here
     }
 

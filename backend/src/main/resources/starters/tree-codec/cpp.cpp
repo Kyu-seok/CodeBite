@@ -9,13 +9,13 @@
  *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
  * };
  */
-class Codec {
+class TreeSerializer {
 public:
-    string serialize(TreeNode* root) {
+    string pack(TreeNode* root) {
         // Write your solution here
     }
 
-    TreeNode* deserialize(string data) {
+    TreeNode* unpack(string data) {
         // Write your solution here
     }
 };

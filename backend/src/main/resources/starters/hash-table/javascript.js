@@ -1,4 +1,4 @@
-class SimpleHashMap {
+class ChainedMap {
     constructor() {
         // Write your solution here
     }
@@ -8,7 +8,7 @@ class SimpleHashMap {
      * @param {number} value
      * @return {void}
      */
-    put(key, value) {
+    set(key, value) {
         // Write your solution here
     }
 
@@ -16,7 +16,7 @@ class SimpleHashMap {
      * @param {number} key
      * @return {number}
      */
-    get(key) {
+    lookup(key) {
         // Write your solution here
     }
 
@@ -24,7 +24,7 @@ class SimpleHashMap {
      * @param {number} key
      * @return {void}
      */
-    remove(key) {
+    erase(key) {
         // Write your solution here
     }
 }

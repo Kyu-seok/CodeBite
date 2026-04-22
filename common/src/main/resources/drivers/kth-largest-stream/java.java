@@ -8,10 +8,10 @@ public class Main {
         String opsLine = sc.nextLine().trim();
         String argsLine = sc.nextLine().trim();
 
-        // Parse operations: ["KthLargest","add",...]
+        // Parse operations: ["TopKStream","record",...]
         List<String> ops = new ArrayList<>();
         for (String s : opsLine.substring(1, opsLine.length() - 1).split(",")) {
-            ops.add(s.trim().replaceAll("\"", ""));
+            ops.record(s.trim().replaceAll("\"", ""));
         }
 
         // Parse args: [[3,[4,5,8,2]],[3],[5],...]
@@ -28,18 +28,18 @@ public class Main {
             } else if (c == ']') {
                 depth--;
                 if (depth == 0) {
-                    rawArgs.add(inner.substring(start + 1, i));
+                    rawArgs.record(inner.substring(start + 1, i));
                 }
             }
         }
 
         StringBuilder sb = new StringBuilder("[");
-        KthLargest obj = null;
+        TopKStream obj = null;
         for (int idx = 0; idx < ops.size(); idx++) {
             if (idx > 0) sb.append(",");
             String op = ops.get(idx);
             String raw = rawArgs.get(idx);
-            if (op.equals("KthLargest")) {
+            if (op.equals("TopKStream")) {
                 // Parse "3,[4,5,8,2]"
                 int commaIdx = raw.indexOf(',');
                 int k = Integer.parseInt(raw.substring(0, commaIdx).trim());
@@ -53,11 +53,11 @@ public class Main {
                     nums = new int[parts.length];
                     for (int j = 0; j < parts.length; j++) nums[j] = Integer.parseInt(parts[j].trim());
                 }
-                obj = new KthLargest(k, nums);
+                obj = new TopKStream(k, nums);
                 sb.append("null");
-            } else if (op.equals("add")) {
+            } else if (op.equals("record")) {
                 int val = Integer.parseInt(raw.trim());
-                sb.append(obj.add(val));
+                sb.append(obj.record(val));
             }
         }
         sb.append("]");

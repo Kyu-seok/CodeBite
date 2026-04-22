@@ -9,8 +9,8 @@ let stack = null;
 for (let i = 0; i < ops.length; i++) {
     const op = ops[i];
     const arg = args[i];
-    if (op === "MinStack") {
-        stack = new MinStack();
+    if (op === "LowTrackStack") {
+        stack = new LowTrackStack();
         result.push(null);
     } else if (op === "push") {
         stack.push(arg[0]);

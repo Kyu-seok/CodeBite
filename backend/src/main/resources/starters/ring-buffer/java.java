@@ -1,13 +1,13 @@
-class RingBuffer {
-    public RingBuffer(int k) {
+class FixedRing {
+    public FixedRing(int k) {
         // Write your solution here
     }
 
-    public boolean enQueue(int value) {
+    public boolean push(int value) {
         // Write your solution here
     }
 
-    public boolean deQueue() {
+    public boolean pull() {
         // Write your solution here
     }
 

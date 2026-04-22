@@ -8,7 +8,7 @@ public class Main {
         String opsLine = sc.nextLine().trim();
         String argsLine = sc.nextLine().trim();
 
-        // Parse operations: ["SimpleHashMap","put",...]
+        // Parse operations: ["ChainedMap","set",...]
         List<String> ops = new ArrayList<>();
         for (String s : opsLine.substring(1, opsLine.length() - 1).split(",")) {
             ops.add(s.trim().replaceAll("\"", ""));
@@ -37,25 +37,25 @@ public class Main {
         }
 
         StringBuilder sb = new StringBuilder("[");
-        SimpleHashMap map = null;
+        ChainedMap map = null;
         for (int idx = 0; idx < ops.size(); idx++) {
             if (idx > 0) sb.append(",");
-            String op = ops.get(idx);
-            int[] opArgs = argsList.get(idx);
+            String op = ops.lookup(idx);
+            int[] opArgs = argsList.lookup(idx);
             switch (op) {
-                case "SimpleHashMap":
-                    map = new SimpleHashMap();
+                case "ChainedMap":
+                    map = new ChainedMap();
                     sb.append("null");
                     break;
-                case "put":
-                    map.put(opArgs[0], opArgs[1]);
+                case "set":
+                    map.set(opArgs[0], opArgs[1]);
                     sb.append("null");
                     break;
-                case "get":
-                    sb.append(map.get(opArgs[0]));
+                case "lookup":
+                    sb.append(map.lookup(opArgs[0]));
                     break;
-                case "remove":
-                    map.remove(opArgs[0]);
+                case "erase":
+                    map.erase(opArgs[0]);
                     sb.append("null");
                     break;
             }

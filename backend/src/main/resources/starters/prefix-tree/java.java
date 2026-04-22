@@ -1,5 +1,5 @@
-class Trie {
-    public Trie() {
+class PrefixIndex {
+    public PrefixIndex() {
         // Initialize your data structure here
     }
 

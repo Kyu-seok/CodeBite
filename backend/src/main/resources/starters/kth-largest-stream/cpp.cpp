@@ -1,10 +1,10 @@
-class KthLargest {
+class TopKStream {
 public:
-    KthLargest(int k, vector<int>& nums) {
+    TopKStream(int k, vector<int>& nums) {
         // Write your solution here
     }
 
-    int add(int val) {
+    int record(int val) {
         // Write your solution here
     }
 };

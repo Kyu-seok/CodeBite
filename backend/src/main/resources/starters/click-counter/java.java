@@ -1,15 +1,15 @@
 import java.util.*;
 
-class HitCounter {
-    public HitCounter() {
+class ClickTally {
+    public ClickTally() {
         // Initialize your data structure here
     }
 
-    public void hit(int timestamp) {
+    public void record(int timestamp) {
         // Write your solution here
     }
 
-    public int getHits(int timestamp) {
+    public int countSince(int timestamp) {
         // Write your solution here
         return 0;
     }

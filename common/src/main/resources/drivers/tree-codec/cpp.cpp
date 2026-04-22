@@ -13,9 +13,9 @@ int main() {
     string line;
     getline(cin, line);
     TreeNode* root = treeFromArray(line);
-    Codec codec;
-    string serialized = codec.serialize(root);
-    TreeNode* result = codec.deserialize(serialized);
+    TreeSerializer codec;
+    string serialized = codec.pack(root);
+    TreeNode* result = codec.unpack(serialized);
     cout << treeToJsonArray(result) << endl;
     return 0;
 }

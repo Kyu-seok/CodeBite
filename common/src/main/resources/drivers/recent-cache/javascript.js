@@ -10,14 +10,14 @@ const result = [];
 for (let i = 0; i < ops.length; i++) {
     const op = ops[i];
     const arg = args[i];
-    if (op === "RecentCache") {
-        obj = new RecentCache(arg[0]);
+    if (op === "RecentRegistry") {
+        obj = new RecentRegistry(arg[0]);
         result.push(null);
-    } else if (op === "put") {
-        obj.put(arg[0], arg[1]);
+    } else if (op === "store") {
+        obj.store(arg[0], arg[1]);
         result.push(null);
-    } else if (op === "get") {
-        result.push(obj.get(arg[0]));
+    } else if (op === "lookup") {
+        result.push(obj.lookup(arg[0]));
     }
 }
 console.log(JSON.stringify(result));

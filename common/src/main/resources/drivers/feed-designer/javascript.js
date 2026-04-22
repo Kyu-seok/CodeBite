@@ -10,19 +10,19 @@ const result = [];
 for (let i = 0; i < ops.length; i++) {
     const op = ops[i];
     const arg = args[i];
-    if (op === "FeedDesigner") {
-        obj = new FeedDesigner();
+    if (op === "MicroFeed") {
+        obj = new MicroFeed();
         result.push(null);
-    } else if (op === "postMessage") {
-        obj.postMessage(arg[0], arg[1]);
+    } else if (op === "publishPost") {
+        obj.publishPost(arg[0], arg[1]);
         result.push(null);
-    } else if (op === "getNewsFeed") {
-        result.push(obj.getNewsFeed(arg[0]));
-    } else if (op === "follow") {
-        obj.follow(arg[0], arg[1]);
+    } else if (op === "latestFeed") {
+        result.push(obj.latestFeed(arg[0]));
+    } else if (op === "subscribe") {
+        obj.subscribe(arg[0], arg[1]);
         result.push(null);
-    } else if (op === "unfollow") {
-        obj.unfollow(arg[0], arg[1]);
+    } else if (op === "unsubscribe") {
+        obj.unsubscribe(arg[0], arg[1]);
         result.push(null);
     }
 }

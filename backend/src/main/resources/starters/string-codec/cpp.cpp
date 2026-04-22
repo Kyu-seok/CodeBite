@@ -1,10 +1,10 @@
-class Codec {
+class ListCoder {
 public:
-    string encode(vector<string>& strs) {
+    string pack(vector<string>& strs) {
         // Write your solution here
     }
 
-    vector<string> decode(string s) {
+    vector<string> unpack(string s) {
         // Write your solution here
     }
 };

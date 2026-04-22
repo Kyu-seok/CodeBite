@@ -2,17 +2,17 @@
 #include <vector>
 using namespace std;
 
-class MedianTracker {
+class StreamMedian {
 public:
-    MedianTracker() {
+    StreamMedian() {
         // Initialize your data structure here
     }
 
-    void addNum(int num) {
+    void record(int num) {
         // Write your solution here
     }
 
-    double findMedian() {
+    double median() {
         // Write your solution here
         return 0.0;
     }

@@ -8,14 +8,14 @@ args = json.loads(input())
 obj = None
 result = []
 for op, arg in zip(ops, args):
-    if op == "MedianTracker":
-        obj = MedianTracker()
+    if op == "StreamMedian":
+        obj = StreamMedian()
         result.append(None)
-    elif op == "addNum":
-        obj.addNum(arg[0])
+    elif op == "record":
+        obj.record(arg[0])
         result.append(None)
-    elif op == "findMedian":
-        median = obj.findMedian()
+    elif op == "median":
+        median = obj.median()
         result.append(median)
 
 # Format output: nulls stay null, floats with 1 decimal if whole, otherwise as-is

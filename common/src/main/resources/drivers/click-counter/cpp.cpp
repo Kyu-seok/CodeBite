@@ -46,20 +46,20 @@ int main() {
     vector<string> ops = parseOps(opsLine);
     vector<string> rawArgs = parseRawArgs(argsLine);
 
-    HitCounter* obj = nullptr;
+    ClickTally* obj = nullptr;
     cout << "[";
     for (int i = 0; i < (int)ops.size(); i++) {
         if (i > 0) cout << ",";
-        if (ops[i] == "HitCounter") {
-            obj = new HitCounter();
+        if (ops[i] == "ClickTally") {
+            obj = new ClickTally();
             cout << "null";
-        } else if (ops[i] == "hit") {
+        } else if (ops[i] == "record") {
             int timestamp = stoi(rawArgs[i]);
-            obj->hit(timestamp);
+            obj->record(timestamp);
             cout << "null";
-        } else if (ops[i] == "getHits") {
+        } else if (ops[i] == "countSince") {
             int timestamp = stoi(rawArgs[i]);
-            int result = obj->getHits(timestamp);
+            int result = obj->countSince(timestamp);
             cout << result;
         }
     }

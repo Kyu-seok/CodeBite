@@ -11,7 +11,7 @@ int main() {
     getline(cin, opsLine);
     getline(cin, argsLine);
 
-    // Parse operations: ["SimpleHashMap","put",...]
+    // Parse operations: ["ChainedMap","set",...]
     vector<string> ops;
     string opsInner = opsLine.substr(1, opsLine.size() - 2);
     stringstream oss(opsInner);
@@ -48,20 +48,20 @@ int main() {
     }
 
     cout << "[";
-    SimpleHashMap* m = nullptr;
+    ChainedMap* m = nullptr;
     for (size_t idx = 0; idx < ops.size(); idx++) {
         if (idx > 0) cout << ",";
         string op = ops[idx];
-        if (op == "SimpleHashMap") {
-            m = new SimpleHashMap();
+        if (op == "ChainedMap") {
+            m = new ChainedMap();
             cout << "null";
-        } else if (op == "put") {
-            m->put(argsList[idx][0], argsList[idx][1]);
+        } else if (op == "set") {
+            m->set(argsList[idx][0], argsList[idx][1]);
             cout << "null";
-        } else if (op == "get") {
-            cout << m->get(argsList[idx][0]);
-        } else if (op == "remove") {
-            m->remove(argsList[idx][0]);
+        } else if (op == "lookup") {
+            cout << m->lookup(argsList[idx][0]);
+        } else if (op == "erase") {
+            m->erase(argsList[idx][0]);
             cout << "null";
         }
     }

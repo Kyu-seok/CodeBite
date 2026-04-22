@@ -13,7 +13,7 @@ int main() {
     getline(cin, opsLine);
     getline(cin, argsLine);
 
-    // Parse operations: ["RandomSet","insert",...]
+    // Parse operations: ["RandomBag","insert",...]
     vector<string> ops;
     string opsInner = opsLine.substr(1, opsLine.size() - 2);
     stringstream oss(opsInner);
@@ -50,19 +50,19 @@ int main() {
     }
 
     cout << "[";
-    RandomSet* rs = nullptr;
+    RandomBag* rs = nullptr;
     for (size_t idx = 0; idx < ops.size(); idx++) {
         if (idx > 0) cout << ",";
         string op = ops[idx];
-        if (op == "RandomSet") {
-            rs = new RandomSet();
+        if (op == "RandomBag") {
+            rs = new RandomBag();
             cout << "null";
         } else if (op == "insert") {
             cout << (rs->insert(argsList[idx][0]) ? "true" : "false");
         } else if (op == "remove") {
             cout << (rs->remove(argsList[idx][0]) ? "true" : "false");
-        } else if (op == "getRandom") {
-            cout << rs->getRandom();
+        } else if (op == "drawRandom") {
+            cout << rs->drawRandom();
         }
     }
     cout << "]" << endl;

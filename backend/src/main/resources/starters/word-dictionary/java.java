@@ -1,13 +1,13 @@
-class WordDictionary {
-    public WordDictionary() {
+class WildcardLexicon {
+    public WildcardLexicon() {
         // Initialize your data structure here
     }
 
-    public void addWord(String word) {
+    public void enroll(String word) {
         // Write your solution here
     }
 
-    public boolean search(String word) {
+    public boolean match(String word) {
         // Write your solution here
     }
 }

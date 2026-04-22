@@ -1,4 +1,4 @@
-class MinStack:
+class LowTrackStack:
     def __init__(self):
         # Write your solution here
         pass

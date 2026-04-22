@@ -8,7 +8,7 @@ public class Main {
         String opsLine = sc.nextLine().trim();
         String argsLine = sc.nextLine().trim();
 
-        // Parse operations: ["RingBuffer","enQueue",...]
+        // Parse operations: ["FixedRing","push",...]
         List<String> ops = new ArrayList<>();
         for (String s : opsLine.substring(1, opsLine.length() - 1).split(",")) {
             ops.add(s.trim().replaceAll("\"", ""));
@@ -37,21 +37,21 @@ public class Main {
         }
 
         StringBuilder sb = new StringBuilder("[");
-        RingBuffer buf = null;
+        FixedRing buf = null;
         for (int idx = 0; idx < ops.size(); idx++) {
             if (idx > 0) sb.append(",");
             String op = ops.get(idx);
             int[] opArgs = argsList.get(idx);
             switch (op) {
-                case "RingBuffer":
-                    buf = new RingBuffer(opArgs[0]);
+                case "FixedRing":
+                    buf = new FixedRing(opArgs[0]);
                     sb.append("null");
                     break;
-                case "enQueue":
-                    sb.append(buf.enQueue(opArgs[0]));
+                case "push":
+                    sb.append(buf.push(opArgs[0]));
                     break;
-                case "deQueue":
-                    sb.append(buf.deQueue());
+                case "pull":
+                    sb.append(buf.pull());
                     break;
                 case "front":
                     sb.append(buf.front());

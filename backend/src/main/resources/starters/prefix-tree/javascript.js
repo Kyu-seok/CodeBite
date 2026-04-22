@@ -1,4 +1,4 @@
-class Trie {
+class PrefixIndex {
     constructor() {
         // Initialize your data structure here
     }

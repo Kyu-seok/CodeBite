@@ -8,7 +8,7 @@ public class Main {
         String opsLine = sc.nextLine().trim();
         String argsLine = sc.nextLine().trim();
 
-        // Parse operations: ["MedianTracker","addNum","findMedian",...]
+        // Parse operations: ["StreamMedian","record","median",...]
         List<String> ops = new ArrayList<>();
         for (String s : opsLine.substring(1, opsLine.length() - 1).split(",")) {
             ops.add(s.trim().replace("\"", ""));
@@ -32,22 +32,22 @@ public class Main {
             }
         }
 
-        MedianTracker obj = null;
+        StreamMedian obj = null;
         StringBuilder sb = new StringBuilder("[");
         for (int i = 0; i < ops.size(); i++) {
             if (i > 0) sb.append(",");
             String op = ops.get(i);
             String raw = rawArgs.get(i).trim();
 
-            if (op.equals("MedianTracker")) {
-                obj = new MedianTracker();
+            if (op.equals("StreamMedian")) {
+                obj = new StreamMedian();
                 sb.append("null");
-            } else if (op.equals("addNum")) {
+            } else if (op.equals("record")) {
                 int num = Integer.parseInt(raw);
-                obj.addNum(num);
+                obj.record(num);
                 sb.append("null");
-            } else if (op.equals("findMedian")) {
-                double median = obj.findMedian();
+            } else if (op.equals("median")) {
+                double median = obj.median();
                 if (median == (long) median) {
                     sb.append(String.format("%.1f", median));
                 } else {

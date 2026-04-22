@@ -1,6 +1,6 @@
 import random
 
-class RandomSet:
+class RandomBag:
     def __init__(self):
         # Write your solution here
         pass
@@ -13,6 +13,6 @@ class RandomSet:
         # Write your solution here
         pass
 
-    def getRandom(self) -> int:
+    def drawRandom(self) -> int:
         # Write your solution here
         pass

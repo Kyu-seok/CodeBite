@@ -1,4 +1,4 @@
-class TimeMap {
+class TimestampedStore {
     constructor() {
         // Initialize your data structure here
     }
@@ -9,7 +9,7 @@ class TimeMap {
      * @param {number} timestamp
      * @return {void}
      */
-    set(key, value, timestamp) {
+    write(key, value, timestamp) {
         // Write your solution here
     }
 
@@ -18,7 +18,7 @@ class TimeMap {
      * @param {number} timestamp
      * @return {string}
      */
-    get(key, timestamp) {
+    readAt(key, timestamp) {
         // Write your solution here
         return "";
     }

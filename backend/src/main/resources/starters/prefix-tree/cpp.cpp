@@ -1,9 +1,9 @@
 #include <string>
 using namespace std;
 
-class Trie {
+class PrefixIndex {
 public:
-    Trie() {
+    PrefixIndex() {
         // Initialize your data structure here
     }
 

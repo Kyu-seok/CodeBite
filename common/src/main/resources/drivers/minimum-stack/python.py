@@ -6,8 +6,8 @@ args = json.loads(input())
 result = []
 stack = None
 for op, arg in zip(ops, args):
-    if op == "MinStack":
-        stack = MinStack()
+    if op == "LowTrackStack":
+        stack = LowTrackStack()
         result.append(None)
     elif op == "push":
         stack.push(arg[0])

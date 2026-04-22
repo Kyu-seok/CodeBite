@@ -48,7 +48,7 @@ def _format_tree(arr):
 
 arr = json.loads(input())
 root = _build_tree(arr)
-codec = Codec()
-serialized = codec.serialize(root)
-result = codec.deserialize(serialized)
+codec = TreeSerializer()
+serialized = codec.pack(root)
+result = codec.unpack(serialized)
 print(_format_tree(_tree_to_array(result)))

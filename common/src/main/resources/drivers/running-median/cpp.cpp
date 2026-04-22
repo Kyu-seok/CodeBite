@@ -68,21 +68,21 @@ int main() {
     vector<string> ops = parseOps(opsLine);
     vector<string> rawArgs = parseRawArgs(argsLine);
 
-    MedianTracker* obj = nullptr;
+    StreamMedian* obj = nullptr;
     cout << "[";
     for (int i = 0; i < (int)ops.size(); i++) {
         if (i > 0) cout << ",";
         string raw = stripSpaces(rawArgs[i]);
 
-        if (ops[i] == "MedianTracker") {
-            obj = new MedianTracker();
+        if (ops[i] == "StreamMedian") {
+            obj = new StreamMedian();
             cout << "null";
-        } else if (ops[i] == "addNum") {
+        } else if (ops[i] == "record") {
             int num = stoi(raw);
-            obj->addNum(num);
+            obj->record(num);
             cout << "null";
-        } else if (ops[i] == "findMedian") {
-            double median = obj->findMedian();
+        } else if (ops[i] == "median") {
+            double median = obj->median();
             cout << formatDouble(median);
         }
     }
