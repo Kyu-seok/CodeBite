@@ -1,10 +1,10 @@
 class Solution {
     /**
-     * @param {number[]} nums
+     * @param {number[]} stock
      * @param {number} target
      * @return {number[]}
      */
-    findPairIndices(nums, target) {
+    findPairIndices(stock, target) {
         // Write your solution here
     }
 }
