@@ -12,7 +12,7 @@ using namespace std;
 int main() {
     string numsLine;
     getline(cin, numsLine);
-    // Parse [2,7,11,15] -> vector<int>
+    // Parse "[a,b,c,...]" -> vector<int>
     string inner = numsLine.substr(1, numsLine.size() - 2);
     vector<int> nums;
     stringstream ss(inner);
@@ -22,7 +22,7 @@ int main() {
     }
     int target;
     cin >> target;
-    vector<int> result = Solution().twoSum(nums, target);
+    vector<int> result = Solution().findPairIndices(nums, target);
     cout << JsonOutput::intVector(result) << endl;
     return 0;
 }

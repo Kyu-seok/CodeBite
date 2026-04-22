@@ -13,7 +13,7 @@ public class Main {
         String[] parts = inner.split(",");
         int[] nums = new int[parts.length];
         for (int i = 0; i < parts.length; i++) nums[i] = Integer.parseInt(parts[i].trim());
-        int[] result = new Solution().twoSum(nums, target);
+        int[] result = new Solution().findPairIndices(nums, target);
         System.out.println(JsonOutput.intArray(result));
     }
 }

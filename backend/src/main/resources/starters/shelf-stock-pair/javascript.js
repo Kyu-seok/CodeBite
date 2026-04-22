@@ -4,7 +4,7 @@ class Solution {
      * @param {number} target
      * @return {number[]}
      */
-    twoSum(nums, target) {
+    findPairIndices(nums, target) {
         // Write your solution here
     }
 }

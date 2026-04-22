@@ -3,5 +3,5 @@
 import json
 nums = eval(input())
 target = int(input())
-result = Solution().twoSum(nums, target)
+result = Solution().findPairIndices(nums, target)
 print(json.dumps(result, separators=(',', ':')))
