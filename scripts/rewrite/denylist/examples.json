@@ -68,7 +68,6 @@
     {"pattern": "pwwkew"},
     {"pattern": "AABABBA"},
     {"pattern": "ABAB"},
-    {"pattern": "anagram"},
     {"pattern": "nagaram"},
     {"pattern": "[\"eat\",\"tea\",\"tan\",\"ate\",\"nat\",\"bat\"]"},
     {"pattern": "babad"},
