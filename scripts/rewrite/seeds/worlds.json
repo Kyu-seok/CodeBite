@@ -1,0 +1,440 @@
+{
+  "_meta": {
+    "description": "Catalog of neutral narrative worlds used as framing sources when rewriting problem statements. Each world provides a domain vocabulary (entities, actions, units) and a mapping from abstract data shapes (array, graph, interval, grid, stream, tree) to concrete in-world phrasings. Goal: replace coding-puzzle surface vocabulary with realistic domain vocabulary without changing the underlying algorithmic task.",
+    "selection_hint": "Prefer worlds where the algorithm's natural_input shape lands cleanly. See shapes.json for shape-to-world pairings."
+  },
+  "worlds": [
+    {
+      "id": "warehouse_logistics",
+      "domain": "warehouse",
+      "vocabulary": {
+        "entities": ["shelf", "pallet", "widget", "order", "picker", "aisle", "dock", "SKU", "crate"],
+        "actions": ["stock", "pick", "pack", "ship", "reorder", "restock"],
+        "units": ["unit", "case", "pallet", "kg"]
+      },
+      "natural_inputs": {
+        "array_of_counts": "widgets on each shelf",
+        "array_of_strings": "SKU codes rolling past a scanner",
+        "pairs_from_array": "two shelves whose combined stock matches an order",
+        "graph": "aisles connected by cross-dock walkways",
+        "intervals": "picker shift windows",
+        "grid": "floor map with blocked bays and charging stations",
+        "stream": "incoming orders timestamped across a shift",
+        "tree": "bill-of-materials hierarchy (assembly → parts → raw)",
+        "linked_sequence": "a pick-path as an ordered chain of shelves"
+      }
+    },
+    {
+      "id": "courier_dispatch",
+      "domain": "delivery",
+      "vocabulary": {
+        "entities": ["driver", "package", "stop", "depot", "route", "zone", "van"],
+        "actions": ["dispatch", "deliver", "reroute", "consolidate", "sort"],
+        "units": ["km", "minute", "parcel"]
+      },
+      "natural_inputs": {
+        "array_of_counts": "parcels loaded on each van",
+        "array_of_numbers": "distance between consecutive stops",
+        "graph": "road network of intersections and streets",
+        "intervals": "driver availability windows",
+        "grid": "delivery-zone map with barriers",
+        "stream": "orders arriving to a dispatch queue",
+        "tree": "depot → regional hub → local cluster hierarchy",
+        "linked_sequence": "a route as an ordered chain of stops"
+      }
+    },
+    {
+      "id": "smart_home_iot",
+      "domain": "smart_home",
+      "vocabulary": {
+        "entities": ["sensor", "hub", "room", "device", "event", "threshold", "zone"],
+        "actions": ["arm", "trigger", "subscribe", "publish", "silence"],
+        "units": ["reading", "event", "°C", "lux"]
+      },
+      "natural_inputs": {
+        "array_of_readings": "temperature sampled at each sensor",
+        "stream": "motion/door events timestamped as they fire",
+        "graph": "device-to-device relays forming the mesh",
+        "grid": "floor plan with room adjacency",
+        "intervals": "scheduled active windows per device",
+        "counts": "events per sensor in a window",
+        "tree": "hub → zone → sensor hierarchy"
+      }
+    },
+    {
+      "id": "grocery_checkout",
+      "domain": "retail",
+      "vocabulary": {
+        "entities": ["lane", "cashier", "item", "basket", "barcode", "coupon", "receipt"],
+        "actions": ["scan", "bag", "void", "apply", "pay"],
+        "units": ["item", "won", "gram"]
+      },
+      "natural_inputs": {
+        "array_of_counts": "items in each basket",
+        "array_of_strings": "barcodes in scan order",
+        "pairs_from_array": "two items whose prices sum to a coupon threshold",
+        "intervals": "lane open windows",
+        "stream": "scans arriving to a single lane",
+        "counts": "barcode frequency over the shift"
+      }
+    },
+    {
+      "id": "library_catalog",
+      "domain": "library",
+      "vocabulary": {
+        "entities": ["book", "shelf", "section", "call-number", "borrower", "reservation"],
+        "actions": ["check out", "return", "reserve", "reshelve", "classify"],
+        "units": ["day", "copy"]
+      },
+      "natural_inputs": {
+        "array_of_counts": "copies on each shelf",
+        "array_of_strings": "call numbers in shelving order",
+        "tree": "Dewey-style classification hierarchy",
+        "intervals": "loan periods per copy",
+        "graph": "cross-reference links between works",
+        "grid": "floor plan of stacks",
+        "stream": "checkout events across the day"
+      }
+    },
+    {
+      "id": "concert_ticketing",
+      "domain": "events",
+      "vocabulary": {
+        "entities": ["seat", "row", "section", "tier", "order", "queue", "hold"],
+        "actions": ["release", "hold", "purchase", "refund", "upgrade"],
+        "units": ["seat", "won"]
+      },
+      "natural_inputs": {
+        "array_of_counts": "seats remaining per tier",
+        "grid": "seat map with aisle gaps",
+        "intervals": "hold-release windows",
+        "stream": "purchase attempts against a live queue",
+        "pairs_from_array": "two tiers whose prices sum to a budget"
+      }
+    },
+    {
+      "id": "farm_irrigation",
+      "domain": "agriculture",
+      "vocabulary": {
+        "entities": ["plot", "valve", "zone", "sensor", "reservoir", "pipe"],
+        "actions": ["open", "close", "schedule", "calibrate", "drain"],
+        "units": ["liter", "minute", "%"]
+      },
+      "natural_inputs": {
+        "array_of_readings": "soil-moisture percent per plot",
+        "graph": "pipe network connecting valves to reservoir",
+        "grid": "field map of plots",
+        "intervals": "scheduled watering windows per valve",
+        "stream": "rainfall events"
+      }
+    },
+    {
+      "id": "film_production",
+      "domain": "film",
+      "vocabulary": {
+        "entities": ["scene", "shot", "crew", "actor", "location", "call-sheet"],
+        "actions": ["block", "roll", "cut", "wrap", "reshoot"],
+        "units": ["take", "minute"]
+      },
+      "natural_inputs": {
+        "array_of_numbers": "scene durations in minutes",
+        "graph": "scenes with precedence constraints",
+        "intervals": "actor availability windows",
+        "linked_sequence": "shooting order for a day",
+        "tree": "production breakdown (script → act → scene → shot)"
+      }
+    },
+    {
+      "id": "restaurant_reservations",
+      "domain": "hospitality",
+      "vocabulary": {
+        "entities": ["table", "party", "seating", "station", "shift", "waitlist"],
+        "actions": ["seat", "turn", "bus", "reserve", "walk-in"],
+        "units": ["guest", "minute"]
+      },
+      "natural_inputs": {
+        "array_of_counts": "party size per reservation",
+        "intervals": "table occupancy windows",
+        "grid": "dining room layout",
+        "stream": "reservation requests",
+        "graph": "kitchen stations and their workflow edges"
+      }
+    },
+    {
+      "id": "subway_ops",
+      "domain": "transit",
+      "vocabulary": {
+        "entities": ["station", "line", "train", "car", "transfer", "platform"],
+        "actions": ["board", "alight", "dwell", "dispatch", "merge"],
+        "units": ["passenger", "minute"]
+      },
+      "natural_inputs": {
+        "graph": "station network connected by lines",
+        "array_of_numbers": "car capacity per train",
+        "intervals": "dwell windows at each platform",
+        "stream": "boardings per station per minute",
+        "string_or_path": "travel path as a sequence of station codes",
+        "tree": "system hierarchy (system → line → station)"
+      }
+    },
+    {
+      "id": "manufacturing_line",
+      "domain": "manufacturing",
+      "vocabulary": {
+        "entities": ["station", "robot", "conveyor", "part", "defect", "batch"],
+        "actions": ["assemble", "inspect", "reject", "tune", "restart"],
+        "units": ["part", "defect", "cycle"]
+      },
+      "natural_inputs": {
+        "array_of_counts": "parts processed per station in a cycle",
+        "linked_sequence": "conveyor as an ordered chain of stations",
+        "graph": "station topology with buffer slots",
+        "stream": "defects flagged by an inspector",
+        "intervals": "machine uptime windows"
+      }
+    },
+    {
+      "id": "aquarium_tanks",
+      "domain": "aquarium",
+      "vocabulary": {
+        "entities": ["tank", "species", "fish", "feeder", "filter", "pH"],
+        "actions": ["feed", "measure", "transfer", "dose", "quarantine"],
+        "units": ["specimen", "ppm", "liter"]
+      },
+      "natural_inputs": {
+        "array_of_readings": "pH per tank",
+        "array_of_counts": "specimens per species",
+        "graph": "tank-to-tank transfer compatibility",
+        "intervals": "feeding schedule windows",
+        "tree": "taxonomy (kingdom → phylum → species)"
+      }
+    },
+    {
+      "id": "print_shop",
+      "domain": "printing",
+      "vocabulary": {
+        "entities": ["printer", "job", "queue", "paper", "toner", "bin"],
+        "actions": ["submit", "print", "retry", "refill", "cancel"],
+        "units": ["page", "job", "ml"]
+      },
+      "natural_inputs": {
+        "array_of_counts": "pages per job",
+        "linked_sequence": "print queue for a single printer",
+        "stream": "jobs submitted over a day",
+        "intervals": "printer uptime windows",
+        "graph": "printer failover relationships"
+      }
+    },
+    {
+      "id": "hospital_triage",
+      "domain": "medical",
+      "vocabulary": {
+        "entities": ["patient", "bed", "ward", "shift", "clinician", "acuity"],
+        "actions": ["admit", "discharge", "escalate", "transfer", "consult"],
+        "units": ["patient", "minute"]
+      },
+      "natural_inputs": {
+        "array_of_scores": "acuity score per patient",
+        "stream": "patient arrivals timestamped",
+        "intervals": "OR or imaging bookings",
+        "graph": "ward connectivity and escalation paths",
+        "tree": "organ-system diagnosis tree",
+        "grid": "ward map with bed positions"
+      }
+    },
+    {
+      "id": "observatory",
+      "domain": "astronomy",
+      "vocabulary": {
+        "entities": ["telescope", "target", "filter", "exposure", "window", "log"],
+        "actions": ["point", "capture", "calibrate", "stack", "dither"],
+        "units": ["frame", "minute", "magnitude"]
+      },
+      "natural_inputs": {
+        "array_of_readings": "brightness per frame",
+        "intervals": "visibility windows for each target",
+        "linked_sequence": "nightly observing sequence",
+        "graph": "targets with slew-time costs",
+        "tree": "catalog hierarchy (constellation → object → component)"
+      }
+    },
+    {
+      "id": "bakery_ovens",
+      "domain": "bakery",
+      "vocabulary": {
+        "entities": ["oven", "tray", "batch", "recipe", "proof-box", "cooling-rack"],
+        "actions": ["proof", "bake", "cool", "rotate", "discard"],
+        "units": ["loaf", "tray", "minute"]
+      },
+      "natural_inputs": {
+        "array_of_counts": "loaves per tray",
+        "intervals": "bake windows",
+        "linked_sequence": "rotation order through ovens",
+        "graph": "recipe ingredient dependencies",
+        "counts": "defect counts per batch"
+      }
+    },
+    {
+      "id": "theme_park",
+      "domain": "entertainment",
+      "vocabulary": {
+        "entities": ["attraction", "queue", "pass", "zone", "guest", "reservation"],
+        "actions": ["board", "hold", "skip", "route", "close"],
+        "units": ["guest", "minute"]
+      },
+      "natural_inputs": {
+        "array_of_counts": "wait time per attraction",
+        "grid": "park map",
+        "graph": "attraction adjacency and walking paths",
+        "stream": "guest entries at the gate",
+        "intervals": "attraction operating windows"
+      }
+    },
+    {
+      "id": "postal_sorting",
+      "domain": "mail",
+      "vocabulary": {
+        "entities": ["letter", "parcel", "bin", "route", "zone-code", "sorter"],
+        "actions": ["scan", "sort", "rebin", "forward", "misroute"],
+        "units": ["piece", "bag"]
+      },
+      "natural_inputs": {
+        "array_of_strings": "zone codes in scan order",
+        "counts": "pieces per destination bin",
+        "graph": "hub-and-spoke routing network",
+        "tree": "zone hierarchy (region → city → postcode)",
+        "stream": "mail arrival across a shift"
+      }
+    },
+    {
+      "id": "airport_ops",
+      "domain": "aviation",
+      "vocabulary": {
+        "entities": ["gate", "flight", "runway", "stand", "crew", "slot"],
+        "actions": ["assign", "push back", "taxi", "hold", "divert"],
+        "units": ["passenger", "minute"]
+      },
+      "natural_inputs": {
+        "array_of_counts": "passengers per flight",
+        "intervals": "gate occupancy windows",
+        "graph": "route network between airports",
+        "stream": "takeoffs/landings per minute",
+        "grid": "apron with numbered stands",
+        "tree": "airline → aircraft type → flight"
+      }
+    },
+    {
+      "id": "news_aggregator",
+      "domain": "media",
+      "vocabulary": {
+        "entities": ["feed", "article", "topic", "cluster", "source", "headline"],
+        "actions": ["ingest", "cluster", "dedup", "rank", "pin"],
+        "units": ["article", "vote"]
+      },
+      "natural_inputs": {
+        "array_of_strings": "headlines from a single feed",
+        "stream": "articles arriving from many feeds",
+        "graph": "topic similarity links",
+        "counts": "topic frequency in a window",
+        "tree": "topic taxonomy"
+      }
+    },
+    {
+      "id": "gym_bookings",
+      "domain": "fitness",
+      "vocabulary": {
+        "entities": ["machine", "member", "booking", "circuit", "locker", "class"],
+        "actions": ["check in", "reserve", "swap", "cancel", "queue"],
+        "units": ["slot", "minute"]
+      },
+      "natural_inputs": {
+        "array_of_counts": "bookings per machine",
+        "intervals": "class schedule windows",
+        "linked_sequence": "circuit training order",
+        "graph": "equipment superset relationships",
+        "stream": "check-ins at the front desk"
+      }
+    },
+    {
+      "id": "vineyard",
+      "domain": "wine",
+      "vocabulary": {
+        "entities": ["vine", "row", "block", "barrel", "vintage", "harvest"],
+        "actions": ["prune", "harvest", "press", "rack", "bottle"],
+        "units": ["vine", "kg", "liter"]
+      },
+      "natural_inputs": {
+        "array_of_counts": "clusters per vine along a row",
+        "grid": "vineyard block map",
+        "intervals": "harvest windows per block",
+        "graph": "barrel blending relationships",
+        "tree": "vintage → block → row → vine hierarchy"
+      }
+    },
+    {
+      "id": "weather_station",
+      "domain": "meteorology",
+      "vocabulary": {
+        "entities": ["station", "reading", "alert", "region", "forecast"],
+        "actions": ["sample", "broadcast", "escalate", "smooth", "aggregate"],
+        "units": ["reading", "°C", "mm"]
+      },
+      "natural_inputs": {
+        "array_of_readings": "temperatures per hour at one station",
+        "stream": "readings arriving from many stations",
+        "grid": "regional weather grid",
+        "graph": "station network for spatial smoothing",
+        "intervals": "forecast validity windows"
+      }
+    },
+    {
+      "id": "recycling_plant",
+      "domain": "recycling",
+      "vocabulary": {
+        "entities": ["bin", "conveyor", "sorter", "material", "bale", "truck"],
+        "actions": ["sort", "reject", "bale", "load", "contaminate"],
+        "units": ["kg", "piece", "bin"]
+      },
+      "natural_inputs": {
+        "array_of_strings": "material codes as items roll past",
+        "counts": "weight per material bin",
+        "linked_sequence": "conveyor as an ordered chain of sort stations",
+        "stream": "contamination events",
+        "graph": "station redundancy links"
+      }
+    },
+    {
+      "id": "emergency_dispatch",
+      "domain": "dispatch",
+      "vocabulary": {
+        "entities": ["call", "unit", "incident", "responder", "district", "priority"],
+        "actions": ["triage", "assign", "dispatch", "close", "escalate"],
+        "units": ["call", "minute"]
+      },
+      "natural_inputs": {
+        "array_of_priorities": "priority per pending call",
+        "stream": "incoming 119 calls timestamped",
+        "graph": "district adjacency for mutual aid",
+        "intervals": "responder shift windows",
+        "grid": "city grid with incident pins"
+      }
+    },
+    {
+      "id": "traffic_grid",
+      "domain": "traffic",
+      "vocabulary": {
+        "entities": ["intersection", "signal", "lane", "corridor", "detector", "incident"],
+        "actions": ["cycle", "hold", "divert", "clear", "meter"],
+        "units": ["vehicle", "minute", "block"]
+      },
+      "natural_inputs": {
+        "grid": "city grid of intersections and streets",
+        "array_of_readings": "vehicles passing through each intersection per minute",
+        "graph": "road network with weighted travel times",
+        "intervals": "signal-cycle windows",
+        "stream": "incidents reported over the shift",
+        "counts": "flow volume per corridor"
+      }
+    }
+  ]
+}

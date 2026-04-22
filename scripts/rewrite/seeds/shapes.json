@@ -1,0 +1,980 @@
+{
+  "_meta": {
+    "description": "Algorithmic shapes present in the CodeBite catalog, indexed by tag. Each shape lists worlds (from worlds.json) where the shape lands naturally, with a one-line hint on how it maps. Use during a rewrite to pick a world whose vocabulary hosts the shape without contortion.",
+    "usage": "Given a problem's tag and the rough algorithmic move it makes, find the matching sub_shape, pick one of its worlds, and write the rewrite in that world's vocabulary.",
+    "shape_id_style": "verb_noun_modifier (no canonical-problem names)"
+  },
+  "tags": {
+    "Arrays & Hashing": {
+      "sub_shapes": [
+        {
+          "id": "pair_sum_to_target",
+          "summary": "Locate two elements (by index) whose values sum to a target.",
+          "worlds": [
+            {"id": "warehouse_logistics", "hint": "Two shelves whose combined widget count equals an order size."},
+            {"id": "grocery_checkout", "hint": "Two items whose prices sum to a coupon threshold."},
+            {"id": "concert_ticketing", "hint": "Two tier prices that together match a spending budget."}
+          ]
+        },
+        {
+          "id": "collection_duplicate_presence",
+          "summary": "Detect whether any value repeats in a collection.",
+          "worlds": [
+            {"id": "library_catalog", "hint": "Two copies with identical call numbers on the same shelf."},
+            {"id": "news_aggregator", "hint": "Two headlines with identical slugs in the ingest buffer."},
+            {"id": "postal_sorting", "hint": "Two parcels with the same tracking code scanned in one bag."}
+          ]
+        },
+        {
+          "id": "multiset_equivalence",
+          "summary": "Test whether two sequences use the same multiset of tokens.",
+          "worlds": [
+            {"id": "bakery_ovens", "hint": "Two recipes that call for the same multiset of ingredients."},
+            {"id": "recycling_plant", "hint": "Two bales whose material mixes are permutations of each other."},
+            {"id": "film_production", "hint": "Two shot lists that use the same set of props in different order."}
+          ]
+        },
+        {
+          "id": "grouping_by_fingerprint",
+          "summary": "Bucket items by a canonical signature (e.g. sorted characters).",
+          "worlds": [
+            {"id": "news_aggregator", "hint": "Cluster articles by normalized topic fingerprint."},
+            {"id": "library_catalog", "hint": "Group books by a normalized-title signature."},
+            {"id": "vineyard", "hint": "Group barrels by their tasting-note signature."}
+          ]
+        },
+        {
+          "id": "top_k_by_frequency",
+          "summary": "Return the k items with highest occurrence count.",
+          "worlds": [
+            {"id": "postal_sorting", "hint": "The k most common destination zone codes in a shift."},
+            {"id": "observatory", "hint": "The k most frequently requested targets in a week."},
+            {"id": "gym_bookings", "hint": "The k most booked machines today."}
+          ]
+        },
+        {
+          "id": "self_exclusion_product",
+          "summary": "For each index, compute an aggregate over all other elements (e.g. product).",
+          "worlds": [
+            {"id": "manufacturing_line", "hint": "Station throughput as the product of all other stations' rates."},
+            {"id": "farm_irrigation", "hint": "Per-plot flow share excluding that plot's own draw."},
+            {"id": "weather_station", "hint": "Per-station anomaly contribution excluding self."}
+          ]
+        },
+        {
+          "id": "longest_consecutive_run",
+          "summary": "Longest run of consecutive integers present in a set.",
+          "worlds": [
+            {"id": "library_catalog", "hint": "Longest run of consecutive call numbers present on a shelf."},
+            {"id": "concert_ticketing", "hint": "Longest block of consecutive seat numbers still available."},
+            {"id": "warehouse_logistics", "hint": "Longest run of consecutive bin numbers fully stocked."}
+          ]
+        },
+        {
+          "id": "rule_satisfiability_grid",
+          "summary": "Verify each row/column/block of a grid obeys a uniqueness or sum rule.",
+          "worlds": [
+            {"id": "vineyard", "hint": "Each block (row/col/region) must include each grape variety exactly once."},
+            {"id": "aquarium_tanks", "hint": "Each row of tanks must host each species exactly once."}
+          ]
+        }
+      ]
+    },
+    "Two Pointers": {
+      "sub_shapes": [
+        {
+          "id": "palindromic_sequence_check",
+          "summary": "Converging pointers to test mirror equality.",
+          "worlds": [
+            {"id": "library_catalog", "hint": "A call-number string that reads the same forward and backward."},
+            {"id": "film_production", "hint": "A shot sequence whose opening and closing shots mirror each other."}
+          ]
+        },
+        {
+          "id": "sorted_pair_sum",
+          "summary": "Two-pointer scan on a sorted array to hit a target sum.",
+          "worlds": [
+            {"id": "warehouse_logistics", "hint": "Two shelves on a sorted rack whose stock sums to an order."},
+            {"id": "bakery_ovens", "hint": "Two trays on a sorted bake roster whose combined count matches demand."}
+          ]
+        },
+        {
+          "id": "triple_sum_zero",
+          "summary": "Fix one index, two-pointer the rest for a three-element target.",
+          "worlds": [
+            {"id": "emergency_dispatch", "hint": "Three calls whose priority deltas cancel out."},
+            {"id": "manufacturing_line", "hint": "Three stations whose cycle-time surpluses and deficits sum to zero."}
+          ]
+        },
+        {
+          "id": "max_area_between_bars",
+          "summary": "Pick two index positions to maximize a width × min-height area.",
+          "worlds": [
+            {"id": "farm_irrigation", "hint": "Two reservoir walls framing the largest capacity pool."},
+            {"id": "recycling_plant", "hint": "Two partition walls framing the largest bale footprint."}
+          ]
+        },
+        {
+          "id": "in_place_compaction",
+          "summary": "Two-pointer in-place dedup or shift.",
+          "worlds": [
+            {"id": "grocery_checkout", "hint": "Collapse duplicate barcodes in the scanned list in place."},
+            {"id": "postal_sorting", "hint": "Push unscannable pieces to the end of a tray without reallocating."}
+          ]
+        }
+      ]
+    },
+    "Sliding Window": {
+      "sub_shapes": [
+        {
+          "id": "best_entry_exit_single_pass",
+          "summary": "One pass keeping running min and best spread.",
+          "worlds": [
+            {"id": "farm_irrigation", "hint": "Best drain/fill gap over a moisture-reading series."},
+            {"id": "weather_station", "hint": "Biggest temperature swing from a day's low to a later high."}
+          ]
+        },
+        {
+          "id": "longest_distinct_window",
+          "summary": "Variable-size window expanding while tokens stay unique.",
+          "worlds": [
+            {"id": "news_aggregator", "hint": "Longest run of headlines without repeating a topic."},
+            {"id": "recycling_plant", "hint": "Longest conveyor stretch without a material repeat."}
+          ]
+        },
+        {
+          "id": "minimum_cover_window",
+          "summary": "Shrink-and-grow window that must cover a required multiset.",
+          "worlds": [
+            {"id": "library_catalog", "hint": "Shortest shelf span covering every required section."},
+            {"id": "bakery_ovens", "hint": "Shortest baking run covering every required recipe."}
+          ]
+        },
+        {
+          "id": "fixed_window_aggregate",
+          "summary": "Fixed-size window with running max / sum / count.",
+          "worlds": [
+            {"id": "smart_home_iot", "hint": "Max event rate in any 10-minute sliding window."},
+            {"id": "traffic_grid", "hint": "Max flow across any contiguous 5-intersection stretch."}
+          ]
+        },
+        {
+          "id": "longest_window_with_budget",
+          "summary": "Variable window where at most k edits/replacements/violations allowed.",
+          "worlds": [
+            {"id": "manufacturing_line", "hint": "Longest production run tolerating at most k defects."},
+            {"id": "concert_ticketing", "hint": "Longest block of seats tolerating at most k holds."}
+          ]
+        }
+      ]
+    },
+    "Stack": {
+      "sub_shapes": [
+        {
+          "id": "balanced_brackets",
+          "summary": "Push opening, pop on matching close; fail fast.",
+          "worlds": [
+            {"id": "print_shop", "hint": "Nested print-job groups must open and close in order."},
+            {"id": "film_production", "hint": "Scene-take markers must nest (slate/cut) correctly."}
+          ]
+        },
+        {
+          "id": "postfix_evaluation",
+          "summary": "Operand-stack evaluation of postfix tokens.",
+          "worlds": [
+            {"id": "recycling_plant", "hint": "Compose bale weights using postfix merge operations."},
+            {"id": "emergency_dispatch", "hint": "Fold severity ops given in postfix order."}
+          ]
+        },
+        {
+          "id": "monotonic_next_greater",
+          "summary": "Monotonic stack to resolve next-greater/smaller per index.",
+          "worlds": [
+            {"id": "weather_station", "hint": "Days until a warmer reading per station."},
+            {"id": "concert_ticketing", "hint": "Nearest upcoming tier priced higher than this one."}
+          ]
+        },
+        {
+          "id": "nested_run_decoding",
+          "summary": "Stack-driven expansion of nested repeat groups.",
+          "worlds": [
+            {"id": "manufacturing_line", "hint": "Expand a compressed assembly plan with nested k(x) repeats."},
+            {"id": "courier_dispatch", "hint": "Expand a compressed route spec like 3(A-B-C)."}
+          ]
+        },
+        {
+          "id": "stack_with_min_query",
+          "summary": "Stack that answers min in O(1) via an auxiliary stack.",
+          "worlds": [
+            {"id": "hospital_triage", "hint": "Active-patient stack that reports lowest acuity on top in O(1)."},
+            {"id": "airport_ops", "hint": "Active-flight stack that reports earliest scheduled arrival in O(1)."}
+          ]
+        }
+      ]
+    },
+    "Binary Search": {
+      "sub_shapes": [
+        {
+          "id": "sorted_array_target",
+          "summary": "Classic binary search for a value or insertion point.",
+          "worlds": [
+            {"id": "library_catalog", "hint": "Locate a call number on a sorted shelf."},
+            {"id": "postal_sorting", "hint": "Locate a zone code in a sorted zone table."}
+          ]
+        },
+        {
+          "id": "rotated_sorted_target",
+          "summary": "Binary search on an array rotated once.",
+          "worlds": [
+            {"id": "subway_ops", "hint": "Find a station in a circular line list rotated by the current dispatch point."},
+            {"id": "observatory", "hint": "Find a target in a sorted catalog rotated by the night's start RA."}
+          ]
+        },
+        {
+          "id": "find_minimum_in_rotated",
+          "summary": "Binary search to find the pivot in a rotated array.",
+          "worlds": [
+            {"id": "subway_ops", "hint": "Identify the line's terminus in a rotated station list."},
+            {"id": "vineyard", "hint": "Identify the season-start block in a rotated harvest log."}
+          ]
+        },
+        {
+          "id": "minimum_rate_to_finish",
+          "summary": "Binary search the answer on a monotone feasibility predicate.",
+          "worlds": [
+            {"id": "farm_irrigation", "hint": "Minimum flow rate that drains all reservoirs before deadline."},
+            {"id": "recycling_plant", "hint": "Minimum conveyor speed that clears the day's material by close."}
+          ]
+        },
+        {
+          "id": "search_sorted_matrix",
+          "summary": "Binary search across a row- and column-sorted grid.",
+          "worlds": [
+            {"id": "traffic_grid", "hint": "Find a flow value in a row/column sorted intersection-density matrix."},
+            {"id": "vineyard", "hint": "Find a sugar reading in a row/column sorted block-by-row matrix."}
+          ]
+        }
+      ]
+    },
+    "Linked Lists": {
+      "sub_shapes": [
+        {
+          "id": "reverse_chain",
+          "summary": "Reverse pointer direction through a singly linked chain.",
+          "worlds": [
+            {"id": "courier_dispatch", "hint": "Reverse the order of stops in a route chain."},
+            {"id": "manufacturing_line", "hint": "Reverse a conveyor-linked station chain."}
+          ]
+        },
+        {
+          "id": "cycle_detection",
+          "summary": "Floyd's tortoise-and-hare or hashset over chain nodes.",
+          "worlds": [
+            {"id": "subway_ops", "hint": "Detect whether a line's transfer chain loops back on itself."},
+            {"id": "postal_sorting", "hint": "Detect a forwarding loop in a redirect chain."}
+          ]
+        },
+        {
+          "id": "merge_sorted_chains",
+          "summary": "Interleave two sorted chains into one sorted chain.",
+          "worlds": [
+            {"id": "bakery_ovens", "hint": "Merge two oven rotation chains into one master rotation."},
+            {"id": "hospital_triage", "hint": "Merge two wards' patient queues (each already acuity-sorted)."}
+          ]
+        },
+        {
+          "id": "reorder_alternating",
+          "summary": "Rearrange a chain into L0, Ln, L1, Ln-1, ... style interleaving.",
+          "worlds": [
+            {"id": "film_production", "hint": "Interleave opening and closing-scene shots into a trailer cut."},
+            {"id": "courier_dispatch", "hint": "Interleave far- and near-stops into a balanced route."}
+          ]
+        },
+        {
+          "id": "remove_nth_from_end",
+          "summary": "Two-pointer skip to remove the k-th node from tail.",
+          "worlds": [
+            {"id": "gym_bookings", "hint": "Drop the k-th booking from the end of the day's reservation chain."},
+            {"id": "print_shop", "hint": "Cancel the k-th-from-last job in a printer queue chain."}
+          ]
+        }
+      ]
+    },
+    "Trees": {
+      "sub_shapes": [
+        {
+          "id": "depth_first_traversal",
+          "summary": "Recursive or stack-based DFS over a rooted tree.",
+          "worlds": [
+            {"id": "library_catalog", "hint": "Walk the Dewey classification tree, emitting call numbers in order."},
+            {"id": "postal_sorting", "hint": "Walk the region→city→postcode tree top-down."}
+          ]
+        },
+        {
+          "id": "level_order_traversal",
+          "summary": "BFS over a rooted tree emitting nodes by depth.",
+          "worlds": [
+            {"id": "airport_ops", "hint": "List airline→aircraft→flight by depth level."},
+            {"id": "warehouse_logistics", "hint": "List assembly→subassembly→part by depth level."}
+          ]
+        },
+        {
+          "id": "mirror_tree",
+          "summary": "Swap left and right children recursively.",
+          "worlds": [
+            {"id": "film_production", "hint": "Mirror a scene-breakdown tree for a reverse-chronology edit."},
+            {"id": "vineyard", "hint": "Mirror a blending tree to test symmetric flavor profiles."}
+          ]
+        },
+        {
+          "id": "tree_depth_or_size",
+          "summary": "Measure max depth or node count of a tree.",
+          "worlds": [
+            {"id": "library_catalog", "hint": "Deepest sub-classification under a given Dewey root."},
+            {"id": "postal_sorting", "hint": "Deepest zone-hierarchy chain."}
+          ]
+        },
+        {
+          "id": "binary_search_tree_invariant",
+          "summary": "Verify in-order ascending or range containment at every node.",
+          "worlds": [
+            {"id": "hospital_triage", "hint": "Verify patient-priority tree satisfies BST order per ward."},
+            {"id": "observatory", "hint": "Verify target-catalog tree respects RA-ordering."}
+          ]
+        },
+        {
+          "id": "lowest_common_ancestor",
+          "summary": "Find the deepest node that has both query nodes in its subtree.",
+          "worlds": [
+            {"id": "warehouse_logistics", "hint": "Deepest shared assembly containing two specific parts."},
+            {"id": "courier_dispatch", "hint": "Deepest common hub in the depot→hub→route tree for two stops."}
+          ]
+        },
+        {
+          "id": "path_sum_root_to_leaf",
+          "summary": "Enumerate root-to-leaf paths with a value predicate on the sum.",
+          "worlds": [
+            {"id": "film_production", "hint": "Root-to-leaf runtime sum for any branch of the act tree."},
+            {"id": "vineyard", "hint": "Root-to-leaf yield totals for any vineyard block path."}
+          ]
+        },
+        {
+          "id": "serialize_deserialize",
+          "summary": "Encode a tree to a string and rebuild it without loss.",
+          "worlds": [
+            {"id": "courier_dispatch", "hint": "Persist a depot tree as a string and restore it after restart."},
+            {"id": "news_aggregator", "hint": "Persist a topic taxonomy for cold-start rehydration."}
+          ]
+        },
+        {
+          "id": "silhouette_view",
+          "summary": "Project the tree to a one-sided silhouette (right/left/top).",
+          "worlds": [
+            {"id": "vineyard", "hint": "Rightmost visible block per tier in a hierarchical vineyard map."},
+            {"id": "warehouse_logistics", "hint": "Rightmost shelf per level as seen from the dock."}
+          ]
+        }
+      ]
+    },
+    "Tries": {
+      "sub_shapes": [
+        {
+          "id": "prefix_insert_lookup",
+          "summary": "Trie supporting insert, exact-match, and prefix-match queries.",
+          "worlds": [
+            {"id": "postal_sorting", "hint": "Zone-code trie for live routing queries."},
+            {"id": "library_catalog", "hint": "Call-number trie for prefix-based shelving queries."}
+          ]
+        },
+        {
+          "id": "autocomplete_rank",
+          "summary": "Prefix tree that returns top-k completions by recency or frequency.",
+          "worlds": [
+            {"id": "news_aggregator", "hint": "Top-k headline completions given a prefix."},
+            {"id": "gym_bookings", "hint": "Top-k machine-name completions on the booking screen."}
+          ]
+        },
+        {
+          "id": "stream_of_tokens_match",
+          "summary": "Per-character trie walker checking if any inserted word matches a suffix.",
+          "worlds": [
+            {"id": "recycling_plant", "hint": "Sticky-pattern detector over rolling material codes."},
+            {"id": "smart_home_iot", "hint": "Sensor-event-stream pattern matcher against an inserted pattern set."}
+          ]
+        }
+      ]
+    },
+    "Heap / Priority Queue": {
+      "sub_shapes": [
+        {
+          "id": "k_smallest_or_largest",
+          "summary": "Bounded min- or max-heap holding the best k seen.",
+          "worlds": [
+            {"id": "observatory", "hint": "The k brightest targets observed tonight."},
+            {"id": "emergency_dispatch", "hint": "The k highest-priority calls waiting."}
+          ]
+        },
+        {
+          "id": "k_closest_to_anchor",
+          "summary": "Top-k heap keyed by distance to a reference point.",
+          "worlds": [
+            {"id": "courier_dispatch", "hint": "The k stops closest to the depot."},
+            {"id": "traffic_grid", "hint": "The k intersections closest to an incident."}
+          ]
+        },
+        {
+          "id": "merge_k_sorted_streams",
+          "summary": "Min-heap over stream heads, pop-and-advance.",
+          "worlds": [
+            {"id": "weather_station", "hint": "Merge readings from many stations into one time-ordered stream."},
+            {"id": "print_shop", "hint": "Merge per-printer queues (each priority-sorted) into one dispatch."}
+          ]
+        },
+        {
+          "id": "running_median_from_stream",
+          "summary": "Two-heap structure maintaining median as values arrive.",
+          "worlds": [
+            {"id": "smart_home_iot", "hint": "Running median temperature as sensor events arrive."},
+            {"id": "traffic_grid", "hint": "Running median wait time as incidents arrive."}
+          ]
+        },
+        {
+          "id": "schedule_with_cooldown",
+          "summary": "Heap-driven scheduler enforcing a cooldown per task class.",
+          "worlds": [
+            {"id": "manufacturing_line", "hint": "Schedule station jobs with a mandatory cool-down between same-type jobs."},
+            {"id": "bakery_ovens", "hint": "Schedule bakes with a recovery window between same-recipe bakes."}
+          ]
+        }
+      ]
+    },
+    "Backtracking": {
+      "sub_shapes": [
+        {
+          "id": "all_subsets",
+          "summary": "Enumerate every subset via include/exclude recursion.",
+          "worlds": [
+            {"id": "film_production", "hint": "Enumerate every subset of scenes that could form a montage."},
+            {"id": "vineyard", "hint": "Enumerate every subset of barrels that could form a blend."}
+          ]
+        },
+        {
+          "id": "all_permutations",
+          "summary": "Enumerate orderings by swap or visited-mask recursion.",
+          "worlds": [
+            {"id": "manufacturing_line", "hint": "Enumerate orderings of a station visit for a single product."},
+            {"id": "courier_dispatch", "hint": "Enumerate stop orderings for a short route."}
+          ]
+        },
+        {
+          "id": "combinations_summing_to_target",
+          "summary": "Backtrack combinations (with or without repetition) hitting a target sum.",
+          "worlds": [
+            {"id": "grocery_checkout", "hint": "All item combos (with repeats) whose prices sum exactly to a voucher."},
+            {"id": "print_shop", "hint": "All job-size combos summing exactly to a batch quota."}
+          ]
+        },
+        {
+          "id": "palindrome_partition",
+          "summary": "Partition a sequence into segments, each satisfying a predicate.",
+          "worlds": [
+            {"id": "news_aggregator", "hint": "Partition a headline into palindrome-shaped sub-phrases."},
+            {"id": "film_production", "hint": "Partition a script into mirror-structured acts."}
+          ]
+        },
+        {
+          "id": "word_search_in_grid",
+          "summary": "DFS with visit-mask through a grid to match a target sequence.",
+          "worlds": [
+            {"id": "theme_park", "hint": "Trace a named path through adjacent zone letters on a park map."},
+            {"id": "vineyard", "hint": "Trace a variety name through adjacent-block letter codes."}
+          ]
+        },
+        {
+          "id": "n_placements_no_conflict",
+          "summary": "Place n items on an n×n grid with conflict constraints.",
+          "worlds": [
+            {"id": "airport_ops", "hint": "Place n aircraft on n parallel taxiways with spacing rules."},
+            {"id": "aquarium_tanks", "hint": "Place n species on an n×n tank grid with predator-row/diagonal exclusions."}
+          ]
+        }
+      ]
+    },
+    "Graphs": {
+      "sub_shapes": [
+        {
+          "id": "connected_components",
+          "summary": "Count separate components via DFS/BFS or union-find.",
+          "worlds": [
+            {"id": "farm_irrigation", "hint": "Count isolated valve clusters in the pipe network."},
+            {"id": "smart_home_iot", "hint": "Count independent device sub-meshes."}
+          ]
+        },
+        {
+          "id": "flood_fill_region",
+          "summary": "Paint-bucket over a 4- or 8-connected grid.",
+          "worlds": [
+            {"id": "farm_irrigation", "hint": "Flood-fill all plots sharing a moisture level with a seed plot."},
+            {"id": "vineyard", "hint": "Flood-fill all blocks sharing a variety with a seed block."}
+          ]
+        },
+        {
+          "id": "shortest_path_unit_grid",
+          "summary": "BFS shortest path on an unweighted grid.",
+          "worlds": [
+            {"id": "theme_park", "hint": "Fewest walk-segments from a gate to an attraction."},
+            {"id": "traffic_grid", "hint": "Fewest blocks between two intersections avoiding closures."}
+          ]
+        },
+        {
+          "id": "clone_graph",
+          "summary": "Deep-copy a node-and-edge graph preserving structure.",
+          "worlds": [
+            {"id": "subway_ops", "hint": "Deep-copy a line network for offline analysis."},
+            {"id": "smart_home_iot", "hint": "Snapshot a device mesh for a what-if simulation."}
+          ]
+        },
+        {
+          "id": "multi_source_bfs_spread",
+          "summary": "Simultaneous BFS from several sources tracking spread layers.",
+          "worlds": [
+            {"id": "hospital_triage", "hint": "Simultaneous spread of infection markers from multiple initial patients."},
+            {"id": "emergency_dispatch", "hint": "Simultaneous coverage spread from deployed responders."}
+          ]
+        },
+        {
+          "id": "one_step_token_transform",
+          "summary": "Shortest transformation chain where each step swaps one token.",
+          "worlds": [
+            {"id": "recycling_plant", "hint": "Shortest reconfiguration chain altering one sort station at a time."},
+            {"id": "warehouse_logistics", "hint": "Shortest shelf-label edit chain, one character change at a time."}
+          ]
+        },
+        {
+          "id": "count_regions_in_grid",
+          "summary": "Count 1-valued regions in a 0/1 grid.",
+          "worlds": [
+            {"id": "vineyard", "hint": "Count contiguous planted regions in a field grid."},
+            {"id": "recycling_plant", "hint": "Count contiguous contamination patches on the sort-floor grid."}
+          ]
+        },
+        {
+          "id": "topological_ordering",
+          "summary": "Order vertices so that every edge goes forward.",
+          "worlds": [
+            {"id": "film_production", "hint": "Order scenes respecting shooting-prerequisite edges."},
+            {"id": "manufacturing_line", "hint": "Order assembly steps respecting parts-ready precedence."}
+          ]
+        }
+      ]
+    },
+    "Advanced Graphs": {
+      "sub_shapes": [
+        {
+          "id": "shortest_weighted_path",
+          "summary": "Dijkstra shortest path on a non-negative-weighted graph.",
+          "worlds": [
+            {"id": "courier_dispatch", "hint": "Fastest route between two stops on a weighted road graph."},
+            {"id": "airport_ops", "hint": "Cheapest routing between two airports with per-leg cost."}
+          ]
+        },
+        {
+          "id": "shortest_with_negatives",
+          "summary": "Bellman-Ford on a graph that may carry negative edges.",
+          "worlds": [
+            {"id": "grocery_checkout", "hint": "Best path through promotions that may apply negative deltas."},
+            {"id": "emergency_dispatch", "hint": "Best routing when certain bypasses subtract cost."}
+          ]
+        },
+        {
+          "id": "minimum_spanning_network",
+          "summary": "MST via Kruskal or Prim on a connected weighted graph.",
+          "worlds": [
+            {"id": "farm_irrigation", "hint": "Minimum-total-length pipe plan connecting every valve."},
+            {"id": "smart_home_iot", "hint": "Minimum-total-latency mesh spanning every device."}
+          ]
+        },
+        {
+          "id": "order_with_prereqs",
+          "summary": "Topological sort returning a concrete ordering, or detecting impossibility.",
+          "worlds": [
+            {"id": "film_production", "hint": "Shoot-day ordering respecting scene prerequisite constraints."},
+            {"id": "manufacturing_line", "hint": "Assembly ordering respecting sub-part completion edges."}
+          ]
+        },
+        {
+          "id": "equivalence_by_union_find",
+          "summary": "Union-find to merge equivalence relations and answer connectivity queries.",
+          "worlds": [
+            {"id": "library_catalog", "hint": "Merge cross-reference equivalences between catalog entries."},
+            {"id": "courier_dispatch", "hint": "Merge zone equivalences as new road segments open."}
+          ]
+        },
+        {
+          "id": "single_traversal_uses_every_edge",
+          "summary": "Eulerian-path reconstruction.",
+          "worlds": [
+            {"id": "postal_sorting", "hint": "A single carrier route covering every street exactly once."},
+            {"id": "theme_park", "hint": "A single guided walk traversing every path exactly once."}
+          ]
+        }
+      ]
+    },
+    "Dynamic Programming": {
+      "sub_shapes": [
+        {
+          "id": "step_sum_1d",
+          "summary": "1-D recurrence where state[i] combines step-back states.",
+          "worlds": [
+            {"id": "farm_irrigation", "hint": "Ways to reach reservoir n taking 1 or 2 canal steps."},
+            {"id": "gym_bookings", "hint": "Distinct ways to fill a class schedule in 1- or 2-slot increments."}
+          ]
+        },
+        {
+          "id": "nonadjacent_pick_max",
+          "summary": "Max sum picking items with a no-adjacent constraint.",
+          "worlds": [
+            {"id": "farm_irrigation", "hint": "Max moisture harvest without irrigating two adjacent plots."},
+            {"id": "observatory", "hint": "Max total exposure picking targets with a no-adjacent-slew rule."}
+          ]
+        },
+        {
+          "id": "min_coins_to_amount",
+          "summary": "DP over denominations reaching a target with fewest units.",
+          "worlds": [
+            {"id": "postal_sorting", "hint": "Fewest bag sizes to fulfill an exact piece count."},
+            {"id": "print_shop", "hint": "Fewest paper-stack sizes summing exactly to a page quota."}
+          ]
+        },
+        {
+          "id": "longest_increasing_subsequence",
+          "summary": "O(n log n) or O(n^2) LIS over a value sequence.",
+          "worlds": [
+            {"id": "observatory", "hint": "Longest strictly increasing brightness sub-sequence across the night."},
+            {"id": "vineyard", "hint": "Longest strictly increasing sugar-reading sub-sequence across a block."}
+          ]
+        },
+        {
+          "id": "segment_into_dictionary",
+          "summary": "Partition a string into valid dictionary tokens.",
+          "worlds": [
+            {"id": "postal_sorting", "hint": "Segment a raw scan into valid zone-code tokens."},
+            {"id": "news_aggregator", "hint": "Segment a run-on headline into valid-topic tokens."}
+          ]
+        },
+        {
+          "id": "decode_digits_to_letters",
+          "summary": "Ways to decode a digit string given a code table.",
+          "worlds": [
+            {"id": "warehouse_logistics", "hint": "Ways to decode a raw pallet scan into valid SKU codes."},
+            {"id": "recycling_plant", "hint": "Ways to decode a raw material code stream into valid category codes."}
+          ]
+        },
+        {
+          "id": "partition_into_equal_sum",
+          "summary": "Decide whether the set can split into two equal-sum halves.",
+          "worlds": [
+            {"id": "emergency_dispatch", "hint": "Split pending calls into two equal-load shifts."},
+            {"id": "recycling_plant", "hint": "Split bales into two equal-weight truckloads."}
+          ]
+        },
+        {
+          "id": "max_contiguous_sum",
+          "summary": "Kadane-style running-best contiguous aggregation.",
+          "worlds": [
+            {"id": "weather_station", "hint": "Best contiguous span of positive-anomaly readings."},
+            {"id": "farm_irrigation", "hint": "Best contiguous run of net-positive flow readings."}
+          ]
+        }
+      ]
+    },
+    "2D Dynamic Programming": {
+      "sub_shapes": [
+        {
+          "id": "unique_paths_grid",
+          "summary": "Count paths through a grid obeying move rules.",
+          "worlds": [
+            {"id": "theme_park", "hint": "Count distinct walk routes from the gate to a target attraction."},
+            {"id": "warehouse_logistics", "hint": "Count forklift routes from dock to target shelf."}
+          ]
+        },
+        {
+          "id": "min_path_sum_grid",
+          "summary": "DP over a grid of costs minimizing start-to-end total.",
+          "worlds": [
+            {"id": "traffic_grid", "hint": "Min-wait route from one intersection to another."},
+            {"id": "farm_irrigation", "hint": "Min-pump-energy path across the field to reach a reservoir."}
+          ]
+        },
+        {
+          "id": "longest_common_subsequence",
+          "summary": "2-D DP comparing two sequences.",
+          "worlds": [
+            {"id": "library_catalog", "hint": "Longest overlap between two shelves' call-number sequences."},
+            {"id": "film_production", "hint": "Longest overlap between two cuts' scene lists."}
+          ]
+        },
+        {
+          "id": "edit_distance",
+          "summary": "2-D DP over insert/delete/replace operations.",
+          "worlds": [
+            {"id": "postal_sorting", "hint": "Min edits to convert one zone code into another."},
+            {"id": "news_aggregator", "hint": "Min edits to convert one headline template into another."}
+          ]
+        },
+        {
+          "id": "interleaving_two_sequences",
+          "summary": "2-D DP deciding whether c is a valid interleave of a and b.",
+          "worlds": [
+            {"id": "print_shop", "hint": "Decide whether a combined queue is a valid interleave of two single-printer queues."},
+            {"id": "manufacturing_line", "hint": "Decide whether a combined output is a valid interleave of two lines."}
+          ]
+        },
+        {
+          "id": "distinct_subsequences",
+          "summary": "2-D DP counting ways to obtain t as a subsequence of s.",
+          "worlds": [
+            {"id": "recycling_plant", "hint": "Ways to detect a target pattern as a subsequence of a material stream."},
+            {"id": "observatory", "hint": "Ways to find a target filter sequence as a subsequence of the night's filter log."}
+          ]
+        }
+      ]
+    },
+    "Greedy": {
+      "sub_shapes": [
+        {
+          "id": "reach_end_with_jumps",
+          "summary": "Greedily extend reachable frontier to test end-reachability.",
+          "worlds": [
+            {"id": "courier_dispatch", "hint": "Decide whether a van can reach the final stop given per-stop fuel gain."},
+            {"id": "manufacturing_line", "hint": "Decide whether production can complete given per-station slack."}
+          ]
+        },
+        {
+          "id": "circular_start_feasibility",
+          "summary": "Single pass finding a valid start for a circular net-flow.",
+          "worlds": [
+            {"id": "subway_ops", "hint": "Start station from which a train can complete a full loop given per-leg energy."},
+            {"id": "farm_irrigation", "hint": "Start valve from which a loop flush completes given per-segment flow."}
+          ]
+        },
+        {
+          "id": "interval_selection_max_count",
+          "summary": "Greedy activity selection by earliest end time.",
+          "worlds": [
+            {"id": "restaurant_reservations", "hint": "Max non-overlapping reservations on one table."},
+            {"id": "observatory", "hint": "Max non-overlapping observation windows tonight."}
+          ]
+        },
+        {
+          "id": "group_into_equal_runs",
+          "summary": "Decide whether a multiset can be grouped into runs of length k.",
+          "worlds": [
+            {"id": "bakery_ovens", "hint": "Decide whether the day's bakes can be grouped into runs of k consecutive recipes."},
+            {"id": "manufacturing_line", "hint": "Decide whether jobs can be grouped into k-length assembly runs."}
+          ]
+        },
+        {
+          "id": "greedy_merge_nonoverlap",
+          "summary": "Sort intervals and sweep to merge overlapping ones.",
+          "worlds": [
+            {"id": "hospital_triage", "hint": "Merge overlapping clinician shifts."},
+            {"id": "theme_park", "hint": "Merge overlapping ride-closure windows into a maintenance blackout list."}
+          ]
+        }
+      ]
+    },
+    "Intervals": {
+      "sub_shapes": [
+        {
+          "id": "merge_overlapping",
+          "summary": "Sort and sweep to collapse overlapping intervals.",
+          "worlds": [
+            {"id": "restaurant_reservations", "hint": "Collapse overlapping table blocks into continuous occupancy."},
+            {"id": "emergency_dispatch", "hint": "Collapse overlapping responder shifts."}
+          ]
+        },
+        {
+          "id": "insert_and_merge",
+          "summary": "Insert a new interval and merge overlaps.",
+          "worlds": [
+            {"id": "observatory", "hint": "Insert a new observing window and merge with existing ones."},
+            {"id": "hospital_triage", "hint": "Insert a new OR booking and merge with existing bookings."}
+          ]
+        },
+        {
+          "id": "nonoverlap_remove_min",
+          "summary": "Remove the fewest intervals to leave a non-overlapping set.",
+          "worlds": [
+            {"id": "print_shop", "hint": "Drop fewest print jobs so remaining jobs never clash for a printer."},
+            {"id": "gym_bookings", "hint": "Drop fewest class bookings so no coach is double-booked."}
+          ]
+        },
+        {
+          "id": "meeting_rooms_needed",
+          "summary": "Sweep with a count to find the peak simultaneous intervals.",
+          "worlds": [
+            {"id": "hospital_triage", "hint": "Peak number of simultaneously occupied ORs."},
+            {"id": "airport_ops", "hint": "Peak number of simultaneously occupied gates."}
+          ]
+        },
+        {
+          "id": "conflict_detection_calendar",
+          "summary": "Detect overlapping bookings in a list.",
+          "worlds": [
+            {"id": "restaurant_reservations", "hint": "Detect double-booked tables in a reservation list."},
+            {"id": "film_production", "hint": "Detect crew conflicts across scene windows."}
+          ]
+        }
+      ]
+    },
+    "Math & Geometry": {
+      "sub_shapes": [
+        {
+          "id": "fast_power",
+          "summary": "Exponentiation by squaring.",
+          "worlds": [
+            {"id": "smart_home_iot", "hint": "Raise a device state matrix to the n-th step via repeated squaring."},
+            {"id": "weather_station", "hint": "Forecast n steps ahead by repeated squaring of a transition matrix."}
+          ]
+        },
+        {
+          "id": "integer_sqrt",
+          "summary": "Binary-search or Newton-style integer square root.",
+          "worlds": [
+            {"id": "farm_irrigation", "hint": "Largest square plot side fitting in an area budget."},
+            {"id": "aquarium_tanks", "hint": "Largest square tank side fitting a volume budget."}
+          ]
+        },
+        {
+          "id": "sieve_for_primes",
+          "summary": "Sieve of Eratosthenes counting primes under n.",
+          "worlds": [
+            {"id": "library_catalog", "hint": "Count prime-numbered call slots under a cap."},
+            {"id": "theme_park", "hint": "Count prime-numbered attraction IDs under a cap."}
+          ]
+        },
+        {
+          "id": "geometric_equivalence",
+          "summary": "Test whether four points form a target shape (e.g. square).",
+          "worlds": [
+            {"id": "vineyard", "hint": "Test whether four blocks form a perfect square."},
+            {"id": "traffic_grid", "hint": "Test whether four intersections form a perfect square."}
+          ]
+        },
+        {
+          "id": "rotate_grid_in_place",
+          "summary": "In-place 90° rotation of a square matrix.",
+          "worlds": [
+            {"id": "aquarium_tanks", "hint": "Rotate a square tank grid 90° to re-orient the room."},
+            {"id": "vineyard", "hint": "Rotate a block grid 90° for a re-layout plan."}
+          ]
+        },
+        {
+          "id": "spiral_order_traversal",
+          "summary": "Emit grid elements in outward spiral order.",
+          "worlds": [
+            {"id": "warehouse_logistics", "hint": "Emit shelves in outward spiral order from the dock."},
+            {"id": "traffic_grid", "hint": "Emit intersections in outward spiral order from downtown."}
+          ]
+        }
+      ]
+    },
+    "Bit Manipulation": {
+      "sub_shapes": [
+        {
+          "id": "xor_pairs_cancel",
+          "summary": "XOR a sequence; values occurring twice cancel to 0.",
+          "worlds": [
+            {"id": "smart_home_iot", "hint": "Find the one sensor whose ID appears odd times in the event log."},
+            {"id": "postal_sorting", "hint": "Find the one parcel whose code appears odd times across scan stations."}
+          ]
+        },
+        {
+          "id": "count_one_bits",
+          "summary": "Count set bits (Brian Kernighan / 2-bit batching).",
+          "worlds": [
+            {"id": "recycling_plant", "hint": "Count active sort-station bits in a binary status word."},
+            {"id": "emergency_dispatch", "hint": "Count raised-priority bits in a dispatch status word."}
+          ]
+        },
+        {
+          "id": "reverse_bits_32",
+          "summary": "Reverse bit order within a fixed-width word.",
+          "worlds": [
+            {"id": "smart_home_iot", "hint": "Reverse the bit order of a device-mask word for legacy firmware."},
+            {"id": "manufacturing_line", "hint": "Reverse a station-status bitmask for protocol compatibility."}
+          ]
+        },
+        {
+          "id": "missing_from_range",
+          "summary": "Find the single value missing from 0..n using XOR or sum.",
+          "worlds": [
+            {"id": "library_catalog", "hint": "Locate the one missing call-slot in the 0..n range."},
+            {"id": "theme_park", "hint": "Locate the one missing pass ID in the 0..n range."}
+          ]
+        },
+        {
+          "id": "addition_without_plus",
+          "summary": "Add using bit-xor and carry-shift iteration.",
+          "worlds": [
+            {"id": "smart_home_iot", "hint": "Sum two readings on a device with no arithmetic ALU, only bit ops."},
+            {"id": "manufacturing_line", "hint": "Sum two counters on a controller that exposes only bit ops."}
+          ]
+        }
+      ]
+    },
+    "Design": {
+      "sub_shapes": [
+        {
+          "id": "bounded_cache_recent",
+          "summary": "Cache with capacity that evicts the least-recently used.",
+          "worlds": [
+            {"id": "news_aggregator", "hint": "Bounded recent-article cache; evict least recently served."},
+            {"id": "library_catalog", "hint": "Bounded recent-checkout cache; evict least recently touched."}
+          ]
+        },
+        {
+          "id": "bounded_cache_frequency",
+          "summary": "Cache with capacity that evicts the least-frequently used.",
+          "worlds": [
+            {"id": "print_shop", "hint": "Bounded font cache; evict the least-used font under capacity."},
+            {"id": "smart_home_iot", "hint": "Bounded rule cache; evict the least-frequently triggered rule."}
+          ]
+        },
+        {
+          "id": "stack_with_min_query",
+          "summary": "Stack that reports running minimum in O(1).",
+          "worlds": [
+            {"id": "hospital_triage", "hint": "Active-patient stack answering lowest-acuity in O(1)."},
+            {"id": "airport_ops", "hint": "Active-flight stack answering earliest-scheduled in O(1)."}
+          ]
+        },
+        {
+          "id": "versioned_keyvalue",
+          "summary": "Time- or version-keyed store with latest-before-timestamp lookup.",
+          "worlds": [
+            {"id": "weather_station", "hint": "Per-station reading store; fetch latest reading at-or-before t."},
+            {"id": "observatory", "hint": "Per-target calibration store; fetch latest calibration at-or-before t."}
+          ]
+        },
+        {
+          "id": "window_counter",
+          "summary": "Count events in a sliding time window.",
+          "worlds": [
+            {"id": "smart_home_iot", "hint": "Count device events in the last w seconds."},
+            {"id": "traffic_grid", "hint": "Count incidents in the last w minutes."}
+          ]
+        },
+        {
+          "id": "random_pick_from_dynamic_set",
+          "summary": "Set supporting insert/remove/get-random in O(1) average.",
+          "worlds": [
+            {"id": "gym_bookings", "hint": "Active-member pool supporting insert/remove and uniform random pick."},
+            {"id": "theme_park", "hint": "Live-guest pool supporting insert/remove and uniform random prize pick."}
+          ]
+        }
+      ]
+    }
+  }
+}
