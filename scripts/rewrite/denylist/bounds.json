@@ -1,0 +1,72 @@
+{
+  "_meta": {
+    "description": "Numeric bound patterns that appear repeatedly in canonical problem sets. When a rewrite's constraints section matches one of these, prefer the CodeBite doctrine bound from cdoctrine_hint instead.",
+    "match_mode": "regex_case_insensitive_on_constraints_field"
+  },
+  "forbidden_regex": [
+    {
+      "regex": "10\\s*\\^\\s*4",
+      "rationale": "Very common small-array bound in well-known problem sets. Replace with 2x10^3 / 5x10^4 / 2x10^5 per CodeBite doctrine."
+    },
+    {
+      "regex": "10\\s*\\^\\s*5",
+      "rationale": "Common medium-array bound. Replace with 5x10^4 or 2x10^5 per doctrine."
+    },
+    {
+      "regex": "10\\s*\\^\\s*9",
+      "rationale": "Common value bound (-10^9 to 10^9). Replace with 10^8 per doctrine."
+    },
+    {
+      "regex": "10\\s*\\^\\s*6",
+      "rationale": "Common value/length bound. Replace with context-appropriate doctrine bound."
+    },
+    {
+      "regex": "2\\s*\\^\\s*31",
+      "rationale": "Avoid referencing INT_MAX this way. Use absolute value like 10^8 or 2x10^9 if really needed."
+    },
+    {
+      "regex": "3\\s*\\*\\s*10\\s*\\^\\s*4",
+      "rationale": "Decisive fingerprint from canonical design-problem call counts. Use 2x10^4 or 5x10^4."
+    },
+    {
+      "regex": "5\\s*\\*\\s*10\\s*\\^\\s*4",
+      "rationale": "Tolerable; prefer 2x10^4 or 8x10^4 for distinctiveness."
+    },
+    {
+      "regex": "2\\s*\\*\\s*10\\s*\\^\\s*4",
+      "rationale": "Borderline. Prefer 2x10^3 / 2x10^5 buckets from doctrine."
+    },
+    {
+      "regex": "9\\s*x\\s*9|9\\s*×\\s*9",
+      "rationale": "Canonical Sudoku grid size. If a Sudoku-style problem, change grid size (e.g., 4x4 minigrid or NxN general)."
+    },
+    {
+      "regex": "\\b300\\b\\s*(seconds|calls|operations|queries)",
+      "rationale": "Canonical design-problem window / trace length. Replace with 180 / 500 / another distinctive number."
+    },
+    {
+      "regex": "10\\s*\\^\\s*4\\s*(calls|operations|queries|method)",
+      "rationale": "Common design-problem call cap. Change to 1.5x10^4 or 8x10^3 etc."
+    },
+    {
+      "regex": "2\\^31\\s*-\\s*1",
+      "rationale": "Avoid referencing INT_MAX this way."
+    },
+    {
+      "regex": "-?2\\^31",
+      "rationale": "Avoid integer bound phrased as 2^31."
+    },
+    {
+      "regex": "\\bASCII\\b",
+      "rationale": "Soft warn — fine to keep but consider rephrasing 'printable ASCII' to 'lowercase Latin letters' etc. for tighter bounds."
+    }
+  ],
+  "cdoctrine_hint": {
+    "small":  "n <= 2 * 10^3  (n^2 viable)",
+    "medium": "n <= 5 * 10^4  (n log n viable)",
+    "large":  "n <= 2 * 10^5  (requires O(n) or O(n log n))",
+    "values": "|v| <= 10^8",
+    "queries": "q <= 10^4",
+    "judge0_limits": "wall=2s, memory=256MB (verify from infra/)"
+  }
+}
