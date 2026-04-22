@@ -1,5 +1,0 @@
-class Solution {
-    nextPermutation(nums) {
-
-    }
-}

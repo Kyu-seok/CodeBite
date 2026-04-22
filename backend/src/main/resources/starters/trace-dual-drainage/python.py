@@ -1,0 +1,4 @@
+class Solution:
+    def traceDualDrainage(self, heights: list[list[int]]) -> list[list[int]]:
+        # Write your solution here
+        pass

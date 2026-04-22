@@ -1,0 +1,5 @@
+class Solution {
+    listSlateSequences(n) {
+
+    }
+}

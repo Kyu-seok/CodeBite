@@ -1,0 +1,10 @@
+class Solution {
+    /**
+     * @param {string} s
+     * @param {number} k
+     * @return {number}
+     */
+    countUniqueTopics(s, k) {
+        // Write your solution here
+    }
+}

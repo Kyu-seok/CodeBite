@@ -1,5 +1,0 @@
-class Solution {
-    generateParenthesis(n) {
-
-    }
-}

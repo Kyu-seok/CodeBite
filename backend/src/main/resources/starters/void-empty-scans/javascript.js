@@ -1,0 +1,5 @@
+class Solution {
+    voidEmptyScans(nums) {
+
+    }
+}

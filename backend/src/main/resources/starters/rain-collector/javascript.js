@@ -1,5 +1,0 @@
-class Solution {
-    trap(height) {
-
-    }
-}

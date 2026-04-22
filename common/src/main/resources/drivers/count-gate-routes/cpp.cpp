@@ -1,0 +1,13 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+
+{USER_CODE}
+
+int main() {
+    int m, n;
+    cin >> m >> n;
+    int result = Solution().countGateRoutes(m, n);
+    cout << result << endl;
+    return 0;
+}

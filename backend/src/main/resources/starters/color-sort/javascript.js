@@ -1,5 +1,0 @@
-class Solution {
-    sortColors(nums) {
-
-    }
-}

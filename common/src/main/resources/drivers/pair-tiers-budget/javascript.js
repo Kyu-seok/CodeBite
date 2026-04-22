@@ -1,0 +1,8 @@
+{USER_CODE}
+
+const input = require('fs').readFileSync('/dev/stdin', 'utf8').trim();
+const lines = input.split('\n');
+const numbers = JSON.parse(lines[0]);
+const target = parseInt(lines[1]);
+const result = new Solution().pairTiersBudget(numbers, target);
+console.log(JSON.stringify(result));
