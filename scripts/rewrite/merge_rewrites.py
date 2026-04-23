@@ -19,7 +19,7 @@ Each input file is a JSON list of entries:
 Validation:
   1. Required keys present; sample_test_cases is a list of >= 2 entries.
   2. `slug` appears as a `new_slug` in master-mapping (or equals the
-     pilot slug `shelf-stock-pair`).
+     pilot slug `snack-drawer-pair`).
   3. Each sample has `order_index`, `input`, `expected_output` as strings
      and preserves the current per-problem line count in `input` (guards
      against accidental driver-format changes).
@@ -133,7 +133,7 @@ def main() -> int:
                    help="directory of per-tag rewrite JSON files")
     p.add_argument("--master-mapping", default="/tmp/rewrite-workspace/data/master-mapping.json")
     p.add_argument("--test-cases", default="/tmp/rewrite-workspace/data/test_cases.json")
-    p.add_argument("--pilot-slug", default="shelf-stock-pair",
+    p.add_argument("--pilot-slug", default="snack-drawer-pair",
                    help="slug whose rename came via a dedicated pilot commit, "
                         "not present in master-mapping")
     p.add_argument("--denylist-dir", default=None)

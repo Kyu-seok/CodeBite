@@ -22,7 +22,7 @@ class DriverCodeLoaderTest {
     @Test
     void loadsAllJavaTemplates() {
         assertNotNull(loader.getDriverCode("pair-sum", "java"));
-        assertNotNull(loader.getDriverCode("string-codec", "java"));
+        assertNotNull(loader.getDriverCode("chat-log-codec", "java"));
         assertNotNull(loader.getDriverCode("k-most-frequent", "java"));
         assertNotNull(loader.getDriverCode("bracket-validator", "java"));
         assertNotNull(loader.getDriverCode("find-duplicates", "java"));
@@ -31,7 +31,7 @@ class DriverCodeLoaderTest {
     @Test
     void loadsAllPythonTemplates() {
         assertNotNull(loader.getDriverCode("pair-sum", "python"));
-        assertNotNull(loader.getDriverCode("string-codec", "python"));
+        assertNotNull(loader.getDriverCode("chat-log-codec", "python"));
         assertNotNull(loader.getDriverCode("k-most-frequent", "python"));
         assertNotNull(loader.getDriverCode("bracket-validator", "python"));
         assertNotNull(loader.getDriverCode("find-duplicates", "python"));
@@ -78,7 +78,7 @@ class DriverCodeLoaderTest {
 
     @Test
     void javaStringCodecDriver_usesJsonOutput() {
-        String template = loader.getDriverCode("string-codec", "java");
+        String template = loader.getDriverCode("chat-log-codec", "java");
         assertTrue(template.contains("JsonOutput.stringList("));
         assertTrue(template.contains("class JsonOutput"));
     }
@@ -100,7 +100,7 @@ class DriverCodeLoaderTest {
     @Test
     void loadsAllJavascriptTemplates() {
         assertNotNull(loader.getDriverCode("pair-sum", "javascript"));
-        assertNotNull(loader.getDriverCode("string-codec", "javascript"));
+        assertNotNull(loader.getDriverCode("chat-log-codec", "javascript"));
         assertNotNull(loader.getDriverCode("k-most-frequent", "javascript"));
         assertNotNull(loader.getDriverCode("bracket-validator", "javascript"));
         assertNotNull(loader.getDriverCode("find-duplicates", "javascript"));
@@ -109,7 +109,7 @@ class DriverCodeLoaderTest {
     @Test
     void loadsAllCppTemplates() {
         assertNotNull(loader.getDriverCode("pair-sum", "cpp"));
-        assertNotNull(loader.getDriverCode("string-codec", "cpp"));
+        assertNotNull(loader.getDriverCode("chat-log-codec", "cpp"));
         assertNotNull(loader.getDriverCode("k-most-frequent", "cpp"));
         assertNotNull(loader.getDriverCode("bracket-validator", "cpp"));
         assertNotNull(loader.getDriverCode("find-duplicates", "cpp"));
@@ -120,8 +120,8 @@ class DriverCodeLoaderTest {
         String twoSum = loader.getDriverCode("pair-sum", "javascript");
         assertTrue(twoSum.contains("JSON.stringify("));
 
-        String stringCodec = loader.getDriverCode("string-codec", "javascript");
-        assertTrue(stringCodec.contains("JSON.stringify("));
+        String chatLogCodec = loader.getDriverCode("chat-log-codec", "javascript");
+        assertTrue(chatLogCodec.contains("JSON.stringify("));
 
         String kMostFrequent = loader.getDriverCode("k-most-frequent", "javascript");
         assertTrue(kMostFrequent.contains("JSON.stringify("));
@@ -136,7 +136,7 @@ class DriverCodeLoaderTest {
 
     @Test
     void cppStringCodecDriver_usesJsonOutput() {
-        String template = loader.getDriverCode("string-codec", "cpp");
+        String template = loader.getDriverCode("chat-log-codec", "cpp");
         assertTrue(template.contains("JsonOutput::stringVector("));
         assertTrue(template.contains("class JsonOutput"));
     }
@@ -153,8 +153,8 @@ class DriverCodeLoaderTest {
         String twoSum = loader.getDriverCode("pair-sum", "python");
         assertTrue(twoSum.contains("json.dumps("));
 
-        String stringCodec = loader.getDriverCode("string-codec", "python");
-        assertTrue(stringCodec.contains("json.dumps("));
+        String chatLogCodec = loader.getDriverCode("chat-log-codec", "python");
+        assertTrue(chatLogCodec.contains("json.dumps("));
 
         String kMostFrequent = loader.getDriverCode("k-most-frequent", "python");
         assertTrue(kMostFrequent.contains("json.dumps("));
