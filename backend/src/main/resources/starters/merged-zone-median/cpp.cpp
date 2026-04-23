@@ -1,6 +1,6 @@
 class Solution {
 public:
-    double mergedZoneMedian(vector<int>& nums1, vector<int>& nums2) {
+    double mergedZoneMedian(vector<int>& zonesA, vector<int>& zonesB) {
         // Write your solution here
     }
 };

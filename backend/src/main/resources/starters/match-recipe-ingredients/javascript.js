@@ -1,10 +1,10 @@
 class Solution {
     /**
-     * @param {string} s
-     * @param {string} t
+     * @param {string} mixA
+     * @param {string} mixB
      * @return {boolean}
      */
-    matchRecipe(s, t) {
+    matchRecipe(mixA, mixB) {
         // Write your solution here
     }
 }

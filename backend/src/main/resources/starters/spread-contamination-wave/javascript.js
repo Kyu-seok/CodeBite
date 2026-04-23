@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {number[][]} grid
+     * @param {number[][]} ward
      * @return {number}
      */
-    spreadContaminationWave(grid) {
+    spreadContaminationWave(ward) {
         // Write your solution here
     }
 }

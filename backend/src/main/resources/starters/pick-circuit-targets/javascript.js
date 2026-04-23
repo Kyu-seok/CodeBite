@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {number[]} nums
+     * @param {number[]} yields
      * @return {number}
      */
-    pickCircuitTargets(nums) {
+    pickCircuitTargets(yields) {
         // Write your solution here
     }
 }

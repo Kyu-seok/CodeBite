@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {string[][]} tickets
+     * @param {string[][]} routes
      * @return {string[]}
      */
-    traceStreetSweep(tickets) {
+    traceStreetSweep(routes) {
         // Write your solution here
     }
 }

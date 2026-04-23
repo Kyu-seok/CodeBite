@@ -1,5 +1,5 @@
 class Solution {
-    public boolean matchesZoneAnagram(String s1, String s2) {
+    public boolean matchesZoneAnagram(String pattern, String log) {
 
     }
 }

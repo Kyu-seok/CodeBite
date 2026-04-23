@@ -1,6 +1,6 @@
 class Solution {
 public:
-    int buildMirrorLength(string s) {
+    int buildMirrorLength(string word) {
         // Write your solution here
     }
 };

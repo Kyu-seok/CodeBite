@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {number[]} nums
+     * @param {number[]} books
      * @return {number}
      */
-    compactShelf(nums) {
+    compactShelf(books) {
         // Write your solution here
     }
 }

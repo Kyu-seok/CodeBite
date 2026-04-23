@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {number[][]} people
+     * @param {number[][]} players
      * @return {number[][]}
      */
-    orderTicketHolders(people) {
+    orderTicketHolders(players) {
         // Write your solution here
     }
 }

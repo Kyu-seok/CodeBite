@@ -1,5 +1,5 @@
 class Solution {
-    public int countGateRoutes(int m, int n) {
+    public int countGateRoutes(int rows, int cols) {
         // Write your solution here
     }
 }

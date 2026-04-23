@@ -3,7 +3,7 @@ using namespace std;
 
 class Solution {
 public:
-    vector<int> sequenceAssemblySteps(int numCourses, vector<vector<int>>& prerequisites) {
+    vector<int> sequenceAssemblySteps(int numSteps, vector<vector<int>>& prereqs) {
         // Write your solution here
     }
 };

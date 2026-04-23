@@ -1,6 +1,6 @@
 class Solution {
 public:
-    bool canBalanceJobs(string s) {
+    bool canBalanceJobs(string tags) {
         // Write your solution here
     }
 };

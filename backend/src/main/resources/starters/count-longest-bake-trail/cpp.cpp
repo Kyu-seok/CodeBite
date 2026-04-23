@@ -1,6 +1,6 @@
 class Solution {
 public:
-    int countLongestTrail(vector<int>& nums) {
+    int countLongestTrail(vector<int>& scores) {
         // Write your solution here
     }
 };

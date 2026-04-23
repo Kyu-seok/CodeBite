@@ -1,5 +1,5 @@
 class Solution {
-    public int pickCircuitTargets(int[] nums) {
+    public int pickCircuitTargets(int[] yields) {
         // Write your solution here
     }
 }

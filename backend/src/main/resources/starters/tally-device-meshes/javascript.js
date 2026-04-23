@@ -1,10 +1,10 @@
 class Solution {
     /**
      * @param {number} n
-     * @param {number[][]} edges
+     * @param {number[][]} relays
      * @return {number}
      */
-    tallyDeviceMeshes(n, edges) {
+    tallyDeviceMeshes(n, relays) {
         // Write your solution here
     }
 }

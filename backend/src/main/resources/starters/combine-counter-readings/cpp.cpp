@@ -1,6 +1,6 @@
 class Solution {
 public:
-    int combineCounters(int a, int b) {
+    int combineCounters(int firstCount, int secondCount) {
         // Write your solution here
     }
 };

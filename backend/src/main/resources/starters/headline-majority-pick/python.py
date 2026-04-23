@@ -1,6 +1,6 @@
 from typing import List
 
 class Solution:
-    def majorityHeadline(self, nums: List[int]) -> int:
+    def majorityHeadline(self, votes: List[int]) -> int:
         # Write your solution here
         pass

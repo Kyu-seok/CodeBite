@@ -1,6 +1,6 @@
 from typing import List
 
 class Solution:
-    def clearDefectRows(self, matrix: List[List[int]]) -> None:
+    def clearDefectRows(self, board: List[List[int]]) -> None:
         # Write your solution here
         pass

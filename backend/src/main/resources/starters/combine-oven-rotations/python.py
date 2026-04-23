@@ -6,6 +6,6 @@ class ListNode:
         self.next = next
 
 class Solution:
-    def combineOvenRotations(self, list1: Optional[ListNode], list2: Optional[ListNode]) -> Optional[ListNode]:
+    def combineOvenRotations(self, runA: Optional[ListNode], runB: Optional[ListNode]) -> Optional[ListNode]:
         # Write your solution here
         pass

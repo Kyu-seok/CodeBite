@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {number[][]} matrix
+     * @param {number[][]} board
      * @return {void}
      */
-    clearDefectRows(matrix) {
+    clearDefectRows(board) {
         // Write your solution here
     }
 }

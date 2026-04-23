@@ -1,10 +1,10 @@
 class Solution {
     /**
-     * @param {number[]} candidates
-     * @param {number} target
+     * @param {number[]} pastries
+     * @param {number} tab
      * @return {number[][]}
      */
-    listQuotaBatches(candidates, target) {
+    listQuotaBatches(pastries, tab) {
         // Write your solution here
     }
 }

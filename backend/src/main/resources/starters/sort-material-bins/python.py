@@ -1,5 +1,5 @@
 from typing import List
 
 class Solution:
-    def sortMaterials(self, nums: List[int]) -> None:
+    def sortMaterials(self, supplies: List[int]) -> None:
         pass

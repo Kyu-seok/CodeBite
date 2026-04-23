@@ -1,6 +1,6 @@
 class Solution {
 public:
-    bool isReversibleCode(int x) {
+    bool isReversibleCode(int code) {
         // Write your solution here
     }
 };

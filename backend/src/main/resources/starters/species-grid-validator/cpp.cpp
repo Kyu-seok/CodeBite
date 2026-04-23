@@ -1,6 +1,6 @@
 class Solution {
 public:
-    bool verifySpeciesGrid(vector<vector<char>>& board) {
+    bool verifySpeciesGrid(vector<vector<char>>& grid) {
         // Write your solution here
     }
 };

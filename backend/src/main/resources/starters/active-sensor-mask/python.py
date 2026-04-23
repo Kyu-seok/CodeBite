@@ -1,4 +1,4 @@
 class Solution:
-    def hamming_weight(self, n: int) -> int:
+    def hamming_weight(self, sensorMask: int) -> int:
         # Write your solution here
         pass

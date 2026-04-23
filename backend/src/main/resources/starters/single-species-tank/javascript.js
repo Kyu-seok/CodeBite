@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {number} n
+     * @param {number} specimenCount
      * @return {boolean}
      */
-    isSoloSpecies(n) {
+    isSoloSpecies(specimenCount) {
         // Write your solution here
     }
 }

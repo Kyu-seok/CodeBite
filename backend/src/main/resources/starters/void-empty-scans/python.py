@@ -1,5 +1,5 @@
 from typing import List
 
 class Solution:
-    def voidEmptyScans(self, nums: List[int]) -> None:
+    def voidEmptyScans(self, scans: List[int]) -> None:
         pass

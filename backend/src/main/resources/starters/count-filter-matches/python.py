@@ -1,4 +1,4 @@
 class Solution:
-    def countFilterMatches(self, s: str, t: str) -> int:
+    def countFilterMatches(self, notes: str, target: str) -> int:
         # Write your solution here
         pass

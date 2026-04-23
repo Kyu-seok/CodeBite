@@ -1,13 +1,13 @@
 class Solution {
     /**
      * @param {number} n
-     * @param {number[][]} flights
+     * @param {number[][]} links
      * @param {number} src
      * @param {number} dst
-     * @param {number} k
+     * @param {number} maxHops
      * @return {number}
      */
-    relayDispatchCost(n, flights, src, dst, k) {
+    relayDispatchCost(n, links, src, dst, maxHops) {
         // Write your solution here
     }
 }

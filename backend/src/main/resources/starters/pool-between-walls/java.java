@@ -1,5 +1,5 @@
 class Solution {
-    public int poolBetweenWalls(int[] height) {
+    public int poolBetweenWalls(int[] wallHeight) {
 
     }
 }

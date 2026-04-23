@@ -1,4 +1,4 @@
 class Solution:
-    def canBalanceJobs(self, s: str) -> bool:
+    def canBalanceJobs(self, tags: str) -> bool:
         # Write your solution here
         pass

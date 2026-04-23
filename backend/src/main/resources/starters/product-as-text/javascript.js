@@ -1,10 +1,10 @@
 class Solution {
     /**
-     * @param {string} num1
-     * @param {string} num2
+     * @param {string} left
+     * @param {string} right
      * @return {string}
      */
-    productAsText(num1, num2) {
+    productAsText(left, right) {
         // Write your solution here
     }
 }

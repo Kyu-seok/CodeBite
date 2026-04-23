@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {number[]} nums
+     * @param {number[]} stops
      * @return {number[][]}
      */
-    listStationOrders(nums) {
+    listStationOrders(stops) {
         // Write your solution here
     }
 }

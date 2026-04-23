@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {number[]} nums
+     * @param {number[]} readings
      * @return {number}
      */
-    pinpointPeak(nums) {
+    pinpointPeak(readings) {
         // Write your solution here
     }
 }

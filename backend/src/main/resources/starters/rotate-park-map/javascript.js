@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {number[][]} matrix
+     * @param {number[][]} cafeMap
      * @return {void}
      */
-    rotateParkMap(matrix) {
+    rotateParkMap(cafeMap) {
         // Write your solution here
     }
 }

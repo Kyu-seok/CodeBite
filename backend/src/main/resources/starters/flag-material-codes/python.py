@@ -1,4 +1,4 @@
 class Solution:
-    def flagMaterialCodes(self, board: list[list[str]], words: list[str]) -> list[str]:
+    def flagMaterialCodes(self, board: list[list[str]], targetWords: list[str]) -> list[str]:
         # Write your solution here
         pass

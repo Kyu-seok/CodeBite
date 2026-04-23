@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {number[][]} intervals
+     * @param {number[][]} seatings
      * @return {number[][]}
      */
-    mergeSeatingWindows(intervals) {
+    mergeSeatingWindows(seatings) {
         // Write your solution here
     }
 }

@@ -1,4 +1,4 @@
 class Solution:
-    def frameLargestBale(self, height: list[int]) -> int:
+    def frameLargestBale(self, lockers: list[int]) -> int:
         # Write your solution here
         pass

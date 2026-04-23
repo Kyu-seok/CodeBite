@@ -1,6 +1,6 @@
 class Solution {
 public:
-    void sortMaterials(vector<int>& nums) {
+    void sortMaterials(vector<int>& supplies) {
 
     }
 };

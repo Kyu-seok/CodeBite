@@ -1,5 +1,5 @@
 class Solution {
-    public boolean splitIntoTwoShifts(int[][] graph) {
+    public boolean splitIntoTwoShifts(int[][] conflicts) {
         // Write your solution here
     }
 }

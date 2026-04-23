@@ -1,11 +1,11 @@
 class Solution {
     /**
-     * @param {string[][]} equations
+     * @param {string[][]} ratios
      * @param {number[]} values
      * @param {string[][]} queries
      * @return {number[]}
      */
-    resolvePriceRatios(equations, values, queries) {
+    resolvePriceRatios(ratios, values, queries) {
         // Write your solution here
     }
 }

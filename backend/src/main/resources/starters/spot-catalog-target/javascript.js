@@ -1,10 +1,10 @@
 class Solution {
     /**
-     * @param {number[]} nums
+     * @param {number[]} catalog
      * @param {number} target
      * @return {number}
      */
-    spotCatalogTarget(nums, target) {
+    spotCatalogTarget(catalog, target) {
         // Write your solution here
     }
 }

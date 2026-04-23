@@ -1,10 +1,10 @@
 class Solution {
     /**
-     * @param {number[]} nums
+     * @param {number[]} readings
      * @param {number} k
      * @return {number}
      */
-    countWindowTallies(nums, k) {
+    countWindowTallies(readings, k) {
         // Write your solution here
     }
 }

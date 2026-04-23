@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {number[]} nums
+     * @param {number[]} traffic
      * @return {number}
      */
-    bestFlowStreak(nums) {
+    bestFlowStreak(traffic) {
         // Write your solution here
     }
 }

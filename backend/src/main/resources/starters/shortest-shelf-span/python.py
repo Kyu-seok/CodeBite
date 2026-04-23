@@ -1,4 +1,4 @@
 class Solution:
-    def shortestShelfSpan(self, s: str, t: str) -> str:
+    def shortestShelfSpan(self, shelf: str, needed: str) -> str:
         # Write your solution here
         pass

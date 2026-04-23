@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {number[]} nums
+     * @param {number[]} rates
      * @return {number[]}
      */
-    computeStationShare(nums) {
+    computeStationShare(rates) {
         // Write your solution here
     }
 }

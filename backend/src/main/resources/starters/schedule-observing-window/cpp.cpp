@@ -3,7 +3,7 @@ using namespace std;
 
 class Solution {
 public:
-    vector<vector<int>> scheduleObservingWindow(vector<vector<int>>& intervals, vector<int>& newInterval) {
+    vector<vector<int>> scheduleObservingWindow(vector<vector<int>>& slots, vector<int>& newSlot) {
         // Write your solution here
     }
 };

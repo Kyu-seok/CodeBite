@@ -1,5 +1,5 @@
 class Solution {
-    public List<List<String>> splitMirrorPhrases(String s) {
+    public List<List<String>> splitMirrorPhrases(String menu) {
         // Write your solution here
     }
 }

@@ -1,5 +1,5 @@
 class Solution {
-    public int findPeakGates(int[][] intervals) {
+    public int findPeakGates(int[][] visits) {
         // Write your solution here
     }
 }

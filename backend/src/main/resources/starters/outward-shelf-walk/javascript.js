@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {number[][]} matrix
+     * @param {number[][]} board
      * @return {number[]}
      */
-    traceOutwardWalk(matrix) {
+    traceOutwardWalk(board) {
         // Write your solution here
     }
 }

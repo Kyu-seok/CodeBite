@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {string[]} words
+     * @param {string[]} tags
      * @return {string}
      */
-    orderSceneShoot(words) {
+    orderSceneShoot(tags) {
         // Write your solution here
     }
 }

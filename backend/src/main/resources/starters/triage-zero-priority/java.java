@@ -1,5 +1,5 @@
 class Solution {
-    public List<List<Integer>> triageZeroPriority(int[] nums) {
+    public List<List<Integer>> triageZeroPriority(int[] deltas) {
         // Write your solution here
     }
 }

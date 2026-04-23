@@ -1,6 +1,6 @@
 class Solution {
 public:
-    int lowestMissingTarget(vector<int>& nums) {
+    int lowestMissingTarget(vector<int>& socks) {
 
     }
 };

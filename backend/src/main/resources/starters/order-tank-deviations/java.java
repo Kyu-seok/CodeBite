@@ -1,5 +1,5 @@
 class Solution {
-    public int[] orderTankDeviations(int[] nums) {
+    public int[] orderTankDeviations(int[] drifts) {
         // Write your solution here
     }
 }

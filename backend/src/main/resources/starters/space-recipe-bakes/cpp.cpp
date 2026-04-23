@@ -1,6 +1,6 @@
 class Solution {
 public:
-    string orderRecipeBakes(string s) {
+    string orderRecipeBakes(string cookies) {
         // Write your solution here
     }
 };

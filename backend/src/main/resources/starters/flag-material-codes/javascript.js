@@ -1,10 +1,10 @@
 class Solution {
     /**
      * @param {character[][]} board
-     * @param {string[]} words
+     * @param {string[]} targetWords
      * @return {string[]}
      */
-    flagMaterialCodes(board, words) {
+    flagMaterialCodes(board, targetWords) {
         // Write your solution here
     }
 }

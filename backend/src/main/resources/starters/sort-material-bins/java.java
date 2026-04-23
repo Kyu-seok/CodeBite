@@ -1,5 +1,5 @@
 class Solution {
-    public void sortMaterials(int[] nums) {
+    public void sortMaterials(int[] supplies) {
 
     }
 }

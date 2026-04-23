@@ -1,10 +1,10 @@
 class Solution {
     /**
-     * @param {number[]} coins
-     * @param {number} amount
+     * @param {number[]} bagSizes
+     * @param {number} quota
      * @return {number}
      */
-    fewestBagSizes(coins, amount) {
+    fewestBagSizes(bagSizes, quota) {
         // Write your solution here
     }
 }

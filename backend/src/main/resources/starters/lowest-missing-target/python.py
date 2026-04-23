@@ -1,5 +1,5 @@
 from typing import List
 
 class Solution:
-    def lowestMissingTarget(self, nums: List[int]) -> int:
+    def lowestMissingTarget(self, socks: List[int]) -> int:
         pass

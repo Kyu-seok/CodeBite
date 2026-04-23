@@ -1,5 +1,5 @@
 class Solution {
-    public boolean verifyMirrorCode(String s) {
+    public boolean verifyMirrorCode(String phrase) {
         // Write your solution here
     }
 }

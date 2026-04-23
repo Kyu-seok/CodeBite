@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {number[][]} heights
+     * @param {number[][]} field
      * @return {number[][]}
      */
-    traceDualDrainage(heights) {
+    traceDualDrainage(field) {
         // Write your solution here
     }
 }

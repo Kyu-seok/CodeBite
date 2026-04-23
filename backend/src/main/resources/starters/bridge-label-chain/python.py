@@ -1,4 +1,4 @@
 class Solution:
-    def bridgeLabelChain(self, beginWord: str, endWord: str, wordList: list[str]) -> int:
+    def bridgeLabelChain(self, startCode: str, targetCode: str, codeBank: list[str]) -> int:
         # Write your solution here
         pass

@@ -1,11 +1,11 @@
 class Solution {
     /**
-     * @param {number[][]} edges
+     * @param {number[][]} links
      * @param {number} n
      * @param {number} src
      * @return {number}
      */
-    propagateAlertWave(edges, n, src) {
+    propagateAlertWave(links, n, src) {
         // Write your solution here
     }
 }

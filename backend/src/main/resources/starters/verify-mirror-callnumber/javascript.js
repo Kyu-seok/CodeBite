@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {string} s
+     * @param {string} phrase
      * @return {boolean}
      */
-    verifyMirrorCode(s) {
+    verifyMirrorCode(phrase) {
         // Write your solution here
     }
 }

@@ -10,11 +10,11 @@ class ListNode {
 
 class Solution {
     /**
-     * @param {ListNode} l1
-     * @param {ListNode} l2
+     * @param {ListNode} score1
+     * @param {ListNode} score2
      * @return {ListNode}
      */
-    tallyPickRoutes(l1, l2) {
+    tallyPickRoutes(score1, score2) {
         // Write your solution here
     }
 }

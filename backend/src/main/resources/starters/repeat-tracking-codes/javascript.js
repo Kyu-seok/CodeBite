@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {number[]} nums
+     * @param {number[]} codes
      * @return {number[]}
      */
-    listRepeatedCodes(nums) {
+    listRepeatedCodes(codes) {
         // Write your solution here
     }
 }

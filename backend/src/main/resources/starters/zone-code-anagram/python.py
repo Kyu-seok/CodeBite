@@ -1,3 +1,3 @@
 class Solution:
-    def matchesZoneAnagram(self, s1: str, s2: str) -> bool:
+    def matchesZoneAnagram(self, pattern: str, log: str) -> bool:
         pass

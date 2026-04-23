@@ -1,4 +1,4 @@
 class Solution:
-    def matchRecipe(self, s: str, t: str) -> bool:
+    def matchRecipe(self, mixA: str, mixB: str) -> bool:
         # Write your solution here
         pass

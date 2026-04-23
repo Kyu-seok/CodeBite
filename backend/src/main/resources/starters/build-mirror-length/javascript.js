@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {string} s
+     * @param {string} word
      * @return {number}
      */
-    buildMirrorLength(s) {
+    buildMirrorLength(word) {
         // Write your solution here
     }
 }

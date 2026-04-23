@@ -1,10 +1,10 @@
 class Solution {
     /**
-     * @param {string} s
-     * @param {string[]} wordDict
+     * @param {string} headline
+     * @param {string[]} topics
      * @return {boolean}
      */
-    splitHeadlineTokens(s, wordDict) {
+    splitHeadlineTokens(headline, topics) {
         // Write your solution here
     }
 }

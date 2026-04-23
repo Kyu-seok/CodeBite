@@ -1,5 +1,5 @@
 class Solution {
-    public int relayDispatchCost(int n, int[][] flights, int src, int dst, int k) {
+    public int relayDispatchCost(int n, int[][] links, int src, int dst, int maxHops) {
         // Write your solution here
     }
 }

@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {number[]} nums
+     * @param {number[]} drifts
      * @return {number[]}
      */
-    orderTankDeviations(nums) {
+    orderTankDeviations(drifts) {
         // Write your solution here
     }
 }

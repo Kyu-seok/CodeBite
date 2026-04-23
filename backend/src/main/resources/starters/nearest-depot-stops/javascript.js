@@ -1,10 +1,10 @@
 class Solution {
     /**
-     * @param {number[][]} points
+     * @param {number[][]} stops
      * @param {number} k
      * @return {number[][]}
      */
-    selectNearestStops(points, k) {
+    selectNearestStops(stops, k) {
         // Write your solution here
     }
 }

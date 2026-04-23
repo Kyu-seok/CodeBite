@@ -1,4 +1,4 @@
 class Solution:
-    def verifySpeciesGrid(self, board: list[list[str]]) -> bool:
+    def verifySpeciesGrid(self, grid: list[list[str]]) -> bool:
         # Write your solution here
         pass

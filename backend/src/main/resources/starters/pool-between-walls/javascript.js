@@ -1,5 +1,5 @@
 class Solution {
-    poolBetweenWalls(height) {
+    poolBetweenWalls(wallHeight) {
 
     }
 }

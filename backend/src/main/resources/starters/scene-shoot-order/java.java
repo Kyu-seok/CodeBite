@@ -1,5 +1,5 @@
 class Solution {
-    public String orderSceneShoot(String[] words) {
+    public String orderSceneShoot(String[] tags) {
         // Write your solution here
     }
 }

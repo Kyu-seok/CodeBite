@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {number} n
+     * @param {number} sensorMask
      * @return {number}
      */
-    countActiveSensors(n) {
+    countActiveSensors(sensorMask) {
         // Write your solution here
     }
 }

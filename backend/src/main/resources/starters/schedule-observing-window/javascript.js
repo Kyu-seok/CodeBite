@@ -1,10 +1,10 @@
 class Solution {
     /**
-     * @param {number[][]} intervals
-     * @param {number[]} newInterval
+     * @param {number[][]} slots
+     * @param {number[]} newSlot
      * @return {number[][]}
      */
-    scheduleObservingWindow(intervals, newInterval) {
+    scheduleObservingWindow(slots, newSlot) {
         // Write your solution here
     }
 }

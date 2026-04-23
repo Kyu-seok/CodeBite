@@ -1,5 +1,5 @@
 class Solution {
-    public int buildMirrorLength(String s) {
+    public int buildMirrorLength(String word) {
         // Write your solution here
     }
 }

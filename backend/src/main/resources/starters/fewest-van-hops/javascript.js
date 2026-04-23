@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {number[]} nums
+     * @param {number[]} fuel
      * @return {number}
      */
-    minVanHops(nums) {
+    minVanHops(fuel) {
         // Write your solution here
     }
 }

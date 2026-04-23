@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {number[]} stones
+     * @param {number[]} blocks
      * @return {number}
      */
-    crushHeaviestBales(stones) {
+    crushHeaviestBales(blocks) {
         // Write your solution here
     }
 }

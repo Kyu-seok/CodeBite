@@ -1,5 +1,5 @@
 class Solution {
-    public void advanceShotOrder(int[] nums) {
+    public void advanceShotOrder(int[] shotOrder) {
 
     }
 }

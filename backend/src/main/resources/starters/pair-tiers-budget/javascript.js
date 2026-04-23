@@ -1,10 +1,10 @@
 class Solution {
     /**
-     * @param {number[]} numbers
-     * @param {number} target
+     * @param {number[]} menuPrice
+     * @param {number} budget
      * @return {number[]}
      */
-    pairTiersBudget(numbers, target) {
+    pairTiersBudget(menuPrice, budget) {
         // Write your solution here
     }
 }

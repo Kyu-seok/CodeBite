@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {number[][]} points
+     * @param {number[][]} bowls
      * @return {number}
      */
-    layPipeNetwork(points) {
+    layPipeNetwork(bowls) {
         // Write your solution here
     }
 }

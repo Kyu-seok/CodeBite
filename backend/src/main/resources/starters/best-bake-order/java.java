@@ -1,5 +1,5 @@
 class Solution {
-    public int bestBakeOrder(int[] nums) {
+    public int bestBakeOrder(int[] balloons) {
         // Write your solution here
     }
 }

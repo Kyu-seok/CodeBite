@@ -1,10 +1,10 @@
 class Solution {
     /**
      * @param {number} amount
-     * @param {number[]} coins
+     * @param {number[]} coupons
      * @return {number}
      */
-    countCouponCombos(amount, coins) {
+    countCouponCombos(amount, coupons) {
         // Write your solution here
     }
 }

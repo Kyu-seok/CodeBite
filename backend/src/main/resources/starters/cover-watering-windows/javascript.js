@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {number[][]} targets
+     * @param {number[][]} zones
      * @return {number}
      */
-    coverAllWindows(targets) {
+    coverAllWindows(zones) {
         // Write your solution here
     }
 }

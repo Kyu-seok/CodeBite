@@ -1,6 +1,6 @@
 class Solution {
 public:
-    void rotateParkMap(vector<vector<int>>& matrix) {
+    void rotateParkMap(vector<vector<int>>& cafeMap) {
         // Write your solution here
     }
 };

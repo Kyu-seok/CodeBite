@@ -1,5 +1,5 @@
 class Solution {
-    public void voidEmptyScans(int[] nums) {
+    public void voidEmptyScans(int[] scans) {
 
     }
 }

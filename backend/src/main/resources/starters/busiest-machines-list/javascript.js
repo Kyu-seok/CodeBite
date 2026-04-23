@@ -1,10 +1,10 @@
 class Solution {
     /**
-     * @param {number[]} nums
+     * @param {number[]} checkIns
      * @param {number} k
      * @return {number[]}
      */
-    busiestMachines(nums, k) {
+    busiestMachines(checkIns, k) {
         // Write your solution here
     }
 }

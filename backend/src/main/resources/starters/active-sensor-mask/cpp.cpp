@@ -1,6 +1,6 @@
 class Solution {
 public:
-    int countActiveSensors(int n) {
+    int countActiveSensors(int sensorMask) {
         // Write your solution here
     }
 };

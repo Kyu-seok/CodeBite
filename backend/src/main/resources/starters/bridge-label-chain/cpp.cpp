@@ -4,7 +4,7 @@ using namespace std;
 
 class Solution {
 public:
-    int bridgeLabelChain(string beginWord, string endWord, vector<string>& wordList) {
+    int bridgeLabelChain(string startCode, string targetCode, vector<string>& codeBank) {
         // Write your solution here
     }
 };

@@ -3,7 +3,7 @@ using namespace std;
 
 class Solution {
 public:
-    bool detectFlowValue(vector<vector<int>>& matrix, int target) {
+    bool detectFlowValue(vector<vector<int>>& menu, int target) {
         // Write your solution here
     }
 };

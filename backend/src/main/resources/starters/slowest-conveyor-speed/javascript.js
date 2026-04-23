@@ -1,10 +1,10 @@
 class Solution {
     /**
      * @param {number[]} piles
-     * @param {number} h
+     * @param {number} hours
      * @return {number}
      */
-    slowestConveyorSpeed(piles, h) {
+    slowestConveyorSpeed(piles, hours) {
         // Write your solution here
     }
 }

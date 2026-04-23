@@ -1,5 +1,5 @@
 class Solution {
-    public int decodeZoneNumeral(String s) {
+    public int decodeZoneNumeral(String numeral) {
         // Write your solution here
     }
 }

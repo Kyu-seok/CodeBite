@@ -1,10 +1,10 @@
 class Solution {
     /**
-     * @param {number} numCourses
-     * @param {number[][]} prerequisites
+     * @param {number} numScenes
+     * @param {number[][]} prereqs
      * @return {boolean}
      */
-    verifyShootPlan(numCourses, prerequisites) {
+    verifyShootPlan(numScenes, prereqs) {
         // Write your solution here
     }
 }

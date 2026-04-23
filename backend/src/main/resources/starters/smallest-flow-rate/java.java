@@ -1,5 +1,5 @@
 class Solution {
-    public int smallestFlowRate(int[] weights, int days) {
+    public int smallestFlowRate(int[] volumes, int days) {
         // Write your solution here
     }
 }

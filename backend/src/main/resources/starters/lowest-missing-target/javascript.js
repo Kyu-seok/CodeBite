@@ -1,5 +1,5 @@
 class Solution {
-    lowestMissingTarget(nums) {
+    lowestMissingTarget(socks) {
 
     }
 }

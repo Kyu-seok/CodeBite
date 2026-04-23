@@ -9,7 +9,7 @@
  * }
  */
 class Solution {
-    public ListNode tallyPickRoutes(ListNode l1, ListNode l2) {
+    public ListNode tallyPickRoutes(ListNode score1, ListNode score2) {
         // Write your solution here
     }
 }

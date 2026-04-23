@@ -1,6 +1,6 @@
 class Solution {
 public:
-    int foldBaleOps(vector<string>& tokens) {
+    int foldBaleOps(vector<string>& baleTape) {
 
     }
 };

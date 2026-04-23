@@ -1,4 +1,4 @@
 class Solution:
-    def isSoloSpecies(self, n: int) -> bool:
+    def isSoloSpecies(self, specimenCount: int) -> bool:
         # Write your solution here
         pass

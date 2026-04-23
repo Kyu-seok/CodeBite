@@ -1,6 +1,6 @@
 from typing import List
 
 class Solution:
-    def findBrightestTargets(self, nums: List[int], k: int) -> int:
+    def findBrightestTargets(self, scores: List[int], k: int) -> int:
         # Write your solution here
         pass

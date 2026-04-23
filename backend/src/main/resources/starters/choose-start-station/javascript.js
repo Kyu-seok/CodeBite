@@ -1,10 +1,10 @@
 class Solution {
     /**
-     * @param {number[]} gas
-     * @param {number[]} cost
+     * @param {number[]} energy
+     * @param {number[]} drain
      * @return {number}
      */
-    pickStartStation(gas, cost) {
+    pickStartStation(energy, drain) {
         // Write your solution here
     }
 }

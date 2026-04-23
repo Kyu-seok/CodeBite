@@ -1,6 +1,6 @@
 from typing import List
 
 class Solution:
-    def splitMirrorPhrases(self, s: str) -> List[List[str]]:
+    def splitMirrorPhrases(self, menu: str) -> List[List[str]]:
         # Write your solution here
         pass

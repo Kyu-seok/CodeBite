@@ -1,10 +1,10 @@
 class Solution {
     /**
-     * @param {number[]} nums
+     * @param {number[]} shelf
      * @param {number} target
      * @return {number}
      */
-    locateCallNumber(nums, target) {
+    locateCallNumber(shelf, target) {
         // Write your solution here
     }
 }

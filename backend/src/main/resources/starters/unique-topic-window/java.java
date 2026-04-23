@@ -1,5 +1,5 @@
 class Solution {
-    public int countUniqueTopics(String s, int k) {
+    public int countUniqueTopics(String queue, int k) {
         // Write your solution here
     }
 }

@@ -1,5 +1,5 @@
 class Solution {
-    sortMaterials(nums) {
+    sortMaterials(supplies) {
 
     }
 }

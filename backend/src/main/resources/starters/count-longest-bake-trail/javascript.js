@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {number[]} nums
+     * @param {number[]} scores
      * @return {number}
      */
-    countLongestTrail(nums) {
+    countLongestTrail(scores) {
         // Write your solution here
     }
 }

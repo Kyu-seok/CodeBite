@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {number[]} nums
+     * @param {number[]} snacks
      * @return {number}
      */
-    pickPlotHaul(nums) {
+    pickPlotHaul(snacks) {
         // Write your solution here
     }
 }

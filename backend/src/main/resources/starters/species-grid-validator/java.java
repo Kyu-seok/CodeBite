@@ -1,5 +1,5 @@
 class Solution {
-    public boolean verifySpeciesGrid(char[][] board) {
+    public boolean verifySpeciesGrid(char[][] grid) {
         // Write your solution here
     }
 }

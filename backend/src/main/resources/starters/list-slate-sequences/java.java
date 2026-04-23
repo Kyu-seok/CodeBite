@@ -1,5 +1,5 @@
 class Solution {
-    public List<String> listSlateSequences(int n) {
+    public List<String> listSlateSequences(int pairCount) {
 
     }
 }

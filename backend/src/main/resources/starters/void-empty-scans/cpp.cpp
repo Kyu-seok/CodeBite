@@ -1,6 +1,6 @@
 class Solution {
 public:
-    void voidEmptyScans(vector<int>& nums) {
+    void voidEmptyScans(vector<int>& scans) {
 
     }
 };

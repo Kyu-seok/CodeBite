@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {number[]} prevRoom
+     * @param {number[]} parent
      * @return {number}
      */
-    countAssemblyOrders(prevRoom) {
+    countAssemblyOrders(parent) {
         // Write your solution here
     }
 }

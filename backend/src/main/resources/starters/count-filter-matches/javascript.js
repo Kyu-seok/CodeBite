@@ -1,10 +1,10 @@
 class Solution {
     /**
-     * @param {string} s
-     * @param {string} t
+     * @param {string} notes
+     * @param {string} target
      * @return {number}
      */
-    countFilterMatches(s, t) {
+    countFilterMatches(notes, target) {
         // Write your solution here
     }
 }

@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {number[]} nums
+     * @param {number[]} trays
      * @return {boolean}
      */
-    verifyBakeOrder(nums) {
+    verifyBakeOrder(trays) {
         // Write your solution here
     }
 }

@@ -1,5 +1,5 @@
 class Solution {
-    public int countAssemblyOrders(int[] prevRoom) {
+    public int countAssemblyOrders(int[] parent) {
         // Write your solution here
     }
 }

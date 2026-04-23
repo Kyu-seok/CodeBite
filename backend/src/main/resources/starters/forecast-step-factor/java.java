@@ -1,5 +1,5 @@
 class Solution {
-    public double raiseForecastFactor(double x, int n) {
+    public double raiseForecastFactor(double base, int step) {
         // Write your solution here
     }
 }

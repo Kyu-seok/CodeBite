@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {character[][]} grid
+     * @param {character[][]} board
      * @return {number}
      */
-    tallyPlantedRegions(grid) {
+    tallyPlantedRegions(board) {
         // Write your solution here
     }
 }

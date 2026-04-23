@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {string} s
+     * @param {string} code
      * @return {number}
      */
-    countMirrorSpans(s) {
+    countMirrorSpans(code) {
         // Write your solution here
     }
 }

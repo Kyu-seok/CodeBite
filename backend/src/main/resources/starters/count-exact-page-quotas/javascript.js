@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {number} n
+     * @param {number} pages
      * @return {number}
      */
-    countExactTargets(n) {
+    countExactTargets(pages) {
         // Write your solution here
     }
 }

@@ -1,11 +1,11 @@
 class Solution {
     /**
-     * @param {string} s1
-     * @param {string} s2
-     * @param {string} s3
+     * @param {string} controllerA
+     * @param {string} controllerB
+     * @param {string} merged
      * @return {boolean}
      */
-    checkMergedQueue(s1, s2, s3) {
+    checkMergedQueue(controllerA, controllerB, merged) {
         // Write your solution here
     }
 }

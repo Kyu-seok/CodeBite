@@ -1,6 +1,6 @@
 class Solution {
 public:
-    bool checkMergedQueue(string s1, string s2, string s3) {
+    bool checkMergedQueue(string controllerA, string controllerB, string merged) {
         // Write your solution here
     }
 };

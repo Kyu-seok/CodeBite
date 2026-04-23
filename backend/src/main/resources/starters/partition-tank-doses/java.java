@@ -1,5 +1,5 @@
 class Solution {
-    public int partitionTankDoses(int[] nums, int target) {
+    public int partitionTankDoses(int[] tickets, int target) {
         // Write your solution here
     }
 }

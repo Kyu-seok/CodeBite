@@ -1,10 +1,10 @@
 class Solution {
     /**
-     * @param {number[][]} intervals
-     * @param {number[]} queries
+     * @param {number[][]} bookings
+     * @param {number[]} probes
      * @return {number[]}
      */
-    findTightestBooking(intervals, queries) {
+    findTightestBooking(bookings, probes) {
         // Write your solution here
     }
 }

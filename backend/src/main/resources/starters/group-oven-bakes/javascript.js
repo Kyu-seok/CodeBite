@@ -1,10 +1,10 @@
 class Solution {
     /**
-     * @param {number[]} hand
+     * @param {number[]} cards
      * @param {number} groupSize
      * @return {boolean}
      */
-    canGroupBakes(hand, groupSize) {
+    canGroupBakes(cards, groupSize) {
         // Write your solution here
     }
 }

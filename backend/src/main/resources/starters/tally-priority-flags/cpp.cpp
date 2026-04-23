@@ -1,6 +1,6 @@
 class Solution {
 public:
-    vector<int> tallyPriorityFlags(int n) {
+    vector<int> tallyPriorityFlags(int upperId) {
         // Write your solution here
     }
 };

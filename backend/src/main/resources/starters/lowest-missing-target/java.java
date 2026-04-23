@@ -1,5 +1,5 @@
 class Solution {
-    public int lowestMissingTarget(int[] nums) {
+    public int lowestMissingTarget(int[] socks) {
 
     }
 }

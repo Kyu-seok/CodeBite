@@ -1,10 +1,10 @@
 class Solution {
     /**
-     * @param {number[]} weights
+     * @param {number[]} crates
      * @param {number} capacity
      * @return {number}
      */
-    pairCrates(weights, capacity) {
+    pairCrates(crates, capacity) {
         // Write your solution here
     }
 }

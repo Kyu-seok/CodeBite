@@ -1,6 +1,6 @@
 class Solution {
 public:
-    bool isSoloSpecies(int n) {
+    bool isSoloSpecies(int specimenCount) {
         // Write your solution here
     }
 };

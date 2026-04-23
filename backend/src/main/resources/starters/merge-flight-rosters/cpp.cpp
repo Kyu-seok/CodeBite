@@ -13,7 +13,7 @@ using namespace std;
  */
 class Solution {
 public:
-    ListNode* mergeFlightRosters(vector<ListNode*>& lists) {
+    ListNode* mergeFlightRosters(vector<ListNode*>& queues) {
         // Write your solution here
     }
 };

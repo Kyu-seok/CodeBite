@@ -1,6 +1,6 @@
 class Solution {
 public:
-    bool verifyMirrorCode(string s) {
+    bool verifyMirrorCode(string phrase) {
         // Write your solution here
     }
 };

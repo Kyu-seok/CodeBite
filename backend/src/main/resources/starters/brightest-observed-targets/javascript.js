@@ -1,10 +1,10 @@
 class Solution {
     /**
-     * @param {number[]} nums
+     * @param {number[]} scores
      * @param {number} k
      * @return {number}
      */
-    findBrightestTargets(nums, k) {
+    findBrightestTargets(scores, k) {
         // Write your solution here
     }
 }

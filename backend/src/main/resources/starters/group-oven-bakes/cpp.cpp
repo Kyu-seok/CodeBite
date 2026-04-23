@@ -1,6 +1,6 @@
 class Solution {
 public:
-    bool canGroupBakes(vector<int>& hand, int groupSize) {
+    bool canGroupBakes(vector<int>& cards, int groupSize) {
         // Write your solution here
     }
 };

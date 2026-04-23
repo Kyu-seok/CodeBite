@@ -1,4 +1,4 @@
 class Solution:
-    def locateTerminus(self, nums: list[int]) -> int:
+    def locateTerminus(self, scores: list[int]) -> int:
         # Write your solution here
         pass

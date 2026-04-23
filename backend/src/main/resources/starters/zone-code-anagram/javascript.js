@@ -1,5 +1,5 @@
 class Solution {
-    matchesZoneAnagram(s1, s2) {
+    matchesZoneAnagram(pattern, log) {
 
     }
 }

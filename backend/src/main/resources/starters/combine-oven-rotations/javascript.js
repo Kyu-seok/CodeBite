@@ -10,11 +10,11 @@ class ListNode {
 
 class Solution {
     /**
-     * @param {ListNode} list1
-     * @param {ListNode} list2
+     * @param {ListNode} runA
+     * @param {ListNode} runB
      * @return {ListNode}
      */
-    combineOvenRotations(list1, list2) {
+    combineOvenRotations(runA, runB) {
         // Write your solution here
     }
 }

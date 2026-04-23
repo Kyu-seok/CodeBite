@@ -1,6 +1,6 @@
 class Solution {
 public:
-    string shortestShelfSpan(string s, string t) {
+    string shortestShelfSpan(string shelf, string needed) {
         // Write your solution here
     }
 };

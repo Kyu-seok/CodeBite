@@ -1,5 +1,5 @@
 class Solution {
-    public int[] resolveLaneCrashes(int[] rocks) {
+    public int[] resolveLaneCrashes(int[] fighters) {
         // Write your solution here
     }
 }

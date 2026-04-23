@@ -1,5 +1,5 @@
 class Solution {
-    public int[][] mergeSeatingWindows(int[][] intervals) {
+    public int[][] mergeSeatingWindows(int[][] seatings) {
         // Write your solution here
     }
 }

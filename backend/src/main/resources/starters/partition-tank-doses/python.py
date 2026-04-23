@@ -1,6 +1,6 @@
 from typing import List
 
 class Solution:
-    def partitionTankDoses(self, nums: List[int], target: int) -> int:
+    def partitionTankDoses(self, tickets: List[int], target: int) -> int:
         # Write your solution here
         pass

@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {number[]} nums
+     * @param {number[]} tickets
      * @return {boolean}
      */
-    canSplitLoads(nums) {
+    canSplitLoads(tickets) {
         // Write your solution here
     }
 }

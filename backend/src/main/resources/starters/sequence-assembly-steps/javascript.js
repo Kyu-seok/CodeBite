@@ -1,10 +1,10 @@
 class Solution {
     /**
-     * @param {number} numCourses
-     * @param {number[][]} prerequisites
+     * @param {number} numSteps
+     * @param {number[][]} prereqs
      * @return {number[]}
      */
-    sequenceAssemblySteps(numCourses, prerequisites) {
+    sequenceAssemblySteps(numSteps, prereqs) {
         // Write your solution here
     }
 }

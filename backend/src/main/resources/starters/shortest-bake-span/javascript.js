@@ -1,10 +1,10 @@
 class Solution {
     /**
-     * @param {number[]} nums
+     * @param {number[]} trays
      * @param {number} target
      * @return {number}
      */
-    shortestBakeSpan(nums, target) {
+    shortestBakeSpan(trays, target) {
         // Write your solution here
     }
 }

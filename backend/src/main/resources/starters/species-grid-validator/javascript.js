@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {character[][]} board
+     * @param {character[][]} grid
      * @return {boolean}
      */
-    verifySpeciesGrid(board) {
+    verifySpeciesGrid(grid) {
         // Write your solution here
     }
 }

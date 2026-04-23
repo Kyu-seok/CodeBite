@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {number[]} items
+     * @param {number[]} treats
      * @return {number}
      */
-    longestCleanRun(items) {
+    longestCleanRun(treats) {
         // Write your solution here
     }
 }

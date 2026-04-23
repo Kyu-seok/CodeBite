@@ -1,4 +1,4 @@
 class Solution:
-    def buildMirrorLength(self, s: str) -> int:
+    def buildMirrorLength(self, word: str) -> int:
         # Write your solution here
         pass

@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {number[]} nums
+     * @param {number[]} barrels
      * @return {number[][]}
      */
-    listBarrelBlends(nums) {
+    listBarrelBlends(barrels) {
         // Write your solution here
     }
 }

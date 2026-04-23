@@ -1,6 +1,6 @@
 class Solution {
 public:
-    int smallestFlowRate(vector<int>& weights, int days) {
+    int smallestFlowRate(vector<int>& volumes, int days) {
         // Write your solution here
     }
 };

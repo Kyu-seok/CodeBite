@@ -1,10 +1,10 @@
 class Solution {
     /**
-     * @param {string[]} words
+     * @param {string[]} topics
      * @param {number} k
      * @return {string[]}
      */
-    rankTrendingTopics(words, k) {
+    rankTrendingTopics(topics, k) {
         // Write your solution here
     }
 }

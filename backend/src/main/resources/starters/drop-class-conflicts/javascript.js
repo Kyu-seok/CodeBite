@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {number[][]} intervals
+     * @param {number[][]} classes
      * @return {number}
      */
-    dropClassConflicts(intervals) {
+    dropClassConflicts(classes) {
         // Write your solution here
     }
 }

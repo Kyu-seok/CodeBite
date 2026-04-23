@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {string} s
+     * @param {string} tape
      * @return {boolean}
      */
-    verifyJobNesting(s) {
+    verifyJobNesting(tape) {
         // Write your solution here
     }
 }

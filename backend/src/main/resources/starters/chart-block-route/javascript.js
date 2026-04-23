@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {number[][]} grid
+     * @param {number[][]} board
      * @return {number}
      */
-    chartBlockRoute(grid) {
+    chartBlockRoute(board) {
         // Write your solution here
     }
 }

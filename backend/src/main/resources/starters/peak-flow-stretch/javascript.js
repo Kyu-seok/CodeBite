@@ -1,5 +1,5 @@
 class Solution {
-    peakFlowPerStretch(nums, k) {
+    peakFlowPerStretch(combo, k) {
 
     }
 }

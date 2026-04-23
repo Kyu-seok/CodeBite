@@ -1,10 +1,10 @@
 class Solution {
     /**
-     * @param {number[]} nums
+     * @param {number[]} tickets
      * @param {number} target
      * @return {number}
      */
-    partitionTankDoses(nums, target) {
+    partitionTankDoses(tickets, target) {
         // Write your solution here
     }
 }

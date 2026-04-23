@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {number[][]} edges
+     * @param {number[][]} links
      * @return {number[]}
      */
-    spotRedundantLink(edges) {
+    spotRedundantLink(links) {
         // Write your solution here
     }
 }

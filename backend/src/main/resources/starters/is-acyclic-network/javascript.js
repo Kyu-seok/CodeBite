@@ -1,10 +1,10 @@
 class Solution {
     /**
      * @param {number} n
-     * @param {number[][]} edges
+     * @param {number[][]} lanes
      * @return {boolean}
      */
-    isAcyclicNetwork(n, edges) {
+    isAcyclicNetwork(n, lanes) {
         // Write your solution here
     }
 }

@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {character[][]} matrix
+     * @param {character[][]} floor
      * @return {number}
      */
-    biggestClearBay(matrix) {
+    biggestClearBay(floor) {
         // Write your solution here
     }
 }

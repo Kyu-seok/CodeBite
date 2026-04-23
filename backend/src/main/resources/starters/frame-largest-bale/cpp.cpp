@@ -1,6 +1,6 @@
 class Solution {
 public:
-    int frameLargestBale(vector<int>& height) {
+    int frameLargestBale(vector<int>& lockers) {
         // Write your solution here
     }
 };

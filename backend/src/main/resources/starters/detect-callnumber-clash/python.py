@@ -1,4 +1,4 @@
 class Solution:
-    def detectClash(self, nums: list[int]) -> bool:
+    def detectClash(self, lockers: list[int]) -> bool:
         # Write your solution here
         pass

@@ -1,5 +1,5 @@
 from typing import List
 
 class Solution:
-    def daysToUpgrade(self, temperatures: List[int]) -> List[int]:
+    def daysToUpgrade(self, readings: List[int]) -> List[int]:
         pass

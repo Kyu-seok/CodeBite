@@ -1,6 +1,6 @@
 from typing import List
 
 class Solution:
-    def bestTierResale(self, prices: List[int]) -> int:
+    def bestTierResale(self, tierPrices: List[int]) -> int:
         # Write your solution here
         pass

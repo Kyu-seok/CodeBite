@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {string} s
+     * @param {string} tags
      * @return {boolean}
      */
-    canBalanceJobs(s) {
+    canBalanceJobs(tags) {
         // Write your solution here
     }
 }

@@ -1,4 +1,4 @@
 class Solution:
-    def verifyJobNesting(self, s: str) -> bool:
+    def verifyJobNesting(self, tape: str) -> bool:
         # Write your solution here
         pass

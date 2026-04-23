@@ -4,7 +4,7 @@ using namespace std;
 
 class Solution {
 public:
-    vector<string> flagMaterialCodes(vector<vector<char>>& board, vector<string>& words) {
+    vector<string> flagMaterialCodes(vector<vector<char>>& board, vector<string>& targetWords) {
         // Write your solution here
     }
 };

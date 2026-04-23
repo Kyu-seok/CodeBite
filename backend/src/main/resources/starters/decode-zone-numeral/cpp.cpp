@@ -1,6 +1,6 @@
 class Solution {
 public:
-    int decodeZoneNumeral(string s) {
+    int decodeZoneNumeral(string numeral) {
         // Write your solution here
     }
 };

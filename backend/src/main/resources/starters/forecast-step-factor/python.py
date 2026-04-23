@@ -1,4 +1,4 @@
 class Solution:
-    def raiseForecastFactor(self, x: float, n: int) -> float:
+    def raiseForecastFactor(self, base: float, step: int) -> float:
         # Write your solution here
         pass

@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {number} x
+     * @param {number} code
      * @return {boolean}
      */
-    isReversibleCode(x) {
+    isReversibleCode(code) {
         // Write your solution here
     }
 }

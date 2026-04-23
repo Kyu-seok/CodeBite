@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {number[][]} matrix
+     * @param {number[][]} scores
      * @return {number}
      */
-    longestVineAscent(matrix) {
+    longestVineAscent(scores) {
         // Write your solution here
     }
 }

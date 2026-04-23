@@ -1,10 +1,10 @@
 class Solution {
     /**
-     * @param {number} x
-     * @param {number} n
+     * @param {number} base
+     * @param {number} step
      * @return {number}
      */
-    raiseForecastFactor(x, n) {
+    raiseForecastFactor(base, step) {
         // Write your solution here
     }
 }

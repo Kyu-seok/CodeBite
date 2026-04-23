@@ -1,5 +1,5 @@
 class Solution {
-    public List<List<Integer>> quadTrayDemand(int[] nums, int target) {
+    public List<List<Integer>> quadTrayDemand(int[] trays, int demand) {
         // Write your solution here
     }
 }

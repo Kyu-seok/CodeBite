@@ -1,6 +1,6 @@
 class Solution {
 public:
-    int findUnpairedFrame(vector<int>& nums) {
+    int findUnpairedFrame(vector<int>& frames) {
         // Write your solution here
     }
 };

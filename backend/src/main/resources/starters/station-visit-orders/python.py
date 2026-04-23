@@ -1,6 +1,6 @@
 from typing import List
 
 class Solution:
-    def listStationOrders(self, nums: List[int]) -> List[List[int]]:
+    def listStationOrders(self, stops: List[int]) -> List[List[int]]:
         # Write your solution here
         pass

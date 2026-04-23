@@ -1,6 +1,6 @@
 class Solution {
 public:
-    vector<int> pairTiersBudget(vector<int>& numbers, int target) {
+    vector<int> pairTiersBudget(vector<int>& menuPrice, int budget) {
         // Write your solution here
     }
 };

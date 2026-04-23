@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {number} n - 32-bit unsigned integer
+     * @param {number} statusWord - 32-bit unsigned integer
      * @return {number} - reversed bits as unsigned integer
      */
-    reversePrinterFlags(n) {
+    reversePrinterFlags(statusWord) {
         // Write your solution here
     }
 }

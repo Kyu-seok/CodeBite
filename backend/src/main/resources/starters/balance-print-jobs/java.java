@@ -1,5 +1,5 @@
 class Solution {
-    public boolean canBalanceJobs(String s) {
+    public boolean canBalanceJobs(String tags) {
         // Write your solution here
     }
 }

@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {number[]} heights
+     * @param {number[]} lockers
      * @return {number}
      */
-    widestVineBlock(heights) {
+    widestVineBlock(lockers) {
         // Write your solution here
     }
 }

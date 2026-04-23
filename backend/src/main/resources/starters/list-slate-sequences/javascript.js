@@ -1,5 +1,5 @@
 class Solution {
-    listSlateSequences(n) {
+    listSlateSequences(pairCount) {
 
     }
 }

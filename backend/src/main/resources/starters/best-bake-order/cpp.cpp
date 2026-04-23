@@ -1,6 +1,6 @@
 class Solution {
 public:
-    int bestBakeOrder(vector<int>& nums) {
+    int bestBakeOrder(vector<int>& balloons) {
         // Write your solution here
     }
 };

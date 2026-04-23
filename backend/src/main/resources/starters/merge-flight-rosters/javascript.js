@@ -10,10 +10,10 @@ class ListNode {
 
 class Solution {
     /**
-     * @param {ListNode[]} lists
+     * @param {ListNode[]} queues
      * @return {ListNode}
      */
-    mergeFlightRosters(lists) {
+    mergeFlightRosters(queues) {
         // Write your solution here
     }
 }

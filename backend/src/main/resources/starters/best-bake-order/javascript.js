@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {number[]} nums
+     * @param {number[]} balloons
      * @return {number}
      */
-    bestBakeOrder(nums) {
+    bestBakeOrder(balloons) {
         // Write your solution here
     }
 }

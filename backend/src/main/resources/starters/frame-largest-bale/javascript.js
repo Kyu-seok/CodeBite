@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {number[]} height
+     * @param {number[]} lockers
      * @return {number}
      */
-    frameLargestBale(height) {
+    frameLargestBale(lockers) {
         // Write your solution here
     }
 }

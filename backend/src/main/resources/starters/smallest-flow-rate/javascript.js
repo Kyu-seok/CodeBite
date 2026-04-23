@@ -1,10 +1,10 @@
 class Solution {
     /**
-     * @param {number[]} weights
+     * @param {number[]} volumes
      * @param {number} days
      * @return {number}
      */
-    smallestFlowRate(weights, days) {
+    smallestFlowRate(volumes, days) {
         // Write your solution here
     }
 }

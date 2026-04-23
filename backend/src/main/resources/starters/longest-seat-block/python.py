@@ -1,4 +1,4 @@
 class Solution:
-    def longestSeatBlock(self, nums: list[int]) -> int:
+    def longestSeatBlock(self, seatIds: list[int]) -> int:
         # Write your solution here
         pass

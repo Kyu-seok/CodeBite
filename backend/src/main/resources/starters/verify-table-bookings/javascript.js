@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {number[][]} intervals
+     * @param {number[][]} bookings
      * @return {boolean}
      */
-    verifyTableBookings(intervals) {
+    verifyTableBookings(bookings) {
         // Write your solution here
     }
 }

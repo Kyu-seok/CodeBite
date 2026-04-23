@@ -1,6 +1,6 @@
 class Solution {
 public:
-    int poolBetweenWalls(vector<int>& height) {
+    int poolBetweenWalls(vector<int>& wallHeight) {
 
     }
 };

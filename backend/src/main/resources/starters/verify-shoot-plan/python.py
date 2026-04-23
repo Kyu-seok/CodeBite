@@ -1,4 +1,4 @@
 class Solution:
-    def verifyShootPlan(self, numCourses: int, prerequisites: list[list[int]]) -> bool:
+    def verifyShootPlan(self, numScenes: int, prereqs: list[list[int]]) -> bool:
         # Write your solution here
         pass

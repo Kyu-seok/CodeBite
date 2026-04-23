@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {number[]} cost
+     * @param {number[]} effort
      * @return {number}
      */
-    pickLeastEffort(cost) {
+    pickLeastEffort(effort) {
         // Write your solution here
     }
 }

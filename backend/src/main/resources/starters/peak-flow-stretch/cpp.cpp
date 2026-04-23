@@ -1,6 +1,6 @@
 class Solution {
 public:
-    vector<int> peakFlowPerStretch(vector<int>& nums, int k) {
+    vector<int> peakFlowPerStretch(vector<int>& combo, int k) {
 
     }
 };

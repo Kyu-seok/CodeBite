@@ -1,10 +1,10 @@
 class Solution {
     /**
-     * @param {number} m
-     * @param {number} n
+     * @param {number} rows
+     * @param {number} cols
      * @return {number}
      */
-    countGateRoutes(m, n) {
+    countGateRoutes(rows, cols) {
         // Write your solution here
     }
 }

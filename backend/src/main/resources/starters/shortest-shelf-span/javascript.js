@@ -1,10 +1,10 @@
 class Solution {
     /**
-     * @param {string} s
-     * @param {string} t
+     * @param {string} shelf
+     * @param {string} needed
      * @return {string}
      */
-    shortestShelfSpan(s, t) {
+    shortestShelfSpan(shelf, needed) {
         // Write your solution here
     }
 }

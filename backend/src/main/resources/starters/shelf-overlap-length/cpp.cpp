@@ -3,7 +3,7 @@ using namespace std;
 
 class Solution {
 public:
-    int shelfOverlapLength(string text1, string text2) {
+    int shelfOverlapLength(string left, string right) {
         // Write your solution here
     }
 };

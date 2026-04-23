@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {number[][]} graph
+     * @param {number[][]} conflicts
      * @return {boolean}
      */
-    splitIntoTwoShifts(graph) {
+    splitIntoTwoShifts(conflicts) {
         // Write your solution here
     }
 }

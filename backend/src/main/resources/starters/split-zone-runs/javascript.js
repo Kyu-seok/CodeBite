@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {string} s
+     * @param {string} stickers
      * @return {number[]}
      */
-    splitZoneRuns(s) {
+    splitZoneRuns(stickers) {
         // Write your solution here
     }
 }

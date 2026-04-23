@@ -1,6 +1,6 @@
 class Solution {
 public:
-    bool verifyJobNesting(string s) {
+    bool verifyJobNesting(string tape) {
         // Write your solution here
     }
 };

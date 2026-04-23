@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {number[]} rocks
+     * @param {number[]} fighters
      * @return {number[]}
      */
-    resolveLaneCrashes(rocks) {
+    resolveLaneCrashes(fighters) {
         // Write your solution here
     }
 }

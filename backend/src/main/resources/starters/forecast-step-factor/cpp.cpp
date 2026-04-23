@@ -1,6 +1,6 @@
 class Solution {
 public:
-    double raiseForecastFactor(double x, int n) {
+    double raiseForecastFactor(double base, int step) {
         // Write your solution here
     }
 };

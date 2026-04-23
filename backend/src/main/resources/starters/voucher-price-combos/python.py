@@ -1,6 +1,6 @@
 from typing import List
 
 class Solution:
-    def listVoucherSums(self, candidates: List[int], target: int) -> List[List[int]]:
+    def listVoucherSums(self, prices: List[int], voucher: int) -> List[List[int]]:
         # Write your solution here
         pass

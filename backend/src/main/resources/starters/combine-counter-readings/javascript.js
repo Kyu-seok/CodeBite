@@ -1,10 +1,10 @@
 class Solution {
     /**
-     * @param {number} a
-     * @param {number} b
+     * @param {number} firstCount
+     * @param {number} secondCount
      * @return {number}
      */
-    combineCounters(a, b) {
+    combineCounters(firstCount, secondCount) {
         // Write your solution here
     }
 }

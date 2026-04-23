@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {number[]} prices
+     * @param {number[]} readings
      * @return {number}
      */
-    maxTempSwing(prices) {
+    maxTempSwing(readings) {
         // Write your solution here
     }
 }

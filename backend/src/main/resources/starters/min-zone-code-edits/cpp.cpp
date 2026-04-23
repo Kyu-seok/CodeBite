@@ -3,7 +3,7 @@ using namespace std;
 
 class Solution {
 public:
-    int minZoneEdits(string word1, string word2) {
+    int minZoneEdits(string source, string target) {
         // Write your solution here
     }
 };

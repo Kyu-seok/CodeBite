@@ -1,10 +1,10 @@
 class Solution {
     /**
-     * @param {number[]} candidates
-     * @param {number} target
+     * @param {number[]} prices
+     * @param {number} voucher
      * @return {number[][]}
      */
-    listVoucherSums(candidates, target) {
+    listVoucherSums(prices, voucher) {
         // Write your solution here
     }
 }

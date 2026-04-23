@@ -1,5 +1,5 @@
 class Solution {
-    public boolean verifyShootPlan(int numCourses, int[][] prerequisites) {
+    public boolean verifyShootPlan(int numScenes, int[][] prereqs) {
         // Write your solution here
     }
 }

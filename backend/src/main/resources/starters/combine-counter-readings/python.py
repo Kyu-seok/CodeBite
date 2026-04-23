@@ -1,4 +1,4 @@
 class Solution:
-    def combineCounters(self, a: int, b: int) -> int:
+    def combineCounters(self, firstCount: int, secondCount: int) -> int:
         # Write your solution here
         pass

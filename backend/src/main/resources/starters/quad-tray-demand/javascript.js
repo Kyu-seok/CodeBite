@@ -1,10 +1,10 @@
 class Solution {
     /**
-     * @param {number[]} nums
-     * @param {number} target
+     * @param {number[]} trays
+     * @param {number} demand
      * @return {number[][]}
      */
-    quadTrayDemand(nums, target) {
+    quadTrayDemand(trays, demand) {
         // Write your solution here
     }
 }

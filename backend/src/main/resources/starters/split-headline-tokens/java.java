@@ -1,5 +1,5 @@
 class Solution {
-    public boolean splitHeadlineTokens(String s, List<String> wordDict) {
+    public boolean splitHeadlineTokens(String headline, List<String> topics) {
         // Write your solution here
     }
 }

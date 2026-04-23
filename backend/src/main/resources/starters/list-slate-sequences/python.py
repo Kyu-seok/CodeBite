@@ -1,5 +1,5 @@
 from typing import List
 
 class Solution:
-    def listSlateSequences(self, n: int) -> List[str]:
+    def listSlateSequences(self, pairCount: int) -> List[str]:
         pass

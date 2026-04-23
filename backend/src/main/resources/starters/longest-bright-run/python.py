@@ -1,6 +1,6 @@
 from typing import List
 
 class Solution:
-    def longestBrightRun(self, nums: List[int]) -> int:
+    def longestBrightRun(self, scores: List[int]) -> int:
         # Write your solution here
         pass

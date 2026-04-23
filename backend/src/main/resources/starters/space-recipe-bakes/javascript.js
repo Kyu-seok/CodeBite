@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {string} s
+     * @param {string} cookies
      * @return {string}
      */
-    orderRecipeBakes(s) {
+    orderRecipeBakes(cookies) {
         // Write your solution here
     }
 }

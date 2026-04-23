@@ -1,6 +1,6 @@
 class Solution {
 public:
-    bool canFinishLine(vector<int>& nums) {
+    bool canFinishLine(vector<int>& slack) {
         // Write your solution here
     }
 };

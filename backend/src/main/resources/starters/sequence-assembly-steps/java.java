@@ -1,5 +1,5 @@
 class Solution {
-    public int[] sequenceAssemblySteps(int numCourses, int[][] prerequisites) {
+    public int[] sequenceAssemblySteps(int numSteps, int[][] prereqs) {
         // Write your solution here
     }
 }

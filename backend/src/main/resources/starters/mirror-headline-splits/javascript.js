@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {string} s
+     * @param {string} menu
      * @return {string[][]}
      */
-    splitMirrorPhrases(s) {
+    splitMirrorPhrases(menu) {
         // Write your solution here
     }
 }

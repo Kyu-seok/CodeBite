@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {number[]} nums
+     * @param {number[]} lockers
      * @return {number}
      */
-    findVacantSlot(nums) {
+    findVacantSlot(lockers) {
         // Write your solution here
     }
 }

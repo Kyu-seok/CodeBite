@@ -9,7 +9,7 @@
  * }
  */
 class Solution {
-    public ListNode combineOvenRotations(ListNode list1, ListNode list2) {
+    public ListNode combineOvenRotations(ListNode runA, ListNode runB) {
         // Write your solution here
     }
 }

@@ -1,4 +1,4 @@
 class Solution:
-    def num_decodings(self, s: str) -> int:
+    def num_decodings(self, scan: str) -> int:
         # Write your solution here
         pass

@@ -1,17 +1,17 @@
 class ListCoder {
     /**
-     * @param {string[]} strs
+     * @param {string[]} messages
      * @return {string}
      */
-    pack(strs) {
+    pack(messages) {
         // Write your solution here
     }
 
     /**
-     * @param {string} s
+     * @param {string} blob
      * @return {string[]}
      */
-    unpack(s) {
+    unpack(blob) {
         // Write your solution here
     }
 }

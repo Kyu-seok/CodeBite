@@ -1,9 +1,9 @@
 class TopKStream {
     /**
      * @param {number} k
-     * @param {number[]} nums
+     * @param {number[]} scores
      */
-    constructor(k, nums) {
+    constructor(k, scores) {
         // Write your solution here
     }
 

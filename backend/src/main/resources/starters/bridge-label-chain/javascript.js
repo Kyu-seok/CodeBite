@@ -1,11 +1,11 @@
 class Solution {
     /**
-     * @param {string} beginWord
-     * @param {string} endWord
-     * @param {string[]} wordList
+     * @param {string} startCode
+     * @param {string} targetCode
+     * @param {string[]} codeBank
      * @return {number}
      */
-    bridgeLabelChain(beginWord, endWord, wordList) {
+    bridgeLabelChain(startCode, targetCode, codeBank) {
         // Write your solution here
     }
 }

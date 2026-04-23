@@ -1,5 +1,5 @@
 class Solution {
-    public boolean probeSugarReading(int[][] matrix, int target) {
+    public boolean probeSugarReading(int[][] menu, int target) {
         // Write your solution here
     }
 }

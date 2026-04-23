@@ -1,10 +1,10 @@
 class Solution {
     /**
-     * @param {string} word1
-     * @param {string} word2
+     * @param {string} source
+     * @param {string} target
      * @return {number}
      */
-    minZoneEdits(word1, word2) {
+    minZoneEdits(source, target) {
         // Write your solution here
     }
 }

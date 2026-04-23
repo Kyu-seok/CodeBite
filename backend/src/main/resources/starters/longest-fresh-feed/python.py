@@ -1,4 +1,4 @@
 class Solution:
-    def longestFreshFeed(self, s: str) -> int:
+    def longestFreshFeed(self, feed: str) -> int:
         # Write your solution here
         pass

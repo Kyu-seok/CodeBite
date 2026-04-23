@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {number[]} nums
+     * @param {number[]} deltas
      * @return {number[][]}
      */
-    triageZeroPriority(nums) {
+    triageZeroPriority(deltas) {
         // Write your solution here
     }
 }

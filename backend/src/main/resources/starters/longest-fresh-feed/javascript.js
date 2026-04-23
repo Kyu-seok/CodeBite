@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {string} s
+     * @param {string} feed
      * @return {number}
      */
-    longestFreshFeed(s) {
+    longestFreshFeed(feed) {
         // Write your solution here
     }
 }

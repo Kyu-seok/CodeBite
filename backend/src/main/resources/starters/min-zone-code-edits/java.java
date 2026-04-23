@@ -1,5 +1,5 @@
 class Solution {
-    public int minZoneEdits(String word1, String word2) {
+    public int minZoneEdits(String source, String target) {
         // Write your solution here
     }
 }

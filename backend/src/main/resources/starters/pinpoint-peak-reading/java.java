@@ -1,5 +1,5 @@
 class Solution {
-    public int pinpointPeak(int[] nums) {
+    public int pinpointPeak(int[] readings) {
         // Write your solution here
     }
 }

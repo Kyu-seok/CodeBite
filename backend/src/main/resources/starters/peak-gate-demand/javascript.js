@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {number[][]} intervals
+     * @param {number[][]} visits
      * @return {number}
      */
-    findPeakGates(intervals) {
+    findPeakGates(visits) {
         // Write your solution here
     }
 }

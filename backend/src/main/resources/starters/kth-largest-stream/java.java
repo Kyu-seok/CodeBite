@@ -1,5 +1,5 @@
 class TopKStream {
-    public TopKStream(int k, int[] nums) {
+    public TopKStream(int k, int[] scores) {
         // Write your solution here
     }
 

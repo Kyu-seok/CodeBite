@@ -1,4 +1,4 @@
 class Solution:
-    def longest_common_subsequence(self, text1: str, text2: str) -> int:
+    def longest_common_subsequence(self, left: str, right: str) -> int:
         # Write your solution here
         pass

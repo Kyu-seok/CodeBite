@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {number[]} nums
+     * @param {number[]} seatIds
      * @return {number}
      */
-    longestSeatBlock(nums) {
+    longestSeatBlock(seatIds) {
         // Write your solution here
     }
 }

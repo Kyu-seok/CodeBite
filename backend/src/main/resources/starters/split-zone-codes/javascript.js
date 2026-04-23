@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {string} s
+     * @param {string} digits
      * @return {string[]}
      */
-    splitZoneCodes(s) {
+    splitZoneCodes(digits) {
         // Write your solution here
     }
 }

@@ -1,5 +1,5 @@
 class Solution {
-    public boolean canBuildBales(int[][] triplets, int[] target) {
+    public boolean canBuildBales(int[][] bags, int[] target) {
         // Write your solution here
     }
 }

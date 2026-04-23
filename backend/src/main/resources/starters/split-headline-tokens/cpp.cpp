@@ -1,6 +1,6 @@
 class Solution {
 public:
-    bool splitHeadlineTokens(string s, vector<string>& wordDict) {
+    bool splitHeadlineTokens(string headline, vector<string>& topics) {
         // Write your solution here
     }
 };

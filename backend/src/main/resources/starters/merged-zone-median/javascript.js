@@ -1,10 +1,10 @@
 class Solution {
     /**
-     * @param {number[]} nums1
-     * @param {number[]} nums2
+     * @param {number[]} zonesA
+     * @param {number[]} zonesB
      * @return {number}
      */
-    mergedZoneMedian(nums1, nums2) {
+    mergedZoneMedian(zonesA, zonesB) {
         // Write your solution here
     }
 }

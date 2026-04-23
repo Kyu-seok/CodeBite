@@ -1,10 +1,10 @@
 class Solution {
     /**
-     * @param {number[][]} triplets
+     * @param {number[][]} bags
      * @param {number[]} target
      * @return {boolean}
      */
-    canBuildBales(triplets, target) {
+    canBuildBales(bags, target) {
         // Write your solution here
     }
 }

@@ -1,5 +1,5 @@
 class Solution {
-    public int longestSeatBlock(int[] nums) {
+    public int longestSeatBlock(int[] seatIds) {
         // Write your solution here
     }
 }

@@ -1,10 +1,10 @@
 class Solution {
     /**
-     * @param {string} s
+     * @param {string} code
      * @param {number} k
      * @return {number}
      */
-    shiftLetters(s, k) {
+    shiftLetters(code, k) {
         // Write your solution here
     }
 }

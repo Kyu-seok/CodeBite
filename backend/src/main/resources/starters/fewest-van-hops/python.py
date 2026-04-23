@@ -1,4 +1,4 @@
 class Solution:
-    def minVanHops(self, nums: list[int]) -> int:
+    def minVanHops(self, fuel: list[int]) -> int:
         # Write your solution here
         pass

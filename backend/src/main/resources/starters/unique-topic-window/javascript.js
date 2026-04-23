@@ -1,10 +1,10 @@
 class Solution {
     /**
-     * @param {string} s
+     * @param {string} queue
      * @param {number} k
      * @return {number}
      */
-    countUniqueTopics(s, k) {
+    countUniqueTopics(queue, k) {
         // Write your solution here
     }
 }

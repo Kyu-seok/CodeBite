@@ -1,6 +1,6 @@
 class Solution {
 public:
-    int countExactTargets(int n) {
+    int countExactTargets(int pages) {
         // Write your solution here
     }
 };

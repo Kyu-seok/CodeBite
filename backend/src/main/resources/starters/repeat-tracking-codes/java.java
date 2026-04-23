@@ -1,5 +1,5 @@
 class Solution {
-    public List<Integer> listRepeatedCodes(int[] nums) {
+    public List<Integer> listRepeatedCodes(int[] codes) {
         // Write your solution here
     }
 }

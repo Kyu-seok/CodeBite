@@ -1,10 +1,10 @@
 class Solution {
     /**
-     * @param {number[][]} matrix
+     * @param {number[][]} menu
      * @param {number} target
      * @return {boolean}
      */
-    detectFlowValue(matrix, target) {
+    detectFlowValue(menu, target) {
         // Write your solution here
     }
 }

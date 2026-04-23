@@ -1,7 +1,7 @@
 from typing import List
 
 class TopKStream:
-    def __init__(self, k: int, nums: List[int]):
+    def __init__(self, k: int, scores: List[int]):
         # Write your solution here
         pass
 

@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {string} s
+     * @param {string} scan
      * @return {number}
      */
-    countScanDecodings(s) {
+    countScanDecodings(scan) {
         // Write your solution here
     }
 }

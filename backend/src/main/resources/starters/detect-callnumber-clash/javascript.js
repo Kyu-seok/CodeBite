@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {number[]} nums
+     * @param {number[]} lockers
      * @return {boolean}
      */
-    detectClash(nums) {
+    detectClash(lockers) {
         // Write your solution here
     }
 }

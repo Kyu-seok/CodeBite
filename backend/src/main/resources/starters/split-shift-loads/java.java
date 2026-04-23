@@ -1,5 +1,5 @@
 class Solution {
-    public boolean canSplitLoads(int[] nums) {
+    public boolean canSplitLoads(int[] tickets) {
         // Write your solution here
     }
 }

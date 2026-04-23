@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {number} n
+     * @param {number} upperId
      * @return {number[]}
      */
-    tallyPriorityFlags(n) {
+    tallyPriorityFlags(upperId) {
         // Write your solution here
     }
 }

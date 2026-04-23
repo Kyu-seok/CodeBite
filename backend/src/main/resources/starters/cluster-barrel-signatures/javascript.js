@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {string[]} strs
+     * @param {string[]} labels
      * @return {string[][]}
      */
-    clusterBarrels(strs) {
+    clusterBarrels(labels) {
         // Write your solution here
     }
 }

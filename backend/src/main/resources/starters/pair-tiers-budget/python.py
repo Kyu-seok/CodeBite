@@ -1,4 +1,4 @@
 class Solution:
-    def pairTiersBudget(self, numbers: list[int], target: int) -> list[int]:
+    def pairTiersBudget(self, menuPrice: list[int], budget: int) -> list[int]:
         # Write your solution here
         pass

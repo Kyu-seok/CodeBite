@@ -1,5 +1,5 @@
 class Solution {
-    public int countWindowTallies(int[] nums, int k) {
+    public int countWindowTallies(int[] readings, int k) {
         // Write your solution here
     }
 }
