@@ -31,12 +31,45 @@ public class Main {
         }
 
         int[] result = new Solution().sequenceAssemblySteps(numCourses, prerequisites);
-        StringBuilder sb = new StringBuilder("[");
+        System.out.println(isValid(numCourses, prerequisites, result) ? "VALID" : "INVALID");
+    }
+
+    private static boolean isValid(int n, int[][] prereqs, int[] result) {
+        if (result == null) return false;
+        if (result.length == 0) return hasCycle(n, prereqs);
+        if (result.length != n) return false;
+        boolean[] seen = new boolean[n];
+        int[] pos = new int[n];
         for (int i = 0; i < result.length; i++) {
-            if (i > 0) sb.append(",");
-            sb.append(result[i]);
+            int v = result[i];
+            if (v < 0 || v >= n || seen[v]) return false;
+            seen[v] = true;
+            pos[v] = i;
         }
-        sb.append("]");
-        System.out.println(sb.toString());
+        for (int[] e : prereqs) {
+            if (pos[e[1]] >= pos[e[0]]) return false;
+        }
+        return true;
+    }
+
+    private static boolean hasCycle(int n, int[][] prereqs) {
+        List<List<Integer>> adj = new ArrayList<>();
+        int[] indeg = new int[n];
+        for (int i = 0; i < n; i++) adj.add(new ArrayList<>());
+        for (int[] e : prereqs) {
+            adj.get(e[1]).add(e[0]);
+            indeg[e[0]]++;
+        }
+        Deque<Integer> queue = new ArrayDeque<>();
+        for (int i = 0; i < n; i++) if (indeg[i] == 0) queue.add(i);
+        int processed = 0;
+        while (!queue.isEmpty()) {
+            int u = queue.poll();
+            processed++;
+            for (int v : adj.get(u)) {
+                if (--indeg[v] == 0) queue.add(v);
+            }
+        }
+        return processed != n;
     }
 }
