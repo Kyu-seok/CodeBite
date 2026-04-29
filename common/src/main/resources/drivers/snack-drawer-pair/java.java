@@ -14,6 +14,9 @@ public class Main {
         int[] nums = new int[parts.length];
         for (int i = 0; i < parts.length; i++) nums[i] = Integer.parseInt(parts[i].trim());
         int[] result = new Solution().findPairIndices(nums, target);
+        if (result != null && result.length == 2 && result[0] > result[1]) {
+            int tmp = result[0]; result[0] = result[1]; result[1] = tmp;
+        }
         System.out.println(JsonOutput.intArray(result));
     }
 }

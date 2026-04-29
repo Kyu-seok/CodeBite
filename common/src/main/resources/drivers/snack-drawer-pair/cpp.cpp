@@ -23,6 +23,9 @@ int main() {
     int target;
     cin >> target;
     vector<int> result = Solution().findPairIndices(nums, target);
+    if (result.size() == 2 && result[0] > result[1]) {
+        swap(result[0], result[1]);
+    }
     cout << JsonOutput::intVector(result) << endl;
     return 0;
 }
