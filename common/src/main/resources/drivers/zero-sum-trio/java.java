@@ -18,14 +18,19 @@ public class Main {
             for (int i = 0; i < parts.length; i++) nums[i] = Integer.parseInt(parts[i].trim());
         }
         List<List<Integer>> result = new Solution().triageZeroPriority(nums);
-        for (List<Integer> triplet : result) Collections.sort(triplet);
-        result.sort((a, b) -> {
+        List<List<Integer>> normalized = new ArrayList<>();
+        for (List<Integer> triplet : result) {
+            List<Integer> copy = new ArrayList<>(triplet);
+            Collections.sort(copy);
+            normalized.add(copy);
+        }
+        normalized.sort((a, b) -> {
             for (int i = 0; i < Math.min(a.size(), b.size()); i++) {
                 int cmp = Integer.compare(a.get(i), b.get(i));
                 if (cmp != 0) return cmp;
             }
             return a.size() - b.size();
         });
-        System.out.println(JsonOutput.intList2D(result));
+        System.out.println(JsonOutput.intList2D(normalized));
     }
 }
