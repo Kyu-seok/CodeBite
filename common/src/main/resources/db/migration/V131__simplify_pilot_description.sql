@@ -49,8 +49,8 @@ INSERT INTO problem_translations (problem_id, locale, title, description, constr
 VALUES (
     (SELECT id FROM problems WHERE slug = 'shelf-stock-pair'),
     'ko',
-    $KO$선반 재고 짝 찾기$KO$,
-    $KO$정수 배열 `stock`과 정수 `target`이 주어집니다. 값의 합이 `target`이 되는 서로 다른 두 원소의 인덱스를 반환하세요.
+    $$선반 재고 짝 찾기$$,
+    $$정수 배열 `stock`과 정수 `target`이 주어집니다. 값의 합이 `target`이 되는 서로 다른 두 원소의 인덱스를 반환하세요.
 
 각 입력에는 정답이 되는 짝이 정확히 하나 존재하며, 두 인덱스는 어떤 순서로 반환해도 됩니다.
 
@@ -66,9 +66,9 @@ Explanation: stock[1] + stock[2] = 11 + 19 = 30.
 Input: stock = [8, 14, 6], target = 14
 Output: [0, 2]
 Explanation: stock[0] + stock[2] = 8 + 6 = 14.
-```$KO$,
-    $KO$- `2 <= stock.length <= 80000`
+```$$,
+    $$- `2 <= stock.length <= 80000`
 - `-10^8 <= stock[i] <= 10^8`
 - `-10^8 <= target <= 10^8`
-- 정답 짝이 정확히 하나 존재합니다.$KO$
+- 정답 짝이 정확히 하나 존재합니다.$$
 );

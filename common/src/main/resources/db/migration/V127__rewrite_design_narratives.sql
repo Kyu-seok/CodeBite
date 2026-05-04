@@ -12,7 +12,7 @@
 --
 
 -- click-counter
-UPDATE problems SET description = $D$A live traffic dashboard for a marketing landing page needs to show how many clicks the page has absorbed in the last few minutes. Requests arrive tagged with their server-side second-of-day, and the dashboard should always reflect a rolling five-minute window, inclusive on both ends.
+UPDATE problems SET description = $$A live traffic dashboard for a marketing landing page needs to show how many clicks the page has absorbed in the last few minutes. Requests arrive tagged with their server-side second-of-day, and the dashboard should always reflect a rolling five-minute window, inclusive on both ends.
 
 Build the `ClickTally` class so it can ingest click events and answer window queries on demand:
 
@@ -41,13 +41,13 @@ Three clicks that share a second all count toward the window anchored at that se
 Input: ["ClickTally","countSince","record","countSince"] / [[],[1],[2],[300]]
 Output: [null,0,null,1]
 ```
-A query before any clicks have arrived returns zero, and the later click is still inside the window at second 300.$D$ WHERE slug = 'click-counter';
-UPDATE problems SET constraints = $D$- `1 <= timestamp <= 2 * 10^9`
+A query before any clicks have arrived returns zero, and the later click is still inside the window at second 300.$$ WHERE slug = 'click-counter';
+UPDATE problems SET constraints = $$- `1 <= timestamp <= 2 * 10^9`
 - Each `timestamp` passed in is greater than or equal to the previous one across all calls.
-- At most 250 total calls are made to `record` and `countSince` combined.$D$ WHERE slug = 'click-counter';
+- At most 250 total calls are made to `record` and `countSince` combined.$$ WHERE slug = 'click-counter';
 
 -- feed-designer
-UPDATE problems SET description = $D$You are wiring up the backend for a lightweight short-post social network where each account can publish snippets and skim a timeline made from their own posts plus whoever they currently follow. The timeline must stay ordered by publish time, newest first, and capped at the ten most recent items.
+UPDATE problems SET description = $$You are wiring up the backend for a lightweight short-post social network where each account can publish snippets and skim a timeline made from their own posts plus whoever they currently follow. The timeline must stay ordered by publish time, newest first, and capped at the ten most recent items.
 
 Implement the `MicroFeed` class so the follow graph and the post stream stay consistent as users subscribe and unsubscribe throughout the day:
 
@@ -79,13 +79,13 @@ Input: ["MicroFeed","publishPost","publishPost","subscribe","latestFeed","unsubs
        [[],[1,10],[2,20],[1,2],[1],[1,2],[1]]
 Output: [null,null,null,null,[20,10],null,[10]]
 ```
-Dropping the follow edge immediately removes account 2's contribution from account 1's timeline.$D$ WHERE slug = 'feed-designer';
-UPDATE problems SET constraints = $D$- `1 <= userId, followerId, followeeId <= 500`
+Dropping the follow edge immediately removes account 2's contribution from account 1's timeline.$$ WHERE slug = 'feed-designer';
+UPDATE problems SET constraints = $$- `1 <= userId, followerId, followeeId <= 500`
 - `0 <= messageId <= 8000`
-- At most `20000` calls total will be made across `publishPost`, `latestFeed`, `subscribe`, and `unsubscribe`.$D$ WHERE slug = 'feed-designer';
+- At most `20000` calls total will be made across `publishPost`, `latestFeed`, `subscribe`, and `unsubscribe`.$$ WHERE slug = 'feed-designer';
 
 -- hash-table
-UPDATE problems SET description = $D$You are wiring a small parts-inventory service that maps integer SKU codes to on-hand counts. The platform forbids pulling in a built-in dictionary library, so the lookup table has to be assembled from scratch using chaining (or any equivalent collision-handling scheme) while still exposing a friendly set/lookup/erase surface.
+UPDATE problems SET description = $$You are wiring a small parts-inventory service that maps integer SKU codes to on-hand counts. The platform forbids pulling in a built-in dictionary library, so the lookup table has to be assembled from scratch using chaining (or any equivalent collision-handling scheme) while still exposing a friendly set/lookup/erase surface.
 
 Build the `ChainedMap` class so the stockroom clerk can keep counts fresh as shipments and pulls happen throughout the day:
 
@@ -113,12 +113,12 @@ Three independent SKUs are recorded and each one returns its own quantity on rea
 Input: ["ChainedMap","lookup","erase","lookup"] / [[],[7],[7],[7]]
 Output: [null,-1,null,-1]
 ```
-Queries and erases against a SKU that was never inserted are harmless.$D$ WHERE slug = 'hash-table';
-UPDATE problems SET constraints = $D$- `0 <= key, value <= 800000`
-- At most `8000` calls will be made across `set`, `lookup`, and `erase`.$D$ WHERE slug = 'hash-table';
+Queries and erases against a SKU that was never inserted are harmless.$$ WHERE slug = 'hash-table';
+UPDATE problems SET constraints = $$- `0 <= key, value <= 800000`
+- At most `8000` calls will be made across `set`, `lookup`, and `erase`.$$ WHERE slug = 'hash-table';
 
 -- kth-largest-stream
-UPDATE problems SET description = $D$A rooftop weather lab forwards a continuous stream of integer readings from a bank of sensors into a monitoring service. Analysts want to watch the `k`-th largest reading as the stream grows — not the `k`-th *distinct* reading, but the `k`-th value in the overall sorted order, so duplicates keep their own rank.
+UPDATE problems SET description = $$A rooftop weather lab forwards a continuous stream of integer readings from a bank of sensors into a monitoring service. Analysts want to watch the `k`-th largest reading as the stream grows — not the `k`-th *distinct* reading, but the `k`-th value in the overall sorted order, so duplicates keep their own rank.
 
 Build the `TopKStream` class to answer that running question efficiently as each new sample arrives:
 
@@ -141,16 +141,16 @@ tracker.record(9);   // stream becomes [4,5,8,2,3,5,10,9]; 3rd largest is 8
 tracker.record(4);   // stream becomes [4,5,8,2,3,5,10,9,4]; 3rd largest is 8
 ```
 
-The tracker must stay responsive across the full shift; a naive re-sort on every sample will quickly fall behind the feed.$D$ WHERE slug = 'kth-largest-stream';
-UPDATE problems SET constraints = $D$- `1 <= k <= 8000`
+The tracker must stay responsive across the full shift; a naive re-sort on every sample will quickly fall behind the feed.$$ WHERE slug = 'kth-largest-stream';
+UPDATE problems SET constraints = $$- `1 <= k <= 8000`
 - `0 <= nums.length <= 8000`
 - `-10^8 <= nums[i] <= 10^8`
 - `-10^8 <= val <= 10^8`
 - At most `8000` calls will be made to `record`.
-- When `record` is called, the combined stream is guaranteed to contain at least `k` readings.$D$ WHERE slug = 'kth-largest-stream';
+- When `record` is called, the combined stream is guaranteed to contain at least `k` readings.$$ WHERE slug = 'kth-largest-stream';
 
 -- minimum-stack
-UPDATE problems SET description = $D$An operations team keeps a running log of service-latency samples pushed from a production tracer. Investigators walk the log like a stack — appending readings as they arrive, popping the tail during rollbacks — and a sidecar dashboard needs to show the **lowest** latency currently sitting in the log at any moment. Every single operation on the log, including the low-watermark query, has to finish in constant time so the tracer never stalls.
+UPDATE problems SET description = $$An operations team keeps a running log of service-latency samples pushed from a production tracer. Investigators walk the log like a stack — appending readings as they arrive, popping the tail during rollbacks — and a sidecar dashboard needs to show the **lowest** latency currently sitting in the log at any moment. Every single operation on the log, including the low-watermark query, has to finish in constant time so the tracer never stalls.
 
 Build the `LowTrackStack` class with exactly this surface:
 
@@ -171,13 +171,13 @@ Output: [null,null,null,null,-2,null,6,6]
 ```
 Three latency samples (12, 6, -2) are appended in order. `getMin` returns `-2`, the smallest reading currently in the log. After popping the top sample, the log holds `[12, 6]`; `top` now returns `6`, and `getMin` also returns `6` because the previous minimum has been evicted.
 
-The sidecar relies on the fact that `pop`, `top`, and `getMin` are only fired after at least one sample has been pushed, so the implementation may assume the log is non-empty for those three operations.$D$ WHERE slug = 'minimum-stack';
-UPDATE problems SET constraints = $D$- `-10^8 <= val <= 10^8`
+The sidecar relies on the fact that `pop`, `top`, and `getMin` are only fired after at least one sample has been pushed, so the implementation may assume the log is non-empty for those three operations.$$ WHERE slug = 'minimum-stack';
+UPDATE problems SET constraints = $$- `-10^8 <= val <= 10^8`
 - `pop`, `top`, and `getMin` are only invoked after at least one element has been pushed.
-- At most `20000` calls will be made across `push`, `pop`, `top`, and `getMin` combined.$D$ WHERE slug = 'minimum-stack';
+- At most `20000` calls will be made across `push`, `pop`, `top`, and `getMin` combined.$$ WHERE slug = 'minimum-stack';
 
 -- prefix-tree
-UPDATE problems SET description = $D$A filesystem indexer for a massive directory catalog needs a compact structure that can answer two questions fast: "have I seen this exact file name before?" and "does anything in the catalog start with this prefix?" A shared character-by-character tree is the right fit — walking one node per letter keeps both queries proportional to the length of the query, not the size of the catalog.
+UPDATE problems SET description = $$A filesystem indexer for a massive directory catalog needs a compact structure that can answer two questions fast: "have I seen this exact file name before?" and "does anything in the catalog start with this prefix?" A shared character-by-character tree is the right fit — walking one node per letter keeps both queries proportional to the length of the query, not the size of the catalog.
 
 Build the `PrefixIndex` class so the indexer can stream file names in and let downstream tooling probe them by full name or by prefix:
 
@@ -194,13 +194,13 @@ Input:
 Output: [null, null, true, false, true, null, true]
 ```
 
-After inserting `"apple"`, `search("apple")` is `true` because the exact name is on record. `search("app")` is `false` because `"app"` has only been *seen as a prefix*, not inserted as its own name. `startsWith("app")` is `true` because `"apple"` begins with those three letters. Once `"app"` is inserted in its own right, the later `search("app")` flips to `true`.$D$ WHERE slug = 'prefix-tree';
-UPDATE problems SET constraints = $D$- `1 <= word.length, prefix.length <= 2000`
+After inserting `"apple"`, `search("apple")` is `true` because the exact name is on record. `search("app")` is `false` because `"app"` has only been *seen as a prefix*, not inserted as its own name. `startsWith("app")` is `true` because `"apple"` begins with those three letters. Once `"app"` is inserted in its own right, the later `search("app")` flips to `true`.$$ WHERE slug = 'prefix-tree';
+UPDATE problems SET constraints = $$- `1 <= word.length, prefix.length <= 2000`
 - `word` and `prefix` consist only of lowercase English letters.
-- At most `20000` calls total will be made across `insert`, `search`, and `startsWith`.$D$ WHERE slug = 'prefix-tree';
+- At most `20000` calls total will be made across `insert`, `search`, and `startsWith`.$$ WHERE slug = 'prefix-tree';
 
 -- random-set
-UPDATE problems SET description = $D$A raffle desk keeps a live pool of eligible ticket numbers and must be able to draw one uniformly at any moment. Each ticket number is a distinct integer, and the set of eligible tickets grows or shrinks as entries come in and are disqualified. Every draw must give each currently-eligible ticket the same chance of being picked, and the bookkeeping for add/remove/draw must stay constant on average no matter how many tickets are in play.
+UPDATE problems SET description = $$A raffle desk keeps a live pool of eligible ticket numbers and must be able to draw one uniformly at any moment. Each ticket number is a distinct integer, and the set of eligible tickets grows or shrinks as entries come in and are disqualified. Every draw must give each currently-eligible ticket the same chance of being picked, and the bookkeeping for add/remove/draw must stay constant on average no matter how many tickets are in play.
 
 Implement the `RandomBag` class:
 
@@ -215,13 +215,13 @@ Calls:  ["RandomBag","insert","insert","remove","drawRandom"]
 Args:   [[],[1],[2],[1],[]]
 Result: [null,true,true,true,2]
 ```
-Ticket `1` and ticket `2` enter the pool, then ticket `1` is disqualified. Only ticket `2` remains eligible, so the draw must return `2`.$D$ WHERE slug = 'random-set';
-UPDATE problems SET constraints = $D$- `-10^8 <= val <= 10^8`
+Ticket `1` and ticket `2` enter the pool, then ticket `1` is disqualified. Only ticket `2` remains eligible, so the draw must return `2`.$$ WHERE slug = 'random-set';
+UPDATE problems SET constraints = $$- `-10^8 <= val <= 10^8`
 - At most `2 * 10^5` combined calls to `insert`, `remove`, and `drawRandom`
-- The pool is guaranteed to be non-empty whenever `drawRandom` is invoked$D$ WHERE slug = 'random-set';
+- The pool is guaranteed to be non-empty whenever `drawRandom` is invoked$$ WHERE slug = 'random-set';
 
 -- recent-cache
-UPDATE problems SET description = $D$An edge node keeps a bounded registry of recently consulted records. Each record is identified by a numeric key and carries a numeric value (think of it as a computed response that is expensive to recompute). When the registry is full and a brand-new key arrives, the record that has gone the longest without being touched must be dropped to make room. Any access to a key — whether a fresh write or a successful read — counts as touching that key and refreshes its standing as the most recently used entry.
+UPDATE problems SET description = $$An edge node keeps a bounded registry of recently consulted records. Each record is identified by a numeric key and carries a numeric value (think of it as a computed response that is expensive to recompute). When the registry is full and a brand-new key arrives, the record that has gone the longest without being touched must be dropped to make room. Any access to a key — whether a fresh write or a successful read — counts as touching that key and refreshes its standing as the most recently used entry.
 
 Implement the `RecentRegistry` class:
 
@@ -239,14 +239,14 @@ registry.store(2, 20)   // {1=10, 2=20}
 registry.lookup(1)      // returns 10; 1 is now most recent
 registry.store(3, 30)   // evicts key 2 -> {1=10, 3=30}
 registry.lookup(2)      // returns -1
-```$D$ WHERE slug = 'recent-cache';
-UPDATE problems SET constraints = $D$- `1 <= capacity <= 3000`
+```$$ WHERE slug = 'recent-cache';
+UPDATE problems SET constraints = $$- `1 <= capacity <= 3000`
 - `0 <= key <= 8000`
 - `0 <= value <= 80000`
-- At most `2 * 10^5` combined calls to `lookup` and `store`$D$ WHERE slug = 'recent-cache';
+- At most `2 * 10^5` combined calls to `lookup` and `store`$$ WHERE slug = 'recent-cache';
 
 -- ring-buffer
-UPDATE problems SET description = $D$A streaming pipeline reuses a fixed block of slots arranged in a ring. Readings flow in at one end and are drained at the other; when the write head reaches the end of the block it wraps around to the start, so the storage never grows beyond the capacity chosen at startup. The pipeline must reject writes when every slot is occupied, ignore drains when nothing is buffered, and cheaply report the head and tail values as well as empty/full status at any time.
+UPDATE problems SET description = $$A streaming pipeline reuses a fixed block of slots arranged in a ring. Readings flow in at one end and are drained at the other; when the write head reaches the end of the block it wraps around to the start, so the storage never grows beyond the capacity chosen at startup. The pipeline must reject writes when every slot is occupied, ignore drains when nothing is buffered, and cheaply report the head and tail values as well as empty/full status at any time.
 
 Implement the `FixedRing` class:
 
@@ -267,13 +267,13 @@ ring.rear()                                // 3
 ring.pull()                                // true, drops 1
 ring.push(4)                               // true, wraps around
 ring.rear()                                // 4
-```$D$ WHERE slug = 'ring-buffer';
-UPDATE problems SET constraints = $D$- `1 <= k <= 1000`
+```$$ WHERE slug = 'ring-buffer';
+UPDATE problems SET constraints = $$- `1 <= k <= 1000`
 - `0 <= value <= 1000`
-- At most `3000` combined calls to `push`, `pull`, `front`, `rear`, `isEmpty`, and `isFull`$D$ WHERE slug = 'ring-buffer';
+- At most `3000` combined calls to `push`, `pull`, `front`, `rear`, `isEmpty`, and `isFull`$$ WHERE slug = 'ring-buffer';
 
 -- running-median
-UPDATE problems SET description = $D$A metrics collector ingests a stream of integer samples from a live service and must be ready, at any point, to report the median of every sample seen so far. Samples arrive one at a time and are never removed. When an even number of samples has been observed, the median is defined as the arithmetic mean of the two middle values and must be returned as a floating-point number; otherwise the middle value itself is returned (also as a floating-point number). Reads and writes are interleaved freely, so both operations need to be cheap even after very long sessions.
+UPDATE problems SET description = $$A metrics collector ingests a stream of integer samples from a live service and must be ready, at any point, to report the median of every sample seen so far. Samples arrive one at a time and are never removed. When an even number of samples has been observed, the median is defined as the arithmetic mean of the two middle values and must be returned as a floating-point number; otherwise the middle value itself is returned (also as a floating-point number). Reads and writes are interleaved freely, so both operations need to be cheap even after very long sessions.
 
 Implement the `StreamMedian` class:
 
@@ -290,13 +290,13 @@ collector.record(2)
 collector.median()    // (1 + 2) / 2 = 1.5
 collector.record(3)
 collector.median()    // middle of [1, 2, 3] = 2.0
-```$D$ WHERE slug = 'running-median';
-UPDATE problems SET constraints = $D$- `-80000 <= num <= 80000`
+```$$ WHERE slug = 'running-median';
+UPDATE problems SET constraints = $$- `-80000 <= num <= 80000`
 - At most `40000` combined calls to `record` and `median`
-- `median` is never called before the first `record`$D$ WHERE slug = 'running-median';
+- `median` is never called before the first `record`$$ WHERE slug = 'running-median';
 
 -- stack-queue
-UPDATE problems SET description = $D$A processing pipeline receives jobs that must be handled in strict arrival order (first-in, first-out), but the only primitive storage available in this environment is a last-in, first-out stack. Your task is to expose a FIFO interface while internally keeping exactly two stacks as backing storage — no arrays, lists, deques, or other containers are permitted. The standard stack primitives (push to top, pop from top, peek at top, emptiness check) are the only moves allowed on the two internal stacks.
+UPDATE problems SET description = $$A processing pipeline receives jobs that must be handled in strict arrival order (first-in, first-out), but the only primitive storage available in this environment is a last-in, first-out stack. Your task is to expose a FIFO interface while internally keeping exactly two stacks as backing storage — no arrays, lists, deques, or other containers are permitted. The standard stack primitives (push to top, pop from top, peek at top, emptiness check) are the only moves allowed on the two internal stacks.
 
 Implement the `QueueFromStacks` class:
 
@@ -316,13 +316,13 @@ q.push(2)
 q.peek()   // 1  -- front of the pipeline
 q.pop()    // 1  -- front is dequeued
 q.empty()  // false -- 2 still queued
-```$D$ WHERE slug = 'stack-queue';
-UPDATE problems SET constraints = $D$- `1 <= x <= 9`
+```$$ WHERE slug = 'stack-queue';
+UPDATE problems SET constraints = $$- `1 <= x <= 9`
 - At most `100` combined calls to `push`, `pop`, `peek`, and `empty`
-- `pop` and `peek` are only invoked when the pipeline is non-empty$D$ WHERE slug = 'stack-queue';
+- `pop` and `peek` are only invoked when the pipeline is non-empty$$ WHERE slug = 'stack-queue';
 
 -- state-snapshots
-UPDATE problems SET description = $D$A configuration service manages a fixed-length row of numeric cells that operators update in place, and it periodically freezes the current row as an immutable snapshot for auditing. Every snapshot gets the next consecutive id, starting at `0`, and later reads must be able to reconstruct the exact value a given cell held at the moment a given snapshot was taken — even after many further edits. All cells start at `0` when the service is created.
+UPDATE problems SET description = $$A configuration service manages a fixed-length row of numeric cells that operators update in place, and it periodically freezes the current row as an immutable snapshot for auditing. Every snapshot gets the next consecutive id, starting at `0`, and later reads must be able to reconstruct the exact value a given cell held at the moment a given snapshot was taken — even after many further edits. All cells start at `0` when the service is created.
 
 Implement the `VersionedCells` class:
 
@@ -338,28 +338,28 @@ cells.set(0, 5)
 cells.commit()        // returns 0; snapshot 0 is [5, 0, 0]
 cells.set(0, 6)       // live row is now [6, 0, 0]
 cells.readAt(0, 0)    // 5 -- value of cell 0 in snapshot 0
-```$D$ WHERE slug = 'state-snapshots';
-UPDATE problems SET constraints = $D$- `1 <= length <= 50000`
+```$$ WHERE slug = 'state-snapshots';
+UPDATE problems SET constraints = $$- `1 <= length <= 50000`
 - `0 <= index < length`
 - `0 <= val <= 10^8`
 - `0 <= snapId` and `snapId` is strictly less than the number of `commit` calls made so far
-- At most `50000` combined calls to `set`, `commit`, and `readAt`$D$ WHERE slug = 'state-snapshots';
+- At most `50000` combined calls to `set`, `commit`, and `readAt`$$ WHERE slug = 'state-snapshots';
 
 -- string-codec
-UPDATE problems SET description = $D$A message-framing layer sits between two services that can only exchange a single raw string across a socket. The upstream side has a list of arbitrary string fragments it needs to hand to the downstream side; the downstream side must reconstruct that list byte-for-byte. Your job is to build the framing codec that lives on both ends.
+UPDATE problems SET description = $$A message-framing layer sits between two services that can only exchange a single raw string across a socket. The upstream side has a list of arbitrary string fragments it needs to hand to the downstream side; the downstream side must reconstruct that list byte-for-byte. Your job is to build the framing codec that lives on both ends.
 
 Implement the `ListCoder` class with two methods:
 
 - `String pack(List<String> strs)` — takes a list of fragments and returns a single framed string that carries enough structural information to recover the list later. The fragments may contain *any* byte pattern, including whatever delimiter or escape character your framing scheme uses, so a naive join on a reserved character will not work.
 - `List<String> unpack(String s)` — takes a framed string previously produced by `pack` and returns the original list, preserving order, length, and content of every fragment, including empty fragments.
 
-The codec must be **stateless**: everything `unpack` needs has to live inside the string that `pack` emitted — no shared counters, no out-of-band metadata, no instance fields persisting between calls. A round trip through `pack` followed by `unpack` must reproduce the input list exactly, even when the list is empty, contains only empty fragments like `hello` or `world`, or contains fragments built entirely of characters that look like framing markers.$D$ WHERE slug = 'string-codec';
-UPDATE problems SET constraints = $D$- `0 <= strs.length <= 200`
+The codec must be **stateless**: everything `unpack` needs has to live inside the string that `pack` emitted — no shared counters, no out-of-band metadata, no instance fields persisting between calls. A round trip through `pack` followed by `unpack` must reproduce the input list exactly, even when the list is empty, contains only empty fragments like `hello` or `world`, or contains fragments built entirely of characters that look like framing markers.$$ WHERE slug = 'string-codec';
+UPDATE problems SET constraints = $$- `0 <= strs.length <= 200`
 - `0 <= strs[i].length <= 200`
-- Each `strs[i]` may contain any Unicode code point, including characters that the codec uses as delimiters or escapes.$D$ WHERE slug = 'string-codec';
+- Each `strs[i]` may contain any Unicode code point, including characters that the codec uses as delimiters or escapes.$$ WHERE slug = 'string-codec';
 
 -- time-map
-UPDATE problems SET description = $D$A metrics platform ingests named signals from fleet instrumentation. Each signal is identified by a string `key` (for example a device identifier or metric name), and the platform records a new `value` for that key every time the device reports in. Reports for the same key arrive in strictly increasing timestamp order. Analysts later ask, for some key and some timestamp `t`, "what did this signal read as-of `t`?" — meaning the latest recorded reading whose timestamp was not in the future relative to `t`.
+UPDATE problems SET description = $$A metrics platform ingests named signals from fleet instrumentation. Each signal is identified by a string `key` (for example a device identifier or metric name), and the platform records a new `value` for that key every time the device reports in. Reports for the same key arrive in strictly increasing timestamp order. Analysts later ask, for some key and some timestamp `t`, "what did this signal read as-of `t`?" — meaning the latest recorded reading whose timestamp was not in the future relative to `t`.
 
 Build the `TimestampedStore` class that backs this workload:
 
@@ -367,14 +367,14 @@ Build the `TimestampedStore` class that backs this workload:
 - `void write(String key, String value, int timestamp)` — appends the reading `value` for signal `key` at the given `timestamp`. For any given key, successive calls to `write` use timestamps that are strictly greater than all prior timestamps for that same key.
 - `String readAt(String key, int timestamp)` — returns the `value` most recently written for `key` at any timestamp `<= timestamp`. When `key` has no reading at or before `timestamp` (including the case where `key` has never been written), return the empty string `""`.
 
-Queries can ask about a point that sits between two recorded timestamps; in that case the reading from the most recent prior write is what was in effect, so that is what `readAt` returns. Queries can also arrive for timestamps newer than the most recent write, and should surface that most recent reading.$D$ WHERE slug = 'time-map';
-UPDATE problems SET constraints = $D$- `1 <= key.length, value.length <= 100`
+Queries can ask about a point that sits between two recorded timestamps; in that case the reading from the most recent prior write is what was in effect, so that is what `readAt` returns. Queries can also arrive for timestamps newer than the most recent write, and should surface that most recent reading.$$ WHERE slug = 'time-map';
+UPDATE problems SET constraints = $$- `1 <= key.length, value.length <= 100`
 - `1 <= timestamp <= 10^7`
 - Timestamps passed to `write` are strictly increasing per `key`.
-- The total number of `write` and `readAt` calls combined is at most `2 * 10^5`.$D$ WHERE slug = 'time-map';
+- The total number of `write` and `readAt` calls combined is at most `2 * 10^5`.$$ WHERE slug = 'time-map';
 
 -- tree-codec
-UPDATE problems SET description = $D$A hierarchical document workflow needs to hand binary-tree-shaped artifacts (think: a content outline where each node has an optional left and right child and an integer label) between services that only speak in strings. Your job is to write the two halves of that wire format: one side flattens a live tree into a single string, the other side rebuilds the identical tree from that string.
+UPDATE problems SET description = $$A hierarchical document workflow needs to hand binary-tree-shaped artifacts (think: a content outline where each node has an optional left and right child and an integer label) between services that only speak in strings. Your job is to write the two halves of that wire format: one side flattens a live tree into a single string, the other side rebuilds the identical tree from that string.
 
 Implement the `TreeSerializer` class with two methods:
 
@@ -383,12 +383,12 @@ Implement the `TreeSerializer` class with two methods:
 
 The specific textual format is yours to pick. What is fixed is the round-trip guarantee: for any valid input tree `t`, calling `unpack(pack(t))` must return a tree indistinguishable from `t`. That guarantee has to hold for a lopsided tree whose children sit on the left only, for a single-node tree, and for the empty tree.
 
-You may not rely on any state outside the string itself — the serializer and deserializer must be stateless so two different processes can exchange trees through `pack`/`unpack` alone.$D$ WHERE slug = 'tree-codec';
-UPDATE problems SET constraints = $D$- The number of nodes in the tree is in the range `[0, 10000]`.
-- `-1000 <= Node.val <= 1000`$D$ WHERE slug = 'tree-codec';
+You may not rely on any state outside the string itself — the serializer and deserializer must be stateless so two different processes can exchange trees through `pack`/`unpack` alone.$$ WHERE slug = 'tree-codec';
+UPDATE problems SET constraints = $$- The number of nodes in the tree is in the range `[0, 10000]`.
+- `-1000 <= Node.val <= 1000`$$ WHERE slug = 'tree-codec';
 
 -- word-dictionary
-UPDATE problems SET description = $D$A spell-check subsystem keeps a growing lexicon of known lowercase terms. Authors can register new terms at any time, and reviewers issue lookup queries against the lexicon using a simple pattern language: an exact letter must match that letter, and a `.` matches any single letter. A pattern is satisfied when at least one stored term, compared letter-for-letter against the pattern of the same length, matches under those rules.
+UPDATE problems SET description = $$A spell-check subsystem keeps a growing lexicon of known lowercase terms. Authors can register new terms at any time, and reviewers issue lookup queries against the lexicon using a simple pattern language: an exact letter must match that letter, and a `.` matches any single letter. A pattern is satisfied when at least one stored term, compared letter-for-letter against the pattern of the same length, matches under those rules.
 
 Implement the `WildcardLexicon` class:
 
@@ -396,8 +396,8 @@ Implement the `WildcardLexicon` class:
 - `void enroll(String word)` — adds `word` to the lexicon. `word` is made of lowercase English letters only. Duplicate enrollments for the same term are harmless; the term simply stays in the lexicon.
 - `boolean match(String word)` — returns `true` if some enrolled term has the same length as `word` and matches it position-by-position, where every `.` in `word` is treated as a single-letter wildcard. Returns `false` when no enrolled term satisfies the pattern, including the case where the lexicon is empty or when every enrolled term is a different length than `word`.
 
-A query's `word` contains only lowercase letters and the wildcard character `.`. A non-wildcard character must match its counterpart exactly; a `.` is allowed to stand in for any single lowercase letter, but it still consumes exactly one character of the stored term. Queries do not mutate the lexicon — they only inspect it — and enrollments and queries may be interleaved arbitrarily.$D$ WHERE slug = 'word-dictionary';
-UPDATE problems SET constraints = $D$- `1 <= word.length <= 25`
+A query's `word` contains only lowercase letters and the wildcard character `.`. A non-wildcard character must match its counterpart exactly; a `.` is allowed to stand in for any single lowercase letter, but it still consumes exactly one character of the stored term. Queries do not mutate the lexicon — they only inspect it — and enrollments and queries may be interleaved arbitrarily.$$ WHERE slug = 'word-dictionary';
+UPDATE problems SET constraints = $$- `1 <= word.length <= 25`
 - `word` in `enroll` consists of lowercase English letters only.
 - `word` in `match` consists of lowercase English letters and/or the wildcard character `.`.
-- At most `8000` calls will be made to `enroll` and `match` combined.$D$ WHERE slug = 'word-dictionary';
+- At most `8000` calls will be made to `enroll` and `match` combined.$$ WHERE slug = 'word-dictionary';

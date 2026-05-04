@@ -44,7 +44,7 @@ WHERE slug = 'valid-slogan-palindrome';
 
 -- Korean translation
 UPDATE problem_translations SET
-    description = $KO$범퍼 스티커 슬로건 `phrase`가 주어집니다. 알파벳을 모두 소문자로 바꾸고 알파벳·숫자가 아닌 문자를 전부 제거했을 때, 남은 문자열이 앞에서 읽어도 뒤에서 읽어도 똑같으면 `true`, 아니면 `false`를 반환하세요. 빈 문자열도 회문으로 간주합니다.
+    description = $$범퍼 스티커 슬로건 `phrase`가 주어집니다. 알파벳을 모두 소문자로 바꾸고 알파벳·숫자가 아닌 문자를 전부 제거했을 때, 남은 문자열이 앞에서 읽어도 뒤에서 읽어도 똑같으면 `true`, 아니면 `false`를 반환하세요. 빈 문자열도 회문으로 간주합니다.
 
 **예시 1:**
 ```
@@ -65,7 +65,7 @@ Explanation: After filtering the phrase becomes "shelf7anotmirrored", which is n
 Input: phrase = ",,,"
 Output: true
 Explanation: After removing non-alphanumeric characters the phrase is empty, which counts as a mirror.
-```$KO$
+```$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = 'valid-slogan-palindrome');
 

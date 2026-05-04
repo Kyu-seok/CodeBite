@@ -46,8 +46,8 @@ INSERT INTO problem_translations (problem_id, locale, title, description, constr
 VALUES (
     (SELECT id FROM problems WHERE slug = 'shelf-stock-pair'),
     'ko',
-    $KO$간식 서랍 짝 찾기$KO$,
-    $KO$친구와 함께 간식 서랍을 뒤지고 있습니다. 배열 `snacks`에는 각 간식의 칼로리가 들어 있고, 두 사람이 정확히 `target` 칼로리만큼 먹으려 합니다.
+    $$간식 서랍 짝 찾기$$,
+    $$친구와 함께 간식 서랍을 뒤지고 있습니다. 배열 `snacks`에는 각 간식의 칼로리가 들어 있고, 두 사람이 정확히 `target` 칼로리만큼 먹으려 합니다.
 
 합이 `target`이 되는 서로 다른 두 간식을 골라 그 인덱스를 반환하세요. 정답 짝은 정확히 하나이고, 순서는 상관없습니다.
 
@@ -63,9 +63,9 @@ Explanation: snacks[1] + snacks[2] = 11 + 19 = 30.
 Input: snacks = [8, 14, 6], target = 14
 Output: [0, 2]
 Explanation: snacks[0] + snacks[2] = 8 + 6 = 14.
-```$KO$,
-    $KO$- `2 <= snacks.length <= 80000`
+```$$,
+    $$- `2 <= snacks.length <= 80000`
 - `-10^8 <= snacks[i] <= 10^8`
 - `-10^8 <= target <= 10^8`
-- 정답 짝이 정확히 하나 존재합니다.$KO$
+- 정답 짝이 정확히 하나 존재합니다.$$
 );

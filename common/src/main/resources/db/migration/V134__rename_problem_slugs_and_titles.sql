@@ -15,7 +15,7 @@ UPDATE problems SET
 WHERE slug = $$active-sensor-mask$$;
 
 UPDATE problem_translations SET
-    title = $KO$온라인 친구 수 세기$KO$
+    title = $$온라인 친구 수 세기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$online-friend-mask$$);
 
@@ -26,7 +26,7 @@ UPDATE problems SET
 WHERE slug = $$alternate-ward-sweep$$;
 
 UPDATE problem_translations SET
-    title = $KO$지그재그로 줄 서기$KO$
+    title = $$지그재그로 줄 서기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$zigzag-yearbook-order$$);
 
@@ -37,7 +37,7 @@ UPDATE problems SET
 WHERE slug = $$assemble-script-breakdown$$;
 
 UPDATE problem_translations SET
-    title = $KO$보스전 트리 복원$KO$
+    title = $$보스전 트리 복원$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$rebuild-boss-tree$$);
 
@@ -48,7 +48,7 @@ UPDATE problems SET
 WHERE slug = $$balance-print-jobs$$;
 
 UPDATE problem_translations SET
-    title = $KO$인쇄 작업 균형 맞추기$KO$
+    title = $$인쇄 작업 균형 맞추기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$balance-print-queue$$);
 
@@ -59,7 +59,7 @@ UPDATE problems SET
 WHERE slug = $$batch-quota-combos$$;
 
 UPDATE problem_translations SET
-    title = $KO$계산서에 딱 맞는 메뉴 조합$KO$
+    title = $$계산서에 딱 맞는 메뉴 조합$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$menu-combos-tab$$);
 
@@ -70,7 +70,7 @@ UPDATE problems SET
 WHERE slug = $$best-bake-order$$;
 
 UPDATE problem_translations SET
-    title = $KO$최고의 풍선 터뜨리기 순서$KO$
+    title = $$최고의 풍선 터뜨리기 순서$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$best-balloon-pop-order$$);
 
@@ -81,7 +81,7 @@ UPDATE problems SET
 WHERE slug = $$best-flow-streak$$;
 
 UPDATE problem_translations SET
-    title = $KO$최고의 손님 흐름 구간$KO$
+    title = $$최고의 손님 흐름 구간$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$best-boba-streak$$);
 
@@ -92,7 +92,7 @@ UPDATE problems SET
 WHERE slug = $$best-scene-branch$$;
 
 UPDATE problem_translations SET
-    title = $KO$최고의 스킬 트리 가지$KO$
+    title = $$최고의 스킬 트리 가지$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$best-skill-tree-path$$);
 
@@ -103,7 +103,7 @@ UPDATE problems SET
 WHERE slug = $$best-tier-resale$$;
 
 UPDATE problem_translations SET
-    title = $KO$최고의 스킨 되팔이 날$KO$
+    title = $$최고의 스킨 되팔이 날$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$best-skin-flip-day$$);
 
@@ -114,7 +114,7 @@ UPDATE problems SET
 WHERE slug = $$biggest-clear-bay$$;
 
 UPDATE problem_translations SET
-    title = $KO$가장 큰 빈 교실 바닥$KO$
+    title = $$가장 큰 빈 교실 바닥$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$biggest-clear-floor$$);
 
@@ -125,7 +125,7 @@ UPDATE problems SET
 WHERE slug = $$bridge-label-chain$$;
 
 UPDATE problem_translations SET
-    title = $KO$스폰 코드 한 글자씩$KO$
+    title = $$스폰 코드 한 글자씩$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$spawn-code-ladder$$);
 
@@ -136,7 +136,7 @@ UPDATE problems SET
 WHERE slug = $$brightest-observed-targets$$;
 
 UPDATE problem_translations SET
-    title = $KO$상위 점수 조회$KO$
+    title = $$상위 점수 조회$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$top-raid-score$$);
 
@@ -147,7 +147,7 @@ UPDATE problems SET
 WHERE slug = $$build-mirror-length$$;
 
 UPDATE problem_translations SET
-    title = $KO$거울처럼 읽히는 구간 길이$KO$
+    title = $$거울처럼 읽히는 구간 길이$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$longest-doodle-palindrome$$);
 
@@ -158,7 +158,7 @@ UPDATE problems SET
 WHERE slug = $$bump-parcel-code$$;
 
 UPDATE problem_translations SET
-    title = $KO$포장 번호 하나 올리기$KO$
+    title = $$포장 번호 하나 올리기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$bump-takeout-number$$);
 
@@ -169,7 +169,7 @@ UPDATE problems SET
 WHERE slug = $$busiest-machines-list$$;
 
 UPDATE problem_translations SET
-    title = $KO$가장 바빴던 머신 목록$KO$
+    title = $$가장 바빴던 머신 목록$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$top-espresso-machines$$);
 
@@ -180,7 +180,7 @@ UPDATE problems SET
 WHERE slug = $$calm-sensor-reading$$;
 
 UPDATE problem_translations SET
-    title = $KO$평온한 전화번호$KO$
+    title = $$평온한 전화번호$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$calm-phone-number$$);
 
@@ -191,7 +191,7 @@ UPDATE problems SET
 WHERE slug = $$carrier-street-sweep$$;
 
 UPDATE problem_translations SET
-    title = $KO$동네 길 한 번씩 돌기$KO$
+    title = $$동네 길 한 번씩 돌기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$dog-street-walk$$);
 
@@ -202,7 +202,7 @@ UPDATE problems SET
 WHERE slug = $$chart-block-route$$;
 
 UPDATE problem_translations SET
-    title = $KO$최단 던전 경로$KO$
+    title = $$최단 던전 경로$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$shortest-dungeon-path$$);
 
@@ -213,7 +213,7 @@ UPDATE problems SET
 WHERE slug = $$check-key-reachability$$;
 
 UPDATE problem_translations SET
-    title = $KO$모든 방 열 수 있는지$KO$
+    title = $$모든 방 열 수 있는지$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$open-all-rooms$$);
 
@@ -224,7 +224,7 @@ UPDATE problems SET
 WHERE slug = $$check-merged-queue$$;
 
 UPDATE problem_translations SET
-    title = $KO$입력 합쳐쓰기 검사$KO$
+    title = $$입력 합쳐쓰기 검사$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$check-interleaved-inputs$$);
 
@@ -235,7 +235,7 @@ UPDATE problems SET
 WHERE slug = $$choose-start-station$$;
 
 UPDATE problem_translations SET
-    title = $KO$출발 충전소 고르기$KO$
+    title = $$출발 충전소 고르기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$pick-charging-start$$);
 
@@ -246,7 +246,7 @@ UPDATE problems SET
 WHERE slug = $$clear-defect-rows$$;
 
 UPDATE problem_translations SET
-    title = $KO$불량 줄 싹 지우기$KO$
+    title = $$불량 줄 싹 지우기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$zero-out-rows-cols$$);
 
@@ -257,7 +257,7 @@ UPDATE problems SET
 WHERE slug = $$click-counter$$;
 
 UPDATE problem_translations SET
-    title = $KO$클릭 집계 창$KO$
+    title = $$클릭 집계 창$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$click-tally-window$$);
 
@@ -268,7 +268,7 @@ UPDATE problems SET
 WHERE slug = $$cluster-barrel-signatures$$;
 
 UPDATE problem_translations SET
-    title = $KO$음료 라벨 묶기$KO$
+    title = $$음료 라벨 묶기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$group-drink-labels$$);
 
@@ -279,7 +279,7 @@ UPDATE problems SET
 WHERE slug = $$combine-counter-readings$$;
 
 UPDATE problem_translations SET
-    title = $KO$더하기 없이 덧셈$KO$
+    title = $$더하기 없이 덧셈$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$add-without-plus$$);
 
@@ -290,7 +290,7 @@ UPDATE problems SET
 WHERE slug = $$combine-oven-rotations$$;
 
 UPDATE problem_translations SET
-    title = $KO$리더보드 기록 합치기$KO$
+    title = $$리더보드 기록 합치기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$merge-leaderboard-runs$$);
 
@@ -301,7 +301,7 @@ UPDATE problems SET
 WHERE slug = $$compact-shelved-copies$$;
 
 UPDATE problem_translations SET
-    title = $KO$책꽂이 중복 정리$KO$
+    title = $$책꽂이 중복 정리$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$dedupe-textbook-shelf$$);
 
@@ -312,7 +312,7 @@ UPDATE problems SET
 WHERE slug = $$compare-pallet-flags$$;
 
 UPDATE problem_translations SET
-    title = $KO$장비 플래그 비교하기$KO$
+    title = $$장비 플래그 비교하기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$compare-loadout-bits$$);
 
@@ -323,7 +323,7 @@ UPDATE problems SET
 WHERE slug = $$contains-topic-branch$$;
 
 UPDATE problem_translations SET
-    title = $KO$주제 가지 포함 확인$KO$
+    title = $$주제 가지 포함 확인$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$find-submap$$);
 
@@ -334,7 +334,7 @@ UPDATE problems SET
 WHERE slug = $$count-assembly-orders$$;
 
 UPDATE problem_translations SET
-    title = $KO$조별 과제 순서 세기$KO$
+    title = $$조별 과제 순서 세기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$count-task-orderings$$);
 
@@ -345,7 +345,7 @@ UPDATE problems SET
 WHERE slug = $$count-coupon-combos$$;
 
 UPDATE problem_translations SET
-    title = $KO$쿠폰 조합 세기$KO$
+    title = $$쿠폰 조합 세기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$count-coupon-ways$$);
 
@@ -356,7 +356,7 @@ UPDATE problems SET
 WHERE slug = $$count-exact-page-quotas$$;
 
 UPDATE problem_translations SET
-    title = $KO$딱 맞는 봉지 개수 세기$KO$
+    title = $$딱 맞는 봉지 개수 세기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$count-square-candy-bags$$);
 
@@ -367,7 +367,7 @@ UPDATE problems SET
 WHERE slug = $$count-filter-matches$$;
 
 UPDATE problem_translations SET
-    title = $KO$노트 매칭 개수 세기$KO$
+    title = $$노트 매칭 개수 세기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$count-hint-matches$$);
 
@@ -378,7 +378,7 @@ UPDATE problems SET
 WHERE slug = $$count-gate-routes$$;
 
 UPDATE problem_translations SET
-    title = $KO$던전 경로 수 세기$KO$
+    title = $$던전 경로 수 세기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$count-dungeon-paths$$);
 
@@ -389,7 +389,7 @@ UPDATE problems SET
 WHERE slug = $$count-longest-bake-trail$$;
 
 UPDATE problem_translations SET
-    title = $KO$가장 긴 굽기 순서 개수$KO$
+    title = $$가장 긴 굽기 순서 개수$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$count-longest-cookie-runs$$);
 
@@ -400,7 +400,7 @@ UPDATE problems SET
 WHERE slug = $$count-mirror-spans$$;
 
 UPDATE problem_translations SET
-    title = $KO$거울 구간 세기$KO$
+    title = $$거울 구간 세기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$count-doodle-palindromes$$);
 
@@ -411,7 +411,7 @@ UPDATE problems SET
 WHERE slug = $$count-reservoir-paths$$;
 
 UPDATE problem_translations SET
-    title = $KO$레벨 뛰는 경우의 수$KO$
+    title = $$레벨 뛰는 경우의 수$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$count-level-hops$$);
 
@@ -422,7 +422,7 @@ UPDATE problems SET
 WHERE slug = $$count-scan-decodings$$;
 
 UPDATE problem_translations SET
-    title = $KO$디코딩 방법 개수$KO$
+    title = $$디코딩 방법 개수$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$count-cipher-decodings$$);
 
@@ -433,7 +433,7 @@ UPDATE problems SET
 WHERE slug = $$cover-watering-windows$$;
 
 UPDATE problem_translations SET
-    title = $KO$수조 구역 덮기$KO$
+    title = $$수조 구역 덮기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$cover-aquarium-zones$$);
 
@@ -444,7 +444,7 @@ UPDATE problems SET
 WHERE slug = $$crush-heaviest-bales$$;
 
 UPDATE problem_translations SET
-    title = $KO$가장 무거운 블록 부수기$KO$
+    title = $$가장 무거운 블록 부수기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$crush-heaviest-blocks$$);
 
@@ -455,7 +455,7 @@ UPDATE problems SET
 WHERE slug = $$days-to-upgrade$$;
 
 UPDATE problem_translations SET
-    title = $KO$기온이 오를 때까지 며칠?$KO$
+    title = $$기온이 오를 때까지 며칠?$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$days-until-warmer$$);
 
@@ -466,7 +466,7 @@ UPDATE problems SET
 WHERE slug = $$decode-zone-numeral$$;
 
 UPDATE problem_translations SET
-    title = $KO$던전 층수 해독하기$KO$
+    title = $$던전 층수 해독하기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$decode-roman-floor$$);
 
@@ -477,7 +477,7 @@ UPDATE problems SET
 WHERE slug = $$deepest-zone-chain$$;
 
 UPDATE problem_translations SET
-    title = $KO$가장 깊은 스킬 체인$KO$
+    title = $$가장 깊은 스킬 체인$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$deepest-skill-chain$$);
 
@@ -488,7 +488,7 @@ UPDATE problems SET
 WHERE slug = $$detect-callnumber-clash$$;
 
 UPDATE problem_translations SET
-    title = $KO$사물함 번호 중복 찾기$KO$
+    title = $$사물함 번호 중복 찾기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$spot-duplicate-locker$$);
 
@@ -499,7 +499,7 @@ UPDATE problems SET
 WHERE slug = $$detect-flow-value$$;
 
 UPDATE problem_translations SET
-    title = $KO$메뉴판에서 가격 찾기$KO$
+    title = $$메뉴판에서 가격 찾기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$find-menu-price$$);
 
@@ -510,7 +510,7 @@ UPDATE problems SET
 WHERE slug = $$detect-transfer-loop$$;
 
 UPDATE problem_translations SET
-    title = $KO$맵 루프 감지하기$KO$
+    title = $$맵 루프 감지하기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$detect-portal-loop$$);
 
@@ -521,7 +521,7 @@ UPDATE problems SET
 WHERE slug = $$dock-edge-silhouette$$;
 
 UPDATE problem_translations SET
-    title = $KO$오른쪽에서 본 스킬 트리$KO$
+    title = $$오른쪽에서 본 스킬 트리$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$right-side-skill-view$$);
 
@@ -532,7 +532,7 @@ UPDATE problems SET
 WHERE slug = $$drop-class-conflicts$$;
 
 UPDATE problem_translations SET
-    title = $KO$겹치는 수업 정리하기$KO$
+    title = $$겹치는 수업 정리하기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$drop-conflicting-classes$$);
 
@@ -543,7 +543,7 @@ UPDATE problems SET
 WHERE slug = $$drop-tail-booking$$;
 
 UPDATE problem_translations SET
-    title = $KO$뒤에서 N번째 예약 취소$KO$
+    title = $$뒤에서 N번째 예약 취소$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$drop-nth-reservation$$);
 
@@ -554,7 +554,7 @@ UPDATE problems SET
 WHERE slug = $$duplicate-catalog-link$$;
 
 UPDATE problem_translations SET
-    title = $KO$중복된 친구 관계$KO$
+    title = $$중복된 친구 관계$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$redundant-friendship$$);
 
@@ -565,7 +565,7 @@ UPDATE problems SET
 WHERE slug = $$duplicate-topic-web$$;
 
 UPDATE problem_translations SET
-    title = $KO$퀘스트 로그 복제$KO$
+    title = $$퀘스트 로그 복제$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$clone-quest-log$$);
 
@@ -576,7 +576,7 @@ UPDATE problems SET
 WHERE slug = $$enumerate-barrel-blends$$;
 
 UPDATE problem_translations SET
-    title = $KO$트레일 믹스 조합 나열$KO$
+    title = $$트레일 믹스 조합 나열$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$list-trail-mix-combos$$);
 
@@ -587,7 +587,7 @@ UPDATE problems SET
 WHERE slug = $$event-window-tally$$;
 
 UPDATE problem_translations SET
-    title = $KO$배터리 변동 구간 세기$KO$
+    title = $$배터리 변동 구간 세기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$battery-window-tally$$);
 
@@ -598,7 +598,7 @@ UPDATE problems SET
 WHERE slug = $$fanout-responder-reach$$;
 
 UPDATE problem_translations SET
-    title = $KO$급식대까지 최소 거리$KO$
+    title = $$급식대까지 최소 거리$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$nearest-cat-feeder$$);
 
@@ -609,7 +609,7 @@ UPDATE problems SET
 WHERE slug = $$feed-designer$$;
 
 UPDATE problem_translations SET
-    title = $KO$짧은 글 피드$KO$
+    title = $$짧은 글 피드$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$micro-feed$$);
 
@@ -620,7 +620,7 @@ UPDATE problems SET
 WHERE slug = $$fewest-bag-sizes$$;
 
 UPDATE problem_translations SET
-    title = $KO$최소 사탕 봉지 수$KO$
+    title = $$최소 사탕 봉지 수$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$fewest-candy-bags$$);
 
@@ -631,7 +631,7 @@ UPDATE problems SET
 WHERE slug = $$fewest-van-hops$$;
 
 UPDATE problem_translations SET
-    title = $KO$최소 점프 횟수$KO$
+    title = $$최소 점프 횟수$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$fewest-tile-jumps$$);
 
@@ -642,7 +642,7 @@ UPDATE problems SET
 WHERE slug = $$finish-assembly-line$$;
 
 UPDATE problem_translations SET
-    title = $KO$레벨 클리어 가능?$KO$
+    title = $$레벨 클리어 가능?$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$finish-the-level$$);
 
@@ -653,7 +653,7 @@ UPDATE problems SET
 WHERE slug = $$flag-material-codes$$;
 
 UPDATE problem_translations SET
-    title = $KO$단어 찾기 목록$KO$
+    title = $$단어 찾기 목록$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$find-hidden-words$$);
 
@@ -664,7 +664,7 @@ UPDATE problems SET
 WHERE slug = $$flights-by-tier$$;
 
 UPDATE problem_translations SET
-    title = $KO$계급별 모으기$KO$
+    title = $$계급별 모으기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$group-tree-by-level$$);
 
@@ -675,7 +675,7 @@ UPDATE problems SET
 WHERE slug = $$flip-sorter-segments$$;
 
 UPDATE problem_translations SET
-    title = $KO$구간별로 뒤집기$KO$
+    title = $$구간별로 뒤집기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$flip-chunks-of-k$$);
 
@@ -686,7 +686,7 @@ UPDATE problems SET
 WHERE slug = $$flooded-corridor-crossing$$;
 
 UPDATE problem_translations SET
-    title = $KO$물에 잠기는 통로 건너기$KO$
+    title = $$물에 잠기는 통로 건너기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$rising-water-path$$);
 
@@ -697,7 +697,7 @@ UPDATE problems SET
 WHERE slug = $$fold-bale-ops$$;
 
 UPDATE problem_translations SET
-    title = $KO$후위 표기식 계산$KO$
+    title = $$후위 표기식 계산$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$eval-postfix-tape$$);
 
@@ -708,7 +708,7 @@ UPDATE problems SET
 WHERE slug = $$forecast-step-factor$$;
 
 UPDATE problem_translations SET
-    title = $KO$배터리 소모율 예측$KO$
+    title = $$배터리 소모율 예측$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$battery-drain-power$$);
 
@@ -719,7 +719,7 @@ UPDATE problems SET
 WHERE slug = $$form-bale-triple$$;
 
 UPDATE problem_translations SET
-    title = $KO$장바구니 세 묶음$KO$
+    title = $$장바구니 세 묶음$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$grocery-bag-triple$$);
 
@@ -730,7 +730,7 @@ UPDATE problems SET
 WHERE slug = $$frame-largest-bale$$;
 
 UPDATE problem_translations SET
-    title = $KO$가장 큰 사물함 포스터$KO$
+    title = $$가장 큰 사물함 포스터$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$biggest-locker-poster$$);
 
@@ -741,7 +741,7 @@ UPDATE problems SET
 WHERE slug = $$group-oven-bakes$$;
 
 UPDATE problem_translations SET
-    title = $KO$스터디 카드 묶기$KO$
+    title = $$스터디 카드 묶기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$group-study-cards$$);
 
@@ -752,7 +752,7 @@ UPDATE problems SET
 WHERE slug = $$group-train-packs$$;
 
 UPDATE problem_translations SET
-    title = $KO$차량 무리 묶기$KO$
+    title = $$차량 무리 묶기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$group-car-packs$$);
 
@@ -763,7 +763,7 @@ UPDATE problems SET
 WHERE slug = $$hash-table$$;
 
 UPDATE problem_translations SET
-    title = $KO$간식 재고 맵$KO$
+    title = $$간식 재고 맵$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$snack-stock-map$$);
 
@@ -774,7 +774,7 @@ UPDATE problems SET
 WHERE slug = $$headline-majority-pick$$;
 
 UPDATE problem_translations SET
-    title = $KO$대세 픽 고르기$KO$
+    title = $$대세 픽 고르기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$majority-boss-vote$$);
 
@@ -785,7 +785,7 @@ UPDATE problems SET
 WHERE slug = $$hub-evenness-check$$;
 
 UPDATE problem_translations SET
-    title = $KO$햄스터 가계도 균형 검사$KO$
+    title = $$햄스터 가계도 균형 검사$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$balanced-hamster-tree$$);
 
@@ -796,7 +796,7 @@ UPDATE problems SET
 WHERE slug = $$interleave-trailer-cuts$$;
 
 UPDATE problem_translations SET
-    title = $KO$트레일러 컷 교차하기$KO$
+    title = $$트레일러 컷 교차하기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$interleave-clip-chain$$);
 
@@ -807,7 +807,7 @@ UPDATE problems SET
 WHERE slug = $$irrigation-pipe-plan$$;
 
 UPDATE problem_translations SET
-    title = $KO$반려동물 급수대 연결$KO$
+    title = $$반려동물 급수대 연결$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$connect-water-bowls$$);
 
@@ -818,7 +818,7 @@ UPDATE problems SET
 WHERE slug = $$is-acyclic-network$$;
 
 UPDATE problem_translations SET
-    title = $KO$무순환 네트워크 판별$KO$
+    title = $$무순환 네트워크 판별$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$valid-pet-tree$$);
 
@@ -829,7 +829,7 @@ UPDATE problems SET
 WHERE slug = $$keypad-device-codes$$;
 
 UPDATE problem_translations SET
-    title = $KO$키패드 문자 조합$KO$
+    title = $$키패드 문자 조합$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$flip-phone-codes$$);
 
@@ -840,7 +840,7 @@ UPDATE problems SET
 WHERE slug = $$kth-largest-stream$$;
 
 UPDATE problem_translations SET
-    title = $KO$실시간 K번째 최고 점수$KO$
+    title = $$실시간 K번째 최고 점수$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$kth-top-score-stream$$);
 
@@ -851,7 +851,7 @@ UPDATE problems SET
 WHERE slug = $$label-lane-scans$$;
 
 UPDATE problem_translations SET
-    title = $KO$라운드 이름 붙이기$KO$
+    title = $$라운드 이름 붙이기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$round-nicknames$$);
 
@@ -862,7 +862,7 @@ UPDATE problems SET
 WHERE slug = $$list-runtime-branches$$;
 
 UPDATE problem_translations SET
-    title = $KO$스킬 빌드 경로 나열$KO$
+    title = $$스킬 빌드 경로 나열$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$list-skill-build-paths$$);
 
@@ -873,7 +873,7 @@ UPDATE problems SET
 WHERE slug = $$list-slate-sequences$$;
 
 UPDATE problem_translations SET
-    title = $KO$괄호 짝 만들기$KO$
+    title = $$괄호 짝 만들기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$list-bracket-pairings$$);
 
@@ -884,7 +884,7 @@ UPDATE problems SET
 WHERE slug = $$locate-call-number$$;
 
 UPDATE problem_translations SET
-    title = $KO$사물함 위치 찾기$KO$
+    title = $$사물함 위치 찾기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$find-locker-number$$);
 
@@ -895,7 +895,7 @@ UPDATE problems SET
 WHERE slug = $$locate-terminus-station$$;
 
 UPDATE problem_translations SET
-    title = $KO$회전된 리더보드 최저 점수$KO$
+    title = $$회전된 리더보드 최저 점수$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$find-rotated-low-score$$);
 
@@ -906,7 +906,7 @@ UPDATE problems SET
 WHERE slug = $$locate-vacant-callslot$$;
 
 UPDATE problem_translations SET
-    title = $KO$비어 있는 사물함 찾기$KO$
+    title = $$비어 있는 사물함 찾기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$find-empty-locker$$);
 
@@ -917,7 +917,7 @@ UPDATE problems SET
 WHERE slug = $$longest-bright-run$$;
 
 UPDATE problem_translations SET
-    title = $KO$가장 긴 상승 퀴즈 수열$KO$
+    title = $$가장 긴 상승 퀴즈 수열$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$longest-quiz-streak$$);
 
@@ -928,7 +928,7 @@ UPDATE problems SET
 WHERE slug = $$longest-clean-run$$;
 
 UPDATE problem_translations SET
-    title = $KO$가장 긴 안 겹치는 간식 구간$KO$
+    title = $$가장 긴 안 겹치는 간식 구간$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$longest-unique-treats$$);
 
@@ -939,7 +939,7 @@ UPDATE problems SET
 WHERE slug = $$longest-fresh-feed$$;
 
 UPDATE problem_translations SET
-    title = $KO$가장 긴 장르 몰아보기$KO$
+    title = $$가장 긴 장르 몰아보기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$longest-genre-window$$);
 
@@ -950,7 +950,7 @@ UPDATE problems SET
 WHERE slug = $$longest-seat-block$$;
 
 UPDATE problem_translations SET
-    title = $KO$가장 긴 좌석 구간$KO$
+    title = $$가장 긴 좌석 구간$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$longest-seat-run$$);
 
@@ -961,7 +961,7 @@ UPDATE problems SET
 WHERE slug = $$longest-vine-ascent$$;
 
 UPDATE problem_translations SET
-    title = $KO$가장 긴 레벨업 경로$KO$
+    title = $$가장 긴 레벨업 경로$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$longest-level-up-path$$);
 
@@ -972,7 +972,7 @@ UPDATE problems SET
 WHERE slug = $$lowest-missing-target$$;
 
 UPDATE problem_translations SET
-    title = $KO$사라진 빨래 번호$KO$
+    title = $$사라진 빨래 번호$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$missing-sock-number$$);
 
@@ -983,7 +983,7 @@ UPDATE problems SET
 WHERE slug = $$match-recipe-ingredients$$;
 
 UPDATE problem_translations SET
-    title = $KO$같은 간식 믹스$KO$
+    title = $$같은 간식 믹스$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$same-snack-mix$$);
 
@@ -994,7 +994,7 @@ UPDATE problems SET
 WHERE slug = $$matching-catalog-layouts$$;
 
 UPDATE problem_translations SET
-    title = $KO$같은 스킬 트리 확인$KO$
+    title = $$같은 스킬 트리 확인$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$same-skill-trees$$);
 
@@ -1005,7 +1005,7 @@ UPDATE problems SET
 WHERE slug = $$merge-flight-rosters$$;
 
 UPDATE problem_translations SET
-    title = $KO$카페 주문 큐 합치기$KO$
+    title = $$카페 주문 큐 합치기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$merge-cafe-queues$$);
 
@@ -1016,7 +1016,7 @@ UPDATE problems SET
 WHERE slug = $$merge-reservation-windows$$;
 
 UPDATE problem_translations SET
-    title = $KO$예약 창 합치기$KO$
+    title = $$예약 창 합치기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$merge-reservation-slots$$);
 
@@ -1027,7 +1027,7 @@ UPDATE problems SET
 WHERE slug = $$merged-zone-median$$;
 
 UPDATE problem_translations SET
-    title = $KO$합쳐진 매출 중간값$KO$
+    title = $$합쳐진 매출 중간값$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$merged-price-median$$);
 
@@ -1038,7 +1038,7 @@ UPDATE problems SET
 WHERE slug = $$min-wait-route$$;
 
 UPDATE problem_translations SET
-    title = $KO$최소 대기 경로$KO$
+    title = $$최소 대기 경로$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$min-wait-drive$$);
 
@@ -1049,7 +1049,7 @@ UPDATE problems SET
 WHERE slug = $$min-zone-code-edits$$;
 
 UPDATE problem_translations SET
-    title = $KO$최소 편집 횟수$KO$
+    title = $$최소 편집 횟수$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$min-cheat-code-edits$$);
 
@@ -1060,7 +1060,7 @@ UPDATE problems SET
 WHERE slug = $$minimum-stack$$;
 
 UPDATE problem_translations SET
-    title = $KO$최저값 추적 스택$KO$
+    title = $$최저값 추적 스택$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$low-score-stack$$);
 
@@ -1071,7 +1071,7 @@ UPDATE problems SET
 WHERE slug = $$mirror-headline-splits$$;
 
 UPDATE problem_translations SET
-    title = $KO$팰린드롬 조각으로 쪼개기$KO$
+    title = $$팰린드롬 조각으로 쪼개기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$palindrome-menu-splits$$);
 
@@ -1082,7 +1082,7 @@ UPDATE problems SET
 WHERE slug = $$montage-scene-picks$$;
 
 UPDATE problem_translations SET
-    title = $KO$간식 조합 뽑기$KO$
+    title = $$간식 조합 뽑기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$snack-combo-picks$$);
 
@@ -1093,7 +1093,7 @@ UPDATE problems SET
 WHERE slug = $$nearest-depot-stops$$;
 
 UPDATE problem_translations SET
-    title = $KO$가까운 카페 배달지$KO$
+    title = $$가까운 카페 배달지$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$nearest-cafe-stops$$);
 
@@ -1104,7 +1104,7 @@ UPDATE problems SET
 WHERE slug = $$next-shot-order$$;
 
 UPDATE problem_translations SET
-    title = $KO$다음 발표 순서$KO$
+    title = $$다음 발표 순서$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$next-speaker-order$$);
 
@@ -1115,7 +1115,7 @@ UPDATE problems SET
 WHERE slug = $$nth-dimmest-target$$;
 
 UPDATE problem_translations SET
-    title = $KO$N번째 낮은 점수$KO$
+    title = $$N번째 낮은 점수$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$nth-lowest-score$$);
 
@@ -1126,7 +1126,7 @@ UPDATE problems SET
 WHERE slug = $$nth-smooth-batch$$;
 
 UPDATE problem_translations SET
-    title = $KO$N번째 해금 레벨$KO$
+    title = $$N번째 해금 레벨$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$nth-unlockable-level$$);
 
@@ -1137,7 +1137,7 @@ UPDATE problems SET
 WHERE slug = $$order-tank-deviations$$;
 
 UPDATE problem_translations SET
-    title = $KO$라떼 온도 편차 정렬$KO$
+    title = $$라떼 온도 편차 정렬$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$sort-latte-squared$$);
 
@@ -1148,7 +1148,7 @@ UPDATE problems SET
 WHERE slug = $$order-ticket-holders$$;
 
 UPDATE problem_translations SET
-    title = $KO$참가자 줄 세우기$KO$
+    title = $$참가자 줄 세우기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$rebuild-tournament-line$$);
 
@@ -1159,7 +1159,7 @@ UPDATE problems SET
 WHERE slug = $$outward-shelf-walk$$;
 
 UPDATE problem_translations SET
-    title = $KO$바깥쪽 선반 돌기$KO$
+    title = $$바깥쪽 선반 돌기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$spiral-shelf-walk$$);
 
@@ -1170,7 +1170,7 @@ UPDATE problems SET
 WHERE slug = $$pair-crates-for-order$$;
 
 UPDATE problem_translations SET
-    title = $KO$도시락 상자 짝짓기$KO$
+    title = $$도시락 상자 짝짓기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$pair-lunchbox-snacks$$);
 
@@ -1181,7 +1181,7 @@ UPDATE problems SET
 WHERE slug = $$pair-tiers-budget$$;
 
 UPDATE problem_translations SET
-    title = $KO$예산 맞춰 두 메뉴 고르기$KO$
+    title = $$예산 맞춰 두 메뉴 고르기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$two-menu-sum$$);
 
@@ -1192,7 +1192,7 @@ UPDATE problems SET
 WHERE slug = $$partition-tank-doses$$;
 
 UPDATE problem_translations SET
-    title = $KO$티켓에 플러스·마이너스 붙이기$KO$
+    title = $$티켓에 플러스·마이너스 붙이기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$ticket-plus-or-minus$$);
 
@@ -1203,7 +1203,7 @@ UPDATE problems SET
 WHERE slug = $$peak-flow-stretch$$;
 
 UPDATE problem_translations SET
-    title = $KO$구간 최고 콤보$KO$
+    title = $$구간 최고 콤보$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$peak-combo-window$$);
 
@@ -1214,7 +1214,7 @@ UPDATE problems SET
 WHERE slug = $$peak-gate-demand$$;
 
 UPDATE problem_translations SET
-    title = $KO$피크 타임 테이블 수요$KO$
+    title = $$피크 타임 테이블 수요$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$peak-table-demand$$);
 
@@ -1225,7 +1225,7 @@ UPDATE problems SET
 WHERE slug = $$peak-reading-window$$;
 
 UPDATE problem_translations SET
-    title = $KO$최고 점수 구간$KO$
+    title = $$최고 점수 구간$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$peak-score-streak$$);
 
@@ -1236,7 +1236,7 @@ UPDATE problems SET
 WHERE slug = $$peak-temp-swing$$;
 
 UPDATE problem_translations SET
-    title = $KO$최대 온도 변동$KO$
+    title = $$최대 온도 변동$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$peak-temp-jump$$);
 
@@ -1247,7 +1247,7 @@ UPDATE problems SET
 WHERE slug = $$pick-circuit-targets$$;
 
 UPDATE problem_translations SET
-    title = $KO$원형 도넛 고르기$KO$
+    title = $$원형 도넛 고르기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$pick-circular-donuts$$);
 
@@ -1258,7 +1258,7 @@ UPDATE problems SET
 WHERE slug = $$pick-least-effort-circuit$$;
 
 UPDATE problem_translations SET
-    title = $KO$체력 최소 소모 코스$KO$
+    title = $$체력 최소 소모 코스$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$min-stamina-checkpoints$$);
 
@@ -1269,7 +1269,7 @@ UPDATE problems SET
 WHERE slug = $$pick-plot-haul$$;
 
 UPDATE problem_translations SET
-    title = $KO$간식 털이 최대화$KO$
+    title = $$간식 털이 최대화$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$pick-snack-haul$$);
 
@@ -1280,7 +1280,7 @@ UPDATE problems SET
 WHERE slug = $$pinpoint-peak-reading$$;
 
 UPDATE problem_translations SET
-    title = $KO$정점 값 찾기$KO$
+    title = $$정점 값 찾기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$find-battery-peak$$);
 
@@ -1291,7 +1291,7 @@ UPDATE problems SET
 WHERE slug = $$pool-between-walls$$;
 
 UPDATE problem_translations SET
-    title = $KO$울타리 사이 물웅덩이$KO$
+    title = $$울타리 사이 물웅덩이$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$puddle-between-fences$$);
 
@@ -1302,7 +1302,7 @@ UPDATE problems SET
 WHERE slug = $$prefix-tree$$;
 
 UPDATE problem_translations SET
-    title = $KO$유저네임 트라이$KO$
+    title = $$유저네임 트라이$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$username-trie$$);
 
@@ -1313,7 +1313,7 @@ UPDATE problems SET
 WHERE slug = $$probe-sugar-reading$$;
 
 UPDATE problem_translations SET
-    title = $KO$메뉴 보드 탐색$KO$
+    title = $$메뉴 보드 탐색$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$find-menu-calorie$$);
 
@@ -1324,7 +1324,7 @@ UPDATE problems SET
 WHERE slug = $$product-as-text$$;
 
 UPDATE problem_translations SET
-    title = $KO$문자열로 곱셈$KO$
+    title = $$문자열로 곱셈$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$multiply-as-text$$);
 
@@ -1335,7 +1335,7 @@ UPDATE problems SET
 WHERE slug = $$quad-tray-demand$$;
 
 UPDATE problem_translations SET
-    title = $KO$네 트레이 합 맞추기$KO$
+    title = $$네 트레이 합 맞추기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$four-tray-sum$$);
 
@@ -1346,7 +1346,7 @@ UPDATE problems SET
 WHERE slug = $$random-set$$;
 
 UPDATE problem_translations SET
-    title = $KO$무작위 뽑기 가방$KO$
+    title = $$무작위 뽑기 가방$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$random-pick-bag$$);
 
@@ -1357,7 +1357,7 @@ UPDATE problems SET
 WHERE slug = $$recent-cache$$;
 
 UPDATE problem_translations SET
-    title = $KO$최근 세이브 슬롯$KO$
+    title = $$최근 세이브 슬롯$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$recent-save-slots$$);
 
@@ -1368,7 +1368,7 @@ UPDATE problems SET
 WHERE slug = $$reflect-blend-profile$$;
 
 UPDATE problem_translations SET
-    title = $KO$메뉴 트리 뒤집기$KO$
+    title = $$메뉴 트리 뒤집기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$mirror-menu-tree$$);
 
@@ -1379,7 +1379,7 @@ UPDATE problems SET
 WHERE slug = $$repeat-tracking-codes$$;
 
 UPDATE problem_translations SET
-    title = $KO$두 번 찍힌 출석 코드$KO$
+    title = $$두 번 찍힌 출석 코드$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$repeat-attendance-codes$$);
 
@@ -1390,7 +1390,7 @@ UPDATE problems SET
 WHERE slug = $$resolve-lane-crashes$$;
 
 UPDATE problem_translations SET
-    title = $KO$레인 충돌 정리하기$KO$
+    title = $$레인 충돌 정리하기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$brawler-lane-collision$$);
 
@@ -1401,7 +1401,7 @@ UPDATE problems SET
 WHERE slug = $$resolve-price-ratios$$;
 
 UPDATE problem_translations SET
-    title = $KO$가격 비율 계산하기$KO$
+    title = $$가격 비율 계산하기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$cafe-price-ratios$$);
 
@@ -1412,7 +1412,7 @@ UPDATE problems SET
 WHERE slug = $$responder-relay-cost$$;
 
 UPDATE problem_translations SET
-    title = $KO$가장 싼 배송 경로$KO$
+    title = $$가장 싼 배송 경로$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$cheapest-courier-route$$);
 
@@ -1423,7 +1423,7 @@ UPDATE problems SET
 WHERE slug = $$reverse-printer-flags$$;
 
 UPDATE problem_translations SET
-    title = $KO$세이브 파일 플래그 뒤집기$KO$
+    title = $$세이브 파일 플래그 뒤집기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$reverse-savefile-flags$$);
 
@@ -1434,7 +1434,7 @@ UPDATE problems SET
 WHERE slug = $$reversible-call-number$$;
 
 UPDATE problem_translations SET
-    title = $KO$뒤집어도 같은 에피소드 번호$KO$
+    title = $$뒤집어도 같은 에피소드 번호$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$palindrome-episode-number$$);
 
@@ -1445,7 +1445,7 @@ UPDATE problems SET
 WHERE slug = $$rewind-conveyor-chain$$;
 
 UPDATE problem_translations SET
-    title = $KO$플레이리스트 뒤집기$KO$
+    title = $$플레이리스트 뒤집기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$reverse-playlist$$);
 
@@ -1456,7 +1456,7 @@ UPDATE problems SET
 WHERE slug = $$ring-buffer$$;
 
 UPDATE problem_translations SET
-    title = $KO$고정 크기 채팅 링 버퍼$KO$
+    title = $$고정 크기 채팅 링 버퍼$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$chat-ring-buffer$$);
 
@@ -1467,7 +1467,7 @@ UPDATE problems SET
 WHERE slug = $$rotate-park-map$$;
 
 UPDATE problem_translations SET
-    title = $KO$펫 카페 지도 회전$KO$
+    title = $$펫 카페 지도 회전$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$rotate-pet-cafe-map$$);
 
@@ -1478,7 +1478,7 @@ UPDATE problems SET
 WHERE slug = $$running-median$$;
 
 UPDATE problem_translations SET
-    title = $KO$실시간 중앙값 추적$KO$
+    title = $$실시간 중앙값 추적$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$running-median-timer$$);
 
@@ -1489,7 +1489,7 @@ UPDATE problems SET
 WHERE slug = $$scene-shoot-order$$;
 
 UPDATE problem_translations SET
-    title = $KO$티어 순서 복원$KO$
+    title = $$티어 순서 복원$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$recover-tier-order$$);
 
@@ -1500,7 +1500,7 @@ UPDATE problems SET
 WHERE slug = $$schedule-observing-window$$;
 
 UPDATE problem_translations SET
-    title = $KO$일정 끼워 넣기$KO$
+    title = $$일정 끼워 넣기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$slot-a-meeting$$);
 
@@ -1511,7 +1511,7 @@ UPDATE problems SET
 WHERE slug = $$seize-enclosed-zones$$;
 
 UPDATE problem_translations SET
-    title = $KO$갇힌 영역 점령$KO$
+    title = $$갇힌 영역 점령$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$capture-enclosed-tiles$$);
 
@@ -1522,7 +1522,7 @@ UPDATE problems SET
 WHERE slug = $$sequence-assembly-steps$$;
 
 UPDATE problem_translations SET
-    title = $KO$과제 수행 순서$KO$
+    title = $$과제 수행 순서$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$order-group-tasks$$);
 
@@ -1533,7 +1533,7 @@ UPDATE problems SET
 WHERE slug = $$shared-assembly-lookup$$;
 
 UPDATE problem_translations SET
-    title = $KO$공통 조상 주제 찾기$KO$
+    title = $$공통 조상 주제 찾기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$topic-catalog-lca$$);
 
@@ -1544,7 +1544,7 @@ UPDATE problems SET
 WHERE slug = $$shared-dispatch-hub$$;
 
 UPDATE problem_translations SET
-    title = $KO$공통 팀장 찾기$KO$
+    title = $$공통 팀장 찾기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$shared-guild-ancestor$$);
 
@@ -1555,7 +1555,7 @@ UPDATE problems SET
 WHERE slug = $$shelf-overlap-length$$;
 
 UPDATE problem_translations SET
-    title = $KO$겹치는 필기 길이$KO$
+    title = $$겹치는 필기 길이$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$desk-notes-overlap$$);
 
@@ -1566,7 +1566,7 @@ UPDATE problems SET
 WHERE slug = $$shelf-stock-pair$$;
 
 UPDATE problem_translations SET
-    title = $KO$간식 서랍 짝 찾기$KO$
+    title = $$간식 서랍 짝 찾기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$snack-drawer-pair$$);
 
@@ -1577,7 +1577,7 @@ UPDATE problems SET
 WHERE slug = $$shift-unscannable-letters$$;
 
 UPDATE problem_translations SET
-    title = $KO$최장 콤보 구간$KO$
+    title = $$최장 콤보 구간$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$longest-combo-run$$);
 
@@ -1588,7 +1588,7 @@ UPDATE problems SET
 WHERE slug = $$shortest-bake-span$$;
 
 UPDATE problem_translations SET
-    title = $KO$가장 짧은 쿠키 구간$KO$
+    title = $$가장 짧은 쿠키 구간$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$shortest-cookie-span$$);
 
@@ -1599,7 +1599,7 @@ UPDATE problems SET
 WHERE slug = $$shortest-shelf-span$$;
 
 UPDATE problem_translations SET
-    title = $KO$가장 짧은 책장 구간$KO$
+    title = $$가장 짧은 책장 구간$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$shortest-book-span$$);
 
@@ -1610,7 +1610,7 @@ UPDATE problems SET
 WHERE slug = $$single-species-tank$$;
 
 UPDATE problem_translations SET
-    title = $KO$2의 거듭제곱 수조$KO$
+    title = $$2의 거듭제곱 수조$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$power-of-two-tank$$);
 
@@ -1621,7 +1621,7 @@ UPDATE problems SET
 WHERE slug = $$slowest-conveyor-speed$$;
 
 UPDATE problem_translations SET
-    title = $KO$가장 느린 간식 속도$KO$
+    title = $$가장 느린 간식 속도$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$slowest-snack-rate$$);
 
@@ -1632,7 +1632,7 @@ UPDATE problems SET
 WHERE slug = $$smallest-flow-rate$$;
 
 UPDATE problem_translations SET
-    title = $KO$최소 하루 제조 용량$KO$
+    title = $$최소 하루 제조 용량$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$min-daily-brew$$);
 
@@ -1643,7 +1643,7 @@ UPDATE problems SET
 WHERE slug = $$snapshot-mesh-layout$$;
 
 UPDATE problem_translations SET
-    title = $KO$맵 스냅샷 뜨기$KO$
+    title = $$맵 스냅샷 뜨기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$snapshot-town-map$$);
 
@@ -1654,7 +1654,7 @@ UPDATE problems SET
 WHERE slug = $$sort-material-bins$$;
 
 UPDATE problem_translations SET
-    title = $KO$재활용 수거함 정리$KO$
+    title = $$재활용 수거함 정리$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$sort-recycle-bins$$);
 
@@ -1665,7 +1665,7 @@ UPDATE problems SET
 WHERE slug = $$space-recipe-bakes$$;
 
 UPDATE problem_translations SET
-    title = $KO$쿠키 사이 간격 두기$KO$
+    title = $$쿠키 사이 간격 두기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$space-cookie-bakes$$);
 
@@ -1676,7 +1676,7 @@ UPDATE problems SET
 WHERE slug = $$species-grid-validator$$;
 
 UPDATE problem_translations SET
-    title = $KO$숫자 퍼즐 격자 검사$KO$
+    title = $$숫자 퍼즐 격자 검사$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$valid-number-puzzle$$);
 
@@ -1687,7 +1687,7 @@ UPDATE problems SET
 WHERE slug = $$split-headline-tokens$$;
 
 UPDATE problem_translations SET
-    title = $KO$헤드라인 토큰 나누기$KO$
+    title = $$헤드라인 토큰 나누기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$word-break-chat$$);
 
@@ -1698,7 +1698,7 @@ UPDATE problems SET
 WHERE slug = $$split-into-two-shifts$$;
 
 UPDATE problem_translations SET
-    title = $KO$바리스타 두 교대 나누기$KO$
+    title = $$바리스타 두 교대 나누기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$two-shift-baristas$$);
 
@@ -1709,7 +1709,7 @@ UPDATE problems SET
 WHERE slug = $$split-reading-for-product$$;
 
 UPDATE problem_translations SET
-    title = $KO$막대 쪼개서 곱 최대화$KO$
+    title = $$막대 쪼개서 곱 최대화$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$split-candy-bar$$);
 
@@ -1720,7 +1720,7 @@ UPDATE problems SET
 WHERE slug = $$split-shift-loads$$;
 
 UPDATE problem_translations SET
-    title = $KO$업무량 똑같이 나누기$KO$
+    title = $$업무량 똑같이 나누기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$split-ticket-pile$$);
 
@@ -1731,7 +1731,7 @@ UPDATE problems SET
 WHERE slug = $$split-zone-codes$$;
 
 UPDATE problem_translations SET
-    title = $KO$IP 주소로 쪼개기$KO$
+    title = $$IP 주소로 쪼개기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$restore-wifi-ip$$);
 
@@ -1742,7 +1742,7 @@ UPDATE problems SET
 WHERE slug = $$split-zone-runs$$;
 
 UPDATE problem_translations SET
-    title = $KO$스티커 문자열 구간 분할$KO$
+    title = $$스티커 문자열 구간 분할$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$split-sticker-runs$$);
 
@@ -1753,7 +1753,7 @@ UPDATE problems SET
 WHERE slug = $$spot-catalog-target$$;
 
 UPDATE problem_translations SET
-    title = $KO$회전된 카탈로그 탐색$KO$
+    title = $$회전된 카탈로그 탐색$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$search-rotated-catalog$$);
 
@@ -1764,7 +1764,7 @@ UPDATE problems SET
 WHERE slug = $$spread-contamination-wave$$;
 
 UPDATE problem_translations SET
-    title = $KO$도넛 상함 전파$KO$
+    title = $$도넛 상함 전파$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$rotting-donuts$$);
 
@@ -1775,7 +1775,7 @@ UPDATE problems SET
 WHERE slug = $$stack-queue$$;
 
 UPDATE problem_translations SET
-    title = $KO$스택으로 큐 만들기$KO$
+    title = $$스택으로 큐 만들기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$queue-from-stacks$$);
 
@@ -1786,7 +1786,7 @@ UPDATE problems SET
 WHERE slug = $$state-snapshots$$;
 
 UPDATE problem_translations SET
-    title = $KO$버전 관리되는 셀 배열$KO$
+    title = $$버전 관리되는 셀 배열$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$versioned-cells$$);
 
@@ -1797,7 +1797,7 @@ UPDATE problems SET
 WHERE slug = $$station-run-planner$$;
 
 UPDATE problem_translations SET
-    title = $KO$작업 쿨다운 스케줄러$KO$
+    title = $$작업 쿨다운 스케줄러$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$task-cooldown-planner$$);
 
@@ -1808,7 +1808,7 @@ UPDATE problems SET
 WHERE slug = $$station-throughput-shares$$;
 
 UPDATE problem_translations SET
-    title = $KO$바리스타 처리량 지분$KO$
+    title = $$바리스타 처리량 지분$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$barista-throughput-share$$);
 
@@ -1819,7 +1819,7 @@ UPDATE problems SET
 WHERE slug = $$station-visit-orders$$;
 
 UPDATE problem_translations SET
-    title = $KO$카페 투어 순서 짜기$KO$
+    title = $$카페 투어 순서 짜기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$cafe-stop-orders$$);
 
@@ -1830,7 +1830,7 @@ UPDATE problems SET
 WHERE slug = $$string-codec$$;
 
 UPDATE problem_translations SET
-    title = $KO$채팅 로그 코덱$KO$
+    title = $$채팅 로그 코덱$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$chat-log-codec$$);
 
@@ -1841,7 +1841,7 @@ UPDATE problems SET
 WHERE slug = $$sum-zone-codes$$;
 
 UPDATE problem_translations SET
-    title = $KO$스킬 트리 코드 합 구하기$KO$
+    title = $$스킬 트리 코드 합 구하기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$sum-skill-tree-codes$$);
 
@@ -1852,7 +1852,7 @@ UPDATE problems SET
 WHERE slug = $$swap-queue-partners$$;
 
 UPDATE problem_translations SET
-    title = $KO$인쇄 대기열 짝 바꾸기$KO$
+    title = $$인쇄 대기열 짝 바꾸기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$swap-print-pairs$$);
 
@@ -1863,7 +1863,7 @@ UPDATE problems SET
 WHERE slug = $$tally-device-meshes$$;
 
 UPDATE problem_translations SET
-    title = $KO$음성 릴레이 파티 세기$KO$
+    title = $$음성 릴레이 파티 세기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$count-voice-parties$$);
 
@@ -1874,7 +1874,7 @@ UPDATE problems SET
 WHERE slug = $$tally-dominant-blocks$$;
 
 UPDATE problem_translations SET
-    title = $KO$최고점 영웅 세기$KO$
+    title = $$최고점 영웅 세기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$count-top-heroes$$);
 
@@ -1885,7 +1885,7 @@ UPDATE problems SET
 WHERE slug = $$tally-pick-paths$$;
 
 UPDATE problem_translations SET
-    title = $KO$점수 합산 연결 리스트$KO$
+    title = $$점수 합산 연결 리스트$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$add-score-lists$$);
 
@@ -1896,7 +1896,7 @@ UPDATE problems SET
 WHERE slug = $$tally-planted-regions$$;
 
 UPDATE problem_translations SET
-    title = $KO$책상 그룹 세기$KO$
+    title = $$책상 그룹 세기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$count-desk-clusters$$);
 
@@ -1907,7 +1907,7 @@ UPDATE problems SET
 WHERE slug = $$tally-priority-flags$$;
 
 UPDATE problem_translations SET
-    title = $KO$비트 플래그 개수 세기$KO$
+    title = $$비트 플래그 개수 세기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$count-flag-bits$$);
 
@@ -1918,7 +1918,7 @@ UPDATE problems SET
 WHERE slug = $$taxiway-aircraft-layout$$;
 
 UPDATE problem_translations SET
-    title = $KO$정찰병 배치 문제$KO$
+    title = $$정찰병 배치 문제$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$place-n-scouts$$);
 
@@ -1929,7 +1929,7 @@ UPDATE problems SET
 WHERE slug = $$tightest-or-booking$$;
 
 UPDATE problem_translations SET
-    title = $KO$가장 짧은 예약 찾기$KO$
+    title = $$가장 짧은 예약 찾기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$shortest-table-booking$$);
 
@@ -1940,7 +1940,7 @@ UPDATE problems SET
 WHERE slug = $$time-map$$;
 
 UPDATE problem_translations SET
-    title = $KO$시각 기록 저장소$KO$
+    title = $$시각 기록 저장소$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$timestamp-value-store$$);
 
@@ -1951,7 +1951,7 @@ UPDATE problems SET
 WHERE slug = $$trace-dual-drainage$$;
 
 UPDATE problem_translations SET
-    title = $KO$두 물그릇 모두 닿기$KO$
+    title = $$두 물그릇 모두 닿기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$dual-waterbowl-flow$$);
 
@@ -1962,7 +1962,7 @@ UPDATE problems SET
 WHERE slug = $$transit-alert-wave$$;
 
 UPDATE problem_translations SET
-    title = $KO$길드 공지 전파 시간$KO$
+    title = $$길드 공지 전파 시간$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$guild-chat-relay$$);
 
@@ -1973,7 +1973,7 @@ UPDATE problems SET
 WHERE slug = $$tree-codec$$;
 
 UPDATE problem_translations SET
-    title = $KO$스킬 트리 직렬화$KO$
+    title = $$스킬 트리 직렬화$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$skill-tree-codec$$);
 
@@ -1984,7 +1984,7 @@ UPDATE problems SET
 WHERE slug = $$trending-feed-topics$$;
 
 UPDATE problem_translations SET
-    title = $KO$단톡방 유행 주제$KO$
+    title = $$단톡방 유행 주제$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$trending-chat-topics$$);
 
@@ -1995,7 +1995,7 @@ UPDATE problems SET
 WHERE slug = $$triage-zero-priority$$;
 
 UPDATE problem_translations SET
-    title = $KO$합이 0인 삼인방$KO$
+    title = $$합이 0인 삼인방$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$zero-sum-trio$$);
 
@@ -2006,7 +2006,7 @@ UPDATE problems SET
 WHERE slug = $$unify-crew-contacts$$;
 
 UPDATE problem_translations SET
-    title = $KO$중복 연락처 합치기$KO$
+    title = $$중복 연락처 합치기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$merge-duplicate-contacts$$);
 
@@ -2017,7 +2017,7 @@ UPDATE problems SET
 WHERE slug = $$unique-topic-window$$;
 
 UPDATE problem_translations SET
-    title = $KO$장르 제한 몰아보기 구간$KO$
+    title = $$장르 제한 몰아보기 구간$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$unique-genre-window$$);
 
@@ -2028,7 +2028,7 @@ UPDATE problems SET
 WHERE slug = $$unpaired-frame-reading$$;
 
 UPDATE problem_translations SET
-    title = $KO$외톨이 사탕 찾기$KO$
+    title = $$외톨이 사탕 찾기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$lonely-candy$$);
 
@@ -2039,7 +2039,7 @@ UPDATE problems SET
 WHERE slug = $$unroll-flight-schedule$$;
 
 UPDATE problem_translations SET
-    title = $KO$일정 트리 펼치기$KO$
+    title = $$일정 트리 펼치기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$flatten-agenda-tree$$);
 
@@ -2050,7 +2050,7 @@ UPDATE problems SET
 WHERE slug = $$validate-part-stream$$;
 
 UPDATE problem_translations SET
-    title = $KO$과제 ID 검증$KO$
+    title = $$과제 ID 검증$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$validate-homework-id$$);
 
@@ -2061,7 +2061,7 @@ UPDATE problems SET
 WHERE slug = $$verify-bake-rotation$$;
 
 UPDATE problem_translations SET
-    title = $KO$피자 트레이 정렬 확인하기$KO$
+    title = $$피자 트레이 정렬 확인하기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$verify-pizza-rotation$$);
 
@@ -2072,7 +2072,7 @@ UPDATE problems SET
 WHERE slug = $$verify-job-nesting$$;
 
 UPDATE problem_translations SET
-    title = $KO$괄호 중첩 검사하기$KO$
+    title = $$괄호 중첩 검사하기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$valid-brackets$$);
 
@@ -2083,7 +2083,7 @@ UPDATE problems SET
 WHERE slug = $$verify-mirror-callnumber$$;
 
 UPDATE problem_translations SET
-    title = $KO$거울 문구 검사하기$KO$
+    title = $$거울 문구 검사하기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$valid-slogan-palindrome$$);
 
@@ -2094,7 +2094,7 @@ UPDATE problems SET
 WHERE slug = $$verify-shoot-plan$$;
 
 UPDATE problem_translations SET
-    title = $KO$조별 과제 계획 검증$KO$
+    title = $$조별 과제 계획 검증$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$verify-task-order$$);
 
@@ -2105,7 +2105,7 @@ UPDATE problems SET
 WHERE slug = $$verify-table-bookings$$;
 
 UPDATE problem_translations SET
-    title = $KO$테이블 예약 충돌 검사$KO$
+    title = $$테이블 예약 충돌 검사$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$can-attend-bookings$$);
 
@@ -2116,7 +2116,7 @@ UPDATE problems SET
 WHERE slug = $$void-empty-scans$$;
 
 UPDATE problem_translations SET
-    title = $KO$취소 주문 뒤로 밀기$KO$
+    title = $$취소 주문 뒤로 밀기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$move-voided-scans$$);
 
@@ -2127,7 +2127,7 @@ UPDATE problems SET
 WHERE slug = $$voucher-price-combos$$;
 
 UPDATE problem_translations SET
-    title = $KO$쿠폰 가격 조합$KO$
+    title = $$쿠폰 가격 조합$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$voucher-price-combos$$);
 
@@ -2138,7 +2138,7 @@ UPDATE problems SET
 WHERE slug = $$ward-priority-audit$$;
 
 UPDATE problem_translations SET
-    title = $KO$점수 트리 검사$KO$
+    title = $$점수 트리 검사$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$valid-score-bst$$);
 
@@ -2149,7 +2149,7 @@ UPDATE problems SET
 WHERE slug = $$widest-catalog-span$$;
 
 UPDATE problem_translations SET
-    title = $KO$가장 긴 폴더 경로$KO$
+    title = $$가장 긴 폴더 경로$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$longest-folder-path$$);
 
@@ -2160,7 +2160,7 @@ UPDATE problems SET
 WHERE slug = $$widest-vine-block$$;
 
 UPDATE problem_translations SET
-    title = $KO$가장 큰 배너 붙이기$KO$
+    title = $$가장 큰 배너 붙이기$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$biggest-banner-span$$);
 
@@ -2171,7 +2171,7 @@ UPDATE problems SET
 WHERE slug = $$wire-zone-peers$$;
 
 UPDATE problem_translations SET
-    title = $KO$같은 층 친구 연결$KO$
+    title = $$같은 층 친구 연결$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$link-guild-siblings$$);
 
@@ -2182,7 +2182,7 @@ UPDATE problems SET
 WHERE slug = $$word-dictionary$$;
 
 UPDATE problem_translations SET
-    title = $KO$와일드카드 단어 사전$KO$
+    title = $$와일드카드 단어 사전$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$wildcard-lexicon$$);
 
@@ -2193,7 +2193,7 @@ UPDATE problems SET
 WHERE slug = $$zone-code-anagram$$;
 
 UPDATE problem_translations SET
-    title = $KO$애너그램 부분 문자열$KO$
+    title = $$애너그램 부분 문자열$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$find-name-anagram$$);
 
@@ -2204,7 +2204,7 @@ UPDATE problems SET
 WHERE slug = $$zone-letter-trail$$;
 
 UPDATE problem_translations SET
-    title = $KO$보드 위 단어 탐색$KO$
+    title = $$보드 위 단어 탐색$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$word-hunt-board$$);
 
