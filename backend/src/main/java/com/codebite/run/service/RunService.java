@@ -12,9 +12,10 @@ import com.codebite.problem.entity.Problem;
 import com.codebite.problem.entity.TestCase;
 import com.codebite.problem.repository.ProblemRepository;
 import com.codebite.problem.repository.TestCaseRepository;
+import com.codebite.run.dto.CustomTestCaseInput;
+import com.codebite.run.dto.RunRequest;
 import com.codebite.run.dto.RunResponse;
 import com.codebite.run.dto.RunTestCaseResult;
-import com.codebite.submission.dto.SubmitRequest;
 import com.codebite.submission.entity.SubmissionStatus;
 import org.springframework.stereotype.Service;
 
@@ -45,7 +46,7 @@ public class RunService {
         this.lineMapper = lineMapper;
     }
 
-    public RunResponse run(String slug, SubmitRequest request) {
+    public RunResponse run(String slug, RunRequest request) {
         Problem problem = problemRepository.findBySlug(slug)
                 .orElseThrow(() -> new ResourceNotFoundException("error.problem.notFound", slug));
 
@@ -70,10 +71,7 @@ public class RunService {
             JudgeResponse response = judgeService.execute(sourceCode, languageId, testCase.getInput());
             SubmissionStatus caseStatus = judgeService.mapStatus(response, testCase.getExpectedOutput());
 
-            List<CodeError> combined = errorParsers.parse(
-                    language, response.compileOutput(), response.stderr());
-            List<CodeError> errors = lineMapper.mapToUserSpace(
-                    combined, userCodeStartLine, userCodeLineCount);
+            List<CodeError> errors = mapErrors(response, language, userCodeStartLine, userCodeLineCount);
 
             results.add(new RunTestCaseResult(
                     testCase.getInput(),
@@ -82,16 +80,77 @@ public class RunService {
                     caseStatus,
                     response.stderr(),
                     response.compileOutput(),
-                    errors
+                    errors,
+                    false,
+                    true
             ));
 
             if (caseStatus != SubmissionStatus.ACCEPTED) {
                 overallStatus = caseStatus;
-                break;
+                return new RunResponse(overallStatus, results);
+            }
+        }
+
+        List<CustomTestCaseInput> customs = request.customTestCases() == null
+                ? List.of()
+                : request.customTestCases();
+
+        for (CustomTestCaseInput tc : customs) {
+            JudgeResponse response = judgeService.execute(sourceCode, languageId, tc.input());
+
+            boolean hasExpected = tc.expectedOutput() != null && !tc.expectedOutput().isBlank();
+            SubmissionStatus caseStatus;
+            boolean judged;
+
+            if (hasExpected) {
+                caseStatus = judgeService.mapStatus(response, tc.expectedOutput());
+                judged = true;
+            } else {
+                int statusId = response.status() != null ? response.status().id() : -1;
+                if (statusId == 3) {
+                    caseStatus = SubmissionStatus.ACCEPTED;
+                    judged = false;
+                } else if (statusId == 5) {
+                    caseStatus = SubmissionStatus.TIME_LIMIT_EXCEEDED;
+                    judged = true;
+                } else if (statusId == 6) {
+                    caseStatus = SubmissionStatus.COMPILATION_ERROR;
+                    judged = true;
+                } else if (statusId >= 7 && statusId <= 12) {
+                    caseStatus = SubmissionStatus.RUNTIME_ERROR;
+                    judged = true;
+                } else {
+                    caseStatus = SubmissionStatus.INTERNAL_ERROR;
+                    judged = true;
+                }
+            }
+
+            List<CodeError> errors = mapErrors(response, language, userCodeStartLine, userCodeLineCount);
+
+            results.add(new RunTestCaseResult(
+                    tc.input(),
+                    hasExpected ? tc.expectedOutput() : null,
+                    response.stdout() != null ? response.stdout().trim() : null,
+                    caseStatus,
+                    response.stderr(),
+                    response.compileOutput(),
+                    errors,
+                    true,
+                    judged
+            ));
+
+            if (judged && caseStatus != SubmissionStatus.ACCEPTED && overallStatus == SubmissionStatus.ACCEPTED) {
+                overallStatus = caseStatus;
             }
         }
 
         return new RunResponse(overallStatus, results);
+    }
+
+    private List<CodeError> mapErrors(JudgeResponse response, String language,
+                                      int userCodeStartLine, int userCodeLineCount) {
+        List<CodeError> combined = errorParsers.parse(language, response.compileOutput(), response.stderr());
+        return lineMapper.mapToUserSpace(combined, userCodeStartLine, userCodeLineCount);
     }
 
     private static int countLines(String source) {

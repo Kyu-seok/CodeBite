@@ -2,9 +2,9 @@ package com.codebite.run.controller;
 
 import com.codebite.common.exception.RateLimitExceededException;
 import com.codebite.common.service.RateLimiterService;
+import com.codebite.run.dto.RunRequest;
 import com.codebite.run.dto.RunResponse;
 import com.codebite.run.service.RunService;
-import com.codebite.submission.dto.SubmitRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +31,7 @@ public class RunController {
     @PostMapping("/problems/{slug}/run")
     public ResponseEntity<RunResponse> run(
             @PathVariable String slug,
-            @Valid @RequestBody SubmitRequest request,
+            @Valid @RequestBody RunRequest request,
             HttpServletRequest httpRequest) {
         if (rateLimiterService != null
                 && rateLimiterService.isRateLimited("run", getClientIp(httpRequest), 5)) {

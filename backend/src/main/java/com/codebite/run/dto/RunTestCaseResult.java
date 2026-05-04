@@ -12,6 +12,8 @@ public record RunTestCaseResult(
         SubmissionStatus status,
         String stderr,
         String compileOutput,
-        List<CodeError> errors
+        List<CodeError> errors,
+        boolean isCustom,
+        boolean judged
 ) {
 }
