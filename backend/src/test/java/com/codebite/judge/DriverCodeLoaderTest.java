@@ -21,38 +21,38 @@ class DriverCodeLoaderTest {
 
     @Test
     void loadsAllJavaTemplates() {
-        assertNotNull(loader.getDriverCode("pair-sum", "java"));
+        assertNotNull(loader.getDriverCode("snack-drawer-pair", "java"));
         assertNotNull(loader.getDriverCode("chat-log-codec", "java"));
-        assertNotNull(loader.getDriverCode("k-most-frequent", "java"));
-        assertNotNull(loader.getDriverCode("bracket-validator", "java"));
-        assertNotNull(loader.getDriverCode("find-duplicates", "java"));
+        assertNotNull(loader.getDriverCode("top-espresso-machines", "java"));
+        assertNotNull(loader.getDriverCode("valid-brackets", "java"));
+        assertNotNull(loader.getDriverCode("spot-duplicate-locker", "java"));
     }
 
     @Test
     void loadsAllPythonTemplates() {
-        assertNotNull(loader.getDriverCode("pair-sum", "python"));
+        assertNotNull(loader.getDriverCode("snack-drawer-pair", "python"));
         assertNotNull(loader.getDriverCode("chat-log-codec", "python"));
-        assertNotNull(loader.getDriverCode("k-most-frequent", "python"));
-        assertNotNull(loader.getDriverCode("bracket-validator", "python"));
-        assertNotNull(loader.getDriverCode("find-duplicates", "python"));
+        assertNotNull(loader.getDriverCode("top-espresso-machines", "python"));
+        assertNotNull(loader.getDriverCode("valid-brackets", "python"));
+        assertNotNull(loader.getDriverCode("spot-duplicate-locker", "python"));
     }
 
     @Test
     void templateContainsUserCodePlaceholder() {
-        String template = loader.getDriverCode("pair-sum", "java");
+        String template = loader.getDriverCode("snack-drawer-pair", "java");
         assertTrue(template.contains("{USER_CODE}"));
     }
 
     @Test
     void hasDriverCode_returnsTrueForExisting() {
-        assertTrue(loader.hasDriverCode("pair-sum", "java"));
-        assertTrue(loader.hasDriverCode("pair-sum", "python"));
+        assertTrue(loader.hasDriverCode("snack-drawer-pair", "java"));
+        assertTrue(loader.hasDriverCode("snack-drawer-pair", "python"));
     }
 
     @Test
     void hasDriverCode_returnsFalseForMissing() {
         assertFalse(loader.hasDriverCode("nonexistent", "java"));
-        assertFalse(loader.hasDriverCode("pair-sum", "rust"));
+        assertFalse(loader.hasDriverCode("snack-drawer-pair", "rust"));
     }
 
     @Test
@@ -85,51 +85,51 @@ class DriverCodeLoaderTest {
 
     @Test
     void javaTwoSumDriver_usesJsonOutput() {
-        String template = loader.getDriverCode("pair-sum", "java");
+        String template = loader.getDriverCode("snack-drawer-pair", "java");
         assertTrue(template.contains("JsonOutput.intArray("));
         assertTrue(template.contains("class JsonOutput"));
     }
 
     @Test
     void javaKMostFrequentDriver_usesJsonOutput() {
-        String template = loader.getDriverCode("k-most-frequent", "java");
+        String template = loader.getDriverCode("top-espresso-machines", "java");
         assertTrue(template.contains("JsonOutput.intArray("));
         assertTrue(template.contains("class JsonOutput"));
     }
 
     @Test
     void loadsAllJavascriptTemplates() {
-        assertNotNull(loader.getDriverCode("pair-sum", "javascript"));
+        assertNotNull(loader.getDriverCode("snack-drawer-pair", "javascript"));
         assertNotNull(loader.getDriverCode("chat-log-codec", "javascript"));
-        assertNotNull(loader.getDriverCode("k-most-frequent", "javascript"));
-        assertNotNull(loader.getDriverCode("bracket-validator", "javascript"));
-        assertNotNull(loader.getDriverCode("find-duplicates", "javascript"));
+        assertNotNull(loader.getDriverCode("top-espresso-machines", "javascript"));
+        assertNotNull(loader.getDriverCode("valid-brackets", "javascript"));
+        assertNotNull(loader.getDriverCode("spot-duplicate-locker", "javascript"));
     }
 
     @Test
     void loadsAllCppTemplates() {
-        assertNotNull(loader.getDriverCode("pair-sum", "cpp"));
+        assertNotNull(loader.getDriverCode("snack-drawer-pair", "cpp"));
         assertNotNull(loader.getDriverCode("chat-log-codec", "cpp"));
-        assertNotNull(loader.getDriverCode("k-most-frequent", "cpp"));
-        assertNotNull(loader.getDriverCode("bracket-validator", "cpp"));
-        assertNotNull(loader.getDriverCode("find-duplicates", "cpp"));
+        assertNotNull(loader.getDriverCode("top-espresso-machines", "cpp"));
+        assertNotNull(loader.getDriverCode("valid-brackets", "cpp"));
+        assertNotNull(loader.getDriverCode("spot-duplicate-locker", "cpp"));
     }
 
     @Test
     void javascriptDrivers_useJsonStringify() {
-        String twoSum = loader.getDriverCode("pair-sum", "javascript");
+        String twoSum = loader.getDriverCode("snack-drawer-pair", "javascript");
         assertTrue(twoSum.contains("JSON.stringify("));
 
         String chatLogCodec = loader.getDriverCode("chat-log-codec", "javascript");
         assertTrue(chatLogCodec.contains("JSON.stringify("));
 
-        String kMostFrequent = loader.getDriverCode("k-most-frequent", "javascript");
+        String kMostFrequent = loader.getDriverCode("top-espresso-machines", "javascript");
         assertTrue(kMostFrequent.contains("JSON.stringify("));
     }
 
     @Test
     void cppTwoSumDriver_usesJsonOutput() {
-        String template = loader.getDriverCode("pair-sum", "cpp");
+        String template = loader.getDriverCode("snack-drawer-pair", "cpp");
         assertTrue(template.contains("JsonOutput::intVector("));
         assertTrue(template.contains("class JsonOutput"));
     }
@@ -143,20 +143,20 @@ class DriverCodeLoaderTest {
 
     @Test
     void cppKMostFrequentDriver_usesJsonOutput() {
-        String template = loader.getDriverCode("k-most-frequent", "cpp");
+        String template = loader.getDriverCode("top-espresso-machines", "cpp");
         assertTrue(template.contains("JsonOutput::intVector("));
         assertTrue(template.contains("class JsonOutput"));
     }
 
     @Test
     void pythonDrivers_useJsonDumps() {
-        String twoSum = loader.getDriverCode("pair-sum", "python");
+        String twoSum = loader.getDriverCode("snack-drawer-pair", "python");
         assertTrue(twoSum.contains("json.dumps("));
 
         String chatLogCodec = loader.getDriverCode("chat-log-codec", "python");
         assertTrue(chatLogCodec.contains("json.dumps("));
 
-        String kMostFrequent = loader.getDriverCode("k-most-frequent", "python");
+        String kMostFrequent = loader.getDriverCode("top-espresso-machines", "python");
         assertTrue(kMostFrequent.contains("json.dumps("));
     }
 }
