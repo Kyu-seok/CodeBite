@@ -77,7 +77,15 @@
     "testResults": "Test Results",
     "test": "Test {{n}}",
     "judging": "Judging...",
-    "placeholder": "Run or submit your code to see results"
+    "placeholder": "Run or submit your code to see results",
+    "customTestsHeading": "Custom Tests",
+    "sampleTestsHeading": "Sample Tests",
+    "addTestCase": "Add Test Case",
+    "removeTestCase": "Remove test case",
+    "customInputLabel": "Input",
+    "customExpectedLabel": "Expected output (optional)",
+    "customEmptyHelp": "Add up to {{max}} custom test cases. Use the same input format as the sample test cases.",
+    "finished": "Finished"
   },
   "submissions": {
     "loginRequired": "Log in to see submission history",

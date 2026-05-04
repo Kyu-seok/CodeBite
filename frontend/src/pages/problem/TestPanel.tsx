@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/Tabs';
 import { Button } from '@/components/ui/Button';
+import { Badge } from '@/components/ui/Badge';
 import { Stack } from '@/components/layout/Stack';
 import StatusBadge from '@/components/ui/StatusBadge';
 import Spinner from '@/components/ui/Spinner';
@@ -10,7 +11,14 @@ import {
   TooltipContent,
 } from '@/components/ui/Tooltip';
 import type { TestCase } from '@/types/problem';
-import type { CodeError, RunResponse, SubmissionResponse } from '@/types/submission';
+import type {
+  CodeError,
+  CustomTestCaseInput,
+  RunResponse,
+  RunTestCaseResult,
+  SubmissionResponse,
+} from '@/types/submission';
+import { CustomTestsEditor } from './CustomTestsEditor';
 
 function hasTemplateError(errs?: CodeError[] | null): boolean {
   return !!errs?.some((e) => !e.inUserCode);
@@ -38,6 +46,8 @@ interface TestPanelProps {
   submitting: boolean;
   activeTab: string;
   userSource: string;
+  customTests: CustomTestCaseInput[];
+  onCustomTestsChange: (next: CustomTestCaseInput[]) => void;
   onTabChange: (tab: string) => void;
   onRun: () => void;
   onSubmit: () => void;
@@ -90,6 +100,8 @@ export function TestPanel({
   submitting,
   activeTab,
   userSource,
+  customTests,
+  onCustomTestsChange,
   onTabChange,
   onRun,
   onSubmit,
@@ -144,6 +156,20 @@ export function TestPanel({
                 ))}
               </div>
             )}
+
+            <div className="my-3 flex items-center gap-2 text-xs text-muted-foreground">
+              <div className="flex-1 border-t border-border" />
+              <span>{t('test.customTestsHeading')}</span>
+              <div className="flex-1 border-t border-border" />
+            </div>
+
+            <CustomTestsEditor
+              customTests={customTests}
+              onChange={onCustomTestsChange}
+              hintInput={sampleTestCases[0]?.input}
+              hintExpected={sampleTestCases[0]?.expectedOutput}
+              maxCases={5}
+            />
           </TabsContent>
 
           {/* Output Tab */}
@@ -256,6 +282,8 @@ function OutputContent({
   }
 
   if (runResult) {
+    const samples = runResult.results.filter((r) => !r.isCustom);
+    const customs = runResult.results.filter((r) => r.isCustom);
     return (
       <div className="space-y-3">
         <div className="flex items-center justify-between">
@@ -264,75 +292,22 @@ function OutputContent({
           </span>
           <StatusBadge status={runResult.overallStatus} />
         </div>
-        <div className="space-y-2">
-          {runResult.results.map((r, i) => (
-            <div key={i} className="rounded-lg bg-muted p-3 text-sm">
-              <div className="mb-1 flex items-center justify-between">
-                <span className="font-medium text-muted-foreground">
-                  {t('test.sample', { n: i + 1 })}
-                </span>
-                <StatusBadge status={r.status} />
-              </div>
-              <p>
-                <span className="text-muted-foreground">{t('test.input')}</span>
-                <code className="rounded bg-secondary px-1 text-foreground">
-                  {r.input}
-                </code>
-              </p>
-              <p>
-                <span className="text-muted-foreground">{t('test.expected')}</span>
-                <code className="rounded bg-secondary px-1 text-foreground">
-                  {r.expectedOutput}
-                </code>
-              </p>
-              {r.actualOutput && (
-                <p>
-                  <span className="text-muted-foreground">{t('test.outputLabel')}</span>
-                  <code className="rounded bg-secondary px-1 text-foreground">
-                    {r.actualOutput}
-                  </code>
-                </p>
-              )}
-              {(() => {
-                const visible = renderableErrors(r.errors);
-                const label = r.compileOutput
-                  ? t('test.compilationError')
-                  : t('test.stderr');
-                if (visible.length > 0) {
-                  return (
-                    <div className="mt-1">
-                      <span className="text-xs text-muted-foreground">{label}</span>
-                      <ErrorDisplay errors={visible} userSource={userSource} />
-                    </div>
-                  );
-                }
-                if (r.stderr) {
-                  return (
-                    <div className="mt-1">
-                      <span className="text-xs text-muted-foreground">{t('test.stderr')}</span>
-                      <pre className="mt-1 overflow-auto rounded bg-error-100 p-2 text-xs text-error-700">
-                        {r.stderr}
-                      </pre>
-                    </div>
-                  );
-                }
-                if (r.compileOutput) {
-                  return (
-                    <div className="mt-1">
-                      <span className="text-xs text-muted-foreground">
-                        {t('test.compilationError')}
-                      </span>
-                      <pre className="mt-1 overflow-auto rounded bg-warning-100 p-2 text-xs text-warning-700">
-                        {r.compileOutput}
-                      </pre>
-                    </div>
-                  );
-                }
-                return null;
-              })()}
-            </div>
-          ))}
-        </div>
+        {samples.length > 0 && (
+          <RunResultsSection
+            heading={customs.length > 0 ? t('test.sampleTestsHeading') : null}
+            results={samples}
+            labelKey="test.sample"
+            userSource={userSource}
+          />
+        )}
+        {customs.length > 0 && (
+          <RunResultsSection
+            heading={t('test.customTestsHeading')}
+            results={customs}
+            labelKey="test.case"
+            userSource={userSource}
+          />
+        )}
       </div>
     );
   }
@@ -414,5 +389,103 @@ function OutputContent({
     <p className="py-8 text-center text-sm text-muted-foreground">
       {t('test.placeholder')}
     </p>
+  );
+}
+
+interface RunResultsSectionProps {
+  heading: string | null;
+  results: RunTestCaseResult[];
+  labelKey: string;
+  userSource: string;
+}
+
+function RunResultsSection({
+  heading,
+  results,
+  labelKey,
+  userSource,
+}: RunResultsSectionProps) {
+  const { t } = useTranslation('problem');
+  return (
+    <div className="space-y-2">
+      {heading && (
+        <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          {heading}
+        </h3>
+      )}
+      {results.map((r, i) => (
+        <div key={i} className="rounded-lg bg-muted p-3 text-sm">
+          <div className="mb-1 flex items-center justify-between">
+            <span className="font-medium text-muted-foreground">
+              {t(labelKey, { n: i + 1 })}
+            </span>
+            {r.judged ? (
+              <StatusBadge status={r.status} />
+            ) : (
+              <Badge variant="secondary">{t('test.finished')}</Badge>
+            )}
+          </div>
+          <p>
+            <span className="text-muted-foreground">{t('test.input')}</span>
+            <code className="rounded bg-secondary px-1 text-foreground">
+              {r.input}
+            </code>
+          </p>
+          {r.expectedOutput != null && (
+            <p>
+              <span className="text-muted-foreground">{t('test.expected')}</span>
+              <code className="rounded bg-secondary px-1 text-foreground">
+                {r.expectedOutput}
+              </code>
+            </p>
+          )}
+          {r.actualOutput && (
+            <p>
+              <span className="text-muted-foreground">{t('test.outputLabel')}</span>
+              <code className="rounded bg-secondary px-1 text-foreground">
+                {r.actualOutput}
+              </code>
+            </p>
+          )}
+          {(() => {
+            const visible = renderableErrors(r.errors);
+            const label = r.compileOutput
+              ? t('test.compilationError')
+              : t('test.stderr');
+            if (visible.length > 0) {
+              return (
+                <div className="mt-1">
+                  <span className="text-xs text-muted-foreground">{label}</span>
+                  <ErrorDisplay errors={visible} userSource={userSource} />
+                </div>
+              );
+            }
+            if (r.stderr) {
+              return (
+                <div className="mt-1">
+                  <span className="text-xs text-muted-foreground">{t('test.stderr')}</span>
+                  <pre className="mt-1 overflow-auto rounded bg-error-100 p-2 text-xs text-error-700">
+                    {r.stderr}
+                  </pre>
+                </div>
+              );
+            }
+            if (r.compileOutput) {
+              return (
+                <div className="mt-1">
+                  <span className="text-xs text-muted-foreground">
+                    {t('test.compilationError')}
+                  </span>
+                  <pre className="mt-1 overflow-auto rounded bg-warning-100 p-2 text-xs text-warning-700">
+                    {r.compileOutput}
+                  </pre>
+                </div>
+              );
+            }
+            return null;
+          })()}
+        </div>
+      ))}
+    </div>
   );
 }

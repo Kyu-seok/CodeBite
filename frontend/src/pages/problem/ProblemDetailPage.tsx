@@ -9,7 +9,12 @@ import Spinner from "@/components/ui/Spinner"
 import { LeftPanel } from "./LeftPanel"
 import { EditorPanel } from "./EditorPanel"
 import { TestPanel } from "./TestPanel"
-import type { CodeError, SubmissionResponse, RunResponse } from "@/types/submission"
+import type {
+  CodeError,
+  CustomTestCaseInput,
+  SubmissionResponse,
+  RunResponse,
+} from "@/types/submission"
 import { AxiosError } from "axios"
 import type { ApiError } from "@/types/api"
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts"
@@ -43,6 +48,14 @@ export default function ProblemDetailPage() {
   const [runResult, setRunResult] = useState<RunResponse | null>(null)
   const [runError, setRunError] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState("testcases")
+  const [customTests, setCustomTests] = useState<CustomTestCaseInput[]>(() => {
+    try {
+      const stored = localStorage.getItem(`custom-tests:${slug}`)
+      return stored ? JSON.parse(stored) : []
+    } catch {
+      return []
+    }
+  })
   const pollIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const resetLayoutRef = useRef<(() => void) | null>(null)
   const runRef = useRef<() => void>(() => {})
@@ -50,6 +63,8 @@ export default function ProblemDetailPage() {
   const timerSnapshotRef = useRef<number | null>(null)
   const codeByLangRef = useRef(codeByLang)
   codeByLangRef.current = codeByLang
+  const customTestsRef = useRef(customTests)
+  customTestsRef.current = customTests
 
   useKeyboardShortcuts(
     useCallback(() => runRef.current(), []),
@@ -86,6 +101,30 @@ export default function ProblemDetailPage() {
       if (!slug) return
       try {
         localStorage.setItem(`code-draft:${slug}`, JSON.stringify(codeByLangRef.current))
+      } catch {
+        // ignore
+      }
+    }
+  }, [slug])
+
+  // Custom tests — debounced persistence + flush on unmount, mirrors code-draft.
+  useEffect(() => {
+    if (!slug) return
+    const handle = setTimeout(() => {
+      try {
+        localStorage.setItem(`custom-tests:${slug}`, JSON.stringify(customTestsRef.current))
+      } catch {
+        // ignore
+      }
+    }, 300)
+    return () => clearTimeout(handle)
+  }, [customTests, slug])
+
+  useEffect(() => {
+    return () => {
+      if (!slug) return
+      try {
+        localStorage.setItem(`custom-tests:${slug}`, JSON.stringify(customTestsRef.current))
       } catch {
         // ignore
       }
@@ -176,9 +215,13 @@ export default function ProblemDetailPage() {
     setSubmitError(null)
     setActiveTab("output")
     try {
+      const cleaned = customTests
+        .map((tc) => ({ input: tc.input.trim(), expectedOutput: tc.expectedOutput }))
+        .filter((tc) => tc.input.length > 0)
       const res = await runCode(slug!, {
         language: activeLang,
         sourceCode: code,
+        customTestCases: cleaned.length > 0 ? cleaned : undefined,
       })
       setRunResult(res.data)
     } catch (err) {
@@ -265,6 +308,8 @@ export default function ProblemDetailPage() {
           submitting={submitting}
           activeTab={activeTab}
           userSource={code}
+          customTests={customTests}
+          onCustomTestsChange={setCustomTests}
           onTabChange={setActiveTab}
           onRun={handleRun}
           onSubmit={handleSubmit}

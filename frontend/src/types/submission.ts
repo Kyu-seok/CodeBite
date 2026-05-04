@@ -58,14 +58,27 @@ export interface SubmitRequest {
   sourceCode: string;
 }
 
-export interface RunTestCaseResult {
+export interface CustomTestCaseInput {
   input: string;
   expectedOutput: string;
+}
+
+export interface RunRequest {
+  language: string;
+  sourceCode: string;
+  customTestCases?: CustomTestCaseInput[];
+}
+
+export interface RunTestCaseResult {
+  input: string;
+  expectedOutput: string | null;
   actualOutput: string | null;
   status: SubmissionStatus;
   stderr: string | null;
   compileOutput: string | null;
   errors: CodeError[];
+  isCustom: boolean;
+  judged: boolean;
 }
 
 export interface RunResponse {
