@@ -97,10 +97,10 @@ class ProblemIntegrationTest {
 
     @Test
     void getProblemBySlug_returnsDetail() throws Exception {
-        mockMvc.perform(get("/api/problems/pair-sum"))
+        mockMvc.perform(get("/api/problems/snack-drawer-pair"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.title").value("Pair Sum"))
-                .andExpect(jsonPath("$.slug").value("pair-sum"))
+                .andExpect(jsonPath("$.title").value("Snack Drawer Pair"))
+                .andExpect(jsonPath("$.slug").value("snack-drawer-pair"))
                 .andExpect(jsonPath("$.description").isNotEmpty())
                 .andExpect(jsonPath("$.difficulty").value("EASY"))
                 .andExpect(jsonPath("$.starterCode.java").isNotEmpty())

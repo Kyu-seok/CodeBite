@@ -22,7 +22,7 @@ class StarterCodeLoaderTest {
 
     @Test
     void loadsAllStarterCodeEntries() {
-        String[] slugs = {"pair-sum", "bracket-validator", "three-sum", "anagram-groups", "overlap-merge"};
+        String[] slugs = {"snack-drawer-pair", "valid-brackets", "zero-sum-trio", "group-drink-labels", "merge-reservation-slots"};
         String[] languages = {"java", "python", "javascript", "cpp"};
 
         for (String slug : slugs) {
@@ -35,30 +35,30 @@ class StarterCodeLoaderTest {
     }
 
     @Test
-    void pairSum_containsExpectedMethodSignatures() {
-        Map<String, String> code = loader.getStarterCode("pair-sum");
-        assertTrue(code.get("java").contains("twoSum"));
-        assertTrue(code.get("python").contains("twoSum"));
-        assertTrue(code.get("javascript").contains("twoSum"));
-        assertTrue(code.get("cpp").contains("twoSum"));
+    void snackDrawerPair_containsExpectedMethodSignatures() {
+        Map<String, String> code = loader.getStarterCode("snack-drawer-pair");
+        assertTrue(code.get("java").contains("findPairIndices"));
+        assertTrue(code.get("python").contains("findPairIndices"));
+        assertTrue(code.get("javascript").contains("findPairIndices"));
+        assertTrue(code.get("cpp").contains("findPairIndices"));
     }
 
     @Test
-    void bracketValidator_containsExpectedMethodSignatures() {
-        Map<String, String> code = loader.getStarterCode("bracket-validator");
-        assertTrue(code.get("java").contains("isValid"));
-        assertTrue(code.get("python").contains("isValid"));
-        assertTrue(code.get("javascript").contains("isValid"));
-        assertTrue(code.get("cpp").contains("isValid"));
+    void validBrackets_containsExpectedMethodSignatures() {
+        Map<String, String> code = loader.getStarterCode("valid-brackets");
+        assertTrue(code.get("java").contains("verifyJobNesting"));
+        assertTrue(code.get("python").contains("verifyJobNesting"));
+        assertTrue(code.get("javascript").contains("verifyJobNesting"));
+        assertTrue(code.get("cpp").contains("verifyJobNesting"));
     }
 
     @Test
-    void threeSum_containsExpectedMethodSignatures() {
-        Map<String, String> code = loader.getStarterCode("three-sum");
-        assertTrue(code.get("java").contains("threeSum"));
-        assertTrue(code.get("python").contains("threeSum"));
-        assertTrue(code.get("javascript").contains("threeSum"));
-        assertTrue(code.get("cpp").contains("threeSum"));
+    void zeroSumTrio_containsExpectedMethodSignatures() {
+        Map<String, String> code = loader.getStarterCode("zero-sum-trio");
+        assertTrue(code.get("java").contains("triageZeroPriority"));
+        assertTrue(code.get("python").contains("triageZeroPriority"));
+        assertTrue(code.get("javascript").contains("triageZeroPriority"));
+        assertTrue(code.get("cpp").contains("triageZeroPriority"));
     }
 
     @Test
