@@ -10,6 +10,6 @@ public record UpdateSolutionRequest(
         @NotBlank @Size(min = 5, max = 100) String title,
         @NotBlank @Size(min = 50, max = 50_000) String content,
         @NotEmpty @Size(max = 4) Set<String> languages,
-        @Size(max = 5) Set<Long> tagIds
+        @Size(max = 5) Set<String> tagSlugs
 ) {
 }

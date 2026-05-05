@@ -104,7 +104,7 @@ public class SolutionService {
         s.setTitle(request.title());
         s.setContent(request.content());
         s.setLanguages(new HashSet<>(request.languages()));
-        s.setTags(loadTags(request.tagIds()));
+        s.setTags(loadTagsBySlug(request.tagSlugs()));
 
         if (request.fromSubmissionId() != null) {
             Submission src = submissionRepository.findById(request.fromSubmissionId())
@@ -132,7 +132,7 @@ public class SolutionService {
         s.setTitle(request.title());
         s.setContent(request.content());
         s.setLanguages(new HashSet<>(request.languages()));
-        s.setTags(loadTags(request.tagIds()));
+        s.setTags(loadTagsBySlug(request.tagSlugs()));
 
         VoteDirection viewerVote = viewerVoteFor(s, userId);
         return SolutionMapper.toDetail(s, viewerVote, userId);
@@ -155,9 +155,9 @@ public class SolutionService {
         s.setPublished(published);
     }
 
-    private Set<Tag> loadTags(Set<Long> tagIds) {
-        if (tagIds == null || tagIds.isEmpty()) return new HashSet<>();
-        return new HashSet<>(tagRepository.findAllById(tagIds));
+    private Set<Tag> loadTagsBySlug(Set<String> tagSlugs) {
+        if (tagSlugs == null || tagSlugs.isEmpty()) return new HashSet<>();
+        return new HashSet<>(tagRepository.findBySlugIn(tagSlugs));
     }
 
     private void validateLanguages(Set<String> languages) {
