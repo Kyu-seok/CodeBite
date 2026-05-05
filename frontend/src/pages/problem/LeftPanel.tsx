@@ -71,6 +71,7 @@ interface LeftPanelProps {
   isAuthenticated: boolean;
   submissions: SubmissionListItem[];
   onUpdateNote?: (id: number, notes: string) => void;
+  onLoadIntoEditor?: (code: string, language: string) => void;
 }
 
 export function LeftPanel({
@@ -82,6 +83,7 @@ export function LeftPanel({
   isAuthenticated,
   submissions,
   onUpdateNote,
+  onLoadIntoEditor,
 }: LeftPanelProps) {
   const { t } = useTranslation('problem');
   return (
@@ -119,6 +121,7 @@ export function LeftPanel({
               isAuthenticated={isAuthenticated}
               submissions={submissions}
               onUpdateNote={onUpdateNote}
+              onLoadIntoEditor={onLoadIntoEditor}
             />
           </TabsContent>
 

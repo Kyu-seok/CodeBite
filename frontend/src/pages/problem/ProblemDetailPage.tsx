@@ -180,6 +180,13 @@ export default function ProblemDetailPage() {
     }
   }
 
+  const handleLoadIntoEditor = (sourceCode: string, lang: string) => {
+    setCodeByLang((prev) => ({ ...prev, [lang]: sourceCode }))
+    if (lang !== activeLang) {
+      handleLanguageChange(lang)
+    }
+  }
+
   const pollForResult = (submissionId: number) => {
     const interval = setInterval(async () => {
       try {
@@ -282,6 +289,7 @@ export default function ProblemDetailPage() {
           isAuthenticated={isAuthenticated}
           submissions={submissions}
           onUpdateNote={updateNote}
+          onLoadIntoEditor={handleLoadIntoEditor}
         />
       }
       editor={

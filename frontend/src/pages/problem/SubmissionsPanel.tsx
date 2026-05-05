@@ -109,12 +109,14 @@ interface SubmissionsPanelProps {
   isAuthenticated: boolean
   submissions: SubmissionListItem[]
   onUpdateNote?: (id: number, notes: string) => void
+  onLoadIntoEditor?: (code: string, language: string) => void
 }
 
 export function SubmissionsPanel({
   isAuthenticated,
   submissions,
   onUpdateNote,
+  onLoadIntoEditor,
 }: SubmissionsPanelProps) {
   const { t } = useTranslation("problem")
   const { t: tc } = useTranslation("common")
@@ -130,6 +132,7 @@ export function SubmissionsPanel({
         submissionId={selectedId}
         onBack={() => setSelectedId(null)}
         onUpdateNote={onUpdateNote}
+        onLoadIntoEditor={onLoadIntoEditor}
       />
     )
   }

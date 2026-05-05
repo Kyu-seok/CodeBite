@@ -1,10 +1,15 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Editor from '@monaco-editor/react';
-import { Share2 } from 'lucide-react';
+import { Check, Copy, FileInput, Share2, X } from 'lucide-react';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/Tooltip';
 import { getSubmission } from '@/api/submissions';
 import { useAuth } from '@/context/AuthContext';
 import { useTheme } from '@/context/ThemeContext';
@@ -56,9 +61,15 @@ interface SubmissionDetailProps {
   submissionId: number;
   onBack: () => void;
   onUpdateNote?: (id: number, notes: string) => void;
+  onLoadIntoEditor?: (code: string, language: string) => void;
 }
 
-export function SubmissionDetail({ submissionId, onBack, onUpdateNote }: SubmissionDetailProps) {
+export function SubmissionDetail({
+  submissionId,
+  onBack,
+  onUpdateNote,
+  onLoadIntoEditor,
+}: SubmissionDetailProps) {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
   const { t } = useTranslation('problem');
@@ -176,9 +187,16 @@ export function SubmissionDetail({ submissionId, onBack, onUpdateNote }: Submiss
 
         {/* Submitted code */}
         <div>
-          <h3 className="mb-2 text-xs font-medium text-muted-foreground uppercase tracking-wider">
-            {t('submissions.submittedCode')}
-          </h3>
+          <div className="mb-2 flex items-center justify-between">
+            <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+              {t('submissions.submittedCode')}
+            </h3>
+            <CodeActions
+              sourceCode={submission.sourceCode}
+              language={submission.language}
+              onLoadIntoEditor={onLoadIntoEditor}
+            />
+          </div>
           <div className="overflow-hidden rounded-lg border border-border">
             <Editor
               height="240px"
@@ -335,6 +353,110 @@ export function SubmissionDetail({ submissionId, onBack, onUpdateNote }: Submiss
           )}
         </div>
       </div>
+    </div>
+  );
+}
+
+interface CodeActionsProps {
+  sourceCode: string;
+  language: string;
+  onLoadIntoEditor?: (code: string, language: string) => void;
+}
+
+type ActionState = 'idle' | 'success' | 'error';
+
+function CodeActions({ sourceCode, language, onLoadIntoEditor }: CodeActionsProps) {
+  const { t } = useTranslation('problem');
+  const [copyState, setCopyState] = useState<ActionState>('idle');
+  const [loadState, setLoadState] = useState<ActionState>('idle');
+  const copyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const loadTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (copyTimerRef.current) clearTimeout(copyTimerRef.current);
+      if (loadTimerRef.current) clearTimeout(loadTimerRef.current);
+    };
+  }, []);
+
+  const flashCopy = (state: ActionState) => {
+    setCopyState(state);
+    if (copyTimerRef.current) clearTimeout(copyTimerRef.current);
+    copyTimerRef.current = setTimeout(() => setCopyState('idle'), 1500);
+  };
+
+  const flashLoad = () => {
+    setLoadState('success');
+    if (loadTimerRef.current) clearTimeout(loadTimerRef.current);
+    loadTimerRef.current = setTimeout(() => setLoadState('idle'), 1500);
+  };
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(sourceCode);
+      flashCopy('success');
+    } catch {
+      flashCopy('error');
+    }
+  };
+
+  const handleLoad = () => {
+    onLoadIntoEditor?.(sourceCode, language);
+    flashLoad();
+  };
+
+  const copyTooltip =
+    copyState === 'success'
+      ? t('submissions.copied')
+      : copyState === 'error'
+        ? t('submissions.copyFailed')
+        : t('submissions.copyToClipboard');
+
+  const loadTooltip =
+    loadState === 'success'
+      ? t('submissions.loadedIntoEditor')
+      : t('submissions.copyToEditor');
+
+  return (
+    <div className="flex items-center gap-1">
+      <Tooltip>
+        <TooltipTrigger>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7"
+            onClick={handleCopy}
+            aria-label={copyTooltip}>
+            {copyState === 'success' ? (
+              <Check className="h-3.5 w-3.5 text-success-500" />
+            ) : copyState === 'error' ? (
+              <X className="h-3.5 w-3.5 text-destructive" />
+            ) : (
+              <Copy className="h-3.5 w-3.5" />
+            )}
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>{copyTooltip}</TooltipContent>
+      </Tooltip>
+      {onLoadIntoEditor && (
+        <Tooltip>
+          <TooltipTrigger>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-7 w-7"
+              onClick={handleLoad}
+              aria-label={loadTooltip}>
+              {loadState === 'success' ? (
+                <Check className="h-3.5 w-3.5 text-success-500" />
+              ) : (
+                <FileInput className="h-3.5 w-3.5" />
+              )}
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>{loadTooltip}</TooltipContent>
+        </Tooltip>
+      )}
     </div>
   );
 }
