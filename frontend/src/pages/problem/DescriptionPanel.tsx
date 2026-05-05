@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next"
-import ReactMarkdown from "react-markdown"
+import { MarkdownRenderer } from "@/components/markdown/MarkdownRenderer"
 import DifficultyBadge from "@/components/ui/DifficultyBadge"
 import { Stack } from "@/components/layout/Stack"
 import type { Difficulty } from "@/types/problem"
@@ -25,18 +25,14 @@ export function DescriptionPanel({
         <DifficultyBadge difficulty={difficulty} />
       </Stack>
 
-      <div className="prose prose-sm dark:prose-invert max-w-none mt-4">
-        <ReactMarkdown>{description}</ReactMarkdown>
-      </div>
+      <MarkdownRenderer source={description} className="mt-4" />
 
       {constraints && (
         <div className="mt-6">
           <h2 className="text-sm font-semibold text-muted-foreground mb-2">
             {t("description.constraints")}
           </h2>
-          <div className="prose prose-sm dark:prose-invert max-w-none">
-            <ReactMarkdown>{constraints}</ReactMarkdown>
-          </div>
+          <MarkdownRenderer source={constraints} />
         </div>
       )}
     </div>

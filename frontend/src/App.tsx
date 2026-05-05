@@ -9,6 +9,8 @@ import LoginPage from "./pages/LoginPage";
 import OAuthCallbackPage from "./pages/OAuthCallbackPage";
 import ProblemListPage from "./pages/ProblemListPage";
 import ProblemDetailPage from "./pages/problem";
+import SolutionDetailPage from "./pages/problem/solutions/SolutionDetailPage";
+import SolutionEditorPage from "./pages/problem/solutions/SolutionEditorPage";
 import RoadmapPage from "./pages/roadmap";
 import ProfilePage from "./pages/profile/ProfilePage";
 import ProtectedRoute from "./components/layout/ProtectedRoute";
@@ -38,6 +40,23 @@ function App() {
                 <Route index element={<LandingPage />} />
                 <Route path="problems" element={<ProblemListPage />} />
                 <Route path="problems/:slug" element={<ProblemDetailPage />} />
+                <Route
+                  path="problems/:slug/solutions/new"
+                  element={
+                    <ProtectedRoute>
+                      <SolutionEditorPage mode="create" />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route path="problems/:slug/solutions/:solutionId" element={<SolutionDetailPage />} />
+                <Route
+                  path="problems/:slug/solutions/:solutionId/edit"
+                  element={
+                    <ProtectedRoute>
+                      <SolutionEditorPage mode="edit" />
+                    </ProtectedRoute>
+                  }
+                />
                 <Route path="roadmap" element={<RoadmapPage />} />
                 <Route path="profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
                 <Route path="*" element={<NotFoundPage />} />

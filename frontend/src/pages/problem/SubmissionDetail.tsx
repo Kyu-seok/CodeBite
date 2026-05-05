@@ -1,8 +1,12 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Editor from '@monaco-editor/react';
+import { Share2 } from 'lucide-react';
 import { Badge } from '@/components/ui/Badge';
+import { Button } from '@/components/ui/Button';
 import { getSubmission } from '@/api/submissions';
+import { useAuth } from '@/context/AuthContext';
 import { useTheme } from '@/context/ThemeContext';
 import type { SubmissionResponse, SubmissionStatus } from '@/types/submission';
 
@@ -55,6 +59,8 @@ interface SubmissionDetailProps {
 }
 
 export function SubmissionDetail({ submissionId, onBack, onUpdateNote }: SubmissionDetailProps) {
+  const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
   const { t } = useTranslation('problem');
   const { t: tc } = useTranslation('common');
   const { theme } = useTheme();
@@ -130,6 +136,23 @@ export function SubmissionDetail({ submissionId, onBack, onUpdateNote }: Submiss
                 </span>
               </>
             )}
+          </div>
+          <div className="mt-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                const target = `/problems/${submission.problemSlug}/solutions/new?fromSubmission=${submission.id}`;
+                if (!isAuthenticated) {
+                  sessionStorage.setItem('returnUrl', target);
+                  navigate('/login');
+                  return;
+                }
+                navigate(target);
+              }}>
+              <Share2 className="h-3.5 w-3.5" />
+              {t('solutions.shareAsSolution')}
+            </Button>
           </div>
         </div>
 

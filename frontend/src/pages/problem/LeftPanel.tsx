@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/Tabs';
 import { DescriptionPanel } from './DescriptionPanel';
 import { SubmissionsPanel } from './SubmissionsPanel';
+import { SolutionsListPanel } from './solutions/SolutionsListPanel';
 import type { Difficulty } from '@/types/problem';
 import type { SubmissionListItem } from '@/types/submission';
 
@@ -62,6 +63,7 @@ function LightbulbIcon() {
 }
 
 interface LeftPanelProps {
+  slug: string;
   title: string;
   difficulty: Difficulty;
   description: string;
@@ -72,6 +74,7 @@ interface LeftPanelProps {
 }
 
 export function LeftPanel({
+  slug,
   title,
   difficulty,
   description,
@@ -119,11 +122,8 @@ export function LeftPanel({
             />
           </TabsContent>
 
-          <TabsContent value="solutions" className="mt-0">
-            <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
-              <LightbulbIcon />
-              <p className="mt-2 text-sm">{t('tabs.solutionsComingSoon')}</p>
-            </div>
+          <TabsContent value="solutions" className="mt-0 h-full">
+            <SolutionsListPanel slug={slug} isAuthenticated={isAuthenticated} />
           </TabsContent>
         </div>
       </Tabs>

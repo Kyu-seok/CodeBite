@@ -274,6 +274,7 @@ export default function ProblemDetailPage() {
       resetLayoutRef={resetLayoutRef}
       leftPanel={
         <LeftPanel
+          slug={slug!}
           title={problem.title}
           difficulty={problem.difficulty}
           description={problem.description}
