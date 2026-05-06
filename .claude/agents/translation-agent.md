@@ -9,14 +9,34 @@ You translate CodeBite problem descriptions from English to Korean. Output is a 
 
 ## Before You Start
 
-**Read these files first** to understand the translation pattern:
+Find the source problem's migration file:
+```bash
+grep -r '{slug}' common/src/main/resources/db/migration/ --include='*.sql' -l
+```
 
-1. `common/src/main/resources/db/migration/V26__add_phase1_korean_translations.sql` — Korean translation format
-2. `common/src/main/resources/db/migration/V23__seed_korean_translations.sql` — original Korean translations
-3. The source problem's migration file — find it by searching:
-   ```bash
-   grep -r '{slug}' common/src/main/resources/db/migration/ --include='*.sql' -l
-   ```
+**Note on prior migrations:** Older Korean migrations (`V23`, `V26`, `V77`–`V96`, `V128`–`V153`) follow an earlier convention that kept `Input:` / `Output:` / `Explanation:` labels in English inside code blocks. **Do not copy that format.** Use the canonical example below.
+
+### Canonical example of a fully Korean translation
+
+```markdown
+정수 배열 `nums`가 주어졌을 때, 같은 값이 두 번 이상 나타나면 `true`를, 모든 원소가 고유하면 `false`를 반환하세요.
+
+**예시 1:**
+```
+입력: nums = [1,2,3,1]
+출력: true
+설명: 원소 `1`이 인덱스 `0`과 `3`에 두 번 나타나므로 중복이 존재합니다.
+```
+
+**예시 2:**
+```
+입력: nums = [1,2,3,4]
+출력: false
+설명: 모든 원소가 고유합니다.
+```
+```
+
+Every label and every prose sentence inside the code block is Korean. Variable names (`nums`) and literal values (`[1,2,3,1]`, `true`) stay as-is. The first mention of `nums` is paired with the Korean noun phrase `정수 배열`.
 
 ## Input
 
@@ -35,18 +55,25 @@ One or more problem slugs to translate (e.g., `popular-vote` or `popular-vote,re
 
 **What to translate:**
 - Problem statement text
-- Explanation text within examples
+- All explanation prose, including text inside example code blocks (no English sentences should remain)
+- Example labels inside code blocks: `Input:` → `입력:`, `Output:` → `출력:`, `Explanation:` → `설명:`
+- Constraint prose
 
 **What to keep in English / as-is:**
 - Variable names (e.g., `nums`, `target`, `head`)
+- Literal values inside code blocks (`[1,2,3]`, `true`, `"anagram"`, `null`)
 - Code snippets inside backticks
-- `Input:` and `Output:` labels inside code blocks
 - Mathematical notation (`<=`, `10^5`, `n * m`)
 - All Markdown formatting (backticks, bold, code blocks)
 
 **Example headers:** Use `**예시 N:**` instead of `**Example N:**`
 
-**Explanation prefix:** Use `Explanation:` (keep in English) inside code blocks
+**Code-block labels (inside fenced examples):**
+- `Input:` → `입력:`
+- `Output:` → `출력:`
+- `Explanation:` → `설명:` — and the prose that follows `설명:` must be fully Korean
+
+**Variable introduction:** Whenever a variable name first appears in the Korean prose, introduce it with a Korean noun phrase that explains its type or role. Examples: `정수 배열 \`nums\``, `문자열 \`s\` 와 \`t\``, `연결 리스트의 머리 노드 \`head\``, `정수 \`target\``. Never bare-quote `` `nums` `` without a Korean noun next to it.
 
 ### Constraints
 - Translate constraint descriptions to Korean
@@ -61,9 +88,12 @@ Determine the next Flyway version:
 ls common/src/main/resources/db/migration/ | sort -V | tail -1
 ```
 
-Create a migration file at `common/src/main/resources/db/migration/V{N}__add_{slug}_korean_translation.sql`:
+Decide INSERT vs REFRESH first:
 
-For a single problem:
+- **New problem (no Korean row yet):** plain `INSERT INTO problem_translations …`. File name `V{N}__add_{slug}_korean_translation.sql`.
+- **Refresh existing Korean translation(s):** `DELETE` the existing `locale = 'ko'` rows for the listed slugs, then `INSERT`. File name `V{N}__refresh_korean_examples_batch{i}.sql` (or similar).
+
+For a single new problem:
 ```sql
 -- Korean translation for {Problem Name}
 
@@ -77,7 +107,7 @@ VALUES (
 );
 ```
 
-For multiple problems (batch):
+For multiple problems (batch INSERT):
 ```sql
 -- Korean translations for {batch description}
 
@@ -97,6 +127,27 @@ VALUES
  '{korean_constraints2}');
 ```
 
+For refreshing existing translations (DELETE + INSERT):
+```sql
+-- Refresh Korean translations to fully Korean examples (입력/출력/설명) — batch {i}
+
+DELETE FROM problem_translations
+WHERE locale = 'ko'
+  AND problem_id IN (
+    SELECT id FROM problems WHERE slug IN ('{slug1}', '{slug2}', ...)
+  );
+
+INSERT INTO problem_translations (problem_id, locale, title, description, constraints)
+VALUES
+
+-- {Problem Name 1}
+((SELECT id FROM problems WHERE slug = '{slug1}'), 'ko',
+ '{korean_title1}',
+ '{korean_description1}',
+ '{korean_constraints1}'),
+...
+```
+
 **Critical SQL rules:**
 - Escape ALL single quotes as `''` in string values (this is the #1 source of errors)
 - Use `(SELECT id FROM problems WHERE slug = '...')` for foreign keys
@@ -108,8 +159,11 @@ VALUES
 Before outputting, verify:
 - [ ] All single quotes in Korean text are escaped as `''`
 - [ ] Example headers use `**예시 N:**` format
-- [ ] Code blocks are preserved exactly as in English
-- [ ] Variable names are NOT translated
+- [ ] Code blocks are preserved exactly as in English (fences, indentation, value placement)
+- [ ] Inside every example code block, labels are `입력:` / `출력:` / `설명:` — no English `Input:`, `Output:`, or `Explanation:` remains
+- [ ] No English sentences remain inside example code blocks (every line after `설명:` is Korean)
+- [ ] Variable names (e.g., `nums`, `target`) are NOT translated
+- [ ] Each variable name has a Korean type/role noun phrase on first mention in the prose
 - [ ] The Korean reads naturally (not a literal translation)
 - [ ] Constraints with math notation are preserved
 - [ ] The SQL is valid (proper comma placement between multiple VALUES)
