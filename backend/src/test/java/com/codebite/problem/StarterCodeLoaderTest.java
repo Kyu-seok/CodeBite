@@ -22,7 +22,7 @@ class StarterCodeLoaderTest {
 
     @Test
     void loadsAllStarterCodeEntries() {
-        String[] slugs = {"snack-drawer-pair", "valid-brackets", "zero-sum-trio", "group-drink-labels", "merge-reservation-slots"};
+        String[] slugs = {"snack-drawer-pair", "valid-brackets", "zero-sum-trio", "group-anagrams", "merge-reservation-slots"};
         String[] languages = {"java", "python", "javascript", "cpp"};
 
         for (String slug : slugs) {
