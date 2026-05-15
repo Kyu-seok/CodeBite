@@ -6,6 +6,8 @@ import { ActivityHeatmap } from './ActivityHeatmap';
 import { SolveProgressCard } from './SolveProgressCard';
 import { TagRadarCard } from './TagRadarCard';
 import { RecentSubmissionsCard } from './RecentSubmissionsCard';
+import { DueReviewsCard } from './DueReviewsCard';
+import { ReviewStreakPill } from './ReviewStreakPill';
 
 export default function ProfilePage() {
   const { user } = useAuth();
@@ -29,6 +31,12 @@ export default function ProfilePage() {
           <SolveProgressCard stats={stats} />
           <TagRadarCard tagProficiency={tagProficiency} />
         </div>
+
+        <div className="flex items-center justify-end">
+          <ReviewStreakPill />
+        </div>
+
+        <DueReviewsCard />
 
         <RecentSubmissionsCard />
       </div>

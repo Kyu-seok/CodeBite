@@ -10,6 +10,7 @@ import {
   DialogDescription,
 } from "@/components/ui/Dialog"
 import type { SubmissionListItem, SubmissionStatus } from "@/types/submission"
+import { confidenceChipClass, confidenceLabel } from "@/lib/confidenceColors"
 import { SubmissionDetail } from "./SubmissionDetail"
 
 const statusColorMap: Record<SubmissionStatus, string> = {
@@ -108,6 +109,8 @@ function NoteModal({
 interface SubmissionsPanelProps {
   isAuthenticated: boolean
   submissions: SubmissionListItem[]
+  selectedSubmissionId: number | null
+  onSelectSubmission: (id: number | null) => void
   onUpdateNote?: (id: number, notes: string) => void
   onLoadIntoEditor?: (code: string, language: string) => void
 }
@@ -115,22 +118,23 @@ interface SubmissionsPanelProps {
 export function SubmissionsPanel({
   isAuthenticated,
   submissions,
+  selectedSubmissionId,
+  onSelectSubmission,
   onUpdateNote,
   onLoadIntoEditor,
 }: SubmissionsPanelProps) {
   const { t } = useTranslation("problem")
   const { t: tc } = useTranslation("common")
   const [editingId, setEditingId] = useState<number | null>(null)
-  const [selectedId, setSelectedId] = useState<number | null>(null)
   const editingSubmission = editingId != null
     ? submissions.find((s) => s.id === editingId) ?? null
     : null
 
-  if (selectedId != null) {
+  if (selectedSubmissionId != null) {
     return (
       <SubmissionDetail
-        submissionId={selectedId}
-        onBack={() => setSelectedId(null)}
+        submissionId={selectedSubmissionId}
+        onBack={() => onSelectSubmission(null)}
         onUpdateNote={onUpdateNote}
         onLoadIntoEditor={onLoadIntoEditor}
       />
@@ -158,12 +162,13 @@ export function SubmissionsPanel({
   return (
     <div className="overflow-auto">
       {/* Header */}
-      <div className="sticky top-0 grid grid-cols-[2rem_1fr_4.5rem_5rem_5rem_minmax(4rem,1fr)] items-center gap-2 px-4 py-2 text-xs font-medium text-muted-foreground border-b border-border bg-background">
+      <div className="sticky top-0 grid grid-cols-[2rem_1fr_4.5rem_5rem_5rem_4.5rem_minmax(4rem,1fr)] items-center gap-2 px-4 py-2 text-xs font-medium text-muted-foreground border-b border-border bg-background">
         <span />
         <span>{tc("label.status")}</span>
         <span>{tc("label.language")}</span>
         <span>{tc("label.runtime")}</span>
         <span>{tc("label.memory")}</span>
+        <span>Conf.</span>
         <span>{t("submissions.notes")}</span>
       </div>
 
@@ -171,8 +176,8 @@ export function SubmissionsPanel({
       {submissions.map((s, i) => (
         <div
           key={s.id}
-          onClick={() => setSelectedId(s.id)}
-          className="grid grid-cols-[2rem_1fr_4.5rem_5rem_5rem_minmax(4rem,1fr)] items-center gap-2 px-4 py-2.5 text-sm border-b border-border hover:bg-muted/50 transition-colors cursor-pointer"
+          onClick={() => onSelectSubmission(s.id)}
+          className="grid grid-cols-[2rem_1fr_4.5rem_5rem_5rem_4.5rem_minmax(4rem,1fr)] items-center gap-2 px-4 py-2.5 text-sm border-b border-border hover:bg-muted/50 transition-colors cursor-pointer"
         >
           {/* Row number */}
           <span className="text-xs text-muted-foreground">
@@ -225,6 +230,17 @@ export function SubmissionsPanel({
               </>
             ) : (
               <span>{tc("label.na")}</span>
+            )}
+          </div>
+
+          {/* Confidence */}
+          <div>
+            {s.confidence ? (
+              <span className={`inline-flex items-center rounded px-1.5 py-0.5 text-[10px] font-medium ${confidenceChipClass[s.confidence]}`}>
+                {confidenceLabel[s.confidence]}
+              </span>
+            ) : (
+              <span className="text-xs text-muted-foreground/50">—</span>
             )}
           </div>
 

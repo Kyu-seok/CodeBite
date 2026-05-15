@@ -1,5 +1,6 @@
 package com.codebite.submission.dto;
 
+import com.codebite.review.entity.Confidence;
 import com.codebite.submission.entity.SubmissionStatus;
 
 import java.time.Instant;
@@ -11,6 +12,8 @@ public record SubmissionListItem(
         Integer runtimeMs,
         Integer memoryKb,
         Instant createdAt,
-        String notes
+        String notes,
+        Confidence confidence,
+        Integer solveTimeSeconds
 ) {
 }

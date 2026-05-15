@@ -183,7 +183,9 @@ public class SubmissionService {
                 submission.getSourceCode(),
                 resultDtos,
                 submission.getCreatedAt(),
-                submission.getNotes()
+                submission.getNotes(),
+                submission.getConfidence(),
+                submission.getSolveTimeSeconds()
         );
     }
 
@@ -204,7 +206,9 @@ public class SubmissionService {
                 submission.getRuntimeMs(),
                 submission.getMemoryKb(),
                 submission.getCreatedAt(),
-                submission.getNotes()
+                submission.getNotes(),
+                submission.getConfidence(),
+                submission.getSolveTimeSeconds()
         );
     }
 
@@ -218,6 +222,19 @@ public class SubmissionService {
         }
 
         submission.setNotes(notes);
+        submissionRepository.save(submission);
+    }
+
+    @Transactional
+    public void setSolveTime(Long id, int solveTimeSeconds, Long userId) {
+        Submission submission = submissionRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("error.submission.notFound", id));
+
+        if (!submission.getUser().getId().equals(userId)) {
+            throw new ResourceNotFoundException("error.submission.notFound", id);
+        }
+
+        submission.setSolveTimeSeconds(solveTimeSeconds);
         submissionRepository.save(submission);
     }
 }

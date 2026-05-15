@@ -146,6 +146,14 @@ export default function Layout() {
             >
               {t('roadmap')}
             </Link>
+            {isAuthenticated && (
+              <Link
+                to="/reviews"
+                className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+              >
+                {t('reviews')}
+              </Link>
+            )}
           </div>
           <div className="flex items-center gap-4 text-sm">
             {isWorkspace && (

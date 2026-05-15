@@ -5,6 +5,7 @@ import com.codebite.submission.dto.SubmissionListItem;
 import com.codebite.submission.dto.SubmissionResponse;
 import com.codebite.submission.dto.SubmitRequest;
 import com.codebite.submission.dto.UpdateNoteRequest;
+import com.codebite.submission.dto.UpdateSolveTimeRequest;
 import com.codebite.common.exception.RateLimitExceededException;
 import com.codebite.common.service.RateLimiterService;
 import com.codebite.submission.service.SubmissionService;
@@ -72,5 +73,14 @@ public class SubmissionController {
             @AuthenticationPrincipal JwtUserPrincipal principal) {
         submissionService.updateNote(id, request.notes(), principal.id());
         return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/submissions/{id}/solve-time")
+    public ResponseEntity<Void> setSolveTime(
+            @PathVariable Long id,
+            @Valid @RequestBody UpdateSolveTimeRequest request,
+            @AuthenticationPrincipal JwtUserPrincipal principal) {
+        submissionService.setSolveTime(id, request.solveTimeSeconds(), principal.id());
+        return ResponseEntity.noContent().build();
     }
 }

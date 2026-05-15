@@ -1,3 +1,5 @@
+import type { Confidence } from "./review";
+
 export type SubmissionStatus =
   | "PENDING"
   | "ACCEPTED"
@@ -41,6 +43,8 @@ export interface SubmissionResponse {
   results: SubmissionResult[];
   createdAt: string;
   notes: string | null;
+  confidence: Confidence | null;
+  solveTimeSeconds: number | null;
 }
 
 export interface SubmissionListItem {
@@ -51,6 +55,8 @@ export interface SubmissionListItem {
   memoryKb: number | null;
   createdAt: string;
   notes: string | null;
+  confidence: Confidence | null;
+  solveTimeSeconds: number | null;
 }
 
 export interface SubmitRequest {

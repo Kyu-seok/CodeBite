@@ -3,12 +3,16 @@ import { useParams, useNavigate, useOutletContext } from "react-router-dom"
 import { useProblem } from "@/hooks/useProblem"
 import { useSubmissions } from "@/hooks/useSubmissions"
 import { useAuth } from "@/context/AuthContext"
-import { submitCode, getSubmission, runCode } from "@/api/submissions"
+import { submitCode, getSubmission, runCode, setSolveTime } from "@/api/submissions"
+import { setSubmissionReview } from "@/api/reviews"
 import { ProblemLayout } from "@/components/layout/ProblemLayout"
 import Spinner from "@/components/ui/Spinner"
 import { LeftPanel } from "./LeftPanel"
 import { EditorPanel } from "./EditorPanel"
 import { TestPanel } from "./TestPanel"
+import { AcceptedModal } from "@/components/review/AcceptedModal"
+import { fireConfetti } from "@/components/review/ConfettiBurst"
+import type { Confidence } from "@/types/review"
 import type {
   CodeError,
   CustomTestCaseInput,
@@ -19,7 +23,6 @@ import { AxiosError } from "axios"
 import type { ApiError } from "@/types/api"
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts"
 import type { WorkspaceOutletContext } from "@/components/layout/Layout"
-import { formatElapsed } from "@/components/layout/Layout"
 
 export default function ProblemDetailPage() {
   const { slug } = useParams<{ slug: string }>()
@@ -48,6 +51,11 @@ export default function ProblemDetailPage() {
   const [runResult, setRunResult] = useState<RunResponse | null>(null)
   const [runError, setRunError] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState("testcases")
+  const [acceptedModal, setAcceptedModal] = useState<{
+    open: boolean
+    submissionId: number | null
+    solveTimeSeconds: number | null
+  }>({ open: false, submissionId: null, solveTimeSeconds: null })
   const [customTests, setCustomTests] = useState<CustomTestCaseInput[]>(() => {
     try {
       const stored = localStorage.getItem(`custom-tests:${slug}`)
@@ -196,12 +204,29 @@ export default function ProblemDetailPage() {
           pollIntervalRef.current = null
           setResult(res.data)
           setSubmitting(false)
+
+          let capturedSolveTime: number | null = null
           if (timerSnapshotRef.current != null && res.data.status === "ACCEPTED") {
-            stopTimer(timerSnapshotRef.current)
-            const note = `Completion time: ${formatElapsed(timerSnapshotRef.current)}`
-            await updateNote(submissionId, note)
+            capturedSolveTime = timerSnapshotRef.current
+            stopTimer(capturedSolveTime)
+            // Persist as a structured field on the submission.
+            try {
+              await setSolveTime(submissionId, capturedSolveTime)
+            } catch {
+              // Non-fatal; the modal still lets the user enter time manually.
+            }
           }
           timerSnapshotRef.current = null
+
+          if (res.data.status === "ACCEPTED") {
+            fireConfetti()
+            setAcceptedModal({
+              open: true,
+              submissionId,
+              solveTimeSeconds: capturedSolveTime,
+            })
+          }
+
           refetchSubmissions()
         }
       } catch {
@@ -212,6 +237,35 @@ export default function ProblemDetailPage() {
       }
     }, 2000)
     pollIntervalRef.current = interval
+  }
+
+  const handleAcceptedReviewSubmit = async ({
+    submissionId,
+    confidence,
+    notes,
+    solveTimeSeconds,
+  }: {
+    submissionId: number
+    confidence: Confidence
+    notes: string | null
+    solveTimeSeconds: number | null
+  }) => {
+    // If the user edited the time in the modal, persist that value (overrides the auto-capture).
+    if (
+      solveTimeSeconds != null &&
+      solveTimeSeconds !== acceptedModal.solveTimeSeconds
+    ) {
+      try {
+        await setSolveTime(submissionId, solveTimeSeconds)
+      } catch {
+        // ignore — primary path is the rating
+      }
+    }
+    await setSubmissionReview(submissionId, {
+      confidence,
+      notes: notes ?? undefined,
+    })
+    refetchSubmissions()
   }
 
   const handleRun = async () => {
@@ -277,53 +331,62 @@ export default function ProblemDetailPage() {
   submitRef.current = handleSubmit
 
   return (
-    <ProblemLayout
-      resetLayoutRef={resetLayoutRef}
-      leftPanel={
-        <LeftPanel
-          slug={slug!}
-          title={problem.title}
-          difficulty={problem.difficulty}
-          description={problem.description}
-          constraints={problem.constraints}
-          isAuthenticated={isAuthenticated}
-          submissions={submissions}
-          onUpdateNote={updateNote}
-          onLoadIntoEditor={handleLoadIntoEditor}
-        />
-      }
-      editor={
-        <EditorPanel
-          languages={languages}
-          activeLanguage={activeLang}
-          code={code}
-          errors={editorErrors}
-          onLanguageChange={handleLanguageChange}
-          onCodeChange={handleCodeChange}
-          onResetCode={handleResetCode}
-          onResetLayout={() => resetLayoutRef.current?.()}
-          onRun={handleRun}
-          onSubmit={handleSubmit}
-        />
-      }
-      testPanel={
-        <TestPanel
-          sampleTestCases={problem.sampleTestCases}
-          runResult={runResult}
-          runError={runError}
-          submitResult={result}
-          submitError={submitError}
-          running={running}
-          submitting={submitting}
-          activeTab={activeTab}
-          userSource={code}
-          customTests={customTests}
-          onCustomTestsChange={setCustomTests}
-          onTabChange={setActiveTab}
-          onRun={handleRun}
-          onSubmit={handleSubmit}
-        />
-      }
-    />
+    <>
+      <ProblemLayout
+        resetLayoutRef={resetLayoutRef}
+        leftPanel={
+          <LeftPanel
+            slug={slug!}
+            title={problem.title}
+            difficulty={problem.difficulty}
+            description={problem.description}
+            constraints={problem.constraints}
+            isAuthenticated={isAuthenticated}
+            submissions={submissions}
+            onUpdateNote={updateNote}
+            onLoadIntoEditor={handleLoadIntoEditor}
+          />
+        }
+        editor={
+          <EditorPanel
+            languages={languages}
+            activeLanguage={activeLang}
+            code={code}
+            errors={editorErrors}
+            onLanguageChange={handleLanguageChange}
+            onCodeChange={handleCodeChange}
+            onResetCode={handleResetCode}
+            onResetLayout={() => resetLayoutRef.current?.()}
+            onRun={handleRun}
+            onSubmit={handleSubmit}
+          />
+        }
+        testPanel={
+          <TestPanel
+            sampleTestCases={problem.sampleTestCases}
+            runResult={runResult}
+            runError={runError}
+            submitResult={result}
+            submitError={submitError}
+            running={running}
+            submitting={submitting}
+            activeTab={activeTab}
+            userSource={code}
+            customTests={customTests}
+            onCustomTestsChange={setCustomTests}
+            onTabChange={setActiveTab}
+            onRun={handleRun}
+            onSubmit={handleSubmit}
+          />
+        }
+      />
+      <AcceptedModal
+        open={acceptedModal.open}
+        onOpenChange={(open) => setAcceptedModal((prev) => ({ ...prev, open }))}
+        submissionId={acceptedModal.submissionId}
+        defaultSolveTimeSeconds={acceptedModal.solveTimeSeconds}
+        onSubmit={handleAcceptedReviewSubmit}
+      />
+    </>
   )
 }

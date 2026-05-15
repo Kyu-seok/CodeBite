@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/Tabs';
 import { DescriptionPanel } from './DescriptionPanel';
@@ -86,9 +87,25 @@ export function LeftPanel({
   onLoadIntoEditor,
 }: LeftPanelProps) {
   const { t } = useTranslation('problem');
+  const [activeTab, setActiveTab] = useState<string>('description');
+  const [selectedSubmissionId, setSelectedSubmissionId] = useState<number | null>(null);
+
+  const handleOpenSubmission = (id: number) => {
+    setSelectedSubmissionId(id);
+    setActiveTab('submissions');
+  };
+
   return (
     <div className="flex h-full flex-col">
-      <Tabs defaultValue="description" className="flex h-full flex-col">
+      <Tabs
+        value={activeTab}
+        onValueChange={(v) => {
+          setActiveTab(v);
+          // Switching tabs away from Submissions should clear any open detail.
+          if (v !== 'submissions') setSelectedSubmissionId(null);
+        }}
+        className="flex h-full flex-col"
+      >
         <div className="border-b border-border bg-muted">
           <TabsList>
             <TabsTrigger value="description" className="gap-1.5">
@@ -109,10 +126,13 @@ export function LeftPanel({
         <div className="flex-1 overflow-auto">
           <TabsContent value="description" className="mt-0">
             <DescriptionPanel
+              slug={slug}
               title={title}
               difficulty={difficulty}
               description={description}
               constraints={constraints}
+              isAuthenticated={isAuthenticated}
+              onOpenSubmission={handleOpenSubmission}
             />
           </TabsContent>
 
@@ -120,6 +140,8 @@ export function LeftPanel({
             <SubmissionsPanel
               isAuthenticated={isAuthenticated}
               submissions={submissions}
+              selectedSubmissionId={selectedSubmissionId}
+              onSelectSubmission={setSelectedSubmissionId}
               onUpdateNote={onUpdateNote}
               onLoadIntoEditor={onLoadIntoEditor}
             />

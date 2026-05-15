@@ -5,9 +5,17 @@ import { useTheme } from '@/context/ThemeContext';
 
 interface ActivityHeatmapProps {
   activity: ActivityDay[];
+  /** Card heading. Defaults to the profile-page submissions heatmap title. */
+  title?: string;
+  /** Renders the right-hand count label. Receives the total count for the visible window. */
+  countLabel?: (total: number) => string;
 }
 
-export function ActivityHeatmap({ activity }: ActivityHeatmapProps) {
+export function ActivityHeatmap({
+  activity,
+  title,
+  countLabel,
+}: ActivityHeatmapProps) {
   const { t } = useTranslation('profile');
   const { theme } = useTheme();
 
@@ -39,14 +47,16 @@ export function ActivityHeatmap({ activity }: ActivityHeatmapProps) {
   }
 
   const totalSubmissions = data.reduce((sum, d) => sum + d.count, 0);
+  const heading = title ?? t('heatmap.title');
+  const countText = countLabel
+    ? countLabel(totalSubmissions)
+    : t('heatmap.submissions', { count: totalSubmissions });
 
   return (
     <div className="rounded-xl border border-border bg-card p-5">
       <div className="mb-4 flex items-center justify-between">
-        <h3 className="text-sm font-medium text-foreground">{t('heatmap.title')}</h3>
-        <span className="text-xs text-muted-foreground">
-          {t('heatmap.submissions', { count: totalSubmissions })}
-        </span>
+        <h3 className="text-sm font-medium text-foreground">{heading}</h3>
+        <span className="text-xs text-muted-foreground">{countText}</span>
       </div>
       <ActivityCalendar
         data={data}

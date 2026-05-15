@@ -257,7 +257,40 @@ CREATE TABLE submission_results (
 );
 
 CREATE INDEX idx_submission_results_submission_id ON submission_results(submission_id);
+
+-- Spaced-Repetition Reviews (V174 + V175)
+-- v2 design: reviews are a 1:1 property of a submission. The dropped V174 event-log
+-- table (`submission_reviews`) was replaced with three columns on `submissions`.
+ALTER TABLE submissions ADD COLUMN confidence         VARCHAR(10);  -- AGAIN, HARD, GOOD, EASY
+ALTER TABLE submissions ADD COLUMN reviewed_at        TIMESTAMP;
+ALTER TABLE submissions ADD COLUMN solve_time_seconds INT;
+CREATE INDEX idx_submissions_review_replay
+    ON submissions(user_id, problem_id, reviewed_at);
+
+-- Denormalized SM-2 cache: one row per (user, problem). Drives "due for review".
+-- Rebuilt by replaying every rated submission for a (user, problem) in chronological
+-- reviewed_at order whenever any submission's confidence changes.
+CREATE TABLE problem_review_state (
+    user_id          BIGINT       NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    problem_id       BIGINT       NOT NULL REFERENCES problems(id) ON DELETE CASCADE,
+    review_count     INT          NOT NULL DEFAULT 0,
+    ease_factor      NUMERIC(4,2) NOT NULL DEFAULT 2.50, -- SM-2, clamped [1.30, 3.00]
+    interval_days    INT          NOT NULL DEFAULT 0,
+    last_reviewed_at TIMESTAMP    NOT NULL,
+    last_confidence  VARCHAR(10)  NOT NULL,
+    next_due_at      TIMESTAMP    NOT NULL,
+    PRIMARY KEY (user_id, problem_id)
+);
+CREATE INDEX idx_review_state_due ON problem_review_state(user_id, next_due_at);
 ```
+
+**Algorithm (SM-2 lite).** On each review the state row is mutated:
+- `AGAIN` → interval resets to 1d, ease drops 0.20
+- `HARD` → interval scaled by *current* ease, ease drops 0.15
+- `GOOD` → interval scaled by ease, ease unchanged (first/second reviews use the fixed ladder 1d → 6d)
+- `EASY` → like GOOD but interval bumps further and ease rises 0.10
+
+Source of truth is the `submissions.confidence` + `submissions.reviewed_at` pair; `problem_review_state` is fully rebuildable by replaying the per-submission ratings in chronological order. Re-rating an old submission updates its `reviewed_at`, which naturally re-orders the replay.
 
 **ER Diagram:**
 
@@ -296,6 +329,15 @@ _accounts
 | POST   | /api/problems/{slug}/submit       | Submit code for a problem        | Yes  |
 | GET    | /api/submissions/{id}             | Get submission result            | Yes  |
 | GET    | /api/problems/{slug}/submissions  | User's submissions for a problem | Yes  |
+
+### Reviews (Spaced Repetition)
+| Method | Path                                       | Description                                          | Auth |
+|--------|--------------------------------------------|------------------------------------------------------|------|
+| PUT    | /api/submissions/{id}/review               | Set/replace confidence on a submission; replays SM-2 | Yes  |
+| PATCH  | /api/submissions/{id}/solve-time           | Set `solve_time_seconds` (auto-captured from timer)  | Yes  |
+| GET    | /api/problems/{slug}/review-state          | Per-problem review state (200 / 204 if none)         | Yes  |
+| GET    | /api/reviews/due?page=&size=               | Paginated list of due/overdue problems               | Yes  |
+| GET    | /api/reviews/due/count                     | `{ "count": N }` for the profile widget              | Yes  |
 
 **Request/Response examples:**
 

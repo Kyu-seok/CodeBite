@@ -14,6 +14,11 @@ import { getSubmission } from '@/api/submissions';
 import { useAuth } from '@/context/AuthContext';
 import { useTheme } from '@/context/ThemeContext';
 import type { SubmissionResponse, SubmissionStatus } from '@/types/submission';
+import { ConfidencePrompt } from '@/components/review/ConfidencePrompt';
+import { useReviewState } from '@/hooks/useReviewState';
+import { clearSubmissionReview } from '@/api/reviews';
+import type { Confidence } from '@/types/review';
+import { formatElapsed } from '@/components/layout/Layout';
 
 const LANGUAGE_MAP: Record<string, string> = {
   java: 'java',
@@ -80,6 +85,11 @@ export function SubmissionDetail({
   const [expandedCase, setExpandedCase] = useState<number | null>(null);
   const [editingNote, setEditingNote] = useState(false);
   const [noteDraft, setNoteDraft] = useState('');
+  const [reviewBusy, setReviewBusy] = useState(false);
+  const { submit: submitReview } = useReviewState(
+    submission?.problemSlug,
+    isAuthenticated && submission != null && submission.status !== 'PENDING',
+  );
 
   useEffect(() => {
     setLoading(true);
@@ -110,6 +120,37 @@ export function SubmissionDetail({
 
   const passedCount = submission.results.filter((r) => r.status === 'ACCEPTED').length;
   const totalCount = submission.results.length;
+  const canReview = isAuthenticated && submission.status !== 'PENDING';
+
+  const handleReviewSubmit = async (c: Confidence, notes: string | null) => {
+    setReviewBusy(true);
+    try {
+      await submitReview(submission.id, c, notes);
+      setSubmission((prev) =>
+        prev
+          ? {
+              ...prev,
+              confidence: c,
+              notes: notes ?? prev.notes,
+            }
+          : prev,
+      );
+    } finally {
+      setReviewBusy(false);
+    }
+  };
+
+  const handleReviewClear = async () => {
+    setReviewBusy(true);
+    try {
+      await clearSubmissionReview(submission.id);
+      setSubmission((prev) =>
+        prev ? { ...prev, confidence: null } : prev,
+      );
+    } finally {
+      setReviewBusy(false);
+    }
+  };
 
   return (
     <div className="flex flex-col overflow-auto">
@@ -167,8 +208,27 @@ export function SubmissionDetail({
           </div>
         </div>
 
+        {/* Confidence prompt — available for any non-PENDING submission */}
+        {canReview && (
+          <ConfidencePrompt
+            onSubmit={handleReviewSubmit}
+            onClear={handleReviewClear}
+            busy={reviewBusy}
+            currentRating={submission.confidence}
+            defaultNotes={submission.confidence ? submission.notes : null}
+            title={submission.confidence ? 'Update your rating' : 'Mark this for review'}
+            subtitle={
+              submission.confidence
+                ? 'Pick a different rating to update; the SM-2 schedule will recompute.'
+                : "Choose how confident you felt — we'll resurface it later for spaced repetition."
+            }
+          />
+        )}
+
         {/* Performance metrics */}
-        {(submission.runtimeMs != null || submission.memoryKb != null) && (
+        {(submission.runtimeMs != null ||
+          submission.memoryKb != null ||
+          submission.solveTimeSeconds != null) && (
           <div className="flex gap-4">
             {submission.runtimeMs != null && (
               <div className="flex-1 rounded-lg border border-border bg-muted/30 px-3 py-2">
@@ -180,6 +240,12 @@ export function SubmissionDetail({
               <div className="flex-1 rounded-lg border border-border bg-muted/30 px-3 py-2">
                 <div className="text-[10px] text-muted-foreground uppercase tracking-wider">{tc('label.memory')}</div>
                 <div className="text-sm font-semibold text-foreground">{formatMemory(submission.memoryKb)}</div>
+              </div>
+            )}
+            {submission.solveTimeSeconds != null && (
+              <div className="flex-1 rounded-lg border border-border bg-muted/30 px-3 py-2">
+                <div className="text-[10px] text-muted-foreground uppercase tracking-wider">Solve time</div>
+                <div className="text-sm font-semibold text-foreground">{formatElapsed(submission.solveTimeSeconds)}</div>
               </div>
             )}
           </div>

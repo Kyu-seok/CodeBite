@@ -20,3 +20,7 @@ export function runCode(slug: string, data: RunRequest) {
 export function updateSubmissionNote(id: number, notes: string) {
   return client.patch(`/submissions/${id}/note`, { notes });
 }
+
+export function setSolveTime(id: number, solveTimeSeconds: number) {
+  return client.patch(`/submissions/${id}/solve-time`, { solveTimeSeconds });
+}
