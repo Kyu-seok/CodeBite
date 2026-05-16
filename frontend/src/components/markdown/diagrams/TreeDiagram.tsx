@@ -1,4 +1,5 @@
 import type { TreeNode } from "./parseDirective";
+import { BeforeAfterPair } from "./BeforeAfterPair";
 
 interface TreeDiagramProps {
   nodes: TreeNode[];
@@ -17,52 +18,19 @@ interface PositionedNode {
   y: number;
 }
 
-/**
- * Render a binary tree from a LeetCode-style level-order array.
- *
- * When `after` is provided, two trees render side-by-side with an arrow
- * between them — the LeetCode "before / after" convention used for problems
- * like Invert Binary Tree.
- */
 export function TreeDiagram({ nodes, highlight = [], after }: TreeDiagramProps) {
   if (after) {
     return (
-      <div className="my-4 flex flex-wrap items-center justify-center gap-3">
-        <div className="flex-1 min-w-0">
-          <SingleTreeSvg nodes={nodes} highlight={highlight} />
-        </div>
-        <TransformArrow />
-        <div className="flex-1 min-w-0">
-          <SingleTreeSvg nodes={after} />
-        </div>
-      </div>
+      <BeforeAfterPair
+        before={<SingleTreeSvg nodes={nodes} highlight={highlight} />}
+        after={<SingleTreeSvg nodes={after} />}
+      />
     );
   }
   return (
     <div className="my-4">
       <SingleTreeSvg nodes={nodes} highlight={highlight} />
     </div>
-  );
-}
-
-function TransformArrow() {
-  // Hollow right-pointing arrow, matches the LeetCode visual style.
-  return (
-    <svg
-      viewBox="0 0 40 40"
-      width={32}
-      height={32}
-      className="shrink-0 text-foreground/70"
-      aria-hidden
-    >
-      <path
-        d="M3 16 L22 16 L22 8 L37 20 L22 32 L22 24 L3 24 Z"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth={1.8}
-        strokeLinejoin="round"
-      />
-    </svg>
   );
 }
 

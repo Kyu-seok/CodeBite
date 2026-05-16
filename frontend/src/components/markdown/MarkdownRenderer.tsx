@@ -5,7 +5,8 @@ import remarkGfm from "remark-gfm"
 import rehypeHighlight from "rehype-highlight"
 import { cn } from "@/lib/utils"
 import { TreeDiagram } from "./diagrams/TreeDiagram"
-import { parseTreeDirective } from "./diagrams/parseDirective"
+import { GraphDiagram } from "./diagrams/GraphDiagram"
+import { parseTreeDirective, parseGraphDirective } from "./diagrams/parseDirective"
 
 interface MarkdownRendererProps {
   source: string
@@ -22,6 +23,18 @@ function renderDiagram(language: string, body: string): ReactElement | null {
         <TreeDiagram
           nodes={spec.nodes}
           highlight={spec.highlight}
+          after={spec.after}
+        />
+      )
+    }
+    if (language === "diagram-graph") {
+      const spec = parseGraphDirective(body)
+      return (
+        <GraphDiagram
+          edges={spec.edges}
+          nodes={spec.nodes}
+          directed={spec.directed}
+          highlight_path={spec.highlight_path}
           after={spec.after}
         />
       )

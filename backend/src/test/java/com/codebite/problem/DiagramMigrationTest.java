@@ -7,6 +7,8 @@ import com.codebite.problem.repository.ProblemTranslationRepository;
 import db.migration.V182__diagram_dedupe;
 import db.migration.V183__add_tree_diagrams_batch1;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -192,5 +194,63 @@ class DiagramMigrationTest {
                 desc, "**예시 1:**", "```diagram-tree\nnodes: [1]\n```");
         assertTrue(out.contains("```diagram-tree"));
         assertTrue(out.indexOf("```diagram-tree") < out.indexOf("**예시 2:**"));
+    }
+
+    // ---- V184 Stage 4 batch (graph diagrams for non-grid graph problems) ----
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "snapshot-town-map", "merge-duplicate-contacts", "count-voice-parties",
+            "order-group-tasks", "verify-task-order", "cafe-price-ratios",
+            "open-all-rooms", "two-shift-baristas", "graph-valid-tree",
+            "word-ladder", "dog-street-walk", "cheapest-courier-route",
+            "redundant-friendship", "connect-water-bowls", "guild-chat-relay"
+    })
+    void v184_graphProblem_descriptionHasExactlyOneDiagramGraphBlock(String slug) {
+        Problem p = problemRepository.findBySlug(slug).orElseThrow(
+                () -> new AssertionError("Problem not found: " + slug));
+        String desc = p.getDescription();
+        long count = desc.split("```diagram-graph", -1).length - 1;
+        assertEquals(1, count,
+                "Expected exactly one diagram-graph block in " + slug + "; actual:\n" + desc);
+        assertTrue(desc.contains("edges: ["),
+                "Expected `edges:` line in " + slug + " diagram");
+        assertTrue(desc.contains("directed: "),
+                "Expected `directed:` line in " + slug + " diagram");
+    }
+
+    @Test
+    void v184_directedProblem_carriesDirectedTrue() {
+        // order-group-tasks is a topo-sort problem — must render arrows.
+        Problem p = problemRepository.findBySlug("order-group-tasks").orElseThrow();
+        assertTrue(p.getDescription().contains("directed: true"),
+                "order-group-tasks should be a directed graph");
+    }
+
+    @Test
+    void v184_undirectedProblem_carriesDirectedFalse() {
+        // count-voice-parties is undirected (Union-Find).
+        Problem p = problemRepository.findBySlug("count-voice-parties").orElseThrow();
+        assertTrue(p.getDescription().contains("directed: false"),
+                "count-voice-parties should be an undirected graph");
+    }
+
+    @Test
+    void v184_pathProblem_carriesHighlightPath() {
+        // word-ladder is BFS shortest path — should highlight the answer.
+        Problem p = problemRepository.findBySlug("word-ladder").orElseThrow();
+        assertTrue(p.getDescription().contains("highlight_path: ["),
+                "word-ladder should highlight its BFS path");
+    }
+
+    @Test
+    void v184_appliesToKoreanTranslationsToo() {
+        Problem p = problemRepository.findBySlug("order-group-tasks").orElseThrow();
+        ProblemTranslation t = translationRepository
+                .findByProblemIdAndLocale(p.getId(), "ko")
+                .orElse(null);
+        assertNotNull(t, "Korean translation should exist");
+        assertTrue(t.getDescription().contains("```diagram-graph"),
+                "Korean description should also carry the graph diagram");
     }
 }

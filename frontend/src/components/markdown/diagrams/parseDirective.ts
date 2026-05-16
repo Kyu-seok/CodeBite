@@ -10,12 +10,25 @@
 // caller can fall back to rendering the raw block.
 
 export type TreeNode = number | string | null;
+export type GraphNode = number | string;
+export type Edge = [GraphNode, GraphNode];
 
 export interface TreeDirective {
   nodes: TreeNode[];
   highlight: number[];
   /** Optional second tree — when present, the diagram renders as a before→after pair. */
   after?: TreeNode[];
+}
+
+export interface GraphDirective {
+  edges: Edge[];
+  /** Optional explicit node list. If omitted, nodes are inferred from edges. */
+  nodes?: GraphNode[];
+  directed: boolean;
+  /** Optional ordered list of nodes forming a path to emphasize. */
+  highlight_path: GraphNode[];
+  /** Optional second graph (edges only) for before→after pair rendering. */
+  after?: Edge[];
 }
 
 function parseKeyValueLines(body: string): Map<string, unknown> {
@@ -74,6 +87,72 @@ export function parseTreeDirective(body: string): TreeDirective {
   return {
     nodes: nodes as TreeNode[],
     highlight: highlightRaw as number[],
+    after,
+  };
+}
+
+function isEdgeArray(v: unknown): v is Edge[] {
+  if (!Array.isArray(v)) return false;
+  for (const e of v) {
+    if (!Array.isArray(e) || e.length !== 2) return false;
+    for (const node of e) {
+      if (typeof node !== "number" && typeof node !== "string") return false;
+    }
+  }
+  return true;
+}
+
+export function parseGraphDirective(body: string): GraphDirective {
+  const map = parseKeyValueLines(body);
+
+  const edges = map.get("edges");
+  if (!isEdgeArray(edges)) {
+    throw new Error(
+      "'edges' must be an array of [from, to] pairs (e.g. edges: [[0,1],[1,2]])",
+    );
+  }
+
+  const nodesRaw = map.get("nodes");
+  let nodes: GraphNode[] | undefined;
+  if (nodesRaw !== undefined) {
+    if (
+      !Array.isArray(nodesRaw) ||
+      !nodesRaw.every((n) => typeof n === "number" || typeof n === "string")
+    ) {
+      throw new Error("'nodes' must be an array of numbers or strings");
+    }
+    nodes = nodesRaw as GraphNode[];
+  }
+
+  const directedRaw = map.get("directed") ?? false;
+  if (typeof directedRaw !== "boolean") {
+    throw new Error("'directed' must be a boolean (true or false)");
+  }
+
+  const highlightPathRaw = map.get("highlight_path") ?? [];
+  if (
+    !Array.isArray(highlightPathRaw) ||
+    !highlightPathRaw.every((n) => typeof n === "number" || typeof n === "string")
+  ) {
+    throw new Error("'highlight_path' must be an array of node ids (numbers or strings)");
+  }
+
+  const afterRaw = map.get("after");
+  let after: Edge[] | undefined;
+  if (afterRaw !== undefined) {
+    if (!isEdgeArray(afterRaw)) {
+      throw new Error(
+        "'after' must be an array of [from, to] pairs matching the edges shape",
+      );
+    }
+    after = afterRaw;
+  }
+
+  return {
+    edges,
+    nodes,
+    directed: directedRaw,
+    highlight_path: highlightPathRaw as GraphNode[],
     after,
   };
 }
