@@ -6,7 +6,12 @@ import rehypeHighlight from "rehype-highlight"
 import { cn } from "@/lib/utils"
 import { TreeDiagram } from "./diagrams/TreeDiagram"
 import { GraphDiagram } from "./diagrams/GraphDiagram"
-import { parseTreeDirective, parseGraphDirective } from "./diagrams/parseDirective"
+import { GridDiagram } from "./diagrams/GridDiagram"
+import {
+  parseTreeDirective,
+  parseGraphDirective,
+  parseGridDirective,
+} from "./diagrams/parseDirective"
 
 interface MarkdownRendererProps {
   source: string
@@ -35,6 +40,16 @@ function renderDiagram(language: string, body: string): ReactElement | null {
           nodes={spec.nodes}
           directed={spec.directed}
           highlight_path={spec.highlight_path}
+          after={spec.after}
+        />
+      )
+    }
+    if (language === "diagram-grid") {
+      const spec = parseGridDirective(body)
+      return (
+        <GridDiagram
+          cells={spec.cells}
+          highlight={spec.highlight}
           after={spec.after}
         />
       )

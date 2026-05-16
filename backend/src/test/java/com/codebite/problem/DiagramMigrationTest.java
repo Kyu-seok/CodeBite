@@ -253,4 +253,52 @@ class DiagramMigrationTest {
         assertTrue(t.getDescription().contains("```diagram-graph"),
                 "Korean description should also carry the graph diagram");
     }
+
+    // ---- V185 Stage 4 batch (grid diagrams for matrix/island/grid-DP problems) ----
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "rotate-pet-cafe-map", "spiral-shelf-walk", "zero-out-rows-cols",
+            "count-desk-clusters", "capture-enclosed-tiles", "walls-and-gates",
+            "dual-waterbowl-flow", "rotting-donuts", "shortest-dungeon-path",
+            "count-dungeon-paths", "rising-water-path", "word-search", "word-search-ii"
+    })
+    void v185_gridProblem_descriptionHasExactlyOneDiagramGridBlock(String slug) {
+        Problem p = problemRepository.findBySlug(slug).orElseThrow(
+                () -> new AssertionError("Problem not found: " + slug));
+        String desc = p.getDescription();
+        long count = desc.split("```diagram-grid", -1).length - 1;
+        assertEquals(1, count,
+                "Expected exactly one diagram-grid block in " + slug + "; actual:\n" + desc);
+        assertTrue(desc.contains("cells: ["),
+                "Expected `cells:` line in " + slug + " diagram");
+    }
+
+    @Test
+    void v185_transformationProblem_carriesAfterField() {
+        // rotate-pet-cafe-map is a structural transform — must use before/after.
+        Problem p = problemRepository.findBySlug("rotate-pet-cafe-map").orElseThrow();
+        assertTrue(p.getDescription().contains("after: ["),
+                "rotate-pet-cafe-map should render as a before/after pair");
+    }
+
+    @Test
+    void v185_islandProblem_carriesHighlight() {
+        // count-desk-clusters (number of islands) — highlight one island so the
+        // "what counts as a connected component" intuition reads visually.
+        Problem p = problemRepository.findBySlug("count-desk-clusters").orElseThrow();
+        assertTrue(p.getDescription().contains("highlight: ["),
+                "count-desk-clusters should highlight an island");
+    }
+
+    @Test
+    void v185_appliesToKoreanTranslationsToo() {
+        Problem p = problemRepository.findBySlug("rotate-pet-cafe-map").orElseThrow();
+        ProblemTranslation t = translationRepository
+                .findByProblemIdAndLocale(p.getId(), "ko")
+                .orElse(null);
+        assertNotNull(t, "Korean translation should exist");
+        assertTrue(t.getDescription().contains("```diagram-grid"),
+                "Korean description should also carry the grid diagram");
+    }
 }

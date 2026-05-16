@@ -12,6 +12,8 @@
 export type TreeNode = number | string | null;
 export type GraphNode = number | string;
 export type Edge = [GraphNode, GraphNode];
+export type Cell = number | string;
+export type CellCoord = [number, number];
 
 export interface TreeDirective {
   nodes: TreeNode[];
@@ -29,6 +31,14 @@ export interface GraphDirective {
   highlight_path: GraphNode[];
   /** Optional second graph (edges only) for before→after pair rendering. */
   after?: Edge[];
+}
+
+export interface GridDirective {
+  cells: Cell[][];
+  /** Optional [row, col] cells to mark with a highlight ring. */
+  highlight: CellCoord[];
+  /** Optional second grid (e.g. rotated, transformed) for before→after pair. */
+  after?: Cell[][];
 }
 
 function parseKeyValueLines(body: string): Map<string, unknown> {
@@ -153,6 +163,57 @@ export function parseGraphDirective(body: string): GraphDirective {
     nodes,
     directed: directedRaw,
     highlight_path: highlightPathRaw as GraphNode[],
+    after,
+  };
+}
+
+function isCellGrid(v: unknown): v is Cell[][] {
+  if (!Array.isArray(v) || v.length === 0) return false;
+  for (const row of v) {
+    if (!Array.isArray(row)) return false;
+    for (const cell of row) {
+      if (typeof cell !== "number" && typeof cell !== "string") return false;
+    }
+  }
+  return true;
+}
+
+export function parseGridDirective(body: string): GridDirective {
+  const map = parseKeyValueLines(body);
+
+  const cells = map.get("cells");
+  if (!isCellGrid(cells)) {
+    throw new Error(
+      "'cells' must be a non-empty 2D array (e.g. cells: [[1,2],[3,4]])",
+    );
+  }
+
+  const highlightRaw = map.get("highlight") ?? [];
+  if (
+    !Array.isArray(highlightRaw) ||
+    !highlightRaw.every(
+      (h) =>
+        Array.isArray(h) &&
+        h.length === 2 &&
+        typeof h[0] === "number" &&
+        typeof h[1] === "number",
+    )
+  ) {
+    throw new Error("'highlight' must be an array of [row, col] number pairs");
+  }
+
+  const afterRaw = map.get("after");
+  let after: Cell[][] | undefined;
+  if (afterRaw !== undefined) {
+    if (!isCellGrid(afterRaw)) {
+      throw new Error("'after' must be a non-empty 2D array matching the cells shape");
+    }
+    after = afterRaw;
+  }
+
+  return {
+    cells,
+    highlight: highlightRaw as CellCoord[],
     after,
   };
 }
