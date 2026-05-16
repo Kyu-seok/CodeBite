@@ -5,6 +5,7 @@ import com.codebite.problem.entity.ProblemTranslation;
 import com.codebite.problem.repository.ProblemRepository;
 import com.codebite.problem.repository.ProblemTranslationRepository;
 import db.migration.V182__diagram_dedupe;
+import db.migration.V183__add_tree_diagrams_batch1;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -108,5 +109,88 @@ class DiagramMigrationTest {
     @Test
     void dedupe_nullInput_isNull() {
         assertNotNull(V182__diagram_dedupe.keepOnlyFirstDiagramTree("ok"));
+    }
+
+    // ---- Spot-checks for the V183 Stage 2 batch (sampling 4 representative cases) ----
+
+    @Test
+    void v183_lcaBst_descriptionHasDiagramWithHighlight() {
+        Problem p = problemRepository.findBySlug("lca-bst").orElseThrow();
+        String desc = p.getDescription();
+        assertTrue(desc.contains("```diagram-tree"), "Expected diagram in lca-bst");
+        assertTrue(desc.contains("nodes: [6, 2, 8, 0, 4, 7, 9, null, null, 3, 5]"),
+                "Expected lca-bst input tree");
+        assertTrue(desc.contains("highlight: [1, 2]"),
+                "Expected p,q indices highlighted");
+    }
+
+    @Test
+    void v183_sameSkillTrees_hasBothPandQAsBeforeAfter() {
+        Problem p = problemRepository.findBySlug("same-skill-trees").orElseThrow();
+        String desc = p.getDescription();
+        assertTrue(desc.contains("```diagram-tree"), "Expected diagram in same-skill-trees");
+        assertTrue(desc.contains("nodes: [8, 4, 12]"), "Expected p tree");
+        assertTrue(desc.contains("after: [8, 4, 12]"), "Expected q tree as after");
+    }
+
+    @Test
+    void v183_appliesToKoreanTranslationsToo() {
+        Problem p = problemRepository.findBySlug("lca-bst").orElseThrow();
+        ProblemTranslation t = translationRepository
+                .findByProblemIdAndLocale(p.getId(), "ko")
+                .orElse(null);
+        assertNotNull(t);
+        assertTrue(t.getDescription().contains("```diagram-tree"),
+                "Expected diagram in ko description for lca-bst");
+        assertTrue(t.getDescription().contains("nodes: [6, 2, 8, 0, 4, 7, 9, null, null, 3, 5]"),
+                "Korean diagram body should match en");
+    }
+
+    @Test
+    void v183_skipsTrieAndGridProblems() {
+        // username-trie, wildcard-lexicon, word-search-ii all carry the trees/tries
+        // tag but were intentionally skipped — visualizing them as binary trees would
+        // be misleading.
+        for (String slug : new String[]{"username-trie", "wildcard-lexicon", "word-search-ii"}) {
+            Problem p = problemRepository.findBySlug(slug).orElse(null);
+            if (p == null) continue;
+            assertEquals(0,
+                    p.getDescription().split("```diagram-tree", -1).length - 1,
+                    "Expected " + slug + " to have NO tree diagram");
+        }
+    }
+
+    // ---- Unit tests for the V183 injection helper ----
+
+    @Test
+    void inject_insertsDiagramAfterExample1ClosingFence() {
+        String desc = "intro\n\n**Example 1:**\n```\nInput: x\nOutput: y\n```\n\n"
+                + "**Example 2:**\n```\nInput: a\nOutput: b\n```";
+        String diagram = "```diagram-tree\nnodes: [1]\n```";
+        String out = V183__add_tree_diagrams_batch1.injectDiagram(desc, "**Example 1:**", diagram);
+        // Diagram should land between Example 1's closing fence and the **Example 2:** marker.
+        int diagramPos = out.indexOf("```diagram-tree");
+        int example2Pos = out.indexOf("**Example 2:**");
+        assertTrue(diagramPos > 0, "Diagram should be inserted");
+        assertTrue(diagramPos < example2Pos, "Diagram should come before Example 2");
+        assertTrue(out.contains("```\n\n```diagram-tree"),
+                "Diagram should be on a new paragraph after the closing fence");
+    }
+
+    @Test
+    void inject_returnsUnchangedWhenAnchorMissing() {
+        String desc = "no example marker here at all";
+        String unchanged = V183__add_tree_diagrams_batch1.injectDiagram(
+                desc, "**Example 1:**", "```diagram-tree\nnodes: [1]\n```");
+        assertEquals(desc, unchanged);
+    }
+
+    @Test
+    void inject_worksForKoreanMarker() {
+        String desc = "도입\n\n**예시 1:**\n```\n입력: x\n출력: y\n```\n\n**예시 2:**";
+        String out = V183__add_tree_diagrams_batch1.injectDiagram(
+                desc, "**예시 1:**", "```diagram-tree\nnodes: [1]\n```");
+        assertTrue(out.contains("```diagram-tree"));
+        assertTrue(out.indexOf("```diagram-tree") < out.indexOf("**예시 2:**"));
     }
 }
