@@ -301,4 +301,48 @@ class DiagramMigrationTest {
         assertTrue(t.getDescription().contains("```diagram-grid"),
                 "Korean description should also carry the grid diagram");
     }
+
+    // ---- V186 linked-list diagrams (cycle, reverse, restructure) ----
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "reverse-linked-list", "detect-portal-loop", "flip-chunks-of-k",
+            "interleave-clip-chain", "swap-print-pairs"
+    })
+    void v186_linkedListProblem_descriptionHasExactlyOneDiagramBlock(String slug) {
+        Problem p = problemRepository.findBySlug(slug).orElseThrow(
+                () -> new AssertionError("Problem not found: " + slug));
+        String desc = p.getDescription();
+        long count = desc.split("```diagram-linked-list", -1).length - 1;
+        assertEquals(1, count,
+                "Expected exactly one diagram-linked-list block in " + slug
+                        + "; actual:\n" + desc);
+        assertTrue(desc.contains("nodes: ["),
+                "Expected `nodes:` line in " + slug + " diagram");
+    }
+
+    @Test
+    void v186_cycleProblem_carriesCycleTo() {
+        Problem p = problemRepository.findBySlug("detect-portal-loop").orElseThrow();
+        assertTrue(p.getDescription().contains("cycle_to:"),
+                "detect-portal-loop should mark where the tail loops back");
+    }
+
+    @Test
+    void v186_reverseProblem_carriesAfter() {
+        Problem p = problemRepository.findBySlug("reverse-linked-list").orElseThrow();
+        assertTrue(p.getDescription().contains("after: ["),
+                "reverse-linked-list should render as a before/after pair");
+    }
+
+    @Test
+    void v186_appliesToKoreanTranslationsToo() {
+        Problem p = problemRepository.findBySlug("reverse-linked-list").orElseThrow();
+        ProblemTranslation t = translationRepository
+                .findByProblemIdAndLocale(p.getId(), "ko")
+                .orElse(null);
+        assertNotNull(t, "Korean translation should exist");
+        assertTrue(t.getDescription().contains("```diagram-linked-list"),
+                "Korean description should also carry the linked-list diagram");
+    }
 }

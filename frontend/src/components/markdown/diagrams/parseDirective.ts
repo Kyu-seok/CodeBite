@@ -41,6 +41,18 @@ export interface GridDirective {
   after?: Cell[][];
 }
 
+export type ListNode = number | string;
+
+export interface LinkedListDirective {
+  nodes: ListNode[];
+  /** Optional array index that the tail node points back to (cycle). */
+  cycle_to?: number;
+  /** Optional array indices to emphasize (e.g. the m..n window of reverse). */
+  highlight: number[];
+  /** Optional second list for before→after pair (reverse, rotate, partition). */
+  after?: ListNode[];
+}
+
 function parseKeyValueLines(body: string): Map<string, unknown> {
   const map = new Map<string, unknown>();
   for (const rawLine of body.split("\n")) {
@@ -214,6 +226,54 @@ export function parseGridDirective(body: string): GridDirective {
   return {
     cells,
     highlight: highlightRaw as CellCoord[],
+    after,
+  };
+}
+
+function isListNodeArray(v: unknown): v is ListNode[] {
+  if (!Array.isArray(v)) return false;
+  return v.every((n) => typeof n === "number" || typeof n === "string");
+}
+
+export function parseLinkedListDirective(body: string): LinkedListDirective {
+  const map = parseKeyValueLines(body);
+
+  const nodes = map.get("nodes");
+  if (!isListNodeArray(nodes) || nodes.length === 0) {
+    throw new Error(
+      "'nodes' must be a non-empty array of numbers or strings (e.g. nodes: [1,2,3])",
+    );
+  }
+
+  const cycleRaw = map.get("cycle_to");
+  let cycle_to: number | undefined;
+  if (cycleRaw !== undefined) {
+    if (typeof cycleRaw !== "number" || cycleRaw < 0 || cycleRaw >= nodes.length) {
+      throw new Error(
+        "'cycle_to' must be a valid array index into nodes (0..nodes.length-1)",
+      );
+    }
+    cycle_to = cycleRaw;
+  }
+
+  const highlightRaw = map.get("highlight") ?? [];
+  if (!Array.isArray(highlightRaw) || !highlightRaw.every((v) => typeof v === "number")) {
+    throw new Error("'highlight' must be an array of numbers (array indices)");
+  }
+
+  const afterRaw = map.get("after");
+  let after: ListNode[] | undefined;
+  if (afterRaw !== undefined) {
+    if (!isListNodeArray(afterRaw)) {
+      throw new Error("'after' must be an array of numbers or strings");
+    }
+    after = afterRaw;
+  }
+
+  return {
+    nodes,
+    cycle_to,
+    highlight: highlightRaw as number[],
     after,
   };
 }

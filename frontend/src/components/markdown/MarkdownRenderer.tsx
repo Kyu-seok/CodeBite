@@ -7,10 +7,12 @@ import { cn } from "@/lib/utils"
 import { TreeDiagram } from "./diagrams/TreeDiagram"
 import { GraphDiagram } from "./diagrams/GraphDiagram"
 import { GridDiagram } from "./diagrams/GridDiagram"
+import { LinkedListDiagram } from "./diagrams/LinkedListDiagram"
 import {
   parseTreeDirective,
   parseGraphDirective,
   parseGridDirective,
+  parseLinkedListDirective,
 } from "./diagrams/parseDirective"
 
 interface MarkdownRendererProps {
@@ -49,6 +51,17 @@ function renderDiagram(language: string, body: string): ReactElement | null {
       return (
         <GridDiagram
           cells={spec.cells}
+          highlight={spec.highlight}
+          after={spec.after}
+        />
+      )
+    }
+    if (language === "diagram-linked-list") {
+      const spec = parseLinkedListDirective(body)
+      return (
+        <LinkedListDiagram
+          nodes={spec.nodes}
+          cycle_to={spec.cycle_to}
           highlight={spec.highlight}
           after={spec.after}
         />
