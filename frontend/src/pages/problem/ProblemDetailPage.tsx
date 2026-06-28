@@ -24,6 +24,9 @@ import type { ApiError } from "@/types/api"
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts"
 import type { WorkspaceOutletContext } from "@/components/layout/Layout"
 
+const POLL_INTERVAL_MS = 500
+const POLL_MAX_DURATION_MS = 60_000
+
 export default function ProblemDetailPage() {
   const { slug } = useParams<{ slug: string }>()
   const navigate = useNavigate()
@@ -196,7 +199,15 @@ export default function ProblemDetailPage() {
   }
 
   const pollForResult = (submissionId: number) => {
+    const startTime = Date.now()
     const interval = setInterval(async () => {
+      if (Date.now() - startTime > POLL_MAX_DURATION_MS) {
+        clearInterval(interval)
+        pollIntervalRef.current = null
+        setSubmitError("Submission is taking longer than expected. Please refresh to check the result.")
+        setSubmitting(false)
+        return
+      }
       try {
         const res = await getSubmission(submissionId)
         if (res.data.status !== "PENDING") {
@@ -235,7 +246,7 @@ export default function ProblemDetailPage() {
         setSubmitError("Failed to fetch results.")
         setSubmitting(false)
       }
-    }, 2000)
+    }, POLL_INTERVAL_MS)
     pollIntervalRef.current = interval
   }
 
