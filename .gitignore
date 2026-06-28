@@ -16,6 +16,8 @@ infra/.env
 doc_resume/
 docs/PROBLEMS.md
 docs/PROBLEMS_MAPPING.md
+docs/면접.md
+docs/제출-지연-분석.md
 
 # Problem-rewrite transient artifacts (never commit annotated denylists or workspace dumps)
 scripts/rewrite/denylist/*.annotated.json
