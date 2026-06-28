@@ -2,6 +2,8 @@ package com.codebite.judge.client;
 
 import com.codebite.common.exception.JudgeExecutionException;
 import com.codebite.config.JudgeClientConfig;
+import com.codebite.judge.dto.BatchGetResponse;
+import com.codebite.judge.dto.BatchSubmitRequest;
 import com.codebite.judge.dto.JudgeRequest;
 import com.codebite.judge.dto.JudgeResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -18,6 +20,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.List;
 
 @Component
 public class JudgeClientImpl implements JudgeClient {
@@ -81,6 +84,58 @@ public class JudgeClientImpl implements JudgeClient {
             return decoded;
         } catch (RestClientException e) {
             throw new JudgeExecutionException("Failed to poll Judge0 submission: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public List<JudgeResponse> submitBatch(List<JudgeRequest> requests) {
+        if (requests.isEmpty()) {
+            return List.of();
+        }
+        String url = baseUrl + "/submissions/batch?base64_encoded=true";
+        try {
+            List<JudgeRequest> encoded = requests.stream()
+                    .map(r -> new JudgeRequest(encode(r.sourceCode()), r.languageId(), encode(r.stdin())))
+                    .toList();
+            byte[] body = judgeObjectMapper.writeValueAsBytes(new BatchSubmitRequest(encoded));
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.setContentLength(body.length);
+
+            HttpEntity<byte[]> entity = new HttpEntity<>(body, headers);
+
+            // Judge0 returns a flat array of {token} objects for batch submit.
+            JudgeResponse[] response = judgeRestTemplate.postForObject(url, entity, JudgeResponse[].class);
+            log.debug("Judge0 batch submit response: {} tokens", response != null ? response.length : 0);
+            return response == null ? List.of() : List.of(response);
+        } catch (JsonProcessingException e) {
+            throw new JudgeExecutionException("Failed to serialize Judge0 batch request: " + e.getMessage(), e);
+        } catch (RestClientException e) {
+            throw new JudgeExecutionException("Failed to submit Judge0 batch: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public List<JudgeResponse> getBatch(List<String> tokens) {
+        if (tokens.isEmpty()) {
+            return List.of();
+        }
+        // Judge0 wraps batch GET in {"submissions": [...]}, unlike single GET.
+        String url = baseUrl + "/submissions/batch?tokens=" + String.join(",", tokens)
+                + "&base64_encoded=true";
+        try {
+            BatchGetResponse response = judgeRestTemplate.getForObject(url, BatchGetResponse.class);
+            if (response == null || response.submissions() == null) {
+                return List.of();
+            }
+            List<JudgeResponse> decoded = response.submissions().stream()
+                    .map(JudgeClientImpl::decodeResponse)
+                    .toList();
+            log.debug("Judge0 batch poll response: {} results", decoded.size());
+            return decoded;
+        } catch (RestClientException e) {
+            throw new JudgeExecutionException("Failed to poll Judge0 batch: " + e.getMessage(), e);
         }
     }
 
