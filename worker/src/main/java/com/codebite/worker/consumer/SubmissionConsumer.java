@@ -70,14 +70,18 @@ public class SubmissionConsumer {
 
             List<TestCase> testCases = testCaseRepository.findByProblemIdOrderByOrderIndexAsc(event.problemId());
 
+            List<String> stdins = testCases.stream().map(TestCase::getInput).toList();
+            List<JudgeResponse> responses = judgeService.executeBatch(
+                    event.sourceCode(), event.languageId(), stdins);
+
             List<SubmissionResult> results = new ArrayList<>();
             SubmissionStatus overallStatus = SubmissionStatus.ACCEPTED;
             Integer maxRuntimeMs = null;
             Integer maxMemoryKb = null;
 
-            for (TestCase testCase : testCases) {
-                JudgeResponse response = judgeService.execute(
-                        event.sourceCode(), event.languageId(), testCase.getInput());
+            for (int i = 0; i < testCases.size(); i++) {
+                TestCase testCase = testCases.get(i);
+                JudgeResponse response = responses.get(i);
                 SubmissionStatus caseStatus = judgeService.mapStatus(response, testCase.getExpectedOutput());
 
                 SubmissionResult result = new SubmissionResult();
@@ -101,9 +105,11 @@ public class SubmissionConsumer {
 
                 results.add(result);
 
-                if (caseStatus != SubmissionStatus.ACCEPTED) {
+                // Overall status reflects the first failing test case in order, mirroring the
+                // previous early-exit semantics. All results are still persisted so users see
+                // full coverage even on partial failures.
+                if (caseStatus != SubmissionStatus.ACCEPTED && overallStatus == SubmissionStatus.ACCEPTED) {
                     overallStatus = caseStatus;
-                    break;
                 }
             }
 

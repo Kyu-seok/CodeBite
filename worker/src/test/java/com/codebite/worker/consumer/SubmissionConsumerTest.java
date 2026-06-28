@@ -24,6 +24,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -47,6 +48,10 @@ class SubmissionConsumerTest {
                 new SimpleMeterRegistry());
     }
 
+    private static JudgeResponse accepted(String stdout) {
+        return new JudgeResponse(null, new JudgeResponse.Status(3, "Accepted"), stdout, null, null, "0.01", 9000);
+    }
+
     @Test
     void consume_acceptedSubmission() {
         Submission submission = new Submission();
@@ -60,8 +65,8 @@ class SubmissionConsumerTest {
 
         when(submissionRepository.findById(1L)).thenReturn(Optional.of(submission));
         when(testCaseRepository.findByProblemIdOrderByOrderIndexAsc(10L)).thenReturn(List.of(testCase));
-        when(judgeService.execute(anyString(), anyInt(), anyString()))
-                .thenReturn(new JudgeResponse(null, new JudgeResponse.Status(3, "Accepted"), "3\n", null, null, "0.01", 9000));
+        when(judgeService.executeBatch(anyString(), anyInt(), anyList()))
+                .thenReturn(List.of(accepted("3\n")));
         when(judgeService.mapStatus(any(), anyString())).thenReturn(SubmissionStatus.ACCEPTED);
 
         consumer.consume(new SubmissionEvent(1L, "source", 62, 10L));
@@ -81,12 +86,12 @@ class SubmissionConsumerTest {
 
         consumer.consume(new SubmissionEvent(1L, "source", 62, 10L));
 
-        verify(judgeService, never()).execute(anyString(), anyInt(), anyString());
+        verify(judgeService, never()).executeBatch(anyString(), anyInt(), anyList());
         verify(submissionResultRepository, never()).saveAll(any());
     }
 
     @Test
-    void consume_wrongAnswer_stopsEarly() {
+    void consume_wrongAnswer_persistsAllResultsButOverallStatusReflectsFirstFailure() {
         Submission submission = new Submission();
         submission.setId(1L);
         submission.setStatus(SubmissionStatus.PENDING);
@@ -103,9 +108,14 @@ class SubmissionConsumerTest {
 
         when(submissionRepository.findById(1L)).thenReturn(Optional.of(submission));
         when(testCaseRepository.findByProblemIdOrderByOrderIndexAsc(10L)).thenReturn(List.of(tc1, tc2));
-        when(judgeService.execute(anyString(), anyInt(), anyString()))
-                .thenReturn(new JudgeResponse(null, new JudgeResponse.Status(3, "Accepted"), "wrong\n", null, null, "0.01", 9000));
-        when(judgeService.mapStatus(any(), anyString())).thenReturn(SubmissionStatus.WRONG_ANSWER);
+        // Batch returns one result per test case; the consumer no longer aborts on first failure
+        // because Judge0 has already executed every case.
+        when(judgeService.executeBatch(anyString(), anyInt(), anyList()))
+                .thenReturn(List.of(accepted("wrong\n"), accepted("11\n")));
+        // First mapStatus -> WRONG_ANSWER (fails on tc1), second -> ACCEPTED
+        when(judgeService.mapStatus(any(), anyString()))
+                .thenReturn(SubmissionStatus.WRONG_ANSWER)
+                .thenReturn(SubmissionStatus.ACCEPTED);
 
         consumer.consume(new SubmissionEvent(1L, "source", 62, 10L));
 
@@ -113,7 +123,7 @@ class SubmissionConsumerTest {
         @SuppressWarnings("unchecked")
         ArgumentCaptor<List<SubmissionResult>> captor = ArgumentCaptor.forClass(List.class);
         verify(submissionResultRepository).saveAll(captor.capture());
-        assertEquals(1, captor.getValue().size());
+        assertEquals(2, captor.getValue().size());
     }
 
     @Test
