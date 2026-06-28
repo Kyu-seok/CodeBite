@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -60,18 +61,63 @@ public class JudgeService {
         long start = System.currentTimeMillis();
         while (true) {
             JudgeResponse result = judgeClient.getSubmission(token);
-            if (result.status() != null && result.status().id() != 1 && result.status().id() != 2) {
+            if (isTerminal(result)) {
                 return result;
             }
             if (System.currentTimeMillis() - start > pollTimeoutMs) {
                 throw new JudgeExecutionException("Judge0 timed out after " + pollTimeoutMs + "ms", null);
             }
-            try {
-                Thread.sleep(pollIntervalMs);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                throw new JudgeExecutionException("Judge0 polling interrupted", e);
+            sleepBetweenPolls();
+        }
+    }
+
+    /**
+     * Submits all stdins as a single Judge0 batch and polls the batch endpoint until every
+     * submission reaches a terminal status. Results are returned in the same order as {@code stdins}.
+     */
+    public List<JudgeResponse> executeBatch(String sourceCode, int languageId, List<String> stdins) {
+        if (stdins.isEmpty()) {
+            return List.of();
+        }
+
+        List<JudgeRequest> requests = stdins.stream()
+                .map(stdin -> new JudgeRequest(sourceCode, languageId, stdin))
+                .toList();
+        List<JudgeResponse> submitResponses = judgeClient.submitBatch(requests);
+
+        if (submitResponses.size() != requests.size()) {
+            throw new JudgeExecutionException(
+                    "Judge0 batch submit returned " + submitResponses.size()
+                            + " tokens but " + requests.size() + " were requested", null);
+        }
+        List<String> tokens = submitResponses.stream().map(JudgeResponse::token).toList();
+
+        long start = System.currentTimeMillis();
+        while (true) {
+            List<JudgeResponse> results = judgeClient.getBatch(tokens);
+            if (results.size() == tokens.size() && results.stream().allMatch(this::isTerminal)) {
+                return results;
             }
+            if (System.currentTimeMillis() - start > pollTimeoutMs) {
+                throw new JudgeExecutionException(
+                        "Judge0 batch timed out after " + pollTimeoutMs + "ms", null);
+            }
+            sleepBetweenPolls();
+        }
+    }
+
+    private boolean isTerminal(JudgeResponse response) {
+        // Judge0 status: 1=In Queue, 2=Processing. Anything else is a terminal result.
+        return response != null && response.status() != null
+                && response.status().id() != 1 && response.status().id() != 2;
+    }
+
+    private void sleepBetweenPolls() {
+        try {
+            Thread.sleep(pollIntervalMs);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new JudgeExecutionException("Judge0 polling interrupted", e);
         }
     }
 
