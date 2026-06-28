@@ -29,7 +29,7 @@ public class JudgeService {
     private final long pollTimeoutMs;
 
     public JudgeService(JudgeClient judgeClient,
-                        @Value("${app.judge0.poll-interval-ms:500}") long pollIntervalMs,
+                        @Value("${app.judge0.poll-interval-ms:150}") long pollIntervalMs,
                         @Value("${app.judge0.poll-timeout-ms:30000}") long pollTimeoutMs) {
         this.judgeClient = judgeClient;
         this.pollIntervalMs = pollIntervalMs;

@@ -46,5 +46,5 @@ app:
       submission: submission-events
   judge0:
     url: ${JUDGE0_URL:http://192.168.219.200:2358}
-    poll-interval-ms: ${JUDGE0_POLL_INTERVAL_MS:500}
+    poll-interval-ms: ${JUDGE0_POLL_INTERVAL_MS:150}
     poll-timeout-ms: ${JUDGE0_POLL_TIMEOUT_MS:30000}
