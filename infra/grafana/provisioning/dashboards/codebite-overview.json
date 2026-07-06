@@ -307,14 +307,14 @@
       "type": "text",
       "title": "Perf Fixes A/B Verification (2026-07-06)",
       "gridPos": {
-        "h": 6,
+        "h": 9,
         "w": 24,
         "x": 0,
         "y": 24
       },
       "options": {
         "mode": "markdown",
-        "content": "**Baseline reset on 2026-06-28**: 4 perf PRs merged (#6 HTTP pool, #7 poll interval 500\u2192150ms, #9 frontend polling 2s\u2192500ms, #10 Judge0 batch endpoint). The **Submission Processing Duration** panel to the right shows the drop in worker-side latency after that date (zoom the time range to include mid-June if it's not visible).\n\n### A/B result \u2014 valid-anagram, 13 test cases, n=10\n\n| language | before (a2dbfc1) | after (f109f81) | speedup |\n|---|---|---|---|\n| Python | p50 14.34s, p95 14.54s | **p50 1.89s**, p95 2.52s | **7.6x** |\n| Java   | p50 16.04s, p95 18.39s | **p50 8.34s**, p95 8.90s | **1.9x** |\n\nJava's smaller improvement is Judge0-side (JVM boot ~1s/case is the floor). Details in `docs/\uc81c\ucd9c-\uc9c0\uc5f0-\ubd84\uc11d.md \u00a77`. Measurement script: `scripts/perf/measure_latency.py`."
+        "content": "**Baseline reset on 2026-06-28**: 4 perf PRs merged (#6 HTTP pool, #7 poll interval 500\u2192150ms, #9 frontend polling 2s\u2192500ms, #10 Judge0 batch endpoint). The **Submission Processing Duration** panel to the right shows the drop in worker-side latency after that date.\n\n### A/B result \u2014 valid-anagram, 13 test cases, n=10\n\n| language | before (a2dbfc1) | after (f109f81) | speedup |\n|---|---|---|---|\n| Python | p50 14.34s, p95 14.54s | **p50 1.89s**, p95 2.52s | **7.6x** |\n| Java   | p50 16.04s, p95 18.39s | **p50 8.34s**, p95 8.90s | **1.9x** |\n\n### Post-fix baseline by language (2026-07-07, master@a981358)\n\nJudge0 host: 4 CPU / 15GiB RAM, `COUNT=8` (already at hardware optimum). Java's slower speedup is Judge0-side: `javac + JVM boot ~1s/case` is the physical floor per test case.\n\n| language | p50 | mean | Judge0 baseline | notes |\n|---|---|---|---|---|\n| JavaScript | **1.97s** | 1.95s | ~200ms | node boot is cheap |\n| Python     | **1.89s** | 1.96s | ~200ms | on par with JS |\n| C++        | **3.58s** | 3.70s | ~600ms | g++ recompiled per test case |\n| Java       | **8.34s** | 8.34s | ~1,000ms | javac + JVM boot per test case |\n\nDetails and next-step options in `docs/\uc81c\ucd9c-\uc9c0\uc5f0-\ubd84\uc11d.md \u00a77-\u00a78`. Measurement script: `scripts/perf/measure_latency.py`."
       }
     }
   ],
