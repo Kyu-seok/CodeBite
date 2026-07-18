@@ -12,6 +12,9 @@ infra/.env
 # OS
 .DS_Store
 
+# Performance test artifacts
+scripts/perf/tokens.json
+
 # Personal
 doc_resume/
 docs/PROBLEMS.md

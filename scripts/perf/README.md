@@ -1,6 +1,73 @@
 # Performance Measurement Scripts
 
-Tools for measuring CodeBite submission latency and comparing before/after states.
+Tools for measuring CodeBite submission latency and finding throughput limits.
+
+## `k6-submission-load.js` — Concurrent load test
+
+Measures end-to-end submission latency under multiple concurrent virtual users (VUs).
+Each VU submits code and polls until the submission is no longer PENDING.
+
+### Prerequisites
+
+1. [Install k6](https://grafana.com/docs/k6/latest/set-up/install-k6/) — `brew install k6`
+2. Backend running with `SPRING_PROFILES_ACTIVE=dev` (enables `/api/auth/test-token`)
+3. Worker + infra running (`docker compose -f infra/docker-compose.yml up -d`)
+4. Generate token pool:
+
+```bash
+python3 scripts/perf/setup-test-users.py \
+  --base-url http://localhost:8080 \
+  --count 25 \
+  --out scripts/perf/tokens.json
+```
+
+### Running tests
+
+```bash
+# Smoke test — 1 VU × 5 iterations (verify the script works)
+k6 run --env SCENARIO=smoke scripts/perf/k6-submission-load.js
+
+# Load test — ramp 1→5→10 VUs, hold each stage for 3 minutes
+k6 run --env SCENARIO=load scripts/perf/k6-submission-load.js
+
+# Stress test — ramp to 20 VUs to find throughput ceiling
+k6 run --env SCENARIO=stress scripts/perf/k6-submission-load.js
+```
+
+### With Grafana (Prometheus remote write)
+
+The docker-compose Prometheus is configured with `--web.enable-remote-write-receiver`.
+k6 pushes metrics directly to it; Grafana shows the "k6 Load Test — Submission" dashboard.
+
+```bash
+K6_PROMETHEUS_RW_SERVER_URL=http://localhost:9090/api/v1/write \
+k6 run --out experimental-prometheus-rw \
+       --env SCENARIO=load \
+       scripts/perf/k6-submission-load.js
+```
+
+Open `http://localhost:3001` → Dashboards → "k6 Load Test — Submission".
+
+### What to look for
+
+| Metric | Panel | Bottleneck signal |
+|--------|-------|-------------------|
+| `submission_duration` p95 | Submission Duration | >30s at 10 VUs → Judge0 or Worker queue saturated |
+| Kafka consumer lag | Kafka Consumer Lag | Rising lag → Worker can't keep up |
+| Worker processing duration | Worker Processing Duration | Rising p95 → Judge0 response time degrading |
+| Check pass rate | Check Pass Rate | Drop below 90% → system errors under load |
+| Iterations/s | Submission Throughput | Plateaus while VUs rise → ceiling found |
+
+### Configurable env vars
+
+| Var | Default | Description |
+|-----|---------|-------------|
+| `BASE_URL` | `http://localhost:8080` | Backend URL |
+| `SLUG` | `two-sum` | Problem slug to submit against |
+| `LANGUAGE` | `python` | `python`, `java`, `javascript`, `cpp` |
+| `SCENARIO` | `smoke` | `smoke`, `load`, `stress` |
+
+---
 
 ## `measure_latency.py`
 

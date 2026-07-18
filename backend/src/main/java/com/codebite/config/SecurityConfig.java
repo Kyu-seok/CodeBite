@@ -36,6 +36,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.GET, "/api/auth/oauth/*").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/oauth/*/callback").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/auth/test-token").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/health").permitAll()
                         .requestMatchers(HttpMethod.HEAD, "/api/health").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/roadmap").permitAll()
