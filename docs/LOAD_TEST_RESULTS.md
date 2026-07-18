@@ -78,6 +78,46 @@ Python 결과 검토 후 "병목이 CPU 아니냐"는 의문이 제기됨. Java�
 
 ---
 
+## Round 3 — Java OpenJ9 실험 (2026-07-18)
+
+Round 2에서 Java smoke 기준 wall time 7.5s 중 JVM cold start가 ~3.5s를 차지한다고 분석.  
+IBM Semeru OpenJ9 17 (AOT 클래스 캐시로 HotSpot 대비 40~60% 빠른 시작 주장)을 Judge0 커스텀 이미지에 탑재하여 재측정.
+
+### 구현 내용
+
+- `infra/judge0/Dockerfile`: `judge0/judge0:1.13.1` 기반에 IBM Semeru OpenJ9 17 설치 + 빌드 시점 AOT 캐시(`/var/cache/openj9`) 사전 생성
+- `languages` 테이블에 ID 90 (`Java (IBM Semeru OpenJ9 17)`) 추가
+- run_cmd: `/usr/local/semeru17/bin/java -Xshareclasses:name=judge0cache,cacheDir=/var/cache/openj9 -Xms8m -Xmx256m Main`
+
+### 실험 결과: 실패
+
+| 지표 | HotSpot (기존) | OpenJ9 + `-Xtune:virtualized` |
+|------|:-----------:|:-----:|
+| submission_duration avg | 7.5s | **13.33s** ❌ |
+| submission_duration p95 | 7.8s | **13.93s** ❌ |
+| checks 통과율 | 100% | 100% |
+
+### 원인 분석
+
+1. **isolate sandbox와 mlock 호환성 문제**  
+   OpenJ9은 `FlushProcessWriteBuffers.cpp:85`에서 `mlock()` syscall의 반환값이 0임을 단언(assert). Judge0 isolate 샌드박스는 `mlock`을 허용하지 않아 assertion fail → JVM crash. `compile_output`에 아래 오류 출력:
+   ```
+   ** ASSERTION FAILED ** at FlushProcessWriteBuffers.cpp:85: ((0 == mlockrc))
+   JVMDUMP039I Processing dump event "traceassert"...
+   ```
+
+2. **`-Xtune:virtualized`로 mlock 우회 시 성능 역전**  
+   OpenJ9의 컨테이너 최적화 플래그 `-Xtune:virtualized`를 추가하면 JVM이 기동되지만, JIT 공격성이 낮아져 **HotSpot보다 78% 느림** (7.5s → 13.33s).
+
+3. **AOT 캐시가 isolate 샌드박스 안에서 동작 불가**  
+   isolate는 `cgroup` + 네임스페이스 기반 파일시스템 격리를 적용. 호스트의 `/var/cache/openj9` 캐시 파일이 샌드박스 내부에서 보이지 않아 `-Xshareclasses` 효과 없음. (컨테이너 외부에서 측정한 JVM 시작 단축 5× 효과는 이 경우 무의미.)
+
+### 결론
+
+OpenJ9의 이점(AOT 캐시 + 빠른 cold start)은 **장수 JVM 프로세스**에서 발휘됨. Judge0의 short-lived isolate 실행 모델과 근본적으로 맞지 않으며, mlock 의존성이 isolate의 syscall 제한과 충돌. **HotSpot(language_id=62)으로 복귀.**
+
+---
+
 ## 결론
 
 ### Python과 Java 비교

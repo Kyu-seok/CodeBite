@@ -83,17 +83,18 @@ function solution(nums, target) {
 }
 `.trim(),
   cpp: `
-#include <vector>
-#include <unordered_map>
-std::vector<int> solution(std::vector<int>& nums, int target) {
-    std::unordered_map<int,int> m;
-    for (int i = 0; i < (int)nums.size(); i++) {
-        int d = target - nums[i];
-        if (m.count(d)) return {m[d], i};
-        m[nums[i]] = i;
+class Solution {
+public:
+    vector<int> findPairIndices(vector<int>& nums, int target) {
+        unordered_map<int,int> m;
+        for (int i = 0; i < (int)nums.size(); i++) {
+            int d = target - nums[i];
+            if (m.count(d)) return {m[d], i};
+            m[nums[i]] = i;
+        }
+        return {};
     }
-    return {};
-}
+};
 `.trim(),
 };
 
