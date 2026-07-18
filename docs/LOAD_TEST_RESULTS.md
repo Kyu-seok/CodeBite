@@ -1,13 +1,16 @@
 # Submission Load Test Results
 
-**날짜**: 2026-07-18  
 **도구**: k6 v2.1.0  
-**대상 문제**: `snack-drawer-pair` (Python 코드, 제출→결과 폴링 패턴)  
-**환경**: 로컬 (MacBook, Judge0 LAN 연결)
+**대상 문제**: `snack-drawer-pair`  
+**환경**: 로컬 MacBook → Judge0 LAN (192.168.219.200), 호스트 RAM 15.37GiB
+
+> `submission_duration` = `POST /submit` 직후부터 `GET /submissions/{id}`가 non-PENDING 상태를 반환할 때까지의 벽시계 시간
 
 ---
 
-## 시나리오별 결과
+## Round 1 — Python (2026-07-18)
+
+Python은 실행 시간이 짧아 Judge0 컨테이너 스폰 오버헤드 + 워커 큐가 주 병목일 것이라 가정하고 실시.
 
 | 지표 | smoke (1 VU) | load (5→10 VUs) | stress (20 VUs) |
 |------|:-----------:|:---------------:|:---------------:|
@@ -18,60 +21,87 @@
 | http_req_failed | 0% | 0% | 0% |
 | checks 통과율 | 100% | 100% | 100% |
 | 총 iterations | 5 | 294 | 179 |
-| 소요 시간 | 14.6s | 7m 31s | 4m 48s |
 
-> `submission_duration` = `POST /submit` 직후부터 `GET /submissions/{id}`가 non-PENDING 상태를 반환할 때까지의 벽시계 시간
+### 관찰
 
----
-
-## 시나리오 정의
-
-### smoke
-- 1 VU × 5 iterations
-- 스크립트 동작 검증
-
-### load
-```
-1 VU →(30s)→ 5 VUs →(3m hold)→ 10 VUs →(3m hold)→ 0
-```
-
-### stress
-```
-1 VU →(1m)→ 20 VUs →(3m hold)→ 0
-```
+- `http_req_duration` p95 = 24ms(20 VU) → 백엔드/Worker/Kafka/DB는 부하 없음
+- 10 VU→20 VU 구간에서 처리량이 0.65→0.62로 수렴 → Judge0 처리 속도가 상한선
+- 초기 분석: **Judge0 워커 큐 깊이**가 병목으로 추정
 
 ---
 
-## 분석
+## Round 2 — Java (2026-07-18)
 
-### 병목: Judge0
+Python 결과 검토 후 "병목이 CPU 아니냐"는 의문이 제기됨. Java는 컴파일 단계가 있어 CPU를 실제로 소비하므로, 더 현실적인 지표를 얻기 위해 Java로 재측정. **stress 테스트 중 SSH로 Judge0 호스트의 CPU%를 10초 간격으로 수집.**
 
-`http_req_duration` (백엔드 API 응답 시간)은 20 VU에서도 p95 **24ms**로 일정. 백엔드, Worker, Kafka, DB는 부하 없음.
+### Judge0 호스트 CPU 모니터링 (stress 20 VUs 중)
 
-`submission_duration`이 VU 증가에 따라 선형으로 늘어나는 것은 Judge0 워커 큐 대기 시간이 원인.
+| 시각 | judge0-workers CPU% |
+|------|:-------------------:|
+| 15:47:51 | 362% |
+| 15:48:03 | 377% |
+| 15:48:16 | 215% |
+| 15:48:29 | 246% |
+| 15:48:41 | 367% |
+| 15:48:54 | 211% |
+| 15:49:06 | 374% |
+| 15:49:19 | 376% |
+| 15:49:32 | 298% |
+| 15:49:44 | 375% |
+| 15:50:09 | 237% |
+| 15:50:22 | 377% |
+| 15:50:35 | 365% |
+| 15:51:00 | 362% |
+| 15:51:13 | 381% |
+| 15:51:26 | 212% |
+| 15:51:38 | 374% |
+| 15:51:51 | 365% |
+| 15:52:16 | 354% |
+| 15:52:29 | 378% |
+| **평균** | **~320%** |
+| **피크** | **381%** |
 
-```
-1 VU  → p95  2.1s   (Judge0 즉시 처리)
-10 VU → p95 17.7s   (큐 대기 ~15s 추가)
-20 VU → p95 39.1s   (큐 대기 ~37s 추가)
-```
+> `docker stats` CPU%는 코어 수 × 100% 기준. 380% = 4코어 풀가동 = **CPU 완전 포화**
 
-### 처리량 포화
+### 시나리오별 결과
 
-10 VU→20 VU 구간에서 iter/s가 **0.65→0.62**로 수렴. Judge0 처리 속도 ~0.65 submit/s가 현재 시스템의 실질적 처리량 상한선.
+| 지표 | smoke (1 VU) | stress (20 VUs) |
+|------|:-----------:|:---------------:|
+| submission_duration p50 | 7.5s | 90s (타임아웃) |
+| submission_duration p95 | 7.8s | **90s** ❌ |
+| 90초 폴링 타임아웃 초과 | 0건 | **35건** |
+| http_req_failed | 0% | 0% |
+| checks 통과율 | 100% | **71.5%** ❌ |
+| 총 iterations | 5 | 53 (+ 17 interrupted) |
 
-### 시스템 안정성
-
-20 VU / 44.9s max에서도 에러 0%, thresholds(p95 < 60s) 모두 통과. 코드 경로상 버그나 타임아웃 없음.
+> smoke 1 VU 기준 Java(7.8s) vs Python(2.1s) → Java가 **3.7배** 더 오래 걸림 (컴파일 오버헤드)
 
 ---
 
 ## 결론
 
-현재 처리량 상한선은 코드나 인프라(Kafka/Worker/DB)가 아닌 **Judge0 워커 수**에 의해 결정된다. 처리량을 높이려면:
+### Python과 Java 비교
 
-1. Judge0 호스트의 워커 수 증가 (`JUDGE0_WORKERS` 환경변수)
-2. Worker 인스턴스를 복수로 띄우기 (Kafka 파티션 수 = 3이므로 최대 3개까지 병렬 소비 가능)
+| | Python stress | Java stress |
+|--|:--:|:--:|
+| CPU 포화 여부 | 미확인 | **확인 (평균 320%)** |
+| 타임아웃 발생 | 0건 | 35건 |
+| checks 통과율 | 100% | 71.5% |
+
+### 병목 확정: CPU (Java 기준)
+
+Round 1에서 추정한 "워커 큐 깊이"가 아닌, **Judge0 호스트 CPU 자체**가 실질적 상한선.  
+Java 컴파일이 CPU를 소비하는 상황에서 `JUDGE0_WORKERS`를 늘리면 코어 경쟁만 심해져 오히려 역효과.
+
+### 백엔드/인프라는 무관
+
+두 라운드 모두 `http_req_duration` p95 < 60ms. Kafka, Worker, DB, Spring 코드에는 개선 여지 없음.
+
+### 처리량을 높이려면
+
+1. **Judge0 호스트에 CPU 코어 추가** — 근본적 해결
+2. **더 많은 코어를 가진 머신으로 Judge0 이전** — 근본적 해결
+3. **언어별 제출 rate limit 차등 적용** — Java/C++ 제출은 더 공격적으로 제한하여 CPU 포화 방지
 
 ---
 
@@ -81,14 +111,18 @@
 # 1. 토큰 풀 생성 (dev 프로파일 백엔드 기동 후)
 python3 scripts/perf/setup-test-users.py --count 25
 
-# 2. smoke
+# 2. smoke (Java)
 k6 run --env SCENARIO=smoke scripts/perf/k6-submission-load.js
 
-# 3. load
-k6 run --env SCENARIO=load scripts/perf/k6-submission-load.js
-
-# 4. stress
-k6 run --env SCENARIO=stress scripts/perf/k6-submission-load.js
+# 3. stress + CPU 모니터링 동시 실행
+k6 run --env SCENARIO=stress scripts/perf/k6-submission-load.js &
+K6_PID=$!
+for i in $(seq 1 25); do
+  echo "[$(date '+%H:%M:%S')] $(ssh 192.168.219.200 \
+    "docker stats --no-stream --format '{{.Name}}\t{{.CPUPerc}}' | grep judge0-workers")"
+  sleep 10
+done
+wait $K6_PID
 ```
 
 자세한 k6 사용법 → `scripts/perf/README.md`

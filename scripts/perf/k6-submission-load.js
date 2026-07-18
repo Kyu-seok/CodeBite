@@ -38,7 +38,7 @@ import { SharedArray } from "k6/data";
 // ── Configuration ──────────────────────────────────────────────────────────
 const BASE_URL = __ENV.BASE_URL || "http://localhost:8080";
 const SLUG = __ENV.SLUG || "snack-drawer-pair";
-const LANGUAGE = __ENV.LANGUAGE || "python";
+const LANGUAGE = __ENV.LANGUAGE || "java";
 const SCENARIO = __ENV.SCENARIO || "smoke";
 
 // ── Token pool ─────────────────────────────────────────────────────────────
@@ -59,14 +59,16 @@ def solution(nums, target):
     return []
 `.trim(),
   java: `
-public static int[] solution(int[] nums, int target) {
-    java.util.Map<Integer,Integer> map = new java.util.HashMap<>();
-    for (int i = 0; i < nums.length; i++) {
-        int diff = target - nums[i];
-        if (map.containsKey(diff)) return new int[]{map.get(diff), i};
-        map.put(nums[i], i);
+class Solution {
+    public int[] findPairIndices(int[] nums, int target) {
+        java.util.Map<Integer, Integer> map = new java.util.HashMap<>();
+        for (int i = 0; i < nums.length; i++) {
+            int diff = target - nums[i];
+            if (map.containsKey(diff)) return new int[]{map.get(diff), i};
+            map.put(nums[i], i);
+        }
+        return new int[]{};
     }
-    return new int[]{};
 }
 `.trim(),
   javascript: `
