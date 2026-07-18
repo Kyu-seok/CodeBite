@@ -137,11 +137,35 @@ Java 컴파일이 CPU를 소비하는 상황에서 `JUDGE0_WORKERS`를 늘리면
 
 두 라운드 모두 `http_req_duration` p95 < 60ms. Kafka, Worker, DB, Spring 코드에는 개선 여지 없음.
 
+### Java 7.5s의 구성 (1 VU smoke 기준)
+
+| 단계 | 예상 소요 |
+|------|----------|
+| Kafka 전달 + Worker 처리 | ~0.2s |
+| isolate 샌드박스 생성 | ~0.5s |
+| javac 컴파일 (JVM cold start + 컴파일) | ~4–5s |
+| java 실행 (JVM cold start + 프로그램) | ~2s |
+
+Judge0는 제출마다 isolate 샌드박스를 새로 생성하고 javac/java를 별도 프로세스로 실행하므로, **JVM cold start 비용이 두 번 발생**한다. 이 비용은 캐싱·공유가 불가능하며 isolate 환경에서는 하드 플로어(hard floor)에 해당한다.
+
+### Judge0 레벨 최적화의 한계
+
+Round 3 (OpenJ9 실험)에서 확인한 바와 같이, isolate 샌드박스는:
+- `mlock()` 등 일부 syscall을 차단 → OpenJ9 JVM crash
+- 파일시스템을 격리 → AOT 클래스 캐시 공유 불가
+
+JVM 교체나 AOT 캐시 사전 생성 등의 기법은 **isolate 구조 자체와 근본적으로 충돌**하므로 실효성 없음.
+
 ### 처리량을 높이려면
 
-1. **Judge0 호스트에 CPU 코어 추가** — 근본적 해결
-2. **더 많은 코어를 가진 머신으로 Judge0 이전** — 근본적 해결
-3. **언어별 제출 rate limit 차등 적용** — Java/C++ 제출은 더 공격적으로 제한하여 CPU 포화 방지
+| 방법 | 효과 | 비고 |
+|------|------|------|
+| Judge0 호스트 CPU 코어 추가 | 근본 해결 | 하드웨어 비용 |
+| 더 많은 코어의 머신으로 이전 | 근본 해결 | 하드웨어 비용 |
+| **언어별 rate limit 차등 적용** | CPU 포화 방지 | 소프트웨어로 즉시 적용 가능 |
+
+Python/JavaScript는 1 VU 기준 ~2s로 빠르고, Java/C++은 ~7–8s로 CPU 소비가 크다.  
+현 환경에서 현실적인 대응은 **Java·C++ 제출에 더 낮은 rate limit을 적용하여 동시 제출 수를 제한**하는 것이다.
 
 ---
 
