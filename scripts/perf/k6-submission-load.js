@@ -37,7 +37,7 @@ import { SharedArray } from "k6/data";
 
 // ── Configuration ──────────────────────────────────────────────────────────
 const BASE_URL = __ENV.BASE_URL || "http://localhost:8080";
-const SLUG = __ENV.SLUG || "two-sum";
+const SLUG = __ENV.SLUG || "snack-drawer-pair";
 const LANGUAGE = __ENV.LANGUAGE || "python";
 const SCENARIO = __ENV.SCENARIO || "smoke";
 
