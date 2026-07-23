@@ -1,0 +1,1 @@
+ALTER TABLE submissions ADD COLUMN admin_submission BOOLEAN NOT NULL DEFAULT FALSE;

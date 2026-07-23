@@ -86,6 +86,7 @@ public interface SubmissionRepository extends JpaRepository<Submission, Long> {
     @Query("SELECT s.problem.id, COUNT(s), " +
            "SUM(CASE WHEN s.status = com.codebite.submission.entity.SubmissionStatus.ACCEPTED THEN 1 ELSE 0 END) " +
            "FROM Submission s WHERE s.status != com.codebite.submission.entity.SubmissionStatus.PENDING " +
+           "AND s.adminSubmission = false " +
            "GROUP BY s.problem.id")
     List<Object[]> findAcceptanceRates();
 
@@ -108,19 +109,23 @@ public interface SubmissionRepository extends JpaRepository<Submission, Long> {
            "WHERE s.user.id = :userId ORDER BY s.createdAt DESC")
     Page<Submission> findRecentByUserId(@Param("userId") Long userId, Pageable pageable);
 
-    // Admin: submissions since a given time
-    @Query("SELECT COUNT(s) FROM Submission s WHERE s.createdAt >= :since")
+    // Admin: submissions since a given time (excludes admin submissions)
+    @Query("SELECT COUNT(s) FROM Submission s WHERE s.createdAt >= :since AND s.adminSubmission = false")
     long countSince(@Param("since") Instant since);
 
-    // Admin: daily submission counts (all users)
+    // Admin: daily submission counts (all users, excludes admin submissions)
     @Query("SELECT CAST(s.createdAt AS LocalDate), COUNT(s) " +
-           "FROM Submission s WHERE s.createdAt >= :since " +
+           "FROM Submission s WHERE s.createdAt >= :since AND s.adminSubmission = false " +
            "GROUP BY CAST(s.createdAt AS LocalDate) " +
            "ORDER BY CAST(s.createdAt AS LocalDate)")
     List<Object[]> countDailySubmissions(@Param("since") Instant since);
 
-    // Admin: recent submissions across all users
+    // Admin: recent submissions across all users (excludes admin submissions)
     @Query("SELECT s FROM Submission s JOIN FETCH s.problem JOIN FETCH s.user " +
+           "WHERE s.adminSubmission = false " +
            "ORDER BY s.createdAt DESC")
     List<Submission> findRecentGlobal(Pageable pageable);
+
+    // Admin: all submissions for a specific user (paginated)
+    Page<Submission> findByUserIdOrderByCreatedAtDesc(Long userId, Pageable pageable);
 }

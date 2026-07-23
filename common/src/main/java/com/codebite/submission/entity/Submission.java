@@ -60,6 +60,9 @@ public class Submission extends BaseEntity {
     @Column(name = "solve_time_seconds")
     private Integer solveTimeSeconds;
 
+    @Column(name = "admin_submission", nullable = false)
+    private boolean adminSubmission = false;
+
     @OneToMany(mappedBy = "submission", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SubmissionResult> results = new ArrayList<>();
 
@@ -149,6 +152,14 @@ public class Submission extends BaseEntity {
 
     public void setSolveTimeSeconds(Integer solveTimeSeconds) {
         this.solveTimeSeconds = solveTimeSeconds;
+    }
+
+    public boolean isAdminSubmission() {
+        return adminSubmission;
+    }
+
+    public void setAdminSubmission(boolean adminSubmission) {
+        this.adminSubmission = adminSubmission;
     }
 
     public List<SubmissionResult> getResults() {

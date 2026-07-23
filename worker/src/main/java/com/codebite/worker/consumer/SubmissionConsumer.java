@@ -119,12 +119,14 @@ public class SubmissionConsumer {
             submission.setMemoryKb(maxMemoryKb);
             submissionRepository.save(submission);
 
-            sample.stop(processingTimer);
-            String language = LANGUAGE_NAMES.getOrDefault(event.languageId(), "unknown");
-            Counter.builder("codebite.submissions.completed")
-                    .tag("status", overallStatus.name())
-                    .tag("language", language)
-                    .register(meterRegistry).increment();
+            if (!event.adminSubmission()) {
+                sample.stop(processingTimer);
+                String language = LANGUAGE_NAMES.getOrDefault(event.languageId(), "unknown");
+                Counter.builder("codebite.submissions.completed")
+                        .tag("status", overallStatus.name())
+                        .tag("language", language)
+                        .register(meterRegistry).increment();
+            }
 
             log.info("Submission {} completed with status: {}", submissionId, overallStatus);
         } catch (Exception e) {

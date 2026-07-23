@@ -90,8 +90,11 @@ public class SubmissionService {
         String sourceCode = judgeService.buildSourceCode(driverTemplate, request.sourceCode());
         int languageId = judgeService.mapLanguageToId(language);
         submissionEventProducer.send(new SubmissionEvent(
-                submission.getId(), sourceCode, languageId, problem.getId()));
-        submissionsCreatedCounter.increment();
+                submission.getId(), sourceCode, languageId, problem.getId(),
+                submission.isAdminSubmission()));
+        if (!submission.isAdminSubmission()) {
+            submissionsCreatedCounter.increment();
+        }
 
         // Return immediately with PENDING status
         return toResponse(submission, List.of(), problem.getSlug(), List.of(), 0);
@@ -142,6 +145,7 @@ public class SubmissionService {
         submission.setLanguage(request.language().toLowerCase());
         submission.setSourceCode(request.sourceCode());
         submission.setStatus(SubmissionStatus.PENDING);
+        submission.setAdminSubmission(user.getRole() == com.codebite.user.entity.Role.ADMIN);
         return submissionRepository.save(submission);
     }
 
@@ -210,6 +214,21 @@ public class SubmissionService {
                 submission.getConfidence(),
                 submission.getSolveTimeSeconds()
         );
+    }
+
+    @Transactional(readOnly = true)
+    public org.springframework.data.domain.Page<SubmissionListItem> getUserSubmissionsForAdmin(
+            Long userId, org.springframework.data.domain.Pageable pageable) {
+        return submissionRepository.findByUserIdOrderByCreatedAtDesc(userId, pageable)
+                .map(this::toListItem);
+    }
+
+    @Transactional
+    public void deleteSubmission(Long id) {
+        if (!submissionRepository.existsById(id)) {
+            throw new ResourceNotFoundException("error.submission.notFound", id);
+        }
+        submissionRepository.deleteById(id);
     }
 
     @Transactional

@@ -69,7 +69,7 @@ class SubmissionConsumerTest {
                 .thenReturn(List.of(accepted("3\n")));
         when(judgeService.mapStatus(any(), anyString())).thenReturn(SubmissionStatus.ACCEPTED);
 
-        consumer.consume(new SubmissionEvent(1L, "source", 62, 10L));
+        consumer.consume(new SubmissionEvent(1L, "source", 62, 10L, false));
 
         assertEquals(SubmissionStatus.ACCEPTED, submission.getStatus());
         verify(submissionResultRepository).saveAll(any());
@@ -84,7 +84,7 @@ class SubmissionConsumerTest {
 
         when(submissionRepository.findById(1L)).thenReturn(Optional.of(submission));
 
-        consumer.consume(new SubmissionEvent(1L, "source", 62, 10L));
+        consumer.consume(new SubmissionEvent(1L, "source", 62, 10L, false));
 
         verify(judgeService, never()).executeBatch(anyString(), anyInt(), anyList());
         verify(submissionResultRepository, never()).saveAll(any());
@@ -117,7 +117,7 @@ class SubmissionConsumerTest {
                 .thenReturn(SubmissionStatus.WRONG_ANSWER)
                 .thenReturn(SubmissionStatus.ACCEPTED);
 
-        consumer.consume(new SubmissionEvent(1L, "source", 62, 10L));
+        consumer.consume(new SubmissionEvent(1L, "source", 62, 10L, false));
 
         assertEquals(SubmissionStatus.WRONG_ANSWER, submission.getStatus());
         @SuppressWarnings("unchecked")
@@ -136,7 +136,7 @@ class SubmissionConsumerTest {
         when(testCaseRepository.findByProblemIdOrderByOrderIndexAsc(10L))
                 .thenThrow(new RuntimeException("DB error"));
 
-        consumer.consume(new SubmissionEvent(1L, "source", 62, 10L));
+        consumer.consume(new SubmissionEvent(1L, "source", 62, 10L, false));
 
         assertEquals(SubmissionStatus.INTERNAL_ERROR, submission.getStatus());
         verify(submissionRepository).save(submission);

@@ -4,5 +4,6 @@ public record SubmissionEvent(
         Long submissionId,
         String sourceCode,
         int languageId,
-        Long problemId
+        Long problemId,
+        boolean adminSubmission
 ) {}
