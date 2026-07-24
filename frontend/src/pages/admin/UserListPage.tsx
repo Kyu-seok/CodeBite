@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { getUsers } from '@/api/admin';
 import type { AdminUser } from '@/types/admin';
@@ -71,6 +72,7 @@ export default function UserListPage() {
               <th className="px-4 py-3">{t('users.solved')}</th>
               <th className="px-4 py-3">{t('users.lastActive')}</th>
               <th className="px-4 py-3">{t('users.joined')}</th>
+              <th className="px-4 py-3"></th>
             </tr>
           </thead>
           <tbody>
@@ -103,6 +105,14 @@ export default function UserListPage() {
                 <td className="px-4 py-3 text-foreground">{u.solvedCount}</td>
                 <td className="px-4 py-3 text-muted-foreground">{timeAgo(u.lastActiveAt)}</td>
                 <td className="px-4 py-3 text-muted-foreground">{formatDate(u.createdAt)}</td>
+                <td className="px-4 py-3 text-right">
+                  <Link
+                    to={`/admin/users/${u.id}/submissions`}
+                    className="rounded-md border border-border px-2.5 py-1 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                  >
+                    {t('users.viewSubmissions')}
+                  </Link>
+                </td>
               </tr>
             ))}
           </tbody>

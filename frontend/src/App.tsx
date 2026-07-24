@@ -20,6 +20,7 @@ import AdminDashboardPage from "./pages/admin/DashboardPage";
 import AdminProblemListPage from "./pages/admin/ProblemListPage";
 import AdminProblemEditPage from "./pages/admin/ProblemEditPage";
 import AdminUserListPage from "./pages/admin/UserListPage";
+import AdminUserSubmissionsPage from "./pages/admin/UserSubmissionsPage";
 import NotFoundPage from "./pages/NotFoundPage";
 
 function App() {
@@ -36,6 +37,7 @@ function App() {
                 <Route path="admin/problems" element={<AdminProblemListPage />} />
                 <Route path="admin/problems/:id" element={<AdminProblemEditPage />} />
                 <Route path="admin/users" element={<AdminUserListPage />} />
+                <Route path="admin/users/:userId/submissions" element={<AdminUserSubmissionsPage />} />
               </Route>
               <Route element={<Layout />}>
                 <Route index element={<LandingPage />} />

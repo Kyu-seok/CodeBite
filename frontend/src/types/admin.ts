@@ -108,3 +108,15 @@ export interface AdminUser {
   solvedCount: number;
   lastActiveAt: string | null;
 }
+
+export interface AdminSubmissionListItem {
+  id: number;
+  status: string;
+  language: string;
+  runtimeMs: number | null;
+  memoryKb: number | null;
+  createdAt: string;
+  notes: string | null;
+  confidence: string | null;
+  solveTimeSeconds: number | null;
+}

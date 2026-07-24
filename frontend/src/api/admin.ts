@@ -12,6 +12,7 @@ import type {
   ProblemAnalytics,
   AdminRecentSubmission,
   AdminUser,
+  AdminSubmissionListItem,
 } from '../types/admin';
 
 // ── Problems ──
@@ -100,4 +101,17 @@ export function getUsers(page = 0, size = 50) {
     '/admin/analytics/users',
     { params: { page, size } },
   );
+}
+
+// ── Submissions ──
+
+export function getUserSubmissions(userId: number, page = 0, size = 20) {
+  return client.get<{ content: AdminSubmissionListItem[]; totalPages: number; totalElements: number }>(
+    `/admin/users/${userId}/submissions`,
+    { params: { page, size } },
+  );
+}
+
+export function deleteSubmission(id: number) {
+  return client.delete(`/admin/submissions/${id}`);
 }

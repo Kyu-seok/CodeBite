@@ -66,6 +66,18 @@
     "role": "역할",
     "solved": "풀이",
     "lastActive": "마지막 활동",
-    "joined": "가입일"
+    "joined": "가입일",
+    "viewSubmissions": "제출 내역"
+  },
+  "submissions": {
+    "heading": "{{username}}의 제출 내역",
+    "total": "총 {{count}}건",
+    "status": "상태",
+    "language": "언어",
+    "runtime": "실행 시간",
+    "submittedAt": "제출 시각",
+    "delete": "삭제",
+    "empty": "제출 내역이 없습니다.",
+    "confirmDelete": "이 제출 기록을 삭제할까요? 되돌릴 수 없습니다."
   }
 }

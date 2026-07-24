@@ -66,6 +66,18 @@
     "role": "Role",
     "solved": "Solved",
     "lastActive": "Last Active",
-    "joined": "Joined"
+    "joined": "Joined",
+    "viewSubmissions": "Submissions"
+  },
+  "submissions": {
+    "heading": "{{username}}'s Submissions",
+    "total": "{{count}} total",
+    "status": "Status",
+    "language": "Language",
+    "runtime": "Runtime",
+    "submittedAt": "Submitted",
+    "delete": "Delete",
+    "empty": "No submissions found.",
+    "confirmDelete": "Delete this submission? This cannot be undone."
   }
 }
