@@ -80,7 +80,7 @@ export function ProblemLayout({
 
               {/* Lower-right — Test cases / Results */}
               <ResizablePanel id="tests" defaultSize={40} minSize={15}>
-                <div className="h-full overflow-auto rounded-lg border border-border bg-card">
+                <div className="h-full overflow-hidden rounded-lg border border-border bg-card">
                   {testPanel}
                 </div>
               </ResizablePanel>

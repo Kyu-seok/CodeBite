@@ -113,7 +113,7 @@ export function TestPanel({
         defaultValue="testcases"
         value={activeTab}
         onValueChange={onTabChange}
-        className="flex min-h-0 flex-1 flex-col">
+        className="flex min-h-0 flex-1 flex-col overflow-hidden">
         <div className="border-b border-border bg-muted">
           <TabsList>
             <TabsTrigger value="testcases">{t('test.testCases')}</TabsTrigger>
@@ -188,7 +188,7 @@ export function TestPanel({
       </Tabs>
 
       {/* Bottom bar with Run / Submit */}
-      <div className="flex items-center justify-between border-t border-border px-3 py-2">
+      <div className="flex flex-shrink-0 items-center justify-between border-t border-border px-3 py-2">
         <div />
         <Stack direction="horizontal" gap="sm">
           <Tooltip>
