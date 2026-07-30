@@ -1,11 +1,14 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/Tabs';
+import { Button } from '@/components/ui/Button';
+import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/Tooltip';
 import { DescriptionPanel } from './DescriptionPanel';
 import { SubmissionsPanel } from './SubmissionsPanel';
 import { SolutionsListPanel } from './solutions/SolutionsListPanel';
 import type { Difficulty } from '@/types/problem';
 import type { SubmissionListItem } from '@/types/submission';
+import { PanelLeftClose, Maximize2, Minimize2 } from 'lucide-react';
 
 function DescriptionIcon() {
   return (
@@ -73,6 +76,9 @@ interface LeftPanelProps {
   submissions: SubmissionListItem[];
   onUpdateNote?: (id: number, notes: string) => void;
   onLoadIntoEditor?: (code: string, language: string) => void;
+  onFold?: () => void;
+  onMaximize?: () => void;
+  isMaximized?: boolean;
 }
 
 export function LeftPanel({
@@ -85,6 +91,9 @@ export function LeftPanel({
   submissions,
   onUpdateNote,
   onLoadIntoEditor,
+  onFold,
+  onMaximize,
+  isMaximized,
 }: LeftPanelProps) {
   const { t } = useTranslation('problem');
   const [activeTab, setActiveTab] = useState<string>('description');
@@ -106,7 +115,7 @@ export function LeftPanel({
         }}
         className="flex h-full flex-col"
       >
-        <div className="border-b border-border bg-muted">
+        <div className="group flex items-center justify-between border-b border-border bg-muted">
           <TabsList>
             <TabsTrigger value="description" className="gap-1.5">
               <DescriptionIcon />
@@ -121,6 +130,24 @@ export function LeftPanel({
               {t('tabs.solutions')}
             </TabsTrigger>
           </TabsList>
+          <div className="flex items-center pr-1 opacity-0 transition-opacity group-hover:opacity-100">
+            <Tooltip>
+              <TooltipTrigger>
+                <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onFold}>
+                  <PanelLeftClose className="h-3.5 w-3.5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Fold panel</TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger>
+                <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onMaximize}>
+                  {isMaximized ? <Minimize2 className="h-3.5 w-3.5" /> : <Maximize2 className="h-3.5 w-3.5" />}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>{isMaximized ? 'Restore' : 'Maximize'}</TooltipContent>
+            </Tooltip>
+          </div>
         </div>
 
         <div className="flex-1 overflow-auto">
@@ -152,6 +179,47 @@ export function LeftPanel({
           </TabsContent>
         </div>
       </Tabs>
+    </div>
+  );
+}
+
+export function CollapsedLeftStrip({ onExpand }: { onExpand?: () => void }) {
+  const { t } = useTranslation('problem');
+  return (
+    <div className="flex h-full flex-col items-center py-2 gap-1">
+      <Tooltip>
+        <TooltipTrigger>
+          <button
+            type="button"
+            onClick={onExpand}
+            className="flex items-center justify-center rounded p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
+            <DescriptionIcon />
+          </button>
+        </TooltipTrigger>
+        <TooltipContent side="right">{t('tabs.description')}</TooltipContent>
+      </Tooltip>
+      <Tooltip>
+        <TooltipTrigger>
+          <button
+            type="button"
+            onClick={onExpand}
+            className="flex items-center justify-center rounded p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
+            <HistoryIcon />
+          </button>
+        </TooltipTrigger>
+        <TooltipContent side="right">{t('tabs.submissions')}</TooltipContent>
+      </Tooltip>
+      <Tooltip>
+        <TooltipTrigger>
+          <button
+            type="button"
+            onClick={onExpand}
+            className="flex items-center justify-center rounded p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
+            <LightbulbIcon />
+          </button>
+        </TooltipTrigger>
+        <TooltipContent side="right">{t('tabs.solutions')}</TooltipContent>
+      </Tooltip>
     </div>
   );
 }

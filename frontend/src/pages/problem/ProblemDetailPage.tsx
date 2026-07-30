@@ -5,11 +5,11 @@ import { useSubmissions } from "@/hooks/useSubmissions"
 import { useAuth } from "@/context/AuthContext"
 import { submitCode, getSubmission, runCode, setSolveTime } from "@/api/submissions"
 import { setSubmissionReview } from "@/api/reviews"
-import { ProblemLayout } from "@/components/layout/ProblemLayout"
+import { ProblemLayout, type PanelFunctions } from "@/components/layout/ProblemLayout"
 import Spinner from "@/components/ui/Spinner"
-import { LeftPanel } from "./LeftPanel"
+import { LeftPanel, CollapsedLeftStrip } from "./LeftPanel"
 import { EditorPanel } from "./EditorPanel"
-import { TestPanel } from "./TestPanel"
+import { TestPanel, CollapsedTestStrip } from "./TestPanel"
 import { AcceptedModal } from "@/components/review/AcceptedModal"
 import { fireConfetti } from "@/components/review/ConfettiBurst"
 import type { Confidence } from "@/types/review"
@@ -67,6 +67,11 @@ export default function ProblemDetailPage() {
       return []
     }
   })
+  const [leftCollapsed, setLeftCollapsed] = useState(false)
+  const [rightCollapsed, setRightCollapsed] = useState(false)
+  const [editorCollapsed, setEditorCollapsed] = useState(false)
+  const [testsCollapsed, setTestsCollapsed] = useState(false)
+  const panelFunctionsRef = useRef<PanelFunctions | null>(null)
   const pollIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const resetLayoutRef = useRef<(() => void) | null>(null)
   const runRef = useRef<() => void>(() => {})
@@ -279,6 +284,30 @@ export default function ProblemDetailPage() {
     refetchSubmissions()
   }
 
+  const handleFoldLeft = () => panelFunctionsRef.current?.collapseLeft()
+  const handleMaximizeLeft = () => {
+    if (rightCollapsed) panelFunctionsRef.current?.expandRight()
+    else panelFunctionsRef.current?.collapseRight()
+  }
+  const handleToggleTests = () => {
+    if (testsCollapsed) panelFunctionsRef.current?.expandTests()
+    else panelFunctionsRef.current?.collapseTests()
+  }
+  const handleMaximizeEditor = () => {
+    if (leftCollapsed && testsCollapsed) {
+      panelFunctionsRef.current?.expandLeft()
+      panelFunctionsRef.current?.expandTests()
+    } else {
+      panelFunctionsRef.current?.collapseLeft()
+      panelFunctionsRef.current?.collapseTests()
+    }
+  }
+  const handleFoldTests = () => panelFunctionsRef.current?.collapseTests()
+  const handleMaximizeTests = () => {
+    if (editorCollapsed) panelFunctionsRef.current?.expandEditor()
+    else panelFunctionsRef.current?.collapseEditor()
+  }
+
   const handleRun = async () => {
     setRunning(true)
     setRunError(null)
@@ -345,6 +374,15 @@ export default function ProblemDetailPage() {
     <>
       <ProblemLayout
         resetLayoutRef={resetLayoutRef}
+        panelFunctionsRef={panelFunctionsRef}
+        onLeftCollapsed={setLeftCollapsed}
+        onRightCollapsed={setRightCollapsed}
+        onEditorCollapsed={setEditorCollapsed}
+        onTestsCollapsed={setTestsCollapsed}
+        leftCollapsed={leftCollapsed}
+        testsCollapsed={testsCollapsed}
+        collapsedLeftContent={<CollapsedLeftStrip onExpand={() => panelFunctionsRef.current?.expandLeft()} />}
+        collapsedTestContent={<CollapsedTestStrip onExpand={() => panelFunctionsRef.current?.expandTests()} />}
         leftPanel={
           <LeftPanel
             slug={slug!}
@@ -356,6 +394,9 @@ export default function ProblemDetailPage() {
             submissions={submissions}
             onUpdateNote={updateNote}
             onLoadIntoEditor={handleLoadIntoEditor}
+            onFold={handleFoldLeft}
+            onMaximize={handleMaximizeLeft}
+            isMaximized={rightCollapsed}
           />
         }
         editor={
@@ -370,6 +411,10 @@ export default function ProblemDetailPage() {
             onResetLayout={() => resetLayoutRef.current?.()}
             onRun={handleRun}
             onSubmit={handleSubmit}
+            onToggleTests={handleToggleTests}
+            onMaximize={handleMaximizeEditor}
+            testsCollapsed={testsCollapsed}
+            isMaximized={leftCollapsed && testsCollapsed}
           />
         }
         testPanel={
@@ -388,6 +433,9 @@ export default function ProblemDetailPage() {
             onTabChange={setActiveTab}
             onRun={handleRun}
             onSubmit={handleSubmit}
+            onFold={handleFoldTests}
+            onMaximize={handleMaximizeTests}
+            isMaximized={editorCollapsed}
           />
         }
       />
