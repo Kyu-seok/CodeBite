@@ -1,4 +1,4 @@
-import { type ReactNode, type RefObject, useState } from 'react';
+import { type ReactNode, type RefObject, useRef, useState } from 'react';
 import {
   ResizablePanelGroup,
   ResizablePanel,
@@ -19,12 +19,10 @@ export interface PanelFunctions {
   expandTests: () => void;
 }
 
-// Panel snaps to these sizes when collapsed — just enough to render the icon/tab strip
-const LEFT_COLLAPSED_SIZE = 4;
-const TESTS_COLLAPSED_SIZE = 6;
-// Dragging below these thresholds triggers a snap to collapsedSize on release
-const LEFT_MIN_SIZE = 15;
-const TESTS_MIN_SIZE = 10;
+// Hard-stop minimum sizes — left/tests panels cannot be dragged below these.
+// At minimum size the strip content is shown in-place.
+const LEFT_COLLAPSED_SIZE = 4;   // ~48-57px at typical screen widths
+const TESTS_COLLAPSED_SIZE = 6;  // ~40-48px at typical screen heights
 
 interface ProblemLayoutProps {
   /** Left panel: tabbed content (description, submissions, solutions) */
@@ -41,7 +39,7 @@ interface ProblemLayoutProps {
   onRightCollapsed?: (v: boolean) => void;
   onEditorCollapsed?: (v: boolean) => void;
   onTestsCollapsed?: (v: boolean) => void;
-  /** Content to render inside the panel when it is collapsed to strip size */
+  /** Content to render inside the panel when it is at minimum (strip) size */
   collapsedLeftContent?: ReactNode;
   collapsedTestContent?: ReactNode;
   className?: string;
@@ -59,8 +57,8 @@ interface ProblemLayoutProps {
  *
  * - Horizontal split: leftPanel | editor+tests (default 50/50)
  * - Vertical split on right: editor | tests (default 60/40)
- * - All panels resizable with drag handles
- * - Left and test panels snap to a thin strip when dragged below their threshold
+ * - Left and test panels have a hard drag floor at strip size (cannot drag past it)
+ * - Right and editor panels are fully collapsible to 0% via buttons
  * - Falls back to stacked layout on small screens
  */
 export function ProblemLayout({
@@ -87,15 +85,18 @@ export function ProblemLayout({
   const [leftSize, setLeftSize] = useState(50);
   const [testsSize, setTestsSize] = useState(40);
 
+  // Track last expanded sizes so buttons can restore the panel after snapping to strip.
+  const prevExpandedLeftSize = useRef(50);
+  const prevExpandedTestsSize = useRef(40);
+
   const leftCollapsed = leftSize <= LEFT_COLLAPSED_SIZE;
   const testsCollapsed = testsSize <= TESTS_COLLAPSED_SIZE;
 
   if (resetLayoutRef) {
     resetLayoutRef.current = () => {
-      leftRef.current?.expand();
+      // Right and editor are collapsible-to-0; expand them first before setLayout.
       rightRef.current?.expand();
       editorRef.current?.expand();
-      testsRef.current?.expand();
       hGroupRef.current?.setLayout({ left: 50, right: 50 });
       vGroupRef.current?.setLayout({ editor: 60, tests: 40 });
     };
@@ -103,14 +104,16 @@ export function ProblemLayout({
 
   if (panelFunctionsRef) {
     panelFunctionsRef.current = {
-      collapseLeft: () => leftRef.current?.collapse(),
-      expandLeft: () => leftRef.current?.expand(),
+      // Left/tests use resize() — they have a hard minSize floor, not collapsible.
+      collapseLeft: () => leftRef.current?.resize(LEFT_COLLAPSED_SIZE),
+      expandLeft: () => leftRef.current?.resize(prevExpandedLeftSize.current),
+      // Right/editor are collapsible to 0%.
       collapseRight: () => rightRef.current?.collapse(),
       expandRight: () => rightRef.current?.expand(),
       collapseEditor: () => editorRef.current?.collapse(),
       expandEditor: () => editorRef.current?.expand(),
-      collapseTests: () => testsRef.current?.collapse(),
-      expandTests: () => testsRef.current?.expand(),
+      collapseTests: () => testsRef.current?.resize(TESTS_COLLAPSED_SIZE),
+      expandTests: () => testsRef.current?.resize(prevExpandedTestsSize.current),
     };
   }
 
@@ -119,16 +122,15 @@ export function ProblemLayout({
       {/* Desktop: resizable panels */}
       <div className="hidden md:flex h-full">
         <ResizablePanelGroup orientation="horizontal" id="problem-h" groupRef={hGroupRef}>
-          {/* Left — Description */}
+          {/* Left — Description. No collapsible: hard stop at LEFT_COLLAPSED_SIZE. */}
           <ResizablePanel
             id="left"
             panelRef={leftRef}
             defaultSize={50}
-            minSize={LEFT_MIN_SIZE}
-            collapsible
-            collapsedSize={LEFT_COLLAPSED_SIZE}
+            minSize={LEFT_COLLAPSED_SIZE}
             onResize={(size) => {
               const pct = size.asPercentage;
+              if (pct > LEFT_COLLAPSED_SIZE) prevExpandedLeftSize.current = pct;
               setLeftSize(pct);
               onLeftCollapsed?.(pct <= LEFT_COLLAPSED_SIZE);
             }}>
@@ -142,7 +144,7 @@ export function ProblemLayout({
 
           <ResizableHandle withHandle />
 
-          {/* Right — Editor + Test panel */}
+          {/* Right — Editor + Test panel. Fully collapsible to 0% via button. */}
           <ResizablePanel
             id="right"
             panelRef={rightRef}
@@ -152,7 +154,7 @@ export function ProblemLayout({
             collapsedSize={0}
             onResize={(size) => onRightCollapsed?.(size.asPercentage === 0)}>
             <ResizablePanelGroup orientation="vertical" id="problem-v" groupRef={vGroupRef}>
-              {/* Upper-right — Editor */}
+              {/* Upper-right — Editor. Fully collapsible to 0% via button. */}
               <ResizablePanel
                 id="editor"
                 panelRef={editorRef}
@@ -168,16 +170,15 @@ export function ProblemLayout({
 
               <ResizableHandle withHandle />
 
-              {/* Lower-right — Test cases / Results */}
+              {/* Lower-right — Test cases. No collapsible: hard stop at TESTS_COLLAPSED_SIZE. */}
               <ResizablePanel
                 id="tests"
                 panelRef={testsRef}
                 defaultSize={40}
-                minSize={TESTS_MIN_SIZE}
-                collapsible
-                collapsedSize={TESTS_COLLAPSED_SIZE}
+                minSize={TESTS_COLLAPSED_SIZE}
                 onResize={(size) => {
                   const pct = size.asPercentage;
+                  if (pct > TESTS_COLLAPSED_SIZE) prevExpandedTestsSize.current = pct;
                   setTestsSize(pct);
                   onTestsCollapsed?.(pct <= TESTS_COLLAPSED_SIZE);
                 }}>
