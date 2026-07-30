@@ -668,14 +668,14 @@ CodeBite/
 **Deliverable:** Submissions are rate-limited per user. Works correctly across multiple backend instances.
 
 ### Milestone 6: Async Execution with Kafka + Worker
-- [ ] Add Kafka (+ Zookeeper or KRaft) to docker-compose
-- [ ] Define `submission-events` topic with partitioned by userId
-- [ ] Implement `SubmissionEventPublisher` (Kafka producer in backend)
-- [ ] Build worker service with `@KafkaListener` consumer
-- [ ] Worker calls Judge0, writes results to DB, commits offset
-- [ ] Backend submission endpoint returns 202 + submissionId
-- [ ] Frontend polls `GET /submissions/{id}` for status updates
-- [ ] Handle consumer failures: retry policy, dead-letter topic
+- [x] Add Kafka to docker-compose — `apache/kafka:3.7.0` in **KRaft** mode (no Zookeeper); single node running `broker,controller` combined
+- [x] Define `submission-events` topic — 3 partitions, RF 1, keyed by **submissionId** (not userId: per-user ordering is not required, and submissionId spreads load evenly)
+- [x] Implement Kafka producer in backend — `SubmissionEventProducer`
+- [x] Build worker service with `@KafkaListener` consumer
+- [x] Worker calls Judge0, writes results to DB, commits offset
+- [x] Backend submission endpoint returns **201 Created** + submission detail (not 202: the submission resource is created synchronously; only grading is async)
+- [x] Frontend polls `GET /submissions/{id}` for status updates
+- [x] Handle consumer failures — retry policy (`FixedBackOff` 1s × 3) + `SubmissionFailureRecoverer` settling the submission as `INTERNAL_ERROR` once retries are exhausted. **No dead-letter topic by design:** `SubmissionEvent` is fully reconstructible from the `submissions` table (`source_code`, `language`, `problem_id`), so a DLT would only duplicate data Postgres already holds
 - [ ] Consider SSE or WebSocket for real-time result delivery
 
 **Deliverable:** Submission execution is decoupled via Kafka. Multiple workers can consume in parallel.
@@ -686,7 +686,7 @@ CodeBite/
 - [ ] PostgreSQL read replica (primary for writes, replica for reads)
 - [ ] Configure Spring to route read queries to replica
 - [x] Redis for auth: JWT token blacklist (logout/revocation) + user profile caching
-- [ ] Scale Kafka consumers by adding workers to consumer group
+- [x] Scale Kafka consumers to one per partition — `spring.kafka.listener.concurrency` (default 3, `KAFKA_LISTENER_CONCURRENCY`) puts 3 consumers in the group, one per partition. Adding worker *instances* is the next lever, but Judge0 host CPU is the current throughput ceiling (see `docs/LOAD_TEST_RESULTS.md`), so it buys nothing until Judge0 is scaled
 - [x] Document the architecture and scaling decisions
 
 #### Redis Auth Cache Details
