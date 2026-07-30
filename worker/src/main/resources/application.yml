@@ -20,9 +20,15 @@ spring:
     enabled: false
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    listener:
+      # submission-events has 3 partitions; one thread per partition.
+      concurrency: ${KAFKA_LISTENER_CONCURRENCY:3}
     consumer:
       group-id: codebite-worker
       auto-offset-reset: earliest
+      # A submission takes seconds to grade, so the default of 500 would blow past
+      # max.poll.interval.ms whenever a backlog builds and trigger a rebalance loop.
+      max-poll-records: 1
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
