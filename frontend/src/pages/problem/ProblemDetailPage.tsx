@@ -379,8 +379,6 @@ export default function ProblemDetailPage() {
         onRightCollapsed={setRightCollapsed}
         onEditorCollapsed={setEditorCollapsed}
         onTestsCollapsed={setTestsCollapsed}
-        leftCollapsed={leftCollapsed}
-        testsCollapsed={testsCollapsed}
         collapsedLeftContent={<CollapsedLeftStrip onExpand={() => panelFunctionsRef.current?.expandLeft()} />}
         collapsedTestContent={<CollapsedTestStrip onExpand={() => panelFunctionsRef.current?.expandTests()} />}
         leftPanel={
