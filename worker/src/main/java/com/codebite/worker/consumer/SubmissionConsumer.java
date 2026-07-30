@@ -10,7 +10,6 @@ import com.codebite.submission.entity.SubmissionStatus;
 import com.codebite.submission.event.SubmissionEvent;
 import com.codebite.submission.repository.SubmissionRepository;
 import com.codebite.submission.repository.SubmissionResultRepository;
-import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import org.slf4j.Logger;
@@ -21,20 +20,17 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Component
 public class SubmissionConsumer {
 
     private static final Logger log = LoggerFactory.getLogger(SubmissionConsumer.class);
 
-    private static final Map<Integer, String> LANGUAGE_NAMES = Map.of(
-            62, "java", 71, "python", 63, "javascript", 54, "cpp");
-
     private final JudgeService judgeService;
     private final TestCaseRepository testCaseRepository;
     private final SubmissionResultRepository submissionResultRepository;
     private final SubmissionRepository submissionRepository;
+    private final SubmissionMetrics submissionMetrics;
     private final MeterRegistry meterRegistry;
     private final Timer processingTimer;
 
@@ -42,11 +38,13 @@ public class SubmissionConsumer {
                               TestCaseRepository testCaseRepository,
                               SubmissionResultRepository submissionResultRepository,
                               SubmissionRepository submissionRepository,
+                              SubmissionMetrics submissionMetrics,
                               MeterRegistry meterRegistry) {
         this.judgeService = judgeService;
         this.testCaseRepository = testCaseRepository;
         this.submissionResultRepository = submissionResultRepository;
         this.submissionRepository = submissionRepository;
+        this.submissionMetrics = submissionMetrics;
         this.meterRegistry = meterRegistry;
         this.processingTimer = Timer.builder("codebite.submissions.processing.duration")
                 .description("Time to process a submission through Judge0")
@@ -61,81 +59,72 @@ public class SubmissionConsumer {
 
         Timer.Sample sample = Timer.start(meterRegistry);
 
-        try {
-            Submission submission = submissionRepository.findById(submissionId).orElse(null);
-            if (submission == null || submission.getStatus() != SubmissionStatus.PENDING) {
-                log.warn("Skipping already-processed or missing submission: {}", submissionId);
-                return;
-            }
-
-            List<TestCase> testCases = testCaseRepository.findByProblemIdOrderByOrderIndexAsc(event.problemId());
-
-            List<String> stdins = testCases.stream().map(TestCase::getInput).toList();
-            List<JudgeResponse> responses = judgeService.executeBatch(
-                    event.sourceCode(), event.languageId(), stdins);
-
-            List<SubmissionResult> results = new ArrayList<>();
-            SubmissionStatus overallStatus = SubmissionStatus.ACCEPTED;
-            Integer maxRuntimeMs = null;
-            Integer maxMemoryKb = null;
-
-            for (int i = 0; i < testCases.size(); i++) {
-                TestCase testCase = testCases.get(i);
-                JudgeResponse response = responses.get(i);
-                SubmissionStatus caseStatus = judgeService.mapStatus(response, testCase.getExpectedOutput());
-
-                SubmissionResult result = new SubmissionResult();
-                result.setSubmission(submission);
-                result.setTestCase(testCase);
-                result.setStatus(caseStatus);
-                result.setActualOutput(response.stdout() != null ? response.stdout().trim() : null);
-                result.setStderr(response.stderr());
-                result.setCompileOutput(response.compileOutput());
-
-                Integer runtimeMs = parseTimeToMs(response.time());
-                result.setRuntimeMs(runtimeMs);
-                result.setMemoryKb(response.memory());
-
-                if (runtimeMs != null) {
-                    maxRuntimeMs = maxRuntimeMs == null ? runtimeMs : Math.max(maxRuntimeMs, runtimeMs);
-                }
-                if (response.memory() != null) {
-                    maxMemoryKb = maxMemoryKb == null ? response.memory() : Math.max(maxMemoryKb, response.memory());
-                }
-
-                results.add(result);
-
-                // Overall status reflects the first failing test case in order, mirroring the
-                // previous early-exit semantics. All results are still persisted so users see
-                // full coverage even on partial failures.
-                if (caseStatus != SubmissionStatus.ACCEPTED && overallStatus == SubmissionStatus.ACCEPTED) {
-                    overallStatus = caseStatus;
-                }
-            }
-
-            submissionResultRepository.saveAll(results);
-            submission.setStatus(overallStatus);
-            submission.setRuntimeMs(maxRuntimeMs);
-            submission.setMemoryKb(maxMemoryKb);
-            submissionRepository.save(submission);
-
-            if (!event.adminSubmission()) {
-                sample.stop(processingTimer);
-                String language = LANGUAGE_NAMES.getOrDefault(event.languageId(), "unknown");
-                Counter.builder("codebite.submissions.completed")
-                        .tag("status", overallStatus.name())
-                        .tag("language", language)
-                        .register(meterRegistry).increment();
-            }
-
-            log.info("Submission {} completed with status: {}", submissionId, overallStatus);
-        } catch (Exception e) {
-            log.error("Submission processing failed for submissionId={}: {}", submissionId, e.getMessage(), e);
-            submissionRepository.findById(submissionId).ifPresent(submission -> {
-                submission.setStatus(SubmissionStatus.INTERNAL_ERROR);
-                submissionRepository.save(submission);
-            });
+        // Exceptions deliberately propagate: the transaction rolls back (leaving the submission
+        // PENDING so a retry re-processes it cleanly) and DefaultErrorHandler drives the retries.
+        // SubmissionFailureRecoverer marks INTERNAL_ERROR once they are exhausted.
+        Submission submission = submissionRepository.findById(submissionId).orElse(null);
+        if (submission == null || submission.getStatus() != SubmissionStatus.PENDING) {
+            log.warn("Skipping already-processed or missing submission: {}", submissionId);
+            return;
         }
+
+        List<TestCase> testCases = testCaseRepository.findByProblemIdOrderByOrderIndexAsc(event.problemId());
+
+        List<String> stdins = testCases.stream().map(TestCase::getInput).toList();
+        List<JudgeResponse> responses = judgeService.executeBatch(
+                event.sourceCode(), event.languageId(), stdins);
+
+        List<SubmissionResult> results = new ArrayList<>();
+        SubmissionStatus overallStatus = SubmissionStatus.ACCEPTED;
+        Integer maxRuntimeMs = null;
+        Integer maxMemoryKb = null;
+
+        for (int i = 0; i < testCases.size(); i++) {
+            TestCase testCase = testCases.get(i);
+            JudgeResponse response = responses.get(i);
+            SubmissionStatus caseStatus = judgeService.mapStatus(response, testCase.getExpectedOutput());
+
+            SubmissionResult result = new SubmissionResult();
+            result.setSubmission(submission);
+            result.setTestCase(testCase);
+            result.setStatus(caseStatus);
+            result.setActualOutput(response.stdout() != null ? response.stdout().trim() : null);
+            result.setStderr(response.stderr());
+            result.setCompileOutput(response.compileOutput());
+
+            Integer runtimeMs = parseTimeToMs(response.time());
+            result.setRuntimeMs(runtimeMs);
+            result.setMemoryKb(response.memory());
+
+            if (runtimeMs != null) {
+                maxRuntimeMs = maxRuntimeMs == null ? runtimeMs : Math.max(maxRuntimeMs, runtimeMs);
+            }
+            if (response.memory() != null) {
+                maxMemoryKb = maxMemoryKb == null ? response.memory() : Math.max(maxMemoryKb, response.memory());
+            }
+
+            results.add(result);
+
+            // Overall status reflects the first failing test case in order, mirroring the
+            // previous early-exit semantics. All results are still persisted so users see
+            // full coverage even on partial failures.
+            if (caseStatus != SubmissionStatus.ACCEPTED && overallStatus == SubmissionStatus.ACCEPTED) {
+                overallStatus = caseStatus;
+            }
+        }
+
+        submissionResultRepository.saveAll(results);
+        submission.setStatus(overallStatus);
+        submission.setRuntimeMs(maxRuntimeMs);
+        submission.setMemoryKb(maxMemoryKb);
+        submissionRepository.save(submission);
+
+        if (!event.adminSubmission()) {
+            sample.stop(processingTimer);
+        }
+        submissionMetrics.recordCompleted(event, overallStatus);
+
+        log.info("Submission {} completed with status: {}", submissionId, overallStatus);
     }
 
     private Integer parseTimeToMs(String time) {

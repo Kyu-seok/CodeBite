@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;
@@ -42,10 +43,11 @@ class SubmissionConsumerTest {
 
     @BeforeEach
     void setUp() {
+        SimpleMeterRegistry meterRegistry = new SimpleMeterRegistry();
         consumer = new SubmissionConsumer(
                 judgeService, testCaseRepository,
                 submissionResultRepository, submissionRepository,
-                new SimpleMeterRegistry());
+                new SubmissionMetrics(meterRegistry), meterRegistry);
     }
 
     private static JudgeResponse accepted(String stdout) {
@@ -127,7 +129,7 @@ class SubmissionConsumerTest {
     }
 
     @Test
-    void consume_exceptionSetsInternalError() {
+    void consume_propagatesExceptionSoRetryAndRollbackCanHappen() {
         Submission submission = new Submission();
         submission.setId(1L);
         submission.setStatus(SubmissionStatus.PENDING);
@@ -136,9 +138,13 @@ class SubmissionConsumerTest {
         when(testCaseRepository.findByProblemIdOrderByOrderIndexAsc(10L))
                 .thenThrow(new RuntimeException("DB error"));
 
-        consumer.consume(new SubmissionEvent(1L, "source", 62, 10L, false));
+        SubmissionEvent event = new SubmissionEvent(1L, "source", 62, 10L, false);
+        assertThrows(RuntimeException.class, () -> consumer.consume(event));
 
-        assertEquals(SubmissionStatus.INTERNAL_ERROR, submission.getStatus());
-        verify(submissionRepository).save(submission);
+        // The consumer must not settle the status itself — the transaction rolls back and the
+        // submission stays PENDING so DefaultErrorHandler can retry it.
+        assertEquals(SubmissionStatus.PENDING, submission.getStatus());
+        verify(submissionRepository, never()).save(any());
+        verify(submissionResultRepository, never()).saveAll(any());
     }
 }
