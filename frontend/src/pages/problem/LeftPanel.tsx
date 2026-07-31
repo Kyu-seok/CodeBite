@@ -8,7 +8,8 @@ import { SubmissionsPanel } from './SubmissionsPanel';
 import { SolutionsListPanel } from './solutions/SolutionsListPanel';
 import type { Difficulty } from '@/types/problem';
 import type { SubmissionListItem } from '@/types/submission';
-import { PanelLeftClose, Maximize2, Minimize2 } from 'lucide-react';
+import { PanelLeftClose, PanelLeftOpen, Maximize2, Minimize2 } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 function DescriptionIcon() {
   return (
@@ -74,6 +75,8 @@ interface LeftPanelProps {
   constraints: string | null;
   isAuthenticated: boolean;
   submissions: SubmissionListItem[];
+  activeTab: string;
+  onTabChange: (tab: string) => void;
   onUpdateNote?: (id: number, notes: string) => void;
   onLoadIntoEditor?: (code: string, language: string) => void;
   onFold?: () => void;
@@ -89,6 +92,8 @@ export function LeftPanel({
   constraints,
   isAuthenticated,
   submissions,
+  activeTab,
+  onTabChange,
   onUpdateNote,
   onLoadIntoEditor,
   onFold,
@@ -96,12 +101,11 @@ export function LeftPanel({
   isMaximized,
 }: LeftPanelProps) {
   const { t } = useTranslation('problem');
-  const [activeTab, setActiveTab] = useState<string>('description');
   const [selectedSubmissionId, setSelectedSubmissionId] = useState<number | null>(null);
 
   const handleOpenSubmission = (id: number) => {
     setSelectedSubmissionId(id);
-    setActiveTab('submissions');
+    onTabChange('submissions');
   };
 
   return (
@@ -109,8 +113,7 @@ export function LeftPanel({
       <Tabs
         value={activeTab}
         onValueChange={(v) => {
-          setActiveTab(v);
-          // Switching tabs away from Submissions should clear any open detail.
+          onTabChange(v);
           if (v !== 'submissions') setSelectedSubmissionId(null);
         }}
         className="flex h-full flex-col"
@@ -183,43 +186,75 @@ export function LeftPanel({
   );
 }
 
-export function CollapsedLeftStrip({ onExpand }: { onExpand?: () => void }) {
+const STRIP_TABS = [
+  { id: 'description', Icon: DescriptionIcon, labelKey: 'tabs.description' as const },
+  { id: 'submissions', Icon: HistoryIcon,     labelKey: 'tabs.submissions' as const },
+  { id: 'solutions',  Icon: LightbulbIcon,   labelKey: 'tabs.solutions' as const },
+] as const;
+
+interface CollapsedLeftStripProps {
+  activeTab: string;
+  onTabSelect: (tab: string) => void;
+  onExpand: () => void;
+  onMaximize: () => void;
+  isMaximized: boolean;
+}
+
+export function CollapsedLeftStrip({
+  activeTab,
+  onTabSelect,
+  onExpand,
+  onMaximize,
+  isMaximized,
+}: CollapsedLeftStripProps) {
   const { t } = useTranslation('problem');
+
   return (
-    <div className="flex h-full flex-col items-center py-2 gap-1">
-      <Tooltip>
-        <TooltipTrigger>
-          <button
-            type="button"
-            onClick={onExpand}
-            className="flex items-center justify-center rounded p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
-            <DescriptionIcon />
-          </button>
-        </TooltipTrigger>
-        <TooltipContent side="right">{t('tabs.description')}</TooltipContent>
-      </Tooltip>
-      <Tooltip>
-        <TooltipTrigger>
-          <button
-            type="button"
-            onClick={onExpand}
-            className="flex items-center justify-center rounded p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
-            <HistoryIcon />
-          </button>
-        </TooltipTrigger>
-        <TooltipContent side="right">{t('tabs.submissions')}</TooltipContent>
-      </Tooltip>
-      <Tooltip>
-        <TooltipTrigger>
-          <button
-            type="button"
-            onClick={onExpand}
-            className="flex items-center justify-center rounded p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
-            <LightbulbIcon />
-          </button>
-        </TooltipTrigger>
-        <TooltipContent side="right">{t('tabs.solutions')}</TooltipContent>
-      </Tooltip>
+    <div className="group/strip flex h-full flex-col items-center py-2">
+      {/* Tab buttons — clicking sets the active tab without expanding */}
+      <div className="flex flex-1 flex-col items-center gap-1 w-full">
+        {STRIP_TABS.map(({ id, Icon, labelKey }) => (
+          <Tooltip key={id}>
+            <TooltipTrigger asChild>
+              <button
+                type="button"
+                onClick={() => onTabSelect(id)}
+                className={cn(
+                  'flex w-full flex-col items-center gap-1 rounded py-2 px-1 transition-colors',
+                  activeTab === id
+                    ? 'text-foreground'
+                    : 'text-muted-foreground hover:bg-muted hover:text-foreground',
+                )}>
+                <Icon />
+                <span className="[writing-mode:vertical-rl] text-[10px] font-medium leading-none">
+                  {t(labelKey)}
+                </span>
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="right">{t(labelKey)}</TooltipContent>
+          </Tooltip>
+        ))}
+      </div>
+
+      {/* Bottom buttons — visible on hover */}
+      <div className="flex flex-col items-center gap-1 pb-1 opacity-0 transition-opacity group-hover/strip:opacity-100">
+        <Tooltip>
+          <TooltipTrigger>
+            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onExpand}>
+              <PanelLeftOpen className="h-3.5 w-3.5" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side="right">Expand panel</TooltipContent>
+        </Tooltip>
+        <Tooltip>
+          <TooltipTrigger>
+            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onMaximize}>
+              {isMaximized ? <Minimize2 className="h-3.5 w-3.5" /> : <Maximize2 className="h-3.5 w-3.5" />}
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side="right">{isMaximized ? 'Restore' : 'Maximize'}</TooltipContent>
+        </Tooltip>
+      </div>
     </div>
   );
 }

@@ -67,6 +67,7 @@ export default function ProblemDetailPage() {
       return []
     }
   })
+  const [leftPanelTab, setLeftPanelTab] = useState('description')
   const [leftCollapsed, setLeftCollapsed] = useState(false)
   const [rightCollapsed, setRightCollapsed] = useState(false)
   const [editorCollapsed, setEditorCollapsed] = useState(false)
@@ -379,7 +380,15 @@ export default function ProblemDetailPage() {
         onRightCollapsed={setRightCollapsed}
         onEditorCollapsed={setEditorCollapsed}
         onTestsCollapsed={setTestsCollapsed}
-        collapsedLeftContent={<CollapsedLeftStrip onExpand={() => panelFunctionsRef.current?.expandLeft()} />}
+        collapsedLeftContent={
+          <CollapsedLeftStrip
+            activeTab={leftPanelTab}
+            onTabSelect={setLeftPanelTab}
+            onExpand={() => panelFunctionsRef.current?.expandLeft()}
+            onMaximize={handleMaximizeLeft}
+            isMaximized={rightCollapsed}
+          />
+        }
         collapsedTestContent={<CollapsedTestStrip onExpand={() => panelFunctionsRef.current?.expandTests()} />}
         leftPanel={
           <LeftPanel
@@ -390,6 +399,8 @@ export default function ProblemDetailPage() {
             constraints={problem.constraints}
             isAuthenticated={isAuthenticated}
             submissions={submissions}
+            activeTab={leftPanelTab}
+            onTabChange={setLeftPanelTab}
             onUpdateNote={updateNote}
             onLoadIntoEditor={handleLoadIntoEditor}
             onFold={handleFoldLeft}
