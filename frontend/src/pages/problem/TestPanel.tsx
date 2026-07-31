@@ -10,7 +10,8 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from '@/components/ui/Tooltip';
-import { PanelBottomClose, Maximize2, Minimize2 } from 'lucide-react';
+import { PanelBottomClose, PanelBottomOpen, Maximize2, Minimize2 } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import type { TestCase } from '@/types/problem';
 import type {
   CodeError,
@@ -515,22 +516,51 @@ function RunResultsSection({
   );
 }
 
-export function CollapsedTestStrip({ onExpand }: { onExpand?: () => void }) {
+interface CollapsedTestStripProps {
+  onExpand: () => void;
+  onMaximize: () => void;
+  isMaximized: boolean;
+}
+
+export function CollapsedTestStrip({ onExpand, onMaximize, isMaximized }: CollapsedTestStripProps) {
   const { t } = useTranslation('problem');
   return (
-    <div className="flex h-full items-center gap-1 px-2">
-      <button
-        type="button"
-        onClick={onExpand}
-        className="rounded px-2 py-1 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
-        {t('test.testCases')}
-      </button>
-      <button
-        type="button"
-        onClick={onExpand}
-        className="rounded px-2 py-1 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
-        {t('test.output')}
-      </button>
+    <div className="group/strip flex h-full items-center justify-between px-2">
+      {/* Tab buttons */}
+      <div className="flex items-center gap-1">
+        <button
+          type="button"
+          onClick={onExpand}
+          className="rounded px-2 py-1 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
+          {t('test.testCases')}
+        </button>
+        <button
+          type="button"
+          onClick={onExpand}
+          className="rounded px-2 py-1 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
+          {t('test.output')}
+        </button>
+      </div>
+
+      {/* Right-side buttons — visible on hover */}
+      <div className={cn('flex items-center gap-1 opacity-0 transition-opacity group-hover/strip:opacity-100')}>
+        <Tooltip>
+          <TooltipTrigger>
+            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onExpand}>
+              <PanelBottomOpen className="h-3.5 w-3.5" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>Expand panel</TooltipContent>
+        </Tooltip>
+        <Tooltip>
+          <TooltipTrigger>
+            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onMaximize}>
+              {isMaximized ? <Minimize2 className="h-3.5 w-3.5" /> : <Maximize2 className="h-3.5 w-3.5" />}
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>{isMaximized ? 'Restore editor' : 'Maximize panel'}</TooltipContent>
+        </Tooltip>
+      </div>
     </div>
   );
 }

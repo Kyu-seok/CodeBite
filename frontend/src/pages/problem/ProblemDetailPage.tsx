@@ -389,7 +389,13 @@ export default function ProblemDetailPage() {
             isMaximized={rightCollapsed}
           />
         }
-        collapsedTestContent={<CollapsedTestStrip onExpand={() => panelFunctionsRef.current?.expandTests()} />}
+        collapsedTestContent={
+          <CollapsedTestStrip
+            onExpand={() => panelFunctionsRef.current?.expandTests()}
+            onMaximize={handleMaximizeTests}
+            isMaximized={editorCollapsed}
+          />
+        }
         leftPanel={
           <LeftPanel
             slug={slug!}
