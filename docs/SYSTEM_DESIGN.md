@@ -505,6 +505,22 @@ GET /submissions/{id}
 - Fails open if Redis is unavailable
 - Works correctly across multiple backend instances (shared Redis state)
 
+**Delivery guarantees:**
+
+PostgreSQL, not Kafka, is the system of record. The submission row holds the source code, so the
+event is only a "process this id" signal. That choice shapes the whole failure model:
+
+| Stage | Guarantee | Mechanism |
+|-------|-----------|-----------|
+| Publish | At-least-once | `acks=all` + idempotent producer. Non-blocking, so the HTTP thread never waits on the broker; a failed send increments `codebite.submissions.publish.failures` and leaves the row PENDING |
+| Delivery | At-least-once | Consumer offsets committed after processing; a rollback leaves the row PENDING for redelivery |
+| Processing | Effectively-once | `SubmissionConsumer` skips any submission that is no longer PENDING, so duplicates are no-ops |
+| Retry | 3 attempts, 1s fixed backoff | `DefaultErrorHandler`; exhaustion marks the row INTERNAL_ERROR (no DLT — the row is the durable record) |
+| Lost event | Recovered | `StuckSubmissionRedriver` re-publishes rows PENDING beyond `min-age`; rows beyond `max-age` are abandoned to INTERNAL_ERROR so the loop terminates |
+
+The re-drive sweep is what closes the gap between the DB commit and the broker ack. Only one backend
+replica sweeps per interval, elected via the same `SET NX EX` primitive as the rate limiter.
+
 ---
 
 ## 7. Project Folder Structure
