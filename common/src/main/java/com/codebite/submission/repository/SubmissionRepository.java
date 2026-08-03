@@ -142,4 +142,26 @@ public interface SubmissionRepository extends JpaRepository<Submission, Long> {
 
     // Re-drive sweep: submissions stuck in PENDING past the point of retrying.
     List<Submission> findByStatusAndCreatedAtBefore(SubmissionStatus status, Instant before);
+
+    // Stats recompute: one row of aggregates for a single user. Recomputing from source is what
+    // makes the stats consumer idempotent — replaying an event yields the same numbers, whereas
+    // incrementing counters would double-count on redelivery.
+    // Returns (distinct solved, distinct attempted, total, accepted, last solved at).
+    @Query("SELECT COUNT(DISTINCT CASE WHEN s.status = com.codebite.submission.entity.SubmissionStatus.ACCEPTED THEN s.problem.id END), "
+           + "COUNT(DISTINCT s.problem.id), "
+           + "COUNT(s), "
+           + "SUM(CASE WHEN s.status = com.codebite.submission.entity.SubmissionStatus.ACCEPTED THEN 1 ELSE 0 END), "
+           + "MAX(CASE WHEN s.status = com.codebite.submission.entity.SubmissionStatus.ACCEPTED THEN s.createdAt END) "
+           + "FROM Submission s "
+           + "WHERE s.user.id = :userId AND s.adminSubmission = false "
+           + "AND s.status != com.codebite.submission.entity.SubmissionStatus.PENDING")
+    Object[] aggregateForUser(@Param("userId") Long userId);
+
+    // Stats recompute: totals for a single problem. Returns (total, accepted).
+    @Query("SELECT COUNT(s), "
+           + "SUM(CASE WHEN s.status = com.codebite.submission.entity.SubmissionStatus.ACCEPTED THEN 1 ELSE 0 END) "
+           + "FROM Submission s "
+           + "WHERE s.problem.id = :problemId AND s.adminSubmission = false "
+           + "AND s.status != com.codebite.submission.entity.SubmissionStatus.PENDING")
+    Object[] aggregateForProblem(@Param("problemId") Long problemId);
 }

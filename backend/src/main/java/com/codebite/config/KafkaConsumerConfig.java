@@ -28,39 +28,61 @@ import java.util.Map;
 @ConditionalOnProperty(name = "app.kafka.enabled", havingValue = "true", matchIfMissing = true)
 public class KafkaConsumerConfig {
 
-    @Bean
-    public ConsumerFactory<String, SubmissionResultEvent> submissionResultConsumerFactory(
-            @Value("${spring.kafka.bootstrap-servers}") String bootstrapServers) {
-
+    /**
+     * Shared deserializer setup. {@link ErrorHandlingDeserializer} matters: without it a malformed
+     * record fails inside the poll loop and the same offset is retried forever, wedging the
+     * partition.
+     */
+    private static ErrorHandlingDeserializer<SubmissionResultEvent> resultDeserializer() {
         JsonDeserializer<SubmissionResultEvent> valueDeserializer =
                 new JsonDeserializer<>(SubmissionResultEvent.class);
         valueDeserializer.addTrustedPackages("com.codebite.submission.event");
         // The worker sends this exact type; ignoring the type header keeps the two sides from
         // being coupled through a fully-qualified class name in the payload.
         valueDeserializer.setUseTypeHeaders(false);
-
-        Map<String, Object> props = new HashMap<>();
-        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-        // A replica only pushes results for connections it currently holds, so history is noise.
-        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
-        props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, true);
-
-        return new DefaultKafkaConsumerFactory<>(
-                props,
-                new StringDeserializer(),
-                // A malformed record must not wedge the listener: without this, deserialization
-                // fails inside the poll loop and the same offset is retried forever.
-                new ErrorHandlingDeserializer<>(valueDeserializer));
+        return new ErrorHandlingDeserializer<>(valueDeserializer);
     }
 
+    private static Map<String, Object> baseProps(String bootstrapServers, String autoOffsetReset) {
+        Map<String, Object> props = new HashMap<>();
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, autoOffsetReset);
+        props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, true);
+        return props;
+    }
+
+    /**
+     * SSE push. {@code latest} is deliberate: a replica can only push results for connections it
+     * currently holds, so replaying history on startup would deliver events nobody is waiting for.
+     */
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, SubmissionResultEvent>
             submissionResultListenerContainerFactory(
-                    ConsumerFactory<String, SubmissionResultEvent> submissionResultConsumerFactory) {
+                    @Value("${spring.kafka.bootstrap-servers}") String bootstrapServers) {
 
         ConcurrentKafkaListenerContainerFactory<String, SubmissionResultEvent> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(submissionResultConsumerFactory);
+        factory.setConsumerFactory(new DefaultKafkaConsumerFactory<>(
+                baseProps(bootstrapServers, "latest"),
+                new StringDeserializer(), resultDeserializer()));
+        return factory;
+    }
+
+    /**
+     * Stats aggregation. {@code earliest} is the opposite choice and for the opposite reason: this
+     * consumer owns durable derived state, so on first deployment it must read the topic from the
+     * beginning to backfill rather than silently starting from empty.
+     */
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, SubmissionResultEvent>
+            statsListenerContainerFactory(
+                    @Value("${spring.kafka.bootstrap-servers}") String bootstrapServers) {
+
+        ConcurrentKafkaListenerContainerFactory<String, SubmissionResultEvent> factory =
+                new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(new DefaultKafkaConsumerFactory<>(
+                baseProps(bootstrapServers, "earliest"),
+                new StringDeserializer(), resultDeserializer()));
         return factory;
     }
 }

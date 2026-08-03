@@ -496,16 +496,32 @@ GET /submissions/{id}
 | `submission-events` | 3 | `codebite-worker` | Work queue — one thread per partition (`concurrency: 3`) |
 | `submission-events-admin` | 1 | `codebite-worker-admin` | Work queue, `concurrency: 1`. Isolates admin bulk validation so a batch cannot occupy every user partition |
 | `submission-results` | 3 | `codebite-sse-${random.uuid}` | **Broadcast** — one single-member group per replica, so every replica sees every event |
+| `submission-results` | 3 | `codebite-stats` | Work queue — partitions split across replicas, each event aggregated once |
 
 - Key: `submissionId` — per-user ordering is not required, and `submissionId` spreads load evenly
 - Replication factor 1 throughout (single broker)
 
-**Why the result topic uses a per-instance group.** Every other consumer shares a group id, so a
-partition goes to exactly one member and the group acts as a work queue. The SSE connection lives on
-one specific backend replica, so a shared group would deliver the result to some replica that has no
-connection to push it to, stranding the client on its polling fallback. Giving each replica its own
-single-member group turns the same topic into a broadcast. The cost is an orphaned group per restart,
-which is harmless — they hold no offsets worth keeping and Kafka expires them.
+**Why the result topic carries two group patterns.** `submission-results` has two independent
+consumers, and they need opposite delivery semantics from the same stream:
+
+- **SSE push** uses a per-instance group id. The connection lives on one specific replica, so a
+  shared group would deliver the result to a replica with no connection to push it to, stranding the
+  client on its polling fallback. Each replica gets its own single-member group, making it a
+  broadcast. The cost is an orphaned group per restart — harmless, since they hold no offsets worth
+  keeping and Kafka expires them.
+- **Stats** uses one shared group. Aggregates must be updated once, not once per replica, so the
+  partitions distribute across instances as an ordinary work queue.
+
+Consumer groups, not topics, decide whether a subscriber is a queue or a broadcast. The two also
+differ on `auto-offset-reset`: SSE uses `latest` (replaying history would push results nobody is
+waiting for), stats uses `earliest` (it owns durable derived state and must backfill on first
+deployment).
+
+**Stats idempotency.** Delivery is at-least-once, so the stats consumer *recomputes* the affected
+rows from `submissions` rather than incrementing counters. Replaying an event converges on the same
+numbers instead of double-counting, and a corrupted aggregate is repaired by replaying the topic.
+This moves a full group-by off the problem-list read path in exchange for one aggregate query per
+graded submission.
 - Storage: `KAFKA_LOG_DIRS: /var/lib/kafka/data` backed by the `codebite-kafka` named volume, so the
   log survives broker recreation. The path matters — it exists in the image owned by `appuser` (uid 1000),
   so the volume inherits that ownership; mounting elsewhere yields a root-owned dir and a crash loop.
