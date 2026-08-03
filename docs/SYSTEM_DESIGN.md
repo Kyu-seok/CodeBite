@@ -489,18 +489,20 @@ Frontend polls
 GET /submissions/{id}
 ```
 
-**Kafka topic design:**
+**Kafka topic design (as implemented):**
 - Topic: `submission-events`
-- Key: `userId` (ensures ordering per user)
-- Partitions: configurable (e.g., 6) — allows parallel worker consumption
-- Consumer group: `judge-workers` — multiple worker instances share partitions
+- Key: `submissionId` — per-user ordering is not required, and `submissionId` spreads load evenly
+- Partitions: 3, replication factor 1 (`KafkaTopicConfig`) — worker runs `concurrency: 3`, one thread per partition
+- Consumer group: `codebite-worker`
+- Storage: `KAFKA_LOG_DIRS: /var/lib/kafka/data` backed by the `codebite-kafka` named volume, so the
+  log survives broker recreation. The path matters — it exists in the image owned by `appuser` (uid 1000),
+  so the volume inherits that ownership; mounting elsewhere yields a root-owned dir and a crash loop.
 
-**Redis rate limiter design:**
-- Algorithm: sliding window counter
-- Key: `rate:submit:{userId}`
-- Limit: configurable (e.g., 5 submissions per 60 seconds)
-- Uses Redis `INCR` + `EXPIRE` or a sorted set with timestamps
-- Returns `429 Too Many Requests` with `Retry-After` header when exceeded
+**Redis rate limiter design (as implemented):**
+- Algorithm: fixed cooldown flag via `SET NX EX` (not a sliding window)
+- Key: `ratelimit:{action}:{identifier}`
+- Limits: submit 10s per user, run 5s per client IP
+- Fails open if Redis is unavailable
 - Works correctly across multiple backend instances (shared Redis state)
 
 ---

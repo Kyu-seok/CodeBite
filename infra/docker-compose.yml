@@ -35,8 +35,13 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
-      KAFKA_LOG_DIRS: /tmp/kraft-combined-logs
+      # /var/lib/kafka/data exists in the image owned by appuser (uid 1000), so a named
+      # volume inherits that ownership. Mounting anywhere else creates a root-owned dir
+      # and the broker crash-loops on startup (see README "Kafka 컨테이너 무한 재시작").
+      KAFKA_LOG_DIRS: /var/lib/kafka/data
       CLUSTER_ID: codebite-kafka-cluster-id-01
+    volumes:
+      - codebite-kafka:/var/lib/kafka/data
 
   prometheus:
     image: prom/prometheus:v2.51.0
@@ -84,3 +89,4 @@ volumes:
   codebite-pgdata:
   codebite-redis:
   codebite-grafana:
+  codebite-kafka:
