@@ -1,6 +1,7 @@
 package com.codebite.submission.repository;
 
 import com.codebite.submission.entity.Submission;
+import com.codebite.submission.entity.SubmissionStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -128,4 +129,17 @@ public interface SubmissionRepository extends JpaRepository<Submission, Long> {
 
     // Admin: all submissions for a specific user (paginated)
     Page<Submission> findByUserIdOrderByCreatedAtDesc(Long userId, Pageable pageable);
+
+    // Re-drive sweep: submissions whose event was likely lost in flight. The window is bounded on
+    // both sides — younger than `from` is still legitimately in progress, older than `to` has been
+    // retried long enough and is abandoned instead.
+    @Query("SELECT s FROM Submission s JOIN FETCH s.problem " +
+           "WHERE s.status = com.codebite.submission.entity.SubmissionStatus.PENDING " +
+           "AND s.createdAt BETWEEN :from AND :to " +
+           "ORDER BY s.createdAt ASC")
+    List<Submission> findStalePending(@Param("from") Instant from, @Param("to") Instant to,
+                                      Pageable pageable);
+
+    // Re-drive sweep: submissions stuck in PENDING past the point of retrying.
+    List<Submission> findByStatusAndCreatedAtBefore(SubmissionStatus status, Instant before);
 }
