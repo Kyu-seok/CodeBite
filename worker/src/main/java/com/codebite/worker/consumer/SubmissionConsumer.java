@@ -8,12 +8,14 @@ import com.codebite.submission.entity.Submission;
 import com.codebite.submission.entity.SubmissionResult;
 import com.codebite.submission.entity.SubmissionStatus;
 import com.codebite.submission.event.SubmissionEvent;
+import com.codebite.submission.event.SubmissionResultEvent;
 import com.codebite.submission.repository.SubmissionRepository;
 import com.codebite.submission.repository.SubmissionResultRepository;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +34,7 @@ public class SubmissionConsumer {
     private final SubmissionRepository submissionRepository;
     private final SubmissionMetrics submissionMetrics;
     private final MeterRegistry meterRegistry;
+    private final ApplicationEventPublisher eventPublisher;
     private final Timer processingTimer;
 
     public SubmissionConsumer(JudgeService judgeService,
@@ -39,13 +42,15 @@ public class SubmissionConsumer {
                               SubmissionResultRepository submissionResultRepository,
                               SubmissionRepository submissionRepository,
                               SubmissionMetrics submissionMetrics,
-                              MeterRegistry meterRegistry) {
+                              MeterRegistry meterRegistry,
+                              ApplicationEventPublisher eventPublisher) {
         this.judgeService = judgeService;
         this.testCaseRepository = testCaseRepository;
         this.submissionResultRepository = submissionResultRepository;
         this.submissionRepository = submissionRepository;
         this.submissionMetrics = submissionMetrics;
         this.meterRegistry = meterRegistry;
+        this.eventPublisher = eventPublisher;
         this.processingTimer = Timer.builder("codebite.submissions.processing.duration")
                 .description("Time to process a submission through Judge0")
                 .register(meterRegistry);
@@ -118,6 +123,18 @@ public class SubmissionConsumer {
         submission.setRuntimeMs(maxRuntimeMs);
         submission.setMemoryKb(maxMemoryKb);
         submissionRepository.save(submission);
+
+        // Fan-out point. Published AFTER_COMMIT by SubmissionResultProducer so a rollback here
+        // cannot announce a grade that was never persisted.
+        eventPublisher.publishEvent(new SubmissionResultEvent(
+                submissionId,
+                submission.getUser().getId(),
+                event.problemId(),
+                overallStatus,
+                maxRuntimeMs,
+                maxMemoryKb,
+                submission.getLanguage(),
+                event.adminSubmission()));
 
         if (!event.adminSubmission()) {
             sample.stop(processingTimer);

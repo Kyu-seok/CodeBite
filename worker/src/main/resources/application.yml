@@ -33,6 +33,17 @@ spring:
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
         spring.json.trusted.packages: com.codebite.submission.event
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      # Result events are a notification, not the record — the graded row is already committed to
+      # PostgreSQL. acks=1 is enough, and a bounded timeout keeps a broker stall from backing up
+      # the listener thread that is trying to grade the next submission.
+      acks: "1"
+      properties:
+        delivery.timeout.ms: 5000
+        request.timeout.ms: 3000
+        max.block.ms: 3000
 
 management:
   endpoints:
@@ -50,6 +61,7 @@ app:
   kafka:
     topic:
       submission: submission-events
+      submission-results: submission-results
   judge0:
     url: ${JUDGE0_URL:http://192.168.219.200:2358}
     poll-interval-ms: ${JUDGE0_POLL_INTERVAL_MS:150}

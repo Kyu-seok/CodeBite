@@ -2,10 +2,12 @@ package com.codebite.worker.consumer;
 
 import com.codebite.submission.entity.SubmissionStatus;
 import com.codebite.submission.event.SubmissionEvent;
+import com.codebite.submission.event.SubmissionResultEvent;
 import com.codebite.submission.repository.SubmissionRepository;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.kafka.listener.ConsumerRecordRecoverer;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,11 +24,14 @@ public class SubmissionFailureRecoverer implements ConsumerRecordRecoverer {
 
     private final SubmissionRepository submissionRepository;
     private final SubmissionMetrics submissionMetrics;
+    private final ApplicationEventPublisher eventPublisher;
 
     public SubmissionFailureRecoverer(SubmissionRepository submissionRepository,
-                                      SubmissionMetrics submissionMetrics) {
+                                      SubmissionMetrics submissionMetrics,
+                                      ApplicationEventPublisher eventPublisher) {
         this.submissionRepository = submissionRepository;
         this.submissionMetrics = submissionMetrics;
+        this.eventPublisher = eventPublisher;
     }
 
     @Override
@@ -45,6 +50,18 @@ public class SubmissionFailureRecoverer implements ConsumerRecordRecoverer {
             submission.setStatus(SubmissionStatus.INTERNAL_ERROR);
             submissionRepository.save(submission);
             submissionMetrics.recordCompleted(event, SubmissionStatus.INTERNAL_ERROR);
+
+            // A client waiting on SSE must learn about the failure too, or it hangs until its
+            // poll fallback times out. Published AFTER_COMMIT, same as the success path.
+            eventPublisher.publishEvent(new SubmissionResultEvent(
+                    submissionId,
+                    submission.getUser().getId(),
+                    event.problemId(),
+                    SubmissionStatus.INTERNAL_ERROR,
+                    null,
+                    null,
+                    submission.getLanguage(),
+                    event.adminSubmission()));
         }, () -> log.warn("Submission {} no longer exists; nothing to mark", submissionId));
     }
 }

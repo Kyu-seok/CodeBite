@@ -10,6 +10,8 @@ import com.codebite.submission.entity.SubmissionStatus;
 import com.codebite.submission.event.SubmissionEvent;
 import com.codebite.submission.repository.SubmissionRepository;
 import com.codebite.submission.repository.SubmissionResultRepository;
+import com.codebite.submission.event.SubmissionResultEvent;
+import com.codebite.user.entity.User;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,6 +19,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.List;
 import java.util.Optional;
@@ -38,6 +41,7 @@ class SubmissionConsumerTest {
     @Mock private TestCaseRepository testCaseRepository;
     @Mock private SubmissionResultRepository submissionResultRepository;
     @Mock private SubmissionRepository submissionRepository;
+    @Mock private ApplicationEventPublisher eventPublisher;
 
     private SubmissionConsumer consumer;
 
@@ -47,7 +51,14 @@ class SubmissionConsumerTest {
         consumer = new SubmissionConsumer(
                 judgeService, testCaseRepository,
                 submissionResultRepository, submissionRepository,
-                new SubmissionMetrics(meterRegistry), meterRegistry);
+                new SubmissionMetrics(meterRegistry), meterRegistry, eventPublisher);
+    }
+
+    /** The result event carries the owner's id, so submissions under test need one. */
+    private static User owner() {
+        User user = new User();
+        user.setId(77L);
+        return user;
     }
 
     private static JudgeResponse accepted(String stdout) {
@@ -59,6 +70,7 @@ class SubmissionConsumerTest {
         Submission submission = new Submission();
         submission.setId(1L);
         submission.setStatus(SubmissionStatus.PENDING);
+        submission.setUser(owner());
 
         TestCase testCase = new TestCase();
         testCase.setId(1L);
@@ -97,6 +109,7 @@ class SubmissionConsumerTest {
         Submission submission = new Submission();
         submission.setId(1L);
         submission.setStatus(SubmissionStatus.PENDING);
+        submission.setUser(owner());
 
         TestCase tc1 = new TestCase();
         tc1.setId(1L);
@@ -133,6 +146,7 @@ class SubmissionConsumerTest {
         Submission submission = new Submission();
         submission.setId(1L);
         submission.setStatus(SubmissionStatus.PENDING);
+        submission.setUser(owner());
 
         when(submissionRepository.findById(1L)).thenReturn(Optional.of(submission));
         when(testCaseRepository.findByProblemIdOrderByOrderIndexAsc(10L))

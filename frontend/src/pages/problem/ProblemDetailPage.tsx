@@ -3,7 +3,14 @@ import { useParams, useNavigate, useOutletContext } from "react-router-dom"
 import { useProblem } from "@/hooks/useProblem"
 import { useSubmissions } from "@/hooks/useSubmissions"
 import { useAuth } from "@/context/AuthContext"
-import { submitCode, getSubmission, runCode, setSolveTime } from "@/api/submissions"
+import {
+  submitCode,
+  getSubmission,
+  runCode,
+  setSolveTime,
+  getStreamToken,
+  submissionStreamUrl,
+} from "@/api/submissions"
 import { setSubmissionReview } from "@/api/reviews"
 import { ProblemLayout, type PanelFunctions } from "@/components/layout/ProblemLayout"
 import Spinner from "@/components/ui/Spinner"
@@ -24,8 +31,12 @@ import type { ApiError } from "@/types/api"
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts"
 import type { WorkspaceOutletContext } from "@/components/layout/Layout"
 
+// Polling is now the fallback path, not the primary one — results normally arrive over SSE.
 const POLL_INTERVAL_MS = 500
 const POLL_MAX_DURATION_MS = 60_000
+// Below the server's 120s emitter timeout, so the client gives up on a silent stream and
+// switches to polling before the connection is closed underneath it.
+const SSE_MAX_DURATION_MS = 90_000
 
 export default function ProblemDetailPage() {
   const { slug } = useParams<{ slug: string }>()
@@ -74,6 +85,7 @@ export default function ProblemDetailPage() {
   const [testsCollapsed, setTestsCollapsed] = useState(false)
   const panelFunctionsRef = useRef<PanelFunctions | null>(null)
   const pollIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const eventSourceRef = useRef<EventSource | null>(null)
   const resetLayoutRef = useRef<(() => void) | null>(null)
   const runRef = useRef<() => void>(() => {})
   const submitRef = useRef<() => void>(() => {})
@@ -92,6 +104,7 @@ export default function ProblemDetailPage() {
   useEffect(() => {
     return () => {
       if (pollIntervalRef.current) clearInterval(pollIntervalRef.current)
+      if (eventSourceRef.current) eventSourceRef.current.close()
     }
   }, [])
 
@@ -204,56 +217,126 @@ export default function ProblemDetailPage() {
     }
   }
 
+  const stopWatching = () => {
+    if (pollIntervalRef.current) {
+      clearInterval(pollIntervalRef.current)
+      pollIntervalRef.current = null
+    }
+    if (eventSourceRef.current) {
+      eventSourceRef.current.close()
+      eventSourceRef.current = null
+    }
+  }
+
+  /**
+   * Loads the finished submission and runs the post-submit side effects.
+   * Shared by the stream and the polling fallback so both settle identically.
+   * Returns false when the submission is still PENDING.
+   */
+  const finalizeSubmission = async (submissionId: number): Promise<boolean> => {
+    const res = await getSubmission(submissionId)
+    if (res.data.status === "PENDING") return false
+
+    stopWatching()
+    setResult(res.data)
+    setSubmitting(false)
+
+    let capturedSolveTime: number | null = null
+    if (timerSnapshotRef.current != null && res.data.status === "ACCEPTED") {
+      capturedSolveTime = timerSnapshotRef.current
+      stopTimer(capturedSolveTime)
+      // Persist as a structured field on the submission.
+      try {
+        await setSolveTime(submissionId, capturedSolveTime)
+      } catch {
+        // Non-fatal; the modal still lets the user enter time manually.
+      }
+    }
+    timerSnapshotRef.current = null
+
+    if (res.data.status === "ACCEPTED") {
+      fireConfetti()
+      setAcceptedModal({
+        open: true,
+        submissionId,
+        solveTimeSeconds: capturedSolveTime,
+      })
+    }
+
+    refetchSubmissions()
+    return true
+  }
+
   const pollForResult = (submissionId: number) => {
+    if (pollIntervalRef.current) return
     const startTime = Date.now()
     const interval = setInterval(async () => {
       if (Date.now() - startTime > POLL_MAX_DURATION_MS) {
-        clearInterval(interval)
-        pollIntervalRef.current = null
+        stopWatching()
         setSubmitError("Submission is taking longer than expected. Please refresh to check the result.")
         setSubmitting(false)
         return
       }
       try {
-        const res = await getSubmission(submissionId)
-        if (res.data.status !== "PENDING") {
-          clearInterval(interval)
-          pollIntervalRef.current = null
-          setResult(res.data)
-          setSubmitting(false)
-
-          let capturedSolveTime: number | null = null
-          if (timerSnapshotRef.current != null && res.data.status === "ACCEPTED") {
-            capturedSolveTime = timerSnapshotRef.current
-            stopTimer(capturedSolveTime)
-            // Persist as a structured field on the submission.
-            try {
-              await setSolveTime(submissionId, capturedSolveTime)
-            } catch {
-              // Non-fatal; the modal still lets the user enter time manually.
-            }
-          }
-          timerSnapshotRef.current = null
-
-          if (res.data.status === "ACCEPTED") {
-            fireConfetti()
-            setAcceptedModal({
-              open: true,
-              submissionId,
-              solveTimeSeconds: capturedSolveTime,
-            })
-          }
-
-          refetchSubmissions()
-        }
+        await finalizeSubmission(submissionId)
       } catch {
-        clearInterval(interval)
-        pollIntervalRef.current = null
+        stopWatching()
         setSubmitError("Failed to fetch results.")
         setSubmitting(false)
       }
     }, POLL_INTERVAL_MS)
     pollIntervalRef.current = interval
+  }
+
+  /**
+   * Waits for the result over SSE, falling back to polling on any failure — no token
+   * (Redis disabled), a refused connection, or a mid-stream drop. The fallback is what
+   * keeps this safe to ship: the worker always writes the row, so polling still resolves.
+   */
+  const watchForResult = async (submissionId: number) => {
+    let token: string
+    try {
+      const res = await getStreamToken(submissionId)
+      token = res.data.token
+    } catch {
+      pollForResult(submissionId)
+      return
+    }
+
+    let source: EventSource
+    try {
+      source = new EventSource(submissionStreamUrl(submissionId, token))
+    } catch {
+      pollForResult(submissionId)
+      return
+    }
+    eventSourceRef.current = source
+
+    // Backstop for a stream that stays open without ever delivering a result.
+    const deadline = setTimeout(() => {
+      if (eventSourceRef.current === source) {
+        source.close()
+        eventSourceRef.current = null
+        pollForResult(submissionId)
+      }
+    }, SSE_MAX_DURATION_MS)
+
+    source.addEventListener("result", () => {
+      clearTimeout(deadline)
+      finalizeSubmission(submissionId).catch(() => {
+        stopWatching()
+        setSubmitError("Failed to fetch results.")
+        setSubmitting(false)
+      })
+    })
+
+    source.onerror = () => {
+      // EventSource retries on its own; only step in once it has actually given up.
+      if (source.readyState !== EventSource.CLOSED) return
+      clearTimeout(deadline)
+      if (eventSourceRef.current === source) eventSourceRef.current = null
+      pollForResult(submissionId)
+    }
   }
 
   const handleAcceptedReviewSubmit = async ({
@@ -357,7 +440,7 @@ export default function ProblemDetailPage() {
         sourceCode: code,
       })
       setResult(res.data)
-      pollForResult(res.data.id)
+      watchForResult(res.data.id)
     } catch (err) {
       if (err instanceof AxiosError && err.response?.data) {
         setSubmitError((err.response.data as ApiError).message)

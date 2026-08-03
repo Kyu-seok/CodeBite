@@ -59,7 +59,19 @@ app:
     enabled: ${KAFKA_ENABLED:true}
     topic:
       submission: submission-events
+      submission-results: submission-results
+    # Per-instance group: each replica forms its own single-member group so it receives every
+    # result event, because only the replica holding the SSE connection can push it. A shared
+    # group id here would strand clients on their polling fallback.
+    sse-group-id: codebite-sse-${random.uuid}
   submission:
+    sse:
+      # Long enough to cover a slow grade plus EventSource reconnects, short enough that a token
+      # leaked through an access log is worthless by the time anyone reads it.
+      token-ttl-seconds: 180
+      # Server-side cap on a stream. Comfortably beyond the p95 grade time; the client falls back
+      # to polling if it trips.
+      timeout-ms: 120000
     redrive:
       enabled: ${REDRIVE_ENABLED:true}
       interval-ms: 60000

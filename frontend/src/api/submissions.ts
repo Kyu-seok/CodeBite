@@ -24,3 +24,26 @@ export function updateSubmissionNote(id: number, notes: string) {
 export function setSolveTime(id: number, solveTimeSeconds: number) {
   return client.patch(`/submissions/${id}/solve-time`, { solveTimeSeconds });
 }
+
+export interface StreamTokenResponse {
+  token: string;
+  expiresInSeconds: number;
+}
+
+/**
+ * Exchanges the stored JWT for a short-lived token that opens the result stream.
+ * 404 means SSE is unavailable server-side (no Redis) — callers fall back to polling.
+ */
+export function getStreamToken(id: number) {
+  return client.post<StreamTokenResponse>(`/submissions/${id}/stream-token`);
+}
+
+/**
+ * Builds the EventSource URL. The token rides in the query string because EventSource
+ * cannot set an Authorization header; it is scoped to this one submission and expires
+ * in minutes, unlike the JWT.
+ */
+export function submissionStreamUrl(id: number, token: string) {
+  const base = import.meta.env.VITE_API_URL || "/api";
+  return `${base}/submissions/${id}/stream?token=${encodeURIComponent(token)}`;
+}
