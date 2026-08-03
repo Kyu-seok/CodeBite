@@ -3,7 +3,7 @@ package com.codebite.submission.sse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -27,8 +27,12 @@ import java.util.concurrent.TimeUnit;
  * <p>Requires Redis. Without it no token can be issued, the stream endpoint is unavailable, and the
  * frontend stays on its polling path.
  */
+// Gated on the property rather than @ConditionalOnBean(StringRedisTemplate.class): condition
+// evaluation for component-scanned beans runs before RedisAutoConfiguration registers that
+// template, so the bean-based condition is always false and the service silently never exists.
+// This mirrors RedisConfig, which supplies the Redis beans under the same flag.
 @Service
-@ConditionalOnBean(StringRedisTemplate.class)
+@ConditionalOnProperty(name = "app.cache.enabled", havingValue = "true", matchIfMissing = false)
 public class SseTokenService {
 
     private static final Logger log = LoggerFactory.getLogger(SseTokenService.class);
