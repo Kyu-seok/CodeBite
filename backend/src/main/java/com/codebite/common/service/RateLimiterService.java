@@ -2,14 +2,18 @@ package com.codebite.common.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.TimeUnit;
 
+// Gated on the property rather than @ConditionalOnBean(StringRedisTemplate.class): condition
+// evaluation for component-scanned beans runs before RedisAutoConfiguration registers that
+// template, so the bean-based condition never matched and no cooldown was ever applied.
+// Mirrors RedisConfig and UserCacheService.
 @Service
-@ConditionalOnBean(StringRedisTemplate.class)
+@ConditionalOnProperty(name = "app.cache.enabled", havingValue = "true", matchIfMissing = false)
 public class RateLimiterService {
 
     private static final Logger log = LoggerFactory.getLogger(RateLimiterService.class);
