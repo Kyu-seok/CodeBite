@@ -20,6 +20,20 @@ public class KafkaTopicConfig {
     }
 
     /**
+     * Admin bulk validation. Isolated from user traffic so a large batch cannot occupy every
+     * partition of submission-events and starve real submissions. One partition is deliberate:
+     * admin work should trickle, not compete with users for Judge0.
+     */
+    @Bean
+    public NewTopic submissionAdminTopic(
+            @Value("${app.kafka.topic.submission-admin}") String topic) {
+        return TopicBuilder.name(topic)
+                .partitions(1)
+                .replicas(1)
+                .build();
+    }
+
+    /**
      * Result fan-out. Every backend replica consumes this topic in its own single-member group, so
      * partition count does not distribute work here the way it does for submission-events — each
      * replica reads all 3 partitions regardless. It is kept at 3 for consistency and to leave room

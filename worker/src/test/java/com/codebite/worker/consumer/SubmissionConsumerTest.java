@@ -91,6 +91,63 @@ class SubmissionConsumerTest {
     }
 
     @Test
+    void consumeAdmin_gradesThroughTheSamePathAsUserSubmissions() {
+        Submission submission = new Submission();
+        submission.setId(1L);
+        submission.setStatus(SubmissionStatus.PENDING);
+        submission.setUser(owner());
+
+        TestCase testCase = new TestCase();
+        testCase.setId(1L);
+        testCase.setInput("1 2");
+        testCase.setExpectedOutput("3");
+
+        when(submissionRepository.findById(1L)).thenReturn(Optional.of(submission));
+        when(testCaseRepository.findByProblemIdOrderByOrderIndexAsc(10L)).thenReturn(List.of(testCase));
+        when(judgeService.executeBatch(anyString(), anyInt(), anyList()))
+                .thenReturn(List.of(accepted("3\n")));
+        when(judgeService.mapStatus(any(), anyString())).thenReturn(SubmissionStatus.ACCEPTED);
+
+        // The admin listener exists to isolate the queue, not to grade differently.
+        consumer.consumeAdmin(new SubmissionEvent(1L, "source", 62, 10L, true));
+
+        assertEquals(SubmissionStatus.ACCEPTED, submission.getStatus());
+        verify(submissionResultRepository).saveAll(any());
+        verify(submissionRepository).save(submission);
+    }
+
+    @Test
+    void consume_publishesResultEventForFanOut() {
+        Submission submission = new Submission();
+        submission.setId(1L);
+        submission.setStatus(SubmissionStatus.PENDING);
+        submission.setUser(owner());
+        submission.setLanguage("java");
+
+        TestCase testCase = new TestCase();
+        testCase.setId(1L);
+        testCase.setInput("1 2");
+        testCase.setExpectedOutput("3");
+
+        when(submissionRepository.findById(1L)).thenReturn(Optional.of(submission));
+        when(testCaseRepository.findByProblemIdOrderByOrderIndexAsc(10L)).thenReturn(List.of(testCase));
+        when(judgeService.executeBatch(anyString(), anyInt(), anyList()))
+                .thenReturn(List.of(accepted("3\n")));
+        when(judgeService.mapStatus(any(), anyString())).thenReturn(SubmissionStatus.ACCEPTED);
+
+        consumer.consume(new SubmissionEvent(1L, "source", 62, 10L, false));
+
+        ArgumentCaptor<SubmissionResultEvent> published =
+                ArgumentCaptor.forClass(SubmissionResultEvent.class);
+        verify(eventPublisher).publishEvent(published.capture());
+
+        SubmissionResultEvent event = published.getValue();
+        assertEquals(1L, event.submissionId());
+        assertEquals(77L, event.userId());
+        assertEquals(SubmissionStatus.ACCEPTED, event.status());
+    }
+
+    @Test
     void consume_skipsAlreadyProcessed() {
         Submission submission = new Submission();
         submission.setId(1L);

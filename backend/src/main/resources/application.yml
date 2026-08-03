@@ -59,6 +59,7 @@ app:
     enabled: ${KAFKA_ENABLED:true}
     topic:
       submission: submission-events
+      submission-admin: submission-events-admin
       submission-results: submission-results
     # Per-instance group: each replica forms its own single-member group so it receives every
     # result event, because only the replica holding the SSE connection can push it. A shared

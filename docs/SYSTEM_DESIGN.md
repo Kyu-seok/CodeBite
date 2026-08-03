@@ -490,10 +490,22 @@ GET /submissions/{id}
 ```
 
 **Kafka topic design (as implemented):**
-- Topic: `submission-events`
+
+| Topic | Partitions | Consumer group | Semantics |
+|-------|-----------|----------------|-----------|
+| `submission-events` | 3 | `codebite-worker` | Work queue — one thread per partition (`concurrency: 3`) |
+| `submission-events-admin` | 1 | `codebite-worker-admin` | Work queue, `concurrency: 1`. Isolates admin bulk validation so a batch cannot occupy every user partition |
+| `submission-results` | 3 | `codebite-sse-${random.uuid}` | **Broadcast** — one single-member group per replica, so every replica sees every event |
+
 - Key: `submissionId` — per-user ordering is not required, and `submissionId` spreads load evenly
-- Partitions: 3, replication factor 1 (`KafkaTopicConfig`) — worker runs `concurrency: 3`, one thread per partition
-- Consumer group: `codebite-worker`
+- Replication factor 1 throughout (single broker)
+
+**Why the result topic uses a per-instance group.** Every other consumer shares a group id, so a
+partition goes to exactly one member and the group acts as a work queue. The SSE connection lives on
+one specific backend replica, so a shared group would deliver the result to some replica that has no
+connection to push it to, stranding the client on its polling fallback. Giving each replica its own
+single-member group turns the same topic into a broadcast. The cost is an orphaned group per restart,
+which is harmless — they hold no offsets worth keeping and Kafka expires them.
 - Storage: `KAFKA_LOG_DIRS: /var/lib/kafka/data` backed by the `codebite-kafka` named volume, so the
   log survives broker recreation. The path matters — it exists in the image owned by `appuser` (uid 1000),
   so the volume inherits that ownership; mounting elsewhere yields a root-owned dir and a crash loop.

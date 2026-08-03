@@ -18,13 +18,16 @@ public class SubmissionEventProducer {
 
     private final KafkaTemplate<String, SubmissionEvent> kafkaTemplate;
     private final String topic;
+    private final String adminTopic;
     private final Counter publishFailures;
 
     public SubmissionEventProducer(KafkaTemplate<String, SubmissionEvent> kafkaTemplate,
                                    @Value("${app.kafka.topic.submission}") String topic,
+                                   @Value("${app.kafka.topic.submission-admin}") String adminTopic,
                                    MeterRegistry meterRegistry) {
         this.kafkaTemplate = kafkaTemplate;
         this.topic = topic;
+        this.adminTopic = adminTopic;
         this.publishFailures = Counter.builder("codebite.submissions.publish.failures")
                 .description("Submission events that could not be published to Kafka")
                 .register(meterRegistry);
@@ -32,12 +35,16 @@ public class SubmissionEventProducer {
 
     public void send(SubmissionEvent event) {
         Long submissionId = event.submissionId();
-        log.info("Publishing submission event: submissionId={}", submissionId);
+
+        // Admin bulk validation goes to its own topic so it cannot occupy every partition and
+        // push real user submissions behind a long batch.
+        String destination = event.adminSubmission() ? adminTopic : topic;
+        log.info("Publishing submission event: submissionId={} topic={}", submissionId, destination);
 
         // Deliberately non-blocking: the HTTP thread returns PENDING immediately and must not
         // absorb broker latency. The callback exists so a failed publish is visible rather than
         // silent — the row stays PENDING and StuckSubmissionRedriver re-publishes it.
-        kafkaTemplate.send(topic, String.valueOf(submissionId), event)
+        kafkaTemplate.send(destination, String.valueOf(submissionId), event)
                 .whenComplete((result, ex) -> {
                     if (ex != null) {
                         log.error("Failed to publish submission event: submissionId={}. "

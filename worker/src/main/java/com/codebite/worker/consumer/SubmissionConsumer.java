@@ -56,9 +56,34 @@ public class SubmissionConsumer {
                 .register(meterRegistry);
     }
 
+    /**
+     * User submissions. Runs at the configured concurrency (one thread per partition).
+     */
     @KafkaListener(topics = "${app.kafka.topic.submission}", groupId = "codebite-worker")
     @Transactional
     public void consume(SubmissionEvent event) {
+        grade(event);
+    }
+
+    /**
+     * Admin submissions, on their own topic and consumer group.
+     *
+     * <p>Admin bulk test-case validation submits many problems at once. Sharing the user topic let
+     * that batch occupy all three partitions and push real user submissions to the back of the
+     * queue — at ~0.65 submissions/sec the wait is measured in minutes. A separate topic gives user
+     * traffic its own partitions, and concurrency 1 keeps admin work from monopolising Judge0,
+     * which is the actual throughput ceiling.
+     */
+    @KafkaListener(
+            topics = "${app.kafka.topic.submission-admin}",
+            groupId = "codebite-worker-admin",
+            concurrency = "1")
+    @Transactional
+    public void consumeAdmin(SubmissionEvent event) {
+        grade(event);
+    }
+
+    private void grade(SubmissionEvent event) {
         Long submissionId = event.submissionId();
         log.info("Processing submission: {}", submissionId);
 

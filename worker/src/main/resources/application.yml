@@ -61,6 +61,7 @@ app:
   kafka:
     topic:
       submission: submission-events
+      submission-admin: submission-events-admin
       submission-results: submission-results
   judge0:
     url: ${JUDGE0_URL:http://192.168.219.200:2358}
