@@ -26,6 +26,19 @@ spring:
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      # Set explicitly rather than relying on client defaults: a submission event that is
+      # lost in flight leaves its row PENDING forever, so the write must be acknowledged by
+      # the full ISR. Idempotence makes the retries safe to duplicate at the broker.
+      acks: all
+      retries: 3
+      properties:
+        enable.idempotence: true
+        # Bound the total time send() will spend retrying. The caller does not block on the
+        # future, but an unbounded retry would hold the record in the accumulator and hide
+        # the failure from the re-drive sweep.
+        delivery.timeout.ms: 10000
+        request.timeout.ms: 5000
+        max.in.flight.requests.per.connection: 5
 
 management:
   endpoints:
@@ -40,10 +53,37 @@ management:
         http.server.requests: true
 
 app:
+  scheduling:
+    enabled: ${SCHEDULING_ENABLED:true}
   kafka:
     enabled: ${KAFKA_ENABLED:true}
     topic:
       submission: submission-events
+      submission-admin: submission-events-admin
+      submission-results: submission-results
+    # Per-instance group: each replica forms its own single-member group so it receives every
+    # result event, because only the replica holding the SSE connection can push it. A shared
+    # group id here would strand clients on their polling fallback.
+    sse-group-id: codebite-sse-${random.uuid}
+  submission:
+    sse:
+      # Long enough to cover a slow grade plus EventSource reconnects, short enough that a token
+      # leaked through an access log is worthless by the time anyone reads it.
+      token-ttl-seconds: 180
+      # Server-side cap on a stream. Comfortably beyond the p95 grade time; the client falls back
+      # to polling if it trips.
+      timeout-ms: 120000
+    redrive:
+      enabled: ${REDRIVE_ENABLED:true}
+      interval-ms: 60000
+      # Younger than this and the worker is probably still grading it.
+      min-age-seconds: 120
+      # Older than this and re-publishing has had long enough; abandon to INTERNAL_ERROR.
+      max-age-seconds: 1800
+      batch-size: 50
+      # Shorter than interval-ms so a replica that dies holding the lock cannot stall the
+      # next sweep for more than one cycle.
+      lock-ttl-seconds: 50
   cache:
     enabled: true
     user-profile-ttl-seconds: 300

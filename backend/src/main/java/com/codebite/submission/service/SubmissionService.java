@@ -81,17 +81,14 @@ public class SubmissionService {
             throw new UnsupportedValueException("error.language.unsupported", language);
         }
 
-        String driverTemplate = driverCodeLoader.getDriverCode(problem.getSlug(), language);
+        // Fail fast before persisting anything if this problem has no driver for the language.
+        driverCodeLoader.getDriverCode(problem.getSlug(), language);
 
         // Save submission as PENDING
         Submission submission = saveSubmission(userId, problem, request);
 
         // Build source code and publish to Kafka for worker processing
-        String sourceCode = judgeService.buildSourceCode(driverTemplate, request.sourceCode());
-        int languageId = judgeService.mapLanguageToId(language);
-        submissionEventProducer.send(new SubmissionEvent(
-                submission.getId(), sourceCode, languageId, problem.getId(),
-                submission.isAdminSubmission()));
+        submissionEventProducer.send(buildEvent(submission));
         if (!submission.isAdminSubmission()) {
             submissionsCreatedCounter.increment();
         }
@@ -134,8 +131,27 @@ public class SubmissionService {
         return submissions.stream().map(this::toListItem).toList();
     }
 
-    @Transactional
-    protected Submission saveSubmission(Long userId, Problem problem, SubmitRequest request) {
+    /**
+     * Builds the Kafka event for a persisted submission. Shared by the submit path and by
+     * {@code StuckSubmissionRedriver}, so a re-published event is byte-identical to the original —
+     * the driver-wrapped source is rebuilt from the stored user code rather than cached anywhere.
+     */
+    public SubmissionEvent buildEvent(Submission submission) {
+        String language = submission.getLanguage();
+        Problem problem = submission.getProblem();
+        String driverTemplate = driverCodeLoader.getDriverCode(problem.getSlug(), language);
+        return new SubmissionEvent(
+                submission.getId(),
+                judgeService.buildSourceCode(driverTemplate, submission.getSourceCode()),
+                judgeService.mapLanguageToId(language),
+                problem.getId(),
+                submission.isAdminSubmission());
+    }
+
+    // Intentionally not @Transactional: this is called via this.submit(), so a Spring proxy would
+    // never apply and the annotation would only be documentation that lies. save() supplies its own
+    // transaction, which is all a single-row insert needs.
+    private Submission saveSubmission(Long userId, Problem problem, SubmitRequest request) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("error.user.notFound", userId));
 

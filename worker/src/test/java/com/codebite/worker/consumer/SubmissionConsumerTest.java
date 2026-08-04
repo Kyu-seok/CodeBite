@@ -10,6 +10,8 @@ import com.codebite.submission.entity.SubmissionStatus;
 import com.codebite.submission.event.SubmissionEvent;
 import com.codebite.submission.repository.SubmissionRepository;
 import com.codebite.submission.repository.SubmissionResultRepository;
+import com.codebite.submission.event.SubmissionResultEvent;
+import com.codebite.user.entity.User;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,11 +19,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;
@@ -37,15 +41,24 @@ class SubmissionConsumerTest {
     @Mock private TestCaseRepository testCaseRepository;
     @Mock private SubmissionResultRepository submissionResultRepository;
     @Mock private SubmissionRepository submissionRepository;
+    @Mock private ApplicationEventPublisher eventPublisher;
 
     private SubmissionConsumer consumer;
 
     @BeforeEach
     void setUp() {
+        SimpleMeterRegistry meterRegistry = new SimpleMeterRegistry();
         consumer = new SubmissionConsumer(
                 judgeService, testCaseRepository,
                 submissionResultRepository, submissionRepository,
-                new SimpleMeterRegistry());
+                new SubmissionMetrics(meterRegistry), meterRegistry, eventPublisher);
+    }
+
+    /** The result event carries the owner's id, so submissions under test need one. */
+    private static User owner() {
+        User user = new User();
+        user.setId(77L);
+        return user;
     }
 
     private static JudgeResponse accepted(String stdout) {
@@ -57,6 +70,7 @@ class SubmissionConsumerTest {
         Submission submission = new Submission();
         submission.setId(1L);
         submission.setStatus(SubmissionStatus.PENDING);
+        submission.setUser(owner());
 
         TestCase testCase = new TestCase();
         testCase.setId(1L);
@@ -74,6 +88,63 @@ class SubmissionConsumerTest {
         assertEquals(SubmissionStatus.ACCEPTED, submission.getStatus());
         verify(submissionResultRepository).saveAll(any());
         verify(submissionRepository).save(submission);
+    }
+
+    @Test
+    void consumeAdmin_gradesThroughTheSamePathAsUserSubmissions() {
+        Submission submission = new Submission();
+        submission.setId(1L);
+        submission.setStatus(SubmissionStatus.PENDING);
+        submission.setUser(owner());
+
+        TestCase testCase = new TestCase();
+        testCase.setId(1L);
+        testCase.setInput("1 2");
+        testCase.setExpectedOutput("3");
+
+        when(submissionRepository.findById(1L)).thenReturn(Optional.of(submission));
+        when(testCaseRepository.findByProblemIdOrderByOrderIndexAsc(10L)).thenReturn(List.of(testCase));
+        when(judgeService.executeBatch(anyString(), anyInt(), anyList()))
+                .thenReturn(List.of(accepted("3\n")));
+        when(judgeService.mapStatus(any(), anyString())).thenReturn(SubmissionStatus.ACCEPTED);
+
+        // The admin listener exists to isolate the queue, not to grade differently.
+        consumer.consumeAdmin(new SubmissionEvent(1L, "source", 62, 10L, true));
+
+        assertEquals(SubmissionStatus.ACCEPTED, submission.getStatus());
+        verify(submissionResultRepository).saveAll(any());
+        verify(submissionRepository).save(submission);
+    }
+
+    @Test
+    void consume_publishesResultEventForFanOut() {
+        Submission submission = new Submission();
+        submission.setId(1L);
+        submission.setStatus(SubmissionStatus.PENDING);
+        submission.setUser(owner());
+        submission.setLanguage("java");
+
+        TestCase testCase = new TestCase();
+        testCase.setId(1L);
+        testCase.setInput("1 2");
+        testCase.setExpectedOutput("3");
+
+        when(submissionRepository.findById(1L)).thenReturn(Optional.of(submission));
+        when(testCaseRepository.findByProblemIdOrderByOrderIndexAsc(10L)).thenReturn(List.of(testCase));
+        when(judgeService.executeBatch(anyString(), anyInt(), anyList()))
+                .thenReturn(List.of(accepted("3\n")));
+        when(judgeService.mapStatus(any(), anyString())).thenReturn(SubmissionStatus.ACCEPTED);
+
+        consumer.consume(new SubmissionEvent(1L, "source", 62, 10L, false));
+
+        ArgumentCaptor<SubmissionResultEvent> published =
+                ArgumentCaptor.forClass(SubmissionResultEvent.class);
+        verify(eventPublisher).publishEvent(published.capture());
+
+        SubmissionResultEvent event = published.getValue();
+        assertEquals(1L, event.submissionId());
+        assertEquals(77L, event.userId());
+        assertEquals(SubmissionStatus.ACCEPTED, event.status());
     }
 
     @Test
@@ -95,6 +166,7 @@ class SubmissionConsumerTest {
         Submission submission = new Submission();
         submission.setId(1L);
         submission.setStatus(SubmissionStatus.PENDING);
+        submission.setUser(owner());
 
         TestCase tc1 = new TestCase();
         tc1.setId(1L);
@@ -127,18 +199,23 @@ class SubmissionConsumerTest {
     }
 
     @Test
-    void consume_exceptionSetsInternalError() {
+    void consume_propagatesExceptionSoRetryAndRollbackCanHappen() {
         Submission submission = new Submission();
         submission.setId(1L);
         submission.setStatus(SubmissionStatus.PENDING);
+        submission.setUser(owner());
 
         when(submissionRepository.findById(1L)).thenReturn(Optional.of(submission));
         when(testCaseRepository.findByProblemIdOrderByOrderIndexAsc(10L))
                 .thenThrow(new RuntimeException("DB error"));
 
-        consumer.consume(new SubmissionEvent(1L, "source", 62, 10L, false));
+        SubmissionEvent event = new SubmissionEvent(1L, "source", 62, 10L, false);
+        assertThrows(RuntimeException.class, () -> consumer.consume(event));
 
-        assertEquals(SubmissionStatus.INTERNAL_ERROR, submission.getStatus());
-        verify(submissionRepository).save(submission);
+        // The consumer must not settle the status itself — the transaction rolls back and the
+        // submission stays PENDING so DefaultErrorHandler can retry it.
+        assertEquals(SubmissionStatus.PENDING, submission.getStatus());
+        verify(submissionRepository, never()).save(any());
+        verify(submissionResultRepository, never()).saveAll(any());
     }
 }

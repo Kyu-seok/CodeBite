@@ -51,8 +51,13 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
-      KAFKA_LOG_DIRS: /tmp/kraft-combined-logs
+      # /var/lib/kafka/data exists in the image owned by appuser (uid 1000), so a named
+      # volume inherits that ownership. Mounting anywhere else creates a root-owned dir
+      # and the broker crash-loops on startup (see README "Kafka 컨테이너 무한 재시작").
+      KAFKA_LOG_DIRS: /var/lib/kafka/data
       CLUSTER_ID: codebite-kafka-cluster-id-01
+    volumes:
+      - codebite-kafka:/var/lib/kafka/data
     healthcheck:
       test: ["CMD-SHELL", "/opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --list"]
       interval: 15s
@@ -125,6 +130,7 @@ services:
       SPRING_DATASOURCE_USERNAME: ${DB_USER}
       SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
       KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      KAFKA_LISTENER_CONCURRENCY: ${KAFKA_LISTENER_CONCURRENCY:-3}
       JUDGE0_URL: ${JUDGE0_URL:-http://judge0:2358}
     networks:
       - codebite
@@ -261,6 +267,7 @@ volumes:
   codebite-prometheus:
   codebite-grafana:
   codebite-loki:
+  codebite-kafka:
   judge0-pgdata:
   judge0-redis:
 

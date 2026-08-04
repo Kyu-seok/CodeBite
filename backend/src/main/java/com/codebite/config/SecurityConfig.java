@@ -45,7 +45,12 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/solutions/*").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/solutions/*/comments").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/tags").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/leaderboard").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/problems/*/run").permitAll()
+                        // EventSource cannot send an Authorization header, so this endpoint
+                        // authenticates itself from a short-lived, submission-scoped query token
+                        // (see SseTokenService). Obtaining that token still requires a valid JWT.
+                        .requestMatchers(HttpMethod.GET, "/api/submissions/*/stream").permitAll()
                         .requestMatchers("/actuator/**").permitAll()
                         .anyRequest().authenticated()
                 )

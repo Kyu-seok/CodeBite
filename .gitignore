@@ -25,3 +25,6 @@ docs/제출-지연-분석.md
 # Problem-rewrite transient artifacts (never commit annotated denylists or workspace dumps)
 scripts/rewrite/denylist/*.annotated.json
 scripts/rewrite/workspace/
+
+# Logo source art. The assets the app actually serves are tracked in frontend/public/.
+Logo/

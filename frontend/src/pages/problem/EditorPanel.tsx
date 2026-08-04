@@ -30,6 +30,10 @@ import {
   Bug,
   RotateCcw,
   Columns2,
+  PanelBottomOpen,
+  PanelBottomClose,
+  Maximize2,
+  Minimize2,
 } from 'lucide-react';
 
 function CodeIcon() {
@@ -183,6 +187,10 @@ interface EditorPanelProps {
   onResetLayout?: () => void;
   onRun?: () => void;
   onSubmit?: () => void;
+  onToggleTests?: () => void;
+  onMaximize?: () => void;
+  testsCollapsed?: boolean;
+  isMaximized?: boolean;
 }
 
 export function EditorPanel({
@@ -196,6 +204,10 @@ export function EditorPanel({
   onResetLayout,
   onRun,
   onSubmit,
+  onToggleTests,
+  onMaximize,
+  testsCollapsed,
+  isMaximized,
 }: EditorPanelProps) {
   const { t } = useTranslation('problem');
   const { theme } = useTheme();
@@ -386,6 +398,24 @@ export function EditorPanel({
                 </Button>
               </TooltipTrigger>
               <TooltipContent>{t('editor.resetLayout')}</TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger>
+                <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onToggleTests}>
+                  {testsCollapsed
+                    ? <PanelBottomOpen className="h-3.5 w-3.5" />
+                    : <PanelBottomClose className="h-3.5 w-3.5" />}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>{testsCollapsed ? 'Show test panel' : 'Hide test panel'}</TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger>
+                <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onMaximize}>
+                  {isMaximized ? <Minimize2 className="h-3.5 w-3.5" /> : <Maximize2 className="h-3.5 w-3.5" />}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>{isMaximized ? 'Exit full screen' : 'Full screen'}</TooltipContent>
             </Tooltip>
             <SettingsDialog />
           </div>

@@ -489,19 +489,65 @@ Frontend polls
 GET /submissions/{id}
 ```
 
-**Kafka topic design:**
-- Topic: `submission-events`
-- Key: `userId` (ensures ordering per user)
-- Partitions: configurable (e.g., 6) — allows parallel worker consumption
-- Consumer group: `judge-workers` — multiple worker instances share partitions
+**Kafka topic design (as implemented):**
 
-**Redis rate limiter design:**
-- Algorithm: sliding window counter
-- Key: `rate:submit:{userId}`
-- Limit: configurable (e.g., 5 submissions per 60 seconds)
-- Uses Redis `INCR` + `EXPIRE` or a sorted set with timestamps
-- Returns `429 Too Many Requests` with `Retry-After` header when exceeded
+| Topic | Partitions | Consumer group | Semantics |
+|-------|-----------|----------------|-----------|
+| `submission-events` | 3 | `codebite-worker` | Work queue — one thread per partition (`concurrency: 3`) |
+| `submission-events-admin` | 1 | `codebite-worker-admin` | Work queue, `concurrency: 1`. Isolates admin bulk validation so a batch cannot occupy every user partition |
+| `submission-results` | 3 | `codebite-sse-${random.uuid}` | **Broadcast** — one single-member group per replica, so every replica sees every event |
+| `submission-results` | 3 | `codebite-stats` | Work queue — partitions split across replicas, each event aggregated once |
+
+- Key: `submissionId` — per-user ordering is not required, and `submissionId` spreads load evenly
+- Replication factor 1 throughout (single broker)
+
+**Why the result topic carries two group patterns.** `submission-results` has two independent
+consumers, and they need opposite delivery semantics from the same stream:
+
+- **SSE push** uses a per-instance group id. The connection lives on one specific replica, so a
+  shared group would deliver the result to a replica with no connection to push it to, stranding the
+  client on its polling fallback. Each replica gets its own single-member group, making it a
+  broadcast. The cost is an orphaned group per restart — harmless, since they hold no offsets worth
+  keeping and Kafka expires them.
+- **Stats** uses one shared group. Aggregates must be updated once, not once per replica, so the
+  partitions distribute across instances as an ordinary work queue.
+
+Consumer groups, not topics, decide whether a subscriber is a queue or a broadcast. The two also
+differ on `auto-offset-reset`: SSE uses `latest` (replaying history would push results nobody is
+waiting for), stats uses `earliest` (it owns durable derived state and must backfill on first
+deployment).
+
+**Stats idempotency.** Delivery is at-least-once, so the stats consumer *recomputes* the affected
+rows from `submissions` rather than incrementing counters. Replaying an event converges on the same
+numbers instead of double-counting, and a corrupted aggregate is repaired by replaying the topic.
+This moves a full group-by off the problem-list read path in exchange for one aggregate query per
+graded submission.
+- Storage: `KAFKA_LOG_DIRS: /var/lib/kafka/data` backed by the `codebite-kafka` named volume, so the
+  log survives broker recreation. The path matters — it exists in the image owned by `appuser` (uid 1000),
+  so the volume inherits that ownership; mounting elsewhere yields a root-owned dir and a crash loop.
+
+**Redis rate limiter design (as implemented):**
+- Algorithm: fixed cooldown flag via `SET NX EX` (not a sliding window)
+- Key: `ratelimit:{action}:{identifier}`
+- Limits: submit 10s per user, run 5s per client IP
+- Fails open if Redis is unavailable
 - Works correctly across multiple backend instances (shared Redis state)
+
+**Delivery guarantees:**
+
+PostgreSQL, not Kafka, is the system of record. The submission row holds the source code, so the
+event is only a "process this id" signal. That choice shapes the whole failure model:
+
+| Stage | Guarantee | Mechanism |
+|-------|-----------|-----------|
+| Publish | At-least-once | `acks=all` + idempotent producer. Non-blocking, so the HTTP thread never waits on the broker; a failed send increments `codebite.submissions.publish.failures` and leaves the row PENDING |
+| Delivery | At-least-once | Consumer offsets committed after processing; a rollback leaves the row PENDING for redelivery |
+| Processing | Effectively-once | `SubmissionConsumer` skips any submission that is no longer PENDING, so duplicates are no-ops |
+| Retry | 3 attempts, 1s fixed backoff | `DefaultErrorHandler`; exhaustion marks the row INTERNAL_ERROR (no DLT — the row is the durable record) |
+| Lost event | Recovered | `StuckSubmissionRedriver` re-publishes rows PENDING beyond `min-age`; rows beyond `max-age` are abandoned to INTERNAL_ERROR so the loop terminates |
+
+The re-drive sweep is what closes the gap between the DB commit and the broker ack. Only one backend
+replica sweeps per interval, elected via the same `SET NX EX` primitive as the rate limiter.
 
 ---
 
@@ -668,14 +714,14 @@ CodeBite/
 **Deliverable:** Submissions are rate-limited per user. Works correctly across multiple backend instances.
 
 ### Milestone 6: Async Execution with Kafka + Worker
-- [ ] Add Kafka (+ Zookeeper or KRaft) to docker-compose
-- [ ] Define `submission-events` topic with partitioned by userId
-- [ ] Implement `SubmissionEventPublisher` (Kafka producer in backend)
-- [ ] Build worker service with `@KafkaListener` consumer
-- [ ] Worker calls Judge0, writes results to DB, commits offset
-- [ ] Backend submission endpoint returns 202 + submissionId
-- [ ] Frontend polls `GET /submissions/{id}` for status updates
-- [ ] Handle consumer failures: retry policy, dead-letter topic
+- [x] Add Kafka to docker-compose — `apache/kafka:3.7.0` in **KRaft** mode (no Zookeeper); single node running `broker,controller` combined
+- [x] Define `submission-events` topic — 3 partitions, RF 1, keyed by **submissionId** (not userId: per-user ordering is not required, and submissionId spreads load evenly)
+- [x] Implement Kafka producer in backend — `SubmissionEventProducer`
+- [x] Build worker service with `@KafkaListener` consumer
+- [x] Worker calls Judge0, writes results to DB, commits offset
+- [x] Backend submission endpoint returns **201 Created** + submission detail (not 202: the submission resource is created synchronously; only grading is async)
+- [x] Frontend polls `GET /submissions/{id}` for status updates
+- [x] Handle consumer failures — retry policy (`FixedBackOff` 1s × 3) + `SubmissionFailureRecoverer` settling the submission as `INTERNAL_ERROR` once retries are exhausted. **No dead-letter topic by design:** `SubmissionEvent` is fully reconstructible from the `submissions` table (`source_code`, `language`, `problem_id`), so a DLT would only duplicate data Postgres already holds
 - [ ] Consider SSE or WebSocket for real-time result delivery
 
 **Deliverable:** Submission execution is decoupled via Kafka. Multiple workers can consume in parallel.
@@ -686,7 +732,7 @@ CodeBite/
 - [ ] PostgreSQL read replica (primary for writes, replica for reads)
 - [ ] Configure Spring to route read queries to replica
 - [x] Redis for auth: JWT token blacklist (logout/revocation) + user profile caching
-- [ ] Scale Kafka consumers by adding workers to consumer group
+- [x] Scale Kafka consumers to one per partition — `spring.kafka.listener.concurrency` (default 3, `KAFKA_LISTENER_CONCURRENCY`) puts 3 consumers in the group, one per partition. Adding worker *instances* is the next lever, but Judge0 host CPU is the current throughput ceiling (see `docs/LOAD_TEST_RESULTS.md`), so it buys nothing until Judge0 is scaled
 - [x] Document the architecture and scaling decisions
 
 #### Redis Auth Cache Details

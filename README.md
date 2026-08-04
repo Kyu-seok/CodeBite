@@ -199,8 +199,15 @@ graph TB
 - `apache/kafka:3.7.0` 이미지는 `appuser`(uid 1000)로 실행되지만, 볼륨 마운트 디렉토리가 root 소유
 - 권한 불일치로 로그 쓰기 실패 → 즉시 크래시
 
-**해결**
+**해결 (1차)**
 - Kafka 로그는 임시 데이터(제출은 이미 PostgreSQL에 저장됨)이므로 불필요한 볼륨 마운트를 제거하여 해결
+
+**해결 (2차 — 영속화 복구)**
+- 1차 해결은 브로커 재생성 시 로그가 모두 소실되는 문제가 있었음(미처리 이벤트 유실)
+- `apache/kafka:3.7.0` 이미지에는 `/var/lib/kafka/data`가 이미 `appuser`(uid 1000) 소유로 존재
+- 해당 경로에 named volume을 마운트하면 Docker가 이미지의 소유권을 그대로 승계하므로 권한 문제 없이 영속화 가능
+- `KAFKA_LOG_DIRS: /var/lib/kafka/data` + `codebite-kafka` named volume 적용
+- ⚠️ 다른 경로(예: `/kafka-logs`)에 마운트하면 root 소유 디렉토리가 생성되어 동일한 크래시 재발
 
 ---
 

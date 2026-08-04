@@ -10,6 +10,8 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from '@/components/ui/Tooltip';
+import { PanelBottomClose, PanelBottomOpen, Maximize2, Minimize2 } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import type { TestCase } from '@/types/problem';
 import type {
   CodeError,
@@ -51,6 +53,9 @@ interface TestPanelProps {
   onTabChange: (tab: string) => void;
   onRun: () => void;
   onSubmit: () => void;
+  onFold?: () => void;
+  onMaximize?: () => void;
+  isMaximized?: boolean;
 }
 
 function renderableErrors(errors?: CodeError[] | null): CodeError[] {
@@ -105,6 +110,9 @@ export function TestPanel({
   onTabChange,
   onRun,
   onSubmit,
+  onFold,
+  onMaximize,
+  isMaximized,
 }: TestPanelProps) {
   const { t } = useTranslation('problem');
   return (
@@ -114,11 +122,29 @@ export function TestPanel({
         value={activeTab}
         onValueChange={onTabChange}
         className="flex min-h-0 flex-1 flex-col overflow-hidden">
-        <div className="border-b border-border bg-muted">
+        <div className="group flex items-center justify-between border-b border-border bg-muted">
           <TabsList>
             <TabsTrigger value="testcases">{t('test.testCases')}</TabsTrigger>
             <TabsTrigger value="output">{t('test.output')}</TabsTrigger>
           </TabsList>
+          <div className="flex items-center pr-1 opacity-0 transition-opacity group-hover:opacity-100">
+            <Tooltip>
+              <TooltipTrigger>
+                <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onFold}>
+                  <PanelBottomClose className="h-3.5 w-3.5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Fold panel</TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger>
+                <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onMaximize}>
+                  {isMaximized ? <Minimize2 className="h-3.5 w-3.5" /> : <Maximize2 className="h-3.5 w-3.5" />}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>{isMaximized ? 'Restore editor' : 'Maximize panel'}</TooltipContent>
+            </Tooltip>
+          </div>
         </div>
 
         <div className="flex-1 overflow-auto p-3">
@@ -486,6 +512,55 @@ function RunResultsSection({
           })()}
         </div>
       ))}
+    </div>
+  );
+}
+
+interface CollapsedTestStripProps {
+  onExpand: () => void;
+  onMaximize: () => void;
+  isMaximized: boolean;
+}
+
+export function CollapsedTestStrip({ onExpand, onMaximize, isMaximized }: CollapsedTestStripProps) {
+  const { t } = useTranslation('problem');
+  return (
+    <div className="group/strip flex h-full items-center justify-between px-2">
+      {/* Tab buttons */}
+      <div className="flex items-center gap-1">
+        <button
+          type="button"
+          onClick={onExpand}
+          className="rounded px-2 py-1 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
+          {t('test.testCases')}
+        </button>
+        <button
+          type="button"
+          onClick={onExpand}
+          className="rounded px-2 py-1 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
+          {t('test.output')}
+        </button>
+      </div>
+
+      {/* Right-side buttons — visible on hover */}
+      <div className={cn('flex items-center gap-1 opacity-0 transition-opacity group-hover/strip:opacity-100')}>
+        <Tooltip>
+          <TooltipTrigger>
+            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onExpand}>
+              <PanelBottomOpen className="h-3.5 w-3.5" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>Expand panel</TooltipContent>
+        </Tooltip>
+        <Tooltip>
+          <TooltipTrigger>
+            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onMaximize}>
+              {isMaximized ? <Minimize2 className="h-3.5 w-3.5" /> : <Maximize2 className="h-3.5 w-3.5" />}
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>{isMaximized ? 'Restore editor' : 'Maximize panel'}</TooltipContent>
+        </Tooltip>
+      </div>
     </div>
   );
 }

@@ -1,5 +1,6 @@
 package com.codebite.worker.config;
 
+import com.codebite.worker.consumer.SubmissionFailureRecoverer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.listener.DefaultErrorHandler;
@@ -9,7 +10,7 @@ import org.springframework.util.backoff.FixedBackOff;
 public class KafkaConsumerConfig {
 
     @Bean
-    public DefaultErrorHandler errorHandler() {
-        return new DefaultErrorHandler(new FixedBackOff(1000L, 3));
+    public DefaultErrorHandler errorHandler(SubmissionFailureRecoverer recoverer) {
+        return new DefaultErrorHandler(recoverer, new FixedBackOff(1000L, 3));
     }
 }
