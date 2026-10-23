@@ -6,6 +6,8 @@ import com.codebite.profile.dto.ActivityDay;
 import com.codebite.profile.dto.ProfileStats;
 import com.codebite.profile.dto.RecentSubmission;
 import com.codebite.profile.dto.TagProficiency;
+import com.codebite.streak.dto.StreakSummary;
+import com.codebite.streak.service.StreakService;
 import com.codebite.submission.entity.Submission;
 import com.codebite.submission.repository.SubmissionRepository;
 import com.codebite.user.entity.User;
@@ -17,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,13 +31,16 @@ public class ProfileService {
     private final SubmissionRepository submissionRepository;
     private final ProblemRepository problemRepository;
     private final UserRepository userRepository;
+    private final StreakService streakService;
 
     public ProfileService(SubmissionRepository submissionRepository,
                           ProblemRepository problemRepository,
-                          UserRepository userRepository) {
+                          UserRepository userRepository,
+                          StreakService streakService) {
         this.submissionRepository = submissionRepository;
         this.problemRepository = problemRepository;
         this.userRepository = userRepository;
+        this.streakService = streakService;
     }
 
     @Transactional(readOnly = true)
@@ -62,7 +66,7 @@ public class ProfileService {
         int totalSolved = solvedEasy + solvedMedium + solvedHard;
         int totalProblems = totalEasy + totalMedium + totalHard;
 
-        // Activity for streaks
+        // Active days for the past year
         Instant oneYearAgo = Instant.now().minus(365, ChronoUnit.DAYS);
         List<Object[]> activityRows = submissionRepository.countDailyActivity(userId, oneYearAgo);
         List<LocalDate> activeDates = new ArrayList<>();
@@ -70,7 +74,7 @@ public class ProfileService {
             activeDates.add((LocalDate) row[0]);
         }
 
-        int[] streaks = computeStreaks(activeDates);
+        StreakSummary streak = streakService.getSummary(userId);
 
         // Member since
         Instant memberSince = userRepository.findById(userId)
@@ -81,7 +85,7 @@ public class ProfileService {
                 totalSolved, totalProblems,
                 solvedEasy, solvedMedium, solvedHard,
                 totalEasy, totalMedium, totalHard,
-                streaks[0], streaks[1], activeDates.size(),
+                streak.currentStreak(), streak.bestStreak(), activeDates.size(),
                 memberSince
         );
     }
@@ -149,42 +153,5 @@ public class ProfileService {
                 s.getMemoryKb(),
                 s.getCreatedAt()
         );
-    }
-
-    /**
-     * Computes [currentStreak, longestStreak] from a sorted list of active dates.
-     */
-    private int[] computeStreaks(List<LocalDate> activeDates) {
-        if (activeDates.isEmpty()) return new int[]{0, 0};
-
-        LocalDate today = LocalDate.now(ZoneOffset.UTC);
-        int longestStreak = 1;
-        int tempStreak = 1;
-
-        for (int i = 1; i < activeDates.size(); i++) {
-            if (activeDates.get(i).equals(activeDates.get(i - 1).plusDays(1))) {
-                tempStreak++;
-            } else {
-                longestStreak = Math.max(longestStreak, tempStreak);
-                tempStreak = 1;
-            }
-        }
-        longestStreak = Math.max(longestStreak, tempStreak);
-
-        // Current streak: count backwards from today
-        int currentStreak = 0;
-        LocalDate lastActive = activeDates.get(activeDates.size() - 1);
-        if (lastActive.equals(today) || lastActive.equals(today.minusDays(1))) {
-            currentStreak = 1;
-            for (int i = activeDates.size() - 2; i >= 0; i--) {
-                if (activeDates.get(i).equals(activeDates.get(i + 1).minusDays(1))) {
-                    currentStreak++;
-                } else {
-                    break;
-                }
-            }
-        }
-
-        return new int[]{currentStreak, longestStreak};
     }
 }

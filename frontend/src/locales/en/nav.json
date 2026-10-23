@@ -9,5 +9,9 @@
   "admin": "Admin",
   "logout": "Log out",
   "login": "Login",
-  "language": "한국어"
+  "language": "한국어",
+  "streak": {
+    "days_one": "{{count}}-day Streak",
+    "days_other": "{{count}}-day Streak"
+  }
 }

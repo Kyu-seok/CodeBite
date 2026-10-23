@@ -3,6 +3,8 @@ package com.codebite.config;
 import com.codebite.submission.event.SubmissionResultEvent;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -10,6 +12,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
+import org.springframework.kafka.listener.DefaultErrorHandler;
+import org.springframework.kafka.support.ExponentialBackOffWithMaxRetries;
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 
@@ -27,6 +31,8 @@ import java.util.Map;
 @Configuration
 @ConditionalOnProperty(name = "app.kafka.enabled", havingValue = "true", matchIfMissing = true)
 public class KafkaConsumerConfig {
+
+    private static final Logger log = LoggerFactory.getLogger(KafkaConsumerConfig.class);
 
     /**
      * Shared deserializer setup. {@link ErrorHandlingDeserializer} matters: without it a malformed
@@ -83,6 +89,35 @@ public class KafkaConsumerConfig {
         factory.setConsumerFactory(new DefaultKafkaConsumerFactory<>(
                 baseProps(bootstrapServers, "earliest"),
                 new StringDeserializer(), resultDeserializer()));
+        return factory;
+    }
+
+    /**
+     * Streak Days. Same {@code earliest} reset as stats, for the same backfill-by-replay reason, but
+     * a different failure policy: a Streak Day is stored state, so a dropped event is a day the
+     * user loses for good. Retry with exponential back-off (about a minute in total) to ride out a
+     * database blip, and only then skip, logging the full event so it can be replayed by hand.
+     * The partition is blocked while retrying, which is acceptable at ~0.65 results/sec.
+     */
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, SubmissionResultEvent>
+            streakListenerContainerFactory(
+                    @Value("${spring.kafka.bootstrap-servers}") String bootstrapServers) {
+
+        ConcurrentKafkaListenerContainerFactory<String, SubmissionResultEvent> factory =
+                new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(new DefaultKafkaConsumerFactory<>(
+                baseProps(bootstrapServers, "earliest"),
+                new StringDeserializer(), resultDeserializer()));
+
+        ExponentialBackOffWithMaxRetries backOff = new ExponentialBackOffWithMaxRetries(6);
+        backOff.setInitialInterval(1_000L);
+        backOff.setMultiplier(2.0);
+        backOff.setMaxInterval(30_000L);
+        factory.setCommonErrorHandler(new DefaultErrorHandler(
+                (record, ex) -> log.error("Streak Day lost after retries; replay manually: {}",
+                        record.value(), ex),
+                backOff));
         return factory;
     }
 }

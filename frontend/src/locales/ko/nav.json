@@ -9,5 +9,8 @@
   "admin": "관리자",
   "logout": "로그아웃",
   "login": "로그인",
-  "language": "English"
+  "language": "English",
+  "streak": {
+    "days_other": "{{count}}일 연속 풀이"
+  }
 }

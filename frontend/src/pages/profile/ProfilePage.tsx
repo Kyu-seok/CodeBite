@@ -8,6 +8,7 @@ import { TagRadarCard } from './TagRadarCard';
 import { RecentSubmissionsCard } from './RecentSubmissionsCard';
 import { DueReviewsCard } from './DueReviewsCard';
 import { ReviewStreakPill } from './ReviewStreakPill';
+import { StreakCalendarCard } from './StreakCalendarCard';
 
 export default function ProfilePage() {
   const { user } = useAuth();
@@ -25,6 +26,7 @@ export default function ProfilePage() {
     <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
       <div className="flex flex-col gap-5">
         <ProfileHeader user={user} stats={stats} />
+        <StreakCalendarCard />
         <ActivityHeatmap activity={activity} />
 
         <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
