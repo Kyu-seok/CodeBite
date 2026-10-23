@@ -12,6 +12,7 @@ import {
   submissionStreamUrl,
 } from "@/api/submissions"
 import { setSubmissionReview } from "@/api/reviews"
+import { notifyStreakChanged } from "@/api/streak"
 import { ProblemLayout, type PanelFunctions } from "@/components/layout/ProblemLayout"
 import Spinner from "@/components/ui/Spinner"
 import { LeftPanel, CollapsedLeftStrip } from "./LeftPanel"
@@ -255,6 +256,7 @@ export default function ProblemDetailPage() {
     timerSnapshotRef.current = null
 
     if (res.data.status === "ACCEPTED") {
+      notifyStreakChanged()
       fireConfetti()
       setAcceptedModal({
         open: true,

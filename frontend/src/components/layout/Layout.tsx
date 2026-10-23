@@ -6,6 +6,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { updateThemePreference, updateLocale } from '../../api/user';
 import { NavbarLogo } from '@/components/ui/NavbarLogo';
+import { StreakFlame } from './StreakFlame';
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/Tooltip';
 import {
   DropdownMenu,
@@ -178,6 +179,7 @@ export default function Layout() {
                 </Tooltip>
               </div>
             )}
+            {isAuthenticated && <StreakFlame />}
             <Tooltip>
               <TooltipTrigger>
                 <button

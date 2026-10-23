@@ -14,5 +14,29 @@
     "title": "풀이 현황",
     "solved": "풀이 완료",
     "unsolved": "미풀이"
+  },
+  "streakCalendar": {
+    "title": "연속 풀이 달력",
+    "repairs_one": "복구 {{count}}개",
+    "repairs_other": "복구 {{count}}개",
+    "progress": "다음 복구까지 {{progress}}/{{total}}",
+    "previousMonth": "이전 달",
+    "nextMonth": "다음 달",
+    "weekdays": {
+      "sun": "일",
+      "mon": "월",
+      "tue": "화",
+      "wed": "수",
+      "thu": "목",
+      "fri": "금",
+      "sat": "토"
+    },
+    "noRepairs": "남은 복구가 없습니다",
+    "confirmTitle": "복구를 사용할까요?",
+    "confirmBody_one": "보유한 복구 {{count}}개 중 1개를 사용해 {{date}}을(를) 채웁니다.",
+    "confirmBody_other": "보유한 복구 {{count}}개 중 1개를 사용해 {{date}}을(를) 채웁니다.",
+    "cancel": "취소",
+    "useRepair": "복구 사용",
+    "repairFailed": "복구하지 못했습니다. 다시 시도해 주세요."
   }
 }

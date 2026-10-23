@@ -4,6 +4,7 @@ import {
   getActivity,
   getTagProficiency,
 } from "../api/profile";
+import { STREAK_CHANGED_EVENT } from "../api/streak";
 import type {
   ProfileStats,
   ActivityDay,
@@ -25,6 +26,15 @@ export function useProfile() {
       })
       .catch(() => {})
       .finally(() => setLoading(false));
+  }, []);
+
+  // A Repair changes the header's current and best Streak.
+  useEffect(() => {
+    const refreshStats = () => {
+      getProfileStats().then((s) => setStats(s.data)).catch(() => {});
+    };
+    window.addEventListener(STREAK_CHANGED_EVENT, refreshStats);
+    return () => window.removeEventListener(STREAK_CHANGED_EVENT, refreshStats);
   }, []);
 
   return { stats, activity, tagProficiency, loading };

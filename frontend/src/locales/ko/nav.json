@@ -9,5 +9,9 @@
   "admin": "관리자",
   "logout": "로그아웃",
   "login": "로그인",
-  "language": "English"
+  "language": "English",
+  "streak": {
+    "done": "오늘의 연속 풀이 완료",
+    "pending": "오늘 문제를 풀어 연속 풀이를 이어가세요"
+  }
 }

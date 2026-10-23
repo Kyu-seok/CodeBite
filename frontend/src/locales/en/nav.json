@@ -9,5 +9,9 @@
   "admin": "Admin",
   "logout": "Log out",
   "login": "Login",
-  "language": "한국어"
+  "language": "한국어",
+  "streak": {
+    "done": "Today's Streak Day is in",
+    "pending": "Solve a problem today to keep your Streak"
+  }
 }

@@ -14,5 +14,29 @@
     "title": "Solve Progress",
     "solved": "Solved",
     "unsolved": "Unsolved"
+  },
+  "streakCalendar": {
+    "title": "Streak Calendar",
+    "repairs_one": "{{count}} Repair",
+    "repairs_other": "{{count}} Repairs",
+    "progress": "{{progress}}/{{total}} toward next",
+    "previousMonth": "Previous month",
+    "nextMonth": "Next month",
+    "weekdays": {
+      "sun": "S",
+      "mon": "M",
+      "tue": "T",
+      "wed": "W",
+      "thu": "T",
+      "fri": "F",
+      "sat": "S"
+    },
+    "noRepairs": "No Repairs left",
+    "confirmTitle": "Use a Repair?",
+    "confirmBody_one": "Fill {{date}} using 1 of your {{count}} Repair.",
+    "confirmBody_other": "Fill {{date}} using 1 of your {{count}} Repairs.",
+    "cancel": "Cancel",
+    "useRepair": "Use Repair",
+    "repairFailed": "Could not repair that day. Please try again."
   }
 }
