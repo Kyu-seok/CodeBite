@@ -3,6 +3,8 @@ package com.codebite.github.gateway;
 import com.codebite.config.GitHubAppProperties;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.boot.web.client.ClientHttpRequestFactories;
+import org.springframework.boot.web.client.ClientHttpRequestFactorySettings;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -13,6 +15,7 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientResponseException;
 
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -32,6 +35,13 @@ import java.util.function.Supplier;
 public class GitHubAppGateway implements GitHubGateway {
 
     private static final int PAGE_SIZE = 100;
+    /**
+     * Bounds every request, so a hung GitHub surfaces as a {@link GitHubTransientException}
+     * instead of holding a listener thread or a profile read.
+     */
+    private static final ClientHttpRequestFactorySettings TIMEOUTS = ClientHttpRequestFactorySettings.DEFAULTS
+            .withConnectTimeout(Duration.ofSeconds(5))
+            .withReadTimeout(Duration.ofSeconds(10));
 
     private final GitHubAppProperties properties;
     private final RestClient api;
@@ -41,11 +51,13 @@ public class GitHubAppGateway implements GitHubGateway {
     public GitHubAppGateway(GitHubAppProperties properties, RestClient.Builder restClientBuilder) {
         this.properties = properties;
         this.api = restClientBuilder.clone()
+                .requestFactory(ClientHttpRequestFactories.get(TIMEOUTS))
                 .baseUrl(properties.getApiBaseUrl())
                 .defaultHeader(HttpHeaders.ACCEPT, "application/vnd.github+json")
                 .defaultHeader("X-GitHub-Api-Version", "2022-11-28")
                 .build();
         this.web = restClientBuilder.clone()
+                .requestFactory(ClientHttpRequestFactories.get(TIMEOUTS))
                 .baseUrl(properties.getWebBaseUrl())
                 .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
                 .build();
@@ -117,6 +129,33 @@ public class GitHubAppGateway implements GitHubGateway {
                 // repository: it was deleted or removed from the installation.
                 throw new GitHubInstallationGoneException(
                         repositoryFullName + " is not reachable through installation " + installationId);
+            }
+            throw translate(what, e);
+        } catch (ResourceAccessException e) {
+            throw new GitHubTransientException(what + " unreachable", e);
+        }
+    }
+
+    @Override
+    public boolean isRepositoryReachable(long installationId, long repositoryId) {
+        requireConfigured();
+        String token;
+        try {
+            token = installationToken(installationId);
+        } catch (GitHubInstallationGoneException e) {
+            return false;
+        }
+        // An installation token only sees the repositories its installation grants; any other
+        // repository, including a deleted one, is a 404.
+        String what = "GET /repositories/" + repositoryId;
+        try {
+            api.get().uri("/repositories/{id}", repositoryId)
+                    .header(HttpHeaders.AUTHORIZATION, bearer(token))
+                    .retrieve().toBodilessEntity();
+            return true;
+        } catch (RestClientResponseException e) {
+            if (e.getStatusCode().value() == 404) {
+                return false;
             }
             throw translate(what, e);
         } catch (ResourceAccessException e) {

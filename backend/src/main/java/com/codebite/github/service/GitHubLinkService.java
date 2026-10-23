@@ -8,6 +8,7 @@ import com.codebite.github.dto.GitHubLinkCallbackResponse;
 import com.codebite.github.dto.GitHubLinkResponse;
 import com.codebite.github.dto.GitHubRepositoryChoiceRequest;
 import com.codebite.github.entity.GitHubLink;
+import com.codebite.github.entity.GitHubLinkStatus;
 import com.codebite.github.gateway.GitHubAccount;
 import com.codebite.github.gateway.GitHubAppNotConfiguredException;
 import com.codebite.github.gateway.GitHubGateway;
@@ -16,8 +17,12 @@ import com.codebite.github.gateway.GitHubInstallationNotAccessibleException;
 import com.codebite.github.gateway.GitHubRepo;
 import com.codebite.github.gateway.ResolvedInstallation;
 import com.codebite.github.repository.GitHubLinkRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.Instant;
@@ -28,22 +33,50 @@ import java.util.Optional;
 @Service
 public class GitHubLinkService {
 
+    private static final Logger log = LoggerFactory.getLogger(GitHubLinkService.class);
+
     private final GitHubLinkRepository linkRepository;
     private final GitHubGateway gitHub;
     private final GitHubLinkStateService stateService;
     private final GitHubAppProperties properties;
+    private final TransactionTemplate tx;
 
     public GitHubLinkService(GitHubLinkRepository linkRepository, GitHubGateway gitHub,
-                             GitHubLinkStateService stateService, GitHubAppProperties properties) {
+                             GitHubLinkStateService stateService, GitHubAppProperties properties,
+                             PlatformTransactionManager transactionManager) {
         this.linkRepository = linkRepository;
         this.gitHub = gitHub;
         this.stateService = stateService;
         this.properties = properties;
+        this.tx = new TransactionTemplate(transactionManager);
     }
 
-    @Transactional(readOnly = true)
+    /**
+     * The user's current GitHub Link, or empty. An ACTIVE link is returned without calling GitHub.
+     * A BROKEN link is checked first: if GitHub can reach its repository again it is recovered to
+     * ACTIVE, otherwise it stays BROKEN. When GitHub cannot answer, it is returned unchanged.
+     * No transaction is held open across the call to GitHub.
+     */
     public Optional<GitHubLinkResponse> getLink(Long userId) {
-        return linkRepository.findByActiveUserId(userId).map(GitHubLinkResponse::from);
+        Optional<GitHubLink> current = linkRepository.findByActiveUserId(userId);
+        if (current.isPresent() && current.get().getStatus() == GitHubLinkStatus.BROKEN
+                && reachable(current.get())) {
+            Long id = current.get().getId();
+            current = tx.execute(status -> linkRepository.findById(id).map(link -> {
+                link.recover();
+                return link;
+            }));
+        }
+        return current.map(GitHubLinkResponse::from);
+    }
+
+    private boolean reachable(GitHubLink link) {
+        try {
+            return gitHub.isRepositoryReachable(link.getInstallationId(), link.getRepositoryId());
+        } catch (RuntimeException e) {
+            log.warn("Could not check GitHub Link {}; left BROKEN: {}", link.getId(), e.getMessage());
+            return false;
+        }
     }
 
     public GitHubInstallUrlResponse installUrl(Long userId) {

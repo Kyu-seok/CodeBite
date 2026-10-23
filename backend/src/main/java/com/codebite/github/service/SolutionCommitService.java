@@ -10,6 +10,7 @@ import com.codebite.github.gateway.GitHubFileExistsException;
 import com.codebite.github.gateway.GitHubAccount;
 import com.codebite.github.gateway.GitHubGateway;
 import com.codebite.github.gateway.GitHubGatewayException;
+import com.codebite.github.gateway.GitHubInstallationGoneException;
 import com.codebite.github.gateway.NewFile;
 import com.codebite.github.repository.GitHubLinkRepository;
 import com.codebite.github.repository.SolutionCommitRepository;
@@ -59,6 +60,7 @@ public class SolutionCommitService {
     private final TransactionTemplate tx;
     private final Counter committedCounter;
     private final Counter failedCounter;
+    private final Counter brokenCounter;
 
     public SolutionCommitService(GitHubLinkRepository linkRepository,
                                  SolutionCommitRepository solutionCommitRepository,
@@ -75,6 +77,7 @@ public class SolutionCommitService {
         this.tx = new TransactionTemplate(transactionManager);
         this.committedCounter = outcomeCounter(meterRegistry, "committed");
         this.failedCounter = outcomeCounter(meterRegistry, "failed");
+        this.brokenCounter = outcomeCounter(meterRegistry, "broken");
     }
 
     private static Counter outcomeCounter(MeterRegistry registry, String outcome) {
@@ -131,14 +134,15 @@ public class SolutionCommitService {
                 : new NewFile(SolutionLayout.readmePath(problem),
                         SolutionLayout.readme(problem, properties.getCodebiteBaseUrl()),
                         SolutionLayout.readmeMessage(problem), author, acceptedAt);
-        return Optional.of(new Attempt(solutionCommit.getId(), l.getInstallationId(),
+        return Optional.of(new Attempt(solutionCommit.getId(), l.getId(), l.getInstallationId(),
                 l.getRepositoryFullName(), l.getDefaultBranch(), readme, solution,
                 solutionCommit.getAttempts() > 0));
     }
 
     /**
      * Pushes the attempt, retrying transient GitHub errors with doubling back-off. Once the tries
-     * run out, or on any other gateway error, the Solution Commit is FAILED. Nothing is thrown.
+     * run out, or on any other gateway error, the Solution Commit is FAILED; when the installation
+     * or repository is gone, the GitHub Link also becomes BROKEN. Nothing is thrown.
      */
     private void push(Attempt attempt) {
         int maxTries = Math.max(1, properties.getCommitMaxTries());
@@ -169,6 +173,13 @@ public class SolutionCommitService {
                 if (!retryAfter(attempt, e, tryNumber, maxTries, backoffMs)) {
                     return;
                 }
+            } catch (GitHubInstallationGoneException e) {
+                // Permanent: never retried. Later submissions are skipped until the user relinks.
+                log.warn("GitHub Link {} is BROKEN: {}", attempt.linkId(), e.getMessage());
+                markLinkBroken(attempt);
+                record(attempt, sc -> sc.markFailed(e.getMessage()));
+                brokenCounter.increment();
+                return;
             } catch (GitHubGatewayException e) {
                 recordFailed(attempt, e);
                 return;
@@ -226,6 +237,11 @@ public class SolutionCommitService {
         }
     }
 
+    private void markLinkBroken(Attempt attempt) {
+        tx.executeWithoutResult(status -> linkRepository.findById(attempt.linkId())
+                .ifPresent(GitHubLink::markBroken));
+    }
+
     private void record(Attempt attempt, Consumer<SolutionCommit> outcome) {
         tx.executeWithoutResult(status -> solutionCommitRepository.findById(attempt.solutionCommitId())
                 .ifPresent(outcome));
@@ -236,7 +252,7 @@ public class SolutionCommitService {
      * when the problem folder is already started. {@code attemptedBefore} is true when an earlier
      * delivery already tried this Solution Commit, so its solution file may be on GitHub already.
      */
-    private record Attempt(Long solutionCommitId, long installationId, String repositoryFullName,
+    private record Attempt(Long solutionCommitId, Long linkId, long installationId, String repositoryFullName,
                            String branch, NewFile readme, NewFile solution, boolean attemptedBefore) {
     }
 }

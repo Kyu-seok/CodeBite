@@ -37,6 +37,7 @@ public class FakeGitHubGateway implements GitHubGateway {
     private Supplier<? extends RuntimeException> alwaysFailure;
     /** Paths whose next commit lands on GitHub but whose response never comes back. */
     private final Set<String> lostResponses = new HashSet<>();
+    private int calls;
 
     /** A commit that reached the fake, in the order made. */
     public record RecordedCommit(long installationId, String repositoryFullName, String branch, String path,
@@ -54,6 +55,12 @@ public class FakeGitHubGateway implements GitHubGateway {
         nextFailures.clear();
         alwaysFailure = null;
         lostResponses.clear();
+        calls = 0;
+    }
+
+    /** How many gateway operations have been called since {@link #reset}, failed ones included. */
+    public synchronized int calls() {
+        return calls;
     }
 
     /** GitHub will exchange {@code code} for {@code account}, which can access those installations. */
@@ -66,6 +73,21 @@ public class FakeGitHubGateway implements GitHubGateway {
     /** Installation {@code installationId} exists and grants exactly these repositories. */
     public synchronized void install(long installationId, GitHubRepo... repositories) {
         reposByInstallation.put(installationId, List.of(repositories));
+    }
+
+    /** The user uninstalled the App: every operation on {@code installationId} now reports it gone. */
+    public synchronized void uninstall(long installationId) {
+        reposByInstallation.remove(installationId);
+    }
+
+    /**
+     * The user deleted {@code repositoryFullName} on GitHub: no installation grants it any more and
+     * its files are gone.
+     */
+    public synchronized void deleteRepository(String repositoryFullName) {
+        reposByInstallation.replaceAll((id, repos) -> repos.stream()
+                .filter(r -> !r.fullName().equals(repositoryFullName)).toList());
+        filesByRepo.remove(repositoryFullName);
     }
 
     /** The next gateway calls throw these, in order, one per call. */
@@ -151,7 +173,15 @@ public class FakeGitHubGateway implements GitHubGateway {
         return repositories;
     }
 
+    @Override
+    public synchronized boolean isRepositoryReachable(long installationId, long repositoryId) {
+        maybeFail();
+        return reposByInstallation.getOrDefault(installationId, List.of()).stream()
+                .anyMatch(r -> r.id() == repositoryId);
+    }
+
     private void maybeFail() {
+        calls++;
         if (alwaysFailure != null) {
             throw alwaysFailure.get();
         }
