@@ -73,7 +73,7 @@ docker compose -f infra/docker-compose.yml up -d   # start PostgreSQL + Redis + 
 The GitHub App behind Solution Commits is registered by hand: run `scripts/setup-github-app-dev.sh`, an interactive wizard that walks through GitHub's app settings and writes the `GITHUB_APP_*` values into `infra/.env`. Production needs its own app (callback on code-bite.com).
 
 ### Package Structure (`backend/src/main/java/com/codebite/`)
-- `config/` — SecurityConfig, WebConfig, OAuthProperties, GitHubAppProperties (`app.github.*`, optional), RedisConfig, KafkaTopicConfig, KafkaConsumerConfig (one container factory per `submission-results` listener)
+- `config/` — SecurityConfig, WebConfig, OAuthProperties, GitHubAppProperties (`app.github.*`, optional), RedisConfig, KafkaTopicConfig, KafkaConsumerConfig (one container factory per `submission-results` listener, plus one for `github-imports`)
 - `common/controller/` — HealthController
 - `common/exception/` — GlobalExceptionHandler
 - `auth/` — JWT auth + OAuth (controller, service, DTOs, filter, token provider, oauth clients)
@@ -82,7 +82,7 @@ The GitHub App behind Solution Commits is registered by hand: run `scripts/setup
 - `submission/` — Submission flow (controller, service, DTOs, Kafka producer)
 - `run/` — Run flow (controller, service, DTOs — synchronous Judge0 execution, sample test cases only)
 - `streak/` — Streaks and Repairs (controller, service, DTOs, `submission-results` listener); terms in GLOSSARY.md, UTC days per docs/adr/0001
-- `github/` — GitHub Links via the CodeBite GitHub App (ADR 0003): `gateway/` (`GitHubGateway` seam, `GitHubAppGateway` REST adapter minting installation tokens from an RS256 app JWT, gateway exceptions), `service/` (link + signed install state and repository-selection token; `SolutionCommitService` + `SolutionLayout` for Solution Commits), `consumer/SolutionCommitListener` (`submission-results`, group `codebite-solution-commits`: every ACCEPTED event of a user with an ACTIVE link becomes a Solution Commit; transient GitHub errors retried with doubling back-off per `app.github.commit-max-tries` / `commit-retry-backoff-ms`, then FAILED; never throws; a gone installation/repository marks the link BROKEN, after which submissions are skipped until relink), controller, DTOs. Tests swap in `FakeGitHubGateway` (`backend/src/test/.../github/gateway/`) via `TestGitHubConfig`
+- `github/` — GitHub Links via the CodeBite GitHub App (ADR 0003): `gateway/` (`GitHubGateway` seam, `GitHubAppGateway` REST adapter minting installation tokens from an RS256 app JWT, gateway exceptions), `service/` (link + signed install state and repository-selection token; `SolutionCommitService` + `SolutionLayout` for Solution Commits), `consumer/SolutionCommitListener` (`submission-results`, group `codebite-solution-commits`: every ACCEPTED event of a user with an ACTIVE link becomes a Solution Commit; transient GitHub errors retried with doubling back-off per `app.github.commit-max-tries` / `commit-retry-backoff-ms`, then FAILED; never throws; a gone installation/repository marks the link BROKEN, after which submissions are skipped until relink), Import (`GitHubImportService` starts it and publishes `event/GitHubImportRequestedEvent` through `GitHubImportPublisher` → `kafka/KafkaGitHubImportPublisher` on topic `github-imports`; `consumer/GitHubImportListener`, group `codebite-github-imports`, runs `GitHubImporter`: every earlier Accepted submission not yet COMMITTED through the link goes up in one batch push via `GitHubGateway.pushCommits`, which the real adapter does with JGit in `gateway/GitBatchPush`, remote base `app.github.git-base-url`), controller, DTOs. Tests swap in `FakeGitHubGateway` (`backend/src/test/.../github/gateway/`) via `TestGitHubConfig`, and `TestKafkaConfig` runs Imports synchronously
 
 ### Run Flow (Synchronous)
 `POST /api/problems/{slug}/run` → `RunService.run()` executes only sample test cases synchronously via JudgeService, returns results immediately. No data is persisted. No auth required.
@@ -117,6 +117,7 @@ The GitHub App behind Solution Commits is registered by hand: run `scripts/setup
 | POST | `/api/github/link/callback` | JWT | 200 + `{link, repositories, selectionToken}` (body `{code, installationId, state}`; links when exactly one repo was granted, else lists them with a signed `selectionToken`; 401 bad state, 403 installation not authorised by that account) |
 | PUT | `/api/github/link/repository` | JWT | 200 + link (body `{selectionToken, repositoryId}`; account and installation come from the token; 400 if the installation doesn't grant that repo, 401 bad token) |
 | DELETE | `/api/github/link` | JWT | 204 No Content (marks the current link UNLINKED, keeping the row; no GitHub call, repository untouched; 204 even with no link) |
+| POST | `/api/github/link/import` | JWT | 202 + link with `importState: RUNNING` when AVAILABLE or FAILED; 409 when RUNNING, DONE or the link is BROKEN; 404 without a link. Runs in the background via Kafka topic `github-imports`; poll `GET /api/github/link` |
 
 ## Worker
 
@@ -189,7 +190,7 @@ npm run build    # production build (includes tsc type check)
 | `codebite.submissions.created` | Counter | Backend | Total submissions created |
 | `codebite.submissions.completed` | Counter | Worker | Submissions completed (tags: `status`, `language`) |
 | `codebite.submissions.processing.duration` | Timer | Worker | Time to process a submission through Judge0 |
-| `codebite.solution.commits` | Counter | Backend | Solution Commits by final outcome after retries (tag: `outcome` = `committed`, `failed`, or `broken` when the installation or repository is gone, which is never retried) |
+| `codebite.solution.commits` | Counter | Backend | Solution Commits by final outcome after retries (tag: `outcome` = `committed`, `failed`, or `broken` when the installation or repository is gone, which is never retried). An Import counts each commit in its batch |
 
 ### Built-in Metrics (via Actuator)
 - `http_server_requests_seconds` — HTTP request rate, latency, status codes per endpoint

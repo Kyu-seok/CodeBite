@@ -118,6 +118,8 @@ app:
     install-url: ${GITHUB_APP_INSTALL_URL:}  # defaults to https://github.com/apps/<slug>/installations/new
     api-base-url: ${GITHUB_API_BASE_URL:https://api.github.com}
     web-base-url: ${GITHUB_WEB_BASE_URL:https://github.com}
+    # Import pushes to <git-base-url>/<owner>/<repo>.git with the installation token.
+    git-base-url: ${GITHUB_GIT_BASE_URL:https://github.com}
     codebite-base-url: ${CODEBITE_BASE_URL:https://code-bite.com}  # links in Solution Repository READMEs
     state-expiration-ms: 900000
     commit-max-tries: ${GITHUB_COMMIT_MAX_TRIES:3}  # per Solution Commit, on transient GitHub errors
