@@ -36,6 +36,14 @@ export function chooseGitHubRepository(selectionToken: string, repositoryId: num
   return client.put<GitHubLink>("/github/link/repository", { selectionToken, repositoryId });
 }
 
+/**
+ * Starts the Import of earlier Accepted submissions (202, import state RUNNING). 409 when it is
+ * already RUNNING or DONE. It runs in the background: poll `getGitHubLink()` for the outcome.
+ */
+export function startGitHubImport() {
+  return client.post<GitHubLink>("/github/link/import");
+}
+
 /** Unlinks the current GitHub Link. Stops future Solution Commits; the repository is untouched. */
 export function unlinkGitHub() {
   return client.delete<void>("/github/link");

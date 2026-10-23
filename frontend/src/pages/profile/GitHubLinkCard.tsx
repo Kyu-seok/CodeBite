@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { AlertTriangle, ExternalLink, Github, Lock } from 'lucide-react';
-import { getGitHubLink, startGitHubInstall, unlinkGitHub } from '@/api/github';
+import { isAxiosError } from 'axios';
+import { AlertTriangle, CheckCircle2, ExternalLink, Github, History, Loader2, Lock } from 'lucide-react';
+import { getGitHubLink, startGitHubImport, startGitHubInstall, unlinkGitHub } from '@/api/github';
 import type { GitHubLink } from '@/types/github';
 import { Button } from '@/components/ui/Button';
 import {
@@ -14,6 +15,98 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/Dialog';
+
+const IMPORT_POLL_MS = 3000;
+
+/**
+ * The one-time Import of earlier Accepted submissions into this Solution Repository, each dated at
+ * its original Accepted time (ADR 0002). Offered while AVAILABLE, retryable after FAILED; polls the
+ * link while RUNNING.
+ */
+function ImportOffer({
+  link,
+  onChange,
+}: {
+  link: GitHubLink;
+  onChange: (link: GitHubLink | null) => void;
+}) {
+  const { t } = useTranslation('profile');
+  const [starting, setStarting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const state = link.importState;
+
+  useEffect(() => {
+    if (state !== 'RUNNING') return;
+    const timer = window.setInterval(() => {
+      getGitHubLink()
+        .then((latest) => {
+          if (!latest || latest.importState !== 'RUNNING') onChange(latest);
+        })
+        .catch(() => {});
+    }, IMPORT_POLL_MS);
+    return () => window.clearInterval(timer);
+  }, [state, onChange]);
+
+  const start = async () => {
+    setStarting(true);
+    setError(null);
+    try {
+      const res = await startGitHubImport();
+      onChange(res.data);
+    } catch (e) {
+      if (isAxiosError(e) && e.response?.status === 409) {
+        // Already running or done elsewhere (another tab): show the real state.
+        onChange(await getGitHubLink().catch(() => link));
+      } else {
+        setError(t('githubLink.import.startFailed'));
+      }
+    } finally {
+      setStarting(false);
+    }
+  };
+
+  if (state === 'DONE') {
+    return (
+      <p className="flex items-center gap-2 text-sm text-muted-foreground">
+        <CheckCircle2 className="h-4 w-4 shrink-0 text-success-500" />
+        {t('githubLink.import.done')}
+      </p>
+    );
+  }
+
+  if (state === 'RUNNING') {
+    return (
+      <p className="flex items-center gap-2 text-sm text-muted-foreground">
+        <Loader2 className="h-4 w-4 shrink-0 animate-spin" />
+        {t('githubLink.import.running')}
+      </p>
+    );
+  }
+
+  const failed = state === 'FAILED';
+  return (
+    <div className="flex flex-col gap-2 rounded-lg border border-border bg-muted/30 px-3 py-2">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <p className="flex items-start gap-2 text-sm text-foreground">
+          {failed ? (
+            <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-error-500" />
+          ) : (
+            <History className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
+          )}
+          {failed ? t('githubLink.import.failed') : t('githubLink.import.offer')}
+        </p>
+        <Button size="sm" variant="outline" onClick={start} disabled={starting}>
+          {starting
+            ? t('githubLink.import.starting')
+            : failed
+              ? t('githubLink.import.retry')
+              : t('githubLink.import.start')}
+        </Button>
+      </div>
+      {error && <p className="text-sm text-error-500">{error}</p>}
+    </div>
+  );
+}
 
 /**
  * The user's GitHub Link: where their Accepted submissions are committed.
@@ -120,6 +213,8 @@ export function GitHubLinkCard() {
               </Button>
             </div>
           )}
+
+          {!broken && <ImportOffer link={link} onChange={setLink} />}
 
           <div className="flex justify-end">
             <Dialog open={confirmingUnlink} onOpenChange={setConfirmingUnlink}>
