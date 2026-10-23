@@ -19,6 +19,8 @@ import com.codebite.user.entity.Role;
 import com.codebite.user.entity.User;
 import com.codebite.user.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -64,6 +66,7 @@ class GitHubImportIntegrationTest {
     @Autowired private SubmissionRepository submissionRepository;
     @Autowired private EntityManager entityManager;
     @Autowired private SolutionCommitService solutionCommitService;
+    @Autowired private MeterRegistry meterRegistry;
 
     private User user;
     private String token;
@@ -243,6 +246,52 @@ class GitHubImportIntegrationTest {
     }
 
     @Test
+    void uninstalledAppMarksTheLinkBrokenAndTheImportFailed() throws Exception {
+        submit(user, twoSum, "python", "print(1)", SubmissionStatus.ACCEPTED, "2026-03-01T10:00:00Z");
+        link("octocat/solutions");
+        gitHub.uninstall(INSTALLATION);
+        double brokenBefore = solutionCommits("broken");
+
+        startImport().andExpect(status().isAccepted());
+
+        assertThat(gitHub.pushes()).isEmpty();
+        getLink().andExpect(jsonPath("$.status").value("BROKEN"))
+                .andExpect(jsonPath("$.importState").value("FAILED"));
+        assertThat(solutionCommits("broken") - brokenBefore).isEqualTo(1);
+    }
+
+    @Test
+    void brokenLinkCannotStartAnImport() throws Exception {
+        link("octocat/solutions");
+        entityManager.createQuery("UPDATE GitHubLink l SET l.status = "
+                        + "com.codebite.github.entity.GitHubLinkStatus.BROKEN WHERE l.userId = :userId")
+                .setParameter("userId", user.getId())
+                .executeUpdate();
+        entityManager.clear();
+        gitHub.uninstall(INSTALLATION);
+
+        startImport().andExpect(status().isConflict());
+
+        assertThat(gitHub.pushes()).isEmpty();
+    }
+
+    @Test
+    void importCountsEachSolutionCommit() throws Exception {
+        submit(user, twoSum, "python", "print(1)", SubmissionStatus.ACCEPTED, "2026-03-01T10:00:00Z");
+        submit(user, lruCache, "cpp", "int main() {}", SubmissionStatus.ACCEPTED, "2026-03-02T10:00:00Z");
+        link("octocat/solutions");
+        double committedBefore = solutionCommits("committed");
+        double failedBefore = solutionCommits("failed");
+        gitHub.failNext(new GitHubTransientException("GitHub is down"));
+
+        startImport().andExpect(status().isAccepted());
+        assertThat(solutionCommits("failed") - failedBefore).isEqualTo(2);
+
+        startImport().andExpect(status().isAccepted());
+        assertThat(solutionCommits("committed") - committedBefore).isEqualTo(2);
+    }
+
+    @Test
     void importWithoutALinkIsNotFound() throws Exception {
         startImport().andExpect(status().isNotFound());
     }
@@ -253,6 +302,11 @@ class GitHubImportIntegrationTest {
     }
 
     // --- helpers ---
+
+    private double solutionCommits(String outcome) {
+        Counter counter = meterRegistry.find("codebite.solution.commits").tag("outcome", outcome).counter();
+        return counter == null ? 0 : counter.count();
+    }
 
     private void linkCreatedAt(String at) {
         entityManager.createQuery("UPDATE GitHubLink l SET l.createdAt = :at WHERE l.userId = :userId")
