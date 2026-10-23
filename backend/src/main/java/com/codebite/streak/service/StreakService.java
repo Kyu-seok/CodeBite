@@ -1,5 +1,8 @@
 package com.codebite.streak.service;
 
+import com.codebite.common.exception.DuplicateResourceException;
+import com.codebite.streak.dto.StreakCalendar;
+import com.codebite.streak.dto.StreakSummary;
 import com.codebite.streak.entity.StreakDay;
 import com.codebite.streak.entity.UserStreak;
 import com.codebite.streak.repository.StreakDayRepository;
@@ -12,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.time.ZoneOffset;
 import java.util.Collection;
 import java.util.List;
@@ -73,6 +77,73 @@ public class StreakService {
             streak.advanceProgress();
         }
         // Otherwise the day is already a real Streak Day: nothing to do.
+    }
+
+    @Transactional(readOnly = true)
+    public StreakSummary getSummary(Long userId) {
+        return getSummary(userId, LocalDate.now(ZoneOffset.UTC));
+    }
+
+    @Transactional(readOnly = true)
+    public StreakSummary getSummary(Long userId, LocalDate today) {
+        List<LocalDate> days = streakDayRepository.findByUserIdOrderByStreakDateAsc(userId).stream()
+                .map(StreakDay::getStreakDate)
+                .toList();
+        Optional<UserStreak> streak = userStreakRepository.findById(userId);
+        return new StreakSummary(
+                currentStreak(days, today),
+                bestStreak(days),
+                days.contains(today),
+                streak.map(UserStreak::getRepairs).orElse(0),
+                streak.map(UserStreak::getRepairProgress).orElse(0));
+    }
+
+    @Transactional(readOnly = true)
+    public StreakCalendar getCalendar(Long userId, YearMonth month) {
+        List<StreakCalendar.Day> days = streakDayRepository
+                .findByUserIdAndStreakDateBetweenOrderByStreakDateAsc(
+                        userId, month.atDay(1), month.atEndOfMonth()).stream()
+                .map(d -> new StreakCalendar.Day(d.getStreakDate(), d.isRepaired()))
+                .toList();
+        return new StreakCalendar(
+                month.toString(),
+                LocalDate.now(ZoneOffset.UTC),
+                streakDayRepository.findFirstStreakDate(userId).orElse(null),
+                days);
+    }
+
+    @Transactional
+    public StreakSummary repair(Long userId, LocalDate date) {
+        return repair(userId, date, LocalDate.now(ZoneOffset.UTC));
+    }
+
+    /**
+     * Spends one Repair to turn {@code date} into a Repaired Day. The user picks any Missed Day: a
+     * past day after their first real Streak Day that is not already counted. Today cannot be
+     * repaired, since it is not over and can still be solved.
+     */
+    @Transactional
+    public StreakSummary repair(Long userId, LocalDate date, LocalDate today) {
+        if (!date.isBefore(today)) {
+            throw new IllegalArgumentException("Only past days can be repaired");
+        }
+        Optional<LocalDate> first = streakDayRepository.findFirstStreakDate(userId);
+        if (first.isEmpty() || !date.isAfter(first.get())) {
+            throw new IllegalArgumentException("Days before your first Streak Day cannot be repaired");
+        }
+
+        // A user who has never earned a Repair has no row; there is nothing to lock or spend.
+        UserStreak streak = userStreakRepository.findByIdForUpdate(userId)
+                .filter(s -> s.getRepairs() > 0)
+                .orElseThrow(() -> new IllegalArgumentException("No Repairs left"));
+        if (streakDayRepository.findByUserIdAndStreakDate(userId, date).isPresent()) {
+            throw new DuplicateResourceException("That day already counts toward your Streak");
+        }
+
+        streak.spendRepair();
+        streakDayRepository.save(new StreakDay(userId, date, true));
+        streakDayRepository.flush();
+        return getSummary(userId, today);
     }
 
     /** Locks the user's streak row, creating it on their first Streak Day. */
