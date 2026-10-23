@@ -29,8 +29,13 @@ CREATE TABLE user_streaks (
 );
 
 -- Backfill: existing Streaks carry over. Repairs and Repair Progress start at 0 for everyone, so
--- no user_streaks rows are written here. created_at is stored as UTC wall time by the
--- containerised JVM, so casting it to DATE yields the UTC date.
+-- no user_streaks rows are written here.
+--
+-- created_at is a TIMESTAMP without zone, written as the backend JVM's local wall time. The
+-- production containers run on UTC only because nothing overrides the image default, so there
+-- casting to DATE yields the UTC date. Against a database written by a non-UTC JVM (e.g. a local
+-- `bootRun` on KST) the backfilled days are dated in that zone instead. Live Streak Days do not
+-- have this problem: StreakService dates them from the submission's Instant in UTC.
 INSERT INTO streak_days (user_id, streak_date)
 SELECT DISTINCT user_id, CAST(created_at AS DATE)
 FROM submissions

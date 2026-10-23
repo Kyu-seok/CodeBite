@@ -10,3 +10,5 @@ A Streak Day is the UTC date of an Accepted submission, for every user. For Kore
 ## Consequences
 
 Changing this later means re-dating every stored Streak Day, which can merge or split days and change Streaks that users have already seen.
+
+Live Streak Days are dated in Java from the submission's timestamp, so they are always UTC. The one-off backfill in `V189__add_streaks.sql` is different: it casts the stored timestamp in SQL, so it is only UTC if the backend that wrote the timestamps ran on UTC. Production does, but only by default: neither the backend image nor Postgres sets a timezone. Pinning it with `TZ` or `hibernate.jdbc.time_zone` would change how every existing timestamp is read, so it was left out of scope.
