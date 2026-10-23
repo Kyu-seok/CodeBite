@@ -92,9 +92,10 @@ export function StreakCalendarCard() {
       setPending(null);
       notifyStreakChanged();
     } catch (e) {
+      // The server's message is English-only; show our own translated copy instead.
       setError(
-        isAxiosError(e) && e.response?.data?.message
-          ? e.response.data.message
+        isAxiosError(e) && e.response?.status === 409
+          ? t('streakCalendar.alreadyCounted')
           : t('streakCalendar.repairFailed'),
       );
     } finally {

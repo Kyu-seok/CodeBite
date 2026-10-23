@@ -37,6 +37,7 @@
     "confirmBody_other": "보유한 복구 {{count}}개 중 1개를 사용해 {{date}}을(를) 채웁니다.",
     "cancel": "취소",
     "useRepair": "복구 사용",
-    "repairFailed": "복구하지 못했습니다. 다시 시도해 주세요."
+    "repairFailed": "복구하지 못했습니다. 다시 시도해 주세요.",
+    "alreadyCounted": "이미 연속 풀이에 포함된 날입니다."
   }
 }

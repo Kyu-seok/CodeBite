@@ -37,6 +37,7 @@
     "confirmBody_other": "Fill {{date}} using 1 of your {{count}} Repairs.",
     "cancel": "Cancel",
     "useRepair": "Use Repair",
-    "repairFailed": "Could not repair that day. Please try again."
+    "repairFailed": "Could not repair that day. Please try again.",
+    "alreadyCounted": "That day already counts toward your Streak."
   }
 }
