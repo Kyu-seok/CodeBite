@@ -35,6 +35,8 @@ public class FakeGitHubGateway implements GitHubGateway {
     /** File contents by repository full name, then path. */
     private final Map<String, Map<String, String>> filesByRepo = new HashMap<>();
     private Supplier<? extends RuntimeException> alwaysFailure;
+    /** Paths whose next commit lands on GitHub but whose response never comes back. */
+    private final Set<String> lostResponses = new HashSet<>();
 
     /** A commit that reached the fake, in the order made. */
     public record RecordedCommit(long installationId, String repositoryFullName, String branch, String path,
@@ -51,6 +53,7 @@ public class FakeGitHubGateway implements GitHubGateway {
         filesByRepo.clear();
         nextFailures.clear();
         alwaysFailure = null;
+        lostResponses.clear();
     }
 
     /** GitHub will exchange {@code code} for {@code account}, which can access those installations. */
@@ -73,6 +76,20 @@ public class FakeGitHubGateway implements GitHubGateway {
     /** Every gateway call throws a fresh exception from {@code failure} until {@link #reset}. */
     public synchronized void failAlways(Supplier<? extends RuntimeException> failure) {
         this.alwaysFailure = failure;
+    }
+
+    /** GitHub works again: forgets injected failures but keeps all GitHub state. */
+    public synchronized void recover() {
+        nextFailures.clear();
+        alwaysFailure = null;
+    }
+
+    /**
+     * The next commit of {@code path} lands, but the caller gets a transient error instead of the
+     * response, as when a connection drops after GitHub has written the file.
+     */
+    public synchronized void loseResponseTo(String path) {
+        lostResponses.add(path);
     }
 
     @Override
@@ -108,6 +125,9 @@ public class FakeGitHubGateway implements GitHubGateway {
         String sha = String.format("%040x", commits.size() + 1);
         commits.add(new RecordedCommit(installationId, repositoryFullName, branch, file.path(), file.content(),
                 file.message(), file.author().login(), file.author().noreplyEmail(), file.authorDate(), sha));
+        if (lostResponses.remove(file.path())) {
+            throw new GitHubTransientException("connection reset after committing " + file.path());
+        }
         return new CommittedFile(sha, "https://github.com/" + repositoryFullName + "/commit/" + sha);
     }
 

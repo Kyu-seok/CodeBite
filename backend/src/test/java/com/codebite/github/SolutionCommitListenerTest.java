@@ -7,6 +7,7 @@ import com.codebite.github.entity.SolutionCommitStatus;
 import com.codebite.github.gateway.FakeGitHubGateway;
 import com.codebite.github.gateway.FakeGitHubGateway.RecordedCommit;
 import com.codebite.github.gateway.GitHubAccount;
+import com.codebite.github.gateway.GitHubGatewayException;
 import com.codebite.github.gateway.GitHubRepo;
 import com.codebite.github.gateway.GitHubTransientException;
 import com.codebite.github.repository.GitHubLinkRepository;
@@ -23,6 +24,8 @@ import com.codebite.submission.repository.SubmissionRepository;
 import com.codebite.user.entity.Role;
 import com.codebite.user.entity.User;
 import com.codebite.user.repository.UserRepository;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -59,6 +62,7 @@ class SolutionCommitListenerTest {
     @Autowired private GitHubLinkRepository linkRepository;
     @Autowired private SolutionCommitRepository solutionCommitRepository;
     @Autowired private EntityManager entityManager;
+    @Autowired private MeterRegistry meterRegistry;
 
     private SolutionCommitListener listener;
     private User user;
@@ -255,6 +259,101 @@ class SolutionCommitListenerTest {
     }
 
     @Test
+    void briefGitHubOutageIsRetriedAndTheSolutionCommitted() {
+        link(user);
+        Submission submission = accepted(user, "python", "a = 1", Instant.parse("2026-10-19T14:05:09Z"));
+        gitHub.failNext(new GitHubTransientException("502 Bad Gateway"),
+                new GitHubTransientException("503 Service Unavailable"));
+
+        listener.onResult(acceptedEvent(submission));
+
+        assertThat(gitHub.commits()).extracting(RecordedCommit::path).containsExactly(
+                "two-sum-gh/README.md", "two-sum-gh/python/2026-10-19T140509Z.py");
+        assertThat(solutionCommitRepository.findAll()).singleElement().satisfies(sc -> {
+            assertThat(sc.getStatus()).isEqualTo(SolutionCommitStatus.COMMITTED);
+            assertThat(sc.getCommitSha()).isEqualTo(gitHub.commits().get(1).sha());
+            assertThat(sc.getLastError()).isNull();
+        });
+    }
+
+    @Test
+    void retriesRunningOutLeaveTheSolutionCommitFailed() {
+        link(user);
+        Submission submission = accepted(user, "python", "a = 1", Instant.parse("2026-10-19T14:05:09Z"));
+        gitHub.failNext(new GitHubTransientException("502 Bad Gateway"),
+                new GitHubTransientException("502 Bad Gateway"),
+                new GitHubTransientException("503 still down"));
+
+        assertThatCode(() -> listener.onResult(acceptedEvent(submission))).doesNotThrowAnyException();
+
+        assertThat(gitHub.commits()).isEmpty();
+        assertThat(solutionCommitRepository.findAll()).singleElement().satisfies(sc -> {
+            assertThat(sc.getStatus()).isEqualTo(SolutionCommitStatus.FAILED);
+            assertThat(sc.getLastError()).isEqualTo("503 still down");
+        });
+    }
+
+    @Test
+    void permanentGitHubErrorIsNotRetried() {
+        link(user);
+        Submission submission = accepted(user, "python", "a = 1", Instant.parse("2026-10-19T14:05:09Z"));
+        gitHub.failNext(new GitHubGatewayException("422 Unprocessable Entity"));
+
+        listener.onResult(acceptedEvent(submission));
+
+        assertThat(gitHub.commits()).isEmpty();
+        assertThat(solutionCommitRepository.findAll()).singleElement().satisfies(sc -> {
+            assertThat(sc.getStatus()).isEqualTo(SolutionCommitStatus.FAILED);
+            assertThat(sc.getLastError()).isEqualTo("422 Unprocessable Entity");
+        });
+    }
+
+    @Test
+    void solutionThatLandedWhenItsResponseWasLostCountsAsCommitted() {
+        link(user);
+        Submission submission = accepted(user, "python", "a = 1", Instant.parse("2026-10-19T14:05:09Z"));
+        gitHub.loseResponseTo("two-sum-gh/python/2026-10-19T140509Z.py");
+
+        listener.onResult(acceptedEvent(submission));
+
+        assertThat(gitHub.commits()).extracting(RecordedCommit::path).containsExactly(
+                "two-sum-gh/README.md", "two-sum-gh/python/2026-10-19T140509Z.py");
+        assertThat(solutionCommitRepository.findAll()).singleElement().satisfies(sc -> {
+            assertThat(sc.getStatus()).isEqualTo(SolutionCommitStatus.COMMITTED);
+            assertThat(sc.getCommitUrl()).isEqualTo(
+                    "https://github.com/octocat/solutions/blob/main/two-sum-gh/python/2026-10-19T140509Z.py");
+        });
+    }
+
+    @Test
+    void solutionPathTakenBeforeTheFirstAttemptIsAFailure() {
+        gitHub.seedFile(REPO.fullName(), "two-sum-gh/python/2026-10-19T140509Z.py", "someone else's file");
+        link(user);
+        Submission submission = accepted(user, "python", "a = 1", Instant.parse("2026-10-19T14:05:09Z"));
+
+        listener.onResult(acceptedEvent(submission));
+
+        assertThat(solutionCommitRepository.findAll()).singleElement()
+                .satisfies(sc -> assertThat(sc.getStatus()).isEqualTo(SolutionCommitStatus.FAILED));
+    }
+
+    @Test
+    void outcomesAreCountedForMetrics() {
+        link(user);
+        Submission ok = accepted(user, "python", "a = 1", Instant.parse("2026-10-19T14:05:09Z"));
+        Submission bad = accepted(user, "java", "class A {}", Instant.parse("2026-10-19T15:00:00Z"));
+        double committedBefore = outcomeCount("committed");
+        double failedBefore = outcomeCount("failed");
+
+        listener.onResult(acceptedEvent(ok));
+        gitHub.failAlways(() -> new GitHubTransientException("GitHub is down"));
+        listener.onResult(acceptedEvent(bad));
+
+        assertThat(outcomeCount("committed") - committedBefore).isEqualTo(1);
+        assertThat(outcomeCount("failed") - failedBefore).isEqualTo(1);
+    }
+
+    @Test
     void gitHubFailureIsRecordedAndNeverThrown() {
         link(user);
         Submission submission = accepted(user, "python", "a = 1", Instant.parse("2026-10-19T14:05:09Z"));
@@ -274,8 +373,9 @@ class SolutionCommitListenerTest {
     void redeliveryAfterAFailureTriesAgain() {
         link(user);
         Submission submission = accepted(user, "python", "a = 1", Instant.parse("2026-10-19T14:05:09Z"));
-        gitHub.failNext(new GitHubTransientException("GitHub is down"));
+        gitHub.failAlways(() -> new GitHubTransientException("GitHub is down"));
         listener.onResult(acceptedEvent(submission));
+        gitHub.recover();
 
         listener.onResult(acceptedEvent(submission));
 
@@ -288,6 +388,11 @@ class SolutionCommitListenerTest {
     }
 
     // --- fixtures ---
+
+    private double outcomeCount(String outcome) {
+        Counter counter = meterRegistry.find("codebite.solution.commits").tag("outcome", outcome).counter();
+        return counter == null ? 0 : counter.count();
+    }
 
     private GitHubLink link(User owner) {
         return linkRepository.saveAndFlush(new GitHubLink(owner.getId(), OCTOCAT.id(), OCTOCAT.login(),
