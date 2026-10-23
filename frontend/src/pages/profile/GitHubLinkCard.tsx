@@ -1,9 +1,19 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AlertTriangle, ExternalLink, Github, Lock } from 'lucide-react';
-import { getGitHubLink, startGitHubInstall } from '@/api/github';
+import { getGitHubLink, startGitHubInstall, unlinkGitHub } from '@/api/github';
 import type { GitHubLink } from '@/types/github';
 import { Button } from '@/components/ui/Button';
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/Dialog';
 
 /**
  * The user's GitHub Link: where their Accepted submissions are committed.
@@ -11,8 +21,11 @@ import { Button } from '@/components/ui/Button';
  */
 export function GitHubLinkCard() {
   const { t } = useTranslation('profile');
+  const { t: tc } = useTranslation('common');
   const [link, setLink] = useState<GitHubLink | null | undefined>(undefined);
   const [starting, setStarting] = useState(false);
+  const [confirmingUnlink, setConfirmingUnlink] = useState(false);
+  const [unlinking, setUnlinking] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -31,6 +44,21 @@ export function GitHubLinkCard() {
     } catch {
       setError(t('githubLink.startFailed'));
       setStarting(false);
+    }
+  };
+
+  const unlink = async () => {
+    setUnlinking(true);
+    setError(null);
+    try {
+      await unlinkGitHub();
+      setConfirmingUnlink(false);
+      setLink(null);
+    } catch {
+      setError(t('githubLink.unlinkFailed'));
+      setConfirmingUnlink(false);
+    } finally {
+      setUnlinking(false);
     }
   };
 
@@ -92,6 +120,34 @@ export function GitHubLinkCard() {
               </Button>
             </div>
           )}
+
+          <div className="flex justify-end">
+            <Dialog open={confirmingUnlink} onOpenChange={setConfirmingUnlink}>
+              <DialogTrigger asChild>
+                <Button size="sm" variant="ghost" className="text-muted-foreground">
+                  {t('githubLink.unlink')}
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-md">
+                <DialogHeader>
+                  <DialogTitle>{t('githubLink.unlinkTitle')}</DialogTitle>
+                  <DialogDescription>
+                    {t('githubLink.unlinkDescription', { repository: link.repositoryFullName })}
+                  </DialogDescription>
+                </DialogHeader>
+                <DialogFooter>
+                  <DialogClose asChild>
+                    <Button variant="outline" disabled={unlinking}>
+                      {tc('button.cancel')}
+                    </Button>
+                  </DialogClose>
+                  <Button variant="destructive" onClick={unlink} disabled={unlinking}>
+                    {unlinking ? t('githubLink.unlinking') : t('githubLink.unlinkConfirm')}
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </div>
         </div>
       )}
 

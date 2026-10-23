@@ -30,3 +30,13 @@ export function completeGitHubLink(code: string, installationId: number, state: 
     state,
   });
 }
+
+/** Chooses the Solution Repository after an install granted several. */
+export function chooseGitHubRepository(selectionToken: string, repositoryId: number) {
+  return client.put<GitHubLink>("/github/link/repository", { selectionToken, repositoryId });
+}
+
+/** Unlinks the current GitHub Link. Stops future Solution Commits; the repository is untouched. */
+export function unlinkGitHub() {
+  return client.delete<void>("/github/link");
+}

@@ -121,6 +121,16 @@ public class FakeGitHubGateway implements GitHubGateway {
         filesByRepo.computeIfAbsent(repositoryFullName, k -> new LinkedHashMap<>()).put(path, content);
     }
 
+    @Override
+    public synchronized List<GitHubRepo> listInstallationRepositories(long installationId) {
+        maybeFail();
+        List<GitHubRepo> repositories = reposByInstallation.get(installationId);
+        if (repositories == null) {
+            throw new GitHubInstallationGoneException("installation " + installationId + " is gone");
+        }
+        return repositories;
+    }
+
     private void maybeFail() {
         if (alwaysFailure != null) {
             throw alwaysFailure.get();

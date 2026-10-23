@@ -137,6 +137,22 @@ class GitHubAppGatewayTest {
     }
 
     @Test
+    void listsAnInstallationsRepositoriesAsTheApp() {
+        assertThat(gateway(configured()).listInstallationRepositories(77))
+                .containsExactly(new GitHubRepo(1296269, "octocat/solutions", "main", true));
+        assertThat(received.get("GET /installation/repositories")[0]).isEqualTo("Bearer installation-token");
+        assertThat(received).doesNotContainKeys("POST /login/oauth/access_token", "GET /user");
+    }
+
+    @Test
+    void listingAGoneInstallationsRepositoriesFails() {
+        respond("POST /app/installations/77/access_tokens", 404, "{\"message\":\"Not Found\"}");
+
+        assertThatThrownBy(() -> gateway(configured()).listInstallationRepositories(77))
+                .isInstanceOf(GitHubInstallationGoneException.class);
+    }
+
+    @Test
     void refusesToRunWithoutAppConfig() {
         GitHubAppProperties empty = new GitHubAppProperties();
         empty.setApiBaseUrl(baseUrl);

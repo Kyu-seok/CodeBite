@@ -1,9 +1,13 @@
 package com.codebite.github;
 
 import com.codebite.auth.jwt.JwtTokenProvider;
+import com.codebite.github.entity.GitHubLink;
+import com.codebite.github.entity.GitHubLinkStatus;
 import com.codebite.github.gateway.FakeGitHubGateway;
 import com.codebite.github.gateway.GitHubAccount;
 import com.codebite.github.gateway.GitHubRepo;
+import com.codebite.github.gateway.GitHubTransientException;
+import com.codebite.github.repository.GitHubLinkRepository;
 import com.codebite.user.entity.Role;
 import com.codebite.user.entity.User;
 import com.codebite.user.repository.UserRepository;
@@ -22,9 +26,13 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Map;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 import static org.hamcrest.Matchers.startsWith;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -39,6 +47,7 @@ class GitHubLinkIntegrationTest {
     @Autowired private JwtTokenProvider jwtTokenProvider;
     @Autowired private ObjectMapper objectMapper;
     @Autowired private FakeGitHubGateway gitHub;
+    @Autowired private GitHubLinkRepository linkRepository;
 
     private String token;
 
@@ -76,7 +85,8 @@ class GitHubLinkIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.link.githubLogin").value("octocat"))
                 .andExpect(jsonPath("$.link.repositoryFullName").value("octocat/codebite-solutions"))
-                .andExpect(jsonPath("$.repositories").isEmpty());
+                .andExpect(jsonPath("$.repositories").isEmpty())
+                .andExpect(jsonPath("$.selectionToken").doesNotExist());
 
         mockMvc.perform(get("/api/github/link").header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
@@ -129,10 +139,77 @@ class GitHubLinkIntegrationTest {
                 .andExpect(jsonPath("$.link").doesNotExist())
                 .andExpect(jsonPath("$.repositories.length()").value(2))
                 .andExpect(jsonPath("$.repositories[1].fullName").value("octocat/dotfiles"))
-                .andExpect(jsonPath("$.repositories[1].repositoryPrivate").value(true));
+                .andExpect(jsonPath("$.repositories[1].repositoryPrivate").value(true))
+                .andExpect(jsonPath("$.selectionToken").isNotEmpty());
 
         mockMvc.perform(get("/api/github/link").header("Authorization", "Bearer " + token))
                 .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void choosingOneOfTheGrantedRepositoriesCreatesTheLink() throws Exception {
+        gitHub.authorize("code-1", new GitHubAccount(583231, "octocat"), 77);
+        gitHub.install(77,
+                new GitHubRepo(1, "octocat/solutions", "main", false),
+                new GitHubRepo(2, "octocat/dotfiles", "trunk", true));
+        String selectionToken = selectionTokenFrom(callback("code-1", 77, stateFor(token), token));
+
+        chooseRepository(selectionToken, 2, token)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.githubLogin").value("octocat"))
+                .andExpect(jsonPath("$.repositoryFullName").value("octocat/dotfiles"));
+
+        mockMvc.perform(get("/api/github/link").header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.githubAccountId").value(583231))
+                .andExpect(jsonPath("$.githubLogin").value("octocat"))
+                .andExpect(jsonPath("$.repositoryId").value(2))
+                .andExpect(jsonPath("$.repositoryFullName").value("octocat/dotfiles"))
+                .andExpect(jsonPath("$.defaultBranch").value("trunk"))
+                .andExpect(jsonPath("$.repositoryPrivate").value(true))
+                .andExpect(jsonPath("$.status").value("ACTIVE"))
+                .andExpect(jsonPath("$.importState").value("AVAILABLE"));
+    }
+
+    @Test
+    void choosingARepositoryTheInstallationDoesNotGrantIsRejected() throws Exception {
+        gitHub.authorize("code-1", new GitHubAccount(583231, "octocat"), 77);
+        gitHub.install(77,
+                new GitHubRepo(1, "octocat/solutions", "main", false),
+                new GitHubRepo(2, "octocat/dotfiles", "main", true));
+        gitHub.install(99, new GitHubRepo(3, "victim/private-code", "main", true));
+        String selectionToken = selectionTokenFrom(callback("code-1", 77, stateFor(token), token));
+
+        chooseRepository(selectionToken, 3, token).andExpect(status().isBadRequest());
+
+        mockMvc.perform(get("/api/github/link").header("Authorization", "Bearer " + token))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void choosingWithAnotherUsersOrAForgedSelectionTokenIsRejected() throws Exception {
+        gitHub.authorize("code-1", new GitHubAccount(583231, "octocat"), 77);
+        gitHub.install(77,
+                new GitHubRepo(1, "octocat/solutions", "main", false),
+                new GitHubRepo(2, "octocat/dotfiles", "main", true));
+        String otherToken = tokenFor("other");
+        String othersSelection = selectionTokenFrom(callback("code-1", 77, stateFor(otherToken), otherToken));
+
+        chooseRepository(othersSelection, 1, token).andExpect(status().isUnauthorized());
+        chooseRepository("not-a-token", 1, token).andExpect(status().isUnauthorized());
+        // The install state is signed with the same key but is not a selection token.
+        chooseRepository(stateFor(token), 1, token).andExpect(status().isUnauthorized());
+
+        mockMvc.perform(get("/api/github/link").header("Authorization", "Bearer " + token))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void chooseRepositoryRequiresAuth() throws Exception {
+        mockMvc.perform(put("/api/github/link/repository")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"selectionToken\":\"t\",\"repositoryId\":1}"))
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -160,11 +237,100 @@ class GitHubLinkIntegrationTest {
     }
 
     @Test
+    void unlinkMarksTheLinkUnlinkedAndKeepsTheRow() throws Exception {
+        linkOneRepository("octocat/codebite-solutions");
+
+        unlink(token).andExpect(status().isNoContent());
+
+        mockMvc.perform(get("/api/github/link").header("Authorization", "Bearer " + token))
+                .andExpect(status().isNoContent());
+        Long userId = userRepository.findByUsername("linker").orElseThrow().getId();
+        assertThat(linkRepository.findByActiveUserId(userId)).isEmpty();
+        assertThat(linkRepository.findAll())
+                .filteredOn(link -> link.getUserId().equals(userId))
+                .singleElement()
+                .satisfies(link -> {
+                    assertThat(link.getStatus()).isEqualTo(GitHubLinkStatus.UNLINKED);
+                    assertThat(link.getUnlinkedAt()).isNotNull();
+                    assertThat(link.getRepositoryFullName()).isEqualTo("octocat/codebite-solutions");
+                });
+    }
+
+    @Test
+    void unlinkMakesNoGitHubCall() throws Exception {
+        linkOneRepository("octocat/codebite-solutions");
+        // Any gateway call now fails, so a 204 proves unlink never reached GitHub.
+        gitHub.failAlways(() -> new GitHubTransientException("GitHub must not be called on unlink"));
+
+        unlink(token).andExpect(status().isNoContent());
+
+        mockMvc.perform(get("/api/github/link").header("Authorization", "Bearer " + token))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void unlinkWithoutALinkIsANoOp() throws Exception {
+        unlink(token).andExpect(status().isNoContent());
+    }
+
+    @Test
+    void unlinkRequiresAuth() throws Exception {
+        mockMvc.perform(delete("/api/github/link")).andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void relinkingAfterUnlinkCreatesAFreshActiveLink() throws Exception {
+        gitHub.authorize("code-1", new GitHubAccount(583231, "octocat"), 77, 78);
+        gitHub.install(77, new GitHubRepo(1, "octocat/old-solutions", "main", false));
+        gitHub.install(78, new GitHubRepo(2, "octocat/new-solutions", "main", false));
+        callback("code-1", 77, stateFor(token), token).andExpect(status().isOk());
+        unlink(token).andExpect(status().isNoContent());
+
+        callback("code-1", 78, stateFor(token), token).andExpect(status().isOk());
+
+        mockMvc.perform(get("/api/github/link").header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.repositoryFullName").value("octocat/new-solutions"))
+                .andExpect(jsonPath("$.status").value("ACTIVE"))
+                .andExpect(jsonPath("$.importState").value("AVAILABLE"));
+        Long userId = userRepository.findByUsername("linker").orElseThrow().getId();
+        assertThat(linkRepository.findAll())
+                .filteredOn(link -> link.getUserId().equals(userId))
+                .extracting(GitHubLink::getRepositoryFullName, GitHubLink::getStatus)
+                .containsExactlyInAnyOrder(
+                        tuple("octocat/old-solutions", GitHubLinkStatus.UNLINKED),
+                        tuple("octocat/new-solutions", GitHubLinkStatus.ACTIVE));
+    }
+
+    @Test
+    void relinkingTheSameRepositoryAfterUnlinkWorks() throws Exception {
+        linkOneRepository("octocat/codebite-solutions");
+        unlink(token).andExpect(status().isNoContent());
+
+        callback("code-1", 77, stateFor(token), token).andExpect(status().isOk());
+
+        mockMvc.perform(get("/api/github/link").header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.repositoryFullName").value("octocat/codebite-solutions"))
+                .andExpect(jsonPath("$.status").value("ACTIVE"));
+    }
+
+    @Test
     void callbackRequiresAuth() throws Exception {
         mockMvc.perform(post("/api/github/link/callback")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"code\":\"c\",\"installationId\":1,\"state\":\"s\"}"))
                 .andExpect(status().isUnauthorized());
+    }
+
+    private void linkOneRepository(String fullName) throws Exception {
+        gitHub.authorize("code-1", new GitHubAccount(583231, "octocat"), 77);
+        gitHub.install(77, new GitHubRepo(1296269, fullName, "main", false));
+        callback("code-1", 77, stateFor(token), token).andExpect(status().isOk());
+    }
+
+    private ResultActions unlink(String bearer) throws Exception {
+        return mockMvc.perform(delete("/api/github/link").header("Authorization", "Bearer " + bearer));
     }
 
     private ResultActions callback(String code, long installationId, String state, String bearer) throws Exception {
@@ -173,6 +339,19 @@ class GitHubLinkIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(
                         Map.of("code", code, "installationId", installationId, "state", state))));
+    }
+
+    private ResultActions chooseRepository(String selectionToken, long repositoryId, String bearer) throws Exception {
+        return mockMvc.perform(put("/api/github/link/repository")
+                .header("Authorization", "Bearer " + bearer)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(
+                        Map.of("selectionToken", selectionToken, "repositoryId", repositoryId))));
+    }
+
+    private String selectionTokenFrom(ResultActions callback) throws Exception {
+        String body = callback.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+        return objectMapper.readTree(body).get("selectionToken").asText();
     }
 
     /** The state GitHub would hand back: the one in the install URL issued to that user. */

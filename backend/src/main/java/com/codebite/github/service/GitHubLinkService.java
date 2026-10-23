@@ -1,14 +1,18 @@
 package com.codebite.github.service;
 
+import com.codebite.common.exception.UnsupportedValueException;
 import com.codebite.config.GitHubAppProperties;
 import com.codebite.github.dto.GitHubInstallUrlResponse;
 import com.codebite.github.dto.GitHubLinkCallbackRequest;
 import com.codebite.github.dto.GitHubLinkCallbackResponse;
 import com.codebite.github.dto.GitHubLinkResponse;
+import com.codebite.github.dto.GitHubRepositoryChoiceRequest;
 import com.codebite.github.entity.GitHubLink;
 import com.codebite.github.gateway.GitHubAccount;
 import com.codebite.github.gateway.GitHubAppNotConfiguredException;
 import com.codebite.github.gateway.GitHubGateway;
+import com.codebite.github.gateway.GitHubInstallationGoneException;
+import com.codebite.github.gateway.GitHubInstallationNotAccessibleException;
 import com.codebite.github.gateway.GitHubRepo;
 import com.codebite.github.gateway.ResolvedInstallation;
 import com.codebite.github.repository.GitHubLinkRepository;
@@ -17,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 
 /** Creating and reading a user's GitHub Link (GLOSSARY.md, ADR 0003). */
@@ -64,11 +69,43 @@ public class GitHubLinkService {
         stateService.verify(request.state(), userId);
         ResolvedInstallation installation = gitHub.resolveInstallCallback(request.code(), request.installationId());
         if (installation.repositories().size() != 1) {
-            return GitHubLinkCallbackResponse.choose(installation.repositories());
+            return GitHubLinkCallbackResponse.choose(installation.repositories(),
+                    stateService.issueSelection(userId, installation.account(), installation.installationId()));
         }
         GitHubLink link = link(userId, installation.account(), installation.installationId(),
                 installation.repositories().get(0));
         return GitHubLinkCallbackResponse.linked(GitHubLinkResponse.from(link));
+    }
+
+    /**
+     * Links the repository the user chose after an install granted several. The account and
+     * installation come from the signed selection token, never from the client, and the choice must
+     * be one the installation grants right now.
+     */
+    @Transactional
+    public GitHubLinkResponse chooseRepository(Long userId, GitHubRepositoryChoiceRequest request) {
+        GitHubLinkStateService.Selection selection = stateService.verifySelection(request.selectionToken(), userId);
+        List<GitHubRepo> granted;
+        try {
+            granted = gitHub.listInstallationRepositories(selection.installationId());
+        } catch (GitHubInstallationGoneException e) {
+            throw new GitHubInstallationNotAccessibleException(e.getMessage());
+        }
+        GitHubRepo repo = granted.stream()
+                .filter(r -> r.id() == request.repositoryId())
+                .findFirst()
+                .orElseThrow(() -> new UnsupportedValueException("error.github.repositoryNotGranted"));
+        return GitHubLinkResponse.from(link(userId, selection.account(), selection.installationId(), repo));
+    }
+
+    /**
+     * Stops future Solution Commits. The link row is kept as UNLINKED so past Solution Commits
+     * keep their link, and the Solution Repository is left exactly as it is: GitHub is not called.
+     * Without a current link this does nothing.
+     */
+    @Transactional
+    public void unlink(Long userId) {
+        linkRepository.findByActiveUserId(userId).ifPresent(current -> current.unlink(Instant.now()));
     }
 
     private GitHubLink link(Long userId, GitHubAccount account, long installationId, GitHubRepo repo) {

@@ -70,15 +70,21 @@ public class GitHubAppGateway implements GitHubGateway {
                     "account " + user.id() + " cannot access installation " + installationId);
         }
 
+        return new ResolvedInstallation(new GitHubAccount(user.id(), user.login()), installationId,
+                listInstallationRepositories(installationId));
+    }
+
+    @Override
+    public List<GitHubRepo> listInstallationRepositories(long installationId) {
+        requireConfigured();
         String token = installationToken(installationId);
-        List<GitHubRepo> repositories = paged("GET /installation/repositories",
+        return paged("GET /installation/repositories",
                 page -> api.get().uri("/installation/repositories?per_page={n}&page={p}", PAGE_SIZE, page)
                         .header(HttpHeaders.AUTHORIZATION, bearer(token))
                         .retrieve().body(RepositoriesPage.class).repositories())
                 .stream()
                 .map(r -> new GitHubRepo(r.id(), r.fullName(), r.defaultBranch(), r.isPrivate()))
                 .toList();
-        return new ResolvedInstallation(new GitHubAccount(user.id(), user.login()), installationId, repositories);
     }
 
     @Override

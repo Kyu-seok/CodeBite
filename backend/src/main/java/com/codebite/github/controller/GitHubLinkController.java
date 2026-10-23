@@ -5,12 +5,15 @@ import com.codebite.github.dto.GitHubInstallUrlResponse;
 import com.codebite.github.dto.GitHubLinkCallbackRequest;
 import com.codebite.github.dto.GitHubLinkCallbackResponse;
 import com.codebite.github.dto.GitHubLinkResponse;
+import com.codebite.github.dto.GitHubRepositoryChoiceRequest;
 import com.codebite.github.service.GitHubLinkService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,6 +37,13 @@ public class GitHubLinkController {
                 .orElseGet(() -> ResponseEntity.noContent().build());
     }
 
+    /** Unlinks; the Solution Repository is left untouched. 204 whether or not a link existed. */
+    @DeleteMapping
+    public ResponseEntity<Void> unlink(@AuthenticationPrincipal JwtUserPrincipal principal) {
+        linkService.unlink(principal.id());
+        return ResponseEntity.noContent().build();
+    }
+
     @GetMapping("/install")
     public ResponseEntity<GitHubInstallUrlResponse> installUrl(@AuthenticationPrincipal JwtUserPrincipal principal) {
         return ResponseEntity.ok(linkService.installUrl(principal.id()));
@@ -45,5 +55,13 @@ public class GitHubLinkController {
             @AuthenticationPrincipal JwtUserPrincipal principal,
             @Valid @RequestBody GitHubLinkCallbackRequest request) {
         return ResponseEntity.ok(linkService.completeInstall(principal.id(), request));
+    }
+
+    /** Chooses the Solution Repository when the install granted several. */
+    @PutMapping("/repository")
+    public ResponseEntity<GitHubLinkResponse> chooseRepository(
+            @AuthenticationPrincipal JwtUserPrincipal principal,
+            @Valid @RequestBody GitHubRepositoryChoiceRequest request) {
+        return ResponseEntity.ok(linkService.chooseRepository(principal.id(), request));
     }
 }

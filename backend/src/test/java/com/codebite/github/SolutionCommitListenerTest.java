@@ -2,6 +2,7 @@ package com.codebite.github;
 
 import com.codebite.github.consumer.SolutionCommitListener;
 import com.codebite.github.entity.GitHubLink;
+import com.codebite.github.entity.GitHubLinkStatus;
 import com.codebite.github.entity.SolutionCommitStatus;
 import com.codebite.github.gateway.FakeGitHubGateway;
 import com.codebite.github.gateway.FakeGitHubGateway.RecordedCommit;
@@ -10,6 +11,7 @@ import com.codebite.github.gateway.GitHubRepo;
 import com.codebite.github.gateway.GitHubTransientException;
 import com.codebite.github.repository.GitHubLinkRepository;
 import com.codebite.github.repository.SolutionCommitRepository;
+import com.codebite.github.service.GitHubLinkService;
 import com.codebite.github.service.SolutionCommitService;
 import com.codebite.problem.entity.Difficulty;
 import com.codebite.problem.entity.Problem;
@@ -49,6 +51,7 @@ class SolutionCommitListenerTest {
     private static final long INSTALLATION = 77;
 
     @Autowired private SolutionCommitService solutionCommitService;
+    @Autowired private GitHubLinkService gitHubLinkService;
     @Autowired private FakeGitHubGateway gitHub;
     @Autowired private UserRepository userRepository;
     @Autowired private ProblemRepository problemRepository;
@@ -155,6 +158,34 @@ class SolutionCommitListenerTest {
 
     @Test
     void userWithoutAGitHubLinkGetsNoSolutionCommit() {
+        Submission submission = accepted(user, "python", "a = 1", Instant.parse("2026-10-19T14:05:09Z"));
+
+        listener.onResult(acceptedEvent(submission));
+
+        assertThat(gitHub.commits()).isEmpty();
+        assertThat(solutionCommitRepository.findAll()).isEmpty();
+    }
+
+    @Test
+    void unlinkedUserGetsNoSolutionCommit() {
+        link(user);
+        gitHubLinkService.unlink(user.getId());
+        Submission submission = accepted(user, "python", "a = 1", Instant.parse("2026-10-19T14:05:09Z"));
+
+        listener.onResult(acceptedEvent(submission));
+
+        assertThat(gitHub.commits()).isEmpty();
+        assertThat(solutionCommitRepository.findAll()).isEmpty();
+    }
+
+    @Test
+    void brokenLinkIsSkipped() {
+        GitHubLink link = link(user);
+        // No transition for this yet (#22); set the status the way it will be stored.
+        entityManager.createQuery("UPDATE GitHubLink l SET l.status = :status WHERE l.id = :id")
+                .setParameter("status", GitHubLinkStatus.BROKEN)
+                .setParameter("id", link.getId())
+                .executeUpdate();
         Submission submission = accepted(user, "python", "a = 1", Instant.parse("2026-10-19T14:05:09Z"));
 
         listener.onResult(acceptedEvent(submission));
