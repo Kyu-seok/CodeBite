@@ -1,5 +1,8 @@
 package com.codebite.common.exception;
 
+import com.codebite.github.gateway.GitHubAppNotConfiguredException;
+import com.codebite.github.gateway.GitHubGatewayException;
+import com.codebite.github.gateway.GitHubInstallationNotAccessibleException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
@@ -76,6 +79,23 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiError> handleRateLimitExceeded(RateLimitExceededException ex) {
         String message = resolveMessage(ex.getMessageCode());
         return buildResponse(HttpStatus.TOO_MANY_REQUESTS, message);
+    }
+
+    @ExceptionHandler(GitHubInstallationNotAccessibleException.class)
+    public ResponseEntity<ApiError> handleGitHubInstallationNotAccessible(GitHubInstallationNotAccessibleException ex) {
+        log.warn("GitHub install callback rejected: {}", ex.getMessage());
+        return buildResponse(HttpStatus.FORBIDDEN, resolveMessage("error.github.installationNotAccessible"));
+    }
+
+    @ExceptionHandler(GitHubAppNotConfiguredException.class)
+    public ResponseEntity<ApiError> handleGitHubAppNotConfigured(GitHubAppNotConfiguredException ex) {
+        return buildResponse(HttpStatus.SERVICE_UNAVAILABLE, resolveMessage("error.github.notConfigured"));
+    }
+
+    @ExceptionHandler(GitHubGatewayException.class)
+    public ResponseEntity<ApiError> handleGitHubGateway(GitHubGatewayException ex) {
+        log.error("GitHub call failed: {}", ex.getMessage(), ex);
+        return buildResponse(HttpStatus.BAD_GATEWAY, resolveMessage("error.github.unavailable"));
     }
 
     @ExceptionHandler(Exception.class)

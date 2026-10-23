@@ -105,3 +105,16 @@ app:
       client-secret: ${GITHUB_CLIENT_SECRET:}
     redirect-base-uri: ${OAUTH_REDIRECT_BASE_URI:http://localhost:5173/auth/callback}
     state-expiration-ms: 300000
+  # CodeBite GitHub App for GitHub Links / Solution Commits (ADR 0003). All optional: when unset,
+  # the backend still starts and the GitHub Link endpoints answer 503. Dev values come from
+  # scripts/setup-github-app-dev.sh (written to infra/.env).
+  github:
+    app-id: ${GITHUB_APP_ID:}
+    client-id: ${GITHUB_APP_CLIENT_ID:}
+    client-secret: ${GITHUB_APP_CLIENT_SECRET:}
+    private-key-base64: ${GITHUB_APP_PRIVATE_KEY_BASE64:}
+    slug: ${GITHUB_APP_SLUG:}
+    install-url: ${GITHUB_APP_INSTALL_URL:}  # defaults to https://github.com/apps/<slug>/installations/new
+    api-base-url: ${GITHUB_API_BASE_URL:https://api.github.com}
+    web-base-url: ${GITHUB_WEB_BASE_URL:https://github.com}
+    state-expiration-ms: 900000
