@@ -1,5 +1,7 @@
 package com.codebite.github.gateway;
 
+import java.util.List;
+
 /**
  * The single seam through which CodeBite talks to GitHub, as the CodeBite GitHub App (ADR 0003).
  *
@@ -24,4 +26,12 @@ public interface GitHubGateway {
      *         to an installation they did not authorise.
      */
     ResolvedInstallation resolveInstallCallback(String authorizationCode, long installationId);
+
+    /**
+     * Lists the repositories an installation grants right now, as the App. Only call this with an
+     * installation id CodeBite already verified the user can access.
+     *
+     * @throws GitHubInstallationGoneException if the installation was removed or suspended
+     */
+    List<GitHubRepo> listInstallationRepositories(long installationId);
 }

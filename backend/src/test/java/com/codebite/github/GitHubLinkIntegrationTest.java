@@ -25,6 +25,7 @@ import java.util.Map;
 import static org.hamcrest.Matchers.startsWith;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -76,7 +77,8 @@ class GitHubLinkIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.link.githubLogin").value("octocat"))
                 .andExpect(jsonPath("$.link.repositoryFullName").value("octocat/codebite-solutions"))
-                .andExpect(jsonPath("$.repositories").isEmpty());
+                .andExpect(jsonPath("$.repositories").isEmpty())
+                .andExpect(jsonPath("$.selectionToken").doesNotExist());
 
         mockMvc.perform(get("/api/github/link").header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
@@ -129,10 +131,77 @@ class GitHubLinkIntegrationTest {
                 .andExpect(jsonPath("$.link").doesNotExist())
                 .andExpect(jsonPath("$.repositories.length()").value(2))
                 .andExpect(jsonPath("$.repositories[1].fullName").value("octocat/dotfiles"))
-                .andExpect(jsonPath("$.repositories[1].repositoryPrivate").value(true));
+                .andExpect(jsonPath("$.repositories[1].repositoryPrivate").value(true))
+                .andExpect(jsonPath("$.selectionToken").isNotEmpty());
 
         mockMvc.perform(get("/api/github/link").header("Authorization", "Bearer " + token))
                 .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void choosingOneOfTheGrantedRepositoriesCreatesTheLink() throws Exception {
+        gitHub.authorize("code-1", new GitHubAccount(583231, "octocat"), 77);
+        gitHub.install(77,
+                new GitHubRepo(1, "octocat/solutions", "main", false),
+                new GitHubRepo(2, "octocat/dotfiles", "trunk", true));
+        String selectionToken = selectionTokenFrom(callback("code-1", 77, stateFor(token), token));
+
+        chooseRepository(selectionToken, 2, token)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.githubLogin").value("octocat"))
+                .andExpect(jsonPath("$.repositoryFullName").value("octocat/dotfiles"));
+
+        mockMvc.perform(get("/api/github/link").header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.githubAccountId").value(583231))
+                .andExpect(jsonPath("$.githubLogin").value("octocat"))
+                .andExpect(jsonPath("$.repositoryId").value(2))
+                .andExpect(jsonPath("$.repositoryFullName").value("octocat/dotfiles"))
+                .andExpect(jsonPath("$.defaultBranch").value("trunk"))
+                .andExpect(jsonPath("$.repositoryPrivate").value(true))
+                .andExpect(jsonPath("$.status").value("ACTIVE"))
+                .andExpect(jsonPath("$.importState").value("AVAILABLE"));
+    }
+
+    @Test
+    void choosingARepositoryTheInstallationDoesNotGrantIsRejected() throws Exception {
+        gitHub.authorize("code-1", new GitHubAccount(583231, "octocat"), 77);
+        gitHub.install(77,
+                new GitHubRepo(1, "octocat/solutions", "main", false),
+                new GitHubRepo(2, "octocat/dotfiles", "main", true));
+        gitHub.install(99, new GitHubRepo(3, "victim/private-code", "main", true));
+        String selectionToken = selectionTokenFrom(callback("code-1", 77, stateFor(token), token));
+
+        chooseRepository(selectionToken, 3, token).andExpect(status().isBadRequest());
+
+        mockMvc.perform(get("/api/github/link").header("Authorization", "Bearer " + token))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void choosingWithAnotherUsersOrAForgedSelectionTokenIsRejected() throws Exception {
+        gitHub.authorize("code-1", new GitHubAccount(583231, "octocat"), 77);
+        gitHub.install(77,
+                new GitHubRepo(1, "octocat/solutions", "main", false),
+                new GitHubRepo(2, "octocat/dotfiles", "main", true));
+        String otherToken = tokenFor("other");
+        String othersSelection = selectionTokenFrom(callback("code-1", 77, stateFor(otherToken), otherToken));
+
+        chooseRepository(othersSelection, 1, token).andExpect(status().isUnauthorized());
+        chooseRepository("not-a-token", 1, token).andExpect(status().isUnauthorized());
+        // The install state is signed with the same key but is not a selection token.
+        chooseRepository(stateFor(token), 1, token).andExpect(status().isUnauthorized());
+
+        mockMvc.perform(get("/api/github/link").header("Authorization", "Bearer " + token))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void chooseRepositoryRequiresAuth() throws Exception {
+        mockMvc.perform(put("/api/github/link/repository")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"selectionToken\":\"t\",\"repositoryId\":1}"))
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -173,6 +242,19 @@ class GitHubLinkIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(
                         Map.of("code", code, "installationId", installationId, "state", state))));
+    }
+
+    private ResultActions chooseRepository(String selectionToken, long repositoryId, String bearer) throws Exception {
+        return mockMvc.perform(put("/api/github/link/repository")
+                .header("Authorization", "Bearer " + bearer)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(
+                        Map.of("selectionToken", selectionToken, "repositoryId", repositoryId))));
+    }
+
+    private String selectionTokenFrom(ResultActions callback) throws Exception {
+        String body = callback.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+        return objectMapper.readTree(body).get("selectionToken").asText();
     }
 
     /** The state GitHub would hand back: the one in the install URL issued to that user. */

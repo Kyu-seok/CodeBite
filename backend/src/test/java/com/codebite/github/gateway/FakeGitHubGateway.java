@@ -76,6 +76,16 @@ public class FakeGitHubGateway implements GitHubGateway {
         return new ResolvedInstallation(account, installationId, reposByInstallation.get(installationId));
     }
 
+    @Override
+    public synchronized List<GitHubRepo> listInstallationRepositories(long installationId) {
+        maybeFail();
+        List<GitHubRepo> repositories = reposByInstallation.get(installationId);
+        if (repositories == null) {
+            throw new GitHubInstallationGoneException("installation " + installationId + " is gone");
+        }
+        return repositories;
+    }
+
     private void maybeFail() {
         if (alwaysFailure != null) {
             throw alwaysFailure.get();
