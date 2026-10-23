@@ -11,7 +11,7 @@
   "login": "Login",
   "language": "한국어",
   "streak": {
-    "done": "Today's Streak Day is in",
-    "pending": "Solve a problem today to keep your Streak"
+    "days_one": "{{count}}-day Streak",
+    "days_other": "{{count}}-day Streak"
   }
 }

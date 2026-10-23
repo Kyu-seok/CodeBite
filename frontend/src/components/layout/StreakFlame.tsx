@@ -6,8 +6,8 @@ import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/Tooltip
 import { cn } from '@/lib/utils';
 
 /**
- * Nav-bar Streak counter. The flame stays grey until today is a Streak Day, the
- * one daily nudge the feature allows itself.
+ * Nav-bar Streak counter. The flame stays grey until today is a Streak Day;
+ * there is deliberately no reminder text beyond that.
  */
 export function StreakFlame() {
   const { t } = useTranslation('nav');
@@ -61,7 +61,7 @@ export function StreakFlame() {
           <span>{streak}</span>
         </Link>
       </TooltipTrigger>
-      <TooltipContent>{solvedToday ? t('streak.done') : t('streak.pending')}</TooltipContent>
+      <TooltipContent>{t('streak.days', { count: streak })}</TooltipContent>
     </Tooltip>
   );
 }
