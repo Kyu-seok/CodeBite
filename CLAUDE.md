@@ -183,3 +183,17 @@ npm run build    # production build (includes tsc type check)
 - `jvm_memory_used_bytes` — JVM heap/non-heap memory
 - `hikaricp_connections_*` — Database connection pool (active, idle, pending)
 - `kafka_consumer_fetch_manager_records_lag` — Kafka consumer lag per partition
+
+## Agent skills
+
+### Issue tracker
+
+GitHub Issues in `Kyu-seok/CodeBite`, via the `gh` CLI. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+The five default roles: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: one `GLOSSARY.md` and `docs/adr/` at the repo root. See `docs/agents/domain.md`.
