@@ -33,6 +33,8 @@ Root `settings.gradle` includes three modules: `common`, `backend`, `worker`. Th
 - `submission/entity/` — Submission, SubmissionResult, SubmissionStatus
 - `submission/repository/` — SubmissionRepository, SubmissionResultRepository
 - `submission/event/` — SubmissionEvent (Kafka message DTO)
+- `streak/entity/` — StreakDay, UserStreak (Repairs held + Repair Progress)
+- `streak/repository/` — StreakDayRepository, UserStreakRepository
 - `judge/` — JudgeClient, JudgeClientImpl, JudgeService, DriverCodeLoader, DTOs
 - `config/` — JudgeClientConfig
 
@@ -75,6 +77,7 @@ docker compose -f infra/docker-compose.yml up -d   # start PostgreSQL + Redis + 
 - `problem/` — Problem CRUD (controllers, service, DTOs)
 - `submission/` — Submission flow (controller, service, DTOs, Kafka producer)
 - `run/` — Run flow (controller, service, DTOs — synchronous Judge0 execution, sample test cases only)
+- `streak/` — Streaks and Repairs (controller, service, DTOs, `submission-results` listener); terms in GLOSSARY.md, UTC days per docs/adr/0001
 
 ### Run Flow (Synchronous)
 `POST /api/problems/{slug}/run` → `RunService.run()` executes only sample test cases synchronously via JudgeService, returns results immediately. No data is persisted. No auth required.

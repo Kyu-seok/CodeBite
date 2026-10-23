@@ -7,11 +7,11 @@ A code practice platform where users solve problems, submit code for judging, an
 ### Streaks
 
 **Streak**:
-The number of consecutive Streak Days ending today or yesterday, shown on the user's profile as the current and best streak.
+The number of consecutive Streak Days and Repaired Days ending today or yesterday, shown on the user's profile as the current and best streak.
 _Avoid_: Solve streak, activity streak, profile streak
 
 **Streak Day**:
-A UTC calendar day on which the user made at least one Accepted submission. Once earned, it is never taken away.
+A UTC calendar day on which the user made at least one Accepted, non-admin submission. Once earned, it is never taken away.
 _Avoid_: Active day, activity day
 
 **Missed Day**:
@@ -26,7 +26,7 @@ An earned item that turns one Missed Day of the user's choosing into a Repaired 
 _Avoid_: Repair point, streak freeze, token
 
 **Repair Progress**:
-The count of Streak Days, from 0 to 5, toward the next Repair; it is never reset by a missed day.
+The count of Streak Days, from 0 to 4, toward the next Repair. The fifth earns a Repair and returns it to 0; a Missed Day never resets it.
 _Avoid_: Repair streak
 
 **Review Streak**:
