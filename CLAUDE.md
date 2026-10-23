@@ -68,6 +68,8 @@ GOOGLE_CLIENT_ID=xxx GOOGLE_CLIENT_SECRET=xxx \
 docker compose -f infra/docker-compose.yml up -d   # start PostgreSQL + Redis + Kafka + Prometheus + Grafana
 ```
 
+The GitHub App behind Solution Commits is registered by hand: run `scripts/setup-github-app-dev.sh`, an interactive wizard that walks through GitHub's app settings and writes the `GITHUB_APP_*` values into `infra/.env`. Production needs its own app (callback on code-bite.com).
+
 ### Package Structure (`backend/src/main/java/com/codebite/`)
 - `config/` — SecurityConfig, WebConfig, OAuthProperties, RedisConfig, KafkaTopicConfig
 - `common/controller/` — HealthController
