@@ -39,5 +39,29 @@
     "useRepair": "복구 사용",
     "repairFailed": "복구하지 못했습니다. 다시 시도해 주세요.",
     "alreadyCounted": "이미 연속 풀이에 포함된 날입니다."
+  },
+  "githubLink": {
+    "title": "GitHub 연결",
+    "description": "직접 만든 GitHub 저장소에 정답 제출을 커밋해 기여 그래프에 표시합니다.",
+    "link": "GitHub 연결",
+    "relink": "다시 연결",
+    "redirecting": "GitHub 여는 중…",
+    "startFailed": "연결을 시작할 수 없습니다. 다시 시도해 주세요.",
+    "account": "계정",
+    "repository": "저장소",
+    "private": "비공개",
+    "privateReminder": "비공개 저장소입니다. GitHub 프로필 설정에서 \"Include private contributions\"를 켜야 커밋이 기여 그래프에 표시됩니다.",
+    "broken": "CodeBite가 이 저장소에 더 이상 접근할 수 없습니다. 앱이 제거되었거나 저장소가 삭제되었을 수 있습니다. 다시 연결하면 커밋이 재개됩니다.",
+    "callback": {
+      "completing": "GitHub 연결을 마무리하는 중…",
+      "missingParams": "GitHub에서 필요한 정보를 받지 못했습니다. 프로필에서 다시 연결해 주세요.",
+      "notAuthorised": "이 GitHub 계정은 해당 CodeBite 앱 설치에 대한 권한이 없습니다.",
+      "expired": "연결 요청이 만료되었거나 다른 계정의 요청입니다. 프로필에서 다시 연결해 주세요.",
+      "failed": "연결을 완료할 수 없습니다. 다시 시도해 주세요.",
+      "severalRepositories": "여러 저장소에 접근 권한을 주셨습니다. CodeBite에는 풀이 저장소 하나만 필요합니다. 설치 설정에서 저장소를 하나만 선택한 뒤 다시 시도해 주세요.",
+      "noRepository": "접근 권한을 준 저장소가 없습니다. GitHub에서 풀이 저장소를 선택한 뒤 다시 시도해 주세요.",
+      "tryAgain": "GitHub 다시 열기",
+      "backToProfile": "프로필로 돌아가기"
+    }
   }
 }

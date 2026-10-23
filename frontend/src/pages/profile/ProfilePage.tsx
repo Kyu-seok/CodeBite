@@ -9,6 +9,7 @@ import { RecentSubmissionsCard } from './RecentSubmissionsCard';
 import { DueReviewsCard } from './DueReviewsCard';
 import { ReviewStreakPill } from './ReviewStreakPill';
 import { StreakCalendarCard } from './StreakCalendarCard';
+import { GitHubLinkCard } from './GitHubLinkCard';
 
 export default function ProfilePage() {
   const { user } = useAuth();
@@ -27,6 +28,7 @@ export default function ProfilePage() {
       <div className="flex flex-col gap-5">
         <ProfileHeader user={user} stats={stats} />
         <StreakCalendarCard />
+        <GitHubLinkCard />
         <ActivityHeatmap activity={activity} />
 
         <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
