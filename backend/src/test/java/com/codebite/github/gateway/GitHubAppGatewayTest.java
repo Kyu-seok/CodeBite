@@ -1,6 +1,8 @@
 package com.codebite.github.gateway;
 
 import com.codebite.config.GitHubAppProperties;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpServer;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -18,6 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
+import java.time.Instant;
 import java.util.Base64;
 import java.util.Map;
 import java.util.Objects;
@@ -142,6 +145,66 @@ class GitHubAppGatewayTest {
         assertThatThrownBy(() -> gateway(empty).resolveInstallCallback("the-code", 77))
                 .isInstanceOf(GitHubAppNotConfiguredException.class);
         assertThat(received).isEmpty();
+    }
+
+    @Test
+    void addsOneFileAsACommitThroughTheContentsApi() throws Exception {
+        respond(CONTENTS, 201, """
+                {"content":{"path":"two-sum/python/2026-10-19T140509Z.py"},
+                 "commit":{"sha":"7638417db6d59f3c431d3e1f261cc637155684cd",
+                           "html_url":"https://github.com/octocat/solutions/commit/7638417db6d59f3c431d3e1f261cc637155684cd"}}
+                """);
+
+        CommittedFile commit = gateway(configured()).addFile(77, "octocat/solutions", "main", solution());
+
+        assertThat(commit).isEqualTo(new CommittedFile("7638417db6d59f3c431d3e1f261cc637155684cd",
+                "https://github.com/octocat/solutions/commit/7638417db6d59f3c431d3e1f261cc637155684cd"));
+        assertThat(received.get(CONTENTS)[0]).isEqualTo("Bearer installation-token");
+        JsonNode body = new ObjectMapper().readTree(received.get(CONTENTS)[1]);
+        assertThat(body.get("message").asText()).isEqualTo("Accepted: Two Sum (python) · 12 ms, 1.5 MB");
+        assertThat(new String(Base64.getDecoder().decode(body.get("content").asText()), StandardCharsets.UTF_8))
+                .isEqualTo("print('안녕')\n");
+        assertThat(body.get("branch").asText()).isEqualTo("main");
+        assertThat(body.get("author").get("name").asText()).isEqualTo("octocat");
+        assertThat(body.get("author").get("email").asText()).isEqualTo("583231+octocat@users.noreply.github.com");
+        assertThat(body.get("author").get("date").asText()).isEqualTo("2026-10-19T14:05:09Z");
+        assertThat(body.has("sha")).as("never replaces an existing file").isFalse();
+    }
+
+    @Test
+    void anExistingPathIsLeftAlone() {
+        // GitHub's answer to a create on a path that exists: it wants the old blob's sha to replace it.
+        respond(CONTENTS, 422, """
+                {"message":"Invalid request.\\n\\n\\"sha\\" wasn't supplied.","status":"422"}
+                """);
+
+        assertThatThrownBy(() -> gateway(configured()).addFile(77, "octocat/solutions", "main", solution()))
+                .isInstanceOf(GitHubFileExistsException.class);
+    }
+
+    @Test
+    void aRepositoryTheInstallationNoLongerGrantsIsGone() {
+        respond(CONTENTS, 404, "{\"message\":\"Not Found\"}");
+
+        assertThatThrownBy(() -> gateway(configured()).addFile(77, "octocat/solutions", "main", solution()))
+                .isInstanceOf(GitHubInstallationGoneException.class);
+    }
+
+    @Test
+    void aServerErrorWhileCommittingIsTransient() {
+        respond(CONTENTS, 503, "{\"message\":\"Service Unavailable\"}");
+
+        assertThatThrownBy(() -> gateway(configured()).addFile(77, "octocat/solutions", "main", solution()))
+                .isInstanceOf(GitHubTransientException.class);
+    }
+
+    private static final String CONTENTS =
+            "PUT /repos/octocat/solutions/contents/two-sum/python/2026-10-19T140509Z.py";
+
+    private static NewFile solution() {
+        return new NewFile("two-sum/python/2026-10-19T140509Z.py", "print('안녕')\n",
+                "Accepted: Two Sum (python) · 12 ms, 1.5 MB", new GitHubAccount(583231, "octocat"),
+                Instant.parse("2026-10-19T14:05:09Z"));
     }
 
     private void respond(String key, int status, String body) {

@@ -12,8 +12,11 @@ import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientResponseException;
 
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -80,7 +83,39 @@ public class GitHubAppGateway implements GitHubGateway {
 
     @Override
     public CommittedFile addFile(long installationId, String repositoryFullName, String branch, NewFile file) {
-        throw new UnsupportedOperationException("not yet implemented");
+        requireConfigured();
+        String token = installationToken(installationId);
+        // No "sha" in the body, so GitHub only ever creates: an existing path is refused with 422.
+        ContentsRequest request = new ContentsRequest(
+                file.message(),
+                Base64.getEncoder().encodeToString(file.content().getBytes(StandardCharsets.UTF_8)),
+                branch,
+                new Author(file.author().login(), file.author().noreplyEmail(),
+                        DateTimeFormatter.ISO_INSTANT.format(file.authorDate())));
+        String what = "PUT /repos/" + repositoryFullName + "/contents/" + file.path();
+        try {
+            ContentsResponse response = api.put()
+                    .uri("/repos/" + repositoryFullName + "/contents/" + file.path())
+                    .header(HttpHeaders.AUTHORIZATION, bearer(token))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(request)
+                    .retrieve().body(ContentsResponse.class);
+            return new CommittedFile(response.commit().sha(), response.commit().htmlUrl());
+        } catch (RestClientResponseException e) {
+            int status = e.getStatusCode().value();
+            if (status == 422 && e.getResponseBodyAsString().contains("sha")) {
+                throw new GitHubFileExistsException(repositoryFullName + " already has " + file.path());
+            }
+            if (status == 404) {
+                // The token was minted, so the installation exists but no longer grants this
+                // repository: it was deleted or removed from the installation.
+                throw new GitHubInstallationGoneException(
+                        repositoryFullName + " is not reachable through installation " + installationId);
+            }
+            throw translate(what, e);
+        } catch (ResourceAccessException e) {
+            throw new GitHubTransientException(what + " unreachable", e);
+        }
     }
 
     /** Exchanges a user authorization code for a user-to-server token, using the App's client. */
@@ -195,6 +230,20 @@ public class GitHubAppGateway implements GitHubGateway {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     record InstallationTokenResponse(String token) {
+    }
+
+    record ContentsRequest(String message, String content, String branch, Author author) {
+    }
+
+    record Author(String name, String email, String date) {
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    record ContentsResponse(CommitRef commit) {
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    record CommitRef(String sha, @JsonProperty("html_url") String htmlUrl) {
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
