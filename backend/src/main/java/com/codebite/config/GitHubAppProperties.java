@@ -23,6 +23,8 @@ public class GitHubAppProperties {
     private String apiBaseUrl = "https://api.github.com";
     /** Host of the OAuth endpoints ({@code /login/oauth/access_token}). */
     private String webBaseUrl = "https://github.com";
+    /** Public CodeBite URL, for the links in Solution Repository READMEs. */
+    private String codebiteBaseUrl = "https://code-bite.com";
     /** How long an install state stays valid; installing on GitHub can take a few minutes. */
     private long stateExpirationMs = 900_000;
 
@@ -110,5 +112,13 @@ public class GitHubAppProperties {
 
     public void setStateExpirationMs(long stateExpirationMs) {
         this.stateExpirationMs = stateExpirationMs;
+    }
+
+    public String getCodebiteBaseUrl() {
+        return codebiteBaseUrl;
+    }
+
+    public void setCodebiteBaseUrl(String codebiteBaseUrl) {
+        this.codebiteBaseUrl = codebiteBaseUrl;
     }
 }

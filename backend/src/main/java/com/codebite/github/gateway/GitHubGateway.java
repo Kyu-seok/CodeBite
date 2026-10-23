@@ -24,4 +24,19 @@ public interface GitHubGateway {
      *         to an installation they did not authorise.
      */
     ResolvedInstallation resolveInstallCallback(String authorizationCode, long installationId);
+
+    /**
+     * Adds one new file to a repository's branch as a single commit, authored as
+     * {@code file.author()} at {@code file.authorDate()}. The committer is the App.
+     *
+     * @param installationId     the installation that grants access to the repository
+     * @param repositoryFullName {@code owner/name}
+     * @param branch             the branch to commit to, normally the default branch
+     * @return the new commit
+     * @throws GitHubFileExistsException       if {@code file.path()} already exists; nothing is
+     *         replaced
+     * @throws GitHubInstallationGoneException if the installation or repository is gone
+     * @throws GitHubTransientException        on an outage worth retrying
+     */
+    CommittedFile addFile(long installationId, String repositoryFullName, String branch, NewFile file);
 }

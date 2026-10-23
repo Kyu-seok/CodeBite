@@ -16,6 +16,7 @@ import org.springframework.kafka.listener.DefaultErrorHandler;
 import org.springframework.kafka.support.ExponentialBackOffWithMaxRetries;
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
+import org.springframework.util.backoff.FixedBackOff;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -118,6 +119,28 @@ public class KafkaConsumerConfig {
                 (record, ex) -> log.error("Streak Day lost after retries; replay manually: {}",
                         record.value(), ex),
                 backOff));
+        return factory;
+    }
+
+    /**
+     * Live Solution Commits. {@code latest}: on its first deployment this group must not replay the
+     * retained topic and commit old submissions; earlier solves are the Import's job. The listener
+     * records GitHub failures itself and never throws, so the error handler is only a backstop:
+     * log and move on without retrying.
+     */
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, SubmissionResultEvent>
+            solutionCommitListenerContainerFactory(
+                    @Value("${spring.kafka.bootstrap-servers}") String bootstrapServers) {
+
+        ConcurrentKafkaListenerContainerFactory<String, SubmissionResultEvent> factory =
+                new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(new DefaultKafkaConsumerFactory<>(
+                baseProps(bootstrapServers, "latest"),
+                new StringDeserializer(), resultDeserializer()));
+        factory.setCommonErrorHandler(new DefaultErrorHandler(
+                (record, ex) -> log.error("Solution Commit skipped: {}", record.value(), ex),
+                new FixedBackOff(0L, 0L)));
         return factory;
     }
 }

@@ -1,10 +1,13 @@
 package com.codebite.github.gateway;
 
+import java.time.Instant;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -28,13 +31,24 @@ public class FakeGitHubGateway implements GitHubGateway {
     private final Map<Long, Set<Long>> installationsByAccount = new HashMap<>();
     private final Map<Long, List<GitHubRepo>> reposByInstallation = new HashMap<>();
     private final Deque<RuntimeException> nextFailures = new ArrayDeque<>();
+    private final List<RecordedCommit> commits = new ArrayList<>();
+    /** File contents by repository full name, then path. */
+    private final Map<String, Map<String, String>> filesByRepo = new HashMap<>();
     private Supplier<? extends RuntimeException> alwaysFailure;
+
+    /** A commit that reached the fake, in the order made. */
+    public record RecordedCommit(long installationId, String repositoryFullName, String branch, String path,
+                                 String content, String message, String authorName, String authorEmail,
+                                 Instant authorDate, String sha) {
+    }
 
     /** Forgets all GitHub state and injected failures. */
     public synchronized void reset() {
         accountsByCode.clear();
         installationsByAccount.clear();
         reposByInstallation.clear();
+        commits.clear();
+        filesByRepo.clear();
         nextFailures.clear();
         alwaysFailure = null;
     }
@@ -74,6 +88,37 @@ public class FakeGitHubGateway implements GitHubGateway {
                     "account " + account.id() + " cannot access installation " + installationId);
         }
         return new ResolvedInstallation(account, installationId, reposByInstallation.get(installationId));
+    }
+
+    @Override
+    public synchronized CommittedFile addFile(long installationId, String repositoryFullName, String branch,
+                                              NewFile file) {
+        maybeFail();
+        boolean granted = reposByInstallation.getOrDefault(installationId, List.of()).stream()
+                .anyMatch(r -> r.fullName().equals(repositoryFullName));
+        if (!granted) {
+            throw new GitHubInstallationGoneException(
+                    "installation " + installationId + " does not grant " + repositoryFullName);
+        }
+        Map<String, String> files = filesByRepo.computeIfAbsent(repositoryFullName, k -> new LinkedHashMap<>());
+        if (files.containsKey(file.path())) {
+            throw new GitHubFileExistsException(repositoryFullName + " already has " + file.path());
+        }
+        files.put(file.path(), file.content());
+        String sha = String.format("%040x", commits.size() + 1);
+        commits.add(new RecordedCommit(installationId, repositoryFullName, branch, file.path(), file.content(),
+                file.message(), file.author().login(), file.author().noreplyEmail(), file.authorDate(), sha));
+        return new CommittedFile(sha, "https://github.com/" + repositoryFullName + "/commit/" + sha);
+    }
+
+    /** Every commit made through {@link #addFile}, oldest first. */
+    public synchronized List<RecordedCommit> commits() {
+        return List.copyOf(commits);
+    }
+
+    /** The repository already contains {@code path}, as if the user or an earlier link added it. */
+    public synchronized void seedFile(String repositoryFullName, String path, String content) {
+        filesByRepo.computeIfAbsent(repositoryFullName, k -> new LinkedHashMap<>()).put(path, content);
     }
 
     private void maybeFail() {

@@ -78,6 +78,11 @@ public class GitHubAppGateway implements GitHubGateway {
         return new ResolvedInstallation(new GitHubAccount(user.id(), user.login()), installationId, repositories);
     }
 
+    @Override
+    public CommittedFile addFile(long installationId, String repositoryFullName, String branch, NewFile file) {
+        throw new UnsupportedOperationException("not yet implemented");
+    }
+
     /** Exchanges a user authorization code for a user-to-server token, using the App's client. */
     private String exchangeUserCode(String code) {
         MultiValueMap<String, String> form = new LinkedMultiValueMap<>();

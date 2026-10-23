@@ -42,3 +42,4 @@ app:
     client-secret: test-github-app-client-secret
     private-key-base64: dGVzdA==  # tests use FakeGitHubGateway, which never reads the key
     slug: codebite-test
+    codebite-base-url: https://code-bite.test
