@@ -366,7 +366,8 @@ _accounts
 |--------|-------------------------------|--------------------------------------------------------------------|------|
 | GET    | /api/github/link              | Current GitHub Link (204 if none)                                  | Yes  |
 | GET    | /api/github/link/install      | App install URL with a user-bound state (503 if App not configured)| Yes  |
-| POST   | /api/github/link/callback     | Finish install: verify the account can access the installation; link if one repo granted, else list repos | Yes  |
+| POST   | /api/github/link/callback     | Finish install: verify the account can access the installation; link if one repo granted, else list repos with a signed `selectionToken` | Yes  |
+| PUT    | /api/github/link/repository   | Choose the Solution Repository: `{selectionToken, repositoryId}`; re-lists the installation's repos and links the choice (400 not granted, 401 bad token) | Yes  |
 
 **Request/Response examples:**
 
@@ -776,7 +777,7 @@ Terms in GLOSSARY.md; decisions in ADR 0001 (UTC days), 0002 (backdated Imports)
 - [x] GitHub Link via the CodeBite GitHub App: `GitHubGateway` seam + fake, `github_links`, install/callback endpoints, profile card (#24)
 - [ ] Live Solution Commits for Accepted submissions (#18)
 - [ ] Solution Commit status on submission detail, with retries (#19)
-- [ ] Choose the Solution Repository when several were granted (#20)
+- [x] Choose the Solution Repository when several were granted: signed selection token, `PUT /api/github/link/repository`, callback picker (#20)
 - [ ] Unlink and relink (#21)
 - [ ] BROKEN links when the installation or repository is gone (#22)
 - [ ] One-time Import of earlier Accepted submissions (#23)

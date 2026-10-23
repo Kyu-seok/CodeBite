@@ -82,7 +82,7 @@ The GitHub App behind Solution Commits is registered by hand: run `scripts/setup
 - `submission/` — Submission flow (controller, service, DTOs, Kafka producer)
 - `run/` — Run flow (controller, service, DTOs — synchronous Judge0 execution, sample test cases only)
 - `streak/` — Streaks and Repairs (controller, service, DTOs, `submission-results` listener); terms in GLOSSARY.md, UTC days per docs/adr/0001
-- `github/` — GitHub Links via the CodeBite GitHub App (ADR 0003): `gateway/` (`GitHubGateway` seam, `GitHubAppGateway` REST adapter minting installation tokens from an RS256 app JWT, gateway exceptions), `service/` (link + signed install state), controller, DTOs. Tests swap in `FakeGitHubGateway` (`backend/src/test/.../github/gateway/`) via `TestGitHubConfig`
+- `github/` — GitHub Links via the CodeBite GitHub App (ADR 0003): `gateway/` (`GitHubGateway` seam, `GitHubAppGateway` REST adapter minting installation tokens from an RS256 app JWT, gateway exceptions), `service/` (link + signed install state and repository-selection token), controller, DTOs. Tests swap in `FakeGitHubGateway` (`backend/src/test/.../github/gateway/`) via `TestGitHubConfig`
 
 ### Run Flow (Synchronous)
 `POST /api/problems/{slug}/run` → `RunService.run()` executes only sample test cases synchronously via JudgeService, returns results immediately. No data is persisted. No auth required.
@@ -114,7 +114,8 @@ The GitHub App behind Solution Commits is registered by hand: run `scripts/setup
 | POST | `/api/streak/repairs` | JWT | 200 + streak summary (body `{date}`; 400 if not a Missed Day or no Repairs, 409 if already counted) |
 | GET | `/api/github/link` | JWT | 200 + `{githubAccountId, githubLogin, repositoryId, repositoryFullName, repositoryUrl, defaultBranch, repositoryPrivate, status, importState, createdAt}`, or 204 if none |
 | GET | `/api/github/link/install` | JWT | 200 + `{installUrl}` (GitHub App install page with a user-bound `state`; 503 if the App is not configured) |
-| POST | `/api/github/link/callback` | JWT | 200 + `{link, repositories}` (body `{code, installationId, state}`; links when exactly one repo was granted; 401 bad state, 403 installation not authorised by that account) |
+| POST | `/api/github/link/callback` | JWT | 200 + `{link, repositories, selectionToken}` (body `{code, installationId, state}`; links when exactly one repo was granted, else lists them with a signed `selectionToken`; 401 bad state, 403 installation not authorised by that account) |
+| PUT | `/api/github/link/repository` | JWT | 200 + link (body `{selectionToken, repositoryId}`; account and installation come from the token; 400 if the installation doesn't grant that repo, 401 bad token) |
 
 ## Worker
 
@@ -171,7 +172,7 @@ npm run build    # production build (includes tsc type check)
 | `/problems` | ProblemListPage | No |
 | `/problems/:slug` | ProblemDetailPage | No (submit requires auth) |
 | `/profile` | ProfilePage | Yes |
-| `/github/callback` | GitHubCallbackPage (GitHub App install redirect) | Yes |
+| `/github/callback` | GitHubCallbackPage (GitHub App install redirect; repository picker when several were granted) | Yes |
 | `*` | NotFoundPage | No |
 
 ## Monitoring
