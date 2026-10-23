@@ -99,6 +99,13 @@ public class GitHubLink extends BaseEntity {
         }
     }
 
+    /** GitHub can reach the Solution Repository again: a BROKEN link resumes Solution Commits. */
+    public void recover() {
+        if (status == GitHubLinkStatus.BROKEN) {
+            status = GitHubLinkStatus.ACTIVE;
+        }
+    }
+
     public Long getUserId() {
         return userId;
     }

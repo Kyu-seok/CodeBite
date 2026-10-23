@@ -153,6 +153,13 @@ public class FakeGitHubGateway implements GitHubGateway {
         return repositories;
     }
 
+    @Override
+    public synchronized boolean isRepositoryReachable(long installationId, long repositoryId) {
+        maybeFail();
+        return reposByInstallation.getOrDefault(installationId, List.of()).stream()
+                .anyMatch(r -> r.id() == repositoryId);
+    }
+
     private void maybeFail() {
         calls++;
         if (alwaysFailure != null) {
