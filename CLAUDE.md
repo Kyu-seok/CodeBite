@@ -35,8 +35,8 @@ Root `settings.gradle` includes three modules: `common`, `backend`, `worker`. Th
 - `submission/event/` — SubmissionEvent (Kafka message DTO)
 - `streak/entity/` — StreakDay, UserStreak (Repairs held + Repair Progress)
 - `streak/repository/` — StreakDayRepository, UserStreakRepository
-- `github/entity/` — GitHubLink, GitHubLinkStatus (ACTIVE/BROKEN/UNLINKED), GitHubImportState
-- `github/repository/` — GitHubLinkRepository (`findByActiveUserId` = the user's current link)
+- `github/entity/` — GitHubLink, GitHubLinkStatus (ACTIVE/BROKEN/UNLINKED), GitHubImportState, SolutionCommit, SolutionCommitStatus (PENDING/COMMITTED/FAILED)
+- `github/repository/` — GitHubLinkRepository (`findByActiveUserId` = the user's current link), SolutionCommitRepository
 - `judge/` — JudgeClient, JudgeClientImpl, JudgeService, DriverCodeLoader, DTOs
 - `config/` — JudgeClientConfig
 
@@ -73,7 +73,7 @@ docker compose -f infra/docker-compose.yml up -d   # start PostgreSQL + Redis + 
 The GitHub App behind Solution Commits is registered by hand: run `scripts/setup-github-app-dev.sh`, an interactive wizard that walks through GitHub's app settings and writes the `GITHUB_APP_*` values into `infra/.env`. Production needs its own app (callback on code-bite.com).
 
 ### Package Structure (`backend/src/main/java/com/codebite/`)
-- `config/` — SecurityConfig, WebConfig, OAuthProperties, GitHubAppProperties (`app.github.*`, optional), RedisConfig, KafkaTopicConfig
+- `config/` — SecurityConfig, WebConfig, OAuthProperties, GitHubAppProperties (`app.github.*`, optional), RedisConfig, KafkaTopicConfig, KafkaConsumerConfig (one container factory per `submission-results` listener)
 - `common/controller/` — HealthController
 - `common/exception/` — GlobalExceptionHandler
 - `auth/` — JWT auth + OAuth (controller, service, DTOs, filter, token provider, oauth clients)
@@ -82,7 +82,7 @@ The GitHub App behind Solution Commits is registered by hand: run `scripts/setup
 - `submission/` — Submission flow (controller, service, DTOs, Kafka producer)
 - `run/` — Run flow (controller, service, DTOs — synchronous Judge0 execution, sample test cases only)
 - `streak/` — Streaks and Repairs (controller, service, DTOs, `submission-results` listener); terms in GLOSSARY.md, UTC days per docs/adr/0001
-- `github/` — GitHub Links via the CodeBite GitHub App (ADR 0003): `gateway/` (`GitHubGateway` seam, `GitHubAppGateway` REST adapter minting installation tokens from an RS256 app JWT, gateway exceptions), `service/` (link + signed install state), controller, DTOs. Tests swap in `FakeGitHubGateway` (`backend/src/test/.../github/gateway/`) via `TestGitHubConfig`
+- `github/` — GitHub Links via the CodeBite GitHub App (ADR 0003): `gateway/` (`GitHubGateway` seam, `GitHubAppGateway` REST adapter minting installation tokens from an RS256 app JWT, gateway exceptions), `service/` (link + signed install state; `SolutionCommitService` + `SolutionLayout` for Solution Commits), `consumer/SolutionCommitListener` (`submission-results`, group `codebite-solution-commits`: every ACCEPTED event of a user with an ACTIVE link becomes a Solution Commit; never throws), controller, DTOs. Tests swap in `FakeGitHubGateway` (`backend/src/test/.../github/gateway/`) via `TestGitHubConfig`
 
 ### Run Flow (Synchronous)
 `POST /api/problems/{slug}/run` → `RunService.run()` executes only sample test cases synchronously via JudgeService, returns results immediately. No data is persisted. No auth required.

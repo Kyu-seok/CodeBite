@@ -314,6 +314,26 @@ CREATE TABLE github_links (
 );
 ```
 
+**Solution Commits** (V191). One row per Accepted submission sent to a link's Solution Repository; unique on (submission, link) so a redelivered event or an Import never commits a submission twice. The live path is the `codebite-solution-commits` consumer group on `submission-results`, which commits through `GitHubGateway.addFile` (Contents API). Files go to `<slug>/<language>/<UTC Accepted time yyyy-MM-ddTHHmmssZ>.<ext>`; the first commit through a link to a problem folder is preceded by a commit adding `<slug>/README.md` (skipped if it already exists).
+
+```sql
+CREATE TABLE solution_commits (
+    id             BIGSERIAL PRIMARY KEY,
+    submission_id  BIGINT NOT NULL REFERENCES submissions(id) ON DELETE CASCADE,
+    github_link_id BIGINT NOT NULL REFERENCES github_links(id) ON DELETE CASCADE,
+    status         VARCHAR(20) NOT NULL,           -- PENDING | COMMITTED | FAILED
+    path           VARCHAR(500) NOT NULL,          -- fixed at creation; retries write the same file
+    commit_sha     VARCHAR(64),
+    commit_url     VARCHAR(500),
+    last_error     VARCHAR(1000),
+    attempts       INT NOT NULL DEFAULT 0,
+    committed_at   TIMESTAMP,                      -- when GitHub accepted it (author date = Accepted time)
+    created_at     TIMESTAMP NOT NULL,
+    updated_at     TIMESTAMP NOT NULL,
+    UNIQUE (submission_id, github_link_id)
+);
+```
+
 **ER Diagram:**
 
 ```
@@ -774,7 +794,7 @@ CodeBite/
 ### Milestone 8: GitHub Solution Commits (#17)
 Terms in GLOSSARY.md; decisions in ADR 0001 (UTC days), 0002 (backdated Imports), 0003 (GitHub App).
 - [x] GitHub Link via the CodeBite GitHub App: `GitHubGateway` seam + fake, `github_links`, install/callback endpoints, profile card (#24)
-- [ ] Live Solution Commits for Accepted submissions (#18)
+- [x] Live Solution Commits for Accepted submissions: `solution_commits`, `submission-results` listener, `GitHubGateway.addFile` via the Contents API (#18)
 - [ ] Solution Commit status on submission detail, with retries (#19)
 - [ ] Choose the Solution Repository when several were granted (#20)
 - [ ] Unlink and relink (#21)
