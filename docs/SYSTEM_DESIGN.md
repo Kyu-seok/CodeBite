@@ -367,6 +367,7 @@ _accounts
 | GET    | /api/github/link              | Current GitHub Link (204 if none)                                  | Yes  |
 | GET    | /api/github/link/install      | App install URL with a user-bound state (503 if App not configured)| Yes  |
 | POST   | /api/github/link/callback     | Finish install: verify the account can access the installation; link if one repo granted, else list repos | Yes  |
+| DELETE | /api/github/link              | Unlink: mark the current link UNLINKED (row kept); no GitHub call, repository untouched | Yes  |
 
 **Request/Response examples:**
 
@@ -777,7 +778,7 @@ Terms in GLOSSARY.md; decisions in ADR 0001 (UTC days), 0002 (backdated Imports)
 - [ ] Live Solution Commits for Accepted submissions (#18)
 - [ ] Solution Commit status on submission detail, with retries (#19)
 - [ ] Choose the Solution Repository when several were granted (#20)
-- [ ] Unlink and relink (#21)
+- [x] Unlink and relink: `DELETE /api/github/link`, Unlink with confirmation on the profile card (#21)
 - [ ] BROKEN links when the installation or repository is gone (#22)
 - [ ] One-time Import of earlier Accepted submissions (#23)
 

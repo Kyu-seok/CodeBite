@@ -115,6 +115,7 @@ The GitHub App behind Solution Commits is registered by hand: run `scripts/setup
 | GET | `/api/github/link` | JWT | 200 + `{githubAccountId, githubLogin, repositoryId, repositoryFullName, repositoryUrl, defaultBranch, repositoryPrivate, status, importState, createdAt}`, or 204 if none |
 | GET | `/api/github/link/install` | JWT | 200 + `{installUrl}` (GitHub App install page with a user-bound `state`; 503 if the App is not configured) |
 | POST | `/api/github/link/callback` | JWT | 200 + `{link, repositories}` (body `{code, installationId, state}`; links when exactly one repo was granted; 401 bad state, 403 installation not authorised by that account) |
+| DELETE | `/api/github/link` | JWT | 204 No Content (marks the current link UNLINKED, keeping the row; no GitHub call, repository untouched; 204 even with no link) |
 
 ## Worker
 
