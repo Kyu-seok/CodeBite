@@ -10,6 +10,7 @@ import com.codebite.github.service.GitHubLinkService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -34,6 +35,13 @@ public class GitHubLinkController {
         return linkService.getLink(principal.id())
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.noContent().build());
+    }
+
+    /** Unlinks; the Solution Repository is left untouched. 204 whether or not a link existed. */
+    @DeleteMapping
+    public ResponseEntity<Void> unlink(@AuthenticationPrincipal JwtUserPrincipal principal) {
+        linkService.unlink(principal.id());
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/install")

@@ -98,6 +98,16 @@ public class GitHubLinkService {
         return GitHubLinkResponse.from(link(userId, selection.account(), selection.installationId(), repo));
     }
 
+    /**
+     * Stops future Solution Commits. The link row is kept as UNLINKED so past Solution Commits
+     * keep their link, and the Solution Repository is left exactly as it is: GitHub is not called.
+     * Without a current link this does nothing.
+     */
+    @Transactional
+    public void unlink(Long userId) {
+        linkRepository.findByActiveUserId(userId).ifPresent(current -> current.unlink(Instant.now()));
+    }
+
     private GitHubLink link(Long userId, GitHubAccount account, long installationId, GitHubRepo repo) {
         linkRepository.findByActiveUserId(userId).ifPresent(current -> {
             current.unlink(Instant.now());
