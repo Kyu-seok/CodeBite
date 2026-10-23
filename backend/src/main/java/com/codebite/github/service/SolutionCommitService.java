@@ -162,6 +162,9 @@ public class SolutionCommitService {
                     solutionMayHaveLanded = true;
                     throw e;
                 } catch (GitHubFileExistsException e) {
+                    if (committedMeanwhile(attempt)) {
+                        return;
+                    }
                     if (!solutionMayHaveLanded) {
                         throw e;
                     }
@@ -186,6 +189,22 @@ public class SolutionCommitService {
             }
             backoffMs *= 2;
         }
+    }
+
+    /**
+     * Whether something else (an Import) COMMITTED this Solution Commit while this attempt was in
+     * flight. Its record, with its sha and URL, stands.
+     */
+    private boolean committedMeanwhile(Attempt attempt) {
+        Boolean committed = tx.execute(status -> solutionCommitRepository.findById(attempt.solutionCommitId())
+                .map(sc -> sc.getStatus() == SolutionCommitStatus.COMMITTED)
+                .orElse(false));
+        if (Boolean.TRUE.equals(committed)) {
+            log.info("Solution Commit {} was committed meanwhile (by an Import); keeping that record",
+                    attempt.solutionCommitId());
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -242,8 +261,10 @@ public class SolutionCommitService {
                 .ifPresent(GitHubLink::markBroken));
     }
 
+    /** Applies {@code outcome} unless the Solution Commit is already COMMITTED, which is final. */
     private void record(Attempt attempt, Consumer<SolutionCommit> outcome) {
         tx.executeWithoutResult(status -> solutionCommitRepository.findById(attempt.solutionCommitId())
+                .filter(sc -> sc.getStatus() != SolutionCommitStatus.COMMITTED)
                 .ifPresent(outcome));
     }
 

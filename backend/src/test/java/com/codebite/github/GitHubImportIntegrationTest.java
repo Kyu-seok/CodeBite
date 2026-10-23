@@ -5,6 +5,10 @@ import com.codebite.github.gateway.FakeGitHubGateway;
 import com.codebite.github.gateway.FakeGitHubGateway.RecordedBatchCommit;
 import com.codebite.github.gateway.FakeGitHubGateway.RecordedCommit;
 import com.codebite.github.gateway.GitHubTransientException;
+import com.codebite.github.entity.SolutionCommit;
+import com.codebite.github.entity.SolutionCommitStatus;
+import com.codebite.github.repository.SolutionCommitRepository;
+import com.codebite.github.service.GitHubImportService;
 import com.codebite.github.service.SolutionCommitService;
 import com.codebite.github.gateway.FakeGitHubGateway.RecordedPush;
 import com.codebite.github.gateway.GitHubAccount;
@@ -67,6 +71,8 @@ class GitHubImportIntegrationTest {
     @Autowired private EntityManager entityManager;
     @Autowired private SolutionCommitService solutionCommitService;
     @Autowired private MeterRegistry meterRegistry;
+    @Autowired private GitHubImportService gitHubImportService;
+    @Autowired private SolutionCommitRepository solutionCommitRepository;
 
     private User user;
     private String token;
@@ -170,6 +176,61 @@ class GitHubImportIntegrationTest {
         // The Import already added the folder's README, so the live commit adds only its file.
         assertThat(gitHub.commits()).extracting(RecordedCommit::path)
                 .containsExactly("two-sum-imp/java/2026-10-20T100000Z.java");
+    }
+
+    @Test
+    void liveEventForAnImportedSubmissionLeavesItCommitted() throws Exception {
+        Submission imported = submit(user, twoSum, "python", "print(1)", SubmissionStatus.ACCEPTED,
+                "2026-03-01T10:00:00Z");
+        link("octocat/solutions");
+        startImport().andExpect(status().isAccepted());
+        String importedUrl = solutionCommitOf(imported).getCommitUrl();
+
+        solutionCommitService.commitAccepted(user.getId(), imported.getId());
+
+        assertThat(solutionCommitOf(imported)).satisfies(sc -> {
+            assertThat(sc.getStatus()).isEqualTo(SolutionCommitStatus.COMMITTED);
+            assertThat(sc.getCommitUrl()).isEqualTo(importedUrl).isNotNull();
+        });
+        assertThat(gitHub.history()).hasSize(1);
+    }
+
+    @Test
+    void importLandingWhileALiveCommitIsInFlightLeavesItCommitted() throws Exception {
+        Submission earlier = submit(user, twoSum, "java", "class A {}", SubmissionStatus.ACCEPTED,
+                "2026-02-01T10:00:00Z");
+        Submission racing = submit(user, twoSum, "python", "print(1)", SubmissionStatus.ACCEPTED,
+                "2026-03-01T10:00:00Z");
+        link("octocat/solutions");
+        // The folder is started, so the live commit adds just its file.
+        solutionCommitService.commitAccepted(user.getId(), earlier.getId());
+        gitHub.beforeNextCommit(() -> gitHubImportService.start(user.getId()));
+
+        solutionCommitService.commitAccepted(user.getId(), racing.getId());
+
+        assertThat(gitHub.pushes()).hasSize(1);
+        assertThat(solutionCommitOf(racing)).satisfies(sc -> {
+            assertThat(sc.getStatus()).isEqualTo(SolutionCommitStatus.COMMITTED);
+            assertThat(sc.getCommitUrl()).isEqualTo(
+                    "https://github.com/octocat/solutions/commit/" + gitHub.pushes().get(0).commits().get(0).sha());
+        });
+    }
+
+    @Test
+    void importLandingWhileAFolderStartingLiveCommitIsInFlightLeavesItCommitted() throws Exception {
+        Submission racing = submit(user, twoSum, "python", "print(1)", SubmissionStatus.ACCEPTED,
+                "2026-03-01T10:00:00Z");
+        link("octocat/solutions");
+        gitHub.beforeNextCommit(() -> gitHubImportService.start(user.getId()));
+
+        solutionCommitService.commitAccepted(user.getId(), racing.getId());
+
+        assertThat(gitHub.history()).hasSize(1);
+        assertThat(solutionCommitOf(racing)).satisfies(sc -> {
+            assertThat(sc.getStatus()).isEqualTo(SolutionCommitStatus.COMMITTED);
+            assertThat(sc.getCommitUrl()).isEqualTo(
+                    "https://github.com/octocat/solutions/commit/" + gitHub.history().get(0).sha());
+        });
     }
 
     @Test
@@ -302,6 +363,12 @@ class GitHubImportIntegrationTest {
     }
 
     // --- helpers ---
+
+    private SolutionCommit solutionCommitOf(Submission submission) {
+        entityManager.flush();
+        entityManager.clear();
+        return solutionCommitRepository.findFirstBySubmissionIdOrderByIdDesc(submission.getId()).orElseThrow();
+    }
 
     private double solutionCommits(String outcome) {
         Counter counter = meterRegistry.find("codebite.solution.commits").tag("outcome", outcome).counter();

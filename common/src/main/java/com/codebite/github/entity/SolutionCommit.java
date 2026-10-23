@@ -69,8 +69,14 @@ public class SolutionCommit extends BaseEntity {
         lastError = null;
     }
 
-    /** The attempt failed with {@code error}. */
+    /**
+     * The attempt failed with {@code error}. A COMMITTED Solution Commit stays COMMITTED: its file
+     * is on GitHub whatever a later, overlapping attempt reports.
+     */
     public void markFailed(String error) {
+        if (status == SolutionCommitStatus.COMMITTED) {
+            return;
+        }
         attempts++;
         status = SolutionCommitStatus.FAILED;
         lastError = error == null || error.length() <= MAX_ERROR_LENGTH

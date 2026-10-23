@@ -40,6 +40,10 @@ public class FakeGitHubGateway implements GitHubGateway {
     /** Paths whose next commit lands on GitHub but whose response never comes back. */
     private final Set<String> lostResponses = new HashSet<>();
     private int calls;
+    /** Every commit in the order made, whether by {@link #addFile} or {@link #pushCommits}. */
+    private final List<RecordedBatchCommit> history = new ArrayList<>();
+    /** Runs once, just before the next commit or push is applied. */
+    private Runnable beforeNextCommit;
 
     /** A commit that reached the fake, in the order made. */
     public record RecordedCommit(long installationId, String repositoryFullName, String branch, String path,
@@ -68,6 +72,8 @@ public class FakeGitHubGateway implements GitHubGateway {
         nextFailures.clear();
         alwaysFailure = null;
         lostResponses.clear();
+        history.clear();
+        beforeNextCommit = null;
         calls = 0;
     }
 
@@ -127,6 +133,27 @@ public class FakeGitHubGateway implements GitHubGateway {
         lostResponses.add(path);
     }
 
+    /**
+     * Runs {@code action} once, just before the next {@link #addFile} or {@link #pushCommits} is
+     * applied: for example another writer landing the same file while a commit is in flight.
+     */
+    public synchronized void beforeNextCommit(Runnable action) {
+        this.beforeNextCommit = action;
+    }
+
+    /** Every commit made, oldest first, with the files each one added, whichever way it was made. */
+    public synchronized List<RecordedBatchCommit> history() {
+        return List.copyOf(history);
+    }
+
+    private void runBeforeNextCommit() {
+        Runnable action = beforeNextCommit;
+        beforeNextCommit = null;
+        if (action != null) {
+            action.run();
+        }
+    }
+
     @Override
     public synchronized ResolvedInstallation resolveInstallCallback(String authorizationCode, long installationId) {
         maybeFail();
@@ -146,6 +173,7 @@ public class FakeGitHubGateway implements GitHubGateway {
     public synchronized CommittedFile addFile(long installationId, String repositoryFullName, String branch,
                                               NewFile file) {
         maybeFail();
+        runBeforeNextCommit();
         requireGranted(installationId, repositoryFullName);
         Map<String, String> files = filesByRepo.computeIfAbsent(repositoryFullName, k -> new LinkedHashMap<>());
         if (files.containsKey(file.path())) {
@@ -155,6 +183,8 @@ public class FakeGitHubGateway implements GitHubGateway {
         String sha = nextSha();
         commits.add(new RecordedCommit(installationId, repositoryFullName, branch, file.path(), file.content(),
                 file.message(), file.author().login(), file.author().noreplyEmail(), file.authorDate(), sha));
+        history.add(new RecordedBatchCommit(Map.of(file.path(), file.content()), file.message(),
+                file.author().login(), file.author().noreplyEmail(), file.authorDate(), sha));
         if (lostResponses.remove(file.path())) {
             throw new GitHubTransientException("connection reset after committing " + file.path());
         }
@@ -175,6 +205,7 @@ public class FakeGitHubGateway implements GitHubGateway {
     public synchronized List<CommittedFile> pushCommits(long installationId, String repositoryFullName,
                                                         String branch, List<BatchCommit> batch) {
         maybeFail();
+        runBeforeNextCommit();
         requireGranted(installationId, repositoryFullName);
         Map<String, String> files = filesByRepo.computeIfAbsent(repositoryFullName, k -> new LinkedHashMap<>());
         List<RecordedBatchCommit> recorded = new ArrayList<>();
@@ -196,6 +227,7 @@ public class FakeGitHubGateway implements GitHubGateway {
             result.add(new CommittedFile(sha, "https://github.com/" + repositoryFullName + "/commit/" + sha));
         }
         pushes.add(new RecordedPush(installationId, repositoryFullName, branch, List.copyOf(recorded)));
+        history.addAll(recorded);
         return result;
     }
 
