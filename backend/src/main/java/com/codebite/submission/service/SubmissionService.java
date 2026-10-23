@@ -2,6 +2,8 @@ package com.codebite.submission.service;
 
 import com.codebite.common.exception.ResourceNotFoundException;
 import com.codebite.common.exception.UnsupportedValueException;
+import com.codebite.github.dto.SolutionCommitSummary;
+import com.codebite.github.repository.SolutionCommitRepository;
 import com.codebite.judge.dto.CodeError;
 import com.codebite.judge.parser.JudgeErrorParsers;
 import com.codebite.judge.parser.UserCodeLineMapper;
@@ -44,6 +46,7 @@ public class SubmissionService {
     private final SubmissionEventProducer submissionEventProducer;
     private final JudgeErrorParsers errorParsers;
     private final UserCodeLineMapper lineMapper;
+    private final SolutionCommitRepository solutionCommitRepository;
     private final Counter submissionsCreatedCounter;
 
     public SubmissionService(SubmissionRepository submissionRepository,
@@ -56,6 +59,7 @@ public class SubmissionService {
                              SubmissionEventProducer submissionEventProducer,
                              JudgeErrorParsers errorParsers,
                              UserCodeLineMapper lineMapper,
+                             SolutionCommitRepository solutionCommitRepository,
                              MeterRegistry meterRegistry) {
         this.submissionRepository = submissionRepository;
         this.submissionResultRepository = submissionResultRepository;
@@ -67,6 +71,7 @@ public class SubmissionService {
         this.submissionEventProducer = submissionEventProducer;
         this.errorParsers = errorParsers;
         this.lineMapper = lineMapper;
+        this.solutionCommitRepository = solutionCommitRepository;
         this.submissionsCreatedCounter = Counter.builder("codebite.submissions.created")
                 .description("Total submissions created")
                 .register(meterRegistry);
@@ -94,7 +99,7 @@ public class SubmissionService {
         }
 
         // Return immediately with PENDING status
-        return toResponse(submission, List.of(), problem.getSlug(), List.of(), 0);
+        return toResponse(submission, List.of(), problem.getSlug(), List.of(), 0, null);
     }
 
     @Transactional(readOnly = true)
@@ -116,8 +121,13 @@ public class SubmissionService {
                         submission.getProblem().getSlug(), submission.getLanguage())
                 : 1;
 
+        SolutionCommitSummary solutionCommit = solutionCommitRepository
+                .findFirstBySubmissionIdOrderByIdDesc(id)
+                .map(SolutionCommitSummary::from)
+                .orElse(null);
+
         return toResponse(submission, results, submission.getProblem().getSlug(),
-                testCases, userCodeStartLine);
+                testCases, userCodeStartLine, solutionCommit);
     }
 
     @Transactional(readOnly = true)
@@ -167,7 +177,7 @@ public class SubmissionService {
 
     private SubmissionResponse toResponse(Submission submission, List<SubmissionResult> results,
                                           String problemSlug, List<TestCase> allTestCases,
-                                          int userCodeStartLine) {
+                                          int userCodeStartLine, SolutionCommitSummary solutionCommit) {
         int userCodeLineCount = countLines(submission.getSourceCode());
         String language = submission.getLanguage();
 
@@ -205,7 +215,8 @@ public class SubmissionService {
                 submission.getCreatedAt(),
                 submission.getNotes(),
                 submission.getConfidence(),
-                submission.getSolveTimeSeconds()
+                submission.getSolveTimeSeconds(),
+                solutionCommit
         );
     }
 
