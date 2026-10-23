@@ -3,6 +3,8 @@ package com.codebite.github.gateway;
 import com.codebite.config.GitHubAppProperties;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.eclipse.jgit.lib.ObjectId;
+import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -19,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.function.Function;
+import java.util.function.IntConsumer;
 import java.util.function.Supplier;
 
 /**
@@ -37,6 +40,7 @@ public class GitHubAppGateway implements GitHubGateway {
     private final RestClient api;
     private final RestClient web;
     private volatile GitHubAppJwt appJwt;
+    private IntConsumer beforePush = attempt -> { };
 
     public GitHubAppGateway(GitHubAppProperties properties, RestClient.Builder restClientBuilder) {
         this.properties = properties;
@@ -122,6 +126,34 @@ public class GitHubAppGateway implements GitHubGateway {
         } catch (ResourceAccessException e) {
             throw new GitHubTransientException(what + " unreachable", e);
         }
+    }
+
+    /**
+     * Batch push over git with the installation token (see {@link GitBatchPush}): a shallow fetch
+     * of {@code branch}, one locally built commit per entry, one push.
+     */
+    @Override
+    public List<CommittedFile> pushCommits(long installationId, String repositoryFullName, String branch,
+                                           List<BatchCommit> commits) {
+        requireConfigured();
+        String token = installationToken(installationId);
+        String remote = stripTrailingSlash(properties.getGitBaseUrl()) + "/" + repositoryFullName + ".git";
+        List<ObjectId> ids = new GitBatchPush(remote,
+                new UsernamePasswordCredentialsProvider("x-access-token", token), branch, beforePush)
+                .push(commits);
+        String commitBase = stripTrailingSlash(properties.getWebBaseUrl()) + "/" + repositoryFullName + "/commit/";
+        return ids.stream()
+                .map(id -> id == null ? new CommittedFile(null, null) : new CommittedFile(id.name(), commitBase + id.name()))
+                .toList();
+    }
+
+    /** Test hook: runs before each push attempt (1-based), e.g. to move the remote tip. */
+    void beforePush(IntConsumer hook) {
+        this.beforePush = hook;
+    }
+
+    private static String stripTrailingSlash(String url) {
+        return url.endsWith("/") ? url.substring(0, url.length() - 1) : url;
     }
 
     /** Exchanges a user authorization code for a user-to-server token, using the App's client. */

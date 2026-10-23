@@ -122,6 +122,12 @@ public class FakeGitHubGateway implements GitHubGateway {
     }
 
     @Override
+    public synchronized List<CommittedFile> pushCommits(long installationId, String repositoryFullName,
+                                                        String branch, List<BatchCommit> batch) {
+        throw new UnsupportedOperationException("not yet");
+    }
+
+    @Override
     public synchronized List<GitHubRepo> listInstallationRepositories(long installationId) {
         maybeFail();
         List<GitHubRepo> repositories = reposByInstallation.get(installationId);

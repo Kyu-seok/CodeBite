@@ -23,6 +23,11 @@ public class GitHubAppProperties {
     private String apiBaseUrl = "https://api.github.com";
     /** Host of the OAuth endpoints ({@code /login/oauth/access_token}). */
     private String webBaseUrl = "https://github.com";
+    /**
+     * Where Import pushes over git: the remote is {@code <gitBaseUrl>/<owner>/<name>.git}. Tests
+     * point it at a {@code file://} directory of bare repositories.
+     */
+    private String gitBaseUrl = "https://github.com";
     /** Public CodeBite URL, for the links in Solution Repository READMEs. */
     private String codebiteBaseUrl = "https://code-bite.com";
     /** How long an install state stays valid; installing on GitHub can take a few minutes. */
@@ -104,6 +109,14 @@ public class GitHubAppProperties {
 
     public void setWebBaseUrl(String webBaseUrl) {
         this.webBaseUrl = webBaseUrl;
+    }
+
+    public String getGitBaseUrl() {
+        return gitBaseUrl;
+    }
+
+    public void setGitBaseUrl(String gitBaseUrl) {
+        this.gitBaseUrl = gitBaseUrl;
     }
 
     public long getStateExpirationMs() {

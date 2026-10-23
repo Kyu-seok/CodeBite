@@ -43,6 +43,22 @@ public interface GitHubGateway {
     CommittedFile addFile(long installationId, String repositoryFullName, String branch, NewFile file);
 
     /**
+     * Pushes {@code commits} onto the tip of {@code branch} in one push, one commit per entry and
+     * in the given order. Each commit only adds files: a path that already exists on the branch is
+     * left untouched, and a commit with nothing left to add is not made. If the push is rejected
+     * because the branch moved (for example a live Solution Commit landed meanwhile), the commits
+     * are rebuilt on the new tip and pushed again, which always succeeds because nothing is
+     * replaced.
+     *
+     * @return one entry per input commit, in order. An entry whose files were all already present
+     *         has a null sha and URL.
+     * @throws GitHubInstallationGoneException if the installation or repository is gone
+     * @throws GitHubTransientException        on an outage worth retrying
+     */
+    List<CommittedFile> pushCommits(long installationId, String repositoryFullName, String branch,
+                                    List<BatchCommit> commits);
+
+    /**
      * Lists the repositories an installation grants right now, as the App. Only call this with an
      * installation id CodeBite already verified the user can access.
      *
