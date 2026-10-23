@@ -27,7 +27,7 @@ import java.util.TreeSet;
  * UTC dates (ADR 0001).
  *
  * <p><strong>Idempotent under redelivery.</strong> Repair Progress only advances when a Streak Day
- * row is created (or a Repaired Day becomes real), never on the event itself, so replaying a
+ * row is created, never on the event itself, so replaying a
  * submission result, or a second Accepted submission on the same day, changes nothing.
  *
  * <p><strong>Serialised per user.</strong> Every mutation first locks the user's
@@ -65,18 +65,13 @@ public class StreakService {
         LocalDate day = LocalDate.ofInstant(submission.get().getCreatedAt(), ZoneOffset.UTC);
 
         UserStreak streak = lockStreak(userId);
-        Optional<StreakDay> existing = streakDayRepository.findByUserIdAndStreakDate(userId, day);
-        if (existing.isEmpty()) {
+        // A day already counted is left alone. That includes a Repaired Day later found to be
+        // solved (its submission was still being judged): it stays repaired and the Repair stays
+        // spent, so a spent Repair is never handed back.
+        if (streakDayRepository.findByUserIdAndStreakDate(userId, day).isEmpty()) {
             streakDayRepository.save(new StreakDay(userId, day, false));
             streak.advanceProgress();
-        } else if (existing.get().isRepaired()) {
-            // The user repaired a day they turn out to have solved, e.g. the submission was still
-            // being judged. The day was never missed, so it becomes real and the Repair comes back.
-            existing.get().setRepaired(false);
-            streak.grantRepair();
-            streak.advanceProgress();
         }
-        // Otherwise the day is already a real Streak Day: nothing to do.
     }
 
     @Transactional(readOnly = true)

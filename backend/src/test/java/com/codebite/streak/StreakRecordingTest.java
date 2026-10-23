@@ -24,7 +24,7 @@ import java.time.LocalDate;
 import java.time.ZoneOffset;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Runs against the real schema: the upsert and the row lock are native/dialect-sensitive, and the
@@ -132,17 +132,18 @@ class StreakRecordingTest {
     }
 
     @Test
-    void solvingARepairedDayMakesItRealAndRefundsTheRepair() {
+    void solvingARepairedDayLeavesItRepaired() {
         streakService.recordSolve(user.getId(), acceptedOn(MONDAY));
         streakDayRepository.save(new StreakDay(user.getId(), MONDAY.plusDays(1), true));
 
+        // A submission from the repaired day comes back Accepted after the Repair was spent.
         streakService.recordSolve(user.getId(), acceptedOn(MONDAY.plusDays(1)));
 
         StreakDay tuesday = streakDayRepository
                 .findByUserIdAndStreakDate(user.getId(), MONDAY.plusDays(1)).orElseThrow();
-        assertFalse(tuesday.isRepaired());
-        assertEquals(1, streak().getRepairs(), "the Repair spent on a day that was not missed comes back");
-        assertEquals(2, streak().getRepairProgress());
+        assertTrue(tuesday.isRepaired(), "the day stays repaired");
+        assertEquals(0, streak().getRepairs(), "the spent Repair is not refunded");
+        assertEquals(1, streak().getRepairProgress(), "only Monday advanced Repair Progress");
     }
 
     @Test

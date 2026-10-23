@@ -46,8 +46,4 @@ public class StreakDay extends BaseEntity {
     public boolean isRepaired() {
         return repaired;
     }
-
-    public void setRepaired(boolean repaired) {
-        this.repaired = repaired;
-    }
 }
