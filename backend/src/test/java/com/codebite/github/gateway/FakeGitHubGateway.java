@@ -34,12 +34,24 @@ public class FakeGitHubGateway implements GitHubGateway {
     private final List<RecordedCommit> commits = new ArrayList<>();
     /** File contents by repository full name, then path. */
     private final Map<String, Map<String, String>> filesByRepo = new HashMap<>();
+    private final List<RecordedPush> pushes = new ArrayList<>();
     private Supplier<? extends RuntimeException> alwaysFailure;
+    private long shaSequence;
 
     /** A commit that reached the fake, in the order made. */
     public record RecordedCommit(long installationId, String repositoryFullName, String branch, String path,
                                  String content, String message, String authorName, String authorEmail,
                                  Instant authorDate, String sha) {
+    }
+
+    /** One batch push and the commits it made, in order. */
+    public record RecordedPush(long installationId, String repositoryFullName, String branch,
+                               List<RecordedBatchCommit> commits) {
+    }
+
+    /** A commit made by a batch push, with only the files it actually added. */
+    public record RecordedBatchCommit(Map<String, String> files, String message, String authorName,
+                                      String authorEmail, Instant authorDate, String sha) {
     }
 
     /** Forgets all GitHub state and injected failures. */
@@ -48,6 +60,7 @@ public class FakeGitHubGateway implements GitHubGateway {
         installationsByAccount.clear();
         reposByInstallation.clear();
         commits.clear();
+        pushes.clear();
         filesByRepo.clear();
         nextFailures.clear();
         alwaysFailure = null;
@@ -94,18 +107,13 @@ public class FakeGitHubGateway implements GitHubGateway {
     public synchronized CommittedFile addFile(long installationId, String repositoryFullName, String branch,
                                               NewFile file) {
         maybeFail();
-        boolean granted = reposByInstallation.getOrDefault(installationId, List.of()).stream()
-                .anyMatch(r -> r.fullName().equals(repositoryFullName));
-        if (!granted) {
-            throw new GitHubInstallationGoneException(
-                    "installation " + installationId + " does not grant " + repositoryFullName);
-        }
+        requireGranted(installationId, repositoryFullName);
         Map<String, String> files = filesByRepo.computeIfAbsent(repositoryFullName, k -> new LinkedHashMap<>());
         if (files.containsKey(file.path())) {
             throw new GitHubFileExistsException(repositoryFullName + " already has " + file.path());
         }
         files.put(file.path(), file.content());
-        String sha = String.format("%040x", commits.size() + 1);
+        String sha = nextSha();
         commits.add(new RecordedCommit(installationId, repositoryFullName, branch, file.path(), file.content(),
                 file.message(), file.author().login(), file.author().noreplyEmail(), file.authorDate(), sha));
         return new CommittedFile(sha, "https://github.com/" + repositoryFullName + "/commit/" + sha);
@@ -124,7 +132,47 @@ public class FakeGitHubGateway implements GitHubGateway {
     @Override
     public synchronized List<CommittedFile> pushCommits(long installationId, String repositoryFullName,
                                                         String branch, List<BatchCommit> batch) {
-        throw new UnsupportedOperationException("not yet");
+        maybeFail();
+        requireGranted(installationId, repositoryFullName);
+        Map<String, String> files = filesByRepo.computeIfAbsent(repositoryFullName, k -> new LinkedHashMap<>());
+        List<RecordedBatchCommit> recorded = new ArrayList<>();
+        List<CommittedFile> result = new ArrayList<>();
+        for (BatchCommit commit : batch) {
+            // Like the real push: files already in the repository are left alone.
+            Map<String, String> added = new LinkedHashMap<>();
+            commit.files().stream()
+                    .filter(f -> !files.containsKey(f.path()) && !added.containsKey(f.path()))
+                    .forEach(f -> added.put(f.path(), f.content()));
+            if (added.isEmpty()) {
+                result.add(new CommittedFile(null, null));
+                continue;
+            }
+            files.putAll(added);
+            String sha = nextSha();
+            recorded.add(new RecordedBatchCommit(added, commit.message(), commit.author().login(),
+                    commit.author().noreplyEmail(), commit.authorDate(), sha));
+            result.add(new CommittedFile(sha, "https://github.com/" + repositoryFullName + "/commit/" + sha));
+        }
+        pushes.add(new RecordedPush(installationId, repositoryFullName, branch, List.copyOf(recorded)));
+        return result;
+    }
+
+    /** Every batch push that reached the fake, oldest first. */
+    public synchronized List<RecordedPush> pushes() {
+        return List.copyOf(pushes);
+    }
+
+    private void requireGranted(long installationId, String repositoryFullName) {
+        boolean granted = reposByInstallation.getOrDefault(installationId, List.of()).stream()
+                .anyMatch(r -> r.fullName().equals(repositoryFullName));
+        if (!granted) {
+            throw new GitHubInstallationGoneException(
+                    "installation " + installationId + " does not grant " + repositoryFullName);
+        }
+    }
+
+    private String nextSha() {
+        return String.format("%040x", ++shaSequence);
     }
 
     @Override

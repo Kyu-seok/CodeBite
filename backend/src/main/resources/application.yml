@@ -61,6 +61,7 @@ app:
       submission: submission-events
       submission-admin: submission-events-admin
       submission-results: submission-results
+      github-import: github-imports
     # Per-instance group: each replica forms its own single-member group so it receives every
     # result event, because only the replica holding the SSE connection can push it. A shared
     # group id here would strand clients on their polling fallback.

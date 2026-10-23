@@ -88,6 +88,20 @@ public class GitHubLink extends BaseEntity {
         unlinkedAt = at;
     }
 
+    /** The RUNNING Import pushed everything. Only a RUNNING Import can finish. */
+    public void finishImport() {
+        if (importState == GitHubImportState.RUNNING) {
+            importState = GitHubImportState.DONE;
+        }
+    }
+
+    /** The RUNNING Import failed; it can be started again. Only a RUNNING Import can fail. */
+    public void failImport() {
+        if (importState == GitHubImportState.RUNNING) {
+            importState = GitHubImportState.FAILED;
+        }
+    }
+
     public Long getUserId() {
         return userId;
     }

@@ -17,6 +17,27 @@ public interface SubmissionRepository extends JpaRepository<Submission, Long> {
 
     List<Submission> findByUserIdAndProblemIdOrderByCreatedAtDesc(Long userId, Long problemId);
 
+    /**
+     * What an Import covers: the user's Accepted submissions (admin ones included) made before
+     * {@code before} (the GitHub Link's created_at), minus any already COMMITTED through that link,
+     * oldest first. Problems are fetched for the repository layout.
+     */
+    @Query("""
+            SELECT s FROM Submission s JOIN FETCH s.problem
+            WHERE s.user.id = :userId
+              AND s.status = com.codebite.submission.entity.SubmissionStatus.ACCEPTED
+              AND s.createdAt < :before
+              AND NOT EXISTS (
+                  SELECT 1 FROM SolutionCommit sc
+                  WHERE sc.submissionId = s.id
+                    AND sc.githubLinkId = :linkId
+                    AND sc.status = com.codebite.github.entity.SolutionCommitStatus.COMMITTED)
+            ORDER BY s.createdAt ASC, s.id ASC
+            """)
+    List<Submission> findImportable(@Param("userId") Long userId,
+                                    @Param("before") Instant before,
+                                    @Param("linkId") Long linkId);
+
     // SM-2 replay: rated submissions for a (user, problem) in chronological rating order.
     List<Submission> findByUserIdAndProblemIdAndConfidenceIsNotNullOrderByReviewedAtAsc(
             Long userId, Long problemId);

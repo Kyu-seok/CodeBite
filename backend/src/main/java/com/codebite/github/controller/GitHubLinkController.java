@@ -6,6 +6,7 @@ import com.codebite.github.dto.GitHubLinkCallbackRequest;
 import com.codebite.github.dto.GitHubLinkCallbackResponse;
 import com.codebite.github.dto.GitHubLinkResponse;
 import com.codebite.github.dto.GitHubRepositoryChoiceRequest;
+import com.codebite.github.service.GitHubImportService;
 import com.codebite.github.service.GitHubLinkService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -24,9 +25,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class GitHubLinkController {
 
     private final GitHubLinkService linkService;
+    private final GitHubImportService importService;
 
-    public GitHubLinkController(GitHubLinkService linkService) {
+    public GitHubLinkController(GitHubLinkService linkService, GitHubImportService importService) {
         this.linkService = linkService;
+        this.importService = importService;
     }
 
     /** The current link, or 204 when the user has none. */
@@ -55,6 +58,15 @@ public class GitHubLinkController {
             @AuthenticationPrincipal JwtUserPrincipal principal,
             @Valid @RequestBody GitHubLinkCallbackRequest request) {
         return ResponseEntity.ok(linkService.completeInstall(principal.id(), request));
+    }
+
+    /**
+     * Starts the Import: 202 with the link (import state RUNNING) while it is AVAILABLE or FAILED,
+     * 409 when it is RUNNING or DONE. It runs in the background; poll {@code GET /api/github/link}.
+     */
+    @PostMapping("/import")
+    public ResponseEntity<GitHubLinkResponse> startImport(@AuthenticationPrincipal JwtUserPrincipal principal) {
+        return ResponseEntity.accepted().body(importService.start(principal.id()));
     }
 
     /** Chooses the Solution Repository when the install granted several. */

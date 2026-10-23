@@ -1,5 +1,6 @@
 package com.codebite.config;
 
+import com.codebite.github.event.GitHubImportRequestedEvent;
 import com.codebite.submission.event.SubmissionResultEvent;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -41,10 +42,13 @@ public class KafkaConsumerConfig {
      * partition.
      */
     private static ErrorHandlingDeserializer<SubmissionResultEvent> resultDeserializer() {
-        JsonDeserializer<SubmissionResultEvent> valueDeserializer =
-                new JsonDeserializer<>(SubmissionResultEvent.class);
-        valueDeserializer.addTrustedPackages("com.codebite.submission.event");
-        // The worker sends this exact type; ignoring the type header keeps the two sides from
+        return jsonDeserializer(SubmissionResultEvent.class);
+    }
+
+    private static <T> ErrorHandlingDeserializer<T> jsonDeserializer(Class<T> type) {
+        JsonDeserializer<T> valueDeserializer = new JsonDeserializer<>(type);
+        valueDeserializer.addTrustedPackages(type.getPackageName());
+        // The producer sends this exact type; ignoring the type header keeps the two sides from
         // being coupled through a fully-qualified class name in the payload.
         valueDeserializer.setUseTypeHeaders(false);
         return new ErrorHandlingDeserializer<>(valueDeserializer);
@@ -140,6 +144,27 @@ public class KafkaConsumerConfig {
                 new StringDeserializer(), resultDeserializer()));
         factory.setCommonErrorHandler(new DefaultErrorHandler(
                 (record, ex) -> log.error("Solution Commit skipped: {}", record.value(), ex),
+                new FixedBackOff(0L, 0L)));
+        return factory;
+    }
+
+    /**
+     * Imports. {@code earliest}: a request published before this group first joined must still
+     * run, or its link would stay RUNNING. The listener records failures itself, so the error
+     * handler is only a backstop that logs.
+     */
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, GitHubImportRequestedEvent>
+            gitHubImportListenerContainerFactory(
+                    @Value("${spring.kafka.bootstrap-servers}") String bootstrapServers) {
+
+        ConcurrentKafkaListenerContainerFactory<String, GitHubImportRequestedEvent> factory =
+                new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(new DefaultKafkaConsumerFactory<>(
+                baseProps(bootstrapServers, "earliest"),
+                new StringDeserializer(), jsonDeserializer(GitHubImportRequestedEvent.class)));
+        factory.setCommonErrorHandler(new DefaultErrorHandler(
+                (record, ex) -> log.error("Import request skipped: {}", record.value(), ex),
                 new FixedBackOff(0L, 0L)));
         return factory;
     }
