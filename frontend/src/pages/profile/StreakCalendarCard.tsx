@@ -116,7 +116,7 @@ export function StreakCalendarCard() {
         </span>
       </div>
 
-      <div className="mb-3 flex items-center justify-between">
+      <div className="mx-auto mb-3 flex max-w-sm items-center justify-between">
         <Button
           variant="ghost"
           size="icon"
@@ -140,7 +140,8 @@ export function StreakCalendarCard() {
         </Button>
       </div>
 
-      <div className="grid grid-cols-7 gap-1 text-center">
+      {/* Capped so square cells stay day-sized instead of filling the profile's width. */}
+      <div className="mx-auto grid max-w-sm grid-cols-7 gap-1 text-center">
         {WEEKDAYS.map((d) => (
           <span key={d} className="pb-1 text-[11px] text-muted-foreground">
             {t(`streakCalendar.weekdays.${d}`)}
