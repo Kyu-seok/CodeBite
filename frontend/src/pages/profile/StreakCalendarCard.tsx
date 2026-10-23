@@ -168,7 +168,7 @@ export function StreakCalendarCard() {
                 repaired === false && 'bg-success-500/20 font-medium text-success-600 dark:text-success-400',
                 repaired === true && 'bg-success-500/10 font-medium text-success-600/80 dark:text-success-400/80',
                 missed && 'text-muted-foreground',
-                canRepair && 'cursor-pointer border border-dashed border-border hover:border-foreground/40 hover:bg-secondary',
+                canRepair && 'cursor-pointer border border-dashed border-foreground/30 text-foreground hover:border-foreground/60 hover:bg-secondary',
                 repaired === undefined && !missed && 'text-muted-foreground/50',
                 date === today && 'ring-1 ring-foreground/30',
               )}
