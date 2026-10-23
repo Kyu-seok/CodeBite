@@ -797,7 +797,7 @@ CodeBite/
 Terms in GLOSSARY.md; decisions in ADR 0001 (UTC days), 0002 (backdated Imports), 0003 (GitHub App).
 - [x] GitHub Link via the CodeBite GitHub App: `GitHubGateway` seam + fake, `github_links`, install/callback endpoints, profile card (#24)
 - [x] Live Solution Commits for Accepted submissions: `solution_commits`, `submission-results` listener, `GitHubGateway.addFile` via the Contents API (#18)
-- [ ] Solution Commit status on submission detail, with retries (#19)
+- [x] Solution Commit status on submission detail, with retries: `solutionCommit` on `GET /api/submissions/{id}`, back-off retries, `codebite.solution.commits` counter (#19)
 - [x] Choose the Solution Repository when several were granted: signed selection token, `PUT /api/github/link/repository`, callback picker (#20)
 - [x] Unlink and relink: `DELETE /api/github/link`, Unlink with confirmation on the profile card (#21)
 - [ ] BROKEN links when the installation or repository is gone (#22)
