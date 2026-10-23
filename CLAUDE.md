@@ -82,7 +82,7 @@ The GitHub App behind Solution Commits is registered by hand: run `scripts/setup
 - `submission/` — Submission flow (controller, service, DTOs, Kafka producer)
 - `run/` — Run flow (controller, service, DTOs — synchronous Judge0 execution, sample test cases only)
 - `streak/` — Streaks and Repairs (controller, service, DTOs, `submission-results` listener); terms in GLOSSARY.md, UTC days per docs/adr/0001
-- `github/` — GitHub Links via the CodeBite GitHub App (ADR 0003): `gateway/` (`GitHubGateway` seam, `GitHubAppGateway` REST adapter minting installation tokens from an RS256 app JWT, gateway exceptions), `service/` (link + signed install state and repository-selection token; `SolutionCommitService` + `SolutionLayout` for Solution Commits), `consumer/SolutionCommitListener` (`submission-results`, group `codebite-solution-commits`: every ACCEPTED event of a user with an ACTIVE link becomes a Solution Commit; never throws), controller, DTOs. Tests swap in `FakeGitHubGateway` (`backend/src/test/.../github/gateway/`) via `TestGitHubConfig`
+- `github/` — GitHub Links via the CodeBite GitHub App (ADR 0003): `gateway/` (`GitHubGateway` seam, `GitHubAppGateway` REST adapter minting installation tokens from an RS256 app JWT, gateway exceptions), `service/` (link + signed install state and repository-selection token; `SolutionCommitService` + `SolutionLayout` for Solution Commits), `consumer/SolutionCommitListener` (`submission-results`, group `codebite-solution-commits`: every ACCEPTED event of a user with an ACTIVE link becomes a Solution Commit; transient GitHub errors retried with doubling back-off per `app.github.commit-max-tries` / `commit-retry-backoff-ms`, then FAILED; never throws; a gone installation/repository marks the link BROKEN, after which submissions are skipped until relink), controller, DTOs. Tests swap in `FakeGitHubGateway` (`backend/src/test/.../github/gateway/`) via `TestGitHubConfig`
 
 ### Run Flow (Synchronous)
 `POST /api/problems/{slug}/run` → `RunService.run()` executes only sample test cases synchronously via JudgeService, returns results immediately. No data is persisted. No auth required.
@@ -107,12 +107,12 @@ The GitHub App behind Solution Commits is registered by hand: run `scripts/setup
 | POST | `/api/admin/problems/{id}/test-cases` | ADMIN | 201 + test case |
 | POST | `/api/problems/{slug}/run` | No | 200 + `{overallStatus, results}` |
 | POST | `/api/problems/{slug}/submit` | JWT | 201 + `{id, problemSlug, language, status, runtimeMs, memoryKb, results, createdAt}` |
-| GET | `/api/submissions/{id}` | JWT | 200 + submission detail (input/expectedOutput only for sample cases) |
+| GET | `/api/submissions/{id}` | JWT | 200 + submission detail (input/expectedOutput only for sample cases; `solutionCommit: {status: PENDING\|COMMITTED\|FAILED, commitUrl}` or null when there's no Solution Commit) |
 | GET | `/api/problems/{slug}/submissions` | JWT | 200 + `[{id, status, language, runtimeMs, memoryKb, createdAt}]` |
 | GET | `/api/streak` | JWT | 200 + `{currentStreak, bestStreak, solvedToday, repairs, repairProgress}` |
 | GET | `/api/streak/days?month=yyyy-MM` | JWT | 200 + `{month, today, firstStreakDate, days: [{date, repaired}]}` |
 | POST | `/api/streak/repairs` | JWT | 200 + streak summary (body `{date}`; 400 if not a Missed Day or no Repairs, 409 if already counted) |
-| GET | `/api/github/link` | JWT | 200 + `{githubAccountId, githubLogin, repositoryId, repositoryFullName, repositoryUrl, defaultBranch, repositoryPrivate, status, importState, createdAt}`, or 204 if none |
+| GET | `/api/github/link` | JWT | 200 + `{githubAccountId, githubLogin, repositoryId, repositoryFullName, repositoryUrl, defaultBranch, repositoryPrivate, status, importState, createdAt}`, or 204 if none (a BROKEN link is re-checked via `GitHubGateway.isRepositoryReachable` and recovered to ACTIVE if reachable; ACTIVE reads never call GitHub) |
 | GET | `/api/github/link/install` | JWT | 200 + `{installUrl}` (GitHub App install page with a user-bound `state`; 503 if the App is not configured) |
 | POST | `/api/github/link/callback` | JWT | 200 + `{link, repositories, selectionToken}` (body `{code, installationId, state}`; links when exactly one repo was granted, else lists them with a signed `selectionToken`; 401 bad state, 403 installation not authorised by that account) |
 | PUT | `/api/github/link/repository` | JWT | 200 + link (body `{selectionToken, repositoryId}`; account and installation come from the token; 400 if the installation doesn't grant that repo, 401 bad token) |
@@ -189,6 +189,7 @@ npm run build    # production build (includes tsc type check)
 | `codebite.submissions.created` | Counter | Backend | Total submissions created |
 | `codebite.submissions.completed` | Counter | Worker | Submissions completed (tags: `status`, `language`) |
 | `codebite.submissions.processing.duration` | Timer | Worker | Time to process a submission through Judge0 |
+| `codebite.solution.commits` | Counter | Backend | Solution Commits by final outcome after retries (tag: `outcome` = `committed`, `failed`, or `broken` when the installation or repository is gone, which is never retried) |
 
 ### Built-in Metrics (via Actuator)
 - `http_server_requests_seconds` — HTTP request rate, latency, status codes per endpoint

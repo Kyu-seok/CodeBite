@@ -32,6 +32,10 @@ public class GitHubAppProperties {
     private String codebiteBaseUrl = "https://code-bite.com";
     /** How long an install state stays valid; installing on GitHub can take a few minutes. */
     private long stateExpirationMs = 900_000;
+    /** Tries per Solution Commit attempt when GitHub reports a transient error (first try included). */
+    private int commitMaxTries = 3;
+    /** Wait before the first retry; it doubles before each later one. */
+    private long commitRetryBackoffMs = 1_000;
 
     /** True when every value needed to install the App and act as it is present. */
     public boolean isConfigured() {
@@ -133,5 +137,21 @@ public class GitHubAppProperties {
 
     public void setCodebiteBaseUrl(String codebiteBaseUrl) {
         this.codebiteBaseUrl = codebiteBaseUrl;
+    }
+
+    public int getCommitMaxTries() {
+        return commitMaxTries;
+    }
+
+    public void setCommitMaxTries(int commitMaxTries) {
+        this.commitMaxTries = commitMaxTries;
+    }
+
+    public long getCommitRetryBackoffMs() {
+        return commitRetryBackoffMs;
+    }
+
+    public void setCommitRetryBackoffMs(long commitRetryBackoffMs) {
+        this.commitRetryBackoffMs = commitRetryBackoffMs;
     }
 }

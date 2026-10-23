@@ -168,7 +168,14 @@
     "hidden": "(hidden)",
     "expectedOutput": "Expected Output",
     "yourOutput": "Your Output",
-    "clickToAddNote": "Click to add a note..."
+    "clickToAddNote": "Click to add a note...",
+    "solutionCommit": {
+      "label": "GitHub",
+      "pending": "Committing to your Solution Repository…",
+      "committed": "Committed to your Solution Repository",
+      "viewCommit": "View on GitHub",
+      "failed": "Couldn't commit to GitHub"
+    }
   },
   "settings": {
     "title": "Settings",

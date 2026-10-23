@@ -120,3 +120,5 @@ app:
     web-base-url: ${GITHUB_WEB_BASE_URL:https://github.com}
     codebite-base-url: ${CODEBITE_BASE_URL:https://code-bite.com}  # links in Solution Repository READMEs
     state-expiration-ms: 900000
+    commit-max-tries: ${GITHUB_COMMIT_MAX_TRIES:3}  # per Solution Commit, on transient GitHub errors
+    commit-retry-backoff-ms: ${GITHUB_COMMIT_RETRY_BACKOFF_MS:1000}  # doubles before each retry

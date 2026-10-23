@@ -65,4 +65,15 @@ public interface GitHubGateway {
      * @throws GitHubInstallationGoneException if the installation was removed or suspended
      */
     List<GitHubRepo> listInstallationRepositories(long installationId);
+
+    /**
+     * Whether an installation still exists and still grants a repository: the check that confirms
+     * or recovers a BROKEN GitHub Link. Costs at most two requests, however many repositories the
+     * installation grants.
+     *
+     * @return false if the installation is gone or no longer grants {@code repositoryId} (for
+     *         example the repository was deleted)
+     * @throws GitHubTransientException on an outage, when reachability is unknown
+     */
+    boolean isRepositoryReachable(long installationId, long repositoryId);
 }

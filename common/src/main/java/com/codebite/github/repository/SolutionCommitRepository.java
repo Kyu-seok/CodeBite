@@ -12,6 +12,9 @@ public interface SolutionCommitRepository extends JpaRepository<SolutionCommit, 
 
     Optional<SolutionCommit> findBySubmissionIdAndGithubLinkId(Long submissionId, Long githubLinkId);
 
+    /** The submission's newest Solution Commit: the one for its most recent GitHub Link. */
+    Optional<SolutionCommit> findFirstBySubmissionIdOrderByIdDesc(Long submissionId);
+
     /**
      * Whether this link already has a Solution Commit in the given status for a submission of this
      * problem, i.e. whether the problem's folder has been started through this link.

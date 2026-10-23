@@ -1,17 +1,20 @@
 package com.codebite.github;
 
 import com.codebite.github.consumer.SolutionCommitListener;
+import com.codebite.github.dto.GitHubLinkCallbackRequest;
 import com.codebite.github.entity.GitHubLink;
 import com.codebite.github.entity.GitHubLinkStatus;
 import com.codebite.github.entity.SolutionCommitStatus;
 import com.codebite.github.gateway.FakeGitHubGateway;
 import com.codebite.github.gateway.FakeGitHubGateway.RecordedCommit;
 import com.codebite.github.gateway.GitHubAccount;
+import com.codebite.github.gateway.GitHubGatewayException;
 import com.codebite.github.gateway.GitHubRepo;
 import com.codebite.github.gateway.GitHubTransientException;
 import com.codebite.github.repository.GitHubLinkRepository;
 import com.codebite.github.repository.SolutionCommitRepository;
 import com.codebite.github.service.GitHubLinkService;
+import com.codebite.github.service.GitHubLinkStateService;
 import com.codebite.github.service.SolutionCommitService;
 import com.codebite.problem.entity.Difficulty;
 import com.codebite.problem.entity.Problem;
@@ -23,6 +26,8 @@ import com.codebite.submission.repository.SubmissionRepository;
 import com.codebite.user.entity.Role;
 import com.codebite.user.entity.User;
 import com.codebite.user.repository.UserRepository;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -52,6 +57,7 @@ class SolutionCommitListenerTest {
 
     @Autowired private SolutionCommitService solutionCommitService;
     @Autowired private GitHubLinkService gitHubLinkService;
+    @Autowired private GitHubLinkStateService gitHubLinkStateService;
     @Autowired private FakeGitHubGateway gitHub;
     @Autowired private UserRepository userRepository;
     @Autowired private ProblemRepository problemRepository;
@@ -59,6 +65,7 @@ class SolutionCommitListenerTest {
     @Autowired private GitHubLinkRepository linkRepository;
     @Autowired private SolutionCommitRepository solutionCommitRepository;
     @Autowired private EntityManager entityManager;
+    @Autowired private MeterRegistry meterRegistry;
 
     private SolutionCommitListener listener;
     private User user;
@@ -179,19 +186,78 @@ class SolutionCommitListenerTest {
     }
 
     @Test
-    void brokenLinkIsSkipped() {
+    void uninstalledAppMarksTheLinkBrokenAndTheSolutionCommitFailed() {
         GitHubLink link = link(user);
-        // No transition for this yet (#22); set the status the way it will be stored.
-        entityManager.createQuery("UPDATE GitHubLink l SET l.status = :status WHERE l.id = :id")
-                .setParameter("status", GitHubLinkStatus.BROKEN)
-                .setParameter("id", link.getId())
-                .executeUpdate();
+        gitHub.uninstall(INSTALLATION);
+        Submission submission = accepted(user, "python", "a = 1", Instant.parse("2026-10-19T14:05:09Z"));
+
+        assertThatCode(() -> listener.onResult(acceptedEvent(submission))).doesNotThrowAnyException();
+
+        assertThat(linkRepository.findById(link.getId()).orElseThrow().getStatus())
+                .isEqualTo(GitHubLinkStatus.BROKEN);
+        assertThat(solutionCommitRepository.findAll()).singleElement()
+                .satisfies(sc -> assertThat(sc.getStatus()).isEqualTo(SolutionCommitStatus.FAILED));
+    }
+
+    @Test
+    void goneInstallationIsNeverRetriedAndIsCountedAsBroken() {
+        link(user);
+        gitHub.uninstall(INSTALLATION);
+        Submission submission = accepted(user, "python", "a = 1", Instant.parse("2026-10-19T14:05:09Z"));
+        double brokenBefore = outcomeCount("broken");
+        double failedBefore = outcomeCount("failed");
+
+        listener.onResult(acceptedEvent(submission));
+
+        assertThat(gitHub.calls()).isEqualTo(1);
+        assertThat(outcomeCount("broken") - brokenBefore).isEqualTo(1);
+        assertThat(outcomeCount("failed") - failedBefore).isZero();
+    }
+
+    @Test
+    void deletedRepositoryMarksTheLinkBroken() {
+        GitHubLink link = link(user);
+        gitHub.deleteRepository(REPO.fullName());
         Submission submission = accepted(user, "python", "a = 1", Instant.parse("2026-10-19T14:05:09Z"));
 
         listener.onResult(acceptedEvent(submission));
 
-        assertThat(gitHub.commits()).isEmpty();
-        assertThat(solutionCommitRepository.findAll()).isEmpty();
+        assertThat(linkRepository.findById(link.getId()).orElseThrow().getStatus())
+                .isEqualTo(GitHubLinkStatus.BROKEN);
+        assertThat(solutionCommitRepository.findAll()).singleElement()
+                .satisfies(sc -> assertThat(sc.getStatus()).isEqualTo(SolutionCommitStatus.FAILED));
+    }
+
+    @Test
+    void brokenLinkSkipsLaterSubmissionsWithoutCallingGitHub() {
+        link(user);
+        gitHub.uninstall(INSTALLATION);
+        listener.onResult(acceptedEvent(accepted(user, "python", "a = 1", Instant.parse("2026-10-19T14:05:09Z"))));
+        int callsWhileBreaking = gitHub.calls();
+
+        listener.onResult(acceptedEvent(accepted(user, "java", "class A {}", Instant.parse("2026-10-20T09:00:00Z"))));
+
+        assertThat(gitHub.calls()).isEqualTo(callsWhileBreaking);
+        assertThat(solutionCommitRepository.findAll()).hasSize(1);
+    }
+
+    @Test
+    void relinkingAfterABrokenLinkRestoresSolutionCommits() {
+        link(user);
+        gitHub.uninstall(INSTALLATION);
+        listener.onResult(acceptedEvent(accepted(user, "python", "a = 1", Instant.parse("2026-10-19T14:05:09Z"))));
+
+        // The user installs the App again (a new installation) and finishes the relink.
+        gitHub.authorize("relink-code", OCTOCAT, 88);
+        gitHub.install(88, REPO);
+        gitHubLinkService.completeInstall(user.getId(),
+                new GitHubLinkCallbackRequest("relink-code", 88L, gitHubLinkStateService.issue(user.getId())));
+        listener.onResult(acceptedEvent(accepted(user, "java", "class A {}", Instant.parse("2026-10-20T09:00:00Z"))));
+
+        assertThat(gitHub.commits()).extracting(RecordedCommit::installationId, RecordedCommit::path)
+                .contains(tuple(88L, "two-sum-gh/java/2026-10-20T090000Z.java"));
+        assertThat(linkRepository.findByActiveUserId(user.getId()).orElseThrow().getStatus())
+                .isEqualTo(GitHubLinkStatus.ACTIVE);
     }
 
     @Test
@@ -255,6 +321,101 @@ class SolutionCommitListenerTest {
     }
 
     @Test
+    void briefGitHubOutageIsRetriedAndTheSolutionCommitted() {
+        link(user);
+        Submission submission = accepted(user, "python", "a = 1", Instant.parse("2026-10-19T14:05:09Z"));
+        gitHub.failNext(new GitHubTransientException("502 Bad Gateway"),
+                new GitHubTransientException("503 Service Unavailable"));
+
+        listener.onResult(acceptedEvent(submission));
+
+        assertThat(gitHub.commits()).extracting(RecordedCommit::path).containsExactly(
+                "two-sum-gh/README.md", "two-sum-gh/python/2026-10-19T140509Z.py");
+        assertThat(solutionCommitRepository.findAll()).singleElement().satisfies(sc -> {
+            assertThat(sc.getStatus()).isEqualTo(SolutionCommitStatus.COMMITTED);
+            assertThat(sc.getCommitSha()).isEqualTo(gitHub.commits().get(1).sha());
+            assertThat(sc.getLastError()).isNull();
+        });
+    }
+
+    @Test
+    void retriesRunningOutLeaveTheSolutionCommitFailed() {
+        link(user);
+        Submission submission = accepted(user, "python", "a = 1", Instant.parse("2026-10-19T14:05:09Z"));
+        gitHub.failNext(new GitHubTransientException("502 Bad Gateway"),
+                new GitHubTransientException("502 Bad Gateway"),
+                new GitHubTransientException("503 still down"));
+
+        assertThatCode(() -> listener.onResult(acceptedEvent(submission))).doesNotThrowAnyException();
+
+        assertThat(gitHub.commits()).isEmpty();
+        assertThat(solutionCommitRepository.findAll()).singleElement().satisfies(sc -> {
+            assertThat(sc.getStatus()).isEqualTo(SolutionCommitStatus.FAILED);
+            assertThat(sc.getLastError()).isEqualTo("503 still down");
+        });
+    }
+
+    @Test
+    void permanentGitHubErrorIsNotRetried() {
+        link(user);
+        Submission submission = accepted(user, "python", "a = 1", Instant.parse("2026-10-19T14:05:09Z"));
+        gitHub.failNext(new GitHubGatewayException("422 Unprocessable Entity"));
+
+        listener.onResult(acceptedEvent(submission));
+
+        assertThat(gitHub.commits()).isEmpty();
+        assertThat(solutionCommitRepository.findAll()).singleElement().satisfies(sc -> {
+            assertThat(sc.getStatus()).isEqualTo(SolutionCommitStatus.FAILED);
+            assertThat(sc.getLastError()).isEqualTo("422 Unprocessable Entity");
+        });
+    }
+
+    @Test
+    void solutionThatLandedWhenItsResponseWasLostCountsAsCommitted() {
+        link(user);
+        Submission submission = accepted(user, "python", "a = 1", Instant.parse("2026-10-19T14:05:09Z"));
+        gitHub.loseResponseTo("two-sum-gh/python/2026-10-19T140509Z.py");
+
+        listener.onResult(acceptedEvent(submission));
+
+        assertThat(gitHub.commits()).extracting(RecordedCommit::path).containsExactly(
+                "two-sum-gh/README.md", "two-sum-gh/python/2026-10-19T140509Z.py");
+        assertThat(solutionCommitRepository.findAll()).singleElement().satisfies(sc -> {
+            assertThat(sc.getStatus()).isEqualTo(SolutionCommitStatus.COMMITTED);
+            assertThat(sc.getCommitUrl()).isEqualTo(
+                    "https://github.com/octocat/solutions/blob/main/two-sum-gh/python/2026-10-19T140509Z.py");
+        });
+    }
+
+    @Test
+    void solutionPathTakenBeforeTheFirstAttemptIsAFailure() {
+        gitHub.seedFile(REPO.fullName(), "two-sum-gh/python/2026-10-19T140509Z.py", "someone else's file");
+        link(user);
+        Submission submission = accepted(user, "python", "a = 1", Instant.parse("2026-10-19T14:05:09Z"));
+
+        listener.onResult(acceptedEvent(submission));
+
+        assertThat(solutionCommitRepository.findAll()).singleElement()
+                .satisfies(sc -> assertThat(sc.getStatus()).isEqualTo(SolutionCommitStatus.FAILED));
+    }
+
+    @Test
+    void outcomesAreCountedForMetrics() {
+        link(user);
+        Submission ok = accepted(user, "python", "a = 1", Instant.parse("2026-10-19T14:05:09Z"));
+        Submission bad = accepted(user, "java", "class A {}", Instant.parse("2026-10-19T15:00:00Z"));
+        double committedBefore = outcomeCount("committed");
+        double failedBefore = outcomeCount("failed");
+
+        listener.onResult(acceptedEvent(ok));
+        gitHub.failAlways(() -> new GitHubTransientException("GitHub is down"));
+        listener.onResult(acceptedEvent(bad));
+
+        assertThat(outcomeCount("committed") - committedBefore).isEqualTo(1);
+        assertThat(outcomeCount("failed") - failedBefore).isEqualTo(1);
+    }
+
+    @Test
     void gitHubFailureIsRecordedAndNeverThrown() {
         link(user);
         Submission submission = accepted(user, "python", "a = 1", Instant.parse("2026-10-19T14:05:09Z"));
@@ -274,8 +435,9 @@ class SolutionCommitListenerTest {
     void redeliveryAfterAFailureTriesAgain() {
         link(user);
         Submission submission = accepted(user, "python", "a = 1", Instant.parse("2026-10-19T14:05:09Z"));
-        gitHub.failNext(new GitHubTransientException("GitHub is down"));
+        gitHub.failAlways(() -> new GitHubTransientException("GitHub is down"));
         listener.onResult(acceptedEvent(submission));
+        gitHub.recover();
 
         listener.onResult(acceptedEvent(submission));
 
@@ -288,6 +450,11 @@ class SolutionCommitListenerTest {
     }
 
     // --- fixtures ---
+
+    private double outcomeCount(String outcome) {
+        Counter counter = meterRegistry.find("codebite.solution.commits").tag("outcome", outcome).counter();
+        return counter == null ? 0 : counter.count();
+    }
 
     private GitHubLink link(User owner) {
         return linkRepository.saveAndFlush(new GitHubLink(owner.getId(), OCTOCAT.id(), OCTOCAT.login(),

@@ -153,6 +153,37 @@ class GitHubAppGatewayTest {
     }
 
     @Test
+    void aRepositoryTheInstallationStillGrantsIsReachable() {
+        respond("GET /repositories/1296269", 200, "{\"id\":1296269,\"full_name\":\"octocat/solutions\"}");
+
+        assertThat(gateway(configured()).isRepositoryReachable(77, 1296269)).isTrue();
+        assertThat(received.get("GET /repositories/1296269")[0]).isEqualTo("Bearer installation-token");
+    }
+
+    @Test
+    void aRepositoryTheInstallationNoLongerGrantsIsUnreachable() {
+        respond("GET /repositories/1296269", 404, "{\"message\":\"Not Found\"}");
+
+        assertThat(gateway(configured()).isRepositoryReachable(77, 1296269)).isFalse();
+    }
+
+    @Test
+    void aGoneInstallationsRepositoryIsUnreachable() {
+        respond("POST /app/installations/77/access_tokens", 404, "{\"message\":\"Not Found\"}");
+
+        assertThat(gateway(configured()).isRepositoryReachable(77, 1296269)).isFalse();
+        assertThat(received).doesNotContainKey("GET /repositories/1296269");
+    }
+
+    @Test
+    void aServerErrorWhileCheckingReachabilityIsTransient() {
+        respond("GET /repositories/1296269", 502, "{\"message\":\"Bad Gateway\"}");
+
+        assertThatThrownBy(() -> gateway(configured()).isRepositoryReachable(77, 1296269))
+                .isInstanceOf(GitHubTransientException.class);
+    }
+
+    @Test
     void refusesToRunWithoutAppConfig() {
         GitHubAppProperties empty = new GitHubAppProperties();
         empty.setApiBaseUrl(baseUrl);

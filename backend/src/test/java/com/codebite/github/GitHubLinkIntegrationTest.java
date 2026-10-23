@@ -316,6 +316,90 @@ class GitHubLinkIntegrationTest {
     }
 
     @Test
+    void readingABrokenLinkThatIsStillGoneKeepsItBroken() throws Exception {
+        linkOneRepository("octocat/codebite-solutions");
+        gitHub.uninstall(77);
+        breakCurrentLink();
+
+        mockMvc.perform(get("/api/github/link").header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("BROKEN"))
+                .andExpect(jsonPath("$.repositoryFullName").value("octocat/codebite-solutions"));
+    }
+
+    @Test
+    void readingABrokenLinkWhoseRepositoryWasDeletedKeepsItBroken() throws Exception {
+        linkOneRepository("octocat/codebite-solutions");
+        gitHub.deleteRepository("octocat/codebite-solutions");
+        breakCurrentLink();
+
+        mockMvc.perform(get("/api/github/link").header("Authorization", "Bearer " + token))
+                .andExpect(jsonPath("$.status").value("BROKEN"));
+    }
+
+    @Test
+    void readingABrokenLinkThatIsReachableAgainRecoversIt() throws Exception {
+        linkOneRepository("octocat/codebite-solutions");
+        breakCurrentLink();
+        // For example the repository was removed from the installation and then added back.
+
+        mockMvc.perform(get("/api/github/link").header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("ACTIVE"));
+        assertThat(currentLink().getStatus()).isEqualTo(GitHubLinkStatus.ACTIVE);
+    }
+
+    @Test
+    void readingABrokenLinkWhileGitHubIsDownLeavesItBroken() throws Exception {
+        linkOneRepository("octocat/codebite-solutions");
+        breakCurrentLink();
+        gitHub.failAlways(() -> new GitHubTransientException("GitHub is down"));
+
+        mockMvc.perform(get("/api/github/link").header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("BROKEN"));
+    }
+
+    @Test
+    void readingAnActiveLinkMakesNoGitHubCall() throws Exception {
+        linkOneRepository("octocat/codebite-solutions");
+        int callsAfterLinking = gitHub.calls();
+
+        mockMvc.perform(get("/api/github/link").header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("ACTIVE"));
+        assertThat(gitHub.calls()).isEqualTo(callsAfterLinking);
+    }
+
+    @Test
+    void relinkingReplacesABrokenLink() throws Exception {
+        linkOneRepository("octocat/codebite-solutions");
+        gitHub.uninstall(77);
+        breakCurrentLink();
+        gitHub.authorize("code-2", new GitHubAccount(583231, "octocat"), 78);
+        gitHub.install(78, new GitHubRepo(1296269, "octocat/codebite-solutions", "main", false));
+
+        callback("code-2", 78, stateFor(token), token).andExpect(status().isOk());
+
+        mockMvc.perform(get("/api/github/link").header("Authorization", "Bearer " + token))
+                .andExpect(jsonPath("$.status").value("ACTIVE"))
+                .andExpect(jsonPath("$.importState").value("AVAILABLE"));
+        assertThat(currentLink().getInstallationId()).isEqualTo(78);
+    }
+
+    @Test
+    void unlinkingABrokenLinkRemovesIt() throws Exception {
+        linkOneRepository("octocat/codebite-solutions");
+        gitHub.uninstall(77);
+        breakCurrentLink();
+
+        unlink(token).andExpect(status().isNoContent());
+
+        mockMvc.perform(get("/api/github/link").header("Authorization", "Bearer " + token))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
     void callbackRequiresAuth() throws Exception {
         mockMvc.perform(post("/api/github/link/callback")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -327,6 +411,17 @@ class GitHubLinkIntegrationTest {
         gitHub.authorize("code-1", new GitHubAccount(583231, "octocat"), 77);
         gitHub.install(77, new GitHubRepo(1296269, fullName, "main", false));
         callback("code-1", 77, stateFor(token), token).andExpect(status().isOk());
+    }
+
+    private GitHubLink currentLink() {
+        Long userId = userRepository.findByUsername("linker").orElseThrow().getId();
+        return linkRepository.findByActiveUserId(userId).orElseThrow();
+    }
+
+    /** What a Solution Commit does when GitHub reports the installation or repository gone. */
+    private void breakCurrentLink() {
+        currentLink().markBroken();
+        linkRepository.flush();
     }
 
     private ResultActions unlink(String bearer) throws Exception {

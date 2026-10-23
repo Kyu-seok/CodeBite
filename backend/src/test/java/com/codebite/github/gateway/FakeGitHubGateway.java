@@ -37,6 +37,9 @@ public class FakeGitHubGateway implements GitHubGateway {
     private final List<RecordedPush> pushes = new ArrayList<>();
     private Supplier<? extends RuntimeException> alwaysFailure;
     private long shaSequence;
+    /** Paths whose next commit lands on GitHub but whose response never comes back. */
+    private final Set<String> lostResponses = new HashSet<>();
+    private int calls;
 
     /** A commit that reached the fake, in the order made. */
     public record RecordedCommit(long installationId, String repositoryFullName, String branch, String path,
@@ -64,6 +67,13 @@ public class FakeGitHubGateway implements GitHubGateway {
         filesByRepo.clear();
         nextFailures.clear();
         alwaysFailure = null;
+        lostResponses.clear();
+        calls = 0;
+    }
+
+    /** How many gateway operations have been called since {@link #reset}, failed ones included. */
+    public synchronized int calls() {
+        return calls;
     }
 
     /** GitHub will exchange {@code code} for {@code account}, which can access those installations. */
@@ -78,6 +88,21 @@ public class FakeGitHubGateway implements GitHubGateway {
         reposByInstallation.put(installationId, List.of(repositories));
     }
 
+    /** The user uninstalled the App: every operation on {@code installationId} now reports it gone. */
+    public synchronized void uninstall(long installationId) {
+        reposByInstallation.remove(installationId);
+    }
+
+    /**
+     * The user deleted {@code repositoryFullName} on GitHub: no installation grants it any more and
+     * its files are gone.
+     */
+    public synchronized void deleteRepository(String repositoryFullName) {
+        reposByInstallation.replaceAll((id, repos) -> repos.stream()
+                .filter(r -> !r.fullName().equals(repositoryFullName)).toList());
+        filesByRepo.remove(repositoryFullName);
+    }
+
     /** The next gateway calls throw these, in order, one per call. */
     public synchronized void failNext(RuntimeException... failures) {
         nextFailures.addAll(List.of(failures));
@@ -86,6 +111,20 @@ public class FakeGitHubGateway implements GitHubGateway {
     /** Every gateway call throws a fresh exception from {@code failure} until {@link #reset}. */
     public synchronized void failAlways(Supplier<? extends RuntimeException> failure) {
         this.alwaysFailure = failure;
+    }
+
+    /** GitHub works again: forgets injected failures but keeps all GitHub state. */
+    public synchronized void recover() {
+        nextFailures.clear();
+        alwaysFailure = null;
+    }
+
+    /**
+     * The next commit of {@code path} lands, but the caller gets a transient error instead of the
+     * response, as when a connection drops after GitHub has written the file.
+     */
+    public synchronized void loseResponseTo(String path) {
+        lostResponses.add(path);
     }
 
     @Override
@@ -116,6 +155,9 @@ public class FakeGitHubGateway implements GitHubGateway {
         String sha = nextSha();
         commits.add(new RecordedCommit(installationId, repositoryFullName, branch, file.path(), file.content(),
                 file.message(), file.author().login(), file.author().noreplyEmail(), file.authorDate(), sha));
+        if (lostResponses.remove(file.path())) {
+            throw new GitHubTransientException("connection reset after committing " + file.path());
+        }
         return new CommittedFile(sha, "https://github.com/" + repositoryFullName + "/commit/" + sha);
     }
 
@@ -185,7 +227,15 @@ public class FakeGitHubGateway implements GitHubGateway {
         return repositories;
     }
 
+    @Override
+    public synchronized boolean isRepositoryReachable(long installationId, long repositoryId) {
+        maybeFail();
+        return reposByInstallation.getOrDefault(installationId, List.of()).stream()
+                .anyMatch(r -> r.id() == repositoryId);
+    }
+
     private void maybeFail() {
+        calls++;
         if (alwaysFailure != null) {
             throw alwaysFailure.get();
         }

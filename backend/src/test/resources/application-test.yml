@@ -43,3 +43,5 @@ app:
     private-key-base64: dGVzdA==  # tests use FakeGitHubGateway, which never reads the key
     slug: codebite-test
     codebite-base-url: https://code-bite.test
+    commit-max-tries: 3
+    commit-retry-backoff-ms: 1  # keep retry tests fast

@@ -102,6 +102,24 @@ public class GitHubLink extends BaseEntity {
         }
     }
 
+    /**
+     * GitHub reports the installation or Solution Repository is gone: Solution Commits stop until
+     * the user relinks. The link stays the user's current one ({@code activeUserId} is kept), so
+     * the profile can show it with a relink prompt. Only an ACTIVE link becomes BROKEN.
+     */
+    public void markBroken() {
+        if (status == GitHubLinkStatus.ACTIVE) {
+            status = GitHubLinkStatus.BROKEN;
+        }
+    }
+
+    /** GitHub can reach the Solution Repository again: a BROKEN link resumes Solution Commits. */
+    public void recover() {
+        if (status == GitHubLinkStatus.BROKEN) {
+            status = GitHubLinkStatus.ACTIVE;
+        }
+    }
+
     public Long getUserId() {
         return userId;
     }

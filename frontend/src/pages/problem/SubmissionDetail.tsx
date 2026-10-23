@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Editor from '@monaco-editor/react';
-import { Check, Copy, FileInput, Share2, X } from 'lucide-react';
+import { Check, CircleAlert, Copy, ExternalLink, FileInput, GitCommitHorizontal, LoaderCircle, Share2, X } from 'lucide-react';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import {
@@ -13,7 +13,7 @@ import {
 import { getSubmission } from '@/api/submissions';
 import { useAuth } from '@/context/AuthContext';
 import { useTheme } from '@/context/ThemeContext';
-import type { SubmissionResponse, SubmissionStatus } from '@/types/submission';
+import type { SolutionCommit, SubmissionResponse, SubmissionStatus } from '@/types/submission';
 import { ConfidencePrompt } from '@/components/review/ConfidencePrompt';
 import { useReviewState } from '@/hooks/useReviewState';
 import { clearSubmissionReview } from '@/api/reviews';
@@ -62,6 +62,22 @@ function formatMemory(kb: number) {
   return `${(kb / 1024).toFixed(1)} MB`;
 }
 
+// The verdict poll stops at Accepted, but the Solution Commit reaches GitHub a little later
+// (with retries, up to several seconds), so detail re-polls on its own while it is in flight.
+const SOLUTION_COMMIT_POLL_MS = 3000;
+const SOLUTION_COMMIT_MAX_POLLS = 40;
+// Right after Accepted, the Solution Commit may not be recorded yet, so null is not yet final.
+const SOLUTION_COMMIT_GRACE_MS = 60_000;
+
+function awaitingSolutionCommit(submission: SubmissionResponse) {
+  if (submission.solutionCommit?.status === 'PENDING') return true;
+  return (
+    submission.status === 'ACCEPTED' &&
+    submission.solutionCommit == null &&
+    Date.now() - new Date(submission.createdAt).getTime() < SOLUTION_COMMIT_GRACE_MS
+  );
+}
+
 interface SubmissionDetailProps {
   submissionId: number;
   onBack: () => void;
@@ -98,6 +114,30 @@ export function SubmissionDetail({
       .catch(() => {})
       .finally(() => setLoading(false));
   }, [submissionId]);
+
+  const awaitingCommit = submission != null && awaitingSolutionCommit(submission);
+  useEffect(() => {
+    if (!awaitingCommit) return;
+    let polls = 0;
+    const timer = setInterval(() => {
+      polls += 1;
+      if (polls > SOLUTION_COMMIT_MAX_POLLS) {
+        clearInterval(timer);
+        return;
+      }
+      getSubmission(submissionId)
+        .then((res) =>
+          // Only take the Solution Commit, so an unsaved note edit isn't overwritten.
+          setSubmission((prev) =>
+            prev && prev.id === res.data.id
+              ? { ...prev, solutionCommit: res.data.solutionCommit }
+              : prev,
+          ),
+        )
+        .catch(() => {});
+    }, SOLUTION_COMMIT_POLL_MS);
+    return () => clearInterval(timer);
+  }, [awaitingCommit, submissionId]);
 
   if (loading) {
     return (
@@ -189,6 +229,9 @@ export function SubmissionDetail({
               </>
             )}
           </div>
+          {submission.solutionCommit && (
+            <SolutionCommitLine solutionCommit={submission.solutionCommit} />
+          )}
           <div className="mt-2">
             <Button
               variant="outline"
@@ -419,6 +462,44 @@ export function SubmissionDetail({
           )}
         </div>
       </div>
+    </div>
+  );
+}
+
+/** Whether this submission reached the user's Solution Repository on GitHub. */
+function SolutionCommitLine({ solutionCommit }: { solutionCommit: SolutionCommit }) {
+  const { t } = useTranslation('problem');
+  const { status, commitUrl } = solutionCommit;
+  return (
+    <div className="mt-1.5 flex flex-wrap items-center gap-1.5 text-xs" aria-live="polite">
+      {status === 'PENDING' && (
+        <>
+          <LoaderCircle className="h-3.5 w-3.5 animate-spin text-muted-foreground" />
+          <span className="text-muted-foreground">{t('submissions.solutionCommit.pending')}</span>
+        </>
+      )}
+      {status === 'COMMITTED' && (
+        <>
+          <GitCommitHorizontal className="h-3.5 w-3.5 text-success-500" />
+          <span className="text-muted-foreground">{t('submissions.solutionCommit.committed')}</span>
+          {commitUrl && (
+            <a
+              href={commitUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-0.5 text-accent hover:underline">
+              {t('submissions.solutionCommit.viewCommit')}
+              <ExternalLink className="h-3 w-3" />
+            </a>
+          )}
+        </>
+      )}
+      {status === 'FAILED' && (
+        <>
+          <CircleAlert className="h-3.5 w-3.5 text-destructive" />
+          <span className="text-destructive">{t('submissions.solutionCommit.failed')}</span>
+        </>
+      )}
     </div>
   );
 }
