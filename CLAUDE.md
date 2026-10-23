@@ -35,6 +35,8 @@ Root `settings.gradle` includes three modules: `common`, `backend`, `worker`. Th
 - `submission/event/` — SubmissionEvent (Kafka message DTO)
 - `streak/entity/` — StreakDay, UserStreak (Repairs held + Repair Progress)
 - `streak/repository/` — StreakDayRepository, UserStreakRepository
+- `github/entity/` — GitHubLink, GitHubLinkStatus (ACTIVE/BROKEN/UNLINKED), GitHubImportState
+- `github/repository/` — GitHubLinkRepository (`findByActiveUserId` = the user's current link)
 - `judge/` — JudgeClient, JudgeClientImpl, JudgeService, DriverCodeLoader, DTOs
 - `config/` — JudgeClientConfig
 
@@ -71,7 +73,7 @@ docker compose -f infra/docker-compose.yml up -d   # start PostgreSQL + Redis + 
 The GitHub App behind Solution Commits is registered by hand: run `scripts/setup-github-app-dev.sh`, an interactive wizard that walks through GitHub's app settings and writes the `GITHUB_APP_*` values into `infra/.env`. Production needs its own app (callback on code-bite.com).
 
 ### Package Structure (`backend/src/main/java/com/codebite/`)
-- `config/` — SecurityConfig, WebConfig, OAuthProperties, RedisConfig, KafkaTopicConfig
+- `config/` — SecurityConfig, WebConfig, OAuthProperties, GitHubAppProperties (`app.github.*`, optional), RedisConfig, KafkaTopicConfig
 - `common/controller/` — HealthController
 - `common/exception/` — GlobalExceptionHandler
 - `auth/` — JWT auth + OAuth (controller, service, DTOs, filter, token provider, oauth clients)
@@ -80,6 +82,7 @@ The GitHub App behind Solution Commits is registered by hand: run `scripts/setup
 - `submission/` — Submission flow (controller, service, DTOs, Kafka producer)
 - `run/` — Run flow (controller, service, DTOs — synchronous Judge0 execution, sample test cases only)
 - `streak/` — Streaks and Repairs (controller, service, DTOs, `submission-results` listener); terms in GLOSSARY.md, UTC days per docs/adr/0001
+- `github/` — GitHub Links via the CodeBite GitHub App (ADR 0003): `gateway/` (`GitHubGateway` seam, `GitHubAppGateway` REST adapter minting installation tokens from an RS256 app JWT, gateway exceptions), `service/` (link + signed install state), controller, DTOs. Tests swap in `FakeGitHubGateway` (`backend/src/test/.../github/gateway/`) via `TestGitHubConfig`
 
 ### Run Flow (Synchronous)
 `POST /api/problems/{slug}/run` → `RunService.run()` executes only sample test cases synchronously via JudgeService, returns results immediately. No data is persisted. No auth required.
@@ -109,6 +112,9 @@ The GitHub App behind Solution Commits is registered by hand: run `scripts/setup
 | GET | `/api/streak` | JWT | 200 + `{currentStreak, bestStreak, solvedToday, repairs, repairProgress}` |
 | GET | `/api/streak/days?month=yyyy-MM` | JWT | 200 + `{month, today, firstStreakDate, days: [{date, repaired}]}` |
 | POST | `/api/streak/repairs` | JWT | 200 + streak summary (body `{date}`; 400 if not a Missed Day or no Repairs, 409 if already counted) |
+| GET | `/api/github/link` | JWT | 200 + `{githubAccountId, githubLogin, repositoryId, repositoryFullName, repositoryUrl, defaultBranch, repositoryPrivate, status, importState, createdAt}`, or 204 if none |
+| GET | `/api/github/link/install` | JWT | 200 + `{installUrl}` (GitHub App install page with a user-bound `state`; 503 if the App is not configured) |
+| POST | `/api/github/link/callback` | JWT | 200 + `{link, repositories}` (body `{code, installationId, state}`; links when exactly one repo was granted; 401 bad state, 403 installation not authorised by that account) |
 
 ## Worker
 
@@ -148,12 +154,12 @@ npm run build    # production build (includes tsc type check)
 ```
 
 ### Directory Structure (`frontend/src/`)
-- `api/` — Axios client and API modules (auth, problems, submissions)
+- `api/` — Axios client and API modules (auth, problems, submissions, streak, github)
 - `types/` — TypeScript interfaces matching backend DTOs
 - `context/` — AuthContext (JWT auth state + localStorage persistence)
 - `components/layout/` — Layout (nav bar), ProtectedRoute
 - `components/ui/` — DifficultyBadge, StatusBadge, Spinner
-- `pages/` — LoginPage, OAuthCallbackPage, ProblemListPage, ProblemDetailPage, NotFoundPage
+- `pages/` — LoginPage, OAuthCallbackPage, GitHubCallbackPage, ProblemListPage, ProblemDetailPage, NotFoundPage, `profile/` (incl. GitHubLinkCard)
 - `hooks/` — useProblems, useProblem, useSubmissions
 
 ### Routing
@@ -164,6 +170,8 @@ npm run build    # production build (includes tsc type check)
 | `/` | Redirect to `/problems` | No |
 | `/problems` | ProblemListPage | No |
 | `/problems/:slug` | ProblemDetailPage | No (submit requires auth) |
+| `/profile` | ProfilePage | Yes |
+| `/github/callback` | GitHubCallbackPage (GitHub App install redirect) | Yes |
 | `*` | NotFoundPage | No |
 
 ## Monitoring

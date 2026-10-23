@@ -292,6 +292,28 @@ CREATE INDEX idx_review_state_due ON problem_review_state(user_id, next_due_at);
 
 Source of truth is the `submissions.confidence` + `submissions.reviewed_at` pair; `problem_review_state` is fully rebuildable by replaying the per-submission ratings in chronological order. Re-rating an old submission updates its `reviewed_at`, which naturally re-orders the replay.
 
+**GitHub Links** (V190; terms in GLOSSARY.md, model in ADR 0003). One row per link; unlinking keeps the row. `active_user_id` mirrors `user_id` until UNLINKED and then goes NULL, so its UNIQUE constraint allows one current link per user (H2 cannot parse a partial unique index).
+
+```sql
+CREATE TABLE github_links (
+    id                   BIGSERIAL PRIMARY KEY,
+    user_id              BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    active_user_id       BIGINT UNIQUE,            -- user_id while ACTIVE/BROKEN, NULL once UNLINKED
+    github_account_id    BIGINT NOT NULL,
+    github_login         VARCHAR(100) NOT NULL,
+    installation_id      BIGINT NOT NULL,          -- tokens are minted on demand, never stored
+    repository_id        BIGINT NOT NULL,
+    repository_full_name VARCHAR(255) NOT NULL,
+    default_branch       VARCHAR(255) NOT NULL,
+    repository_private   BOOLEAN NOT NULL,
+    status               VARCHAR(20) NOT NULL,     -- ACTIVE | BROKEN | UNLINKED
+    import_state         VARCHAR(20) NOT NULL,     -- AVAILABLE | RUNNING | DONE | FAILED
+    created_at           TIMESTAMP NOT NULL,       -- also the Import cutoff
+    updated_at           TIMESTAMP NOT NULL,
+    unlinked_at          TIMESTAMP
+);
+```
+
 **ER Diagram:**
 
 ```
@@ -338,6 +360,13 @@ _accounts
 | GET    | /api/problems/{slug}/review-state          | Per-problem review state (200 / 204 if none)         | Yes  |
 | GET    | /api/reviews/due?page=&size=               | Paginated list of due/overdue problems               | Yes  |
 | GET    | /api/reviews/due/count                     | `{ "count": N }` for the profile widget              | Yes  |
+
+### GitHub Link (GitHub App, ADR 0003)
+| Method | Path                          | Description                                                        | Auth |
+|--------|-------------------------------|--------------------------------------------------------------------|------|
+| GET    | /api/github/link              | Current GitHub Link (204 if none)                                  | Yes  |
+| GET    | /api/github/link/install      | App install URL with a user-bound state (503 if App not configured)| Yes  |
+| POST   | /api/github/link/callback     | Finish install: verify the account can access the installation; link if one repo granted, else list repos | Yes  |
 
 **Request/Response examples:**
 
@@ -741,6 +770,16 @@ CodeBite/
 - Both services use `@ConditionalOnBean` — when Redis is unavailable (e.g., in tests), they are not created and the system degrades gracefully.
 
 **Deliverable:** Dockerized multi-instance deployment demonstrating horizontal scaling.
+
+### Milestone 8: GitHub Solution Commits (#17)
+Terms in GLOSSARY.md; decisions in ADR 0001 (UTC days), 0002 (backdated Imports), 0003 (GitHub App).
+- [x] GitHub Link via the CodeBite GitHub App: `GitHubGateway` seam + fake, `github_links`, install/callback endpoints, profile card (#24)
+- [ ] Live Solution Commits for Accepted submissions (#18)
+- [ ] Solution Commit status on submission detail, with retries (#19)
+- [ ] Choose the Solution Repository when several were granted (#20)
+- [ ] Unlink and relink (#21)
+- [ ] BROKEN links when the installation or repository is gone (#22)
+- [ ] One-time Import of earlier Accepted submissions (#23)
 
 ---
 
