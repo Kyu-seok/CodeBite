@@ -52,6 +52,12 @@
     "private": "비공개",
     "privateReminder": "비공개 저장소입니다. GitHub 프로필 설정에서 \"Include private contributions\"를 켜야 커밋이 기여 그래프에 표시됩니다.",
     "broken": "CodeBite가 이 저장소에 더 이상 접근할 수 없습니다. 앱이 제거되었거나 저장소가 삭제되었을 수 있습니다. 다시 연결하면 커밋이 재개됩니다.",
+    "unlink": "연결 해제",
+    "unlinkTitle": "GitHub 연결을 해제할까요?",
+    "unlinkDescription": "정답 제출이 더 이상 {{repository}}에 커밋되지 않습니다. 저장소에 이미 있는 내용은 그대로 유지됩니다. 언제든 다시 연결할 수 있습니다.",
+    "unlinkConfirm": "연결 해제",
+    "unlinking": "연결 해제 중…",
+    "unlinkFailed": "연결을 해제할 수 없습니다. 다시 시도해 주세요.",
     "callback": {
       "completing": "GitHub 연결을 마무리하는 중…",
       "missingParams": "GitHub에서 필요한 정보를 받지 못했습니다. 프로필에서 다시 연결해 주세요.",

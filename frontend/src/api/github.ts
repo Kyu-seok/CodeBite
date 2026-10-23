@@ -30,3 +30,8 @@ export function completeGitHubLink(code: string, installationId: number, state: 
     state,
   });
 }
+
+/** Unlinks the current GitHub Link. Stops future Solution Commits; the repository is untouched. */
+export function unlinkGitHub() {
+  return client.delete<void>("/github/link");
+}
