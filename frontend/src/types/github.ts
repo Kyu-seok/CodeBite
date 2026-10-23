@@ -29,9 +29,11 @@ export interface GitHubRepositoryOption {
 
 /**
  * Outcome of an install callback: `link` when exactly one repository was granted,
- * otherwise `null` with the granted `repositories`.
+ * otherwise `null` with the granted `repositories` and a `selectionToken` to send back
+ * with the chosen one.
  */
 export interface GitHubLinkCallbackResponse {
   link: GitHubLink | null;
   repositories: GitHubRepositoryOption[];
+  selectionToken: string | null;
 }

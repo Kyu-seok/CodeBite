@@ -58,7 +58,10 @@
       "notAuthorised": "이 GitHub 계정은 해당 CodeBite 앱 설치에 대한 권한이 없습니다.",
       "expired": "연결 요청이 만료되었거나 다른 계정의 요청입니다. 프로필에서 다시 연결해 주세요.",
       "failed": "연결을 완료할 수 없습니다. 다시 시도해 주세요.",
-      "severalRepositories": "여러 저장소에 접근 권한을 주셨습니다. CodeBite에는 풀이 저장소 하나만 필요합니다. 설치 설정에서 저장소를 하나만 선택한 뒤 다시 시도해 주세요.",
+      "chooseRepository": "여러 저장소에 접근 권한을 주셨습니다. 풀이 저장소로 사용할 저장소 하나를 선택해 주세요. CodeBite는 선택한 저장소에만 풀이를 추가합니다.",
+      "chooseRepositoryLegend": "풀이 저장소",
+      "useRepository": "이 저장소 사용",
+      "notGranted": "CodeBite 앱에 더 이상 해당 저장소에 대한 접근 권한이 없습니다. GitHub를 다시 열어 권한을 부여해 주세요.",
       "noRepository": "접근 권한을 준 저장소가 없습니다. GitHub에서 풀이 저장소를 선택한 뒤 다시 시도해 주세요.",
       "tryAgain": "GitHub 다시 열기",
       "backToProfile": "프로필로 돌아가기"
