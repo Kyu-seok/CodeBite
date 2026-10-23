@@ -92,12 +92,14 @@ export function StreakCalendarCard() {
       setPending(null);
       notifyStreakChanged();
     } catch (e) {
+      const alreadyCounted = isAxiosError(e) && e.response?.status === 409;
       // The server's message is English-only; show our own translated copy instead.
-      setError(
-        isAxiosError(e) && e.response?.status === 409
-          ? t('streakCalendar.alreadyCounted')
-          : t('streakCalendar.repairFailed'),
-      );
+      setError(t(alreadyCounted ? 'streakCalendar.alreadyCounted' : 'streakCalendar.repairFailed'));
+      // The day was solved since this month loaded, so the calendar and Streak counts are stale.
+      if (alreadyCounted) {
+        getStreakCalendar(month).then((res) => setCalendar(res.data)).catch(() => {});
+        notifyStreakChanged();
+      }
     } finally {
       setRepairing(false);
     }
