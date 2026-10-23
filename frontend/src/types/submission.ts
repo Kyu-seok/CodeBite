@@ -45,6 +45,17 @@ export interface SubmissionResponse {
   notes: string | null;
   confidence: Confidence | null;
   solveTimeSeconds: number | null;
+  /** Null when the submission has no Solution Commit (not Accepted, or no GitHub Link). */
+  solutionCommit: SolutionCommit | null;
+}
+
+export type SolutionCommitStatus = "PENDING" | "COMMITTED" | "FAILED";
+
+/** Whether an Accepted submission reached the user's Solution Repository on GitHub. */
+export interface SolutionCommit {
+  status: SolutionCommitStatus;
+  /** Set only when COMMITTED. */
+  commitUrl: string | null;
 }
 
 export interface SubmissionListItem {
