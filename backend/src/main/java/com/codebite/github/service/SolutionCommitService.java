@@ -10,6 +10,7 @@ import com.codebite.github.gateway.GitHubFileExistsException;
 import com.codebite.github.gateway.GitHubAccount;
 import com.codebite.github.gateway.GitHubGateway;
 import com.codebite.github.gateway.GitHubGatewayException;
+import com.codebite.github.gateway.GitHubInstallationGoneException;
 import com.codebite.github.gateway.NewFile;
 import com.codebite.github.repository.GitHubLinkRepository;
 import com.codebite.github.repository.SolutionCommitRepository;
@@ -114,7 +115,7 @@ public class SolutionCommitService {
                 : new NewFile(SolutionLayout.readmePath(problem),
                         SolutionLayout.readme(problem, properties.getCodebiteBaseUrl()),
                         SolutionLayout.readmeMessage(problem), author, acceptedAt);
-        return Optional.of(new Attempt(solutionCommit.getId(), l.getInstallationId(),
+        return Optional.of(new Attempt(solutionCommit.getId(), l.getId(), l.getInstallationId(),
                 l.getRepositoryFullName(), l.getDefaultBranch(), readme, solution));
     }
 
@@ -126,6 +127,10 @@ public class SolutionCommitService {
             CommittedFile commit = gitHub.addFile(attempt.installationId(), attempt.repositoryFullName(),
                     attempt.branch(), attempt.solution());
             record(attempt, sc -> sc.markCommitted(commit.sha(), commit.url(), Instant.now()));
+        } catch (GitHubInstallationGoneException e) {
+            log.warn("GitHub Link {} is BROKEN: {}", attempt.linkId(), e.getMessage());
+            markLinkBroken(attempt);
+            record(attempt, sc -> sc.markFailed(e.getMessage()));
         } catch (GitHubGatewayException e) {
             log.warn("Solution Commit {} failed: {}", attempt.solutionCommitId(), e.getMessage());
             record(attempt, sc -> sc.markFailed(e.getMessage()));
@@ -140,6 +145,11 @@ public class SolutionCommitService {
         }
     }
 
+    private void markLinkBroken(Attempt attempt) {
+        tx.executeWithoutResult(status -> linkRepository.findById(attempt.linkId())
+                .ifPresent(GitHubLink::markBroken));
+    }
+
     private void record(Attempt attempt, Consumer<SolutionCommit> outcome) {
         tx.executeWithoutResult(status -> solutionCommitRepository.findById(attempt.solutionCommitId())
                 .ifPresent(outcome));
@@ -149,7 +159,7 @@ public class SolutionCommitService {
      * Everything one attempt needs, read before the transaction closes. {@code readme} is null
      * when the problem folder is already started.
      */
-    private record Attempt(Long solutionCommitId, long installationId, String repositoryFullName,
+    private record Attempt(Long solutionCommitId, Long linkId, long installationId, String repositoryFullName,
                            String branch, NewFile readme, NewFile solution) {
     }
 }
