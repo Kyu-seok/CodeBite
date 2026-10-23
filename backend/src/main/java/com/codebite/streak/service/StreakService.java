@@ -59,6 +59,8 @@ public class StreakService {
     public void recordSolve(Long userId, Long submissionId) {
         Optional<Submission> submission = submissionRepository.findById(submissionId);
         if (submission.isEmpty()) {
+            // The worker publishes only after the result is committed, so a missing row was
+            // deleted since (e.g. the account was removed). Retrying would not bring it back.
             log.warn("Submission {} not found; no Streak Day recorded for user {}", submissionId, userId);
             return;
         }
