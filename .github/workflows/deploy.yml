@@ -3,6 +3,9 @@ name: Deploy
 on:
   push:
     branches: [master]
+  # Manual runs roll the backend replicas without a code change, e.g. after
+  # scripts/setup-github-app-prod.sh updates the server's infra/.env.
+  workflow_dispatch:
 
 jobs:
   test:
