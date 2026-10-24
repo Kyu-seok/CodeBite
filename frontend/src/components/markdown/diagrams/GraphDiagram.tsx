@@ -79,6 +79,7 @@ function SingleGraphSvg({
   directed = false,
   highlight_path = [],
 }: SingleGraphProps) {
+  const arrowMarkerId = `gdiag-arrow-${useId().replace(/:/g, "")}`;
   const allNodes = collectNodes(edges, nodes);
 
   if (allNodes.length === 0) {
@@ -112,8 +113,6 @@ function SingleGraphSvg({
     if (!directed) highlightedEdgeKeys.add(`${b}|${a}`);
   }
   const highlightedNodeKeys = new Set(highlight_path.map(String));
-
-  const arrowMarkerId = `gdiag-arrow-${useId().replace(/:/g, "")}`;
 
   return (
     <svg

@@ -72,7 +72,7 @@ export function AcceptedModal({
           </DialogTitle>
         </DialogHeader>
 
-        {(defaultSolveTimeSeconds != null || true) && (
+        {(
           <div className="mt-2 rounded-md border border-border bg-muted/30 px-3 py-2">
             <label className="text-xs text-muted-foreground">Time taken</label>
             <div className="mt-1 flex items-center gap-1.5 text-sm">

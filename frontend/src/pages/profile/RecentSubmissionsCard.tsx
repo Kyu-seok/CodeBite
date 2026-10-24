@@ -10,6 +10,7 @@ import type { SubmissionStatus } from '@/types/submission';
 export function RecentSubmissionsCard() {
   const [submissions, setSubmissions] = useState<RecentSubmission[]>([]);
   const [loading, setLoading] = useState(true);
+  const [now] = useState(() => Date.now());
 
   useEffect(() => {
     getRecentSubmissions(0, 10)
@@ -19,7 +20,7 @@ export function RecentSubmissionsCard() {
   }, []);
 
   const timeAgo = (iso: string) => {
-    const diff = Date.now() - new Date(iso).getTime();
+    const diff = now - new Date(iso).getTime();
     const mins = Math.floor(diff / 60000);
     if (mins < 60) return `${mins}m ago`;
     const hours = Math.floor(mins / 60);
