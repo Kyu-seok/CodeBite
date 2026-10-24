@@ -278,12 +278,16 @@ class GitHubImportIntegrationTest {
         link("octocat/solutions");
         startImport().andExpect(status().isAccepted());
 
-        // The message is localized (Korean here; English falls back to the JVM locale without a
-        // messages_en.properties, so it is not asserted).
+        // The message is localized, and English is the default whatever the JVM locale is.
         mockMvc.perform(post("/api/github/link/import").header("Authorization", "Bearer " + token)
                         .header("Accept-Language", "ko"))
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.message").value("이 GitHub 연결의 가져오기는 이미 실행 중이거나 완료되었습니다."));
+        mockMvc.perform(post("/api/github/link/import").header("Authorization", "Bearer " + token)
+                        .header("Accept-Language", "en"))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.message")
+                        .value("The Import has already run or is running for this GitHub Link."));
 
         assertThat(gitHub.pushes()).hasSize(1);
         getLink().andExpect(jsonPath("$.importState").value("DONE"));

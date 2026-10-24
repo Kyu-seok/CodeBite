@@ -259,8 +259,10 @@ pause
 stage "Start CodeBite locally"
 say "In separate terminals, from the repo root:"
 step "docker compose -f infra/docker-compose.yml up -d"
-step "source infra/.env && SPRING_PROFILES_ACTIVE=dev ./gradlew :backend:bootRun"
-step "source infra/.env && ./gradlew :worker:bootRun     (needs Judge0 reachable at JUDGE0_URL)"
+step "source scripts/dev-env.sh && SPRING_PROFILES_ACTIVE=dev ./gradlew :backend:bootRun"
+step "source scripts/dev-env.sh && ./gradlew :worker:bootRun"
+note "dev-env.sh loads only the OAuth and GitHub App values; never source infra/.env itself,"
+note "it carries production CORS, JWT, database and Judge0 settings."
 step "cd frontend && npm run dev"
 pause "Press Enter once all four are up"
 until curl -fsS http://localhost:8080/api/health >/dev/null 2>&1; do

@@ -5,6 +5,10 @@ server:
 spring:
   lifecycle:
     timeout-per-shutdown-phase: 30s
+  messages:
+    # There is no messages_en.properties: English requests must fall back to the
+    # default messages.properties, not to the JVM's locale (Korean on some machines).
+    fallback-to-system-locale: false
   data:
     redis:
       host: ${REDIS_HOST:localhost}

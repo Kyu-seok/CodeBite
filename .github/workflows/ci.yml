@@ -17,7 +17,7 @@ jobs:
           distribution: corretto
           java-version: 17
           cache: gradle
-      - run: ./gradlew :backend:test
+      - run: ./gradlew :common:test :backend:test
 
   worker-test:
     runs-on: ubuntu-latest
@@ -41,5 +41,14 @@ jobs:
           cache-dependency-path: frontend/package-lock.json
       - run: npm ci
         working-directory: frontend
+      - run: npm run lint
+        working-directory: frontend
       - run: npm run build
         working-directory: frontend
+
+  scripts-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: shellcheck -S warning scripts/*.sh
+      - run: scripts/dev-env.test.sh
