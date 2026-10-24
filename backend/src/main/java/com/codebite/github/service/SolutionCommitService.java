@@ -118,7 +118,7 @@ public class SolutionCommitService {
         }
         return Optional.of(new Attempt(solutionCommit.getId(), link.getId(), link.getInstallationId(),
                 link.getRepositoryFullName(), link.getDefaultBranch(), readme, solution,
-                solutionCommit.getAttempts() > 0));
+                SolutionLayout.disambiguatedPath(submission), solutionCommit.getAttempts() > 0));
     }
 
     /**
@@ -147,10 +147,17 @@ public class SolutionCommitService {
                     if (committedMeanwhile(attempt)) {
                         return;
                     }
-                    if (!solutionMayHaveLanded) {
+                    if (solutionMayHaveLanded) {
+                        commit = landedEarlier(attempt);
+                    } else if (!attempt.disambiguated()) {
+                        // Not ours: someone else's file, or another submission from the same
+                        // second. This one gets its own file instead; nothing is overwritten.
+                        attempt = moveToOwnFile(attempt);
+                        commit = gitHub.addFile(attempt.installationId(), attempt.repositoryFullName(),
+                                attempt.branch(), attempt.solution());
+                    } else {
                         throw e;
                     }
-                    commit = landedEarlier(attempt);
                 }
                 recordCommitted(attempt, commit);
                 return;
@@ -171,6 +178,21 @@ public class SolutionCommitService {
             }
             backoffMs *= 2;
         }
+    }
+
+    /**
+     * Moves the Solution Commit to its disambiguated path ({@link SolutionLayout#disambiguatedPath})
+     * because its plain path is taken on GitHub by a file that is not its own.
+     */
+    private Attempt moveToOwnFile(Attempt attempt) {
+        String path = attempt.disambiguatedPath();
+        log.info("Solution Commit {}: {} is taken; committing to {} instead",
+                attempt.solutionCommitId(), attempt.solution().path(), path);
+        tx.executeWithoutResult(status -> solutionCommitRepository.findById(attempt.solutionCommitId())
+                .ifPresent(sc -> sc.moveTo(path)));
+        NewFile solution = attempt.solution();
+        return attempt.withSolution(new NewFile(path, solution.content(), solution.message(), solution.author(),
+                solution.authorDate()));
     }
 
     /**
@@ -256,6 +278,16 @@ public class SolutionCommitService {
      * delivery already tried this Solution Commit, so its solution file may be on GitHub already.
      */
     private record Attempt(Long solutionCommitId, Long linkId, long installationId, String repositoryFullName,
-                           String branch, NewFile readme, NewFile solution, boolean attemptedBefore) {
+                           String branch, NewFile readme, NewFile solution, String disambiguatedPath,
+                           boolean attemptedBefore) {
+
+        boolean disambiguated() {
+            return solution.path().equals(disambiguatedPath);
+        }
+
+        Attempt withSolution(NewFile newSolution) {
+            return new Attempt(solutionCommitId, linkId, installationId, repositoryFullName, branch, readme,
+                    newSolution, disambiguatedPath, attemptedBefore);
+        }
     }
 }

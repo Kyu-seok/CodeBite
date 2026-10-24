@@ -179,6 +179,27 @@ class GitHubImportIntegrationTest {
     }
 
     @Test
+    void importKeepsTwoSolutionsAcceptedInTheSameSecond() throws Exception {
+        Submission first = submit(user, twoSum, "python", "print(1)", SubmissionStatus.ACCEPTED,
+                "2026-03-01T10:00:00Z");
+        Submission second = submit(user, twoSum, "python", "print(2)", SubmissionStatus.ACCEPTED,
+                "2026-03-01T10:00:00Z");
+        link("octocat/solutions");
+
+        startImport().andExpect(status().isAccepted());
+
+        String secondPath = "two-sum-imp/python/2026-03-01T100000Z-" + second.getId() + ".py";
+        assertThat(gitHub.pushes().get(0).commits()).extracting(c -> c.files().keySet()).containsExactly(
+                java.util.Set.of("two-sum-imp/README.md", "two-sum-imp/python/2026-03-01T100000Z.py"),
+                java.util.Set.of(secondPath));
+        assertThat(solutionCommitOf(first).getPath()).isEqualTo("two-sum-imp/python/2026-03-01T100000Z.py");
+        assertThat(solutionCommitOf(second)).satisfies(sc -> {
+            assertThat(sc.getStatus()).isEqualTo(SolutionCommitStatus.COMMITTED);
+            assertThat(sc.getPath()).isEqualTo(secondPath);
+        });
+    }
+
+    @Test
     void liveEventForAnImportedSubmissionLeavesItCommitted() throws Exception {
         Submission imported = submit(user, twoSum, "python", "print(1)", SubmissionStatus.ACCEPTED,
                 "2026-03-01T10:00:00Z");

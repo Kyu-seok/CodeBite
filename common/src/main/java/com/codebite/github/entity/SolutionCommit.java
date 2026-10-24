@@ -29,7 +29,10 @@ public class SolutionCommit extends BaseEntity {
     @Column(nullable = false, length = 20)
     private SolutionCommitStatus status;
 
-    /** The file's repository path, fixed at creation so every attempt writes the same file. */
+    /**
+     * The file's repository path, fixed at creation so every attempt writes the same file. It only
+     * changes, once, when GitHub reports the plain path taken by a file that is not this one's.
+     */
     @Column(nullable = false, length = 500)
     private String path;
 
@@ -57,6 +60,13 @@ public class SolutionCommit extends BaseEntity {
         this.githubLinkId = githubLinkId;
         this.path = path;
         this.status = SolutionCommitStatus.PENDING;
+    }
+
+    /** Writes to {@code newPath} from now on. Ignored once COMMITTED, since the file is on GitHub. */
+    public void moveTo(String newPath) {
+        if (status != SolutionCommitStatus.COMMITTED) {
+            path = newPath;
+        }
     }
 
     /** GitHub accepted the commit. */

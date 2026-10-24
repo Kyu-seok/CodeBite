@@ -388,15 +388,41 @@ class SolutionCommitListenerTest {
     }
 
     @Test
-    void solutionPathTakenBeforeTheFirstAttemptIsAFailure() {
+    void solutionPathTakenBeforeTheFirstAttemptGoesToItsOwnFile() {
         gitHub.seedFile(REPO.fullName(), "two-sum-gh/python/2026-10-19T140509Z.py", "someone else's file");
         link(user);
         Submission submission = accepted(user, "python", "a = 1", Instant.parse("2026-10-19T14:05:09Z"));
 
         listener.onResult(acceptedEvent(submission));
 
-        assertThat(solutionCommitRepository.findAll()).singleElement()
-                .satisfies(sc -> assertThat(sc.getStatus()).isEqualTo(SolutionCommitStatus.FAILED));
+        String ownPath = "two-sum-gh/python/2026-10-19T140509Z-" + submission.getId() + ".py";
+        assertThat(committedFiles()).containsEntry(ownPath, "a = 1")
+                .doesNotContainEntry("two-sum-gh/python/2026-10-19T140509Z.py", "a = 1");
+        assertThat(solutionCommitRepository.findAll()).singleElement().satisfies(sc -> {
+            assertThat(sc.getStatus()).isEqualTo(SolutionCommitStatus.COMMITTED);
+            assertThat(sc.getPath()).isEqualTo(ownPath);
+        });
+    }
+
+    @Test
+    void twoSolutionsAcceptedInTheSameSecondAreBothKept() {
+        link(user);
+        Instant sameSecond = Instant.parse("2026-10-19T14:05:09Z");
+        Submission first = accepted(user, "python", "first = 1", sameSecond);
+        Submission second = accepted(user, "python", "second = 2", sameSecond);
+
+        listener.onResult(acceptedEvent(first));
+        listener.onResult(acceptedEvent(second));
+
+        String secondPath = "two-sum-gh/python/2026-10-19T140509Z-" + second.getId() + ".py";
+        assertThat(committedFiles())
+                .containsEntry("two-sum-gh/python/2026-10-19T140509Z.py", "first = 1")
+                .containsEntry(secondPath, "second = 2");
+        assertThat(solutionCommitRepository.findAll())
+                .extracting(sc -> sc.getStatus(), sc -> sc.getPath())
+                .containsExactlyInAnyOrder(
+                        tuple(SolutionCommitStatus.COMMITTED, "two-sum-gh/python/2026-10-19T140509Z.py"),
+                        tuple(SolutionCommitStatus.COMMITTED, secondPath));
     }
 
     @Test
@@ -450,6 +476,13 @@ class SolutionCommitListenerTest {
     }
 
     // --- fixtures ---
+
+    /** Every file the Solution Commits added, by path, however they were committed. */
+    private java.util.Map<String, String> committedFiles() {
+        java.util.Map<String, String> files = new java.util.LinkedHashMap<>();
+        gitHub.history().forEach(c -> files.putAll(c.files()));
+        return files;
+    }
 
     private double outcomeCount(String outcome) {
         Counter counter = meterRegistry.find("codebite.solution.commits").tag("outcome", outcome).counter();

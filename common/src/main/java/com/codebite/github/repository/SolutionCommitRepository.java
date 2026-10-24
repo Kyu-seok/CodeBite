@@ -12,6 +12,9 @@ public interface SolutionCommitRepository extends JpaRepository<SolutionCommit, 
 
     Optional<SolutionCommit> findBySubmissionIdAndGithubLinkId(Long submissionId, Long githubLinkId);
 
+    /** Whether a Solution Commit through this link already writes {@code path}. */
+    boolean existsByGithubLinkIdAndPath(Long githubLinkId, String path);
+
     /** The submission's newest Solution Commit: the one for its most recent GitHub Link. */
     Optional<SolutionCommit> findFirstBySubmissionIdOrderByIdDesc(Long submissionId);
 

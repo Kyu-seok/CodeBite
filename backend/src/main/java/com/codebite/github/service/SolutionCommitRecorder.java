@@ -61,6 +61,9 @@ class SolutionCommitRecorder {
         return solutionCommitRepository.findBySubmissionIdAndGithubLinkId(submission.getId(), link.getId())
                 .orElseGet(() -> {
                     String path = SolutionLayout.solutionPath(submission);
+                    if (solutionCommitRepository.existsByGithubLinkIdAndPath(link.getId(), path)) {
+                        path = SolutionLayout.disambiguatedPath(submission);
+                    }
                     return solutionCommitRepository.saveAndFlush(
                             new SolutionCommit(submission.getId(), link.getId(), path));
                 });

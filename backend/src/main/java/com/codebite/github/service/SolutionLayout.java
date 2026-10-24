@@ -34,6 +34,15 @@ final class SolutionLayout {
         return solutionPath(submission, "");
     }
 
+    /**
+     * {@code <slug>/<language>/<yyyy-MM-ddTHHmmssZ>-<submission id>.<ext>}: the file for a
+     * submission whose plain path is already taken, e.g. by another submission Accepted in the same
+     * UTC second. Unique per submission, so nothing is ever overwritten.
+     */
+    static String disambiguatedPath(Submission submission) {
+        return solutionPath(submission, "-" + submission.getId());
+    }
+
     private static String solutionPath(Submission submission, String suffix) {
         String language = submission.getLanguage();
         String extension = EXTENSIONS.getOrDefault(language, "txt");
