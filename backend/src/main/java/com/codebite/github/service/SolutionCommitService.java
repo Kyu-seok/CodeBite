@@ -5,6 +5,7 @@ import com.codebite.github.entity.GitHubLink;
 import com.codebite.github.entity.GitHubLinkStatus;
 import com.codebite.github.entity.SolutionCommit;
 import com.codebite.github.entity.SolutionCommitStatus;
+import com.codebite.github.gateway.BatchCommit;
 import com.codebite.github.gateway.CommittedFile;
 import com.codebite.github.gateway.GitHubFileExistsException;
 import com.codebite.github.gateway.GitHubAccount;
@@ -18,8 +19,6 @@ import com.codebite.problem.entity.Problem;
 import com.codebite.submission.entity.Submission;
 import com.codebite.submission.repository.SubmissionRepository;
 import com.codebite.github.gateway.GitHubTransientException;
-import io.micrometer.core.instrument.Counter;
-import io.micrometer.core.instrument.MeterRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -56,35 +55,24 @@ public class SolutionCommitService {
     private final SolutionCommitRepository solutionCommitRepository;
     private final SubmissionRepository submissionRepository;
     private final GitHubGateway gitHub;
+    private final SolutionCommitRecorder recorder;
     private final GitHubAppProperties properties;
     private final TransactionTemplate tx;
-    private final Counter committedCounter;
-    private final Counter failedCounter;
-    private final Counter brokenCounter;
 
     public SolutionCommitService(GitHubLinkRepository linkRepository,
                                  SolutionCommitRepository solutionCommitRepository,
                                  SubmissionRepository submissionRepository,
                                  GitHubGateway gitHub,
+                                 SolutionCommitRecorder recorder,
                                  GitHubAppProperties properties,
-                                 PlatformTransactionManager transactionManager,
-                                 MeterRegistry meterRegistry) {
+                                 PlatformTransactionManager transactionManager) {
         this.linkRepository = linkRepository;
         this.solutionCommitRepository = solutionCommitRepository;
         this.submissionRepository = submissionRepository;
         this.gitHub = gitHub;
+        this.recorder = recorder;
         this.properties = properties;
         this.tx = new TransactionTemplate(transactionManager);
-        this.committedCounter = outcomeCounter(meterRegistry, "committed");
-        this.failedCounter = outcomeCounter(meterRegistry, "failed");
-        this.brokenCounter = outcomeCounter(meterRegistry, "broken");
-    }
-
-    private static Counter outcomeCounter(MeterRegistry registry, String outcome) {
-        return Counter.builder("codebite.solution.commits")
-                .description("Solution Commit attempts by outcome, after retries")
-                .tag("outcome", outcome)
-                .register(registry);
     }
 
     /** Commits Accepted submission {@code submissionId} if {@code userId} has an ACTIVE GitHub Link. */
@@ -97,11 +85,12 @@ public class SolutionCommitService {
     }
 
     private Optional<Attempt> prepare(Long userId, Long submissionId) {
-        Optional<GitHubLink> link = linkRepository.findCurrentByUserId(userId)
-                .filter(l -> l.getStatus() == GitHubLinkStatus.ACTIVE);
-        if (link.isEmpty()) {
+        Optional<GitHubLink> current = linkRepository.findCurrentByUserId(userId)
+                .filter(link -> link.getStatus() == GitHubLinkStatus.ACTIVE);
+        if (current.isEmpty()) {
             return Optional.empty();
         }
+        GitHubLink link = current.get();
         Optional<Submission> found = submissionRepository.findById(submissionId);
         if (found.isEmpty()) {
             log.warn("Submission {} not found; no Solution Commit for user {}", submissionId, userId);
@@ -111,31 +100,24 @@ public class SolutionCommitService {
         Problem problem = submission.getProblem();
         Instant acceptedAt = submission.getCreatedAt();
 
-        SolutionCommit solutionCommit = solutionCommitRepository
-                .findBySubmissionIdAndGithubLinkId(submissionId, link.get().getId())
-                .orElseGet(() -> solutionCommitRepository.saveAndFlush(new SolutionCommit(
-                        submissionId, link.get().getId(),
-                        SolutionLayout.solutionPath(problem, submission.getLanguage(), acceptedAt))));
+        SolutionCommit solutionCommit = recorder.findOrCreate(link, submission);
         if (solutionCommit.getStatus() == SolutionCommitStatus.COMMITTED) {
             return Optional.empty();
         }
 
-        GitHubLink l = link.get();
-        GitHubAccount author = new GitHubAccount(l.getGithubAccountId(), l.getGithubLogin());
+        GitHubAccount author = GitHubAccount.of(link);
         NewFile solution = new NewFile(solutionCommit.getPath(), submission.getSourceCode(),
                 SolutionLayout.commitMessage(problem, submission), author, acceptedAt);
-        // README-first is decided from CodeBite's own records: no COMMITTED Solution Commit for
-        // this problem through this link yet. If the README is already there anyway (an earlier
-        // link to the same repository, or a failed attempt that got that far), GitHub refuses to
-        // add it again and push() carries on.
-        NewFile readme = solutionCommitRepository.existsForProblem(
-                l.getId(), problem.getId(), SolutionCommitStatus.COMMITTED)
-                ? null
-                : new NewFile(SolutionLayout.readmePath(problem),
-                        SolutionLayout.readme(problem, properties.getCodebiteBaseUrl()),
-                        SolutionLayout.readmeMessage(problem), author, acceptedAt);
-        return Optional.of(new Attempt(solutionCommit.getId(), l.getId(), l.getInstallationId(),
-                l.getRepositoryFullName(), l.getDefaultBranch(), readme, solution,
+        // If the README is already there anyway (an earlier link to the same repository, or a
+        // failed attempt that got that far), GitHub refuses to add it again and push() carries on.
+        NewFile readme = null;
+        if (recorder.needsReadme(link, problem)) {
+            BatchCommit.File file = recorder.readme(problem);
+            readme = new NewFile(file.path(), file.content(), SolutionLayout.readmeMessage(problem), author,
+                    acceptedAt);
+        }
+        return Optional.of(new Attempt(solutionCommit.getId(), link.getId(), link.getInstallationId(),
+                link.getRepositoryFullName(), link.getDefaultBranch(), readme, solution,
                 solutionCommit.getAttempts() > 0));
     }
 
@@ -181,7 +163,7 @@ public class SolutionCommitService {
                 log.warn("GitHub Link {} is BROKEN: {}", attempt.linkId(), e.getMessage());
                 markLinkBroken(attempt);
                 record(attempt, sc -> sc.markFailed(e.getMessage()));
-                brokenCounter.increment();
+                recorder.countBroken(1);
                 return;
             } catch (GitHubGatewayException e) {
                 recordFailed(attempt, e);
@@ -214,8 +196,8 @@ public class SolutionCommitService {
     private CommittedFile landedEarlier(Attempt attempt) {
         log.info("Solution Commit {}: {} is already there from an earlier try; counting it as committed",
                 attempt.solutionCommitId(), attempt.solution().path());
-        return new CommittedFile(null, properties.getWebBaseUrl() + "/" + attempt.repositoryFullName()
-                + "/blob/" + attempt.branch() + "/" + attempt.solution().path());
+        return new CommittedFile(null, recorder.commitUrl(null, attempt.repositoryFullName(), attempt.branch(),
+                attempt.solution().path()));
     }
 
     /** Waits before the next try, or records FAILED and returns false when tries have run out. */
@@ -239,13 +221,13 @@ public class SolutionCommitService {
 
     private void recordCommitted(Attempt attempt, CommittedFile commit) {
         record(attempt, sc -> sc.markCommitted(commit.sha(), commit.url(), Instant.now()));
-        committedCounter.increment();
+        recorder.countCommitted(1);
     }
 
     private void recordFailed(Attempt attempt, GitHubGatewayException e) {
         log.warn("Solution Commit {} failed: {}", attempt.solutionCommitId(), e.getMessage());
         record(attempt, sc -> sc.markFailed(e.getMessage()));
-        failedCounter.increment();
+        recorder.countFailed(1);
     }
 
     private void addUnlessPresent(Attempt attempt, NewFile file) {

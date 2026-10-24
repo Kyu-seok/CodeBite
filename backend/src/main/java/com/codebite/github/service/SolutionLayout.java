@@ -29,10 +29,16 @@ final class SolutionLayout {
     private SolutionLayout() {
     }
 
-    /** {@code <slug>/<language>/<yyyy-MM-ddTHHmmssZ>.<ext>} */
-    static String solutionPath(Problem problem, String language, Instant acceptedAt) {
+    /** {@code <slug>/<language>/<yyyy-MM-ddTHHmmssZ>.<ext>}, named by the UTC Accepted time. */
+    static String solutionPath(Submission submission) {
+        return solutionPath(submission, "");
+    }
+
+    private static String solutionPath(Submission submission, String suffix) {
+        String language = submission.getLanguage();
         String extension = EXTENSIONS.getOrDefault(language, "txt");
-        return problem.getSlug() + "/" + language + "/" + FILE_TIME.format(acceptedAt) + "." + extension;
+        return submission.getProblem().getSlug() + "/" + language + "/"
+                + FILE_TIME.format(submission.getCreatedAt()) + suffix + "." + extension;
     }
 
     /** {@code <slug>/README.md} */

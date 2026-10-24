@@ -1,6 +1,5 @@
 package com.codebite.github.service;
 
-import com.codebite.config.GitHubAppProperties;
 import com.codebite.github.entity.GitHubImportState;
 import com.codebite.github.entity.GitHubLink;
 import com.codebite.github.entity.GitHubLinkStatus;
@@ -16,8 +15,6 @@ import com.codebite.github.repository.SolutionCommitRepository;
 import com.codebite.problem.entity.Problem;
 import com.codebite.submission.entity.Submission;
 import com.codebite.submission.repository.SubmissionRepository;
-import io.micrometer.core.instrument.Counter;
-import io.micrometer.core.instrument.MeterRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -51,37 +48,21 @@ public class GitHubImporter {
     private final SolutionCommitRepository solutionCommitRepository;
     private final SubmissionRepository submissionRepository;
     private final GitHubGateway gitHub;
-    private final GitHubAppProperties properties;
+    private final SolutionCommitRecorder recorder;
     private final TransactionTemplate tx;
-    private final Counter committedCounter;
-    private final Counter failedCounter;
-    private final Counter brokenCounter;
 
     public GitHubImporter(GitHubLinkRepository linkRepository,
                           SolutionCommitRepository solutionCommitRepository,
                           SubmissionRepository submissionRepository,
                           GitHubGateway gitHub,
-                          GitHubAppProperties properties,
-                          PlatformTransactionManager transactionManager,
-                          MeterRegistry meterRegistry) {
+                          SolutionCommitRecorder recorder,
+                          PlatformTransactionManager transactionManager) {
         this.linkRepository = linkRepository;
         this.solutionCommitRepository = solutionCommitRepository;
         this.submissionRepository = submissionRepository;
         this.gitHub = gitHub;
-        this.properties = properties;
+        this.recorder = recorder;
         this.tx = new TransactionTemplate(transactionManager);
-        // Imported commits are Solution Commits too: the same counter as live ones, one count per
-        // commit in the batch (the push is all-or-nothing, so they share an outcome).
-        this.committedCounter = outcomeCounter(meterRegistry, "committed");
-        this.failedCounter = outcomeCounter(meterRegistry, "failed");
-        this.brokenCounter = outcomeCounter(meterRegistry, "broken");
-    }
-
-    private static Counter outcomeCounter(MeterRegistry registry, String outcome) {
-        return Counter.builder("codebite.solution.commits")
-                .description("Solution Commit attempts by outcome, after retries")
-                .tag("outcome", outcome)
-                .register(registry);
     }
 
     /**
@@ -107,18 +88,19 @@ public class GitHubImporter {
                 }
                 linkRepository.findById(linkId).ifPresent(GitHubLink::finishImport);
             });
-            committedCounter.increment(batch.commits().size());
+            // Imported commits are Solution Commits too: one count per commit in the batch.
+            recorder.countCommitted(batch.commits().size());
             log.info("Import for link {} pushed {} Solution Commits", linkId, batch.commits().size());
         } catch (GitHubInstallationGoneException e) {
             // Same as a live Solution Commit: the link is BROKEN until the user relinks, which
             // offers a fresh Import.
             log.warn("Import for link {} found the installation or repository gone: {}", linkId, e.getMessage());
             recordFailure(linkId, batch, e, GitHubLink::markBroken);
-            brokenCounter.increment(batch.commits().size());
+            recorder.countBroken(batch.commits().size());
         } catch (RuntimeException e) {
             log.warn("Import for link {} failed: {}", linkId, e.getMessage());
             recordFailure(linkId, batch, e, link -> { });
-            failedCounter.increment(batch.commits().size());
+            recorder.countFailed(batch.commits().size());
         }
     }
 
@@ -155,31 +137,24 @@ public class GitHubImporter {
             return Optional.empty();
         }
 
-        GitHubAccount author = new GitHubAccount(link.getGithubAccountId(), link.getGithubLogin());
-        // A problem folder gets its README once, from the first commit that touches it, unless this
-        // link already COMMITTED to that folder (the same rule as live Solution Commits).
-        Map<Long, Boolean> folderStarted = new HashMap<>();
+        GitHubAccount author = GitHubAccount.of(link);
+        // A problem folder gets its README once, from the first commit that touches it (the same
+        // rule as live Solution Commits); remembered here for the rest of the batch.
+        Map<Long, Boolean> needsReadme = new HashMap<>();
         List<Long> solutionCommitIds = new ArrayList<>();
         List<BatchCommit> commits = new ArrayList<>();
         for (Submission submission : submissions) {
             Problem problem = submission.getProblem();
-            Instant acceptedAt = submission.getCreatedAt();
-            SolutionCommit solutionCommit = solutionCommitRepository
-                    .findBySubmissionIdAndGithubLinkId(submission.getId(), link.getId())
-                    .orElseGet(() -> solutionCommitRepository.saveAndFlush(new SolutionCommit(
-                            submission.getId(), link.getId(),
-                            SolutionLayout.solutionPath(problem, submission.getLanguage(), acceptedAt))));
+            SolutionCommit solutionCommit = recorder.findOrCreate(link, submission);
 
             List<BatchCommit.File> files = new ArrayList<>();
-            boolean started = folderStarted.computeIfAbsent(problem.getId(), id ->
-                    solutionCommitRepository.existsForProblem(link.getId(), id, SolutionCommitStatus.COMMITTED));
-            if (!started) {
-                files.add(new BatchCommit.File(SolutionLayout.readmePath(problem),
-                        SolutionLayout.readme(problem, properties.getCodebiteBaseUrl())));
-                folderStarted.put(problem.getId(), true);
+            if (needsReadme.computeIfAbsent(problem.getId(), id -> recorder.needsReadme(link, problem))) {
+                files.add(recorder.readme(problem));
+                needsReadme.put(problem.getId(), false);
             }
             files.add(new BatchCommit.File(solutionCommit.getPath(), submission.getSourceCode()));
-            commits.add(new BatchCommit(files, SolutionLayout.commitMessage(problem, submission), author, acceptedAt));
+            commits.add(new BatchCommit(files, SolutionLayout.commitMessage(problem, submission), author,
+                    submission.getCreatedAt()));
             solutionCommitIds.add(solutionCommit.getId());
         }
         return Optional.of(new Batch(link.getInstallationId(), link.getRepositoryFullName(),
