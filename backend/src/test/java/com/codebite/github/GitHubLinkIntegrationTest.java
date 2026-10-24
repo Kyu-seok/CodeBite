@@ -101,6 +101,15 @@ class GitHubLinkIntegrationTest {
     }
 
     @Test
+    void callbackWhileGitHubIsDownIsABadGateway() throws Exception {
+        gitHub.authorize("code-1", new GitHubAccount(583231, "octocat"), 77);
+        gitHub.install(77, new GitHubRepo(1, "octocat/codebite-solutions", "main", false));
+        gitHub.failNext(new GitHubTransientException("GitHub is down"));
+
+        callback("code-1", 77, stateFor(token), token).andExpect(status().isBadGateway());
+    }
+
+    @Test
     void callbackForAnInstallationTheAccountCannotAccessIsRejected() throws Exception {
         // Someone else's installation 99 exists; octocat only authorised 77.
         gitHub.authorize("code-1", new GitHubAccount(583231, "octocat"), 77);
