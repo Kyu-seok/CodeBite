@@ -60,10 +60,9 @@ Root `settings.gradle` includes three modules: `common`, `backend`, `worker`. Th
 ```bash
 ./gradlew :backend:compileJava     # compile backend
 ./gradlew :backend:test            # run backend tests (uses H2, no Docker needed)
-GOOGLE_CLIENT_ID=xxx GOOGLE_CLIENT_SECRET=xxx \
-  GITHUB_CLIENT_ID=xxx GITHUB_CLIENT_SECRET=xxx \
-  SPRING_PROFILES_ACTIVE=dev ./gradlew :backend:bootRun  # run locally
+source scripts/dev-env.sh && SPRING_PROFILES_ACTIVE=dev ./gradlew :backend:bootRun  # run locally
 ```
+`scripts/dev-env.sh` loads only the OAuth and GitHub App values from `infra/.env`. That file is the production server's config: sourcing it whole overrides the dev CORS origins, JWT secret, database and Judge0 URL.
 
 ### Infrastructure
 ```bash
@@ -132,7 +131,7 @@ The GitHub App behind Solution Commits is registered by hand: run `scripts/setup
 ```bash
 ./gradlew :worker:compileJava     # compile worker
 ./gradlew :worker:test            # run worker tests
-./gradlew :worker:bootRun         # run worker locally (needs Postgres + Kafka + Judge0)
+source scripts/dev-env.sh && ./gradlew :worker:bootRun  # run worker locally (needs Postgres + Kafka + Judge0)
 ```
 
 ### Package Structure (`worker/src/main/java/com/codebite/worker/`)
