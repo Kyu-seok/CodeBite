@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+# Runs the CI checks that cover what this commit touches, so a broken module,
+# lint error or script is caught before it reaches a PR.
+# Enable once per clone: git config core.hooksPath .githooks
+# Skip in an emergency: git commit --no-verify
+set -euo pipefail
+
+staged=$(git diff --cached --name-only --diff-filter=ACMR)
+touches() { grep -qE "$1" <<<"$staged"; }
+
+if touches '^(common|backend|worker)/|^(build|settings)\.gradle'; then
+  modules=()
+  touches '^common/|^(build|settings)\.gradle' && modules+=(:common:test :backend:test :worker:test)
+  touches '^backend/' && modules+=(:backend:test)
+  touches '^worker/' && modules+=(:worker:test)
+  echo "pre-commit: ./gradlew ${modules[*]}"
+  ./gradlew -q "${modules[@]}"
+fi
+
+if touches '^frontend/'; then
+  echo "pre-commit: frontend lint"
+  (cd frontend && npm run -s lint -- --quiet)
+fi
+
+if touches '^scripts/.*\.sh$|^\.shellcheckrc$'; then
+  if command -v shellcheck >/dev/null 2>&1; then
+    echo "pre-commit: shellcheck"
+    shellcheck -S warning scripts/*.sh
+  else
+    echo "pre-commit: shellcheck not installed, skipping (CI still runs it)"
+  fi
+  scripts/dev-env.test.sh
+fi

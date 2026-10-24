@@ -1,3 +1,4 @@
+# shellcheck shell=bash
 # Source this before running the backend or worker locally:
 #
 #   source scripts/dev-env.sh && SPRING_PROFILES_ACTIVE=dev ./gradlew :backend:bootRun

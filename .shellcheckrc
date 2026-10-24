@@ -1,0 +1,4 @@
+# The /wizard template library copied verbatim into scripts/setup-github-app-dev.sh
+# and scripts/verify-github-solution-commits.sh prints prompt text like
+# "$e[Enter keeps current]": the bracket is literal, not an array index.
+disable=SC1087
