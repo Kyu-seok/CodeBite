@@ -151,14 +151,14 @@ class GitHubImportIntegrationTest {
         submit(user, twoSum, "cpp", "int after() {}", SubmissionStatus.ACCEPTED, "2026-07-01T10:00:00Z");
         // A submission accepted just before linking whose event arrived after it: committed live.
         solutionCommitService.commitAccepted(user.getId(), committedLive.getId());
-        assertThat(gitHub.commits()).extracting(RecordedCommit::path)
-                .containsExactly("two-sum-imp/README.md", "two-sum-imp/python/2026-03-01T100000Z.py");
+        assertThat(gitHub.history()).extracting(c -> c.files().keySet()).containsExactly(
+                java.util.Set.of("two-sum-imp/README.md", "two-sum-imp/python/2026-03-01T100000Z.py"));
 
         startImport().andExpect(status().isAccepted());
 
-        assertThat(gitHub.pushes()).hasSize(1);
+        assertThat(gitHub.pushes()).hasSize(2);
         // The folder was already started through this link, so no second README.
-        assertThat(gitHub.pushes().get(0).commits()).extracting(RecordedBatchCommit::files).containsExactly(
+        assertThat(gitHub.pushes().get(1).commits()).extracting(RecordedBatchCommit::files).containsExactly(
                 Map.of("two-sum-imp/java/2026-04-01T100000Z.java", "class Earlier {}"));
         getLink().andExpect(jsonPath("$.importState").value("DONE"));
     }
@@ -246,11 +246,12 @@ class GitHubImportIntegrationTest {
 
         solutionCommitService.commitAccepted(user.getId(), racing.getId());
 
-        assertThat(gitHub.pushes()).hasSize(1);
+        // The first live commit started the folder; the second push is the Import's.
+        assertThat(gitHub.pushes()).hasSize(2);
         assertThat(solutionCommitOf(racing)).satisfies(sc -> {
             assertThat(sc.getStatus()).isEqualTo(SolutionCommitStatus.COMMITTED);
             assertThat(sc.getCommitUrl()).isEqualTo(
-                    "https://github.com/octocat/solutions/commit/" + gitHub.pushes().get(0).commits().get(0).sha());
+                    "https://github.com/octocat/solutions/commit/" + gitHub.pushes().get(1).commits().get(0).sha());
         });
     }
 

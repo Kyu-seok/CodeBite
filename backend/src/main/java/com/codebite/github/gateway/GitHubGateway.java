@@ -50,12 +50,12 @@ public interface GitHubGateway {
      * are rebuilt on the new tip and pushed again, which always succeeds because nothing is
      * replaced.
      *
-     * @return one entry per input commit, in order. An entry whose files were all already present
-     *         has a null sha and URL.
+     * @return one entry per input commit, in order, with the paths it actually added. An entry
+     *         whose files were all already present has a null sha and URL.
      * @throws GitHubInstallationGoneException if the installation or repository is gone
      * @throws GitHubTransientException        on an outage worth retrying
      */
-    List<CommittedFile> pushCommits(long installationId, String repositoryFullName, String branch,
+    List<PushedCommit> pushCommits(long installationId, String repositoryFullName, String branch,
                                     List<BatchCommit> commits);
 
     /**

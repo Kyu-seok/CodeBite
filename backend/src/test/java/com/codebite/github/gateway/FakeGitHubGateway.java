@@ -202,14 +202,14 @@ public class FakeGitHubGateway implements GitHubGateway {
     }
 
     @Override
-    public synchronized List<CommittedFile> pushCommits(long installationId, String repositoryFullName,
+    public synchronized List<PushedCommit> pushCommits(long installationId, String repositoryFullName,
                                                         String branch, List<BatchCommit> batch) {
         maybeFail();
         runBeforeNextCommit();
         requireGranted(installationId, repositoryFullName);
         Map<String, String> files = filesByRepo.computeIfAbsent(repositoryFullName, k -> new LinkedHashMap<>());
         List<RecordedBatchCommit> recorded = new ArrayList<>();
-        List<CommittedFile> result = new ArrayList<>();
+        List<PushedCommit> result = new ArrayList<>();
         for (BatchCommit commit : batch) {
             // Like the real push: files already in the repository are left alone.
             Map<String, String> added = new LinkedHashMap<>();
@@ -217,17 +217,25 @@ public class FakeGitHubGateway implements GitHubGateway {
                     .filter(f -> !files.containsKey(f.path()) && !added.containsKey(f.path()))
                     .forEach(f -> added.put(f.path(), f.content()));
             if (added.isEmpty()) {
-                result.add(new CommittedFile(null, null));
+                result.add(new PushedCommit(null, null, Set.of()));
                 continue;
             }
             files.putAll(added);
             String sha = nextSha();
             recorded.add(new RecordedBatchCommit(added, commit.message(), commit.author().login(),
                     commit.author().noreplyEmail(), commit.authorDate(), sha));
-            result.add(new CommittedFile(sha, "https://github.com/" + repositoryFullName + "/commit/" + sha));
+            result.add(new PushedCommit(sha, "https://github.com/" + repositoryFullName + "/commit/" + sha,
+                    added.keySet()));
         }
         pushes.add(new RecordedPush(installationId, repositoryFullName, branch, List.copyOf(recorded)));
         history.addAll(recorded);
+        for (RecordedBatchCommit commit : recorded) {
+            for (String path : commit.files().keySet()) {
+                if (lostResponses.remove(path)) {
+                    throw new GitHubTransientException("connection reset after pushing " + path);
+                }
+            }
+        }
         return result;
     }
 

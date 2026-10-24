@@ -3,7 +3,6 @@ package com.codebite.github.gateway;
 import com.codebite.config.GitHubAppProperties;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.springframework.boot.web.client.ClientHttpRequestFactories;
 import org.springframework.boot.web.client.ClientHttpRequestFactorySettings;
@@ -23,6 +22,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.IntConsumer;
 import java.util.function.Supplier;
@@ -145,17 +145,19 @@ public class GitHubAppGateway implements GitHubGateway {
      * of {@code branch}, one locally built commit per entry, one push.
      */
     @Override
-    public List<CommittedFile> pushCommits(long installationId, String repositoryFullName, String branch,
+    public List<PushedCommit> pushCommits(long installationId, String repositoryFullName, String branch,
                                            List<BatchCommit> commits) {
         requireConfigured();
         String token = installationToken(installationId);
         String remote = stripTrailingSlash(properties.getGitBaseUrl()) + "/" + repositoryFullName + ".git";
-        List<ObjectId> ids = new GitBatchPush(remote,
+        List<GitBatchPush.Built> built = new GitBatchPush(remote,
                 new UsernamePasswordCredentialsProvider("x-access-token", token), branch, beforePush)
                 .push(commits);
         String commitBase = stripTrailingSlash(properties.getWebBaseUrl()) + "/" + repositoryFullName + "/commit/";
-        return ids.stream()
-                .map(id -> id == null ? new CommittedFile(null, null) : new CommittedFile(id.name(), commitBase + id.name()))
+        return built.stream()
+                .map(b -> b.id() == null
+                        ? new PushedCommit(null, null, Set.of())
+                        : new PushedCommit(b.id().name(), commitBase + b.id().name(), b.added()))
                 .toList();
     }
 

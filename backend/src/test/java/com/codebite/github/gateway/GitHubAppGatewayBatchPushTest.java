@@ -30,6 +30,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -81,7 +82,7 @@ class GitHubAppGatewayBatchPushTest {
     void pushesOneCommitPerSubmissionOnTopOfTheTip() throws Exception {
         ObjectId initial = commitToRemote("main", Map.of("README.md", "# My solutions\n"), "Initial commit");
 
-        List<CommittedFile> pushed = gateway().pushCommits(77, REPO, "main", List.of(
+        List<PushedCommit> pushed = gateway().pushCommits(77, REPO, "main", List.of(
                 commit("2026-03-01T23:59:59Z", "Accepted: Two Sum (python) · 12 ms, 1.5 MB",
                         "two-sum/README.md", "# Two Sum\n",
                         "two-sum/python/2026-03-01T235959Z.py", "print(1)\n"),
@@ -122,7 +123,7 @@ class GitHubAppGatewayBatchPushTest {
                 "lru-cache/cpp/2026-05-10T083000Z.cpp", "int main() {}\n"));
         assertThat(files(log.get(3))).containsEntry("README.md", "# My solutions\n");
 
-        assertThat(pushed).extracting(CommittedFile::sha)
+        assertThat(pushed).extracting(PushedCommit::sha)
                 .containsExactlyElementsOf(imported.stream().map(RevCommit::name).toList());
         assertThat(pushed.get(0).url()).isEqualTo("https://github.test/octocat/solutions/commit/" + imported.get(0).name());
         assertThat(tokenMints).hasValue(1);
@@ -144,7 +145,7 @@ class GitHubAppGatewayBatchPushTest {
             }
         });
 
-        List<CommittedFile> pushed = gateway.pushCommits(77, REPO, "main", List.of(
+        List<PushedCommit> pushed = gateway.pushCommits(77, REPO, "main", List.of(
                 commit("2026-03-01T10:00:00Z", "Accepted: Two Sum (java) · 40 ms, 20.0 MB",
                         "two-sum/README.md", "# Two Sum\n",
                         "two-sum/java/2026-03-01T100000Z.java", "class A {}\n"),
@@ -163,12 +164,12 @@ class GitHubAppGatewayBatchPushTest {
         assertThat(addedFiles(log.get(2))).isEqualTo(Map.of("two-sum/java/2026-03-01T100000Z.java", "class A {}\n"));
         assertThat(files(log.get(3))).containsEntry("two-sum/README.md", "# Two Sum (live)\n")
                 .containsEntry("two-sum/python/2026-10-24T090000Z.py", "print('live')\n");
-        assertThat(pushed).extracting(CommittedFile::sha).containsExactly(log.get(2).name(), log.get(3).name());
+        assertThat(pushed).extracting(PushedCommit::sha).containsExactly(log.get(2).name(), log.get(3).name());
     }
 
     @Test
     void emptyRepositoryGetsTheCommitsAsItsFirstHistory() throws Exception {
-        List<CommittedFile> pushed = gateway().pushCommits(77, REPO, "main", List.of(
+        List<PushedCommit> pushed = gateway().pushCommits(77, REPO, "main", List.of(
                 commit("2026-03-01T10:00:00Z", "Accepted: Two Sum (java) · 40 ms, 20.0 MB",
                         "two-sum/README.md", "# Two Sum\n",
                         "two-sum/java/2026-03-01T100000Z.java", "class A {}\n")));
@@ -184,12 +185,28 @@ class GitHubAppGatewayBatchPushTest {
     void commitWhoseFilesAreAllPresentIsNotMade() throws Exception {
         commitToRemote("main", Map.of("two-sum/java/2026-03-01T100000Z.java", "class A {}\n"), "Live commit");
 
-        List<CommittedFile> pushed = gateway().pushCommits(77, REPO, "main", List.of(
+        List<PushedCommit> pushed = gateway().pushCommits(77, REPO, "main", List.of(
                 commit("2026-03-01T10:00:00Z", "Accepted: Two Sum (java) · 40 ms, 20.0 MB",
                         "two-sum/java/2026-03-01T100000Z.java", "class A {}\n")));
 
         assertThat(log("main")).extracting(RevCommit::getShortMessage).containsExactly("Live commit");
-        assertThat(pushed).containsExactly(new CommittedFile(null, null));
+        assertThat(pushed).containsExactly(new PushedCommit(null, null, Set.of()));
+    }
+
+    @Test
+    void eachCommitReportsTheFilesItActuallyAdded() throws Exception {
+        commitToRemote("main", Map.of("two-sum/java/2026-03-01T100000Z.java", "someone else's\n"), "Not ours");
+
+        List<PushedCommit> pushed = gateway().pushCommits(77, REPO, "main", List.of(
+                commit("2026-03-01T10:00:00Z", "Accepted: Two Sum (java) · 40 ms, 20.0 MB",
+                        "two-sum/README.md", "# Two Sum\n",
+                        "two-sum/java/2026-03-01T100000Z.java", "class A {}\n")));
+
+        assertThat(pushed).singleElement().satisfies(commit -> {
+            assertThat(commit.sha()).isEqualTo(log("main").get(1).name());
+            assertThat(commit.addedPaths()).containsExactly("two-sum/README.md");
+            assertThat(commit.added("two-sum/java/2026-03-01T100000Z.java")).isFalse();
+        });
     }
 
     @Test

@@ -6,7 +6,7 @@ import com.codebite.github.entity.GitHubLinkStatus;
 import com.codebite.github.entity.SolutionCommit;
 import com.codebite.github.entity.SolutionCommitStatus;
 import com.codebite.github.gateway.BatchCommit;
-import com.codebite.github.gateway.CommittedFile;
+import com.codebite.github.gateway.PushedCommit;
 import com.codebite.github.gateway.GitHubAccount;
 import com.codebite.github.gateway.GitHubGateway;
 import com.codebite.github.gateway.GitHubInstallationGoneException;
@@ -76,12 +76,12 @@ public class GitHubImporter {
         }
         Batch batch = prepared.get();
         try {
-            List<CommittedFile> pushed = gitHub.pushCommits(batch.installationId(), batch.repositoryFullName(),
+            List<PushedCommit> pushed = gitHub.pushCommits(batch.installationId(), batch.repositoryFullName(),
                     batch.branch(), batch.commits());
             Instant now = Instant.now();
             tx.executeWithoutResult(status -> {
                 for (int i = 0; i < batch.solutionCommitIds().size(); i++) {
-                    CommittedFile commit = pushed.get(i);
+                    PushedCommit commit = pushed.get(i);
                     // A commit with nothing left to add (the file was already there) has no sha;
                     // the row then links to the file, so COMMITTED always has a link.
                     solutionCommitRepository.findById(batch.solutionCommitIds().get(i))

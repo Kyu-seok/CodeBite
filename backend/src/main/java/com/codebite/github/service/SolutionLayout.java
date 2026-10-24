@@ -64,10 +64,6 @@ final class SolutionLayout {
                 + "[Solve it on CodeBite](" + codebiteBaseUrl + "/problems/" + problem.getSlug() + ")\n";
     }
 
-    static String readmeMessage(Problem problem) {
-        return "Add README for " + problem.getTitle();
-    }
-
     /** {@code Accepted: <title> (<language>) · <runtime> ms, <memory> MB} */
     static String commitMessage(Problem problem, Submission submission) {
         return "Accepted: " + problem.getTitle() + " (" + submission.getLanguage() + ") · "

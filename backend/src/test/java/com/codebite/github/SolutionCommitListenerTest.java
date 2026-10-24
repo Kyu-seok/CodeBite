@@ -6,7 +6,8 @@ import com.codebite.github.entity.GitHubLink;
 import com.codebite.github.entity.GitHubLinkStatus;
 import com.codebite.github.entity.SolutionCommitStatus;
 import com.codebite.github.gateway.FakeGitHubGateway;
-import com.codebite.github.gateway.FakeGitHubGateway.RecordedCommit;
+import com.codebite.github.gateway.FakeGitHubGateway.RecordedBatchCommit;
+import com.codebite.github.gateway.FakeGitHubGateway.RecordedPush;
 import com.codebite.github.gateway.GitHubAccount;
 import com.codebite.github.gateway.GitHubGatewayException;
 import com.codebite.github.gateway.GitHubRepo;
@@ -37,6 +38,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
@@ -99,13 +101,11 @@ class SolutionCommitListenerTest {
 
         listener.onResult(acceptedEvent(submission));
 
-        RecordedCommit commit = gitHub.commits().stream()
-                .filter(c -> c.path().startsWith("two-sum-gh/python/"))
-                .findFirst().orElseThrow();
-        assertThat(commit.repositoryFullName()).isEqualTo("octocat/solutions");
-        assertThat(commit.branch()).isEqualTo("main");
-        assertThat(commit.path()).isEqualTo("two-sum-gh/python/2026-10-19T140509Z.py");
-        assertThat(commit.content()).isEqualTo("print('hi')");
+        RecordedPush push = gitHub.pushes().get(0);
+        assertThat(push.repositoryFullName()).isEqualTo("octocat/solutions");
+        assertThat(push.branch()).isEqualTo("main");
+        RecordedBatchCommit commit = push.commits().get(0);
+        assertThat(commit.files()).containsEntry("two-sum-gh/python/2026-10-19T140509Z.py", "print('hi')");
         assertThat(commit.authorName()).isEqualTo("octocat");
         assertThat(commit.authorEmail()).isEqualTo("583231+octocat@users.noreply.github.com");
         assertThat(commit.authorDate()).isEqualTo(Instant.parse("2026-10-19T14:05:09Z"));
@@ -121,21 +121,26 @@ class SolutionCommitListenerTest {
         listener.onResult(acceptedEvent(first));
         listener.onResult(acceptedEvent(second));
 
-        assertThat(gitHub.commits()).extracting(RecordedCommit::path).containsExactly(
-                "two-sum-gh/README.md",
-                "two-sum-gh/python/2026-10-19T140509Z.py",
-                "two-sum-gh/java/2026-10-20T090000Z.java");
-        RecordedCommit readme = gitHub.commits().get(0);
-        assertThat(readme.content()).isEqualTo("""
+        // The README rides in the folder's first Solution Commit, so a first solve is one commit.
+        assertThat(gitHub.history()).extracting(c -> c.files().keySet()).containsExactly(
+                Set.of("two-sum-gh/README.md", "two-sum-gh/python/2026-10-19T140509Z.py"),
+                Set.of("two-sum-gh/java/2026-10-20T090000Z.java"));
+        RecordedBatchCommit firstCommit = gitHub.history().get(0);
+        assertThat(firstCommit.files().get("two-sum-gh/README.md")).isEqualTo("""
                 # Two Sum
 
                 Difficulty: Easy
 
                 [Solve it on CodeBite](https://code-bite.test/problems/two-sum-gh)
                 """);
-        assertThat(readme.message()).isEqualTo("Add README for Two Sum");
-        assertThat(readme.authorEmail()).isEqualTo("583231+octocat@users.noreply.github.com");
-        assertThat(readme.authorDate()).isEqualTo(Instant.parse("2026-10-19T14:05:09Z"));
+        assertThat(firstCommit.message()).isEqualTo("Accepted: Two Sum (python) · 12 ms, 1.5 MB");
+        assertThat(firstCommit.authorEmail()).isEqualTo("583231+octocat@users.noreply.github.com");
+        assertThat(firstCommit.authorDate()).isEqualTo(Instant.parse("2026-10-19T14:05:09Z"));
+        assertThat(solutionCommitRepository.findBySubmissionIdAndGithubLinkId(first.getId(),
+                solutionCommitRepository.findAll().get(0).getGithubLinkId())).hasValueSatisfying(sc -> {
+            assertThat(sc.getCommitSha()).isEqualTo(firstCommit.sha());
+            assertThat(sc.getCommitUrl()).isEqualTo("https://github.com/octocat/solutions/commit/" + firstCommit.sha());
+        });
     }
 
     @Test
@@ -147,8 +152,8 @@ class SolutionCommitListenerTest {
 
         listener.onResult(acceptedEvent(submission));
 
-        assertThat(gitHub.commits()).extracting(RecordedCommit::path)
-                .containsExactly("two-sum-gh/python/2026-10-19T140509Z.py");
+        assertThat(gitHub.history()).extracting(c -> c.files().keySet())
+                .containsExactly(Set.of("two-sum-gh/python/2026-10-19T140509Z.py"));
     }
 
     @Test
@@ -159,7 +164,7 @@ class SolutionCommitListenerTest {
         listener.onResult(event(submission, SubmissionStatus.WRONG_ANSWER, false));
         listener.onResult(event(submission, SubmissionStatus.COMPILATION_ERROR, false));
 
-        assertThat(gitHub.commits()).isEmpty();
+        assertThat(gitHub.history()).isEmpty();
         assertThat(solutionCommitRepository.findAll()).isEmpty();
     }
 
@@ -169,7 +174,7 @@ class SolutionCommitListenerTest {
 
         listener.onResult(acceptedEvent(submission));
 
-        assertThat(gitHub.commits()).isEmpty();
+        assertThat(gitHub.history()).isEmpty();
         assertThat(solutionCommitRepository.findAll()).isEmpty();
     }
 
@@ -181,7 +186,7 @@ class SolutionCommitListenerTest {
 
         listener.onResult(acceptedEvent(submission));
 
-        assertThat(gitHub.commits()).isEmpty();
+        assertThat(gitHub.history()).isEmpty();
         assertThat(solutionCommitRepository.findAll()).isEmpty();
     }
 
@@ -254,8 +259,9 @@ class SolutionCommitListenerTest {
                 new GitHubLinkCallbackRequest("relink-code", 88L, gitHubLinkStateService.issue(user.getId())));
         listener.onResult(acceptedEvent(accepted(user, "java", "class A {}", Instant.parse("2026-10-20T09:00:00Z"))));
 
-        assertThat(gitHub.commits()).extracting(RecordedCommit::installationId, RecordedCommit::path)
-                .contains(tuple(88L, "two-sum-gh/java/2026-10-20T090000Z.java"));
+        assertThat(gitHub.pushes()).extracting(RecordedPush::installationId,
+                        p -> p.commits().get(0).files().containsKey("two-sum-gh/java/2026-10-20T090000Z.java"))
+                .contains(tuple(88L, true));
         assertThat(linkRepository.findCurrentByUserId(user.getId()).orElseThrow().getStatus())
                 .isEqualTo(GitHubLinkStatus.ACTIVE);
     }
@@ -267,8 +273,7 @@ class SolutionCommitListenerTest {
 
         listener.onResult(event(submission, SubmissionStatus.ACCEPTED, true));
 
-        assertThat(gitHub.commits()).extracting(RecordedCommit::path)
-                .contains("two-sum-gh/python/2026-10-19T140509Z.py");
+        assertThat(committedFiles()).containsKey("two-sum-gh/python/2026-10-19T140509Z.py");
     }
 
     @Test
@@ -279,13 +284,13 @@ class SolutionCommitListenerTest {
         listener.onResult(acceptedEvent(submission));
         listener.onResult(acceptedEvent(submission));
 
-        assertThat(gitHub.commits()).extracting(RecordedCommit::path).containsExactly(
-                "two-sum-gh/README.md", "two-sum-gh/python/2026-10-19T140509Z.py");
+        assertThat(gitHub.history()).extracting(c -> c.files().keySet()).containsExactly(
+                Set.of("two-sum-gh/README.md", "two-sum-gh/python/2026-10-19T140509Z.py"));
         assertThat(solutionCommitRepository.findAll()).singleElement().satisfies(sc -> {
             assertThat(sc.getStatus()).isEqualTo(SolutionCommitStatus.COMMITTED);
-            assertThat(sc.getCommitSha()).isEqualTo(gitHub.commits().get(1).sha());
+            assertThat(sc.getCommitSha()).isEqualTo(gitHub.history().get(0).sha());
             assertThat(sc.getCommitUrl()).isEqualTo(
-                    "https://github.com/octocat/solutions/commit/" + gitHub.commits().get(1).sha());
+                    "https://github.com/octocat/solutions/commit/" + gitHub.history().get(0).sha());
             assertThat(sc.getPath()).isEqualTo("two-sum-gh/python/2026-10-19T140509Z.py");
             assertThat(sc.getAttempts()).isEqualTo(1);
         });
@@ -300,11 +305,9 @@ class SolutionCommitListenerTest {
         listener.onResult(acceptedEvent(first));
         listener.onResult(acceptedEvent(second));
 
-        assertThat(gitHub.commits()).filteredOn(c -> c.path().contains("/python/"))
-                .extracting(RecordedCommit::path, RecordedCommit::content)
-                .containsExactly(
-                        tuple("two-sum-gh/python/2026-10-19T140509Z.py", "same = 1"),
-                        tuple("two-sum-gh/python/2026-10-19T140730Z.py", "same = 1"));
+        assertThat(committedFiles())
+                .containsEntry("two-sum-gh/python/2026-10-19T140509Z.py", "same = 1")
+                .containsEntry("two-sum-gh/python/2026-10-19T140730Z.py", "same = 1");
     }
 
     @Test
@@ -315,8 +318,8 @@ class SolutionCommitListenerTest {
 
         listener.onResult(acceptedEvent(submission));
 
-        RecordedCommit commit = gitHub.commits().get(gitHub.commits().size() - 1);
-        assertThat(commit.path()).isEqualTo("two-sum-gh/cpp/2026-10-20T000030Z.cpp");
+        RecordedBatchCommit commit = gitHub.history().get(gitHub.history().size() - 1);
+        assertThat(commit.files()).containsKey("two-sum-gh/cpp/2026-10-20T000030Z.cpp");
         assertThat(commit.authorDate()).isEqualTo(Instant.parse("2026-10-20T00:00:30Z"));
     }
 
@@ -329,11 +332,11 @@ class SolutionCommitListenerTest {
 
         listener.onResult(acceptedEvent(submission));
 
-        assertThat(gitHub.commits()).extracting(RecordedCommit::path).containsExactly(
-                "two-sum-gh/README.md", "two-sum-gh/python/2026-10-19T140509Z.py");
+        assertThat(gitHub.history()).extracting(c -> c.files().keySet()).containsExactly(
+                Set.of("two-sum-gh/README.md", "two-sum-gh/python/2026-10-19T140509Z.py"));
         assertThat(solutionCommitRepository.findAll()).singleElement().satisfies(sc -> {
             assertThat(sc.getStatus()).isEqualTo(SolutionCommitStatus.COMMITTED);
-            assertThat(sc.getCommitSha()).isEqualTo(gitHub.commits().get(1).sha());
+            assertThat(sc.getCommitSha()).isEqualTo(gitHub.history().get(0).sha());
             assertThat(sc.getLastError()).isNull();
         });
     }
@@ -348,7 +351,7 @@ class SolutionCommitListenerTest {
 
         assertThatCode(() -> listener.onResult(acceptedEvent(submission))).doesNotThrowAnyException();
 
-        assertThat(gitHub.commits()).isEmpty();
+        assertThat(gitHub.history()).isEmpty();
         assertThat(solutionCommitRepository.findAll()).singleElement().satisfies(sc -> {
             assertThat(sc.getStatus()).isEqualTo(SolutionCommitStatus.FAILED);
             assertThat(sc.getLastError()).isEqualTo("503 still down");
@@ -363,7 +366,7 @@ class SolutionCommitListenerTest {
 
         listener.onResult(acceptedEvent(submission));
 
-        assertThat(gitHub.commits()).isEmpty();
+        assertThat(gitHub.history()).isEmpty();
         assertThat(solutionCommitRepository.findAll()).singleElement().satisfies(sc -> {
             assertThat(sc.getStatus()).isEqualTo(SolutionCommitStatus.FAILED);
             assertThat(sc.getLastError()).isEqualTo("422 Unprocessable Entity");
@@ -378,8 +381,8 @@ class SolutionCommitListenerTest {
 
         listener.onResult(acceptedEvent(submission));
 
-        assertThat(gitHub.commits()).extracting(RecordedCommit::path).containsExactly(
-                "two-sum-gh/README.md", "two-sum-gh/python/2026-10-19T140509Z.py");
+        assertThat(gitHub.history()).extracting(c -> c.files().keySet()).containsExactly(
+                Set.of("two-sum-gh/README.md", "two-sum-gh/python/2026-10-19T140509Z.py"));
         assertThat(solutionCommitRepository.findAll()).singleElement().satisfies(sc -> {
             assertThat(sc.getStatus()).isEqualTo(SolutionCommitStatus.COMMITTED);
             assertThat(sc.getCommitUrl()).isEqualTo(
@@ -449,7 +452,7 @@ class SolutionCommitListenerTest {
 
         assertThatCode(() -> listener.onResult(acceptedEvent(submission))).doesNotThrowAnyException();
 
-        assertThat(gitHub.commits()).isEmpty();
+        assertThat(gitHub.history()).isEmpty();
         assertThat(solutionCommitRepository.findAll()).singleElement().satisfies(sc -> {
             assertThat(sc.getStatus()).isEqualTo(SolutionCommitStatus.FAILED);
             assertThat(sc.getLastError()).contains("GitHub is down");
@@ -467,8 +470,8 @@ class SolutionCommitListenerTest {
 
         listener.onResult(acceptedEvent(submission));
 
-        assertThat(gitHub.commits()).extracting(RecordedCommit::path).containsExactly(
-                "two-sum-gh/README.md", "two-sum-gh/python/2026-10-19T140509Z.py");
+        assertThat(gitHub.history()).extracting(c -> c.files().keySet()).containsExactly(
+                Set.of("two-sum-gh/README.md", "two-sum-gh/python/2026-10-19T140509Z.py"));
         assertThat(solutionCommitRepository.findAll()).singleElement().satisfies(sc -> {
             assertThat(sc.getStatus()).isEqualTo(SolutionCommitStatus.COMMITTED);
             assertThat(sc.getAttempts()).isEqualTo(2);

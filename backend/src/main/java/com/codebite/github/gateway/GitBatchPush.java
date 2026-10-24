@@ -70,10 +70,14 @@ final class GitBatchPush {
         this.beforePush = beforePush;
     }
 
+    /** One input commit as built: its id (null where every file already existed) and the paths it added. */
+    record Built(ObjectId id, Set<String> added) {
+    }
+
     /**
-     * @return the new commit id per input commit, in order; null where every file already existed
+     * @return one entry per input commit, in order
      */
-    List<ObjectId> push(List<BatchCommit> commits) {
+    List<Built> push(List<BatchCommit> commits) {
         Path dir = null;
         try {
             dir = Files.createTempDirectory("codebite-import-");
@@ -82,8 +86,9 @@ final class GitBatchPush {
                 repository.create(true);
                 for (int attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
                     ObjectId tip = fetchTip(git);
-                    List<ObjectId> built = build(repository, tip, commits);
-                    ObjectId head = built.stream().filter(id -> id != null).reduce((a, b) -> b).orElse(null);
+                    List<Built> built = build(repository, tip, commits);
+                    ObjectId head = built.stream().map(Built::id).filter(id -> id != null)
+                            .reduce((a, b) -> b).orElse(null);
                     if (head == null) {
                         return built;
                     }
@@ -132,9 +137,9 @@ final class GitBatchPush {
                 .getObjectId();
     }
 
-    private static List<ObjectId> build(Repository repository, ObjectId tip, List<BatchCommit> commits)
+    private static List<Built> build(Repository repository, ObjectId tip, List<BatchCommit> commits)
             throws IOException {
-        List<ObjectId> built = new ArrayList<>();
+        List<Built> built = new ArrayList<>();
         try (ObjectInserter inserter = repository.newObjectInserter();
              ObjectReader reader = repository.newObjectReader();
              RevWalk walk = new RevWalk(reader)) {
@@ -164,7 +169,7 @@ final class GitBatchPush {
                     });
                 }
                 if (added.isEmpty()) {
-                    built.add(null);
+                    built.add(new Built(null, Set.of()));
                     continue;
                 }
                 editor.finish();
@@ -180,7 +185,7 @@ final class GitBatchPush {
                 builder.setCommitter(ident(author, Instant.now()));
                 builder.setMessage(commit.message());
                 parent = inserter.insert(builder);
-                built.add(parent);
+                built.add(new Built(parent, Set.copyOf(added)));
             }
             inserter.flush();
         }
