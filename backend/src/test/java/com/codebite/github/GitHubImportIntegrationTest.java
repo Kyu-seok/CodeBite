@@ -200,6 +200,23 @@ class GitHubImportIntegrationTest {
     }
 
     @Test
+    void importedSolutionAlreadyInTheRepositoryLinksToItsFile() throws Exception {
+        Submission submission = submit(user, twoSum, "python", "print(1)", SubmissionStatus.ACCEPTED,
+                "2026-03-01T10:00:00Z");
+        link("octocat/solutions");
+        gitHub.seedFile("octocat/solutions", "two-sum-imp/README.md", "notes");
+        gitHub.seedFile("octocat/solutions", "two-sum-imp/python/2026-03-01T100000Z.py", "print(1)");
+
+        startImport().andExpect(status().isAccepted());
+
+        assertThat(solutionCommitOf(submission)).satisfies(sc -> {
+            assertThat(sc.getStatus()).isEqualTo(SolutionCommitStatus.COMMITTED);
+            assertThat(sc.getCommitUrl()).isEqualTo(
+                    "https://github.com/octocat/solutions/blob/main/two-sum-imp/python/2026-03-01T100000Z.py");
+        });
+    }
+
+    @Test
     void liveEventForAnImportedSubmissionLeavesItCommitted() throws Exception {
         Submission imported = submit(user, twoSum, "python", "print(1)", SubmissionStatus.ACCEPTED,
                 "2026-03-01T10:00:00Z");

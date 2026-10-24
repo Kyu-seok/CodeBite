@@ -82,9 +82,12 @@ public class GitHubImporter {
             tx.executeWithoutResult(status -> {
                 for (int i = 0; i < batch.solutionCommitIds().size(); i++) {
                     CommittedFile commit = pushed.get(i);
+                    // A commit with nothing left to add (the file was already there) has no sha;
+                    // the row then links to the file, so COMMITTED always has a link.
                     solutionCommitRepository.findById(batch.solutionCommitIds().get(i))
                             .filter(sc -> sc.getStatus() != SolutionCommitStatus.COMMITTED)
-                            .ifPresent(sc -> sc.markCommitted(commit.sha(), commit.url(), now));
+                            .ifPresent(sc -> sc.markCommitted(commit.sha(), recorder.commitUrl(commit.url(),
+                                    batch.repositoryFullName(), batch.branch(), sc.getPath()), now));
                 }
                 linkRepository.findById(linkId).ifPresent(GitHubLink::finishImport);
             });
