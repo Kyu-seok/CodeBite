@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.IntConsumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -132,11 +133,10 @@ class GitHubAppGatewayBatchPushTest {
     @Test
     void pushRejectedBecauseTheTipMovedIsRebuiltOnTheNewTip() throws Exception {
         ObjectId initial = commitToRemote("main", Map.of("README.md", "# My solutions\n"), "Initial commit");
-        GitHubAppGateway gateway = gateway();
         List<Integer> attempts = new ArrayList<>();
         // A live Solution Commit lands between Import's fetch and its push, and it already started
         // the two-sum folder with its README.
-        gateway.beforePush(attempt -> {
+        GitHubAppGateway gateway = gateway(attempt -> {
             attempts.add(attempt);
             if (attempt == 1) {
                 commitToRemoteUnchecked(Map.of(
@@ -227,6 +227,11 @@ class GitHubAppGatewayBatchPushTest {
     }
 
     private GitHubAppGateway gateway() {
+        return gateway(attempt -> { });
+    }
+
+    /** {@code beforePush} runs before each push attempt (1-based), e.g. to move the remote tip. */
+    private GitHubAppGateway gateway(IntConsumer beforePush) {
         GitHubAppProperties properties = new GitHubAppProperties();
         properties.setAppId("12345");
         properties.setClientId("app-client-id");
@@ -236,7 +241,7 @@ class GitHubAppGatewayBatchPushTest {
         properties.setApiBaseUrl(apiBaseUrl);
         properties.setWebBaseUrl("https://github.test");
         properties.setGitBaseUrl(temp.resolve("remotes").toUri().toString());
-        return new GitHubAppGateway(properties, RestClient.builder());
+        return new GitHubAppGateway(properties, RestClient.builder(), beforePush);
     }
 
     /** A commit authored as octocat at {@code at}, adding path/content pairs. */

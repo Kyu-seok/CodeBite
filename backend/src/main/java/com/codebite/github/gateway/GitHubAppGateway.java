@@ -4,6 +4,7 @@ import com.codebite.config.GitHubAppProperties;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.ClientHttpRequestFactories;
 import org.springframework.boot.web.client.ClientHttpRequestFactorySettings;
 import org.springframework.http.HttpHeaders;
@@ -50,11 +51,19 @@ public class GitHubAppGateway implements GitHubGateway {
     private final GitHubAppProperties properties;
     private final RestClient api;
     private final RestClient web;
+    /** Runs before each batch push attempt (1-based); a no-op outside tests. */
+    private final IntConsumer beforePush;
     private volatile GitHubAppJwt appJwt;
-    private IntConsumer beforePush = attempt -> { };
 
+    @Autowired
     public GitHubAppGateway(GitHubAppProperties properties, RestClient.Builder restClientBuilder) {
+        this(properties, restClientBuilder, attempt -> { });
+    }
+
+    /** For tests: {@code beforePush} can move the remote tip between a batch's fetch and its push. */
+    GitHubAppGateway(GitHubAppProperties properties, RestClient.Builder restClientBuilder, IntConsumer beforePush) {
         this.properties = properties;
+        this.beforePush = beforePush;
         this.api = restClientBuilder.clone()
                 .requestFactory(ClientHttpRequestFactories.get(TIMEOUTS))
                 .baseUrl(properties.getApiBaseUrl())
@@ -157,11 +166,6 @@ public class GitHubAppGateway implements GitHubGateway {
                         ? new PushedCommit(null, null, Set.of())
                         : new PushedCommit(b.id().name(), commitBase + b.id().name(), b.added()))
                 .toList();
-    }
-
-    /** Test hook: runs before each push attempt (1-based), e.g. to move the remote tip. */
-    void beforePush(IntConsumer hook) {
-        this.beforePush = hook;
     }
 
     private static String stripTrailingSlash(String url) {
