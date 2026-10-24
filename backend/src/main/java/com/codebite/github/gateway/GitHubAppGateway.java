@@ -8,6 +8,7 @@ import org.springframework.boot.web.client.ClientHttpRequestFactories;
 import org.springframework.boot.web.client.ClientHttpRequestFactorySettings;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -115,29 +116,26 @@ public class GitHubAppGateway implements GitHubGateway {
                 new Author(file.author().login(), file.author().noreplyEmail(),
                         DateTimeFormatter.ISO_INSTANT.format(file.authorDate())));
         String what = "PUT /repos/" + repositoryFullName + "/contents/" + file.path();
-        try {
-            ContentsResponse response = api.put()
-                    .uri("/repos/" + repositoryFullName + "/contents/" + file.path())
-                    .header(HttpHeaders.AUTHORIZATION, bearer(token))
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .body(request)
-                    .retrieve().body(ContentsResponse.class);
-            return new CommittedFile(response.commit().sha(), response.commit().htmlUrl());
-        } catch (RestClientResponseException e) {
-            int status = e.getStatusCode().value();
-            if (status == 422 && e.getResponseBodyAsString().contains("sha")) {
-                throw new GitHubFileExistsException(repositoryFullName + " already has " + file.path());
-            }
-            if (status == 404) {
-                // The token was minted, so the installation exists but no longer grants this
-                // repository: it was deleted or removed from the installation.
-                throw new GitHubInstallationGoneException(
-                        repositoryFullName + " is not reachable through installation " + installationId);
-            }
-            throw translate(what, e);
-        } catch (ResourceAccessException e) {
-            throw new GitHubTransientException(what + " unreachable", e);
-        }
+        ContentsResponse response = call(what, () -> api.put()
+                        .uri("/repos/" + repositoryFullName + "/contents/" + file.path())
+                        .header(HttpHeaders.AUTHORIZATION, bearer(token))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(request)
+                        .retrieve().body(ContentsResponse.class),
+                e -> {
+                    int status = e.getStatusCode().value();
+                    if (status == 422 && e.getResponseBodyAsString().contains("sha")) {
+                        return new GitHubFileExistsException(repositoryFullName + " already has " + file.path());
+                    }
+                    if (status == 404) {
+                        // The token was minted, so the installation exists but no longer grants
+                        // this repository: it was deleted or removed from the installation.
+                        return new GitHubInstallationGoneException(
+                                repositoryFullName + " is not reachable through installation " + installationId);
+                    }
+                    return null;
+                });
+        return new CommittedFile(response.commit().sha(), response.commit().htmlUrl());
     }
 
     /**
@@ -181,20 +179,14 @@ public class GitHubAppGateway implements GitHubGateway {
         }
         // An installation token only sees the repositories its installation grants; any other
         // repository, including a deleted one, is a 404.
-        String what = "GET /repositories/" + repositoryId;
-        try {
-            api.get().uri("/repositories/{id}", repositoryId)
-                    .header(HttpHeaders.AUTHORIZATION, bearer(token))
-                    .retrieve().toBodilessEntity();
-            return true;
-        } catch (RestClientResponseException e) {
-            if (e.getStatusCode().value() == 404) {
-                return false;
-            }
-            throw translate(what, e);
-        } catch (ResourceAccessException e) {
-            throw new GitHubTransientException(what + " unreachable", e);
-        }
+        // Here a 404 is an answer, not an error.
+        ResponseEntity<Void> response = call("GET /repositories/" + repositoryId, () -> api.get()
+                .uri("/repositories/{id}", repositoryId)
+                .header(HttpHeaders.AUTHORIZATION, bearer(token))
+                .retrieve()
+                .onStatus(status -> status.value() == 404, (request, notFound) -> { })
+                .toBodilessEntity());
+        return response.getStatusCode().value() != 404;
     }
 
     /** Exchanges a user authorization code for a user-to-server token, using the App's client. */
@@ -223,22 +215,18 @@ public class GitHubAppGateway implements GitHubGateway {
      */
     String installationToken(long installationId) {
         String jwt = appJwt().sign(Instant.now());
-        try {
-            InstallationTokenResponse response = api.post()
-                    .uri("/app/installations/{id}/access_tokens", installationId)
-                    .header(HttpHeaders.AUTHORIZATION, bearer(jwt))
-                    .retrieve().body(InstallationTokenResponse.class);
-            return response.token();
-        } catch (RestClientResponseException e) {
-            int status = e.getStatusCode().value();
-            if (status == 404 || status == 403) {
-                throw new GitHubInstallationGoneException(
-                        "installation " + installationId + " is gone: HTTP " + status);
-            }
-            throw translate("POST /app/installations/{id}/access_tokens", e);
-        } catch (ResourceAccessException e) {
-            throw new GitHubTransientException("POST /app/installations/{id}/access_tokens unreachable", e);
-        }
+        InstallationTokenResponse response = call("POST /app/installations/{id}/access_tokens", () -> api.post()
+                        .uri("/app/installations/{id}/access_tokens", installationId)
+                        .header(HttpHeaders.AUTHORIZATION, bearer(jwt))
+                        .retrieve().body(InstallationTokenResponse.class),
+                e -> {
+                    int status = e.getStatusCode().value();
+                    return status == 404 || status == 403
+                            ? new GitHubInstallationGoneException(
+                                    "installation " + installationId + " is gone: HTTP " + status)
+                            : null;
+                });
+        return response.token();
     }
 
     private <T> List<T> paged(String what, Function<Integer, List<T>> fetchPage) {
@@ -254,10 +242,24 @@ public class GitHubAppGateway implements GitHubGateway {
     }
 
     private <T> T call(String what, Supplier<T> request) {
+        return call(what, request, e -> null);
+    }
+
+    /**
+     * Runs one request and turns every failure into a {@link GitHubGatewayException}: the single
+     * place HTTP statuses become gateway exceptions.
+     *
+     * @param meaning what an error status means for this endpoint in particular (a 404 means
+     *                different things on different endpoints), or null to fall back to
+     *                {@link #translate}
+     */
+    private <T> T call(String what, Supplier<T> request,
+                       Function<RestClientResponseException, GitHubGatewayException> meaning) {
         try {
             return request.get();
         } catch (RestClientResponseException e) {
-            throw translate(what, e);
+            GitHubGatewayException specific = meaning.apply(e);
+            throw specific != null ? specific : translate(what, e);
         } catch (ResourceAccessException e) {
             throw new GitHubTransientException(what + " unreachable", e);
         }
