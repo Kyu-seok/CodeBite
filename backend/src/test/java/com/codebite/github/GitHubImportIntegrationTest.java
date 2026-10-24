@@ -278,7 +278,12 @@ class GitHubImportIntegrationTest {
         link("octocat/solutions");
         startImport().andExpect(status().isAccepted());
 
-        startImport().andExpect(status().isConflict());
+        // The message is localized (Korean here; English falls back to the JVM locale without a
+        // messages_en.properties, so it is not asserted).
+        mockMvc.perform(post("/api/github/link/import").header("Authorization", "Bearer " + token)
+                        .header("Accept-Language", "ko"))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.message").value("이 GitHub 연결의 가져오기는 이미 실행 중이거나 완료되었습니다."));
 
         assertThat(gitHub.pushes()).hasSize(1);
         getLink().andExpect(jsonPath("$.importState").value("DONE"));
@@ -370,7 +375,10 @@ class GitHubImportIntegrationTest {
         entityManager.clear();
         gitHub.uninstall(INSTALLATION);
 
-        startImport().andExpect(status().isConflict());
+        mockMvc.perform(post("/api/github/link/import").header("Authorization", "Bearer " + token)
+                        .header("Accept-Language", "ko"))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.message").value("GitHub 연결이 끊어졌습니다. 가져오기 전에 GitHub를 다시 연결하세요."));
 
         assertThat(gitHub.pushes()).isEmpty();
     }

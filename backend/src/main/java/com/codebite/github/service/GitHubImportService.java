@@ -1,6 +1,6 @@
 package com.codebite.github.service;
 
-import com.codebite.common.exception.DuplicateResourceException;
+import com.codebite.common.exception.InvalidStateException;
 import com.codebite.common.exception.ResourceNotFoundException;
 import com.codebite.github.dto.GitHubLinkResponse;
 import com.codebite.github.entity.GitHubLink;
@@ -33,17 +33,17 @@ public class GitHubImportService {
      *
      * @return the link as it is now, with import state RUNNING
      * @throws ResourceNotFoundException  if the user has no GitHub Link
-     * @throws DuplicateResourceException if the link is BROKEN, or its Import is RUNNING or DONE
+     * @throws InvalidStateException     if the link is BROKEN, or its Import is RUNNING or DONE
      */
     public GitHubLinkResponse start(Long userId) {
         GitHubLink started = tx.execute(status -> {
             GitHubLink link = linkRepository.findCurrentByUserId(userId)
                     .orElseThrow(() -> new ResourceNotFoundException("error.github.link.notFound"));
             if (link.getStatus() != GitHubLinkStatus.ACTIVE) {
-                throw new DuplicateResourceException("The GitHub Link is broken; link again before importing");
+                throw new InvalidStateException("error.github.link.broken");
             }
             if (linkRepository.claimImport(link.getId()) == 0) {
-                throw new DuplicateResourceException("The Import is already running or done");
+                throw new InvalidStateException("error.github.import.alreadyStarted");
             }
             return linkRepository.findById(link.getId()).orElseThrow();
         });

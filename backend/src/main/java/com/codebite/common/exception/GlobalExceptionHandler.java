@@ -38,6 +38,12 @@ public class GlobalExceptionHandler {
         return buildResponse(HttpStatus.CONFLICT, ex.getMessage());
     }
 
+    @ExceptionHandler(InvalidStateException.class)
+    public ResponseEntity<ApiError> handleInvalidState(InvalidStateException ex) {
+        String message = resolveMessage(ex.getMessageCode(), ex.getMessageArgs());
+        return buildResponse(HttpStatus.CONFLICT, message);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiError> handleValidation(MethodArgumentNotValidException ex) {
         String message = ex.getBindingResult().getFieldErrors().stream()
