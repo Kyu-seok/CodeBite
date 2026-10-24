@@ -1,5 +1,6 @@
 package com.codebite;
 
+import com.codebite.config.GitHubAppProperties;
 import com.codebite.config.OAuthProperties;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -8,7 +9,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 @SpringBootApplication(exclude = {
     org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration.class
 })
-@EnableConfigurationProperties(OAuthProperties.class)
+@EnableConfigurationProperties({OAuthProperties.class, GitHubAppProperties.class})
 public class CodeBiteApplication {
 
     public static void main(String[] args) {

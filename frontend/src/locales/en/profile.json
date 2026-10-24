@@ -39,5 +39,48 @@
     "useRepair": "Use Repair",
     "repairFailed": "Could not repair that day. Please try again.",
     "alreadyCounted": "That day already counts toward your Streak."
+  },
+  "githubLink": {
+    "title": "GitHub Link",
+    "description": "Commit every Accepted submission to a GitHub repository you created, so it shows on your contribution graph.",
+    "link": "Link GitHub",
+    "relink": "Link again",
+    "redirecting": "Opening GitHub…",
+    "startFailed": "Could not start linking. Please try again.",
+    "account": "Account",
+    "repository": "Repository",
+    "private": "Private",
+    "privateReminder": "This repository is private. Its commits only show on your contribution graph when \"Include private contributions\" is turned on in your GitHub profile settings.",
+    "broken": "CodeBite can no longer reach this repository. The app may have been uninstalled or the repository deleted. Link again to resume commits.",
+    "import": {
+      "offer": "Import your earlier Accepted submissions too. Each becomes its own commit, dated when it was Accepted, so those past days turn green as well.",
+      "start": "Import",
+      "starting": "Starting…",
+      "running": "Importing your earlier solutions…",
+      "done": "Earlier solutions imported.",
+      "failed": "The Import didn't finish. Nothing was added to the repository, so you can try again.",
+      "retry": "Try again",
+      "startFailed": "Could not start the Import. Please try again."
+    },
+    "unlink": "Unlink",
+    "unlinkTitle": "Unlink GitHub?",
+    "unlinkDescription": "Accepted submissions will stop being committed to {{repository}}. Everything already in the repository stays as it is. You can link again at any time.",
+    "unlinkConfirm": "Unlink",
+    "unlinking": "Unlinking…",
+    "unlinkFailed": "Could not unlink. Please try again.",
+    "callback": {
+      "completing": "Finishing your GitHub Link…",
+      "missingParams": "GitHub did not send back the expected details. Start linking again from your profile.",
+      "notAuthorised": "Your GitHub account has not authorised this installation of the CodeBite app.",
+      "expired": "This link request expired or belongs to another account. Start linking again from your profile.",
+      "failed": "Could not finish linking. Please try again.",
+      "chooseRepository": "You gave CodeBite access to several repositories. Choose the one to use as your Solution Repository. CodeBite only ever adds solutions to that one.",
+      "chooseRepositoryLegend": "Solution Repository",
+      "useRepository": "Use this repository",
+      "notGranted": "The CodeBite app no longer has access to that repository. Open GitHub again and grant it.",
+      "noRepository": "You didn't give CodeBite access to any repository. Choose your Solution Repository on GitHub and try again.",
+      "tryAgain": "Open GitHub again",
+      "backToProfile": "Back to profile"
+    }
   }
 }

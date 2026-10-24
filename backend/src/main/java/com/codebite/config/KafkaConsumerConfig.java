@@ -1,5 +1,6 @@
 package com.codebite.config;
 
+import com.codebite.github.event.GitHubImportRequestedEvent;
 import com.codebite.submission.event.SubmissionResultEvent;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -16,6 +17,7 @@ import org.springframework.kafka.listener.DefaultErrorHandler;
 import org.springframework.kafka.support.ExponentialBackOffWithMaxRetries;
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
+import org.springframework.util.backoff.FixedBackOff;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -40,10 +42,13 @@ public class KafkaConsumerConfig {
      * partition.
      */
     private static ErrorHandlingDeserializer<SubmissionResultEvent> resultDeserializer() {
-        JsonDeserializer<SubmissionResultEvent> valueDeserializer =
-                new JsonDeserializer<>(SubmissionResultEvent.class);
-        valueDeserializer.addTrustedPackages("com.codebite.submission.event");
-        // The worker sends this exact type; ignoring the type header keeps the two sides from
+        return jsonDeserializer(SubmissionResultEvent.class);
+    }
+
+    private static <T> ErrorHandlingDeserializer<T> jsonDeserializer(Class<T> type) {
+        JsonDeserializer<T> valueDeserializer = new JsonDeserializer<>(type);
+        valueDeserializer.addTrustedPackages(type.getPackageName());
+        // The producer sends this exact type; ignoring the type header keeps the two sides from
         // being coupled through a fully-qualified class name in the payload.
         valueDeserializer.setUseTypeHeaders(false);
         return new ErrorHandlingDeserializer<>(valueDeserializer);
@@ -118,6 +123,49 @@ public class KafkaConsumerConfig {
                 (record, ex) -> log.error("Streak Day lost after retries; replay manually: {}",
                         record.value(), ex),
                 backOff));
+        return factory;
+    }
+
+    /**
+     * Live Solution Commits. {@code latest}: on its first deployment this group must not replay the
+     * retained topic and commit old submissions; earlier solves are the Import's job. The listener
+     * records GitHub failures itself and never throws, so the error handler is only a backstop:
+     * log and move on without retrying.
+     */
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, SubmissionResultEvent>
+            solutionCommitListenerContainerFactory(
+                    @Value("${spring.kafka.bootstrap-servers}") String bootstrapServers) {
+
+        ConcurrentKafkaListenerContainerFactory<String, SubmissionResultEvent> factory =
+                new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(new DefaultKafkaConsumerFactory<>(
+                baseProps(bootstrapServers, "latest"),
+                new StringDeserializer(), resultDeserializer()));
+        factory.setCommonErrorHandler(new DefaultErrorHandler(
+                (record, ex) -> log.error("Solution Commit skipped: {}", record.value(), ex),
+                new FixedBackOff(0L, 0L)));
+        return factory;
+    }
+
+    /**
+     * Imports. {@code earliest}: a request published before this group first joined must still
+     * run, or its link would stay RUNNING. The listener records failures itself, so the error
+     * handler is only a backstop that logs.
+     */
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, GitHubImportRequestedEvent>
+            gitHubImportListenerContainerFactory(
+                    @Value("${spring.kafka.bootstrap-servers}") String bootstrapServers) {
+
+        ConcurrentKafkaListenerContainerFactory<String, GitHubImportRequestedEvent> factory =
+                new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(new DefaultKafkaConsumerFactory<>(
+                baseProps(bootstrapServers, "earliest"),
+                new StringDeserializer(), jsonDeserializer(GitHubImportRequestedEvent.class)));
+        factory.setCommonErrorHandler(new DefaultErrorHandler(
+                (record, ex) -> log.error("Import request skipped: {}", record.value(), ex),
+                new FixedBackOff(0L, 0L)));
         return factory;
     }
 }

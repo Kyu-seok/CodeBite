@@ -1,5 +1,6 @@
 package com.codebite.submission.dto;
 
+import com.codebite.github.dto.SolutionCommitSummary;
 import com.codebite.review.entity.Confidence;
 import com.codebite.submission.entity.SubmissionStatus;
 
@@ -18,6 +19,8 @@ public record SubmissionResponse(
         Instant createdAt,
         String notes,
         Confidence confidence,
-        Integer solveTimeSeconds
+        Integer solveTimeSeconds,
+        /** Null when the submission has no Solution Commit (not Accepted, or no GitHub Link). */
+        SolutionCommitSummary solutionCommit
 ) {
 }

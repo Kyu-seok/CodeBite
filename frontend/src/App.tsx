@@ -13,6 +13,7 @@ import SolutionDetailPage from "./pages/problem/solutions/SolutionDetailPage";
 import SolutionEditorPage from "./pages/problem/solutions/SolutionEditorPage";
 import RoadmapPage from "./pages/roadmap";
 import ProfilePage from "./pages/profile/ProfilePage";
+import GitHubCallbackPage from "./pages/GitHubCallbackPage";
 import ReviewsPage from "./pages/reviews/ReviewsPage";
 import ProtectedRoute from "./components/layout/ProtectedRoute";
 import AdminLayout from "./pages/admin/AdminLayout";
@@ -62,6 +63,7 @@ function App() {
                 />
                 <Route path="roadmap" element={<RoadmapPage />} />
                 <Route path="profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+                <Route path="github/callback" element={<ProtectedRoute><GitHubCallbackPage /></ProtectedRoute>} />
                 <Route path="reviews" element={<ProtectedRoute><ReviewsPage /></ProtectedRoute>} />
                 <Route path="*" element={<NotFoundPage />} />
               </Route>

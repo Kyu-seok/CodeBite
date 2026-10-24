@@ -47,4 +47,16 @@ public class KafkaTopicConfig {
                 .replicas(1)
                 .build();
     }
+
+    /**
+     * Import requests (one per GitHub Link at most, ever). One partition: Imports are rare and each
+     * is a single push, so there is nothing to parallelise.
+     */
+    @Bean
+    public NewTopic gitHubImportTopic(@Value("${app.kafka.topic.github-import}") String topic) {
+        return TopicBuilder.name(topic)
+                .partitions(1)
+                .replicas(1)
+                .build();
+    }
 }

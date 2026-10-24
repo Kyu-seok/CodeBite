@@ -10,6 +10,7 @@ import com.codebite.problem.entity.Problem;
 import com.codebite.problem.entity.TestCase;
 import com.codebite.problem.repository.ProblemRepository;
 import com.codebite.problem.repository.TestCaseRepository;
+import com.codebite.github.repository.SolutionCommitRepository;
 import com.codebite.submission.dto.SubmissionResponse;
 import com.codebite.submission.dto.SubmitRequest;
 import com.codebite.submission.entity.Submission;
@@ -54,6 +55,7 @@ class SubmissionServiceTest {
     @Mock private JudgeService judgeService;
     @Mock private DriverCodeLoader driverCodeLoader;
     @Mock private SubmissionEventProducer submissionEventProducer;
+    @Mock private SolutionCommitRepository solutionCommitRepository;
 
     private SubmissionService submissionService;
 
@@ -67,7 +69,7 @@ class SubmissionServiceTest {
                 problemRepository, testCaseRepository, userRepository,
                 judgeService, driverCodeLoader, submissionEventProducer,
                 new JudgeErrorParsers(), new UserCodeLineMapper(),
-                new SimpleMeterRegistry());
+                solutionCommitRepository, new SimpleMeterRegistry());
 
         problem = new Problem();
         problem.setId(1L);

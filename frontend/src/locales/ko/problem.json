@@ -168,7 +168,14 @@
     "hidden": "(비공개)",
     "expectedOutput": "예상 출력",
     "yourOutput": "실제 출력",
-    "clickToAddNote": "노트를 추가하려면 클릭하세요..."
+    "clickToAddNote": "노트를 추가하려면 클릭하세요...",
+    "solutionCommit": {
+      "label": "GitHub",
+      "pending": "풀이 저장소에 커밋하는 중…",
+      "committed": "풀이 저장소에 커밋됨",
+      "viewCommit": "GitHub에서 보기",
+      "failed": "GitHub에 커밋하지 못했습니다"
+    }
   },
   "settings": {
     "title": "설정",

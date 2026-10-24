@@ -292,6 +292,50 @@ CREATE INDEX idx_review_state_due ON problem_review_state(user_id, next_due_at);
 
 Source of truth is the `submissions.confidence` + `submissions.reviewed_at` pair; `problem_review_state` is fully rebuildable by replaying the per-submission ratings in chronological order. Re-rating an old submission updates its `reviewed_at`, which naturally re-orders the replay.
 
+**GitHub Links** (V190; terms in GLOSSARY.md, model in ADR 0003). One row per link; unlinking keeps the row. `active_user_id` mirrors `user_id` until UNLINKED and then goes NULL, so its UNIQUE constraint allows one current link per user (H2 cannot parse a partial unique index).
+
+```sql
+CREATE TABLE github_links (
+    id                   BIGSERIAL PRIMARY KEY,
+    user_id              BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    active_user_id       BIGINT UNIQUE,            -- user_id while ACTIVE/BROKEN, NULL once UNLINKED
+    github_account_id    BIGINT NOT NULL,
+    github_login         VARCHAR(100) NOT NULL,
+    installation_id      BIGINT NOT NULL,          -- tokens are minted on demand, never stored
+    repository_id        BIGINT NOT NULL,
+    repository_full_name VARCHAR(255) NOT NULL,
+    default_branch       VARCHAR(255) NOT NULL,
+    repository_private   BOOLEAN NOT NULL,
+    status               VARCHAR(20) NOT NULL,     -- ACTIVE | BROKEN | UNLINKED
+    import_state         VARCHAR(20) NOT NULL,     -- AVAILABLE | RUNNING | DONE | FAILED
+    created_at           TIMESTAMP NOT NULL,       -- also the Import cutoff
+    updated_at           TIMESTAMP NOT NULL,
+    unlinked_at          TIMESTAMP
+);
+```
+
+**Solution Commits** (V191). One row per Accepted submission sent to a link's Solution Repository; unique on (submission, link) so a redelivered event or an Import never commits a submission twice. The live path is the `codebite-solution-commits` consumer group on `submission-results`, which commits through `GitHubGateway.addFile` (Contents API), except a problem folder's first Solution Commit through the link: that one adds `<slug>/README.md` and the solution together in one commit via a one-commit `GitHubGateway.pushCommits` (an existing README is left alone), so a first solve is a single contribution, as in an Import. `pushCommits` reports per commit which paths it actually added. Files go to `<slug>/<language>/<UTC Accepted time yyyy-MM-ddTHHmmssZ>.<ext>`, or `<time>-<submission id>.<ext>` when that path is already taken (another submission of the link Accepted in the same second, or a foreign file GitHub reports on a first attempt); the final path is stored on the row and nothing is ever overwritten. A COMMITTED row is final: an overlapping attempt never turns it FAILED.
+
+**Import** (no migration; uses `github_links.import_state`). `POST /api/github/link/import` atomically moves AVAILABLE/FAILED → RUNNING and publishes to `github-imports`. The backend's `GitHubImporter` records a PENDING Solution Commit for each Accepted submission made before the link's `created_at` and not yet COMMITTED through it (oldest first, admin included), then pushes them all through `GitHubGateway.pushCommits`: a shallow JGit fetch of the default branch, one commit per submission (author date = Accepted time in UTC, committer date = now) and a single push. The README goes inside the first batch commit for a folder this link hasn't COMMITTED to. A non-fast-forward rejection (a live Solution Commit landed meanwhile) refetches and rebuilds on the new tip; files already on the branch are left alone (a submission whose file was already there is COMMITTED with a link to that file's page instead of a commit). All-or-nothing: DONE, or FAILED (retryable); a gone installation/repository also marks the link BROKEN.
+
+```sql
+CREATE TABLE solution_commits (
+    id             BIGSERIAL PRIMARY KEY,
+    submission_id  BIGINT NOT NULL REFERENCES submissions(id) ON DELETE CASCADE,
+    github_link_id BIGINT NOT NULL REFERENCES github_links(id) ON DELETE CASCADE,
+    status         VARCHAR(20) NOT NULL,           -- PENDING | COMMITTED | FAILED
+    path           VARCHAR(500) NOT NULL,          -- fixed at creation; retries write the same file
+    commit_sha     VARCHAR(64),
+    commit_url     VARCHAR(500),
+    last_error     VARCHAR(1000),
+    attempts       INT NOT NULL DEFAULT 0,
+    committed_at   TIMESTAMP,                      -- when GitHub accepted it (author date = Accepted time)
+    created_at     TIMESTAMP NOT NULL,
+    updated_at     TIMESTAMP NOT NULL,
+    UNIQUE (submission_id, github_link_id)
+);
+```
+
 **ER Diagram:**
 
 ```
@@ -338,6 +382,16 @@ _accounts
 | GET    | /api/problems/{slug}/review-state          | Per-problem review state (200 / 204 if none)         | Yes  |
 | GET    | /api/reviews/due?page=&size=               | Paginated list of due/overdue problems               | Yes  |
 | GET    | /api/reviews/due/count                     | `{ "count": N }` for the profile widget              | Yes  |
+
+### GitHub Link (GitHub App, ADR 0003)
+| Method | Path                          | Description                                                        | Auth |
+|--------|-------------------------------|--------------------------------------------------------------------|------|
+| GET    | /api/github/link              | Current GitHub Link (204 if none); a BROKEN link is re-checked and recovered to ACTIVE if reachable again | Yes  |
+| GET    | /api/github/link/install      | App install URL with a user-bound state (503 if App not configured)| Yes  |
+| POST   | /api/github/link/callback     | Finish install: verify the account can access the installation; link if one repo granted, else list repos with a signed `selectionToken` | Yes  |
+| PUT    | /api/github/link/repository   | Choose the Solution Repository: `{selectionToken, repositoryId}`; re-lists the installation's repos and links the choice (400 not granted, 401 bad token) | Yes  |
+| DELETE | /api/github/link              | Unlink: mark the current link UNLINKED (row kept); no GitHub call, repository untouched | Yes  |
+| POST   | /api/github/link/import       | Start the Import: 202 + link (RUNNING) when AVAILABLE/FAILED; 409 when RUNNING, DONE or the link is BROKEN; 404 without a link | Yes  |
 
 **Request/Response examples:**
 
@@ -497,6 +551,7 @@ GET /submissions/{id}
 | `submission-events-admin` | 1 | `codebite-worker-admin` | Work queue, `concurrency: 1`. Isolates admin bulk validation so a batch cannot occupy every user partition |
 | `submission-results` | 3 | `codebite-sse-${random.uuid}` | **Broadcast** — one single-member group per replica, so every replica sees every event |
 | `submission-results` | 3 | `codebite-stats` | Work queue — partitions split across replicas, each event aggregated once |
+| `github-imports` | 1 | `codebite-github-imports` | Work queue — one Import request per started Import (key: link id), consumed by the backend so an Import survives a restart |
 
 - Key: `submissionId` — per-user ordering is not required, and `submissionId` spreads load evenly
 - Replication factor 1 throughout (single broker)
@@ -741,6 +796,16 @@ CodeBite/
 - Both services use `@ConditionalOnBean` — when Redis is unavailable (e.g., in tests), they are not created and the system degrades gracefully.
 
 **Deliverable:** Dockerized multi-instance deployment demonstrating horizontal scaling.
+
+### Milestone 8: GitHub Solution Commits (#17)
+Terms in GLOSSARY.md; decisions in ADR 0001 (UTC days), 0002 (backdated Imports), 0003 (GitHub App).
+- [x] GitHub Link via the CodeBite GitHub App: `GitHubGateway` seam + fake, `github_links`, install/callback endpoints, profile card (#24)
+- [x] Live Solution Commits for Accepted submissions: `solution_commits`, `submission-results` listener, `GitHubGateway.addFile` via the Contents API (#18)
+- [x] Solution Commit status on submission detail, with retries: `solutionCommit` on `GET /api/submissions/{id}`, back-off retries, `codebite.solution.commits` counter (#19)
+- [x] Choose the Solution Repository when several were granted: signed selection token, `PUT /api/github/link/repository`, callback picker (#20)
+- [x] Unlink and relink: `DELETE /api/github/link`, Unlink with confirmation on the profile card (#21)
+- [x] BROKEN links when the installation or repository is gone: `GitHubLink.markBroken()` on `GitHubInstallationGoneException`, BROKEN skips Solution Commits, `GitHubGateway.isRepositoryReachable` re-checks a BROKEN link on read, relink prompt on the profile card (#22)
+- [x] One-time Import of earlier Accepted submissions: `POST /api/github/link/import`, `github-imports` topic, JGit batch push, Import offer on the profile card (#23)
 
 ---
 

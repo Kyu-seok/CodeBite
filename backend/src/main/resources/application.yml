@@ -61,6 +61,7 @@ app:
       submission: submission-events
       submission-admin: submission-events-admin
       submission-results: submission-results
+      github-import: github-imports
     # Per-instance group: each replica forms its own single-member group so it receives every
     # result event, because only the replica holding the SSE connection can push it. A shared
     # group id here would strand clients on their polling fallback.
@@ -105,3 +106,21 @@ app:
       client-secret: ${GITHUB_CLIENT_SECRET:}
     redirect-base-uri: ${OAUTH_REDIRECT_BASE_URI:http://localhost:5173/auth/callback}
     state-expiration-ms: 300000
+  # CodeBite GitHub App for GitHub Links / Solution Commits (ADR 0003). All optional: when unset,
+  # the backend still starts and the GitHub Link endpoints answer 503. Dev values come from
+  # scripts/setup-github-app-dev.sh (written to infra/.env).
+  github:
+    app-id: ${GITHUB_APP_ID:}
+    client-id: ${GITHUB_APP_CLIENT_ID:}
+    client-secret: ${GITHUB_APP_CLIENT_SECRET:}
+    private-key-base64: ${GITHUB_APP_PRIVATE_KEY_BASE64:}
+    slug: ${GITHUB_APP_SLUG:}
+    install-url: ${GITHUB_APP_INSTALL_URL:}  # defaults to https://github.com/apps/<slug>/installations/new
+    api-base-url: ${GITHUB_API_BASE_URL:https://api.github.com}
+    web-base-url: ${GITHUB_WEB_BASE_URL:https://github.com}
+    # Import pushes to <git-base-url>/<owner>/<repo>.git with the installation token.
+    git-base-url: ${GITHUB_GIT_BASE_URL:https://github.com}
+    codebite-base-url: ${CODEBITE_BASE_URL:https://code-bite.com}  # links in Solution Repository READMEs
+    state-expiration-ms: 900000
+    commit-max-tries: ${GITHUB_COMMIT_MAX_TRIES:3}  # per Solution Commit, on transient GitHub errors
+    commit-retry-backoff-ms: ${GITHUB_COMMIT_RETRY_BACKOFF_MS:1000}  # doubles before each retry
