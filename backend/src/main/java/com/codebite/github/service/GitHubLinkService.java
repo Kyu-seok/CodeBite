@@ -58,7 +58,7 @@ public class GitHubLinkService {
      * No transaction is held open across the call to GitHub.
      */
     public Optional<GitHubLinkResponse> getLink(Long userId) {
-        Optional<GitHubLink> current = linkRepository.findByActiveUserId(userId);
+        Optional<GitHubLink> current = linkRepository.findCurrentByUserId(userId);
         if (current.isPresent() && current.get().getStatus() == GitHubLinkStatus.BROKEN
                 && reachable(current.get())) {
             Long id = current.get().getId();
@@ -138,11 +138,11 @@ public class GitHubLinkService {
      */
     @Transactional
     public void unlink(Long userId) {
-        linkRepository.findByActiveUserId(userId).ifPresent(current -> current.unlink(Instant.now()));
+        linkRepository.findCurrentByUserId(userId).ifPresent(current -> current.unlink(Instant.now()));
     }
 
     private GitHubLink link(Long userId, GitHubAccount account, long installationId, GitHubRepo repo) {
-        linkRepository.findByActiveUserId(userId).ifPresent(current -> {
+        linkRepository.findCurrentByUserId(userId).ifPresent(current -> {
             current.unlink(Instant.now());
             // Flush before the insert: Hibernate orders inserts first, which would trip the
             // one-current-link constraint.

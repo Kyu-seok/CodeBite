@@ -36,7 +36,7 @@ Root `settings.gradle` includes three modules: `common`, `backend`, `worker`. Th
 - `streak/entity/` — StreakDay, UserStreak (Repairs held + Repair Progress)
 - `streak/repository/` — StreakDayRepository, UserStreakRepository
 - `github/entity/` — GitHubLink, GitHubLinkStatus (ACTIVE/BROKEN/UNLINKED), GitHubImportState, SolutionCommit, SolutionCommitStatus (PENDING/COMMITTED/FAILED)
-- `github/repository/` — GitHubLinkRepository (`findByActiveUserId` = the user's current link), SolutionCommitRepository
+- `github/repository/` — GitHubLinkRepository (`findCurrentByUserId` = the user's current link, ACTIVE or BROKEN), SolutionCommitRepository
 - `judge/` — JudgeClient, JudgeClientImpl, JudgeService, DriverCodeLoader, DTOs
 - `config/` — JudgeClientConfig
 

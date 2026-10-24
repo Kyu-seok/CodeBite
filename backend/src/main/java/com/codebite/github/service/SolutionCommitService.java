@@ -97,7 +97,7 @@ public class SolutionCommitService {
     }
 
     private Optional<Attempt> prepare(Long userId, Long submissionId) {
-        Optional<GitHubLink> link = linkRepository.findByActiveUserId(userId)
+        Optional<GitHubLink> link = linkRepository.findCurrentByUserId(userId)
                 .filter(l -> l.getStatus() == GitHubLinkStatus.ACTIVE);
         if (link.isEmpty()) {
             return Optional.empty();

@@ -245,7 +245,7 @@ class GitHubLinkIntegrationTest {
         mockMvc.perform(get("/api/github/link").header("Authorization", "Bearer " + token))
                 .andExpect(status().isNoContent());
         Long userId = userRepository.findByUsername("linker").orElseThrow().getId();
-        assertThat(linkRepository.findByActiveUserId(userId)).isEmpty();
+        assertThat(linkRepository.findCurrentByUserId(userId)).isEmpty();
         assertThat(linkRepository.findAll())
                 .filteredOn(link -> link.getUserId().equals(userId))
                 .singleElement()
@@ -415,7 +415,7 @@ class GitHubLinkIntegrationTest {
 
     private GitHubLink currentLink() {
         Long userId = userRepository.findByUsername("linker").orElseThrow().getId();
-        return linkRepository.findByActiveUserId(userId).orElseThrow();
+        return linkRepository.findCurrentByUserId(userId).orElseThrow();
     }
 
     /** What a Solution Commit does when GitHub reports the installation or repository gone. */

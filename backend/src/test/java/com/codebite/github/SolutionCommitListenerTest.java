@@ -256,7 +256,7 @@ class SolutionCommitListenerTest {
 
         assertThat(gitHub.commits()).extracting(RecordedCommit::installationId, RecordedCommit::path)
                 .contains(tuple(88L, "two-sum-gh/java/2026-10-20T090000Z.java"));
-        assertThat(linkRepository.findByActiveUserId(user.getId()).orElseThrow().getStatus())
+        assertThat(linkRepository.findCurrentByUserId(user.getId()).orElseThrow().getStatus())
                 .isEqualTo(GitHubLinkStatus.ACTIVE);
     }
 

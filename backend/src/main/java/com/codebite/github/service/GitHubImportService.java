@@ -37,7 +37,7 @@ public class GitHubImportService {
      */
     public GitHubLinkResponse start(Long userId) {
         GitHubLink started = tx.execute(status -> {
-            GitHubLink link = linkRepository.findByActiveUserId(userId)
+            GitHubLink link = linkRepository.findCurrentByUserId(userId)
                     .orElseThrow(() -> new ResourceNotFoundException("error.github.link.notFound"));
             if (link.getStatus() != GitHubLinkStatus.ACTIVE) {
                 throw new DuplicateResourceException("The GitHub Link is broken; link again before importing");

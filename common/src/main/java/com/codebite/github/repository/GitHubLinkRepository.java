@@ -11,7 +11,8 @@ import java.util.Optional;
 public interface GitHubLinkRepository extends JpaRepository<GitHubLink, Long> {
 
     /** The user's current (ACTIVE or BROKEN) GitHub Link, if any. UNLINKED rows never match. */
-    Optional<GitHubLink> findByActiveUserId(Long userId);
+    @Query("SELECT l FROM GitHubLink l WHERE l.activeUserId = :userId")
+    Optional<GitHubLink> findCurrentByUserId(@Param("userId") Long userId);
 
     /**
      * Moves the link's Import to RUNNING if it is AVAILABLE or FAILED, atomically, so two requests
