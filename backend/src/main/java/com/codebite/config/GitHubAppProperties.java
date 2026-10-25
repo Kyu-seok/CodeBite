@@ -20,9 +20,11 @@ public class GitHubAppProperties {
     private String slug = "";
     /**
      * The template ({@code owner/name}) that GitHub's new-repository page creates a Solution
-     * Repository from, so it starts with a README and a default branch. Blank leaves it empty.
+     * Repository from, so it starts with a README and a default branch. Blank means none.
      */
     private String solutionRepositoryTemplate = "";
+    private String solutionRepositoryTemplateOwner = "";
+    private String solutionRepositoryTemplateName = "";
     /** Overrides the install URL derived from {@link #slug}. */
     private String installUrl = "";
     private String apiBaseUrl = "https://api.github.com";
@@ -100,8 +102,29 @@ public class GitHubAppProperties {
         return solutionRepositoryTemplate;
     }
 
+    /** @throws IllegalArgumentException unless blank or {@code owner/name}, failing startup */
     public void setSolutionRepositoryTemplate(String solutionRepositoryTemplate) {
+        String[] parts = solutionRepositoryTemplate.split("/", -1);
+        if (!solutionRepositoryTemplate.isBlank()
+                && (parts.length != 2 || parts[0].isBlank() || parts[1].isBlank())) {
+            throw new IllegalArgumentException(
+                    "app.github.solution-repository-template must be owner/name, was: " + solutionRepositoryTemplate);
+        }
         this.solutionRepositoryTemplate = solutionRepositoryTemplate;
+        this.solutionRepositoryTemplateOwner = solutionRepositoryTemplate.isBlank() ? "" : parts[0];
+        this.solutionRepositoryTemplateName = solutionRepositoryTemplate.isBlank() ? "" : parts[1];
+    }
+
+    public boolean hasSolutionRepositoryTemplate() {
+        return !solutionRepositoryTemplate.isBlank();
+    }
+
+    public String solutionRepositoryTemplateOwner() {
+        return solutionRepositoryTemplateOwner;
+    }
+
+    public String solutionRepositoryTemplateName() {
+        return solutionRepositoryTemplateName;
     }
 
     public String getInstallUrl() {

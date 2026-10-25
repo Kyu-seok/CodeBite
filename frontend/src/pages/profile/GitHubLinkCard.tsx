@@ -4,7 +4,7 @@ import { isAxiosError } from 'axios';
 import { AlertTriangle, CheckCircle2, ExternalLink, Github, History, Loader2, Lock } from 'lucide-react';
 import {
   DEFAULT_REPOSITORY_NAME,
-  getGitHubInstallUrl,
+  getGitHubLinkPages,
   getGitHubLink,
   startGitHubImport,
   startGitHubInstall,
@@ -33,13 +33,13 @@ function isValidRepositoryName(name: string) {
 }
 
 /**
- * Linking without a GitHub Link: the user names the Solution Repository and picks its visibility,
- * creates it on GitHub's prefilled new-repository page (or skips that when it already exists), then
- * installs the CodeBite GitHub App on it.
+ * Linking, or relinking a BROKEN link: the user names the Solution Repository and picks its
+ * visibility, creates it on GitHub's prefilled new-repository page (or skips that when it already
+ * exists), then installs the CodeBite GitHub App on it.
  */
-function LinkSetup() {
+function LinkSetup({ initialName = DEFAULT_REPOSITORY_NAME }: { initialName?: string }) {
   const { t } = useTranslation('profile');
-  const [name, setName] = useState(DEFAULT_REPOSITORY_NAME);
+  const [name, setName] = useState(initialName);
   const [visibility, setVisibility] = useState<GitHubRepositoryVisibility>('public');
   const [createUrl, setCreateUrl] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -50,7 +50,7 @@ function LinkSetup() {
     setBusy(true);
     setError(null);
     try {
-      const res = await getGitHubInstallUrl(trimmed, visibility);
+      const res = await getGitHubLinkPages(trimmed, visibility);
       setCreateUrl(res.data.createRepositoryUrl);
     } catch {
       setError(t('githubLink.startFailed'));
@@ -252,7 +252,7 @@ export function GitHubLinkCard() {
   const { t } = useTranslation('profile');
   const { t: tc } = useTranslation('common');
   const [link, setLink] = useState<GitHubLink | null | undefined>(undefined);
-  const [starting, setStarting] = useState(false);
+  const [relinking, setRelinking] = useState(false);
   const [confirmingUnlink, setConfirmingUnlink] = useState(false);
   const [unlinking, setUnlinking] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -264,18 +264,6 @@ export function GitHubLinkCard() {
   }, []);
 
   if (link === undefined) return null;
-
-  /** Relinks a BROKEN link to the same Solution Repository. */
-  const relink = async (current: GitHubLink) => {
-    setStarting(true);
-    setError(null);
-    try {
-      await startGitHubInstall(current.repositoryFullName.split('/')[1]);
-    } catch {
-      setError(t('githubLink.startFailed'));
-      setStarting(false);
-    }
-  };
 
   const unlink = async () => {
     setUnlinking(true);
@@ -340,10 +328,17 @@ export function GitHubLinkCard() {
                 <AlertTriangle className="h-4 w-4 shrink-0 text-warning-500" />
                 {t('githubLink.broken')}
               </p>
-              <Button size="sm" variant="outline" onClick={() => relink(link)} disabled={starting}>
-                {starting ? t('githubLink.redirecting') : t('githubLink.relink')}
-              </Button>
+              {!relinking && (
+                <Button size="sm" variant="outline" onClick={() => setRelinking(true)}>
+                  {t('githubLink.relink')}
+                </Button>
+              )}
             </div>
+          )}
+
+          {broken && relinking && (
+            // The same name by default; the repository may have been deleted, so it can be created again.
+            <LinkSetup initialName={link.repositoryFullName.slice(link.repositoryFullName.indexOf('/') + 1)} />
           )}
 
           {!broken && <ImportOffer link={link} onChange={setLink} />}

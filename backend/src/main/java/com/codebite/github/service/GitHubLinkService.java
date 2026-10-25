@@ -2,7 +2,7 @@ package com.codebite.github.service;
 
 import com.codebite.common.exception.UnsupportedValueException;
 import com.codebite.config.GitHubAppProperties;
-import com.codebite.github.dto.GitHubInstallUrlResponse;
+import com.codebite.github.dto.GitHubLinkPagesResponse;
 import com.codebite.github.dto.GitHubLinkCallbackRequest;
 import com.codebite.github.dto.GitHubLinkResponse;
 import com.codebite.github.entity.GitHubLink;
@@ -83,7 +83,7 @@ public class GitHubLinkService {
      * create it in the user's own account, prefilled from the template, and one to install the
      * App, whose state remembers the name for {@link #completeInstall}.
      */
-    public GitHubInstallUrlResponse installUrl(Long userId, String repositoryName, String visibility) {
+    public GitHubLinkPagesResponse linkPages(Long userId, String repositoryName, String visibility) {
         if (!properties.isConfigured()) {
             throw new GitHubAppNotConfiguredException();
         }
@@ -100,10 +100,9 @@ public class GitHubLinkService {
         UriComponentsBuilder create = UriComponentsBuilder.fromUriString(properties.getWebBaseUrl())
                 .path("/new")
                 .queryParam("owner", "@me");
-        String template = properties.getSolutionRepositoryTemplate();
-        if (!template.isBlank()) {
-            create.queryParam("template_owner", template.substring(0, template.indexOf('/')))
-                    .queryParam("template_name", template.substring(template.indexOf('/') + 1));
+        if (properties.hasSolutionRepositoryTemplate()) {
+            create.queryParam("template_owner", properties.solutionRepositoryTemplateOwner())
+                    .queryParam("template_name", properties.solutionRepositoryTemplateName());
         }
         String createRepositoryUrl = create.queryParam("name", repositoryName)
                 .queryParam("visibility", visibility)
@@ -111,7 +110,7 @@ public class GitHubLinkService {
                 .encode()
                 .build()
                 .toUriString();
-        return new GitHubInstallUrlResponse(installUrl, createRepositoryUrl);
+        return new GitHubLinkPagesResponse(installUrl, createRepositoryUrl);
     }
 
     /**
@@ -129,7 +128,7 @@ public class GitHubLinkService {
         ResolvedInstallation installation = gitHub.resolveInstallCallback(request.code(), request.installationId());
         List<GitHubRepo> granted = installation.repositories();
         GitHubRepo repo = granted.stream()
-                .filter(r -> r.fullName().substring(r.fullName().indexOf('/') + 1).equalsIgnoreCase(repositoryName))
+                .filter(r -> r.name().equalsIgnoreCase(repositoryName))
                 .findFirst()
                 .or(() -> granted.size() == 1 ? Optional.of(granted.get(0)) : Optional.empty())
                 .orElseThrow(() -> new UnsupportedValueException("error.github.repositoryNotGranted", repositoryName));

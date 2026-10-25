@@ -19,12 +19,12 @@ import java.util.UUID;
  * started it. GitHub hands the state back on the callback, which is rejected unless the same user
  * completes it, so a crafted install link cannot attach someone else's installation to a victim.
  * It also carries the name of the Solution Repository the user chose, for the callback to link.
- *
  */
 @Service
 public class GitHubLinkStateService {
 
     private static final String PURPOSE = "github-link";
+    private static final String STATE_INVALID = "error.github.link.stateInvalid";
 
     private final SecretKey key;
     private final long expirationMs;
@@ -52,19 +52,15 @@ public class GitHubLinkStateService {
      * @throws InvalidOAuthStateException if the state is forged, expired or another user's
      */
     public String verify(String state, Long userId) {
-        return parse(state, PURPOSE, userId, "error.github.link.stateInvalid").get("repositoryName", String.class);
-    }
-
-    private Claims parse(String token, String purpose, Long userId, String messageCode) {
         Claims claims;
         try {
-            claims = Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload();
+            claims = Jwts.parser().verifyWith(key).build().parseSignedClaims(state).getPayload();
         } catch (JwtException | IllegalArgumentException e) {
-            throw new InvalidOAuthStateException(messageCode);
+            throw new InvalidOAuthStateException(STATE_INVALID);
         }
-        if (!purpose.equals(claims.get("purpose", String.class)) || !userId.toString().equals(claims.getSubject())) {
-            throw new InvalidOAuthStateException(messageCode);
+        if (!PURPOSE.equals(claims.get("purpose", String.class)) || !userId.toString().equals(claims.getSubject())) {
+            throw new InvalidOAuthStateException(STATE_INVALID);
         }
-        return claims;
+        return claims.get("repositoryName", String.class);
     }
 }
