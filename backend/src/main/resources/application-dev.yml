@@ -6,6 +6,10 @@ spring:
   jpa:
     show-sql: true
 app:
+  # Fixed, not ${CORS_ALLOWED_ORIGINS}: a shell that sourced the production infra/.env would
+  # otherwise serve https://code-bite.com only, and every browser call from Vite gets 403.
+  cors:
+    allowed-origins: http://localhost:5173,http://localhost:5174,http://localhost:3000
   judge0:
     url: ${JUDGE0_URL:http://192.168.219.200:2358}
 logging:
