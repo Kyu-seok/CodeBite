@@ -1,5 +1,5 @@
 import client from "./client";
-import type { GitHubInstallUrl, GitHubLink, GitHubRepositoryVisibility } from "../types/github";
+import type { GitHubLinkPages, GitHubLink, GitHubRepositoryVisibility } from "../types/github";
 
 /** The Solution Repository name suggested when linking. */
 export const DEFAULT_REPOSITORY_NAME = "codebite-solutions";
@@ -13,11 +13,11 @@ export async function getGitHubLink(): Promise<GitHubLink | null> {
 }
 
 /** The GitHub pages that create the named Solution Repository and install the App on it. */
-export function getGitHubInstallUrl(
+export function getGitHubLinkPages(
   repositoryName: string,
   visibility: GitHubRepositoryVisibility = "public",
 ) {
-  return client.get<GitHubInstallUrl>("/github/link/install", {
+  return client.get<GitHubLinkPages>("/github/link/install", {
     params: { repositoryName, visibility },
   });
 }
@@ -33,10 +33,11 @@ export function rememberedRepositoryName() {
 
 /**
  * Sends the browser to the GitHub App install page for the named Solution Repository; GitHub
- * returns to `/github/callback`.
+ * returns to `/github/callback`. Fetches the page afresh: its state expires, and creating the
+ * repository on GitHub first can take a while.
  */
 export async function startGitHubInstall(repositoryName: string) {
-  const res = await getGitHubInstallUrl(repositoryName);
+  const res = await getGitHubLinkPages(repositoryName);
   try {
     sessionStorage.setItem(REPOSITORY_NAME_KEY, repositoryName);
   } catch {

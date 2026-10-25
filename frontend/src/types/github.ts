@@ -20,7 +20,7 @@ export interface GitHubLink {
 export type GitHubRepositoryVisibility = "public" | "private";
 
 /** The two GitHub pages of linking a Solution Repository. */
-export interface GitHubInstallUrl {
+export interface GitHubLinkPages {
   /** Installs the CodeBite GitHub App; the state remembers the chosen repository name. */
   installUrl: string;
   /** GitHub's new-repository page, prefilled with the chosen name and visibility. */
