@@ -63,6 +63,7 @@ Root `settings.gradle` includes three modules: `common`, `backend`, `worker`. Th
 source scripts/dev-env.sh && SPRING_PROFILES_ACTIVE=dev ./gradlew :backend:bootRun  # run locally
 ```
 `scripts/dev-env.sh` loads only the OAuth and GitHub App values from `infra/.env`. That file is the production server's config: sourcing it whole overrides the dev CORS origins, JWT secret, database and Judge0 URL.
+When a local backend or worker answers 403, behaves like old code, or a button "does nothing", run `scripts/dev-status.sh` first. It flags a process older than its source (bootRun doesn't reload) or carrying production values.
 
 ### Infrastructure
 ```bash
