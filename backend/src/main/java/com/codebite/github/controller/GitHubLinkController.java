@@ -1,7 +1,7 @@
 package com.codebite.github.controller;
 
 import com.codebite.auth.jwt.JwtUserPrincipal;
-import com.codebite.github.dto.GitHubInstallUrlResponse;
+import com.codebite.github.dto.GitHubLinkPagesResponse;
 import com.codebite.github.dto.GitHubLinkCallbackRequest;
 import com.codebite.github.dto.GitHubLinkResponse;
 import com.codebite.github.service.GitHubImportService;
@@ -47,11 +47,11 @@ public class GitHubLinkController {
 
     /** The GitHub pages that create the named Solution Repository and install the App on it. */
     @GetMapping("/install")
-    public ResponseEntity<GitHubInstallUrlResponse> installUrl(
+    public ResponseEntity<GitHubLinkPagesResponse> linkPages(
             @AuthenticationPrincipal JwtUserPrincipal principal,
             @RequestParam String repositoryName,
             @RequestParam(defaultValue = "public") String visibility) {
-        return ResponseEntity.ok(linkService.installUrl(principal.id(), repositoryName, visibility));
+        return ResponseEntity.ok(linkService.linkPages(principal.id(), repositoryName, visibility));
     }
 
     /** Completes the install GitHub redirected back from, linking the chosen Solution Repository. */

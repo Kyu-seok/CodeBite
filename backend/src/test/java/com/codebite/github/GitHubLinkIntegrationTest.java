@@ -198,6 +198,17 @@ class GitHubLinkIntegrationTest {
     }
 
     @Test
+    void callbackWithNoGrantedRepositoryLinksNothing() throws Exception {
+        gitHub.authorize("code-1", new GitHubAccount(583231, "octocat"), 77);
+        gitHub.install(77);
+
+        callback("code-1", 77, stateFor(token, "codebite-solutions"), token).andExpect(status().isBadRequest());
+
+        mockMvc.perform(get("/api/github/link").header("Authorization", "Bearer " + token))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
     void callbackWithAnotherUsersStateIsRejected() throws Exception {
         gitHub.authorize("code-1", new GitHubAccount(583231, "octocat"), 77);
         gitHub.install(77, new GitHubRepo(1, "octocat/solutions", "main", false));
