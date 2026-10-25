@@ -1,5 +1,9 @@
 package com.codebite.github.dto;
 
-/** Where to send the user to install the CodeBite GitHub App, with a state bound to them. */
-public record GitHubInstallUrlResponse(String installUrl) {
+/**
+ * The two GitHub pages of linking: {@code createRepositoryUrl} opens GitHub's new-repository page
+ * prefilled with the chosen Solution Repository, and {@code installUrl} installs the CodeBite
+ * GitHub App with a state bound to the user and that repository's name.
+ */
+public record GitHubInstallUrlResponse(String installUrl, String createRepositoryUrl) {
 }

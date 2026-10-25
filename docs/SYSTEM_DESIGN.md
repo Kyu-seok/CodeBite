@@ -387,9 +387,8 @@ _accounts
 | Method | Path                          | Description                                                        | Auth |
 |--------|-------------------------------|--------------------------------------------------------------------|------|
 | GET    | /api/github/link              | Current GitHub Link (204 if none); a BROKEN link is re-checked and recovered to ACTIVE if reachable again | Yes  |
-| GET    | /api/github/link/install      | App install URL with a user-bound state (503 if App not configured)| Yes  |
-| POST   | /api/github/link/callback     | Finish install: verify the account can access the installation; link if one repo granted, else list repos with a signed `selectionToken` | Yes  |
-| PUT    | /api/github/link/repository   | Choose the Solution Repository: `{selectionToken, repositoryId}`; re-lists the installation's repos and links the choice (400 not granted, 401 bad token) | Yes  |
+| GET    | /api/github/link/install      | `?repositoryName=&visibility=`: App install URL with a state bound to the user and that name, plus GitHub's new-repository page prefilled from the template (400 bad name, 503 if App not configured) | Yes  |
+| POST   | /api/github/link/callback     | Finish install: verify the account can access the installation; link the granted repo with the state's name, or the only granted one (400 if several and none matches) | Yes  |
 | DELETE | /api/github/link              | Unlink: mark the current link UNLINKED (row kept); no GitHub call, repository untouched | Yes  |
 | POST   | /api/github/link/import       | Start the Import: 202 + link (RUNNING) when AVAILABLE/FAILED; 409 when RUNNING, DONE or the link is BROKEN; 404 without a link | Yes  |
 
@@ -803,6 +802,7 @@ Terms in GLOSSARY.md; decisions in ADR 0001 (UTC days), 0002 (backdated Imports)
 - [x] Live Solution Commits for Accepted submissions: `solution_commits`, `submission-results` listener, `GitHubGateway.addFile` via the Contents API (#18)
 - [x] Solution Commit status on submission detail, with retries: `solutionCommit` on `GET /api/submissions/{id}`, back-off retries, `codebite.solution.commits` counter (#19)
 - [x] Choose the Solution Repository when several were granted: signed selection token, `PUT /api/github/link/repository`, callback picker (#20)
+- [x] Guided Solution Repository creation: name and visibility on the profile card, GitHub's prefilled new-repository page from a template, callback links by the chosen name; replaces the picker and selection token from #20
 - [x] Unlink and relink: `DELETE /api/github/link`, Unlink with confirmation on the profile card (#21)
 - [x] BROKEN links when the installation or repository is gone: `GitHubLink.markBroken()` on `GitHubInstallationGoneException`, BROKEN skips Solution Commits, `GitHubGateway.isRepositoryReachable` re-checks a BROKEN link on read, relink prompt on the profile card (#22)
 - [x] One-time Import of earlier Accepted submissions: `POST /api/github/link/import`, `github-imports` topic, JGit batch push, Import offer on the profile card (#23)

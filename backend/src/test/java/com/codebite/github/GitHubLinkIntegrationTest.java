@@ -32,7 +32,6 @@ import static org.hamcrest.Matchers.startsWith;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -70,10 +69,28 @@ class GitHubLinkIntegrationTest {
 
     @Test
     void installUrlPointsAtTheAppAndCarriesAState() throws Exception {
-        mockMvc.perform(get("/api/github/link/install").header("Authorization", "Bearer " + token))
+        install("codebite-solutions", "public", token)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.installUrl")
                         .value(startsWith("https://github.com/apps/codebite-test/installations/new?state=")));
+    }
+
+    @Test
+    void installRejectsARepositoryNameOrVisibilityGitHubWouldNotAccept() throws Exception {
+        install("my solutions!", "public", token).andExpect(status().isBadRequest());
+        install("..", "public", token).andExpect(status().isBadRequest());
+        install("a".repeat(101), "public", token).andExpect(status().isBadRequest());
+        install("codebite-solutions", "secret", token).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void createRepositoryUrlPrefillsGitHubsNewRepositoryPageFromTheTemplate() throws Exception {
+        install("my-solutions", "private", token)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.createRepositoryUrl").value("https://github.com/new"
+                        + "?owner=@me&template_owner=codebite&template_name=solutions-template"
+                        + "&name=my-solutions&visibility=private"
+                        + "&description=Solutions%20to%20CodeBite%20problems"));
     }
 
     @Test
@@ -83,10 +100,8 @@ class GitHubLinkIntegrationTest {
 
         callback("code-1", 77, stateFor(token), token)
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.link.githubLogin").value("octocat"))
-                .andExpect(jsonPath("$.link.repositoryFullName").value("octocat/codebite-solutions"))
-                .andExpect(jsonPath("$.repositories").isEmpty())
-                .andExpect(jsonPath("$.selectionToken").doesNotExist());
+                .andExpect(jsonPath("$.githubLogin").value("octocat"))
+                .andExpect(jsonPath("$.repositoryFullName").value("octocat/codebite-solutions"));
 
         mockMvc.perform(get("/api/github/link").header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
@@ -129,7 +144,7 @@ class GitHubLinkIntegrationTest {
 
         callback("code-1", 77, stateFor(token), token)
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.link.repositoryPrivate").value(true));
+                .andExpect(jsonPath("$.repositoryPrivate").value(true));
 
         mockMvc.perform(get("/api/github/link").header("Authorization", "Bearer " + token))
                 .andExpect(jsonPath("$.repositoryPrivate").value(true))
@@ -137,88 +152,49 @@ class GitHubLinkIntegrationTest {
     }
 
     @Test
-    void callbackWithSeveralGrantedRepositoriesListsThemWithoutLinking() throws Exception {
+    void callbackLinksTheGrantedRepositoryWithTheNameChosenInCodeBite() throws Exception {
         gitHub.authorize("code-1", new GitHubAccount(583231, "octocat"), 77);
         gitHub.install(77,
-                new GitHubRepo(1, "octocat/solutions", "main", false),
-                new GitHubRepo(2, "octocat/dotfiles", "main", true));
+                new GitHubRepo(1, "octocat/dotfiles", "main", true),
+                new GitHubRepo(2, "octocat/codebite-solutions", "trunk", false));
 
-        callback("code-1", 77, stateFor(token), token)
+        // GitHub repository names are case-insensitive.
+        callback("code-1", 77, stateFor(token, "CodeBite-Solutions"), token)
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.link").doesNotExist())
-                .andExpect(jsonPath("$.repositories.length()").value(2))
-                .andExpect(jsonPath("$.repositories[1].fullName").value("octocat/dotfiles"))
-                .andExpect(jsonPath("$.repositories[1].repositoryPrivate").value(true))
-                .andExpect(jsonPath("$.selectionToken").isNotEmpty());
-
-        mockMvc.perform(get("/api/github/link").header("Authorization", "Bearer " + token))
-                .andExpect(status().isNoContent());
-    }
-
-    @Test
-    void choosingOneOfTheGrantedRepositoriesCreatesTheLink() throws Exception {
-        gitHub.authorize("code-1", new GitHubAccount(583231, "octocat"), 77);
-        gitHub.install(77,
-                new GitHubRepo(1, "octocat/solutions", "main", false),
-                new GitHubRepo(2, "octocat/dotfiles", "trunk", true));
-        String selectionToken = selectionTokenFrom(callback("code-1", 77, stateFor(token), token));
-
-        chooseRepository(selectionToken, 2, token)
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.githubLogin").value("octocat"))
-                .andExpect(jsonPath("$.repositoryFullName").value("octocat/dotfiles"));
-
-        mockMvc.perform(get("/api/github/link").header("Authorization", "Bearer " + token))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.githubAccountId").value(583231))
-                .andExpect(jsonPath("$.githubLogin").value("octocat"))
                 .andExpect(jsonPath("$.repositoryId").value(2))
-                .andExpect(jsonPath("$.repositoryFullName").value("octocat/dotfiles"))
-                .andExpect(jsonPath("$.defaultBranch").value("trunk"))
-                .andExpect(jsonPath("$.repositoryPrivate").value(true))
-                .andExpect(jsonPath("$.status").value("ACTIVE"))
-                .andExpect(jsonPath("$.importState").value("AVAILABLE"));
+                .andExpect(jsonPath("$.repositoryFullName").value("octocat/codebite-solutions"))
+                .andExpect(jsonPath("$.defaultBranch").value("trunk"));
+
+        mockMvc.perform(get("/api/github/link").header("Authorization", "Bearer " + token))
+                .andExpect(jsonPath("$.repositoryFullName").value("octocat/codebite-solutions"));
     }
 
     @Test
-    void choosingARepositoryTheInstallationDoesNotGrantIsRejected() throws Exception {
+    void callbackWithOneGrantedRepositoryOfAnotherNameLinksIt() throws Exception {
+        // The user renamed the repository on GitHub's new-repository page.
+        gitHub.authorize("code-1", new GitHubAccount(583231, "octocat"), 77);
+        gitHub.install(77, new GitHubRepo(1, "octocat/my-solutions", "main", false));
+
+        callback("code-1", 77, stateFor(token, "codebite-solutions"), token)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.repositoryFullName").value("octocat/my-solutions"));
+    }
+
+    @Test
+    void callbackWithSeveralGrantedRepositoriesNoneWithTheChosenNameLinksNothing() throws Exception {
         gitHub.authorize("code-1", new GitHubAccount(583231, "octocat"), 77);
         gitHub.install(77,
                 new GitHubRepo(1, "octocat/solutions", "main", false),
                 new GitHubRepo(2, "octocat/dotfiles", "main", true));
-        gitHub.install(99, new GitHubRepo(3, "victim/private-code", "main", true));
-        String selectionToken = selectionTokenFrom(callback("code-1", 77, stateFor(token), token));
 
-        chooseRepository(selectionToken, 3, token).andExpect(status().isBadRequest());
-
-        mockMvc.perform(get("/api/github/link").header("Authorization", "Bearer " + token))
-                .andExpect(status().isNoContent());
-    }
-
-    @Test
-    void choosingWithAnotherUsersOrAForgedSelectionTokenIsRejected() throws Exception {
-        gitHub.authorize("code-1", new GitHubAccount(583231, "octocat"), 77);
-        gitHub.install(77,
-                new GitHubRepo(1, "octocat/solutions", "main", false),
-                new GitHubRepo(2, "octocat/dotfiles", "main", true));
-        String otherToken = tokenFor("other");
-        String othersSelection = selectionTokenFrom(callback("code-1", 77, stateFor(otherToken), otherToken));
-
-        chooseRepository(othersSelection, 1, token).andExpect(status().isUnauthorized());
-        chooseRepository("not-a-token", 1, token).andExpect(status().isUnauthorized());
-        // The install state is signed with the same key but is not a selection token.
-        chooseRepository(stateFor(token), 1, token).andExpect(status().isUnauthorized());
+        callback("code-1", 77, stateFor(token, "codebite-solutions"), token)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value(
+                        "The CodeBite app was not given access to codebite-solutions. "
+                                + "Install it again and choose codebite-solutions."));
 
         mockMvc.perform(get("/api/github/link").header("Authorization", "Bearer " + token))
                 .andExpect(status().isNoContent());
-    }
-
-    @Test
-    void chooseRepositoryRequiresAuth() throws Exception {
-        mockMvc.perform(put("/api/github/link/repository")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"selectionToken\":\"t\",\"repositoryId\":1}"))
-                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -445,23 +421,20 @@ class GitHubLinkIntegrationTest {
                         Map.of("code", code, "installationId", installationId, "state", state))));
     }
 
-    private ResultActions chooseRepository(String selectionToken, long repositoryId, String bearer) throws Exception {
-        return mockMvc.perform(put("/api/github/link/repository")
-                .header("Authorization", "Bearer " + bearer)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(
-                        Map.of("selectionToken", selectionToken, "repositoryId", repositoryId))));
+    private ResultActions install(String repositoryName, String visibility, String bearer) throws Exception {
+        return mockMvc.perform(get("/api/github/link/install")
+                .param("repositoryName", repositoryName)
+                .param("visibility", visibility)
+                .header("Authorization", "Bearer " + bearer));
     }
 
-    private String selectionTokenFrom(ResultActions callback) throws Exception {
-        String body = callback.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
-        return objectMapper.readTree(body).get("selectionToken").asText();
+    private String stateFor(String bearer) throws Exception {
+        return stateFor(bearer, "codebite-solutions");
     }
 
     /** The state GitHub would hand back: the one in the install URL issued to that user. */
-    private String stateFor(String bearer) throws Exception {
-        String body = mockMvc.perform(get("/api/github/link/install").header("Authorization", "Bearer " + bearer))
-                .andReturn().getResponse().getContentAsString();
+    private String stateFor(String bearer, String repositoryName) throws Exception {
+        String body = install(repositoryName, "public", bearer).andReturn().getResponse().getContentAsString();
         String installUrl = objectMapper.readTree(body).get("installUrl").asText();
         return UriComponentsBuilder.fromUriString(installUrl).build().getQueryParams().getFirst("state");
     }

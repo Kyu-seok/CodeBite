@@ -42,7 +42,21 @@
   },
   "githubLink": {
     "title": "GitHub 연결",
-    "description": "직접 만든 GitHub 저장소에 정답 제출을 커밋해 기여 그래프에 표시합니다.",
+    "description": "정답 제출을 내 GitHub 저장소에 커밋해 기여 그래프에 표시합니다.",
+    "setup": {
+      "name": "저장소 이름",
+      "nameInvalid": "영문자, 숫자, \".\", \"-\", \"_\"만 100자까지 사용할 수 있습니다.",
+      "visibility": "공개 범위",
+      "public": "공개",
+      "private": "비공개",
+      "createStep": "1. GitHub에서 {{repository}} 저장소를 만드세요.",
+      "createHint": "새 탭에서 GitHub가 모든 항목이 채워진 채로 열립니다. Create repository만 누르면 됩니다. 이미 {{repository}}이(가) 있다면 이 단계는 건너뛰세요.",
+      "create": "GitHub에서 만들기",
+      "connectStep": "2. CodeBite에 연결하세요.",
+      "connectHint": "다음 페이지에서 Only select repositories → {{repository}}를 선택한 뒤 Install을 누르세요.",
+      "connect": "연결하기",
+      "back": "이름 변경"
+    },
     "link": "GitHub 연결",
     "relink": "다시 연결",
     "redirecting": "GitHub 여는 중…",
@@ -74,11 +88,7 @@
       "notAuthorised": "이 GitHub 계정은 해당 CodeBite 앱 설치에 대한 권한이 없습니다.",
       "expired": "연결 요청이 만료되었거나 다른 계정의 요청입니다. 프로필에서 다시 연결해 주세요.",
       "failed": "연결을 완료할 수 없습니다. 다시 시도해 주세요.",
-      "chooseRepository": "여러 저장소에 접근 권한을 주셨습니다. 풀이 저장소로 사용할 저장소 하나를 선택해 주세요. CodeBite는 선택한 저장소에만 풀이를 추가합니다.",
-      "chooseRepositoryLegend": "풀이 저장소",
-      "useRepository": "이 저장소 사용",
-      "notGranted": "CodeBite 앱에 더 이상 해당 저장소에 대한 접근 권한이 없습니다. GitHub를 다시 열어 권한을 부여해 주세요.",
-      "noRepository": "접근 권한을 준 저장소가 없습니다. GitHub에서 풀이 저장소를 선택한 뒤 다시 시도해 주세요.",
+      "notGranted": "CodeBite 앱에 {{repository}} 저장소 접근 권한이 없습니다. GitHub를 다시 열어 {{repository}}을(를) 선택해 주세요.",
       "tryAgain": "GitHub 다시 열기",
       "backToProfile": "프로필로 돌아가기"
     }

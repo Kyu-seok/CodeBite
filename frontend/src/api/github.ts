@@ -1,9 +1,10 @@
 import client from "./client";
-import type {
-  GitHubInstallUrl,
-  GitHubLink,
-  GitHubLinkCallbackResponse,
-} from "../types/github";
+import type { GitHubInstallUrl, GitHubLink, GitHubRepositoryVisibility } from "../types/github";
+
+/** The Solution Repository name suggested when linking. */
+export const DEFAULT_REPOSITORY_NAME = "codebite-solutions";
+
+const REPOSITORY_NAME_KEY = "codebite.github.repositoryName";
 
 /** The current GitHub Link, or `null` when the user has none (204). */
 export async function getGitHubLink(): Promise<GitHubLink | null> {
@@ -11,29 +12,46 @@ export async function getGitHubLink(): Promise<GitHubLink | null> {
   return res.status === 204 || !res.data ? null : res.data;
 }
 
-/** The GitHub App install page, carrying a state bound to the signed-in user. */
-export function getGitHubInstallUrl() {
-  return client.get<GitHubInstallUrl>("/github/link/install");
+/** The GitHub pages that create the named Solution Repository and install the App on it. */
+export function getGitHubInstallUrl(
+  repositoryName: string,
+  visibility: GitHubRepositoryVisibility = "public",
+) {
+  return client.get<GitHubInstallUrl>("/github/link/install", {
+    params: { repositoryName, visibility },
+  });
 }
 
-/** Sends the browser to the GitHub App install page; GitHub returns to `/github/callback`. */
-export async function startGitHubInstall() {
-  const res = await getGitHubInstallUrl();
+/** The name the user last chose to link, so the callback page can retry with it. */
+export function rememberedRepositoryName() {
+  try {
+    return sessionStorage.getItem(REPOSITORY_NAME_KEY) ?? DEFAULT_REPOSITORY_NAME;
+  } catch {
+    return DEFAULT_REPOSITORY_NAME;
+  }
+}
+
+/**
+ * Sends the browser to the GitHub App install page for the named Solution Repository; GitHub
+ * returns to `/github/callback`.
+ */
+export async function startGitHubInstall(repositoryName: string) {
+  const res = await getGitHubInstallUrl(repositoryName);
+  try {
+    sessionStorage.setItem(REPOSITORY_NAME_KEY, repositoryName);
+  } catch {
+    // Only the callback page's retry uses it, and it falls back to the default name.
+  }
   window.location.assign(res.data.installUrl);
 }
 
 /** Completes the install GitHub redirected back to `/github/callback` from. */
 export function completeGitHubLink(code: string, installationId: number, state: string) {
-  return client.post<GitHubLinkCallbackResponse>("/github/link/callback", {
+  return client.post<GitHubLink>("/github/link/callback", {
     code,
     installationId,
     state,
   });
-}
-
-/** Chooses the Solution Repository after an install granted several. */
-export function chooseGitHubRepository(selectionToken: string, repositoryId: number) {
-  return client.put<GitHubLink>("/github/link/repository", { selectionToken, repositoryId });
 }
 
 /**

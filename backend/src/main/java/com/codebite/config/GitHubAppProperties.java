@@ -18,6 +18,11 @@ public class GitHubAppProperties {
     private String privateKeyBase64 = "";
     /** The App's slug, from its public link {@code https://github.com/apps/<slug>}. */
     private String slug = "";
+    /**
+     * The template ({@code owner/name}) that GitHub's new-repository page creates a Solution
+     * Repository from, so it starts with a README and a default branch. Blank leaves it empty.
+     */
+    private String solutionRepositoryTemplate = "";
     /** Overrides the install URL derived from {@link #slug}. */
     private String installUrl = "";
     private String apiBaseUrl = "https://api.github.com";
@@ -89,6 +94,14 @@ public class GitHubAppProperties {
 
     public void setSlug(String slug) {
         this.slug = slug;
+    }
+
+    public String getSolutionRepositoryTemplate() {
+        return solutionRepositoryTemplate;
+    }
+
+    public void setSolutionRepositoryTemplate(String solutionRepositoryTemplate) {
+        this.solutionRepositoryTemplate = solutionRepositoryTemplate;
     }
 
     public String getInstallUrl() {

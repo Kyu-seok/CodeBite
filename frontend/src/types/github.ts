@@ -17,23 +17,12 @@ export interface GitHubLink {
   createdAt: string;
 }
 
+export type GitHubRepositoryVisibility = "public" | "private";
+
+/** The two GitHub pages of linking a Solution Repository. */
 export interface GitHubInstallUrl {
+  /** Installs the CodeBite GitHub App; the state remembers the chosen repository name. */
   installUrl: string;
-}
-
-export interface GitHubRepositoryOption {
-  id: number;
-  fullName: string;
-  repositoryPrivate: boolean;
-}
-
-/**
- * Outcome of an install callback: `link` when exactly one repository was granted,
- * otherwise `null` with the granted `repositories` and a `selectionToken` to send back
- * with the chosen one.
- */
-export interface GitHubLinkCallbackResponse {
-  link: GitHubLink | null;
-  repositories: GitHubRepositoryOption[];
-  selectionToken: string | null;
+  /** GitHub's new-repository page, prefilled with the chosen name and visibility. */
+  createRepositoryUrl: string;
 }

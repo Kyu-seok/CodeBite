@@ -453,11 +453,12 @@ class GitHubImportIntegrationTest {
                         .content(objectMapper.writeValueAsString(Map.of(
                                 "code", "code-" + fullName, "installationId", INSTALLATION, "state", state()))))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.link.repositoryFullName").value(fullName));
+                .andExpect(jsonPath("$.repositoryFullName").value(fullName));
     }
 
     private String state() throws Exception {
-        String body = mockMvc.perform(get("/api/github/link/install").header("Authorization", "Bearer " + token))
+        String body = mockMvc.perform(get("/api/github/link/install").param("repositoryName", "codebite-solutions")
+                        .header("Authorization", "Bearer " + token))
                 .andReturn().getResponse().getContentAsString();
         String installUrl = objectMapper.readTree(body).get("installUrl").asText();
         return UriComponentsBuilder.fromUriString(installUrl).build().getQueryParams().getFirst("state");

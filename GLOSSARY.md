@@ -39,7 +39,7 @@ The connection between a CodeBite user and one GitHub account and its Solution R
 _Avoid_: GitHub integration, GitHub sync, connected account
 
 **Solution Repository**:
-The single GitHub repository, created and chosen by the user, that receives their Solution Commits. Files in it are only ever added, never replaced or removed.
+The single repository in the GitHub account's own space that receives the user's Solution Commits. The user creates it on GitHub as part of linking, under the name they pick in CodeBite, or reuses a repository already bearing that name. Files in it are only ever added, never replaced or removed.
 
 **Solution Commit**:
 The commit that adds one Accepted submission, an admin's included, to the Solution Repository, dated at the moment the submission was Accepted. A Repaired Day never has one.

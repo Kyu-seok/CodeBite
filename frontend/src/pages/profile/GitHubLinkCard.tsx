@@ -2,9 +2,17 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { isAxiosError } from 'axios';
 import { AlertTriangle, CheckCircle2, ExternalLink, Github, History, Loader2, Lock } from 'lucide-react';
-import { getGitHubLink, startGitHubImport, startGitHubInstall, unlinkGitHub } from '@/api/github';
-import type { GitHubLink } from '@/types/github';
-import { Button } from '@/components/ui/Button';
+import {
+  DEFAULT_REPOSITORY_NAME,
+  getGitHubInstallUrl,
+  getGitHubLink,
+  startGitHubImport,
+  startGitHubInstall,
+  unlinkGitHub,
+} from '@/api/github';
+import type { GitHubLink, GitHubRepositoryVisibility } from '@/types/github';
+import { Button, buttonVariants } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
 import {
   Dialog,
   DialogClose,
@@ -17,6 +25,134 @@ import {
 } from '@/components/ui/Dialog';
 
 const IMPORT_POLL_MS = 3000;
+/** What GitHub accepts as a repository name, apart from "." and "..". */
+const REPOSITORY_NAME = /^[A-Za-z0-9._-]{1,100}$/;
+
+function isValidRepositoryName(name: string) {
+  return REPOSITORY_NAME.test(name) && name !== '.' && name !== '..';
+}
+
+/**
+ * Linking without a GitHub Link: the user names the Solution Repository and picks its visibility,
+ * creates it on GitHub's prefilled new-repository page (or skips that when it already exists), then
+ * installs the CodeBite GitHub App on it.
+ */
+function LinkSetup() {
+  const { t } = useTranslation('profile');
+  const [name, setName] = useState(DEFAULT_REPOSITORY_NAME);
+  const [visibility, setVisibility] = useState<GitHubRepositoryVisibility>('public');
+  const [createUrl, setCreateUrl] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const trimmed = name.trim();
+
+  const proceed = async () => {
+    setBusy(true);
+    setError(null);
+    try {
+      const res = await getGitHubInstallUrl(trimmed, visibility);
+      setCreateUrl(res.data.createRepositoryUrl);
+    } catch {
+      setError(t('githubLink.startFailed'));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const connect = async () => {
+    setBusy(true);
+    setError(null);
+    try {
+      await startGitHubInstall(trimmed);
+    } catch {
+      setError(t('githubLink.startFailed'));
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="flex flex-col gap-3">
+      <p className="text-sm text-muted-foreground">{t('githubLink.description')}</p>
+
+      {createUrl === null ? (
+        <div className="flex flex-col gap-3">
+          <label className="flex flex-col gap-1 text-sm">
+            <span className="text-muted-foreground">{t('githubLink.setup.name')}</span>
+            <Input
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              maxLength={100}
+              aria-invalid={!isValidRepositoryName(trimmed)}
+            />
+          </label>
+          {!isValidRepositoryName(trimmed) && (
+            <p className="text-xs text-error-500">{t('githubLink.setup.nameInvalid')}</p>
+          )}
+          <fieldset className="flex flex-wrap gap-4 text-sm">
+            <legend className="sr-only">{t('githubLink.setup.visibility')}</legend>
+            {(['public', 'private'] as const).map((option) => (
+              <label key={option} className="flex cursor-pointer items-center gap-2 text-foreground">
+                <input
+                  type="radio"
+                  name="solution-repository-visibility"
+                  value={option}
+                  checked={visibility === option}
+                  onChange={() => setVisibility(option)}
+                  className="accent-primary"
+                />
+                {t(`githubLink.setup.${option}`)}
+              </label>
+            ))}
+          </fieldset>
+          {visibility === 'private' && (
+            <p className="rounded-lg bg-muted/40 px-3 py-2 text-xs text-muted-foreground">
+              {t('githubLink.privateReminder')}
+            </p>
+          )}
+          <div className="flex justify-end">
+            <Button size="sm" onClick={proceed} disabled={busy || !isValidRepositoryName(trimmed)}>
+              {t('githubLink.link')}
+            </Button>
+          </div>
+        </div>
+      ) : (
+        <ol className="flex flex-col gap-3 text-sm">
+          <li className="flex flex-col gap-2 rounded-lg border border-border px-3 py-2">
+            <p className="text-foreground">{t('githubLink.setup.createStep', { repository: trimmed })}</p>
+            <p className="text-xs text-muted-foreground">
+              {t('githubLink.setup.createHint', { repository: trimmed })}
+            </p>
+            <a
+              href={createUrl}
+              target="_blank"
+              rel="noreferrer"
+              className={buttonVariants({ size: 'sm', variant: 'outline', className: 'self-start' })}
+            >
+              {t('githubLink.setup.create')}
+              <ExternalLink className="h-3 w-3" />
+            </a>
+          </li>
+          <li className="flex flex-col gap-2 rounded-lg border border-border px-3 py-2">
+            <p className="text-foreground">{t('githubLink.setup.connectStep')}</p>
+            <p className="text-xs text-muted-foreground">
+              {t('githubLink.setup.connectHint', { repository: trimmed })}
+            </p>
+            <div className="flex flex-wrap gap-2">
+              <Button size="sm" onClick={connect} disabled={busy}>
+                {busy ? t('githubLink.redirecting') : t('githubLink.setup.connect')}
+              </Button>
+              <Button size="sm" variant="ghost" onClick={() => setCreateUrl(null)} disabled={busy}>
+                {t('githubLink.setup.back')}
+              </Button>
+            </div>
+          </li>
+        </ol>
+      )}
+
+      {error && <p className="text-sm text-error-500">{error}</p>}
+    </div>
+  );
+}
 
 /**
  * The one-time Import of earlier Accepted submissions into this Solution Repository, each dated at
@@ -129,11 +265,12 @@ export function GitHubLinkCard() {
 
   if (link === undefined) return null;
 
-  const install = async () => {
+  /** Relinks a BROKEN link to the same Solution Repository. */
+  const relink = async (current: GitHubLink) => {
     setStarting(true);
     setError(null);
     try {
-      await startGitHubInstall();
+      await startGitHubInstall(current.repositoryFullName.split('/')[1]);
     } catch {
       setError(t('githubLink.startFailed'));
       setStarting(false);
@@ -165,12 +302,7 @@ export function GitHubLinkCard() {
       </div>
 
       {!link ? (
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <p className="text-sm text-muted-foreground">{t('githubLink.description')}</p>
-          <Button size="sm" onClick={install} disabled={starting}>
-            {starting ? t('githubLink.redirecting') : t('githubLink.link')}
-          </Button>
-        </div>
+        <LinkSetup />
       ) : (
         <div className="flex flex-col gap-3">
           <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm">
@@ -208,7 +340,7 @@ export function GitHubLinkCard() {
                 <AlertTriangle className="h-4 w-4 shrink-0 text-warning-500" />
                 {t('githubLink.broken')}
               </p>
-              <Button size="sm" variant="outline" onClick={install} disabled={starting}>
+              <Button size="sm" variant="outline" onClick={() => relink(link)} disabled={starting}>
                 {starting ? t('githubLink.redirecting') : t('githubLink.relink')}
               </Button>
             </div>

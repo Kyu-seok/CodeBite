@@ -4,16 +4,12 @@ import com.codebite.common.exception.UnsupportedValueException;
 import com.codebite.config.GitHubAppProperties;
 import com.codebite.github.dto.GitHubInstallUrlResponse;
 import com.codebite.github.dto.GitHubLinkCallbackRequest;
-import com.codebite.github.dto.GitHubLinkCallbackResponse;
 import com.codebite.github.dto.GitHubLinkResponse;
-import com.codebite.github.dto.GitHubRepositoryChoiceRequest;
 import com.codebite.github.entity.GitHubLink;
 import com.codebite.github.entity.GitHubLinkStatus;
 import com.codebite.github.gateway.GitHubAccount;
 import com.codebite.github.gateway.GitHubAppNotConfiguredException;
 import com.codebite.github.gateway.GitHubGateway;
-import com.codebite.github.gateway.GitHubInstallationGoneException;
-import com.codebite.github.gateway.GitHubInstallationNotAccessibleException;
 import com.codebite.github.gateway.GitHubRepo;
 import com.codebite.github.gateway.ResolvedInstallation;
 import com.codebite.github.repository.GitHubLinkRepository;
@@ -28,12 +24,15 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 /** Creating and reading a user's GitHub Link (GLOSSARY.md, ADR 0003). */
 @Service
 public class GitHubLinkService {
 
     private static final Logger log = LoggerFactory.getLogger(GitHubLinkService.class);
+    /** What GitHub accepts as a repository name, apart from "." and "..". */
+    private static final Pattern REPOSITORY_NAME = Pattern.compile("[A-Za-z0-9._-]{1,100}");
 
     private final GitHubLinkRepository linkRepository;
     private final GitHubGateway gitHub;
@@ -79,56 +78,62 @@ public class GitHubLinkService {
         }
     }
 
-    public GitHubInstallUrlResponse installUrl(Long userId) {
+    /**
+     * The two GitHub pages of linking the Solution Repository named {@code repositoryName}: one to
+     * create it in the user's own account, prefilled from the template, and one to install the
+     * App, whose state remembers the name for {@link #completeInstall}.
+     */
+    public GitHubInstallUrlResponse installUrl(Long userId, String repositoryName, String visibility) {
         if (!properties.isConfigured()) {
             throw new GitHubAppNotConfiguredException();
         }
-        String url = UriComponentsBuilder.fromUriString(properties.resolvedInstallUrl())
-                .queryParam("state", stateService.issue(userId))
+        if (!REPOSITORY_NAME.matcher(repositoryName).matches() || repositoryName.matches("\\.{1,2}")) {
+            throw new UnsupportedValueException("error.github.link.repositoryNameInvalid");
+        }
+        if (!visibility.equals("public") && !visibility.equals("private")) {
+            throw new UnsupportedValueException("error.github.link.visibilityInvalid");
+        }
+        String installUrl = UriComponentsBuilder.fromUriString(properties.resolvedInstallUrl())
+                .queryParam("state", stateService.issue(userId, repositoryName))
                 .build()
                 .toUriString();
-        return new GitHubInstallUrlResponse(url);
+        UriComponentsBuilder create = UriComponentsBuilder.fromUriString(properties.getWebBaseUrl())
+                .path("/new")
+                .queryParam("owner", "@me");
+        String template = properties.getSolutionRepositoryTemplate();
+        if (!template.isBlank()) {
+            create.queryParam("template_owner", template.substring(0, template.indexOf('/')))
+                    .queryParam("template_name", template.substring(template.indexOf('/') + 1));
+        }
+        String createRepositoryUrl = create.queryParam("name", repositoryName)
+                .queryParam("visibility", visibility)
+                .queryParam("description", "Solutions to CodeBite problems")
+                .encode()
+                .build()
+                .toUriString();
+        return new GitHubInstallUrlResponse(installUrl, createRepositoryUrl);
     }
 
     /**
      * Finishes an App install. The state must be the one issued to this user, and GitHub must
-     * confirm the authorising account can access the installation. With exactly one granted
-     * repository that repository becomes the Solution Repository, replacing any current link
-     * (relinking offers Import again). Otherwise nothing is linked and the granted repositories
-     * are returned.
+     * confirm the authorising account can access the installation. The granted repository named as
+     * the user chose in CodeBite becomes the Solution Repository, or the only granted one when none
+     * has that name (it was renamed on GitHub's page). It replaces any current link (relinking
+     * offers Import again).
+     *
+     * @throws UnsupportedValueException when several repositories were granted and none has the name
      */
     @Transactional
-    public GitHubLinkCallbackResponse completeInstall(Long userId, GitHubLinkCallbackRequest request) {
-        stateService.verify(request.state(), userId);
+    public GitHubLinkResponse completeInstall(Long userId, GitHubLinkCallbackRequest request) {
+        String repositoryName = stateService.verify(request.state(), userId);
         ResolvedInstallation installation = gitHub.resolveInstallCallback(request.code(), request.installationId());
-        if (installation.repositories().size() != 1) {
-            return GitHubLinkCallbackResponse.choose(installation.repositories(),
-                    stateService.issueSelection(userId, installation.account(), installation.installationId()));
-        }
-        GitHubLink link = link(userId, installation.account(), installation.installationId(),
-                installation.repositories().get(0));
-        return GitHubLinkCallbackResponse.linked(GitHubLinkResponse.from(link));
-    }
-
-    /**
-     * Links the repository the user chose after an install granted several. The account and
-     * installation come from the signed selection token, never from the client, and the choice must
-     * be one the installation grants right now.
-     */
-    @Transactional
-    public GitHubLinkResponse chooseRepository(Long userId, GitHubRepositoryChoiceRequest request) {
-        GitHubLinkStateService.Selection selection = stateService.verifySelection(request.selectionToken(), userId);
-        List<GitHubRepo> granted;
-        try {
-            granted = gitHub.listInstallationRepositories(selection.installationId());
-        } catch (GitHubInstallationGoneException e) {
-            throw new GitHubInstallationNotAccessibleException(e.getMessage());
-        }
+        List<GitHubRepo> granted = installation.repositories();
         GitHubRepo repo = granted.stream()
-                .filter(r -> r.id() == request.repositoryId())
+                .filter(r -> r.fullName().substring(r.fullName().indexOf('/') + 1).equalsIgnoreCase(repositoryName))
                 .findFirst()
-                .orElseThrow(() -> new UnsupportedValueException("error.github.repositoryNotGranted"));
-        return GitHubLinkResponse.from(link(userId, selection.account(), selection.installationId(), repo));
+                .or(() -> granted.size() == 1 ? Optional.of(granted.get(0)) : Optional.empty())
+                .orElseThrow(() -> new UnsupportedValueException("error.github.repositoryNotGranted", repositoryName));
+        return GitHubLinkResponse.from(link(userId, installation.account(), installation.installationId(), repo));
     }
 
     /**
