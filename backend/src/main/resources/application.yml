@@ -119,6 +119,8 @@ app:
     client-secret: ${GITHUB_APP_CLIENT_SECRET:}
     private-key-base64: ${GITHUB_APP_PRIVATE_KEY_BASE64:}
     slug: ${GITHUB_APP_SLUG:}
+    # owner/name of the template GitHub's new-repository page creates the Solution Repository from
+    solution-repository-template: ${GITHUB_SOLUTION_REPOSITORY_TEMPLATE:Kyu-seok/codebite-solutions-template}
     install-url: ${GITHUB_APP_INSTALL_URL:}  # defaults to https://github.com/apps/<slug>/installations/new
     api-base-url: ${GITHUB_API_BASE_URL:https://api.github.com}
     web-base-url: ${GITHUB_WEB_BASE_URL:https://github.com}

@@ -3,9 +3,7 @@ package com.codebite.github.controller;
 import com.codebite.auth.jwt.JwtUserPrincipal;
 import com.codebite.github.dto.GitHubInstallUrlResponse;
 import com.codebite.github.dto.GitHubLinkCallbackRequest;
-import com.codebite.github.dto.GitHubLinkCallbackResponse;
 import com.codebite.github.dto.GitHubLinkResponse;
-import com.codebite.github.dto.GitHubRepositoryChoiceRequest;
 import com.codebite.github.service.GitHubImportService;
 import com.codebite.github.service.GitHubLinkService;
 import jakarta.validation.Valid;
@@ -14,9 +12,9 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /** The signed-in user's own GitHub Link. Separate from signing in with GitHub (ADR 0003). */
@@ -47,14 +45,18 @@ public class GitHubLinkController {
         return ResponseEntity.noContent().build();
     }
 
+    /** The GitHub pages that create the named Solution Repository and install the App on it. */
     @GetMapping("/install")
-    public ResponseEntity<GitHubInstallUrlResponse> installUrl(@AuthenticationPrincipal JwtUserPrincipal principal) {
-        return ResponseEntity.ok(linkService.installUrl(principal.id()));
+    public ResponseEntity<GitHubInstallUrlResponse> installUrl(
+            @AuthenticationPrincipal JwtUserPrincipal principal,
+            @RequestParam String repositoryName,
+            @RequestParam(defaultValue = "public") String visibility) {
+        return ResponseEntity.ok(linkService.installUrl(principal.id(), repositoryName, visibility));
     }
 
-    /** Completes the install GitHub redirected back from; links when one repository was granted. */
+    /** Completes the install GitHub redirected back from, linking the chosen Solution Repository. */
     @PostMapping("/callback")
-    public ResponseEntity<GitHubLinkCallbackResponse> callback(
+    public ResponseEntity<GitHubLinkResponse> callback(
             @AuthenticationPrincipal JwtUserPrincipal principal,
             @Valid @RequestBody GitHubLinkCallbackRequest request) {
         return ResponseEntity.ok(linkService.completeInstall(principal.id(), request));
@@ -67,13 +69,5 @@ public class GitHubLinkController {
     @PostMapping("/import")
     public ResponseEntity<GitHubLinkResponse> startImport(@AuthenticationPrincipal JwtUserPrincipal principal) {
         return ResponseEntity.accepted().body(importService.start(principal.id()));
-    }
-
-    /** Chooses the Solution Repository when the install granted several. */
-    @PutMapping("/repository")
-    public ResponseEntity<GitHubLinkResponse> chooseRepository(
-            @AuthenticationPrincipal JwtUserPrincipal principal,
-            @Valid @RequestBody GitHubRepositoryChoiceRequest request) {
-        return ResponseEntity.ok(linkService.chooseRepository(principal.id(), request));
     }
 }

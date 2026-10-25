@@ -256,7 +256,7 @@ class SolutionCommitListenerTest {
         gitHub.authorize("relink-code", OCTOCAT, 88);
         gitHub.install(88, REPO);
         gitHubLinkService.completeInstall(user.getId(),
-                new GitHubLinkCallbackRequest("relink-code", 88L, gitHubLinkStateService.issue(user.getId())));
+                new GitHubLinkCallbackRequest("relink-code", 88L, gitHubLinkStateService.issue(user.getId(), "codebite-solutions")));
         listener.onResult(acceptedEvent(accepted(user, "java", "class A {}", Instant.parse("2026-10-20T09:00:00Z"))));
 
         assertThat(gitHub.pushes()).extracting(RecordedPush::installationId,
