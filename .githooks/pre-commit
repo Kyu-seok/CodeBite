@@ -8,6 +8,10 @@ set -euo pipefail
 staged=$(git diff --cached --name-only --diff-filter=ACMR)
 touches() { grep -qE "$1" <<<"$staged"; }
 
+# git runs hooks with GIT_INDEX_FILE, GIT_DIR and friends pointing at this repository. JGit reads
+# them too, so the Import tests' scratch repositories would act on this repository's index and fail.
+while IFS= read -r var; do unset "$var"; done < <(compgen -e | grep '^GIT_')
+
 if touches '^(common|backend|worker)/|^(build|settings)\.gradle'; then
   modules=()
   touches '^common/|^(build|settings)\.gradle' && modules+=(:common:test :backend:test :worker:test)
