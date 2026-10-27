@@ -27,6 +27,8 @@ public class ProblemReviewState {
     private static final BigDecimal DEFAULT_EASE = new BigDecimal("2.50");
     private static final BigDecimal HARD_MULTIPLIER = new BigDecimal("1.2");
     private static final BigDecimal EASY_BONUS = new BigDecimal("1.3");
+    /** About 100 years: keeps repeated Easy ratings from overflowing the int interval. */
+    private static final int MAX_INTERVAL_DAYS = 36500;
 
     @Id
     @Column(name = "user_id")
@@ -81,7 +83,8 @@ public class ProblemReviewState {
             int next;
             if (reviewCount == 0) {
                 next = switch (confidence) {
-                    case HARD, GOOD -> 1;
+                    case HARD -> 1;
+                    case GOOD -> 2;
                     case EASY -> 4;
                     default -> 1;
                 };
@@ -95,13 +98,15 @@ public class ProblemReviewState {
             } else {
                 // Anki-style spread from the third review on, using the ease held before this
                 // rating (its ease change below only affects later reviews):
-                //   Hard = interval × 1.2
-                //   Good = interval × ease,                  at least Hard + 1
+                //   Hard = interval × 1.2,                     at least interval + 1
+                //   Good = interval × ease,                    at least Hard + 1
                 //   Easy = interval × ease × 1.3 (easy bonus), at least Good + 1
-                // each rounded half-up, so Hard < Good < Easy always holds.
-                int hard = Math.max(1, scale(intervalDays, HARD_MULTIPLIER));
-                int good = Math.max(hard + 1, scale(intervalDays, easeFactor));
-                int easy = Math.max(good + 1, scale(intervalDays, easeFactor.multiply(EASY_BONUS)));
+                // each rounded half-up and capped at MAX_INTERVAL_DAYS, so Hard < Good < Easy
+                // holds below the cap and all three meet at it.
+                int hard = capped(Math.max(intervalDays + 1L, scale(intervalDays, HARD_MULTIPLIER)));
+                int good = capped(Math.max(hard + 1L, scale(intervalDays, easeFactor)));
+                int easy = capped(Math.max(good + 1L,
+                        scale(intervalDays, easeFactor.multiply(EASY_BONUS))));
                 next = switch (confidence) {
                     case HARD -> hard;
                     case EASY -> easy;
@@ -125,8 +130,14 @@ public class ProblemReviewState {
         this.nextDueAt = reviewedAt.plus(intervalDays, ChronoUnit.DAYS);
     }
 
-    private static int scale(int days, BigDecimal factor) {
-        return BigDecimal.valueOf(days).multiply(factor).setScale(0, RoundingMode.HALF_UP).intValue();
+    /** days × factor rounded half-up, clamped to MAX_INTERVAL_DAYS before narrowing so it can't wrap. */
+    private static long scale(int days, BigDecimal factor) {
+        BigDecimal scaled = BigDecimal.valueOf(days).multiply(factor).setScale(0, RoundingMode.HALF_UP);
+        return scaled.min(BigDecimal.valueOf(MAX_INTERVAL_DAYS)).longValueExact();
+    }
+
+    private static int capped(long days) {
+        return (int) Math.min(days, MAX_INTERVAL_DAYS);
     }
 
     private static BigDecimal clampEase(BigDecimal v) {
