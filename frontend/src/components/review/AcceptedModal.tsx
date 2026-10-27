@@ -16,6 +16,8 @@ interface AcceptedModalProps {
   onOpenChange: (open: boolean) => void;
   submissionId: number | null;
   defaultSolveTimeSeconds?: number | null;
+  /** The backend scheduler's interval per rating, shown on each option. */
+  reviewIntervalDays?: Record<Confidence, number> | null;
   onSubmit: (args: {
     submissionId: number;
     confidence: Confidence;
@@ -34,6 +36,7 @@ export function AcceptedModal({
   onOpenChange,
   submissionId,
   defaultSolveTimeSeconds,
+  reviewIntervalDays,
   onSubmit,
 }: AcceptedModalProps) {
   const { t } = useTranslation("common");
@@ -68,7 +71,18 @@ export function AcceptedModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent
+        // Start on the rating's tab stop (Good) rather than the time inputs: rating is what this
+        // dialog is for, and the time is usually already filled in from the solve timer.
+        onOpenAutoFocus={(e) => {
+          const stop = (e.currentTarget as HTMLElement | null)?.querySelector<HTMLElement>(
+            '[role="radio"][tabindex="0"]',
+          );
+          if (!stop) return;
+          e.preventDefault();
+          stop.focus();
+        }}
+      >
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <span
@@ -119,6 +133,7 @@ export function AcceptedModal({
             onSubmit={handleSubmit}
             onSkip={() => onOpenChange(false)}
             busy={busy}
+            intervalDays={reviewIntervalDays}
           />
         </div>
       </DialogContent>

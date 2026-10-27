@@ -47,6 +47,8 @@ export interface SubmissionResponse {
   solveTimeSeconds: number | null;
   /** Null when the submission has no Solution Commit (not Accepted, or no GitHub Link). */
   solutionCommit: SolutionCommit | null;
+  /** Days until review for each rating if this submission were rated now; null while PENDING. */
+  reviewIntervalDays?: Record<Confidence, number> | null;
 }
 
 export type SolutionCommitStatus = "PENDING" | "COMMITTED" | "FAILED";

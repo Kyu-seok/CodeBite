@@ -62,7 +62,10 @@
       "clearing": "평가를 지우는 중…",
       "cleared": "평가를 지웠습니다",
       "clearFailed": "평가를 지우지 못했습니다. 다시 시도해 주세요.",
-      "skip": "건너뛰기"
+      "skip": "건너뛰기",
+      "intervalShort_other": "{{count}}일",
+      "interval_other": "{{count}}일 후 다시 복습",
+      "shortcutHint": "숫자 키 1–4로 평가할 수 있어요"
     },
     "accepted": {
       "title": "정답입니다!",

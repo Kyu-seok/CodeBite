@@ -62,7 +62,12 @@
       "clearing": "Clearing your rating…",
       "cleared": "Rating cleared",
       "clearFailed": "Couldn't clear your rating. Try again.",
-      "skip": "Skip"
+      "skip": "Skip",
+      "intervalShort_one": "{{count}}d",
+      "intervalShort_other": "{{count}}d",
+      "interval_one": "Back for review in {{count}} day",
+      "interval_other": "Back for review in {{count}} days",
+      "shortcutHint": "Press 1–4 to rate"
     },
     "accepted": {
       "title": "Accepted!",

@@ -6,26 +6,17 @@ import { CONFIDENCE_ORDER, useConfidenceLabel } from "@/lib/confidenceColors";
 import { cn, focusRing } from "@/lib/utils";
 import type { Confidence } from "@/types/review";
 
-// Hairline-weight borders and washes may use the 500 step; label text follows
-// Wash-and-Text / Readable Ember (700 on paper, 800 for Ember on its own wash, 400 on night).
-const OPTION_CLASS: Record<Confidence, { base: string; selected: string }> = {
-  AGAIN: {
-    base: "border-error-500/50 hover:border-error-500 hover:bg-error-500/10 text-error-700 dark:text-error-400",
-    selected: "border-error-500 bg-error-500/10",
-  },
-  HARD: {
-    base: "border-warning-500/50 hover:border-warning-500 hover:bg-warning-500/10 text-warning-700 dark:text-warning-400",
-    selected: "border-warning-500 bg-warning-500/10",
-  },
-  GOOD: {
-    base: "border-accent-500/50 hover:border-accent-500 hover:bg-accent-500/10 text-accent-700 hover:text-accent-800 dark:text-accent-400 dark:hover:text-accent-400",
-    selected: "border-accent-500 bg-accent-500/10 text-accent-800 dark:text-accent-400",
-  },
-  EASY: {
-    base: "border-success-500/50 hover:border-success-500 hover:bg-success-500/10 text-success-700 dark:text-success-400",
-    selected: "border-success-500 bg-success-500/10",
-  },
-};
+// Neutral on purpose. A rating is a self-assessment, not a judging outcome, so it never takes
+// green, amber or red (Outcome-Only Rule), and it never takes Ember, because the view's one accent
+// belongs to Submit (One CTA Rule). Selection is an Ink border with an inset hairline, a Mist wash
+// and a check mark, so it doesn't rely on colour.
+const OPTION_BASE = "border-border text-foreground hover:border-foreground/40 hover:bg-muted/60";
+const OPTION_SELECTED = "border-foreground bg-muted inset-ring inset-ring-foreground";
+
+// Digit keys rate without a pointer: 1 = Again … 4 = Easy.
+const SHORTCUT_KEYS = ["1", "2", "3", "4"] as const;
+// With nothing rated yet, Tab (and the Accepted dialog's initial focus) lands on Good.
+const DEFAULT_FOCUS: Confidence = "GOOD";
 
 type Status =
   | { kind: "idle" }
@@ -46,11 +37,16 @@ interface ConfidencePromptProps {
   subtitle?: string;
   currentRating?: Confidence | null;
   defaultNotes?: string | null;
+  /** Days until the problem comes back for each rating, from the backend scheduler. Hidden when absent. */
+  intervalDays?: Partial<Record<Confidence, number>> | null;
 }
 
 /**
- * The confidence choice is a radio group: Tab lands on the current rating (or the first),
- * arrow keys move between options without saving, and Enter / Space saves the focused one.
+ * The note comes first and the rating last, because picking a rating saves it together with the note.
+ * The confidence choice is a radio group: Tab lands on the current rating (or Good), arrow keys move
+ * between options without saving, and Enter / Space or the digit keys 1–4 save one. Digits are
+ * handled only inside this prompt, and never while typing or with a modifier held, so they can't
+ * reach the editor or the page's Cmd/Ctrl Run and Submit shortcuts.
  */
 export function ConfidencePrompt({
   onSubmit,
@@ -61,6 +57,7 @@ export function ConfidencePrompt({
   subtitle,
   currentRating = null,
   defaultNotes = null,
+  intervalDays = null,
 }: ConfidencePromptProps) {
   const { t } = useTranslation("common");
   const confidenceLabel = useConfidenceLabel();
@@ -76,7 +73,7 @@ export function ConfidencePrompt({
 
   const working = busy || status.kind === "saving" || status.kind === "clearing";
   const selected = picked ?? currentRating;
-  const tabStop = Math.max(0, selected ? CONFIDENCE_ORDER.indexOf(selected) : 0);
+  const tabStop = Math.max(0, CONFIDENCE_ORDER.indexOf(selected ?? DEFAULT_FOCUS));
   const [focusIndex, setFocusIndex] = useState<number | null>(null);
   const activeIndex = focusIndex ?? tabStop;
 
@@ -118,6 +115,18 @@ export function ConfidencePrompt({
     optionRefs.current[next]?.focus();
   };
 
+  const handleShortcut = (e: KeyboardEvent<HTMLDivElement>) => {
+    if (e.defaultPrevented || e.repeat || e.metaKey || e.ctrlKey || e.altKey || e.shiftKey) return;
+    if (e.nativeEvent.isComposing) return;
+    if (e.target instanceof Element && e.target.closest("textarea, input, select, [contenteditable]")) return;
+    const index = SHORTCUT_KEYS.indexOf(e.key as (typeof SHORTCUT_KEYS)[number]);
+    if (index < 0) return;
+    e.preventDefault();
+    setFocusIndex(index);
+    optionRefs.current[index]?.focus();
+    void handlePick(CONFIDENCE_ORDER[index]);
+  };
+
   const statusText =
     status.kind === "saving"
       ? t("review.prompt.saving")
@@ -138,7 +147,7 @@ export function ConfidencePrompt({
   const showClear = onClear && currentRating;
 
   return (
-    <div className="@container rounded-lg border border-border bg-card p-4">
+    <div className="@container rounded-lg border border-border bg-card p-4" onKeyDown={handleShortcut}>
       <div>
         <h3 id={titleId} className="text-sm font-semibold text-foreground">
           {title ?? t("review.prompt.title")}
@@ -146,55 +155,6 @@ export function ConfidencePrompt({
         <p id={subtitleId} className="mt-0.5 text-xs text-muted-foreground">
           {subtitle ?? t("review.prompt.subtitle")}
         </p>
-      </div>
-
-      <div
-        role="radiogroup"
-        aria-labelledby={titleId}
-        aria-describedby={subtitleId}
-        aria-busy={working || undefined}
-        className="mt-3 grid grid-cols-2 gap-2 @sm:grid-cols-4"
-        onBlur={(e) => {
-          if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setFocusIndex(null);
-        }}
-      >
-        {CONFIDENCE_ORDER.map((c, i) => {
-          const isSelected = selected === c;
-          const hintId = `${id}-hint-${c}`;
-          const nameId = `${id}-name-${c}`;
-          return (
-            <button
-              key={c}
-              ref={(el) => {
-                optionRefs.current[i] = el;
-              }}
-              type="button"
-              role="radio"
-              aria-checked={isSelected}
-              aria-labelledby={nameId}
-              aria-describedby={hintId}
-              aria-disabled={working || undefined}
-              tabIndex={i === activeIndex ? 0 : -1}
-              onClick={() => handlePick(c)}
-              onKeyDown={(e) => handleKeyDown(e, i)}
-              onFocus={() => setFocusIndex(i)}
-              className={cn(
-                "relative flex min-w-0 flex-col items-center justify-start gap-0.5 rounded-md border bg-background px-2 pb-2 pt-2.5 text-center transition-colors aria-disabled:cursor-not-allowed aria-disabled:opacity-60",
-                focusRing,
-                OPTION_CLASS[c].base,
-                isSelected && OPTION_CLASS[c].selected,
-              )}
-            >
-              {isSelected && (
-                <Check aria-hidden className="absolute right-1.5 top-1.5 h-3.5 w-3.5" strokeWidth={2.5} />
-              )}
-              <span id={nameId} className="text-sm font-semibold">{confidenceLabel(c)}</span>
-              <span id={hintId} className="text-xs leading-snug text-muted-foreground break-keep [overflow-wrap:anywhere]">
-                {t(`confidence.hint.${c}`)}
-              </span>
-            </button>
-          );
-        })}
       </div>
 
       <label htmlFor={notesId} className="mt-3 block text-xs font-medium text-muted-foreground">
@@ -211,6 +171,76 @@ export function ConfidencePrompt({
         className="mt-1 w-full resize-y rounded-md border border-border bg-background px-2 py-1.5 text-base text-foreground placeholder:text-muted-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50 sm:text-xs"
       />
 
+      <div
+        role="radiogroup"
+        aria-labelledby={titleId}
+        aria-describedby={subtitleId}
+        aria-busy={working || undefined}
+        className="mt-3 grid grid-cols-2 gap-2 @sm:grid-cols-4"
+        onBlur={(e) => {
+          if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setFocusIndex(null);
+        }}
+      >
+        {CONFIDENCE_ORDER.map((c, i) => {
+          const isSelected = selected === c;
+          const hintId = `${id}-hint-${c}`;
+          const nameId = `${id}-name-${c}`;
+          const intervalId = `${id}-interval-${c}`;
+          const days = intervalDays?.[c];
+          return (
+            <button
+              key={c}
+              ref={(el) => {
+                optionRefs.current[i] = el;
+              }}
+              type="button"
+              role="radio"
+              aria-checked={isSelected}
+              aria-labelledby={nameId}
+              aria-describedby={days != null ? `${intervalId} ${hintId}` : hintId}
+              aria-keyshortcuts={SHORTCUT_KEYS[i]}
+              aria-disabled={working || undefined}
+              tabIndex={i === activeIndex ? 0 : -1}
+              onClick={() => handlePick(c)}
+              onKeyDown={(e) => handleKeyDown(e, i)}
+              onFocus={() => setFocusIndex(i)}
+              className={cn(
+                "relative flex min-w-0 flex-col items-center justify-start gap-0.5 rounded-md border bg-background px-2 pb-2 pt-2.5 text-center transition-colors aria-disabled:cursor-not-allowed aria-disabled:opacity-60",
+                focusRing,
+                OPTION_BASE,
+                isSelected && OPTION_SELECTED,
+              )}
+            >
+              <kbd
+                aria-hidden
+                className="absolute left-1.5 top-1.5 font-mono text-[0.625rem] leading-none text-muted-foreground"
+              >
+                {SHORTCUT_KEYS[i]}
+              </kbd>
+              {isSelected && (
+                <Check aria-hidden className="absolute right-1.5 top-1.5 h-3.5 w-3.5" strokeWidth={2.5} />
+              )}
+              <span className="flex flex-wrap items-baseline justify-center gap-x-1">
+                <span id={nameId} className="text-sm font-semibold">{confidenceLabel(c)}</span>
+                {days != null && (
+                  <span aria-hidden className="font-mono text-xs tabular-nums text-muted-foreground">
+                    · {t("review.prompt.intervalShort", { count: days })}
+                  </span>
+                )}
+              </span>
+              {days != null && (
+                <span id={intervalId} className="sr-only">
+                  {t("review.prompt.interval", { count: days })}
+                </span>
+              )}
+              <span id={hintId} className="text-xs leading-snug text-muted-foreground break-keep [overflow-wrap:anywhere]">
+                {t(`confidence.hint.${c}`)}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+
       {errorText && (
         <p role="alert" className="mt-2 text-xs text-error-700 dark:text-error-400">
           {errorText}
@@ -218,9 +248,15 @@ export function ConfidencePrompt({
       )}
 
       <div className="mt-2 flex flex-wrap items-center justify-end gap-2">
-        <p role="status" className="mr-auto min-w-0 text-xs text-muted-foreground">
-          {statusText}
-        </p>
+        <div className="mr-auto min-w-0 text-xs text-muted-foreground">
+          <p role="status">{statusText}</p>
+          {/* Each option carries aria-keyshortcuts; this is the sighted version of the same hint. */}
+          {!statusText && (
+            <p aria-hidden className="hidden [@media(hover:hover)]:block">
+              {t("review.prompt.shortcutHint")}
+            </p>
+          )}
+        </div>
         {showClear && (
           <Button
             type="button"

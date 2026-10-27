@@ -79,7 +79,8 @@ export default function ProblemDetailPage() {
     open: boolean
     submissionId: number | null
     solveTimeSeconds: number | null
-  }>({ open: false, submissionId: null, solveTimeSeconds: null })
+    reviewIntervalDays: Record<Confidence, number> | null
+  }>({ open: false, submissionId: null, solveTimeSeconds: null, reviewIntervalDays: null })
   const [customTests, setCustomTests] = useState<CustomTestCaseInput[]>(() => {
     try {
       const stored = localStorage.getItem(`custom-tests:${slug}`)
@@ -295,6 +296,7 @@ export default function ProblemDetailPage() {
         open: true,
         submissionId,
         solveTimeSeconds: capturedSolveTime,
+        reviewIntervalDays: res.data.reviewIntervalDays ?? null,
       })
     }
 
@@ -591,6 +593,7 @@ export default function ProblemDetailPage() {
         onOpenChange={(open) => setAcceptedModal((prev) => ({ ...prev, open }))}
         submissionId={acceptedModal.submissionId}
         defaultSolveTimeSeconds={acceptedModal.solveTimeSeconds}
+        reviewIntervalDays={acceptedModal.reviewIntervalDays}
         onSubmit={handleAcceptedReviewSubmit}
       />
       <ConfirmDialog
