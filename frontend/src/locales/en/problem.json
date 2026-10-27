@@ -26,7 +26,8 @@
     "statusAttempted": "Attempted",
     "loadError": "Couldn't load problems.",
     "randomError": "Couldn't pick a random problem. Try again.",
-    "retry": "Try again",
+    "tagsLoadError": "Couldn't load tags.",
+    "statsLoadError": "Couldn't load your progress.",
     "clearFilters": "Clear filters"
   },
   "tabs": {

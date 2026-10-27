@@ -1,18 +1,30 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { getProblemStats } from "../api/problems";
 import type { ProblemStats } from "../types/problem";
 
 export function useProblemStats(curation?: string) {
   const [stats, setStats] = useState<ProblemStats | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [failed, setFailed] = useState(false);
+  const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
-    setLoading(true);
+    let current = true;
     getProblemStats(curation)
-      .then((res) => setStats(res.data))
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, [curation]);
+      .then((res) => {
+        if (!current) return;
+        setStats(res.data);
+        setFailed(false);
+      })
+      .catch(() => current && setFailed(true));
+    return () => {
+      current = false;
+    };
+  }, [curation, attempt]);
 
-  return { stats, loading };
+  const retry = useCallback(() => {
+    setFailed(false);
+    setAttempt((n) => n + 1);
+  }, []);
+
+  return { stats, failed, retry };
 }
