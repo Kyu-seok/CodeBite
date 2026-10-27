@@ -571,11 +571,7 @@ function OutputContent({
                     </code>
                   </p>
                 )}
-                <Diagnostics
-                  errors={renderableErrors(r.errors)}
-                  errorLabel={t(errorLabelKey(r.status, false))}
-                  userSource={userSource}
-                />
+                <CaseOutput status={r.status} errors={r.errors} userSource={userSource} />
               </div>
             ))}
           </div>
@@ -696,40 +692,67 @@ function RunResultsSection({
               </code>
             </p>
           )}
-          <RunCaseOutput result={r} userSource={userSource} />
+          <CaseOutput
+            status={r.status}
+            errors={r.errors}
+            stderr={r.stderr}
+            compileOutput={r.compileOutput}
+            userSource={userSource}
+          />
         </div>
       ))}
     </div>
   );
 }
 
+function isFatalStatus(status: SubmissionStatus) {
+  return status === 'RUNTIME_ERROR' || status === 'COMPILATION_ERROR';
+}
+
 /**
- * A Run case's diagnostics and raw output. Raw stderr or compiler output shows only when no
- * parsed error already covers it; output from code that still ran is a warning, not an error.
+ * A case's diagnostics and raw output, shared by Run and Submit. Red or amber is decided by the
+ * case's status, never by what the parser found: a fatal case with no fatal line parsed (an
+ * unparsed error, -Werror) shows its raw output in red; output from code that still ran is an
+ * amber Warning. Submit results carry no raw stderr or compiler output.
  */
-function RunCaseOutput({ result: r, userSource }: { result: RunTestCaseResult; userSource: string }) {
+function CaseOutput({
+  status,
+  errors,
+  stderr,
+  compileOutput,
+  userSource,
+}: {
+  status: SubmissionStatus;
+  errors?: CodeError[] | null;
+  stderr?: string | null;
+  compileOutput?: string | null;
+  userSource: string;
+}) {
   const { t } = useTranslation('problem');
-  const visible = renderableErrors(r.errors);
+  const visible = renderableErrors(errors);
+  const errorLabel = t(errorLabelKey(status, !!compileOutput));
   const hasFatalLine = visible.some((e) => e.severity !== 'WARNING');
-  const fatalStatus = r.status === 'RUNTIME_ERROR' || r.status === 'COMPILATION_ERROR';
-  const raw = hasFatalLine
-    ? null
-    : r.stderr
-      ? fatalStatus
-        ? <OutputBlock label={t(errorLabelKey(r.status, !!r.compileOutput))} tone="error">{r.stderr}</OutputBlock>
-        : <OutputBlock label={t('test.warning')} tone="warning">{r.stderr}</OutputBlock>
-      : r.compileOutput && visible.length === 0
-        ? r.status === 'COMPILATION_ERROR'
-          ? <OutputBlock label={t('test.compilationError')} tone="warning">{r.compileOutput}</OutputBlock>
-          : <OutputBlock label={t('test.warning')} tone="warning">{r.compileOutput}</OutputBlock>
-        : null;
+  let raw: ReactNode = null;
+  if (isFatalStatus(status)) {
+    if (!hasFatalLine) {
+      const unplaced = (errors ?? [])
+        .filter((e) => e.inUserCode && e.line == null && e.severity !== 'WARNING')
+        .map((e) => e.message)
+        .join('\n');
+      raw = (
+        <OutputBlock label={errorLabel} tone="error">
+          {stderr || compileOutput || unplaced || t('test.noErrorDetails')}
+        </OutputBlock>
+      );
+    }
+  } else if (stderr) {
+    raw = <OutputBlock label={t('test.warning')} tone="warning">{stderr}</OutputBlock>;
+  } else if (compileOutput && visible.length === 0) {
+    raw = <OutputBlock label={t('test.warning')} tone="warning">{compileOutput}</OutputBlock>;
+  }
   return (
     <>
-      <Diagnostics
-        errors={visible}
-        errorLabel={t(errorLabelKey(r.status, !!r.compileOutput))}
-        userSource={userSource}
-      />
+      <Diagnostics errors={visible} errorLabel={errorLabel} userSource={userSource} />
       {raw}
     </>
   );

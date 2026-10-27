@@ -88,6 +88,7 @@
     "stderr": "Stderr:",
     "compilationError": "Compilation Error:",
     "runtimeError": "Runtime Error:",
+    "noErrorDetails": "The judge reported no further details.",
     "testResults": "Test Results",
     "test": "Test {{n}}",
     "judging": "Judging...",

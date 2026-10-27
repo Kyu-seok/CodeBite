@@ -88,6 +88,7 @@
     "stderr": "표준 에러:",
     "compilationError": "컴파일 에러:",
     "runtimeError": "런타임 에러:",
+    "noErrorDetails": "채점 서버가 자세한 내용을 보내지 않았습니다.",
     "testResults": "테스트 결과",
     "test": "테스트 {{n}}",
     "judging": "채점 중...",
