@@ -72,18 +72,22 @@ export function buildFlowNodes(
 }
 
 // ── Edge colors ──
-// CSS custom properties don't work in SVG stroke attributes,
-// so we resolve the theme at runtime from the DOM.
+// The arrowhead marker takes a literal colour, so edges resolve the palette in JS. The caller
+// passes the theme in, so a theme switch rebuilds the edges instead of keeping the old palette.
 
-function getEdgeColors(): Record<
+export interface EdgeOptions {
+  isDark: boolean;
+  /** prefers-reduced-motion: in-progress edges keep their ember stroke but stop marching. */
+  reduceMotion: boolean;
+}
+
+function getEdgeColors({ isDark, reduceMotion }: EdgeOptions): Record<
   NodeState,
   { stroke: string; animated: boolean; dashed: boolean; opacity: number }
 > {
-  const root = document.documentElement;
-  const isDark = root.classList.contains('dark');
-
-  const neutral = isDark ? '#4b5563' : '#9ca3af';
-  const muted = isDark ? '#9ca3af' : '#6b7280';
+  // Graphite / Night Graphite (muted) for topics not started; ink ramp 300 / 500 for topics still coming.
+  const neutral = isDark ? '#4c6683' : '#9aacbf';
+  const muted = isDark ? '#a1aab6' : '#6b7685';
   const accent = '#fe7403';
   const success = isDark ? '#4ade80' : '#22c55e';
 
@@ -98,7 +102,7 @@ function getEdgeColors(): Record<
       stroke: accent,
       dashed: false,
       opacity: 1,
-      animated: true,
+      animated: !reduceMotion,
     },
     complete: { stroke: success, dashed: false, opacity: 1, animated: false },
     'coming-soon': {
@@ -110,8 +114,8 @@ function getEdgeColors(): Record<
   };
 }
 
-export function buildFlowEdges(categories: RoadmapCategory[]): Edge[] {
-  const colors = getEdgeColors();
+export function buildFlowEdges(categories: RoadmapCategory[], options: EdgeOptions): Edge[] {
+  const colors = getEdgeColors(options);
 
   const edges: Edge[] = [];
   for (const category of categories) {

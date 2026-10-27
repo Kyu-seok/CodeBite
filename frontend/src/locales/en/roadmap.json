@@ -1,6 +1,15 @@
 {
   "title": "Roadmap — CodeBite",
   "comingSoon": "Coming Soon",
+  "heading": "Learning roadmap",
+  "listView": "View as list",
+  "graphView": "View as graph",
+  "progress": "{{solved}} of {{total}} solved",
+  "solved": "Solved",
+  "notSolved": "Not solved",
+  "nodeLabel": "{{name}}, {{progress}}. Press Enter to see its problems",
+  "comingSoonLabel": "{{name}}, coming soon",
+  "closePanel": "Close {{name}}",
   "categories": {
     "arrays-and-hashing": {
       "name": "Arrays & Hashing",

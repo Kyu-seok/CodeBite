@@ -18,7 +18,7 @@ Admins maintain problems, test cases and users through the admin dashboard.
 
 CodeBite turns deliberate practice (Anders Ericsson, *Peak*) into software. Its three conditions map onto three product systems:
 
-- **Problems at the right level** → the learning roadmap: 19 topics linked by prerequisites, showing which are open and which are premature, with per-topic progress.
+- **Problems at the right level** → the learning roadmap: 19 topics in prerequisite order. Every topic is open; the arrows show what to learn first, and each topic shows its progress.
 - **Immediate feedback** → Run (synchronous, sample cases) and Submit (asynchronous judging via Kafka + Judge0, results pushed over SSE).
 - **Spaced repetition** → after an Accepted submission the learner rates confidence (Again / Hard / Good / Easy), which schedules when the problem returns, Anki-style.
 
