@@ -9,18 +9,31 @@ export function useRoadmap() {
   const [loading, setLoading] = useState(true)
   const [failed, setFailed] = useState(false)
 
-  const fetchRoadmap = useCallback(() => {
+  // isCurrent drops a response that lands after a newer request, so a quick en→ko→en
+  // switch can't leave titles in the wrong language.
+  const fetchRoadmap = useCallback((isCurrent: () => boolean = () => true) => {
     getRoadmap()
       .then((res) => {
+        if (!isCurrent()) return
         setCategories(res.data.categories)
         setFailed(false)
       })
-      .catch(() => setFailed(true))
-      .finally(() => setLoading(false))
+      .catch(() => {
+        if (isCurrent()) setFailed(true)
+      })
+      .finally(() => {
+        if (isCurrent()) setLoading(false)
+      })
   }, [])
 
   // Refetch on a language switch: problem titles come back translated.
-  useEffect(fetchRoadmap, [fetchRoadmap, i18n.language])
+  useEffect(() => {
+    let current = true
+    fetchRoadmap(() => current)
+    return () => {
+      current = false
+    }
+  }, [fetchRoadmap, i18n.language])
 
   const reload = useCallback(() => {
     setLoading(true)
