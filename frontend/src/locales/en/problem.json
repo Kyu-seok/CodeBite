@@ -54,22 +54,20 @@
   },
   "bugReport": {
     "title": "Report a Bug",
-    "description": "Help us improve by reporting issues with this problem.",
-    "thanks": "Thanks for your report!",
-    "willLookInto": "We'll look into it.",
+    "description": "Reports are filed as issues on CodeBite's public GitHub repository.",
     "category": "Category",
     "descriptionLabel": "Description",
     "placeholder": "Describe the issue...",
-    "submit": "Open GitHub issue",
+    "submit": "Open issue on GitHub",
     "wrongTestCase": "Wrong test case",
     "wrongExpectedOutput": "Wrong expected output",
     "descriptionUnclear": "Description unclear",
     "starterCodeIssue": "Starter code issue",
     "other": "Other",
-    "githubNote": "This opens a prefilled issue on GitHub. You'll need a GitHub account to post it.",
-    "opened": "Issue draft opened on GitHub",
-    "openedHint": "Post it there to send the report.",
-    "openManually": "Didn't open? Open the issue on GitHub"
+    "githubNote": "A prefilled GitHub issue opens in a new tab. Nothing is sent until you submit it there, which needs a GitHub account.",
+    "opened": "Issue draft opened in a new tab",
+    "openedHint": "Nothing has been sent yet. Submit the issue on GitHub to send your report.",
+    "openManually": "Tab didn't open? Open the issue on GitHub"
   },
   "test": {
     "testCases": "Test Cases",

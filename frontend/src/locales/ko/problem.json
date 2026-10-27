@@ -54,22 +54,20 @@
   },
   "bugReport": {
     "title": "버그 신고",
-    "description": "이 문제의 오류를 신고해 주세요.",
-    "thanks": "신고해 주셔서 감사합니다!",
-    "willLookInto": "확인 후 처리하겠습니다.",
+    "description": "신고는 CodeBite의 공개 GitHub 저장소에 이슈로 등록됩니다.",
     "category": "카테고리",
     "descriptionLabel": "설명",
     "placeholder": "문제를 설명해 주세요...",
-    "submit": "GitHub 이슈 열기",
+    "submit": "GitHub에서 이슈 열기",
     "wrongTestCase": "잘못된 테스트 케이스",
     "wrongExpectedOutput": "잘못된 예상 출력",
     "descriptionUnclear": "설명이 불명확함",
     "starterCodeIssue": "스타터 코드 문제",
     "other": "기타",
-    "githubNote": "내용이 채워진 GitHub 이슈 작성 화면이 열립니다. 등록하려면 GitHub 계정이 필요합니다.",
-    "opened": "GitHub에서 이슈 작성 화면을 열었습니다",
-    "openedHint": "그곳에서 등록하면 제보가 전달됩니다.",
-    "openManually": "열리지 않았나요? GitHub에서 이슈 열기"
+    "githubNote": "내용이 미리 채워진 GitHub 이슈 작성 화면이 새 탭에서 열립니다. 그곳에서 등록하기 전까지는 아무것도 전송되지 않으며, 등록하려면 GitHub 계정이 필요합니다.",
+    "opened": "새 탭에서 이슈 작성 화면을 열었습니다",
+    "openedHint": "아직 전송되지 않았습니다. GitHub에서 이슈를 등록해야 신고가 접수됩니다.",
+    "openManually": "새 탭이 열리지 않았나요? GitHub에서 이슈 열기"
   },
   "test": {
     "testCases": "테스트 케이스",
