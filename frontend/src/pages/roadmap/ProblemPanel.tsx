@@ -21,9 +21,12 @@ export default function ProblemPanel({ category, onClose }: ProblemPanelProps) {
   const name = category ? t(`categories.${category.slug}.name`) : ""
 
   // Opening moves focus into the panel, so keyboard users land on what they asked for.
+  // Keyed on the slug: a language switch refetches new category objects, and focus
+  // shouldn't jump to the panel when the user didn't open anything.
+  const openSlug = category?.slug
   useEffect(() => {
-    if (category) headingRef.current?.focus()
-  }, [category])
+    if (openSlug) headingRef.current?.focus()
+  }, [openSlug])
 
   return (
     <div
