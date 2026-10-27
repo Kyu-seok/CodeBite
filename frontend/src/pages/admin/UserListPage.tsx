@@ -1,57 +1,64 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { getUsers } from '@/api/admin';
 import type { AdminUser } from '@/types/admin';
 import Spinner from '@/components/ui/Spinner';
+import LoadError from '@/components/ui/LoadError';
 import { Badge } from '@/components/ui/Badge';
+import { formatDate, timeAgo } from './adminFormat';
 
-function formatDate(dateStr: string | null) {
-  if (!dateStr) return '—';
-  return new Date(dateStr).toLocaleDateString(undefined, {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  });
-}
-
-function timeAgo(dateStr: string | null) {
-  if (!dateStr) return '—';
-  const diff = Date.now() - new Date(dateStr).getTime();
-  const mins = Math.floor(diff / 60000);
-  if (mins < 1) return 'just now';
-  if (mins < 60) return `${mins}m ago`;
-  const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return `${hrs}h ago`;
-  const days = Math.floor(hrs / 24);
-  if (days < 30) return `${days}d ago`;
-  return formatDate(dateStr);
-}
+const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
 
 export default function UserListPage() {
-  const { t } = useTranslation('admin');
+  const { t, i18n } = useTranslation('admin');
   const { t: tc } = useTranslation('common');
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [totalElements, setTotalElements] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [status, setStatus] = useState<'loading' | 'ready' | 'failed'>('loading');
+  const [now] = useState(() => Date.now());
 
-  useEffect(() => {
-    setLoading(true);
+  const fetchUsers = useCallback(() => {
     getUsers(page, 50)
       .then((res) => {
         setUsers(res.data.content);
         setTotalPages(res.data.totalPages);
         setTotalElements(res.data.totalElements);
+        setStatus('ready');
       })
-      .finally(() => setLoading(false));
+      .catch(() => setStatus('failed'));
   }, [page]);
 
-  if (loading && users.length === 0) {
+  useEffect(fetchUsers, [fetchUsers]);
+
+  const retry = () => {
+    setStatus('loading');
+    fetchUsers();
+  };
+
+  // Recent activity reads as relative time; older than a month, as a date.
+  const lastActive = (iso: string | null) => {
+    if (!iso) return '—';
+    return now - new Date(iso).getTime() < THIRTY_DAYS_MS
+      ? timeAgo(iso, i18n.language, t('time.justNow'))
+      : formatDate(iso, i18n.language);
+  };
+
+  if (status === 'loading' && users.length === 0) {
     return (
       <div className="flex h-full items-center justify-center">
         <Spinner />
+      </div>
+    );
+  }
+
+  if (status === 'failed') {
+    return (
+      <div className="space-y-4 p-6">
+        <h1 className="text-2xl font-bold text-foreground">{t('users.heading')}</h1>
+        <LoadError onRetry={retry} />
       </div>
     );
   }
@@ -103,8 +110,10 @@ export default function UserListPage() {
                   </Badge>
                 </td>
                 <td className="px-4 py-3 text-foreground">{u.solvedCount}</td>
-                <td className="px-4 py-3 text-muted-foreground">{timeAgo(u.lastActiveAt)}</td>
-                <td className="px-4 py-3 text-muted-foreground">{formatDate(u.createdAt)}</td>
+                <td className="px-4 py-3 text-muted-foreground">{lastActive(u.lastActiveAt)}</td>
+                <td className="px-4 py-3 text-muted-foreground">
+                  {u.createdAt ? formatDate(u.createdAt, i18n.language) : '—'}
+                </td>
                 <td className="px-4 py-3 text-right">
                   <Link
                     to={`/admin/users/${u.id}/submissions`}

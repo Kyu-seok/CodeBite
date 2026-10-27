@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { getUserSubmissions, getUsers, deleteSubmission } from '@/api/admin';
@@ -6,20 +6,13 @@ import type { AdminSubmissionListItem, AdminUser } from '@/types/admin';
 import type { SubmissionStatus } from '@/types/submission';
 import StatusBadge from '@/components/ui/StatusBadge';
 import Spinner from '@/components/ui/Spinner';
-
-function formatDate(dateStr: string) {
-  return new Date(dateStr).toLocaleString(undefined, {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-}
+import LoadError from '@/components/ui/LoadError';
+import { ConfirmDialog } from '@/pages/problem/ConfirmDialog';
+import { formatDate } from './adminFormat';
 
 export default function UserSubmissionsPage() {
   const { userId } = useParams<{ userId: string }>();
-  const { t } = useTranslation('admin');
+  const { t, i18n } = useTranslation('admin');
   const { t: tc } = useTranslation('common');
 
   const [user, setUser] = useState<AdminUser | null>(null);
@@ -27,42 +20,65 @@ export default function UserSubmissionsPage() {
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [totalElements, setTotalElements] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [status, setStatus] = useState<'loading' | 'ready' | 'failed'>('loading');
   const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [pendingDelete, setPendingDelete] = useState<number | null>(null);
+  // Separate from the target, so the dialog keeps its title while it animates closed.
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   const uid = Number(userId);
 
   useEffect(() => {
-    getUsers(0, 50).then((res) => {
-      const found = res.data.content.find((u) => u.id === uid);
-      if (found) setUser(found);
-    });
+    // The name is only for the heading; "#id" stands in if this fails.
+    getUsers(0, 50)
+      .then((res) => {
+        const found = res.data.content.find((u) => u.id === uid);
+        if (found) setUser(found);
+      })
+      .catch(() => {});
   }, [uid]);
 
-  useEffect(() => {
-    setLoading(true);
+  // The page the rows on screen belong to; while it differs the old rows stay, dimmed and busy.
+  const [shownPage, setShownPage] = useState<number | null>(null);
+
+  const fetchSubmissions = useCallback(() => {
     getUserSubmissions(uid, page, 20)
       .then((res) => {
+        setShownPage(page);
         setSubmissions(res.data.content);
         setTotalPages(res.data.totalPages);
         setTotalElements(res.data.totalElements);
+        setStatus('ready');
       })
-      .finally(() => setLoading(false));
+      .catch(() => setStatus('failed'));
   }, [uid, page]);
 
-  const handleDelete = async (id: number) => {
-    if (!window.confirm(t('submissions.confirmDelete'))) return;
+  useEffect(fetchSubmissions, [fetchSubmissions]);
+
+  const retry = () => {
+    setStatus('loading');
+    fetchSubmissions();
+  };
+
+  const confirmDelete = async () => {
+    const id = pendingDelete;
+    setDeleteOpen(false);
+    if (id == null) return;
     setDeletingId(id);
+    setDeleteError(null);
     try {
       await deleteSubmission(id);
       setSubmissions((prev) => prev.filter((s) => s.id !== id));
       setTotalElements((n) => n - 1);
+    } catch {
+      setDeleteError(t('submissions.deleteFailed'));
     } finally {
       setDeletingId(null);
     }
   };
 
-  if (loading && submissions.length === 0) {
+  if (status === 'loading' && submissions.length === 0) {
     return (
       <div className="flex h-full items-center justify-center">
         <Spinner />
@@ -77,7 +93,7 @@ export default function UserSubmissionsPage() {
         <Link to="/admin/users" className="hover:text-foreground transition-colors">
           {t('users.heading')}
         </Link>
-        <span>/</span>
+        <span aria-hidden>/</span>
         <span className="text-foreground font-medium">
           {user ? user.username : `#${uid}`}
         </span>
@@ -94,16 +110,25 @@ export default function UserSubmissionsPage() {
         </div>
       </div>
 
+      {deleteError && (
+        <p role="alert" className="text-sm text-error-700 dark:text-error-400">
+          {deleteError}
+        </p>
+      )}
+
+      {status === 'failed' ? (
+        <LoadError onRetry={retry} />
+      ) : (
       <div className="overflow-auto rounded-xl border border-border bg-card">
-        <table className="w-full text-sm">
+        <table aria-busy={shownPage !== page} className="w-full text-sm transition-opacity aria-busy:opacity-60">
           <thead>
             <tr className="border-b border-border text-left text-xs text-muted-foreground">
-              <th className="px-4 py-3">ID</th>
-              <th className="px-4 py-3">{t('submissions.status')}</th>
-              <th className="px-4 py-3">{t('submissions.language')}</th>
-              <th className="px-4 py-3">{t('submissions.runtime')}</th>
-              <th className="px-4 py-3">{t('submissions.submittedAt')}</th>
-              <th className="px-4 py-3"></th>
+              <th scope="col" className="px-4 py-3">{t('submissions.id')}</th>
+              <th scope="col" className="px-4 py-3">{t('submissions.status')}</th>
+              <th scope="col" className="px-4 py-3">{t('submissions.language')}</th>
+              <th scope="col" className="px-4 py-3">{t('submissions.runtime')}</th>
+              <th scope="col" className="px-4 py-3">{t('submissions.submittedAt')}</th>
+              <th scope="col" className="px-4 py-3"><span className="sr-only">{t('problems.actions')}</span></th>
             </tr>
           </thead>
           <tbody>
@@ -116,7 +141,7 @@ export default function UserSubmissionsPage() {
             ) : (
               submissions.map((s) => (
                 <tr key={s.id} className="border-b border-border/50 last:border-0">
-                  <td className="px-4 py-3 text-muted-foreground">#{s.id}</td>
+                  <td className="px-4 py-3 tabular-nums text-muted-foreground">#{s.id}</td>
                   <td className="px-4 py-3">
                     <StatusBadge status={s.status as SubmissionStatus} />
                   </td>
@@ -124,14 +149,18 @@ export default function UserSubmissionsPage() {
                   <td className="px-4 py-3 text-muted-foreground">
                     {s.runtimeMs != null ? `${s.runtimeMs} ms` : '—'}
                   </td>
-                  <td className="px-4 py-3 text-muted-foreground">{formatDate(s.createdAt)}</td>
+                  <td className="px-4 py-3 text-muted-foreground">{formatDate(s.createdAt, i18n.language, true)}</td>
                   <td className="px-4 py-3 text-right">
                     <button
-                      onClick={() => handleDelete(s.id)}
+                      type="button"
+                      onClick={() => {
+                        setPendingDelete(s.id);
+                        setDeleteOpen(true);
+                      }}
                       disabled={deletingId === s.id}
-                      className="rounded-md px-2.5 py-1 text-xs text-destructive border border-destructive/30 transition-colors hover:bg-destructive/10 disabled:opacity-40"
+                      className="rounded-md px-2.5 py-1 text-xs text-error-700 border border-destructive/30 transition-colors hover:bg-destructive/10 disabled:opacity-40 dark:text-error-400"
                     >
-                      {deletingId === s.id ? tc('button.deleting') : t('submissions.delete')}
+                      {deletingId === s.id ? t('submissions.deleting') : t('submissions.delete')}
                     </button>
                   </td>
                 </tr>
@@ -140,8 +169,18 @@ export default function UserSubmissionsPage() {
           </tbody>
         </table>
       </div>
+      )}
 
-      {totalPages > 1 && (
+      <ConfirmDialog
+        open={deleteOpen}
+        title={t('submissions.confirmDeleteTitle', { id: pendingDelete ?? '' })}
+        description={t('submissions.confirmDeleteBody')}
+        confirmLabel={t('submissions.delete')}
+        onConfirm={confirmDelete}
+        onCancel={() => setDeleteOpen(false)}
+      />
+
+      {status !== 'failed' && totalPages > 1 && (
         <div className="flex items-center justify-center gap-2">
           <button
             onClick={() => setPage((p) => Math.max(0, p - 1))}

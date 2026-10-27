@@ -5,42 +5,59 @@ import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import DifficultyBadge from '@/components/ui/DifficultyBadge';
+import Spinner from '@/components/ui/Spinner';
+import LoadError from '@/components/ui/LoadError';
+import { ConfirmDialog } from '@/pages/problem/ConfirmDialog';
 import { listProblems, deleteProblem } from '@/api/admin';
 import type { AdminProblemListItem } from '@/types/admin';
 import type { Difficulty } from '@/types/problem';
 
 export default function AdminProblemListPage() {
   const { t } = useTranslation('admin');
-  const { t: tc } = useTranslation('common');
   const navigate = useNavigate();
   const [problems, setProblems] = useState<AdminProblemListItem[]>([]);
   const [totalElements, setTotalElements] = useState(0);
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [status, setStatus] = useState<'loading' | 'ready' | 'failed'>('loading');
+  const [pendingDelete, setPendingDelete] = useState<AdminProblemListItem | null>(null);
+  // Separate from the target, so the dialog keeps its title while it animates closed.
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  // Which search and page the rows on screen belong to; while it differs from the current one
+  // the old rows stay, dimmed and marked busy.
+  const requestKey = `${page}|${search}`;
+  const [shownKey, setShownKey] = useState<string | null>(null);
 
   const fetchProblems = useCallback(() => {
-    setLoading(true);
     listProblems({ page, size: 50, search: search || undefined })
       .then((res) => {
         setProblems(res.data.content);
         setTotalElements(res.data.totalElements);
+        setShownKey(requestKey);
+        setStatus('ready');
       })
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, [page, search]);
+      .catch(() => setStatus('failed'));
+  }, [page, search, requestKey]);
 
-  useEffect(() => {
+  useEffect(fetchProblems, [fetchProblems]);
+
+  const retry = () => {
+    setStatus('loading');
     fetchProblems();
-  }, [fetchProblems]);
+  };
 
-  const handleDelete = async (id: number, title: string) => {
-    if (!confirm(`Delete "${title}"? This cannot be undone.`)) return;
+  const confirmDelete = async () => {
+    const target = pendingDelete;
+    setDeleteOpen(false);
+    if (!target) return;
+    setDeleteError(null);
     try {
-      await deleteProblem(id);
+      await deleteProblem(target.id);
       fetchProblems();
     } catch {
-      // ignore
+      setDeleteError(t('problems.deleteFailed'));
     }
   };
 
@@ -58,6 +75,7 @@ export default function AdminProblemListPage() {
 
       <div className="mb-4">
         <Input
+          aria-label={t('problems.search')}
           placeholder={t('problems.search')}
           value={search}
           onChange={(e) => {
@@ -68,22 +86,35 @@ export default function AdminProblemListPage() {
         />
       </div>
 
-      {loading ? (
-        <div className="flex justify-center py-12">
-          <div className="h-5 w-5 animate-spin rounded-full border-2 border-muted border-t-accent" />
+      {deleteError && (
+        <p role="alert" className="mb-3 text-sm text-error-700 dark:text-error-400">
+          {deleteError}
+        </p>
+      )}
+
+      {status === 'loading' ? (
+        <Spinner size="sm" />
+      ) : status === 'failed' ? (
+        <LoadError onRetry={retry} />
+      ) : problems.length === 0 ? (
+        <div className="py-12 text-center text-sm text-muted-foreground">
+          {t('problems.noProblems')}
         </div>
       ) : (
-        <div className="rounded-lg border border-border overflow-hidden">
-          <table className="w-full text-sm">
+        <div className="overflow-auto rounded-lg border border-border">
+          <table
+            aria-busy={shownKey !== requestKey}
+            className="w-full text-sm transition-opacity aria-busy:opacity-60"
+          >
             <thead>
               <tr className="border-b border-border bg-muted/50 text-left text-xs text-muted-foreground">
-                <th className="px-4 py-2.5 font-medium w-12">{t('problems.id')}</th>
-                <th className="px-4 py-2.5 font-medium">{t('problems.title')}</th>
-                <th className="px-4 py-2.5 font-medium w-24">{tc('difficulty.easy').replace(/./, '') && 'Difficulty'}</th>
-                <th className="px-4 py-2.5 font-medium w-20">{t('problems.status')}</th>
-                <th className="px-4 py-2.5 font-medium w-24">{t('problems.accepted')}</th>
-                <th className="px-4 py-2.5 font-medium w-28">{t('problems.tags')}</th>
-                <th className="px-4 py-2.5 font-medium w-24 text-right">{t('problems.actions')}</th>
+                <th scope="col" className="px-4 py-2.5 font-medium w-12">{t('problems.id')}</th>
+                <th scope="col" className="px-4 py-2.5 font-medium">{t('problems.title')}</th>
+                <th scope="col" className="px-4 py-2.5 font-medium w-24">{t('problems.difficulty')}</th>
+                <th scope="col" className="px-4 py-2.5 font-medium w-20">{t('problems.status')}</th>
+                <th scope="col" className="px-4 py-2.5 font-medium w-24">{t('problems.accepted')}</th>
+                <th scope="col" className="px-4 py-2.5 font-medium w-28">{t('problems.tags')}</th>
+                <th scope="col" className="px-4 py-2.5 font-medium w-24 text-right">{t('problems.actions')}</th>
               </tr>
             </thead>
             <tbody>
@@ -91,33 +122,40 @@ export default function AdminProblemListPage() {
                 <tr
                   key={p.id}
                   className="border-b border-border/50 last:border-0 hover:bg-muted/30 transition-colors cursor-pointer"
+                  // The title link is the keyboard path; the row click is a pointer shortcut to it.
                   onClick={() => navigate(`/admin/problems/${p.id}`)}
                 >
-                  <td className="px-4 py-2.5 text-muted-foreground">{p.problemNumber ?? p.id}</td>
+                  <td className="px-4 py-2.5 tabular-nums text-muted-foreground">{p.problemNumber ?? p.id}</td>
                   <td className="px-4 py-2.5">
-                    <span className="font-medium text-foreground">{p.title}</span>
+                    <Link
+                      to={`/admin/problems/${p.id}`}
+                      onClick={(e) => e.stopPropagation()}
+                      className="rounded-sm font-medium text-foreground hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    >
+                      {p.title}
+                    </Link>
                     <span className="ml-2 text-xs text-muted-foreground">/{p.slug}</span>
                   </td>
                   <td className="px-4 py-2.5">
                     <DifficultyBadge difficulty={p.difficulty as Difficulty} />
                   </td>
                   <td className="px-4 py-2.5">
-                    <Badge variant={p.status === 'ACCEPTED' ? 'success' : 'secondary'} className="text-[10px]">
+                    <Badge variant={p.status === 'ACCEPTED' ? 'success' : 'secondary'}>
                       {p.status === 'ACCEPTED' ? t('problems.accepted') : t('problems.draft')}
                     </Badge>
                   </td>
-                  <td className="px-4 py-2.5 text-muted-foreground">
+                  <td className="px-4 py-2.5 tabular-nums text-muted-foreground">
                     {p.acceptanceRate != null ? `${p.acceptanceRate}%` : '—'}
                   </td>
                   <td className="px-4 py-2.5">
                     <div className="flex flex-wrap gap-1">
                       {p.tags.slice(0, 2).map((tag) => (
-                        <span key={tag} className="rounded bg-muted px-1.5 py-0.5 text-[10px] text-muted-foreground">
+                        <span key={tag} className="rounded bg-muted px-1.5 py-0.5 text-xs text-secondary-foreground">
                           {tag}
                         </span>
                       ))}
                       {p.tags.length > 2 && (
-                        <span className="text-[10px] text-muted-foreground">+{p.tags.length - 2}</span>
+                        <span className="text-xs text-muted-foreground">+{p.tags.length - 2}</span>
                       )}
                     </div>
                   </td>
@@ -130,8 +168,12 @@ export default function AdminProblemListPage() {
                         {t('problems.view')}
                       </Link>
                       <button
-                        onClick={() => handleDelete(p.id, p.title)}
-                        className="rounded px-2 py-1 text-xs text-destructive hover:bg-destructive/10 transition-colors"
+                        type="button"
+                        onClick={() => {
+                          setPendingDelete(p);
+                          setDeleteOpen(true);
+                        }}
+                        className="rounded px-2 py-1 text-xs text-error-700 hover:bg-destructive/10 transition-colors dark:text-error-400"
                       >
                         {t('problems.delete')}
                       </button>
@@ -144,11 +186,14 @@ export default function AdminProblemListPage() {
         </div>
       )}
 
-      {!loading && problems.length === 0 && (
-        <div className="py-12 text-center text-sm text-muted-foreground">
-          {t('problems.noProblems')}
-        </div>
-      )}
+      <ConfirmDialog
+        open={deleteOpen}
+        title={t('problems.confirmDeleteTitle', { title: pendingDelete?.title ?? '' })}
+        description={t('problems.confirmDeleteBody')}
+        confirmLabel={t('problems.delete')}
+        onConfirm={confirmDelete}
+        onCancel={() => setDeleteOpen(false)}
+      />
     </div>
   );
 }

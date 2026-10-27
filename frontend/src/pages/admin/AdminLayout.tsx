@@ -1,4 +1,5 @@
 import { Link, Outlet, useLocation, Navigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/context/AuthContext';
 import { useTheme } from '@/context/ThemeContext';
 import { updateThemePreference } from '@/api/user';
@@ -6,7 +7,7 @@ import Spinner from '@/components/ui/Spinner';
 
 const NAV_ITEMS = [
   {
-    label: 'Dashboard',
+    labelKey: 'layout.dashboard',
     path: '/admin/dashboard',
     icon: (
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -16,7 +17,7 @@ const NAV_ITEMS = [
     ),
   },
   {
-    label: 'Problems',
+    labelKey: 'layout.problems',
     path: '/admin/problems',
     icon: (
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -26,7 +27,7 @@ const NAV_ITEMS = [
     ),
   },
   {
-    label: 'Users',
+    labelKey: 'layout.users',
     path: '/admin/users',
     icon: (
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -38,6 +39,8 @@ const NAV_ITEMS = [
 ];
 
 export default function AdminLayout() {
+  const { t } = useTranslation('admin');
+  const { t: tn } = useTranslation('nav');
   const { user, isAuthenticated, loading } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const location = useLocation();
@@ -70,12 +73,13 @@ export default function AdminLayout() {
           <Link to="/" className="text-lg font-bold text-foreground">
             CodeBite
           </Link>
-          <span className="rounded bg-accent/10 px-1.5 py-0.5 text-[10px] font-semibold text-accent uppercase">
-            Admin
+          {/* Readable Ember: the 800 step holds 4.5:1 on its own wash; 400 on night. */}
+          <span className="rounded bg-accent-500/15 px-1.5 py-0.5 text-xs font-semibold uppercase text-accent-800 dark:text-accent-400">
+            {t('layout.badge')}
           </span>
         </div>
 
-        <nav className="flex-1 overflow-auto p-3">
+        <nav aria-label={t('layout.nav')} className="flex-1 overflow-auto p-3">
           <ul className="space-y-0.5">
             {NAV_ITEMS.map((item) => {
               const isActive = location.pathname.startsWith(item.path);
@@ -83,14 +87,15 @@ export default function AdminLayout() {
                 <li key={item.path}>
                   <Link
                     to={item.path}
+                    aria-current={isActive ? 'page' : undefined}
                     className={`flex items-center gap-2.5 rounded-md px-3 py-2 text-sm transition-colors ${
                       isActive
-                        ? 'bg-accent/10 font-medium text-accent'
+                        ? 'bg-accent-500/15 font-medium text-accent-800 dark:text-accent-400'
                         : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                     }`}
                   >
-                    {item.icon}
-                    {item.label}
+                    <span aria-hidden>{item.icon}</span>
+                    {t(item.labelKey)}
                   </Link>
                 </li>
               );
@@ -102,8 +107,10 @@ export default function AdminLayout() {
           <div className="flex items-center justify-between">
             <span className="text-xs text-muted-foreground">{user?.username}</span>
             <button
+              type="button"
               onClick={handleToggleTheme}
-              className="flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              aria-label={theme === 'light' ? tn('switchToDark') : tn('switchToLight')}
+              className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
             >
               {theme === 'light' ? (
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

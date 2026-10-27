@@ -12,12 +12,13 @@
     "acceptance": "Acceptance",
     "noProblems": "No problems yet",
     "recentSubmissions": "Recent Submissions",
-    "noSubmissions": "No submissions yet"
+    "noSubmissions": "No submissions yet",
+    "difficulty": "Difficulty"
   },
   "problems": {
     "heading": "Problems",
     "total": "{{count}} total",
-    "newProblem": "+ New Problem",
+    "newProblem": "New Problem",
     "search": "Search problems...",
     "id": "ID",
     "title": "Title",
@@ -29,7 +30,11 @@
     "view": "View",
     "delete": "Delete",
     "noProblems": "No problems found.",
-    "accepted": "Accepted"
+    "accepted": "Accepted",
+    "difficulty": "Difficulty",
+    "confirmDeleteTitle": "Delete \"{{title}}\"?",
+    "confirmDeleteBody": "This can't be undone.",
+    "deleteFailed": "Couldn't delete the problem. Try again."
   },
   "edit": {
     "newProblem": "New Problem",
@@ -45,19 +50,26 @@
     "constraints": "Constraints",
     "constraintsPlaceholder": "e.g. 1 <= nums.length <= 10^4",
     "testCases": "Test Cases ({{count}})",
-    "addTestCase": "+ Add Test Case",
+    "addTestCase": "Add Test Case",
     "sample": "Sample",
-    "input": "Input:",
-    "expected": "Expected:",
+    "input": "Input",
+    "expected": "Expected",
     "inputLabel": "Input",
     "expectedOutputLabel": "Expected Output",
     "sampleVisible": "Sample (visible to users)",
-    "order": "Order:",
+    "order": "Order",
     "difficulty": "Difficulty",
     "visibility": "Visibility",
     "visibleToAll": "Visible to all users",
     "adminOnly": "Only visible to admins",
-    "tagsSelected": "Tags ({{count}} selected)"
+    "tagsSelected": "Tags ({{count}} selected)",
+    "back": "Back to problems",
+    "saved": "Saved",
+    "saveFailed": "Couldn't save the problem. Your changes are still here, so try again.",
+    "testCaseFailed": "Couldn't save the test case. Try again.",
+    "confirmDeleteTestCase": "Delete test case #{{order}}?",
+    "confirmDeleteTestCaseBody": "This can't be undone.",
+    "deleteTestCaseFailed": "Couldn't delete the test case. Try again."
   },
   "users": {
     "heading": "Users",
@@ -78,6 +90,20 @@
     "submittedAt": "Submitted",
     "delete": "Delete",
     "empty": "No submissions found.",
-    "confirmDelete": "Delete this submission? This cannot be undone."
+    "id": "ID",
+    "deleting": "Deleting…",
+    "deleteFailed": "Couldn't delete the submission. Try again.",
+    "confirmDeleteTitle": "Delete submission #{{id}}?",
+    "confirmDeleteBody": "This can't be undone."
+  },
+  "layout": {
+    "badge": "Admin",
+    "nav": "Admin",
+    "dashboard": "Dashboard",
+    "problems": "Problems",
+    "users": "Users"
+  },
+  "time": {
+    "justNow": "just now"
   }
 }
