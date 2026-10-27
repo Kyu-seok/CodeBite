@@ -447,7 +447,7 @@ Judge0 is a self-hosted or cloud API that compiles and runs code in a sandboxed 
 Judge0 uses numeric IDs. Maintain a mapping:
 ```
 java       → 62 (Java OpenJDK 13)
-python     → 71 (Python 3)
+python     → 100 (Python 3.12, our image; 71 = Python 3.8.1 is the rollback)
 javascript → 63 (Node.js 12)
 cpp        → 54 (GCC 9.2)
 ```
