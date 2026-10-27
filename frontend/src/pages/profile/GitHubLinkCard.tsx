@@ -183,6 +183,7 @@ function ImportOffer({
         .then((latest) => {
           if (!latest || latest.importState !== 'RUNNING') onChange(latest);
         })
+        // eslint-disable-next-line no-restricted-syntax -- Background poll while the Import runs: the next tick retries, and the card keeps showing it as running meanwhile.
         .catch(() => {});
     }, IMPORT_POLL_MS);
     return () => window.clearInterval(timer);

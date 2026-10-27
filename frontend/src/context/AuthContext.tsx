@@ -66,6 +66,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const logout = () => {
+    // eslint-disable-next-line no-restricted-syntax -- The token is dropped locally either way; the server call only blacklists it early, and there's no one left to show a failure to.
     authApi.logout().catch(() => {});
     localStorage.removeItem("token");
     setUser(null);

@@ -30,12 +30,12 @@ export default function UserSubmissionsPage() {
   const uid = Number(userId);
 
   useEffect(() => {
-    // The name is only for the heading; "#id" stands in if this fails.
     getUsers(0, 50)
       .then((res) => {
         const found = res.data.content.find((u) => u.id === uid);
         if (found) setUser(found);
       })
+      // eslint-disable-next-line no-restricted-syntax -- The name is only for the heading; "#id" stands in if this fails, and the submissions below show their own error.
       .catch(() => {});
   }, [uid]);
 

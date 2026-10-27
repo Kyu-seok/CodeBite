@@ -47,6 +47,7 @@ export function useProfile() {
   // A Repair changes the header's current and best Streak.
   useEffect(() => {
     const refreshStats = () => {
+      // eslint-disable-next-line no-restricted-syntax -- Best-effort refresh after a Repair, which already succeeded and shows in the Streak calendar; the header catches up on the next load.
       getProfileStats().then((s) => setStats(s.data)).catch(() => {});
     };
     window.addEventListener(STREAK_CHANGED_EVENT, refreshStats);
