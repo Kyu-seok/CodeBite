@@ -75,7 +75,14 @@
       "minutes": "min",
       "seconds": "sec",
       "minutesLabel": "Minutes taken",
-      "secondsLabel": "Seconds taken"
+      "secondsLabel": "Seconds taken",
+      "scheduled": "Rated {{label}} · due {{date}}",
+      "next": {
+        "review": "Next due review",
+        "roadmap": "Next on your roadmap",
+        "list": "Nothing else is due for review",
+        "listAction": "Browse problems"
+      }
     },
     "badge": {
       "label": "Review status",

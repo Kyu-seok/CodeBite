@@ -413,11 +413,12 @@ export default function ProblemDetailPage() {
         // ignore — primary path is the rating
       }
     }
-    await setSubmissionReview(submissionId, {
+    const res = await setSubmissionReview(submissionId, {
       confidence,
       notes: notes ?? undefined,
     })
     refetchSubmissions()
+    return res.data
   }
 
   const handleFoldLeft = () => panelFunctionsRef.current?.collapseLeft()
@@ -609,6 +610,7 @@ export default function ProblemDetailPage() {
         open={acceptedModal.open}
         onOpenChange={(open) => setAcceptedModal((prev) => ({ ...prev, open }))}
         submissionId={acceptedModal.submissionId}
+        problemSlug={slug!}
         defaultSolveTimeSeconds={acceptedModal.solveTimeSeconds}
         reviewIntervalDays={acceptedModal.reviewIntervalDays}
         onSubmit={handleAcceptedReviewSubmit}
