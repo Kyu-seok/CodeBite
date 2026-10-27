@@ -33,6 +33,7 @@
     "loading": "불러오는 중"
   },
   "pagination": {
-    "pageOf": "{{current}} / {{total}} 페이지"
+    "pageOf": "{{current}} / {{total}} 페이지",
+    "label": "페이지 이동"
   }
 }
