@@ -226,6 +226,7 @@ export function SubmissionDetail({
             busy={reviewBusy}
             currentRating={submission.confidence}
             defaultNotes={submission.confidence ? submission.notes : null}
+            intervalDays={submission.reviewIntervalDays}
             title={t(submission.confidence ? 'submissions.updateRating' : 'submissions.markForReview')}
             subtitle={t(
               submission.confidence ? 'submissions.updateRatingHint' : 'submissions.markForReviewHint',

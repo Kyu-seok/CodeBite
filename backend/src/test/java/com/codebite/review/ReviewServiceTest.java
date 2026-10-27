@@ -25,6 +25,7 @@ import org.mockito.quality.Strictness;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -242,6 +243,46 @@ class ReviewServiceTest {
         reviewService.setReview(100L, 1L, Confidence.HARD, null);
 
         assertEquals("kept", sub.getNotes());
+    }
+
+    @Test
+    void previewIntervals_firstRating_followsTheColdStartLadder() {
+        Submission sub = submission(100L, SubmissionStatus.ACCEPTED);
+        when(submissionRepository
+                .findByUserIdAndProblemIdAndConfidenceIsNotNullOrderByReviewedAtAsc(1L, 10L))
+                .thenReturn(List.of());
+
+        Map<Confidence, Integer> preview = reviewService.previewIntervals(sub);
+
+        assertEquals(Map.of(Confidence.AGAIN, 1, Confidence.HARD, 1,
+                Confidence.GOOD, 1, Confidence.EASY, 4), preview);
+        verify(stateRepository, never()).save(any(ProblemReviewState.class));
+        verify(submissionRepository, never()).save(any(Submission.class));
+    }
+
+    @Test
+    void previewIntervals_matchesWhatSetReviewWouldSchedule() {
+        Submission first = submission(100L, SubmissionStatus.ACCEPTED);
+        first.setConfidence(Confidence.GOOD);
+        first.setReviewedAt(Instant.parse("2026-01-01T00:00:00Z"));
+        Submission second = submission(101L, SubmissionStatus.ACCEPTED);
+        second.setConfidence(Confidence.GOOD);
+        second.setReviewedAt(Instant.parse("2026-01-02T00:00:00Z"));
+        Submission third = submission(102L, SubmissionStatus.ACCEPTED);
+        // The second submission's own rating drops out: re-rating it replays it last.
+        when(submissionRepository
+                .findByUserIdAndProblemIdAndConfidenceIsNotNullOrderByReviewedAtAsc(1L, 10L))
+                .thenReturn(List.of(first, second));
+
+        Map<Confidence, Integer> rerate = reviewService.previewIntervals(second);
+        Map<Confidence, Integer> fresh = reviewService.previewIntervals(third);
+
+        // One prior GOOD → second rung: HARD 3, GOOD 6, EASY 10; AGAIN always resets to 1.
+        assertEquals(Map.of(Confidence.AGAIN, 1, Confidence.HARD, 3,
+                Confidence.GOOD, 6, Confidence.EASY, 10), rerate);
+        // Two prior GOODs (1d → 6d, ease 2.50) → interval × ease = 15 for every pass.
+        assertEquals(Map.of(Confidence.AGAIN, 1, Confidence.HARD, 15,
+                Confidence.GOOD, 15, Confidence.EASY, 15), fresh);
     }
 
     @Test

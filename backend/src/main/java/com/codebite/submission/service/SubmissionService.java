@@ -13,6 +13,8 @@ import com.codebite.problem.entity.Problem;
 import com.codebite.problem.entity.TestCase;
 import com.codebite.problem.repository.ProblemRepository;
 import com.codebite.problem.repository.TestCaseRepository;
+import com.codebite.review.entity.Confidence;
+import com.codebite.review.service.ReviewService;
 import com.codebite.submission.dto.SubmissionListItem;
 import com.codebite.submission.dto.SubmissionResponse;
 import com.codebite.submission.dto.SubmissionResultDto;
@@ -32,6 +34,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class SubmissionService {
@@ -47,6 +50,7 @@ public class SubmissionService {
     private final JudgeErrorParsers errorParsers;
     private final UserCodeLineMapper lineMapper;
     private final SolutionCommitRepository solutionCommitRepository;
+    private final ReviewService reviewService;
     private final Counter submissionsCreatedCounter;
 
     public SubmissionService(SubmissionRepository submissionRepository,
@@ -60,6 +64,7 @@ public class SubmissionService {
                              JudgeErrorParsers errorParsers,
                              UserCodeLineMapper lineMapper,
                              SolutionCommitRepository solutionCommitRepository,
+                             ReviewService reviewService,
                              MeterRegistry meterRegistry) {
         this.submissionRepository = submissionRepository;
         this.submissionResultRepository = submissionResultRepository;
@@ -72,6 +77,7 @@ public class SubmissionService {
         this.errorParsers = errorParsers;
         this.lineMapper = lineMapper;
         this.solutionCommitRepository = solutionCommitRepository;
+        this.reviewService = reviewService;
         this.submissionsCreatedCounter = Counter.builder("codebite.submissions.created")
                 .description("Total submissions created")
                 .register(meterRegistry);
@@ -99,7 +105,7 @@ public class SubmissionService {
         }
 
         // Return immediately with PENDING status
-        return toResponse(submission, List.of(), problem.getSlug(), List.of(), 0, null);
+        return toResponse(submission, List.of(), problem.getSlug(), List.of(), 0, null, null);
     }
 
     @Transactional(readOnly = true)
@@ -126,8 +132,12 @@ public class SubmissionService {
                 .map(SolutionCommitSummary::from)
                 .orElse(null);
 
+        Map<Confidence, Integer> reviewIntervalDays = submission.getStatus() == SubmissionStatus.PENDING
+                ? null
+                : reviewService.previewIntervals(submission);
+
         return toResponse(submission, results, submission.getProblem().getSlug(),
-                testCases, userCodeStartLine, solutionCommit);
+                testCases, userCodeStartLine, solutionCommit, reviewIntervalDays);
     }
 
     @Transactional(readOnly = true)
@@ -177,7 +187,8 @@ public class SubmissionService {
 
     private SubmissionResponse toResponse(Submission submission, List<SubmissionResult> results,
                                           String problemSlug, List<TestCase> allTestCases,
-                                          int userCodeStartLine, SolutionCommitSummary solutionCommit) {
+                                          int userCodeStartLine, SolutionCommitSummary solutionCommit,
+                                          Map<Confidence, Integer> reviewIntervalDays) {
         int userCodeLineCount = countLines(submission.getSourceCode());
         String language = submission.getLanguage();
 
@@ -216,7 +227,8 @@ public class SubmissionService {
                 submission.getNotes(),
                 submission.getConfidence(),
                 submission.getSolveTimeSeconds(),
-                solutionCommit
+                solutionCommit,
+                reviewIntervalDays
         );
     }
 
