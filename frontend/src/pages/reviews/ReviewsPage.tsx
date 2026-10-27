@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   getReviewStats,
   getReviewActivity,
@@ -7,17 +8,18 @@ import {
 import type { ReviewStats, TagConfidenceItem } from "@/types/review";
 import type { ActivityDay } from "@/types/profile";
 import Spinner from "@/components/ui/Spinner";
+import LoadError from "@/components/ui/LoadError";
 import { ActivityHeatmap } from "@/pages/profile/ActivityHeatmap";
 import { TagConfidenceChart } from "./TagConfidenceChart";
 import { RecommendationsCard } from "./RecommendationsCard";
 import { ReviewHistoryList } from "./ReviewHistoryList";
+import { formatDuration } from "./formatDuration";
 
-function formatDuration(seconds: number): string {
-  if (seconds <= 0) return "0m";
-  const hours = Math.floor(seconds / 3600);
-  const mins = Math.floor((seconds % 3600) / 60);
-  if (hours > 0) return mins > 0 ? `${hours}h ${mins}m` : `${hours}h`;
-  return `${mins}m`;
+function without<T>(set: ReadonlySet<T>, item: T): ReadonlySet<T> {
+  if (!set.has(item)) return set;
+  const next = new Set(set);
+  next.delete(item);
+  return next;
 }
 
 interface SummaryCardProps {
@@ -29,30 +31,47 @@ interface SummaryCardProps {
 function SummaryCard({ label, value, hint }: SummaryCardProps) {
   return (
     <div className="rounded-xl border border-border bg-card p-5">
-      <div className="text-xs uppercase tracking-wider text-muted-foreground">{label}</div>
-      <div className="mt-2 text-2xl font-semibold text-foreground tabular-nums">{value}</div>
-      {hint && <div className="mt-1 text-xs text-muted-foreground">{hint}</div>}
+      <dt className="text-xs uppercase tracking-wider text-muted-foreground">{label}</dt>
+      <dd className="mt-2 text-2xl font-semibold text-foreground tabular-nums break-keep">{value}</dd>
+      {hint && <dd className="mt-1 text-xs text-muted-foreground">{hint}</dd>}
     </div>
   );
 }
 
+type Section = "stats" | "activity" | "tags";
+const SECTIONS: Section[] = ["stats", "activity", "tags"];
+
 export default function ReviewsPage() {
+  const { t, i18n } = useTranslation("reviews");
   const [stats, setStats] = useState<ReviewStats | null>(null);
   const [activity, setActivity] = useState<ActivityDay[]>([]);
   const [tagConfidence, setTagConfidence] = useState<TagConfidenceItem[]>([]);
+  const [failed, setFailed] = useState<ReadonlySet<Section>>(new Set());
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    document.title = "Reviews | CodeBite";
-    Promise.all([getReviewStats(), getReviewActivity(12), getTagConfidence()])
-      .then(([statsRes, activityRes, tagRes]) => {
-        setStats(statsRes.data);
-        setActivity(activityRes.data as ActivityDay[]);
-        setTagConfidence(tagRes.data);
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false));
+    document.title = t("metaTitle");
+  }, [t]);
+
+  // Each section loads and retries on its own, so one failure shows as an error on its card
+  // instead of zeros across the page, and retrying it leaves the other cards (and the
+  // History filters) alone.
+  const load = useCallback((section: Section) => {
+    const request =
+      section === "stats"
+        ? getReviewStats().then((res) => setStats(res.data))
+        : section === "activity"
+          ? getReviewActivity(12).then((res) => setActivity(res.data as ActivityDay[]))
+          : getTagConfidence().then((res) => setTagConfidence(res.data));
+    return request.then(
+      () => setFailed((prev) => without(prev, section)),
+      () => setFailed((prev) => new Set(prev).add(section)),
+    );
   }, []);
+
+  useEffect(() => {
+    Promise.all(SECTIONS.map(load)).finally(() => setLoading(false));
+  }, [load]);
 
   if (loading) {
     return (
@@ -66,44 +85,53 @@ export default function ReviewsPage() {
     <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
       <div className="flex flex-col gap-5">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Reviews</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Your spaced-repetition history and progress.
-          </p>
+          <h1 className="text-2xl font-bold text-foreground">{t("title")}</h1>
+          <p className="mt-1 text-sm text-muted-foreground">{t("subtitle")}</p>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-          <SummaryCard
-            label="Total ratings"
-            value={String(stats?.totalReviews ?? 0)}
-            hint="Confidence ratings logged across all submissions."
-          />
-          <SummaryCard
-            label="Time invested"
-            value={formatDuration(stats?.totalSolveTimeSeconds ?? 0)}
-            hint="Sum of solve time across rated submissions."
-          />
-          <SummaryCard
-            label="Current streak"
-            value={`${stats?.currentStreak ?? 0}d`}
-            hint="Consecutive days with at least one rating."
-          />
-          <SummaryCard
-            label="Longest streak"
-            value={`${stats?.longestStreak ?? 0}d`}
-            hint="Your best run."
-          />
-        </div>
+        {failed.has("stats") || !stats ? (
+          <div className="rounded-xl border border-border bg-card p-5">
+            <LoadError onRetry={() => load("stats")} />
+          </div>
+        ) : (
+          <dl className="grid grid-cols-2 gap-4 md:grid-cols-4">
+            <SummaryCard
+              label={t("summary.totalRatings")}
+              value={stats.totalReviews.toLocaleString(i18n.language)}
+              hint={t("summary.totalRatingsHint")}
+            />
+            <SummaryCard
+              label={t("summary.timeInvested")}
+              value={formatDuration(stats.totalSolveTimeSeconds, i18n.language)}
+              hint={t("summary.timeInvestedHint")}
+            />
+            <SummaryCard
+              label={t("summary.reviewStreak")}
+              value={t("summary.days", { count: stats.currentStreak })}
+              hint={t("summary.reviewStreakHint")}
+            />
+            <SummaryCard
+              label={t("summary.bestReviewStreak")}
+              value={t("summary.days", { count: stats.longestStreak })}
+              hint={t("summary.bestReviewStreakHint")}
+            />
+          </dl>
+        )}
 
-        <ActivityHeatmap
-          activity={activity}
-          title="Review activity"
-          countLabel={(total) =>
-            `${total} ${total === 1 ? "rating" : "ratings"} in the past year`
-          }
-        />
+        {failed.has("activity") ? (
+          <section className="rounded-xl border border-border bg-card p-5">
+            <h2 className="text-sm font-medium text-foreground">{t("activity.title")}</h2>
+            <LoadError onRetry={() => load("activity")} />
+          </section>
+        ) : (
+          <ActivityHeatmap
+            activity={activity}
+            title={t("activity.title")}
+            countLabel={(total) => t("activity.count", { count: total })}
+          />
+        )}
 
-        <TagConfidenceChart data={tagConfidence} />
+        <TagConfidenceChart data={tagConfidence} failed={failed.has("tags")} onRetry={() => load("tags")} />
 
         <RecommendationsCard />
 

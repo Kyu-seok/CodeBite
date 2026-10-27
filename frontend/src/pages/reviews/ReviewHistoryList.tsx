@@ -1,6 +1,10 @@
-import { useEffect, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
+import { Link, useLocation, useSearchParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import DifficultyBadge from "@/components/ui/DifficultyBadge";
+import Spinner from "@/components/ui/Spinner";
+import LoadError from "@/components/ui/LoadError";
+import { Button } from "@/components/ui/Button";
 import {
   Pagination,
   PaginationContent,
@@ -10,62 +14,41 @@ import {
 } from "@/components/ui/Pagination";
 import { getReviewHistoryFiltered } from "@/api/reviews";
 import { getTags } from "@/api/tags";
-import { confidenceChipClass, useConfidenceLabel } from "@/lib/confidenceColors";
-import type {
-  Confidence,
-  ReviewHistoryItem,
-  ReviewHistoryPage,
-} from "@/types/review";
+import { CONFIDENCE_ORDER, useConfidenceLabel } from "@/lib/confidenceColors";
+import type { Confidence, ReviewHistoryPage } from "@/types/review";
 import type { Difficulty, TagDto } from "@/types/problem";
+import { formatSolveTime } from "./formatDuration";
 
 const PAGE_SIZE = 20;
 
-const CONFIDENCES: Confidence[] = ["AGAIN", "HARD", "GOOD", "EASY"];
 const DIFFICULTIES: Difficulty[] = ["EASY", "MEDIUM", "HARD"];
 
-function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
-}
-
-function formatSolveTime(seconds: number | null): string {
-  if (seconds == null) return "—";
-  const m = Math.floor(seconds / 60);
-  const s = seconds % 60;
-  if (m > 0) return `${m}m ${s}s`;
-  return `${s}s`;
-}
-
-interface FilterChipProps<T extends string> {
+interface FilterSelectProps<T extends string> {
   label: string;
   value: T | undefined;
   options: T[];
-  optionLabel?: (v: T) => string;
+  optionLabel: (v: T) => string;
   onChange: (v: T | undefined) => void;
 }
 
-function FilterChip<T extends string>({
-  label,
-  value,
-  options,
-  optionLabel,
-  onChange,
-}: FilterChipProps<T>) {
+function FilterSelect<T extends string>({ label, value, options, optionLabel, onChange }: FilterSelectProps<T>) {
+  const { t } = useTranslation("reviews");
+  const id = useId();
   return (
     <div className="flex items-center gap-1.5">
-      <span className="text-xs text-muted-foreground">{label}:</span>
+      <label htmlFor={id} className="text-xs text-muted-foreground">
+        {label}
+      </label>
       <select
+        id={id}
         value={value ?? ""}
         onChange={(e) => onChange((e.target.value || undefined) as T | undefined)}
-        className="h-7 rounded-md border border-border bg-background px-2 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+        className="h-8 rounded-md border border-border bg-background px-2 text-xs text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       >
-        <option value="">Any</option>
+        <option value="">{t("history.any")}</option>
         {options.map((opt) => (
           <option key={opt} value={opt}>
-            {optionLabel ? optionLabel(opt) : opt}
+            {optionLabel(opt)}
           </option>
         ))}
       </select>
@@ -74,100 +57,174 @@ function FilterChip<T extends string>({
 }
 
 export function ReviewHistoryList() {
+  const { t, i18n } = useTranslation("reviews");
+  const { t: tc } = useTranslation("common");
   const confidenceLabel = useConfidenceLabel();
+  const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
+  // The URL owns the tag filter, so a "Weakest categories" link on this same page applies it.
+  const tag = searchParams.get("tag") || undefined;
   const [page, setPage] = useState(0);
   const [confidence, setConfidence] = useState<Confidence | undefined>();
   const [difficulty, setDifficulty] = useState<Difficulty | undefined>();
-  const [tag, setTagState] = useState<string | undefined>(
-    searchParams.get("tag") || undefined,
-  );
   const [data, setData] = useState<ReviewHistoryPage | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState<"loading" | "ready" | "failed">("loading");
   const [tags, setTags] = useState<TagDto[]>([]);
+  const [tagsFailed, setTagsFailed] = useState(false);
+  const [lastTag, setLastTag] = useState(tag);
+  // Which filters the rows on screen belong to; while it differs from the current ones the
+  // previous rows stay, dimmed and marked busy, instead of collapsing to a spinner.
+  const requestKey = `${confidence}|${difficulty}|${tag}|${page}`;
+  const [shownKey, setShownKey] = useState<string | null>(null);
+  const headingRef = useRef<HTMLHeadingElement>(null);
 
-  // Keep `tag` in sync with the URL so deep links (e.g. /reviews?tag=dp) work
-  // and so changing the dropdown updates the URL for sharing/back-button.
+  // A tag picked from outside (a link) starts the list over, like the selects below do.
+  if (tag !== lastTag) {
+    setLastTag(tag);
+    setPage(0);
+  }
+
   const setTag = (next: string | undefined) => {
-    setTagState(next);
     const sp = new URLSearchParams(searchParams);
     if (next) sp.set("tag", next);
     else sp.delete("tag");
     setSearchParams(sp, { replace: true });
   };
 
-  useEffect(() => {
+  const fetchTags = useCallback(() => {
     getTags()
       .then((res) => setTags(res.data))
-      .catch(() => {});
+      .catch(() => setTagsFailed(true));
   }, []);
 
-  // Reset to page 0 when filters change.
+  useEffect(fetchTags, [fetchTags]);
+
+  // isCurrent drops a response that lands after the filters have moved on, so an older page
+  // can't replace a newer one (and leave the list marked busy).
+  const fetchPage = useCallback(
+    (isCurrent: () => boolean = () => true) => {
+      getReviewHistoryFiltered({ confidence, difficulty, tag, page, size: PAGE_SIZE })
+        .then((res) => {
+          if (!isCurrent()) return;
+          setData(res.data);
+          setShownKey(requestKey);
+          setStatus("ready");
+        })
+        .catch(() => {
+          if (isCurrent()) setStatus("failed");
+        });
+    },
+    [confidence, difficulty, tag, page, requestKey],
+  );
+
   useEffect(() => {
+    let current = true;
+    fetchPage(() => current);
+    return () => {
+      current = false;
+    };
+  }, [fetchPage]);
+
+  // Arriving from a "Weakest categories" link: bring the filtered list into view and focus.
+  useEffect(() => {
+    if ((location.state as { focusHistory?: boolean } | null)?.focusHistory) {
+      headingRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      headingRef.current?.focus({ preventScroll: true });
+    }
+  }, [location.key, location.state]);
+
+  const retry = () => {
+    setStatus("loading");
+    fetchPage();
+  };
+
+  const filtered = Boolean(confidence || difficulty || tag);
+  const clearFilters = () => {
+    setConfidence(undefined);
+    setDifficulty(undefined);
     setPage(0);
-  }, [confidence, difficulty, tag]);
+    setTag(undefined);
+  };
 
-  useEffect(() => {
-    setLoading(true);
-    getReviewHistoryFiltered({ confidence, difficulty, tag, page, size: PAGE_SIZE })
-      .then((res) => setData(res.data))
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, [confidence, difficulty, tag, page]);
-
-  const items: ReviewHistoryItem[] = data?.content ?? [];
+  const tagName = (slug: string) => tags.find((tg) => tg.slug === slug)?.name ?? slug;
+  const items = data?.content ?? [];
   const totalPages = data?.totalPages ?? 0;
+  const formatDate = (iso: string) =>
+    new Date(iso).toLocaleDateString(i18n.language, { month: "short", day: "numeric", year: "numeric" });
 
   return (
-    <div className="rounded-xl border border-border bg-card p-5">
-      <div className="mb-4 flex flex-wrap items-baseline justify-between gap-3">
-        <h3 className="text-sm font-medium text-foreground">History</h3>
+    <section className="rounded-xl border border-border bg-card p-5">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+        <h2 ref={headingRef} tabIndex={-1} className="scroll-mt-20 text-sm font-medium text-foreground outline-none">
+          {t("history.title")}
+        </h2>
         <div className="flex flex-wrap items-center gap-3">
-          <FilterChip
-            label="Confidence"
+          <FilterSelect
+            label={t("history.confidence")}
             value={confidence}
-            options={CONFIDENCES}
-            optionLabel={(v) => confidenceLabel(v)}
-            onChange={setConfidence}
+            options={[...CONFIDENCE_ORDER]}
+            optionLabel={confidenceLabel}
+            onChange={(v) => {
+              setConfidence(v);
+              setPage(0);
+            }}
           />
-          <FilterChip
-            label="Difficulty"
+          <FilterSelect
+            label={t("history.difficulty")}
             value={difficulty}
             options={DIFFICULTIES}
-            onChange={setDifficulty}
+            optionLabel={(v) => tc(`difficulty.${v.toLowerCase()}`)}
+            onChange={(v) => {
+              setDifficulty(v);
+              setPage(0);
+            }}
           />
-          <div className="flex items-center gap-1.5">
-            <span className="text-xs text-muted-foreground">Tag:</span>
-            <select
-              value={tag ?? ""}
-              onChange={(e) => setTag(e.target.value || undefined)}
-              className="h-7 rounded-md border border-border bg-background px-2 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-            >
-              <option value="">Any</option>
-              {tags.map((t) => (
-                <option key={t.slug} value={t.slug}>
-                  {t.name}
-                </option>
-              ))}
-            </select>
-          </div>
+          <FilterSelect
+            label={t("history.tag")}
+            value={tag}
+            options={tags.map((tg) => tg.slug)}
+            optionLabel={tagName}
+            onChange={setTag}
+          />
         </div>
       </div>
 
-      {loading ? (
-        <div className="flex h-20 items-center justify-center">
-          <div className="h-5 w-5 animate-spin rounded-full border-2 border-muted border-t-accent" />
-        </div>
+      {tagsFailed && (
+        <p role="alert" className="mb-3 flex items-center gap-2 text-xs text-muted-foreground">
+          {t("history.tagsFailed")}
+          <Button size="sm" variant="link" className="h-auto p-0 text-xs" onClick={() => {
+              setTagsFailed(false);
+              fetchTags();
+            }}>
+            {tc("loadError.retry")}
+          </Button>
+        </p>
+      )}
+      {/* Says which tag a "Weakest categories" link applied; the focused heading alone reads "History". */}
+      <p role="status" className="sr-only">
+        {tag ? t("history.filteredByTag", { tag: tagName(tag) }) : ""}
+      </p>
+
+      {status === "failed" ? (
+        <LoadError onRetry={retry} />
+      ) : status === "loading" && !data ? (
+        <Spinner size="sm" className="h-20 p-0" />
       ) : items.length === 0 ? (
-        <div className="flex h-20 items-center justify-center">
-          <p className="text-sm text-muted-foreground">
-            No ratings match the current filters.
-          </p>
+        <div className="flex h-20 flex-col items-center justify-center gap-2 text-center">
+          <p className="text-sm text-muted-foreground">{filtered ? t("history.empty") : t("history.noRatings")}</p>
+          {filtered && (
+            <Button size="sm" variant="outline" onClick={clearFilters}>
+              {t("history.clearFilters")}
+            </Button>
+          )}
         </div>
       ) : (
-        <div className="space-y-0 divide-y divide-border/50">
+        <ul
+          aria-busy={shownKey !== requestKey}
+          className="space-y-0 divide-y divide-border/50 transition-opacity aria-busy:opacity-60"
+        >
           {items.map((it) => (
-            <div
+            <li
               key={it.submissionId}
               className="flex items-center justify-between gap-4 py-2.5 first:pt-0 last:pb-0"
             >
@@ -175,7 +232,7 @@ export function ReviewHistoryList() {
                 <DifficultyBadge difficulty={it.difficulty} />
                 <Link
                   to={`/problems/${it.problemSlug}`}
-                  className="truncate text-sm text-foreground transition-colors hover:text-accent"
+                  className="truncate rounded-sm text-sm text-foreground transition-colors hover:text-accent-700 dark:hover:text-accent-400"
                 >
                   {it.problemTitle}
                 </Link>
@@ -185,21 +242,19 @@ export function ReviewHistoryList() {
                 <span className="hidden text-xs capitalize text-muted-foreground sm:block">
                   {it.language}
                 </span>
-                <span
-                  className={`inline-flex items-center rounded px-1.5 py-0.5 text-[10px] font-medium ${confidenceChipClass[it.confidence]}`}
-                >
+                <span className="inline-flex items-center rounded bg-secondary px-1.5 py-0.5 text-xs font-medium text-secondary-foreground">
                   {confidenceLabel(it.confidence)}
                 </span>
-                <span className="hidden w-16 text-right text-xs tabular-nums text-muted-foreground md:block">
-                  {formatSolveTime(it.solveTimeSeconds)}
+                <span className="hidden w-16 text-right font-mono text-xs tabular-nums text-muted-foreground md:block">
+                  {it.solveTimeSeconds == null ? "—" : formatSolveTime(it.solveTimeSeconds, i18n.language)}
                 </span>
-                <span className="w-20 text-right text-xs tabular-nums text-muted-foreground">
+                <span className="min-w-20 text-right text-xs tabular-nums text-muted-foreground">
                   {formatDate(it.reviewedAt)}
                 </span>
               </div>
-            </div>
+            </li>
           ))}
-        </div>
+        </ul>
       )}
 
       {totalPages > 1 && (
@@ -214,7 +269,7 @@ export function ReviewHistoryList() {
               </PaginationItem>
               <PaginationItem>
                 <span className="px-3 text-xs text-muted-foreground tabular-nums">
-                  {page + 1} / {totalPages}
+                  {t("history.page", { page: page + 1, total: totalPages })}
                 </span>
               </PaginationItem>
               <PaginationItem>
@@ -227,7 +282,6 @@ export function ReviewHistoryList() {
           </Pagination>
         </div>
       )}
-    </div>
+    </section>
   );
 }
-

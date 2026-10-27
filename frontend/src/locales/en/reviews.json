@@ -1,0 +1,49 @@
+{
+  "metaTitle": "Reviews | CodeBite",
+  "title": "Reviews",
+  "subtitle": "Your spaced-repetition history and progress.",
+  "summary": {
+    "totalRatings": "Total ratings",
+    "totalRatingsHint": "Confidence ratings logged across all submissions.",
+    "timeInvested": "Time invested",
+    "timeInvestedHint": "Sum of solve time across rated submissions.",
+    "reviewStreak": "Review Streak",
+    "reviewStreakHint": "Consecutive days with a completed review.",
+    "bestReviewStreak": "Best Review Streak",
+    "bestReviewStreakHint": "Your longest run of review days.",
+    "days_one": "{{count}} day",
+    "days_other": "{{count}} days"
+  },
+  "activity": {
+    "title": "Review activity",
+    "count_one": "{{count}} rating in the past year",
+    "count_other": "{{count}} ratings in the past year"
+  },
+  "chart": {
+    "title": "Confidence by tag",
+    "empty": "Rate a few submissions to see your tag breakdown.",
+    "ratings_one": "{{count}} rating",
+    "ratings_other": "{{count}} ratings",
+    "segment": "{{label}} {{count}}"
+  },
+  "recommendations": {
+    "title": "Recommendations",
+    "empty": "Rate a few submissions and we'll start suggesting what to revisit.",
+    "weakest": "Weakest categories",
+    "average": "Average: {{label}}",
+    "roadmapNext": "Roadmap next"
+  },
+  "history": {
+    "title": "History",
+    "confidence": "Confidence",
+    "difficulty": "Difficulty",
+    "tag": "Tag",
+    "any": "Any",
+    "empty": "No ratings match these filters.",
+    "clearFilters": "Clear filters",
+    "noRatings": "No ratings yet. Rate an Accepted submission to start your history.",
+    "page": "Page {{page}} of {{total}}",
+    "filteredByTag": "Showing ratings tagged {{tag}}",
+    "tagsFailed": "Couldn't load tags."
+  }
+}
