@@ -255,6 +255,8 @@
     "hideTests": "테스트 패널 숨기기",
     "fullScreen": "전체 화면",
     "exitFullScreen": "전체 화면 종료",
+    "resizeLeftRight": "설명과 코드 패널 크기 조절",
+    "resizeEditorTests": "코드와 테스트 패널 크기 조절",
     "runShortcut": "{{keys}}로 실행",
     "submitShortcut": "{{keys}}로 제출",
     "problemNotFound": "문제를 찾을 수 없습니다.",

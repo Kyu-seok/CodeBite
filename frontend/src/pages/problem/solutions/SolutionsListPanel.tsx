@@ -108,7 +108,7 @@ export function SolutionsListPanel({ slug, isAuthenticated }: SolutionsListPanel
               </option>
             ))}
           </select>
-          <Button variant="accent" size="sm" onClick={handleShare}>
+          <Button size="sm" onClick={handleShare}>
             {t("solutions.shareYourSolution")}
           </Button>
         </div>

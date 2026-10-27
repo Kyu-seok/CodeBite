@@ -115,6 +115,43 @@ function ErrorDisplay({
   );
 }
 
+type ResultAnnouncerProps = Pick<
+  TestPanelProps,
+  'running' | 'submitting' | 'runResult' | 'runError' | 'submitResult' | 'submitError'
+>;
+
+/**
+ * The workspace's one live region for Run and Submit. Rendered by the page, not the test panel,
+ * so a run started with the shortcut while the panel is folded is still announced.
+ */
+export function ResultAnnouncer({
+  running,
+  submitting,
+  runResult,
+  runError,
+  submitResult,
+  submitError,
+}: ResultAnnouncerProps) {
+  const { t } = useTranslation('problem');
+  const { t: tc } = useTranslation('common');
+  const announcement = running
+    ? t('test.running')
+    : submitting
+      ? t('test.judging')
+      : runError || submitError
+        ? (runError || submitError)!
+        : runResult
+          ? `${t('test.runResults')}: ${tc(STATUS_KEYS[runResult.overallStatus])}`
+          : submitResult
+            ? tc(STATUS_KEYS[submitResult.status])
+            : '';
+  return (
+    <p role="status" aria-live="polite" className="sr-only">
+      {announcement}
+    </p>
+  );
+}
+
 export function TestPanel({
   sampleTestCases,
   runResult,
@@ -137,24 +174,8 @@ export function TestPanel({
   isMaximized,
 }: TestPanelProps) {
   const { t } = useTranslation('problem');
-  const { t: tc } = useTranslation('common');
-  const announcement = running
-    ? t('test.running')
-    : submitting
-      ? t('test.judging')
-      : runError || submitError
-        ? (runError || submitError)!
-        : runResult
-          ? `${t('test.runResults')}: ${tc(STATUS_KEYS[runResult.overallStatus])}`
-          : submitResult
-            ? tc(STATUS_KEYS[submitResult.status])
-            : '';
   return (
     <div className="flex h-full flex-col">
-      {/* Always mounted so screen readers hear the verdict when it lands. */}
-      <p role="status" aria-live="polite" className="sr-only">
-        {announcement}
-      </p>
       <Tabs
         defaultValue="testcases"
         value={activeTab}
@@ -165,7 +186,7 @@ export function TestPanel({
             <TabsTrigger value="testcases">{t('test.testCases')}</TabsTrigger>
             <TabsTrigger value="output">{t('test.output')}</TabsTrigger>
           </TabsList>
-          <div className="flex items-center pr-1 opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100">
+          <div className="flex items-center pr-1 opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100 [@media(hover:none)]:opacity-100">
             <Tooltip>
               <TooltipTrigger>
                 <Button
@@ -270,11 +291,10 @@ export function TestPanel({
           <Tooltip>
             <TooltipTrigger>
               <Button
-                variant="outline"
+                variant="secondary"
                 size="lg"
                 onClick={onRun}
-                disabled={running || submitting}
-                className="border-accent-700/40 text-accent-700 hover:bg-accent-500/10 hover:border-accent-700 dark:border-accent-400/40 dark:text-accent-400 dark:hover:border-accent-400">
+                disabled={running || submitting}>
                 {running ? t('test.running') : t('test.run')}
                 <kbd className="ml-1.5 font-sans text-sm opacity-80">
                   {isMac ? "⌘+'" : "Ctrl+'"}
@@ -338,7 +358,7 @@ function OutputContent({
   if (running) {
     return (
       <div className="flex flex-col items-center gap-2 py-8">
-        <Spinner />
+        <Spinner announce={false} />
         <p className="text-sm text-muted-foreground">{t('test.running')}</p>
       </div>
     );
@@ -347,7 +367,7 @@ function OutputContent({
   if (submitting) {
     return (
       <div className="flex flex-col items-center gap-2 py-8">
-        <Spinner />
+        <Spinner announce={false} />
         <p className="text-sm text-muted-foreground">{t('test.judging')}</p>
         <JudgingClock startedAt={submitStartedAt} language={language} />
       </div>
@@ -624,7 +644,7 @@ export function CollapsedTestStrip({ onExpand, onMaximize, isMaximized }: Collap
       </div>
 
       {/* Right-side buttons — visible on hover */}
-      <div className={cn('flex items-center gap-1 opacity-0 transition-opacity group-hover/strip:opacity-100 group-focus-within/strip:opacity-100')}>
+      <div className={cn('flex items-center gap-1 opacity-0 transition-opacity group-hover/strip:opacity-100 group-focus-within/strip:opacity-100 [@media(hover:none)]:opacity-100')}>
         <Tooltip>
           <TooltipTrigger>
             <Button

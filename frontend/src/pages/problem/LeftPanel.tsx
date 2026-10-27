@@ -133,7 +133,7 @@ export function LeftPanel({
               {t('tabs.solutions')}
             </TabsTrigger>
           </TabsList>
-          <div className="flex items-center pr-1 opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100">
+          <div className="flex items-center pr-1 opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100 [@media(hover:none)]:opacity-100">
             <Tooltip>
               <TooltipTrigger>
                 <Button
@@ -248,7 +248,7 @@ export function CollapsedLeftStrip({
       </div>
 
       {/* Bottom buttons — visible on hover */}
-      <div className="flex flex-col items-center gap-1 pb-1 opacity-0 transition-opacity group-hover/strip:opacity-100 group-focus-within/strip:opacity-100">
+      <div className="flex flex-col items-center gap-1 pb-1 opacity-0 transition-opacity group-hover/strip:opacity-100 group-focus-within/strip:opacity-100 [@media(hover:none)]:opacity-100">
         <Tooltip>
           <TooltipTrigger>
             <Button
