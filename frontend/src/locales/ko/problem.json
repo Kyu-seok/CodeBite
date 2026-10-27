@@ -87,6 +87,7 @@
     "outputLabel": "출력: ",
     "stderr": "표준 에러:",
     "compilationError": "컴파일 에러:",
+    "runtimeError": "런타임 에러:",
     "testResults": "테스트 결과",
     "test": "테스트 {{n}}",
     "judging": "채점 중...",
@@ -105,7 +106,7 @@
       "error": "오류",
       "warning": "경고"
     },
-    "compilerWarnings": "컴파일러 경고:"
+    "warning": "경고:"
   },
   "solutions": {
     "shareYourSolution": "내 풀이 공유하기",

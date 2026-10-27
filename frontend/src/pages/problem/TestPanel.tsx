@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/Tabs';
 import { Button } from '@/components/ui/Button';
@@ -87,32 +87,77 @@ function renderableErrors(errors?: CodeError[] | null): CodeError[] {
   return (errors ?? []).filter((e) => e.inUserCode && e.line != null);
 }
 
-/** Warnings alone mean the code compiled, so they must not be headed "Compilation Error". */
-function diagnosticsLabelKey(errors: CodeError[], fallback: string): string {
-  return errors.length > 0 && errors.every((e) => e.severity === 'WARNING')
-    ? 'test.compilerWarnings'
-    : fallback;
+/** Label for a case's fatal output, by what actually went wrong. */
+function errorLabelKey(status: SubmissionStatus, hasCompileOutput: boolean): string {
+  if (status === 'RUNTIME_ERROR') return 'test.runtimeError';
+  if (status === 'COMPILATION_ERROR' || hasCompileOutput) return 'test.compilationError';
+  return 'test.stderr';
+}
+
+/** Red wash for what stopped the code, amber for what didn't; both keep the night-mode 950 wash. */
+const TONE_CLASS = {
+  error: 'bg-error-100 text-error-700 dark:bg-error-950 dark:text-error-400',
+  warning: 'bg-warning-100 text-warning-700 dark:bg-warning-950 dark:text-warning-400',
+} as const;
+
+type Tone = keyof typeof TONE_CLASS;
+
+function OutputBlock({ label, tone, children }: { label: string; tone: Tone; children: ReactNode }) {
+  return (
+    <div className="mt-1">
+      <span className="text-xs text-muted-foreground">{label}</span>
+      <pre className={cn('mt-1 overflow-auto rounded p-2 text-xs', TONE_CLASS[tone])}>{children}</pre>
+    </div>
+  );
+}
+
+/**
+ * Line diagnostics split by severity: errors under the fatal label in red, warnings (the code
+ * still compiled and ran) under "Warning" in amber, never under "Compilation Error".
+ */
+function Diagnostics({
+  errors,
+  errorLabel,
+  userSource,
+}: {
+  errors: CodeError[];
+  errorLabel: string;
+  userSource: string;
+}) {
+  const { t } = useTranslation('problem');
+  const fatal = errors.filter((e) => e.severity !== 'WARNING');
+  const warnings = errors.filter((e) => e.severity === 'WARNING');
+  return (
+    <>
+      {fatal.length > 0 && (
+        <div className="mt-1">
+          <span className="text-xs text-muted-foreground">{errorLabel}</span>
+          <ErrorDisplay errors={fatal} tone="error" userSource={userSource} />
+        </div>
+      )}
+      {warnings.length > 0 && (
+        <div className="mt-1">
+          <span className="text-xs text-muted-foreground">{t('test.warning')}</span>
+          <ErrorDisplay errors={warnings} tone="warning" userSource={userSource} />
+        </div>
+      )}
+    </>
+  );
 }
 
 function ErrorDisplay({
   errors,
+  tone,
   userSource,
 }: {
   errors: CodeError[];
+  tone: Tone;
   userSource: string;
 }) {
   const { t } = useTranslation('problem');
   const sourceLines = userSource.split('\n');
-  // Warnings alone (e.g. a missing return) take amber; red is kept for real errors.
-  const onlyWarnings = errors.every((e) => e.severity === 'WARNING');
   return (
-    <div
-      className={cn(
-        'mt-1 space-y-2 rounded p-2 text-xs',
-        onlyWarnings
-          ? 'bg-warning-100 text-warning-700 dark:bg-warning-950 dark:text-warning-400'
-          : 'bg-error-100 text-error-700 dark:bg-error-950 dark:text-error-400',
-      )}>
+    <div className={cn('mt-1 space-y-2 overflow-x-auto rounded p-2 text-xs', TONE_CLASS[tone])}>
       {errors.map((e, i) => {
         const snippet = e.line != null ? sourceLines[e.line - 1] : undefined;
         const caret =
@@ -526,18 +571,11 @@ function OutputContent({
                     </code>
                   </p>
                 )}
-                {(() => {
-                  const visible = renderableErrors(r.errors);
-                  if (visible.length === 0) return null;
-                  return (
-                    <div className="mt-1">
-                      <span className="text-xs text-muted-foreground">
-                        {t(diagnosticsLabelKey(visible, 'test.compilationError'))}
-                      </span>
-                      <ErrorDisplay errors={visible} userSource={userSource} />
-                    </div>
-                  );
-                })()}
+                <Diagnostics
+                  errors={renderableErrors(r.errors)}
+                  errorLabel={t(errorLabelKey(r.status, false))}
+                  userSource={userSource}
+                />
               </div>
             ))}
           </div>
@@ -658,46 +696,42 @@ function RunResultsSection({
               </code>
             </p>
           )}
-          {(() => {
-            const visible = renderableErrors(r.errors);
-            const label = t(
-              diagnosticsLabelKey(visible, r.compileOutput ? 'test.compilationError' : 'test.stderr'),
-            );
-            if (visible.length > 0) {
-              return (
-                <div className="mt-1">
-                  <span className="text-xs text-muted-foreground">{label}</span>
-                  <ErrorDisplay errors={visible} userSource={userSource} />
-                </div>
-              );
-            }
-            if (r.stderr) {
-              return (
-                <div className="mt-1">
-                  <span className="text-xs text-muted-foreground">{t('test.stderr')}</span>
-                  <pre className="mt-1 overflow-auto rounded bg-error-100 p-2 text-xs text-error-700 dark:bg-error-950 dark:text-error-400">
-                    {r.stderr}
-                  </pre>
-                </div>
-              );
-            }
-            if (r.compileOutput) {
-              return (
-                <div className="mt-1">
-                  <span className="text-xs text-muted-foreground">
-                    {t('test.compilationError')}
-                  </span>
-                  <pre className="mt-1 overflow-auto rounded bg-warning-100 p-2 text-xs text-warning-700 dark:bg-warning-950 dark:text-warning-400">
-                    {r.compileOutput}
-                  </pre>
-                </div>
-              );
-            }
-            return null;
-          })()}
+          <RunCaseOutput result={r} userSource={userSource} />
         </div>
       ))}
     </div>
+  );
+}
+
+/**
+ * A Run case's diagnostics and raw output. Raw stderr or compiler output shows only when no
+ * parsed error already covers it; output from code that still ran is a warning, not an error.
+ */
+function RunCaseOutput({ result: r, userSource }: { result: RunTestCaseResult; userSource: string }) {
+  const { t } = useTranslation('problem');
+  const visible = renderableErrors(r.errors);
+  const hasFatalLine = visible.some((e) => e.severity !== 'WARNING');
+  const fatalStatus = r.status === 'RUNTIME_ERROR' || r.status === 'COMPILATION_ERROR';
+  const raw = hasFatalLine
+    ? null
+    : r.stderr
+      ? fatalStatus
+        ? <OutputBlock label={t(errorLabelKey(r.status, !!r.compileOutput))} tone="error">{r.stderr}</OutputBlock>
+        : <OutputBlock label={t('test.warning')} tone="warning">{r.stderr}</OutputBlock>
+      : r.compileOutput && visible.length === 0
+        ? r.status === 'COMPILATION_ERROR'
+          ? <OutputBlock label={t('test.compilationError')} tone="warning">{r.compileOutput}</OutputBlock>
+          : <OutputBlock label={t('test.warning')} tone="warning">{r.compileOutput}</OutputBlock>
+        : null;
+  return (
+    <>
+      <Diagnostics
+        errors={visible}
+        errorLabel={t(errorLabelKey(r.status, !!r.compileOutput))}
+        userSource={userSource}
+      />
+      {raw}
+    </>
   );
 }
 

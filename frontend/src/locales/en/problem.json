@@ -87,6 +87,7 @@
     "outputLabel": "Output: ",
     "stderr": "Stderr:",
     "compilationError": "Compilation Error:",
+    "runtimeError": "Runtime Error:",
     "testResults": "Test Results",
     "test": "Test {{n}}",
     "judging": "Judging...",
@@ -105,7 +106,7 @@
       "error": "error",
       "warning": "warning"
     },
-    "compilerWarnings": "Compiler warnings:"
+    "warning": "Warning:"
   },
   "solutions": {
     "shareYourSolution": "Share Your Solution",
