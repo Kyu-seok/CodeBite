@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/Tabs';
 import { Button } from '@/components/ui/Button';
@@ -21,6 +22,7 @@ import type {
   SubmissionResponse,
 } from '@/types/submission';
 import { CustomTestsEditor } from './CustomTestsEditor';
+import { STATUS_KEYS, languageLabel, typicalJudgeSeconds } from './submissionDisplay';
 
 function hasTemplateError(errs?: CodeError[] | null): boolean {
   return !!errs?.some((e) => !e.inUserCode);
@@ -46,6 +48,8 @@ interface TestPanelProps {
   submitError: string | null;
   running: boolean;
   submitting: boolean;
+  submitStartedAt: number | null;
+  language: string;
   activeTab: string;
   userSource: string;
   customTests: CustomTestCaseInput[];
@@ -69,20 +73,29 @@ function ErrorDisplay({
   errors: CodeError[];
   userSource: string;
 }) {
+  const { t } = useTranslation('problem');
   const sourceLines = userSource.split('\n');
+  // Warnings alone (e.g. a missing return) take amber; red is kept for real errors.
+  const onlyWarnings = errors.every((e) => e.severity === 'WARNING');
   return (
-    <div className="mt-1 space-y-2 rounded bg-error-100 p-2 text-xs text-error-700">
+    <div
+      className={cn(
+        'mt-1 space-y-2 rounded p-2 text-xs',
+        onlyWarnings
+          ? 'bg-warning-100 text-warning-700 dark:bg-warning-950 dark:text-warning-400'
+          : 'bg-error-100 text-error-700 dark:bg-error-950 dark:text-error-400',
+      )}>
       {errors.map((e, i) => {
         const snippet = e.line != null ? sourceLines[e.line - 1] : undefined;
         const caret =
           e.column != null && e.column >= 1
             ? ' '.repeat(e.column - 1) + '^'
             : null;
-        const label = e.severity === 'WARNING' ? 'warning' : 'error';
+        const label = t(e.severity === 'WARNING' ? 'test.severity.warning' : 'test.severity.error');
         return (
           <div key={i} className="font-mono">
             <div>
-              Line {e.line}: {label}: {e.message}
+              {t('test.errorLine', { line: e.line, severity: label, message: e.message })}
             </div>
             {snippet !== undefined && (
               <pre className="mt-0.5 whitespace-pre">    {snippet}</pre>
@@ -103,6 +116,8 @@ export function TestPanel({
   submitError,
   running,
   submitting,
+  submitStartedAt,
+  language,
   activeTab,
   userSource,
   customTests,
@@ -115,8 +130,24 @@ export function TestPanel({
   isMaximized,
 }: TestPanelProps) {
   const { t } = useTranslation('problem');
+  const { t: tc } = useTranslation('common');
+  const announcement = running
+    ? t('test.running')
+    : submitting
+      ? t('test.judging')
+      : runError || submitError
+        ? (runError || submitError)!
+        : runResult
+          ? `${t('test.runResults')}: ${tc(STATUS_KEYS[runResult.overallStatus])}`
+          : submitResult
+            ? tc(STATUS_KEYS[submitResult.status])
+            : '';
   return (
     <div className="flex h-full flex-col">
+      {/* Always mounted so screen readers hear the verdict when it lands. */}
+      <p role="status" aria-live="polite" className="sr-only">
+        {announcement}
+      </p>
       <Tabs
         defaultValue="testcases"
         value={activeTab}
@@ -127,29 +158,39 @@ export function TestPanel({
             <TabsTrigger value="testcases">{t('test.testCases')}</TabsTrigger>
             <TabsTrigger value="output">{t('test.output')}</TabsTrigger>
           </TabsList>
-          <div className="flex items-center pr-1 opacity-0 transition-opacity group-hover:opacity-100">
+          <div className="flex items-center pr-1 opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100">
             <Tooltip>
               <TooltipTrigger>
-                <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onFold}>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7"
+                  onClick={onFold}
+                  aria-label={t('workspace.foldPanel')}>
                   <PanelBottomClose className="h-3.5 w-3.5" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>Fold panel</TooltipContent>
+              <TooltipContent>{t('workspace.foldPanel')}</TooltipContent>
             </Tooltip>
             <Tooltip>
               <TooltipTrigger>
-                <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onMaximize}>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7"
+                  onClick={onMaximize}
+                  aria-label={t(isMaximized ? 'workspace.restoreEditor' : 'workspace.maximizePanel')}>
                   {isMaximized ? <Minimize2 className="h-3.5 w-3.5" /> : <Maximize2 className="h-3.5 w-3.5" />}
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>{isMaximized ? 'Restore editor' : 'Maximize panel'}</TooltipContent>
+              <TooltipContent>{t(isMaximized ? 'workspace.restoreEditor' : 'workspace.maximizePanel')}</TooltipContent>
             </Tooltip>
           </div>
         </div>
 
         <div className="flex-1 overflow-auto p-3">
           {collectTemplateError(runResult, submitResult) && (
-            <div className="mb-3 rounded-lg border border-warning-200 bg-warning-100 p-3 text-sm text-warning-700">
+            <div className="mb-3 rounded-lg border border-warning-200 bg-warning-100 p-3 text-sm text-warning-700 dark:border-warning-900 dark:bg-warning-950 dark:text-warning-400">
               {t('editor.templateErrorBanner')}
             </div>
           )}
@@ -162,19 +203,19 @@ export function TestPanel({
             ) : (
               <div className="space-y-2">
                 {sampleTestCases.map((tc, i) => (
-                  <div key={tc.id} className="rounded-lg bg-muted p-3 text-sm">
+                  <div key={tc.id} className="border-t border-border pt-2 text-sm first:border-t-0 first:pt-0">
                     <p className="mb-1 font-medium text-muted-foreground">
                       {t('test.case', { n: i + 1 })}
                     </p>
                     <p>
                       <span className="text-muted-foreground">{t('test.input')}</span>
-                      <code className="rounded bg-secondary px-1 text-foreground">
+                      <code className="rounded bg-muted px-1 font-mono text-foreground">
                         {tc.input}
                       </code>
                     </p>
                     <p>
                       <span className="text-muted-foreground">{t('test.expected')}</span>
-                      <code className="rounded bg-secondary px-1 text-foreground">
+                      <code className="rounded bg-muted px-1 font-mono text-foreground">
                         {tc.expectedOutput}
                       </code>
                     </p>
@@ -203,6 +244,8 @@ export function TestPanel({
             <OutputContent
               running={running}
               submitting={submitting}
+              submitStartedAt={submitStartedAt}
+              language={language}
               runResult={runResult}
               runError={runError}
               submitResult={submitResult}
@@ -224,15 +267,15 @@ export function TestPanel({
                 size="lg"
                 onClick={onRun}
                 disabled={running || submitting}
-                className="border-accent-500/40 text-accent-500 hover:bg-accent-500/10 hover:border-accent-500">
+                className="border-accent-700/40 text-accent-700 hover:bg-accent-500/10 hover:border-accent-700 dark:border-accent-400/40 dark:text-accent-400 dark:hover:border-accent-400">
                 {running ? t('test.running') : t('test.run')}
-                <kbd className="ml-1.5 text-lg opacity-60">
+                <kbd className="ml-1.5 font-sans text-sm opacity-80">
                   {isMac ? "⌘+'" : "Ctrl+'"}
                 </kbd>
               </Button>
             </TooltipTrigger>
             <TooltipContent side="top">
-              {isMac ? "⌘+'" : "Ctrl+'"} to run
+              {t('workspace.runShortcut', { keys: isMac ? "⌘+'" : "Ctrl+'" })}
             </TooltipContent>
           </Tooltip>
           <Tooltip>
@@ -243,13 +286,13 @@ export function TestPanel({
                 onClick={onSubmit}
                 disabled={submitting || running}>
                 {submitting ? t('test.submitting') : t('test.submit')}
-                <kbd className="ml-1.5 text-lg opacity-60">
+                <kbd className="ml-1.5 font-sans text-sm opacity-80">
                   {isMac ? '⌘+↵' : 'Ctrl+↵'}
                 </kbd>
               </Button>
             </TooltipTrigger>
             <TooltipContent side="top">
-              {isMac ? '⌘+↵' : 'Ctrl+Enter'} to submit
+              {t('workspace.submitShortcut', { keys: isMac ? '⌘+↵' : 'Ctrl+Enter' })}
             </TooltipContent>
           </Tooltip>
         </Stack>
@@ -263,6 +306,8 @@ export function TestPanel({
 function OutputContent({
   running,
   submitting,
+  submitStartedAt,
+  language,
   runResult,
   runError,
   submitResult,
@@ -272,6 +317,8 @@ function OutputContent({
   TestPanelProps,
   | 'running'
   | 'submitting'
+  | 'submitStartedAt'
+  | 'language'
   | 'runResult'
   | 'runError'
   | 'submitResult'
@@ -295,13 +342,14 @@ function OutputContent({
       <div className="flex flex-col items-center gap-2 py-8">
         <Spinner />
         <p className="text-sm text-muted-foreground">{t('test.judging')}</p>
+        <JudgingClock startedAt={submitStartedAt} language={language} />
       </div>
     );
   }
 
   if (runError || submitError) {
     return (
-      <div className="rounded-lg border border-error-200 bg-error-100 p-3 text-sm text-error-700">
+      <div className="rounded-lg border border-error-200 bg-error-100 p-3 text-sm text-error-700 dark:border-error-900 dark:bg-error-950 dark:text-error-400">
         {runError || submitError}
       </div>
     );
@@ -343,7 +391,7 @@ function OutputContent({
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <StatusBadge status={submitResult.status} />
-          <div className="space-x-3 text-xs text-muted-foreground">
+          <div className="space-x-3 font-mono text-xs tabular-nums text-muted-foreground">
             {submitResult.runtimeMs != null && (
               <span>{tc('label.runtime')}: {submitResult.runtimeMs}ms</span>
             )}
@@ -360,7 +408,7 @@ function OutputContent({
             {submitResult.results.map((r, i) => (
               <div
                 key={r.testCaseId}
-                className="rounded-lg bg-muted p-3 text-sm">
+                className="border-t border-border pt-2 text-sm first:border-t-0 first:pt-0">
                 <div className="mb-1 flex items-center justify-between">
                   <span className="font-medium text-muted-foreground">
                     {t('test.test', { n: i + 1 })}
@@ -370,7 +418,7 @@ function OutputContent({
                 {r.input && (
                   <p>
                     <span className="text-muted-foreground">{t('test.input')}</span>
-                    <code className="rounded bg-secondary px-1 text-foreground">
+                    <code className="rounded bg-muted px-1 font-mono text-foreground">
                       {r.input}
                     </code>
                   </p>
@@ -378,7 +426,7 @@ function OutputContent({
                 {r.expectedOutput && (
                   <p>
                     <span className="text-muted-foreground">{t('test.expected')}</span>
-                    <code className="rounded bg-secondary px-1 text-foreground">
+                    <code className="rounded bg-muted px-1 font-mono text-foreground">
                       {r.expectedOutput}
                     </code>
                   </p>
@@ -386,7 +434,7 @@ function OutputContent({
                 {r.actualOutput && (
                   <p>
                     <span className="text-muted-foreground">{t('test.outputLabel')}</span>
-                    <code className="rounded bg-secondary px-1 text-foreground">
+                    <code className="rounded bg-muted px-1 font-mono text-foreground">
                       {r.actualOutput}
                     </code>
                   </p>
@@ -418,6 +466,32 @@ function OutputContent({
   );
 }
 
+/** Elapsed judging time against the measured typical wait, so a slow Java judge reads as expected. */
+function JudgingClock({ startedAt, language }: { startedAt: number | null; language: string }) {
+  const { t } = useTranslation('problem');
+  const [now, setNow] = useState(() => Date.now());
+
+  useEffect(() => {
+    if (startedAt == null) return;
+    const timer = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(timer);
+  }, [startedAt]);
+
+  if (startedAt == null) return null;
+  const seconds = Math.max(0, Math.floor((now - startedAt) / 1000));
+  const typical = typicalJudgeSeconds(language);
+  return (
+    <p className="text-xs text-muted-foreground">
+      <span className="font-mono tabular-nums text-foreground">
+        {t('workspace.judgingElapsed', { seconds })}
+      </span>
+      {typical != null && (
+        <span> · {t('workspace.judgingTypical', { seconds: typical, language: languageLabel(language) })}</span>
+      )}
+    </p>
+  );
+}
+
 interface RunResultsSectionProps {
   heading: string | null;
   results: RunTestCaseResult[];
@@ -440,7 +514,7 @@ function RunResultsSection({
         </h3>
       )}
       {results.map((r, i) => (
-        <div key={i} className="rounded-lg bg-muted p-3 text-sm">
+        <div key={i} className="border-t border-border pt-2 text-sm first:border-t-0 first:pt-0">
           <div className="mb-1 flex items-center justify-between">
             <span className="font-medium text-muted-foreground">
               {t(labelKey, { n: i + 1 })}
@@ -453,14 +527,14 @@ function RunResultsSection({
           </div>
           <p>
             <span className="text-muted-foreground">{t('test.input')}</span>
-            <code className="rounded bg-secondary px-1 text-foreground">
+            <code className="rounded bg-muted px-1 font-mono text-foreground">
               {r.input}
             </code>
           </p>
           {r.expectedOutput != null && (
             <p>
               <span className="text-muted-foreground">{t('test.expected')}</span>
-              <code className="rounded bg-secondary px-1 text-foreground">
+              <code className="rounded bg-muted px-1 font-mono text-foreground">
                 {r.expectedOutput}
               </code>
             </p>
@@ -468,7 +542,7 @@ function RunResultsSection({
           {r.actualOutput && (
             <p>
               <span className="text-muted-foreground">{t('test.outputLabel')}</span>
-              <code className="rounded bg-secondary px-1 text-foreground">
+              <code className="rounded bg-muted px-1 font-mono text-foreground">
                 {r.actualOutput}
               </code>
             </p>
@@ -490,7 +564,7 @@ function RunResultsSection({
               return (
                 <div className="mt-1">
                   <span className="text-xs text-muted-foreground">{t('test.stderr')}</span>
-                  <pre className="mt-1 overflow-auto rounded bg-error-100 p-2 text-xs text-error-700">
+                  <pre className="mt-1 overflow-auto rounded bg-error-100 p-2 text-xs text-error-700 dark:bg-error-950 dark:text-error-400">
                     {r.stderr}
                   </pre>
                 </div>
@@ -502,7 +576,7 @@ function RunResultsSection({
                   <span className="text-xs text-muted-foreground">
                     {t('test.compilationError')}
                   </span>
-                  <pre className="mt-1 overflow-auto rounded bg-warning-100 p-2 text-xs text-warning-700">
+                  <pre className="mt-1 overflow-auto rounded bg-warning-100 p-2 text-xs text-warning-700 dark:bg-warning-950 dark:text-warning-400">
                     {r.compileOutput}
                   </pre>
                 </div>
@@ -543,22 +617,32 @@ export function CollapsedTestStrip({ onExpand, onMaximize, isMaximized }: Collap
       </div>
 
       {/* Right-side buttons — visible on hover */}
-      <div className={cn('flex items-center gap-1 opacity-0 transition-opacity group-hover/strip:opacity-100')}>
+      <div className={cn('flex items-center gap-1 opacity-0 transition-opacity group-hover/strip:opacity-100 group-focus-within/strip:opacity-100')}>
         <Tooltip>
           <TooltipTrigger>
-            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onExpand}>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-7 w-7"
+              onClick={onExpand}
+              aria-label={t('workspace.expandPanel')}>
               <PanelBottomOpen className="h-3.5 w-3.5" />
             </Button>
           </TooltipTrigger>
-          <TooltipContent>Expand panel</TooltipContent>
+          <TooltipContent>{t('workspace.expandPanel')}</TooltipContent>
         </Tooltip>
         <Tooltip>
           <TooltipTrigger>
-            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onMaximize}>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-7 w-7"
+              onClick={onMaximize}
+              aria-label={t(isMaximized ? 'workspace.restoreEditor' : 'workspace.maximizePanel')}>
               {isMaximized ? <Minimize2 className="h-3.5 w-3.5" /> : <Maximize2 className="h-3.5 w-3.5" />}
             </Button>
           </TooltipTrigger>
-          <TooltipContent>{isMaximized ? 'Restore editor' : 'Maximize panel'}</TooltipContent>
+          <TooltipContent>{t(isMaximized ? 'workspace.restoreEditor' : 'workspace.maximizePanel')}</TooltipContent>
         </Tooltip>
       </div>
     </div>

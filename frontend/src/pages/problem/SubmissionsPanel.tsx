@@ -9,42 +9,16 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/Dialog"
-import type { SubmissionListItem, SubmissionStatus } from "@/types/submission"
+import type { SubmissionListItem } from "@/types/submission"
 import { confidenceChipClass, confidenceLabel } from "@/lib/confidenceColors"
 import { SubmissionDetail } from "./SubmissionDetail"
-
-const statusColorMap: Record<SubmissionStatus, string> = {
-  ACCEPTED: "text-success-500",
-  WRONG_ANSWER: "text-destructive",
-  RUNTIME_ERROR: "text-destructive",
-  TIME_LIMIT_EXCEEDED: "text-warning-500",
-  COMPILATION_ERROR: "text-warning-500",
-  PENDING: "text-muted-foreground",
-  INTERNAL_ERROR: "text-muted-foreground",
-}
-
-const statusKeys: Record<SubmissionStatus, string> = {
-  ACCEPTED: "status.accepted",
-  WRONG_ANSWER: "status.wrongAnswer",
-  TIME_LIMIT_EXCEEDED: "status.timeLimitExceeded",
-  RUNTIME_ERROR: "status.runtimeError",
-  COMPILATION_ERROR: "status.compilationError",
-  PENDING: "status.pending",
-  INTERNAL_ERROR: "status.internalError",
-}
-
-function formatDate(dateStr: string) {
-  const d = new Date(dateStr)
-  return d.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  })
-}
-
-function formatMemory(kb: number) {
-  return `${(kb / 1024).toFixed(1)} MB`
-}
+import {
+  STATUS_KEYS,
+  STATUS_TEXT_CLASS,
+  formatMemory,
+  formatSubmissionDate,
+  languageLabel,
+} from "./submissionDisplay"
 
 function NoteModal({
   open,
@@ -80,6 +54,7 @@ function NoteModal({
           </DialogDescription>
         </DialogHeader>
         <textarea
+          aria-label={t("submissions.notesDialog")}
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
           maxLength={500}
@@ -123,7 +98,7 @@ export function SubmissionsPanel({
   onUpdateNote,
   onLoadIntoEditor,
 }: SubmissionsPanelProps) {
-  const { t } = useTranslation("problem")
+  const { t, i18n } = useTranslation("problem")
   const { t: tc } = useTranslation("common")
   const [editingId, setEditingId] = useState<number | null>(null)
   const editingSubmission = editingId != null
@@ -168,36 +143,42 @@ export function SubmissionsPanel({
         <span>{tc("label.language")}</span>
         <span>{tc("label.runtime")}</span>
         <span>{tc("label.memory")}</span>
-        <span>Conf.</span>
+        <span>{t("submissions.confidence")}</span>
         <span>{t("submissions.notes")}</span>
       </div>
 
       {/* Rows */}
-      {submissions.map((s, i) => (
+      {submissions.map((s, i) => {
+        const date = formatSubmissionDate(s.createdAt, i18n.language)
+        return (
         <div
           key={s.id}
-          onClick={() => onSelectSubmission(s.id)}
-          className="grid grid-cols-[2rem_1fr_4.5rem_5rem_5rem_4.5rem_minmax(4rem,1fr)] items-center gap-2 px-4 py-2.5 text-sm border-b border-border hover:bg-muted/50 transition-colors cursor-pointer"
+          className="relative grid grid-cols-[2rem_1fr_4.5rem_5rem_5rem_4.5rem_minmax(4rem,1fr)] items-center gap-2 px-4 py-2.5 text-sm border-b border-border hover:bg-muted/50 transition-colors focus-within:bg-muted/50"
         >
           {/* Row number */}
-          <span className="text-xs text-muted-foreground">
+          <span className="font-mono text-xs tabular-nums text-muted-foreground">
             {submissions.length - i}
           </span>
 
-          {/* Status + date */}
+          {/* Status + date. The button's overlay makes the whole row open the submission. */}
           <div className="min-w-0">
-            <div className={`font-medium ${statusColorMap[s.status]}`}>
-              {tc(statusKeys[s.status])}
-            </div>
+            <button
+              type="button"
+              onClick={() => onSelectSubmission(s.id)}
+              aria-label={`${tc(STATUS_KEYS[s.status])}, ${t("submissions.openSubmission", { date })}`}
+              className={`block text-left font-medium after:absolute after:inset-0 after:content-[''] focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-inset focus-visible:after:ring-ring ${STATUS_TEXT_CLASS[s.status]}`}
+            >
+              {tc(STATUS_KEYS[s.status])}
+            </button>
             <div className="text-xs text-muted-foreground">
-              {formatDate(s.createdAt)}
+              {date}
             </div>
           </div>
 
           {/* Language */}
           <div>
-            <Badge variant="secondary" className="text-[10px] px-1.5 py-0 capitalize">
-              {s.language}
+            <Badge variant="secondary" className="text-xs px-1.5 py-0">
+              {languageLabel(s.language)}
             </Badge>
           </div>
 
@@ -209,7 +190,7 @@ export function SubmissionsPanel({
                   <circle cx="12" cy="12" r="10" />
                   <polyline points="12 6 12 12 16 14" />
                 </svg>
-                <span>{s.runtimeMs} ms</span>
+                <span className="font-mono tabular-nums">{s.runtimeMs} ms</span>
               </>
             ) : (
               <span>{tc("label.na")}</span>
@@ -226,7 +207,7 @@ export function SubmissionsPanel({
                   <path d="M15 2v2" /><path d="M15 20v2" /><path d="M2 15h2" /><path d="M2 9h2" />
                   <path d="M20 15h2" /><path d="M20 9h2" /><path d="M9 2v2" /><path d="M9 20v2" />
                 </svg>
-                <span>{formatMemory(s.memoryKb)}</span>
+                <span className="font-mono tabular-nums">{formatMemory(s.memoryKb)}</span>
               </>
             ) : (
               <span>{tc("label.na")}</span>
@@ -236,28 +217,31 @@ export function SubmissionsPanel({
           {/* Confidence */}
           <div>
             {s.confidence ? (
-              <span className={`inline-flex items-center rounded px-1.5 py-0.5 text-[10px] font-medium ${confidenceChipClass[s.confidence]}`}>
+              <span className={`inline-flex items-center rounded px-1.5 py-0.5 text-xs font-medium ${confidenceChipClass[s.confidence]}`}>
                 {confidenceLabel[s.confidence]}
               </span>
             ) : (
-              <span className="text-xs text-muted-foreground/50">—</span>
+              <span className="text-xs text-muted-foreground" aria-hidden="true">—</span>
             )}
           </div>
 
           {/* Notes */}
           <div className="min-w-0">
-            <span
-              onClick={(e) => { e.stopPropagation(); setEditingId(s.id); }}
-              className="text-xs text-muted-foreground truncate block cursor-pointer hover:text-foreground transition-colors"
+            <button
+              type="button"
+              onClick={() => setEditingId(s.id)}
+              aria-label={s.notes ? `${t("submissions.editNote")}: ${s.notes}` : t("submissions.addNote")}
+              className="relative z-10 block w-full truncate rounded text-left text-xs text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               title={s.notes || t("submissions.addNote")}
             >
               {s.notes || (
-                <span className="italic opacity-50">{t("submissions.addNote")}</span>
+                <span className="italic">{t("submissions.addNote")}</span>
               )}
-            </span>
+            </button>
           </div>
         </div>
-      ))}
+        )
+      })}
 
       <NoteModal
         open={editingId != null}

@@ -26,6 +26,7 @@ import Spinner from '@/components/ui/Spinner';
 import { useTheme } from '@/context/ThemeContext';
 import { useEditorSettings } from '@/context/EditorSettingsContext';
 import { SettingsDialog } from './SettingsDialog';
+import { MONACO_LANGUAGE, languageLabel } from './submissionDisplay';
 import {
   Bug,
   RotateCcw,
@@ -34,6 +35,7 @@ import {
   PanelBottomClose,
   Maximize2,
   Minimize2,
+  ExternalLink,
 } from 'lucide-react';
 
 function CodeIcon() {
@@ -54,21 +56,7 @@ function CodeIcon() {
   );
 }
 
-const LANGUAGE_MAP: Record<string, string> = {
-  java: 'java',
-  python: 'python',
-  javascript: 'javascript',
-  cpp: 'cpp',
-  c: 'c',
-};
-
-const LANGUAGE_LABELS: Record<string, string> = {
-  java: 'Java',
-  python: 'Python',
-  javascript: 'JavaScript',
-  cpp: 'C++',
-  c: 'C',
-};
+const ISSUES_NEW_URL = 'https://github.com/Kyu-seok/CodeBite/issues/new';
 
 const BUG_CATEGORY_KEYS = [
   'wrongTestCase',
@@ -80,31 +68,52 @@ const BUG_CATEGORY_KEYS = [
 
 type BugCategoryKey = typeof BUG_CATEGORY_KEYS[number];
 
+/**
+ * There is no report endpoint, so a report becomes a prefilled GitHub issue the learner posts
+ * themselves; the dialog says so instead of pretending the report was sent.
+ */
 function BugReportDialog({
   open,
   onClose,
+  problemSlug,
+  language,
 }: {
   open: boolean;
   onClose: () => void;
+  problemSlug: string;
+  language: string;
 }) {
   const { t } = useTranslation('problem');
   const { t: tc } = useTranslation('common');
   const [category, setCategory] = useState<BugCategoryKey>(BUG_CATEGORY_KEYS[0]);
   const [description, setDescription] = useState('');
-  const [submitted, setSubmitted] = useState(false);
+  const [opened, setOpened] = useState(false);
 
   useEffect(() => {
     if (open) {
       setCategory(BUG_CATEGORY_KEYS[0]);
       setDescription('');
-      setSubmitted(false);
+      setOpened(false);
     }
   }, [open]);
 
   const handleSubmit = () => {
-    // TODO: send bug report to backend
-    setSubmitted(true);
-    setTimeout(() => onClose(), 1500);
+    // Issues are triaged in English, whatever the UI locale.
+    const categoryLabel = t(`bugReport.${category}`, { lng: 'en' });
+    const body = [
+      `**Problem:** \`${problemSlug}\``,
+      `**Language:** ${languageLabel(language)}`,
+      `**Category:** ${categoryLabel}`,
+      `**Page:** ${window.location.href}`,
+      '',
+      description.trim(),
+    ].join('\n');
+    const params = new URLSearchParams({
+      title: `[Problem bug] ${problemSlug}: ${categoryLabel}`,
+      body,
+    });
+    window.open(`${ISSUES_NEW_URL}?${params}`, '_blank', 'noopener,noreferrer');
+    setOpened(true);
   };
 
   return (
@@ -116,24 +125,23 @@ function BugReportDialog({
             {t('bugReport.description')}
           </DialogDescription>
         </DialogHeader>
-        {submitted ? (
-          <div className="py-6 text-center">
-            <div className="mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-success-500/10">
-              <svg className="h-5 w-5 text-success-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M20 6 9 17l-5-5" />
-              </svg>
-            </div>
-            <p className="text-sm font-medium text-foreground">{t('bugReport.thanks')}</p>
-            <p className="mt-1 text-xs text-muted-foreground">{t('bugReport.willLookInto')}</p>
+        {opened ? (
+          <div className="py-6 text-center" role="status">
+            <p className="text-sm font-medium text-foreground">{t('bugReport.opened')}</p>
+            <p className="mt-1 text-xs text-muted-foreground">{t('bugReport.openedHint')}</p>
+            <Button variant="outline" size="sm" className="mt-4" onClick={onClose}>
+              {tc('button.close')}
+            </Button>
           </div>
         ) : (
           <>
             <div className="mt-2 space-y-4">
               <div>
-                <label className="mb-1.5 block text-sm font-medium text-foreground">
+                <label htmlFor="bug-category" className="mb-1.5 block text-sm font-medium text-foreground">
                   {t('bugReport.category')}
                 </label>
                 <select
+                  id="bug-category"
                   value={category}
                   onChange={(e) => setCategory(e.target.value as BugCategoryKey)}
                   className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
@@ -144,10 +152,11 @@ function BugReportDialog({
                 </select>
               </div>
               <div>
-                <label className="mb-1.5 block text-sm font-medium text-foreground">
+                <label htmlFor="bug-description" className="mb-1.5 block text-sm font-medium text-foreground">
                   {t('bugReport.descriptionLabel')}
                 </label>
                 <textarea
+                  id="bug-description"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   maxLength={1000}
@@ -156,6 +165,7 @@ function BugReportDialog({
                   className="w-full resize-none rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                 />
               </div>
+              <p className="text-xs text-muted-foreground">{t('bugReport.githubNote')}</p>
             </div>
             <div className="mt-4 flex justify-end gap-2">
               <Button variant="outline" size="sm" onClick={onClose}>
@@ -167,6 +177,7 @@ function BugReportDialog({
                 disabled={!description.trim()}
               >
                 {t('bugReport.submit')}
+                <ExternalLink className="h-3.5 w-3.5" />
               </Button>
             </div>
           </>
@@ -177,6 +188,7 @@ function BugReportDialog({
 }
 
 interface EditorPanelProps {
+  problemSlug: string;
   languages: string[];
   activeLanguage: string;
   code: string;
@@ -194,6 +206,7 @@ interface EditorPanelProps {
 }
 
 export function EditorPanel({
+  problemSlug,
   languages,
   activeLanguage,
   code,
@@ -359,7 +372,7 @@ export function EditorPanel({
               </TabsTrigger>
             </TabsList>
             <Select value={activeLanguage} onValueChange={onLanguageChange}>
-              <SelectTrigger className="w-[130px]">
+              <SelectTrigger className="w-[130px]" aria-label={t('editor.languages')}>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -367,7 +380,7 @@ export function EditorPanel({
                   <SelectLabel>{t('editor.languages')}</SelectLabel>
                   {languages.map((lang) => (
                     <SelectItem key={lang} value={lang}>
-                      {LANGUAGE_LABELS[lang] || lang}
+                      {languageLabel(lang)}
                     </SelectItem>
                   ))}
                 </SelectGroup>
@@ -377,7 +390,12 @@ export function EditorPanel({
           <div className="flex items-center">
             <Tooltip>
               <TooltipTrigger>
-                <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setBugReportOpen(true)}>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7"
+                  onClick={() => setBugReportOpen(true)}
+                  aria-label={t('editor.reportBug')}>
                   <Bug className="h-3.5 w-3.5" />
                 </Button>
               </TooltipTrigger>
@@ -385,7 +403,12 @@ export function EditorPanel({
             </Tooltip>
             <Tooltip>
               <TooltipTrigger>
-                <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onResetCode}>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7"
+                  onClick={onResetCode}
+                  aria-label={t('editor.resetCode')}>
                   <RotateCcw className="h-3.5 w-3.5" />
                 </Button>
               </TooltipTrigger>
@@ -393,7 +416,12 @@ export function EditorPanel({
             </Tooltip>
             <Tooltip>
               <TooltipTrigger>
-                <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onResetLayout}>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7"
+                  onClick={onResetLayout}
+                  aria-label={t('editor.resetLayout')}>
                   <Columns2 className="h-3.5 w-3.5" />
                 </Button>
               </TooltipTrigger>
@@ -401,21 +429,31 @@ export function EditorPanel({
             </Tooltip>
             <Tooltip>
               <TooltipTrigger>
-                <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onToggleTests}>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7"
+                  onClick={onToggleTests}
+                  aria-label={t(testsCollapsed ? 'workspace.showTests' : 'workspace.hideTests')}>
                   {testsCollapsed
                     ? <PanelBottomOpen className="h-3.5 w-3.5" />
                     : <PanelBottomClose className="h-3.5 w-3.5" />}
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>{testsCollapsed ? 'Show test panel' : 'Hide test panel'}</TooltipContent>
+              <TooltipContent>{t(testsCollapsed ? 'workspace.showTests' : 'workspace.hideTests')}</TooltipContent>
             </Tooltip>
             <Tooltip>
               <TooltipTrigger>
-                <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onMaximize}>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7"
+                  onClick={onMaximize}
+                  aria-label={t(isMaximized ? 'workspace.exitFullScreen' : 'workspace.fullScreen')}>
                   {isMaximized ? <Minimize2 className="h-3.5 w-3.5" /> : <Maximize2 className="h-3.5 w-3.5" />}
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>{isMaximized ? 'Exit full screen' : 'Full screen'}</TooltipContent>
+              <TooltipContent>{t(isMaximized ? 'workspace.exitFullScreen' : 'workspace.fullScreen')}</TooltipContent>
             </Tooltip>
             <SettingsDialog />
           </div>
@@ -424,7 +462,7 @@ export function EditorPanel({
         <TabsContent value="code" className="mt-0 min-h-0 flex-1">
           <Editor
             height="100%"
-            language={LANGUAGE_MAP[activeLanguage] || activeLanguage}
+            language={MONACO_LANGUAGE[activeLanguage] || activeLanguage}
             value={code}
             onChange={onCodeChange}
             onMount={handleMount}
@@ -450,7 +488,12 @@ export function EditorPanel({
           />
         )}
       </Tabs>
-      <BugReportDialog open={bugReportOpen} onClose={() => setBugReportOpen(false)} />
+      <BugReportDialog
+        open={bugReportOpen}
+        onClose={() => setBugReportOpen(false)}
+        problemSlug={problemSlug}
+        language={activeLanguage}
+      />
     </div>
   );
 }

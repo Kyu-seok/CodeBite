@@ -34,7 +34,7 @@ export function SettingsDialog() {
       <Tooltip>
         <TooltipTrigger>
           <DialogTrigger asChild>
-            <Button variant="ghost" size="icon" className="h-7 w-7">
+            <Button variant="ghost" size="icon" className="h-7 w-7" aria-label={t("settings.title")}>
               <Settings className="h-3.5 w-3.5" />
             </Button>
           </DialogTrigger>
@@ -50,8 +50,8 @@ export function SettingsDialog() {
           {/* Font Size */}
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium">{t("settings.fontSize")}</p>
-              <p className="text-xs text-muted-foreground">
+              <p id="setting-fontSize" className="text-sm font-medium">{t("settings.fontSize")}</p>
+              <p id="setting-fontSize-hint" className="text-xs text-muted-foreground">
                 {t("settings.fontSizeDescription")}
               </p>
             </div>
@@ -59,7 +59,7 @@ export function SettingsDialog() {
               value={String(settings.fontSize)}
               onValueChange={(v) => updateSettings({ fontSize: Number(v) })}
             >
-              <SelectTrigger className="w-[120px]">
+              <SelectTrigger className="w-[120px]" aria-labelledby="setting-fontSize" aria-describedby="setting-fontSize-hint">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -75,8 +75,8 @@ export function SettingsDialog() {
           {/* Tab Size */}
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium">{t("settings.tabSize")}</p>
-              <p className="text-xs text-muted-foreground">
+              <p id="setting-tabSize" className="text-sm font-medium">{t("settings.tabSize")}</p>
+              <p id="setting-tabSize-hint" className="text-xs text-muted-foreground">
                 {t("settings.tabSizeDescription")}
               </p>
             </div>
@@ -84,7 +84,7 @@ export function SettingsDialog() {
               value={String(settings.tabSize)}
               onValueChange={(v) => updateSettings({ tabSize: Number(v) })}
             >
-              <SelectTrigger className="w-[120px]">
+              <SelectTrigger className="w-[120px]" aria-labelledby="setting-tabSize" aria-describedby="setting-tabSize-hint">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -100,8 +100,8 @@ export function SettingsDialog() {
           {/* Editor Key Bindings */}
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium">{t("settings.keyBindings")}</p>
-              <p className="text-xs text-muted-foreground">
+              <p id="setting-keyBindings" className="text-sm font-medium">{t("settings.keyBindings")}</p>
+              <p id="setting-keyBindings-hint" className="text-xs text-muted-foreground">
                 {t("settings.keyBindingsDescription")}
               </p>
             </div>
@@ -111,7 +111,7 @@ export function SettingsDialog() {
                 updateSettings({ keyBindings: v as "normal" | "vim" | "emacs" })
               }
             >
-              <SelectTrigger className="w-[120px]">
+              <SelectTrigger className="w-[120px]" aria-labelledby="setting-keyBindings" aria-describedby="setting-keyBindings-hint">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -125,12 +125,14 @@ export function SettingsDialog() {
           {/* IntelliSense */}
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium">{t("settings.intelliSense")}</p>
-              <p className="text-xs text-muted-foreground">
+              <p id="setting-intelliSense" className="text-sm font-medium">{t("settings.intelliSense")}</p>
+              <p id="setting-intelliSense-hint" className="text-xs text-muted-foreground">
                 {t("settings.intelliSenseDescription")}
               </p>
             </div>
             <Switch
+              aria-labelledby="setting-intelliSense"
+              aria-describedby="setting-intelliSense-hint"
               checked={settings.intelliSense}
               onCheckedChange={(v) => updateSettings({ intelliSense: v })}
             />

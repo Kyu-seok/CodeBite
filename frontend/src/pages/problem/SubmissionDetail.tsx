@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Editor from '@monaco-editor/react';
@@ -13,54 +13,20 @@ import {
 import { getSubmission } from '@/api/submissions';
 import { useAuth } from '@/context/AuthContext';
 import { useTheme } from '@/context/ThemeContext';
-import type { SolutionCommit, SubmissionResponse, SubmissionStatus } from '@/types/submission';
+import type { SolutionCommit, SubmissionResponse } from '@/types/submission';
 import { ConfidencePrompt } from '@/components/review/ConfidencePrompt';
 import { useReviewState } from '@/hooks/useReviewState';
 import { clearSubmissionReview } from '@/api/reviews';
 import type { Confidence } from '@/types/review';
 import { formatElapsed } from '@/components/layout/Layout';
-
-const LANGUAGE_MAP: Record<string, string> = {
-  java: 'java',
-  python: 'python',
-  javascript: 'javascript',
-  cpp: 'cpp',
-  c: 'c',
-};
-
-const statusColorMap: Record<SubmissionStatus, string> = {
-  ACCEPTED: 'text-success-500',
-  WRONG_ANSWER: 'text-destructive',
-  RUNTIME_ERROR: 'text-destructive',
-  TIME_LIMIT_EXCEEDED: 'text-warning-500',
-  COMPILATION_ERROR: 'text-warning-500',
-  PENDING: 'text-muted-foreground',
-  INTERNAL_ERROR: 'text-muted-foreground',
-};
-
-const statusKeys: Record<SubmissionStatus, string> = {
-  ACCEPTED: 'status.accepted',
-  WRONG_ANSWER: 'status.wrongAnswer',
-  TIME_LIMIT_EXCEEDED: 'status.timeLimitExceeded',
-  RUNTIME_ERROR: 'status.runtimeError',
-  COMPILATION_ERROR: 'status.compilationError',
-  PENDING: 'status.pending',
-  INTERNAL_ERROR: 'status.internalError',
-};
-
-function formatDate(dateStr: string) {
-  return new Date(dateStr).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit',
-  });
-}
-
-function formatMemory(kb: number) {
-  return `${(kb / 1024).toFixed(1)} MB`;
-}
+import {
+  MONACO_LANGUAGE,
+  STATUS_KEYS,
+  STATUS_TEXT_CLASS,
+  formatMemory,
+  formatSubmissionDate,
+  languageLabel,
+} from './submissionDisplay';
 
 // The verdict poll stops at Accepted, but the Solution Commit reaches GitHub a little later
 // (with retries, up to several seconds), so detail re-polls on its own while it is in flight.
@@ -93,7 +59,7 @@ export function SubmissionDetail({
 }: SubmissionDetailProps) {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
-  const { t } = useTranslation('problem');
+  const { t, i18n } = useTranslation('problem');
   const { t: tc } = useTranslation('common');
   const { theme } = useTheme();
   const [submission, setSubmission] = useState<SubmissionResponse | null>(null);
@@ -142,7 +108,7 @@ export function SubmissionDetail({
   if (loading) {
     return (
       <div className="flex items-center justify-center py-16">
-        <div className="h-5 w-5 animate-spin rounded-full border-2 border-muted border-t-accent" />
+        <div className="h-5 w-5 animate-spin rounded-full border-2 border-muted border-t-accent motion-reduce:animate-none" />
       </div>
     );
   }
@@ -211,18 +177,18 @@ export function SubmissionDetail({
       <div className="p-4 space-y-4">
         {/* Status + meta */}
         <div>
-          <div className={`text-lg font-semibold ${statusColorMap[submission.status]}`}>
-            {tc(statusKeys[submission.status])}
-          </div>
+          <h2 className={`text-lg font-semibold ${STATUS_TEXT_CLASS[submission.status]}`}>
+            {tc(STATUS_KEYS[submission.status])}
+          </h2>
           <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-            <span>{formatDate(submission.createdAt)}</span>
-            <span className="text-border">|</span>
-            <Badge variant="secondary" className="text-[10px] px-1.5 py-0 capitalize">
-              {submission.language}
+            <span>{formatSubmissionDate(submission.createdAt, i18n.language, true)}</span>
+            <span className="text-border" aria-hidden="true">|</span>
+            <Badge variant="secondary" className="text-xs px-1.5 py-0">
+              {languageLabel(submission.language)}
             </Badge>
             {totalCount > 0 && (
               <>
-                <span className="text-border">|</span>
+                <span className="text-border" aria-hidden="true">|</span>
                 <span>
                   {t('submissions.testCasesPassed', { n: `${passedCount}/${totalCount}` })}
                 </span>
@@ -259,12 +225,10 @@ export function SubmissionDetail({
             busy={reviewBusy}
             currentRating={submission.confidence}
             defaultNotes={submission.confidence ? submission.notes : null}
-            title={submission.confidence ? 'Update your rating' : 'Mark this for review'}
-            subtitle={
-              submission.confidence
-                ? 'Pick a different rating to update; the SM-2 schedule will recompute.'
-                : "Choose how confident you felt — we'll resurface it later for spaced repetition."
-            }
+            title={t(submission.confidence ? 'submissions.updateRating' : 'submissions.markForReview')}
+            subtitle={t(
+              submission.confidence ? 'submissions.updateRatingHint' : 'submissions.markForReviewHint',
+            )}
           />
         )}
 
@@ -275,20 +239,20 @@ export function SubmissionDetail({
           <div className="flex gap-4">
             {submission.runtimeMs != null && (
               <div className="flex-1 rounded-lg border border-border bg-muted/30 px-3 py-2">
-                <div className="text-[10px] text-muted-foreground uppercase tracking-wider">{tc('label.runtime')}</div>
-                <div className="text-sm font-semibold text-foreground">{submission.runtimeMs} ms</div>
+                <div className="text-xs text-muted-foreground">{tc('label.runtime')}</div>
+                <div className="font-mono text-sm font-semibold tabular-nums text-foreground">{submission.runtimeMs} ms</div>
               </div>
             )}
             {submission.memoryKb != null && (
               <div className="flex-1 rounded-lg border border-border bg-muted/30 px-3 py-2">
-                <div className="text-[10px] text-muted-foreground uppercase tracking-wider">{tc('label.memory')}</div>
-                <div className="text-sm font-semibold text-foreground">{formatMemory(submission.memoryKb)}</div>
+                <div className="text-xs text-muted-foreground">{tc('label.memory')}</div>
+                <div className="font-mono text-sm font-semibold tabular-nums text-foreground">{formatMemory(submission.memoryKb)}</div>
               </div>
             )}
             {submission.solveTimeSeconds != null && (
               <div className="flex-1 rounded-lg border border-border bg-muted/30 px-3 py-2">
-                <div className="text-[10px] text-muted-foreground uppercase tracking-wider">Solve time</div>
-                <div className="text-sm font-semibold text-foreground">{formatElapsed(submission.solveTimeSeconds)}</div>
+                <div className="text-xs text-muted-foreground">{t('submissions.solveTime')}</div>
+                <div className="font-mono text-sm font-semibold tabular-nums text-foreground">{formatElapsed(submission.solveTimeSeconds)}</div>
               </div>
             )}
           </div>
@@ -309,7 +273,7 @@ export function SubmissionDetail({
           <div className="overflow-hidden rounded-lg border border-border">
             <Editor
               height="240px"
-              language={LANGUAGE_MAP[submission.language] || submission.language}
+              language={MONACO_LANGUAGE[submission.language] || submission.language}
               value={submission.sourceCode}
               theme={theme === 'dark' ? 'vs-dark' : 'light'}
               options={{
@@ -345,17 +309,19 @@ export function SubmissionDetail({
 
                 return (
                   <div key={r.testCaseId} className="rounded-lg border border-border overflow-hidden">
-                    <button
-                      onClick={() => setExpandedCase(isExpanded ? null : i)}
-                      className="flex w-full items-center gap-2 px-3 py-2 text-sm hover:bg-muted/50 transition-colors"
+                    <CaseRow
+                      expandable={hasSampleData}
+                      expanded={isExpanded}
+                      onToggle={() => setExpandedCase(isExpanded ? null : i)}
                     >
                       {/* Pass/fail icon */}
+                      <span className="sr-only">{tc(STATUS_KEYS[r.status])}</span>
                       {passed ? (
-                        <svg className="h-4 w-4 shrink-0 text-success-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <svg aria-hidden="true" className="h-4 w-4 shrink-0 text-success-600 dark:text-success-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                           <polyline points="20 6 9 17 4 12" />
                         </svg>
                       ) : (
-                        <svg className="h-4 w-4 shrink-0 text-destructive" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <svg aria-hidden="true" className="h-4 w-4 shrink-0 text-destructive" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                           <line x1="18" y1="6" x2="6" y2="18" />
                           <line x1="6" y1="6" x2="18" y2="18" />
                         </svg>
@@ -367,10 +333,11 @@ export function SubmissionDetail({
                         )}
                       </span>
                       {r.runtimeMs != null && (
-                        <span className="text-xs text-muted-foreground">{r.runtimeMs} ms</span>
+                        <span className="font-mono text-xs tabular-nums text-muted-foreground">{r.runtimeMs} ms</span>
                       )}
                       {hasSampleData && (
                         <svg
+                          aria-hidden="true"
                           className={`h-3.5 w-3.5 text-muted-foreground transition-transform ${isExpanded ? 'rotate-180' : ''}`}
                           viewBox="0 0 24 24"
                           fill="none"
@@ -382,7 +349,7 @@ export function SubmissionDetail({
                           <polyline points="6 9 12 15 18 9" />
                         </svg>
                       )}
-                    </button>
+                    </CaseRow>
 
                     {isExpanded && hasSampleData && (
                       <div className="border-t border-border bg-muted/20 px-3 py-2 space-y-2 text-xs">
@@ -401,7 +368,7 @@ export function SubmissionDetail({
                         {r.actualOutput != null && (
                           <div>
                             <div className="font-medium text-muted-foreground mb-0.5">{t('submissions.yourOutput')}</div>
-                            <pre className={`rounded px-2 py-1 whitespace-pre-wrap break-all ${passed ? 'bg-success-500/10 text-success-500' : 'bg-destructive/10 text-destructive'}`}>
+                            <pre className={`rounded px-2 py-1 whitespace-pre-wrap break-all ${passed ? 'bg-success-100 text-success-700 dark:bg-success-950 dark:text-success-400' : 'bg-error-100 text-error-700 dark:bg-error-950 dark:text-error-400'}`}>
                               {r.actualOutput}
                             </pre>
                           </div>
@@ -423,6 +390,7 @@ export function SubmissionDetail({
           {editingNote ? (
             <div>
               <textarea
+                aria-label={t('submissions.notes')}
                 value={noteDraft}
                 onChange={(e) => setNoteDraft(e.target.value)}
                 maxLength={500}
@@ -443,7 +411,7 @@ export function SubmissionDetail({
                     setSubmission((prev) => prev ? { ...prev, notes: noteDraft } : prev);
                     setEditingNote(false);
                   }}
-                  className="rounded-md bg-accent px-3 py-1 text-xs font-medium text-white hover:bg-accent/90 transition-colors"
+                  className="rounded-md bg-accent-700 px-3 py-1 text-xs font-medium text-white hover:bg-accent-800 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 >
                   {tc('button.save')}
                 </button>
@@ -474,20 +442,20 @@ function SolutionCommitLine({ solutionCommit }: { solutionCommit: SolutionCommit
     <div className="mt-1.5 flex flex-wrap items-center gap-1.5 text-xs" aria-live="polite">
       {status === 'PENDING' && (
         <>
-          <LoaderCircle className="h-3.5 w-3.5 animate-spin text-muted-foreground" />
+          <LoaderCircle className="h-3.5 w-3.5 animate-spin text-muted-foreground motion-reduce:animate-none" />
           <span className="text-muted-foreground">{t('submissions.solutionCommit.pending')}</span>
         </>
       )}
       {status === 'COMMITTED' && (
         <>
-          <GitCommitHorizontal className="h-3.5 w-3.5 text-success-500" />
+          <GitCommitHorizontal className="h-3.5 w-3.5 text-success-600 dark:text-success-400" />
           <span className="text-muted-foreground">{t('submissions.solutionCommit.committed')}</span>
           {commitUrl && (
             <a
               href={commitUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-0.5 text-accent hover:underline">
+              className="inline-flex items-center gap-0.5 text-accent-700 hover:underline dark:text-accent-400">
               {t('submissions.solutionCommit.viewCommit')}
               <ExternalLink className="h-3 w-3" />
             </a>
@@ -501,6 +469,32 @@ function SolutionCommitLine({ solutionCommit }: { solutionCommit: SolutionCommit
         </>
       )}
     </div>
+  );
+}
+
+/** A test-case header: a disclosure button when its sample data can be shown, plain text otherwise. */
+function CaseRow({
+  expandable,
+  expanded,
+  onToggle,
+  children,
+}: {
+  expandable: boolean;
+  expanded: boolean;
+  onToggle: () => void;
+  children: ReactNode;
+}) {
+  const className = 'flex w-full items-center gap-2 px-3 py-2 text-sm';
+  if (!expandable) return <div className={className}>{children}</div>;
+  return (
+    <button
+      type="button"
+      aria-expanded={expanded}
+      onClick={onToggle}
+      className={`${className} hover:bg-muted/50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring`}
+    >
+      {children}
+    </button>
   );
 }
 
@@ -575,7 +569,7 @@ function CodeActions({ sourceCode, language, onLoadIntoEditor }: CodeActionsProp
             onClick={handleCopy}
             aria-label={copyTooltip}>
             {copyState === 'success' ? (
-              <Check className="h-3.5 w-3.5 text-success-500" />
+              <Check className="h-3.5 w-3.5 text-success-600 dark:text-success-400" />
             ) : copyState === 'error' ? (
               <X className="h-3.5 w-3.5 text-destructive" />
             ) : (
@@ -595,7 +589,7 @@ function CodeActions({ sourceCode, language, onLoadIntoEditor }: CodeActionsProp
               onClick={handleLoad}
               aria-label={loadTooltip}>
               {loadState === 'success' ? (
-                <Check className="h-3.5 w-3.5 text-success-500" />
+                <Check className="h-3.5 w-3.5 text-success-600 dark:text-success-400" />
               ) : (
                 <FileInput className="h-3.5 w-3.5" />
               )}

@@ -51,12 +51,15 @@
     "category": "카테고리",
     "descriptionLabel": "설명",
     "placeholder": "문제를 설명해 주세요...",
-    "submit": "신고하기",
+    "submit": "GitHub 이슈 열기",
     "wrongTestCase": "잘못된 테스트 케이스",
     "wrongExpectedOutput": "잘못된 예상 출력",
     "descriptionUnclear": "설명이 불명확함",
     "starterCodeIssue": "스타터 코드 문제",
-    "other": "기타"
+    "other": "기타",
+    "githubNote": "내용이 채워진 GitHub 이슈 작성 화면이 열립니다. 등록하려면 GitHub 계정이 필요합니다.",
+    "opened": "GitHub에서 이슈 작성 화면을 열었습니다",
+    "openedHint": "그곳에서 등록하면 제보가 전달됩니다."
   },
   "test": {
     "testCases": "테스트 케이스",
@@ -85,7 +88,12 @@
     "customInputLabel": "입력",
     "customExpectedLabel": "예상 출력 (선택)",
     "customEmptyHelp": "최대 {{max}}개의 사용자 테스트 케이스를 추가할 수 있습니다. 샘플 테스트와 동일한 입력 형식을 사용하세요.",
-    "finished": "완료"
+    "finished": "완료",
+    "errorLine": "{{line}}행: {{severity}}: {{message}}",
+    "severity": {
+      "error": "오류",
+      "warning": "경고"
+    }
   },
   "solutions": {
     "shareYourSolution": "내 풀이 공유하기",
@@ -122,7 +130,12 @@
       "save": "저장",
       "cancel": "취소",
       "edited": "수정됨",
-      "confirmDelete": "이 댓글을 삭제할까요?"
+      "confirmDelete": "이 댓글을 삭제할까요?",
+      "failed": "댓글을 저장하지 못했습니다. 다시 시도해 주세요.",
+      "deleteFailed": "댓글을 삭제하지 못했습니다. 다시 시도해 주세요.",
+      "label": "댓글",
+      "replyLabel": "답글",
+      "editLabel": "댓글 수정"
     },
     "editor": {
       "title": "제목",
@@ -143,7 +156,28 @@
       "publish": "공유",
       "publishing": "공유 중…",
       "update": "변경 저장",
-      "publishFailed": "공유에 실패했습니다. 다시 시도해 주세요."
+      "publishFailed": "공유에 실패했습니다. 다시 시도해 주세요.",
+      "contentLabel": "풀이 (마크다운)"
+    },
+    "upvote": "추천",
+    "downvote": "비추천",
+    "score": "점수 {{n}}",
+    "commentsCount": "댓글 {{n}}개",
+    "voteFailed": "투표를 반영하지 못했습니다. 다시 시도해 주세요.",
+    "deleteFailed": "풀이를 삭제하지 못했습니다. 다시 시도해 주세요.",
+    "reportFailed": "신고를 보내지 못했습니다. 다시 시도해 주세요.",
+    "reportReason": "사유",
+    "searchLabel": "풀이 검색",
+    "sortLabel": "풀이 정렬",
+    "languageFilter": "언어로 거르기",
+    "seedTemplate": "## 접근 방법\n\n_아이디어를 설명해 주세요._\n\n## 코드\n\n{{code}}\n",
+    "toolbar": {
+      "bold": "굵게 ({{mod}}B)",
+      "italic": "기울임 ({{mod}}I)",
+      "code": "인라인 코드",
+      "link": "링크",
+      "heading": "제목",
+      "list": "목록"
     }
   },
   "submissions": {
@@ -175,7 +209,15 @@
       "committed": "풀이 저장소에 커밋됨",
       "viewCommit": "GitHub에서 보기",
       "failed": "GitHub에 커밋하지 못했습니다"
-    }
+    },
+    "confidence": "평가",
+    "solveTime": "풀이 시간",
+    "updateRating": "평가 수정",
+    "updateRatingHint": "다른 평가를 고르면 복습 일정이 다시 계산됩니다.",
+    "markForReview": "복습에 추가",
+    "markForReviewHint": "얼마나 자신 있었는지 고르세요. 간격 반복으로 나중에 다시 보여 드립니다.",
+    "openSubmission": "{{date}} 제출 열기",
+    "editNote": "메모 편집"
   },
   "settings": {
     "title": "설정",
@@ -190,5 +232,32 @@
     "intelliSense": "IntelliSense",
     "intelliSenseDescription": "타입 기반 자동완성, 시그니처 도움말, 에러 강조 표시.",
     "spaces": "{{n}} 칸"
+  },
+  "workspace": {
+    "foldPanel": "패널 접기",
+    "expandPanel": "패널 펼치기",
+    "maximize": "최대화",
+    "restore": "복원",
+    "maximizePanel": "패널 최대화",
+    "restoreEditor": "에디터 복원",
+    "showTests": "테스트 패널 보기",
+    "hideTests": "테스트 패널 숨기기",
+    "fullScreen": "전체 화면",
+    "exitFullScreen": "전체 화면 종료",
+    "runShortcut": "{{keys}}로 실행",
+    "submitShortcut": "{{keys}}로 제출",
+    "problemNotFound": "문제를 찾을 수 없습니다.",
+    "runFailed": "실행에 실패했습니다. 다시 시도해 주세요.",
+    "submitFailed": "제출에 실패했습니다. 다시 시도해 주세요.",
+    "judgingSlow": "채점이 예상보다 오래 걸리고 있습니다. 페이지를 새로고침해 결과를 확인하세요.",
+    "resultFetchFailed": "결과를 불러오지 못했습니다. 페이지를 새로고침해 확인하세요.",
+    "judgingElapsed": "{{seconds}}초",
+    "judgingTypical": "{{language}}는 보통 {{seconds}}초 정도 걸립니다",
+    "resetConfirmTitle": "코드를 초기화할까요?",
+    "resetConfirmBody": "{{language}} 코드가 시작 템플릿으로 돌아갑니다. 지금 코드는 복구할 수 없습니다.",
+    "resetConfirm": "코드 초기화",
+    "loadConfirmTitle": "지금 코드를 바꿀까요?",
+    "loadConfirmBody": "이 제출을 불러오면 에디터의 {{language}} 코드가 바뀝니다. 지금 코드는 복구할 수 없습니다.",
+    "loadConfirm": "코드 바꾸기"
   }
 }
