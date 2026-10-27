@@ -9,6 +9,8 @@ Issues and specs for this repo live as GitHub issues in `Kyu-seok/CodeBite`. Use
 - **List issues**: `gh issue list --state open --json number,title,body,labels,comments --jq '[.[] | {number, title, body, labels: [.labels[].name], comments: [.comments[].body]}]'` with appropriate `--label` and `--state` filters.
 - **Make an issue a sub-issue of a parent**: the local `gh` is 2.58, which has no `--parent` or `--add-sub-issue`, so use `gh api --method POST repos/Kyu-seok/CodeBite/issues/<parent>/sub_issues -F sub_issue_id=<child-db-id>` (database id, as in **Blocking** below). If that fails, put `Part of #<parent>` at the top of the child body.
 - **Comment on an issue**: `gh issue comment <number> --body "..."`
+- **Open or update a PR**: check `gh pr list --head <branch> --json number` first; if the branch already has a PR, update that one instead of creating another.
+- **Edit a PR's title or body**: `gh pr edit` fails on gh 2.58 (`Projects (classic) is being deprecated`), so use `gh api --method PATCH repos/Kyu-seok/CodeBite/pulls/<n> -f title="..." -F body=@<file>`.
 - **Apply / remove labels**: `gh issue edit <number> --add-label "..."` / `--remove-label "..."`
 - **Close**: `gh issue close <number> --comment "..."`
 
