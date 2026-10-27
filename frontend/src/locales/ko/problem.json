@@ -42,15 +42,15 @@
     "output": "출력: "
   },
   "editor": {
-    "code": "코드",
     "languages": "언어",
     "reportBug": "버그 신고",
     "resetCode": "코드 초기화",
     "resetLayout": "레이아웃 초기화",
+    "moreActions": "더보기",
     "settings": "설정",
     "runCode": "코드 실행",
     "submitCode": "코드 제출",
-    "templateErrorBanner": "테스트 환경 자체의 문제로 보입니다. 버그 신고 버튼을 이용해 주세요."
+    "templateErrorBanner": "테스트 환경 자체의 문제로 보입니다. 에디터의 더보기 메뉴에서 버그 신고를 이용해 주세요."
   },
   "bugReport": {
     "title": "버그 신고",

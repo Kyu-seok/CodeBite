@@ -2,9 +2,10 @@ import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Editor from '@monaco-editor/react';
-import { Check, CircleAlert, Copy, ExternalLink, FileInput, GitCommitHorizontal, LoaderCircle, Share2, X } from 'lucide-react';
+import { Check, CircleAlert, Copy, ExternalLink, FileInput, GitCommitHorizontal, Share2, X } from 'lucide-react';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
+import Spinner from '@/components/ui/Spinner';
 import {
   Tooltip,
   TooltipContent,
@@ -107,9 +108,7 @@ export function SubmissionDetail({
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-16">
-        <div className="h-5 w-5 animate-spin rounded-full border-2 border-muted border-t-accent motion-reduce:animate-none" />
-      </div>
+      <Spinner size="sm" className="py-16" />
     );
   }
 
@@ -444,7 +443,7 @@ function SolutionCommitLine({ solutionCommit }: { solutionCommit: SolutionCommit
     <div className="mt-1.5 flex flex-wrap items-center gap-1.5 text-xs" aria-live="polite">
       {status === 'PENDING' && (
         <>
-          <LoaderCircle className="h-3.5 w-3.5 animate-spin text-muted-foreground motion-reduce:animate-none" />
+          <Spinner size="xs" announce={false} className="p-0" />
           <span className="text-muted-foreground">{t('submissions.solutionCommit.pending')}</span>
         </>
       )}

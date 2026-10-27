@@ -43,7 +43,7 @@ export function SettingsDialog() {
       </Tooltip>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-center">{t("settings.editorSettings")}</DialogTitle>
+          <DialogTitle>{t("settings.editorSettings")}</DialogTitle>
         </DialogHeader>
 
         <div className="mt-4 space-y-6">
