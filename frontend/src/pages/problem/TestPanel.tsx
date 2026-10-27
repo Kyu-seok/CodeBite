@@ -270,11 +270,10 @@ export function TestPanel({
           <Tooltip>
             <TooltipTrigger>
               <Button
-                variant="outline"
+                variant="secondary"
                 size="lg"
                 onClick={onRun}
-                disabled={running || submitting}
-                className="border-accent-700/40 text-accent-700 hover:bg-accent-500/10 hover:border-accent-700 dark:border-accent-400/40 dark:text-accent-400 dark:hover:border-accent-400">
+                disabled={running || submitting}>
                 {running ? t('test.running') : t('test.run')}
                 <kbd className="ml-1.5 font-sans text-sm opacity-80">
                   {isMac ? "⌘+'" : "Ctrl+'"}

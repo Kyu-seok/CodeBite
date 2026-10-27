@@ -412,7 +412,7 @@ export function SubmissionDetail({
                     setSubmission((prev) => prev ? { ...prev, notes: noteDraft } : prev);
                     setEditingNote(false);
                   }}
-                  className="rounded-md bg-accent-700 px-3 py-1 text-xs font-medium text-white hover:bg-accent-800 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  className="rounded-md bg-primary-800 px-3 py-1 text-xs font-medium text-primary-50 hover:bg-primary-700 dark:bg-primary-50 dark:text-primary-800 dark:hover:bg-primary-200 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 >
                   {tc('button.save')}
                 </button>
