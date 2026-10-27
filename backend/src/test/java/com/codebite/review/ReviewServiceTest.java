@@ -100,7 +100,7 @@ class ReviewServiceTest {
         assertEquals(Confidence.GOOD, sub.getConfidence());
         assertNotNull(sub.getReviewedAt());
         assertEquals(1, resp.reviewCount());
-        assertEquals(1, resp.intervalDays());
+        assertEquals(2, resp.intervalDays()); // first GOOD → 2d
         assertEquals(Confidence.GOOD, resp.lastConfidence());
         verify(submissionRepository).save(sub);
         verify(stateRepository).save(any(ProblemReviewState.class));
@@ -255,7 +255,7 @@ class ReviewServiceTest {
         Map<Confidence, Integer> preview = reviewService.previewIntervals(sub);
 
         assertEquals(Map.of(Confidence.AGAIN, 1, Confidence.HARD, 1,
-                Confidence.GOOD, 1, Confidence.EASY, 4), preview);
+                Confidence.GOOD, 2, Confidence.EASY, 4), preview);
         verify(stateRepository, never()).save(any(ProblemReviewState.class));
         verify(submissionRepository, never()).save(any(Submission.class));
     }
@@ -280,9 +280,10 @@ class ReviewServiceTest {
         // One prior GOOD → second rung: HARD 3, GOOD 6, EASY 10; AGAIN always resets to 1.
         assertEquals(Map.of(Confidence.AGAIN, 1, Confidence.HARD, 3,
                 Confidence.GOOD, 6, Confidence.EASY, 10), rerate);
-        // Two prior GOODs (1d → 6d, ease 2.50) → interval × ease = 15 for every pass.
-        assertEquals(Map.of(Confidence.AGAIN, 1, Confidence.HARD, 15,
-                Confidence.GOOD, 15, Confidence.EASY, 15), fresh);
+        // Two prior GOODs (2d → 6d, ease 2.50) → the rating now scales the 6d interval:
+        // HARD 6 × 1.2 = 7.2 → 7, GOOD 6 × 2.50 = 15, EASY 6 × 2.50 × 1.3 = 19.5 → 20.
+        assertEquals(Map.of(Confidence.AGAIN, 1, Confidence.HARD, 7,
+                Confidence.GOOD, 15, Confidence.EASY, 20), fresh);
     }
 
     @Test

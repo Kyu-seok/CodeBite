@@ -11,6 +11,7 @@ import com.codebite.problem.entity.TestCase;
 import com.codebite.problem.repository.ProblemRepository;
 import com.codebite.problem.repository.TestCaseRepository;
 import com.codebite.github.repository.SolutionCommitRepository;
+import com.codebite.review.entity.Confidence;
 import com.codebite.review.service.ReviewService;
 import com.codebite.submission.dto.SubmissionResponse;
 import com.codebite.submission.dto.SubmitRequest;
@@ -32,6 +33,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -158,6 +160,43 @@ class SubmissionServiceTest {
         SubmissionResponse response = submissionService.getSubmission(1L, 1L);
         assertNotNull(response);
         assertEquals(1L, response.id());
+    }
+
+    // --- getSubmission: review interval previews ---
+
+    @Test
+    void getSubmission_pending_hasNoReviewIntervalPreview() {
+        Submission submission = ownedSubmission(SubmissionStatus.PENDING);
+        when(submissionRepository.findById(1L)).thenReturn(Optional.of(submission));
+
+        SubmissionResponse response = submissionService.getSubmission(1L, 1L);
+
+        assertNull(response.reviewIntervalDays());
+        verify(reviewService, never()).previewIntervals(any());
+    }
+
+    @Test
+    void getSubmission_judged_carriesTheReviewIntervalPreview() {
+        Submission submission = ownedSubmission(SubmissionStatus.ACCEPTED);
+        Map<Confidence, Integer> preview = Map.of(Confidence.AGAIN, 1, Confidence.HARD, 7,
+                Confidence.GOOD, 15, Confidence.EASY, 20);
+        when(submissionRepository.findById(1L)).thenReturn(Optional.of(submission));
+        when(reviewService.previewIntervals(submission)).thenReturn(preview);
+
+        SubmissionResponse response = submissionService.getSubmission(1L, 1L);
+
+        assertEquals(preview, response.reviewIntervalDays());
+    }
+
+    private Submission ownedSubmission(SubmissionStatus status) {
+        Submission submission = new Submission();
+        submission.setId(1L);
+        submission.setUser(user);
+        submission.setProblem(problem);
+        submission.setLanguage("java");
+        submission.setSourceCode("code");
+        submission.setStatus(status);
+        return submission;
     }
 
     @Test
