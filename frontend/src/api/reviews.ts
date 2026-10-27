@@ -10,12 +10,23 @@ import type {
   TagConfidenceItem,
 } from "../types/review";
 
-export function setSubmissionReview(id: number, body: SetReviewRequest) {
-  return client.put<ReviewState>(`/submissions/${id}/review`, body);
+/** Fired on `window` after a confidence rating is saved or cleared, so review views refetch. */
+export const REVIEW_CHANGED_EVENT = "codebite:review-changed";
+
+function notifyReviewChanged() {
+  window.dispatchEvent(new Event(REVIEW_CHANGED_EVENT));
 }
 
-export function clearSubmissionReview(id: number) {
-  return client.delete(`/submissions/${id}/review`);
+export async function setSubmissionReview(id: number, body: SetReviewRequest) {
+  const res = await client.put<ReviewState>(`/submissions/${id}/review`, body);
+  notifyReviewChanged();
+  return res;
+}
+
+export async function clearSubmissionReview(id: number) {
+  const res = await client.delete(`/submissions/${id}/review`);
+  notifyReviewChanged();
+  return res;
 }
 
 export function getReviewHistory(slug: string) {

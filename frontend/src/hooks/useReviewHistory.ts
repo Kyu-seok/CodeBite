@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { getReviewHistory } from "@/api/reviews";
+import { getReviewHistory, REVIEW_CHANGED_EVENT } from "@/api/reviews";
 import type { RatingHistoryItem } from "@/types/review";
 
 export function useReviewHistory(slug: string | undefined, enabled: boolean) {
@@ -22,6 +22,14 @@ export function useReviewHistory(slug: string | undefined, enabled: boolean) {
   useEffect(() => {
     fetchHistory();
   }, [fetchHistory]);
+
+  // Keep the Progression strip in step with ratings saved elsewhere on the page.
+  useEffect(() => {
+    if (!enabled) return;
+    const onChange = () => fetchHistory();
+    window.addEventListener(REVIEW_CHANGED_EVENT, onChange);
+    return () => window.removeEventListener(REVIEW_CHANGED_EVENT, onChange);
+  }, [enabled, fetchHistory]);
 
   return { history, loading, refetch: fetchHistory };
 }
