@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react"
-import { useNavigate, useParams } from "react-router-dom"
+import { Link, useNavigate, useParams } from "react-router-dom"
 import { useTranslation } from "react-i18next"
 import { ArrowLeft, Flag, Pencil, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/Button"
 import { Badge } from "@/components/ui/Badge"
 import Spinner from "@/components/ui/Spinner"
+import LoadError from "@/components/ui/LoadError"
 import { useAuth } from "@/context/AuthContext"
 import { MarkdownRenderer } from "@/components/markdown/MarkdownRenderer"
 import { deleteSolution, getSolution, reportSolution } from "@/api/solutions"
@@ -20,29 +21,42 @@ import type { SolutionDetail } from "@/types/solution"
 
 export default function SolutionDetailPage() {
   const { t, i18n } = useTranslation("problem")
-  const { user } = useAuth()
+  const { user, isAuthenticated } = useAuth()
   const navigate = useNavigate()
   const { slug, solutionId } = useParams<{ slug: string; solutionId: string }>()
   const id = solutionId ? Number(solutionId) : null
 
   const [solution, setSolution] = useState<SolutionDetail | null>(null)
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [failed, setFailed] = useState(false)
+  const [loadAttempt, setLoadAttempt] = useState(0)
   const [reportOpen, setReportOpen] = useState(false)
+  const [reported, setReported] = useState(false)
   const [confirmingDelete, setConfirmingDelete] = useState(false)
   const [actionError, setActionError] = useState<string | null>(null)
-  const { comments, setComments } = useComments(id)
+  const comments = useComments(id)
+
+  // Moving to another solution on the same route starts over, instead of showing the previous
+  // solution (or its failure) until the new one lands.
+  const [shownId, setShownId] = useState(id)
+  if (id !== shownId) {
+    setShownId(id)
+    setSolution(null)
+    setFailed(false)
+    setLoading(true)
+    setReported(false)
+    setActionError(null)
+  }
 
   useEffect(() => {
     if (id == null) return
     let cancelled = false
-    setLoading(true)
     getSolution(id)
       .then((res) => {
         if (!cancelled) setSolution(res.data)
       })
       .catch(() => {
-        if (!cancelled) setError(t("solutions.failedToLoad"))
+        if (!cancelled) setFailed(true)
       })
       .finally(() => {
         if (!cancelled) setLoading(false)
@@ -50,7 +64,17 @@ export default function SolutionDetailPage() {
     return () => {
       cancelled = true
     }
-  }, [id, t])
+  }, [id, loadAttempt])
+
+  useEffect(() => {
+    if (solution) document.title = `${solution.title} | CodeBite`
+  }, [solution])
+
+  const retry = () => {
+    setFailed(false)
+    setLoading(true)
+    setLoadAttempt((n) => n + 1)
+  }
 
   if (loading) {
     return (
@@ -60,15 +84,20 @@ export default function SolutionDetailPage() {
     )
   }
 
-  if (error || !solution) {
+  if (failed || !solution) {
     return (
-      <div className="flex h-[calc(100dvh-3.5rem)] items-center justify-center">
-        <p className="text-sm text-destructive">{error ?? t("solutions.failedToLoad")}</p>
+      <div className="mx-auto max-w-md px-4 py-20">
+        <LoadError message={t("solutions.failedToLoad")} onRetry={retry} />
       </div>
     )
   }
 
   const canEdit = solution.ownedByViewer || user?.role === "ADMIN"
+  // Counted from the thread itself once it has loaded, so posting or deleting (which removes
+  // a comment's replies too) keeps the heading honest.
+  const commentCount = comments.loaded
+    ? comments.comments.reduce((n, c) => n + 1 + c.replies.length, 0)
+    : solution.commentsCount
 
   const handleDelete = async () => {
     setConfirmingDelete(false)
@@ -83,12 +112,12 @@ export default function SolutionDetailPage() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-6">
-      <button
-        onClick={() => navigate(`/problems/${slug}`)}
-        className="mb-4 inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
-        <ArrowLeft className="h-3.5 w-3.5" />
+      <Link
+        to={`/problems/${slug}`}
+        className="mb-4 inline-flex items-center gap-1 rounded-sm text-sm text-muted-foreground hover:text-foreground">
+        <ArrowLeft aria-hidden className="h-3.5 w-3.5" />
         {t("solutions.backToProblem")}
-      </button>
+      </Link>
 
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0 flex-1">
@@ -128,25 +157,29 @@ export default function SolutionDetailPage() {
               variant="outline"
               size="sm"
               onClick={() => navigate(`/problems/${slug}/solutions/${solution.id}/edit`)}>
-              <Pencil className="h-3.5 w-3.5" />
+              <Pencil aria-hidden className="h-3.5 w-3.5" />
               {t("solutions.edit")}
             </Button>
             <Button variant="destructive" size="sm" onClick={() => setConfirmingDelete(true)}>
-              <Trash2 className="h-3.5 w-3.5" />
+              <Trash2 aria-hidden className="h-3.5 w-3.5" />
               {t("solutions.delete")}
             </Button>
           </>
         )}
-        {!solution.ownedByViewer && (
+        {/* Reporting needs an account, as it does on comments. */}
+        {isAuthenticated && !solution.ownedByViewer && (
           <Button variant="ghost" size="sm" onClick={() => setReportOpen(true)}>
-            <Flag className="h-3.5 w-3.5" />
+            <Flag aria-hidden className="h-3.5 w-3.5" />
             {t("solutions.report")}
           </Button>
         )}
       </div>
 
+      <p role="status" className="text-right text-xs text-muted-foreground">
+        {reported ? t("solutions.reported") : ""}
+      </p>
       {actionError && (
-        <p role="alert" className="text-right text-xs text-destructive">{actionError}</p>
+        <p role="alert" className="text-right text-xs text-error-700 dark:text-error-400">{actionError}</p>
       )}
 
       <MarkdownRenderer source={solution.content} className="my-6" />
@@ -154,14 +187,18 @@ export default function SolutionDetailPage() {
       <hr className="my-6 border-border" />
 
       <h2 className="mb-3 text-lg font-semibold text-foreground">
-        {t("solutions.comments.heading", { count: solution.commentsCount })}
+        {t("solutions.comments.heading", { count: commentCount })}
       </h2>
-      <CommentThread
-        solutionId={solution.id}
-        slug={slug ?? ""}
-        comments={comments}
-        onChange={setComments}
-      />
+      {comments.error ? (
+        <LoadError onRetry={comments.refetch} />
+      ) : (
+        <CommentThread
+          solutionId={solution.id}
+          slug={slug ?? ""}
+          comments={comments.comments}
+          onChange={comments.setComments}
+        />
+      )}
 
       <ConfirmDialog
         open={confirmingDelete}
@@ -176,6 +213,7 @@ export default function SolutionDetailPage() {
         onClose={() => setReportOpen(false)}
         onSubmit={async (reason) => {
           await reportSolution(solution.id, { reason })
+          setReported(true)
         }}
       />
     </div>

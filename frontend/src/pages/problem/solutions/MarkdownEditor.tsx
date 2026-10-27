@@ -10,6 +10,9 @@ interface MarkdownEditorProps {
   onChange: (next: string) => void
   maxLength?: number
   placeholder?: string
+  /** Ids of the hint and error text that describe the textarea. */
+  describedBy?: string
+  invalid?: boolean
 }
 
 const MOD_KEY =
@@ -21,6 +24,8 @@ export function MarkdownEditor({
   onChange,
   maxLength = 50_000,
   placeholder,
+  describedBy,
+  invalid,
 }: MarkdownEditorProps) {
   const { t } = useTranslation("problem")
   const textareaRef = useRef<HTMLTextAreaElement>(null)
@@ -102,9 +107,11 @@ export function MarkdownEditor({
           value={value}
           onChange={(e) => onChange(e.target.value.slice(0, maxLength))}
           onKeyDown={onKeyDown}
+          aria-describedby={describedBy}
+          aria-invalid={invalid || undefined}
           rows={20}
           placeholder={placeholder ?? t("solutions.editor.contentPlaceholder")}
-          className="flex-1 min-h-[400px] resize-y rounded-md border border-border bg-background px-3 py-2 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+          className="flex-1 min-h-[400px] resize-y rounded-md border border-border bg-background px-3 py-2 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-ring aria-invalid:border-error-500"
         />
       </div>
       <div className="rounded-md border border-border bg-background p-4 overflow-auto max-h-[calc(100dvh-12rem)]">

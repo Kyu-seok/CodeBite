@@ -1,8 +1,79 @@
 @import "tailwindcss";
 @import "highlight.js/styles/github.css" layer(base);
-@import "highlight.js/styles/github-dark.css" layer(base) (prefers-color-scheme: dark);
 @config "../tailwind.config.ts";
 @plugin "@tailwindcss/typography";
+
+/* ── Code highlighting in light mode ──
+   On the Mist code background github.css's keyword red (#d73a49) reaches 4.1:1, built-in orange
+   (#e36209) 3.1:1, comment grey (#6a737d) 4.3:1 and tag green (#22863a) 4.2:1; these darker
+   steps of the same hues clear 4.5:1. */
+@layer base {
+  :root:not(.dark) .hljs-doctag,
+  :root:not(.dark) .hljs-keyword,
+  :root:not(.dark) .hljs-meta .hljs-keyword,
+  :root:not(.dark) .hljs-template-tag,
+  :root:not(.dark) .hljs-template-variable,
+  :root:not(.dark) .hljs-type,
+  :root:not(.dark) .hljs-variable.language_ { color: #b31d28; }
+  :root:not(.dark) .hljs-built_in,
+  :root:not(.dark) .hljs-symbol { color: #a04100; }
+  :root:not(.dark) .hljs-comment,
+  :root:not(.dark) .hljs-code,
+  :root:not(.dark) .hljs-formula { color: #5c6570; }
+  :root:not(.dark) .hljs-name,
+  :root:not(.dark) .hljs-quote,
+  :root:not(.dark) .hljs-selector-tag,
+  :root:not(.dark) .hljs-selector-pseudo,
+  :root:not(.dark) .hljs-addition { color: #197a35; }
+}
+
+/* ── Code highlighting in dark mode ──
+   Dark mode is the `.dark` class (ThemeContext), not the OS setting, so github-dark's colours
+   are scoped to it here instead of importing that sheet under prefers-color-scheme: an app in
+   dark mode on a light-mode OS used to get white code blocks, and the reverse. */
+@layer base {
+  .dark .hljs { color: #c9d1d9; }
+  .dark .hljs-doctag,
+  .dark .hljs-keyword,
+  .dark .hljs-meta .hljs-keyword,
+  .dark .hljs-template-tag,
+  .dark .hljs-template-variable,
+  .dark .hljs-type,
+  .dark .hljs-variable.language_ { color: #ff7b72; }
+  .dark .hljs-title,
+  .dark .hljs-title.class_,
+  .dark .hljs-title.class_.inherited__,
+  .dark .hljs-title.function_ { color: #d2a8ff; }
+  .dark .hljs-attr,
+  .dark .hljs-attribute,
+  .dark .hljs-literal,
+  .dark .hljs-meta,
+  .dark .hljs-number,
+  .dark .hljs-operator,
+  .dark .hljs-variable,
+  .dark .hljs-selector-attr,
+  .dark .hljs-selector-class,
+  .dark .hljs-selector-id { color: #79c0ff; }
+  .dark .hljs-regexp,
+  .dark .hljs-string,
+  .dark .hljs-meta .hljs-string { color: #a5d6ff; }
+  .dark .hljs-built_in,
+  .dark .hljs-symbol { color: #ffa657; }
+  .dark .hljs-comment,
+  .dark .hljs-code,
+  .dark .hljs-formula { color: #a1aab6; } /* github-dark's #8b949e is 4.4:1 on Night Raised; Night Graphite */
+  .dark .hljs-name,
+  .dark .hljs-quote,
+  .dark .hljs-selector-tag,
+  .dark .hljs-selector-pseudo { color: #7ee787; }
+  .dark .hljs-subst,
+  .dark .hljs-emphasis,
+  .dark .hljs-strong { color: #c9d1d9; }
+  .dark .hljs-section { color: #58a6ff; } /* github-dark's #1f6feb is 3.0:1 on Night Raised */
+  .dark .hljs-bullet { color: #f2cc60; }
+  .dark .hljs-addition { color: #aff5b4; background-color: #033a16; }
+  .dark .hljs-deletion { color: #ffdcd7; background-color: #67060c; }
+}
 
 /* ── Light mode ── */
 :root {
