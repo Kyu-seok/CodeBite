@@ -14,15 +14,15 @@ function PlateauChart({ label }: { label: string }) {
   ]
 
   return (
-    <svg viewBox="0 0 200 110" className="w-full" fill="none" role="img" aria-label={label}>
+    <svg viewBox="0 0 200 122" className="w-full" fill="none" role="img" aria-label={label}>
       {/* Bars */}
       {bars.map((bar, i) => (
         <g key={bar.year}>
           <rect
             x={15 + i * 38}
-            y={100 - bar.height}
+            y={100 - bar.height * 0.82}
             width="24"
-            height={bar.height}
+            height={bar.height * 0.82}
             rx="3"
             className={
               i < 2
@@ -32,7 +32,7 @@ function PlateauChart({ label }: { label: string }) {
           />
           <text
             x={27 + i * 38}
-            y="108"
+            y="115"
             className="fill-muted-foreground text-[11px]"
             textAnchor="middle"
           >
@@ -44,14 +44,14 @@ function PlateauChart({ label }: { label: string }) {
       {/* Plateau line */}
       <line
         x1="90"
-        y1="6"
+        y1="21"
         x2="200"
-        y2="3"
+        y2="18"
         className="stroke-muted-foreground/60"
         strokeWidth="1"
         strokeDasharray="4 3"
       />
-      <text x="200" y="16" className="fill-muted-foreground text-[11px]" textAnchor="end">
+      <text x="200" y="12" className="fill-muted-foreground text-[11px]" textAnchor="end">
         {t("science.plateau.label")}
       </text>
     </svg>
@@ -61,7 +61,7 @@ function PlateauChart({ label }: { label: string }) {
 function ForgettingCurveChart({ label }: { label: string }) {
   const { t } = useTranslation("landing")
   return (
-    <svg viewBox="0 0 200 110" className="w-full" fill="none" role="img" aria-label={label}>
+    <svg viewBox="0 0 200 122" className="w-full" fill="none" role="img" aria-label={label}>
       {/* No review — steep decay */}
       <path
         d="M 10 15 C 30 40, 50 70, 80 85 C 110 95, 140 98, 190 100"
@@ -78,15 +78,15 @@ function ForgettingCurveChart({ label }: { label: string }) {
       />
 
       {/* Labels */}
-      <text x="190" y="96" className="fill-muted-foreground text-[11px]" textAnchor="end">
+      <text x="190" y="89" className="fill-muted-foreground text-[11px]" textAnchor="end">
         {t("science.forgetting.noReview")}
       </text>
-      <text x="190" y="36" className="fill-accent-700 dark:fill-accent-400 text-[11px]" textAnchor="end">
+      <text x="190" y="14" className="fill-accent-700 dark:fill-accent-400 text-[11px]" textAnchor="end">
         {t("science.forgetting.spacedReview")}
       </text>
 
       {/* Axis */}
-      <text x="100" y="108" className="fill-muted-foreground text-[11px]" textAnchor="middle">
+      <text x="100" y="117" className="fill-muted-foreground text-[11px]" textAnchor="middle">
         {t("science.forgetting.daysAfter")}
       </text>
     </svg>
@@ -96,7 +96,7 @@ function ForgettingCurveChart({ label }: { label: string }) {
 function FeedbackChart({ label }: { label: string }) {
   const { t } = useTranslation("landing")
   return (
-    <svg viewBox="0 0 200 110" className="w-full" fill="none" role="img" aria-label={label}>
+    <svg viewBox="0 0 200 122" className="w-full" fill="none" role="img" aria-label={label}>
       {/* Without feedback — gradual steps */}
       <path
         d="M 10 95 L 40 95 L 40 82 L 70 82 L 70 72 L 100 72 L 100 65 L 130 65 L 130 60 L 160 60 L 160 57 L 190 57"
@@ -113,7 +113,7 @@ function FeedbackChart({ label }: { label: string }) {
       />
 
       {/* Labels */}
-      <text x="190" y="53" className="fill-muted-foreground text-[11px]" textAnchor="end">
+      <text x="190" y="84" className="fill-muted-foreground text-[11px]" textAnchor="end">
         {t("science.feedback.withoutFeedback")}
       </text>
       <text x="190" y="10" className="fill-accent-700 dark:fill-accent-400 text-[11px]" textAnchor="end">
@@ -121,7 +121,7 @@ function FeedbackChart({ label }: { label: string }) {
       </text>
 
       {/* Axis */}
-      <text x="100" y="108" className="fill-muted-foreground text-[11px]" textAnchor="middle">
+      <text x="100" y="117" className="fill-muted-foreground text-[11px]" textAnchor="middle">
         {t("science.feedback.sessions")}
       </text>
     </svg>
