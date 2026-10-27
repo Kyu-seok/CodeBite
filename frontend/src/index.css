@@ -115,6 +115,20 @@ html {
   animation: draw-line 2s ease-out forwards;
 }
 
+/* Reduced motion: content and charts are simply there, no slide-in or self-drawing lines. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .animate-fade-up,
+  .animate-draw {
+    animation: none;
+  }
+  .animate-draw {
+    stroke-dasharray: none;
+  }
+}
+
 /* ── Base styles ── */
 @layer base {
   * {
