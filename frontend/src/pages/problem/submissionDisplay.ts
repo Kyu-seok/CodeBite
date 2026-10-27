@@ -1,3 +1,4 @@
+import i18n from '@/lib/i18n';
 import type { SubmissionStatus } from '@/types/submission';
 
 /** Monaco language ids by CodeBite language code. */
@@ -45,8 +46,14 @@ export const STATUS_KEYS: Record<SubmissionStatus, string> = {
   INTERNAL_ERROR: 'status.internalError',
 };
 
-export function formatSubmissionDate(dateStr: string, locale: string, withTime = false) {
-  return new Date(dateStr).toLocaleDateString(locale, {
+/**
+ * A date in the UI language (i18n.language), e.g. "Oct 27, 2026" or "2026년 10월 27일".
+ * A missing or unparseable date shows the localized "N/A" rather than "Invalid Date".
+ */
+export function formatDate(dateStr: string | null | undefined, locale: string, withTime = false) {
+  const date = dateStr ? new Date(dateStr) : null;
+  if (!date || isNaN(date.getTime())) return i18n.t('common:label.na');
+  return date.toLocaleDateString(locale, {
     month: 'short',
     day: 'numeric',
     year: 'numeric',

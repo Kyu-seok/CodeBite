@@ -12,6 +12,7 @@ import {
 import { ReportDialog } from "./ReportDialog"
 import { AuthorAvatar } from "./AuthorAvatar"
 import { ConfirmDialog } from "../ConfirmDialog"
+import { formatDate } from "../submissionDisplay"
 import type { SolutionComment } from "@/types/solution"
 
 interface CommentThreadProps {
@@ -284,7 +285,7 @@ function CommentRow({
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
             <span className="font-semibold text-foreground">{comment.authorUsername}</span>
-            <span>· {new Date(comment.createdAt).toLocaleDateString(i18n.language)}</span>
+            <span>· {formatDate(comment.createdAt, i18n.language)}</span>
             {comment.edited && <span>· {t("solutions.comments.edited")}</span>}
           </div>
           {editing ? (

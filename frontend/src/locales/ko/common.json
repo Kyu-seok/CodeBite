@@ -1,8 +1,8 @@
 {
   "difficulty": {
-    "easy": "Easy",
-    "medium": "Medium",
-    "hard": "Hard"
+    "easy": "쉬움",
+    "medium": "보통",
+    "hard": "어려움"
   },
   "status": {
     "accepted": "정답",

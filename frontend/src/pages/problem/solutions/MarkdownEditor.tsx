@@ -63,10 +63,10 @@ export function MarkdownEditor({
   const onKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "b") {
       e.preventDefault()
-      wrap("**", "**", "bold")
+      wrap("**", "**", t("solutions.toolbar.sample.bold"))
     } else if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "i") {
       e.preventDefault()
-      wrap("_", "_", "italic")
+      wrap("_", "_", t("solutions.toolbar.sample.italic"))
     }
   }
 
@@ -74,22 +74,22 @@ export function MarkdownEditor({
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
       <div className="flex flex-col">
         <div className="mb-2 flex flex-wrap items-center gap-1 rounded-md border border-border bg-muted px-2 py-1">
-          <ToolbarButton onClick={() => wrap("**", "**", "bold")} label={t("solutions.toolbar.bold", { mod: MOD_KEY })}>
+          <ToolbarButton onClick={() => wrap("**", "**", t("solutions.toolbar.sample.bold"))} label={t("solutions.toolbar.bold", { mod: MOD_KEY })}>
             <Bold className="h-3.5 w-3.5" />
           </ToolbarButton>
-          <ToolbarButton onClick={() => wrap("_", "_", "italic")} label={t("solutions.toolbar.italic", { mod: MOD_KEY })}>
+          <ToolbarButton onClick={() => wrap("_", "_", t("solutions.toolbar.sample.italic"))} label={t("solutions.toolbar.italic", { mod: MOD_KEY })}>
             <Italic className="h-3.5 w-3.5" />
           </ToolbarButton>
-          <ToolbarButton onClick={() => wrap("`", "`", "code")} label={t("solutions.toolbar.code")}>
+          <ToolbarButton onClick={() => wrap("`", "`", t("solutions.toolbar.sample.code"))} label={t("solutions.toolbar.code")}>
             <Code className="h-3.5 w-3.5" />
           </ToolbarButton>
-          <ToolbarButton onClick={() => wrap("[", "](url)", "link")} label={t("solutions.toolbar.link")}>
+          <ToolbarButton onClick={() => wrap("[", "](url)", t("solutions.toolbar.sample.link"))} label={t("solutions.toolbar.link")}>
             <LinkIcon className="h-3.5 w-3.5" />
           </ToolbarButton>
-          <ToolbarButton onClick={() => insertLine("## ", "Heading")} label={t("solutions.toolbar.heading")}>
+          <ToolbarButton onClick={() => insertLine("## ", t("solutions.toolbar.sample.heading"))} label={t("solutions.toolbar.heading")}>
             <Heading2 className="h-3.5 w-3.5" />
           </ToolbarButton>
-          <ToolbarButton onClick={() => insertLine("- ", "item")} label={t("solutions.toolbar.list")}>
+          <ToolbarButton onClick={() => insertLine("- ", t("solutions.toolbar.sample.item"))} label={t("solutions.toolbar.list")}>
             <List className="h-3.5 w-3.5" />
           </ToolbarButton>
           <span className="ml-auto font-mono text-xs tabular-nums text-muted-foreground">

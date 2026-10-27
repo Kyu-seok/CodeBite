@@ -7,13 +7,14 @@ interface SolveProgressCardProps {
 }
 
 const DIFFICULTIES = [
-  { key: 'Easy' as const, color: '#22c55e', bg: 'bg-green-500/10', text: 'text-green-500' },
-  { key: 'Medium' as const, color: '#f59e0b', bg: 'bg-amber-500/10', text: 'text-amber-500' },
-  { key: 'Hard' as const, color: '#ef4444', bg: 'bg-red-500/10', text: 'text-red-500' },
+  { key: 'Easy' as const, labelKey: 'difficulty.easy', color: '#22c55e', bg: 'bg-green-500/10', text: 'text-green-500' },
+  { key: 'Medium' as const, labelKey: 'difficulty.medium', color: '#f59e0b', bg: 'bg-amber-500/10', text: 'text-amber-500' },
+  { key: 'Hard' as const, labelKey: 'difficulty.hard', color: '#ef4444', bg: 'bg-red-500/10', text: 'text-red-500' },
 ];
 
 export function SolveProgressCard({ stats }: SolveProgressCardProps) {
   const { t } = useTranslation('profile');
+  const { t: tc } = useTranslation('common');
   const counts = {
     Easy: { solved: stats.solvedEasy, total: stats.totalEasy },
     Medium: { solved: stats.solvedMedium, total: stats.totalMedium },
@@ -66,7 +67,7 @@ export function SolveProgressCard({ stats }: SolveProgressCardProps) {
 
         {/* Breakdown */}
         <div className="flex flex-1 flex-col gap-3">
-          {DIFFICULTIES.map(({ key, color, bg, text }) => {
+          {DIFFICULTIES.map(({ key, labelKey, color, bg, text }) => {
             const { solved, total } = counts[key];
             const pct = total > 0 ? (solved / total) * 100 : 0;
             return (
@@ -74,7 +75,7 @@ export function SolveProgressCard({ stats }: SolveProgressCardProps) {
                 <div className="mb-1 flex items-center justify-between">
                   <span className="flex items-center gap-2">
                     <span className={`inline-flex rounded px-1.5 py-0.5 text-xs font-medium ${bg} ${text}`}>
-                      {key}
+                      {tc(labelKey)}
                     </span>
                   </span>
                   <span className="text-xs tabular-nums text-muted-foreground">

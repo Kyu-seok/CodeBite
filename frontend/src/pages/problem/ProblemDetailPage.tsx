@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
-import { useParams, useNavigate, useOutletContext } from "react-router-dom"
+import { Link, useParams, useNavigate, useOutletContext } from "react-router-dom"
 import { useTranslation } from "react-i18next"
 import { useProblem } from "@/hooks/useProblem"
 import { useSubmissions } from "@/hooks/useSubmissions"
@@ -16,6 +16,7 @@ import { setSubmissionReview } from "@/api/reviews"
 import { notifyStreakChanged } from "@/api/streak"
 import { ProblemLayout, type PanelFunctions } from "@/components/layout/ProblemLayout"
 import Spinner from "@/components/ui/Spinner"
+import { Button } from "@/components/ui/Button"
 import { LeftPanel, CollapsedLeftStrip } from "./LeftPanel"
 import { EditorPanel } from "./EditorPanel"
 import { TestPanel, CollapsedTestStrip, ResultAnnouncer } from "./TestPanel"
@@ -48,7 +49,7 @@ export default function ProblemDetailPage() {
   const { t } = useTranslation("problem")
   const { getTimerSnapshot, stopTimer } = useOutletContext<WorkspaceOutletContext>()
   const { user, isAuthenticated, loading: authLoading, updateUser } = useAuth()
-  const { problem, loading, error } = useProblem(slug!)
+  const { problem, loading, error, retry: retryProblem } = useProblem(slug!)
   const { submissions, refetch: refetchSubmissions, updateNote } = useSubmissions(
     slug!,
     isAuthenticated,
@@ -191,8 +192,20 @@ export default function ProblemDetailPage() {
 
   if (error || !problem) {
     return (
-      <div className="flex h-[calc(100dvh-3.5rem)] items-center justify-center">
-        <p className="text-sm text-destructive">{error || t("workspace.problemNotFound")}</p>
+      <div className="flex h-[calc(100dvh-3.5rem)] flex-col items-center justify-center gap-3 px-4 text-center">
+        <p className="text-sm text-foreground" role="alert">
+          {error === "failed" ? t("workspace.problemLoadFailed") : t("workspace.problemNotFound")}
+        </p>
+        {error === "failed" && (
+          <Button variant="outline" size="sm" onClick={retryProblem}>
+            {t("workspace.retryLoad")}
+          </Button>
+        )}
+        <Link
+          to="/problems"
+          className="text-sm text-accent-700 underline-offset-4 hover:underline dark:text-accent-400">
+          {t("workspace.goToProblems")}
+        </Link>
       </div>
     )
   }
