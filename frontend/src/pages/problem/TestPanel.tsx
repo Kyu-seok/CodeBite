@@ -115,6 +115,43 @@ function ErrorDisplay({
   );
 }
 
+type ResultAnnouncerProps = Pick<
+  TestPanelProps,
+  'running' | 'submitting' | 'runResult' | 'runError' | 'submitResult' | 'submitError'
+>;
+
+/**
+ * The workspace's one live region for Run and Submit. Rendered by the page, not the test panel,
+ * so a run started with the shortcut while the panel is folded is still announced.
+ */
+export function ResultAnnouncer({
+  running,
+  submitting,
+  runResult,
+  runError,
+  submitResult,
+  submitError,
+}: ResultAnnouncerProps) {
+  const { t } = useTranslation('problem');
+  const { t: tc } = useTranslation('common');
+  const announcement = running
+    ? t('test.running')
+    : submitting
+      ? t('test.judging')
+      : runError || submitError
+        ? (runError || submitError)!
+        : runResult
+          ? `${t('test.runResults')}: ${tc(STATUS_KEYS[runResult.overallStatus])}`
+          : submitResult
+            ? tc(STATUS_KEYS[submitResult.status])
+            : '';
+  return (
+    <p role="status" aria-live="polite" className="sr-only">
+      {announcement}
+    </p>
+  );
+}
+
 export function TestPanel({
   sampleTestCases,
   runResult,
@@ -137,24 +174,8 @@ export function TestPanel({
   isMaximized,
 }: TestPanelProps) {
   const { t } = useTranslation('problem');
-  const { t: tc } = useTranslation('common');
-  const announcement = running
-    ? t('test.running')
-    : submitting
-      ? t('test.judging')
-      : runError || submitError
-        ? (runError || submitError)!
-        : runResult
-          ? `${t('test.runResults')}: ${tc(STATUS_KEYS[runResult.overallStatus])}`
-          : submitResult
-            ? tc(STATUS_KEYS[submitResult.status])
-            : '';
   return (
     <div className="flex h-full flex-col">
-      {/* Always mounted so screen readers hear the verdict when it lands. */}
-      <p role="status" aria-live="polite" className="sr-only">
-        {announcement}
-      </p>
       <Tabs
         defaultValue="testcases"
         value={activeTab}
@@ -337,7 +358,7 @@ function OutputContent({
   if (running) {
     return (
       <div className="flex flex-col items-center gap-2 py-8">
-        <Spinner />
+        <Spinner announce={false} />
         <p className="text-sm text-muted-foreground">{t('test.running')}</p>
       </div>
     );
@@ -346,7 +367,7 @@ function OutputContent({
   if (submitting) {
     return (
       <div className="flex flex-col items-center gap-2 py-8">
-        <Spinner />
+        <Spinner announce={false} />
         <p className="text-sm text-muted-foreground">{t('test.judging')}</p>
         <JudgingClock startedAt={submitStartedAt} language={language} />
       </div>

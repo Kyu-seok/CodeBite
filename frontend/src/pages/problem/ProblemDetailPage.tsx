@@ -18,7 +18,7 @@ import { ProblemLayout, type PanelFunctions } from "@/components/layout/ProblemL
 import Spinner from "@/components/ui/Spinner"
 import { LeftPanel, CollapsedLeftStrip } from "./LeftPanel"
 import { EditorPanel } from "./EditorPanel"
-import { TestPanel, CollapsedTestStrip } from "./TestPanel"
+import { TestPanel, CollapsedTestStrip, ResultAnnouncer } from "./TestPanel"
 import { ConfirmDialog } from "./ConfirmDialog"
 import { languageLabel } from "./submissionDisplay"
 import { AcceptedModal } from "@/components/review/AcceptedModal"
@@ -577,6 +577,14 @@ export default function ProblemDetailPage() {
             isMaximized={editorCollapsed}
           />
         }
+      />
+      <ResultAnnouncer
+        running={running}
+        submitting={submitting}
+        runResult={runResult}
+        runError={runError}
+        submitResult={result}
+        submitError={submitError}
       />
       <AcceptedModal
         open={acceptedModal.open}
