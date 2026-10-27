@@ -8,7 +8,7 @@
     "timeInvested": "투자한 시간",
     "timeInvestedHint": "평가한 제출의 풀이 시간 합계입니다.",
     "reviewStreak": "복습 연속",
-    "reviewStreakHint": "하루에 한 번 이상 평가한 날이 이어진 일수입니다.",
+    "reviewStreakHint": "복습을 마친 날이 이어진 일수입니다.",
     "bestReviewStreak": "최고 복습 연속",
     "bestReviewStreakHint": "가장 길게 이어진 복습 일수입니다.",
     "days_one": "{{count}}일",
@@ -42,6 +42,8 @@
     "empty": "이 필터에 맞는 평가가 없습니다.",
     "clearFilters": "필터 지우기",
     "noRatings": "아직 평가가 없습니다. 정답 제출을 평가하면 기록이 시작됩니다.",
-    "page": "{{total}}쪽 중 {{page}}쪽"
+    "page": "{{total}}쪽 중 {{page}}쪽",
+    "filteredByTag": "{{tag}} 태그의 평가를 보여줍니다",
+    "tagsFailed": "태그를 불러오지 못했습니다."
   }
 }

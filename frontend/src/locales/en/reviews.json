@@ -8,7 +8,7 @@
     "timeInvested": "Time invested",
     "timeInvestedHint": "Sum of solve time across rated submissions.",
     "reviewStreak": "Review Streak",
-    "reviewStreakHint": "Consecutive days with at least one rating.",
+    "reviewStreakHint": "Consecutive days with a completed review.",
     "bestReviewStreak": "Best Review Streak",
     "bestReviewStreakHint": "Your longest run of review days.",
     "days_one": "{{count}} day",
@@ -42,6 +42,8 @@
     "empty": "No ratings match these filters.",
     "clearFilters": "Clear filters",
     "noRatings": "No ratings yet. Rate an Accepted submission to start your history.",
-    "page": "Page {{page}} of {{total}}"
+    "page": "Page {{page}} of {{total}}",
+    "filteredByTag": "Showing ratings tagged {{tag}}",
+    "tagsFailed": "Couldn't load tags."
   }
 }

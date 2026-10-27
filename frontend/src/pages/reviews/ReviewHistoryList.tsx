@@ -70,6 +70,7 @@ export function ReviewHistoryList() {
   const [data, setData] = useState<ReviewHistoryPage | null>(null);
   const [status, setStatus] = useState<"loading" | "ready" | "failed">("loading");
   const [tags, setTags] = useState<TagDto[]>([]);
+  const [tagsFailed, setTagsFailed] = useState(false);
   const [lastTag, setLastTag] = useState(tag);
   // Which filters the rows on screen belong to; while it differs from the current ones the
   // previous rows stay, dimmed and marked busy, instead of collapsing to a spinner.
@@ -90,23 +91,39 @@ export function ReviewHistoryList() {
     setSearchParams(sp, { replace: true });
   };
 
-  useEffect(() => {
+  const fetchTags = useCallback(() => {
     getTags()
       .then((res) => setTags(res.data))
-      .catch(() => {});
+      .catch(() => setTagsFailed(true));
   }, []);
 
-  const fetchPage = useCallback(() => {
-    getReviewHistoryFiltered({ confidence, difficulty, tag, page, size: PAGE_SIZE })
-      .then((res) => {
-        setData(res.data);
-        setShownKey(requestKey);
-        setStatus("ready");
-      })
-      .catch(() => setStatus("failed"));
-  }, [confidence, difficulty, tag, page, requestKey]);
+  useEffect(fetchTags, [fetchTags]);
 
-  useEffect(fetchPage, [fetchPage]);
+  // isCurrent drops a response that lands after the filters have moved on, so an older page
+  // can't replace a newer one (and leave the list marked busy).
+  const fetchPage = useCallback(
+    (isCurrent: () => boolean = () => true) => {
+      getReviewHistoryFiltered({ confidence, difficulty, tag, page, size: PAGE_SIZE })
+        .then((res) => {
+          if (!isCurrent()) return;
+          setData(res.data);
+          setShownKey(requestKey);
+          setStatus("ready");
+        })
+        .catch(() => {
+          if (isCurrent()) setStatus("failed");
+        });
+    },
+    [confidence, difficulty, tag, page, requestKey],
+  );
+
+  useEffect(() => {
+    let current = true;
+    fetchPage(() => current);
+    return () => {
+      current = false;
+    };
+  }, [fetchPage]);
 
   // Arriving from a "Weakest categories" link: bring the filtered list into view and focus.
   useEffect(() => {
@@ -129,6 +146,7 @@ export function ReviewHistoryList() {
     setTag(undefined);
   };
 
+  const tagName = (slug: string) => tags.find((tg) => tg.slug === slug)?.name ?? slug;
   const items = data?.content ?? [];
   const totalPages = data?.totalPages ?? 0;
   const formatDate = (iso: string) =>
@@ -165,11 +183,27 @@ export function ReviewHistoryList() {
             label={t("history.tag")}
             value={tag}
             options={tags.map((tg) => tg.slug)}
-            optionLabel={(slug) => tags.find((tg) => tg.slug === slug)?.name ?? slug}
+            optionLabel={tagName}
             onChange={setTag}
           />
         </div>
       </div>
+
+      {tagsFailed && (
+        <p role="alert" className="mb-3 flex items-center gap-2 text-xs text-muted-foreground">
+          {t("history.tagsFailed")}
+          <Button size="sm" variant="link" className="h-auto p-0 text-xs" onClick={() => {
+              setTagsFailed(false);
+              fetchTags();
+            }}>
+            {tc("loadError.retry")}
+          </Button>
+        </p>
+      )}
+      {/* Says which tag a "Weakest categories" link applied; the focused heading alone reads "History". */}
+      <p role="status" className="sr-only">
+        {tag ? t("history.filteredByTag", { tag: tagName(tag) }) : ""}
+      </p>
 
       {status === "failed" ? (
         <LoadError onRetry={retry} />
