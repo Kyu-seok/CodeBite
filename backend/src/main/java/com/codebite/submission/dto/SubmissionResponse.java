@@ -6,6 +6,7 @@ import com.codebite.submission.entity.SubmissionStatus;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 
 public record SubmissionResponse(
         Long id,
@@ -21,6 +22,11 @@ public record SubmissionResponse(
         Confidence confidence,
         Integer solveTimeSeconds,
         /** Null when the submission has no Solution Commit (not Accepted, or no GitHub Link). */
-        SolutionCommitSummary solutionCommit
+        SolutionCommitSummary solutionCommit,
+        /**
+         * Days until the problem comes back for each confidence, if this submission were rated
+         * now (the review scheduler's real result). Null while PENDING, and outside submission detail.
+         */
+        Map<Confidence, Integer> reviewIntervalDays
 ) {
 }

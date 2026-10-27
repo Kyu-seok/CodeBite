@@ -28,6 +28,7 @@ import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -275,10 +276,7 @@ public class ReviewService {
                 .findByUserIdAndProblemId(userId, problemId)
                 .orElseGet(() -> ProblemReviewState.newFor(userId, problemId));
         // Reset before replay so re-rating an old submission doesn't compound.
-        ProblemReviewState fresh = ProblemReviewState.newFor(userId, problemId);
-        for (Submission s : rated) {
-            fresh.applyReview(s.getConfidence(), s.getReviewedAt());
-        }
+        ProblemReviewState fresh = replay(userId, problemId, rated);
         // Copy replayed values onto the persisted (or newly-created) entity instance.
         state.setReviewCount(fresh.getReviewCount());
         state.setEaseFactor(fresh.getEaseFactor());
@@ -289,6 +287,38 @@ public class ReviewService {
         state.setMastered(isMastered(rated, fresh));
 
         return stateRepository.save(state);
+    }
+
+    private static ProblemReviewState replay(Long userId, Long problemId, List<Submission> rated) {
+        ProblemReviewState fresh = ProblemReviewState.newFor(userId, problemId);
+        for (Submission s : rated) {
+            fresh.applyReview(s.getConfidence(), s.getReviewedAt());
+        }
+        return fresh;
+    }
+
+    /**
+     * The interval, in days, each confidence would schedule if the learner rated this
+     * submission now. Mirrors {@link #setReview}: the submission's own earlier rating (if any)
+     * drops out and the new one is replayed last, after every other rated submission.
+     */
+    @Transactional(readOnly = true)
+    public Map<Confidence, Integer> previewIntervals(Submission submission) {
+        Long userId = submission.getUser().getId();
+        Long problemId = submission.getProblem().getId();
+        List<Submission> others = submissionRepository
+                .findByUserIdAndProblemIdAndConfidenceIsNotNullOrderByReviewedAtAsc(userId, problemId)
+                .stream()
+                .filter(s -> !s.getId().equals(submission.getId()))
+                .toList();
+        Instant now = Instant.now();
+        Map<Confidence, Integer> intervals = new EnumMap<>(Confidence.class);
+        for (Confidence c : Confidence.values()) {
+            ProblemReviewState state = replay(userId, problemId, others);
+            state.applyReview(c, now);
+            intervals.put(c, state.getIntervalDays());
+        }
+        return intervals;
     }
 
     /**
