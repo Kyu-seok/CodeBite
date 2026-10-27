@@ -53,6 +53,7 @@ export function EditorSettingsProvider({ children }: { children: ReactNode }) {
     if (!isAuthenticatedRef.current) return;
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => {
+      // eslint-disable-next-line no-restricted-syntax -- Settings already applied and kept in localStorage; this debounced sync only carries them to other devices.
       saveToBackend(JSON.stringify(next)).catch(() => {});
     }, 1000);
   };

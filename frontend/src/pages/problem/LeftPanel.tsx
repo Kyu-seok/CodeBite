@@ -75,6 +75,9 @@ interface LeftPanelProps {
   constraints: string | null;
   isAuthenticated: boolean;
   submissions: SubmissionListItem[];
+  /** The submissions list request failed; the tab shows an error with a retry instead of "no submissions". */
+  submissionsFailed: boolean;
+  onRetrySubmissions: () => void;
   activeTab: string;
   onTabChange: (tab: string) => void;
   onUpdateNote?: (id: number, notes: string) => void;
@@ -92,6 +95,8 @@ export function LeftPanel({
   constraints,
   isAuthenticated,
   submissions,
+  submissionsFailed,
+  onRetrySubmissions,
   activeTab,
   onTabChange,
   onUpdateNote,
@@ -180,6 +185,8 @@ export function LeftPanel({
             <SubmissionsPanel
               isAuthenticated={isAuthenticated}
               submissions={submissions}
+              failed={submissionsFailed}
+              onRetry={onRetrySubmissions}
               selectedSubmissionId={selectedSubmissionId}
               onSelectSubmission={setSelectedSubmissionId}
               onUpdateNote={onUpdateNote}

@@ -27,9 +27,9 @@ export function DueReviewsCard() {
         setStatus("ready");
       })
       .catch(() => setStatus("failed"));
-    // The Review Streak is a footnote here; if it fails to load the card simply doesn't show it.
     getReviewStats()
       .then((res) => setReviewStreak(res.data.currentStreak))
+      // eslint-disable-next-line no-restricted-syntax -- The Review Streak is a footnote here; if it fails the card simply doesn't show it, and the Reviews page shows the error.
       .catch(() => {});
   }, []);
 

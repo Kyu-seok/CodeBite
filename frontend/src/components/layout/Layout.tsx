@@ -229,6 +229,7 @@ export default function Layout() {
     const newTheme = theme === "light" ? "dark" : "light";
     toggleTheme();
     if (isAuthenticated) {
+      // eslint-disable-next-line no-restricted-syntax -- Theme already applied here and kept in localStorage; a failed save only means the next sign-in opens in the old theme.
       updateThemePreference(newTheme).catch(() => {});
     }
   };
@@ -241,6 +242,7 @@ export default function Layout() {
     const newLang = isKorean ? 'en' : 'ko';
     i18n.changeLanguage(newLang);
     if (isAuthenticated) {
+      // eslint-disable-next-line no-restricted-syntax -- Language already switched here; a failed save only means the next sign-in opens in the old language.
       updateLocale(newLang).catch(() => {});
     }
   };

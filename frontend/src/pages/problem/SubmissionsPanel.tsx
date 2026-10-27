@@ -2,6 +2,7 @@ import { useState, useEffect } from "react"
 import { useTranslation } from "react-i18next"
 import { Badge } from "@/components/ui/Badge"
 import { Button } from "@/components/ui/Button"
+import LoadError from "@/components/ui/LoadError"
 import {
   Dialog,
   DialogContent,
@@ -84,6 +85,8 @@ function NoteModal({
 interface SubmissionsPanelProps {
   isAuthenticated: boolean
   submissions: SubmissionListItem[]
+  failed: boolean
+  onRetry: () => void
   selectedSubmissionId: number | null
   onSelectSubmission: (id: number | null) => void
   onUpdateNote?: (id: number, notes: string) => void
@@ -93,6 +96,8 @@ interface SubmissionsPanelProps {
 export function SubmissionsPanel({
   isAuthenticated,
   submissions,
+  failed,
+  onRetry,
   selectedSubmissionId,
   onSelectSubmission,
   onUpdateNote,
@@ -123,6 +128,14 @@ export function SubmissionsPanel({
         <p className="text-sm text-muted-foreground">
           {t("submissions.loginRequired")}
         </p>
+      </div>
+    )
+  }
+
+  if (failed) {
+    return (
+      <div className="p-6">
+        <LoadError onRetry={onRetry} />
       </div>
     )
   }

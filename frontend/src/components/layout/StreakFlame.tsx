@@ -24,6 +24,7 @@ export function StreakFlame() {
           setStreak(res.data.currentStreak);
           setSolvedToday(res.data.solvedToday);
         })
+        // eslint-disable-next-line no-restricted-syntax -- Ambient nav counter: on failure it just stays hidden; the profile's Streak calendar shows the error with a retry.
         .catch(() => {});
     };
     load();

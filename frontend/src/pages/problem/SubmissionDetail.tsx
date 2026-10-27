@@ -6,6 +6,7 @@ import { Check, CircleAlert, Copy, ExternalLink, FileInput, GitCommitHorizontal,
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import Spinner from '@/components/ui/Spinner';
+import LoadError from '@/components/ui/LoadError';
 import {
   Tooltip,
   TooltipContent,
@@ -65,6 +66,7 @@ export function SubmissionDetail({
   const { theme } = useTheme();
   const [submission, setSubmission] = useState<SubmissionResponse | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadAttempt, setLoadAttempt] = useState(0);
   const [expandedCase, setExpandedCase] = useState<number | null>(null);
   const [editingNote, setEditingNote] = useState(false);
   const [noteDraft, setNoteDraft] = useState('');
@@ -78,9 +80,9 @@ export function SubmissionDetail({
     setLoading(true);
     getSubmission(submissionId)
       .then((res) => setSubmission(res.data))
-      .catch(() => {})
+      .catch(() => setSubmission(null))
       .finally(() => setLoading(false));
-  }, [submissionId]);
+  }, [submissionId, loadAttempt]);
 
   const awaitingCommit = submission != null && awaitingSolutionCommit(submission);
   useEffect(() => {
@@ -101,6 +103,7 @@ export function SubmissionDetail({
               : prev,
           ),
         )
+        // eslint-disable-next-line no-restricted-syntax -- Background poll for the Solution Commit: the next tick retries, and the card keeps showing it as pending meanwhile.
         .catch(() => {});
     }, SOLUTION_COMMIT_POLL_MS);
     return () => clearInterval(timer);
@@ -118,7 +121,7 @@ export function SubmissionDetail({
         <button onClick={onBack} className="mb-4 text-sm text-muted-foreground hover:text-foreground transition-colors">
           &larr; {t('submissions.backToSubmissions')}
         </button>
-        <p className="text-sm text-muted-foreground">{t('submissions.failedToLoad')}</p>
+        <LoadError message={t('submissions.failedToLoad')} onRetry={() => setLoadAttempt((n) => n + 1)} />
       </div>
     );
   }

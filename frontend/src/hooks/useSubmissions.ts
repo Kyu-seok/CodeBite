@@ -5,13 +5,15 @@ import type { SubmissionListItem } from "../types/submission";
 export function useSubmissions(slug: string, enabled: boolean) {
   const [submissions, setSubmissions] = useState<SubmissionListItem[]>([]);
   const [loading, setLoading] = useState(false);
+  const [failed, setFailed] = useState(false);
 
   const fetch = useCallback(() => {
     if (!enabled) return;
     setLoading(true);
+    setFailed(false);
     getSubmissionsByProblem(slug)
       .then((res) => setSubmissions(res.data))
-      .catch(() => {})
+      .catch(() => setFailed(true))
       .finally(() => setLoading(false));
   }, [slug, enabled]);
 
@@ -30,5 +32,5 @@ export function useSubmissions(slug: string, enabled: boolean) {
     }
   }, [fetch]);
 
-  return { submissions, loading, refetch: fetch, updateNote };
+  return { submissions, loading, failed, refetch: fetch, updateNote };
 }

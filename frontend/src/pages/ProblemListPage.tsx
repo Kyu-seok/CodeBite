@@ -8,6 +8,7 @@ import { useProblemStats } from "../hooks/useProblemStats"
 import { useTags } from "../hooks/useTags"
 import DifficultyBadge from "../components/ui/DifficultyBadge"
 import Spinner from "../components/ui/Spinner"
+import { InlineLoadError } from "@/components/ui/LoadError"
 import { Button } from "@/components/ui/Button"
 import { Input } from "@/components/ui/Input"
 import {
@@ -132,8 +133,8 @@ export default function ProblemListPage() {
   const [randomLoading, setRandomLoading] = useState(false)
   const [randomError, setRandomError] = useState(false)
   const [showAll, setShowAll] = useState(user?.singlePage ?? true)
-  const { tags } = useTags()
-  const { stats } = useProblemStats(curation)
+  const { tags, failed: tagsFailed, retry: retryTags } = useTags()
+  const { stats, failed: statsFailed, retry: retryStats } = useProblemStats(curation)
   const pageSize = showAll ? 200 : 20
   const { data, loading, error, retry } = useProblems(
     showAll ? 0 : page, pageSize, undefined, search || undefined, sort, tag || undefined, curation
@@ -193,6 +194,7 @@ export default function ProblemListPage() {
     setSearchParams(params)
     if (isAuthenticated) {
       updateUser({ curation: value })
+      // eslint-disable-next-line no-restricted-syntax -- The list already switched (it's in the URL); a failed save only means the next visit opens on the old curation.
       saveCuration(value).catch(() => {})
     }
   }
@@ -201,6 +203,7 @@ export default function ProblemListPage() {
     setShowAll(checked)
     if (isAuthenticated) {
       updateUser({ singlePage: checked })
+      // eslint-disable-next-line no-restricted-syntax -- The view already switched; a failed save only means the next visit opens in the old view.
       saveSinglePage(checked).catch(() => {})
     }
   }
@@ -300,6 +303,10 @@ export default function ProblemListPage() {
         </p>
       )}
 
+      {tagsFailed && (
+        <InlineLoadError message={t("list.tagsLoadError")} onRetry={retryTags} />
+      )}
+
       {tags.length > 0 && (
         <div role="group" aria-label={t("list.tagsLabel")} className="flex flex-wrap gap-1.5 mb-4">
           {tags.map((tagItem) => (
@@ -321,7 +328,11 @@ export default function ProblemListPage() {
         </div>
       )}
 
-      {stats && (
+      {statsFailed && (
+        <InlineLoadError message={t("list.statsLoadError")} onRetry={retryStats} />
+      )}
+
+      {stats && !statsFailed && (
         <div className="flex flex-wrap items-center gap-x-6 gap-y-3 mb-4 p-4 rounded-lg border border-border bg-card">
           <div className="whitespace-nowrap text-sm font-medium text-foreground">
             {stats.solvedEasy + stats.solvedMedium + stats.solvedHard}
@@ -369,12 +380,7 @@ export default function ProblemListPage() {
       {loading && !data && <Spinner />}
 
       {error && (
-        <div role="alert" className="mb-4 flex flex-wrap items-center gap-3 rounded-lg border border-border bg-card p-4 text-sm">
-          <span className="text-error-700 dark:text-error-400">{t("list.loadError")}</span>
-          <Button variant="outline" size="sm" onClick={retry}>
-            {t("list.retry")}
-          </Button>
-        </div>
+        <InlineLoadError message={t("list.loadError")} onRetry={retry} />
       )}
 
       {data && data.content.length === 0 && (

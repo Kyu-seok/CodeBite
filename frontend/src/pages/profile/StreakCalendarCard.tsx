@@ -80,6 +80,9 @@ export function StreakCalendarCard() {
 
   const retry = () => {
     setFailed(false);
+    // The refused Repair's dialog would otherwise reopen over the refreshed calendar.
+    setPending(null);
+    setError(null);
     if (!summary) fetchSummary();
     fetchCalendar();
   };
@@ -88,6 +91,12 @@ export function StreakCalendarCard() {
     return (
       <section className="rounded-xl border border-border bg-card p-5">
         <h2 className="text-sm font-medium text-foreground">{t('streakCalendar.title')}</h2>
+        {/* A refused Repair's reason (already counted) stays in view when the refresh after it fails. */}
+        {error && (
+          <p role="alert" className="mt-3 text-sm text-error-700 dark:text-error-400">
+            {error}
+          </p>
+        )}
         <LoadError onRetry={retry} />
       </section>
     );
@@ -133,7 +142,7 @@ export function StreakCalendarCard() {
       setError(t(alreadyCounted ? 'streakCalendar.alreadyCounted' : 'streakCalendar.repairFailed'));
       // The day was solved since this month loaded, so the calendar and Streak counts are stale.
       if (alreadyCounted) {
-        getStreakCalendar(month).then((res) => setCalendar(res.data)).catch(() => {});
+        fetchCalendar();
         notifyStreakChanged();
       }
     } finally {

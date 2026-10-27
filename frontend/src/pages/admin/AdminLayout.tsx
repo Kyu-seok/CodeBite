@@ -61,6 +61,7 @@ export default function AdminLayout() {
     const newTheme = theme === 'light' ? 'dark' : 'light';
     toggleTheme();
     if (isAuthenticated) {
+      // eslint-disable-next-line no-restricted-syntax -- Theme already applied here and kept in localStorage; a failed save only means the next sign-in opens in the old theme.
       updateThemePreference(newTheme).catch(() => {});
     }
   };
