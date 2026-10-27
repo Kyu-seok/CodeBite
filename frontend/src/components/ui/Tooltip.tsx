@@ -85,6 +85,11 @@ const TooltipTrigger = forwardRef<HTMLDivElement, TooltipTriggerProps>(
         onMouseLeave={handleLeave}
         onFocus={handleEnter}
         onBlur={handleLeave}
+        // A press usually opens or changes something; the hint has done its job.
+        onPointerDown={handleLeave}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ' || e.key === 'Escape') handleLeave();
+        }}
         {...props}
       >
         {children}

@@ -59,7 +59,8 @@
     "other": "기타",
     "githubNote": "내용이 채워진 GitHub 이슈 작성 화면이 열립니다. 등록하려면 GitHub 계정이 필요합니다.",
     "opened": "GitHub에서 이슈 작성 화면을 열었습니다",
-    "openedHint": "그곳에서 등록하면 제보가 전달됩니다."
+    "openedHint": "그곳에서 등록하면 제보가 전달됩니다.",
+    "openManually": "열리지 않았나요? GitHub에서 이슈 열기"
   },
   "test": {
     "testCases": "테스트 케이스",
@@ -93,7 +94,8 @@
     "severity": {
       "error": "오류",
       "warning": "경고"
-    }
+    },
+    "compilerWarnings": "컴파일러 경고:"
   },
   "solutions": {
     "shareYourSolution": "내 풀이 공유하기",

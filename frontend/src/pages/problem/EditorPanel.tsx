@@ -87,13 +87,14 @@ function BugReportDialog({
   const { t: tc } = useTranslation('common');
   const [category, setCategory] = useState<BugCategoryKey>(BUG_CATEGORY_KEYS[0]);
   const [description, setDescription] = useState('');
-  const [opened, setOpened] = useState(false);
+  // The issue URL once opened; kept so a blocked popup still has a way through.
+  const [issueUrl, setIssueUrl] = useState<string | null>(null);
 
   useEffect(() => {
     if (open) {
       setCategory(BUG_CATEGORY_KEYS[0]);
       setDescription('');
-      setOpened(false);
+      setIssueUrl(null);
     }
   }, [open]);
 
@@ -112,8 +113,11 @@ function BugReportDialog({
       title: `[Problem bug] ${problemSlug}: ${categoryLabel}`,
       body,
     });
-    window.open(`${ISSUES_NEW_URL}?${params}`, '_blank', 'noopener,noreferrer');
-    setOpened(true);
+    const url = `${ISSUES_NEW_URL}?${params}`;
+    // With noopener, window.open returns null even on success, so a blocked popup can't be
+    // detected; the confirmation always offers the link as well.
+    window.open(url, '_blank', 'noopener,noreferrer');
+    setIssueUrl(url);
   };
 
   return (
@@ -125,13 +129,23 @@ function BugReportDialog({
             {t('bugReport.description')}
           </DialogDescription>
         </DialogHeader>
-        {opened ? (
+        {issueUrl ? (
           <div className="py-6 text-center" role="status">
             <p className="text-sm font-medium text-foreground">{t('bugReport.opened')}</p>
             <p className="mt-1 text-xs text-muted-foreground">{t('bugReport.openedHint')}</p>
-            <Button variant="outline" size="sm" className="mt-4" onClick={onClose}>
-              {tc('button.close')}
-            </Button>
+            <a
+              href={issueUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-3 inline-flex items-center gap-1 text-xs text-accent-700 underline-offset-4 hover:underline dark:text-accent-400">
+              {t('bugReport.openManually')}
+              <ExternalLink className="h-3 w-3" />
+            </a>
+            <div>
+              <Button variant="outline" size="sm" className="mt-4" onClick={onClose}>
+                {tc('button.close')}
+              </Button>
+            </div>
           </div>
         ) : (
           <>
@@ -279,14 +293,14 @@ export function EditorPanel({
 
     const runAction = editor.addAction({
       id: 'codebite-run',
-      label: 'Run Code',
+      label: t('editor.runCode'),
       keybindings: [KeyMod.CtrlCmd | KeyCode.Quote],
       run: () => onRunRef.current?.(),
     });
 
     const submitAction = editor.addAction({
       id: 'codebite-submit',
-      label: 'Submit Code',
+      label: t('editor.submitCode'),
       keybindings: [KeyMod.CtrlCmd | KeyCode.Enter],
       run: () => onSubmitRef.current?.(),
     });
@@ -295,7 +309,8 @@ export function EditorPanel({
       runAction.dispose();
       submitAction.dispose();
     };
-  }, [editorMounted]);
+    // Re-registered on locale change so the command palette follows it.
+  }, [editorMounted, t]);
 
   // Paint Judge0 errors as red wavy underlines via deltaDecorations.
   // Decorations are rendered unconditionally by Monaco's view layer, unlike

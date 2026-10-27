@@ -53,7 +53,7 @@ export default function SolutionDetailPage() {
 
   if (loading) {
     return (
-      <div className="flex h-[calc(100vh-3.5rem)] items-center justify-center">
+      <div className="flex h-[calc(100dvh-3.5rem)] items-center justify-center">
         <Spinner />
       </div>
     )
@@ -61,7 +61,7 @@ export default function SolutionDetailPage() {
 
   if (error || !solution) {
     return (
-      <div className="flex h-[calc(100vh-3.5rem)] items-center justify-center">
+      <div className="flex h-[calc(100dvh-3.5rem)] items-center justify-center">
         <p className="text-sm text-destructive">{error ?? t("solutions.failedToLoad")}</p>
       </div>
     )

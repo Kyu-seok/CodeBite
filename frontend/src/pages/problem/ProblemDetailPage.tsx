@@ -181,7 +181,7 @@ export default function ProblemDetailPage() {
 
   if (loading || authLoading) {
     return (
-      <div className="flex h-[calc(100vh-3.5rem)] items-center justify-center">
+      <div className="flex h-[calc(100dvh-3.5rem)] items-center justify-center">
         <Spinner />
       </div>
     )
@@ -189,7 +189,7 @@ export default function ProblemDetailPage() {
 
   if (error || !problem) {
     return (
-      <div className="flex h-[calc(100vh-3.5rem)] items-center justify-center">
+      <div className="flex h-[calc(100dvh-3.5rem)] items-center justify-center">
         <p className="text-sm text-destructive">{error || t("workspace.problemNotFound")}</p>
       </div>
     )

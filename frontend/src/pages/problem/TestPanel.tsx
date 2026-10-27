@@ -66,6 +66,13 @@ function renderableErrors(errors?: CodeError[] | null): CodeError[] {
   return (errors ?? []).filter((e) => e.inUserCode && e.line != null);
 }
 
+/** Warnings alone mean the code compiled, so they must not be headed "Compilation Error". */
+function diagnosticsLabelKey(errors: CodeError[], fallback: string): string {
+  return errors.length > 0 && errors.every((e) => e.severity === 'WARNING')
+    ? 'test.compilerWarnings'
+    : fallback;
+}
+
 function ErrorDisplay({
   errors,
   userSource,
@@ -445,7 +452,7 @@ function OutputContent({
                   return (
                     <div className="mt-1">
                       <span className="text-xs text-muted-foreground">
-                        {t('test.compilationError')}
+                        {t(diagnosticsLabelKey(visible, 'test.compilationError'))}
                       </span>
                       <ErrorDisplay errors={visible} userSource={userSource} />
                     </div>
@@ -549,9 +556,9 @@ function RunResultsSection({
           )}
           {(() => {
             const visible = renderableErrors(r.errors);
-            const label = r.compileOutput
-              ? t('test.compilationError')
-              : t('test.stderr');
+            const label = t(
+              diagnosticsLabelKey(visible, r.compileOutput ? 'test.compilationError' : 'test.stderr'),
+            );
             if (visible.length > 0) {
               return (
                 <div className="mt-1">
