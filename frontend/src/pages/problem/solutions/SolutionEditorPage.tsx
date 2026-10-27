@@ -19,16 +19,10 @@ import { SUPPORTED_LANGUAGES, languageLabel } from "../submissionDisplay"
 import { MarkdownEditor } from "./MarkdownEditor"
 import { TagPicker } from "./TagPicker"
 import { ConfirmDialog } from "../ConfirmDialog"
+import { draftChanged, type SolutionDraft } from "@/lib/draftChanged"
 
 interface SolutionEditorPageProps {
   mode: "create" | "edit"
-}
-
-interface DraftPayload {
-  title: string
-  content: string
-  languages: string[]
-  tagSlugs: string[]
 }
 
 type Field = "title" | "languages" | "content"
@@ -42,15 +36,8 @@ const CONTENT_MAX = 50_000
 const fieldError = "mt-1 text-xs text-error-700 dark:text-error-400"
 const fieldHint = "mt-1 text-xs text-muted-foreground"
 
-function emptyDraft(): DraftPayload {
+function emptyDraft(): SolutionDraft {
   return { title: "", content: "", languages: [], tagSlugs: [] }
-}
-
-// Languages and tags are sets: turning one off and on again isn't an edit.
-function sameDraft(a: DraftPayload, b: DraftPayload): boolean {
-  const normal = (d: DraftPayload) =>
-    JSON.stringify({ ...d, languages: [...d.languages].sort(), tagSlugs: [...d.tagSlugs].sort() })
-  return normal(a) === normal(b)
 }
 
 export default function SolutionEditorPage({ mode }: SolutionEditorPageProps) {
@@ -67,9 +54,9 @@ export default function SolutionEditorPage({ mode }: SolutionEditorPageProps) {
     [slug, user],
   )
 
-  const [draft, setDraft] = useState<DraftPayload>(emptyDraft)
+  const [draft, setDraft] = useState<SolutionDraft>(emptyDraft)
   // The solution as loaded, so edit mode knows when there's something to lose.
-  const [original, setOriginal] = useState<DraftPayload | null>(null)
+  const [original, setOriginal] = useState<SolutionDraft | null>(null)
   const [ownedByViewer, setOwnedByViewer] = useState<boolean | null>(null)
   const [loading, setLoading] = useState(mode === "edit")
   const [loadFailed, setLoadFailed] = useState(false)
@@ -86,7 +73,7 @@ export default function SolutionEditorPage({ mode }: SolutionEditorPageProps) {
   const titleRef = useRef<HTMLInputElement>(null)
   const languagesRef = useRef<HTMLDivElement>(null)
 
-  const dirty = mode === "edit" && original !== null && !sameDraft(draft, original)
+  const dirty = mode === "edit" && original !== null && draftChanged(original, draft)
 
   useEffect(() => {
     document.title = `${mode === "create" ? t("solutions.create") : t("solutions.edit")} | CodeBite`
@@ -153,7 +140,7 @@ export default function SolutionEditorPage({ mode }: SolutionEditorPageProps) {
     if (draftKey) {
       try {
         const stored = localStorage.getItem(draftKey)
-        if (stored) setDraft(JSON.parse(stored) as DraftPayload)
+        if (stored) setDraft(JSON.parse(stored) as SolutionDraft)
       } catch {
         // ignore
       }
@@ -167,7 +154,7 @@ export default function SolutionEditorPage({ mode }: SolutionEditorPageProps) {
     const handle = setTimeout(() => {
       try {
         localStorage.setItem(draftKey, JSON.stringify(draft))
-        setDraftSaved(!sameDraft(draft, emptyDraft()))
+        setDraftSaved(draftChanged(emptyDraft(), draft))
       } catch {
         // ignore
       }
@@ -210,7 +197,7 @@ export default function SolutionEditorPage({ mode }: SolutionEditorPageProps) {
     return () => window.removeEventListener("beforeunload", warn)
   }, [dirty])
 
-  const update = (field: keyof DraftPayload, value: DraftPayload[keyof DraftPayload]) => {
+  const update = (field: keyof SolutionDraft, value: SolutionDraft[keyof SolutionDraft]) => {
     setDraft((prev) => ({ ...prev, [field]: value }))
     if (field in errors) setErrors((prev) => ({ ...prev, [field]: undefined }))
   }
