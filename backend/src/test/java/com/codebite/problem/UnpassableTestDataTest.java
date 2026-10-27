@@ -51,12 +51,7 @@ class UnpassableTestDataTest {
         List<String> unsorted = new ArrayList<>();
         for (TestCase tc : testCases("cafe-stop-orders")) {
             List<List<Integer>> orders = JSON.readValue(tc.getExpectedOutput(), new TypeReference<>() {});
-            for (int i = 1; i < orders.size(); i++) {
-                if (compareLists(orders.get(i - 1), orders.get(i)) >= 0) {
-                    unsorted.add("test case " + tc.getOrderIndex());
-                    break;
-                }
-            }
+            if (!ListOrder.isStrictlyAscending(orders)) unsorted.add("test case " + tc.getOrderIndex());
         }
         assertTrue(unsorted.isEmpty(), "Permutations not in the drivers' order: " + unsorted);
     }
@@ -147,8 +142,14 @@ class UnpassableTestDataTest {
         assertTrue(wrong.isEmpty(), "Walks not starting at HUB or not using every segment once: " + wrong);
     }
 
+    // Every driver whose output the expected outputs above (and NQueensBoardOrderTest's) rely on sorting.
+
     @ParameterizedTest
     @CsvSource({
+            "n-queens, python,     result.sort()",
+            "n-queens, javascript, result.sort(",
+            "n-queens, java,       result.sort(",
+            "n-queens, cpp,        sort(result.begin(), result.end())",
             "merge-duplicate-contacts, python,   result.sort(key=lambda a: a[1])",
             "merge-duplicate-contacts, javascript, result.sort((a, b) => a[1] < b[1]",
             "merge-duplicate-contacts, java,       result.sort((a, b) -> a.get(1).compareTo(b.get(1)))",
@@ -188,13 +189,5 @@ class UnpassableTestDataTest {
         return testCases(slug).stream()
                 .filter(tc -> tc.isSample() && tc.getOrderIndex() == orderIndex)
                 .findFirst().orElseThrow();
-    }
-
-    private static <T extends Comparable<T>> int compareLists(List<T> a, List<T> b) {
-        for (int i = 0; i < Math.min(a.size(), b.size()); i++) {
-            int cmp = a.get(i).compareTo(b.get(i));
-            if (cmp != 0) return cmp;
-        }
-        return Integer.compare(a.size(), b.size());
     }
 }

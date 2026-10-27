@@ -1,14 +1,11 @@
 package com.codebite.problem;
 
-import com.codebite.judge.service.DriverCodeLoader;
 import com.codebite.problem.entity.TestCase;
 import com.codebite.problem.repository.ProblemRepository;
 import com.codebite.problem.repository.TestCaseRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -24,7 +21,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * n-queens lets a solution return its boards in any order, so every driver sorts them
  * (row by row, '.' before 'Q') before printing, and the judge compares that output exactly.
  * Each expected output must therefore list its boards in that same order, or no language can
- * pass (#78: sample test case 1 listed them in backtracking order).
+ * pass (#78: sample test case 1 listed them in backtracking order). That every driver still
+ * sorts is checked with the other sorting drivers in UnpassableTestDataTest.
  */
 @SpringBootTest
 @ActiveProfiles("test")
@@ -50,29 +48,11 @@ class NQueensBoardOrderTest {
     void everyExpectedOutputListsBoardsInTheDriversOrder() throws Exception {
         List<String> unsorted = new ArrayList<>();
         for (TestCase tc : testCases()) {
-            List<List<String>> boards = parse(tc.getExpectedOutput());
-            for (int i = 1; i < boards.size(); i++) {
-                if (compareBoards(boards.get(i - 1), boards.get(i)) >= 0) {
-                    unsorted.add("test case " + tc.getOrderIndex() + " (n=" + tc.getInput().trim() + ")");
-                    break;
-                }
+            if (!ListOrder.isStrictlyAscending(parse(tc.getExpectedOutput()))) {
+                unsorted.add("test case " + tc.getOrderIndex() + " (n=" + tc.getInput().trim() + ")");
             }
         }
         assertTrue(unsorted.isEmpty(), "Boards not in the drivers' order: " + unsorted);
-    }
-
-    @ParameterizedTest
-    @CsvSource({
-            "python,     result.sort()",
-            "javascript, result.sort(",
-            "java,       result.sort(",
-            "cpp,        sort(result.begin(), result.end())",
-    })
-    void everyDriverSortsTheBoardsBeforePrinting(String language, String sortCall) throws Exception {
-        DriverCodeLoader drivers = new DriverCodeLoader();
-        drivers.loadTemplates();
-        String driver = drivers.getDriverCode(SLUG, language);
-        assertTrue(driver.contains(sortCall), language + " driver no longer sorts the boards");
     }
 
     private List<TestCase> testCases() {
@@ -84,14 +64,5 @@ class NQueensBoardOrderTest {
 
     private static List<List<String>> parse(String json) throws Exception {
         return new ObjectMapper().readValue(json, new TypeReference<>() {});
-    }
-
-    /** Row by row, as Python's list.sort, C++'s vector operator< and the Java/JS comparators do. */
-    private static int compareBoards(List<String> a, List<String> b) {
-        for (int i = 0; i < Math.min(a.size(), b.size()); i++) {
-            int cmp = a.get(i).compareTo(b.get(i));
-            if (cmp != 0) return cmp;
-        }
-        return Integer.compare(a.size(), b.size());
     }
 }
