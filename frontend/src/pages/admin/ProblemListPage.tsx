@@ -21,17 +21,25 @@ export default function AdminProblemListPage() {
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState<'loading' | 'ready' | 'failed'>('loading');
   const [pendingDelete, setPendingDelete] = useState<AdminProblemListItem | null>(null);
+  // Separate from the target, so the dialog keeps its title while it animates closed.
+  const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  // Which search and page the rows on screen belong to; while it differs from the current one
+  // the old rows stay, dimmed and marked busy.
+  const requestKey = `${page}|${search}`;
+  const [shownKey, setShownKey] = useState<string | null>(null);
 
   const fetchProblems = useCallback(() => {
     listProblems({ page, size: 50, search: search || undefined })
       .then((res) => {
         setProblems(res.data.content);
         setTotalElements(res.data.totalElements);
+        setShownKey(requestKey);
         setStatus('ready');
       })
       .catch(() => setStatus('failed'));
-  }, [page, search]);
+  }, [page, search, requestKey]);
 
   useEffect(fetchProblems, [fetchProblems]);
 
@@ -42,7 +50,7 @@ export default function AdminProblemListPage() {
 
   const confirmDelete = async () => {
     const target = pendingDelete;
-    setPendingDelete(null);
+    setDeleteOpen(false);
     if (!target) return;
     setDeleteError(null);
     try {
@@ -94,7 +102,10 @@ export default function AdminProblemListPage() {
         </div>
       ) : (
         <div className="overflow-auto rounded-lg border border-border">
-          <table className="w-full text-sm">
+          <table
+            aria-busy={shownKey !== requestKey}
+            className="w-full text-sm transition-opacity aria-busy:opacity-60"
+          >
             <thead>
               <tr className="border-b border-border bg-muted/50 text-left text-xs text-muted-foreground">
                 <th scope="col" className="px-4 py-2.5 font-medium w-12">{t('problems.id')}</th>
@@ -158,7 +169,10 @@ export default function AdminProblemListPage() {
                       </Link>
                       <button
                         type="button"
-                        onClick={() => setPendingDelete(p)}
+                        onClick={() => {
+                          setPendingDelete(p);
+                          setDeleteOpen(true);
+                        }}
                         className="rounded px-2 py-1 text-xs text-error-700 hover:bg-destructive/10 transition-colors dark:text-error-400"
                       >
                         {t('problems.delete')}
@@ -173,12 +187,12 @@ export default function AdminProblemListPage() {
       )}
 
       <ConfirmDialog
-        open={pendingDelete !== null}
+        open={deleteOpen}
         title={t('problems.confirmDeleteTitle', { title: pendingDelete?.title ?? '' })}
         description={t('problems.confirmDeleteBody')}
         confirmLabel={t('problems.delete')}
         onConfirm={confirmDelete}
-        onCancel={() => setPendingDelete(null)}
+        onCancel={() => setDeleteOpen(false)}
       />
     </div>
   );

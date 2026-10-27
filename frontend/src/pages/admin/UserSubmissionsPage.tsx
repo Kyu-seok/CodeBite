@@ -23,6 +23,8 @@ export default function UserSubmissionsPage() {
   const [status, setStatus] = useState<'loading' | 'ready' | 'failed'>('loading');
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [pendingDelete, setPendingDelete] = useState<number | null>(null);
+  // Separate from the target, so the dialog keeps its title while it animates closed.
+  const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
 
   const uid = Number(userId);
@@ -37,9 +39,13 @@ export default function UserSubmissionsPage() {
       .catch(() => {});
   }, [uid]);
 
+  // The page the rows on screen belong to; while it differs the old rows stay, dimmed and busy.
+  const [shownPage, setShownPage] = useState<number | null>(null);
+
   const fetchSubmissions = useCallback(() => {
     getUserSubmissions(uid, page, 20)
       .then((res) => {
+        setShownPage(page);
         setSubmissions(res.data.content);
         setTotalPages(res.data.totalPages);
         setTotalElements(res.data.totalElements);
@@ -57,7 +63,7 @@ export default function UserSubmissionsPage() {
 
   const confirmDelete = async () => {
     const id = pendingDelete;
-    setPendingDelete(null);
+    setDeleteOpen(false);
     if (id == null) return;
     setDeletingId(id);
     setDeleteError(null);
@@ -114,7 +120,7 @@ export default function UserSubmissionsPage() {
         <LoadError onRetry={retry} />
       ) : (
       <div className="overflow-auto rounded-xl border border-border bg-card">
-        <table className="w-full text-sm">
+        <table aria-busy={shownPage !== page} className="w-full text-sm transition-opacity aria-busy:opacity-60">
           <thead>
             <tr className="border-b border-border text-left text-xs text-muted-foreground">
               <th scope="col" className="px-4 py-3">{t('submissions.id')}</th>
@@ -147,7 +153,10 @@ export default function UserSubmissionsPage() {
                   <td className="px-4 py-3 text-right">
                     <button
                       type="button"
-                      onClick={() => setPendingDelete(s.id)}
+                      onClick={() => {
+                        setPendingDelete(s.id);
+                        setDeleteOpen(true);
+                      }}
                       disabled={deletingId === s.id}
                       className="rounded-md px-2.5 py-1 text-xs text-error-700 border border-destructive/30 transition-colors hover:bg-destructive/10 disabled:opacity-40 dark:text-error-400"
                     >
@@ -163,15 +172,15 @@ export default function UserSubmissionsPage() {
       )}
 
       <ConfirmDialog
-        open={pendingDelete !== null}
+        open={deleteOpen}
         title={t('submissions.confirmDeleteTitle', { id: pendingDelete ?? '' })}
         description={t('submissions.confirmDeleteBody')}
         confirmLabel={t('submissions.delete')}
         onConfirm={confirmDelete}
-        onCancel={() => setPendingDelete(null)}
+        onCancel={() => setDeleteOpen(false)}
       />
 
-      {totalPages > 1 && (
+      {status !== 'failed' && totalPages > 1 && (
         <div className="flex items-center justify-center gap-2">
           <button
             onClick={() => setPage((p) => Math.max(0, p - 1))}
