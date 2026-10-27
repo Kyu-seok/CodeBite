@@ -8,15 +8,32 @@ export function useProblems(page: number, size: number, difficulty?: Difficulty,
   const { i18n } = useTranslation();
   const [data, setData] = useState<PageResponse<ProblemListItem> | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  // A flag, not a message: the page owns the translated copy.
+  const [error, setError] = useState(false);
+  const [retryKey, setRetryKey] = useState(0);
 
   useEffect(() => {
+    // Filters change faster than the API answers; only the latest request may land.
+    let current = true;
     setLoading(true);
     getProblems(page, size, difficulty, search, sort, tag, curation)
-      .then((res) => setData(res.data))
-      .catch(() => setError("Failed to load problems"))
-      .finally(() => setLoading(false));
-  }, [page, size, difficulty, search, sort, tag, curation, i18n.language]);
+      .then((res) => {
+        if (!current) return;
+        setData(res.data);
+        setError(false);
+      })
+      .catch(() => {
+        if (current) setError(true);
+      })
+      .finally(() => {
+        if (current) setLoading(false);
+      });
+    return () => {
+      current = false;
+    };
+  }, [page, size, difficulty, search, sort, tag, curation, i18n.language, retryKey]);
 
-  return { data, loading, error };
+  const retry = () => setRetryKey((k) => k + 1);
+
+  return { data, loading, error, retry };
 }
