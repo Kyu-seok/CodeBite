@@ -7,6 +7,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,47 +34,38 @@ class TestTokenIntegrationTest {
 
     @Test
     void adminRoleToken_isAllowedOnAdminEndpoint() throws Exception {
-        String token = issueToken(post("/api/auth/test-token")
-                .param("username", "dev-admin")
-                .param("role", "ADMIN"));
+        String token = issueToken("dev-admin", "ADMIN");
 
-        mockMvc.perform(get("/api/admin/problems").header("Authorization", "Bearer " + token))
-                .andExpect(status().isOk());
+        expectAdminEndpoint(token, status().isOk());
     }
 
     @Test
     void defaultToken_isForbiddenOnAdminEndpoint() throws Exception {
-        String token = issueToken(post("/api/auth/test-token").param("username", "dev-default"));
+        String token = issueToken("dev-default", null);
 
-        mockMvc.perform(get("/api/admin/problems").header("Authorization", "Bearer " + token))
-                .andExpect(status().isForbidden());
-        mockMvc.perform(get("/api/auth/me").header("Authorization", "Bearer " + token))
-                .andExpect(jsonPath("$.role").value("USER"));
+        expectAdminEndpoint(token, status().isForbidden());
+        assertRole(token, "USER");
     }
 
     @Test
     void roleForExistingUser_switchesTheirRoleBothWays() throws Exception {
-        String asUser = issueToken(post("/api/auth/test-token").param("username", "dev-switch"));
+        String asUser = issueToken("dev-switch", null);
         assertRole(asUser, "USER");
 
-        String asAdmin = issueToken(post("/api/auth/test-token")
-                .param("username", "dev-switch").param("role", "ADMIN"));
+        String asAdmin = issueToken("dev-switch", "ADMIN");
         assertRole(asAdmin, "ADMIN");
-        mockMvc.perform(get("/api/admin/problems").header("Authorization", "Bearer " + asAdmin))
-                .andExpect(status().isOk());
+        expectAdminEndpoint(asAdmin, status().isOk());
 
-        String backToUser = issueToken(post("/api/auth/test-token")
-                .param("username", "dev-switch").param("role", "USER"));
+        String backToUser = issueToken("dev-switch", "USER");
         assertRole(backToUser, "USER");
-        mockMvc.perform(get("/api/admin/problems").header("Authorization", "Bearer " + backToUser))
-                .andExpect(status().isForbidden());
+        expectAdminEndpoint(backToUser, status().isForbidden());
     }
 
     @Test
     void noRole_leavesAnExistingAdminAsAdmin() throws Exception {
-        issueToken(post("/api/auth/test-token").param("username", "dev-keep").param("role", "ADMIN"));
+        issueToken("dev-keep", "ADMIN");
 
-        String again = issueToken(post("/api/auth/test-token").param("username", "dev-keep"));
+        String again = issueToken("dev-keep", null);
 
         assertRole(again, "ADMIN");
     }
@@ -84,7 +76,17 @@ class TestTokenIntegrationTest {
                 .andExpect(jsonPath("$.role").value(role));
     }
 
-    private String issueToken(MockHttpServletRequestBuilder request) throws Exception {
+    private void expectAdminEndpoint(String token, ResultMatcher expected) throws Exception {
+        mockMvc.perform(get("/api/admin/problems").header("Authorization", "Bearer " + token))
+                .andExpect(expected);
+    }
+
+    /** Issues a test token for {@code username}, passing {@code role} only when non-null. */
+    private String issueToken(String username, String role) throws Exception {
+        MockHttpServletRequestBuilder request = post("/api/auth/test-token").param("username", username);
+        if (role != null) {
+            request.param("role", role);
+        }
         String body = mockMvc.perform(request)
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
