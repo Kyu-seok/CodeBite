@@ -1,15 +1,28 @@
 package com.codebite.auth;
 
+import com.codebite.auth.service.UserCacheService;
+import com.codebite.user.dto.UserProfile;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.when;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -18,7 +31,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 /**
  * Local sign-in without OAuth: the dev-profile test-token endpoint, optionally with a role.
- * "test" comes last so its H2 datasource wins over dev's PostgreSQL one.
+ * "test" comes last so its H2 datasource wins over dev's PostgreSQL one. The profile cache, off in
+ * tests but on by default, is an in-memory stand-in here so a role switch must evict it.
  */
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -31,6 +45,21 @@ class TestTokenIntegrationTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @MockBean
+    private UserCacheService userCacheService;
+
+    private final Map<Long, UserProfile> cachedProfiles = new HashMap<>();
+
+    @BeforeEach
+    void cacheProfilesInMemory() {
+        when(userCacheService.getCachedProfile(anyLong()))
+                .thenAnswer(inv -> Optional.ofNullable(cachedProfiles.get(inv.<Long>getArgument(0))));
+        doAnswer(inv -> cachedProfiles.put(inv.getArgument(0), inv.getArgument(1)))
+                .when(userCacheService).cacheProfile(anyLong(), any());
+        doAnswer(inv -> cachedProfiles.remove(inv.<Long>getArgument(0)))
+                .when(userCacheService).evictProfile(anyLong());
+    }
 
     @Test
     void adminRoleToken_isAllowedOnAdminEndpoint() throws Exception {

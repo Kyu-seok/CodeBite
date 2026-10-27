@@ -1,9 +1,11 @@
 package com.codebite.auth.controller;
 
 import com.codebite.auth.jwt.JwtTokenProvider;
+import com.codebite.auth.service.UserCacheService;
 import com.codebite.user.entity.Role;
 import com.codebite.user.entity.User;
 import com.codebite.user.repository.UserRepository;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,7 +18,8 @@ import java.util.Map;
 
 /**
  * Local sign-in without OAuth (dev profile only): issues a JWT for the named user, created as USER
- * if missing. An optional {@code role} (USER or ADMIN) sets that user's role first.
+ * if missing. An optional {@code role} (USER or ADMIN) sets that user's role first and evicts their
+ * cached profile, so {@code /api/auth/me} reports the new role at once.
  */
 @Profile("dev")
 @RestController
@@ -25,10 +28,13 @@ public class TestTokenController {
 
     private final UserRepository userRepository;
     private final JwtTokenProvider tokenProvider;
+    private final ObjectProvider<UserCacheService> userCacheService;
 
-    public TestTokenController(UserRepository userRepository, JwtTokenProvider tokenProvider) {
+    public TestTokenController(UserRepository userRepository, JwtTokenProvider tokenProvider,
+                               ObjectProvider<UserCacheService> userCacheService) {
         this.userRepository = userRepository;
         this.tokenProvider = tokenProvider;
+        this.userCacheService = userCacheService;
     }
 
     @PostMapping("/test-token")
@@ -48,6 +54,10 @@ public class TestTokenController {
             user.setRole(role);
         }
         user = userRepository.save(user);
+        if (role != null) {
+            Long userId = user.getId();
+            userCacheService.ifAvailable(cache -> cache.evictProfile(userId));
+        }
 
         String token = tokenProvider.generateToken(user);
         return ResponseEntity.ok(Map.of("token", token));
