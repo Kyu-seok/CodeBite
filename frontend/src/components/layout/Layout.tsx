@@ -113,9 +113,19 @@ export default function Layout() {
   const navigate = useNavigate();
   const location = useLocation();
   const isWorkspace = useMatch('problems/:slug');
+  // Any page of a problem (workspace or its solutions) keeps that problem's timer.
+  const problemSlug = useMatch('problems/:slug/*')?.params.slug ?? null;
 
   const [timerActive, setTimerActive] = useState(false);
   const [elapsed, setElapsed] = useState(0);
+  // The solve timer belongs to one problem: opening a different problem starts it fresh
+  // instead of carrying the previous problem's elapsed time over.
+  const [timerSlug, setTimerSlug] = useState(problemSlug);
+  if (problemSlug !== null && problemSlug !== timerSlug) {
+    setTimerSlug(problemSlug);
+    setTimerActive(false);
+    setElapsed(0);
+  }
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
