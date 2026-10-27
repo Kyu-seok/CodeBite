@@ -220,6 +220,7 @@ export function SubmissionDetail({
         {/* Confidence prompt — available for any non-PENDING submission */}
         {canReview && (
           <ConfidencePrompt
+            key={submission.id}
             onSubmit={handleReviewSubmit}
             onClear={handleReviewClear}
             busy={reviewBusy}
