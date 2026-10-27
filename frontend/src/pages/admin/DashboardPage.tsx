@@ -143,7 +143,8 @@ export default function DashboardPage() {
               </div>
               <div>
                 <p className="text-2xl font-bold tabular-nums text-foreground">
-                  {stats[card.key].toLocaleString(i18n.language)}
+                  {/* A missing figure reads as unknown, not as a confident 0. */}
+                  {stats[card.key] == null ? '—' : stats[card.key].toLocaleString(i18n.language)}
                 </p>
                 <p className="text-xs text-muted-foreground">{card.label}</p>
               </div>
