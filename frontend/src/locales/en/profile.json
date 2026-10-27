@@ -83,6 +83,7 @@
     "unlinking": "Unlinking…",
     "unlinkFailed": "Could not unlink. Please try again.",
     "callback": {
+      "title": "GitHub Link | CodeBite",
       "completing": "Finishing your GitHub Link…",
       "missingParams": "GitHub did not send back the expected details. Start linking again from your profile.",
       "notAuthorised": "Your GitHub account has not authorised this installation of the CodeBite app.",
