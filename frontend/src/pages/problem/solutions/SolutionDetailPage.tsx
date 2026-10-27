@@ -12,11 +12,13 @@ import { LanguagePill } from "./LanguagePill"
 import { VoteBar } from "./VoteBar"
 import { ReportDialog } from "./ReportDialog"
 import { CommentThread } from "./CommentThread"
+import { AuthorAvatar } from "./AuthorAvatar"
+import { ConfirmDialog } from "../ConfirmDialog"
 import { useComments } from "@/hooks/useSolutions"
 import type { SolutionDetail } from "@/types/solution"
 
 export default function SolutionDetailPage() {
-  const { t } = useTranslation("problem")
+  const { t, i18n } = useTranslation("problem")
   const { user } = useAuth()
   const navigate = useNavigate()
   const { slug, solutionId } = useParams<{ slug: string; solutionId: string }>()
@@ -26,6 +28,8 @@ export default function SolutionDetailPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [reportOpen, setReportOpen] = useState(false)
+  const [confirmingDelete, setConfirmingDelete] = useState(false)
+  const [actionError, setActionError] = useState<string | null>(null)
   const { comments, setComments } = useComments(id)
 
   useEffect(() => {
@@ -66,12 +70,13 @@ export default function SolutionDetailPage() {
   const canEdit = solution.ownedByViewer || user?.role === "ADMIN"
 
   const handleDelete = async () => {
-    if (!confirm(t("solutions.confirmDelete"))) return
+    setConfirmingDelete(false)
+    setActionError(null)
     try {
       await deleteSolution(solution.id)
       navigate(`/problems/${slug}`)
     } catch {
-      // ignore
+      setActionError(t("solutions.deleteFailed"))
     }
   }
 
@@ -88,12 +93,12 @@ export default function SolutionDetailPage() {
         <div className="min-w-0 flex-1">
           <h1 className="text-2xl font-bold text-foreground">{solution.title}</h1>
           <div className="mt-2 flex items-center gap-2 text-sm text-muted-foreground">
-            <AvatarOrInitial
+            <AuthorAvatar
               avatarUrl={solution.authorAvatarUrl}
               username={solution.authorUsername}
             />
             <span className="font-medium text-foreground">{solution.authorUsername}</span>
-            <span>· {new Date(solution.createdAt).toLocaleDateString()}</span>
+            <span>· {new Date(solution.createdAt).toLocaleDateString(i18n.language)}</span>
           </div>
           <div className="mt-3 flex flex-wrap items-center gap-1.5">
             {solution.languages.map((l) => (
@@ -125,7 +130,7 @@ export default function SolutionDetailPage() {
               <Pencil className="h-3.5 w-3.5" />
               {t("solutions.edit")}
             </Button>
-            <Button variant="destructive" size="sm" onClick={handleDelete}>
+            <Button variant="destructive" size="sm" onClick={() => setConfirmingDelete(true)}>
               <Trash2 className="h-3.5 w-3.5" />
               {t("solutions.delete")}
             </Button>
@@ -138,6 +143,10 @@ export default function SolutionDetailPage() {
           </Button>
         )}
       </div>
+
+      {actionError && (
+        <p role="alert" className="text-right text-xs text-destructive">{actionError}</p>
+      )}
 
       <MarkdownRenderer source={solution.content} className="my-6" />
 
@@ -153,6 +162,14 @@ export default function SolutionDetailPage() {
         onChange={setComments}
       />
 
+      <ConfirmDialog
+        open={confirmingDelete}
+        title={t("solutions.confirmDelete")}
+        description={solution.title}
+        confirmLabel={t("solutions.delete")}
+        onConfirm={handleDelete}
+        onCancel={() => setConfirmingDelete(false)}
+      />
       <ReportDialog
         open={reportOpen}
         onClose={() => setReportOpen(false)}
@@ -160,23 +177,6 @@ export default function SolutionDetailPage() {
           await reportSolution(solution.id, { reason })
         }}
       />
-    </div>
-  )
-}
-
-function AvatarOrInitial({
-  avatarUrl,
-  username,
-}: {
-  avatarUrl: string | null
-  username: string
-}) {
-  if (avatarUrl) {
-    return <img src={avatarUrl} alt={username} className="h-6 w-6 rounded-full" />
-  }
-  return (
-    <div className="flex h-6 w-6 items-center justify-center rounded-full bg-accent text-xs font-bold text-white">
-      {username.charAt(0).toUpperCase()}
     </div>
   )
 }

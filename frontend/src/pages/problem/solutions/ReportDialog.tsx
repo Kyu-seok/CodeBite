@@ -20,20 +20,25 @@ export function ReportDialog({ open, onClose, onSubmit }: ReportDialogProps) {
   const { t: tc } = useTranslation("common")
   const [reason, setReason] = useState("")
   const [submitting, setSubmitting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     if (open) {
       setReason("")
       setSubmitting(false)
+      setError(null)
     }
   }, [open])
 
   const handleSubmit = async () => {
     if (!reason.trim() || submitting) return
     setSubmitting(true)
+    setError(null)
     try {
       await onSubmit(reason.trim())
       onClose()
+    } catch {
+      setError(t("solutions.reportFailed"))
     } finally {
       setSubmitting(false)
     }
@@ -51,6 +56,7 @@ export function ReportDialog({ open, onClose, onSubmit }: ReportDialogProps) {
           <DialogDescription>{t("solutions.reportDescription")}</DialogDescription>
         </DialogHeader>
         <textarea
+          aria-label={t("solutions.reportReason")}
           value={reason}
           onChange={(e) => setReason(e.target.value)}
           maxLength={500}
@@ -58,6 +64,9 @@ export function ReportDialog({ open, onClose, onSubmit }: ReportDialogProps) {
           placeholder={t("solutions.reportReasonPlaceholder")}
           className="mt-2 w-full resize-none rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
         />
+        {error && (
+          <p role="alert" className="mt-2 text-xs text-destructive">{error}</p>
+        )}
         <div className="mt-4 flex justify-end gap-2">
           <Button variant="outline" size="sm" onClick={onClose}>
             {tc("button.cancel")}

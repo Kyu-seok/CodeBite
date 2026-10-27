@@ -13,7 +13,8 @@ import {
 } from "@/api/solutions"
 import { getSubmission } from "@/api/submissions"
 import type { ApiError } from "@/types/api"
-import { LanguagePill, SUPPORTED_LANGUAGES, languageLabel } from "./LanguagePill"
+import { LanguagePill } from "./LanguagePill"
+import { SUPPORTED_LANGUAGES, languageLabel } from "../submissionDisplay"
 import { MarkdownEditor } from "./MarkdownEditor"
 import { TagPicker } from "./TagPicker"
 
@@ -98,7 +99,7 @@ export default function SolutionEditorPage({ mode }: SolutionEditorPageProps) {
             if (prev.content) return prev
             return {
               ...prev,
-              content: `## My Approach\n\n_Describe your idea here._\n\n## Code\n\n${fence}\n`,
+              content: t("solutions.seedTemplate", { code: fence, interpolation: { escapeValue: false } }),
               languages: prev.languages.length > 0 ? prev.languages : [lang],
             }
           })
@@ -201,10 +202,11 @@ export default function SolutionEditorPage({ mode }: SolutionEditorPageProps) {
 
       <div className="mt-4 space-y-4">
         <div>
-          <label className="text-xs font-medium text-muted-foreground">
+          <label htmlFor="solution-title" className="text-xs font-medium text-muted-foreground">
             {t("solutions.editor.title")}
           </label>
           <input
+            id="solution-title"
             type="text"
             value={draft.title}
             onChange={(e) =>
@@ -214,26 +216,30 @@ export default function SolutionEditorPage({ mode }: SolutionEditorPageProps) {
             placeholder={t("solutions.editor.titlePlaceholder")}
             className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-ring"
           />
-          <p className="mt-1 text-xs text-muted-foreground">
+          <p className="mt-1 font-mono text-xs tabular-nums text-muted-foreground">
             {draft.title.length}/{TITLE_MAX}
           </p>
         </div>
 
         <div>
-          <label className="text-xs font-medium text-muted-foreground">
+          <p id="solution-languages" className="text-xs font-medium text-muted-foreground">
             {t("solutions.editor.languages")}
-          </label>
-          <div className="mt-1 flex flex-wrap items-center gap-1.5">
+          </p>
+          <div
+            role="group"
+            aria-labelledby="solution-languages"
+            className="mt-1 flex flex-wrap items-center gap-1.5">
             {SUPPORTED_LANGUAGES.map((code) => {
               const selected = draft.languages.includes(code)
               return (
                 <button
                   key={code}
                   type="button"
+                  aria-pressed={selected}
                   onClick={() => toggleLanguage(code)}
-                  className="focus:outline-none">
+                  className="rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
                   {selected ? (
-                    <LanguagePill code={code} className="ring-2 ring-ring" />
+                    <LanguagePill code={code} className="bg-accent-100 text-accent-700 ring-1 ring-accent-700 dark:bg-accent-950 dark:text-accent-400 dark:ring-accent-400" />
                   ) : (
                     <span className="inline-flex items-center rounded-md border border-border bg-background px-2 py-0.5 text-xs text-muted-foreground hover:bg-muted">
                       {languageLabel(code)}
@@ -246,10 +252,10 @@ export default function SolutionEditorPage({ mode }: SolutionEditorPageProps) {
         </div>
 
         <div>
-          <label className="text-xs font-medium text-muted-foreground">
+          <p id="solution-tags" className="text-xs font-medium text-muted-foreground">
             {t("solutions.editor.tags")}
-          </label>
-          <div className="mt-1">
+          </p>
+          <div className="mt-1" role="group" aria-labelledby="solution-tags">
             <TagPicker
               selected={draft.tagSlugs}
               onChange={(tagSlugs) => setDraft((prev) => ({ ...prev, tagSlugs }))}
@@ -258,11 +264,12 @@ export default function SolutionEditorPage({ mode }: SolutionEditorPageProps) {
         </div>
 
         <div>
-          <label className="text-xs font-medium text-muted-foreground">
+          <label htmlFor="solution-content" className="text-xs font-medium text-muted-foreground">
             {t("solutions.editor.content")}
           </label>
           <div className="mt-1">
             <MarkdownEditor
+              id="solution-content"
               value={draft.content}
               onChange={(content) => setDraft((prev) => ({ ...prev, content }))}
               maxLength={CONTENT_MAX}
@@ -271,7 +278,7 @@ export default function SolutionEditorPage({ mode }: SolutionEditorPageProps) {
         </div>
 
         {error && (
-          <div className="rounded-md border border-error-200 bg-error-100 p-3 text-sm text-error-700">
+          <div role="alert" className="rounded-md border border-error-200 bg-error-100 p-3 text-sm text-error-700 dark:border-error-900 dark:bg-error-950 dark:text-error-400">
             {error}
           </div>
         )}

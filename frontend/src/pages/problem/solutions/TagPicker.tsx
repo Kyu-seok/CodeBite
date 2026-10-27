@@ -18,6 +18,7 @@ interface TagPickerProps {
 
 export function TagPicker({ selected, onChange, max = 5 }: TagPickerProps) {
   const { t } = useTranslation("problem")
+  const { t: tc } = useTranslation("common")
   const [all, setAll] = useState<TagOption[]>([])
   const [filter, setFilter] = useState("")
   const [loaded, setLoaded] = useState(false)
@@ -70,8 +71,8 @@ export function TagPicker({ selected, onChange, max = 5 }: TagPickerProps) {
             <button
               type="button"
               onClick={() => remove(tag.slug)}
-              aria-label={`Remove ${tag.name}`}
-              className="hover:text-destructive">
+              aria-label={`${tc("button.delete")}: ${tag.name}`}
+              className="rounded hover:text-destructive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
               <X className="h-3 w-3" />
             </button>
           </Badge>
@@ -88,6 +89,7 @@ export function TagPicker({ selected, onChange, max = 5 }: TagPickerProps) {
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
           placeholder={t("solutions.editor.tagsSearch")}
+          aria-label={t("solutions.editor.tagsSearch")}
           disabled={selected.length >= max}
           className="w-full rounded-md border border-border bg-background px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
         />
@@ -107,7 +109,7 @@ export function TagPicker({ selected, onChange, max = 5 }: TagPickerProps) {
           </div>
         )}
       </div>
-      <p className="mt-1 text-xs text-muted-foreground">
+      <p className="mt-1 font-mono text-xs tabular-nums text-muted-foreground">
         {selected.length}/{max}
       </p>
     </div>
