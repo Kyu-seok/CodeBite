@@ -9,7 +9,14 @@
     "description": "Anders Ericsson's research shows that experts don't just practice more — they practice differently. CodeBite applies those principles to coding interviews.",
     "startPracticing": "Start Practicing",
     "seeMethod": "See the Method",
-    "chartLabel": "Skill growth over time"
+    "chartLabel": "Skill growth over time",
+    "chart": {
+      "random": "Random practice",
+      "deliberate": "Deliberate practice",
+      "time": "Time invested",
+      "skill": "Skill level",
+      "summary": "Illustration: skill over time. Random practice levels off; deliberate practice keeps climbing."
+    }
   },
   "method": {
     "title": "Two Ways to Practice",
@@ -35,32 +42,34 @@
     "title": "The Science Behind CodeBite",
     "subtitle": "Every feature is grounded in decades of research on how humans actually develop expertise.",
     "plateau": {
-      "title": "Most developers plateau after 1–2 years",
+      "title": "Experience alone doesn't make you better",
       "description": "Ericsson found that experience alone doesn't equal expertise. Without deliberate challenge, skills stagnate. CodeBite keeps you at your growth edge.",
-      "source": "Peak, Chapter 1",
+      "source": "Ericsson & Pool, Peak (2016)",
       "label": "plateau"
     },
     "forgetting": {
-      "title": "You forget 70% within 24 hours",
+      "title": "Without review, most of it fades within days",
       "description": "Without review, knowledge fades fast. Our spaced repetition engine resurfaces problems at optimal intervals — turning short-term solving into long-term mastery.",
-      "source": "Ebbinghaus, 1885 / Peak, Chapter 4",
+      "source": "Ebbinghaus, Memory (1885)",
       "noReview": "No review",
       "spacedReview": "Spaced review",
       "daysAfter": "Days after learning"
     },
     "feedback": {
-      "title": "3.5× faster improvement with immediate feedback",
-      "description": "Ericsson's research shows that immediate, targeted feedback is the single biggest accelerator of skill development. Every submission gives you instant, detailed results.",
-      "source": "Peak, Chapter 3",
+      "title": "Practice without feedback doesn't improve",
+      "description": "In Ericsson's research, effective practice always came with immediate feedback: you need to know what went wrong while it still matters. Every CodeBite submission tells you right away.",
+      "source": "Ericsson & Pool, Peak (2016)",
       "withoutFeedback": "Without feedback",
       "withFeedback": "With feedback",
       "sessions": "Practice sessions"
     },
-    "year": "Yr {{n}}"
+    "year": "Yr {{n}}",
+    "chartLabel": "Illustration: {{title}}",
+    "illustrative": "The charts are illustrations of each idea, not measured data."
   },
   "cta": {
-    "quote": "Ericsson's research across chess, music, and medicine found that deliberate practice is the #1 predictor of elite performance — not talent, not years of experience.",
-    "quoteHighlight": "deliberate practice is the #1 predictor of elite performance",
+    "quote": "Ericsson's research across chess, music and medicine found that the best performers didn't just practice longer — they practiced deliberately.",
+    "quoteHighlight": "they practiced deliberately",
     "source": "— Peak: Secrets from the New Science of Expertise",
     "heading": "Stop passive learning. Start deliberate practice.",
     "subtitle": "Join developers building real problem-solving skills.",

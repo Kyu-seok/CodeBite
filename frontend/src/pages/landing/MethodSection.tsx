@@ -69,12 +69,10 @@ export function MethodSection() {
                 {naivePoints.map((item) => (
                   <li
                     key={item}
-                    className="flex items-start gap-3 text-sm text-muted-foreground/70"
+                    className="flex items-start gap-3 text-sm text-muted-foreground"
                   >
                     <XIcon />
-                    <span className="line-through decoration-muted-foreground/30">
-                      {item}
-                    </span>
+                    <span>{item}</span>
                   </li>
                 ))}
               </ul>
@@ -84,7 +82,7 @@ export function MethodSection() {
           {/* Deliberate practice */}
           <Card className="animate-fade-up border-accent-500/30 shadow-md" style={{ animationDelay: "150ms" }}>
             <CardContent className="p-6">
-              <p className="mb-5 text-lg font-semibold text-accent-500">
+              <p className="mb-5 text-lg font-semibold text-accent-700 dark:text-accent-400">
                 {t("method.codebite")}
               </p>
               <ul className="space-y-3">

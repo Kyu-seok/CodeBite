@@ -5,8 +5,9 @@ import { Button } from "@/components/ui/Button"
 import { Badge } from "@/components/ui/Badge"
 
 function GrowthChart() {
+  const { t } = useTranslation("landing")
   return (
-    <svg
+    <svg role="img" aria-label={t("hero.chart.summary")}
       viewBox="0 0 420 220"
       className="w-full max-w-lg"
       fill="none"
@@ -32,7 +33,7 @@ function GrowthChart() {
       {/* Random Practice curve — plateaus */}
       <path
         d="M 40 185 C 80 170, 120 140, 160 120 C 200 105, 240 98, 280 95 C 320 93, 360 92, 400 92"
-        className="animate-draw stroke-muted-foreground/50"
+        className="stroke-muted-foreground/60"
         strokeWidth="2"
         strokeDasharray="6 4"
         fill="none"
@@ -48,25 +49,25 @@ function GrowthChart() {
       />
 
       {/* Labels */}
-      <text x="395" y="108" className="fill-muted-foreground text-[9px]" textAnchor="end">
-        Random practice
+      <text x="395" y="108" className="fill-muted-foreground text-[12px]" textAnchor="end">
+        {t("hero.chart.random")}
       </text>
-      <text x="395" y="18" className="fill-accent-500 text-[9px] font-medium" textAnchor="end">
-        Deliberate practice
+      <text x="395" y="16" className="fill-accent-700 dark:fill-accent-400 text-[12px] font-medium" textAnchor="end">
+        {t("hero.chart.deliberate")}
       </text>
 
       {/* Axis labels */}
-      <text x="220" y="210" className="fill-muted-foreground text-[10px]" textAnchor="middle">
-        Time Invested
+      <text x="220" y="210" className="fill-muted-foreground text-[12px]" textAnchor="middle">
+        {t("hero.chart.time")}
       </text>
       <text
         x="12"
         y="105"
-        className="fill-muted-foreground text-[10px]"
+        className="fill-muted-foreground text-[12px]"
         textAnchor="middle"
         transform="rotate(-90, 12, 105)"
       >
-        Skill Level
+        {t("hero.chart.skill")}
       </text>
     </svg>
   )
@@ -83,7 +84,7 @@ export function HeroSection() {
           {/* Left — Copy */}
           <div className="text-center lg:text-left">
             <div className="animate-fade-up">
-              <Badge variant="accent" className="mb-6">
+              <Badge variant="accent" className="mb-6 text-accent-800 dark:text-accent-400">
                 {t("hero.badge")}
               </Badge>
             </div>
@@ -93,7 +94,7 @@ export function HeroSection() {
               style={{ animationDelay: "100ms" }}
             >
               {t("hero.headingPrefix")}{" "}
-              <span className="text-accent-500">{t("hero.headingHighlight")}</span>
+              <span className="text-accent-700 dark:text-accent-400">{t("hero.headingHighlight")}</span>
             </h1>
 
             <p
@@ -119,7 +120,9 @@ export function HeroSection() {
                 onClick={() =>
                   document
                     .getElementById("method")
-                    ?.scrollIntoView({ behavior: "smooth" })
+                    ?.scrollIntoView({
+                      behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+                    })
                 }
               >
                 {t("hero.seeMethod")}

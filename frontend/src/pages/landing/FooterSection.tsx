@@ -17,7 +17,7 @@ export function FooterSection() {
             {t("footer.problems")}
           </Link>
           <a
-            href="https://github.com"
+            href="https://github.com/Kyu-seok/CodeBite"
             target="_blank"
             rel="noopener noreferrer"
             className="transition-colors hover:text-foreground"

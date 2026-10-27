@@ -3,7 +3,8 @@ import { Card, CardContent } from "@/components/ui/Card"
 
 /* ── Mini SVG Charts ── */
 
-function PlateauChart() {
+function PlateauChart({ label }: { label: string }) {
+  const { t } = useTranslation("landing")
   const bars = [
     { year: 1, height: 70 },
     { year: 2, height: 90 },
@@ -13,7 +14,7 @@ function PlateauChart() {
   ]
 
   return (
-    <svg viewBox="0 0 200 110" className="w-full" fill="none">
+    <svg viewBox="0 0 200 110" className="w-full" fill="none" role="img" aria-label={label}>
       {/* Bars */}
       {bars.map((bar, i) => (
         <g key={bar.year}>
@@ -32,10 +33,10 @@ function PlateauChart() {
           <text
             x={27 + i * 38}
             y="108"
-            className="fill-muted-foreground text-[8px]"
+            className="fill-muted-foreground text-[9px]"
             textAnchor="middle"
           >
-            Yr {bar.year}
+            {t("science.year", { n: bar.year })}
           </text>
         </g>
       ))}
@@ -46,20 +47,21 @@ function PlateauChart() {
         y1="6"
         x2="200"
         y2="3"
-        className="stroke-destructive/50"
+        className="stroke-muted-foreground/60"
         strokeWidth="1"
         strokeDasharray="4 3"
       />
-      <text x="200" y="10" className="fill-destructive/70 text-[7px]" textAnchor="end">
-        plateau
+      <text x="200" y="12" className="fill-muted-foreground text-[9px]" textAnchor="end">
+        {t("science.plateau.label")}
       </text>
     </svg>
   )
 }
 
-function ForgettingCurveChart() {
+function ForgettingCurveChart({ label }: { label: string }) {
+  const { t } = useTranslation("landing")
   return (
-    <svg viewBox="0 0 200 110" className="w-full" fill="none">
+    <svg viewBox="0 0 200 110" className="w-full" fill="none" role="img" aria-label={label}>
       {/* No review — steep decay */}
       <path
         d="M 10 15 C 30 40, 50 70, 80 85 C 110 95, 140 98, 190 100"
@@ -76,24 +78,25 @@ function ForgettingCurveChart() {
       />
 
       {/* Labels */}
-      <text x="190" y="98" className="fill-muted-foreground/60 text-[7px]" textAnchor="end">
-        No review
+      <text x="190" y="96" className="fill-muted-foreground text-[9px]" textAnchor="end">
+        {t("science.forgetting.noReview")}
       </text>
-      <text x="190" y="38" className="fill-accent-500 text-[7px]" textAnchor="end">
-        Spaced review
+      <text x="190" y="36" className="fill-accent-700 dark:fill-accent-400 text-[9px]" textAnchor="end">
+        {t("science.forgetting.spacedReview")}
       </text>
 
       {/* Axis */}
-      <text x="100" y="108" className="fill-muted-foreground text-[7px]" textAnchor="middle">
-        Days after learning
+      <text x="100" y="108" className="fill-muted-foreground text-[9px]" textAnchor="middle">
+        {t("science.forgetting.daysAfter")}
       </text>
     </svg>
   )
 }
 
-function FeedbackChart() {
+function FeedbackChart({ label }: { label: string }) {
+  const { t } = useTranslation("landing")
   return (
-    <svg viewBox="0 0 200 110" className="w-full" fill="none">
+    <svg viewBox="0 0 200 110" className="w-full" fill="none" role="img" aria-label={label}>
       {/* Without feedback — gradual steps */}
       <path
         d="M 10 95 L 40 95 L 40 82 L 70 82 L 70 72 L 100 72 L 100 65 L 130 65 L 130 60 L 160 60 L 160 57 L 190 57"
@@ -110,16 +113,16 @@ function FeedbackChart() {
       />
 
       {/* Labels */}
-      <text x="190" y="55" className="fill-muted-foreground/60 text-[7px]" textAnchor="end">
-        Without feedback
+      <text x="190" y="53" className="fill-muted-foreground text-[9px]" textAnchor="end">
+        {t("science.feedback.withoutFeedback")}
       </text>
-      <text x="190" y="12" className="fill-accent-500 text-[7px]" textAnchor="end">
-        With feedback
+      <text x="190" y="10" className="fill-accent-700 dark:fill-accent-400 text-[9px]" textAnchor="end">
+        {t("science.feedback.withFeedback")}
       </text>
 
       {/* Axis */}
-      <text x="100" y="108" className="fill-muted-foreground text-[7px]" textAnchor="middle">
-        Practice sessions
+      <text x="100" y="108" className="fill-muted-foreground text-[9px]" textAnchor="middle">
+        {t("science.feedback.sessions")}
       </text>
     </svg>
   )
@@ -170,29 +173,30 @@ export function ScienceSection() {
           {insights.map((insight, i) => (
             <Card
               key={insight.key}
-              className="animate-fade-up overflow-hidden border border-border transition-all duration-300 hover:-translate-y-0.5 hover:border-accent-500/50 hover:shadow-md"
+              className="animate-fade-up overflow-hidden border border-border"
               style={{ animationDelay: `${i * 150}ms` }}
             >
               <CardContent className="p-6">
-                <p className="text-xl font-bold text-accent-500">
+                <h3 className="text-xl font-bold text-accent-700 dark:text-accent-400">
                   {insight.stat}
-                </p>
+                </h3>
 
                 <div className="my-4 rounded-lg bg-muted/50 p-3">
-                  <insight.chart />
+                  <insight.chart label={t("science.chartLabel", { title: insight.stat })} />
                 </div>
 
                 <p className="text-sm leading-relaxed text-muted-foreground">
                   {insight.description}
                 </p>
 
-                <p className="mt-3 text-[11px] italic text-muted-foreground/60">
+                <p className="mt-3 text-xs italic text-muted-foreground">
                   {insight.source}
                 </p>
               </CardContent>
             </Card>
           ))}
         </div>
+        <p className="mt-6 text-center text-xs text-muted-foreground">{t("science.illustrative")}</p>
       </div>
     </section>
   )
