@@ -155,8 +155,11 @@ services:
     networks:
       - codebite
 
+  # Our own image with Python 3.12 as language 100 next to Judge0's 3.8.1 (71), built by hand on
+  # the server with scripts/build-judge0-image.sh and never pulled (docs/adr/0004).
   judge0:
-    image: judge0/judge0:1.13.1
+    image: localhost/codebite-judge0:1.13.1-py312
+    pull_policy: never
     container_name: codebite-judge0
     restart: unless-stopped
     ports:
@@ -174,7 +177,8 @@ services:
       - codebite
 
   judge0-workers:
-    image: judge0/judge0:1.13.1
+    image: localhost/codebite-judge0:1.13.1-py312
+    pull_policy: never
     container_name: codebite-judge0-workers
     command: ["./scripts/workers"]
     restart: unless-stopped

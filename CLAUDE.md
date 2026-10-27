@@ -71,7 +71,7 @@ To sign in locally without OAuth (dev profile only), `POST /api/auth/test-token?
 docker compose -f infra/docker-compose.yml up -d   # start PostgreSQL + Redis + Kafka + Prometheus + Grafana
 ```
 
-Production Judge0 runs `localhost/codebite-judge0` (Judge0 1.13.1 plus newer runtimes as extra language ids), built by hand from `infra/judge0/Dockerfile` with `scripts/build-judge0-image.sh`; compose names it by tag only, never `build:` or pull (docs/adr/0004). Language ids live in `JudgeService.LANGUAGE_IDS` and the worker's `SubmissionMetrics`.
+Production Judge0 runs `localhost/codebite-judge0` (Judge0 1.13.1 plus newer runtimes as extra language ids), built by hand from `infra/judge0/Dockerfile` with `scripts/build-judge0-image.sh`; compose names it by tag only, never `build:` or pull (docs/adr/0004). Language ids live in `JudgeService.LANGUAGE_IDS` and the worker's `SubmissionMetrics`. Production Judge0 changes image only by a hand cutover at low traffic, never a push (a deploy would restart Judge0 at the end of a backend roll); `scripts/cutover-judge0-py312.sh` is the wizard for the move onto the py312 image, a template for the next one.
 
 The GitHub App behind Solution Commits is registered by hand: run `scripts/setup-github-app-dev.sh`, an interactive wizard that walks through GitHub's app settings and writes the `GITHUB_APP_*` values into `infra/.env`. After that, `scripts/verify-github-solution-commits.sh` walks through checking once that GitHub credits live and Imported Solution Commits on the right UTC day. Production needs its own app (callback on code-bite.com): `scripts/setup-github-app-prod.sh` registers it, writes its values to the server over SSH and rolls the backend.
 
