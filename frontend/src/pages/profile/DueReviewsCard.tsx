@@ -44,7 +44,9 @@ export function DueReviewsCard() {
     if (daysOverdue >= 1) return t("dueReviews.overdue", { count: daysOverdue });
     const ms = new Date(iso).getTime() - now;
     if (ms <= 0) return t("dueReviews.dueNow");
-    return t("dueReviews.due", { when: relative.format(Math.ceil(ms / 86_400_000) - 1, "day") });
+    // Whole UTC days between today and the due date, as Streak Days count them (ADR 0001)
+    const utcDay = (time: number) => Math.floor(time / 86_400_000);
+    return t("dueReviews.due", { when: relative.format(utcDay(now + ms) - utcDay(now), "day") });
   };
 
   return (
