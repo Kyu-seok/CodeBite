@@ -137,6 +137,7 @@ All Redis operations are wrapped in try/catch — failures log a warning and fal
 |---------|--------|
 | `GET /api/auth/oauth/*` | Public |
 | `POST /api/auth/oauth/*/callback` | Public |
+| `POST /api/auth/test-token` | Public (endpoint exists in the dev profile only) |
 | `GET /api/health` | Public |
 | `GET /api/problems`, `GET /api/problems/*` | Public |
 | `POST /api/admin/**` | Authenticated (ADMIN role enforced at controller level) |
@@ -150,6 +151,7 @@ All Redis operations are wrapped in try/catch — failures log a warning and fal
 | `POST` | `/api/auth/oauth/{provider}/callback` | No | `200 { token, user }` |
 | `GET` | `/api/auth/me` | JWT | `200 { id, username, email, role, createdAt }` |
 | `POST` | `/api/auth/logout` | JWT | `204 No Content` |
+| `POST` | `/api/auth/test-token?username=&role=` | No (dev profile only; 404 elsewhere) | `200 { token }` for `username` (default `perf-test-1`, created as `USER` if missing). Optional `role` (`USER` or `ADMIN`) sets that user's role first and evicts their cached profile; any other value is `400` |
 
 ## Configuration Reference
 

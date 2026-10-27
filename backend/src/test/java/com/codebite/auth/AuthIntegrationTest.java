@@ -39,6 +39,12 @@ class AuthIntegrationTest {
     private JwtTokenProvider jwtTokenProvider;
 
     @Test
+    void testToken_isAbsentOutsideDevProfile() throws Exception {
+        mockMvc.perform(post("/api/auth/test-token"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
     void getOAuthUrl_google_returnsUrl() throws Exception {
         mockMvc.perform(get("/api/auth/oauth/google"))
                 .andExpect(status().isOk())

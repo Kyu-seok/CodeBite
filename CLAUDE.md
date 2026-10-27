@@ -64,6 +64,7 @@ source scripts/dev-env.sh && SPRING_PROFILES_ACTIVE=dev ./gradlew :backend:bootR
 ```
 `scripts/dev-env.sh` loads only the OAuth and GitHub App values from `infra/.env`. That file is the production server's config: sourcing it whole overrides the dev CORS origins, JWT secret, database and Judge0 URL.
 When a local backend or worker answers 403, behaves like old code, or a button "does nothing", run `scripts/dev-status.sh` first. It flags a process older than its source (bootRun doesn't reload) or carrying production values.
+To sign in locally without OAuth (dev profile only), `POST /api/auth/test-token?username=<name>&role=ADMIN` returns a JWT; `role` (USER or ADMIN) also switches an existing user, and leaving it out keeps the role (new users are USER). Use an ADMIN token to check admin pages against real data.
 
 ### Infrastructure
 ```bash
