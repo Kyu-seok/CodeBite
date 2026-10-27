@@ -122,9 +122,34 @@ class UnpassableTestDataTest {
         }
     }
 
+    // dog-street-walk: the description starts every walk at "HUB".
+
+    @Test
+    void dogStreetWalkSampleStartsAtHub() {
+        TestCase tc = sample("dog-street-walk", 3);
+        assertEquals("[[\"HUB\",\"KUL\"],[\"HUB\",\"NRT\"],[\"NRT\",\"HUB\"]]", tc.getInput().strip());
+        assertEquals("[\"HUB\",\"NRT\",\"HUB\",\"KUL\"]", tc.getExpectedOutput().strip());
+    }
+
+    @Test
+    void everyDogStreetWalkStartsAtHubAndUsesEverySegmentOnce() throws Exception {
+        List<String> wrong = new ArrayList<>();
+        for (TestCase tc : testCases("dog-street-walk")) {
+            List<List<String>> routes = JSON.readValue(tc.getInput(), new TypeReference<>() {});
+            List<String> walk = JSON.readValue(tc.getExpectedOutput(), new TypeReference<>() {});
+            List<List<String>> unused = new ArrayList<>(routes);
+            boolean ok = walk.get(0).equals("HUB") && walk.size() == routes.size() + 1;
+            for (int i = 1; ok && i < walk.size(); i++) {
+                ok = unused.remove(List.of(walk.get(i - 1), walk.get(i)));
+            }
+            if (!ok) wrong.add("test case " + tc.getOrderIndex());
+        }
+        assertTrue(wrong.isEmpty(), "Walks not starting at HUB or not using every segment once: " + wrong);
+    }
+
     @ParameterizedTest
     @CsvSource({
-            "merge-duplicate-contacts, python,    result.sort(key=lambda a: a[1])",
+            "merge-duplicate-contacts, python,   result.sort(key=lambda a: a[1])",
             "merge-duplicate-contacts, javascript, result.sort((a, b) => a[1] < b[1]",
             "merge-duplicate-contacts, java,       result.sort((a, b) -> a.get(1).compareTo(b.get(1)))",
             "merge-duplicate-contacts, cpp,        return a[1] < b[1];",

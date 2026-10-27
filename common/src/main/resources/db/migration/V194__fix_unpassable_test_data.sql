@@ -82,3 +82,79 @@ directed: false
 highlight_path: ["hit","hot","dot","dog","cog"]')
 WHERE problem_id = (SELECT id FROM problems WHERE slug = 'word-ladder')
   AND locale = 'ko';
+
+-- dog-street-walk: the description starts every walk at "HUB", but test cases 3-11 came from the
+-- original itinerary problem and start at "JFK", so a solution following the description could not
+-- pass them. Rename JFK to HUB in each; no other zone in them sorts between HUB and JFK, so every
+-- expected walk stays the lexicographically smallest.
+UPDATE test_cases
+SET input = '[["HUB","KUL"],["HUB","NRT"],["NRT","HUB"]]',
+    expected_output = '["HUB","NRT","HUB","KUL"]'
+WHERE problem_id = (SELECT id FROM problems WHERE slug = 'dog-street-walk')
+  AND order_index = 3
+  AND input = '[["JFK","KUL"],["JFK","NRT"],["NRT","JFK"]]'
+  AND expected_output = '["JFK","NRT","JFK","KUL"]';
+
+UPDATE test_cases
+SET input = '[["HUB","ATL"]]',
+    expected_output = '["HUB","ATL"]'
+WHERE problem_id = (SELECT id FROM problems WHERE slug = 'dog-street-walk')
+  AND order_index = 4
+  AND input = '[["JFK","ATL"]]'
+  AND expected_output = '["JFK","ATL"]';
+
+UPDATE test_cases
+SET input = '[["HUB","AAA"],["AAA","HUB"],["HUB","BBB"]]',
+    expected_output = '["HUB","AAA","HUB","BBB"]'
+WHERE problem_id = (SELECT id FROM problems WHERE slug = 'dog-street-walk')
+  AND order_index = 5
+  AND input = '[["JFK","AAA"],["AAA","JFK"],["JFK","BBB"]]'
+  AND expected_output = '["JFK","AAA","JFK","BBB"]';
+
+UPDATE test_cases
+SET input = '[["HUB","SFO"],["SFO","HUB"]]',
+    expected_output = '["HUB","SFO","HUB"]'
+WHERE problem_id = (SELECT id FROM problems WHERE slug = 'dog-street-walk')
+  AND order_index = 6
+  AND input = '[["JFK","SFO"],["SFO","JFK"]]'
+  AND expected_output = '["JFK","SFO","JFK"]';
+
+UPDATE test_cases
+SET input = '[["HUB","ZZZ"],["HUB","AAA"],["AAA","HUB"]]',
+    expected_output = '["HUB","AAA","HUB","ZZZ"]'
+WHERE problem_id = (SELECT id FROM problems WHERE slug = 'dog-street-walk')
+  AND order_index = 7
+  AND input = '[["JFK","ZZZ"],["JFK","AAA"],["AAA","JFK"]]'
+  AND expected_output = '["JFK","AAA","JFK","ZZZ"]';
+
+UPDATE test_cases
+SET input = '[["HUB","AAA"],["AAA","BBB"],["BBB","HUB"],["HUB","AAA"],["AAA","CCC"]]',
+    expected_output = '["HUB","AAA","BBB","HUB","AAA","CCC"]'
+WHERE problem_id = (SELECT id FROM problems WHERE slug = 'dog-street-walk')
+  AND order_index = 8
+  AND input = '[["JFK","AAA"],["AAA","BBB"],["BBB","JFK"],["JFK","AAA"],["AAA","CCC"]]'
+  AND expected_output = '["JFK","AAA","BBB","JFK","AAA","CCC"]';
+
+UPDATE test_cases
+SET input = '[["HUB","LAX"],["LAX","SFO"],["SFO","HUB"],["HUB","DEN"]]',
+    expected_output = '["HUB","LAX","SFO","HUB","DEN"]'
+WHERE problem_id = (SELECT id FROM problems WHERE slug = 'dog-street-walk')
+  AND order_index = 9
+  AND input = '[["JFK","LAX"],["LAX","SFO"],["SFO","JFK"],["JFK","DEN"]]'
+  AND expected_output = '["JFK","LAX","SFO","JFK","DEN"]';
+
+UPDATE test_cases
+SET input = '[["HUB","AAA"],["AAA","BBB"],["BBB","AAA"],["AAA","HUB"],["HUB","AAA"],["AAA","CCC"]]',
+    expected_output = '["HUB","AAA","BBB","AAA","HUB","AAA","CCC"]'
+WHERE problem_id = (SELECT id FROM problems WHERE slug = 'dog-street-walk')
+  AND order_index = 10
+  AND input = '[["JFK","AAA"],["AAA","BBB"],["BBB","AAA"],["AAA","JFK"],["JFK","AAA"],["AAA","CCC"]]'
+  AND expected_output = '["JFK","AAA","BBB","AAA","JFK","AAA","CCC"]';
+
+UPDATE test_cases
+SET input = '[["HUB","A"],["A","B"],["B","C"],["C","D"],["D","E"]]',
+    expected_output = '["HUB","A","B","C","D","E"]'
+WHERE problem_id = (SELECT id FROM problems WHERE slug = 'dog-street-walk')
+  AND order_index = 11
+  AND input = '[["JFK","A"],["A","B"],["B","C"],["C","D"],["D","E"]]'
+  AND expected_output = '["JFK","A","B","C","D","E"]';
