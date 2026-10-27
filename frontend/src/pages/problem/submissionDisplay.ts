@@ -45,7 +45,8 @@ export const STATUS_KEYS: Record<SubmissionStatus, string> = {
   INTERNAL_ERROR: 'status.internalError',
 };
 
-export function formatSubmissionDate(dateStr: string, locale: string, withTime = false) {
+/** A date in the UI language (i18n.language), e.g. "Oct 27, 2026" or "2026년 10월 27일". */
+export function formatDate(dateStr: string, locale: string, withTime = false) {
   return new Date(dateStr).toLocaleDateString(locale, {
     month: 'short',
     day: 'numeric',

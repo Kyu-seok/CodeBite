@@ -24,7 +24,7 @@ import {
   STATUS_KEYS,
   STATUS_TEXT_CLASS,
   formatMemory,
-  formatSubmissionDate,
+  formatDate,
   languageLabel,
 } from './submissionDisplay';
 
@@ -181,7 +181,7 @@ export function SubmissionDetail({
             {tc(STATUS_KEYS[submission.status])}
           </h2>
           <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-            <span>{formatSubmissionDate(submission.createdAt, i18n.language, true)}</span>
+            <span>{formatDate(submission.createdAt, i18n.language, true)}</span>
             <span className="text-border" aria-hidden="true">|</span>
             <Badge variant="secondary" className="text-xs px-1.5 py-0">
               {languageLabel(submission.language)}

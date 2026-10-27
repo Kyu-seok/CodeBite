@@ -14,6 +14,7 @@ import { ReportDialog } from "./ReportDialog"
 import { CommentThread } from "./CommentThread"
 import { AuthorAvatar } from "./AuthorAvatar"
 import { ConfirmDialog } from "../ConfirmDialog"
+import { formatDate } from "../submissionDisplay"
 import { useComments } from "@/hooks/useSolutions"
 import type { SolutionDetail } from "@/types/solution"
 
@@ -98,7 +99,7 @@ export default function SolutionDetailPage() {
               username={solution.authorUsername}
             />
             <span className="font-medium text-foreground">{solution.authorUsername}</span>
-            <span>· {new Date(solution.createdAt).toLocaleDateString(i18n.language)}</span>
+            <span>· {formatDate(solution.createdAt, i18n.language)}</span>
           </div>
           <div className="mt-3 flex flex-wrap items-center gap-1.5">
             {solution.languages.map((l) => (

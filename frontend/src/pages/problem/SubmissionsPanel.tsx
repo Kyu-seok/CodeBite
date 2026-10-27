@@ -16,7 +16,7 @@ import {
   STATUS_KEYS,
   STATUS_TEXT_CLASS,
   formatMemory,
-  formatSubmissionDate,
+  formatDate,
   languageLabel,
 } from "./submissionDisplay"
 
@@ -151,7 +151,7 @@ export function SubmissionsPanel({
 
       {/* Rows */}
       {submissions.map((s, i) => {
-        const date = formatSubmissionDate(s.createdAt, i18n.language)
+        const date = formatDate(s.createdAt, i18n.language)
         return (
         <div
           key={s.id}

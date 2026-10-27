@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/Badge"
 import Spinner from "@/components/ui/Spinner"
 import { useSolutionsList } from "@/hooks/useSolutions"
 import { LanguagePill } from "./LanguagePill"
-import { SUPPORTED_LANGUAGES, languageLabel } from "../submissionDisplay"
+import { SUPPORTED_LANGUAGES, formatDate, languageLabel } from "../submissionDisplay"
 import { AuthorAvatar } from "./AuthorAvatar"
 import type { SolutionListItem, SolutionSort } from "@/types/solution"
 
@@ -182,7 +182,7 @@ function SolutionCard({ solution, slug }: { solution: SolutionListItem; slug: st
             />
             <span className="text-xs text-muted-foreground">{solution.authorUsername}</span>
             <span className="text-xs text-muted-foreground">
-              · {new Date(solution.createdAt).toLocaleDateString(i18n.language)}
+              · {formatDate(solution.createdAt, i18n.language)}
             </span>
           </div>
           <h3 className="text-sm font-semibold text-foreground line-clamp-2">{solution.title}</h3>
