@@ -18,7 +18,7 @@ int main() {
     while (getline(ss, token, ',')) {
         nums.push_back(stoi(token));
     }
-    vector<int> result = Solution().computeStationShare(nums);
+    vector<int> result = Solution().productOfAllOtherElements(nums);
     cout << JsonOutput::intVector(result) << endl;
     return 0;
 }

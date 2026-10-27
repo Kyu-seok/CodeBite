@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {number[]} rates
+     * @param {number[]} nums
      * @return {number[]}
      */
-    computeStationShare(rates) {
+    productOfAllOtherElements(nums) {
         // Write your solution here
     }
 }
