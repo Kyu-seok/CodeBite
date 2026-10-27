@@ -12,12 +12,13 @@
     "acceptance": "정답률",
     "noProblems": "아직 문제가 없습니다",
     "recentSubmissions": "최근 제출",
-    "noSubmissions": "아직 제출이 없습니다"
+    "noSubmissions": "아직 제출이 없습니다",
+    "difficulty": "난이도"
   },
   "problems": {
     "heading": "문제",
     "total": "{{count}}개",
-    "newProblem": "+ 새 문제",
+    "newProblem": "새 문제",
     "search": "문제 검색...",
     "id": "ID",
     "title": "제목",
@@ -29,7 +30,11 @@
     "view": "보기",
     "delete": "삭제",
     "noProblems": "문제가 없습니다.",
-    "accepted": "정답"
+    "accepted": "정답",
+    "difficulty": "난이도",
+    "confirmDeleteTitle": "\"{{title}}\"을(를) 삭제할까요?",
+    "confirmDeleteBody": "되돌릴 수 없습니다.",
+    "deleteFailed": "문제를 삭제하지 못했습니다. 다시 시도해 주세요."
   },
   "edit": {
     "newProblem": "새 문제",
@@ -45,19 +50,26 @@
     "constraints": "제약 조건",
     "constraintsPlaceholder": "예: 1 <= nums.length <= 10^4",
     "testCases": "테스트 케이스 ({{count}}개)",
-    "addTestCase": "+ 테스트 케이스 추가",
+    "addTestCase": "테스트 케이스 추가",
     "sample": "샘플",
-    "input": "입력:",
-    "expected": "예상:",
+    "input": "입력",
+    "expected": "예상",
     "inputLabel": "입력",
     "expectedOutputLabel": "예상 출력",
     "sampleVisible": "샘플 (사용자에게 공개)",
-    "order": "순서:",
+    "order": "순서",
     "difficulty": "난이도",
     "visibility": "공개 설정",
     "visibleToAll": "모든 사용자에게 공개",
     "adminOnly": "관리자만 열람 가능",
-    "tagsSelected": "태그 ({{count}}개 선택)"
+    "tagsSelected": "태그 ({{count}}개 선택)",
+    "back": "문제 목록으로",
+    "saved": "저장했습니다",
+    "saveFailed": "문제를 저장하지 못했습니다. 입력한 내용은 그대로 있으니 다시 시도해 주세요.",
+    "testCaseFailed": "테스트 케이스를 저장하지 못했습니다. 다시 시도해 주세요.",
+    "confirmDeleteTestCase": "테스트 케이스 #{{order}}을(를) 삭제할까요?",
+    "confirmDeleteTestCaseBody": "되돌릴 수 없습니다.",
+    "deleteTestCaseFailed": "테스트 케이스를 삭제하지 못했습니다. 다시 시도해 주세요."
   },
   "users": {
     "heading": "사용자",
@@ -78,6 +90,21 @@
     "submittedAt": "제출 시각",
     "delete": "삭제",
     "empty": "제출 내역이 없습니다.",
-    "confirmDelete": "이 제출 기록을 삭제할까요? 되돌릴 수 없습니다."
+    "confirmDelete": "이 제출 기록을 삭제할까요? 되돌릴 수 없습니다.",
+    "id": "ID",
+    "deleting": "삭제 중…",
+    "deleteFailed": "제출 기록을 삭제하지 못했습니다. 다시 시도해 주세요.",
+    "confirmDeleteTitle": "제출 #{{id}}을(를) 삭제할까요?",
+    "confirmDeleteBody": "되돌릴 수 없습니다."
+  },
+  "layout": {
+    "badge": "관리자",
+    "nav": "관리자",
+    "dashboard": "대시보드",
+    "problems": "문제",
+    "users": "사용자"
+  },
+  "time": {
+    "justNow": "방금"
   }
 }

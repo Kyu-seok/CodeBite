@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { getOverviewStats, getDailySubmissions, getProblemAnalytics, getRecentSubmissions } from '@/api/admin';
 import type { OverviewStats, DailySubmission, ProblemAnalytics, AdminRecentSubmission } from '@/types/admin';
@@ -8,26 +9,23 @@ import type { Difficulty } from '@/types/problem';
 import type { SubmissionStatus } from '@/types/submission';
 import StatusBadge from '@/components/ui/StatusBadge';
 import Spinner from '@/components/ui/Spinner';
+import LoadError from '@/components/ui/LoadError';
+import { timeAgo } from './adminFormat';
 
-function timeAgo(dateStr: string) {
-  const diff = Date.now() - new Date(dateStr).getTime();
-  const mins = Math.floor(diff / 60000);
-  if (mins < 1) return 'just now';
-  if (mins < 60) return `${mins}m ago`;
-  const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return `${hrs}h ago`;
-  const days = Math.floor(hrs / 24);
-  return `${days}d ago`;
+type SortField = 'totalSubmissions' | 'acceptanceRate';
+
+interface DashboardData {
+  stats: OverviewStats;
+  daily: DailySubmission[];
+  problems: ProblemAnalytics[];
+  recent: AdminRecentSubmission[];
 }
 
 export default function DashboardPage() {
-  const { t } = useTranslation('admin');
-  const [stats, setStats] = useState<OverviewStats | null>(null);
-  const [daily, setDaily] = useState<DailySubmission[]>([]);
-  const [problems, setProblems] = useState<ProblemAnalytics[]>([]);
-  const [recent, setRecent] = useState<AdminRecentSubmission[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [sortField, setSortField] = useState<'totalSubmissions' | 'acceptanceRate'>('totalSubmissions');
+  const { t, i18n } = useTranslation('admin');
+  const [data, setData] = useState<DashboardData | null>(null);
+  const [status, setStatus] = useState<'loading' | 'ready' | 'failed'>('loading');
+  const [sortField, setSortField] = useState<SortField>('totalSubmissions');
   const [sortAsc, setSortAsc] = useState(false);
 
   const STAT_CARDS = [
@@ -55,21 +53,30 @@ export default function DashboardPage() {
     )},
   ];
 
-  useEffect(() => {
+  // A failed request is shown as a failure: zeros and "No problems yet" would claim the
+  // platform is empty (PRODUCT.md principle 2).
+  const fetchDashboard = useCallback(() => {
     Promise.all([
       getOverviewStats(),
       getDailySubmissions(30),
       getProblemAnalytics(),
       getRecentSubmissions(10),
-    ]).then(([s, d, p, r]) => {
-      setStats(s.data);
-      setDaily(d.data);
-      setProblems(p.data);
-      setRecent(r.data);
-    }).finally(() => setLoading(false));
+    ])
+      .then(([s, d, p, r]) => {
+        setData({ stats: s.data, daily: d.data, problems: p.data, recent: r.data });
+        setStatus('ready');
+      })
+      .catch(() => setStatus('failed'));
   }, []);
 
-  if (loading) {
+  useEffect(fetchDashboard, [fetchDashboard]);
+
+  const retry = () => {
+    setStatus('loading');
+    fetchDashboard();
+  };
+
+  if (status === 'loading') {
     return (
       <div className="flex h-full items-center justify-center">
         <Spinner />
@@ -77,12 +84,23 @@ export default function DashboardPage() {
     );
   }
 
-  const sortedProblems = [...problems].sort((a, b) => {
-    const diff = sortAsc ? a[sortField] - b[sortField] : b[sortField] - a[sortField];
-    return diff;
-  });
+  if (status === 'failed' || !data) {
+    return (
+      <div className="space-y-6 p-6">
+        <h1 className="text-2xl font-bold text-foreground">{t('dashboard.title')}</h1>
+        <div className="rounded-xl border border-border bg-card p-4">
+          <LoadError onRetry={retry} />
+        </div>
+      </div>
+    );
+  }
 
-  const handleSort = (field: 'totalSubmissions' | 'acceptanceRate') => {
+  const { stats, daily, problems, recent } = data;
+  const sortedProblems = [...problems].sort((a, b) =>
+    sortAsc ? a[sortField] - b[sortField] : b[sortField] - a[sortField],
+  );
+
+  const handleSort = (field: SortField) => {
     if (sortField === field) {
       setSortAsc(!sortAsc);
     } else {
@@ -91,8 +109,25 @@ export default function DashboardPage() {
     }
   };
 
-  const sortIndicator = (field: string) =>
-    sortField === field ? (sortAsc ? ' \u2191' : ' \u2193') : '';
+  // Sortable headers follow the problem list (#36): a button in the cell, aria-sort on the cell.
+  const sortHeader = (field: SortField, label: string, className: string) => {
+    const active = sortField === field;
+    return (
+      <th scope="col" aria-sort={active ? (sortAsc ? 'ascending' : 'descending') : undefined} className={className}>
+        <button
+          type="button"
+          onClick={() => handleSort(field)}
+          className={`-mx-1 inline-flex items-center gap-1 rounded-sm px-1 transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+            active ? 'font-medium text-foreground' : ''
+          }`}
+        >
+          {label}
+          {active &&
+            (sortAsc ? <ChevronUp aria-hidden className="h-3.5 w-3.5" /> : <ChevronDown aria-hidden className="h-3.5 w-3.5" />)}
+        </button>
+      </th>
+    );
+  };
 
   return (
     <div className="space-y-6 p-6">
@@ -103,12 +138,12 @@ export default function DashboardPage() {
         {STAT_CARDS.map((card) => (
           <div key={card.key} className="rounded-xl border border-border bg-card p-4">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent/10 text-accent">
+              <div aria-hidden className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent/10 text-accent">
                 {card.icon}
               </div>
               <div>
-                <p className="text-2xl font-bold text-foreground">
-                  {stats?.[card.key]?.toLocaleString() ?? 0}
+                <p className="text-2xl font-bold tabular-nums text-foreground">
+                  {stats[card.key].toLocaleString(i18n.language)}
                 </p>
                 <p className="text-xs text-muted-foreground">{card.label}</p>
               </div>
@@ -131,14 +166,13 @@ export default function DashboardPage() {
             <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
             <XAxis
               dataKey="date"
-              tick={{ fontSize: 11, fill: 'var(--color-muted-foreground)' }}
-              tickFormatter={(d: string) => {
-                const date = new Date(d + 'T00:00:00');
-                return `${date.getMonth() + 1}/${date.getDate()}`;
-              }}
+              tick={{ fontSize: 12, fill: 'var(--color-muted-foreground)' }}
+              tickFormatter={(d: string) =>
+                new Date(d + 'T00:00:00').toLocaleDateString(i18n.language, { month: 'numeric', day: 'numeric' })
+              }
             />
             <YAxis
-              tick={{ fontSize: 11, fill: 'var(--color-muted-foreground)' }}
+              tick={{ fontSize: 12, fill: 'var(--color-muted-foreground)' }}
               allowDecimals={false}
             />
             <Tooltip
@@ -148,7 +182,7 @@ export default function DashboardPage() {
                 borderRadius: '8px',
                 fontSize: '12px',
               }}
-              labelFormatter={(d) => new Date(String(d) + 'T00:00:00').toLocaleDateString()}
+              labelFormatter={(d) => new Date(String(d) + 'T00:00:00').toLocaleDateString(i18n.language)}
             />
             <Area
               type="monotone"
@@ -170,20 +204,10 @@ export default function DashboardPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border text-left text-xs text-muted-foreground">
-                  <th className="pb-2 pr-3">{t('dashboard.problem')}</th>
-                  <th className="pb-2 pr-3">Difficulty</th>
-                  <th
-                    className="cursor-pointer pb-2 pr-3 hover:text-foreground"
-                    onClick={() => handleSort('totalSubmissions')}
-                  >
-                    {t('dashboard.submissions')}{sortIndicator('totalSubmissions')}
-                  </th>
-                  <th
-                    className="cursor-pointer pb-2 hover:text-foreground"
-                    onClick={() => handleSort('acceptanceRate')}
-                  >
-                    {t('dashboard.acceptance')}{sortIndicator('acceptanceRate')}
-                  </th>
+                  <th scope="col" className="pb-2 pr-3 font-normal">{t('dashboard.problem')}</th>
+                  <th scope="col" className="pb-2 pr-3 font-normal">{t('dashboard.difficulty')}</th>
+                  {sortHeader('totalSubmissions', t('dashboard.submissions'), 'pb-2 pr-3 font-normal')}
+                  {sortHeader('acceptanceRate', t('dashboard.acceptance'), 'pb-2 font-normal')}
                 </tr>
               </thead>
               <tbody>
@@ -193,16 +217,16 @@ export default function DashboardPage() {
                     <td className="py-2 pr-3">
                       <DifficultyBadge difficulty={p.difficulty as Difficulty} />
                     </td>
-                    <td className="py-2 pr-3 text-muted-foreground">{p.totalSubmissions}</td>
+                    <td className="py-2 pr-3 tabular-nums text-muted-foreground">{p.totalSubmissions}</td>
                     <td className="py-2">
                       <div className="flex items-center gap-2">
-                        <div className="h-1.5 w-16 overflow-hidden rounded-full bg-muted">
+                        <div aria-hidden className="h-1.5 w-16 overflow-hidden rounded-full bg-muted">
                           <div
                             className="h-full rounded-full bg-accent"
                             style={{ width: `${Math.min(p.acceptanceRate, 100)}%` }}
                           />
                         </div>
-                        <span className="text-xs text-muted-foreground">{p.acceptanceRate}%</span>
+                        <span className="text-xs tabular-nums text-muted-foreground">{p.acceptanceRate}%</span>
                       </div>
                     </td>
                   </tr>
@@ -222,9 +246,9 @@ export default function DashboardPage() {
         {/* Recent Submissions */}
         <div className="rounded-xl border border-border bg-card p-4 lg:col-span-2">
           <h2 className="mb-3 text-sm font-semibold text-foreground">{t('dashboard.recentSubmissions')}</h2>
-          <div className="space-y-3">
+          <ul className="space-y-3">
             {recent.map((s) => (
-              <div key={s.id} className="flex items-start justify-between gap-2">
+              <li key={s.id} className="flex items-start justify-between gap-2">
                 <div className="min-w-0">
                   <p className="truncate text-sm font-medium text-foreground">{s.problemTitle}</p>
                   <p className="text-xs text-muted-foreground">
@@ -233,14 +257,16 @@ export default function DashboardPage() {
                 </div>
                 <div className="flex shrink-0 flex-col items-end gap-1">
                   <StatusBadge status={s.status as SubmissionStatus} />
-                  <span className="text-[10px] text-muted-foreground">{timeAgo(s.createdAt)}</span>
+                  <span className="text-xs text-muted-foreground">
+                    {timeAgo(s.createdAt, i18n.language, t('time.justNow'))}
+                  </span>
                 </div>
-              </div>
+              </li>
             ))}
-            {recent.length === 0 && (
-              <p className="py-8 text-center text-sm text-muted-foreground">{t('dashboard.noSubmissions')}</p>
-            )}
-          </div>
+          </ul>
+          {recent.length === 0 && (
+            <p className="py-8 text-center text-sm text-muted-foreground">{t('dashboard.noSubmissions')}</p>
+          )}
         </div>
       </div>
     </div>
