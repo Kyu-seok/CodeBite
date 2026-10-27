@@ -15,8 +15,9 @@ import java.util.Map;
 @Component
 public class SubmissionMetrics {
 
+    // Python is 100 (3.12); 71 (3.8) stays for events queued before the switch.
     private static final Map<Integer, String> LANGUAGE_NAMES = Map.of(
-            62, "java", 71, "python", 63, "javascript", 54, "cpp");
+            62, "java", 71, "python", 100, "python", 63, "javascript", 54, "cpp");
 
     private final MeterRegistry meterRegistry;
 

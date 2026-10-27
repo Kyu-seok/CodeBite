@@ -2,7 +2,7 @@
 
 Goal: user code in Python runs on **Python 3.12** instead of 3.8.1, so users can write modern Python (`list[int]`, `match`, `int | None`, PEP 701 f-strings, `itertools.pairwise`, `functools.cache`).
 
-Status (2026-10-27): feasibility proven on a test Judge0; plan grilled and revised. No CodeBite code changed yet. Why the image is built by hand outside CI: [ADR 0004](adr/0004-custom-judge0-image-built-outside-ci.md).
+Status (2026-10-28): steps 1–5 done. Production Judge0 runs the py312 image (deploy A, #74), the replay passed with 200 Accepted on id 100 (#76), and CodeBite sends Python as id 100 (deploy B, #54). Why the image is built by hand outside CI: [ADR 0004](adr/0004-custom-judge0-image-built-outside-ci.md).
 
 ## Background
 

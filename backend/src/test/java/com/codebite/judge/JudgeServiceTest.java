@@ -50,7 +50,7 @@ class JudgeServiceTest {
 
     @Test
     void mapLanguageToId_python() {
-        assertEquals(71, judgeService.mapLanguageToId("python"));
+        assertEquals(100, judgeService.mapLanguageToId("python"));
     }
 
     @Test
@@ -66,7 +66,7 @@ class JudgeServiceTest {
     @Test
     void mapLanguageToId_caseInsensitive() {
         assertEquals(62, judgeService.mapLanguageToId("Java"));
-        assertEquals(71, judgeService.mapLanguageToId("Python"));
+        assertEquals(100, judgeService.mapLanguageToId("Python"));
     }
 
     @Test
