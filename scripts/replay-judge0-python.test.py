@@ -139,11 +139,14 @@ class LocalJudgeTest(unittest.TestCase):
 
 
     def test_a_target_naming_an_interpreter_judges_locally(self):
-        report = run([problem("p", [("3", "6")], ECHO_DOUBLE)], replay.judge_for(PYTHON_312))
+        judge, judged_on = replay.judge_for(PYTHON_312, 100)
+        report = run([problem("p", [("3", "6")], ECHO_DOUBLE)], judge)
         self.assertEqual(report.passed, ["p"])
+        self.assertEqual(judged_on, PYTHON_312)
 
     def test_a_target_naming_a_url_judges_on_judge0(self):
-        judge = replay.judge_for("http://127.0.0.1:9/")
+        judge, judged_on = replay.judge_for("http://127.0.0.1:9/", 100)
+        self.assertEqual(judged_on, "language 100")
         with self.assertRaises(OSError):  # nothing listens on the discard port: proof it went over HTTP
             judge("print(1)", 100, [""])
 

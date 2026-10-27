@@ -16,7 +16,8 @@ Port 2359 is the throwaway test stack; the gate itself runs on production Judge0
 On this machine, scripts/replay-local.sh slug,... does the export and the local run in one go.
 
 Locally, name a Python 3.12+ interpreter instead of a Judge0 URL. Each test case then runs in its own
-process (a time limit of --time-limit seconds, Judge0's default CPU limit), with the same verdicts:
+process with the same verdicts, under a wall-clock limit of --time-limit seconds (default 5, the number of
+Judge0's default CPU limit, but stricter: waiting on a busy machine counts too):
   python3 -I scripts/replay-judge0-python.py /opt/homebrew/bin/python3.12 100 . /tmp/replay-local.json --pause 0 --only slug,...
 """
 import argparse, base64, json, os, re, subprocess, sys, tempfile, time, urllib.request
@@ -28,7 +29,7 @@ PROCESSING, ACCEPTED, TLE, COMPILATION_ERROR, RUNTIME_ERRORS = 2, 3, 5, 6, range
 NZEC = 11  # Runtime Error (NZEC): how Judge0 reports a Python exception or syntax error
 BATCH_SIZE = 20  # Judge0's default MAX_SUBMISSION_BATCH_SIZE
 POLL_TIMEOUT_S = 60
-LOCAL_TIME_LIMIT_S = 5  # Judge0's default CPU_TIME_LIMIT
+LOCAL_TIME_LIMIT_S = 5  # wall-clock; Judge0's default CPU_TIME_LIMIT is 5s of CPU, so this is stricter under load
 
 Report = namedtuple("Report", "passed failed nothing")
 # case is 1-based, in order_index order (None when no case ran); detail is the last line of the output.
@@ -134,31 +135,28 @@ def local_judge(python, time_limit=LOCAL_TIME_LIMIT_S):
 
     Exit 0 is Judge0's "ran" status (the replay compares the output), any other exit is a runtime
     error (a syntax error included, as Judge0 reports Python's), and a run past time_limit seconds
-    is Time Limit Exceeded. The environment matches the id 100 image's run_cmd.
+    of wall-clock time is Time Limit Exceeded (stricter than Judge0's CPU limit when the machine is busy). The environment matches the id 100 image's run_cmd.
     Raises ValueError unless python is Python 3.12 or newer, so a pass can't come from the wrong interpreter."""
     try:
         version = subprocess.run([python, "-c", "import sys; print('.'.join(map(str, sys.version_info[:3])))"],
                                  capture_output=True, text=True, timeout=30).stdout.strip()
-        major_minor = tuple(int(n) for n in version.split(".")[:2])
+        major, minor = (int(n) for n in version.split(".")[:2])  # fewer than two numbers is a ValueError too
     except (OSError, ValueError, subprocess.TimeoutExpired):
         raise ValueError(f"{python} is not a Python interpreter")
-    if len(major_minor) != 2:
-        raise ValueError(f"{python} is not a Python interpreter")
-    if major_minor < (3, 12):
+    if (major, minor) < (3, 12):
         raise ValueError(f"{python} is Python {version}; the local replay needs Python 3.12 or newer")
 
     def run(source, language_id, stdins):
         results = []
-        with tempfile.TemporaryDirectory(prefix="replay-") as box:
-            script = Path(box) / "script.py"
-            script.write_text(source)
+        with tempfile.TemporaryDirectory(prefix="replay-") as workdir:
+            (Path(workdir) / "script.py").write_text(source)
             for stdin in stdins:
                 try:
-                    p = subprocess.run([python, "script.py"], cwd=box, input=stdin, capture_output=True, text=True,
-                                       errors="replace", timeout=time_limit,
-                                       env={"PATH": os.environ.get("PATH", ""), "PYTHONINTMAXSTRDIGITS": "0"})
-                    status = ACCEPTED if p.returncode == 0 else NZEC
-                    results.append({"status": {"id": status}, "stdout": p.stdout, "stderr": p.stderr,
+                    finished = subprocess.run([python, "script.py"], cwd=workdir, input=stdin, capture_output=True,
+                                              text=True, errors="replace", timeout=time_limit,
+                                              env={"PATH": os.environ.get("PATH", ""), "PYTHONINTMAXSTRDIGITS": "0"})
+                    status = ACCEPTED if finished.returncode == 0 else NZEC
+                    results.append({"status": {"id": status}, "stdout": finished.stdout, "stderr": finished.stderr,
                                     "compile_output": ""})
                 except subprocess.TimeoutExpired:
                     results.append({"status": {"id": TLE}, "stdout": "", "stderr": "", "compile_output": ""})
@@ -167,11 +165,12 @@ def local_judge(python, time_limit=LOCAL_TIME_LIMIT_S):
     return run
 
 
-def judge_for(target, time_limit=LOCAL_TIME_LIMIT_S):
-    """A Judge0 base URL (http:// or https://) judges on that Judge0; anything else names a local Python 3.12."""
+def judge_for(target, language_id, time_limit=LOCAL_TIME_LIMIT_S):
+    """(judge, what it judges on): a Judge0 base URL (http:// or https://) judges on that Judge0, on
+    language_id; anything else names a local Python 3.12+, which ignores language_id."""
     if re.match(r"https?://", target):
-        return judge0(target.rstrip("/"))
-    return local_judge(target, time_limit)
+        return judge0(target.rstrip("/")), f"language {language_id}"
+    return local_judge(target, time_limit), target
 
 
 def driver_assembler(root):
@@ -196,28 +195,28 @@ def main():
     ap.add_argument("export", type=Path, help="output of scripts/replay-judge0-python.sql")
     ap.add_argument("--pause", type=float, default=2, help="seconds between problems (default 2)")
     ap.add_argument("--time-limit", type=float, default=LOCAL_TIME_LIMIT_S,
-                    help=f"seconds per test case on a local interpreter (default {LOCAL_TIME_LIMIT_S})")
+                    help=f"wall-clock seconds per test case on a local interpreter (default {LOCAL_TIME_LIMIT_S}; "
+                         "stricter than Judge0's CPU limit under load)")
     ap.add_argument("--only", help="comma-separated slugs to replay, e.g. the failures of an earlier run")
     args = ap.parse_args()
 
     problems = json.loads(args.export.read_text())
     if args.only:
         wanted = set(args.only.split(","))
-        unknown = wanted - {p["slug"] for p in problems}
+        unknown = wanted - {problem["slug"] for problem in problems}
         if unknown:  # a misspelled slug would otherwise replay nothing and pass
             sys.exit(f"replay: not in the export: {', '.join(sorted(unknown))}")
-        problems = [p for p in problems if p["slug"] in wanted]
+        problems = [problem for problem in problems if problem["slug"] in wanted]
     references = {f.stem: f.read_text() for f in (args.root / "scripts/replay-solutions").glob("*.py")}
 
     def log(slug, verdict):
         print(f"  {slug:<40} {verdict}", flush=True)
 
     try:
-        judge = judge_for(args.target, args.time_limit)
+        judge, judged_on = judge_for(args.target, args.language_id, args.time_limit)
     except ValueError as e:
         sys.exit(f"replay: {e}")
-    on = f"language {args.language_id}" if re.match(r"https?://", args.target) else args.target
-    print(f"== replaying {len(problems)} problems on {on}, {args.pause}s apart")
+    print(f"== replaying {len(problems)} problems on {judged_on}, {args.pause}s apart")
     report = replay(problems, judge, args.language_id, driver_assembler(args.root),
                     time.sleep, log, references, args.pause)
 
