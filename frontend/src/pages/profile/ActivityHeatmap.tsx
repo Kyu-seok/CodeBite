@@ -97,7 +97,7 @@ export function ActivityHeatmap({
         <h2 className="text-sm font-medium text-foreground">{heading}</h2>
         <span className="text-xs tabular-nums text-muted-foreground">{countText}</span>
       </div>
-      {/* The count above is the text alternative; per-day counts are in the tooltips. */}
+      {/* The count above is the text alternative. Per-day counts are pointer-only tooltips: a focus stop per day would be a year of Tab presses. */}
       <div aria-hidden>
         <ActivityCalendar
           ref={calendarRef}
