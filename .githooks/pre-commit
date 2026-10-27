@@ -31,6 +31,8 @@ fi
 if touches '^frontend/'; then
   echo "pre-commit: frontend lint"
   (cd frontend && npm run -s lint -- --quiet)
+  echo "pre-commit: frontend tests"
+  (cd frontend && npm test -s)
 fi
 
 if touches '^scripts/.*\.sh$|^\.shellcheckrc$'; then
