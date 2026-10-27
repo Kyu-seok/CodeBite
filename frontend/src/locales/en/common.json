@@ -29,7 +29,8 @@
     "language": "Language",
     "runtime": "Runtime",
     "memory": "Memory",
-    "na": "N/A"
+    "na": "N/A",
+    "loading": "Loading"
   },
   "pagination": {
     "pageOf": "Page {{current}} of {{total}}"

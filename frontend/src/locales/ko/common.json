@@ -29,7 +29,8 @@
     "language": "언어",
     "runtime": "실행 시간",
     "memory": "메모리",
-    "na": "N/A"
+    "na": "N/A",
+    "loading": "불러오는 중"
   },
   "pagination": {
     "pageOf": "{{current}} / {{total}} 페이지"
