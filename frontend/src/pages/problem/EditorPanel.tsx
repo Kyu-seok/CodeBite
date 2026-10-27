@@ -68,7 +68,7 @@ function ToolbarButton({
 }
 
 function ToolbarDivider() {
-  return <div aria-hidden className="mx-1 h-4 w-px bg-border" />;
+  return <div aria-hidden className="mx-1 h-4 w-px bg-muted-foreground/30" />;
 }
 
 const ISSUES_NEW_URL = 'https://github.com/Kyu-seok/CodeBite/issues/new';
