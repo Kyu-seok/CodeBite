@@ -1,6 +1,15 @@
 {
   "title": "로드맵 — CodeBite",
   "comingSoon": "준비 중",
+  "heading": "학습 로드맵",
+  "listView": "목록으로 보기",
+  "graphView": "그래프로 보기",
+  "progress": "{{total}}개 중 {{solved}}개 풀이",
+  "solved": "풀이 완료",
+  "notSolved": "미풀이",
+  "nodeLabel": "{{name}}, {{progress}}. Enter를 눌러 문제 보기",
+  "comingSoonLabel": "{{name}}, 준비 중",
+  "closePanel": "{{name}} 닫기",
   "categories": {
     "arrays-and-hashing": {
       "name": "배열 & 해시",

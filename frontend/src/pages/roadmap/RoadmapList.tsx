@@ -1,29 +1,10 @@
-import { useState } from "react"
+import { useId, useState } from "react"
 import { Link } from "react-router-dom"
 import { useTranslation } from "react-i18next"
+import { ChevronDown } from "lucide-react"
 import type { RoadmapCategory } from "@/types/roadmap"
 import { TOPOLOGICAL_ORDER } from "./roadmapLayout"
-import DifficultyBadge from "@/components/ui/DifficultyBadge"
-
-function CheckIcon() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="20 6 9 17 4 12" />
-    </svg>
-  )
-}
-
-function ChevronIcon({ open }: { open: boolean }) {
-  return (
-    <svg
-      width="16" height="16" viewBox="0 0 24 24" fill="none"
-      stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-      className={`transition-transform duration-200 ${open ? "rotate-180" : ""}`}
-    >
-      <polyline points="6 9 12 15 18 9" />
-    </svg>
-  )
-}
+import { ProblemRow } from "./ProblemRow"
 
 interface RoadmapListProps {
   categories: RoadmapCategory[]
@@ -32,83 +13,89 @@ interface RoadmapListProps {
 export default function RoadmapList({ categories }: RoadmapListProps) {
   const { t } = useTranslation("roadmap")
   const [expandedSlug, setExpandedSlug] = useState<string | null>(null)
+  const idPrefix = useId()
 
   const categoryMap = new Map(categories.map((c) => [c.slug, c]))
 
+  // Prerequisite order, so the list keeps the graph's "learn this first" meaning.
   const orderedCategories = TOPOLOGICAL_ORDER
     .map((slug) => categoryMap.get(slug))
     .filter((c): c is RoadmapCategory => c != null)
 
   return (
-    <div className="space-y-3">
+    <ol className="space-y-3">
       {orderedCategories.map((category) => {
         const totalProblems = category.problems.length
         const solvedCount = category.problems.filter((p) => p.status === "SOLVED").length
         const isEmpty = totalProblems === 0
         const isComplete = totalProblems > 0 && solvedCount === totalProblems
         const isExpanded = expandedSlug === category.slug
+        const panelId = `${idPrefix}-${category.slug}`
 
         return (
-          <div
+          <li
             key={category.slug}
             className={`rounded-lg border bg-card shadow-sm transition-colors
-              ${isEmpty ? "border-border/50 opacity-60" : "border-border"}
-              ${isComplete ? "border-success-500/50" : ""}
+              ${isEmpty ? "border-dashed border-border" : isComplete ? "border-success-500/50" : "border-border"}
             `}
           >
-            <button
-              onClick={() => !isEmpty && setExpandedSlug(isExpanded ? null : category.slug)}
-              className={`flex w-full items-center gap-3 p-4 text-left ${isEmpty ? "cursor-default" : "cursor-pointer"}`}
-            >
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
-                  <h3 className="text-sm font-semibold text-foreground">{t(`categories.${category.slug}.name`)}</h3>
-                  {isEmpty && (
-                    <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground/60">
-                      {t('comingSoon')}
+            {/* The heading wraps the toggle, so it stays a heading and the button stays a button. */}
+            <h2 className="text-sm">
+              <button
+                type="button"
+                disabled={isEmpty}
+                aria-expanded={isEmpty ? undefined : isExpanded}
+                aria-controls={isEmpty ? undefined : panelId}
+                onClick={() => setExpandedSlug(isExpanded ? null : category.slug)}
+                className="flex w-full items-center gap-3 rounded-lg p-4 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default"
+              >
+                <span className="min-w-0 flex-1">
+                  <span className="flex items-center gap-2">
+                    <span className={`font-semibold ${isEmpty ? "text-muted-foreground" : "text-foreground"}`}>
+                      {t(`categories.${category.slug}.name`)}
                     </span>
-                  )}
-                </div>
-                <p className="mt-0.5 text-[11px] text-muted-foreground italic truncate">
-                  "{t(`categories.${category.slug}.description`)}"
-                </p>
-              </div>
-              {!isEmpty && (
-                <div className="flex items-center gap-3 flex-shrink-0">
-                  <span className="text-xs font-medium text-muted-foreground">
-                    {solvedCount}/{totalProblems}
+                    {isEmpty && (
+                      <span className="text-xs font-medium text-muted-foreground">{t("comingSoon")}</span>
+                    )}
                   </span>
-                  <ChevronIcon open={isExpanded} />
-                </div>
-              )}
-            </button>
+                  <span className="mt-0.5 block truncate text-xs font-normal italic text-muted-foreground">
+                    &ldquo;{t(`categories.${category.slug}.description`)}&rdquo;
+                  </span>
+                </span>
+                {!isEmpty && (
+                  <span className="flex flex-shrink-0 items-center gap-3">
+                    <span className="text-xs font-medium tabular-nums text-muted-foreground">
+                      <span aria-hidden>
+                        {solvedCount}/{totalProblems}
+                      </span>
+                      <span className="sr-only">{t("progress", { solved: solvedCount, total: totalProblems })}</span>
+                    </span>
+                    <ChevronDown
+                      aria-hidden
+                      className={`h-4 w-4 text-muted-foreground transition-transform duration-200 motion-reduce:transition-none ${isExpanded ? "rotate-180" : ""}`}
+                    />
+                  </span>
+                )}
+              </button>
+            </h2>
 
-            {isExpanded && totalProblems > 0 && (
-              <div className="border-t border-border px-2 py-1">
+            {isExpanded && (
+              <ul id={panelId} className="border-t border-border px-2 py-1">
                 {category.problems.map((problem) => (
-                  <Link
-                    key={problem.id}
-                    to={`/problems/${problem.slug}`}
-                    className="flex items-center gap-2 rounded-md px-2 py-2 text-sm transition-colors hover:bg-secondary"
-                  >
-                    <span className={`flex-shrink-0 ${problem.status === "SOLVED" ? "text-success-500" : "text-muted-foreground/30"}`}>
-                      {problem.status === "SOLVED" ? (
-                        <CheckIcon />
-                      ) : (
-                        <span className="inline-block h-3.5 w-3.5 rounded-full border-2 border-current" />
-                      )}
-                    </span>
-                    <span className={`flex-1 truncate ${problem.status === "SOLVED" ? "text-muted-foreground" : "text-foreground"}`}>
-                      {problem.title}
-                    </span>
-                    <DifficultyBadge difficulty={problem.difficulty} />
-                  </Link>
+                  <li key={problem.id}>
+                    <Link
+                      to={`/problems/${problem.slug}`}
+                      className="flex items-center gap-2 rounded-md px-2 py-2 text-sm transition-colors hover:bg-secondary"
+                    >
+                      <ProblemRow problem={problem} />
+                    </Link>
+                  </li>
                 ))}
-              </div>
+              </ul>
             )}
-          </div>
+          </li>
         )
       })}
-    </div>
+    </ol>
   )
 }

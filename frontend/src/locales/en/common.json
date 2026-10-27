@@ -114,5 +114,9 @@
       "count_other": "{{count}} reviews",
       "pill": "{{label}}, {{language}}, {{status}}, {{date}}. Open this submission"
     }
+  },
+  "loadError": {
+    "message": "Couldn't load this. Check your connection and try again.",
+    "retry": "Try again"
   }
 }

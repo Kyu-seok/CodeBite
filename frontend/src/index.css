@@ -194,4 +194,21 @@ html {
   --xy-controls-button-border-color: var(--border);
   --xy-controls-button-color: var(--foreground);
   --xy-background-pattern-color: var(--border);
+  --xy-controls-button-background-color-hover: var(--secondary);
+  --xy-controls-button-color-hover: var(--foreground);
+  --xy-attribution-background-color: transparent;
+}
+
+/* The attribution stays (React Flow's licence asks for it), at the working size and readable.
+   Doubled class: xyflow's own stylesheet loads after this one at the same specificity. */
+.react-flow .react-flow__attribution a {
+  color: var(--muted-foreground);
+  font-size: 0.75rem;
+}
+
+/* In-progress edges march; under reduced motion their ember stroke alone carries the state. */
+@media (prefers-reduced-motion: reduce) {
+  .react-flow__edge.animated path {
+    animation: none;
+  }
 }

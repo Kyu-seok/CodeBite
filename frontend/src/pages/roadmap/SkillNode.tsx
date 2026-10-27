@@ -5,10 +5,10 @@ import { useTranslation } from "react-i18next"
 import type { SkillNodeData, NodeState } from "./flowUtils"
 
 const stateStyles: Record<NodeState, string> = {
-  "not-started": "border-gray-300 dark:border-gray-500 bg-card cursor-pointer hover:border-gray-400 dark:hover:border-gray-400 hover:shadow-md",
+  "not-started": "border-border bg-card cursor-pointer hover:border-muted-foreground hover:shadow-md",
   "in-progress": "border-accent-500 bg-card ring-2 ring-accent-500/25 cursor-pointer hover:shadow-md",
   "complete":    "border-success-500 bg-card ring-2 ring-success-500/25 cursor-pointer hover:shadow-md",
-  "coming-soon": "opacity-50 border-dashed border-gray-300 dark:border-gray-600 bg-card cursor-default",
+  "coming-soon": "opacity-60 border-dashed border-border bg-card cursor-default",
 }
 
 const handleStyle = {
@@ -36,10 +36,10 @@ function SkillNode({ data }: NodeProps) {
         className={`w-72 rounded-xl border-2 p-4 shadow-sm transition-all ${stateStyles[state]}`}
       >
         <div className="flex items-start justify-between gap-2">
-          <h3 className="text-xl font-bold leading-tight text-foreground">
+          <h2 className="text-xl font-bold leading-tight text-foreground">
             {t(`categories.${category.slug}.name`)}
-          </h3>
-          {state === "complete" && <Check className="h-5 w-5 flex-shrink-0 text-success-500" />}
+          </h2>
+          {state === "complete" && <Check aria-hidden className="h-5 w-5 flex-shrink-0 text-success-500" />}
         </div>
 
         <p className="mt-1.5 text-sm leading-snug text-muted-foreground italic">
@@ -52,7 +52,7 @@ function SkillNode({ data }: NodeProps) {
           </span>
         ) : (
           <div className="mt-3 flex items-center gap-2.5">
-            <div className="h-2 flex-1 overflow-hidden rounded-full bg-secondary">
+            <div aria-hidden className="h-2 flex-1 overflow-hidden rounded-full bg-secondary">
               <div
                 className={`h-full rounded-full transition-all ${
                   state === "complete" ? "bg-success-500" : "bg-accent-500"
@@ -60,7 +60,7 @@ function SkillNode({ data }: NodeProps) {
                 style={{ width: totalCount > 0 ? `${(solvedCount / totalCount) * 100}%` : "0%" }}
               />
             </div>
-            <span className="text-sm font-semibold text-muted-foreground">
+            <span className="text-sm font-semibold tabular-nums text-muted-foreground">
               {solvedCount}/{totalCount}
             </span>
           </div>
