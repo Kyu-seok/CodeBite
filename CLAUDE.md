@@ -156,6 +156,7 @@ source scripts/dev-env.sh && ./gradlew :worker:bootRun  # run worker locally (ne
 cd frontend
 npm run dev      # dev server at http://localhost:5173
 npm run build    # production build (includes tsc type check)
+npm test         # unit tests (Vitest); run by pre-commit and CI
 ```
 
 ### Directory Structure (`frontend/src/`)
@@ -165,6 +166,7 @@ npm run build    # production build (includes tsc type check)
 - `components/layout/` — Layout (nav bar), ProtectedRoute
 - `components/ui/` — DifficultyBadge, StatusBadge, Spinner
 - `pages/` — LoginPage, OAuthCallbackPage, GitHubCallbackPage, ProblemListPage, ProblemDetailPage, NotFoundPage, `profile/` (incl. GitHubLinkCard)
+- `lib/` — pure helpers (e.g. dueWording)
 - `hooks/` — useProblems, useProblem, useSubmissions
 
 ### Routing
