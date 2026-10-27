@@ -40,7 +40,7 @@ class AuthIntegrationTest {
 
     @Test
     void testToken_isAbsentOutsideDevProfile() throws Exception {
-        mockMvc.perform(post("/api/auth/test-token").param("role", "ADMIN"))
+        mockMvc.perform(post("/api/auth/test-token"))
                 .andExpect(status().isNotFound());
     }
 
