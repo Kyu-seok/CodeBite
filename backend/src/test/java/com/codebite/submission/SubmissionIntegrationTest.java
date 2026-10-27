@@ -20,6 +20,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -214,5 +215,48 @@ class SubmissionIntegrationTest {
         mockMvc.perform(get("/api/problems"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").isArray());
+    }
+
+    // --- Solve time: null or 0 records no time instead of 0:00 ---
+
+    @Test
+    void setSolveTime_nullOrZero_storesNoTime() throws Exception {
+        SubmitRequest request = new SubmitRequest("java",
+                "class Solution { public int[] twoSum(int[] nums, int target) { return new int[]{0,1}; } }");
+        MvcResult submitResult = mockMvc.perform(post("/api/problems/snack-drawer-pair/submit")
+                        .header("Authorization", "Bearer " + userToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isCreated())
+                .andReturn();
+        long id = objectMapper.readTree(submitResult.getResponse().getContentAsString()).get("id").asLong();
+
+        String[][] cases = {{"{\"solveTimeSeconds\":312}", "312"},
+                {"{\"solveTimeSeconds\":null}", null},
+                {"{\"solveTimeSeconds\":0}", null}};
+        for (String[] c : cases) {
+            mockMvc.perform(patch("/api/submissions/" + id + "/solve-time")
+                            .header("Authorization", "Bearer " + userToken)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(c[0]))
+                    .andExpect(status().isNoContent());
+            var get = mockMvc.perform(get("/api/submissions/" + id)
+                            .header("Authorization", "Bearer " + userToken))
+                    .andExpect(status().isOk());
+            if (c[1] == null) {
+                get.andExpect(jsonPath("$.solveTimeSeconds").value(org.hamcrest.Matchers.nullValue()));
+            } else {
+                get.andExpect(jsonPath("$.solveTimeSeconds").value(Integer.parseInt(c[1])));
+            }
+        }
+    }
+
+    @Test
+    void setSolveTime_negative_returns400() throws Exception {
+        mockMvc.perform(patch("/api/submissions/1/solve-time")
+                        .header("Authorization", "Bearer " + userToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"solveTimeSeconds\":-5}"))
+                .andExpect(status().isBadRequest());
     }
 }

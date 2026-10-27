@@ -73,7 +73,15 @@
       "minutes": "분",
       "seconds": "초",
       "minutesLabel": "걸린 시간(분)",
-      "secondsLabel": "걸린 시간(초)"
+      "secondsLabel": "걸린 시간(초)",
+      "scheduled": "평가: {{label}} · {{date}} 복습 예정",
+      "next": {
+        "review": "다음 복습할 문제",
+        "roadmap": "로드맵의 다음 문제",
+        "list": "지금 복습할 문제가 없어요",
+        "listAction": "문제 목록 보기"
+      },
+      "noTime": "기록된 시간이 없어요. 직접 입력하거나 비워 두세요."
     },
     "badge": {
       "label": "복습 상태",

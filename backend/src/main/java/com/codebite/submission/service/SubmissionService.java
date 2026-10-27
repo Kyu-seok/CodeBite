@@ -283,8 +283,9 @@ public class SubmissionService {
         submissionRepository.save(submission);
     }
 
+    /** Stores the solve time; null or 0 stores no time, since 0:00 is never a real solve. */
     @Transactional
-    public void setSolveTime(Long id, int solveTimeSeconds, Long userId) {
+    public void setSolveTime(Long id, Integer solveTimeSeconds, Long userId) {
         Submission submission = submissionRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("error.submission.notFound", id));
 
@@ -292,7 +293,8 @@ public class SubmissionService {
             throw new ResourceNotFoundException("error.submission.notFound", id);
         }
 
-        submission.setSolveTimeSeconds(solveTimeSeconds);
+        submission.setSolveTimeSeconds(
+                solveTimeSeconds == null || solveTimeSeconds == 0 ? null : solveTimeSeconds);
         submissionRepository.save(submission);
     }
 }
