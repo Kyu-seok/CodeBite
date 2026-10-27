@@ -25,6 +25,8 @@ public class ProblemReviewState {
     private static final BigDecimal EASE_FLOOR = new BigDecimal("1.30");
     private static final BigDecimal EASE_CEIL = new BigDecimal("3.00");
     private static final BigDecimal DEFAULT_EASE = new BigDecimal("2.50");
+    private static final BigDecimal HARD_MULTIPLIER = new BigDecimal("1.2");
+    private static final BigDecimal EASY_BONUS = new BigDecimal("1.3");
 
     @Id
     @Column(name = "user_id")
@@ -91,10 +93,20 @@ public class ProblemReviewState {
                     default -> 1;
                 };
             } else {
-                BigDecimal scaled = BigDecimal.valueOf(intervalDays)
-                        .multiply(easeFactor)
-                        .setScale(0, RoundingMode.HALF_UP);
-                next = Math.max(1, scaled.intValue());
+                // Anki-style spread from the third review on, using the ease held before this
+                // rating (its ease change below only affects later reviews):
+                //   Hard = interval × 1.2
+                //   Good = interval × ease,                  at least Hard + 1
+                //   Easy = interval × ease × 1.3 (easy bonus), at least Good + 1
+                // each rounded half-up, so Hard < Good < Easy always holds.
+                int hard = Math.max(1, scale(intervalDays, HARD_MULTIPLIER));
+                int good = Math.max(hard + 1, scale(intervalDays, easeFactor));
+                int easy = Math.max(good + 1, scale(intervalDays, easeFactor.multiply(EASY_BONUS)));
+                next = switch (confidence) {
+                    case HARD -> hard;
+                    case EASY -> easy;
+                    default -> good;
+                };
             }
             this.intervalDays = next;
 
@@ -111,6 +123,10 @@ public class ProblemReviewState {
         this.lastConfidence = confidence;
         this.lastReviewedAt = reviewedAt;
         this.nextDueAt = reviewedAt.plus(intervalDays, ChronoUnit.DAYS);
+    }
+
+    private static int scale(int days, BigDecimal factor) {
+        return BigDecimal.valueOf(days).multiply(factor).setScale(0, RoundingMode.HALF_UP).intValue();
     }
 
     private static BigDecimal clampEase(BigDecimal v) {

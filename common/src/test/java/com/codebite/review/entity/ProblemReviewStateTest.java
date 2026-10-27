@@ -82,9 +82,9 @@ class ProblemReviewStateTest {
 
         s.applyReview(Confidence.HARD, T0.plus(7, ChronoUnit.DAYS));
 
-        // interval is computed with the OLD ease (2.50), then ease drops by 0.15
-        // so: round(6 * 2.50) = 15, ease 2.50 - 0.15 = 2.35
-        assertEquals(15, s.getIntervalDays());
+        // Hard scales the interval by 1.2 (not by ease): round(6 * 1.2) = 7,
+        // then ease drops by 0.15 for later reviews: 2.50 - 0.15 = 2.35
+        assertEquals(7, s.getIntervalDays());
         assertEquals(0, s.getEaseFactor().compareTo(new BigDecimal("2.35")));
     }
 
