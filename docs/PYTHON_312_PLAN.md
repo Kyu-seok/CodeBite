@@ -89,7 +89,25 @@ Proves that working solutions still pass on 3.12, not just that the starters loa
   docker exec -i codebite-postgres psql -U codebite -d codebite -tA < scripts/replay-judge0-python.sql > /tmp/replay.json
   python3 -I scripts/replay-judge0-python.py http://localhost:2358 100 . /tmp/replay.json --pause 2
   ```
-  Its tests run against a fake Judge0: `python3 -I scripts/replay-judge0-python.test.py`.
+  Its tests run against a fake Judge0, and its local judge against real tiny programs on the local Python 3.12: `python3 -I scripts/replay-judge0-python.test.py`.
+
+- **Locally, without Judge0** (for writing and checking reference solutions; never point parallel runs at production Judge0). The replay takes the path of a Python 3.12+ interpreter in place of a Judge0 URL and runs each test case in its own process, with the same driver assembly, output comparison and verdicts: exit 0 is compared as output (Accepted or Wrong Answer), an exception or syntax error is Runtime Error, a run past `--time-limit` seconds of wall-clock time (default 5) is Time Limit Exceeded, retried once. Judge0's default limit is 5 seconds of CPU time, so the local limit is stricter when the machine is busy: a local Time Limit Exceeded under load may still pass on Judge0. It refuses an interpreter older than 3.12. The system `python3` on macOS is 3.9, so name 3.12 explicitly (`/opt/homebrew/bin/python3.12`, or set `CODEBITE_PYTHON312`).
+
+  1. Migrate the local database to master first. It has been found behind (pre-#48 slugs), and a stale database judges against old slugs and test cases. Compare `docker exec codebite-postgres psql -U codebite -d codebite -tAc "select max(version::int) from flyway_schema_history where success"` with the newest `common/src/main/resources/db/migration/V*` on master. If it is behind, start the backend once from an up-to-date master checkout (`source scripts/dev-env.sh && SPRING_PROFILES_ACTIVE=dev ./gradlew :backend:bootRun`; Flyway migrates on boot), then stop it. `scripts/replay-local.sh` warns when the database is behind the checkout.
+  2. Check a set of problems (the database runs via `docker compose -f infra/docker-compose.yml up -d`):
+
+     ```bash
+     scripts/replay-local.sh spot-duplicate-locker,lru-cache
+     ```
+     It exports the local database with `scripts/replay-judge0-python.sql` into a temporary file, replays the named slugs with this checkout's `scripts/replay-solutions/`, and exits 1 unless every one was Accepted (a slug not in the database is an error). Each run makes its own export, so several worktrees can run it at once. With no slugs it replays every problem; arguments after the slugs go to the replay (e.g. `--time-limit 10`).
+
+     The same thing by hand, keeping the export:
+     ```bash
+     docker exec -i codebite-postgres psql -U codebite -d codebite -tA < scripts/replay-judge0-python.sql > /tmp/replay-local.json
+     python3 -I scripts/replay-judge0-python.py /opt/homebrew/bin/python3.12 100 . /tmp/replay-local.json --pause 0 --only spot-duplicate-locker
+     ```
+
+  A reference solution is the complete code a user would type into the editor: the starter's `Solution` class and method (`backend/src/main/resources/starters/<slug>/python.py`), or the design class the driver constructs. It may use 3.12 syntax. A problem with an Accepted Python submission in the local database (`snack-drawer-pair` and `valid-anagram` locally) replays that submission instead of its reference solution, as on production.
 
 ### 5. Deploy B: switch CodeBite to id 100 (normal push)
 - In `JudgeService.LANGUAGE_IDS`, change `"python", 71` to `"python", 100`. The backend picks the id for both Run and Submit; for Submit it sends the id to the worker in the `SubmissionEvent`.
