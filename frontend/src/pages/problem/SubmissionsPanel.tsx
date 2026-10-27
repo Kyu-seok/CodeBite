@@ -134,16 +134,17 @@ export function SubmissionsPanel({
     )
   }
 
+  // A container query, not a viewport one: the left panel is resizable, so its own width decides.
   return (
-    <div className="overflow-auto">
+    <div className="@container overflow-auto">
       {/* Header */}
-      <div className="sticky top-0 grid grid-cols-[2rem_1fr_4.5rem_5rem_5rem_4.5rem_minmax(4rem,1fr)] items-center gap-2 px-4 py-2 text-xs font-medium text-muted-foreground border-b border-border bg-background">
+      <div className="sticky top-0 grid grid-cols-[2rem_minmax(7rem,1fr)_4.5rem_4.5rem_minmax(3rem,1fr)] @xl:grid-cols-[2rem_minmax(7rem,1fr)_4.5rem_5rem_5rem_4.5rem_minmax(4rem,1fr)] items-center gap-2 px-4 py-2 text-xs font-medium text-muted-foreground border-b border-border bg-background">
         <span />
         <span>{tc("label.status")}</span>
         <span>{tc("label.language")}</span>
         <span>{tc("label.runtime")}</span>
-        <span>{tc("label.memory")}</span>
-        <span>{t("submissions.confidence")}</span>
+        <span className="hidden @xl:block">{tc("label.memory")}</span>
+        <span className="hidden @xl:block">{t("submissions.confidence")}</span>
         <span>{t("submissions.notes")}</span>
       </div>
 
@@ -153,7 +154,7 @@ export function SubmissionsPanel({
         return (
         <div
           key={s.id}
-          className="relative grid grid-cols-[2rem_1fr_4.5rem_5rem_5rem_4.5rem_minmax(4rem,1fr)] items-center gap-2 px-4 py-2.5 text-sm border-b border-border hover:bg-muted/50 transition-colors focus-within:bg-muted/50"
+          className="relative grid grid-cols-[2rem_minmax(7rem,1fr)_4.5rem_4.5rem_minmax(3rem,1fr)] @xl:grid-cols-[2rem_minmax(7rem,1fr)_4.5rem_5rem_5rem_4.5rem_minmax(4rem,1fr)] items-center gap-2 px-4 py-2.5 text-sm border-b border-border hover:bg-muted/50 transition-colors focus-within:bg-muted/50"
         >
           {/* Row number */}
           <span className="font-mono text-xs tabular-nums text-muted-foreground">
@@ -170,7 +171,7 @@ export function SubmissionsPanel({
             >
               {tc(STATUS_KEYS[s.status])}
             </button>
-            <div className="text-xs text-muted-foreground">
+            <div className="whitespace-nowrap text-xs text-muted-foreground">
               {date}
             </div>
           </div>
@@ -198,7 +199,7 @@ export function SubmissionsPanel({
           </div>
 
           {/* Memory */}
-          <div className="flex items-center gap-1 text-xs text-muted-foreground">
+          <div className="hidden items-center gap-1 text-xs text-muted-foreground @xl:flex">
             {s.memoryKb != null ? (
               <>
                 <svg className="w-3 h-3 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -215,7 +216,7 @@ export function SubmissionsPanel({
           </div>
 
           {/* Confidence */}
-          <div>
+          <div className="hidden @xl:block">
             {s.confidence ? (
               <span className={`inline-flex items-center rounded px-1.5 py-0.5 text-xs font-medium ${confidenceChipClass[s.confidence]}`}>
                 {confidenceLabel[s.confidence]}
