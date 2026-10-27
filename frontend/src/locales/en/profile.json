@@ -1,6 +1,6 @@
 {
   "header": {
-    "memberSince": "Member since {{month}} {{year}}",
+    "memberSince": "Member since {{date}}",
     "solved": "/ {{total}} solved",
     "currentStreak": "Current Streak",
     "bestStreak": "Best Streak",
@@ -8,7 +8,12 @@
   },
   "heatmap": {
     "title": "Submission Activity",
-    "submissions": "{{count}} submissions in the last year"
+    "submissions": "{{count}} submissions in the last year",
+    "less": "Less",
+    "more": "More",
+    "day_zero": "No submissions on {{date}}",
+    "day_one": "1 submission on {{date}}",
+    "day_other": "{{count}} submissions on {{date}}"
   },
   "progress": {
     "title": "Solve Progress",
@@ -38,7 +43,19 @@
     "cancel": "Cancel",
     "useRepair": "Use Repair",
     "repairFailed": "Could not repair that day. Please try again.",
-    "alreadyCounted": "That day already counts toward your Streak."
+    "alreadyCounted": "That day already counts toward your Streak.",
+    "day": {
+      "streak": "{{date}}, Streak Day",
+      "repaired": "{{date}}, Repaired Day",
+      "missedRepairable": "{{date}}, Missed Day. Use a Repair",
+      "missed": "{{date}}, Missed Day",
+      "plain": "{{date}}"
+    },
+    "legend": {
+      "streak": "Streak Day",
+      "repaired": "Repaired Day",
+      "missed": "Missed Day"
+    }
   },
   "githubLink": {
     "title": "GitHub Link",
@@ -92,5 +109,31 @@
       "tryAgain": "Open GitHub again",
       "backToProfile": "Back to profile"
     }
+  },
+  "error": {
+    "load": "Couldn't load this. Check your connection and try again.",
+    "retry": "Try again"
+  },
+  "tags": {
+    "title": "Tag Proficiency",
+    "empty": "Solve problems to see your tag proficiency.",
+    "count": "{{solved}}/{{total}}"
+  },
+  "dueReviews": {
+    "title": "Due for review",
+    "empty": "Nothing due. Review a solved problem to start the cycle.",
+    "viewAll": "View all",
+    "count_one": "1 problem",
+    "count_other": "{{count}} problems",
+    "reviewStreak_one": "1-day Review Streak",
+    "reviewStreak_other": "{{count}}-day Review Streak",
+    "overdue_one": "1 day overdue",
+    "overdue_other": "{{count}} days overdue",
+    "dueNow": "due now",
+    "due": "due {{when}}"
+  },
+  "recent": {
+    "title": "Recent Submissions",
+    "empty": "No submissions yet."
   }
 }

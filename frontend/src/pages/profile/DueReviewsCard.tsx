@@ -1,71 +1,82 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import DifficultyBadge from "@/components/ui/DifficultyBadge";
-import { getDueReviews } from "@/api/reviews";
+import Spinner from "@/components/ui/Spinner";
+import { getDueReviews, getReviewStats } from "@/api/reviews";
 import { useConfidenceLabel, confidenceTextClass } from "@/lib/confidenceColors";
 import type { DueReviewItem } from "@/types/review";
 import type { Difficulty } from "@/types/problem";
-
-function dueText(iso: string, daysOverdue: number): string {
-  if (daysOverdue >= 1) {
-    return daysOverdue === 1 ? "overdue 1d" : `overdue ${daysOverdue}d`;
-  }
-  const ms = new Date(iso).getTime() - Date.now();
-  if (ms <= 0) return "due now";
-  const days = Math.ceil(ms / (1000 * 60 * 60 * 24));
-  if (days === 1) return "due today";
-  return `due in ${days}d`;
-}
+import { CardError } from "./CardError";
 
 export function DueReviewsCard() {
+  const { t, i18n } = useTranslation("profile");
   const confidenceLabel = useConfidenceLabel();
   const [items, setItems] = useState<DueReviewItem[]>([]);
   const [total, setTotal] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [reviewStreak, setReviewStreak] = useState(0);
+  const [status, setStatus] = useState<"loading" | "ready" | "failed">("loading");
+  const [now] = useState(() => Date.now());
 
-  useEffect(() => {
+  const fetchDue = useCallback(() => {
     getDueReviews(0, 5)
       .then((res) => {
         setItems(res.data.content);
         setTotal(res.data.totalElements);
+        setStatus("ready");
       })
-      .catch(() => {})
-      .finally(() => setLoading(false));
+      .catch(() => setStatus("failed"));
+    // The Review Streak is a footnote here; if it fails to load the card simply doesn't show it.
+    getReviewStats()
+      .then((res) => setReviewStreak(res.data.currentStreak))
+      .catch(() => {});
   }, []);
 
+  useEffect(fetchDue, [fetchDue]);
+
+  const retry = () => {
+    setStatus("loading");
+    fetchDue();
+  };
+
+  const relative = new Intl.RelativeTimeFormat(i18n.language, { numeric: "auto" });
+  const dueText = (iso: string, daysOverdue: number) => {
+    if (daysOverdue >= 1) return t("dueReviews.overdue", { count: daysOverdue });
+    const ms = new Date(iso).getTime() - now;
+    if (ms <= 0) return t("dueReviews.dueNow");
+    return t("dueReviews.due", { when: relative.format(Math.ceil(ms / 86_400_000) - 1, "day") });
+  };
+
   return (
-    <div className="rounded-xl border border-border bg-card p-5">
-      <div className="mb-4 flex items-baseline justify-between">
-        <h3 className="text-sm font-medium text-foreground">Due for review</h3>
-        <div className="flex items-baseline gap-3">
-          {total > 0 && (
-            <span className="text-xs tabular-nums text-muted-foreground">
-              {total} {total === 1 ? "problem" : "problems"}
-            </span>
+    <section className="rounded-xl border border-border bg-card p-5">
+      <div className="mb-4 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+        <h2 className="text-sm font-medium text-foreground">{t("dueReviews.title")}</h2>
+        <div className="flex items-baseline gap-3 text-xs text-muted-foreground">
+          {reviewStreak > 0 && (
+            <span className="tabular-nums">{t("dueReviews.reviewStreak", { count: reviewStreak })}</span>
           )}
+          {total > 0 && <span className="tabular-nums">{t("dueReviews.count", { count: total })}</span>}
           <Link
             to="/reviews"
-            className="text-xs text-muted-foreground hover:text-accent transition-colors"
+            className="rounded-sm transition-colors hover:text-accent-700 dark:hover:text-accent-400"
           >
-            View all →
+            {t("dueReviews.viewAll")}
           </Link>
         </div>
       </div>
 
-      {loading ? (
-        <div className="flex h-20 items-center justify-center">
-          <div className="h-5 w-5 animate-spin rounded-full border-2 border-muted border-t-accent" />
-        </div>
+      {status === "loading" ? (
+        <Spinner size="sm" className="h-20 p-0" />
+      ) : status === "failed" ? (
+        <CardError onRetry={retry} />
       ) : items.length === 0 ? (
         <div className="flex h-20 items-center justify-center">
-          <p className="text-sm text-muted-foreground">
-            Nothing due — review a solved problem to start the cycle.
-          </p>
+          <p className="text-sm text-muted-foreground">{t("dueReviews.empty")}</p>
         </div>
       ) : (
-        <div className="space-y-0 divide-y divide-border/50">
+        <ul className="space-y-0 divide-y divide-border/50">
           {items.map((it) => (
-            <div
+            <li
               key={it.problemId}
               className="flex items-center justify-between gap-4 py-2.5 first:pt-0 last:pb-0"
             >
@@ -73,7 +84,7 @@ export function DueReviewsCard() {
                 <DifficultyBadge difficulty={it.difficulty as Difficulty} />
                 <Link
                   to={`/problems/${it.slug}`}
-                  className="truncate text-sm text-foreground hover:text-accent transition-colors"
+                  className="truncate rounded-sm text-sm text-foreground transition-colors hover:text-accent-700 dark:hover:text-accent-400"
                 >
                   {it.title}
                 </Link>
@@ -85,14 +96,14 @@ export function DueReviewsCard() {
                 >
                   {confidenceLabel(it.lastConfidence)}
                 </span>
-                <span className="w-24 text-right text-xs tabular-nums text-muted-foreground">
+                <span className="min-w-24 text-right text-xs tabular-nums text-muted-foreground">
                   {dueText(it.nextDueAt, it.daysOverdue)}
                 </span>
               </div>
-            </div>
+            </li>
           ))}
-        </div>
+        </ul>
       )}
-    </div>
+    </section>
   );
 }

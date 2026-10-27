@@ -73,6 +73,15 @@ export function StreakCalendarCard() {
   const isMissed = (date: string) =>
     !counted.has(date) && firstStreakDate !== null && date > firstStreakDate && date < today;
 
+  const hasMissed = monthGrid(month).some((date) => date !== null && isMissed(date));
+  const formatDay = (date: string) =>
+    new Date(`${date}T00:00:00Z`).toLocaleDateString(i18n.language, {
+      month: 'long',
+      day: 'numeric',
+      weekday: 'long',
+      timeZone: 'UTC',
+    });
+
   const firstMonth = (firstStreakDate ?? today).slice(0, 7);
   const currentMonth = today.slice(0, 7);
   const monthLabel = new Date(`${month}-01T00:00:00Z`).toLocaleDateString(i18n.language, {
@@ -106,9 +115,9 @@ export function StreakCalendarCard() {
   };
 
   return (
-    <div className="rounded-xl border border-border bg-card p-5">
+    <section className="rounded-xl border border-border bg-card p-5">
       <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
-        <h3 className="text-sm font-medium text-foreground">{t('streakCalendar.title')}</h3>
+        <h2 className="text-sm font-medium text-foreground">{t('streakCalendar.title')}</h2>
         <span className="text-xs text-muted-foreground tabular-nums">
           {t('streakCalendar.repairs', { count: summary.repairs })}
           {' · '}
@@ -127,7 +136,7 @@ export function StreakCalendarCard() {
         >
           <ChevronLeft className="h-4 w-4" />
         </Button>
-        <span className="text-sm font-medium text-foreground">{monthLabel}</span>
+        <span aria-live="polite" className="text-sm font-medium text-foreground">{monthLabel}</span>
         <Button
           variant="ghost"
           size="icon"
@@ -143,7 +152,7 @@ export function StreakCalendarCard() {
       {/* Capped so square cells stay day-sized instead of filling the profile's width. */}
       <div className="mx-auto grid max-w-sm grid-cols-7 gap-1 text-center">
         {WEEKDAYS.map((d) => (
-          <span key={d} className="pb-1 text-[11px] text-muted-foreground">
+          <span key={d} aria-hidden className="pb-1 text-xs text-muted-foreground">
             {t(`streakCalendar.weekdays.${d}`)}
           </span>
         ))}
@@ -153,32 +162,79 @@ export function StreakCalendarCard() {
           const repaired = counted.get(date);
           const missed = isMissed(date);
           const canRepair = missed && summary.repairs > 0;
+          // Each day names its date and kind, so the grid doesn't rely on colour, a check or a
+          // dashed border alone.
+          const label = t(
+            repaired === false
+              ? 'streakCalendar.day.streak'
+              : repaired === true
+                ? 'streakCalendar.day.repaired'
+                : canRepair
+                  ? 'streakCalendar.day.missedRepairable'
+                  : missed
+                    ? 'streakCalendar.day.missed'
+                    : 'streakCalendar.day.plain',
+            { date: formatDay(date) },
+          );
+          const className = cn(
+            'relative flex aspect-square items-center justify-center rounded-md text-xs tabular-nums transition-colors',
+            repaired === false && 'bg-success-500/20 font-medium text-success-700 dark:text-success-400',
+            repaired === true && 'bg-success-500/10 font-medium text-success-700 dark:text-success-400',
+            missed && 'border border-dashed border-foreground/30 text-muted-foreground',
+            canRepair && 'cursor-pointer text-foreground hover:border-foreground/60 hover:bg-secondary',
+            repaired === undefined && !missed && 'text-muted-foreground/60',
+            date === today && 'ring-1 ring-foreground/30',
+          );
+          const content =
+            repaired !== undefined ? <Check aria-hidden className="h-3.5 w-3.5" strokeWidth={3} /> : day;
 
-          return (
+          // Only a Missed Day with a Repair to spend is a control; every other day is a labelled cell.
+          return canRepair ? (
             <button
               key={date}
               type="button"
-              disabled={!canRepair}
+              aria-label={label}
+              aria-current={date === today ? 'date' : undefined}
               onClick={() => {
                 setError(null);
                 setPending(date);
               }}
-              title={missed && !canRepair ? t('streakCalendar.noRepairs') : undefined}
-              className={cn(
-                'relative flex aspect-square items-center justify-center rounded-md text-xs tabular-nums transition-colors',
-                repaired === false && 'bg-success-500/20 font-medium text-success-600 dark:text-success-400',
-                repaired === true && 'bg-success-500/10 font-medium text-success-600/80 dark:text-success-400/80',
-                missed && 'text-muted-foreground',
-                canRepair && 'cursor-pointer border border-dashed border-foreground/30 text-foreground hover:border-foreground/60 hover:bg-secondary',
-                repaired === undefined && !missed && 'text-muted-foreground/50',
-                date === today && 'ring-1 ring-foreground/30',
-              )}
+              className={className}
             >
-              {repaired !== undefined ? <Check className="h-3.5 w-3.5" strokeWidth={3} /> : day}
+              {content}
             </button>
+          ) : (
+            <span key={date} className={className} aria-current={date === today ? 'date' : undefined}>
+              <span aria-hidden className="contents">
+                {content}
+              </span>
+              <span className="sr-only">{label}</span>
+            </span>
           );
         })}
       </div>
+
+      <ul className="mx-auto mt-3 flex max-w-sm flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+        <li className="flex items-center gap-1.5">
+          <span aria-hidden className="flex h-3.5 w-3.5 items-center justify-center rounded-sm bg-success-500/20 text-success-700 dark:text-success-400">
+            <Check className="h-2.5 w-2.5" strokeWidth={3} />
+          </span>
+          {t('streakCalendar.legend.streak')}
+        </li>
+        <li className="flex items-center gap-1.5">
+          <span aria-hidden className="flex h-3.5 w-3.5 items-center justify-center rounded-sm bg-success-500/10 text-success-700 dark:text-success-400">
+            <Check className="h-2.5 w-2.5" strokeWidth={3} />
+          </span>
+          {t('streakCalendar.legend.repaired')}
+        </li>
+        <li className="flex items-center gap-1.5">
+          <span aria-hidden className="h-3.5 w-3.5 rounded-sm border border-dashed border-foreground/30" />
+          {t('streakCalendar.legend.missed')}
+        </li>
+      </ul>
+      {hasMissed && summary.repairs === 0 && (
+        <p className="mx-auto mt-2 max-w-sm text-xs text-muted-foreground">{t('streakCalendar.noRepairs')}</p>
+      )}
 
       <Dialog open={pending !== null} onOpenChange={(open) => !open && setPending(null)}>
         <DialogContent className="max-w-sm">
@@ -197,7 +253,11 @@ export function StreakCalendarCard() {
                 })}
             </DialogDescription>
           </DialogHeader>
-          {error && <p className="text-sm text-error-500">{error}</p>}
+          {error && (
+            <p role="alert" className="text-sm text-error-700 dark:text-error-400">
+              {error}
+            </p>
+          )}
           <DialogFooter>
             <Button variant="outline" size="sm" onClick={() => setPending(null)} disabled={repairing}>
               {t('streakCalendar.cancel')}
@@ -208,6 +268,6 @@ export function StreakCalendarCard() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+    </section>
   );
 }
