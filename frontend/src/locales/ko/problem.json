@@ -87,6 +87,8 @@
     "outputLabel": "출력: ",
     "stderr": "표준 에러:",
     "compilationError": "컴파일 에러:",
+    "runtimeError": "런타임 에러:",
+    "noErrorDetails": "채점 서버가 자세한 내용을 보내지 않았습니다.",
     "testResults": "테스트 결과",
     "test": "테스트 {{n}}",
     "judging": "채점 중...",
@@ -99,12 +101,13 @@
     "customExpectedLabel": "예상 출력 (선택)",
     "customEmptyHelp": "최대 {{max}}개의 사용자 테스트 케이스를 추가할 수 있습니다. 샘플 테스트와 동일한 입력 형식을 사용하세요.",
     "finished": "완료",
+    "passedCount": "{{passed}}/{{total}} 통과",
     "errorLine": "{{line}}행: {{severity}}: {{message}}",
     "severity": {
       "error": "오류",
       "warning": "경고"
     },
-    "compilerWarnings": "컴파일러 경고:"
+    "warning": "경고:"
   },
   "solutions": {
     "shareYourSolution": "내 풀이 공유하기",
@@ -265,7 +268,7 @@
     "judgingSlow": "채점이 예상보다 오래 걸리고 있습니다. 페이지를 새로고침해 결과를 확인하세요.",
     "resultFetchFailed": "결과를 불러오지 못했습니다. 페이지를 새로고침해 확인하세요.",
     "judgingElapsed": "{{seconds}}초",
-    "judgingTypical": "{{language}}는 보통 {{seconds}}초 정도 걸립니다",
+    "judgingTypical": "보통 ~{{seconds}}초",
     "resetConfirmTitle": "코드를 초기화할까요?",
     "resetConfirmBody": "{{language}} 코드가 시작 템플릿으로 돌아갑니다. 지금 코드는 복구할 수 없습니다.",
     "resetConfirm": "코드 초기화",

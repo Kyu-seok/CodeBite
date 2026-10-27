@@ -72,6 +72,7 @@ export default function ProblemDetailPage() {
   const [result, setResult] = useState<SubmissionResponse | null>(null)
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [running, setRunning] = useState(false)
+  const [runStartedAt, setRunStartedAt] = useState<number | null>(null)
   const [runResult, setRunResult] = useState<RunResponse | null>(null)
   const [runError, setRunError] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState("testcases")
@@ -432,6 +433,7 @@ export default function ProblemDetailPage() {
 
   const handleRun = async () => {
     setRunning(true)
+    setRunStartedAt(Date.now())
     setRunError(null)
     setRunResult(null)
     setResult(null)
@@ -455,6 +457,7 @@ export default function ProblemDetailPage() {
       }
     } finally {
       setRunning(false)
+      setRunStartedAt(null)
     }
   }
 
@@ -566,6 +569,7 @@ export default function ProblemDetailPage() {
             running={running}
             submitting={submitting}
             submitStartedAt={submitStartedAt}
+            runStartedAt={runStartedAt}
             language={activeLang}
             activeTab={activeTab}
             userSource={code}

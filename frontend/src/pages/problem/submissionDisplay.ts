@@ -23,19 +23,6 @@ export function languageLabel(code: string) {
   return LANGUAGE_LABELS[code] ?? code;
 }
 
-// Measured submit-to-result times (README); Java is bounded by per-case JVM startup.
-const TYPICAL_JUDGE_SECONDS: Record<string, number> = {
-  python: 2,
-  javascript: 2,
-  cpp: 4,
-  c: 4,
-  java: 8,
-};
-
-export function typicalJudgeSeconds(code: string): number | undefined {
-  return TYPICAL_JUDGE_SECONDS[code];
-}
-
 /** Text colour for a verdict: the 700 step on paper, the 400 step on night (Wash-and-Text rule). */
 export const STATUS_TEXT_CLASS: Record<SubmissionStatus, string> = {
   ACCEPTED: 'text-success-700 dark:text-success-400',

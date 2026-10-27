@@ -87,6 +87,8 @@
     "outputLabel": "Output: ",
     "stderr": "Stderr:",
     "compilationError": "Compilation Error:",
+    "runtimeError": "Runtime Error:",
+    "noErrorDetails": "The judge reported no further details.",
     "testResults": "Test Results",
     "test": "Test {{n}}",
     "judging": "Judging...",
@@ -99,12 +101,13 @@
     "customExpectedLabel": "Expected output (optional)",
     "customEmptyHelp": "Add up to {{max}} custom test cases. Use the same input format as the sample test cases.",
     "finished": "Finished",
+    "passedCount": "{{passed}}/{{total}} passed",
     "errorLine": "Line {{line}}: {{severity}}: {{message}}",
     "severity": {
       "error": "error",
       "warning": "warning"
     },
-    "compilerWarnings": "Compiler warnings:"
+    "warning": "Warning:"
   },
   "solutions": {
     "shareYourSolution": "Share Your Solution",
@@ -265,7 +268,7 @@
     "judgingSlow": "Judging is taking longer than expected. Refresh the page to check the result.",
     "resultFetchFailed": "Couldn't load the result. Refresh the page to check it.",
     "judgingElapsed": "{{seconds}}s",
-    "judgingTypical": "Usually about {{seconds}}s for {{language}}",
+    "judgingTypical": "usually ~{{seconds}}s",
     "resetConfirmTitle": "Reset your code?",
     "resetConfirmBody": "Your {{language}} code goes back to the starter template. Your current code can't be recovered.",
     "resetConfirm": "Reset code",

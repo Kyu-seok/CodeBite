@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/Tabs';
 import { Button } from '@/components/ui/Button';
@@ -20,9 +20,11 @@ import type {
   RunResponse,
   RunTestCaseResult,
   SubmissionResponse,
+  SubmissionStatus,
 } from '@/types/submission';
 import { CustomTestsEditor } from './CustomTestsEditor';
-import { STATUS_KEYS, languageLabel, typicalJudgeSeconds } from './submissionDisplay';
+import { STATUS_KEYS } from './submissionDisplay';
+import { estimatedJudgeSeconds, type JudgeMode } from './judgeTimeEstimates';
 
 function hasTemplateError(errs?: CodeError[] | null): boolean {
   return !!errs?.some((e) => !e.inUserCode);
@@ -37,6 +39,24 @@ function collectTemplateError(
   return false;
 }
 
+/** Passed out of judged cases; a custom case without an expected output isn't judged, so it isn't counted. */
+function passCount(results: { status: string; judged?: boolean }[]) {
+  const judged = results.filter((r) => r.judged !== false);
+  return {
+    passed: judged.filter((r) => r.status === 'ACCEPTED').length,
+    total: judged.length,
+  };
+}
+
+/** A case that didn't pass. An unjudged custom case fails only when it crashed or timed out. */
+function caseFailed(r: { status: SubmissionStatus; judged?: boolean }) {
+  if (r.status === 'ACCEPTED' || r.status === 'PENDING') return false;
+  if (r.judged === false) {
+    return r.status === 'RUNTIME_ERROR' || r.status === 'TIME_LIMIT_EXCEEDED' || r.status === 'COMPILATION_ERROR';
+  }
+  return true;
+}
+
 const isMac =
   typeof navigator !== 'undefined' && /Mac/.test(navigator.userAgent);
 
@@ -49,6 +69,7 @@ interface TestPanelProps {
   running: boolean;
   submitting: boolean;
   submitStartedAt: number | null;
+  runStartedAt: number | null;
   language: string;
   activeTab: string;
   userSource: string;
@@ -66,32 +87,77 @@ function renderableErrors(errors?: CodeError[] | null): CodeError[] {
   return (errors ?? []).filter((e) => e.inUserCode && e.line != null);
 }
 
-/** Warnings alone mean the code compiled, so they must not be headed "Compilation Error". */
-function diagnosticsLabelKey(errors: CodeError[], fallback: string): string {
-  return errors.length > 0 && errors.every((e) => e.severity === 'WARNING')
-    ? 'test.compilerWarnings'
-    : fallback;
+/** Label for a case's fatal output, by what actually went wrong. */
+function errorLabelKey(status: SubmissionStatus, hasCompileOutput: boolean): string {
+  if (status === 'RUNTIME_ERROR') return 'test.runtimeError';
+  if (status === 'COMPILATION_ERROR' || hasCompileOutput) return 'test.compilationError';
+  return 'test.stderr';
+}
+
+/** Red wash for what stopped the code, amber for what didn't; both keep the night-mode 950 wash. */
+const TONE_CLASS = {
+  error: 'bg-error-100 text-error-700 dark:bg-error-950 dark:text-error-400',
+  warning: 'bg-warning-100 text-warning-700 dark:bg-warning-950 dark:text-warning-400',
+} as const;
+
+type Tone = keyof typeof TONE_CLASS;
+
+function OutputBlock({ label, tone, children }: { label: string; tone: Tone; children: ReactNode }) {
+  return (
+    <div className="mt-1">
+      <span className="text-xs text-muted-foreground">{label}</span>
+      <pre className={cn('mt-1 overflow-auto rounded p-2 text-xs', TONE_CLASS[tone])}>{children}</pre>
+    </div>
+  );
+}
+
+/**
+ * Line diagnostics split by severity: errors under the fatal label in red, warnings (the code
+ * still compiled and ran) under "Warning" in amber, never under "Compilation Error".
+ */
+function Diagnostics({
+  errors,
+  errorLabel,
+  userSource,
+}: {
+  errors: CodeError[];
+  errorLabel: string;
+  userSource: string;
+}) {
+  const { t } = useTranslation('problem');
+  const fatal = errors.filter((e) => e.severity !== 'WARNING');
+  const warnings = errors.filter((e) => e.severity === 'WARNING');
+  return (
+    <>
+      {fatal.length > 0 && (
+        <div className="mt-1">
+          <span className="text-xs text-muted-foreground">{errorLabel}</span>
+          <ErrorDisplay errors={fatal} tone="error" userSource={userSource} />
+        </div>
+      )}
+      {warnings.length > 0 && (
+        <div className="mt-1">
+          <span className="text-xs text-muted-foreground">{t('test.warning')}</span>
+          <ErrorDisplay errors={warnings} tone="warning" userSource={userSource} />
+        </div>
+      )}
+    </>
+  );
 }
 
 function ErrorDisplay({
   errors,
+  tone,
   userSource,
 }: {
   errors: CodeError[];
+  tone: Tone;
   userSource: string;
 }) {
   const { t } = useTranslation('problem');
   const sourceLines = userSource.split('\n');
-  // Warnings alone (e.g. a missing return) take amber; red is kept for real errors.
-  const onlyWarnings = errors.every((e) => e.severity === 'WARNING');
   return (
-    <div
-      className={cn(
-        'mt-1 space-y-2 rounded p-2 text-xs',
-        onlyWarnings
-          ? 'bg-warning-100 text-warning-700 dark:bg-warning-950 dark:text-warning-400'
-          : 'bg-error-100 text-error-700 dark:bg-error-950 dark:text-error-400',
-      )}>
+    <div className={cn('mt-1 space-y-2 overflow-x-auto rounded p-2 text-xs', TONE_CLASS[tone])}>
       {errors.map((e, i) => {
         const snippet = e.line != null ? sourceLines[e.line - 1] : undefined;
         const caret =
@@ -134,6 +200,9 @@ export function ResultAnnouncer({
 }: ResultAnnouncerProps) {
   const { t } = useTranslation('problem');
   const { t: tc } = useTranslation('common');
+  const counted = runResult ?? (submitResult?.status !== 'PENDING' ? submitResult : null);
+  const count = counted ? passCount(counted.results) : null;
+  const countText = count && count.total > 0 ? `, ${t('test.passedCount', count)}` : '';
   const announcement = running
     ? t('test.running')
     : submitting
@@ -141,9 +210,9 @@ export function ResultAnnouncer({
       : runError || submitError
         ? (runError || submitError)!
         : runResult
-          ? `${t('test.runResults')}: ${tc(STATUS_KEYS[runResult.overallStatus])}`
+          ? `${t('test.runResults')}: ${tc(STATUS_KEYS[runResult.overallStatus])}${countText}`
           : submitResult
-            ? tc(STATUS_KEYS[submitResult.status])
+            ? `${tc(STATUS_KEYS[submitResult.status])}${countText}`
             : '';
   return (
     <p role="status" aria-live="polite" className="sr-only">
@@ -161,6 +230,7 @@ export function TestPanel({
   running,
   submitting,
   submitStartedAt,
+  runStartedAt,
   language,
   activeTab,
   userSource,
@@ -174,6 +244,29 @@ export function TestPanel({
   isMaximized,
 }: TestPanelProps) {
   const { t } = useTranslation('problem');
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const jumpedForRef = useRef<unknown>(null);
+  const settled = running || submitting ? null : (runResult ?? submitResult);
+
+  // Jump to the first failing case once per result, as soon as the output tab shows it.
+  useEffect(() => {
+    if (!settled || jumpedForRef.current === settled || activeTab !== 'output') return;
+    const frame = requestAnimationFrame(() => {
+      const container = scrollRef.current;
+      const target = container?.querySelector<HTMLElement>('[data-failed]');
+      jumpedForRef.current = settled;
+      if (!container || !target) return;
+      const top =
+        container.scrollTop +
+        target.getBoundingClientRect().top -
+        container.getBoundingClientRect().top -
+        12;
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      container.scrollTo({ top, behavior: reduce ? 'auto' : 'smooth' });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [settled, activeTab]);
+
   return (
     <div className="flex h-full flex-col">
       <Tabs
@@ -216,7 +309,7 @@ export function TestPanel({
           </div>
         </div>
 
-        <div className="flex-1 overflow-auto p-3">
+        <div ref={scrollRef} className="flex-1 overflow-auto p-3">
           {collectTemplateError(runResult, submitResult) && (
             <div className="mb-3 rounded-lg border border-warning-200 bg-warning-100 p-3 text-sm text-warning-700 dark:border-warning-900 dark:bg-warning-950 dark:text-warning-400">
               {t('editor.templateErrorBanner')}
@@ -273,6 +366,7 @@ export function TestPanel({
               running={running}
               submitting={submitting}
               submitStartedAt={submitStartedAt}
+              runStartedAt={runStartedAt}
               language={language}
               runResult={runResult}
               runError={runError}
@@ -334,6 +428,7 @@ function OutputContent({
   running,
   submitting,
   submitStartedAt,
+  runStartedAt,
   language,
   runResult,
   runError,
@@ -345,6 +440,7 @@ function OutputContent({
   | 'running'
   | 'submitting'
   | 'submitStartedAt'
+  | 'runStartedAt'
   | 'language'
   | 'runResult'
   | 'runError'
@@ -355,21 +451,21 @@ function OutputContent({
   const { t } = useTranslation('problem');
   const { t: tc } = useTranslation('common');
 
-  if (running) {
+  if (running || submitting) {
     return (
       <div className="flex flex-col items-center gap-2 py-8">
-        <Spinner announce={false} />
-        <p className="text-sm text-muted-foreground">{t('test.running')}</p>
-      </div>
-    );
-  }
-
-  if (submitting) {
-    return (
-      <div className="flex flex-col items-center gap-2 py-8">
-        <Spinner announce={false} />
-        <p className="text-sm text-muted-foreground">{t('test.judging')}</p>
-        <JudgingClock startedAt={submitStartedAt} language={language} />
+        {/* Under reduced motion the ticking clock alone shows progress. */}
+        <div className="motion-reduce:hidden">
+          <Spinner announce={false} />
+        </div>
+        <p className="text-sm text-muted-foreground">
+          {t(running ? 'test.running' : 'test.judging')}
+        </p>
+        <JudgingClock
+          startedAt={running ? runStartedAt : submitStartedAt}
+          language={language}
+          mode={running ? 'run' : 'submit'}
+        />
       </div>
     );
   }
@@ -383,6 +479,7 @@ function OutputContent({
   }
 
   if (runResult) {
+    const count = passCount(runResult.results);
     const samples = runResult.results.filter((r) => !r.isCustom);
     const customs = runResult.results.filter((r) => r.isCustom);
     return (
@@ -391,7 +488,10 @@ function OutputContent({
           <span className="text-sm font-semibold text-foreground">
             {t('test.runResults')}
           </span>
-          <StatusBadge status={runResult.overallStatus} />
+          <div className="flex items-center gap-2">
+            {count.total > 0 && <PassCount {...count} />}
+            <StatusBadge status={runResult.overallStatus} />
+          </div>
         </div>
         {samples.length > 0 && (
           <RunResultsSection
@@ -414,10 +514,14 @@ function OutputContent({
   }
 
   if (submitResult) {
+    const count = passCount(submitResult.results);
     return (
       <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <StatusBadge status={submitResult.status} />
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <StatusBadge status={submitResult.status} />
+            {submitResult.status !== 'PENDING' && count.total > 0 && <PassCount {...count} />}
+          </div>
           <div className="space-x-3 font-mono text-xs tabular-nums text-muted-foreground">
             {submitResult.runtimeMs != null && (
               <span>{tc('label.runtime')}: {submitResult.runtimeMs}ms</span>
@@ -435,6 +539,7 @@ function OutputContent({
             {submitResult.results.map((r, i) => (
               <div
                 key={r.testCaseId}
+                data-failed={caseFailed(r) || undefined}
                 className="border-t border-border pt-2 text-sm first:border-t-0 first:pt-0">
                 <div className="mb-1 flex items-center justify-between">
                   <span className="font-medium text-muted-foreground">
@@ -466,18 +571,7 @@ function OutputContent({
                     </code>
                   </p>
                 )}
-                {(() => {
-                  const visible = renderableErrors(r.errors);
-                  if (visible.length === 0) return null;
-                  return (
-                    <div className="mt-1">
-                      <span className="text-xs text-muted-foreground">
-                        {t(diagnosticsLabelKey(visible, 'test.compilationError'))}
-                      </span>
-                      <ErrorDisplay errors={visible} userSource={userSource} />
-                    </div>
-                  );
-                })()}
+                <CaseOutput status={r.status} errors={r.errors} userSource={userSource} />
               </div>
             ))}
           </div>
@@ -493,8 +587,29 @@ function OutputContent({
   );
 }
 
-/** Elapsed judging time against the measured typical wait, so a slow Java judge reads as expected. */
-function JudgingClock({ startedAt, language }: { startedAt: number | null; language: string }) {
+function PassCount({ passed, total }: { passed: number; total: number }) {
+  const { t } = useTranslation('problem');
+  return (
+    <span className="font-mono text-xs tabular-nums text-muted-foreground">
+      {t('test.passedCount', { passed, total })}
+    </span>
+  );
+}
+
+/**
+ * Elapsed judging time against the usual wait for this language, so a slow Java judge reads as
+ * expected. Deliberately not a live region: the page's ResultAnnouncer speaks the start and the
+ * result, and a screen reader reaches the current count by reading the panel.
+ */
+function JudgingClock({
+  startedAt,
+  language,
+  mode,
+}: {
+  startedAt: number | null;
+  language: string;
+  mode: JudgeMode;
+}) {
   const { t } = useTranslation('problem');
   const [now, setNow] = useState(() => Date.now());
 
@@ -506,14 +621,14 @@ function JudgingClock({ startedAt, language }: { startedAt: number | null; langu
 
   if (startedAt == null) return null;
   const seconds = Math.max(0, Math.floor((now - startedAt) / 1000));
-  const typical = typicalJudgeSeconds(language);
+  const typical = estimatedJudgeSeconds(language, mode);
   return (
     <p className="text-xs text-muted-foreground">
       <span className="font-mono tabular-nums text-foreground">
         {t('workspace.judgingElapsed', { seconds })}
       </span>
       {typical != null && (
-        <span> · {t('workspace.judgingTypical', { seconds: typical, language: languageLabel(language) })}</span>
+        <span> · {t('workspace.judgingTypical', { seconds: typical })}</span>
       )}
     </p>
   );
@@ -541,7 +656,10 @@ function RunResultsSection({
         </h3>
       )}
       {results.map((r, i) => (
-        <div key={i} className="border-t border-border pt-2 text-sm first:border-t-0 first:pt-0">
+        <div
+          key={i}
+          data-failed={caseFailed(r) || undefined}
+          className="border-t border-border pt-2 text-sm first:border-t-0 first:pt-0">
           <div className="mb-1 flex items-center justify-between">
             <span className="font-medium text-muted-foreground">
               {t(labelKey, { n: i + 1 })}
@@ -574,46 +692,69 @@ function RunResultsSection({
               </code>
             </p>
           )}
-          {(() => {
-            const visible = renderableErrors(r.errors);
-            const label = t(
-              diagnosticsLabelKey(visible, r.compileOutput ? 'test.compilationError' : 'test.stderr'),
-            );
-            if (visible.length > 0) {
-              return (
-                <div className="mt-1">
-                  <span className="text-xs text-muted-foreground">{label}</span>
-                  <ErrorDisplay errors={visible} userSource={userSource} />
-                </div>
-              );
-            }
-            if (r.stderr) {
-              return (
-                <div className="mt-1">
-                  <span className="text-xs text-muted-foreground">{t('test.stderr')}</span>
-                  <pre className="mt-1 overflow-auto rounded bg-error-100 p-2 text-xs text-error-700 dark:bg-error-950 dark:text-error-400">
-                    {r.stderr}
-                  </pre>
-                </div>
-              );
-            }
-            if (r.compileOutput) {
-              return (
-                <div className="mt-1">
-                  <span className="text-xs text-muted-foreground">
-                    {t('test.compilationError')}
-                  </span>
-                  <pre className="mt-1 overflow-auto rounded bg-warning-100 p-2 text-xs text-warning-700 dark:bg-warning-950 dark:text-warning-400">
-                    {r.compileOutput}
-                  </pre>
-                </div>
-              );
-            }
-            return null;
-          })()}
+          <CaseOutput
+            status={r.status}
+            errors={r.errors}
+            stderr={r.stderr}
+            compileOutput={r.compileOutput}
+            userSource={userSource}
+          />
         </div>
       ))}
     </div>
+  );
+}
+
+function isFatalStatus(status: SubmissionStatus) {
+  return status === 'RUNTIME_ERROR' || status === 'COMPILATION_ERROR';
+}
+
+/**
+ * A case's diagnostics and raw output, shared by Run and Submit. Red or amber is decided by the
+ * case's status, never by what the parser found: a fatal case with no fatal line parsed (an
+ * unparsed error, -Werror) shows its raw output in red; output from code that still ran is an
+ * amber Warning. Submit results carry no raw stderr or compiler output.
+ */
+function CaseOutput({
+  status,
+  errors,
+  stderr,
+  compileOutput,
+  userSource,
+}: {
+  status: SubmissionStatus;
+  errors?: CodeError[] | null;
+  stderr?: string | null;
+  compileOutput?: string | null;
+  userSource: string;
+}) {
+  const { t } = useTranslation('problem');
+  const visible = renderableErrors(errors);
+  const errorLabel = t(errorLabelKey(status, !!compileOutput));
+  const hasFatalLine = visible.some((e) => e.severity !== 'WARNING');
+  let raw: ReactNode = null;
+  if (isFatalStatus(status)) {
+    if (!hasFatalLine) {
+      const unplaced = (errors ?? [])
+        .filter((e) => e.inUserCode && e.line == null && e.severity !== 'WARNING')
+        .map((e) => e.message)
+        .join('\n');
+      raw = (
+        <OutputBlock label={errorLabel} tone="error">
+          {stderr || compileOutput || unplaced || t('test.noErrorDetails')}
+        </OutputBlock>
+      );
+    }
+  } else if (stderr) {
+    raw = <OutputBlock label={t('test.warning')} tone="warning">{stderr}</OutputBlock>;
+  } else if (compileOutput && visible.length === 0) {
+    raw = <OutputBlock label={t('test.warning')} tone="warning">{compileOutput}</OutputBlock>;
+  }
+  return (
+    <>
+      <Diagnostics errors={visible} errorLabel={errorLabel} userSource={userSource} />
+      {raw}
+    </>
   );
 }
 
