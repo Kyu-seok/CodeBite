@@ -13,15 +13,21 @@ Usage:
   python3 -I scripts/replay-judge0-python.py http://192.168.219.200:2359 100 . /tmp/replay.json [--pause 2] [--only slug,...]
 
 Port 2359 is the throwaway test stack; the gate itself runs on production Judge0 (localhost:2358 on mini).
+
+Locally, name a Python 3.12+ interpreter instead of a Judge0 URL. Each test case then runs in its own
+process (a time limit of --time-limit seconds, Judge0's default CPU limit), with the same verdicts:
+  python3 -I scripts/replay-judge0-python.py /opt/homebrew/bin/python3.12 100 . /tmp/replay-local.json --pause 0 --only slug,...
 """
-import argparse, base64, json, re, sys, time, urllib.request
+import argparse, base64, json, os, re, subprocess, sys, tempfile, time, urllib.request
 from collections import namedtuple
 from pathlib import Path
 
 # Judge0 status ids: 1 In Queue, 2 Processing, 3 Accepted, 5 TLE, 6 Compilation Error, 7-12 runtime errors.
 PROCESSING, ACCEPTED, TLE, COMPILATION_ERROR, RUNTIME_ERRORS = 2, 3, 5, 6, range(7, 13)
+NZEC = 11  # Runtime Error (NZEC): how Judge0 reports a Python exception or syntax error
 BATCH_SIZE = 20  # Judge0's default MAX_SUBMISSION_BATCH_SIZE
 POLL_TIMEOUT_S = 60
+LOCAL_TIME_LIMIT_S = 5  # Judge0's default CPU_TIME_LIMIT
 
 Report = namedtuple("Report", "passed failed nothing")
 # case is 1-based, in order_index order (None when no case ran); detail is the last line of the output.
@@ -122,6 +128,51 @@ def judge0(url):
     return run
 
 
+def local_judge(python, time_limit=LOCAL_TIME_LIMIT_S):
+    """A judge on a local Python: runs the source once per stdin and answers in Judge0's shape.
+
+    Exit 0 is Judge0's "ran" status (the replay compares the output), any other exit is a runtime
+    error (a syntax error included, as Judge0 reports Python's), and a run past time_limit seconds
+    is Time Limit Exceeded. The environment matches the id 100 image's run_cmd.
+    Raises ValueError unless python is Python 3.12 or newer, so a pass can't come from the wrong interpreter."""
+    try:
+        version = subprocess.run([python, "-c", "import sys; print('.'.join(map(str, sys.version_info[:3])))"],
+                                 capture_output=True, text=True, timeout=30).stdout.strip()
+        major_minor = tuple(int(n) for n in version.split(".")[:2])
+    except (OSError, ValueError, subprocess.TimeoutExpired):
+        raise ValueError(f"{python} is not a Python interpreter")
+    if len(major_minor) != 2:
+        raise ValueError(f"{python} is not a Python interpreter")
+    if major_minor < (3, 12):
+        raise ValueError(f"{python} is Python {version}; the local replay needs Python 3.12 or newer")
+
+    def run(source, language_id, stdins):
+        results = []
+        with tempfile.TemporaryDirectory(prefix="replay-") as box:
+            script = Path(box) / "script.py"
+            script.write_text(source)
+            for stdin in stdins:
+                try:
+                    p = subprocess.run([python, "script.py"], cwd=box, input=stdin, capture_output=True, text=True,
+                                       errors="replace", timeout=time_limit,
+                                       env={"PATH": os.environ.get("PATH", ""), "PYTHONINTMAXSTRDIGITS": "0"})
+                    status = ACCEPTED if p.returncode == 0 else NZEC
+                    results.append({"status": {"id": status}, "stdout": p.stdout, "stderr": p.stderr,
+                                    "compile_output": ""})
+                except subprocess.TimeoutExpired:
+                    results.append({"status": {"id": TLE}, "stdout": "", "stderr": "", "compile_output": ""})
+        return results
+
+    return run
+
+
+def judge_for(target, time_limit=LOCAL_TIME_LIMIT_S):
+    """A Judge0 base URL (http:// or https://) judges on that Judge0; anything else names a local Python 3.12."""
+    if re.match(r"https?://", target):
+        return judge0(target.rstrip("/"))
+    return local_judge(target, time_limit)
+
+
 def driver_assembler(root):
     """Puts a solution into the problem's Python driver, as DriverCodeLoader and JudgeService.buildSourceCode do."""
     drivers = root / "common/src/main/resources/drivers"
@@ -137,11 +188,14 @@ def driver_assembler(root):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("judge0", help="Judge0 base URL")
-    ap.add_argument("language_id", type=int, help="Judge0 language id to replay on, e.g. 100 for Python 3.12")
+    ap.add_argument("target", help="Judge0 base URL, or the path of a local Python 3.12+ interpreter")
+    ap.add_argument("language_id", type=int,
+                    help="Judge0 language id to replay on, e.g. 100 for Python 3.12 (unused by a local interpreter)")
     ap.add_argument("root", type=Path, help="repository root")
     ap.add_argument("export", type=Path, help="output of scripts/replay-judge0-python.sql")
     ap.add_argument("--pause", type=float, default=2, help="seconds between problems (default 2)")
+    ap.add_argument("--time-limit", type=float, default=LOCAL_TIME_LIMIT_S,
+                    help=f"seconds per test case on a local interpreter (default {LOCAL_TIME_LIMIT_S})")
     ap.add_argument("--only", help="comma-separated slugs to replay, e.g. the failures of an earlier run")
     args = ap.parse_args()
 
@@ -154,8 +208,13 @@ def main():
     def log(slug, verdict):
         print(f"  {slug:<40} {verdict}", flush=True)
 
-    print(f"== replaying {len(problems)} problems on language {args.language_id}, {args.pause}s apart")
-    report = replay(problems, judge0(args.judge0.rstrip("/")), args.language_id, driver_assembler(args.root),
+    try:
+        judge = judge_for(args.target, args.time_limit)
+    except ValueError as e:
+        sys.exit(f"replay: {e}")
+    on = f"language {args.language_id}" if re.match(r"https?://", args.target) else args.target
+    print(f"== replaying {len(problems)} problems on {on}, {args.pause}s apart")
+    report = replay(problems, judge, args.language_id, driver_assembler(args.root),
                     time.sleep, log, references, args.pause)
 
     print(f"\n== {len(report.passed)} Accepted")

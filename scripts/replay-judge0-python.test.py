@@ -2,7 +2,7 @@
 
 Run: python3 -I scripts/replay-judge0-python.test.py
 """
-import importlib.util, unittest
+import importlib.util, os, shutil, stat, tempfile, unittest
 from pathlib import Path
 
 spec = importlib.util.spec_from_file_location("replay", Path(__file__).with_name("replay-judge0-python.py"))
@@ -94,6 +94,81 @@ class ReplayTest(unittest.TestCase):
         run([problem("a", [("1", "2")], "a"), problem("b", [("1", "2")]), problem("c", [("1", "2")], "c")],
             judge, pause=2.5, sleep=sleeps.append)
         self.assertEqual(sleeps, [2.5])
+
+
+# The local judge's tests run real tiny programs on a local Python 3.12.
+PYTHON_312 = os.environ.get("CODEBITE_PYTHON312") or shutil.which("python3.12") or "/opt/homebrew/bin/python3.12"
+ECHO_DOUBLE = "print(int(input()) * 2)"
+
+
+@unittest.skipUnless(os.path.exists(PYTHON_312), f"needs Python 3.12 at {PYTHON_312}")
+class LocalJudgeTest(unittest.TestCase):
+
+    def verdicts(self, source, cases, time_limit=5):
+        judge = replay.local_judge(PYTHON_312, time_limit)
+        report = run([problem("p", cases, source)], judge)
+        return report.passed, [(f.status, f.case) for f in report.failed]
+
+    def test_correct_output_is_accepted(self):
+        self.assertEqual(self.verdicts(ECHO_DOUBLE, [("1", "2"), ("21", "42")]), (["p"], []))
+
+    def test_wrong_output_is_wrong_answer(self):
+        self.assertEqual(self.verdicts(ECHO_DOUBLE, [("1", "2"), ("2", "5")]), ([], [("WRONG_ANSWER", 2)]))
+
+    def test_an_exception_is_a_runtime_error_with_its_message(self):
+        judge = replay.local_judge(PYTHON_312)
+        report = run([problem("p", [("1", "2")], "raise ValueError('boom')")], judge)
+        self.assertEqual([(f.status, f.detail) for f in report.failed], [("RUNTIME_ERROR", "ValueError: boom")])
+
+    def test_a_syntax_error_is_a_runtime_error(self):
+        self.assertEqual(self.verdicts("def f(:\n    pass", [("1", "2")]), ([], [("RUNTIME_ERROR", 1)]))
+
+    def test_modern_syntax_runs(self):
+        source = "match int(input()):\n    case n:\n        xs: list[int] = [n]\n        print(f\"{xs[0] * 2}\")"
+        self.assertEqual(self.verdicts(source, [("4", "8")]), (["p"], []))
+
+    def test_a_run_past_the_time_limit_is_time_limit_exceeded_after_one_retry(self):
+        judge = replay.local_judge(PYTHON_312, time_limit=0.5)
+        calls = []
+        counting = lambda source, language_id, stdins: calls.append(stdins) or judge(source, language_id, stdins)
+        report = run([problem("p", [("1", "2"), ("2", "4")], "import time\nn = int(input())\n"
+                                                          "time.sleep(2 if n == 2 else 0)\nprint(n * 2)")],
+                     counting)
+        self.assertEqual([(f.status, f.case) for f in report.failed], [("TIME_LIMIT_EXCEEDED", 2)])
+        self.assertEqual(calls, [["1", "2"], ["2"]])
+
+
+    def test_a_target_naming_an_interpreter_judges_locally(self):
+        report = run([problem("p", [("3", "6")], ECHO_DOUBLE)], replay.judge_for(PYTHON_312))
+        self.assertEqual(report.passed, ["p"])
+
+    def test_a_target_naming_a_url_judges_on_judge0(self):
+        judge = replay.judge_for("http://127.0.0.1:9/")
+        with self.assertRaises(OSError):  # nothing listens on the discard port: proof it went over HTTP
+            judge("print(1)", 100, [""])
+
+
+class LocalJudgeVersionTest(unittest.TestCase):
+
+    def interpreter(self, version):
+        """A stand-in interpreter that reports the given version, whatever it is asked to run."""
+        path = Path(tempfile.mkdtemp()) / "python"
+        path.write_text(f"#!/bin/sh\necho {version}\n")
+        path.chmod(path.stat().st_mode | stat.S_IEXEC)
+        self.addCleanup(shutil.rmtree, path.parent)
+        return str(path)
+
+    def test_an_interpreter_older_than_3_12_is_refused(self):
+        with self.assertRaisesRegex(ValueError, r"3\.11\.9.*3\.12 or newer"):
+            replay.local_judge(self.interpreter("3.11.9"))
+
+    def test_an_interpreter_that_is_not_python_is_refused(self):
+        with self.assertRaisesRegex(ValueError, "not a Python"):
+            replay.local_judge("/nonexistent/python3.12")
+
+    def test_3_12_and_newer_are_accepted(self):
+        replay.local_judge(self.interpreter("3.12.0"))
+        replay.local_judge(self.interpreter("3.13.1"))
 
 
 if __name__ == "__main__":
