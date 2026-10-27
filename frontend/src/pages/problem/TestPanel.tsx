@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/Tabs';
 import { Button } from '@/components/ui/Button';
@@ -20,6 +20,7 @@ import type {
   RunResponse,
   RunTestCaseResult,
   SubmissionResponse,
+  SubmissionStatus,
 } from '@/types/submission';
 import { CustomTestsEditor } from './CustomTestsEditor';
 import { STATUS_KEYS } from './submissionDisplay';
@@ -45,6 +46,15 @@ function passCount(results: { status: string; judged?: boolean }[]) {
     passed: judged.filter((r) => r.status === 'ACCEPTED').length,
     total: judged.length,
   };
+}
+
+/** A case that didn't pass. An unjudged custom case fails only when it crashed or timed out. */
+function caseFailed(r: { status: SubmissionStatus; judged?: boolean }) {
+  if (r.status === 'ACCEPTED' || r.status === 'PENDING') return false;
+  if (r.judged === false) {
+    return r.status === 'RUNTIME_ERROR' || r.status === 'TIME_LIMIT_EXCEEDED' || r.status === 'COMPILATION_ERROR';
+  }
+  return true;
 }
 
 const isMac =
@@ -189,6 +199,29 @@ export function TestPanel({
   isMaximized,
 }: TestPanelProps) {
   const { t } = useTranslation('problem');
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const jumpedForRef = useRef<unknown>(null);
+  const settled = running || submitting ? null : (runResult ?? submitResult);
+
+  // Jump to the first failing case once per result, as soon as the output tab shows it.
+  useEffect(() => {
+    if (!settled || jumpedForRef.current === settled || activeTab !== 'output') return;
+    const frame = requestAnimationFrame(() => {
+      const container = scrollRef.current;
+      const target = container?.querySelector<HTMLElement>('[data-failed]');
+      jumpedForRef.current = settled;
+      if (!container || !target) return;
+      const top =
+        container.scrollTop +
+        target.getBoundingClientRect().top -
+        container.getBoundingClientRect().top -
+        12;
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      container.scrollTo({ top, behavior: reduce ? 'auto' : 'smooth' });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [settled, activeTab]);
+
   return (
     <div className="flex h-full flex-col">
       <Tabs
@@ -231,7 +264,7 @@ export function TestPanel({
           </div>
         </div>
 
-        <div className="flex-1 overflow-auto p-3">
+        <div ref={scrollRef} className="flex-1 overflow-auto p-3">
           {collectTemplateError(runResult, submitResult) && (
             <div className="mb-3 rounded-lg border border-warning-200 bg-warning-100 p-3 text-sm text-warning-700 dark:border-warning-900 dark:bg-warning-950 dark:text-warning-400">
               {t('editor.templateErrorBanner')}
@@ -461,6 +494,7 @@ function OutputContent({
             {submitResult.results.map((r, i) => (
               <div
                 key={r.testCaseId}
+                data-failed={caseFailed(r) || undefined}
                 className="border-t border-border pt-2 text-sm first:border-t-0 first:pt-0">
                 <div className="mb-1 flex items-center justify-between">
                   <span className="font-medium text-muted-foreground">
@@ -588,7 +622,10 @@ function RunResultsSection({
         </h3>
       )}
       {results.map((r, i) => (
-        <div key={i} className="border-t border-border pt-2 text-sm first:border-t-0 first:pt-0">
+        <div
+          key={i}
+          data-failed={caseFailed(r) || undefined}
+          className="border-t border-border pt-2 text-sm first:border-t-0 first:pt-0">
           <div className="mb-1 flex items-center justify-between">
             <span className="font-medium text-muted-foreground">
               {t(labelKey, { n: i + 1 })}
