@@ -104,9 +104,27 @@ class UnpassableTestDataTest {
         assertTrue(korean("merge-duplicate-contacts").contains("출력: " + expected));
     }
 
+    // word-ladder: the answer counts both endpoints, so a one-letter step straight to endWord is 2.
+
+    @Test
+    void wordLadderSampleWithADirectStepExpectsTwoWords() {
+        TestCase direct = sample("word-ladder", 1);
+        // V124 wrote this input as E'pet\npot\n...'; H2 keeps the backslashes, PostgreSQL makes newlines.
+        assertEquals("pet\npot\n[\"pit\",\"pot\",\"pat\"]", direct.getInput().strip().replace("\\n", "\n"));
+        assertEquals("2", direct.getExpectedOutput().strip());
+    }
+
+    @Test
+    void wordLadderDiagramDrawsExampleOnesShortestPath() {
+        for (String text : List.of(description("word-ladder"), korean("word-ladder"))) {
+            assertFalse(text.contains("\"pet\""), "diagram still draws pet -> pit -> pot");
+            assertTrue(text.contains("highlight_path: [\"hit\",\"hot\",\"dot\",\"dog\",\"cog\"]"));
+        }
+    }
+
     @ParameterizedTest
     @CsvSource({
-            "merge-duplicate-contacts, python,     result.sort(key=lambda a: a[1])",
+            "merge-duplicate-contacts, python,    result.sort(key=lambda a: a[1])",
             "merge-duplicate-contacts, javascript, result.sort((a, b) => a[1] < b[1]",
             "merge-duplicate-contacts, java,       result.sort((a, b) -> a.get(1).compareTo(b.get(1)))",
             "merge-duplicate-contacts, cpp,        return a[1] < b[1];",

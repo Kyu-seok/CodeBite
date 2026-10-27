@@ -49,3 +49,36 @@ SET description = REPLACE(description,
         '출력: [["Leo","leo.grip@set.film"],["Maya","maya.dp@set.film","mayalens@set.film","mk.camera@set.film"],["Maya","maya.solo@set.film"]]')
 WHERE problem_id = (SELECT id FROM problems WHERE slug = 'merge-duplicate-contacts')
   AND locale = 'ko';
+
+-- word-ladder: the length counts both endpoints, so pet -> pot (one letter, pot in the list) is 2,
+-- as the description and sample test case 3 (x -> z) say, but V124 gave sample test case 1 the
+-- answer 3. Expect 2 (the input is matched with LIKE because V124 wrote it as E'pet\npot\n...', which
+-- H2 keeps verbatim), and make Example 1's diagram draw Example 1's path instead of pet -> pit -> pot.
+UPDATE test_cases
+SET expected_output = '2'
+WHERE problem_id = (SELECT id FROM problems WHERE slug = 'word-ladder')
+  AND is_sample = TRUE
+  AND order_index = 1
+  AND input LIKE 'pet%pot%["pit","pot","pat"]'
+  AND expected_output = '3';
+
+UPDATE problems
+SET description = REPLACE(description,
+        'edges: [["pet","pit"],["pit","pot"]]
+directed: true
+highlight_path: ["pet","pit","pot"]',
+        'edges: [["hit","hot"],["hot","dot"],["hot","lot"],["dot","dog"],["lot","log"],["dog","cog"],["log","cog"]]
+directed: false
+highlight_path: ["hit","hot","dot","dog","cog"]')
+WHERE slug = 'word-ladder';
+
+UPDATE problem_translations
+SET description = REPLACE(description,
+        'edges: [["pet","pit"],["pit","pot"]]
+directed: true
+highlight_path: ["pet","pit","pot"]',
+        'edges: [["hit","hot"],["hot","dot"],["hot","lot"],["dot","dog"],["lot","log"],["dog","cog"],["log","cog"]]
+directed: false
+highlight_path: ["hit","hot","dot","dog","cog"]')
+WHERE problem_id = (SELECT id FROM problems WHERE slug = 'word-ladder')
+  AND locale = 'ko';
