@@ -8,11 +8,14 @@ interface ProfileHeaderProps {
 }
 
 export function ProfileHeader({ user, stats }: ProfileHeaderProps) {
-  const { t } = useTranslation('profile');
-  const d = new Date(stats.memberSince);
+  const { t, i18n } = useTranslation('profile');
+  // Streak Days are UTC days, so the join month is read in UTC too.
   const memberSince = t('header.memberSince', {
-    month: d.getMonth() + 1,
-    year: d.getFullYear(),
+    date: new Date(stats.memberSince).toLocaleDateString(i18n.language, {
+      year: 'numeric',
+      month: 'long',
+      timeZone: 'UTC',
+    }),
   });
 
   const solvedPct =
@@ -22,8 +25,7 @@ export function ProfileHeader({ user, stats }: ProfileHeaderProps) {
 
   return (
     <div className="rounded-xl border border-border bg-card overflow-hidden">
-      {/* Accent bar */}
-      <div className="h-1.5 bg-gradient-to-r from-accent to-orange-400" />
+      <div aria-hidden className="h-1 bg-accent" />
 
       <div className="p-6">
         <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
@@ -32,11 +34,14 @@ export function ProfileHeader({ user, stats }: ProfileHeaderProps) {
             {user.avatarUrl ? (
               <img
                 src={user.avatarUrl}
-                alt={user.username}
+                alt=""
                 className="h-16 w-16 rounded-full ring-2 ring-border ring-offset-2 ring-offset-card"
               />
             ) : (
-              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-accent text-2xl font-bold text-white ring-2 ring-border ring-offset-2 ring-offset-card">
+              <div
+                aria-hidden
+                className="flex h-16 w-16 items-center justify-center rounded-full bg-accent-700 text-2xl font-bold text-white ring-2 ring-border ring-offset-2 ring-offset-card"
+              >
                 {user.username.charAt(0).toUpperCase()}
               </div>
             )}
@@ -44,13 +49,13 @@ export function ProfileHeader({ user, stats }: ProfileHeaderProps) {
               <h1 className="text-xl font-bold text-foreground">{user.username}</h1>
               <p className="text-xs text-muted-foreground">{memberSince}</p>
               <div className="mt-1.5 flex items-center gap-1.5">
-                <span className="text-sm font-semibold text-accent">
+                <span className="text-sm font-semibold tabular-nums text-accent-700 dark:text-accent-400">
                   {stats.totalSolved}
                 </span>
                 <span className="text-sm text-muted-foreground">
                   {t('header.solved', { total: stats.totalProblems })}
                 </span>
-                <span className="ml-1 rounded-full bg-accent/10 px-2 py-0.5 text-xs font-medium text-accent">
+                <span className="ml-1 rounded-full bg-accent-500/15 px-2 py-0.5 text-xs font-medium tabular-nums text-accent-800 dark:text-accent-400">
                   {solvedPct}%
                 </span>
               </div>
@@ -107,11 +112,11 @@ function StatCounter({
 }) {
   return (
     <div className="flex flex-col items-center gap-0.5 text-center">
-      <div className="flex items-center gap-1.5 text-muted-foreground">
+      <div aria-hidden className="flex items-center gap-1.5 text-muted-foreground">
         {icon}
       </div>
       <span className="text-2xl font-bold tabular-nums text-foreground">{value}</span>
-      <span className="text-[11px] text-muted-foreground whitespace-nowrap">{label}</span>
+      <span className="text-xs text-muted-foreground whitespace-nowrap">{label}</span>
     </div>
   );
 }

@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import {
   RadarChart,
   Radar,
@@ -6,43 +7,51 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import type { TagProficiency } from '@/types/profile';
+import LoadError from '@/components/ui/LoadError';
 
 interface TagRadarCardProps {
   tagProficiency: TagProficiency[];
+  /** The tag request failed: say so instead of claiming there is nothing solved. */
+  failed?: boolean;
+  onRetry?: () => void;
 }
 
-export function TagRadarCard({ tagProficiency }: TagRadarCardProps) {
-  const data = tagProficiency.map((t) => ({
-    tag: t.tagName,
-    proficiency: t.total > 0 ? Math.round((t.solved / t.total) * 100) : 0,
-    solved: t.solved,
-    total: t.total,
+export function TagRadarCard({ tagProficiency, failed, onRetry }: TagRadarCardProps) {
+  const { t } = useTranslation('profile');
+  const data = tagProficiency.map((tag) => ({
+    tag: tag.tagName,
+    proficiency: tag.total > 0 ? Math.round((tag.solved / tag.total) * 100) : 0,
+    solved: tag.solved,
+    total: tag.total,
   }));
 
-  if (data.length === 0) {
+  if (failed || data.length === 0) {
     return (
-      <div className="rounded-xl border border-border bg-card p-5">
-        <h3 className="mb-4 text-sm font-medium text-foreground">Tag Proficiency</h3>
-        <div className="flex h-64 items-center justify-center">
-          <p className="text-sm text-muted-foreground">
-            Solve problems to see your tag proficiency.
-          </p>
-        </div>
-      </div>
+      <section className="rounded-xl border border-border bg-card p-5">
+        <h2 className="mb-4 text-sm font-medium text-foreground">{t('tags.title')}</h2>
+        {failed ? (
+          <LoadError onRetry={onRetry} />
+        ) : (
+          <div className="flex h-64 items-center justify-center">
+            <p className="text-sm text-muted-foreground">{t('tags.empty')}</p>
+          </div>
+        )}
+      </section>
     );
   }
 
   return (
-    <div className="rounded-xl border border-border bg-card p-5">
-      <h3 className="mb-2 text-sm font-medium text-foreground">Tag Proficiency</h3>
+    <section className="rounded-xl border border-border bg-card p-5">
+      <h2 className="mb-2 text-sm font-medium text-foreground">{t('tags.title')}</h2>
 
-      <div className="h-64">
+      {/* The list below carries the same numbers as text. */}
+      <div aria-hidden className="h-64">
         <ResponsiveContainer width="100%" height="100%">
           <RadarChart data={data} cx="50%" cy="50%" outerRadius="65%">
             <PolarGrid stroke="var(--border)" strokeOpacity={0.6} />
             <PolarAngleAxis
               dataKey="tag"
-              tick={{ fill: 'var(--muted-foreground)', fontSize: 11 }}
+              tick={{ fill: 'var(--muted-foreground)', fontSize: 12 }}
             />
             <Radar
               dataKey="proficiency"
@@ -55,19 +64,19 @@ export function TagRadarCard({ tagProficiency }: TagRadarCardProps) {
         </ResponsiveContainer>
       </div>
 
-      <div className="mt-2 flex flex-wrap gap-2">
+      <ul className="mt-2 flex flex-wrap gap-2">
         {data.map((d) => (
-          <span
+          <li
             key={d.tag}
-            className="inline-flex items-center gap-1 rounded-md bg-muted px-2 py-0.5 text-xs text-muted-foreground"
+            className="inline-flex items-center gap-1 rounded-md bg-muted px-2 py-0.5 text-xs text-secondary-foreground"
           >
             {d.tag}
             <span className="font-medium tabular-nums text-foreground">
-              {d.solved}/{d.total}
+              {t('tags.count', { solved: d.solved, total: d.total })}
             </span>
-          </span>
+          </li>
         ))}
-      </div>
-    </div>
+      </ul>
+    </section>
   );
 }

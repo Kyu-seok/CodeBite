@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { isAxiosError } from 'axios';
 import { AlertTriangle, CheckCircle2, ExternalLink, Github, History, Loader2, Lock } from 'lucide-react';
@@ -13,6 +13,7 @@ import {
 import type { GitHubLink, GitHubRepositoryVisibility } from '@/types/github';
 import { Button, buttonVariants } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import LoadError from '@/components/ui/LoadError';
 import {
   Dialog,
   DialogClose,
@@ -86,7 +87,7 @@ function LinkSetup({ initialName = DEFAULT_REPOSITORY_NAME }: { initialName?: st
             />
           </label>
           {!isValidRepositoryName(trimmed) && (
-            <p className="text-xs text-error-500">{t('githubLink.setup.nameInvalid')}</p>
+            <p className="text-xs text-error-700 dark:text-error-400">{t('githubLink.setup.nameInvalid')}</p>
           )}
           <fieldset className="flex flex-wrap gap-4 text-sm">
             <legend className="sr-only">{t('githubLink.setup.visibility')}</legend>
@@ -149,7 +150,11 @@ function LinkSetup({ initialName = DEFAULT_REPOSITORY_NAME }: { initialName?: st
         </ol>
       )}
 
-      {error && <p className="text-sm text-error-500">{error}</p>}
+      {error && (
+        <p role="alert" className="text-sm text-error-700 dark:text-error-400">
+          {error}
+        </p>
+      )}
     </div>
   );
 }
@@ -201,9 +206,10 @@ function ImportOffer({
     }
   };
 
+  // role="status" so a screen reader hears the Import finish when polling flips RUNNING → DONE.
   if (state === 'DONE') {
     return (
-      <p className="flex items-center gap-2 text-sm text-muted-foreground">
+      <p role="status" className="flex items-center gap-2 text-sm text-muted-foreground">
         <CheckCircle2 className="h-4 w-4 shrink-0 text-success-500" />
         {t('githubLink.import.done')}
       </p>
@@ -212,7 +218,7 @@ function ImportOffer({
 
   if (state === 'RUNNING') {
     return (
-      <p className="flex items-center gap-2 text-sm text-muted-foreground">
+      <p role="status" className="flex items-center gap-2 text-sm text-muted-foreground">
         <Loader2 className="h-4 w-4 shrink-0 animate-spin" />
         {t('githubLink.import.running')}
       </p>
@@ -239,7 +245,11 @@ function ImportOffer({
               : t('githubLink.import.start')}
         </Button>
       </div>
-      {error && <p className="text-sm text-error-500">{error}</p>}
+      {error && (
+        <p role="alert" className="text-sm text-error-700 dark:text-error-400">
+          {error}
+        </p>
+      )}
     </div>
   );
 }
@@ -257,11 +267,28 @@ export function GitHubLinkCard() {
   const [unlinking, setUnlinking] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
+  // A failed read is its own state: showing the setup form would tell a linked user they aren't linked.
+  const [loadFailed, setLoadFailed] = useState(false);
+  const load = useCallback(() => {
+    setLoadFailed(false);
     getGitHubLink()
       .then(setLink)
-      .catch(() => setLink(null));
+      .catch(() => setLoadFailed(true));
   }, []);
+
+  useEffect(load, [load]);
+
+  if (loadFailed) {
+    return (
+      <section className="rounded-xl border border-border bg-card p-5">
+        <div className="mb-3 flex items-center gap-2">
+          <Github aria-hidden className="h-4 w-4 text-muted-foreground" />
+          <h2 className="text-sm font-medium text-foreground">{t('githubLink.title')}</h2>
+        </div>
+        <LoadError onRetry={load} />
+      </section>
+    );
+  }
 
   if (link === undefined) return null;
 
@@ -283,10 +310,10 @@ export function GitHubLinkCard() {
   const broken = link?.status === 'BROKEN';
 
   return (
-    <div className="rounded-xl border border-border bg-card p-5">
+    <section className="rounded-xl border border-border bg-card p-5">
       <div className="mb-3 flex items-center gap-2">
-        <Github className="h-4 w-4 text-muted-foreground" />
-        <h3 className="text-sm font-medium text-foreground">{t('githubLink.title')}</h3>
+        <Github aria-hidden className="h-4 w-4 text-muted-foreground" />
+        <h2 className="text-sm font-medium text-foreground">{t('githubLink.title')}</h2>
       </div>
 
       {!link ? (
@@ -373,7 +400,11 @@ export function GitHubLinkCard() {
         </div>
       )}
 
-      {error && <p className="mt-3 text-sm text-error-500">{error}</p>}
-    </div>
+      {error && (
+        <p role="alert" className="mt-3 text-sm text-error-700 dark:text-error-400">
+          {error}
+        </p>
+      )}
+    </section>
   );
 }

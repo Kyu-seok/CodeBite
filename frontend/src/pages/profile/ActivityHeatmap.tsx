@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityCalendar } from 'react-activity-calendar';
 import type { ActivityDay } from '@/types/profile';
@@ -11,13 +12,44 @@ interface ActivityHeatmapProps {
   countLabel?: (total: number) => string;
 }
 
+// Effort is the one thing Ember marks (DESIGN.md), so activity climbs the ember ramp. Level 0
+// sits one tonal step off the card (Mist / Night Raised) so empty days keep the grid's shape.
+const RAMP = {
+  light: ['#f1f3f6', '#fed7aa', '#fdba74', '#fb923c', '#ea6502'],
+  dark: ['#272e39', '#431a05', '#7c340f', '#c25005', '#fb923c'],
+};
+
+/** Month and weekday names in the UI language, Sunday first as the calendar draws them. */
+function calendarNames(locale: string) {
+  const months = Array.from({ length: 12 }, (_, m) =>
+    new Date(Date.UTC(2024, m, 1)).toLocaleDateString(locale, { month: 'short', timeZone: 'UTC' }),
+  );
+  // 2024-01-07 is a Sunday.
+  const weekdays = Array.from({ length: 7 }, (_, d) =>
+    new Date(Date.UTC(2024, 0, 7 + d)).toLocaleDateString(locale, { weekday: 'short', timeZone: 'UTC' }),
+  );
+  return { months, weekdays };
+}
+
 export function ActivityHeatmap({
   activity,
   title,
   countLabel,
 }: ActivityHeatmapProps) {
-  const { t } = useTranslation('profile');
+  const { t, i18n } = useTranslation('profile');
   const { theme } = useTheme();
+  const calendarRef = useRef<HTMLElement>(null);
+
+  // The year runs left to right, so a narrow card would open on last year's empty months.
+  // Start scrolled to the newest week instead.
+  useEffect(() => {
+    const root = calendarRef.current;
+    if (!root) return;
+    const scroller = [root, ...root.querySelectorAll<HTMLElement>('*')].find(
+      (el) => el.scrollWidth > el.clientWidth && getComputedStyle(el).overflowX !== 'visible',
+    );
+    if (scroller) scroller.scrollLeft = scroller.scrollWidth;
+  }, [activity]);
 
   const maxCount = Math.max(1, ...activity.map((d) => d.count));
   const dataMap = new Map(activity.map((d) => [d.date, d.count]));
@@ -51,24 +83,44 @@ export function ActivityHeatmap({
   const countText = countLabel
     ? countLabel(totalSubmissions)
     : t('heatmap.submissions', { count: totalSubmissions });
+  const formatDay = (date: string) =>
+    new Date(`${date}T00:00:00Z`).toLocaleDateString(i18n.language, {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      timeZone: 'UTC',
+    });
 
   return (
-    <div className="rounded-xl border border-border bg-card p-5">
-      <div className="mb-4 flex items-center justify-between">
-        <h3 className="text-sm font-medium text-foreground">{heading}</h3>
-        <span className="text-xs text-muted-foreground">{countText}</span>
+    <section className="rounded-xl border border-border bg-card p-5">
+      <div className="mb-4 flex items-center justify-between gap-3">
+        <h2 className="text-sm font-medium text-foreground">{heading}</h2>
+        <span className="text-xs tabular-nums text-muted-foreground">{countText}</span>
       </div>
-      <ActivityCalendar
-        data={data}
-        blockSize={12}
-        blockMargin={3}
-        fontSize={12}
-        theme={{
-          light: ['#ebedf0', '#9be9a8', '#40c463', '#30a14e', '#216e39'],
-          dark: ['#1a1f27', '#0e4429', '#006d32', '#26a641', '#39d353'],
-        }}
-        colorScheme={theme === 'dark' ? 'dark' : 'light'}
-      />
-    </div>
+      {/* The count above is the text alternative. Per-day counts are pointer-only tooltips: a focus stop per day would be a year of Tab presses. */}
+      <div aria-hidden>
+        <ActivityCalendar
+          ref={calendarRef}
+          data={data}
+          blockSize={12}
+          blockMargin={3}
+          fontSize={12}
+          theme={RAMP}
+          colorScheme={theme === 'dark' ? 'dark' : 'light'}
+          // The library's total reads "N activities in <first year>", wrong for a rolling year
+          // and English-only; the heading row already shows the count.
+          showTotalCount={false}
+          labels={{
+            ...calendarNames(i18n.language),
+            legend: { less: t('heatmap.less'), more: t('heatmap.more') },
+          }}
+          tooltips={{
+            activity: {
+              text: (a) => t('heatmap.day', { count: a.count, date: formatDay(a.date) }),
+            },
+          }}
+        />
+      </div>
+    </section>
   );
 }

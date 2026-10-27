@@ -1,52 +1,66 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import DifficultyBadge from '@/components/ui/DifficultyBadge';
 import StatusBadge from '@/components/ui/StatusBadge';
+import Spinner from '@/components/ui/Spinner';
 import { getRecentSubmissions } from '@/api/profile';
 import type { RecentSubmission } from '@/types/profile';
 import type { Difficulty } from '@/types/problem';
 import type { SubmissionStatus } from '@/types/submission';
+import LoadError from '@/components/ui/LoadError';
+
+/** The largest whole unit that fits, e.g. "3 hours ago" / "3시간 전". */
+function timeAgo(format: Intl.RelativeTimeFormat, iso: string, now: number): string {
+  const mins = Math.floor((now - new Date(iso).getTime()) / 60000);
+  if (mins < 60) return format.format(-mins, 'minute');
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return format.format(-hours, 'hour');
+  const days = Math.floor(hours / 24);
+  if (days < 30) return format.format(-days, 'day');
+  return format.format(-Math.floor(days / 30), 'month');
+}
 
 export function RecentSubmissionsCard() {
+  const { t, i18n } = useTranslation('profile');
   const [submissions, setSubmissions] = useState<RecentSubmission[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [status, setStatus] = useState<'loading' | 'ready' | 'failed'>('loading');
   const [now] = useState(() => Date.now());
 
-  useEffect(() => {
+  const fetchSubmissions = useCallback(() => {
     getRecentSubmissions(0, 10)
-      .then((res) => setSubmissions(res.data.content))
-      .catch(() => {})
-      .finally(() => setLoading(false));
+      .then((res) => {
+        setSubmissions(res.data.content);
+        setStatus('ready');
+      })
+      .catch(() => setStatus('failed'));
   }, []);
 
-  const timeAgo = (iso: string) => {
-    const diff = now - new Date(iso).getTime();
-    const mins = Math.floor(diff / 60000);
-    if (mins < 60) return `${mins}m ago`;
-    const hours = Math.floor(mins / 60);
-    if (hours < 24) return `${hours}h ago`;
-    const days = Math.floor(hours / 24);
-    if (days < 30) return `${days}d ago`;
-    const months = Math.floor(days / 30);
-    return `${months}mo ago`;
+  useEffect(fetchSubmissions, [fetchSubmissions]);
+
+  const retry = () => {
+    setStatus('loading');
+    fetchSubmissions();
   };
 
-  return (
-    <div className="rounded-xl border border-border bg-card p-5">
-      <h3 className="mb-4 text-sm font-medium text-foreground">Recent Submissions</h3>
+  const relative = new Intl.RelativeTimeFormat(i18n.language, { numeric: 'auto', style: 'short' });
 
-      {loading ? (
-        <div className="flex h-20 items-center justify-center">
-          <div className="h-5 w-5 animate-spin rounded-full border-2 border-muted border-t-accent" />
-        </div>
+  return (
+    <section className="rounded-xl border border-border bg-card p-5">
+      <h2 className="mb-4 text-sm font-medium text-foreground">{t('recent.title')}</h2>
+
+      {status === 'loading' ? (
+        <Spinner size="sm" className="h-20 p-0" />
+      ) : status === 'failed' ? (
+        <LoadError onRetry={retry} />
       ) : submissions.length === 0 ? (
         <div className="flex h-20 items-center justify-center">
-          <p className="text-sm text-muted-foreground">No submissions yet.</p>
+          <p className="text-sm text-muted-foreground">{t('recent.empty')}</p>
         </div>
       ) : (
-        <div className="space-y-0 divide-y divide-border/50">
+        <ul className="space-y-0 divide-y divide-border/50">
           {submissions.map((s) => (
-            <div
+            <li
               key={s.id}
               className="flex items-center justify-between gap-4 py-2.5 first:pt-0 last:pb-0"
             >
@@ -54,7 +68,7 @@ export function RecentSubmissionsCard() {
                 <DifficultyBadge difficulty={s.difficulty as Difficulty} />
                 <Link
                   to={`/problems/${s.problemSlug}`}
-                  className="truncate text-sm text-foreground hover:text-accent transition-colors"
+                  className="truncate rounded-sm text-sm text-foreground transition-colors hover:text-accent-700 dark:hover:text-accent-400"
                 >
                   {s.problemTitle}
                 </Link>
@@ -65,19 +79,19 @@ export function RecentSubmissionsCard() {
                   {s.language}
                 </span>
                 {s.runtimeMs != null && (
-                  <span className="hidden text-xs tabular-nums text-muted-foreground md:block">
+                  <span className="hidden font-mono text-xs tabular-nums text-muted-foreground md:block">
                     {s.runtimeMs} ms
                   </span>
                 )}
                 <StatusBadge status={s.status as SubmissionStatus} />
-                <span className="w-14 text-right text-xs tabular-nums text-muted-foreground">
-                  {timeAgo(s.createdAt)}
+                <span className="min-w-14 text-right text-xs tabular-nums text-muted-foreground">
+                  {timeAgo(relative, s.createdAt, now)}
                 </span>
               </div>
-            </div>
+            </li>
           ))}
-        </div>
+        </ul>
       )}
-    </div>
+    </section>
   );
 }

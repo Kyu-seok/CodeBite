@@ -1,6 +1,6 @@
 {
   "header": {
-    "memberSince": "{{year}}년 {{month}}월 가입",
+    "memberSince": "{{date}} 가입",
     "solved": "/ {{total}} 풀이 완료",
     "currentStreak": "연속 풀이",
     "bestStreak": "최고 연속",
@@ -8,7 +8,12 @@
   },
   "heatmap": {
     "title": "제출 활동",
-    "submissions": "지난 1년간 {{count}}회 제출"
+    "submissions": "지난 1년간 {{count}}회 제출",
+    "less": "적음",
+    "more": "많음",
+    "day_zero": "{{date}}: 제출 없음",
+    "day_one": "{{date}}: {{count}}회 제출",
+    "day_other": "{{date}}: {{count}}회 제출"
   },
   "progress": {
     "title": "풀이 현황",
@@ -38,7 +43,19 @@
     "cancel": "취소",
     "useRepair": "복구 사용",
     "repairFailed": "복구하지 못했습니다. 다시 시도해 주세요.",
-    "alreadyCounted": "이미 연속 풀이에 포함된 날입니다."
+    "alreadyCounted": "이미 연속 풀이에 포함된 날입니다.",
+    "day": {
+      "streak": "{{date}}, 연속 풀이일",
+      "repaired": "{{date}}, 복구한 날",
+      "missedRepairable": "{{date}}, 놓친 날. 복구 사용",
+      "missed": "{{date}}, 놓친 날",
+      "plain": "{{date}}"
+    },
+    "legend": {
+      "streak": "연속 풀이일",
+      "repaired": "복구한 날",
+      "missed": "놓친 날"
+    }
   },
   "githubLink": {
     "title": "GitHub 연결",
@@ -93,5 +110,27 @@
       "tryAgain": "GitHub 다시 열기",
       "backToProfile": "프로필로 돌아가기"
     }
+  },
+  "tags": {
+    "title": "태그별 숙련도",
+    "empty": "문제를 풀면 태그별 숙련도가 표시됩니다.",
+    "count": "{{solved}}/{{total}}"
+  },
+  "dueReviews": {
+    "title": "복습할 문제",
+    "empty": "복습할 문제가 없어요. 푼 문제를 복습하면 복습 주기가 시작됩니다.",
+    "viewAll": "전체 보기",
+    "count_one": "{{count}}문제",
+    "count_other": "{{count}}문제",
+    "reviewStreak_one": "복습 연속 {{count}}일",
+    "reviewStreak_other": "복습 연속 {{count}}일",
+    "overdue_one": "{{count}}일 지남",
+    "overdue_other": "{{count}}일 지남",
+    "dueNow": "지금 복습",
+    "due": "{{when}} 복습"
+  },
+  "recent": {
+    "title": "최근 제출",
+    "empty": "아직 제출이 없습니다."
   }
 }
