@@ -1,10 +1,12 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { isAxiosError } from "axios";
 import { completeGitHubLink, rememberedRepositoryName, startGitHubInstall } from "@/api/github";
 import { Button } from "@/components/ui/Button";
 import Spinner from "@/components/ui/Spinner";
+import { Card } from "@/components/ui/Card";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 function errorKey(e: unknown) {
   const status = isAxiosError(e) ? e.response?.status : undefined;
@@ -41,9 +43,15 @@ export default function GitHubCallbackPage() {
   const missingParams = !code || !installationId || !state;
   const error = missingParams ? t("githubLink.callback.missingParams") : requestError;
 
+  useDocumentTitle(t("githubLink.callback.title"));
+
+  const errorId = useId();
+  const errorHeadingRef = useRef<HTMLHeadingElement>(null);
+  // An alert already on the page at first render (missing parameters) isn't read by every
+  // screen reader, so focus the heading; it carries the error as its description.
   useEffect(() => {
-    document.title = t("githubLink.callback.title");
-  }, [t]);
+    if (error) errorHeadingRef.current?.focus();
+  }, [error]);
 
   useEffect(() => {
     if (calledRef.current || !code || !installationId || !state) return;
@@ -78,9 +86,16 @@ export default function GitHubCallbackPage() {
 
   return (
     <div className="mx-auto max-w-lg px-4 py-16 sm:px-6">
-      <div className="rounded-xl border border-border bg-card p-6">
-        <h1 className="mb-3 text-base font-medium text-foreground">{t("githubLink.title")}</h1>
-        <p role="alert" className="text-sm text-error-700 dark:text-error-400">
+      <Card className="p-6">
+        <h1
+          ref={errorHeadingRef}
+          tabIndex={-1}
+          aria-describedby={errorId}
+          className="mb-3 text-lg font-semibold text-foreground outline-none"
+        >
+          {t("githubLink.title")}
+        </h1>
+        <p id={errorId} role="alert" className="text-sm text-error-700 dark:text-error-400">
           {error}
         </p>
         {retryError && (
@@ -96,7 +111,7 @@ export default function GitHubCallbackPage() {
             {t("githubLink.callback.backToProfile")}
           </Button>
         </div>
-      </div>
+      </Card>
     </div>
   );
 }
