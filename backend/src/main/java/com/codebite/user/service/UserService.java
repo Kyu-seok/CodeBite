@@ -1,6 +1,7 @@
 package com.codebite.user.service;
 
 import com.codebite.auth.oauth.dto.OAuthUserInfo;
+import com.codebite.auth.service.UserCacheService;
 import com.codebite.common.exception.ResourceNotFoundException;
 import com.codebite.user.dto.UserProfile;
 import com.codebite.user.entity.OAuthProvider;
@@ -8,8 +9,11 @@ import com.codebite.user.entity.User;
 import com.codebite.user.entity.UserOAuthAccount;
 import com.codebite.user.repository.UserOAuthAccountRepository;
 import com.codebite.user.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
@@ -19,6 +23,9 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final UserOAuthAccountRepository oauthAccountRepository;
+
+    @Autowired(required = false)
+    private UserCacheService userCacheService;
 
     public UserService(UserRepository userRepository, UserOAuthAccountRepository oauthAccountRepository) {
         this.userRepository = userRepository;
@@ -54,10 +61,9 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public UserProfile getUserProfile(Long userId) {
-        User user = userRepository.findById(userId)
+    public User getUser(Long userId) {
+        return userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("error.user.notFound", userId));
-        return toProfile(user);
     }
 
     public static UserProfile toProfile(User user) {
@@ -83,6 +89,7 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("error.user.notFound", userId));
         user.setEditorSettings(editorSettings);
         userRepository.save(user);
+        evictCachedProfile(userId);
     }
 
     @Transactional
@@ -91,6 +98,7 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("error.user.notFound", userId));
         user.setThemePreference(themePreference);
         userRepository.save(user);
+        evictCachedProfile(userId);
     }
 
     @Transactional
@@ -99,6 +107,7 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("error.user.notFound", userId));
         user.setLocale(locale);
         userRepository.save(user);
+        evictCachedProfile(userId);
     }
 
     @Transactional
@@ -107,6 +116,7 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("error.user.notFound", userId));
         user.setCuration(curation);
         userRepository.save(user);
+        evictCachedProfile(userId);
     }
 
     @Transactional
@@ -115,6 +125,25 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("error.user.notFound", userId));
         user.setSinglePage(singlePage);
         userRepository.save(user);
+        evictCachedProfile(userId);
+    }
+
+    // /api/auth/me serves the cached profile, so a settings change must drop it or the old value returns on reload.
+    // Evicting before commit would let a concurrent /me re-cache the old row, so it waits for the commit.
+    private void evictCachedProfile(Long userId) {
+        if (userCacheService == null) {
+            return;
+        }
+        if (!TransactionSynchronizationManager.isSynchronizationActive()) {
+            userCacheService.evictProfile(userId);
+            return;
+        }
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                userCacheService.evictProfile(userId);
+            }
+        });
     }
 
     private void createOAuthAccount(User user, OAuthProvider provider, String providerId) {

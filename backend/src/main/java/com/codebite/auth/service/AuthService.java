@@ -68,10 +68,8 @@ public class AuthService {
         OAuthUserInfo userInfo = client.getUserInfo(tokenResponse.accessToken());
 
         User user = userService.findOrCreateOAuthUser(userInfo, provider);
-        submissionRepository.findFirstByUserIdOrderByCreatedAtDesc(user.getId())
-                .ifPresent(s -> user.setRecentLanguage(s.getLanguage()));
         String jwt = tokenProvider.generateToken(user);
-        UserProfile profile = UserService.toProfile(user);
+        UserProfile profile = profileOf(user);
         if (userCacheService != null) {
             userCacheService.cacheProfile(user.getId(), profile);
         }
@@ -85,11 +83,18 @@ public class AuthService {
                 return cached.get();
             }
         }
-        UserProfile profile = userService.getUserProfile(userId);
+        UserProfile profile = profileOf(userService.getUser(userId));
         if (userCacheService != null) {
             userCacheService.cacheProfile(userId, profile);
         }
         return profile;
+    }
+
+    // recentLanguage isn't stored; it comes from the latest submission each time a profile is built
+    private UserProfile profileOf(User user) {
+        submissionRepository.findFirstByUserIdOrderByCreatedAtDesc(user.getId())
+                .ifPresent(s -> user.setRecentLanguage(s.getLanguage()));
+        return UserService.toProfile(user);
     }
 
     private OAuthProvider parseProvider(String providerName) {
