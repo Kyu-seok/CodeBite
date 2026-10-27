@@ -60,6 +60,8 @@ PROBES = {
     "X | None hint": "def f(x: int | None = None) -> int: return x or 0\nprint(f())",
     "PEP 701 f-string": "xs = ['a', 'b']\nprint(f\"{\", \".join(xs)}\")",
     "itertools.pairwise": "from itertools import pairwise; print(list(pairwise([1, 2, 3])))",
+    # 3.11+ refuses to print ints over 4300 digits unless PYTHONINTMAXSTRDIGITS=0, as id 100 sets.
+    "int of 5001 digits": "print(len(str(10**5000)))",
     "stdlib C modules": "import ssl, ctypes, sqlite3, decimal, zlib, lzma, bz2, hashlib, uuid, readline, json, heapq, bisect\n"
                         "from functools import cache; print(ssl.OPENSSL_VERSION)",
 }

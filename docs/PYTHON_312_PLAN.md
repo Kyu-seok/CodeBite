@@ -37,55 +37,28 @@ The sandbox still enforces its limits on 3.12: network unreachable, Time Limit E
 
 Only `_tkinter` did not build (no Tk on the base image; not needed).
 
-That test image predates the checksum and `PYTHONINTMAXSTRDIGITS` changes below, so it must be rebuilt (step 1).
+Rerun on 2026-10-27 against the rebuilt image (checksum, `PYTHONINTMAXSTRDIGITS=0`): the same results, plus a 5001-digit int printing on both ids. By then 47 starters failed to load on 3.8.
 
 ## The image
 
-The image on `mini` today is `codebite/judge0:1.13.1-py312` (14.7 GB), built from `~/judge0-py312/`. Step 1 replaces it with this Dockerfile, committed to the repo:
-
-```dockerfile
-# Judge0 1.13.1 plus Python 3.12, registered as language 100 (the id hosted Judge0 uses).
-FROM judge0/judge0:1.13.1
-USER root
-
-ENV PYTHON_312_VERSION=3.12.16
-ENV PYTHON_312_SHA256=<sha256 of Python-3.12.16.tar.xz>
-RUN set -xe && \
-    curl -fSsL "https://www.python.org/ftp/python/$PYTHON_312_VERSION/Python-$PYTHON_312_VERSION.tar.xz" -o /tmp/python.tar.xz && \
-    echo "$PYTHON_312_SHA256  /tmp/python.tar.xz" | sha256sum -c - && \
-    mkdir /tmp/python && \
-    tar -xf /tmp/python.tar.xz -C /tmp/python --strip-components=1 && \
-    cd /tmp/python && \
-    ./configure --prefix=/usr/local/python-$PYTHON_312_VERSION && \
-    make -j2 && \
-    make install && \
-    rm -rf /tmp/*
-
-# The server re-seeds languages from active.rb on every start, so the entry must live here.
-# active.rb has no trailing newline, so start a new line before appending.
-# PYTHONINTMAXSTRDIGITS=0 keeps 3.8's behaviour of printing ints of any length.
-RUN printf "\n" >> /api/db/languages/active.rb && echo "@languages << { id: 100, name: \"Python ($PYTHON_312_VERSION)\", is_archived: false, source_file: \"script.py\", run_cmd: \"env PYTHONINTMAXSTRDIGITS=0 /usr/local/python-$PYTHON_312_VERSION/bin/python3 script.py\" }" \
-      >> /api/db/languages/active.rb
-
-USER judge0
-```
+The image is `localhost/codebite-judge0:1.13.1-py312` (14.7 GB), built from [`infra/judge0/Dockerfile`](../infra/judge0/Dockerfile) by `scripts/build-judge0-image.sh`.
 
 Things that matter about it:
 - **Languages must be added in `active.rb`, not with SQL.** The Judge0 server runs `rails db:seed` on every start. The seed deletes every language row and recreates them from `db/languages/active.rb`.
 - **`active.rb` has no trailing newline.** Without the `printf "\n"`, the appended line joins the closing `]`. The seed then fails, and `/languages` returns `[]`.
 - **Both services use this image.** `judge0` needs the language row; `judge0-workers` needs the Python binary.
-- **The checksum.** python.org publishes no `.sha256` file; take the SHA-256 from the release page (python.org/downloads/release/python-31216/) and check it once against the `.asc` GPG signature on a dev machine before committing it.
+- **The checksum.** python.org publishes no SHA-256 for the release (only GPG and Sigstore signatures), so the pinned hash was computed from the tarball after `gpg --verify` of its `.asc` passed with the 3.12 release manager's key. Do the same on a version bump.
 - **Python 3.12 builds from source on the image's Debian buster.** All the dev libraries are already in the image. Buster is EOL, so `apt-get` would need archive mirrors, but the build doesn't use apt.
 - **Isolate mounts `/usr` read-only**, so the sandbox can see `/usr/local/python-3.12.16/`.
-- **Build it on `mini` with the classic builder and limited CPU**, so live judging keeps priority: `DOCKER_BUILDKIT=0 docker build --cpuset-cpus=2,3 --cpu-shares=128 -t localhost/codebite-judge0:1.13.1-py312 .`
+- **Build it on `mini` with the classic builder and limited CPU**, so live judging keeps priority (`scripts/build-judge0-image.sh` has the exact command).
 - **Testing needs a Linux host.** Judge0 1.13.1 workers need cgroup v1 and `privileged`, which Docker Desktop on macOS doesn't give.
 - **If the image is lost** (manual `docker system prune -a`, new disk), Judge0 won't start until `scripts/build-judge0-image.sh` is run again. `deploy.yml`'s `docker image prune -f` only removes dangling images, so it is safe.
 
 ## Steps
 
 ### 1. Put the image in the repo and rebuild it
-- Add the Dockerfile above as `infra/judge0/Dockerfile`, with the verified SHA-256.
-- Add `scripts/build-judge0-image.sh`. It runs the build command above on the server (`ssh mini`, from `~/CodeBite/infra/judge0`) and tags the image `localhost/codebite-judge0:1.13.1-py312`.
+- Add `infra/judge0/Dockerfile`, with the verified SHA-256.
+- Add `scripts/build-judge0-image.sh`. It pipes the Dockerfile over `ssh mini` as the whole build context (it copies nothing in), runs the build there, and tags the image `localhost/codebite-judge0:1.13.1-py312`. The server's checkout doesn't need to be on this branch.
 - Add a check to `scripts/check-judge0-python.py` that `print(10**5000)` works on id 100.
 - Rebuild on `mini`, bring up the throwaway test stack (below) on the new image, and rerun `check-judge0-python.py` against it. Then remove the old `codebite/judge0:1.13.1-py312` tag.
 - **Do not add `build:` to the Judge0 services in `docker-compose.prod.yml`** (ADR 0004). Reference the pre-built image by tag only.
