@@ -5,13 +5,18 @@ import { Button } from "@/components/ui/Button"
 import { MarkdownRenderer } from "@/components/markdown/MarkdownRenderer"
 
 interface MarkdownEditorProps {
+  id?: string
   value: string
   onChange: (next: string) => void
   maxLength?: number
   placeholder?: string
 }
 
+const MOD_KEY =
+  typeof navigator !== "undefined" && /Mac/.test(navigator.userAgent) ? "⌘" : "Ctrl+"
+
 export function MarkdownEditor({
+  id,
   value,
   onChange,
   maxLength = 50_000,
@@ -69,29 +74,30 @@ export function MarkdownEditor({
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
       <div className="flex flex-col">
         <div className="mb-2 flex flex-wrap items-center gap-1 rounded-md border border-border bg-muted px-2 py-1">
-          <ToolbarButton onClick={() => wrap("**", "**", "bold")} label="Bold (⌘B)">
+          <ToolbarButton onClick={() => wrap("**", "**", "bold")} label={t("solutions.toolbar.bold", { mod: MOD_KEY })}>
             <Bold className="h-3.5 w-3.5" />
           </ToolbarButton>
-          <ToolbarButton onClick={() => wrap("_", "_", "italic")} label="Italic (⌘I)">
+          <ToolbarButton onClick={() => wrap("_", "_", "italic")} label={t("solutions.toolbar.italic", { mod: MOD_KEY })}>
             <Italic className="h-3.5 w-3.5" />
           </ToolbarButton>
-          <ToolbarButton onClick={() => wrap("`", "`", "code")} label="Inline code">
+          <ToolbarButton onClick={() => wrap("`", "`", "code")} label={t("solutions.toolbar.code")}>
             <Code className="h-3.5 w-3.5" />
           </ToolbarButton>
-          <ToolbarButton onClick={() => wrap("[", "](url)", "link")} label="Link">
+          <ToolbarButton onClick={() => wrap("[", "](url)", "link")} label={t("solutions.toolbar.link")}>
             <LinkIcon className="h-3.5 w-3.5" />
           </ToolbarButton>
-          <ToolbarButton onClick={() => insertLine("## ", "Heading")} label="Heading">
+          <ToolbarButton onClick={() => insertLine("## ", "Heading")} label={t("solutions.toolbar.heading")}>
             <Heading2 className="h-3.5 w-3.5" />
           </ToolbarButton>
-          <ToolbarButton onClick={() => insertLine("- ", "item")} label="List">
+          <ToolbarButton onClick={() => insertLine("- ", "item")} label={t("solutions.toolbar.list")}>
             <List className="h-3.5 w-3.5" />
           </ToolbarButton>
-          <span className="ml-auto text-xs text-muted-foreground">
+          <span className="ml-auto font-mono text-xs tabular-nums text-muted-foreground">
             {value.length}/{maxLength}
           </span>
         </div>
         <textarea
+          id={id}
           ref={textareaRef}
           value={value}
           onChange={(e) => onChange(e.target.value.slice(0, maxLength))}
@@ -130,6 +136,7 @@ function ToolbarButton({
       size="sm"
       className="h-7 w-7 p-0"
       title={label}
+      aria-label={label}
       onClick={onClick}>
       {children}
     </Button>

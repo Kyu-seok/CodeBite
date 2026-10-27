@@ -16,11 +16,11 @@ const buttonVariants = cva(
         ghost:
           "hover:bg-foreground/10 active:bg-foreground/15",
         destructive:
-          "bg-error-500 text-white hover:bg-error-600 dark:bg-error-400 dark:text-error-950 dark:hover:bg-error-500",
+          "bg-error-600 text-white hover:bg-error-700 dark:bg-error-400 dark:text-error-950 dark:hover:bg-error-500",
         accent:
-          "bg-accent-500 text-white hover:bg-accent-600 dark:hover:bg-accent-400",
+          "bg-accent-700 text-white hover:bg-accent-800",
         link:
-          "text-accent-500 underline-offset-4 hover:underline",
+          "text-accent-700 underline-offset-4 hover:underline dark:text-accent-400",
       },
       size: {
         sm: "h-8 rounded-md px-3 text-xs",

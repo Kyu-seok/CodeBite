@@ -8,6 +8,7 @@ export function fireConfetti() {
     startVelocity: 45,
     origin: { x: 0.5, y: 0.65 },
     ticks: 200,
+    disableForReducedMotion: true,
     scalar: 1.0,
   });
   // Side-flanking pops for a richer effect without overwhelming.
@@ -17,12 +18,14 @@ export function fireConfetti() {
       spread: 60,
       angle: 60,
       origin: { x: 0.1, y: 0.8 },
+      disableForReducedMotion: true,
     });
     confetti({
       particleCount: 60,
       spread: 60,
       angle: 120,
       origin: { x: 0.9, y: 0.8 },
+      disableForReducedMotion: true,
     });
   }, 150);
 }

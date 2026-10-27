@@ -10,6 +10,8 @@ import {
   updateComment,
 } from "@/api/solutions"
 import { ReportDialog } from "./ReportDialog"
+import { AuthorAvatar } from "./AuthorAvatar"
+import { ConfirmDialog } from "../ConfirmDialog"
 import type { SolutionComment } from "@/types/solution"
 
 interface CommentThreadProps {
@@ -25,6 +27,7 @@ export function CommentThread({ solutionId, slug, comments, onChange }: CommentT
   const navigate = useNavigate()
   const [composer, setComposer] = useState("")
   const [submitting, setSubmitting] = useState(false)
+  const [composerError, setComposerError] = useState<string | null>(null)
 
   const requireAuth = () => {
     sessionStorage.setItem("returnUrl", `/problems/${slug}/solutions/${solutionId}`)
@@ -39,12 +42,13 @@ export function CommentThread({ solutionId, slug, comments, onChange }: CommentT
       return
     }
     setSubmitting(true)
+    setComposerError(null)
     try {
       const res = await createComment(solutionId, { content })
       onChange([...comments, res.data])
       setComposer("")
     } catch {
-      // ignore
+      setComposerError(t("solutions.comments.failed"))
     } finally {
       setSubmitting(false)
     }
@@ -54,6 +58,7 @@ export function CommentThread({ solutionId, slug, comments, onChange }: CommentT
     <div className="space-y-4">
       <div>
         <textarea
+          aria-label={t("solutions.comments.label")}
           value={composer}
           onChange={(e) => setComposer(e.target.value)}
           maxLength={2000}
@@ -62,7 +67,7 @@ export function CommentThread({ solutionId, slug, comments, onChange }: CommentT
           className="w-full resize-y rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
         />
         <div className="mt-2 flex items-center justify-between">
-          <span className="text-xs text-muted-foreground">
+          <span className="font-mono text-xs tabular-nums text-muted-foreground">
             {composer.length}/2000
           </span>
           <Button
@@ -72,6 +77,9 @@ export function CommentThread({ solutionId, slug, comments, onChange }: CommentT
             {t("solutions.comments.submit")}
           </Button>
         </div>
+        {composerError && (
+          <p role="alert" className="mt-1 text-xs text-destructive">{composerError}</p>
+        )}
       </div>
 
       {comments.length === 0 ? (
@@ -208,9 +216,11 @@ function CommentRow({
   onUpdate,
   onDelete,
 }: CommentRowProps) {
-  const { t } = useTranslation("problem")
+  const { t, i18n } = useTranslation("problem")
   const navigate = useNavigate()
   const [replying, setReplying] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [confirmingDelete, setConfirmingDelete] = useState(false)
   const [editing, setEditing] = useState(false)
   const [draft, setDraft] = useState(comment.content)
   const [reportOpen, setReportOpen] = useState(false)
@@ -226,6 +236,7 @@ function CommentRow({
       requireAuth()
       return
     }
+    setError(null)
     try {
       const res = await createComment(solutionId, {
         content: draft.trim(),
@@ -235,47 +246,51 @@ function CommentRow({
       setDraft(comment.content)
       setReplying(false)
     } catch {
-      // ignore
+      setError(t("solutions.comments.failed"))
     }
   }
 
   const submitEdit = async () => {
     if (!draft.trim()) return
+    setError(null)
     try {
       const res = await updateComment(comment.id, { content: draft.trim() })
       onUpdate(res.data)
       setEditing(false)
     } catch {
-      // ignore
+      setError(t("solutions.comments.failed"))
     }
   }
 
   const handleDelete = async () => {
-    if (!confirm(t("solutions.comments.confirmDelete"))) return
+    setConfirmingDelete(false)
+    setError(null)
     try {
       await deleteComment(comment.id)
       onDelete()
     } catch {
-      // ignore
+      setError(t("solutions.comments.deleteFailed"))
     }
   }
 
   return (
     <div>
       <div className="flex items-start gap-2">
-        <AvatarOrInitial
+        <AuthorAvatar
           avatarUrl={comment.authorAvatarUrl}
           username={comment.authorUsername}
+          className="h-7 w-7"
         />
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
             <span className="font-semibold text-foreground">{comment.authorUsername}</span>
-            <span>· {new Date(comment.createdAt).toLocaleDateString()}</span>
+            <span>· {new Date(comment.createdAt).toLocaleDateString(i18n.language)}</span>
             {comment.edited && <span>· {t("solutions.comments.edited")}</span>}
           </div>
           {editing ? (
             <div className="mt-1">
               <textarea
+                aria-label={t("solutions.comments.editLabel")}
                 value={draft}
                 onChange={(e) => setDraft(e.target.value)}
                 maxLength={2000}
@@ -306,7 +321,7 @@ function CommentRow({
             <div className="mt-1 flex gap-3 text-xs text-muted-foreground">
               {canReply && (
                 <button
-                  className="hover:text-foreground"
+                  className="rounded hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   onClick={() => {
                     if (!isAuthenticated) requireAuth()
                     else {
@@ -320,32 +335,38 @@ function CommentRow({
               {comment.ownedByViewer && (
                 <>
                   <button
-                    className="hover:text-foreground"
+                    className="rounded hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                     onClick={() => {
                       setDraft(comment.content)
                       setEditing(true)
                     }}>
                     {t("solutions.comments.edit")}
                   </button>
-                  <button className="hover:text-destructive" onClick={handleDelete}>
+                  <button
+                    className="rounded hover:text-destructive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    onClick={() => setConfirmingDelete(true)}>
                     {t("solutions.comments.delete")}
                   </button>
                 </>
               )}
               {!comment.ownedByViewer && isAuthenticated && (
                 <button
-                  className="hover:text-foreground"
+                  className="rounded hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   onClick={() => setReportOpen(true)}>
                   {t("solutions.report")}
                 </button>
               )}
             </div>
           )}
+          {error && (
+            <p role="alert" className="mt-1 text-xs text-destructive">{error}</p>
+          )}
         </div>
       </div>
       {replying && (
         <div className="mt-2 ml-7">
           <textarea
+            aria-label={t("solutions.comments.replyLabel")}
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
             maxLength={2000}
@@ -363,6 +384,14 @@ function CommentRow({
           </div>
         </div>
       )}
+      <ConfirmDialog
+        open={confirmingDelete}
+        title={t("solutions.comments.confirmDelete")}
+        description={comment.content.length > 120 ? `${comment.content.slice(0, 120)}…` : comment.content}
+        confirmLabel={t("solutions.comments.delete")}
+        onConfirm={handleDelete}
+        onCancel={() => setConfirmingDelete(false)}
+      />
       <ReportDialog
         open={reportOpen}
         onClose={() => setReportOpen(false)}
@@ -370,29 +399,6 @@ function CommentRow({
           await reportComment(comment.id, { reason })
         }}
       />
-    </div>
-  )
-}
-
-function AvatarOrInitial({
-  avatarUrl,
-  username,
-}: {
-  avatarUrl: string | null
-  username: string
-}) {
-  if (avatarUrl) {
-    return (
-      <img
-        src={avatarUrl}
-        alt={username}
-        className="h-7 w-7 rounded-full"
-      />
-    )
-  }
-  return (
-    <div className="flex h-7 w-7 items-center justify-center rounded-full bg-accent text-xs font-bold text-white">
-      {username.charAt(0).toUpperCase()}
     </div>
   )
 }

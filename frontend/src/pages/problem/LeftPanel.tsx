@@ -133,22 +133,32 @@ export function LeftPanel({
               {t('tabs.solutions')}
             </TabsTrigger>
           </TabsList>
-          <div className="flex items-center pr-1 opacity-0 transition-opacity group-hover:opacity-100">
+          <div className="flex items-center pr-1 opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100">
             <Tooltip>
               <TooltipTrigger>
-                <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onFold}>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7"
+                  onClick={onFold}
+                  aria-label={t('workspace.foldPanel')}>
                   <PanelLeftClose className="h-3.5 w-3.5" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>Fold panel</TooltipContent>
+              <TooltipContent>{t('workspace.foldPanel')}</TooltipContent>
             </Tooltip>
             <Tooltip>
               <TooltipTrigger>
-                <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onMaximize}>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7"
+                  onClick={onMaximize}
+                  aria-label={t(isMaximized ? 'workspace.restore' : 'workspace.maximize')}>
                   {isMaximized ? <Minimize2 className="h-3.5 w-3.5" /> : <Maximize2 className="h-3.5 w-3.5" />}
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>{isMaximized ? 'Restore' : 'Maximize'}</TooltipContent>
+              <TooltipContent>{t(isMaximized ? 'workspace.restore' : 'workspace.maximize')}</TooltipContent>
             </Tooltip>
           </div>
         </div>
@@ -218,6 +228,7 @@ export function CollapsedLeftStrip({
             <TooltipTrigger asChild>
               <button
                 type="button"
+                aria-pressed={activeTab === id}
                 onClick={() => onTabSelect(id)}
                 className={cn(
                   'flex w-full flex-col items-center gap-1 rounded py-2 px-1 transition-colors',
@@ -226,7 +237,7 @@ export function CollapsedLeftStrip({
                     : 'text-muted-foreground hover:bg-muted hover:text-foreground',
                 )}>
                 <Icon />
-                <span className="[writing-mode:vertical-rl] text-[10px] font-medium leading-none">
+                <span className="[writing-mode:vertical-rl] text-xs font-medium leading-none">
                   {t(labelKey)}
                 </span>
               </button>
@@ -237,22 +248,32 @@ export function CollapsedLeftStrip({
       </div>
 
       {/* Bottom buttons — visible on hover */}
-      <div className="flex flex-col items-center gap-1 pb-1 opacity-0 transition-opacity group-hover/strip:opacity-100">
+      <div className="flex flex-col items-center gap-1 pb-1 opacity-0 transition-opacity group-hover/strip:opacity-100 group-focus-within/strip:opacity-100">
         <Tooltip>
           <TooltipTrigger>
-            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onExpand}>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-7 w-7"
+              onClick={onExpand}
+              aria-label={t('workspace.expandPanel')}>
               <PanelLeftOpen className="h-3.5 w-3.5" />
             </Button>
           </TooltipTrigger>
-          <TooltipContent side="right">Expand panel</TooltipContent>
+          <TooltipContent side="right">{t('workspace.expandPanel')}</TooltipContent>
         </Tooltip>
         <Tooltip>
           <TooltipTrigger>
-            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onMaximize}>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-7 w-7"
+              onClick={onMaximize}
+              aria-label={t(isMaximized ? 'workspace.restore' : 'workspace.maximize')}>
               {isMaximized ? <Minimize2 className="h-3.5 w-3.5" /> : <Maximize2 className="h-3.5 w-3.5" />}
             </Button>
           </TooltipTrigger>
-          <TooltipContent side="right">{isMaximized ? 'Restore' : 'Maximize'}</TooltipContent>
+          <TooltipContent side="right">{t(isMaximized ? 'workspace.restore' : 'workspace.maximize')}</TooltipContent>
         </Tooltip>
       </div>
     </div>

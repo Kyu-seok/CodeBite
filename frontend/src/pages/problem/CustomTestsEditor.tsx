@@ -61,7 +61,7 @@ export function CustomTestsEditor({
   return (
     <div className="space-y-2">
       {customTests.map((tc, i) => (
-        <div key={i} className="rounded-lg border border-border bg-muted p-3 text-sm">
+        <div key={i} className="border-t border-border pt-2 text-sm first:border-t-0 first:pt-0">
           <div className="mb-2 flex items-center justify-between">
             <span className="text-xs font-medium text-muted-foreground">
               {t('test.case', { n: i + 1 })}
@@ -75,10 +75,11 @@ export function CustomTestsEditor({
               <X className="h-3.5 w-3.5" />
             </Button>
           </div>
-          <label className="text-xs text-muted-foreground">
+          <label htmlFor={`custom-input-${i}`} className="text-xs text-muted-foreground">
             {t('test.customInputLabel')}
           </label>
           <textarea
+            id={`custom-input-${i}`}
             value={tc.input}
             onChange={(e) => updateCase(i, { input: e.target.value })}
             maxLength={10000}
@@ -86,10 +87,11 @@ export function CustomTestsEditor({
             placeholder={hintInput}
             className={TEXTAREA_CLASS}
           />
-          <label className="mt-2 block text-xs text-muted-foreground">
+          <label htmlFor={`custom-expected-${i}`} className="mt-2 block text-xs text-muted-foreground">
             {t('test.customExpectedLabel')}
           </label>
           <textarea
+            id={`custom-expected-${i}`}
             value={tc.expectedOutput}
             onChange={(e) => updateCase(i, { expectedOutput: e.target.value })}
             maxLength={10000}
@@ -100,7 +102,7 @@ export function CustomTestsEditor({
         </div>
       ))}
       <div className="flex items-center justify-between pt-1">
-        <span className="text-xs text-muted-foreground">
+        <span className="font-mono text-xs tabular-nums text-muted-foreground">
           {customTests.length}/{maxCases}
         </span>
         <Button variant="outline" size="sm" onClick={addCase} disabled={atMax}>

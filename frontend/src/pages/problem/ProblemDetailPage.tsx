@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useParams, useNavigate, useOutletContext } from "react-router-dom"
+import { useTranslation } from "react-i18next"
 import { useProblem } from "@/hooks/useProblem"
 import { useSubmissions } from "@/hooks/useSubmissions"
 import { useAuth } from "@/context/AuthContext"
@@ -18,6 +19,8 @@ import Spinner from "@/components/ui/Spinner"
 import { LeftPanel, CollapsedLeftStrip } from "./LeftPanel"
 import { EditorPanel } from "./EditorPanel"
 import { TestPanel, CollapsedTestStrip } from "./TestPanel"
+import { ConfirmDialog } from "./ConfirmDialog"
+import { languageLabel } from "./submissionDisplay"
 import { AcceptedModal } from "@/components/review/AcceptedModal"
 import { fireConfetti } from "@/components/review/ConfettiBurst"
 import type { Confidence } from "@/types/review"
@@ -42,6 +45,7 @@ const SSE_MAX_DURATION_MS = 90_000
 export default function ProblemDetailPage() {
   const { slug } = useParams<{ slug: string }>()
   const navigate = useNavigate()
+  const { t } = useTranslation("problem")
   const { timerActive, elapsed, stopTimer } = useOutletContext<WorkspaceOutletContext>()
   const { user, isAuthenticated, loading: authLoading, updateUser } = useAuth()
   const { problem, loading, error } = useProblem(slug!)
@@ -60,6 +64,11 @@ export default function ProblemDetailPage() {
     }
   })
   const [submitting, setSubmitting] = useState(false)
+  const [submitStartedAt, setSubmitStartedAt] = useState<number | null>(null)
+  // A pending overwrite of the editor (reset or load), held until the learner confirms it.
+  const [pendingOverwrite, setPendingOverwrite] = useState<
+    { kind: "reset" | "load"; lang: string; sourceCode?: string } | null
+  >(null)
   const [result, setResult] = useState<SubmissionResponse | null>(null)
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [running, setRunning] = useState(false)
@@ -181,7 +190,7 @@ export default function ProblemDetailPage() {
   if (error || !problem) {
     return (
       <div className="flex h-[calc(100vh-3.5rem)] items-center justify-center">
-        <p className="text-sm text-destructive">{error || "Problem not found"}</p>
+        <p className="text-sm text-destructive">{error || t("workspace.problemNotFound")}</p>
       </div>
     )
   }
@@ -197,12 +206,23 @@ export default function ProblemDetailPage() {
     updateUser({ recentLanguage: lang })
   }
 
-  const handleResetCode = () => {
+  // True when the editor holds work for `lang` that an overwrite would lose.
+  const hasOwnCode = (lang: string, incoming?: string) => {
+    const current = codeByLang[lang]
+    return current != null && current !== problem.starterCode[lang] && current !== incoming
+  }
+
+  const resetCode = (lang: string) => {
     setCodeByLang((prev) => {
       const next = { ...prev }
-      delete next[activeLang]
+      delete next[lang]
       return next
     })
+  }
+
+  const handleResetCode = () => {
+    if (hasOwnCode(activeLang)) setPendingOverwrite({ kind: "reset", lang: activeLang })
+    else resetCode(activeLang)
   }
 
   const handleCodeChange = (value: string | undefined) => {
@@ -211,11 +231,23 @@ export default function ProblemDetailPage() {
     }
   }
 
-  const handleLoadIntoEditor = (sourceCode: string, lang: string) => {
+  const loadIntoEditor = (sourceCode: string, lang: string) => {
     setCodeByLang((prev) => ({ ...prev, [lang]: sourceCode }))
     if (lang !== activeLang) {
       handleLanguageChange(lang)
     }
+  }
+
+  const handleLoadIntoEditor = (sourceCode: string, lang: string) => {
+    if (hasOwnCode(lang, sourceCode)) setPendingOverwrite({ kind: "load", lang, sourceCode })
+    else loadIntoEditor(sourceCode, lang)
+  }
+
+  const confirmOverwrite = () => {
+    if (!pendingOverwrite) return
+    if (pendingOverwrite.kind === "reset") resetCode(pendingOverwrite.lang)
+    else loadIntoEditor(pendingOverwrite.sourceCode ?? "", pendingOverwrite.lang)
+    setPendingOverwrite(null)
   }
 
   const stopWatching = () => {
@@ -241,6 +273,7 @@ export default function ProblemDetailPage() {
     stopWatching()
     setResult(res.data)
     setSubmitting(false)
+    setSubmitStartedAt(null)
 
     let capturedSolveTime: number | null = null
     if (timerSnapshotRef.current != null && res.data.status === "ACCEPTED") {
@@ -269,22 +302,25 @@ export default function ProblemDetailPage() {
     return true
   }
 
+  const failWatching = (message: string) => {
+    stopWatching()
+    setSubmitError(message)
+    setSubmitting(false)
+    setSubmitStartedAt(null)
+  }
+
   const pollForResult = (submissionId: number) => {
     if (pollIntervalRef.current) return
     const startTime = Date.now()
     const interval = setInterval(async () => {
       if (Date.now() - startTime > POLL_MAX_DURATION_MS) {
-        stopWatching()
-        setSubmitError("Submission is taking longer than expected. Please refresh to check the result.")
-        setSubmitting(false)
+        failWatching(t("workspace.judgingSlow"))
         return
       }
       try {
         await finalizeSubmission(submissionId)
       } catch {
-        stopWatching()
-        setSubmitError("Failed to fetch results.")
-        setSubmitting(false)
+        failWatching(t("workspace.resultFetchFailed"))
       }
     }, POLL_INTERVAL_MS)
     pollIntervalRef.current = interval
@@ -326,9 +362,7 @@ export default function ProblemDetailPage() {
     source.addEventListener("result", () => {
       clearTimeout(deadline)
       finalizeSubmission(submissionId).catch(() => {
-        stopWatching()
-        setSubmitError("Failed to fetch results.")
-        setSubmitting(false)
+        failWatching(t("workspace.resultFetchFailed"))
       })
     })
 
@@ -415,7 +449,7 @@ export default function ProblemDetailPage() {
       if (err instanceof AxiosError && err.response?.data) {
         setRunError((err.response.data as ApiError).message)
       } else {
-        setRunError("Run failed. Please try again.")
+        setRunError(t("workspace.runFailed"))
       }
     } finally {
       setRunning(false)
@@ -431,6 +465,7 @@ export default function ProblemDetailPage() {
     timerSnapshotRef.current = timerActive ? elapsed : null
     if (pollIntervalRef.current) clearInterval(pollIntervalRef.current)
     setSubmitting(true)
+    setSubmitStartedAt(Date.now())
     setSubmitError(null)
     setResult(null)
     setRunResult(null)
@@ -447,9 +482,10 @@ export default function ProblemDetailPage() {
       if (err instanceof AxiosError && err.response?.data) {
         setSubmitError((err.response.data as ApiError).message)
       } else {
-        setSubmitError("Submission failed. Please try again.")
+        setSubmitError(t("workspace.submitFailed"))
       }
       setSubmitting(false)
+      setSubmitStartedAt(null)
     }
   }
 
@@ -501,6 +537,7 @@ export default function ProblemDetailPage() {
         }
         editor={
           <EditorPanel
+            problemSlug={slug!}
             languages={languages}
             activeLanguage={activeLang}
             code={code}
@@ -526,6 +563,8 @@ export default function ProblemDetailPage() {
             submitError={submitError}
             running={running}
             submitting={submitting}
+            submitStartedAt={submitStartedAt}
+            language={activeLang}
             activeTab={activeTab}
             userSource={code}
             customTests={customTests}
@@ -545,6 +584,17 @@ export default function ProblemDetailPage() {
         submissionId={acceptedModal.submissionId}
         defaultSolveTimeSeconds={acceptedModal.solveTimeSeconds}
         onSubmit={handleAcceptedReviewSubmit}
+      />
+      <ConfirmDialog
+        open={pendingOverwrite != null}
+        title={t(pendingOverwrite?.kind === "load" ? "workspace.loadConfirmTitle" : "workspace.resetConfirmTitle")}
+        description={t(
+          pendingOverwrite?.kind === "load" ? "workspace.loadConfirmBody" : "workspace.resetConfirmBody",
+          { language: languageLabel(pendingOverwrite?.lang ?? activeLang) },
+        )}
+        confirmLabel={t(pendingOverwrite?.kind === "load" ? "workspace.loadConfirm" : "workspace.resetConfirm")}
+        onConfirm={confirmOverwrite}
+        onCancel={() => setPendingOverwrite(null)}
       />
     </>
   )

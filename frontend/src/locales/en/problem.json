@@ -51,12 +51,15 @@
     "category": "Category",
     "descriptionLabel": "Description",
     "placeholder": "Describe the issue...",
-    "submit": "Submit Report",
+    "submit": "Open GitHub issue",
     "wrongTestCase": "Wrong test case",
     "wrongExpectedOutput": "Wrong expected output",
     "descriptionUnclear": "Description unclear",
     "starterCodeIssue": "Starter code issue",
-    "other": "Other"
+    "other": "Other",
+    "githubNote": "This opens a prefilled issue on GitHub. You'll need a GitHub account to post it.",
+    "opened": "Issue draft opened on GitHub",
+    "openedHint": "Post it there to send the report."
   },
   "test": {
     "testCases": "Test Cases",
@@ -85,7 +88,12 @@
     "customInputLabel": "Input",
     "customExpectedLabel": "Expected output (optional)",
     "customEmptyHelp": "Add up to {{max}} custom test cases. Use the same input format as the sample test cases.",
-    "finished": "Finished"
+    "finished": "Finished",
+    "errorLine": "Line {{line}}: {{severity}}: {{message}}",
+    "severity": {
+      "error": "error",
+      "warning": "warning"
+    }
   },
   "solutions": {
     "shareYourSolution": "Share Your Solution",
@@ -122,7 +130,12 @@
       "save": "Save",
       "cancel": "Cancel",
       "edited": "edited",
-      "confirmDelete": "Delete this comment?"
+      "confirmDelete": "Delete this comment?",
+      "failed": "Couldn't save your comment. Please try again.",
+      "deleteFailed": "Couldn't delete the comment. Please try again.",
+      "label": "Comment",
+      "replyLabel": "Reply",
+      "editLabel": "Edit comment"
     },
     "editor": {
       "title": "Title",
@@ -143,7 +156,28 @@
       "publish": "Publish",
       "publishing": "Publishing…",
       "update": "Save changes",
-      "publishFailed": "Could not publish. Please try again."
+      "publishFailed": "Could not publish. Please try again.",
+      "contentLabel": "Solution (Markdown)"
+    },
+    "upvote": "Upvote",
+    "downvote": "Downvote",
+    "score": "Score {{n}}",
+    "commentsCount": "{{n}} comments",
+    "voteFailed": "Couldn't record your vote. Please try again.",
+    "deleteFailed": "Couldn't delete the solution. Please try again.",
+    "reportFailed": "Couldn't send the report. Please try again.",
+    "reportReason": "Reason",
+    "searchLabel": "Search solutions",
+    "sortLabel": "Sort solutions",
+    "languageFilter": "Filter by language",
+    "seedTemplate": "## My Approach\n\n_Describe your idea here._\n\n## Code\n\n{{code}}\n",
+    "toolbar": {
+      "bold": "Bold ({{mod}}B)",
+      "italic": "Italic ({{mod}}I)",
+      "code": "Inline code",
+      "link": "Link",
+      "heading": "Heading",
+      "list": "List"
     }
   },
   "submissions": {
@@ -175,7 +209,15 @@
       "committed": "Committed to your Solution Repository",
       "viewCommit": "View on GitHub",
       "failed": "Couldn't commit to GitHub"
-    }
+    },
+    "confidence": "Rating",
+    "solveTime": "Solve time",
+    "updateRating": "Update your rating",
+    "updateRatingHint": "Pick a different rating to update; the review schedule will recompute.",
+    "markForReview": "Mark this for review",
+    "markForReviewHint": "Choose how confident you felt. We'll bring it back later for spaced review.",
+    "openSubmission": "Open submission from {{date}}",
+    "editNote": "Edit note"
   },
   "settings": {
     "title": "Settings",
@@ -190,5 +232,32 @@
     "intelliSense": "IntelliSense",
     "intelliSenseDescription": "Type-aware completions, signature help, and error highlighting.",
     "spaces": "{{n}} Spaces"
+  },
+  "workspace": {
+    "foldPanel": "Fold panel",
+    "expandPanel": "Expand panel",
+    "maximize": "Maximize",
+    "restore": "Restore",
+    "maximizePanel": "Maximize panel",
+    "restoreEditor": "Restore editor",
+    "showTests": "Show test panel",
+    "hideTests": "Hide test panel",
+    "fullScreen": "Full screen",
+    "exitFullScreen": "Exit full screen",
+    "runShortcut": "{{keys}} to run",
+    "submitShortcut": "{{keys}} to submit",
+    "problemNotFound": "Problem not found.",
+    "runFailed": "Run failed. Please try again.",
+    "submitFailed": "Submission failed. Please try again.",
+    "judgingSlow": "Judging is taking longer than expected. Refresh the page to check the result.",
+    "resultFetchFailed": "Couldn't load the result. Refresh the page to check it.",
+    "judgingElapsed": "{{seconds}}s",
+    "judgingTypical": "Usually about {{seconds}}s for {{language}}",
+    "resetConfirmTitle": "Reset your code?",
+    "resetConfirmBody": "Your {{language}} code goes back to the starter template. Your current code can't be recovered.",
+    "resetConfirm": "Reset code",
+    "loadConfirmTitle": "Replace your current code?",
+    "loadConfirmBody": "Loading this submission replaces the {{language}} code in your editor. Your current code can't be recovered.",
+    "loadConfirm": "Replace code"
   }
 }
