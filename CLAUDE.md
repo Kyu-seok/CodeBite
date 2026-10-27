@@ -212,3 +212,7 @@ The five default roles: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-
 ### Domain docs
 
 Single-context: one `GLOSSARY.md` and `docs/adr/` at the repo root. See `docs/agents/domain.md`.
+
+### Parallel sessions
+
+Several sessions often run in this repo at once. Leave the main checkout on `master` and do all branch work in your own worktree (`git worktree add <scratchpad>/wt -b <branch> origin/master`); a `git switch` or commit in the shared checkout moves every other session's files. The pre-commit hook refuses commits on `master`.
