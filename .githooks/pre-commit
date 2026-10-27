@@ -5,6 +5,13 @@
 # Skip in an emergency: git commit --no-verify
 set -euo pipefail
 
+# master only moves through merged PRs. A commit here usually means the checkout was switched
+# under you (another session sharing this directory); branch first, or use a git worktree.
+if [ "$(git branch --show-current)" = master ]; then
+  echo "pre-commit: refusing to commit on master; switch to a branch first" >&2
+  exit 1
+fi
+
 staged=$(git diff --cached --name-only --diff-filter=ACMR)
 touches() { grep -qE "$1" <<<"$staged"; }
 
