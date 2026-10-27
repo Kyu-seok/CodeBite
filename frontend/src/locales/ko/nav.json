@@ -3,8 +3,6 @@
   "problems": "문제",
   "roadmap": "로드맵",
   "reviews": "리뷰",
-  "darkMode": "다크 모드",
-  "lightMode": "라이트 모드",
   "profile": "프로필",
   "admin": "관리자",
   "logout": "로그아웃",
@@ -12,5 +10,18 @@
   "language": "English",
   "streak": {
     "days_other": "{{count}}일 연속 풀이"
+  },
+  "home": "CodeBite 홈",
+  "mainNav": "주 메뉴",
+  "menu": "메뉴",
+  "skipToContent": "본문으로 건너뛰기",
+  "accountMenu": "계정 메뉴",
+  "switchToDark": "다크 모드로 전환",
+  "switchToLight": "라이트 모드로 전환",
+  "switchLanguage": "영어로 전환",
+  "timer": {
+    "start": "타이머 시작",
+    "pause": "타이머 일시정지",
+    "reset": "타이머 초기화"
   }
 }

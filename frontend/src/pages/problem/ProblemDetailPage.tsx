@@ -46,7 +46,7 @@ export default function ProblemDetailPage() {
   const { slug } = useParams<{ slug: string }>()
   const navigate = useNavigate()
   const { t } = useTranslation("problem")
-  const { timerActive, elapsed, stopTimer } = useOutletContext<WorkspaceOutletContext>()
+  const { getTimerSnapshot, stopTimer } = useOutletContext<WorkspaceOutletContext>()
   const { user, isAuthenticated, loading: authLoading, updateUser } = useAuth()
   const { problem, loading, error } = useProblem(slug!)
   const { submissions, refetch: refetchSubmissions, updateNote } = useSubmissions(
@@ -462,7 +462,7 @@ export default function ProblemDetailPage() {
       navigate("/login")
       return
     }
-    timerSnapshotRef.current = timerActive ? elapsed : null
+    timerSnapshotRef.current = getTimerSnapshot()
     if (pollIntervalRef.current) clearInterval(pollIntervalRef.current)
     setSubmitting(true)
     setSubmitStartedAt(Date.now())
