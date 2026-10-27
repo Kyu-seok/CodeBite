@@ -68,8 +68,48 @@ class UnpassableTestDataTest {
         assertTrue(korean("cafe-stop-orders").contains("출력: " + expected));
     }
 
+    // merge-duplicate-contacts: every driver sorts each account's emails, then the accounts by
+    // their first email.
+
+    @Test
+    void mergeDuplicateContactsSampleListsAccountsByFirstEmail() {
+        assertEquals("[[\"Leo\",\"leo.grip@set.film\"],"
+                        + "[\"Maya\",\"maya.dp@set.film\",\"mayalens@set.film\",\"mk.camera@set.film\"],"
+                        + "[\"Maya\",\"maya.solo@set.film\"]]",
+                sample("merge-duplicate-contacts", 1).getExpectedOutput());
+    }
+
+    @Test
+    void everyMergeDuplicateContactsExpectedOutputIsInTheDriversOrder() throws Exception {
+        List<String> unsorted = new ArrayList<>();
+        for (TestCase tc : testCases("merge-duplicate-contacts")) {
+            List<List<String>> accounts = JSON.readValue(tc.getExpectedOutput(), new TypeReference<>() {});
+            boolean sorted = true;
+            for (int i = 0; i < accounts.size(); i++) {
+                List<String> emails = accounts.get(i).subList(1, accounts.get(i).size());
+                for (int j = 1; j < emails.size(); j++) {
+                    sorted &= emails.get(j - 1).compareTo(emails.get(j)) < 0;
+                }
+                if (i > 0) sorted &= accounts.get(i - 1).get(1).compareTo(accounts.get(i).get(1)) < 0;
+            }
+            if (!sorted) unsorted.add("test case " + tc.getOrderIndex());
+        }
+        assertTrue(unsorted.isEmpty(), "Accounts not in the drivers' order: " + unsorted);
+    }
+
+    @Test
+    void mergeDuplicateContactsExamplesShowTheSampleOutput() {
+        String expected = sample("merge-duplicate-contacts", 1).getExpectedOutput();
+        assertTrue(description("merge-duplicate-contacts").contains("Output: " + expected));
+        assertTrue(korean("merge-duplicate-contacts").contains("출력: " + expected));
+    }
+
     @ParameterizedTest
     @CsvSource({
+            "merge-duplicate-contacts, python,     result.sort(key=lambda a: a[1])",
+            "merge-duplicate-contacts, javascript, result.sort((a, b) => a[1] < b[1]",
+            "merge-duplicate-contacts, java,       result.sort((a, b) -> a.get(1).compareTo(b.get(1)))",
+            "merge-duplicate-contacts, cpp,        return a[1] < b[1];",
             "cafe-stop-orders, python,     result.sort()",
             "cafe-stop-orders, javascript, result.sort(",
             "cafe-stop-orders, java,       result.sort(",
