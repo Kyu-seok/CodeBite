@@ -8,6 +8,7 @@ import { useConfidenceLabel, confidenceTextClass } from "@/lib/confidenceColors"
 import type { DueReviewItem } from "@/types/review";
 import type { Difficulty } from "@/types/problem";
 import LoadError from "@/components/ui/LoadError";
+import { dueWording } from "@/lib/dueWording";
 
 export function DueReviewsCard() {
   const { t, i18n } = useTranslation("profile");
@@ -39,14 +40,9 @@ export function DueReviewsCard() {
     fetchDue();
   };
 
-  const relative = new Intl.RelativeTimeFormat(i18n.language, { numeric: "auto" });
   const dueText = (iso: string, daysOverdue: number) => {
-    if (daysOverdue >= 1) return t("dueReviews.overdue", { count: daysOverdue });
-    const ms = new Date(iso).getTime() - now;
-    if (ms <= 0) return t("dueReviews.dueNow");
-    // Whole UTC days between today and the due date, as Streak Days count them (ADR 0001)
-    const utcDay = (time: number) => Math.floor(time / 86_400_000);
-    return t("dueReviews.due", { when: relative.format(utcDay(now + ms) - utcDay(now), "day") });
+    const { key, ...values } = dueWording(iso, daysOverdue, now, i18n.language);
+    return t(key, values);
   };
 
   return (
