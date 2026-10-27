@@ -99,6 +99,7 @@
     "customExpectedLabel": "Expected output (optional)",
     "customEmptyHelp": "Add up to {{max}} custom test cases. Use the same input format as the sample test cases.",
     "finished": "Finished",
+    "passedCount": "{{passed}}/{{total}} passed",
     "errorLine": "Line {{line}}: {{severity}}: {{message}}",
     "severity": {
       "error": "error",

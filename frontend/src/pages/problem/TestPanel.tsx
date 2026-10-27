@@ -38,6 +38,15 @@ function collectTemplateError(
   return false;
 }
 
+/** Passed out of judged cases; a custom case without an expected output isn't judged, so it isn't counted. */
+function passCount(results: { status: string; judged?: boolean }[]) {
+  const judged = results.filter((r) => r.judged !== false);
+  return {
+    passed: judged.filter((r) => r.status === 'ACCEPTED').length,
+    total: judged.length,
+  };
+}
+
 const isMac =
   typeof navigator !== 'undefined' && /Mac/.test(navigator.userAgent);
 
@@ -136,6 +145,9 @@ export function ResultAnnouncer({
 }: ResultAnnouncerProps) {
   const { t } = useTranslation('problem');
   const { t: tc } = useTranslation('common');
+  const counted = runResult ?? (submitResult?.status !== 'PENDING' ? submitResult : null);
+  const count = counted ? passCount(counted.results) : null;
+  const countText = count && count.total > 0 ? `, ${t('test.passedCount', count)}` : '';
   const announcement = running
     ? t('test.running')
     : submitting
@@ -143,9 +155,9 @@ export function ResultAnnouncer({
       : runError || submitError
         ? (runError || submitError)!
         : runResult
-          ? `${t('test.runResults')}: ${tc(STATUS_KEYS[runResult.overallStatus])}`
+          ? `${t('test.runResults')}: ${tc(STATUS_KEYS[runResult.overallStatus])}${countText}`
           : submitResult
-            ? tc(STATUS_KEYS[submitResult.status])
+            ? `${tc(STATUS_KEYS[submitResult.status])}${countText}`
             : '';
   return (
     <p role="status" aria-live="polite" className="sr-only">
@@ -389,6 +401,7 @@ function OutputContent({
   }
 
   if (runResult) {
+    const count = passCount(runResult.results);
     const samples = runResult.results.filter((r) => !r.isCustom);
     const customs = runResult.results.filter((r) => r.isCustom);
     return (
@@ -397,7 +410,10 @@ function OutputContent({
           <span className="text-sm font-semibold text-foreground">
             {t('test.runResults')}
           </span>
-          <StatusBadge status={runResult.overallStatus} />
+          <div className="flex items-center gap-2">
+            {count.total > 0 && <PassCount {...count} />}
+            <StatusBadge status={runResult.overallStatus} />
+          </div>
         </div>
         {samples.length > 0 && (
           <RunResultsSection
@@ -420,10 +436,14 @@ function OutputContent({
   }
 
   if (submitResult) {
+    const count = passCount(submitResult.results);
     return (
       <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <StatusBadge status={submitResult.status} />
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <StatusBadge status={submitResult.status} />
+            {submitResult.status !== 'PENDING' && count.total > 0 && <PassCount {...count} />}
+          </div>
           <div className="space-x-3 font-mono text-xs tabular-nums text-muted-foreground">
             {submitResult.runtimeMs != null && (
               <span>{tc('label.runtime')}: {submitResult.runtimeMs}ms</span>
@@ -496,6 +516,15 @@ function OutputContent({
     <p className="py-8 text-center text-sm text-muted-foreground">
       {t('test.placeholder')}
     </p>
+  );
+}
+
+function PassCount({ passed, total }: { passed: number; total: number }) {
+  const { t } = useTranslation('problem');
+  return (
+    <span className="font-mono text-xs tabular-nums text-muted-foreground">
+      {t('test.passedCount', { passed, total })}
+    </span>
   );
 }
 
