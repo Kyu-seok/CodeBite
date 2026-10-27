@@ -2,5 +2,5 @@
 
 s = input().strip()
 k = int(input())
-result = Solution().character_replacement(s, k)
+result = Solution().shiftLetters(s, k)
 print(result)

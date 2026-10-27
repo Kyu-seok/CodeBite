@@ -17,5 +17,5 @@ head = dummy.next
 if pos >= 0 and nodes:
     nodes[-1].next = nodes[pos]
 
-result = Solution().has_cycle(head)
+result = Solution().detectTransferLoop(head)
 print(json.dumps(result))

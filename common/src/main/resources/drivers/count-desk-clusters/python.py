@@ -2,5 +2,5 @@
 
 import json
 grid = json.loads(input())
-result = Solution().num_islands(grid)
+result = Solution().tallyPlantedRegions(grid)
 print(result)
