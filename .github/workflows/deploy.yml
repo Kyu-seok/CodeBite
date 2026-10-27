@@ -146,3 +146,30 @@ jobs:
             docker image prune -f
             echo "--- Post-deploy status ---"
             $COMPOSE ps
+
+  # A failed deploy leaves production on the old code without telling anyone,
+  # so push a phone notification through ntfy (topic in the NTFY_TOPIC secret).
+  # Runs when the tests or the deploy fail; skipped when the secret is unset.
+  notify-failure:
+    runs-on: ubuntu-latest
+    needs: [test, deploy]
+    if: failure()
+    steps:
+      - name: Push a notification
+        env:
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+          COMMIT_TITLE: ${{ github.event.head_commit.message }}
+          SHA: ${{ github.sha }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          if [ -z "$NTFY_TOPIC" ]; then
+            echo "NTFY_TOPIC is not set; skipping"
+            exit 0
+          fi
+          curl -fsS \
+            -H "Title: CodeBite deploy failed" \
+            -H "Priority: high" \
+            -H "Tags: rotating_light" \
+            -H "Click: $RUN_URL" \
+            -d "${SHA:0:7} ${COMMIT_TITLE%%$'\n'*}. Production may still be on the previous commit; tap for the run." \
+            "https://ntfy.sh/$NTFY_TOPIC"
