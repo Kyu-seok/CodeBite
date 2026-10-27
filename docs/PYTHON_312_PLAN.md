@@ -80,6 +80,14 @@ Proves that working solutions still pass on 3.12, not just that the starters loa
 - Run each on id 100 against **all** of the problem's test cases on production Judge0 (`localhost:2358` on `mini`), one problem at a time with a pause between, at low traffic.
 - Every problem must be Accepted. Retry a Time Limit Exceeded once before counting it as a failure (timing noise).
 - Fix any failures (driver or test case) before step 5.
+- Run it with `scripts/replay-judge0-python.py`. It reads an export made by `scripts/replay-judge0-python.sql` and takes reference solutions from `scripts/replay-solutions/<slug>.py`. It exits 1 unless every problem was Accepted. Its report lists the problems that failed apart from those with nothing to replay (no Accepted Python submission and no reference solution). Rerun just the failures with `--only slug,...`.
+
+  ```bash
+  # on mini
+  docker exec -i codebite-postgres psql -U codebite -d codebite -tA < scripts/replay-judge0-python.sql > /tmp/replay.json
+  python3 -I scripts/replay-judge0-python.py http://localhost:2358 100 . /tmp/replay.json --pause 2
+  ```
+  Its tests run against a fake Judge0: `python3 -I scripts/replay-judge0-python.test.py`.
 
 ### 5. Deploy B: switch CodeBite to id 100 (normal push)
 - In `JudgeService.LANGUAGE_IDS`, change `"python", 71` to `"python", 100`. The backend picks the id for both Run and Submit; for Submit it sends the id to the worker in the `SubmissionEvent`.
