@@ -14,6 +14,12 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: [test]
+    # One deploy at a time: two merges seconds apart once rolled the backend
+    # concurrently and collided on replica names. Never cancel a roll midway;
+    # a queued run is replaced by a newer one, whose pull includes it.
+    concurrency:
+      group: deploy-production
+      cancel-in-progress: false
     steps:
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1
