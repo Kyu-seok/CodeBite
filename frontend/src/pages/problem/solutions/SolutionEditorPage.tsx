@@ -46,8 +46,11 @@ function emptyDraft(): DraftPayload {
   return { title: "", content: "", languages: [], tagSlugs: [] }
 }
 
+// Languages and tags are sets: turning one off and on again isn't an edit.
 function sameDraft(a: DraftPayload, b: DraftPayload): boolean {
-  return JSON.stringify(a) === JSON.stringify(b)
+  const normal = (d: DraftPayload) =>
+    JSON.stringify({ ...d, languages: [...d.languages].sort(), tagSlugs: [...d.tagSlugs].sort() })
+  return normal(a) === normal(b)
 }
 
 export default function SolutionEditorPage({ mode }: SolutionEditorPageProps) {
@@ -76,7 +79,8 @@ export default function SolutionEditorPage({ mode }: SolutionEditorPageProps) {
   const [errors, setErrors] = useState<FieldErrors>({})
   const [publishError, setPublishError] = useState<string | null>(null)
   const [draftSaved, setDraftSaved] = useState(false)
-  const [confirmingLeave, setConfirmingLeave] = useState(false)
+  // Where an in-app link or Cancel would take the user, while the leave dialog asks
+  const [leaveTo, setLeaveTo] = useState<string | null>(null)
   const [confirmingDiscard, setConfirmingDiscard] = useState(false)
   const seededRef = useRef(false)
   const titleRef = useRef<HTMLInputElement>(null)
@@ -171,6 +175,33 @@ export default function SolutionEditorPage({ mode }: SolutionEditorPageProps) {
     return () => clearTimeout(handle)
   }, [draft, draftKey, mode])
 
+  const forgetDraft = () => {
+    if (!draftKey) return
+    try {
+      localStorage.removeItem(draftKey)
+    } catch {
+      // ignore
+    }
+  }
+
+  // Edit mode: any in-app link (the Back link, the nav bar) asks before leaving unsaved edits.
+  // The browser's own Back button can't be caught under BrowserRouter.
+  useEffect(() => {
+    if (!dirty) return
+    const guard = (e: MouseEvent) => {
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return
+      const link = e.target instanceof Element ? e.target.closest<HTMLAnchorElement>("a[href]") : null
+      if (!link || link.target === "_blank" || link.hasAttribute("download")) return
+      const url = new URL(link.href)
+      if (url.origin !== window.location.origin) return
+      e.preventDefault()
+      e.stopPropagation()
+      setLeaveTo(url.pathname + url.search + url.hash)
+    }
+    document.addEventListener("click", guard, true)
+    return () => document.removeEventListener("click", guard, true)
+  }, [dirty])
+
   // Edit mode: closing or reloading the tab with unsaved edits asks first.
   useEffect(() => {
     if (!dirty) return
@@ -184,13 +215,15 @@ export default function SolutionEditorPage({ mode }: SolutionEditorPageProps) {
     if (field in errors) setErrors((prev) => ({ ...prev, [field]: undefined }))
   }
 
+  // From the latest state, so two quick toggles before a re-render both count.
   const toggleLanguage = (lang: string) => {
-    update(
-      "languages",
-      draft.languages.includes(lang)
-        ? draft.languages.filter((l) => l !== lang)
-        : [...draft.languages, lang],
-    )
+    setDraft((prev) => ({
+      ...prev,
+      languages: prev.languages.includes(lang)
+        ? prev.languages.filter((l) => l !== lang)
+        : [...prev.languages, lang],
+    }))
+    if ("languages" in errors) setErrors((prev) => ({ ...prev, languages: undefined }))
   }
 
   // Every rule at once, in the order the fields appear.
@@ -230,7 +263,7 @@ export default function SolutionEditorPage({ mode }: SolutionEditorPageProps) {
           tagSlugs: draft.tagSlugs,
           fromSubmissionId: fromSubmissionId ? Number(fromSubmissionId) : null,
         })
-        if (draftKey) localStorage.removeItem(draftKey)
+        forgetDraft()
         navigate(`/problems/${slug}/solutions/${res.data.id}`, { replace: true })
       } else {
         await updateSolution(Number(solutionId), {
@@ -253,12 +286,12 @@ export default function SolutionEditorPage({ mode }: SolutionEditorPageProps) {
   }
 
   const leave = () => {
-    if (dirty) setConfirmingLeave(true)
+    if (dirty) setLeaveTo(problemPath)
     else navigate(problemPath)
   }
 
   const discardDraft = () => {
-    if (draftKey) localStorage.removeItem(draftKey)
+    forgetDraft()
     setConfirmingDiscard(false)
     navigate(problemPath)
   }
@@ -292,12 +325,6 @@ export default function SolutionEditorPage({ mode }: SolutionEditorPageProps) {
     <div className="mx-auto max-w-5xl px-4 py-6">
       <Link
         to={problemPath}
-        onClick={(e) => {
-          if (dirty) {
-            e.preventDefault()
-            setConfirmingLeave(true)
-          }
-        }}
         className="mb-4 inline-flex items-center gap-1 rounded-sm text-sm text-muted-foreground hover:text-foreground">
         <ArrowLeft aria-hidden className="h-3.5 w-3.5" />
         {t("solutions.backToProblem")}
@@ -461,15 +488,16 @@ export default function SolutionEditorPage({ mode }: SolutionEditorPageProps) {
       </div>
 
       <ConfirmDialog
-        open={confirmingLeave}
+        open={leaveTo !== null}
         title={t("solutions.editor.discardChangesTitle")}
         description={t("solutions.editor.discardChangesBody")}
         confirmLabel={t("solutions.editor.discardChanges")}
         onConfirm={() => {
-          setConfirmingLeave(false)
-          navigate(problemPath)
+          const to = leaveTo ?? problemPath
+          setLeaveTo(null)
+          navigate(to)
         }}
-        onCancel={() => setConfirmingLeave(false)}
+        onCancel={() => setLeaveTo(null)}
       />
       <ConfirmDialog
         open={confirmingDiscard}
