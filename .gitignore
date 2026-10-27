@@ -29,6 +29,9 @@ scripts/rewrite/workspace/
 # Logo source art. The assets the app actually serves are tracked in frontend/public/.
 Logo/
 
+# Portfolio PDF and source (personal, not part of the project)
+docs/portfolio/
+
 # Impeccable: machine-local consent, detector cache and per-session critiques
 .impeccable/config.local.json
 .impeccable/hook.cache.json

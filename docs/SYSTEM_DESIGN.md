@@ -286,9 +286,10 @@ CREATE INDEX idx_review_state_due ON problem_review_state(user_id, next_due_at);
 
 **Algorithm (SM-2 lite).** On each review the state row is mutated:
 - `AGAIN` → interval resets to 1d, ease drops 0.20
-- `HARD` → interval scaled by *current* ease, ease drops 0.15
-- `GOOD` → interval scaled by ease, ease unchanged (first/second reviews use the fixed ladder 1d → 6d)
-- `EASY` → like GOOD but interval bumps further and ease rises 0.10
+- `HARD` → 1st review 1d, 2nd 3d, then max(interval + 1, round(interval × 1.2)); ease drops 0.15
+- `GOOD` → 1st review 2d, 2nd 6d, then max(Hard + 1, round(interval × ease)); ease unchanged
+- `EASY` → 1st review 4d, 2nd 10d, then max(Good + 1, round(interval × ease × 1.3)); ease rises 0.10
+- Each rating uses the ease held before it (half-up rounding); every interval is capped at 36500d
 
 Source of truth is the `submissions.confidence` + `submissions.reviewed_at` pair; `problem_review_state` is fully rebuildable by replaying the per-submission ratings in chronological order. Re-rating an old submission updates its `reviewed_at`, which naturally re-orders the replay.
 
@@ -818,7 +819,7 @@ Terms in GLOSSARY.md; decisions in ADR 0001 (UTC days), 0002 (backdated Imports)
 | Package structure | By feature | Cohesive modules, easy to extract into services later |
 | Code execution | Judge0 (self-hosted) | Battle-tested sandboxing, supports 40+ languages |
 | MVP submission | Synchronous | Simplest to implement; refactor to async in Milestone 6 |
-| Async queue | Kafka | Durable, partitioned log; supports parallel consumers, replay, and dead-letter topics; strong portfolio signal |
+| Async queue | Kafka | Retained log lets one `submission-results` topic serve both a broadcast subscriber (SSE, per-instance group) and a work queue (stats, shared group), and lets derived state backfill by replay. Not chosen for throughput — the measured ceiling is Judge0 host CPU at ~0.65 submissions/sec. RabbitMQ would arguably fit the work-queue half better (per-message ack suits second-scale tasks, DLX and priority queues are built in); Kafka's costs here are `max-poll-records: 1`, a partition-count parallelism ceiling, and a hand-rolled terminal handler |
 | Rate limiting | Redis sliding window | Atomic counters across multiple backend instances; low latency |
 | Caching | Redis (cache-aside) | Same Redis instance used for rate limiting; avoids adding another dependency |
 | API style | REST + JSON | Standard, well-understood, sufficient for this use case |
