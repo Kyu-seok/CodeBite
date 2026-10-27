@@ -83,6 +83,7 @@
     "unlinking": "연결 해제 중…",
     "unlinkFailed": "연결을 해제할 수 없습니다. 다시 시도해 주세요.",
     "callback": {
+      "title": "GitHub 연결 | CodeBite",
       "completing": "GitHub 연결을 마무리하는 중…",
       "missingParams": "GitHub에서 필요한 정보를 받지 못했습니다. 프로필에서 다시 연결해 주세요.",
       "notAuthorised": "이 GitHub 계정은 해당 CodeBite 앱 설치에 대한 권한이 없습니다.",
