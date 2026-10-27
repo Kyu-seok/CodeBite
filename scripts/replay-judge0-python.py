@@ -13,6 +13,7 @@ Usage:
   python3 -I scripts/replay-judge0-python.py http://192.168.219.200:2359 100 . /tmp/replay.json [--pause 2] [--only slug,...]
 
 Port 2359 is the throwaway test stack; the gate itself runs on production Judge0 (localhost:2358 on mini).
+On this machine, scripts/replay-local.sh slug,... does the export and the local run in one go.
 
 Locally, name a Python 3.12+ interpreter instead of a Judge0 URL. Each test case then runs in its own
 process (a time limit of --time-limit seconds, Judge0's default CPU limit), with the same verdicts:
@@ -202,6 +203,9 @@ def main():
     problems = json.loads(args.export.read_text())
     if args.only:
         wanted = set(args.only.split(","))
+        unknown = wanted - {p["slug"] for p in problems}
+        if unknown:  # a misspelled slug would otherwise replay nothing and pass
+            sys.exit(f"replay: not in the export: {', '.join(sorted(unknown))}")
         problems = [p for p in problems if p["slug"] in wanted]
     references = {f.stem: f.read_text() for f in (args.root / "scripts/replay-solutions").glob("*.py")}
 
