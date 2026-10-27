@@ -135,6 +135,9 @@ export default function Layout() {
 
   const [timerActive, setTimerActive] = useState(false);
   const [elapsed, setElapsed] = useState(0);
+  // Set when an Accepted submission has already recorded the shown time. A frozen time is
+  // not offered again, so resubmitting the same problem can't count it twice.
+  const [timerFrozen, setTimerFrozen] = useState(false);
   // The solve timer belongs to one problem: opening a different problem starts it fresh
   // instead of carrying the previous problem's elapsed time over.
   const [timerSlug, setTimerSlug] = useState(problemSlug);
@@ -144,6 +147,7 @@ export default function Layout() {
     setTimerSlug(problemSlug);
     setTimerActive(false);
     setElapsed(0);
+    setTimerFrozen(false);
     setTimerNudge(false);
   }
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -160,11 +164,13 @@ export default function Layout() {
 
   const handleTimerToggle = () => {
     setTimerActive((prev) => !prev);
+    setTimerFrozen(false);
     setTimerNudge(false);
   };
 
   const handleNudgeStart = () => {
     setTimerActive(true);
+    setTimerFrozen(false);
     setTimerNudge(false);
   };
 
@@ -180,14 +186,15 @@ export default function Layout() {
   const handleTimerReset = () => {
     setTimerActive(false);
     setElapsed(0);
+    setTimerFrozen(false);
   };
 
   // The workspace reads the timer only when it submits, so the context stays stable and
   // the page does not re-render on every tick.
-  const timerRef = useRef({ active: timerActive, elapsed });
+  const timerRef = useRef({ active: timerActive, elapsed, frozen: timerFrozen });
   useEffect(() => {
-    timerRef.current = { active: timerActive, elapsed };
-  }, [timerActive, elapsed]);
+    timerRef.current = { active: timerActive, elapsed, frozen: timerFrozen };
+  }, [timerActive, elapsed, timerFrozen]);
 
   // Solve time only reaches the backend for a signed-in learner, so only they get the nudge.
   const nudgeRef = useRef({ slug: problemSlug, nudgedSlug: null as string | null, enabled: isAuthenticated });
@@ -197,11 +204,16 @@ export default function Layout() {
   }, [problemSlug, isAuthenticated]);
 
   const outletContext = useMemo<WorkspaceOutletContext>(() => ({
-    // A paused timer still counts; one that never ran is "no time", not 0:00.
-    getTimerSnapshot: () => (timerRef.current.elapsed > 0 ? timerRef.current.elapsed : null),
+    // A paused timer still counts; one that never ran is "no time", not 0:00, and one
+    // frozen by an earlier Accepted submission has already been recorded.
+    getTimerSnapshot: () => {
+      const { elapsed: seconds, frozen } = timerRef.current;
+      return !frozen && seconds > 0 ? seconds : null;
+    },
     stopTimer: (freezeAt: number) => {
       setTimerActive(false);
       setElapsed(freezeAt);
+      setTimerFrozen(true);
     },
     notifyEditing: () => {
       const nudge = nudgeRef.current;
