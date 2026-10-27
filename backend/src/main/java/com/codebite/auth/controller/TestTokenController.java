@@ -14,6 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
+/**
+ * Local sign-in without OAuth (dev profile only): issues a JWT for the named user, created as USER
+ * if missing. An optional {@code role} (USER or ADMIN) sets that user's role first.
+ */
 @Profile("dev")
 @RestController
 @RequestMapping("/api/auth")
@@ -30,14 +34,20 @@ public class TestTokenController {
     @PostMapping("/test-token")
     @Transactional
     public ResponseEntity<Map<String, String>> issueTestToken(
-            @RequestParam(defaultValue = "perf-test-1") String username) {
+            @RequestParam(defaultValue = "perf-test-1") String username,
+            @RequestParam(required = false) Role role) {
         User user = userRepository.findByUsername(username).orElseGet(() -> {
             User u = new User();
             u.setUsername(username);
             u.setEmail(username + "@perf.local");
             u.setRole(Role.USER);
-            return userRepository.save(u);
+            return u;
         });
+        // A named role is applied even to an existing user, so switching USER <-> ADMIN is one call.
+        if (role != null) {
+            user.setRole(role);
+        }
+        user = userRepository.save(user);
 
         String token = tokenProvider.generateToken(user);
         return ResponseEntity.ok(Map.of("token", token));
