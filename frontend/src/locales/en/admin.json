@@ -90,7 +90,6 @@
     "submittedAt": "Submitted",
     "delete": "Delete",
     "empty": "No submissions found.",
-    "confirmDelete": "Delete this submission? This cannot be undone.",
     "id": "ID",
     "deleting": "Deleting…",
     "deleteFailed": "Couldn't delete the submission. Try again.",

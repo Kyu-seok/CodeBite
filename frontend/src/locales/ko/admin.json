@@ -90,7 +90,6 @@
     "submittedAt": "제출 시각",
     "delete": "삭제",
     "empty": "제출 내역이 없습니다.",
-    "confirmDelete": "이 제출 기록을 삭제할까요? 되돌릴 수 없습니다.",
     "id": "ID",
     "deleting": "삭제 중…",
     "deleteFailed": "제출 기록을 삭제하지 못했습니다. 다시 시도해 주세요.",
