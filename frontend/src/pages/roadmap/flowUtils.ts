@@ -85,7 +85,7 @@ function getEdgeColors({ isDark, reduceMotion }: EdgeOptions): Record<
   NodeState,
   { stroke: string; animated: boolean; dashed: boolean; opacity: number }
 > {
-  // Graphite / Night Graphite for prerequisites, the ink ramp for topics still coming.
+  // Graphite / Night Graphite (muted) for topics not started; ink ramp 300 / 500 for topics still coming.
   const neutral = isDark ? '#4c6683' : '#9aacbf';
   const muted = isDark ? '#a1aab6' : '#6b7685';
   const accent = '#fe7403';
