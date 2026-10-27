@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
-import { useParams, useNavigate, useOutletContext } from "react-router-dom"
+import { Link, useParams, useNavigate, useOutletContext } from "react-router-dom"
 import { useTranslation } from "react-i18next"
 import { useProblem } from "@/hooks/useProblem"
 import { useSubmissions } from "@/hooks/useSubmissions"
@@ -191,8 +191,13 @@ export default function ProblemDetailPage() {
 
   if (error || !problem) {
     return (
-      <div className="flex h-[calc(100dvh-3.5rem)] items-center justify-center">
-        <p className="text-sm text-destructive">{error || t("workspace.problemNotFound")}</p>
+      <div className="flex h-[calc(100dvh-3.5rem)] flex-col items-center justify-center gap-3 px-4 text-center">
+        <p className="text-sm text-foreground">{t("workspace.problemNotFound")}</p>
+        <Link
+          to="/problems"
+          className="text-sm text-accent-700 underline-offset-4 hover:underline dark:text-accent-400">
+          {t("workspace.goToProblems")}
+        </Link>
       </div>
     )
   }
