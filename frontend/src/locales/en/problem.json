@@ -189,7 +189,15 @@
       "code": "Inline code",
       "link": "Link",
       "heading": "Heading",
-      "list": "List"
+      "list": "List",
+      "sample": {
+        "bold": "bold text",
+        "italic": "italic text",
+        "code": "code",
+        "link": "link text",
+        "heading": "Heading",
+        "item": "List item"
+      }
     }
   },
   "submissions": {
