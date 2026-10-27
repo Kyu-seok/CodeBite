@@ -3,6 +3,21 @@
 @config "../tailwind.config.ts";
 @plugin "@tailwindcss/typography";
 
+/* ── Code highlighting in light mode ──
+   github.css's keyword red (#d73a49) and built-in orange (#e36209) reach only 4.1:1 and 3.1:1 on
+   the Mist code background; these darker steps of the same hues clear 4.5:1. */
+@layer base {
+  :root:not(.dark) .hljs-doctag,
+  :root:not(.dark) .hljs-keyword,
+  :root:not(.dark) .hljs-meta .hljs-keyword,
+  :root:not(.dark) .hljs-template-tag,
+  :root:not(.dark) .hljs-template-variable,
+  :root:not(.dark) .hljs-type,
+  :root:not(.dark) .hljs-variable.language_ { color: #b31d28; }
+  :root:not(.dark) .hljs-built_in,
+  :root:not(.dark) .hljs-symbol { color: #a04100; }
+}
+
 /* ── Code highlighting in dark mode ──
    Dark mode is the `.dark` class (ThemeContext), not the OS setting, so github-dark's colours
    are scoped to it here instead of importing that sheet under prefers-color-scheme: an app in
