@@ -36,6 +36,18 @@ export default function SolutionDetailPage() {
   const [actionError, setActionError] = useState<string | null>(null)
   const comments = useComments(id)
 
+  // Moving to another solution on the same route starts over, instead of showing the previous
+  // solution (or its failure) until the new one lands.
+  const [shownId, setShownId] = useState(id)
+  if (id !== shownId) {
+    setShownId(id)
+    setSolution(null)
+    setFailed(false)
+    setLoading(true)
+    setReported(false)
+    setActionError(null)
+  }
+
   useEffect(() => {
     if (id == null) return
     let cancelled = false
