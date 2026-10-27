@@ -21,6 +21,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
+  DialogFooter,
 } from '@/components/ui/Dialog';
 import Spinner from '@/components/ui/Spinner';
 import { useTheme } from '@/context/ThemeContext';
@@ -181,7 +182,7 @@ function BugReportDialog({
               </div>
               <p className="text-xs text-muted-foreground">{t('bugReport.githubNote')}</p>
             </div>
-            <div className="mt-4 flex justify-end gap-2">
+            <DialogFooter className="mt-4">
               <Button variant="outline" size="sm" onClick={onClose}>
                 {tc('button.cancel')}
               </Button>
@@ -193,7 +194,7 @@ function BugReportDialog({
                 {t('bugReport.submit')}
                 <ExternalLink className="h-3.5 w-3.5" />
               </Button>
-            </div>
+            </DialogFooter>
           </>
         )}
       </DialogContent>
