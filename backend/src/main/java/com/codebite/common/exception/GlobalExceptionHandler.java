@@ -10,6 +10,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.Locale;
 
@@ -82,6 +83,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiError> handleRateLimitExceeded(RateLimitExceededException ex) {
         String message = resolveMessage(ex.getMessageCode());
         return buildResponse(HttpStatus.TOO_MANY_REQUESTS, message);
+    }
+
+    /** A path no controller maps (e.g. a dev-only endpoint outside dev) is a 404, not an unexpected 500. */
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<ApiError> handleNoResource(NoResourceFoundException ex) {
+        return buildResponse(HttpStatus.NOT_FOUND, resolveMessage("error.path.notFound"));
     }
 
     @ExceptionHandler(Exception.class)
