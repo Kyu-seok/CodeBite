@@ -5,6 +5,7 @@ import {
   ResizableHandle,
 } from '@/components/ui/Resizable';
 import { useGroupRef, usePanelRef } from 'react-resizable-panels';
+import { useTranslation } from 'react-i18next';
 import { PageLayout } from './PageLayout';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { cn } from '@/lib/utils';
@@ -82,6 +83,7 @@ export function ProblemLayout({
   collapsedTestContent,
   className,
 }: ProblemLayoutProps) {
+  const { t } = useTranslation('problem');
   const hGroupRef = useGroupRef();
   const vGroupRef = useGroupRef();
   const leftRef = usePanelRef();
@@ -151,7 +153,7 @@ export function ProblemLayout({
               </div>
             </ResizablePanel>
 
-            <ResizableHandle withHandle />
+            <ResizableHandle withHandle aria-label={t('workspace.resizeLeftRight')} />
 
             {/* Right — Editor + Test panel. Fully collapsible to 0% via button. */}
             <ResizablePanel
@@ -177,7 +179,7 @@ export function ProblemLayout({
                   </div>
                 </ResizablePanel>
 
-                <ResizableHandle withHandle />
+                <ResizableHandle withHandle aria-label={t('workspace.resizeEditorTests')} />
 
                 {/* Lower-right — Tests. Hard stop at TESTS_COLLAPSED_SIZE (no collapsible). */}
                 <ResizablePanel

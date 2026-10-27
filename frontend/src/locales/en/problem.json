@@ -255,6 +255,8 @@
     "hideTests": "Hide test panel",
     "fullScreen": "Full screen",
     "exitFullScreen": "Exit full screen",
+    "resizeLeftRight": "Resize description and code panels",
+    "resizeEditorTests": "Resize code and test panels",
     "runShortcut": "{{keys}} to run",
     "submitShortcut": "{{keys}} to submit",
     "problemNotFound": "Problem not found.",
