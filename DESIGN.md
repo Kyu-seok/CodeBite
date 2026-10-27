@@ -150,7 +150,7 @@ components:
     rounded: "{rounded.full}"
     padding: "2px 10px"
   chip-tag-selected:
-    backgroundColor: "{colors.ember-orange}"
+    backgroundColor: "{colors.ember-orange-text}"
     textColor: "{colors.paper}"
   nav-link:
     textColor: "{colors.graphite}"
@@ -188,7 +188,7 @@ A restrained slate-and-paper palette with a single ember accent and a strictly s
 - **Ink Slate Hover** (#31445b): hover state for primary buttons.
 
 ### Secondary
-- **Ember Orange** (#fe7403): the single accent and the focus ring colour (`--ring`). Used for the landing CTA, selected tag chips, the active sort column, links, the accent headline word, roadmap highlights and the logo. Same value in light and dark.
+- **Ember Orange** (#fe7403): the single accent and the focus ring colour (`--ring`). Used for the landing CTA, links, the accent headline word, roadmap highlights and the logo. Same value in light and dark.
 - **Ember Orange Deep** (#ea6502): hover for accent buttons.
 - **Ember Orange Wash** (#ffedd5) and **Ember Orange Text** (#c25005): the accent badge pairing and soft highlight backgrounds (hero tint, eyebrow tags).
 
@@ -212,7 +212,7 @@ A restrained slate-and-paper palette with a single ember accent and a strictly s
 
 **The Wash-and-Text Rule.** Status badges pair a 100-step wash with a 700-step text in light mode (950 wash / 400 text in dark); never a saturated fill with white text.
 
-**The Readable Ember Rule.** White on Ember Orange (#fe7403) measures 2.7:1, so text never sits on it or is set in it. Accent buttons fill with Ember Orange Text (#c25005, 4.7:1 with white; hover #9a3f0c), and orange text on paper uses the same #c25005 (#fb923c on night). Bright Ember stays for the logo, focus ring and non-text marks. Known gap: selected tag chips still use white on #fe7403.
+**The Readable Ember Rule.** White on Ember Orange (#fe7403) measures 2.7:1, so text never sits on it or is set in it. Accent buttons fill with Ember Orange Text (#c25005, 4.7:1 with white; hover #9a3f0c), and orange text on paper uses the same #c25005 (#fb923c on night). Selected tag chips, the Random button and the active page number follow the same rule; the active sort column header uses #9a3f0c, since #c25005 reaches only 4.2:1 on the Mist header row. Bright Ember stays for the logo, focus ring and non-text marks.
 
 ## Typography
 
@@ -273,7 +273,7 @@ Compact and dependable.
 
 ### Chips
 - **Style:** tag filters are full pills, Mist with a Hairline border and 12px medium text.
-- **State:** hover tints toward orange (10% wash, orange text); selected is a solid Ember Orange fill with white text.
+- **State:** hover tints toward orange (10% wash, #9a3f0c text; #fb923c on night); selected is a solid Ember Orange Text (#c25005) fill with white text, and carries `aria-pressed`.
 
 ### Badges
 - **Style:** 6px corners, 12px medium text, wash background with a deep text colour.
@@ -298,7 +298,7 @@ Segmented: a Mist track (36px, 8px corners, 4px inset) holding triggers; the act
 Sticky 56px bar, logo left, 14px Graphite links that turn Ink on hover, language toggle, theme toggle and avatar on the right. In the workspace it also carries a mono solve timer in a bordered segmented control.
 
 ### Problem Table (signature)
-A bordered, 8px-cornered table with a Mist header row and Hairline row dividers. Solved rows get a faint Pass Green tint and a green check; the active sort column header turns Ember Orange. Above it sits a progress strip: solved count plus a thin segmented bar in green / amber / red per difficulty.
+A bordered, 8px-cornered table with a Mist header row and Hairline row dividers. Solved rows get a faint Pass Green tint and a green check; the active sort column header turns orange (#9a3f0c; #fb923c on night) with a chevron, and each sortable header is a button with `aria-sort` on its cell. Below `sm` the acceptance column drops and cells tighten so titles keep their width. Above it sits a progress strip: solved count plus a thin segmented bar in green / amber / red per difficulty.
 
 ## Do's and Don'ts
 

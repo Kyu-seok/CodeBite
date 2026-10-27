@@ -33,6 +33,7 @@
     "loading": "Loading"
   },
   "pagination": {
-    "pageOf": "Page {{current}} of {{total}}"
+    "pageOf": "Page {{current}} of {{total}}",
+    "label": "Pagination"
   }
 }

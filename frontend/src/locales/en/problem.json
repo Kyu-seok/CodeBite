@@ -18,7 +18,16 @@
       "CB50": "50 essentials to get started",
       "CB100": "100 problems covering core patterns",
       "CB200": "200 problems for deeper prep"
-    }
+    },
+    "searchLabel": "Search problems",
+    "tagsLabel": "Filter by tag",
+    "columnStatus": "Status",
+    "statusSolved": "Solved",
+    "statusAttempted": "Attempted",
+    "loadError": "Couldn't load problems.",
+    "randomError": "Couldn't pick a random problem. Try again.",
+    "retry": "Try again",
+    "clearFilters": "Clear filters"
   },
   "tabs": {
     "description": "Description",
