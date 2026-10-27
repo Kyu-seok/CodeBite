@@ -33,7 +33,7 @@ function PlateauChart({ label }: { label: string }) {
           <text
             x={27 + i * 38}
             y="108"
-            className="fill-muted-foreground text-[9px]"
+            className="fill-muted-foreground text-[11px]"
             textAnchor="middle"
           >
             {t("science.year", { n: bar.year })}
@@ -51,7 +51,7 @@ function PlateauChart({ label }: { label: string }) {
         strokeWidth="1"
         strokeDasharray="4 3"
       />
-      <text x="200" y="12" className="fill-muted-foreground text-[9px]" textAnchor="end">
+      <text x="200" y="16" className="fill-muted-foreground text-[11px]" textAnchor="end">
         {t("science.plateau.label")}
       </text>
     </svg>
@@ -78,15 +78,15 @@ function ForgettingCurveChart({ label }: { label: string }) {
       />
 
       {/* Labels */}
-      <text x="190" y="96" className="fill-muted-foreground text-[9px]" textAnchor="end">
+      <text x="190" y="96" className="fill-muted-foreground text-[11px]" textAnchor="end">
         {t("science.forgetting.noReview")}
       </text>
-      <text x="190" y="36" className="fill-accent-700 dark:fill-accent-400 text-[9px]" textAnchor="end">
+      <text x="190" y="36" className="fill-accent-700 dark:fill-accent-400 text-[11px]" textAnchor="end">
         {t("science.forgetting.spacedReview")}
       </text>
 
       {/* Axis */}
-      <text x="100" y="108" className="fill-muted-foreground text-[9px]" textAnchor="middle">
+      <text x="100" y="108" className="fill-muted-foreground text-[11px]" textAnchor="middle">
         {t("science.forgetting.daysAfter")}
       </text>
     </svg>
@@ -113,15 +113,15 @@ function FeedbackChart({ label }: { label: string }) {
       />
 
       {/* Labels */}
-      <text x="190" y="53" className="fill-muted-foreground text-[9px]" textAnchor="end">
+      <text x="190" y="53" className="fill-muted-foreground text-[11px]" textAnchor="end">
         {t("science.feedback.withoutFeedback")}
       </text>
-      <text x="190" y="10" className="fill-accent-700 dark:fill-accent-400 text-[9px]" textAnchor="end">
+      <text x="190" y="10" className="fill-accent-700 dark:fill-accent-400 text-[11px]" textAnchor="end">
         {t("science.feedback.withFeedback")}
       </text>
 
       {/* Axis */}
-      <text x="100" y="108" className="fill-muted-foreground text-[9px]" textAnchor="middle">
+      <text x="100" y="108" className="fill-muted-foreground text-[11px]" textAnchor="middle">
         {t("science.feedback.sessions")}
       </text>
     </svg>
@@ -169,7 +169,8 @@ export function ScienceSection() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+        {/* Three across only from lg: at md the charts would shrink their labels below 12px. */}
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           {insights.map((insight, i) => (
             <Card
               key={insight.key}
@@ -181,7 +182,7 @@ export function ScienceSection() {
                   {insight.stat}
                 </h3>
 
-                <div className="my-4 rounded-lg bg-muted/50 p-3">
+                <div className="mx-auto my-4 max-w-sm rounded-lg bg-muted/50 p-3 lg:max-w-none">
                   <insight.chart label={t("science.chartLabel", { title: insight.stat })} />
                 </div>
 
