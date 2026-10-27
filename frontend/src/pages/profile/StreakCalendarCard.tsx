@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { isAxiosError } from 'axios';
 import { ChevronLeft, ChevronRight, Check } from 'lucide-react';
@@ -19,6 +19,7 @@ import {
   DialogTitle,
 } from '@/components/ui/Dialog';
 import { cn } from '@/lib/utils';
+import LoadError from '@/components/ui/LoadError';
 
 /** Months and dates are UTC strings (`YYYY-MM`, `YYYY-MM-DD`), matching Streak Days. */
 function shiftMonth(month: string, delta: number): string {
@@ -54,17 +55,43 @@ export function StreakCalendarCard() {
   const [pending, setPending] = useState<string | null>(null);
   const [repairing, setRepairing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [failed, setFailed] = useState(false);
 
-  useEffect(() => {
-    getStreak().then((res) => setSummary(res.data)).catch(() => {});
-    // Start on the current UTC month; the server's `today` keeps us honest after.
-    setMonth(new Date().toISOString().slice(0, 7));
+  const fetchSummary = useCallback(() => {
+    getStreak()
+      .then((res) => setSummary(res.data))
+      .catch(() => setFailed(true));
   }, []);
 
-  useEffect(() => {
+  const fetchCalendar = useCallback(() => {
     if (!month) return;
-    getStreakCalendar(month).then((res) => setCalendar(res.data)).catch(() => {});
+    getStreakCalendar(month)
+      .then((res) => setCalendar(res.data))
+      .catch(() => setFailed(true));
   }, [month]);
+
+  useEffect(() => {
+    fetchSummary();
+    // Start on the current UTC month; the server's `today` keeps us honest after.
+    setMonth(new Date().toISOString().slice(0, 7));
+  }, [fetchSummary]);
+
+  useEffect(fetchCalendar, [fetchCalendar]);
+
+  const retry = () => {
+    setFailed(false);
+    if (!summary) fetchSummary();
+    fetchCalendar();
+  };
+
+  if (failed) {
+    return (
+      <section className="rounded-xl border border-border bg-card p-5">
+        <h2 className="text-sm font-medium text-foreground">{t('streakCalendar.title')}</h2>
+        <LoadError onRetry={retry} />
+      </section>
+    );
+  }
 
   if (!summary || !month || !calendar) return null;
 
