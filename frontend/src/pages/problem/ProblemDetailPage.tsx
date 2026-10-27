@@ -50,7 +50,7 @@ export default function ProblemDetailPage() {
   const { getTimerSnapshot, stopTimer, notifyEditing } = useOutletContext<WorkspaceOutletContext>()
   const { user, isAuthenticated, loading: authLoading, updateUser } = useAuth()
   const { problem, loading, error, retry: retryProblem } = useProblem(slug!)
-  const { submissions, refetch: refetchSubmissions, updateNote } = useSubmissions(
+  const { submissions, failed: submissionsFailed, refetch: refetchSubmissions, updateNote } = useSubmissions(
     slug!,
     isAuthenticated,
   )
@@ -544,6 +544,8 @@ export default function ProblemDetailPage() {
             constraints={problem.constraints}
             isAuthenticated={isAuthenticated}
             submissions={submissions}
+            submissionsFailed={submissionsFailed}
+            onRetrySubmissions={refetchSubmissions}
             activeTab={leftPanelTab}
             onTabChange={setLeftPanelTab}
             onUpdateNote={updateNote}
