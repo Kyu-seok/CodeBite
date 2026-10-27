@@ -110,10 +110,6 @@
       "backToProfile": "Back to profile"
     }
   },
-  "error": {
-    "load": "Couldn't load this. Check your connection and try again.",
-    "retry": "Try again"
-  },
   "tags": {
     "title": "Tag Proficiency",
     "empty": "Solve problems to see your tag proficiency.",

@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityCalendar } from 'react-activity-calendar';
 import type { ActivityDay } from '@/types/profile';
@@ -37,6 +38,18 @@ export function ActivityHeatmap({
 }: ActivityHeatmapProps) {
   const { t, i18n } = useTranslation('profile');
   const { theme } = useTheme();
+  const calendarRef = useRef<HTMLElement>(null);
+
+  // The year runs left to right, so a narrow card would open on last year's empty months.
+  // Start scrolled to the newest week instead.
+  useEffect(() => {
+    const root = calendarRef.current;
+    if (!root) return;
+    const scroller = [root, ...root.querySelectorAll<HTMLElement>('*')].find(
+      (el) => el.scrollWidth > el.clientWidth && getComputedStyle(el).overflowX !== 'visible',
+    );
+    if (scroller) scroller.scrollLeft = scroller.scrollWidth;
+  }, [activity]);
 
   const maxCount = Math.max(1, ...activity.map((d) => d.count));
   const dataMap = new Map(activity.map((d) => [d.date, d.count]));
@@ -87,6 +100,7 @@ export function ActivityHeatmap({
       {/* The count above is the text alternative; per-day counts are in the tooltips. */}
       <div aria-hidden>
         <ActivityCalendar
+          ref={calendarRef}
           data={data}
           blockSize={12}
           blockMargin={3}

@@ -13,7 +13,7 @@ import {
 import type { GitHubLink, GitHubRepositoryVisibility } from '@/types/github';
 import { Button, buttonVariants } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { CardError } from './CardError';
+import LoadError from '@/components/ui/LoadError';
 import {
   Dialog,
   DialogClose,
@@ -285,7 +285,7 @@ export function GitHubLinkCard() {
           <Github aria-hidden className="h-4 w-4 text-muted-foreground" />
           <h2 className="text-sm font-medium text-foreground">{t('githubLink.title')}</h2>
         </div>
-        <CardError onRetry={load} />
+        <LoadError onRetry={load} />
       </section>
     );
   }

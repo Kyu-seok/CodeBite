@@ -7,7 +7,7 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import type { TagProficiency } from '@/types/profile';
-import { CardError } from './CardError';
+import LoadError from '@/components/ui/LoadError';
 
 interface TagRadarCardProps {
   tagProficiency: TagProficiency[];
@@ -30,7 +30,7 @@ export function TagRadarCard({ tagProficiency, failed, onRetry }: TagRadarCardPr
       <section className="rounded-xl border border-border bg-card p-5">
         <h2 className="mb-4 text-sm font-medium text-foreground">{t('tags.title')}</h2>
         {failed ? (
-          <CardError onRetry={onRetry} />
+          <LoadError onRetry={onRetry} />
         ) : (
           <div className="flex h-64 items-center justify-center">
             <p className="text-sm text-muted-foreground">{t('tags.empty')}</p>

@@ -7,7 +7,7 @@ import { getDueReviews, getReviewStats } from "@/api/reviews";
 import { useConfidenceLabel, confidenceTextClass } from "@/lib/confidenceColors";
 import type { DueReviewItem } from "@/types/review";
 import type { Difficulty } from "@/types/problem";
-import { CardError } from "./CardError";
+import LoadError from "@/components/ui/LoadError";
 
 export function DueReviewsCard() {
   const { t, i18n } = useTranslation("profile");
@@ -68,7 +68,7 @@ export function DueReviewsCard() {
       {status === "loading" ? (
         <Spinner size="sm" className="h-20 p-0" />
       ) : status === "failed" ? (
-        <CardError onRetry={retry} />
+        <LoadError onRetry={retry} />
       ) : items.length === 0 ? (
         <div className="flex h-20 items-center justify-center">
           <p className="text-sm text-muted-foreground">{t("dueReviews.empty")}</p>

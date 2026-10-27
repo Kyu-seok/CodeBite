@@ -10,7 +10,7 @@ import { RecentSubmissionsCard } from './RecentSubmissionsCard';
 import { DueReviewsCard } from './DueReviewsCard';
 import { StreakCalendarCard } from './StreakCalendarCard';
 import { GitHubLinkCard } from './GitHubLinkCard';
-import { CardError } from './CardError';
+import LoadError from '@/components/ui/LoadError';
 
 export default function ProfilePage() {
   const { t } = useTranslation('profile');
@@ -29,7 +29,7 @@ export default function ProfilePage() {
     return (
       <div className="mx-auto max-w-md px-4 py-20 sm:px-6">
         <h1 className="sr-only">{user.username}</h1>
-        <CardError onRetry={reload} />
+        <LoadError onRetry={reload} />
       </div>
     );
   }
@@ -43,7 +43,7 @@ export default function ProfilePage() {
         {failed.has('activity') ? (
           <section className="rounded-xl border border-border bg-card p-5">
             <h2 className="text-sm font-medium text-foreground">{t('heatmap.title')}</h2>
-            <CardError onRetry={reload} />
+            <LoadError onRetry={reload} />
           </section>
         ) : (
           <ActivityHeatmap activity={activity} />

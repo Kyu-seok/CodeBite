@@ -8,7 +8,7 @@ import { getRecentSubmissions } from '@/api/profile';
 import type { RecentSubmission } from '@/types/profile';
 import type { Difficulty } from '@/types/problem';
 import type { SubmissionStatus } from '@/types/submission';
-import { CardError } from './CardError';
+import LoadError from '@/components/ui/LoadError';
 
 /** The largest whole unit that fits, e.g. "3 hours ago" / "3시간 전". */
 function timeAgo(format: Intl.RelativeTimeFormat, iso: string, now: number): string {
@@ -52,7 +52,7 @@ export function RecentSubmissionsCard() {
       {status === 'loading' ? (
         <Spinner size="sm" className="h-20 p-0" />
       ) : status === 'failed' ? (
-        <CardError onRetry={retry} />
+        <LoadError onRetry={retry} />
       ) : submissions.length === 0 ? (
         <div className="flex h-20 items-center justify-center">
           <p className="text-sm text-muted-foreground">{t('recent.empty')}</p>
