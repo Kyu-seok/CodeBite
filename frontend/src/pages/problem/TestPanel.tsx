@@ -165,7 +165,7 @@ export function TestPanel({
             <TabsTrigger value="testcases">{t('test.testCases')}</TabsTrigger>
             <TabsTrigger value="output">{t('test.output')}</TabsTrigger>
           </TabsList>
-          <div className="flex items-center pr-1 opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100">
+          <div className="flex items-center pr-1 opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100 [@media(hover:none)]:opacity-100">
             <Tooltip>
               <TooltipTrigger>
                 <Button
@@ -623,7 +623,7 @@ export function CollapsedTestStrip({ onExpand, onMaximize, isMaximized }: Collap
       </div>
 
       {/* Right-side buttons — visible on hover */}
-      <div className={cn('flex items-center gap-1 opacity-0 transition-opacity group-hover/strip:opacity-100 group-focus-within/strip:opacity-100')}>
+      <div className={cn('flex items-center gap-1 opacity-0 transition-opacity group-hover/strip:opacity-100 group-focus-within/strip:opacity-100 [@media(hover:none)]:opacity-100')}>
         <Tooltip>
           <TooltipTrigger>
             <Button
