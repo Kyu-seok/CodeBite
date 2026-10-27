@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { Link, NavLink, Outlet, useNavigate, useLocation, useMatch } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import i18n from '@/lib/i18n';
@@ -101,8 +101,8 @@ export function formatElapsed(seconds: number) {
 }
 
 export interface WorkspaceOutletContext {
-  timerActive: boolean;
-  elapsed: number;
+  /** Seconds on the solve timer if it is running, else null. Read at submit time. */
+  getTimerSnapshot: () => number | null;
   stopTimer: (freezeAt: number) => void;
 }
 
@@ -137,10 +137,20 @@ export default function Layout() {
     setElapsed(0);
   };
 
-  const stopTimer = (freezeAt: number) => {
-    setTimerActive(false);
-    setElapsed(freezeAt);
-  };
+  // The workspace reads the timer only when it submits, so the context stays stable and
+  // the page does not re-render on every tick.
+  const timerRef = useRef({ active: timerActive, elapsed });
+  useEffect(() => {
+    timerRef.current = { active: timerActive, elapsed };
+  }, [timerActive, elapsed]);
+
+  const outletContext = useMemo<WorkspaceOutletContext>(() => ({
+    getTimerSnapshot: () => (timerRef.current.active ? timerRef.current.elapsed : null),
+    stopTimer: (freezeAt: number) => {
+      setTimerActive(false);
+      setElapsed(freezeAt);
+    },
+  }), []);
 
   const handleToggleTheme = () => {
     const newTheme = theme === "light" ? "dark" : "light";
@@ -368,7 +378,7 @@ export default function Layout() {
         </div>
       </header>
       <main id="main" tabIndex={-1} className="outline-none">
-        <Outlet context={{ timerActive, elapsed, stopTimer } satisfies WorkspaceOutletContext} />
+        <Outlet context={outletContext} />
       </main>
     </div>
   );
