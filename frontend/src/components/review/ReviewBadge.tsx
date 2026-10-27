@@ -1,5 +1,9 @@
+import { useTranslation } from "react-i18next";
+import type { TFunction } from "i18next";
+import { Star } from "lucide-react";
 import { useReviewState } from "@/hooks/useReviewState";
-import { confidenceLabel, confidenceTextClass } from "@/lib/confidenceColors";
+import { confidenceTextClass, useConfidenceLabel } from "@/lib/confidenceColors";
+import { cn, focusRing } from "@/lib/utils";
 
 interface ReviewBadgeProps {
   slug: string;
@@ -7,64 +11,102 @@ interface ReviewBadgeProps {
   refreshKey?: unknown;
 }
 
-function relativeFromNow(iso: string): string {
-  const target = new Date(iso).getTime();
-  const now = Date.now();
-  const diffMs = target - now;
-  const absDays = Math.floor(Math.abs(diffMs) / (1000 * 60 * 60 * 24));
-  if (diffMs < -1000 * 60 * 60 * 24) {
-    if (absDays === 1) return "overdue 1d";
-    return `overdue ${absDays}d`;
-  }
-  if (diffMs <= 1000 * 60 * 60 * 24) return "due now";
-  if (absDays === 1) return "due tomorrow";
-  return `due in ${absDays}d`;
+const DAY_MS = 1000 * 60 * 60 * 24;
+
+function dueText(iso: string, t: TFunction): string {
+  const diffMs = new Date(iso).getTime() - Date.now();
+  const count = Math.floor(Math.abs(diffMs) / DAY_MS);
+  if (diffMs < -DAY_MS) return t("review.badge.overdue", { count });
+  if (diffMs <= DAY_MS) return t("review.badge.dueNow");
+  if (count === 1) return t("review.badge.dueTomorrow");
+  return t("review.badge.dueIn", { count });
 }
 
-function lastReviewedText(iso: string): string {
-  const ms = Date.now() - new Date(iso).getTime();
-  const days = Math.floor(ms / (1000 * 60 * 60 * 24));
-  if (days < 1) return "today";
-  if (days === 1) return "yesterday";
-  if (days < 30) return `${days}d ago`;
-  const months = Math.floor(days / 30);
-  return `${months}mo ago`;
+function lastReviewedText(iso: string, t: TFunction): string {
+  const days = Math.floor((Date.now() - new Date(iso).getTime()) / DAY_MS);
+  if (days < 1) return t("review.badge.today");
+  if (days === 1) return t("review.badge.yesterday");
+  if (days < 30) return t("review.badge.daysAgo", { count: days });
+  return t("review.badge.monthsAgo", { count: Math.floor(days / 30) });
 }
+
+const Sep = () => (
+  <span aria-hidden className="text-border">
+    ·
+  </span>
+);
 
 export function ReviewBadge({ slug, enabled }: ReviewBadgeProps) {
-  const { state } = useReviewState(slug, enabled);
+  const { t } = useTranslation("common");
+  const confidenceLabel = useConfidenceLabel();
+  const { state, loading, error, loaded, refetch } = useReviewState(slug, enabled);
 
   if (!enabled) return null;
 
+  const shell =
+    "flex min-h-8 flex-wrap items-center gap-x-3 gap-y-1 rounded-md border border-border bg-muted/30 px-3 py-1.5 text-xs";
+
+  if (error) {
+    return (
+      <div role="alert" className={shell}>
+        <span className="text-error-700 dark:text-error-400">{t("review.badge.loadFailed")}</span>
+        <button
+          type="button"
+          onClick={refetch}
+          disabled={loading}
+          className={cn(
+            "rounded-sm font-medium text-accent-700 underline-offset-2 hover:text-accent-800 hover:underline disabled:opacity-50 dark:text-accent-400 dark:hover:text-accent-400",
+            focusRing,
+          )}
+        >
+          {t("review.badge.retry")}
+        </button>
+      </div>
+    );
+  }
+
+  if (!loaded) {
+    return (
+      <div role="status" className={shell}>
+        <span className="h-3 w-40 max-w-full animate-pulse rounded bg-muted motion-reduce:animate-none" aria-hidden />
+        <span className="sr-only">{t("review.badge.loading")}</span>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-md border border-border bg-muted/30 px-3 py-1.5 text-xs">
+    <div role="group" aria-label={t("review.badge.label")} className={shell}>
       {state ? (
         <>
           {state.mastered && (
             <>
               <span
-                title="Mastered: 3+ reviews, last 2 Good or Easy, interval ≥ 30 days."
-                className="font-medium text-success-500"
+                title={t("review.badge.masteredHint")}
+                className="inline-flex items-center gap-1 font-medium text-success-700 dark:text-success-400"
               >
-                ★ Mastered
+                <Star aria-hidden className="h-3 w-3 fill-current" />
+                {t("review.badge.mastered")}
+                <span className="sr-only">: {t("review.badge.masteredHint")}</span>
               </span>
-              <span className="text-border">·</span>
+              <Sep />
             </>
           )}
-          <span className="text-muted-foreground">Reviewed:</span>
-          <span className="text-foreground">{lastReviewedText(state.lastReviewedAt)}</span>
-          <span className="text-border">·</span>
-          <span className="text-muted-foreground">Confidence:</span>
-          <span className={`font-medium ${confidenceTextClass[state.lastConfidence]}`}>
-            {confidenceLabel[state.lastConfidence]}
+          <span className="inline-flex items-baseline gap-1.5">
+            <span className="text-muted-foreground">{t("review.badge.reviewed")}</span>
+            <span className="text-foreground">{lastReviewedText(state.lastReviewedAt, t)}</span>
           </span>
-          <span className="text-border">·</span>
-          <span className="font-medium text-foreground">
-            {relativeFromNow(state.nextDueAt)}
+          <Sep />
+          <span className="inline-flex items-baseline gap-1.5">
+            <span className="text-muted-foreground">{t("review.badge.confidence")}</span>
+            <span className={cn("font-medium", confidenceTextClass[state.lastConfidence])}>
+              {confidenceLabel(state.lastConfidence)}
+            </span>
           </span>
+          <Sep />
+          <span className="font-medium text-foreground">{dueText(state.nextDueAt, t)}</span>
         </>
       ) : (
-        <span className="text-muted-foreground">No review logged yet — rate a submission to start tracking.</span>
+        <span className="text-muted-foreground">{t("review.badge.empty")}</span>
       )}
     </div>
   );
