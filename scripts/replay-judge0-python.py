@@ -16,7 +16,8 @@ Port 2359 is the throwaway test stack; the gate itself runs on production Judge0
 On this machine, scripts/replay-local.sh slug,... does the export and the local run in one go.
 
 Locally, name a Python 3.12+ interpreter instead of a Judge0 URL. Each test case then runs in its own
-process (a time limit of --time-limit seconds, Judge0's default CPU limit), with the same verdicts:
+process with the same verdicts, under a wall-clock limit of --time-limit seconds (default 5, the number of
+Judge0's default CPU limit, but stricter: waiting on a busy machine counts too):
   python3 -I scripts/replay-judge0-python.py /opt/homebrew/bin/python3.12 100 . /tmp/replay-local.json --pause 0 --only slug,...
 """
 import argparse, base64, json, os, re, subprocess, sys, tempfile, time, urllib.request
@@ -28,7 +29,7 @@ PROCESSING, ACCEPTED, TLE, COMPILATION_ERROR, RUNTIME_ERRORS = 2, 3, 5, 6, range
 NZEC = 11  # Runtime Error (NZEC): how Judge0 reports a Python exception or syntax error
 BATCH_SIZE = 20  # Judge0's default MAX_SUBMISSION_BATCH_SIZE
 POLL_TIMEOUT_S = 60
-LOCAL_TIME_LIMIT_S = 5  # Judge0's default CPU_TIME_LIMIT
+LOCAL_TIME_LIMIT_S = 5  # wall-clock; Judge0's default CPU_TIME_LIMIT is 5s of CPU, so this is stricter under load
 
 Report = namedtuple("Report", "passed failed nothing")
 # case is 1-based, in order_index order (None when no case ran); detail is the last line of the output.
@@ -134,7 +135,7 @@ def local_judge(python, time_limit=LOCAL_TIME_LIMIT_S):
 
     Exit 0 is Judge0's "ran" status (the replay compares the output), any other exit is a runtime
     error (a syntax error included, as Judge0 reports Python's), and a run past time_limit seconds
-    is Time Limit Exceeded. The environment matches the id 100 image's run_cmd.
+    of wall-clock time is Time Limit Exceeded (stricter than Judge0's CPU limit when the machine is busy). The environment matches the id 100 image's run_cmd.
     Raises ValueError unless python is Python 3.12 or newer, so a pass can't come from the wrong interpreter."""
     try:
         version = subprocess.run([python, "-c", "import sys; print('.'.join(map(str, sys.version_info[:3])))"],
@@ -194,7 +195,8 @@ def main():
     ap.add_argument("export", type=Path, help="output of scripts/replay-judge0-python.sql")
     ap.add_argument("--pause", type=float, default=2, help="seconds between problems (default 2)")
     ap.add_argument("--time-limit", type=float, default=LOCAL_TIME_LIMIT_S,
-                    help=f"seconds per test case on a local interpreter (default {LOCAL_TIME_LIMIT_S})")
+                    help=f"wall-clock seconds per test case on a local interpreter (default {LOCAL_TIME_LIMIT_S}; "
+                         "stricter than Judge0's CPU limit under load)")
     ap.add_argument("--only", help="comma-separated slugs to replay, e.g. the failures of an earlier run")
     args = ap.parse_args()
 
