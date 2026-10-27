@@ -501,7 +501,7 @@
       "refersTo": "chip-tag",
       "description": "Topic filter pill; solid orange when selected.",
       "html": "<div class=\"ds-chips\"><button class=\"ds-chip\">Graphs</button><button class=\"ds-chip ds-chip-on\">Sliding Window</button><button class=\"ds-chip\">Trees</button></div>",
-      "css": ".ds-chips { display: flex; gap: 8px; } .ds-chip { font-family: Inter, ui-sans-serif, system-ui, sans-serif; display: inline-flex; align-items: center; padding: 2px 10px; border-radius: 9999px; border: 1px solid #e8ebef; background: #f1f3f6; color: #27384c; font-size: 12px; font-weight: 500; cursor: pointer; transition: background-color .15s, color .15s, border-color .15s; } .ds-chip:hover { background: rgb(254 116 3 / .1); color: #fe7403; border-color: rgb(254 116 3 / .3); } .ds-chip-on, .ds-chip-on:hover { background: #fe7403; color: #fff; border-color: #fe7403; } .ds-chip:focus-visible { outline: none; box-shadow: 0 0 0 2px #fff, 0 0 0 4px #fe7403; }"
+      "css": ".ds-chips { display: flex; gap: 8px; } .ds-chip { font-family: Inter, ui-sans-serif, system-ui, sans-serif; display: inline-flex; align-items: center; padding: 2px 10px; border-radius: 9999px; border: 1px solid #e8ebef; background: #f1f3f6; color: #27384c; font-size: 12px; font-weight: 500; cursor: pointer; transition: background-color .15s, color .15s, border-color .15s; } .ds-chip:hover { background: rgb(254 116 3 / .1); color: #9a3f0c; border-color: rgb(254 116 3 / .3); } .ds-chip-on, .ds-chip-on:hover { background: #c25005; color: #fff; border-color: #c25005; } .ds-chip:focus-visible { outline: none; box-shadow: 0 0 0 2px #fff, 0 0 0 4px #fe7403; }"
     },
     {
       "name": "Difficulty Badges",
