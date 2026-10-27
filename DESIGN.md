@@ -266,10 +266,14 @@ Compact and dependable.
 - **Shape:** gently rounded (6px; 8px on `lg`).
 - **Sizes:** sm 32px / 12px text, md 36px / 14px (default), lg 40px with 24px padding, icon 36×36.
 - **Primary:** Ink Slate fill, Ink Slate Soft text; inverted in dark mode.
-- **Accent:** Ember Orange Text (#c25005) fill, white text. For the one action that matters most on a surface (landing CTA, submit-type moments).
-- **Secondary / Outline / Ghost:** Mist fill; transparent with a Hairline border; transparent with a 10% foreground wash on hover.
+- **Accent:** Ember Orange Text (#c25005) fill, white text (4.7:1; hover #9a3f0c, 6.8:1). The fill holds 3.5:1 against Night Surface, so it reads as a button in dark mode too. For the one action that matters most on a view: the landing CTA, and Submit in the problem workspace.
+- **Secondary:** Mist fill, Ink Slate text (10.8:1; Night Raised with Night Ink in dark, 12.3:1). The companion to an accent button: Run sits beside Submit as a secondary slate button, never as an orange outline.
+- **Outline / Ghost:** transparent with a Hairline border; transparent with a 10% foreground wash on hover. Icon-only ghost buttons always carry an `aria-label` matching their tooltip.
 - **Destructive / Link:** red-600 (#dc2626) fill, white text; Ember Orange Text (#c25005) link text, underline on hover.
 - **Hover / Focus:** colour transitions only; focus-visible shows a 2px Ember Orange ring offset by 2px. Disabled drops to 50% opacity.
+- **Revealed controls:** panel controls that fade in on hover (fold, collapse, maximize) also appear when anything in their header receives focus, and stay visible on touch screens (`hover: none`), so a keyboard user always sees the button and its ring.
+
+**The One CTA Rule.** A view gets at most one accent button. Every other button on it, including saving a note, sharing a solution or Run, is primary slate, secondary or ghost. In the problem workspace that one button is Submit; resize handles and other controls stay neutral too. Ember there is left only for the focus ring, text links and non-interactive marks (logo, progress spinner, avatars).
 
 ### Chips
 - **Style:** tag filters are full pills, Mist with a Hairline border and 12px medium text.
@@ -304,7 +308,7 @@ A bordered, 8px-cornered table with a Mist header row and Hairline row dividers.
 
 ### Do:
 - **Do** use the semantic CSS variables (`--background`, `--foreground`, `--muted`, `--border`, `--ring`) or the named ramps, so dark mode follows automatically.
-- **Do** keep Ember Orange for the single most important action, the current selection, and focus.
+- **Do** keep Ember Orange for the single most important action (one accent button per view), the current selection, and focus.
 - **Do** build app surfaces at 12–14px text with compact 32–36px controls.
 - **Do** put durations, runtimes and code in JetBrains Mono with tabular numerals.
 - **Do** check every new surface in Korean and English and in both themes.
@@ -313,5 +317,6 @@ A bordered, 8px-cornered table with a Mist header row and Hairline row dividers.
 - **Don't** introduce gamified arcade styling: neon, XP bars, loud badges as decoration, or celebration beyond the single confetti burst on an Accepted submission.
 - **Don't** use green, amber or red for anything other than judging outcomes, difficulty or destructive actions.
 - **Don't** add a second accent colour or a gradient-heavy surface.
+- **Don't** put two orange buttons side by side (an orange outline counts): pair the accent with a secondary slate button, as Run does with Submit.
 - **Don't** use shadows larger than Float on anything that doesn't float above the page.
 - **Don't** hard-code raw Tailwind greys (`text-gray-900`, `text-gray-300`); `LoginPage` and `NotFoundPage` still do and break in dark mode.
