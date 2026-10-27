@@ -49,6 +49,8 @@ export function useComments(solutionId: number | null) {
   const [comments, setComments] = useState<SolutionComment[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  // True once a fetch has succeeded, so callers can tell "no comments" from "not loaded yet".
+  const [loaded, setLoaded] = useState(false)
 
   const fetchComments = useCallback(async () => {
     if (solutionId == null) return
@@ -57,6 +59,7 @@ export function useComments(solutionId: number | null) {
     try {
       const res = await listComments(solutionId)
       setComments(res.data.content)
+      setLoaded(true)
     } catch {
       setError("Failed to load comments.")
     } finally {
@@ -68,5 +71,5 @@ export function useComments(solutionId: number | null) {
     fetchComments()
   }, [fetchComments])
 
-  return { comments, setComments, loading, error, refetch: fetchComments }
+  return { comments, setComments, loading, loaded, error, refetch: fetchComments }
 }

@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { useTranslation } from "react-i18next"
 import { ChevronUp, MessageSquare } from "lucide-react"
 import { Button } from "@/components/ui/Button"
 import { Badge } from "@/components/ui/Badge"
 import Spinner from "@/components/ui/Spinner"
+import LoadError from "@/components/ui/LoadError"
 import { useSolutionsList } from "@/hooks/useSolutions"
 import { LanguagePill } from "./LanguagePill"
 import { SUPPORTED_LANGUAGES, formatDate, languageLabel } from "../submissionDisplay"
@@ -48,7 +49,15 @@ export function SolutionsListPanel({ slug, isAuthenticated }: SolutionsListPanel
     [language, sort, search, page],
   )
 
-  const { state, loading, error } = useSolutionsList(slug, params)
+  const { state, loading, error, refetch } = useSolutionsList(slug, params)
+  const filtered = Boolean(language || search)
+
+  const clearFilters = () => {
+    setLanguage(undefined)
+    setSearchInput("")
+    setSearch("")
+    setPage(0)
+  }
 
   const handleShare = () => {
     if (!isAuthenticated) {
@@ -121,17 +130,25 @@ export function SolutionsListPanel({ slug, isAuthenticated }: SolutionsListPanel
             <Spinner />
           </div>
         ) : error ? (
-          <div role="alert" className="p-4 text-sm text-destructive">{error}</div>
+          <LoadError onRetry={refetch} />
         ) : !state || state.items.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 px-4 text-center text-muted-foreground">
-            <p className="text-sm">{t("solutions.noSolutions")}</p>
+          // A search or language filter with no match isn't "nobody has shared yet".
+          <div className="flex flex-col items-center justify-center gap-3 py-16 px-4 text-center text-muted-foreground">
+            <p className="text-sm">{filtered ? t("solutions.noSolutionsMatch") : t("solutions.noSolutions")}</p>
+            {filtered && (
+              <Button size="sm" variant="outline" onClick={clearFilters}>
+                {t("solutions.clearFilters")}
+              </Button>
+            )}
           </div>
         ) : (
-          <div className="divide-y divide-border">
+          <ul className="divide-y divide-border">
             {state.items.map((s) => (
-              <SolutionCard key={s.id} solution={s} slug={slug} />
+              <li key={s.id}>
+                <SolutionCard solution={s} slug={slug} />
+              </li>
             ))}
-          </div>
+          </ul>
         )}
       </div>
 
@@ -165,13 +182,11 @@ export function SolutionsListPanel({ slug, isAuthenticated }: SolutionsListPanel
 
 function SolutionCard({ solution, slug }: { solution: SolutionListItem; slug: string }) {
   const { t, i18n } = useTranslation("problem")
-  const navigate = useNavigate()
   const netScore = solution.upvotesCount - solution.downvotesCount
+  // An article whose title link stretches over the card: one tab stop, a real heading, and
+  // it opens in a new tab like any link.
   return (
-    <button
-      type="button"
-      onClick={() => navigate(`/problems/${slug}/solutions/${solution.id}`)}
-      className="w-full p-4 text-left hover:bg-muted/50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring">
+    <article className="relative w-full p-4 text-left transition-colors hover:bg-muted/50 has-[a:focus-visible]:ring-2 has-[a:focus-visible]:ring-inset has-[a:focus-visible]:ring-ring">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2 mb-1">
@@ -185,7 +200,13 @@ function SolutionCard({ solution, slug }: { solution: SolutionListItem; slug: st
               · {formatDate(solution.createdAt, i18n.language)}
             </span>
           </div>
-          <h3 className="text-sm font-semibold text-foreground line-clamp-2">{solution.title}</h3>
+          <h3 className="text-sm font-semibold text-foreground line-clamp-2">
+            <Link
+              to={`/problems/${slug}/solutions/${solution.id}`}
+              className="after:absolute after:inset-0 focus-visible:outline-none">
+              {solution.title}
+            </Link>
+          </h3>
           <div className="mt-2 flex flex-wrap items-center gap-1.5">
             {solution.languages.map((l) => (
               <LanguagePill key={l} code={l} />
@@ -205,11 +226,11 @@ function SolutionCard({ solution, slug }: { solution: SolutionListItem; slug: st
           </span>
           <span className="inline-flex items-center gap-1">
             <MessageSquare aria-hidden="true" className="h-3 w-3" />
-            <span className="sr-only">{t("solutions.commentsCount", { n: solution.commentsCount })}</span>
+            <span className="sr-only">{t("solutions.commentsCount", { count: solution.commentsCount })}</span>
             <span aria-hidden="true">{solution.commentsCount}</span>
           </span>
         </div>
       </div>
-    </button>
+    </article>
   )
 }

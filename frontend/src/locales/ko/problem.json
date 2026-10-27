@@ -147,7 +147,11 @@
       "deleteFailed": "댓글을 삭제하지 못했습니다. 다시 시도해 주세요.",
       "label": "댓글",
       "replyLabel": "답글",
-      "editLabel": "댓글 수정"
+      "editLabel": "댓글 수정",
+      "signInPrompt": "로그인하면 댓글을 남길 수 있습니다.",
+      "signIn": "로그인하고 댓글 달기",
+      "posting": "등록 중…",
+      "saving": "저장 중…"
     },
     "editor": {
       "title": "제목",
@@ -169,12 +173,26 @@
       "publishing": "공유 중…",
       "update": "변경 저장",
       "publishFailed": "공유에 실패했습니다. 다시 시도해 주세요.",
-      "contentLabel": "풀이 (마크다운)"
+      "contentLabel": "풀이 (마크다운)",
+      "titleHint": "5~100자.",
+      "contentHint": "50자 이상, 50,000자 이하.",
+      "languagesHint": "하나 이상 선택해 주세요.",
+      "draftSaved": "이 기기에 임시 저장했습니다.",
+      "discardDraft": "임시 저장 삭제",
+      "discardDraftTitle": "임시 저장을 삭제할까요?",
+      "discardDraftBody": "이 문제에 작성 중인 풀이가 이 기기에서 삭제됩니다.",
+      "discardChangesTitle": "변경 사항을 버릴까요?",
+      "discardChangesBody": "이 풀이에서 수정한 내용이 아직 저장되지 않았습니다.",
+      "discardChanges": "변경 사항 버리기",
+      "seedFailed": "제출한 코드를 불러오지 못했습니다. 다시 시도하거나 직접 작성해 주세요.",
+      "tagsFailed": "태그를 불러오지 못했습니다.",
+      "loadFailed": "수정할 풀이를 불러오지 못했습니다."
     },
     "upvote": "추천",
     "downvote": "비추천",
     "score": "점수 {{n}}",
-    "commentsCount": "댓글 {{n}}개",
+    "commentsCount_one": "댓글 {{count}}개",
+    "commentsCount_other": "댓글 {{count}}개",
     "voteFailed": "투표를 반영하지 못했습니다. 다시 시도해 주세요.",
     "deleteFailed": "풀이를 삭제하지 못했습니다. 다시 시도해 주세요.",
     "reportFailed": "신고를 보내지 못했습니다. 다시 시도해 주세요.",
@@ -198,7 +216,11 @@
         "heading": "제목",
         "item": "목록 항목"
       }
-    }
+    },
+    "noSolutionsMatch": "이 필터에 맞는 풀이가 없습니다.",
+    "clearFilters": "필터 지우기",
+    "reported": "신고가 접수되었습니다. 검토하겠습니다.",
+    "retry": "다시 시도"
   },
   "submissions": {
     "loginRequired": "제출 내역을 보려면 로그인하세요",

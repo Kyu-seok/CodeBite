@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { X } from "lucide-react"
 import { Button } from "@/components/ui/Button"
@@ -22,24 +22,25 @@ export function TagPicker({ selected, onChange, max = 5 }: TagPickerProps) {
   const [all, setAll] = useState<TagOption[]>([])
   const [filter, setFilter] = useState("")
   const [loaded, setLoaded] = useState(false)
+  // A failed load says so; otherwise the search box could never return anything, silently.
+  const [loadFailed, setLoadFailed] = useState(false)
 
-  useEffect(() => {
-    let cancelled = false
+  const fetchTags = useCallback(() => {
     client
       .get<TagOption[]>("/tags")
       .then((res) => {
-        if (!cancelled) {
-          setAll(res.data)
-          setLoaded(true)
-        }
+        setAll(res.data)
+        setLoaded(true)
       })
-      .catch(() => {
-        if (!cancelled) setLoaded(true)
-      })
-    return () => {
-      cancelled = true
-    }
+      .catch(() => setLoadFailed(true))
   }, [])
+
+  useEffect(fetchTags, [fetchTags])
+
+  const retry = () => {
+    setLoadFailed(false)
+    fetchTags()
+  }
 
   const remove = (slug: string) => onChange(selected.filter((s) => s !== slug))
 
@@ -93,6 +94,14 @@ export function TagPicker({ selected, onChange, max = 5 }: TagPickerProps) {
           disabled={selected.length >= max}
           className="w-full rounded-md border border-border bg-background px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
         />
+        {loadFailed && (
+          <p role="alert" className="mt-1 flex items-center gap-2 text-xs text-error-700 dark:text-error-400">
+            {t("solutions.editor.tagsFailed")}
+            <Button type="button" variant="outline" size="sm" onClick={retry}>
+              {t("solutions.retry")}
+            </Button>
+          </p>
+        )}
         {loaded && visible.length > 0 && (
           <div className="mt-1 flex flex-wrap gap-1">
             {visible.map((tag) => (

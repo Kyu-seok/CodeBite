@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useRef, useState, type RefObject } from "react"
 import { useNavigate } from "react-router-dom"
 import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/Button"
@@ -22,26 +22,31 @@ interface CommentThreadProps {
   onChange: (comments: SolutionComment[]) => void
 }
 
-export function CommentThread({ solutionId, slug, comments, onChange }: CommentThreadProps) {
-  const { t } = useTranslation("problem")
-  const { isAuthenticated } = useAuth()
-  const navigate = useNavigate()
-  const [composer, setComposer] = useState("")
-  const [submitting, setSubmitting] = useState(false)
-  const [composerError, setComposerError] = useState<string | null>(null)
+const errorText = "mt-1 text-xs text-error-700 dark:text-error-400"
+const actionClass =
+  "rounded px-1 py-0.5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
 
-  const requireAuth = () => {
+/** Signing in from a solution comes back to it. */
+function useRequireAuth(slug: string, solutionId: number) {
+  const navigate = useNavigate()
+  return () => {
     sessionStorage.setItem("returnUrl", `/problems/${slug}/solutions/${solutionId}`)
     navigate("/login")
   }
+}
+
+export function CommentThread({ solutionId, slug, comments, onChange }: CommentThreadProps) {
+  const { t } = useTranslation("problem")
+  const { isAuthenticated } = useAuth()
+  const requireAuth = useRequireAuth(slug, solutionId)
+  const [composer, setComposer] = useState("")
+  const [submitting, setSubmitting] = useState(false)
+  const [composerError, setComposerError] = useState<string | null>(null)
+  const composerRef = useRef<HTMLTextAreaElement>(null)
 
   const submitTopLevel = async () => {
     const content = composer.trim()
-    if (!content) return
-    if (!isAuthenticated) {
-      requireAuth()
-      return
-    }
+    if (!content || submitting) return
     setSubmitting(true)
     setComposerError(null)
     try {
@@ -55,33 +60,50 @@ export function CommentThread({ solutionId, slug, comments, onChange }: CommentT
     }
   }
 
+  // A deleted comment takes its focused button with it; land on the composer instead of <body>.
+  const afterDelete = (next: SolutionComment[]) => {
+    onChange(next)
+    requestAnimationFrame(() => composerRef.current?.focus())
+  }
+
   return (
     <div className="space-y-4">
-      <div>
-        <textarea
-          aria-label={t("solutions.comments.label")}
-          value={composer}
-          onChange={(e) => setComposer(e.target.value)}
-          maxLength={2000}
-          rows={3}
-          placeholder={t("solutions.comments.composerPlaceholder")}
-          className="w-full resize-y rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-        />
-        <div className="mt-2 flex items-center justify-between">
-          <span className="font-mono text-xs tabular-nums text-muted-foreground">
-            {composer.length}/2000
-          </span>
-          <Button
-            size="sm"
-            disabled={!composer.trim() || submitting}
-            onClick={submitTopLevel}>
-            {t("solutions.comments.submit")}
+      {isAuthenticated ? (
+        <div>
+          <textarea
+            ref={composerRef}
+            aria-label={t("solutions.comments.label")}
+            value={composer}
+            onChange={(e) => setComposer(e.target.value)}
+            maxLength={2000}
+            rows={3}
+            placeholder={t("solutions.comments.composerPlaceholder")}
+            className="w-full resize-y rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+          />
+          <div className="mt-2 flex items-center justify-between">
+            <span className="font-mono text-xs tabular-nums text-muted-foreground">
+              {composer.length}/2000
+            </span>
+            <Button
+              size="sm"
+              disabled={!composer.trim() || submitting}
+              onClick={submitTopLevel}>
+              {submitting ? t("solutions.comments.posting") : t("solutions.comments.submit")}
+            </Button>
+          </div>
+          {composerError && (
+            <p role="alert" className={errorText}>{composerError}</p>
+          )}
+        </div>
+      ) : (
+        // Signed out: offer sign-in up front instead of a composer whose text the redirect drops.
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-dashed border-border px-3 py-3">
+          <p className="text-sm text-muted-foreground">{t("solutions.comments.signInPrompt")}</p>
+          <Button size="sm" variant="outline" onClick={requireAuth}>
+            {t("solutions.comments.signIn")}
           </Button>
         </div>
-        {composerError && (
-          <p role="alert" className="mt-1 text-xs text-destructive">{composerError}</p>
-        )}
-      </div>
+      )}
 
       {comments.length === 0 ? (
         <p className="text-sm text-muted-foreground">{t("solutions.comments.empty")}</p>
@@ -121,7 +143,7 @@ export function CommentThread({ solutionId, slug, comments, onChange }: CommentT
                 )
                 onChange(next)
               }}
-              onDelete={() => onChange(comments.filter((existing) => existing.id !== c.id))}
+              onDelete={() => afterDelete(comments.filter((existing) => existing.id !== c.id))}
               onDeleteReply={(replyId) => {
                 const next = comments.map((existing) =>
                   existing.id === c.id
@@ -131,7 +153,7 @@ export function CommentThread({ solutionId, slug, comments, onChange }: CommentT
                       }
                     : existing,
                 )
-                onChange(next)
+                afterDelete(next)
               }}
             />
           ))}
@@ -218,48 +240,57 @@ function CommentRow({
   onDelete,
 }: CommentRowProps) {
   const { t, i18n } = useTranslation("problem")
-  const navigate = useNavigate()
+  const requireAuth = useRequireAuth(slug, solutionId)
   const [replying, setReplying] = useState(false)
+  const [replyDraft, setReplyDraft] = useState("")
+  const [editing, setEditing] = useState(false)
+  const [editDraft, setEditDraft] = useState(comment.content)
+  // One request at a time per row, so a double click can't post the same reply twice.
+  const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [confirmingDelete, setConfirmingDelete] = useState(false)
-  const [editing, setEditing] = useState(false)
-  const [draft, setDraft] = useState(comment.content)
   const [reportOpen, setReportOpen] = useState(false)
+  const replyButtonRef = useRef<HTMLButtonElement>(null)
+  const editButtonRef = useRef<HTMLButtonElement>(null)
 
-  const requireAuth = () => {
-    sessionStorage.setItem("returnUrl", `/problems/${slug}/solutions/${solutionId}`)
-    navigate("/login")
-  }
+  const refocus = (ref: RefObject<HTMLButtonElement | null>) =>
+    requestAnimationFrame(() => ref.current?.focus())
 
   const submitReply = async () => {
-    if (!draft.trim()) return
-    if (!isAuthenticated) {
-      requireAuth()
-      return
-    }
+    const content = replyDraft.trim()
+    if (!content || busy) return
+    setBusy(true)
     setError(null)
     try {
       const res = await createComment(solutionId, {
-        content: draft.trim(),
+        content,
         parentCommentId: comment.id,
       })
       onAddReply?.(res.data)
-      setDraft(comment.content)
+      setReplyDraft("")
       setReplying(false)
+      refocus(replyButtonRef)
     } catch {
       setError(t("solutions.comments.failed"))
+    } finally {
+      setBusy(false)
     }
   }
 
   const submitEdit = async () => {
-    if (!draft.trim()) return
+    const content = editDraft.trim()
+    if (!content || busy) return
+    setBusy(true)
     setError(null)
     try {
-      const res = await updateComment(comment.id, { content: draft.trim() })
+      const res = await updateComment(comment.id, { content })
       onUpdate(res.data)
       setEditing(false)
+      refocus(editButtonRef)
     } catch {
       setError(t("solutions.comments.failed"))
+    } finally {
+      setBusy(false)
     }
   }
 
@@ -292,22 +323,24 @@ function CommentRow({
             <div className="mt-1">
               <textarea
                 aria-label={t("solutions.comments.editLabel")}
-                value={draft}
-                onChange={(e) => setDraft(e.target.value)}
+                value={editDraft}
+                onChange={(e) => setEditDraft(e.target.value)}
                 maxLength={2000}
                 rows={3}
+                autoFocus
                 className="w-full resize-y rounded-md border border-border bg-background px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
               />
               <div className="mt-1 flex gap-2">
-                <Button size="sm" onClick={submitEdit}>
-                  {t("solutions.comments.save")}
+                <Button size="sm" onClick={submitEdit} disabled={!editDraft.trim() || busy}>
+                  {busy ? t("solutions.comments.saving") : t("solutions.comments.save")}
                 </Button>
                 <Button
                   size="sm"
                   variant="ghost"
                   onClick={() => {
                     setEditing(false)
-                    setDraft(comment.content)
+                    setEditDraft(comment.content)
+                    refocus(editButtonRef)
                   }}>
                   {t("solutions.comments.cancel")}
                 </Button>
@@ -319,16 +352,16 @@ function CommentRow({
             </p>
           )}
           {!editing && (
-            <div className="mt-1 flex gap-3 text-xs text-muted-foreground">
+            <div className="mt-1 flex gap-2 text-xs text-muted-foreground">
               {canReply && (
                 <button
-                  className="rounded hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  ref={replyButtonRef}
+                  type="button"
+                  aria-expanded={isAuthenticated ? replying : undefined}
+                  className={actionClass}
                   onClick={() => {
                     if (!isAuthenticated) requireAuth()
-                    else {
-                      setDraft("")
-                      setReplying((v) => !v)
-                    }
+                    else setReplying((v) => !v)
                   }}>
                   {t("solutions.comments.reply")}
                 </button>
@@ -336,15 +369,18 @@ function CommentRow({
               {comment.ownedByViewer && (
                 <>
                   <button
-                    className="rounded hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    ref={editButtonRef}
+                    type="button"
+                    className={actionClass}
                     onClick={() => {
-                      setDraft(comment.content)
+                      setEditDraft(comment.content)
                       setEditing(true)
                     }}>
                     {t("solutions.comments.edit")}
                   </button>
                   <button
-                    className="rounded hover:text-destructive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    type="button"
+                    className="rounded px-1 py-0.5 hover:text-destructive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                     onClick={() => setConfirmingDelete(true)}>
                     {t("solutions.comments.delete")}
                   </button>
@@ -352,7 +388,8 @@ function CommentRow({
               )}
               {!comment.ownedByViewer && isAuthenticated && (
                 <button
-                  className="rounded hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  type="button"
+                  className={actionClass}
                   onClick={() => setReportOpen(true)}>
                   {t("solutions.report")}
                 </button>
@@ -360,7 +397,7 @@ function CommentRow({
             </div>
           )}
           {error && (
-            <p role="alert" className="mt-1 text-xs text-destructive">{error}</p>
+            <p role="alert" className={errorText}>{error}</p>
           )}
         </div>
       </div>
@@ -368,18 +405,25 @@ function CommentRow({
         <div className="mt-2 ml-7">
           <textarea
             aria-label={t("solutions.comments.replyLabel")}
-            value={draft}
-            onChange={(e) => setDraft(e.target.value)}
+            value={replyDraft}
+            onChange={(e) => setReplyDraft(e.target.value)}
             maxLength={2000}
             rows={2}
+            autoFocus
             placeholder={t("solutions.comments.composerPlaceholder")}
             className="w-full resize-y rounded-md border border-border bg-background px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
           />
           <div className="mt-1 flex gap-2">
-            <Button size="sm" onClick={submitReply}>
-              {t("solutions.comments.reply")}
+            <Button size="sm" onClick={submitReply} disabled={!replyDraft.trim() || busy}>
+              {busy ? t("solutions.comments.posting") : t("solutions.comments.reply")}
             </Button>
-            <Button size="sm" variant="ghost" onClick={() => setReplying(false)}>
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => {
+                setReplying(false)
+                refocus(replyButtonRef)
+              }}>
               {t("solutions.comments.cancel")}
             </Button>
           </div>

@@ -147,7 +147,11 @@
       "deleteFailed": "Couldn't delete the comment. Please try again.",
       "label": "Comment",
       "replyLabel": "Reply",
-      "editLabel": "Edit comment"
+      "editLabel": "Edit comment",
+      "signInPrompt": "Sign in to join the discussion.",
+      "signIn": "Sign in to comment",
+      "posting": "Posting…",
+      "saving": "Saving…"
     },
     "editor": {
       "title": "Title",
@@ -169,12 +173,26 @@
       "publishing": "Publishing…",
       "update": "Save changes",
       "publishFailed": "Could not publish. Please try again.",
-      "contentLabel": "Solution (Markdown)"
+      "contentLabel": "Solution (Markdown)",
+      "titleHint": "5–100 characters.",
+      "contentHint": "At least 50 characters, up to 50,000.",
+      "languagesHint": "Pick at least one.",
+      "draftSaved": "Draft saved on this device.",
+      "discardDraft": "Discard draft",
+      "discardDraftTitle": "Discard this draft?",
+      "discardDraftBody": "Your unpublished solution for this problem will be deleted from this device.",
+      "discardChangesTitle": "Discard your changes?",
+      "discardChangesBody": "Your edits to this solution haven't been saved.",
+      "discardChanges": "Discard changes",
+      "seedFailed": "Couldn't load the code from your submission. Try again, or write the solution yourself.",
+      "tagsFailed": "Couldn't load tags.",
+      "loadFailed": "Couldn't load this solution for editing."
     },
     "upvote": "Upvote",
     "downvote": "Downvote",
     "score": "Score {{n}}",
-    "commentsCount": "{{n}} comments",
+    "commentsCount_one": "{{count}} comment",
+    "commentsCount_other": "{{count}} comments",
     "voteFailed": "Couldn't record your vote. Please try again.",
     "deleteFailed": "Couldn't delete the solution. Please try again.",
     "reportFailed": "Couldn't send the report. Please try again.",
@@ -198,7 +216,11 @@
         "heading": "Heading",
         "item": "List item"
       }
-    }
+    },
+    "noSolutionsMatch": "No solutions match these filters.",
+    "clearFilters": "Clear filters",
+    "reported": "Reported. Thanks, we'll review it.",
+    "retry": "Try again"
   },
   "submissions": {
     "loginRequired": "Log in to see submission history",
