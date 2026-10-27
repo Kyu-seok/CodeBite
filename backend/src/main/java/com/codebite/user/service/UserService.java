@@ -61,10 +61,9 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public UserProfile getUserProfile(Long userId) {
-        User user = userRepository.findById(userId)
+    public User getUser(Long userId) {
+        return userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("error.user.notFound", userId));
-        return toProfile(user);
     }
 
     public static UserProfile toProfile(User user) {
