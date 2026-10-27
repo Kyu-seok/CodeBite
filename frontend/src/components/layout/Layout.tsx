@@ -313,7 +313,7 @@ export default function Layout() {
                         referrerPolicy="no-referrer"
                       />
                     ) : (
-                      <span aria-hidden className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-orange-400 to-amber-600 text-xs font-semibold text-white">
+                      <span aria-hidden className="flex h-7 w-7 items-center justify-center rounded-full bg-accent-700 text-xs font-semibold text-white">
                         {userInitial}
                       </span>
                     )}
@@ -329,7 +329,7 @@ export default function Layout() {
                         referrerPolicy="no-referrer"
                       />
                     ) : (
-                      <span aria-hidden className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-orange-400 to-amber-600 text-sm font-semibold text-white">
+                      <span aria-hidden className="flex h-10 w-10 items-center justify-center rounded-full bg-accent-700 text-sm font-semibold text-white">
                         {userInitial}
                       </span>
                     )}

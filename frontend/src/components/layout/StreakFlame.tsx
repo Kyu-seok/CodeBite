@@ -52,9 +52,12 @@ export function StreakFlame() {
       <TooltipTrigger>
         <Link
           to="/profile"
+          aria-label={t('streak.days', { count: streak })}
           className={cn(
-            'flex h-7 items-center gap-1 rounded-md px-1.5 text-xs font-semibold tabular-nums transition-colors hover:bg-secondary',
-            solvedToday ? 'text-warning-500' : 'text-muted-foreground',
+            'flex h-7 items-center gap-1 rounded-md px-1.5 font-mono text-xs font-semibold tabular-nums transition-colors hover:bg-secondary',
+            'outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
+            // Readable Ember: the count is text, so it takes the 700 step on paper, 400 on night.
+            solvedToday ? 'text-accent-700 dark:text-accent-400' : 'text-muted-foreground',
           )}
         >
           <span aria-hidden className={cn(!solvedToday && 'opacity-40 grayscale')}>🔥</span>
