@@ -3,8 +3,6 @@
   "problems": "Problems",
   "roadmap": "Roadmap",
   "reviews": "Reviews",
-  "darkMode": "Dark mode",
-  "lightMode": "Light mode",
   "profile": "Profile",
   "admin": "Admin",
   "logout": "Log out",
@@ -13,5 +11,18 @@
   "streak": {
     "days_one": "{{count}}-day Streak",
     "days_other": "{{count}}-day Streak"
+  },
+  "home": "CodeBite home",
+  "mainNav": "Main",
+  "menu": "Menu",
+  "skipToContent": "Skip to content",
+  "accountMenu": "Account menu",
+  "switchToDark": "Switch to dark mode",
+  "switchToLight": "Switch to light mode",
+  "switchLanguage": "Switch to Korean",
+  "timer": {
+    "start": "Start timer",
+    "pause": "Pause timer",
+    "reset": "Reset timer"
   }
 }
