@@ -15,6 +15,13 @@ import { RecommendationsCard } from "./RecommendationsCard";
 import { ReviewHistoryList } from "./ReviewHistoryList";
 import { formatDuration } from "./formatDuration";
 
+function without<T>(set: ReadonlySet<T>, item: T): ReadonlySet<T> {
+  if (!set.has(item)) return set;
+  const next = new Set(set);
+  next.delete(item);
+  return next;
+}
+
 interface SummaryCardProps {
   label: string;
   value: string;
@@ -32,6 +39,7 @@ function SummaryCard({ label, value, hint }: SummaryCardProps) {
 }
 
 type Section = "stats" | "activity" | "tags";
+const SECTIONS: Section[] = ["stats", "activity", "tags"];
 
 export default function ReviewsPage() {
   const { t, i18n } = useTranslation("reviews");
@@ -45,29 +53,25 @@ export default function ReviewsPage() {
     document.title = t("metaTitle");
   }, [t]);
 
-  // Each request settles on its own, so one failure shows as an error on its card instead of
-  // zeros and "rate a few submissions" across the whole page.
-  const fetchAll = useCallback(() => {
-    Promise.allSettled([getReviewStats(), getReviewActivity(12), getTagConfidence()])
-      .then(([s, a, tc]) => {
-        const next = new Set<Section>();
-        if (s.status === "fulfilled") setStats(s.value.data);
-        else next.add("stats");
-        if (a.status === "fulfilled") setActivity(a.value.data as ActivityDay[]);
-        else next.add("activity");
-        if (tc.status === "fulfilled") setTagConfidence(tc.value.data);
-        else next.add("tags");
-        setFailed(next);
-      })
-      .finally(() => setLoading(false));
+  // Each section loads and retries on its own, so one failure shows as an error on its card
+  // instead of zeros across the page, and retrying it leaves the other cards (and the
+  // History filters) alone.
+  const load = useCallback((section: Section) => {
+    const request =
+      section === "stats"
+        ? getReviewStats().then((res) => setStats(res.data))
+        : section === "activity"
+          ? getReviewActivity(12).then((res) => setActivity(res.data as ActivityDay[]))
+          : getTagConfidence().then((res) => setTagConfidence(res.data));
+    return request.then(
+      () => setFailed((prev) => without(prev, section)),
+      () => setFailed((prev) => new Set(prev).add(section)),
+    );
   }, []);
 
-  useEffect(fetchAll, [fetchAll]);
-
-  const retry = () => {
-    setLoading(true);
-    fetchAll();
-  };
+  useEffect(() => {
+    Promise.all(SECTIONS.map(load)).finally(() => setLoading(false));
+  }, [load]);
 
   if (loading) {
     return (
@@ -87,7 +91,7 @@ export default function ReviewsPage() {
 
         {failed.has("stats") || !stats ? (
           <div className="rounded-xl border border-border bg-card p-5">
-            <LoadError onRetry={retry} />
+            <LoadError onRetry={() => load("stats")} />
           </div>
         ) : (
           <dl className="grid grid-cols-2 gap-4 md:grid-cols-4">
@@ -117,7 +121,7 @@ export default function ReviewsPage() {
         {failed.has("activity") ? (
           <section className="rounded-xl border border-border bg-card p-5">
             <h2 className="text-sm font-medium text-foreground">{t("activity.title")}</h2>
-            <LoadError onRetry={retry} />
+            <LoadError onRetry={() => load("activity")} />
           </section>
         ) : (
           <ActivityHeatmap
@@ -127,7 +131,7 @@ export default function ReviewsPage() {
           />
         )}
 
-        <TagConfidenceChart data={tagConfidence} failed={failed.has("tags")} onRetry={retry} />
+        <TagConfidenceChart data={tagConfidence} failed={failed.has("tags")} onRetry={() => load("tags")} />
 
         <RecommendationsCard />
 
