@@ -42,15 +42,15 @@
     "output": "Output: "
   },
   "editor": {
-    "code": "Code",
     "languages": "Languages",
     "reportBug": "Report Bug",
     "resetCode": "Reset Code",
     "resetLayout": "Reset Layout",
+    "moreActions": "More actions",
     "settings": "Settings",
     "runCode": "Run Code",
     "submitCode": "Submit Code",
-    "templateErrorBanner": "This looks like a bug in our test harness — please use the Report Bug button."
+    "templateErrorBanner": "This looks like a bug in our test harness. Please report it with Report Bug in the editor's More actions menu."
   },
   "bugReport": {
     "title": "Report a Bug",

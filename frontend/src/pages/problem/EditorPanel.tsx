@@ -1,9 +1,8 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import Editor from '@monaco-editor/react';
 import { KeyMod, KeyCode, Range as MonacoRange, editor as monacoEditor } from 'monaco-editor';
 import type { CodeError } from '@/types/submission';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/Tabs';
 import {
   Select,
   SelectTrigger,
@@ -15,6 +14,12 @@ import {
 } from '@/components/ui/Select';
 import { Button } from '@/components/ui/Button';
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/Tooltip';
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from '@/components/ui/DropdownMenu';
 import {
   Dialog,
   DialogContent,
@@ -37,24 +42,33 @@ import {
   Maximize2,
   Minimize2,
   ExternalLink,
+  Ellipsis,
 } from 'lucide-react';
 
-function CodeIcon() {
+/** An icon-only toolbar button: its tooltip and accessible name are the same label. */
+function ToolbarButton({
+  label,
+  onClick,
+  children,
+}: {
+  label: string;
+  onClick?: () => void;
+  children: ReactNode;
+}) {
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="14"
-      height="14"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round">
-      <polyline points="16 18 22 12 16 6" />
-      <polyline points="8 6 2 12 8 18" />
-    </svg>
+    <Tooltip>
+      <TooltipTrigger>
+        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onClick} aria-label={label}>
+          {children}
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent>{label}</TooltipContent>
+    </Tooltip>
   );
+}
+
+function ToolbarDivider() {
+  return <div aria-hidden className="mx-1 h-4 w-px bg-border" />;
 }
 
 const ISSUES_NEW_URL = 'https://github.com/Kyu-seok/CodeBite/issues/new';
@@ -378,132 +392,100 @@ export function EditorPanel({
 
   return (
     <div className="flex h-full flex-col">
-      <Tabs defaultValue="code" className="flex h-full flex-col">
-        <div className="flex items-center justify-between border-b border-border bg-muted">
-          <div className="flex items-center gap-1">
-            <TabsList>
-              <TabsTrigger value="code" className="gap-1.5 cursor-default">
-                <CodeIcon />
-                {t('editor.code')}
-              </TabsTrigger>
-            </TabsList>
-            <Select value={activeLanguage} onValueChange={onLanguageChange}>
-              <SelectTrigger className="w-[130px]" aria-label={t('editor.languages')}>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectLabel>{t('editor.languages')}</SelectLabel>
-                  {languages.map((lang) => (
-                    <SelectItem key={lang} value={lang}>
-                      {languageLabel(lang)}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="flex items-center">
+      <div className="flex h-9 items-center justify-between gap-2 border-b border-border bg-muted px-1">
+        <Select value={activeLanguage} onValueChange={onLanguageChange}>
+          <SelectTrigger className="w-[130px]" aria-label={t('editor.languages')}>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectLabel>{t('editor.languages')}</SelectLabel>
+              {languages.map((lang) => (
+                <SelectItem key={lang} value={lang}>
+                  {languageLabel(lang)}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+        {/* Three groups: the code, the panes, then preferences and the rarely used actions. */}
+        <div className="flex items-center">
+          <ToolbarButton label={t('editor.resetCode')} onClick={onResetCode}>
+            <RotateCcw className="h-3.5 w-3.5" />
+          </ToolbarButton>
+          <ToolbarDivider />
+          <ToolbarButton
+            label={t(testsCollapsed ? 'workspace.showTests' : 'workspace.hideTests')}
+            onClick={onToggleTests}>
+            {testsCollapsed
+              ? <PanelBottomOpen className="h-3.5 w-3.5" />
+              : <PanelBottomClose className="h-3.5 w-3.5" />}
+          </ToolbarButton>
+          <ToolbarButton
+            label={t(isMaximized ? 'workspace.exitFullScreen' : 'workspace.fullScreen')}
+            onClick={onMaximize}>
+            {isMaximized ? <Minimize2 className="h-3.5 w-3.5" /> : <Maximize2 className="h-3.5 w-3.5" />}
+          </ToolbarButton>
+          <ToolbarDivider />
+          <SettingsDialog />
+          {/* Non-modal, so opening the bug report from it doesn't fight the menu over focus. */}
+          <DropdownMenu modal={false}>
             <Tooltip>
               <TooltipTrigger>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-7 w-7"
-                  onClick={() => setBugReportOpen(true)}
-                  aria-label={t('editor.reportBug')}>
-                  <Bug className="h-3.5 w-3.5" />
-                </Button>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-7 w-7"
+                    aria-label={t('editor.moreActions')}>
+                    <Ellipsis className="h-3.5 w-3.5" />
+                  </Button>
+                </DropdownMenuTrigger>
               </TooltipTrigger>
-              <TooltipContent>{t('editor.reportBug')}</TooltipContent>
+              <TooltipContent>{t('editor.moreActions')}</TooltipContent>
             </Tooltip>
-            <Tooltip>
-              <TooltipTrigger>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-7 w-7"
-                  onClick={onResetCode}
-                  aria-label={t('editor.resetCode')}>
-                  <RotateCcw className="h-3.5 w-3.5" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>{t('editor.resetCode')}</TooltipContent>
-            </Tooltip>
-            <Tooltip>
-              <TooltipTrigger>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-7 w-7"
-                  onClick={onResetLayout}
-                  aria-label={t('editor.resetLayout')}>
-                  <Columns2 className="h-3.5 w-3.5" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>{t('editor.resetLayout')}</TooltipContent>
-            </Tooltip>
-            <Tooltip>
-              <TooltipTrigger>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-7 w-7"
-                  onClick={onToggleTests}
-                  aria-label={t(testsCollapsed ? 'workspace.showTests' : 'workspace.hideTests')}>
-                  {testsCollapsed
-                    ? <PanelBottomOpen className="h-3.5 w-3.5" />
-                    : <PanelBottomClose className="h-3.5 w-3.5" />}
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>{t(testsCollapsed ? 'workspace.showTests' : 'workspace.hideTests')}</TooltipContent>
-            </Tooltip>
-            <Tooltip>
-              <TooltipTrigger>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-7 w-7"
-                  onClick={onMaximize}
-                  aria-label={t(isMaximized ? 'workspace.exitFullScreen' : 'workspace.fullScreen')}>
-                  {isMaximized ? <Minimize2 className="h-3.5 w-3.5" /> : <Maximize2 className="h-3.5 w-3.5" />}
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>{t(isMaximized ? 'workspace.exitFullScreen' : 'workspace.fullScreen')}</TooltipContent>
-            </Tooltip>
-            <SettingsDialog />
-          </div>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onSelect={() => onResetLayout?.()}>
+                <Columns2 className="h-3.5 w-3.5 text-muted-foreground" />
+                {t('editor.resetLayout')}
+              </DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => setBugReportOpen(true)}>
+                <Bug className="h-3.5 w-3.5 text-muted-foreground" />
+                {t('editor.reportBug')}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
+      </div>
 
-        <TabsContent value="code" className="mt-0 min-h-0 flex-1">
-          <Editor
-            height="100%"
-            language={MONACO_LANGUAGE[activeLanguage] || activeLanguage}
-            value={code}
-            onChange={onCodeChange}
-            onMount={handleMount}
-            theme={theme === 'dark' ? 'vs-dark' : 'light'}
-            loading={<Spinner />}
-            options={{
-              minimap: { enabled: false },
-              fontSize: settings.fontSize,
-              tabSize: settings.tabSize,
-              detectIndentation: false,
-              scrollBeyondLastLine: false,
-              padding: { top: 12 },
-              quickSuggestions: settings.intelliSense,
-              suggestOnTriggerCharacters: settings.intelliSense,
-              parameterHints: { enabled: settings.intelliSense },
-            }}
-          />
-        </TabsContent>
-        {settings.keyBindings === 'vim' && (
-          <div
-            ref={statusBarRef}
-            className="border-t border-border bg-muted px-3 py-0.5 text-xs font-mono text-muted-foreground"
-          />
-        )}
-      </Tabs>
+      <div className="min-h-0 flex-1">
+        <Editor
+          height="100%"
+          language={MONACO_LANGUAGE[activeLanguage] || activeLanguage}
+          value={code}
+          onChange={onCodeChange}
+          onMount={handleMount}
+          theme={theme === 'dark' ? 'vs-dark' : 'light'}
+          loading={<Spinner />}
+          options={{
+            minimap: { enabled: false },
+            fontSize: settings.fontSize,
+            tabSize: settings.tabSize,
+            detectIndentation: false,
+            scrollBeyondLastLine: false,
+            padding: { top: 12 },
+            quickSuggestions: settings.intelliSense,
+            suggestOnTriggerCharacters: settings.intelliSense,
+            parameterHints: { enabled: settings.intelliSense },
+          }}
+        />
+      </div>
+      {settings.keyBindings === 'vim' && (
+        <div
+          ref={statusBarRef}
+          className="border-t border-border bg-muted px-3 py-0.5 text-xs font-mono text-muted-foreground"
+        />
+      )}
       <BugReportDialog
         open={bugReportOpen}
         onClose={() => setBugReportOpen(false)}
