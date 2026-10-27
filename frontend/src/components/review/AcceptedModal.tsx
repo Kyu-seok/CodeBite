@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { ArrowRight, Check } from "lucide-react";
@@ -41,9 +41,22 @@ interface Done {
   next: NextProblem;
 }
 
-function splitMinSec(total: number | null): { min: number; sec: number } {
-  if (total == null || total < 0) return { min: 0, sec: 0 };
-  return { min: Math.floor(total / 60), sec: total % 60 };
+// Blank fields mean no time. The timer is manual, so a problem solved without it has no
+// time to record, and saving 0:00 would read as a real (impossibly fast) solve.
+function splitMinSec(total: number | null): { min: string; sec: string } {
+  if (total == null || total <= 0) return { min: "", sec: "" };
+  return { min: String(Math.floor(total / 60)), sec: String(total % 60) };
+}
+
+function toSeconds(min: string, sec: string): number | null {
+  const total = (Number(min) || 0) * 60 + (Number(sec) || 0);
+  return total > 0 ? total : null;
+}
+
+function cleanDigits(value: string, max?: number): string {
+  if (value === "") return "";
+  const n = Math.max(0, Math.floor(Number(value) || 0));
+  return String(max != null ? Math.min(max, n) : n);
 }
 
 export function AcceptedModal({
@@ -63,6 +76,8 @@ export function AcceptedModal({
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState<Done | null>(null);
   const nextLinkRef = useRef<HTMLAnchorElement>(null);
+  const noTimeId = useId();
+  const noTime = toSeconds(min, sec) == null;
 
   // Reset the dialog when it re-opens for a different submission.
   useEffect(() => {
@@ -84,10 +99,7 @@ export function AcceptedModal({
     if (submissionId == null) return;
     setBusy(true);
     try {
-      const total =
-        defaultSolveTimeSeconds != null || min > 0 || sec > 0
-          ? Math.max(0, min) * 60 + Math.max(0, sec)
-          : null;
+      const total = toSeconds(min, sec);
       const state = await onSubmit({ submissionId, confidence, notes, solveTimeSeconds: total });
       const next = await findNextProblem(problemSlug);
       setDone({ confidence, state, next });
@@ -108,7 +120,7 @@ export function AcceptedModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         // Start on the rating's tab stop (Good) rather than the time inputs: rating is what this
-        // dialog is for, and the time is usually already filled in from the solve timer.
+        // dialog is for, and the time is either filled in from the solve timer or left blank.
         onOpenAutoFocus={(e) => {
           const stop = (e.currentTarget as HTMLElement | null)?.querySelector<HTMLElement>(
             '[role="radio"][tabindex="0"]',
@@ -192,9 +204,11 @@ export function AcceptedModal({
                   inputMode="numeric"
                   min={0}
                   value={min}
-                  onChange={(e) => setMin(Math.max(0, Number(e.target.value) || 0))}
+                  placeholder="—"
+                  onChange={(e) => setMin(cleanDigits(e.target.value))}
                   disabled={busy}
                   aria-label={t("review.accepted.minutesLabel")}
+                  aria-describedby={noTime ? noTimeId : undefined}
                   className="w-16 rounded-md border border-border bg-background px-2 py-1 text-right font-mono text-base tabular-nums text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:text-sm"
                 />
                 <span aria-hidden className="text-muted-foreground">{t("review.accepted.minutes")}</span>
@@ -204,13 +218,18 @@ export function AcceptedModal({
                   min={0}
                   max={59}
                   value={sec}
-                  onChange={(e) => setSec(Math.max(0, Math.min(59, Number(e.target.value) || 0)))}
+                  placeholder="—"
+                  onChange={(e) => setSec(cleanDigits(e.target.value, 59))}
                   disabled={busy}
                   aria-label={t("review.accepted.secondsLabel")}
+                  aria-describedby={noTime ? noTimeId : undefined}
                   className="w-16 rounded-md border border-border bg-background px-2 py-1 text-right font-mono text-base tabular-nums text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:text-sm"
                 />
                 <span aria-hidden className="text-muted-foreground">{t("review.accepted.seconds")}</span>
               </div>
+              {noTime && (
+                <p id={noTimeId} className="mt-1 text-xs text-muted-foreground">{t("review.accepted.noTime")}</p>
+              )}
             </fieldset>
 
             <div className="mt-3">

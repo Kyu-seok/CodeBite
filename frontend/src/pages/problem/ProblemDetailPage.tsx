@@ -47,7 +47,7 @@ export default function ProblemDetailPage() {
   const { slug } = useParams<{ slug: string }>()
   const navigate = useNavigate()
   const { t } = useTranslation("problem")
-  const { getTimerSnapshot, stopTimer } = useOutletContext<WorkspaceOutletContext>()
+  const { getTimerSnapshot, stopTimer, notifyEditing } = useOutletContext<WorkspaceOutletContext>()
   const { user, isAuthenticated, loading: authLoading, updateUser } = useAuth()
   const { problem, loading, error, retry: retryProblem } = useProblem(slug!)
   const { submissions, refetch: refetchSubmissions, updateNote } = useSubmissions(
@@ -243,6 +243,7 @@ export default function ProblemDetailPage() {
   const handleCodeChange = (value: string | undefined) => {
     if (value !== undefined) {
       setCodeByLang((prev) => ({ ...prev, [activeLang]: value }))
+      notifyEditing()
     }
   }
 
@@ -403,10 +404,8 @@ export default function ProblemDetailPage() {
     solveTimeSeconds: number | null
   }) => {
     // If the user edited the time in the modal, persist that value (overrides the auto-capture).
-    if (
-      solveTimeSeconds != null &&
-      solveTimeSeconds !== acceptedModal.solveTimeSeconds
-    ) {
+    // Clearing it sends null: no time, rather than 0:00.
+    if (solveTimeSeconds !== acceptedModal.solveTimeSeconds) {
       try {
         await setSolveTime(submissionId, solveTimeSeconds)
       } catch {

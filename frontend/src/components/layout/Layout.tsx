@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { Link, NavLink, Outlet, useNavigate, useLocation, useMatch } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { X } from 'lucide-react';
 import i18n from '@/lib/i18n';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
@@ -101,9 +102,25 @@ export function formatElapsed(seconds: number) {
 }
 
 export interface WorkspaceOutletContext {
-  /** Seconds on the solve timer if it is running, else null. Read at submit time. */
+  /**
+   * Seconds on the solve timer, or null when it never ran (no time, rather than 0:00).
+   * Read at submit time.
+   */
   getTimerSnapshot: () => number | null;
   stopTimer: (freezeAt: number) => void;
+  /** The learner edited the code; may nudge them to start an idle timer. */
+  notifyEditing: () => void;
+}
+
+// The timer stays manual. Once dismissed, the start-timer nudge never comes back.
+const TIMER_NUDGE_KEY = 'timer-nudge-dismissed';
+
+function readNudgeDismissed() {
+  try {
+    return localStorage.getItem(TIMER_NUDGE_KEY) === '1';
+  } catch {
+    return false;
+  }
 }
 
 export default function Layout() {
@@ -121,10 +138,13 @@ export default function Layout() {
   // The solve timer belongs to one problem: opening a different problem starts it fresh
   // instead of carrying the previous problem's elapsed time over.
   const [timerSlug, setTimerSlug] = useState(problemSlug);
+  // Shown at most once per problem, on the first edit while the timer has never run.
+  const [timerNudge, setTimerNudge] = useState(false);
   if (problemSlug !== null && problemSlug !== timerSlug) {
     setTimerSlug(problemSlug);
     setTimerActive(false);
     setElapsed(0);
+    setTimerNudge(false);
   }
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -140,6 +160,21 @@ export default function Layout() {
 
   const handleTimerToggle = () => {
     setTimerActive((prev) => !prev);
+    setTimerNudge(false);
+  };
+
+  const handleNudgeStart = () => {
+    setTimerActive(true);
+    setTimerNudge(false);
+  };
+
+  const handleNudgeDismiss = () => {
+    setTimerNudge(false);
+    try {
+      localStorage.setItem(TIMER_NUDGE_KEY, '1');
+    } catch {
+      // Without storage the nudge just shows again on the next problem.
+    }
   };
 
   const handleTimerReset = () => {
@@ -154,11 +189,27 @@ export default function Layout() {
     timerRef.current = { active: timerActive, elapsed };
   }, [timerActive, elapsed]);
 
+  // Solve time only reaches the backend for a signed-in learner, so only they get the nudge.
+  const nudgeRef = useRef({ slug: problemSlug, nudgedSlug: null as string | null, enabled: isAuthenticated });
+  useEffect(() => {
+    nudgeRef.current.slug = problemSlug;
+    nudgeRef.current.enabled = isAuthenticated;
+  }, [problemSlug, isAuthenticated]);
+
   const outletContext = useMemo<WorkspaceOutletContext>(() => ({
-    getTimerSnapshot: () => (timerRef.current.active ? timerRef.current.elapsed : null),
+    // A paused timer still counts; one that never ran is "no time", not 0:00.
+    getTimerSnapshot: () => (timerRef.current.elapsed > 0 ? timerRef.current.elapsed : null),
     stopTimer: (freezeAt: number) => {
       setTimerActive(false);
       setElapsed(freezeAt);
+    },
+    notifyEditing: () => {
+      const nudge = nudgeRef.current;
+      const timer = timerRef.current;
+      if (!nudge.enabled || nudge.slug === null || nudge.nudgedSlug === nudge.slug) return;
+      if (timer.active || timer.elapsed > 0 || readNudgeDismissed()) return;
+      nudge.nudgedSlug = nudge.slug;
+      setTimerNudge(true);
     },
   }), []);
 
@@ -259,7 +310,7 @@ export default function Layout() {
           </div>
           <div className="flex shrink-0 items-center gap-2 text-sm sm:gap-4">
             {isWorkspace && (
-              <div className="flex items-center rounded-md border border-border">
+              <div className="relative flex items-center rounded-md border border-border">
                 <button
                   type="button"
                   onClick={handleTimerToggle}
@@ -288,6 +339,36 @@ export default function Layout() {
                   </TooltipTrigger>
                   <TooltipContent>{t('timer.reset')}</TooltipContent>
                 </Tooltip>
+                {/* Polite and unfocused: the learner is typing in the editor when this appears. */}
+                <div role="status" className="absolute right-0 top-full z-10 mt-2">
+                  {timerNudge && (
+                    <div className="flex w-64 max-w-[calc(100vw-2rem)] items-start gap-2 rounded-md border border-border bg-popover p-3 text-popover-foreground shadow-md">
+                      <div className="min-w-0 flex-1">
+                        <p className="text-xs leading-snug text-foreground">{t('timer.nudge')}</p>
+                        <button
+                          type="button"
+                          onClick={handleNudgeStart}
+                          className={cn(
+                            'mt-2 inline-flex h-7 items-center gap-1.5 rounded-md bg-secondary px-2.5 text-xs font-medium text-secondary-foreground transition-colors hover:bg-neutral-200 dark:hover:bg-neutral-700',
+                            focusRing,
+                          )}
+                        >
+                          <PlayIcon />
+                          {t('timer.start')}
+                        </button>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleNudgeDismiss}
+                        aria-label={t('timer.nudgeDismiss')}
+                        title={t('timer.nudgeDismiss')}
+                        className={cn(iconButton, 'h-6 w-6 shrink-0')}
+                      >
+                        <X className="h-3.5 w-3.5" aria-hidden />
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
             )}
             {isAuthenticated && <StreakFlame />}

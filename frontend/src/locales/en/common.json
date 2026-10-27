@@ -82,7 +82,8 @@
         "roadmap": "Next on your roadmap",
         "list": "Nothing else is due for review",
         "listAction": "Browse problems"
-      }
+      },
+      "noTime": "No time recorded. Enter one, or leave it blank."
     },
     "badge": {
       "label": "Review status",

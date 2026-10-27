@@ -21,7 +21,8 @@ export function updateSubmissionNote(id: number, notes: string) {
   return client.patch(`/submissions/${id}/note`, { notes });
 }
 
-export function setSolveTime(id: number, solveTimeSeconds: number) {
+/** null clears the solve time: the learner has no time to record. */
+export function setSolveTime(id: number, solveTimeSeconds: number | null) {
   return client.patch(`/submissions/${id}/solve-time`, { solveTimeSeconds });
 }
 
