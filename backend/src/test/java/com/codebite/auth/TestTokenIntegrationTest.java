@@ -99,6 +99,14 @@ class TestTokenIntegrationTest {
         assertRole(again, "ADMIN");
     }
 
+    @Test
+    void unknownRole_isABadRequest() throws Exception {
+        for (String role : new String[] {"FOO", "admin"}) {
+            mockMvc.perform(post("/api/auth/test-token").param("username", "dev-bad").param("role", role))
+                    .andExpect(status().isBadRequest());
+        }
+    }
+
     private void assertRole(String token, String role) throws Exception {
         mockMvc.perform(get("/api/auth/me").header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
