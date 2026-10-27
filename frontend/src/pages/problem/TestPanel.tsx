@@ -22,7 +22,8 @@ import type {
   SubmissionResponse,
 } from '@/types/submission';
 import { CustomTestsEditor } from './CustomTestsEditor';
-import { STATUS_KEYS, languageLabel, typicalJudgeSeconds } from './submissionDisplay';
+import { STATUS_KEYS } from './submissionDisplay';
+import { estimatedJudgeSeconds, type JudgeMode } from './judgeTimeEstimates';
 
 function hasTemplateError(errs?: CodeError[] | null): boolean {
   return !!errs?.some((e) => !e.inUserCode);
@@ -49,6 +50,7 @@ interface TestPanelProps {
   running: boolean;
   submitting: boolean;
   submitStartedAt: number | null;
+  runStartedAt: number | null;
   language: string;
   activeTab: string;
   userSource: string;
@@ -161,6 +163,7 @@ export function TestPanel({
   running,
   submitting,
   submitStartedAt,
+  runStartedAt,
   language,
   activeTab,
   userSource,
@@ -273,6 +276,7 @@ export function TestPanel({
               running={running}
               submitting={submitting}
               submitStartedAt={submitStartedAt}
+              runStartedAt={runStartedAt}
               language={language}
               runResult={runResult}
               runError={runError}
@@ -334,6 +338,7 @@ function OutputContent({
   running,
   submitting,
   submitStartedAt,
+  runStartedAt,
   language,
   runResult,
   runError,
@@ -345,6 +350,7 @@ function OutputContent({
   | 'running'
   | 'submitting'
   | 'submitStartedAt'
+  | 'runStartedAt'
   | 'language'
   | 'runResult'
   | 'runError'
@@ -355,21 +361,21 @@ function OutputContent({
   const { t } = useTranslation('problem');
   const { t: tc } = useTranslation('common');
 
-  if (running) {
+  if (running || submitting) {
     return (
       <div className="flex flex-col items-center gap-2 py-8">
-        <Spinner announce={false} />
-        <p className="text-sm text-muted-foreground">{t('test.running')}</p>
-      </div>
-    );
-  }
-
-  if (submitting) {
-    return (
-      <div className="flex flex-col items-center gap-2 py-8">
-        <Spinner announce={false} />
-        <p className="text-sm text-muted-foreground">{t('test.judging')}</p>
-        <JudgingClock startedAt={submitStartedAt} language={language} />
+        {/* Under reduced motion the ticking clock alone shows progress. */}
+        <div className="motion-reduce:hidden">
+          <Spinner announce={false} />
+        </div>
+        <p className="text-sm text-muted-foreground">
+          {t(running ? 'test.running' : 'test.judging')}
+        </p>
+        <JudgingClock
+          startedAt={running ? runStartedAt : submitStartedAt}
+          language={language}
+          mode={running ? 'run' : 'submit'}
+        />
       </div>
     );
   }
@@ -493,8 +499,20 @@ function OutputContent({
   );
 }
 
-/** Elapsed judging time against the measured typical wait, so a slow Java judge reads as expected. */
-function JudgingClock({ startedAt, language }: { startedAt: number | null; language: string }) {
+/**
+ * Elapsed judging time against the usual wait for this language, so a slow Java judge reads as
+ * expected. Deliberately not a live region: the page's ResultAnnouncer speaks the start and the
+ * result, and a screen reader reaches the current count by reading the panel.
+ */
+function JudgingClock({
+  startedAt,
+  language,
+  mode,
+}: {
+  startedAt: number | null;
+  language: string;
+  mode: JudgeMode;
+}) {
   const { t } = useTranslation('problem');
   const [now, setNow] = useState(() => Date.now());
 
@@ -506,14 +524,14 @@ function JudgingClock({ startedAt, language }: { startedAt: number | null; langu
 
   if (startedAt == null) return null;
   const seconds = Math.max(0, Math.floor((now - startedAt) / 1000));
-  const typical = typicalJudgeSeconds(language);
+  const typical = estimatedJudgeSeconds(language, mode);
   return (
     <p className="text-xs text-muted-foreground">
       <span className="font-mono tabular-nums text-foreground">
         {t('workspace.judgingElapsed', { seconds })}
       </span>
       {typical != null && (
-        <span> · {t('workspace.judgingTypical', { seconds: typical, language: languageLabel(language) })}</span>
+        <span> · {t('workspace.judgingTypical', { seconds: typical })}</span>
       )}
     </p>
   );

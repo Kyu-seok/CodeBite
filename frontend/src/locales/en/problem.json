@@ -265,7 +265,7 @@
     "judgingSlow": "Judging is taking longer than expected. Refresh the page to check the result.",
     "resultFetchFailed": "Couldn't load the result. Refresh the page to check it.",
     "judgingElapsed": "{{seconds}}s",
-    "judgingTypical": "Usually about {{seconds}}s for {{language}}",
+    "judgingTypical": "usually ~{{seconds}}s",
     "resetConfirmTitle": "Reset your code?",
     "resetConfirmBody": "Your {{language}} code goes back to the starter template. Your current code can't be recovered.",
     "resetConfirm": "Reset code",
