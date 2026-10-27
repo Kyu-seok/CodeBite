@@ -10,10 +10,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -77,6 +80,22 @@ class UserServiceSettingsTest {
     @Test
     void settingsUpdate_withCacheDisabled_stillSaves() {
         ReflectionTestUtils.setField(userService, "userCacheService", null);
-        assertDoesNotThrow(() -> userService.updateThemePreference(USER_ID, "dark"));
+        userService.updateThemePreference(USER_ID, "dark");
+        verify(userRepository).save(any(User.class));
+    }
+
+    // Evicting before commit lets a concurrent /me re-cache the old row for the whole TTL
+    @Test
+    void settingsUpdate_insideTransaction_evictsOnlyAfterCommit() {
+        TransactionSynchronizationManager.initSynchronization();
+        try {
+            userService.updateLocale(USER_ID, "ko");
+            verify(userCacheService, never()).evictProfile(any());
+
+            TransactionSynchronizationManager.getSynchronizations().forEach(TransactionSynchronization::afterCommit);
+            verify(userCacheService).evictProfile(USER_ID);
+        } finally {
+            TransactionSynchronizationManager.clearSynchronization();
+        }
     }
 }

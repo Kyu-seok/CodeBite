@@ -12,6 +12,8 @@ import com.codebite.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
@@ -127,11 +129,22 @@ public class UserService {
         evictCachedProfile(userId);
     }
 
-    // /api/auth/me serves the cached profile, so a settings change must drop it or the old value returns on reload
+    // /api/auth/me serves the cached profile, so a settings change must drop it or the old value returns on reload.
+    // Evicting before commit would let a concurrent /me re-cache the old row, so it waits for the commit.
     private void evictCachedProfile(Long userId) {
-        if (userCacheService != null) {
-            userCacheService.evictProfile(userId);
+        if (userCacheService == null) {
+            return;
         }
+        if (!TransactionSynchronizationManager.isSynchronizationActive()) {
+            userCacheService.evictProfile(userId);
+            return;
+        }
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                userCacheService.evictProfile(userId);
+            }
+        });
     }
 
     private void createOAuthAccount(User user, OAuthProvider provider, String providerId) {
