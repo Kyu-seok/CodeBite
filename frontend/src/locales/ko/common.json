@@ -35,5 +35,66 @@
   "pagination": {
     "pageOf": "{{current}} / {{total}} 페이지",
     "label": "페이지 이동"
+  },
+  "confidence": {
+    "AGAIN": "다시",
+    "HARD": "어려움",
+    "GOOD": "좋음",
+    "EASY": "쉬움",
+    "hint": {
+      "AGAIN": "풀지 못했거나 풀이를 봤어요",
+      "HARD": "꽤 고생해서 풀었어요",
+      "GOOD": "약간의 노력으로 깔끔하게 풀었어요",
+      "EASY": "빠르게 풀고 완전히 이해했어요"
+    }
+  },
+  "review": {
+    "prompt": {
+      "title": "어땠나요?",
+      "subtitle": "평가에 따라 이 문제를 다시 복습할 시점이 정해집니다.",
+      "current": "현재 평가",
+      "notesLabel": "메모 (선택)",
+      "notesPlaceholder": "막혔던 부분, 기억할 점…",
+      "saving": "평가를 저장하는 중…",
+      "saved": "평가를 저장했습니다: {{label}}",
+      "saveFailed": "평가를 저장하지 못했습니다. 메모는 그대로 있으니 평가를 다시 골라 주세요.",
+      "clear": "평가 지우기",
+      "clearing": "평가를 지우는 중…",
+      "cleared": "평가를 지웠습니다",
+      "clearFailed": "평가를 지우지 못했습니다. 다시 시도해 주세요.",
+      "skip": "건너뛰기"
+    },
+    "accepted": {
+      "title": "정답입니다!",
+      "timeTaken": "걸린 시간",
+      "minutes": "분",
+      "seconds": "초",
+      "minutesLabel": "걸린 시간(분)",
+      "secondsLabel": "걸린 시간(초)"
+    },
+    "badge": {
+      "label": "복습 상태",
+      "reviewed": "최근 복습",
+      "confidence": "평가",
+      "today": "오늘",
+      "yesterday": "어제",
+      "daysAgo_other": "{{count}}일 전",
+      "monthsAgo_other": "{{count}}개월 전",
+      "overdue_other": "{{count}}일 지남",
+      "dueNow": "지금 복습",
+      "dueTomorrow": "내일 복습",
+      "dueIn_other": "{{count}}일 후 복습",
+      "mastered": "마스터",
+      "masteredHint": "복습 3회 이상, 최근 2회 평가가 좋음 또는 쉬움, 복습 간격 30일 이상.",
+      "loading": "복습 상태를 불러오는 중…",
+      "empty": "아직 복습 기록이 없습니다. 제출을 평가하면 기록이 시작됩니다.",
+      "loadFailed": "복습 상태를 불러오지 못했습니다.",
+      "retry": "다시 시도"
+    },
+    "strip": {
+      "label": "평가 기록",
+      "count_other": "복습 {{count}}회",
+      "pill": "{{label}}, {{language}}, {{status}}, {{date}}. 이 제출 열기"
+    }
   }
 }

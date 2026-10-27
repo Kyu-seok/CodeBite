@@ -10,7 +10,7 @@ import {
   DialogDescription,
 } from "@/components/ui/Dialog"
 import type { SubmissionListItem } from "@/types/submission"
-import { confidenceChipClass, confidenceLabel } from "@/lib/confidenceColors"
+import { confidenceChipClass, useConfidenceLabel } from "@/lib/confidenceColors"
 import { SubmissionDetail } from "./SubmissionDetail"
 import {
   STATUS_KEYS,
@@ -100,6 +100,7 @@ export function SubmissionsPanel({
 }: SubmissionsPanelProps) {
   const { t, i18n } = useTranslation("problem")
   const { t: tc } = useTranslation("common")
+  const confidenceLabel = useConfidenceLabel()
   const [editingId, setEditingId] = useState<number | null>(null)
   const editingSubmission = editingId != null
     ? submissions.find((s) => s.id === editingId) ?? null
@@ -219,7 +220,7 @@ export function SubmissionsPanel({
           <div className="hidden @xl:block">
             {s.confidence ? (
               <span className={`inline-flex items-center rounded px-1.5 py-0.5 text-xs font-medium ${confidenceChipClass[s.confidence]}`}>
-                {confidenceLabel[s.confidence]}
+                {confidenceLabel(s.confidence)}
               </span>
             ) : (
               <span className="text-xs text-muted-foreground" aria-hidden="true">—</span>

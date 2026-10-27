@@ -35,5 +35,71 @@
   "pagination": {
     "pageOf": "Page {{current}} of {{total}}",
     "label": "Pagination"
+  },
+  "confidence": {
+    "AGAIN": "Again",
+    "HARD": "Hard",
+    "GOOD": "Good",
+    "EASY": "Easy",
+    "hint": {
+      "AGAIN": "Couldn't solve it, or used the solution",
+      "HARD": "Solved with significant struggle",
+      "GOOD": "Solved cleanly with some effort",
+      "EASY": "Solved quickly, fully understood"
+    }
+  },
+  "review": {
+    "prompt": {
+      "title": "How was it?",
+      "subtitle": "Your rating sets when this problem will resurface for review.",
+      "current": "Current rating",
+      "notesLabel": "Note (optional)",
+      "notesPlaceholder": "What tripped you up, what to remember…",
+      "saving": "Saving your rating…",
+      "saved": "Rating saved: {{label}}",
+      "saveFailed": "Couldn't save your rating. Your note is kept, so pick a rating to try again.",
+      "clear": "Clear rating",
+      "clearing": "Clearing your rating…",
+      "cleared": "Rating cleared",
+      "clearFailed": "Couldn't clear your rating. Try again.",
+      "skip": "Skip"
+    },
+    "accepted": {
+      "title": "Accepted!",
+      "timeTaken": "Time taken",
+      "minutes": "min",
+      "seconds": "sec",
+      "minutesLabel": "Minutes taken",
+      "secondsLabel": "Seconds taken"
+    },
+    "badge": {
+      "label": "Review status",
+      "reviewed": "Reviewed",
+      "confidence": "Rating",
+      "today": "today",
+      "yesterday": "yesterday",
+      "daysAgo_one": "{{count}} day ago",
+      "daysAgo_other": "{{count}} days ago",
+      "monthsAgo_one": "{{count}} month ago",
+      "monthsAgo_other": "{{count}} months ago",
+      "overdue_one": "Overdue by {{count}} day",
+      "overdue_other": "Overdue by {{count}} days",
+      "dueNow": "Due now",
+      "dueTomorrow": "Due tomorrow",
+      "dueIn_one": "Due in {{count}} day",
+      "dueIn_other": "Due in {{count}} days",
+      "mastered": "Mastered",
+      "masteredHint": "3+ reviews, the last 2 rated Good or Easy, and an interval of 30 days or more.",
+      "loading": "Loading review status…",
+      "empty": "No review logged yet. Rate a submission to start tracking.",
+      "loadFailed": "Couldn't load your review status.",
+      "retry": "Try again"
+    },
+    "strip": {
+      "label": "Progression",
+      "count_one": "{{count}} review",
+      "count_other": "{{count}} reviews",
+      "pill": "{{label}}, {{language}}, {{status}}, {{date}}. Open this submission"
+    }
   }
 }

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import DifficultyBadge from "@/components/ui/DifficultyBadge";
 import { getDueReviews } from "@/api/reviews";
-import { confidenceLabel, confidenceTextClass } from "@/lib/confidenceColors";
+import { useConfidenceLabel, confidenceTextClass } from "@/lib/confidenceColors";
 import type { DueReviewItem } from "@/types/review";
 import type { Difficulty } from "@/types/problem";
 
@@ -18,6 +18,7 @@ function dueText(iso: string, daysOverdue: number): string {
 }
 
 export function DueReviewsCard() {
+  const confidenceLabel = useConfidenceLabel();
   const [items, setItems] = useState<DueReviewItem[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -82,7 +83,7 @@ export function DueReviewsCard() {
                 <span
                   className={`hidden text-xs font-medium sm:block ${confidenceTextClass[it.lastConfidence]}`}
                 >
-                  {confidenceLabel[it.lastConfidence]}
+                  {confidenceLabel(it.lastConfidence)}
                 </span>
                 <span className="w-24 text-right text-xs tabular-nums text-muted-foreground">
                   {dueText(it.nextDueAt, it.daysOverdue)}

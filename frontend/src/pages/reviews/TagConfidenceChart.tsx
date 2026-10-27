@@ -1,5 +1,5 @@
 import type { Confidence, TagConfidenceItem } from "@/types/review";
-import { confidenceLabel } from "@/lib/confidenceColors";
+import { useConfidenceLabel } from "@/lib/confidenceColors";
 
 interface TagConfidenceChartProps {
   data: TagConfidenceItem[];
@@ -44,6 +44,7 @@ export function TagConfidenceChart({ data }: TagConfidenceChartProps) {
 }
 
 function TagRow({ row }: { row: TagConfidenceItem }) {
+  const confidenceLabel = useConfidenceLabel();
   const total = row.again + row.hard + row.good + row.easy;
   const counts: Record<Confidence, number> = {
     AGAIN: row.again,
@@ -70,7 +71,7 @@ function TagRow({ row }: { row: TagConfidenceItem }) {
               key={c}
               className={`${segmentBg[c]} transition-opacity hover:opacity-80`}
               style={{ width: `${pct}%` }}
-              title={`${confidenceLabel[c]}: ${count} (${pct.toFixed(0)}%)`}
+              title={`${confidenceLabel(c)}: ${count} (${pct.toFixed(0)}%)`}
             />
           );
         })}
@@ -80,12 +81,13 @@ function TagRow({ row }: { row: TagConfidenceItem }) {
 }
 
 function Legend() {
+  const confidenceLabel = useConfidenceLabel();
   return (
     <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] text-muted-foreground">
       {ORDER.map((c) => (
         <div key={c} className="flex items-center gap-1">
           <span className={`inline-block h-2.5 w-2.5 rounded-sm ${segmentBg[c]}`} />
-          <span>{confidenceLabel[c]}</span>
+          <span>{confidenceLabel(c)}</span>
         </div>
       ))}
     </div>

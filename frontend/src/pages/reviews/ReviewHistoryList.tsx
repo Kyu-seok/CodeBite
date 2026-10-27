@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/Pagination";
 import { getReviewHistoryFiltered } from "@/api/reviews";
 import { getTags } from "@/api/tags";
-import { confidenceChipClass, confidenceLabel } from "@/lib/confidenceColors";
+import { confidenceChipClass, useConfidenceLabel } from "@/lib/confidenceColors";
 import type {
   Confidence,
   ReviewHistoryItem,
@@ -74,6 +74,7 @@ function FilterChip<T extends string>({
 }
 
 export function ReviewHistoryList() {
+  const confidenceLabel = useConfidenceLabel();
   const [searchParams, setSearchParams] = useSearchParams();
   const [page, setPage] = useState(0);
   const [confidence, setConfidence] = useState<Confidence | undefined>();
@@ -126,7 +127,7 @@ export function ReviewHistoryList() {
             label="Confidence"
             value={confidence}
             options={CONFIDENCES}
-            optionLabel={(v) => confidenceLabel[v]}
+            optionLabel={(v) => confidenceLabel(v)}
             onChange={setConfidence}
           />
           <FilterChip
@@ -187,7 +188,7 @@ export function ReviewHistoryList() {
                 <span
                   className={`inline-flex items-center rounded px-1.5 py-0.5 text-[10px] font-medium ${confidenceChipClass[it.confidence]}`}
                 >
-                  {confidenceLabel[it.confidence]}
+                  {confidenceLabel(it.confidence)}
                 </span>
                 <span className="hidden w-16 text-right text-xs tabular-nums text-muted-foreground md:block">
                   {formatSolveTime(it.solveTimeSeconds)}
