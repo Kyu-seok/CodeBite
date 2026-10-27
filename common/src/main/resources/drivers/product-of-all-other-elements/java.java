@@ -12,7 +12,7 @@ public class Main {
         String[] parts = inner.split(",");
         int[] nums = new int[parts.length];
         for (int i = 0; i < parts.length; i++) nums[i] = Integer.parseInt(parts[i].trim());
-        int[] result = new Solution().computeStationShare(nums);
+        int[] result = new Solution().productOfAllOtherElements(nums);
         System.out.println(JsonOutput.intArray(result));
     }
 }

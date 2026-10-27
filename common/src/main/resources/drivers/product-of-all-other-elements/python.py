@@ -2,5 +2,5 @@
 
 import json
 nums = eval(input())
-result = Solution().computeStationShare(nums)
+result = Solution().productOfAllOtherElements(nums)
 print(json.dumps(result, separators=(',', ':')))

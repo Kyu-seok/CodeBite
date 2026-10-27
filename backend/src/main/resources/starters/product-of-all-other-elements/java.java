@@ -1,5 +1,5 @@
 class Solution {
-    public int[] computeStationShare(int[] rates) {
+    public int[] productOfAllOtherElements(int[] nums) {
         // Write your solution here
     }
 }

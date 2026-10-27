@@ -1,6 +1,6 @@
 class Solution {
 public:
-    vector<int> computeStationShare(vector<int>& rates) {
+    vector<int> productOfAllOtherElements(vector<int>& nums) {
         // Write your solution here
     }
 };
