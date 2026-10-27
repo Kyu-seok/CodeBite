@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState, type ReactNode } from 'react';
+import { useRef, useEffect, useState, type ReactNode, type RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
 import Editor from '@monaco-editor/react';
 import { KeyMod, KeyCode, Range as MonacoRange, editor as monacoEditor } from 'monaco-editor';
@@ -92,11 +92,14 @@ function BugReportDialog({
   onClose,
   problemSlug,
   language,
+  returnFocusRef,
 }: {
   open: boolean;
   onClose: () => void;
   problemSlug: string;
   language: string;
+  /** Opened from a menu item that is gone by close time, so focus goes back to the menu's trigger. */
+  returnFocusRef: RefObject<HTMLButtonElement | null>;
 }) {
   const { t } = useTranslation('problem');
   const { t: tc } = useTranslation('common');
@@ -137,7 +140,12 @@ function BugReportDialog({
 
   return (
     <Dialog open={open} onOpenChange={(isOpen) => { if (!isOpen) onClose(); }}>
-      <DialogContent className="max-w-md">
+      <DialogContent
+        className="max-w-md"
+        onCloseAutoFocus={(e) => {
+          e.preventDefault();
+          returnFocusRef.current?.focus();
+        }}>
         <DialogHeader>
           <DialogTitle>{t('bugReport.title')}</DialogTitle>
           <DialogDescription>
@@ -264,6 +272,7 @@ export function EditorPanel({
   onSubmitRef.current = onSubmit;
   const [editorMounted, setEditorMounted] = useState(false);
   const [bugReportOpen, setBugReportOpen] = useState(false);
+  const moreActionsRef = useRef<HTMLButtonElement | null>(null);
 
   const handleMount = (editor: monacoEditor.IStandaloneCodeEditor) => {
     editorRef.current = editor;
@@ -434,6 +443,7 @@ export function EditorPanel({
               <TooltipTrigger>
                 <DropdownMenuTrigger asChild>
                   <Button
+                    ref={moreActionsRef}
                     variant="ghost"
                     size="icon"
                     className="h-7 w-7"
@@ -491,6 +501,7 @@ export function EditorPanel({
         onClose={() => setBugReportOpen(false)}
         problemSlug={problemSlug}
         language={activeLanguage}
+        returnFocusRef={moreActionsRef}
       />
     </div>
   );
