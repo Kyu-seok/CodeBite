@@ -67,9 +67,11 @@ Things that matter about it:
 `count-desk-clusters`, `detect-portal-loop`, `longest-combo-run` and `verify-task-order`: each Python driver calls the old method name. Change it to the name the starter defines. Verify each on Judge0 with a correct solution against all of the problem's test cases. Independent of Python 3.12; can ship first.
 
 ### 3. Deploy A: swap the Judge0 image, by hand (no user-visible change)
+`scripts/cutover-judge0-py312.sh` is a wizard for the steps below: it pushes the swap commit only if it says `[skip ci]`, pulls on `mini`, asks before restarting Judge0, then checks `/languages`, runs `print(6*7)` on both ids through a worker, and offers a rollback to `judge0/judge0:1.13.1` through a compose override outside the checkout.
+
 - In `infra/docker-compose.prod.yml`, change both `judge0` and `judge0-workers` from `judge0/judge0:1.13.1` to `localhost/codebite-judge0:1.13.1-py312`, and add `pull_policy: never` to both.
 - Commit to master with `[skip ci]` in the message, so `deploy.yml` doesn't run. A normal deploy would restart Judge0 at an unplanned moment, at the end of a backend roll.
-- At low traffic, on `mini`: `cd ~/CodeBite && git pull origin master && docker compose -f infra/docker-compose.prod.yml up -d judge0 judge0-workers`. Pulling first keeps `mini`'s working tree clean; a local edit to the compose file would make the next deploy's `git pull` fail.
+- At low traffic, on `mini`: `cd ~/CodeBite && git pull origin master && docker compose -f infra/docker-compose.prod.yml up -d --no-deps judge0 judge0-workers`. Pulling first keeps `mini`'s working tree clean; a local edit to the compose file would make the next deploy's `git pull` fail.
 - Watch it come up. Check: `curl localhost:2358/languages` on `mini` lists both 71 and 100. A Python submission on the site still works (still id 71).
 - Why separate from step 5: if both changed together, backends sending id 100 could reach the old Judge0, and every Python submission would fail.
 - Submissions in flight during the restart may fail (accepted; the restart is short and done at low traffic).
