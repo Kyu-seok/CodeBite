@@ -6,6 +6,7 @@ import {
 } from '@/components/ui/Resizable';
 import { useGroupRef, usePanelRef } from 'react-resizable-panels';
 import { PageLayout } from './PageLayout';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { cn } from '@/lib/utils';
 
 export interface PanelFunctions {
@@ -25,6 +26,9 @@ const LEFT_COLLAPSED_PCT = 4;    // percentage for comparisons
 const TESTS_COLLAPSED_PCT = 6;   // percentage for comparisons
 const LEFT_COLLAPSED_SIZE = `${LEFT_COLLAPSED_PCT}%`;   // string for panel props
 const TESTS_COLLAPSED_SIZE = `${TESTS_COLLAPSED_PCT}%`; // string for panel props
+
+// Tailwind's `md` breakpoint, where the stacked layout gives way to resizable panels.
+const DESKTOP_QUERY = '(min-width: 768px)';
 
 interface ProblemLayoutProps {
   /** Left panel: tabbed content (description, submissions, solutions) */
@@ -61,7 +65,8 @@ interface ProblemLayoutProps {
  * - Vertical split on right: editor | tests (default 60/40)
  * - Left and test panels have a hard drag floor at strip size (cannot drag past it)
  * - Right and editor panels are fully collapsible to 0% via buttons only
- * - Falls back to stacked layout on small screens
+ * - Falls back to stacked layout on small screens. Only one layout is mounted: rendering both
+ *   and hiding one with CSS ran two Monaco editors and duplicated every element id.
  */
 export function ProblemLayout({
   leftPanel,
@@ -90,6 +95,8 @@ export function ProblemLayout({
   // Track last expanded sizes so buttons can restore after snapping to strip.
   const prevExpandedLeftSize = useRef(50);
   const prevExpandedTestsSize = useRef(40);
+
+  const isDesktop = useMediaQuery(DESKTOP_QUERY);
 
   const leftCollapsed = leftSize <= LEFT_COLLAPSED_PCT;
   const testsCollapsed = testsSize <= TESTS_COLLAPSED_PCT;
@@ -120,90 +127,91 @@ export function ProblemLayout({
 
   return (
     <PageLayout variant="workspace" className={cn('px-2 pb-2', className)}>
-      {/* Desktop: resizable panels */}
-      <div className="hidden md:flex h-full">
-        <ResizablePanelGroup orientation="horizontal" id="problem-h" groupRef={hGroupRef}>
-          {/* Left — Description. Hard stop at LEFT_COLLAPSED_SIZE (no collapsible). */}
-          <ResizablePanel
-            id="left"
-            panelRef={leftRef}
-            defaultSize={50}
-            minSize={LEFT_COLLAPSED_SIZE}
-            onResize={(size) => {
-              const pct = size.asPercentage;
-              if (pct > LEFT_COLLAPSED_PCT) prevExpandedLeftSize.current = pct;
-              setLeftSize(pct);
-              onLeftCollapsed?.(pct <= LEFT_COLLAPSED_PCT);
-            }}>
-            <div className={cn(
-              'h-full rounded-lg border border-border bg-card',
-              leftCollapsed ? 'overflow-hidden' : 'overflow-auto',
-            )}>
-              {leftCollapsed ? collapsedLeftContent : leftPanel}
-            </div>
-          </ResizablePanel>
+      {/* Desktop: resizable panels; mobile: stacked */}
+      {isDesktop ? (
+        <div className="flex h-full">
+          <ResizablePanelGroup orientation="horizontal" id="problem-h" groupRef={hGroupRef}>
+            {/* Left — Description. Hard stop at LEFT_COLLAPSED_SIZE (no collapsible). */}
+            <ResizablePanel
+              id="left"
+              panelRef={leftRef}
+              defaultSize={50}
+              minSize={LEFT_COLLAPSED_SIZE}
+              onResize={(size) => {
+                const pct = size.asPercentage;
+                if (pct > LEFT_COLLAPSED_PCT) prevExpandedLeftSize.current = pct;
+                setLeftSize(pct);
+                onLeftCollapsed?.(pct <= LEFT_COLLAPSED_PCT);
+              }}>
+              <div className={cn(
+                'h-full rounded-lg border border-border bg-card',
+                leftCollapsed ? 'overflow-hidden' : 'overflow-auto',
+              )}>
+                {leftCollapsed ? collapsedLeftContent : leftPanel}
+              </div>
+            </ResizablePanel>
 
-          <ResizableHandle withHandle />
+            <ResizableHandle withHandle />
 
-          {/* Right — Editor + Test panel. Fully collapsible to 0% via button. */}
-          <ResizablePanel
-            id="right"
-            panelRef={rightRef}
-            defaultSize={50}
-            minSize="20%"
-            collapsible
-            collapsedSize="0%"
-            onResize={(size) => onRightCollapsed?.(size.asPercentage === 0)}>
-            <ResizablePanelGroup orientation="vertical" id="problem-v" groupRef={vGroupRef}>
-              {/* Upper-right — Editor. Fully collapsible to 0% via button. */}
-              <ResizablePanel
-                id="editor"
-                panelRef={editorRef}
-                defaultSize={60}
-                minSize="20%"
-                collapsible
-                collapsedSize="0%"
-                onResize={(size) => onEditorCollapsed?.(size.asPercentage === 0)}>
-                <div className="h-full overflow-hidden rounded-lg border border-border bg-card">
-                  {editor}
-                </div>
-              </ResizablePanel>
+            {/* Right — Editor + Test panel. Fully collapsible to 0% via button. */}
+            <ResizablePanel
+              id="right"
+              panelRef={rightRef}
+              defaultSize={50}
+              minSize="20%"
+              collapsible
+              collapsedSize="0%"
+              onResize={(size) => onRightCollapsed?.(size.asPercentage === 0)}>
+              <ResizablePanelGroup orientation="vertical" id="problem-v" groupRef={vGroupRef}>
+                {/* Upper-right — Editor. Fully collapsible to 0% via button. */}
+                <ResizablePanel
+                  id="editor"
+                  panelRef={editorRef}
+                  defaultSize={60}
+                  minSize="20%"
+                  collapsible
+                  collapsedSize="0%"
+                  onResize={(size) => onEditorCollapsed?.(size.asPercentage === 0)}>
+                  <div className="h-full overflow-hidden rounded-lg border border-border bg-card">
+                    {editor}
+                  </div>
+                </ResizablePanel>
 
-              <ResizableHandle withHandle />
+                <ResizableHandle withHandle />
 
-              {/* Lower-right — Tests. Hard stop at TESTS_COLLAPSED_SIZE (no collapsible). */}
-              <ResizablePanel
-                id="tests"
-                panelRef={testsRef}
-                defaultSize={40}
-                minSize={TESTS_COLLAPSED_SIZE}
-                onResize={(size) => {
-                  const pct = size.asPercentage;
-                  if (pct > TESTS_COLLAPSED_PCT) prevExpandedTestsSize.current = pct;
-                  setTestsSize(pct);
-                  onTestsCollapsed?.(pct <= TESTS_COLLAPSED_PCT);
-                }}>
-                <div className="h-full overflow-hidden rounded-lg border border-border bg-card">
-                  {testsCollapsed ? collapsedTestContent : testPanel}
-                </div>
-              </ResizablePanel>
-            </ResizablePanelGroup>
-          </ResizablePanel>
-        </ResizablePanelGroup>
-      </div>
-
-      {/* Mobile: stacked layout */}
-      <div className="flex flex-col gap-2 md:hidden h-full overflow-auto">
-        <div className="rounded-lg border border-border bg-card">
-          {leftPanel}
+                {/* Lower-right — Tests. Hard stop at TESTS_COLLAPSED_SIZE (no collapsible). */}
+                <ResizablePanel
+                  id="tests"
+                  panelRef={testsRef}
+                  defaultSize={40}
+                  minSize={TESTS_COLLAPSED_SIZE}
+                  onResize={(size) => {
+                    const pct = size.asPercentage;
+                    if (pct > TESTS_COLLAPSED_PCT) prevExpandedTestsSize.current = pct;
+                    setTestsSize(pct);
+                    onTestsCollapsed?.(pct <= TESTS_COLLAPSED_PCT);
+                  }}>
+                  <div className="h-full overflow-hidden rounded-lg border border-border bg-card">
+                    {testsCollapsed ? collapsedTestContent : testPanel}
+                  </div>
+                </ResizablePanel>
+              </ResizablePanelGroup>
+            </ResizablePanel>
+          </ResizablePanelGroup>
         </div>
-        <div className="min-h-[50vh] rounded-lg border border-border bg-card overflow-hidden">
-          {editor}
+      ) : (
+        <div className="flex flex-col gap-2 h-full overflow-auto">
+          <div className="rounded-lg border border-border bg-card">
+            {leftPanel}
+          </div>
+          <div className="min-h-[50vh] rounded-lg border border-border bg-card overflow-hidden">
+            {editor}
+          </div>
+          <div className="rounded-lg border border-border bg-card">
+            {testPanel}
+          </div>
         </div>
-        <div className="rounded-lg border border-border bg-card">
-          {testPanel}
-        </div>
-      </div>
+      )}
     </PageLayout>
   );
 }
