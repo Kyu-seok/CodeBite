@@ -1,14 +1,12 @@
-import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { buttonVariants } from "@/components/ui/Button";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 export default function NotFoundPage() {
   const { t } = useTranslation("auth");
 
-  useEffect(() => {
-    document.title = t("notFound.title");
-  }, [t]);
+  useDocumentTitle(t("notFound.title"));
 
   return (
     <div className="flex min-h-[60vh] flex-col items-center justify-center px-4 text-center">

@@ -1,18 +1,18 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { getOAuthUrl } from "../api/auth";
 import { AxiosError } from "axios";
 import type { ApiError } from "../types/api";
 import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 export default function LoginPage() {
   const { t } = useTranslation("auth");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState("");
 
-  useEffect(() => {
-    document.title = t("login.title");
-  }, [t]);
+  useDocumentTitle(t("login.title"));
 
   const handleOAuth = async (provider: string) => {
     setError("");
@@ -32,7 +32,7 @@ export default function LoginPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="w-full max-w-md rounded-xl border border-border bg-card p-8 shadow-sm">
+      <Card className="w-full max-w-md p-8 shadow-sm">
         <h1 className="mb-2 text-center text-2xl font-bold text-foreground">
           {t("login.heading")}
         </h1>
@@ -95,7 +95,7 @@ export default function LoginPage() {
             {loading === "github" ? t("login.redirecting") : t("login.github")}
           </Button>
         </div>
-      </div>
+      </Card>
     </div>
   );
 }
