@@ -57,13 +57,20 @@ export default function ProblemEditPage() {
   const [constraints, setConstraints] = useState('');
   const [published, setPublished] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [saveState, setSaveState] = useState<'idle' | 'saved' | 'failed'>('idle');
-  const [status, setStatus] = useState<'loading' | 'ready' | 'failed'>(isNew ? 'ready' : 'loading');
+  const [saveFailed, setSaveFailed] = useState(false);
+  // The form as it was last saved; "Saved" shows only while nothing has changed since.
+  const [savedSnapshot, setSavedSnapshot] = useState<string | null>(null);
+  // A new problem whose tags failed to save after it was created; saving again updates it
+  // instead of creating a second one.
+  const [createdId, setCreatedId] = useState<number | null>(null);
+  const [status, setStatus] = useState<'loading' | 'ready' | 'failed'>('loading');
 
   // Test cases
   const [testCases, setTestCases] = useState<TestCaseDto[]>([]);
   const [editingTc, setEditingTc] = useState<Partial<CreateTestCaseRequest & { id?: number }> | null>(null);
   const [pendingDeleteTc, setPendingDeleteTc] = useState<TestCaseDto | null>(null);
+  // Separate from the target, so the dialog keeps its title while it animates closed.
+  const [deleteTcOpen, setDeleteTcOpen] = useState(false);
   const [testCaseError, setTestCaseError] = useState<string | null>(null);
 
   // Tags
@@ -72,7 +79,13 @@ export default function ProblemEditPage() {
 
   const fetchProblem = useCallback(() => {
     if (isNew) {
-      listTags().then((res) => setAllTags(res.data)).catch(() => {});
+      // Without the tag list the picker would read "0 selected" with nothing to pick from.
+      listTags()
+        .then((res) => {
+          setAllTags(res.data);
+          setStatus('ready');
+        })
+        .catch(() => setStatus('failed'));
       return;
     }
     const problemId = Number(id);
@@ -110,24 +123,38 @@ export default function ProblemEditPage() {
     fetchProblem();
   };
 
+  const formSnapshot = JSON.stringify([
+    title,
+    description,
+    difficulty,
+    constraints,
+    published,
+    Array.from(selectedTagIds).sort((a, b) => a - b),
+  ]);
+
   const handleSave = async () => {
+    const snapshot = formSnapshot;
+    const form = { title, description, difficulty, constraints: constraints || undefined, published };
     setSaving(true);
-    setSaveState('idle');
+    setSaveFailed(false);
     try {
-      if (isNew) {
-        const res = await createProblem({ title, description, difficulty, constraints: constraints || undefined, published });
-        // Update tags
-        if (selectedTagIds.size > 0) {
-          await updateProblemTags(res.data.id, Array.from(selectedTagIds));
-        }
-        navigate(`/admin/problems/${res.data.id}`, { replace: true });
+      let problemId = isNew ? createdId : Number(id);
+      if (problemId === null) {
+        problemId = (await createProblem(form)).data.id;
+        setCreatedId(problemId);
       } else {
-        await updateProblem(Number(id), { title, description, difficulty, constraints: constraints || undefined, published });
-        await updateProblemTags(Number(id), Array.from(selectedTagIds));
-        setSaveState('saved');
+        await updateProblem(problemId, form);
+      }
+      if (!isNew || selectedTagIds.size > 0) {
+        await updateProblemTags(problemId, Array.from(selectedTagIds));
+      }
+      if (isNew) {
+        navigate(`/admin/problems/${problemId}`, { replace: true });
+      } else {
+        setSavedSnapshot(snapshot);
       }
     } catch {
-      setSaveState('failed');
+      setSaveFailed(true);
     } finally {
       setSaving(false);
     }
@@ -163,7 +190,7 @@ export default function ProblemEditPage() {
 
   const confirmDeleteTestCase = async () => {
     const target = pendingDeleteTc;
-    setPendingDeleteTc(null);
+    setDeleteTcOpen(false);
     if (!target) return;
     setTestCaseError(null);
     try {
@@ -222,7 +249,7 @@ export default function ProblemEditPage() {
         {header}
         <div className="flex items-center gap-3">
           <span role="status" className="text-xs text-muted-foreground">
-            {saveState === 'saved' ? t('edit.saved') : ''}
+            {savedSnapshot === formSnapshot ? t('edit.saved') : ''}
           </span>
           <Button onClick={handleSave} disabled={saving || !title || !description}>
             {saving ? t('edit.saving') : t('edit.save')}
@@ -230,7 +257,7 @@ export default function ProblemEditPage() {
         </div>
       </div>
 
-      {saveState === 'failed' && (
+      {saveFailed && (
         <p role="alert" className="mb-4 text-sm text-error-700 dark:text-error-400">
           {t('edit.saveFailed')}
         </p>
@@ -327,7 +354,10 @@ export default function ProblemEditPage() {
                         </button>
                         <button
                           type="button"
-                          onClick={() => setPendingDeleteTc(testCase)}
+                          onClick={() => {
+                            setPendingDeleteTc(testCase);
+                            setDeleteTcOpen(true);
+                          }}
                           className="rounded px-2 py-0.5 text-xs text-error-700 hover:bg-destructive/10 transition-colors dark:text-error-400"
                         >
                           {tc('button.delete')}
@@ -496,12 +526,12 @@ export default function ProblemEditPage() {
       </div>
 
       <ConfirmDialog
-        open={pendingDeleteTc !== null}
+        open={deleteTcOpen}
         title={t('edit.confirmDeleteTestCase', { order: pendingDeleteTc?.orderIndex ?? '' })}
         description={t('edit.confirmDeleteTestCaseBody')}
         confirmLabel={tc('button.delete')}
         onConfirm={confirmDeleteTestCase}
-        onCancel={() => setPendingDeleteTc(null)}
+        onCancel={() => setDeleteTcOpen(false)}
       />
     </div>
   );
