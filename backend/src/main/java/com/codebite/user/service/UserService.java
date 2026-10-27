@@ -1,6 +1,7 @@
 package com.codebite.user.service;
 
 import com.codebite.auth.oauth.dto.OAuthUserInfo;
+import com.codebite.auth.service.UserCacheService;
 import com.codebite.common.exception.ResourceNotFoundException;
 import com.codebite.user.dto.UserProfile;
 import com.codebite.user.entity.OAuthProvider;
@@ -8,6 +9,7 @@ import com.codebite.user.entity.User;
 import com.codebite.user.entity.UserOAuthAccount;
 import com.codebite.user.repository.UserOAuthAccountRepository;
 import com.codebite.user.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +21,9 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final UserOAuthAccountRepository oauthAccountRepository;
+
+    @Autowired(required = false)
+    private UserCacheService userCacheService;
 
     public UserService(UserRepository userRepository, UserOAuthAccountRepository oauthAccountRepository) {
         this.userRepository = userRepository;
@@ -83,6 +88,7 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("error.user.notFound", userId));
         user.setEditorSettings(editorSettings);
         userRepository.save(user);
+        evictCachedProfile(userId);
     }
 
     @Transactional
@@ -91,6 +97,7 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("error.user.notFound", userId));
         user.setThemePreference(themePreference);
         userRepository.save(user);
+        evictCachedProfile(userId);
     }
 
     @Transactional
@@ -99,6 +106,7 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("error.user.notFound", userId));
         user.setLocale(locale);
         userRepository.save(user);
+        evictCachedProfile(userId);
     }
 
     @Transactional
@@ -107,6 +115,7 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("error.user.notFound", userId));
         user.setCuration(curation);
         userRepository.save(user);
+        evictCachedProfile(userId);
     }
 
     @Transactional
@@ -115,6 +124,14 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("error.user.notFound", userId));
         user.setSinglePage(singlePage);
         userRepository.save(user);
+        evictCachedProfile(userId);
+    }
+
+    // /api/auth/me serves the cached profile, so a settings change must drop it or the old value returns on reload
+    private void evictCachedProfile(Long userId) {
+        if (userCacheService != null) {
+            userCacheService.evictProfile(userId);
+        }
     }
 
     private void createOAuthAccount(User user, OAuthProvider provider, String providerId) {
