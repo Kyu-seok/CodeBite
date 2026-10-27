@@ -59,7 +59,8 @@
     "other": "Other",
     "githubNote": "This opens a prefilled issue on GitHub. You'll need a GitHub account to post it.",
     "opened": "Issue draft opened on GitHub",
-    "openedHint": "Post it there to send the report."
+    "openedHint": "Post it there to send the report.",
+    "openManually": "Didn't open? Open the issue on GitHub"
   },
   "test": {
     "testCases": "Test Cases",
@@ -93,7 +94,8 @@
     "severity": {
       "error": "error",
       "warning": "warning"
-    }
+    },
+    "compilerWarnings": "Compiler warnings:"
   },
   "solutions": {
     "shareYourSolution": "Share Your Solution",

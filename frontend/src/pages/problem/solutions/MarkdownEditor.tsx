@@ -107,7 +107,7 @@ export function MarkdownEditor({
           className="flex-1 min-h-[400px] resize-y rounded-md border border-border bg-background px-3 py-2 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-ring"
         />
       </div>
-      <div className="rounded-md border border-border bg-background p-4 overflow-auto max-h-[calc(100vh-12rem)]">
+      <div className="rounded-md border border-border bg-background p-4 overflow-auto max-h-[calc(100dvh-12rem)]">
         {value.trim() ? (
           <MarkdownRenderer source={value} />
         ) : (
