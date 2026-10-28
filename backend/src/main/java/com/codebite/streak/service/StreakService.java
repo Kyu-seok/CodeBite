@@ -1,6 +1,7 @@
 package com.codebite.streak.service;
 
 import com.codebite.common.exception.DuplicateResourceException;
+import com.codebite.common.time.DayRuns;
 import com.codebite.streak.dto.StreakCalendar;
 import com.codebite.streak.dto.StreakSummary;
 import com.codebite.streak.entity.StreakDay;
@@ -17,10 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.ZoneOffset;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.TreeSet;
 
 /**
  * Owns Streak Days, Repairs and Repair Progress. Vocabulary is defined in GLOSSARY.md; days are
@@ -88,8 +87,8 @@ public class StreakService {
                 .toList();
         Optional<UserStreak> streak = userStreakRepository.findById(userId);
         return new StreakSummary(
-                currentStreak(days, today),
-                bestStreak(days),
+                DayRuns.current(days, today),
+                DayRuns.longest(days),
                 days.contains(today),
                 streak.map(UserStreak::getRepairs).orElse(0),
                 streak.map(UserStreak::getRepairProgress).orElse(0));
@@ -148,34 +147,5 @@ public class StreakService {
         userStreakRepository.insertIfAbsent(userId);
         return userStreakRepository.findByIdForUpdate(userId)
                 .orElseThrow(() -> new IllegalStateException("user_streaks row missing for " + userId));
-    }
-
-    /**
-     * The current Streak: consecutive days ending today, or yesterday if today is not done yet, so
-     * the Streak does not read 0 all morning before the user solves.
-     */
-    public static int currentStreak(Collection<LocalDate> days, LocalDate today) {
-        TreeSet<LocalDate> set = new TreeSet<>(days);
-        LocalDate cursor = set.contains(today) ? today : today.minusDays(1);
-        int streak = 0;
-        while (set.contains(cursor)) {
-            streak++;
-            cursor = cursor.minusDays(1);
-        }
-        return streak;
-    }
-
-    /** The longest run of consecutive days anywhere in the history. */
-    public static int bestStreak(Collection<LocalDate> days) {
-        List<LocalDate> sorted = new TreeSet<>(days).stream().toList();
-        int best = 0;
-        int run = 0;
-        LocalDate previous = null;
-        for (LocalDate day : sorted) {
-            run = previous != null && day.equals(previous.plusDays(1)) ? run + 1 : 1;
-            best = Math.max(best, run);
-            previous = day;
-        }
-        return best;
     }
 }
