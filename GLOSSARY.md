@@ -14,6 +14,14 @@ _Avoid_: Result, outcome, overall status
 A custom test case the user gave no expected output for. It runs and shows its output, and counts against the Verdict only if the program fails to compile, crashes or exceeds its time limit.
 _Avoid_: Free run, output-only case
 
+**Language**:
+One of the codes CodeBite accepts in a submission (`java`, `python`, `javascript`, `cpp`), each bound to one active Judge0 language id.
+_Avoid_: Runtime, language id (that is Judge0's)
+
+**Abandoned**:
+A submission that stayed PENDING past the re-drive window and was closed as INTERNAL_ERROR without ever being judged. Distinct from a submission that failed after the worker's retries.
+_Avoid_: Expired, timed out
+
 ### Streaks
 
 **Streak**:
