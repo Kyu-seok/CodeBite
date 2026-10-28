@@ -165,7 +165,8 @@ public class SubmissionService {
                 judgeService.buildSourceCode(driverTemplate, submission.getSourceCode()),
                 judgeService.mapLanguageToId(language),
                 problem.getId(),
-                submission.isAdminSubmission());
+                submission.isAdminSubmission(),
+                language);
     }
 
     // Intentionally not @Transactional: this is called via this.submit(), so a Spring proxy would

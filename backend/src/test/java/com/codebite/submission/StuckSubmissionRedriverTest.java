@@ -65,7 +65,7 @@ class StuckSubmissionRedriverTest {
     @Test
     void republishesSubmissionsInsideTheStaleWindow() {
         Submission stuck = pending(42L);
-        SubmissionEvent event = new SubmissionEvent(42L, "src", 71, 7L, false);
+        SubmissionEvent event = new SubmissionEvent(42L, "src", 71, 7L, false, "python");
 
         when(rateLimiterService.isRateLimited(anyString(), anyString(), anyLong())).thenReturn(false);
         when(submissionRepository.findByStatusAndCreatedAtBefore(any(), any())).thenReturn(List.of());
@@ -124,7 +124,7 @@ class StuckSubmissionRedriverTest {
     void oneUnbuildableSubmissionDoesNotStopTheBatch() {
         Submission bad = pending(1L);
         Submission good = pending(2L);
-        SubmissionEvent goodEvent = new SubmissionEvent(2L, "src", 71, 7L, false);
+        SubmissionEvent goodEvent = new SubmissionEvent(2L, "src", 71, 7L, false, "python");
 
         when(rateLimiterService.isRateLimited(anyString(), anyString(), anyLong())).thenReturn(false);
         when(submissionRepository.findByStatusAndCreatedAtBefore(any(), any())).thenReturn(List.of());

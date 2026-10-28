@@ -71,7 +71,7 @@ class SubmissionFailureRecovererTest {
 
         when(submissionRepository.findById(1L)).thenReturn(Optional.of(submission));
 
-        recoverer.accept(record(new SubmissionEvent(1L, "source", 62, 10L, false)),
+        recoverer.accept(record(new SubmissionEvent(1L, "source", 62, 10L, false, "java")),
                 new RuntimeException("judge0 down"));
 
         assertEquals(SubmissionStatus.INTERNAL_ERROR, submission.getStatus());
@@ -88,7 +88,7 @@ class SubmissionFailureRecovererTest {
 
         when(submissionRepository.findById(1L)).thenReturn(Optional.of(submission));
 
-        recoverer.accept(record(new SubmissionEvent(1L, "source", 62, 10L, true)),
+        recoverer.accept(record(new SubmissionEvent(1L, "source", 62, 10L, true, "java")),
                 new RuntimeException("judge0 down"));
 
         assertEquals(SubmissionStatus.INTERNAL_ERROR, submission.getStatus());
@@ -99,7 +99,7 @@ class SubmissionFailureRecovererTest {
     void accept_missingSubmissionIsIgnored() {
         when(submissionRepository.findById(1L)).thenReturn(Optional.empty());
 
-        recoverer.accept(record(new SubmissionEvent(1L, "source", 62, 10L, false)),
+        recoverer.accept(record(new SubmissionEvent(1L, "source", 62, 10L, false, "java")),
                 new RuntimeException("judge0 down"));
 
         verify(submissionRepository, never()).save(any());
@@ -120,7 +120,7 @@ class SubmissionFailureRecovererTest {
         Submission submission = pendingSubmission(1L);
         when(submissionRepository.findById(1L)).thenReturn(Optional.of(submission));
 
-        recoverer.accept(record(new SubmissionEvent(1L, "source", 62, 10L, false)),
+        recoverer.accept(record(new SubmissionEvent(1L, "source", 62, 10L, false, "java")),
                 new RuntimeException("judge0 down"));
 
         ArgumentCaptor<SubmissionResultEvent> published =
@@ -137,7 +137,7 @@ class SubmissionFailureRecovererTest {
     void accept_missingSubmissionPublishesNothing() {
         when(submissionRepository.findById(1L)).thenReturn(Optional.empty());
 
-        recoverer.accept(record(new SubmissionEvent(1L, "source", 62, 10L, false)),
+        recoverer.accept(record(new SubmissionEvent(1L, "source", 62, 10L, false, "java")),
                 new RuntimeException("judge0 down"));
 
         verify(eventPublisher, never()).publishEvent(any(Object.class));

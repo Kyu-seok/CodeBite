@@ -1,6 +1,7 @@
 package com.codebite.judge.service;
 
 import com.codebite.common.exception.JudgeExecutionException;
+import com.codebite.judge.Language;
 import com.codebite.judge.client.JudgeClient;
 import com.codebite.judge.dto.JudgeRequest;
 import com.codebite.judge.dto.JudgeResponse;
@@ -10,19 +11,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class JudgeService {
 
     private static final Logger log = LoggerFactory.getLogger(JudgeService.class);
-
-    private static final Map<String, Integer> LANGUAGE_IDS = Map.of(
-            "java", 62,
-            "python", 100,
-            "javascript", 63,
-            "cpp", 54
-    );
 
     private final JudgeClient judgeClient;
     private final long pollIntervalMs;
@@ -41,15 +34,13 @@ public class JudgeService {
     }
 
     public int mapLanguageToId(String language) {
-        Integer id = LANGUAGE_IDS.get(language.toLowerCase());
-        if (id == null) {
-            throw new IllegalArgumentException("Unsupported language: " + language);
-        }
-        return id;
+        return Language.fromCode(language)
+                .map(Language::judge0Id)
+                .orElseThrow(() -> new IllegalArgumentException("Unsupported language: " + language));
     }
 
     public boolean isLanguageSupported(String language) {
-        return LANGUAGE_IDS.containsKey(language.toLowerCase());
+        return Language.fromCode(language).isPresent();
     }
 
     public JudgeResponse execute(String sourceCode, int languageId, String stdin) {

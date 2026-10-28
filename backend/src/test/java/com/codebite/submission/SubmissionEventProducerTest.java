@@ -47,7 +47,7 @@ class SubmissionEventProducerTest {
     void userSubmissionsGoToTheUserTopic() {
         stubSend(new CompletableFuture<>());
 
-        producer.send(new SubmissionEvent(1L, "src", 62, 10L, false));
+        producer.send(new SubmissionEvent(1L, "src", 62, 10L, false, "java"));
 
         verify(kafkaTemplate).send(eq(USER_TOPIC), anyString(), any());
     }
@@ -56,7 +56,7 @@ class SubmissionEventProducerTest {
     void adminSubmissionsGoToTheAdminTopic() {
         stubSend(new CompletableFuture<>());
 
-        producer.send(new SubmissionEvent(1L, "src", 62, 10L, true));
+        producer.send(new SubmissionEvent(1L, "src", 62, 10L, true, "java"));
 
         // Isolation is the whole point: admin batches must not share partitions with users.
         verify(kafkaTemplate).send(eq(ADMIN_TOPIC), anyString(), any());
@@ -66,7 +66,7 @@ class SubmissionEventProducerTest {
     void partitionsBySubmissionId() {
         stubSend(new CompletableFuture<>());
 
-        producer.send(new SubmissionEvent(4242L, "src", 62, 10L, false));
+        producer.send(new SubmissionEvent(4242L, "src", 62, 10L, false, "java"));
 
         ArgumentCaptor<String> key = ArgumentCaptor.forClass(String.class);
         verify(kafkaTemplate).send(anyString(), key.capture(), any());
@@ -80,7 +80,7 @@ class SubmissionEventProducerTest {
         stubSend(failed);
 
         // Must not propagate: the row stays PENDING and the re-drive sweep recovers it.
-        producer.send(new SubmissionEvent(1L, "src", 62, 10L, false));
+        producer.send(new SubmissionEvent(1L, "src", 62, 10L, false, "java"));
 
         assertEquals(1.0, meterRegistry.get("codebite.submissions.publish.failures").counter().count());
     }
@@ -89,7 +89,7 @@ class SubmissionEventProducerTest {
     void aSuccessfulPublishIsNotCountedAsAFailure() {
         stubSend(CompletableFuture.completedFuture(null));
 
-        producer.send(new SubmissionEvent(1L, "src", 62, 10L, false));
+        producer.send(new SubmissionEvent(1L, "src", 62, 10L, false, "java"));
 
         assertEquals(0.0, meterRegistry.get("codebite.submissions.publish.failures").counter().count());
     }

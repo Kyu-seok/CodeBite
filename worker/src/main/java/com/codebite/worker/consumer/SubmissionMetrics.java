@@ -1,12 +1,11 @@
 package com.codebite.worker.consumer;
 
+import com.codebite.judge.Language;
 import com.codebite.submission.entity.SubmissionStatus;
 import com.codebite.submission.event.SubmissionEvent;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.stereotype.Component;
-
-import java.util.Map;
 
 /**
  * Owns the {@code codebite.submissions.completed} counter so the success path and the
@@ -14,10 +13,6 @@ import java.util.Map;
  */
 @Component
 public class SubmissionMetrics {
-
-    // Python is 100 (3.12); 71 (3.8) stays for events queued before the switch.
-    private static final Map<Integer, String> LANGUAGE_NAMES = Map.of(
-            62, "java", 71, "python", 100, "python", 63, "javascript", 54, "cpp");
 
     private final MeterRegistry meterRegistry;
 
@@ -32,7 +27,18 @@ public class SubmissionMetrics {
         }
         Counter.builder("codebite.submissions.completed")
                 .tag("status", status.name())
-                .tag("language", LANGUAGE_NAMES.getOrDefault(event.languageId(), "unknown"))
+                .tag("language", languageTag(event))
                 .register(meterRegistry).increment();
+    }
+
+    /**
+     * The event's language code; events published before the field existed carry none, so the
+     * Judge0 id is resolved instead, retired ids included.
+     */
+    private static String languageTag(SubmissionEvent event) {
+        if (event.language() != null && !event.language().isBlank()) {
+            return event.language();
+        }
+        return Language.fromJudge0Id(event.languageId()).map(Language::code).orElse("unknown");
     }
 }

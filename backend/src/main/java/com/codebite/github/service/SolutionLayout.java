@@ -1,5 +1,6 @@
 package com.codebite.github.service;
 
+import com.codebite.judge.Language;
 import com.codebite.problem.entity.Problem;
 import com.codebite.submission.entity.Submission;
 
@@ -7,7 +8,6 @@ import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
-import java.util.Map;
 
 /**
  * How Solution Commits lay out a Solution Repository: one folder per problem, a subfolder per
@@ -19,12 +19,6 @@ final class SolutionLayout {
     /** UTC, so the file name's day is the Streak Day (ADR 0001). No colons: they are awkward in paths. */
     private static final DateTimeFormatter FILE_TIME =
             DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HHmmss'Z'").withZone(ZoneOffset.UTC);
-
-    private static final Map<String, String> EXTENSIONS = Map.of(
-            "java", "java",
-            "python", "py",
-            "cpp", "cpp",
-            "javascript", "js");
 
     private SolutionLayout() {
     }
@@ -45,7 +39,7 @@ final class SolutionLayout {
 
     private static String solutionPath(Submission submission, String suffix) {
         String language = submission.getLanguage();
-        String extension = EXTENSIONS.getOrDefault(language, "txt");
+        String extension = Language.fromCode(language).map(Language::extension).orElse("txt");
         return submission.getProblem().getSlug() + "/" + language + "/"
                 + FILE_TIME.format(submission.getCreatedAt()) + suffix + "." + extension;
     }
