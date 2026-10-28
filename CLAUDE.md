@@ -26,6 +26,7 @@ Root `settings.gradle` includes three modules: `common`, `backend`, `worker`. Th
 ### Package Structure (`common/src/main/java/com/codebite/`)
 - `common/base/` — BaseEntity (id, createdAt, updatedAt)
 - `common/exception/` — ApiError, custom exceptions (ResourceNotFoundException, JudgeExecutionException, etc.)
+- `common/time/` — DayRuns (runs of consecutive UTC days behind the Streak and the Review Streak)
 - `user/entity/` — User, Role, OAuthProvider, UserOAuthAccount
 - `user/repository/` — UserRepository, UserOAuthAccountRepository
 - `problem/entity/` — Problem, TestCase, Difficulty
