@@ -9,3 +9,4 @@ The image is built by hand on the production server with `scripts/build-judge0-i
 - The image lives only in the server's local Docker store, with no registry. If it is lost, Judge0 fails to start until the build script is run again.
 - `pull_policy: never` and the `localhost/` prefix make sure a missing image is never replaced by one pulled from Docker Hub. The workers run privileged.
 - A runtime upgrade is a manual image rebuild followed by a code change that switches the language id. Old ids stay in the image, so rolling back is a one-line change.
+- The id is the constant on `Language` (`common/.../judge/Language.java`), with the retired id listed beside it so events already in Kafka still resolve; the worker keeps no table of its own.

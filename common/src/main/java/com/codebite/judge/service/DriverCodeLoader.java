@@ -1,5 +1,6 @@
 package com.codebite.judge.service;
 
+import com.codebite.judge.Language;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,13 +20,6 @@ import java.util.regex.Pattern;
 public class DriverCodeLoader {
 
     private static final Logger log = LoggerFactory.getLogger(DriverCodeLoader.class);
-
-    private static final Map<String, String> LANGUAGE_EXTENSIONS = Map.of(
-            "java", ".java",
-            "python", ".py",
-            "cpp", ".cpp",
-            "javascript", ".js"
-    );
 
     private static final Pattern LIB_MARKER_PATTERN = Pattern.compile("^(?://|#)\\s*\\{\\{LIB:(\\w+)}}$", Pattern.MULTILINE);
 
@@ -73,9 +67,9 @@ public class DriverCodeLoader {
 
     private void loadLibraries() throws IOException {
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-        for (Map.Entry<String, String> entry : LANGUAGE_EXTENSIONS.entrySet()) {
-            String language = entry.getKey();
-            String ext = entry.getValue();
+        for (Language entry : Language.values()) {
+            String language = entry.code();
+            String ext = "." + entry.extension();
             String pattern = "classpath:drivers/lib/" + language + "/*" + ext;
             try {
                 Resource[] resources = resolver.getResources(pattern);
@@ -96,9 +90,9 @@ public class DriverCodeLoader {
 
     private void loadDriverTemplates() throws IOException {
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-        for (Map.Entry<String, String> entry : LANGUAGE_EXTENSIONS.entrySet()) {
-            String language = entry.getKey();
-            String ext = entry.getValue();
+        for (Language entry : Language.values()) {
+            String language = entry.code();
+            String ext = "." + entry.extension();
             String pattern = "classpath:drivers/*/" + language + ext;
             try {
                 Resource[] resources = resolver.getResources(pattern);
