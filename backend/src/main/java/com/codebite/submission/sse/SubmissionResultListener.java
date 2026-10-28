@@ -1,5 +1,6 @@
 package com.codebite.submission.sse;
 
+import com.codebite.submission.event.ResultScope;
 import com.codebite.submission.event.SubmissionResultEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +31,9 @@ import java.util.Map;
 @ConditionalOnProperty(name = "app.kafka.enabled", havingValue = "true", matchIfMissing = true)
 public class SubmissionResultListener {
 
+    /** Every Verdict: whoever is watching the submission wants to know how it ended. */
+    static final ResultScope SCOPE = ResultScope.ALL;
+
     private static final Logger log = LoggerFactory.getLogger(SubmissionResultListener.class);
 
     private final SubmissionEmitterRegistry registry;
@@ -43,6 +47,9 @@ public class SubmissionResultListener {
             groupId = "${app.kafka.sse-group-id}",
             containerFactory = "submissionResultListenerContainerFactory")
     public void onResult(SubmissionResultEvent event) {
+        if (!SCOPE.test(event)) {
+            return;
+        }
         log.debug("Result event received: submissionId={} status={}",
                 event.submissionId(), event.status());
 

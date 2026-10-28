@@ -1,6 +1,7 @@
 package com.codebite.stats.consumer;
 
 import com.codebite.stats.service.StatsService;
+import com.codebite.submission.event.ResultScope;
 import com.codebite.submission.event.SubmissionResultEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +28,9 @@ import org.springframework.stereotype.Component;
 @ConditionalOnProperty(name = "app.kafka.enabled", havingValue = "true", matchIfMissing = true)
 public class SubmissionStatsListener {
 
+    /** Every Verdict counts toward acceptance rates; admin submissions are dropped below. */
+    static final ResultScope SCOPE = ResultScope.ALL;
+
     private static final Logger log = LoggerFactory.getLogger(SubmissionStatsListener.class);
 
     private final StatsService statsService;
@@ -40,6 +44,9 @@ public class SubmissionStatsListener {
             groupId = "codebite-stats",
             containerFactory = "statsListenerContainerFactory")
     public void onResult(SubmissionResultEvent event) {
+        if (!SCOPE.test(event)) {
+            return;
+        }
         // Admin bulk validation would inflate every problem's submission count and pollute the
         // leaderboard with a service account.
         if (event.adminSubmission()) {

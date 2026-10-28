@@ -1,7 +1,7 @@
 package com.codebite.github.consumer;
 
 import com.codebite.github.service.SolutionCommitService;
-import com.codebite.submission.entity.SubmissionStatus;
+import com.codebite.submission.event.ResultScope;
 import com.codebite.submission.event.SubmissionResultEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +24,9 @@ import org.springframework.stereotype.Component;
 @ConditionalOnProperty(name = "app.kafka.enabled", havingValue = "true", matchIfMissing = true)
 public class SolutionCommitListener {
 
+    /** Admins' included: the GitHub Link is the opt-in. */
+    static final ResultScope SCOPE = ResultScope.ACCEPTED_ALL;
+
     private static final Logger log = LoggerFactory.getLogger(SolutionCommitListener.class);
 
     private final SolutionCommitService solutionCommitService;
@@ -37,7 +40,7 @@ public class SolutionCommitListener {
             groupId = "codebite-solution-commits",
             containerFactory = "solutionCommitListenerContainerFactory")
     public void onResult(SubmissionResultEvent event) {
-        if (event.status() != SubmissionStatus.ACCEPTED) {
+        if (!SCOPE.test(event)) {
             return;
         }
         try {

@@ -1,7 +1,7 @@
 package com.codebite.streak.consumer;
 
 import com.codebite.streak.service.StreakService;
-import com.codebite.submission.entity.SubmissionStatus;
+import com.codebite.submission.event.ResultScope;
 import com.codebite.submission.event.SubmissionResultEvent;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -24,6 +24,9 @@ import org.springframework.stereotype.Component;
 @ConditionalOnProperty(name = "app.kafka.enabled", havingValue = "true", matchIfMissing = true)
 public class StreakListener {
 
+    /** Admin bulk validation runs as a service account and would hand it a Streak. */
+    static final ResultScope SCOPE = ResultScope.ACCEPTED_USERS;
+
     private final StreakService streakService;
 
     public StreakListener(StreakService streakService) {
@@ -35,8 +38,7 @@ public class StreakListener {
             groupId = "codebite-streaks",
             containerFactory = "streakListenerContainerFactory")
     public void onResult(SubmissionResultEvent event) {
-        // Admin bulk validation runs as a service account and would hand it a Streak.
-        if (event.status() != SubmissionStatus.ACCEPTED || event.adminSubmission()) {
+        if (!SCOPE.test(event)) {
             return;
         }
         streakService.recordSolve(event.userId(), event.submissionId());

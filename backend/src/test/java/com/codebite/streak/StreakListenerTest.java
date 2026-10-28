@@ -32,14 +32,9 @@ class StreakListenerTest {
     }
 
     @Test
-    void failedSubmissionsDoNotCount() {
-        listener.onResult(event(SubmissionStatus.WRONG_ANSWER, false));
-
-        verify(streakService, never()).recordSolve(anyLong(), anyLong());
-    }
-
-    @Test
-    void adminSubmissionsDoNotCount() {
+    void eventsOutsideItsScopeAreIgnored() {
+        // Which events are in scope is ResultScopeTest's business; this pins that the listener
+        // asks ACCEPTED_USERS, the one scope that drops an admin's Accepted submission.
         listener.onResult(event(SubmissionStatus.ACCEPTED, true));
 
         verify(streakService, never()).recordSolve(anyLong(), anyLong());

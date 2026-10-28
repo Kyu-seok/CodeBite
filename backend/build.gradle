@@ -28,5 +28,7 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testImplementation 'org.awaitility:awaitility:4.2.1'
+    // ResultFanOutWiringTest: an in-JVM broker for the submission-results fan-out (no Docker)
+    testImplementation 'org.springframework.kafka:spring-kafka-test'
     testRuntimeOnly 'com.h2database:h2'
 }
