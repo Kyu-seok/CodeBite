@@ -3,8 +3,6 @@ package com.codebite.github.service;
 import com.codebite.config.GitHubAppProperties;
 import com.codebite.github.entity.GitHubLink;
 import com.codebite.github.entity.GitHubLinkStatus;
-import com.codebite.github.entity.SolutionCommit;
-import com.codebite.github.entity.SolutionCommitStatus;
 import com.codebite.github.gateway.CommittedFile;
 import com.codebite.github.gateway.GitHubFileExistsException;
 import com.codebite.github.gateway.GitHubGateway;
@@ -23,10 +21,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Consumer;
 
 /**
  * Turns an Accepted submission into a Solution Commit in the user's Solution Repository
@@ -123,11 +119,11 @@ public class SolutionCommitService {
         int tryNumber = 1;
         while (true) {
             try {
-                recordCommitted(pc, commitOnce(plan, pc));
+                recordCommitted(plan, pc, commitOnce(plan, pc));
                 return;
             } catch (GitHubTransientException e) {
                 solutionMayHaveLanded = true;
-                if (!retryAfter(pc, e, tryNumber, maxTries, backoffMs)) {
+                if (!retryAfter(plan, pc, e, tryNumber, maxTries, backoffMs)) {
                     return;
                 }
                 tryNumber++;
@@ -137,23 +133,22 @@ public class SolutionCommitService {
                     return;
                 }
                 if (solutionMayHaveLanded) {
-                    recordCommitted(pc, landedEarlier(plan, pc));
+                    recordCommitted(plan, pc, landedEarlier(pc));
                     return;
                 }
                 if (pc.disambiguated()) {
-                    recordFailed(pc, e);
+                    recordFailed(plan, pc, e);
                     return;
                 }
                 pc = moveToOwnFile(pc);
             } catch (GitHubInstallationGoneException e) {
-                // Permanent: never retried. Later submissions are skipped until the user relinks.
+                // Permanent: never retried. The recorder marks the link BROKEN with the row, so
+                // later submissions are skipped until the user relinks.
                 log.warn("GitHub Link {} is BROKEN: {}", plan.linkId(), e.getMessage());
-                markLinkBroken(plan);
-                record(pc, sc -> sc.markFailed(e.getMessage()));
-                recorder.countBroken(1);
+                recorder.record(plan, List.of(pc), new Outcome.Broken(e));
                 return;
             } catch (GitHubGatewayException e) {
-                recordFailed(pc, e);
+                recordFailed(plan, pc, e);
                 return;
             }
         }
@@ -189,8 +184,7 @@ public class SolutionCommitService {
         String path = pc.disambiguatedPath();
         log.info("Solution Commit {}: {} is taken; committing to {} instead",
                 pc.solutionCommitId(), pc.solutionPath(), path);
-        tx.executeWithoutResult(status -> solutionCommitRepository.findById(pc.solutionCommitId())
-                .ifPresent(sc -> sc.moveTo(path)));
+        recorder.moveTo(pc.solutionCommitId(), path);
         // The README needs no second try: the push found the plain path taken, so the folder exists.
         return pc.movedTo(path);
     }
@@ -200,10 +194,7 @@ public class SolutionCommitService {
      * flight. Its record, with its sha and URL, stands.
      */
     private boolean committedMeanwhile(PlannedCommit pc) {
-        Boolean committed = tx.execute(status -> solutionCommitRepository.findById(pc.solutionCommitId())
-                .map(sc -> sc.getStatus() == SolutionCommitStatus.COMMITTED)
-                .orElse(false));
-        if (Boolean.TRUE.equals(committed)) {
+        if (recorder.isCommitted(pc.solutionCommitId())) {
             log.info("Solution Commit {} was committed meanwhile (by an Import); keeping that record",
                     pc.solutionCommitId());
             return true;
@@ -213,20 +204,19 @@ public class SolutionCommitService {
 
     /**
      * The solution file is already there and an earlier call for it may have landed, so it did.
-     * The sha was in the lost response; link to the file instead.
+     * The sha was in the lost response; the recorder links to the file at the row's path instead.
      */
-    private CommittedFile landedEarlier(Plan plan, PlannedCommit pc) {
+    private CommittedFile landedEarlier(PlannedCommit pc) {
         log.info("Solution Commit {}: {} is already there from an earlier try; counting it as committed",
                 pc.solutionCommitId(), pc.solutionPath());
-        return new CommittedFile(null, recorder.commitUrl(null, plan.repositoryFullName(), plan.branch(),
-                pc.solutionPath()));
+        return new CommittedFile(null, null);
     }
 
     /** Waits before the next try, or records FAILED and returns false when tries have run out. */
-    private boolean retryAfter(PlannedCommit pc, GitHubTransientException e, int tryNumber, int maxTries,
-                               long backoffMs) {
+    private boolean retryAfter(Plan plan, PlannedCommit pc, GitHubTransientException e, int tryNumber,
+                               int maxTries, long backoffMs) {
         if (tryNumber >= maxTries) {
-            recordFailed(pc, e);
+            recordFailed(plan, pc, e);
             return false;
         }
         log.info("Solution Commit {} try {}/{} failed ({}); retrying in {} ms",
@@ -236,32 +226,18 @@ public class SolutionCommitService {
             return true;
         } catch (InterruptedException interrupted) {
             Thread.currentThread().interrupt();
-            recordFailed(pc, e);
+            recordFailed(plan, pc, e);
             return false;
         }
     }
 
-    private void recordCommitted(PlannedCommit pc, CommittedFile commit) {
-        record(pc, sc -> sc.markCommitted(commit.sha(), commit.url(), Instant.now()));
-        recorder.countCommitted(1);
+    private void recordCommitted(Plan plan, PlannedCommit pc, CommittedFile commit) {
+        recorder.record(plan, List.of(pc), new Outcome.Committed(List.of(commit)));
     }
 
-    private void recordFailed(PlannedCommit pc, GitHubGatewayException e) {
+    private void recordFailed(Plan plan, PlannedCommit pc, GitHubGatewayException e) {
         log.warn("Solution Commit {} failed: {}", pc.solutionCommitId(), e.getMessage());
-        record(pc, sc -> sc.markFailed(e.getMessage()));
-        recorder.countFailed(1);
-    }
-
-    private void markLinkBroken(Plan plan) {
-        tx.executeWithoutResult(status -> linkRepository.findById(plan.linkId())
-                .ifPresent(GitHubLink::markBroken));
-    }
-
-    /** Applies {@code outcome} unless the Solution Commit is already COMMITTED, which is final. */
-    private void record(PlannedCommit pc, Consumer<SolutionCommit> outcome) {
-        tx.executeWithoutResult(status -> solutionCommitRepository.findById(pc.solutionCommitId())
-                .filter(sc -> sc.getStatus() != SolutionCommitStatus.COMMITTED)
-                .ifPresent(outcome));
+        recorder.record(plan, List.of(pc), new Outcome.Failed(e));
     }
 
     /** An ACTIVE link and the Accepted submission to commit through it, problem loaded. */
