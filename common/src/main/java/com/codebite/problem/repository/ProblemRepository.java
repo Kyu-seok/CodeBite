@@ -22,11 +22,14 @@ public interface ProblemRepository extends JpaRepository<Problem, Long>, JpaSpec
 
     Page<Problem> findByPublishedTrueAndDifficulty(Difficulty difficulty, Pageable pageable);
 
-    @Query("SELECT p.difficulty, COUNT(p) FROM Problem p WHERE p.published = true GROUP BY p.difficulty")
-    List<Object[]> countPublishedByDifficulty();
+    // Totals the user's Progress is shown against; a difficulty with no published problem is absent.
+    @Query("SELECT new com.codebite.problem.repository.DifficultyCount(p.difficulty, COUNT(p)) "
+           + "FROM Problem p WHERE p.published = true GROUP BY p.difficulty")
+    List<DifficultyCount> countPublishedByDifficulty();
 
-    @Query("SELECT p.difficulty, COUNT(p) FROM Problem p WHERE p.published = true AND p.problemNumber <= :maxNumber GROUP BY p.difficulty")
-    List<Object[]> countPublishedByDifficultyAndCuration(@Param("maxNumber") int maxNumber);
+    @Query("SELECT new com.codebite.problem.repository.DifficultyCount(p.difficulty, COUNT(p)) "
+           + "FROM Problem p WHERE p.published = true AND p.problemNumber <= :maxNumber GROUP BY p.difficulty")
+    List<DifficultyCount> countPublishedByDifficultyAndCuration(@Param("maxNumber") int maxNumber);
 
     @Query("SELECT p.slug FROM Problem p WHERE p.published = true ORDER BY RANDOM()")
     List<String> findRandomPublishedSlugs(Pageable pageable);
@@ -50,7 +53,8 @@ public interface ProblemRepository extends JpaRepository<Problem, Long>, JpaSpec
     @Query("SELECT p FROM Problem p WHERE p.published = true AND p.difficulty = :difficulty AND LOWER(p.title) LIKE LOWER(CONCAT('%', :search, '%'))")
     Page<Problem> findByPublishedTrueAndDifficultyAndTitleSearch(@Param("difficulty") Difficulty difficulty, @Param("search") String search, Pageable pageable);
 
-    // Profile: count published problems per tag
-    @Query("SELECT t.name, t.slug, COUNT(p) FROM Problem p JOIN p.tags t WHERE p.published = true GROUP BY t.name, t.slug")
-    List<Object[]> countPublishedByTag();
+    // Profile: published problems per tag; a tag no published problem carries is absent.
+    @Query("SELECT new com.codebite.problem.repository.TagCount(t.name, t.slug, COUNT(p)) "
+           + "FROM Problem p JOIN p.tags t WHERE p.published = true GROUP BY t.name, t.slug")
+    List<TagCount> countPublishedByTag();
 }

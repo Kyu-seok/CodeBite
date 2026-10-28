@@ -4,8 +4,10 @@ import com.codebite.judge.grader.CaseVerdict;
 import com.codebite.judge.grader.Verdict;
 import com.codebite.problem.entity.Difficulty;
 import com.codebite.problem.entity.Problem;
+import com.codebite.problem.entity.Tag;
 import com.codebite.problem.entity.TestCase;
 import com.codebite.progress.UserProgress.Status;
+import com.codebite.progress.UserProgress.TagProgress;
 import com.codebite.submission.entity.Submission;
 import com.codebite.submission.entity.SubmissionStatus;
 import com.codebite.user.entity.Role;
@@ -22,6 +24,7 @@ import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
 import java.util.Map;
+import java.util.OptionalInt;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -145,6 +148,92 @@ class UserProgressTest {
 
             assertEquals(Set.of(easy.getId(), draft.getId()), progress.solvedProblemIds(user.getId()));
         }
+    }
+
+    @Nested
+    class SolvedByDifficulty {
+
+        @Test
+        void countsDistinctPublishedProblemsPerDifficulty() {
+            Problem easy2 = persistProblem("progress-easy-2", Difficulty.EASY, true);
+            Problem draft = persistProblem("progress-draft", Difficulty.HARD, false);
+            submit(user, easy, SubmissionStatus.ACCEPTED);
+            submit(user, easy, SubmissionStatus.ACCEPTED);
+            submit(user, easy2, SubmissionStatus.ACCEPTED);
+            submit(user, medium, SubmissionStatus.WRONG_ANSWER);
+            submit(user, draft, SubmissionStatus.ACCEPTED);
+            submit(admin, hard, SubmissionStatus.ACCEPTED);
+            entityManager.flush();
+
+            assertEquals(Map.of(Difficulty.EASY, 2),
+                    progress.solvedByDifficulty(user.getId(), OptionalInt.empty()),
+                    "two Accepted on one problem count once; unpublished, attempted and admin do not count");
+        }
+
+        @Test
+        void curationLimitsByProblemNumber() {
+            easy.setProblemNumber(10);
+            hard.setProblemNumber(120);
+            submit(user, easy, SubmissionStatus.ACCEPTED);
+            submit(user, hard, SubmissionStatus.ACCEPTED);
+            entityManager.flush();
+
+            assertEquals(Map.of(Difficulty.EASY, 1, Difficulty.HARD, 1),
+                    progress.solvedByDifficulty(user.getId(), OptionalInt.empty()));
+            assertEquals(Map.of(Difficulty.EASY, 1),
+                    progress.solvedByDifficulty(user.getId(), OptionalInt.of(100)));
+        }
+
+        @Test
+        void nothingSolvedIsAnEmptyMap() {
+            submit(user, easy, SubmissionStatus.WRONG_ANSWER);
+            entityManager.flush();
+
+            assertEquals(Map.of(), progress.solvedByDifficulty(user.getId(), OptionalInt.empty()));
+        }
+    }
+
+    @Nested
+    class SolvedByTag {
+
+        @Test
+        void countsDistinctPublishedProblemsPerTag() {
+            Tag arrays = persistTag("arrays", "Arrays");
+            Tag hashing = persistTag("hashing", "Hashing");
+            Problem draft = persistProblem("progress-draft", Difficulty.EASY, false);
+            easy.getTags().addAll(Set.of(arrays, hashing));
+            medium.getTags().add(arrays);
+            hard.getTags().add(hashing);
+            draft.getTags().add(arrays);
+            submit(user, easy, SubmissionStatus.ACCEPTED);
+            submit(user, easy, SubmissionStatus.ACCEPTED);
+            submit(user, medium, SubmissionStatus.ACCEPTED);
+            submit(user, hard, SubmissionStatus.WRONG_ANSWER);
+            submit(user, draft, SubmissionStatus.ACCEPTED);
+            submit(admin, hard, SubmissionStatus.ACCEPTED);
+            entityManager.flush();
+
+            List<TagProgress> byTag = progress.solvedByTag(user.getId());
+
+            assertEquals(Set.of(new TagProgress("arrays", "Arrays", 2L), new TagProgress("hashing", "Hashing", 1L)),
+                    Set.copyOf(byTag));
+        }
+
+        @Test
+        void nothingSolvedIsAnEmptyList() {
+            easy.getTags().add(persistTag("arrays", "Arrays"));
+            submit(user, easy, SubmissionStatus.TIME_LIMIT_EXCEEDED);
+            entityManager.flush();
+
+            assertEquals(List.of(), progress.solvedByTag(user.getId()));
+        }
+    }
+
+    private Tag persistTag(String slug, String name) {
+        Tag tag = new Tag();
+        tag.setSlug(slug);
+        tag.setName(name);
+        return entityManager.persist(tag);
     }
 
     private static List<Long> ids(Problem... problems) {

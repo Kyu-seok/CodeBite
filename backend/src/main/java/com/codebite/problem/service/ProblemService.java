@@ -13,6 +13,7 @@ import com.codebite.problem.entity.Problem;
 import com.codebite.problem.entity.ProblemTranslation;
 import com.codebite.problem.entity.Tag;
 import com.codebite.problem.entity.TestCase;
+import com.codebite.problem.repository.DifficultyCount;
 import com.codebite.problem.repository.ProblemRepository;
 import com.codebite.problem.repository.ProblemTranslationRepository;
 import com.codebite.problem.repository.TagRepository;
@@ -29,10 +30,11 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.OptionalInt;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -94,31 +96,26 @@ public class ProblemService {
     @Transactional(readOnly = true)
     public ProblemStats getStats(Long userId, String curation) {
         Integer maxNumber = parseCuration(curation);
-        Map<String, Integer> totals = new HashMap<>();
-        List<Object[]> totalRows = maxNumber != null
+        Map<Difficulty, Integer> totals = new EnumMap<>(Difficulty.class);
+        List<DifficultyCount> totalRows = maxNumber != null
                 ? problemRepository.countPublishedByDifficultyAndCuration(maxNumber)
                 : problemRepository.countPublishedByDifficulty();
-        for (Object[] row : totalRows) {
-            totals.put(((Difficulty) row[0]).name(), ((Long) row[1]).intValue());
+        for (DifficultyCount row : totalRows) {
+            totals.put(row.difficulty(), (int) row.count());
         }
 
-        Map<String, Integer> solved = new HashMap<>();
-        if (userId != null) {
-            List<Object[]> solvedRows = maxNumber != null
-                    ? submissionRepository.countSolvedByDifficultyAndUserIdAndCuration(userId, maxNumber)
-                    : submissionRepository.countSolvedByDifficultyAndUserId(userId);
-            for (Object[] row : solvedRows) {
-                solved.put(((Difficulty) row[0]).name(), ((Long) row[1]).intValue());
-            }
-        }
+        Map<Difficulty, Integer> solved = userId != null
+                ? userProgress.solvedByDifficulty(userId,
+                        maxNumber != null ? OptionalInt.of(maxNumber) : OptionalInt.empty())
+                : Map.of();
 
         return new ProblemStats(
-                totals.getOrDefault("EASY", 0),
-                totals.getOrDefault("MEDIUM", 0),
-                totals.getOrDefault("HARD", 0),
-                solved.getOrDefault("EASY", 0),
-                solved.getOrDefault("MEDIUM", 0),
-                solved.getOrDefault("HARD", 0)
+                totals.getOrDefault(Difficulty.EASY, 0),
+                totals.getOrDefault(Difficulty.MEDIUM, 0),
+                totals.getOrDefault(Difficulty.HARD, 0),
+                solved.getOrDefault(Difficulty.EASY, 0),
+                solved.getOrDefault(Difficulty.MEDIUM, 0),
+                solved.getOrDefault(Difficulty.HARD, 0)
         );
     }
 

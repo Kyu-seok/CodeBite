@@ -1,14 +1,18 @@
 package com.codebite.progress;
 
+import com.codebite.problem.entity.Difficulty;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.OptionalInt;
 import java.util.Set;
 
 /**
@@ -24,23 +28,32 @@ import java.util.Set;
  *   <li><strong>Attempted</strong>: a graded, non-admin submission to the problem but never an
  *       Accepted one. PENDING is neither Solved nor Attempted; an admin's submissions are
  *       invisible here.</li>
- *   <li>{@link #statusByProblem} has no published filter: the caller passes the ids it shows.</li>
+ *   <li>{@link #statusByProblem} has no published filter: the caller passes the ids it shows.
+ *       {@link #solvedByDifficulty} and {@link #solvedByTag} count published problems only,
+ *       because they are shown against the published totals.</li>
  * </ul>
+ *
+ * <p>The projection records are instantiated by Hibernate from the select list, so their
+ * components are the boxed types the columns come back as.
  */
 @Service
 public class UserProgress {
 
     public enum Status { SOLVED, ATTEMPTED }
 
-    /**
-     * One problem the user has a graded submission to, and how many of them were Accepted.
-     * Hibernate instantiates it from the select list, so the components are the boxed types the
-     * columns come back as.
-     */
+    /** One problem the user has a graded submission to, and how many of them were Accepted. */
     public record ProblemStatus(Long problemId, Long accepted) {
         public Status status() {
             return accepted > 0 ? Status.SOLVED : Status.ATTEMPTED;
         }
+    }
+
+    /** Solved published problems of one difficulty. */
+    public record DifficultySolved(Difficulty difficulty, Long solved) {
+    }
+
+    /** Solved published problems carrying one tag. */
+    public record TagProgress(String slug, String name, Long solved) {
     }
 
     private static final String GRADED_NON_ADMIN =
@@ -71,6 +84,40 @@ public class UserProgress {
             statuses.put(row.problemId(), row.status());
         }
         return statuses;
+    }
+
+    /**
+     * Solved published problems per difficulty, with a difficulty absent when none is Solved.
+     * {@code maxProblemNumber} limits the count to a curation (CB50, CB100, ...).
+     */
+    @Transactional(readOnly = true)
+    public Map<Difficulty, Integer> solvedByDifficulty(Long userId, OptionalInt maxProblemNumber) {
+        String jpql = "SELECT p.difficulty, COUNT(DISTINCT p.id) FROM Submission s JOIN s.problem p "
+                + "WHERE s.user.id = :userId AND " + ACCEPTED_NON_ADMIN + " AND p.published = true "
+                + (maxProblemNumber.isPresent() ? "AND p.problemNumber <= :maxNumber " : "")
+                + "GROUP BY p.difficulty";
+        var query = entityManager.createQuery(jpql, DifficultySolved.class).setParameter("userId", userId);
+        if (maxProblemNumber.isPresent()) {
+            query.setParameter("maxNumber", maxProblemNumber.getAsInt());
+        }
+        Map<Difficulty, Integer> solved = new EnumMap<>(Difficulty.class);
+        for (DifficultySolved row : query.getResultList()) {
+            solved.put(row.difficulty(), row.solved().intValue());
+        }
+        return solved;
+    }
+
+    /** Solved published problems per tag, in no particular order; a tag with none Solved is absent. */
+    @Transactional(readOnly = true)
+    public List<TagProgress> solvedByTag(Long userId) {
+        return entityManager.createQuery(
+                        "SELECT t.slug, t.name, COUNT(DISTINCT p.id) "
+                                + "FROM Submission s JOIN s.problem p JOIN p.tags t "
+                                + "WHERE s.user.id = :userId AND " + ACCEPTED_NON_ADMIN + " AND p.published = true "
+                                + "GROUP BY t.slug, t.name",
+                        TagProgress.class)
+                .setParameter("userId", userId)
+                .getResultList();
     }
 
     /** Every problem the user has Solved, published or not. */
