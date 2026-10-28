@@ -122,7 +122,7 @@ public class StuckSubmissionRedriver {
         for (Submission submission : expired) {
             log.error("Submission {} still PENDING after {} — abandoning to INTERNAL_ERROR",
                     submission.getId(), maxAge);
-            submission.setStatus(SubmissionStatus.INTERNAL_ERROR);
+            submission.abandon();
             abandonedCounter.increment();
         }
         submissionRepository.saveAll(expired);

@@ -9,6 +9,8 @@ import com.codebite.submission.kafka.SubmissionEventProducer;
 import com.codebite.submission.repository.SubmissionRepository;
 import com.codebite.submission.service.StuckSubmissionRedriver;
 import com.codebite.submission.service.SubmissionService;
+import com.codebite.user.entity.Role;
+import com.codebite.user.entity.User;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,6 +25,7 @@ import java.time.Instant;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -49,16 +52,15 @@ class StuckSubmissionRedriverTest {
     }
 
     private Submission pending(long id) {
+        User user = new User();
+        user.setId(3L);
+        user.setRole(Role.USER);
         Problem problem = new Problem();
         problem.setId(7L);
         problem.setSlug("pair-sum");
 
-        Submission submission = new Submission();
+        Submission submission = Submission.pending(user, problem, "python", "print(1)");
         submission.setId(id);
-        submission.setProblem(problem);
-        submission.setLanguage("python");
-        submission.setSourceCode("print(1)");
-        submission.setStatus(SubmissionStatus.PENDING);
         return submission;
     }
 
@@ -90,6 +92,7 @@ class StuckSubmissionRedriverTest {
 
         redriver(rateLimiterService).sweep();
 
+        assertFalse(expired.isPending());
         assertEquals(SubmissionStatus.INTERNAL_ERROR, expired.getStatus());
 
         ArgumentCaptor<List<Submission>> saved = ArgumentCaptor.forClass(List.class);
