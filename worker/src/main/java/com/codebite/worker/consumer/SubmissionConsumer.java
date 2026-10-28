@@ -1,7 +1,10 @@
 package com.codebite.worker.consumer;
 
-import com.codebite.judge.dto.JudgeResponse;
-import com.codebite.judge.service.JudgeService;
+import com.codebite.judge.grader.CaseVerdict;
+import com.codebite.judge.grader.Grader;
+import com.codebite.judge.grader.Program;
+import com.codebite.judge.grader.TestInput;
+import com.codebite.judge.grader.Verdict;
 import com.codebite.problem.entity.TestCase;
 import com.codebite.problem.repository.TestCaseRepository;
 import com.codebite.submission.entity.Submission;
@@ -28,7 +31,7 @@ public class SubmissionConsumer {
 
     private static final Logger log = LoggerFactory.getLogger(SubmissionConsumer.class);
 
-    private final JudgeService judgeService;
+    private final Grader grader;
     private final TestCaseRepository testCaseRepository;
     private final SubmissionResultRepository submissionResultRepository;
     private final SubmissionRepository submissionRepository;
@@ -37,14 +40,14 @@ public class SubmissionConsumer {
     private final ApplicationEventPublisher eventPublisher;
     private final Timer processingTimer;
 
-    public SubmissionConsumer(JudgeService judgeService,
+    public SubmissionConsumer(Grader grader,
                               TestCaseRepository testCaseRepository,
                               SubmissionResultRepository submissionResultRepository,
                               SubmissionRepository submissionRepository,
                               SubmissionMetrics submissionMetrics,
                               MeterRegistry meterRegistry,
                               ApplicationEventPublisher eventPublisher) {
-        this.judgeService = judgeService;
+        this.grader = grader;
         this.testCaseRepository = testCaseRepository;
         this.submissionResultRepository = submissionResultRepository;
         this.submissionRepository = submissionRepository;
@@ -100,48 +103,20 @@ public class SubmissionConsumer {
 
         List<TestCase> testCases = testCaseRepository.findByProblemIdOrderByOrderIndexAsc(event.problemId());
 
-        List<String> stdins = testCases.stream().map(TestCase::getInput).toList();
-        List<JudgeResponse> responses = judgeService.executeBatch(
-                event.sourceCode(), event.languageId(), stdins);
+        // Every case is graded; the verdict's overall status is the first failing case in order
+        // (docs/adr/0005), and all results are persisted so users see full coverage even on
+        // partial failures.
+        Verdict verdict = grader.grade(
+                new Program(event.sourceCode(), event.languageId()),
+                testCases.stream().map(tc -> new TestInput(tc.getInput(), tc.getExpectedOutput())).toList());
 
-        List<SubmissionResult> results = new ArrayList<>();
-        SubmissionStatus overallStatus = SubmissionStatus.ACCEPTED;
-        Integer maxRuntimeMs = null;
-        Integer maxMemoryKb = null;
-
+        List<SubmissionResult> results = new ArrayList<>(testCases.size());
         for (int i = 0; i < testCases.size(); i++) {
-            TestCase testCase = testCases.get(i);
-            JudgeResponse response = responses.get(i);
-            SubmissionStatus caseStatus = judgeService.mapStatus(response, testCase.getExpectedOutput());
-
-            SubmissionResult result = new SubmissionResult();
-            result.setSubmission(submission);
-            result.setTestCase(testCase);
-            result.setStatus(caseStatus);
-            result.setActualOutput(response.stdout() != null ? response.stdout().trim() : null);
-            result.setStderr(response.stderr());
-            result.setCompileOutput(response.compileOutput());
-
-            Integer runtimeMs = parseTimeToMs(response.time());
-            result.setRuntimeMs(runtimeMs);
-            result.setMemoryKb(response.memory());
-
-            if (runtimeMs != null) {
-                maxRuntimeMs = maxRuntimeMs == null ? runtimeMs : Math.max(maxRuntimeMs, runtimeMs);
-            }
-            if (response.memory() != null) {
-                maxMemoryKb = maxMemoryKb == null ? response.memory() : Math.max(maxMemoryKb, response.memory());
-            }
-
-            results.add(result);
-
-            // Overall status reflects the first failing test case in order, mirroring the
-            // previous early-exit semantics. All results are still persisted so users see
-            // full coverage even on partial failures.
-            if (caseStatus != SubmissionStatus.ACCEPTED && overallStatus == SubmissionStatus.ACCEPTED) {
-                overallStatus = caseStatus;
-            }
+            results.add(toResult(submission, testCases.get(i), verdict.cases().get(i)));
         }
+        SubmissionStatus overallStatus = verdict.overall();
+        Integer maxRuntimeMs = verdict.maxRuntimeMs();
+        Integer maxMemoryKb = verdict.maxMemoryKb();
 
         submissionResultRepository.saveAll(results);
         submission.setStatus(overallStatus);
@@ -169,12 +144,16 @@ public class SubmissionConsumer {
         log.info("Submission {} completed with status: {}", submissionId, overallStatus);
     }
 
-    private Integer parseTimeToMs(String time) {
-        if (time == null) return null;
-        try {
-            return (int) (Double.parseDouble(time) * 1000);
-        } catch (NumberFormatException e) {
-            return null;
-        }
+    private static SubmissionResult toResult(Submission submission, TestCase testCase, CaseVerdict verdict) {
+        SubmissionResult result = new SubmissionResult();
+        result.setSubmission(submission);
+        result.setTestCase(testCase);
+        result.setStatus(verdict.status());
+        result.setActualOutput(verdict.stdout());
+        result.setStderr(verdict.stderr());
+        result.setCompileOutput(verdict.compileOutput());
+        result.setRuntimeMs(verdict.runtimeMs());
+        result.setMemoryKb(verdict.memoryKb());
+        return result;
     }
 }

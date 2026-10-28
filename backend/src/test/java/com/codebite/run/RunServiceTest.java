@@ -1,7 +1,13 @@
 package com.codebite.run;
 
 import com.codebite.common.exception.ResourceNotFoundException;
-import com.codebite.judge.dto.JudgeResponse;
+import com.codebite.common.exception.UnsupportedValueException;
+import com.codebite.judge.dto.CodeError;
+import com.codebite.judge.grader.CaseVerdict;
+import com.codebite.judge.grader.Grader;
+import com.codebite.judge.grader.Program;
+import com.codebite.judge.grader.TestInput;
+import com.codebite.judge.grader.Verdict;
 import com.codebite.judge.parser.JudgeErrorParsers;
 import com.codebite.judge.parser.UserCodeLineMapper;
 import com.codebite.judge.service.DriverCodeLoader;
@@ -14,6 +20,7 @@ import com.codebite.problem.repository.TestCaseRepository;
 import com.codebite.run.dto.CustomTestCaseInput;
 import com.codebite.run.dto.RunRequest;
 import com.codebite.run.dto.RunResponse;
+import com.codebite.run.dto.RunTestCaseResult;
 import com.codebite.run.service.RunService;
 import com.codebite.submission.entity.SubmissionStatus;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,6 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
@@ -40,9 +48,12 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class RunServiceTest {
 
+    private static final Program PROGRAM = new Program("full source", 62);
+
     @Mock private ProblemRepository problemRepository;
     @Mock private TestCaseRepository testCaseRepository;
     @Mock private JudgeService judgeService;
+    @Mock private Grader grader;
     @Mock private DriverCodeLoader driverCodeLoader;
 
     private RunService runService;
@@ -51,7 +62,7 @@ class RunServiceTest {
     @BeforeEach
     void setUp() {
         runService = new RunService(
-                problemRepository, testCaseRepository, judgeService, driverCodeLoader,
+                problemRepository, testCaseRepository, judgeService, grader, driverCodeLoader,
                 new JudgeErrorParsers(), new UserCodeLineMapper());
 
         problem = new Problem();
@@ -74,16 +85,20 @@ class RunServiceTest {
         return tc;
     }
 
-    private JudgeResponse acceptedResponse(String stdout) {
-        return new JudgeResponse(null, new JudgeResponse.Status(3, "Accepted"), stdout, null, null, "0.01", 1024);
+    private static CaseVerdict accepted(String stdout) {
+        return new CaseVerdict(SubmissionStatus.ACCEPTED, true, stdout, null, null, 10, 1024);
     }
 
-    private JudgeResponse wrongAnswerResponse(String stdout) {
-        return new JudgeResponse(null, new JudgeResponse.Status(3, "Accepted"), stdout, null, null, "0.01", 1024);
+    private static CaseVerdict wrongAnswer(String stdout) {
+        return new CaseVerdict(SubmissionStatus.WRONG_ANSWER, true, stdout, null, null, 10, 1024);
     }
 
-    private JudgeResponse compilationErrorResponse(String compileOutput) {
-        return new JudgeResponse(null, new JudgeResponse.Status(6, "Compilation Error"), null, null, compileOutput, null, null);
+    private static CaseVerdict unjudged(String stdout) {
+        return new CaseVerdict(SubmissionStatus.ACCEPTED, false, stdout, null, null, 10, 1024);
+    }
+
+    private static CaseVerdict compilationError(String compileOutput) {
+        return new CaseVerdict(SubmissionStatus.COMPILATION_ERROR, true, null, null, compileOutput, null, null);
     }
 
     private void setupCommonMocks() {
@@ -101,38 +116,20 @@ class RunServiceTest {
         TestCase tc2 = sampleTestCase("[3,2,4]\n6", "1 2", 1);
         when(testCaseRepository.findByProblemIdAndSampleTrueOrderByOrderIndexAsc(1L))
                 .thenReturn(List.of(tc1, tc2));
-        when(judgeService.execute(anyString(), eq(62), eq("[2,7,11,15]\n9")))
-                .thenReturn(acceptedResponse("0 1\n"));
-        when(judgeService.execute(anyString(), eq(62), eq("[3,2,4]\n6")))
-                .thenReturn(acceptedResponse("1 2\n"));
-        when(judgeService.mapStatus(any(JudgeResponse.class), anyString()))
-                .thenReturn(SubmissionStatus.ACCEPTED);
+        when(grader.gradeUntilFailure(PROGRAM, List.of(
+                new TestInput("[2,7,11,15]\n9", "0 1"), new TestInput("[3,2,4]\n6", "1 2"))))
+                .thenReturn(Verdict.of(List.of(accepted("0 1"), accepted("1 2"))));
 
         RunResponse response = runService.run("pair-sum", new RunRequest("java", "code", null));
 
         assertEquals(SubmissionStatus.ACCEPTED, response.overallStatus());
         assertEquals(2, response.results().size());
+        assertEquals("[2,7,11,15]\n9", response.results().get(0).input());
+        assertEquals("0 1", response.results().get(0).expectedOutput());
         assertEquals("0 1", response.results().get(0).actualOutput());
         assertEquals("1 2", response.results().get(1).actualOutput());
-    }
-
-    @Test
-    void run_firstTestFails_shortCircuits() {
-        setupCommonMocks();
-        TestCase tc1 = sampleTestCase("[2,7,11,15]\n9", "0 1", 0);
-        TestCase tc2 = sampleTestCase("[3,2,4]\n6", "1 2", 1);
-        when(testCaseRepository.findByProblemIdAndSampleTrueOrderByOrderIndexAsc(1L))
-                .thenReturn(List.of(tc1, tc2));
-        when(judgeService.execute(anyString(), eq(62), eq("[2,7,11,15]\n9")))
-                .thenReturn(wrongAnswerResponse("wrong\n"));
-        when(judgeService.mapStatus(any(JudgeResponse.class), anyString()))
-                .thenReturn(SubmissionStatus.WRONG_ANSWER);
-
-        RunResponse response = runService.run("pair-sum", new RunRequest("java", "code", null));
-
-        assertEquals(SubmissionStatus.WRONG_ANSWER, response.overallStatus());
-        assertEquals(1, response.results().size());
-        verify(judgeService, never()).execute(anyString(), eq(62), eq("[3,2,4]\n6"));
+        assertTrue(response.results().get(0).errors().isEmpty());
+        verify(grader, never()).grade(any(), anyList());
     }
 
     @Test
@@ -141,16 +138,37 @@ class RunServiceTest {
         TestCase tc1 = sampleTestCase("[2,7,11,15]\n9", "0 1", 0);
         when(testCaseRepository.findByProblemIdAndSampleTrueOrderByOrderIndexAsc(1L))
                 .thenReturn(List.of(tc1));
-        when(judgeService.execute(anyString(), eq(62), eq("[2,7,11,15]\n9")))
-                .thenReturn(compilationErrorResponse("error: ';' expected"));
-        when(judgeService.mapStatus(any(JudgeResponse.class), anyString()))
-                .thenReturn(SubmissionStatus.COMPILATION_ERROR);
+        when(grader.gradeUntilFailure(eq(PROGRAM), anyList()))
+                .thenReturn(Verdict.of(List.of(compilationError("error: ';' expected"))));
 
         RunResponse response = runService.run("pair-sum", new RunRequest("java", "code", null));
 
         assertEquals(SubmissionStatus.COMPILATION_ERROR, response.overallStatus());
         assertEquals(1, response.results().size());
         assertEquals("error: ';' expected", response.results().get(0).compileOutput());
+    }
+
+    @Test
+    void run_mapsJudgeErrorsOntoUserCodeLines() {
+        setupCommonMocks();
+        // The driver puts the user's code at line 3 of the combined file, so combined line 5 is
+        // user line 3 of this five-line program.
+        when(driverCodeLoader.getUserCodeStartLine("pair-sum", "java")).thenReturn(3);
+        when(testCaseRepository.findByProblemIdAndSampleTrueOrderByOrderIndexAsc(1L))
+                .thenReturn(List.of(sampleTestCase("in", "out", 0)));
+        when(grader.gradeUntilFailure(eq(PROGRAM), anyList()))
+                .thenReturn(Verdict.of(List.of(compilationError(
+                        "Main.java:5: error: ';' expected\n        int x = 1\n                 ^\n1 error"))));
+
+        RunResponse response = runService.run("pair-sum",
+                new RunRequest("java", "a\nb\nint x = 1\nd\ne", null));
+
+        List<CodeError> errors = response.results().get(0).errors();
+        assertEquals(1, errors.size());
+        assertEquals(3, errors.get(0).line());
+        assertEquals(CodeError.Severity.ERROR, errors.get(0).severity());
+        assertTrue(errors.get(0).inUserCode());
+        assertTrue(errors.get(0).message().contains("';' expected"));
     }
 
     @Test
@@ -162,20 +180,15 @@ class RunServiceTest {
     }
 
     @Test
-    void run_unsupportedLanguage_throwsIllegalArgumentException() {
+    void run_unsupportedLanguage_throwsUnsupportedValueException() {
         when(problemRepository.findBySlug("pair-sum")).thenReturn(Optional.of(problem));
         when(judgeService.isLanguageSupported("rust")).thenReturn(false);
 
-        assertThrows(com.codebite.common.exception.UnsupportedValueException.class,
+        assertThrows(UnsupportedValueException.class,
                 () -> runService.run("pair-sum", new RunRequest("rust", "code", null)));
     }
 
     // ── Custom test case tests ────────────────────────────────────────────
-
-    private JudgeResponse runtimeErrorResponse(String stderr) {
-        return new JudgeResponse(null, new JudgeResponse.Status(11, "Runtime Error (NZEC)"),
-                null, stderr, null, null, null);
-    }
 
     @Test
     void run_customTests_runAllAfterSamples_judgedTrue() {
@@ -183,14 +196,11 @@ class RunServiceTest {
         TestCase tc1 = sampleTestCase("[2,7,11,15]\n9", "0 1", 0);
         when(testCaseRepository.findByProblemIdAndSampleTrueOrderByOrderIndexAsc(1L))
                 .thenReturn(List.of(tc1));
-        when(judgeService.execute(anyString(), eq(62), eq("[2,7,11,15]\n9")))
-                .thenReturn(acceptedResponse("0 1\n"));
-        when(judgeService.execute(anyString(), eq(62), eq("custom-input-1")))
-                .thenReturn(acceptedResponse("custom-out-1\n"));
-        when(judgeService.execute(anyString(), eq(62), eq("custom-input-2")))
-                .thenReturn(acceptedResponse("custom-out-2\n"));
-        when(judgeService.mapStatus(any(JudgeResponse.class), anyString()))
-                .thenReturn(SubmissionStatus.ACCEPTED);
+        when(grader.gradeUntilFailure(eq(PROGRAM), anyList()))
+                .thenReturn(Verdict.of(List.of(accepted("0 1"))));
+        when(grader.grade(PROGRAM, List.of(
+                new TestInput("custom-input-1", "custom-out-1"), new TestInput("custom-input-2", "custom-out-2"))))
+                .thenReturn(Verdict.of(List.of(accepted("custom-out-1"), accepted("custom-out-2"))));
 
         RunResponse response = runService.run("pair-sum", new RunRequest("java", "code", List.of(
                 new CustomTestCaseInput("custom-input-1", "custom-out-1"),
@@ -203,6 +213,8 @@ class RunServiceTest {
         assertTrue(response.results().get(0).judged());
         assertTrue(response.results().get(1).isCustom());
         assertTrue(response.results().get(1).judged());
+        assertEquals("custom-input-1", response.results().get(1).input());
+        assertEquals("custom-out-1", response.results().get(1).expectedOutput());
         assertTrue(response.results().get(2).isCustom());
         assertTrue(response.results().get(2).judged());
     }
@@ -212,15 +224,16 @@ class RunServiceTest {
         setupCommonMocks();
         when(testCaseRepository.findByProblemIdAndSampleTrueOrderByOrderIndexAsc(1L))
                 .thenReturn(List.of());
-        when(judgeService.execute(anyString(), eq(62), eq("hello")))
-                .thenReturn(acceptedResponse("hi\n"));
+        when(grader.gradeUntilFailure(PROGRAM, List.of())).thenReturn(Verdict.empty());
+        when(grader.grade(PROGRAM, List.of(new TestInput("hello", null))))
+                .thenReturn(Verdict.of(List.of(unjudged("hi"))));
 
         RunResponse response = runService.run("pair-sum", new RunRequest("java", "code", List.of(
-                new CustomTestCaseInput("hello", null)
+                new CustomTestCaseInput("hello", "  ")
         )));
 
         assertEquals(1, response.results().size());
-        com.codebite.run.dto.RunTestCaseResult r = response.results().get(0);
+        RunTestCaseResult r = response.results().get(0);
         assertTrue(r.isCustom());
         assertFalse(r.judged());
         assertNull(r.expectedOutput());
@@ -230,76 +243,36 @@ class RunServiceTest {
     }
 
     @Test
-    void run_customTestNoExpected_blankExpectedTreatedAsNull() {
+    void run_customTestsAreGradedInFull_notUntilFailure() {
         setupCommonMocks();
         when(testCaseRepository.findByProblemIdAndSampleTrueOrderByOrderIndexAsc(1L))
                 .thenReturn(List.of());
-        when(judgeService.execute(anyString(), eq(62), eq("x")))
-                .thenReturn(acceptedResponse("y\n"));
-
-        RunResponse response = runService.run("pair-sum", new RunRequest("java", "code", List.of(
-                new CustomTestCaseInput("x", "  ")
-        )));
-
-        com.codebite.run.dto.RunTestCaseResult r = response.results().get(0);
-        assertFalse(r.judged());
-        assertNull(r.expectedOutput());
-    }
-
-    @Test
-    void run_customTestRuntimeError_judgedTrue_evenWithoutExpected() {
-        setupCommonMocks();
-        when(testCaseRepository.findByProblemIdAndSampleTrueOrderByOrderIndexAsc(1L))
-                .thenReturn(List.of());
-        when(judgeService.execute(anyString(), eq(62), eq("crash")))
-                .thenReturn(runtimeErrorResponse("NZEC"));
-
-        RunResponse response = runService.run("pair-sum", new RunRequest("java", "code", List.of(
-                new CustomTestCaseInput("crash", null)
-        )));
-
-        com.codebite.run.dto.RunTestCaseResult r = response.results().get(0);
-        assertTrue(r.judged());
-        assertEquals(SubmissionStatus.RUNTIME_ERROR, r.status());
-        assertEquals(SubmissionStatus.RUNTIME_ERROR, response.overallStatus());
-    }
-
-    @Test
-    void run_customTestsDoNotShortCircuit_onWrongAnswer() {
-        setupCommonMocks();
-        when(testCaseRepository.findByProblemIdAndSampleTrueOrderByOrderIndexAsc(1L))
-                .thenReturn(List.of());
-        when(judgeService.execute(anyString(), eq(62), eq("a")))
-                .thenReturn(acceptedResponse("X\n"));
-        when(judgeService.execute(anyString(), eq(62), eq("b")))
-                .thenReturn(acceptedResponse("Y\n"));
-        when(judgeService.mapStatus(any(JudgeResponse.class), eq("X")))
-                .thenReturn(SubmissionStatus.WRONG_ANSWER);
-        when(judgeService.mapStatus(any(JudgeResponse.class), eq("Y")))
-                .thenReturn(SubmissionStatus.ACCEPTED);
+        when(grader.gradeUntilFailure(PROGRAM, List.of())).thenReturn(Verdict.empty());
+        when(grader.grade(PROGRAM, List.of(new TestInput("a", "X"), new TestInput("b", "Y"))))
+                .thenReturn(Verdict.of(List.of(wrongAnswer("nope"), accepted("Y"))));
 
         RunResponse response = runService.run("pair-sum", new RunRequest("java", "code", List.of(
                 new CustomTestCaseInput("a", "X"),
                 new CustomTestCaseInput("b", "Y")
         )));
 
+        assertEquals(SubmissionStatus.WRONG_ANSWER, response.overallStatus());
         assertEquals(2, response.results().size());
         assertEquals(SubmissionStatus.WRONG_ANSWER, response.results().get(0).status());
         assertEquals(SubmissionStatus.ACCEPTED, response.results().get(1).status());
-        verify(judgeService).execute(anyString(), eq(62), eq("a"));
-        verify(judgeService).execute(anyString(), eq(62), eq("b"));
+        verify(grader, never()).gradeUntilFailure(eq(PROGRAM), eq(List.of(new TestInput("a", "X"), new TestInput("b", "Y"))));
     }
 
     @Test
     void run_samplesShortCircuit_customsNotRun() {
         setupCommonMocks();
         TestCase tc1 = sampleTestCase("sample-in", "sample-out", 0);
+        TestCase tc2 = sampleTestCase("sample-in-2", "sample-out-2", 1);
         when(testCaseRepository.findByProblemIdAndSampleTrueOrderByOrderIndexAsc(1L))
-                .thenReturn(List.of(tc1));
-        when(judgeService.execute(anyString(), eq(62), eq("sample-in")))
-                .thenReturn(wrongAnswerResponse("nope\n"));
-        when(judgeService.mapStatus(any(JudgeResponse.class), eq("sample-out")))
-                .thenReturn(SubmissionStatus.WRONG_ANSWER);
+                .thenReturn(List.of(tc1, tc2));
+        // The Grader stopped after the first sample, so its verdict is a one-case prefix.
+        when(grader.gradeUntilFailure(eq(PROGRAM), anyList()))
+                .thenReturn(Verdict.of(List.of(wrongAnswer("nope"))));
 
         RunResponse response = runService.run("pair-sum", new RunRequest("java", "code", List.of(
                 new CustomTestCaseInput("custom-in", "custom-out")
@@ -308,7 +281,8 @@ class RunServiceTest {
         assertEquals(SubmissionStatus.WRONG_ANSWER, response.overallStatus());
         assertEquals(1, response.results().size());
         assertFalse(response.results().get(0).isCustom());
-        verify(judgeService, never()).execute(anyString(), eq(62), eq("custom-in"));
+        assertEquals("sample-in", response.results().get(0).input());
+        verify(grader, never()).grade(any(), anyList());
     }
 
     @Test
@@ -317,14 +291,10 @@ class RunServiceTest {
         TestCase tc1 = sampleTestCase("sample-in", "sample-out", 0);
         when(testCaseRepository.findByProblemIdAndSampleTrueOrderByOrderIndexAsc(1L))
                 .thenReturn(List.of(tc1));
-        when(judgeService.execute(anyString(), eq(62), eq("sample-in")))
-                .thenReturn(acceptedResponse("sample-out\n"));
-        when(judgeService.execute(anyString(), eq(62), eq("custom-in")))
-                .thenReturn(acceptedResponse("wrong\n"));
-        when(judgeService.mapStatus(any(JudgeResponse.class), eq("sample-out")))
-                .thenReturn(SubmissionStatus.ACCEPTED);
-        when(judgeService.mapStatus(any(JudgeResponse.class), eq("custom-out")))
-                .thenReturn(SubmissionStatus.WRONG_ANSWER);
+        when(grader.gradeUntilFailure(eq(PROGRAM), anyList()))
+                .thenReturn(Verdict.of(List.of(accepted("sample-out"))));
+        when(grader.grade(eq(PROGRAM), anyList()))
+                .thenReturn(Verdict.of(List.of(wrongAnswer("wrong"))));
 
         RunResponse response = runService.run("pair-sum", new RunRequest("java", "code", List.of(
                 new CustomTestCaseInput("custom-in", "custom-out")
@@ -332,21 +302,7 @@ class RunServiceTest {
 
         assertEquals(SubmissionStatus.WRONG_ANSWER, response.overallStatus());
         assertEquals(2, response.results().size());
-    }
-
-    @Test
-    void run_unjudgedCustomDoesNotPoisonOverall() {
-        setupCommonMocks();
-        when(testCaseRepository.findByProblemIdAndSampleTrueOrderByOrderIndexAsc(1L))
-                .thenReturn(List.of());
-        when(judgeService.execute(anyString(), eq(62), eq("ping")))
-                .thenReturn(acceptedResponse("pong\n"));
-
-        RunResponse response = runService.run("pair-sum", new RunRequest("java", "code", List.of(
-                new CustomTestCaseInput("ping", null)
-        )));
-
-        assertEquals(SubmissionStatus.ACCEPTED, response.overallStatus());
-        assertFalse(response.results().get(0).judged());
+        assertEquals(SubmissionStatus.ACCEPTED, response.results().get(0).status());
+        assertEquals(SubmissionStatus.WRONG_ANSWER, response.results().get(1).status());
     }
 }

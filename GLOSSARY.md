@@ -4,6 +4,16 @@ A code practice platform where users solve problems, submit code for judging, an
 
 ## Language
 
+### Grading
+
+**Verdict**:
+The outcome of grading one program against an ordered list of test cases: a status for each case and an overall status, which is the status of the first judged case that is not Accepted, or Accepted when there is none.
+_Avoid_: Result, outcome, overall status
+
+**Unjudged Case**:
+A custom test case the user gave no expected output for. It runs and shows its output, and counts against the Verdict only if the program fails to compile, crashes or exceeds its time limit.
+_Avoid_: Free run, output-only case
+
 ### Streaks
 
 **Streak**:
