@@ -17,11 +17,13 @@ import com.codebite.user.entity.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -30,6 +32,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
@@ -85,15 +88,13 @@ class ReviewServiceTest {
     }
 
     @Test
-    void setReview_firstTime_createsStateAndAdvancesLadder() {
+    void setReview_firstTime_storesTheSnapshot() {
         Submission sub = submission(100L, SubmissionStatus.ACCEPTED);
 
         when(submissionRepository.findById(100L)).thenReturn(Optional.of(sub));
-        when(stateRepository.findByUserIdAndProblemId(1L, 10L)).thenReturn(Optional.empty());
-        // Replay sees the just-rated submission (in real DB the same tx flush would do this).
         when(submissionRepository
                 .findByUserIdAndProblemIdAndConfidenceIsNotNullOrderByReviewedAtAsc(1L, 10L))
-                .thenAnswer(inv -> sub.getConfidence() != null ? List.of(sub) : List.of());
+                .thenReturn(List.of());
 
         ReviewStateResponse resp = reviewService.setReview(100L, 1L, Confidence.GOOD, null);
 
@@ -102,60 +103,78 @@ class ReviewServiceTest {
         assertEquals(1, resp.reviewCount());
         assertEquals(2, resp.intervalDays()); // first GOOD → 2d
         assertEquals(Confidence.GOOD, resp.lastConfidence());
+        assertEquals(sub.getReviewedAt(), resp.lastReviewedAt());
+        assertEquals(sub.getReviewedAt().plus(2, ChronoUnit.DAYS), resp.nextDueAt());
         verify(submissionRepository).save(sub);
         verify(stateRepository).save(any(ProblemReviewState.class));
+        verify(stateRepository, never()).deleteByUserIdAndProblemId(any(), any());
     }
 
     @Test
-    void setReview_replaysAcrossTwoSubmissionsInChronologicalOrder() {
+    void setReview_ratesAfterTheOtherSubmissionsReviews_droppingItsOwnEarlierOne() {
+        // Before: first → GOOD (Jan 1), second → EASY (Jan 5). The user re-rates first as AGAIN.
         Submission first = submission(100L, SubmissionStatus.ACCEPTED);
         first.setConfidence(Confidence.GOOD);
         first.setReviewedAt(Instant.parse("2026-01-01T00:00:00Z"));
-
-        Submission second = submission(101L, SubmissionStatus.ACCEPTED);
-
-        when(submissionRepository.findById(101L)).thenReturn(Optional.of(second));
-        when(stateRepository.findByUserIdAndProblemId(1L, 10L))
-                .thenReturn(Optional.of(ProblemReviewState.newFor(1L, 10L)));
-        // Both ratings will be present on replay; reviewedAt order: first (Jan 1), then second (now).
-        when(submissionRepository
-                .findByUserIdAndProblemIdAndConfidenceIsNotNullOrderByReviewedAtAsc(1L, 10L))
-                .thenAnswer(inv -> List.of(first, second));
-
-        ReviewStateResponse resp = reviewService.setReview(101L, 1L, Confidence.GOOD, null);
-
-        // Two GOODs from cold start: 1d → 6d, ease 2.50.
-        assertEquals(2, resp.reviewCount());
-        assertEquals(6, resp.intervalDays());
-    }
-
-    @Test
-    void setReview_reRatingOldSubmission_reordersReplay() {
-        // Initial chronology: first → GOOD (Jan 1), second → EASY (Jan 5).
-        Submission first = submission(100L, SubmissionStatus.ACCEPTED);
-        first.setConfidence(Confidence.GOOD);
-        first.setReviewedAt(Instant.parse("2026-01-01T00:00:00Z"));
-
         Submission second = submission(101L, SubmissionStatus.ACCEPTED);
         second.setConfidence(Confidence.EASY);
         second.setReviewedAt(Instant.parse("2026-01-05T00:00:00Z"));
 
-        // User now re-rates the FIRST submission as AGAIN — its reviewed_at jumps to "now".
         when(submissionRepository.findById(100L)).thenReturn(Optional.of(first));
-        when(stateRepository.findByUserIdAndProblemId(1L, 10L))
-                .thenReturn(Optional.of(ProblemReviewState.newFor(1L, 10L)));
+        // What the repository holds before the change; the service must not count first's old GOOD.
         when(submissionRepository
                 .findByUserIdAndProblemIdAndConfidenceIsNotNullOrderByReviewedAtAsc(1L, 10L))
-                .thenAnswer(inv -> {
-                    // Simulate what the DB would return after the in-tx update: order by new reviewed_at.
-                    return List.of(second, first);
-                });
+                .thenReturn(List.of(first, second));
 
         ReviewStateResponse resp = reviewService.setReview(100L, 1L, Confidence.AGAIN, null);
 
-        // Replay: second EASY (interval 4, ease 2.60), then first AGAIN (interval reset to 1, ease 2.40).
+        // second EASY (4d, ease 2.60) then first AGAIN (1d, ease 2.40): two Reviews, not three.
+        assertEquals(2, resp.reviewCount());
         assertEquals(Confidence.AGAIN, resp.lastConfidence());
         assertEquals(1, resp.intervalDays());
+        assertEquals(0, resp.easeFactor().compareTo(new BigDecimal("2.40")));
+    }
+
+    @Test
+    void clearReview_withOtherReviewsLeft_storesTheirSchedule() {
+        Submission first = submission(100L, SubmissionStatus.ACCEPTED);
+        first.setConfidence(Confidence.GOOD);
+        first.setReviewedAt(Instant.parse("2026-01-01T00:00:00Z"));
+        Submission second = submission(101L, SubmissionStatus.ACCEPTED);
+        second.setConfidence(Confidence.EASY);
+        second.setReviewedAt(Instant.parse("2026-01-05T00:00:00Z"));
+
+        when(submissionRepository.findById(101L)).thenReturn(Optional.of(second));
+        when(submissionRepository
+                .findByUserIdAndProblemIdAndConfidenceIsNotNullOrderByReviewedAtAsc(1L, 10L))
+                .thenReturn(List.of(first, second));
+
+        reviewService.clearReview(101L, 1L);
+
+        assertNull(second.getConfidence());
+        assertNull(second.getReviewedAt());
+        ArgumentCaptor<ProblemReviewState> saved = ArgumentCaptor.forClass(ProblemReviewState.class);
+        verify(stateRepository).save(saved.capture());
+        assertEquals(1, saved.getValue().getReviewCount());
+        assertEquals(Confidence.GOOD, saved.getValue().getLastConfidence());
+        verify(stateRepository, never()).deleteByUserIdAndProblemId(any(), any());
+    }
+
+    @Test
+    void clearReview_ofTheOnlyReview_deletesTheRow() {
+        Submission only = submission(100L, SubmissionStatus.ACCEPTED);
+        only.setConfidence(Confidence.GOOD);
+        only.setReviewedAt(Instant.parse("2026-01-01T00:00:00Z"));
+
+        when(submissionRepository.findById(100L)).thenReturn(Optional.of(only));
+        when(submissionRepository
+                .findByUserIdAndProblemIdAndConfidenceIsNotNullOrderByReviewedAtAsc(1L, 10L))
+                .thenReturn(List.of(only));
+
+        reviewService.clearReview(100L, 1L);
+
+        verify(stateRepository).deleteByUserIdAndProblemId(1L, 10L);
+        verify(stateRepository, never()).save(any());
     }
 
     @Test
@@ -219,10 +238,9 @@ class ReviewServiceTest {
         sub.setNotes("old");
 
         when(submissionRepository.findById(100L)).thenReturn(Optional.of(sub));
-        when(stateRepository.findByUserIdAndProblemId(1L, 10L)).thenReturn(Optional.empty());
         when(submissionRepository
                 .findByUserIdAndProblemIdAndConfidenceIsNotNullOrderByReviewedAtAsc(1L, 10L))
-                .thenAnswer(inv -> List.of(sub));
+                .thenReturn(List.of());
 
         reviewService.setReview(100L, 1L, Confidence.HARD, "new note");
 
@@ -235,10 +253,9 @@ class ReviewServiceTest {
         sub.setNotes("kept");
 
         when(submissionRepository.findById(100L)).thenReturn(Optional.of(sub));
-        when(stateRepository.findByUserIdAndProblemId(1L, 10L)).thenReturn(Optional.empty());
         when(submissionRepository
                 .findByUserIdAndProblemIdAndConfidenceIsNotNullOrderByReviewedAtAsc(1L, 10L))
-                .thenAnswer(inv -> List.of(sub));
+                .thenReturn(List.of());
 
         reviewService.setReview(100L, 1L, Confidence.HARD, null);
 
@@ -317,10 +334,5 @@ class ReviewServiceTest {
         List<RatingHistoryItem> history = reviewService.getReviewHistory("two-sum", 1L);
 
         assertEquals(0, history.size());
-    }
-
-    // Reference checks below to make Java compiler happy about unused imports.
-    @SuppressWarnings("unused") private void _unusedTime() {
-        Instant t = Instant.now().plus(1, ChronoUnit.SECONDS);
     }
 }

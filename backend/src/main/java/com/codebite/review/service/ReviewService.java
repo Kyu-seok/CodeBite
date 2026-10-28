@@ -65,15 +65,19 @@ public class ReviewService {
             throw new IllegalArgumentException("error.review.pending");
         }
 
+        Instant now = Instant.now();
         submission.setConfidence(confidence);
-        submission.setReviewedAt(Instant.now());
+        submission.setReviewedAt(now);
         if (notes != null) {
             submission.setNotes(notes);
         }
         submissionRepository.save(submission);
 
-        ProblemReviewState state = replayState(userId, submission.getProblem().getId());
-        return toStateResponse(state);
+        Long problemId = submission.getProblem().getId();
+        ReviewSchedule schedule = ReviewSchedule
+                .replay(reviewsExcept(userId, problemId, submission.getId()))
+                .rate(confidence, now);
+        return toStateResponse(store(userId, problemId, schedule));
     }
 
     @Transactional
@@ -91,7 +95,9 @@ public class ReviewService {
         submission.setReviewedAt(null);
         submissionRepository.save(submission);
 
-        replayState(userId, submission.getProblem().getId());
+        Long problemId = submission.getProblem().getId();
+        store(userId, problemId,
+                ReviewSchedule.replay(reviewsExcept(userId, problemId, submission.getId())));
     }
 
     @Transactional(readOnly = true)
@@ -218,40 +224,30 @@ public class ReviewService {
     }
 
     /**
-     * Rebuild problem_review_state for (userId, problemId) from every rated submission's
-     * Review. The Reviews are the source of truth; the row is a snapshot of their
-     * {@link ReviewSchedule}, deleted when none is left.
+     * Keep problem_review_state for (userId, problemId) as the snapshot of this schedule. The
+     * Reviews are the source of truth; the row is deleted when none is left and null is returned.
      */
-    private ProblemReviewState replayState(Long userId, Long problemId) {
-        List<Submission> rated = submissionRepository
-                .findByUserIdAndProblemIdAndConfidenceIsNotNullOrderByReviewedAtAsc(
-                        userId, problemId);
-
-        if (rated.isEmpty()) {
+    private ProblemReviewState store(Long userId, Long problemId, ReviewSchedule schedule) {
+        if (schedule.isEmpty()) {
             stateRepository.deleteByUserIdAndProblemId(userId, problemId);
             return null;
         }
-
-        ReviewSchedule schedule = ReviewSchedule.replay(reviews(rated));
         return stateRepository.save(ProblemReviewState.of(userId, problemId, schedule));
-    }
-
-    private static List<Review> reviews(List<Submission> rated) {
-        return rated.stream()
-                .map(s -> new Review(s.getConfidence(), s.getReviewedAt()))
-                .toList();
     }
 
     /**
      * The Reviews of the user's other submissions of the problem: a re-rated submission drops
-     * its earlier Review, so its new one goes in through {@link ReviewSchedule#rate} last.
+     * its earlier Review, so its new one goes in through {@link ReviewSchedule#rate} last, and
+     * a cleared one is simply gone. Neither depends on the submission's own change having been
+     * flushed yet.
      */
     private List<Review> reviewsExcept(Long userId, Long problemId, Long submissionId) {
-        return reviews(submissionRepository
+        return submissionRepository
                 .findByUserIdAndProblemIdAndConfidenceIsNotNullOrderByReviewedAtAsc(userId, problemId)
                 .stream()
                 .filter(s -> !s.getId().equals(submissionId))
-                .toList());
+                .map(s -> new Review(s.getConfidence(), s.getReviewedAt()))
+                .toList();
     }
 
     /**
