@@ -30,7 +30,7 @@ The count of Streak Days, from 0 to 4, toward the next Repair. The fifth earns a
 _Avoid_: Repair streak
 
 **Review Streak**:
-The number of consecutive days with a completed review, tracked independently of the Streak.
+The number of consecutive days with a completed review, ending today or yesterday like the Streak, tracked independently of it.
 
 ### GitHub
 
