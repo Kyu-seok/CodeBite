@@ -1,5 +1,6 @@
 package com.codebite.submission.repository;
 
+import com.codebite.common.time.DayCount;
 import com.codebite.submission.entity.Submission;
 import com.codebite.submission.entity.SubmissionStatus;
 import org.springframework.data.domain.Page;
@@ -9,7 +10,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.Instant;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,55 +38,6 @@ public interface SubmissionRepository extends JpaRepository<Submission, Long> {
                                     @Param("before") Instant before,
                                     @Param("linkId") Long linkId);
 
-    // SM-2 replay: rated submissions for a (user, problem) in chronological rating order.
-    List<Submission> findByUserIdAndProblemIdAndConfidenceIsNotNullOrderByReviewedAtAsc(
-            Long userId, Long problemId);
-
-    // Reviews stats: total ratings recorded by this user.
-    @Query("SELECT COUNT(s) FROM Submission s WHERE s.user.id = :userId AND s.confidence IS NOT NULL")
-    long countRated(@Param("userId") Long userId);
-
-    // Reviews stats: total solve time across rated submissions (seconds).
-    @Query("SELECT COALESCE(SUM(s.solveTimeSeconds), 0) FROM Submission s " +
-           "WHERE s.user.id = :userId AND s.confidence IS NOT NULL AND s.solveTimeSeconds IS NOT NULL")
-    long sumSolveTimeSecondsForRated(@Param("userId") Long userId);
-
-    // Reviews stats: distinct local-dates a user has logged at least one rating on, in no
-    // particular order.
-    @Query("SELECT DISTINCT CAST(s.reviewedAt AS LocalDate) FROM Submission s " +
-           "WHERE s.user.id = :userId AND s.confidence IS NOT NULL")
-    List<LocalDate> findDistinctReviewDates(@Param("userId") Long userId);
-
-    // Reviews stats: daily rating counts for the heatmap.
-    @Query("SELECT CAST(s.reviewedAt AS LocalDate), COUNT(s) FROM Submission s " +
-           "WHERE s.user.id = :userId AND s.confidence IS NOT NULL AND s.reviewedAt >= :since " +
-           "GROUP BY CAST(s.reviewedAt AS LocalDate) " +
-           "ORDER BY CAST(s.reviewedAt AS LocalDate)")
-    List<Object[]> countDailyReviews(@Param("userId") Long userId, @Param("since") Instant since);
-
-    // Reviews stats: per-tag confidence distribution. Returns rows of
-    // (tag_slug, tag_name, confidence, count). Service pivots into per-tag DTOs.
-    @Query("SELECT t.slug, t.name, s.confidence, COUNT(s) " +
-           "FROM Submission s JOIN s.problem p JOIN p.tags t " +
-           "WHERE s.user.id = :userId AND s.confidence IS NOT NULL " +
-           "GROUP BY t.slug, t.name, s.confidence")
-    List<Object[]> countConfidenceByTag(@Param("userId") Long userId);
-
-    // Reviews history feed: rated submissions filtered by optional tag/difficulty/confidence.
-    // Each filter applies only when its parameter is non-null.
-    @Query("SELECT s FROM Submission s JOIN FETCH s.problem p " +
-           "WHERE s.user.id = :userId AND s.confidence IS NOT NULL " +
-           "AND (:confidence IS NULL OR s.confidence = :confidence) " +
-           "AND (:difficulty IS NULL OR p.difficulty = :difficulty) " +
-           "AND (:tagSlug IS NULL OR EXISTS (SELECT 1 FROM p.tags t WHERE t.slug = :tagSlug)) " +
-           "ORDER BY s.reviewedAt DESC")
-    org.springframework.data.domain.Page<Submission> findRatedFiltered(
-            @Param("userId") Long userId,
-            @Param("confidence") com.codebite.review.entity.Confidence confidence,
-            @Param("difficulty") com.codebite.problem.entity.Difficulty difficulty,
-            @Param("tagSlug") String tagSlug,
-            org.springframework.data.domain.Pageable pageable);
-
     Optional<Submission> findFirstByUserIdOrderByCreatedAtDesc(Long userId);
 
     // Profile: recent submissions across all problems
@@ -98,12 +49,13 @@ public interface SubmissionRepository extends JpaRepository<Submission, Long> {
     @Query("SELECT COUNT(s) FROM Submission s WHERE s.createdAt >= :since AND s.adminSubmission = false")
     long countSince(@Param("since") Instant since);
 
-    // Admin: daily submission counts (all users, excludes admin submissions)
-    @Query("SELECT CAST(s.createdAt AS LocalDate), COUNT(s) " +
+    // Admin: daily submission counts (all users, excludes admin submissions); a day without any
+    // is absent. The day is the database session's, not UTC: see UserProgress.activity.
+    @Query("SELECT new com.codebite.common.time.DayCount(CAST(s.createdAt AS LocalDate), COUNT(s)) " +
            "FROM Submission s WHERE s.createdAt >= :since AND s.adminSubmission = false " +
            "GROUP BY CAST(s.createdAt AS LocalDate) " +
            "ORDER BY CAST(s.createdAt AS LocalDate)")
-    List<Object[]> countDailySubmissions(@Param("since") Instant since);
+    List<DayCount> countDailySubmissions(@Param("since") Instant since);
 
     // Admin: recent submissions across all users (excludes admin submissions)
     @Query("SELECT s FROM Submission s JOIN FETCH s.problem JOIN FETCH s.user " +

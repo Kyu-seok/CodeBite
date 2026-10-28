@@ -26,18 +26,18 @@ Root `settings.gradle` includes three modules: `common`, `backend`, `worker`. Th
 ### Package Structure (`common/src/main/java/com/codebite/`)
 - `common/base/` — BaseEntity (id, createdAt, updatedAt)
 - `common/exception/` — ApiError, custom exceptions (ResourceNotFoundException, JudgeExecutionException, etc.)
-- `common/time/` — DayRuns (runs of consecutive UTC days behind the Streak and the Review Streak)
+- `common/time/` — DayRuns (runs of consecutive UTC days behind the Streak and the Review Streak), DayCount (a count on one calendar day, the heatmap row)
 - `user/entity/` — User, Role, OAuthProvider, UserOAuthAccount
 - `user/repository/` — UserRepository, UserOAuthAccountRepository
 - `problem/entity/` — Problem, TestCase, Difficulty
 - `problem/repository/` — ProblemRepository, TestCaseRepository
 - `submission/entity/` — Submission, SubmissionResult, SubmissionStatus
-- `submission/repository/` — SubmissionRepository, SubmissionResultRepository
+- `submission/repository/` — SubmissionRepository (lifecycle, Import, re-drive and admin reads; progress reads live in the backend's `progress/`), SubmissionResultRepository
 - `submission/event/` — SubmissionEvent (Kafka message DTO)
 - `streak/entity/` — StreakDay, UserStreak (Repairs held + Repair Progress)
 - `streak/repository/` — StreakDayRepository, UserStreakRepository
 - `review/entity/` — Confidence, ProblemReviewState (the stored snapshot of a Review Schedule, built by `of(userId, problemId, schedule)`, getters only), ProblemReviewStateId
-- `review/repository/` — ProblemReviewStateRepository (`findDue`, `countDue`)
+- `review/repository/` — ProblemReviewStateRepository (`findDue`, `countDue`), ReviewRepository (reads of rated submissions: replay order, stats, heatmap `DayCount`s, `TagConfidenceCount`s, filtered history)
 - `review/schedule/` — Review, ReviewSchedule (SM-2 lite as an immutable value: `replay`, `rate`, `preview`, `mastered`; the only place the numbers live; `review-schedule-golden.csv` in test resources pins them)
 - `github/entity/` — GitHubLink, GitHubLinkStatus (ACTIVE/BROKEN/UNLINKED), GitHubImportState, SolutionCommit, SolutionCommitStatus (PENDING/COMMITTED/FAILED)
 - `github/repository/` — GitHubLinkRepository (`findCurrentByUserId` = the user's current link, ACTIVE or BROKEN), SolutionCommitRepository

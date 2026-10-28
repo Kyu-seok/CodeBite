@@ -59,7 +59,7 @@ public class AdminAnalyticsService {
     public List<DailySubmissionDto> getDailySubmissions(int days) {
         Instant since = LocalDate.now().minusDays(days).atStartOfDay(ZoneOffset.UTC).toInstant();
         return submissionRepository.countDailySubmissions(since).stream()
-                .map(row -> new DailySubmissionDto((LocalDate) row[0], (Long) row[1]))
+                .map(day -> new DailySubmissionDto(day.day(), day.count()))
                 .toList();
     }
 

@@ -6,9 +6,10 @@ import com.codebite.recommendation.dto.RoadmapNextItem;
 import com.codebite.recommendation.dto.RoadmapNextProblem;
 import com.codebite.recommendation.dto.WeakCategoryItem;
 import com.codebite.review.entity.Confidence;
+import com.codebite.review.repository.ReviewRepository;
+import com.codebite.review.repository.TagConfidenceCount;
 import com.codebite.roadmap.entity.RoadmapCategory;
 import com.codebite.roadmap.repository.RoadmapCategoryRepository;
-import com.codebite.submission.repository.SubmissionRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,14 +22,14 @@ import java.util.Set;
 @Service
 public class RecommendationService {
 
-    private final SubmissionRepository submissionRepository;
+    private final ReviewRepository reviewRepository;
     private final RoadmapCategoryRepository roadmapRepository;
     private final UserProgress userProgress;
 
-    public RecommendationService(SubmissionRepository submissionRepository,
+    public RecommendationService(ReviewRepository reviewRepository,
                                  RoadmapCategoryRepository roadmapRepository,
                                  UserProgress userProgress) {
-        this.submissionRepository = submissionRepository;
+        this.reviewRepository = reviewRepository;
         this.roadmapRepository = roadmapRepository;
         this.userProgress = userProgress;
     }
@@ -41,13 +42,9 @@ public class RecommendationService {
     public List<WeakCategoryItem> getWeakTags(Long userId, int limit) {
         record TagKey(String slug, String name) {}
         Map<TagKey, long[]> byTag = new LinkedHashMap<>();
-        for (Object[] row : submissionRepository.countConfidenceByTag(userId)) {
-            String slug = (String) row[0];
-            String name = (String) row[1];
-            Confidence conf = (Confidence) row[2];
-            long count = (Long) row[3];
-            long[] counts = byTag.computeIfAbsent(new TagKey(slug, name), k -> new long[4]);
-            counts[confidenceIndex(conf)] += count;
+        for (TagConfidenceCount row : reviewRepository.countConfidenceByTag(userId)) {
+            long[] counts = byTag.computeIfAbsent(new TagKey(row.slug(), row.name()), k -> new long[4]);
+            counts[confidenceIndex(row.confidence())] += row.count();
         }
 
         return byTag.entrySet().stream()

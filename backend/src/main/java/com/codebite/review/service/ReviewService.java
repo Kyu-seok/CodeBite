@@ -16,6 +16,8 @@ import com.codebite.review.dto.TagConfidenceItem;
 import com.codebite.review.entity.Confidence;
 import com.codebite.review.entity.ProblemReviewState;
 import com.codebite.review.repository.ProblemReviewStateRepository;
+import com.codebite.review.repository.ReviewRepository;
+import com.codebite.review.repository.TagConfidenceCount;
 import com.codebite.review.schedule.Review;
 import com.codebite.review.schedule.ReviewSchedule;
 import com.codebite.submission.entity.Submission;
@@ -30,7 +32,6 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,13 +43,16 @@ public class ReviewService {
     private final ProblemReviewStateRepository stateRepository;
     private final ProblemRepository problemRepository;
     private final SubmissionRepository submissionRepository;
+    private final ReviewRepository reviewRepository;
 
     public ReviewService(ProblemReviewStateRepository stateRepository,
                          ProblemRepository problemRepository,
-                         SubmissionRepository submissionRepository) {
+                         SubmissionRepository submissionRepository,
+                         ReviewRepository reviewRepository) {
         this.stateRepository = stateRepository;
         this.problemRepository = problemRepository;
         this.submissionRepository = submissionRepository;
+        this.reviewRepository = reviewRepository;
     }
 
     @Transactional
@@ -116,7 +120,7 @@ public class ReviewService {
             String tagSlug,
             int page,
             int size) {
-        Page<Submission> submissions = submissionRepository.findRatedFiltered(
+        Page<Submission> submissions = reviewRepository.findRatedFiltered(
                 userId, confidence, difficulty, tagSlug, PageRequest.of(page, size));
         return submissions.map(this::toHistoryItem);
     }
@@ -143,7 +147,7 @@ public class ReviewService {
     public List<RatingHistoryItem> getReviewHistory(String slug, Long userId) {
         Problem problem = problemRepository.findBySlug(slug)
                 .orElseThrow(() -> new ResourceNotFoundException("error.problem.notFound", slug));
-        return submissionRepository
+        return reviewRepository
                 .findByUserIdAndProblemIdAndConfidenceIsNotNullOrderByReviewedAtAsc(
                         userId, problem.getId())
                 .stream()
@@ -172,33 +176,25 @@ public class ReviewService {
     @Transactional(readOnly = true)
     public List<ActivityDay> getReviewActivity(Long userId, int months) {
         Instant since = Instant.now().minus(months * 30L, ChronoUnit.DAYS);
-        List<Object[]> rows = submissionRepository.countDailyReviews(userId, since);
-        List<ActivityDay> result = new ArrayList<>();
-        for (Object[] row : rows) {
-            result.add(new ActivityDay((LocalDate) row[0], ((Long) row[1]).intValue()));
-        }
-        return result;
+        return reviewRepository.countDailyReviews(userId, since).stream()
+                .map(day -> new ActivityDay(day.day(), (int) day.count()))
+                .toList();
     }
 
     @Transactional(readOnly = true)
     public List<TagConfidenceItem> getTagConfidenceDistribution(Long userId) {
-        List<Object[]> rows = submissionRepository.countConfidenceByTag(userId);
-        // Pivot (tagSlug, tagName, confidence, count) rows into one DTO per tag.
+        // Pivot one row per (tag, confidence) into one DTO per tag.
         record TagKey(String slug, String name) {}
         Map<TagKey, long[]> byTag = new LinkedHashMap<>();
-        for (Object[] row : rows) {
-            String slug = (String) row[0];
-            String name = (String) row[1];
-            Confidence conf = (Confidence) row[2];
-            long count = (Long) row[3];
-            long[] counts = byTag.computeIfAbsent(new TagKey(slug, name), k -> new long[4]);
-            int idx = switch (conf) {
+        for (TagConfidenceCount row : reviewRepository.countConfidenceByTag(userId)) {
+            long[] counts = byTag.computeIfAbsent(new TagKey(row.slug(), row.name()), k -> new long[4]);
+            int idx = switch (row.confidence()) {
                 case AGAIN -> 0;
                 case HARD -> 1;
                 case GOOD -> 2;
                 case EASY -> 3;
             };
-            counts[idx] += count;
+            counts[idx] += row.count();
         }
         return byTag.entrySet().stream()
                 .map(e -> new TagConfidenceItem(
@@ -214,9 +210,9 @@ public class ReviewService {
 
     @Transactional(readOnly = true)
     public ReviewStatsResponse getStats(Long userId) {
-        long totalReviews = submissionRepository.countRated(userId);
-        long totalSolveTimeSeconds = submissionRepository.sumSolveTimeSecondsForRated(userId);
-        List<LocalDate> reviewDates = submissionRepository.findDistinctReviewDates(userId);
+        long totalReviews = reviewRepository.countRated(userId);
+        long totalSolveTimeSeconds = reviewRepository.sumSolveTimeSecondsForRated(userId);
+        List<LocalDate> reviewDates = reviewRepository.findDistinctReviewDates(userId);
         int currentStreak = DayRuns.current(reviewDates, LocalDate.now(ZoneOffset.UTC));
         int longestStreak = DayRuns.longest(reviewDates);
         return new ReviewStatsResponse(
@@ -242,7 +238,7 @@ public class ReviewService {
      * flushed yet.
      */
     private List<Review> reviewsExcept(Long userId, Long problemId, Long submissionId) {
-        return submissionRepository
+        return reviewRepository
                 .findByUserIdAndProblemIdAndConfidenceIsNotNullOrderByReviewedAtAsc(userId, problemId)
                 .stream()
                 .filter(s -> !s.getId().equals(submissionId))
