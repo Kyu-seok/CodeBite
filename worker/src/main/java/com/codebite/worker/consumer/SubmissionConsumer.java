@@ -1,6 +1,5 @@
 package com.codebite.worker.consumer;
 
-import com.codebite.judge.grader.CaseVerdict;
 import com.codebite.judge.grader.Grader;
 import com.codebite.judge.grader.Program;
 import com.codebite.judge.grader.TestInput;
@@ -8,12 +7,9 @@ import com.codebite.judge.grader.Verdict;
 import com.codebite.problem.entity.TestCase;
 import com.codebite.problem.repository.TestCaseRepository;
 import com.codebite.submission.entity.Submission;
-import com.codebite.submission.entity.SubmissionResult;
-import com.codebite.submission.entity.SubmissionStatus;
 import com.codebite.submission.event.SubmissionEvent;
 import com.codebite.submission.event.SubmissionResultEvent;
 import com.codebite.submission.repository.SubmissionRepository;
-import com.codebite.submission.repository.SubmissionResultRepository;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import org.slf4j.Logger;
@@ -23,7 +19,6 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -33,7 +28,6 @@ public class SubmissionConsumer {
 
     private final Grader grader;
     private final TestCaseRepository testCaseRepository;
-    private final SubmissionResultRepository submissionResultRepository;
     private final SubmissionRepository submissionRepository;
     private final SubmissionMetrics submissionMetrics;
     private final MeterRegistry meterRegistry;
@@ -42,14 +36,12 @@ public class SubmissionConsumer {
 
     public SubmissionConsumer(Grader grader,
                               TestCaseRepository testCaseRepository,
-                              SubmissionResultRepository submissionResultRepository,
                               SubmissionRepository submissionRepository,
                               SubmissionMetrics submissionMetrics,
                               MeterRegistry meterRegistry,
                               ApplicationEventPublisher eventPublisher) {
         this.grader = grader;
         this.testCaseRepository = testCaseRepository;
-        this.submissionResultRepository = submissionResultRepository;
         this.submissionRepository = submissionRepository;
         this.submissionMetrics = submissionMetrics;
         this.meterRegistry = meterRegistry;
@@ -96,7 +88,7 @@ public class SubmissionConsumer {
         // PENDING so a retry re-processes it cleanly) and DefaultErrorHandler drives the retries.
         // SubmissionFailureRecoverer marks INTERNAL_ERROR once they are exhausted.
         Submission submission = submissionRepository.findById(submissionId).orElse(null);
-        if (submission == null || submission.getStatus() != SubmissionStatus.PENDING) {
+        if (submission == null || !submission.isPending()) {
             log.warn("Skipping already-processed or missing submission: {}", submissionId);
             return;
         }
@@ -110,50 +102,19 @@ public class SubmissionConsumer {
                 new Program(event.sourceCode(), event.languageId()),
                 testCases.stream().map(tc -> new TestInput(tc.getInput(), tc.getExpectedOutput())).toList());
 
-        List<SubmissionResult> results = new ArrayList<>(testCases.size());
-        for (int i = 0; i < testCases.size(); i++) {
-            results.add(toResult(submission, testCases.get(i), verdict.cases().get(i)));
-        }
-        SubmissionStatus overallStatus = verdict.overall();
-        Integer maxRuntimeMs = verdict.maxRuntimeMs();
-        Integer maxMemoryKb = verdict.maxMemoryKb();
-
-        submissionResultRepository.saveAll(results);
-        submission.setStatus(overallStatus);
-        submission.setRuntimeMs(maxRuntimeMs);
-        submission.setMemoryKb(maxMemoryKb);
+        // The row owns the transition; save() cascades the result rows it added.
+        SubmissionResultEvent result = submission.grade(verdict, testCases);
         submissionRepository.save(submission);
 
         // Fan-out point. Published AFTER_COMMIT by SubmissionResultProducer so a rollback here
         // cannot announce a grade that was never persisted.
-        eventPublisher.publishEvent(new SubmissionResultEvent(
-                submissionId,
-                submission.getUser().getId(),
-                event.problemId(),
-                overallStatus,
-                maxRuntimeMs,
-                maxMemoryKb,
-                submission.getLanguage(),
-                event.adminSubmission()));
+        eventPublisher.publishEvent(result);
 
         if (!event.adminSubmission()) {
             sample.stop(processingTimer);
         }
-        submissionMetrics.recordCompleted(event, overallStatus);
+        submissionMetrics.recordCompleted(event, result.status());
 
-        log.info("Submission {} completed with status: {}", submissionId, overallStatus);
-    }
-
-    private static SubmissionResult toResult(Submission submission, TestCase testCase, CaseVerdict verdict) {
-        SubmissionResult result = new SubmissionResult();
-        result.setSubmission(submission);
-        result.setTestCase(testCase);
-        result.setStatus(verdict.status());
-        result.setActualOutput(verdict.stdout());
-        result.setStderr(verdict.stderr());
-        result.setCompileOutput(verdict.compileOutput());
-        result.setRuntimeMs(verdict.runtimeMs());
-        result.setMemoryKb(verdict.memoryKb());
-        return result;
+        log.info("Submission {} completed with status: {}", submissionId, result.status());
     }
 }
