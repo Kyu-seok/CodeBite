@@ -16,6 +16,7 @@ import com.codebite.problem.repository.TagRepository;
 import com.codebite.problem.repository.TestCaseRepository;
 import com.codebite.problem.service.ProblemService;
 import com.codebite.problem.service.StarterCodeLoader;
+import com.codebite.progress.ProblemPopularity;
 import com.codebite.submission.repository.SubmissionRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -59,11 +60,15 @@ class ProblemServiceTest {
     @Mock
     private SubmissionRepository submissionRepository;
 
+    @Mock
+    private ProblemPopularity problemPopularity;
+
     private ProblemService problemService;
 
     @BeforeEach
     void setUp() {
-        problemService = new ProblemService(problemRepository, translationRepository, testCaseRepository, tagRepository, starterCodeLoader, submissionRepository);
+        problemService = new ProblemService(problemRepository, translationRepository, testCaseRepository,
+                tagRepository, starterCodeLoader, submissionRepository, problemPopularity);
     }
 
     private Problem buildProblem(Long id, String title, String slug, boolean published) {
@@ -82,7 +87,7 @@ class ProblemServiceTest {
         Problem p1 = buildProblem(1L, "Two Sum", "pair-sum", true);
         Page<Problem> page = new PageImpl<>(List.of(p1));
         when(problemRepository.findAll(any(org.springframework.data.jpa.domain.Specification.class), any(PageRequest.class))).thenReturn(page);
-        when(submissionRepository.findAcceptanceRates()).thenReturn(List.of());
+        when(problemPopularity.acceptanceRates(List.of(1L))).thenReturn(Map.of());
 
         Page<ProblemListItem> result = problemService.listPublishedProblems(null, null, null, null, null, PageRequest.of(0, 10));
         assertEquals(1, result.getTotalElements());
@@ -94,7 +99,7 @@ class ProblemServiceTest {
         Problem p1 = buildProblem(1L, "Easy One", "easy-one", true);
         Page<Problem> page = new PageImpl<>(List.of(p1));
         when(problemRepository.findAll(any(org.springframework.data.jpa.domain.Specification.class), any(PageRequest.class))).thenReturn(page);
-        when(submissionRepository.findAcceptanceRates()).thenReturn(List.of());
+        when(problemPopularity.acceptanceRates(List.of(1L))).thenReturn(Map.of());
 
         Page<ProblemListItem> result = problemService.listPublishedProblems(Difficulty.EASY, null, null, null, null, PageRequest.of(0, 10));
         assertEquals(1, result.getTotalElements());

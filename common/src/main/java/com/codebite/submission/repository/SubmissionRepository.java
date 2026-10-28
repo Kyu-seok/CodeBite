@@ -105,13 +105,6 @@ public interface SubmissionRepository extends JpaRepository<Submission, Long> {
            "AND p.problemNumber <= :maxNumber GROUP BY p.difficulty")
     List<Object[]> countSolvedByDifficultyAndUserIdAndCuration(@Param("userId") Long userId, @Param("maxNumber") int maxNumber);
 
-    @Query("SELECT s.problem.id, COUNT(s), " +
-           "SUM(CASE WHEN s.status = com.codebite.submission.entity.SubmissionStatus.ACCEPTED THEN 1 ELSE 0 END) " +
-           "FROM Submission s WHERE s.status != com.codebite.submission.entity.SubmissionStatus.PENDING " +
-           "AND s.adminSubmission = false " +
-           "GROUP BY s.problem.id")
-    List<Object[]> findAcceptanceRates();
-
     // Profile: daily submission counts for activity heatmap
     @Query("SELECT CAST(s.createdAt AS LocalDate), COUNT(s) " +
            "FROM Submission s WHERE s.user.id = :userId AND s.createdAt >= :since " +

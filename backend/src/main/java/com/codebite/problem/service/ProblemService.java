@@ -17,6 +17,8 @@ import com.codebite.problem.repository.ProblemRepository;
 import com.codebite.problem.repository.ProblemTranslationRepository;
 import com.codebite.problem.repository.TagRepository;
 import com.codebite.problem.repository.TestCaseRepository;
+import com.codebite.progress.ProblemPopularity;
+import com.codebite.progress.ProblemPopularity.Rate;
 import com.codebite.submission.repository.SubmissionRepository;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
@@ -42,18 +44,21 @@ public class ProblemService {
     private final TagRepository tagRepository;
     private final StarterCodeLoader starterCodeLoader;
     private final SubmissionRepository submissionRepository;
+    private final ProblemPopularity problemPopularity;
 
     public ProblemService(ProblemRepository problemRepository,
                           ProblemTranslationRepository translationRepository,
                           TestCaseRepository testCaseRepository,
                           TagRepository tagRepository, StarterCodeLoader starterCodeLoader,
-                          SubmissionRepository submissionRepository) {
+                          SubmissionRepository submissionRepository,
+                          ProblemPopularity problemPopularity) {
         this.problemRepository = problemRepository;
         this.translationRepository = translationRepository;
         this.testCaseRepository = testCaseRepository;
         this.tagRepository = tagRepository;
         this.starterCodeLoader = starterCodeLoader;
         this.submissionRepository = submissionRepository;
+        this.problemPopularity = problemPopularity;
     }
 
     @Transactional(readOnly = true)
@@ -74,29 +79,18 @@ public class ProblemService {
         }
 
         Map<Long, String> statusMap = userId != null ? buildStatusMap(userId) : Map.of();
-        Map<Long, Double> acceptanceMap = buildAcceptanceMap();
 
         Page<Problem> page = problemRepository.findAll(spec, pageable);
-        Map<Long, ProblemTranslation> translationMap = fetchTranslationMap(
-                page.getContent().stream().map(Problem::getId).toList());
-        return page.map(p -> toListItem(p, statusMap, acceptanceMap, translationMap));
+        List<Long> pageIds = page.getContent().stream().map(Problem::getId).toList();
+        Map<Long, Rate> acceptanceRates = problemPopularity.acceptanceRates(pageIds);
+        Map<Long, ProblemTranslation> translationMap = fetchTranslationMap(pageIds);
+        return page.map(p -> toListItem(p, statusMap, acceptanceRates, translationMap));
     }
 
     private Map<Long, String> buildStatusMap(Long userId) {
         Map<Long, String> map = new HashMap<>();
         for (Object[] row : submissionRepository.findProblemStatusesByUserId(userId)) {
             map.put((Long) row[0], (String) row[1]);
-        }
-        return map;
-    }
-
-    private Map<Long, Double> buildAcceptanceMap() {
-        Map<Long, Double> map = new HashMap<>();
-        for (Object[] row : submissionRepository.findAcceptanceRates()) {
-            Long problemId = (Long) row[0];
-            long total = (Long) row[1];
-            long accepted = (Long) row[2];
-            map.put(problemId, total > 0 ? Math.round(accepted * 1000.0 / total) / 10.0 : 0.0);
         }
         return map;
     }
@@ -246,8 +240,10 @@ public class ProblemService {
             spec = spec.and(ProblemSpecifications.titleContains(search));
         }
 
-        Map<Long, Double> acceptanceMap = buildAcceptanceMap();
-        return problemRepository.findAll(spec, pageable).map(p -> toListItem(p, Map.of(), acceptanceMap, Map.of()));
+        Page<Problem> page = problemRepository.findAll(spec, pageable);
+        Map<Long, Rate> acceptanceRates = problemPopularity.acceptanceRates(
+                page.getContent().stream().map(Problem::getId).toList());
+        return page.map(p -> toListItem(p, Map.of(), acceptanceRates, Map.of()));
     }
 
     @Transactional(readOnly = true)
@@ -359,7 +355,7 @@ public class ProblemService {
     }
 
     private ProblemListItem toListItem(Problem problem, Map<Long, String> statusMap,
-                                       Map<Long, Double> acceptanceMap,
+                                       Map<Long, Rate> acceptanceRates,
                                        Map<Long, ProblemTranslation> translationMap) {
         String title = problem.getTitle();
         ProblemTranslation t = translationMap.get(problem.getId());
@@ -377,7 +373,7 @@ public class ProblemService {
                 problem.getDifficulty(),
                 tagNames,
                 statusMap.getOrDefault(problem.getId(), null),
-                acceptanceMap.getOrDefault(problem.getId(), null)
+                acceptanceRates.getOrDefault(problem.getId(), Rate.NONE).percentIfGraded()
         );
     }
 

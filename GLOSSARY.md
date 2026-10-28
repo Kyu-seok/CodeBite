@@ -70,6 +70,12 @@ A problem whose Review Schedule's next due moment is at or before now.
 **Mastered**:
 A problem with at least three Reviews, the last two Good or Easy, and an interval of 30 days or more; recomputed on every Review and can be lost.
 
+### Progress
+
+**Acceptance Rate**:
+Per problem, the share of graded non-admin submissions that were Accepted, as a percentage to one decimal. A problem nobody has been graded on has none.
+_Avoid_: Pass rate, success rate, solve rate
+
 ### GitHub
 
 **GitHub Link**:
