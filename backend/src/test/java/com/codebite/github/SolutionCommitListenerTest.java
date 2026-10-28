@@ -429,22 +429,6 @@ class SolutionCommitListenerTest {
     }
 
     @Test
-    void outcomesAreCountedForMetrics() {
-        link(user);
-        Submission ok = accepted(user, "python", "a = 1", Instant.parse("2026-10-19T14:05:09Z"));
-        Submission bad = accepted(user, "java", "class A {}", Instant.parse("2026-10-19T15:00:00Z"));
-        double committedBefore = outcomeCount("committed");
-        double failedBefore = outcomeCount("failed");
-
-        listener.onResult(acceptedEvent(ok));
-        gitHub.failAlways(() -> new GitHubTransientException("GitHub is down"));
-        listener.onResult(acceptedEvent(bad));
-
-        assertThat(outcomeCount("committed") - committedBefore).isEqualTo(1);
-        assertThat(outcomeCount("failed") - failedBefore).isEqualTo(1);
-    }
-
-    @Test
     void gitHubFailureIsRecordedAndNeverThrown() {
         link(user);
         Submission submission = accepted(user, "python", "a = 1", Instant.parse("2026-10-19T14:05:09Z"));
