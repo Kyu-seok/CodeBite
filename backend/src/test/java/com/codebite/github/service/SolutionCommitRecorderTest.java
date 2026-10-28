@@ -10,7 +10,10 @@ import com.codebite.github.gateway.GitHubTransientException;
 import com.codebite.github.repository.GitHubLinkRepository;
 import com.codebite.github.repository.SolutionCommitRepository;
 import com.codebite.problem.entity.Difficulty;
+import com.codebite.judge.grader.CaseVerdict;
+import com.codebite.judge.grader.Verdict;
 import com.codebite.problem.entity.Problem;
+import com.codebite.problem.entity.TestCase;
 import com.codebite.problem.repository.ProblemRepository;
 import com.codebite.submission.entity.Submission;
 import com.codebite.submission.entity.SubmissionStatus;
@@ -450,14 +453,15 @@ class SolutionCommitRecorderTest {
     /** An Accepted submission (12 ms, 1536 KB) made at {@code at}, with its problem loaded. */
     private Submission accepted(Problem problem, String language, String code, String at) {
         Submission saved = inTx(() -> {
-            Submission submission = new Submission();
-            submission.setUser(user);
-            submission.setProblem(problem);
-            submission.setLanguage(language);
-            submission.setSourceCode(code);
-            submission.setStatus(SubmissionStatus.ACCEPTED);
-            submission.setRuntimeMs(12);
-            submission.setMemoryKb(1536);
+            TestCase testCase = new TestCase();
+            testCase.setProblem(problem);
+            testCase.setInput("1");
+            testCase.setExpectedOutput("1");
+            testCase.setOrderIndex(1);
+            entityManager.persist(testCase);
+            Submission submission = Submission.pending(user, problem, language, code);
+            submission.grade(Verdict.of(List.of(new CaseVerdict(SubmissionStatus.ACCEPTED, true, "", null, null,
+                    12, 1536))), List.of(testCase));
             submission = submissionRepository.saveAndFlush(submission);
             // created_at is set on insert and not updatable through the entity, so backdate it in SQL.
             entityManager.createQuery("UPDATE Submission s SET s.createdAt = :at WHERE s.id = :id")

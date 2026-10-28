@@ -1,7 +1,10 @@
 package com.codebite.stats;
 
+import com.codebite.judge.grader.CaseVerdict;
+import com.codebite.judge.grader.Verdict;
 import com.codebite.problem.entity.Difficulty;
 import com.codebite.problem.entity.Problem;
+import com.codebite.problem.entity.TestCase;
 import com.codebite.stats.entity.ProblemStats;
 import com.codebite.stats.entity.UserStats;
 import com.codebite.stats.repository.ProblemStatsRepository;
@@ -10,6 +13,7 @@ import com.codebite.stats.service.StatsService;
 import com.codebite.submission.entity.Submission;
 import com.codebite.submission.entity.SubmissionStatus;
 import com.codebite.submission.repository.SubmissionRepository;
+import com.codebite.user.entity.Role;
 import com.codebite.user.entity.User;
 import com.codebite.user.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,6 +24,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -37,6 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         "DELETE FROM problem_stats",
         "DELETE FROM submission_results",
         "DELETE FROM submissions",
+        "DELETE FROM test_cases",
         "DELETE FROM problems",
         "DELETE FROM users"
 }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
@@ -50,6 +57,7 @@ class StatsAggregationTest {
     @Autowired private TestEntityManager entityManager;
 
     private User user;
+    private User admin;
     private Problem problemA;
     private Problem problemB;
 
@@ -60,6 +68,13 @@ class StatsAggregationTest {
         user.setEmail("stats@test.com");
         user.setPasswordHash("hash");
         user = entityManager.persist(user);
+
+        admin = new User();
+        admin.setUsername("stats-admin");
+        admin.setEmail("stats-admin@test.com");
+        admin.setPasswordHash("hash");
+        admin.setRole(Role.ADMIN);
+        admin = entityManager.persist(admin);
 
         problemA = persistProblem("stats-problem-a");
         problemB = persistProblem("stats-problem-b");
@@ -76,14 +91,22 @@ class StatsAggregationTest {
         return entityManager.persist(problem);
     }
 
-    private Submission submit(Problem problem, SubmissionStatus status, boolean admin) {
-        Submission submission = new Submission();
-        submission.setUser(user);
-        submission.setProblem(problem);
-        submission.setLanguage("python");
-        submission.setSourceCode("x");
-        submission.setStatus(status);
-        submission.setAdminSubmission(admin);
+    /** A graded submission by {@code user}, or by the admin user when {@code asAdmin}. */
+    private Submission submit(Problem problem, SubmissionStatus status, boolean asAdmin) {
+        return submit(asAdmin ? admin : user, problem, status);
+    }
+
+    private Submission submit(User owner, Problem problem, SubmissionStatus status) {
+        TestCase testCase = new TestCase();
+        testCase.setProblem(problem);
+        testCase.setInput("1");
+        testCase.setExpectedOutput("1");
+        testCase.setOrderIndex(1);
+        testCase = entityManager.persist(testCase);
+
+        Submission submission = Submission.pending(owner, problem, "python", "x");
+        submission.grade(Verdict.of(List.of(new CaseVerdict(status, true, "", null, null, 1, 1))),
+                List.of(testCase));
         return entityManager.persist(submission);
     }
 
@@ -202,13 +225,7 @@ class StatsAggregationTest {
         submit(problemA, SubmissionStatus.ACCEPTED, false);
         submit(problemB, SubmissionStatus.ACCEPTED, false);
 
-        Submission theirs = new Submission();
-        theirs.setUser(second);
-        theirs.setProblem(problemA);
-        theirs.setLanguage("python");
-        theirs.setSourceCode("x");
-        theirs.setStatus(SubmissionStatus.ACCEPTED);
-        entityManager.persist(theirs);
+        submit(second, problemA, SubmissionStatus.ACCEPTED);
         entityManager.flush();
 
         statsService.recompute(user.getId(), problemA.getId());

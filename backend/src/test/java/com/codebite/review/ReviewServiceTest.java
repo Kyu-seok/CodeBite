@@ -1,8 +1,11 @@
 package com.codebite.review;
 
 import com.codebite.common.exception.ResourceNotFoundException;
+import com.codebite.judge.grader.CaseVerdict;
+import com.codebite.judge.grader.Verdict;
 import com.codebite.problem.entity.Difficulty;
 import com.codebite.problem.entity.Problem;
+import com.codebite.problem.entity.TestCase;
 import com.codebite.problem.repository.ProblemRepository;
 import com.codebite.review.dto.RatingHistoryItem;
 import com.codebite.review.dto.ReviewStateResponse;
@@ -77,13 +80,16 @@ class ReviewServiceTest {
     }
 
     private Submission submission(long id, SubmissionStatus status) {
-        Submission s = new Submission();
+        return submission(id, user, status);
+    }
+
+    private Submission submission(long id, User owner, SubmissionStatus status) {
+        Submission s = Submission.pending(owner, problem, "java", "code");
         s.setId(id);
-        s.setUser(user);
-        s.setProblem(problem);
-        s.setLanguage("java");
-        s.setSourceCode("code");
-        s.setStatus(status);
+        if (status != SubmissionStatus.PENDING) {
+            s.grade(Verdict.of(List.of(new CaseVerdict(status, true, "", null, null, 1, 1))),
+                    List.of(new TestCase()));
+        }
         return s;
     }
 
@@ -208,11 +214,7 @@ class ReviewServiceTest {
     void setReview_submissionFromOtherUser_isRejected() {
         User other = new User();
         other.setId(99L);
-        Submission sub = new Submission();
-        sub.setId(100L);
-        sub.setUser(other);
-        sub.setProblem(problem);
-        sub.setStatus(SubmissionStatus.ACCEPTED);
+        Submission sub = submission(100L, other, SubmissionStatus.ACCEPTED);
 
         when(submissionRepository.findById(100L)).thenReturn(Optional.of(sub));
 

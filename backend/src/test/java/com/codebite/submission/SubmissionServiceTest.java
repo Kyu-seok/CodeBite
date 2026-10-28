@@ -1,6 +1,7 @@
 package com.codebite.submission;
 
 import com.codebite.common.exception.ResourceNotFoundException;
+import com.codebite.judge.grader.Verdict;
 import com.codebite.judge.parser.JudgeErrorParsers;
 import com.codebite.judge.parser.UserCodeLineMapper;
 import com.codebite.judge.service.DriverCodeLoader;
@@ -145,13 +146,7 @@ class SubmissionServiceTest {
 
     @Test
     void getSubmission_ownerCanView() {
-        Submission submission = new Submission();
-        submission.setId(1L);
-        submission.setUser(user);
-        submission.setProblem(problem);
-        submission.setLanguage("java");
-        submission.setSourceCode("code");
-        submission.setStatus(SubmissionStatus.ACCEPTED);
+        Submission submission = ownedSubmission(SubmissionStatus.ACCEPTED);
 
         when(submissionRepository.findById(1L)).thenReturn(Optional.of(submission));
         when(submissionResultRepository.findBySubmissionIdOrderById(1L)).thenReturn(List.of());
@@ -188,23 +183,19 @@ class SubmissionServiceTest {
         assertEquals(preview, response.reviewIntervalDays());
     }
 
+    /** PENDING, or Accepted with no result rows. */
     private Submission ownedSubmission(SubmissionStatus status) {
-        Submission submission = new Submission();
+        Submission submission = Submission.pending(user, problem, "java", "code");
         submission.setId(1L);
-        submission.setUser(user);
-        submission.setProblem(problem);
-        submission.setLanguage("java");
-        submission.setSourceCode("code");
-        submission.setStatus(status);
+        if (status == SubmissionStatus.ACCEPTED) {
+            submission.grade(Verdict.empty(), List.of());
+        }
         return submission;
     }
 
     @Test
     void getSubmission_nonOwnerGetsDenied() {
-        Submission submission = new Submission();
-        submission.setId(1L);
-        submission.setUser(user);
-        submission.setProblem(problem);
+        Submission submission = ownedSubmission(SubmissionStatus.PENDING);
 
         when(submissionRepository.findById(1L)).thenReturn(Optional.of(submission));
 

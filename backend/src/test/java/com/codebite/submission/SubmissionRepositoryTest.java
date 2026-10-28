@@ -1,5 +1,7 @@
 package com.codebite.submission;
 
+import com.codebite.judge.grader.CaseVerdict;
+import com.codebite.judge.grader.Verdict;
 import com.codebite.problem.entity.Difficulty;
 import com.codebite.problem.entity.Problem;
 import com.codebite.problem.entity.TestCase;
@@ -148,13 +150,35 @@ class SubmissionRepositoryTest {
         assertEquals(SubmissionStatus.ACCEPTED, results.get(0).getStatus());
     }
 
+    /** Graded with no result rows when Accepted, so tests can add their own rows explicitly. */
     private Submission createSubmission(SubmissionStatus status) {
-        Submission submission = new Submission();
-        submission.setUser(user);
-        submission.setProblem(problem);
-        submission.setLanguage("java");
-        submission.setSourceCode("class Solution {}");
-        submission.setStatus(status);
+        Submission submission = Submission.pending(user, problem, "java", "class Solution {}");
+        if (status == SubmissionStatus.ACCEPTED) {
+            submission.grade(Verdict.empty(), List.of());
+        } else {
+            submission.grade(Verdict.of(List.of(new CaseVerdict(status, true, "", null, null, 1, 1))),
+                    List.of(testCase));
+        }
         return submission;
+    }
+
+    /** Dropping the explicit saveAll of result rows relies on this cascade. */
+    @Test
+    void save_cascadesTheResultRowsGradeAdded() {
+        Submission submission = Submission.pending(user, problem, "java", "class Solution {}");
+        submission.grade(Verdict.of(List.of(
+                new CaseVerdict(SubmissionStatus.WRONG_ANSWER, true, "[1,0]", null, null, 5, 100))), List.of(testCase));
+
+        submission = submissionRepository.save(submission);
+        entityManager.flush();
+        entityManager.clear();
+
+        List<SubmissionResult> rows = submissionResultRepository.findBySubmissionIdOrderById(submission.getId());
+        assertEquals(1, rows.size());
+        assertEquals(SubmissionStatus.WRONG_ANSWER, rows.get(0).getStatus());
+        assertEquals("[1,0]", rows.get(0).getActualOutput());
+        assertEquals(testCase.getId(), rows.get(0).getTestCase().getId());
+        assertEquals(SubmissionStatus.WRONG_ANSWER,
+                submissionRepository.findById(submission.getId()).orElseThrow().getStatus());
     }
 }

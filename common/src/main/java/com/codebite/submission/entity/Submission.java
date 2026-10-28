@@ -198,28 +198,17 @@ public class Submission extends BaseEntity {
         this.sourceCode = sourceCode;
     }
 
+    /** Set only by {@link #grade}, {@link #fail} and {@link #abandon}. */
     public SubmissionStatus getStatus() {
         return status;
-    }
-
-    public void setStatus(SubmissionStatus status) {
-        this.status = status;
     }
 
     public Integer getRuntimeMs() {
         return runtimeMs;
     }
 
-    public void setRuntimeMs(Integer runtimeMs) {
-        this.runtimeMs = runtimeMs;
-    }
-
     public Integer getMemoryKb() {
         return memoryKb;
-    }
-
-    public void setMemoryKb(Integer memoryKb) {
-        this.memoryKb = memoryKb;
     }
 
     public String getNotes() {
@@ -258,15 +247,7 @@ public class Submission extends BaseEntity {
         return adminSubmission;
     }
 
-    public void setAdminSubmission(boolean adminSubmission) {
-        this.adminSubmission = adminSubmission;
-    }
-
     public List<SubmissionResult> getResults() {
         return results;
-    }
-
-    public void setResults(List<SubmissionResult> results) {
-        this.results = results;
     }
 }
