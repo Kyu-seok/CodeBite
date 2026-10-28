@@ -1,19 +1,18 @@
 import type { SubmissionResponse } from "@/types/submission";
+import type { TimerDeps } from "@/lib/timers";
+import { pollUntil, type Poll, type PollOutcome } from "./pollUntil";
 
 /**
  * What the browser hands the watch: the API, the result stream and timers. Tests pass fakes;
  * `hooks/useSubmissionWatch.ts` passes the real ones.
  */
-export interface WatchDeps {
+export interface WatchDeps extends TimerDeps {
   getSubmission(id: number): Promise<SubmissionResponse>;
   /**
    * Opens the result stream for a submission. Rejects when it cannot be opened: no stream token
    * (SSE is off server-side), or no EventSource. The watch then polls instead.
    */
   openStream(id: number): Promise<ResultStream>;
-  now(): number;
-  setTimeout(fn: () => void, ms: number): unknown;
-  clearTimeout(handle: unknown): void;
 }
 
 /** A server-sent stream that announces the verdict; the watch still fetches the submission. */
@@ -74,8 +73,7 @@ export function watchSubmission(
   let phase: Phase = "opening";
   let stream: ResultStream | null = null;
   let sseDeadline: unknown = null;
-  let pollTick: unknown = null;
-  let pollDeadline: unknown = null;
+  let poll: Poll | null = null;
   const listeners = new Set<(ev: WatchEvent) => void>();
 
   const clearTimer = (handle: unknown) => {
@@ -84,9 +82,9 @@ export function watchSubmission(
 
   const teardown = () => {
     clearTimer(sseDeadline);
-    clearTimer(pollTick);
-    clearTimer(pollDeadline);
-    sseDeadline = pollTick = pollDeadline = null;
+    sseDeadline = null;
+    poll?.stop();
+    poll = null;
     stream?.close();
     stream = null;
   };
@@ -100,23 +98,12 @@ export function watchSubmission(
     for (const listener of heard) listener(ev);
   };
 
-  /** Fetches the submission once; settles on a verdict, fails on rejection, else `onPending`. */
-  const check = (onPending: () => void) => {
-    deps.getSubmission(id).then(
-      (submission) => {
-        if (phase === "done") return;
-        if (submission.status === "PENDING") onPending();
-        else finish({ type: "settled", submission });
-      },
-      () => finish({ type: "failed", reason: "unreachable" }),
-    );
-  };
-
-  const poll = () => {
-    pollTick = null;
-    check(() => {
-      pollTick = deps.setTimeout(poll, timing.pollIntervalMs);
-    });
+  /** One fetch's outcome: a verdict settles, a rejection fails, PENDING goes to `onPending`. */
+  const judge = (outcome: PollOutcome<SubmissionResponse>, onPending: () => void) => {
+    if (phase === "done") return;
+    if (outcome.type === "rejected") finish({ type: "failed", reason: "unreachable" });
+    else if (outcome.value.status === "PENDING") onPending();
+    else finish({ type: "settled", submission: outcome.value });
   };
 
   const startPolling = () => {
@@ -126,8 +113,16 @@ export function watchSubmission(
     sseDeadline = null;
     stream?.close();
     stream = null;
-    pollDeadline = deps.setTimeout(() => finish({ type: "failed", reason: "slow" }), timing.pollMaxMs);
-    pollTick = deps.setTimeout(poll, timing.pollIntervalMs);
+    poll = pollUntil(
+      () => deps.getSubmission(id),
+      (outcome) => {
+        judge(outcome, () => {});
+        return phase === "done" ? "stop" : "continue";
+      },
+      { intervalMs: timing.pollIntervalMs, maxMs: timing.pollMaxMs },
+      deps,
+      () => finish({ type: "failed", reason: "slow" }),
+    );
   };
 
   const onStreamResult = () => {
@@ -138,7 +133,10 @@ export function watchSubmission(
     sseDeadline = null;
     stream?.close();
     stream = null;
-    check(startPolling);
+    deps.getSubmission(id).then(
+      (value) => judge({ type: "resolved", value }, startPolling),
+      (error) => judge({ type: "rejected", error }, startPolling),
+    );
   };
 
   const onStreamClosed = () => {

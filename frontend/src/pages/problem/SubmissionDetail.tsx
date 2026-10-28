@@ -18,6 +18,7 @@ import { useTheme } from '@/context/ThemeContext';
 import type { SolutionCommit, SubmissionResponse } from '@/types/submission';
 import { ConfidencePrompt } from '@/components/review/ConfidencePrompt';
 import { useReviewState } from '@/hooks/useReviewState';
+import { useSolutionCommit } from '@/hooks/useSolutionCommit';
 import { clearSubmissionReview } from '@/api/reviews';
 import type { Confidence } from '@/types/review';
 import { formatElapsed } from '@/components/layout/Layout';
@@ -29,22 +30,6 @@ import {
   formatDate,
   languageLabel,
 } from './submissionDisplay';
-
-// The verdict poll stops at Accepted, but the Solution Commit reaches GitHub a little later
-// (with retries, up to several seconds), so detail re-polls on its own while it is in flight.
-const SOLUTION_COMMIT_POLL_MS = 3000;
-const SOLUTION_COMMIT_MAX_POLLS = 40;
-// Right after Accepted, the Solution Commit may not be recorded yet, so null is not yet final.
-const SOLUTION_COMMIT_GRACE_MS = 60_000;
-
-function awaitingSolutionCommit(submission: SubmissionResponse) {
-  if (submission.solutionCommit?.status === 'PENDING') return true;
-  return (
-    submission.status === 'ACCEPTED' &&
-    submission.solutionCommit == null &&
-    Date.now() - new Date(submission.createdAt).getTime() < SOLUTION_COMMIT_GRACE_MS
-  );
-}
 
 interface SubmissionDetailProps {
   submissionId: number;
@@ -84,30 +69,8 @@ export function SubmissionDetail({
       .finally(() => setLoading(false));
   }, [submissionId, loadAttempt]);
 
-  const awaitingCommit = submission != null && awaitingSolutionCommit(submission);
-  useEffect(() => {
-    if (!awaitingCommit) return;
-    let polls = 0;
-    const timer = setInterval(() => {
-      polls += 1;
-      if (polls > SOLUTION_COMMIT_MAX_POLLS) {
-        clearInterval(timer);
-        return;
-      }
-      getSubmission(submissionId)
-        .then((res) =>
-          // Only take the Solution Commit, so an unsaved note edit isn't overwritten.
-          setSubmission((prev) =>
-            prev && prev.id === res.data.id
-              ? { ...prev, solutionCommit: res.data.solutionCommit }
-              : prev,
-          ),
-        )
-        // eslint-disable-next-line no-restricted-syntax -- Background poll for the Solution Commit: the next tick retries, and the card keeps showing it as pending meanwhile.
-        .catch(() => {});
-    }, SOLUTION_COMMIT_POLL_MS);
-    return () => clearInterval(timer);
-  }, [awaitingCommit, submissionId]);
+  // Kept current while the Solution Commit is still reaching GitHub.
+  const solutionCommit = useSolutionCommit(submission);
 
   if (loading) {
     return (
@@ -197,8 +160,8 @@ export function SubmissionDetail({
               </>
             )}
           </div>
-          {submission.solutionCommit && (
-            <SolutionCommitLine solutionCommit={submission.solutionCommit} />
+          {solutionCommit && (
+            <SolutionCommitLine solutionCommit={solutionCommit} />
           )}
           <div className="mt-2">
             <Button
