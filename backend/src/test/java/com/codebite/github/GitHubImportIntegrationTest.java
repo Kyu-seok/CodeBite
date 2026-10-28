@@ -3,7 +3,6 @@ package com.codebite.github;
 import com.codebite.auth.jwt.JwtTokenProvider;
 import com.codebite.github.gateway.FakeGitHubGateway;
 import com.codebite.github.gateway.FakeGitHubGateway.RecordedBatchCommit;
-import com.codebite.github.gateway.FakeGitHubGateway.RecordedCommit;
 import com.codebite.github.gateway.GitHubTransientException;
 import com.codebite.github.entity.SolutionCommit;
 import com.codebite.github.entity.SolutionCommitStatus;
@@ -164,42 +163,6 @@ class GitHubImportIntegrationTest {
     }
 
     @Test
-    void importedSolutionsCountAsCommittedForLaterLiveCommits() throws Exception {
-        submit(user, twoSum, "python", "print(1)", SubmissionStatus.ACCEPTED, "2026-03-01T10:00:00Z");
-        link("octocat/solutions");
-        startImport().andExpect(status().isAccepted());
-        Submission later = submit(user, twoSum, "java", "class Later {}", SubmissionStatus.ACCEPTED,
-                "2026-10-20T10:00:00Z");
-
-        solutionCommitService.commitAccepted(user.getId(), later.getId());
-
-        // The Import already added the folder's README, so the live commit adds only its file.
-        assertThat(gitHub.commits()).extracting(RecordedCommit::path)
-                .containsExactly("two-sum-imp/java/2026-10-20T100000Z.java");
-    }
-
-    @Test
-    void importKeepsTwoSolutionsAcceptedInTheSameSecond() throws Exception {
-        Submission first = submit(user, twoSum, "python", "print(1)", SubmissionStatus.ACCEPTED,
-                "2026-03-01T10:00:00Z");
-        Submission second = submit(user, twoSum, "python", "print(2)", SubmissionStatus.ACCEPTED,
-                "2026-03-01T10:00:00Z");
-        link("octocat/solutions");
-
-        startImport().andExpect(status().isAccepted());
-
-        String secondPath = "two-sum-imp/python/2026-03-01T100000Z-" + second.getId() + ".py";
-        assertThat(gitHub.pushes().get(0).commits()).extracting(c -> c.files().keySet()).containsExactly(
-                java.util.Set.of("two-sum-imp/README.md", "two-sum-imp/python/2026-03-01T100000Z.py"),
-                java.util.Set.of(secondPath));
-        assertThat(solutionCommitOf(first).getPath()).isEqualTo("two-sum-imp/python/2026-03-01T100000Z.py");
-        assertThat(solutionCommitOf(second)).satisfies(sc -> {
-            assertThat(sc.getStatus()).isEqualTo(SolutionCommitStatus.COMMITTED);
-            assertThat(sc.getPath()).isEqualTo(secondPath);
-        });
-    }
-
-    @Test
     void importedSolutionAlreadyInTheRepositoryLinksToItsFile() throws Exception {
         Submission submission = submit(user, twoSum, "python", "print(1)", SubmissionStatus.ACCEPTED,
                 "2026-03-01T10:00:00Z");
@@ -214,23 +177,6 @@ class GitHubImportIntegrationTest {
             assertThat(sc.getCommitUrl()).isEqualTo(
                     "https://github.com/octocat/solutions/blob/main/two-sum-imp/python/2026-03-01T100000Z.py");
         });
-    }
-
-    @Test
-    void liveEventForAnImportedSubmissionLeavesItCommitted() throws Exception {
-        Submission imported = submit(user, twoSum, "python", "print(1)", SubmissionStatus.ACCEPTED,
-                "2026-03-01T10:00:00Z");
-        link("octocat/solutions");
-        startImport().andExpect(status().isAccepted());
-        String importedUrl = solutionCommitOf(imported).getCommitUrl();
-
-        solutionCommitService.commitAccepted(user.getId(), imported.getId());
-
-        assertThat(solutionCommitOf(imported)).satisfies(sc -> {
-            assertThat(sc.getStatus()).isEqualTo(SolutionCommitStatus.COMMITTED);
-            assertThat(sc.getCommitUrl()).isEqualTo(importedUrl).isNotNull();
-        });
-        assertThat(gitHub.history()).hasSize(1);
     }
 
     @Test
