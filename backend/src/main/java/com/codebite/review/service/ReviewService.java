@@ -16,6 +16,8 @@ import com.codebite.review.dto.TagConfidenceItem;
 import com.codebite.review.entity.Confidence;
 import com.codebite.review.entity.ProblemReviewState;
 import com.codebite.review.repository.ProblemReviewStateRepository;
+import com.codebite.review.schedule.Review;
+import com.codebite.review.schedule.ReviewSchedule;
 import com.codebite.submission.entity.Submission;
 import com.codebite.submission.entity.SubmissionStatus;
 import com.codebite.submission.repository.SubmissionRepository;
@@ -217,9 +219,9 @@ public class ReviewService {
     }
 
     /**
-     * Rebuild problem_review_state for (userId, problemId) by replaying every rated
-     * submission in chronological reviewed_at order through SM-2 lite. Source of truth
-     * lives on the submissions, so this is always derivable.
+     * Rebuild problem_review_state for (userId, problemId) from every rated submission's
+     * Review. The Reviews are the source of truth; the row is a snapshot of their
+     * {@link ReviewSchedule}, deleted when none is left.
      */
     private ProblemReviewState replayState(Long userId, Long problemId) {
         List<Submission> rated = submissionRepository
@@ -231,21 +233,14 @@ public class ReviewService {
             return null;
         }
 
-        ProblemReviewState state = stateRepository
-                .findByUserIdAndProblemId(userId, problemId)
-                .orElseGet(() -> ProblemReviewState.newFor(userId, problemId));
-        // Reset before replay so re-rating an old submission doesn't compound.
-        ProblemReviewState fresh = replay(userId, problemId, rated);
-        // Copy replayed values onto the persisted (or newly-created) entity instance.
-        state.setReviewCount(fresh.getReviewCount());
-        state.setEaseFactor(fresh.getEaseFactor());
-        state.setIntervalDays(fresh.getIntervalDays());
-        state.setLastReviewedAt(fresh.getLastReviewedAt());
-        state.setLastConfidence(fresh.getLastConfidence());
-        state.setNextDueAt(fresh.getNextDueAt());
-        state.setMastered(isMastered(rated, fresh));
+        ReviewSchedule schedule = ReviewSchedule.replay(reviews(rated));
+        return stateRepository.save(ProblemReviewState.of(userId, problemId, schedule));
+    }
 
-        return stateRepository.save(state);
+    private static List<Review> reviews(List<Submission> rated) {
+        return rated.stream()
+                .map(s -> new Review(s.getConfidence(), s.getReviewedAt()))
+                .toList();
     }
 
     private static ProblemReviewState replay(Long userId, Long problemId, List<Submission> rated) {
@@ -283,6 +278,8 @@ public class ReviewService {
     /**
      * Mastered = at least 3 reviews, last 2 are GOOD or EASY, current interval ≥ 30 days.
      * "Last" is by chronological reviewed_at, matching the replay order.
+     * Superseded by {@link ReviewSchedule#mastered()}; kept only for ReviewScheduleGoldenCsvTest
+     * until {@code ProblemReviewState.applyReview} goes with it.
      */
     static boolean isMastered(List<Submission> rated, ProblemReviewState state) {
         if (rated.size() < 3) return false;

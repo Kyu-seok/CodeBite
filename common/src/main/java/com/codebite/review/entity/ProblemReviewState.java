@@ -8,6 +8,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.IdClass;
 import jakarta.persistence.Table;
 
+import com.codebite.review.schedule.ReviewSchedule;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Instant;
@@ -59,6 +61,24 @@ public class ProblemReviewState {
 
     @Column(name = "mastered", nullable = false)
     private boolean mastered;
+
+    /** The row that stores this Review Schedule; a schedule with no Review has no row. */
+    public static ProblemReviewState of(Long userId, Long problemId, ReviewSchedule schedule) {
+        if (schedule.isEmpty()) {
+            throw new IllegalArgumentException("a schedule without Reviews is not stored");
+        }
+        ProblemReviewState s = new ProblemReviewState();
+        s.userId = userId;
+        s.problemId = problemId;
+        s.reviewCount = schedule.reviewCount();
+        s.easeFactor = schedule.ease();
+        s.intervalDays = schedule.intervalDays();
+        s.lastReviewedAt = schedule.lastReviewedAt();
+        s.lastConfidence = schedule.lastConfidence();
+        s.nextDueAt = schedule.nextDueAt();
+        s.mastered = schedule.mastered();
+        return s;
+    }
 
     public static ProblemReviewState newFor(Long userId, Long problemId) {
         ProblemReviewState s = new ProblemReviewState();
