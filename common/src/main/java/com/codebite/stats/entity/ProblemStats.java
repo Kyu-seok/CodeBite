@@ -11,8 +11,8 @@ import java.time.Instant;
 /**
  * Precomputed per-problem aggregates, maintained by the {@code codebite-stats} consumer.
  *
- * <p>Replaces the full group-by over {@code submissions} that
- * {@code SubmissionRepository.findAcceptanceRates()} runs on the problem-list read path.
+ * <p>What {@code ProblemPopularity} reads for the Acceptance Rate on the problem list, in place of
+ * the full group-by over {@code submissions} the list used to run. V195 backfilled it once.
  *
  * <p>Not to be confused with {@code com.codebite.problem.dto.ProblemStats}, which is the
  * per-user solved-count DTO for the problem list header.

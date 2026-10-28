@@ -1,33 +1,28 @@
 package com.codebite.problem;
 
 import com.codebite.common.exception.ResourceNotFoundException;
-import com.codebite.problem.dto.CreateProblemRequest;
-import com.codebite.problem.dto.CreateTestCaseRequest;
 import com.codebite.problem.dto.ProblemDetail;
-import com.codebite.problem.dto.ProblemListItem;
-import com.codebite.problem.dto.TestCaseDto;
-import com.codebite.problem.dto.UpdateProblemRequest;
 import com.codebite.problem.entity.Difficulty;
 import com.codebite.problem.entity.Problem;
-import com.codebite.problem.entity.TestCase;
 import com.codebite.problem.repository.ProblemRepository;
-import com.codebite.problem.repository.ProblemTranslationRepository;
-import com.codebite.problem.repository.TagRepository;
 import com.codebite.problem.repository.TestCaseRepository;
-import com.codebite.problem.service.ProblemService;
+import com.codebite.problem.service.ProblemDtos;
 import com.codebite.problem.service.StarterCodeLoader;
-import com.codebite.submission.repository.SubmissionRepository;
+import com.codebite.problem.dto.CreateProblemRequest;
+import com.codebite.problem.dto.CreateTestCaseRequest;
+import com.codebite.problem.dto.TestCaseDto;
+import com.codebite.problem.dto.UpdateProblemRequest;
+import com.codebite.problem.entity.TestCase;
+import com.codebite.problem.repository.TagRepository;
+import com.codebite.problem.service.ProblemAdminService;
+import com.codebite.progress.ProblemPopularity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -35,35 +30,23 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class ProblemServiceTest {
+class ProblemAdminServiceTest {
 
-    @Mock
-    private ProblemRepository problemRepository;
+    @Mock private ProblemRepository problemRepository;
+    @Mock private TestCaseRepository testCaseRepository;
+    @Mock private TagRepository tagRepository;
+    @Mock private StarterCodeLoader starterCodeLoader;
+    @Mock private ProblemPopularity problemPopularity;
 
-    @Mock
-    private ProblemTranslationRepository translationRepository;
-
-    @Mock
-    private TestCaseRepository testCaseRepository;
-
-    @Mock
-    private StarterCodeLoader starterCodeLoader;
-
-    @Mock
-    private TagRepository tagRepository;
-
-    @Mock
-    private SubmissionRepository submissionRepository;
-
-    private ProblemService problemService;
+    private ProblemAdminService problemService;
 
     @BeforeEach
     void setUp() {
-        problemService = new ProblemService(problemRepository, translationRepository, testCaseRepository, tagRepository, starterCodeLoader, submissionRepository);
+        problemService = new ProblemAdminService(problemRepository, testCaseRepository, tagRepository,
+                problemPopularity, new ProblemDtos(starterCodeLoader));
     }
 
     private Problem buildProblem(Long id, String title, String slug, boolean published) {
@@ -75,59 +58,6 @@ class ProblemServiceTest {
         p.setDifficulty(Difficulty.EASY);
         p.setPublished(published);
         return p;
-    }
-
-    @Test
-    void listPublishedProblems_returnsPage() {
-        Problem p1 = buildProblem(1L, "Two Sum", "pair-sum", true);
-        Page<Problem> page = new PageImpl<>(List.of(p1));
-        when(problemRepository.findAll(any(org.springframework.data.jpa.domain.Specification.class), any(PageRequest.class))).thenReturn(page);
-        when(submissionRepository.findAcceptanceRates()).thenReturn(List.of());
-
-        Page<ProblemListItem> result = problemService.listPublishedProblems(null, null, null, null, null, PageRequest.of(0, 10));
-        assertEquals(1, result.getTotalElements());
-        assertEquals("Two Sum", result.getContent().get(0).title());
-    }
-
-    @Test
-    void listPublishedProblems_withDifficultyFilter() {
-        Problem p1 = buildProblem(1L, "Easy One", "easy-one", true);
-        Page<Problem> page = new PageImpl<>(List.of(p1));
-        when(problemRepository.findAll(any(org.springframework.data.jpa.domain.Specification.class), any(PageRequest.class))).thenReturn(page);
-        when(submissionRepository.findAcceptanceRates()).thenReturn(List.of());
-
-        Page<ProblemListItem> result = problemService.listPublishedProblems(Difficulty.EASY, null, null, null, null, PageRequest.of(0, 10));
-        assertEquals(1, result.getTotalElements());
-    }
-
-    @Test
-    void getProblemBySlug_returnsDetail() {
-        Problem problem = buildProblem(1L, "Two Sum", "pair-sum", true);
-        when(problemRepository.findBySlug("pair-sum")).thenReturn(Optional.of(problem));
-        when(testCaseRepository.findByProblemIdAndSampleTrueOrderByOrderIndexAsc(1L)).thenReturn(List.of());
-        when(starterCodeLoader.getStarterCode("pair-sum")).thenReturn(Map.of("java", "class Solution {}"));
-
-        ProblemDetail detail = problemService.getProblemBySlug("pair-sum");
-        assertEquals("Two Sum", detail.title());
-        assertEquals("pair-sum", detail.slug());
-        assertEquals(Map.of("java", "class Solution {}"), detail.starterCode());
-    }
-
-    @Test
-    void getProblemBySlug_notFound_throws() {
-        when(problemRepository.findBySlug("missing")).thenReturn(Optional.empty());
-
-        assertThrows(ResourceNotFoundException.class,
-                () -> problemService.getProblemBySlug("missing"));
-    }
-
-    @Test
-    void getProblemBySlug_unpublished_throws() {
-        Problem problem = buildProblem(1L, "Draft", "draft", false);
-        when(problemRepository.findBySlug("draft")).thenReturn(Optional.of(problem));
-
-        assertThrows(ResourceNotFoundException.class,
-                () -> problemService.getProblemBySlug("draft"));
     }
 
     @Test

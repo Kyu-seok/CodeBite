@@ -162,6 +162,28 @@ class SubmissionRepositoryTest {
         return submission;
     }
 
+    @Test
+    void countDailySubmissions_isEmptyWithoutAny_andSkipsAdminSubmissions() {
+        assertEquals(List.of(), submissionRepository.countDailySubmissions(java.time.Instant.EPOCH));
+
+        User admin = new User();
+        admin.setUsername("admin");
+        admin.setEmail("admin@test.com");
+        admin.setPasswordHash("hash");
+        admin.setRole(com.codebite.user.entity.Role.ADMIN);
+        admin = entityManager.persist(admin);
+        entityManager.persist(createSubmission(SubmissionStatus.ACCEPTED));
+        entityManager.persist(createSubmission(SubmissionStatus.WRONG_ANSWER));
+        Submission validation = Submission.pending(admin, problem, "java", "x");
+        validation.grade(Verdict.empty(), List.of());
+        entityManager.persist(validation);
+        entityManager.flush();
+
+        List<com.codebite.common.time.DayCount> days = submissionRepository.countDailySubmissions(java.time.Instant.EPOCH);
+        assertEquals(1, days.size(), "both user submissions were made today");
+        assertEquals(2, days.get(0).count());
+    }
+
     /** Dropping the explicit saveAll of result rows relies on this cascade. */
     @Test
     void save_cascadesTheResultRowsGradeAdded() {

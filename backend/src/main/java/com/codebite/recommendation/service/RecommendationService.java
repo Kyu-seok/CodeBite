@@ -1,18 +1,19 @@
 package com.codebite.recommendation.service;
 
 import com.codebite.problem.entity.Problem;
+import com.codebite.progress.UserProgress;
 import com.codebite.recommendation.dto.RoadmapNextItem;
 import com.codebite.recommendation.dto.RoadmapNextProblem;
 import com.codebite.recommendation.dto.WeakCategoryItem;
 import com.codebite.review.entity.Confidence;
+import com.codebite.review.repository.ReviewRepository;
+import com.codebite.review.repository.TagConfidenceCount;
 import com.codebite.roadmap.entity.RoadmapCategory;
 import com.codebite.roadmap.repository.RoadmapCategoryRepository;
-import com.codebite.submission.repository.SubmissionRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,13 +22,16 @@ import java.util.Set;
 @Service
 public class RecommendationService {
 
-    private final SubmissionRepository submissionRepository;
+    private final ReviewRepository reviewRepository;
     private final RoadmapCategoryRepository roadmapRepository;
+    private final UserProgress userProgress;
 
-    public RecommendationService(SubmissionRepository submissionRepository,
-                                 RoadmapCategoryRepository roadmapRepository) {
-        this.submissionRepository = submissionRepository;
+    public RecommendationService(ReviewRepository reviewRepository,
+                                 RoadmapCategoryRepository roadmapRepository,
+                                 UserProgress userProgress) {
+        this.reviewRepository = reviewRepository;
         this.roadmapRepository = roadmapRepository;
+        this.userProgress = userProgress;
     }
 
     /**
@@ -38,13 +42,9 @@ public class RecommendationService {
     public List<WeakCategoryItem> getWeakTags(Long userId, int limit) {
         record TagKey(String slug, String name) {}
         Map<TagKey, long[]> byTag = new LinkedHashMap<>();
-        for (Object[] row : submissionRepository.countConfidenceByTag(userId)) {
-            String slug = (String) row[0];
-            String name = (String) row[1];
-            Confidence conf = (Confidence) row[2];
-            long count = (Long) row[3];
-            long[] counts = byTag.computeIfAbsent(new TagKey(slug, name), k -> new long[4]);
-            counts[confidenceIndex(conf)] += count;
+        for (TagConfidenceCount row : reviewRepository.countConfidenceByTag(userId)) {
+            long[] counts = byTag.computeIfAbsent(new TagKey(row.slug(), row.name()), k -> new long[4]);
+            counts[confidenceIndex(row.confidence())] += row.count();
         }
 
         return byTag.entrySet().stream()
@@ -68,7 +68,7 @@ public class RecommendationService {
     @Transactional(readOnly = true)
     public List<RoadmapNextItem> getRoadmapNext(Long userId) {
         List<RoadmapCategory> categories = roadmapRepository.findAllByOrderByDisplayOrderAsc();
-        Set<Long> solvedProblemIds = loadSolvedProblemIds(userId);
+        Set<Long> solvedProblemIds = userProgress.solvedProblemIds(userId);
 
         // Determine which categories are fully solved (all published problems solved).
         Map<Long, Boolean> isCategorySolved = new HashMap<>();
@@ -104,16 +104,6 @@ public class RecommendationService {
                                 .toList()
                 ))
                 .toList();
-    }
-
-    private Set<Long> loadSolvedProblemIds(Long userId) {
-        Set<Long> solved = new HashSet<>();
-        for (Object[] row : submissionRepository.findProblemStatusesByUserId(userId)) {
-            if ("SOLVED".equals(row[1])) {
-                solved.add((Long) row[0]);
-            }
-        }
-        return solved;
     }
 
     private static int confidenceIndex(Confidence c) {

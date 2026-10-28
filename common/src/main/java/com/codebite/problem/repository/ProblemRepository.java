@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,11 +23,14 @@ public interface ProblemRepository extends JpaRepository<Problem, Long>, JpaSpec
 
     Page<Problem> findByPublishedTrueAndDifficulty(Difficulty difficulty, Pageable pageable);
 
-    @Query("SELECT p.difficulty, COUNT(p) FROM Problem p WHERE p.published = true GROUP BY p.difficulty")
-    List<Object[]> countPublishedByDifficulty();
+    // Totals the user's Progress is shown against; a difficulty with no published problem is absent.
+    @Query("SELECT new com.codebite.problem.repository.DifficultyCount(p.difficulty, COUNT(p)) "
+           + "FROM Problem p WHERE p.published = true GROUP BY p.difficulty")
+    List<DifficultyCount> countPublishedByDifficulty();
 
-    @Query("SELECT p.difficulty, COUNT(p) FROM Problem p WHERE p.published = true AND p.problemNumber <= :maxNumber GROUP BY p.difficulty")
-    List<Object[]> countPublishedByDifficultyAndCuration(@Param("maxNumber") int maxNumber);
+    @Query("SELECT new com.codebite.problem.repository.DifficultyCount(p.difficulty, COUNT(p)) "
+           + "FROM Problem p WHERE p.published = true AND p.problemNumber <= :maxNumber GROUP BY p.difficulty")
+    List<DifficultyCount> countPublishedByDifficultyAndCuration(@Param("maxNumber") int maxNumber);
 
     @Query("SELECT p.slug FROM Problem p WHERE p.published = true ORDER BY RANDOM()")
     List<String> findRandomPublishedSlugs(Pageable pageable);
@@ -34,15 +38,17 @@ public interface ProblemRepository extends JpaRepository<Problem, Long>, JpaSpec
     @Query("SELECT p.slug FROM Problem p WHERE p.published = true AND p.difficulty = :difficulty ORDER BY RANDOM()")
     List<String> findRandomPublishedSlugsByDifficulty(@Param("difficulty") Difficulty difficulty, Pageable pageable);
 
-    @Query("SELECT p.slug FROM Problem p WHERE p.published = true " +
-           "AND p.id NOT IN (SELECT DISTINCT s.problem.id FROM Submission s WHERE s.user.id = :userId AND s.status = 'ACCEPTED') " +
-           "ORDER BY RANDOM()")
-    List<String> findRandomUnsolvedSlugs(@Param("userId") Long userId, Pageable pageable);
+    // Random pick among published problems other than the given ones (the user's Solved ids from
+    // UserProgress). `excluded` must not be empty: NOT IN () is not SQL; callers use the plain
+    // random query then.
+    @Query("SELECT p.slug FROM Problem p WHERE p.published = true AND p.id NOT IN :excluded ORDER BY RANDOM()")
+    List<String> findRandomPublishedSlugsExcluding(@Param("excluded") Collection<Long> excluded, Pageable pageable);
 
-    @Query("SELECT p.slug FROM Problem p WHERE p.published = true AND p.difficulty = :difficulty " +
-           "AND p.id NOT IN (SELECT DISTINCT s.problem.id FROM Submission s WHERE s.user.id = :userId AND s.status = 'ACCEPTED') " +
-           "ORDER BY RANDOM()")
-    List<String> findRandomUnsolvedSlugsByDifficulty(@Param("difficulty") Difficulty difficulty, @Param("userId") Long userId, Pageable pageable);
+    @Query("SELECT p.slug FROM Problem p WHERE p.published = true AND p.difficulty = :difficulty "
+           + "AND p.id NOT IN :excluded ORDER BY RANDOM()")
+    List<String> findRandomPublishedSlugsByDifficultyExcluding(@Param("difficulty") Difficulty difficulty,
+                                                               @Param("excluded") Collection<Long> excluded,
+                                                               Pageable pageable);
 
     @Query("SELECT p FROM Problem p WHERE p.published = true AND LOWER(p.title) LIKE LOWER(CONCAT('%', :search, '%'))")
     Page<Problem> findByPublishedTrueAndTitleSearch(@Param("search") String search, Pageable pageable);
@@ -50,7 +56,8 @@ public interface ProblemRepository extends JpaRepository<Problem, Long>, JpaSpec
     @Query("SELECT p FROM Problem p WHERE p.published = true AND p.difficulty = :difficulty AND LOWER(p.title) LIKE LOWER(CONCAT('%', :search, '%'))")
     Page<Problem> findByPublishedTrueAndDifficultyAndTitleSearch(@Param("difficulty") Difficulty difficulty, @Param("search") String search, Pageable pageable);
 
-    // Profile: count published problems per tag
-    @Query("SELECT t.name, t.slug, COUNT(p) FROM Problem p JOIN p.tags t WHERE p.published = true GROUP BY t.name, t.slug")
-    List<Object[]> countPublishedByTag();
+    // Profile: published problems per tag; a tag no published problem carries is absent.
+    @Query("SELECT new com.codebite.problem.repository.TagCount(t.name, t.slug, COUNT(p)) "
+           + "FROM Problem p JOIN p.tags t WHERE p.published = true GROUP BY t.name, t.slug")
+    List<TagCount> countPublishedByTag();
 }

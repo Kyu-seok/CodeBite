@@ -5,7 +5,7 @@ import com.codebite.problem.dto.ProblemDetail;
 import com.codebite.problem.dto.ProblemListItem;
 import com.codebite.problem.dto.ProblemStats;
 import com.codebite.problem.entity.Difficulty;
-import com.codebite.problem.service.ProblemService;
+import com.codebite.problem.service.ProblemCatalogue;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -27,9 +27,9 @@ public class ProblemController {
 
     private static final Set<String> ALLOWED_SORT_FIELDS = Set.of("id", "problemNumber", "title", "difficulty");
 
-    private final ProblemService problemService;
+    private final ProblemCatalogue problemService;
 
-    public ProblemController(ProblemService problemService) {
+    public ProblemController(ProblemCatalogue problemService) {
         this.problemService = problemService;
     }
 

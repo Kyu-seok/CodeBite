@@ -1,7 +1,11 @@
 package com.codebite.profile.service;
 
 import com.codebite.problem.entity.Difficulty;
+import com.codebite.problem.repository.DifficultyCount;
 import com.codebite.problem.repository.ProblemRepository;
+import com.codebite.problem.repository.TagCount;
+import com.codebite.progress.UserProgress;
+import com.codebite.progress.UserProgress.TagProgress;
 import com.codebite.profile.dto.ActivityDay;
 import com.codebite.profile.dto.ProfileStats;
 import com.codebite.profile.dto.RecentSubmission;
@@ -18,12 +22,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.OptionalInt;
 
 @Service
 public class ProfileService {
@@ -32,47 +37,40 @@ public class ProfileService {
     private final ProblemRepository problemRepository;
     private final UserRepository userRepository;
     private final StreakService streakService;
+    private final UserProgress userProgress;
 
     public ProfileService(SubmissionRepository submissionRepository,
                           ProblemRepository problemRepository,
                           UserRepository userRepository,
-                          StreakService streakService) {
+                          StreakService streakService,
+                          UserProgress userProgress) {
         this.submissionRepository = submissionRepository;
         this.problemRepository = problemRepository;
         this.userRepository = userRepository;
         this.streakService = streakService;
+        this.userProgress = userProgress;
     }
 
     @Transactional(readOnly = true)
     public ProfileStats getStats(Long userId) {
-        // Difficulty totals
-        Map<String, Integer> totals = new HashMap<>();
-        for (Object[] row : problemRepository.countPublishedByDifficulty()) {
-            totals.put(((Difficulty) row[0]).name(), ((Long) row[1]).intValue());
+        Map<Difficulty, Integer> totals = new EnumMap<>(Difficulty.class);
+        for (DifficultyCount row : problemRepository.countPublishedByDifficulty()) {
+            totals.put(row.difficulty(), (int) row.count());
         }
+        Map<Difficulty, Integer> solved = userProgress.solvedByDifficulty(userId, OptionalInt.empty());
 
-        // Solved by difficulty
-        Map<String, Integer> solved = new HashMap<>();
-        for (Object[] row : submissionRepository.countSolvedByDifficultyAndUserId(userId)) {
-            solved.put(((Difficulty) row[0]).name(), ((Long) row[1]).intValue());
-        }
-
-        int totalEasy = totals.getOrDefault("EASY", 0);
-        int totalMedium = totals.getOrDefault("MEDIUM", 0);
-        int totalHard = totals.getOrDefault("HARD", 0);
-        int solvedEasy = solved.getOrDefault("EASY", 0);
-        int solvedMedium = solved.getOrDefault("MEDIUM", 0);
-        int solvedHard = solved.getOrDefault("HARD", 0);
+        int totalEasy = totals.getOrDefault(Difficulty.EASY, 0);
+        int totalMedium = totals.getOrDefault(Difficulty.MEDIUM, 0);
+        int totalHard = totals.getOrDefault(Difficulty.HARD, 0);
+        int solvedEasy = solved.getOrDefault(Difficulty.EASY, 0);
+        int solvedMedium = solved.getOrDefault(Difficulty.MEDIUM, 0);
+        int solvedHard = solved.getOrDefault(Difficulty.HARD, 0);
         int totalSolved = solvedEasy + solvedMedium + solvedHard;
         int totalProblems = totalEasy + totalMedium + totalHard;
 
         // Active days for the past year
         Instant oneYearAgo = Instant.now().minus(365, ChronoUnit.DAYS);
-        List<Object[]> activityRows = submissionRepository.countDailyActivity(userId, oneYearAgo);
-        List<LocalDate> activeDates = new ArrayList<>();
-        for (Object[] row : activityRows) {
-            activeDates.add((LocalDate) row[0]);
-        }
+        int activeDays = userProgress.activity(userId, oneYearAgo).size();
 
         StreakSummary streak = streakService.getSummary(userId);
 
@@ -85,7 +83,7 @@ public class ProfileService {
                 totalSolved, totalProblems,
                 solvedEasy, solvedMedium, solvedHard,
                 totalEasy, totalMedium, totalHard,
-                streak.currentStreak(), streak.bestStreak(), activeDates.size(),
+                streak.currentStreak(), streak.bestStreak(), activeDays,
                 memberSince
         );
     }
@@ -93,43 +91,23 @@ public class ProfileService {
     @Transactional(readOnly = true)
     public List<ActivityDay> getActivity(Long userId, int months) {
         Instant since = Instant.now().minus(months * 30L, ChronoUnit.DAYS);
-        List<Object[]> rows = submissionRepository.countDailyActivity(userId, since);
-        List<ActivityDay> result = new ArrayList<>();
-        for (Object[] row : rows) {
-            result.add(new ActivityDay((LocalDate) row[0], ((Long) row[1]).intValue()));
-        }
-        return result;
+        return userProgress.activity(userId, since).stream()
+                .map(day -> new ActivityDay(day.day(), day.submissions()))
+                .toList();
     }
 
     @Transactional(readOnly = true)
     public List<TagProficiency> getTagProficiency(Long userId) {
-        // Total problems per tag
-        Map<String, int[]> tagMap = new HashMap<>(); // slug -> [solved, total]
-        Map<String, String> nameMap = new HashMap<>(); // slug -> name
-
-        for (Object[] row : problemRepository.countPublishedByTag()) {
-            String name = (String) row[0];
-            String slug = (String) row[1];
-            int total = ((Long) row[2]).intValue();
-            tagMap.put(slug, new int[]{0, total});
-            nameMap.put(slug, name);
+        Map<String, Integer> solvedBySlug = new HashMap<>();
+        for (TagProgress tag : userProgress.solvedByTag(userId)) {
+            solvedBySlug.put(tag.slug(), tag.solved().intValue());
         }
 
-        // Solved per tag
-        for (Object[] row : submissionRepository.countSolvedByTag(userId)) {
-            String slug = (String) row[1];
-            int solvedCount = ((Long) row[2]).intValue();
-            int[] counts = tagMap.get(slug);
-            if (counts != null) {
-                counts[0] = solvedCount;
-            }
-        }
-
+        // One entry per tag with a published problem, Solved or not.
         List<TagProficiency> result = new ArrayList<>();
-        for (Map.Entry<String, int[]> entry : tagMap.entrySet()) {
-            String slug = entry.getKey();
-            int[] counts = entry.getValue();
-            result.add(new TagProficiency(nameMap.get(slug), slug, counts[0], counts[1]));
+        for (TagCount tag : problemRepository.countPublishedByTag()) {
+            result.add(new TagProficiency(tag.name(), tag.slug(),
+                    solvedBySlug.getOrDefault(tag.slug(), 0), (int) tag.count()));
         }
         result.sort((a, b) -> a.tagName().compareTo(b.tagName()));
         return result;

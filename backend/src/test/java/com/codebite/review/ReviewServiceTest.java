@@ -12,6 +12,7 @@ import com.codebite.review.dto.ReviewStateResponse;
 import com.codebite.review.entity.Confidence;
 import com.codebite.review.entity.ProblemReviewState;
 import com.codebite.review.repository.ProblemReviewStateRepository;
+import com.codebite.review.repository.ReviewRepository;
 import com.codebite.review.service.ReviewService;
 import com.codebite.submission.entity.Submission;
 import com.codebite.submission.entity.SubmissionStatus;
@@ -49,6 +50,7 @@ class ReviewServiceTest {
     @Mock private ProblemReviewStateRepository stateRepository;
     @Mock private ProblemRepository problemRepository;
     @Mock private SubmissionRepository submissionRepository;
+    @Mock private ReviewRepository reviewRepository;
 
     private ReviewService reviewService;
 
@@ -58,7 +60,7 @@ class ReviewServiceTest {
     @BeforeEach
     void setUp() {
         reviewService = new ReviewService(
-                stateRepository, problemRepository, submissionRepository);
+                stateRepository, problemRepository, submissionRepository, reviewRepository);
 
         user = new User();
         user.setId(1L);
@@ -98,7 +100,7 @@ class ReviewServiceTest {
         Submission sub = submission(100L, SubmissionStatus.ACCEPTED);
 
         when(submissionRepository.findById(100L)).thenReturn(Optional.of(sub));
-        when(submissionRepository
+        when(reviewRepository
                 .findByUserIdAndProblemIdAndConfidenceIsNotNullOrderByReviewedAtAsc(1L, 10L))
                 .thenReturn(List.of());
 
@@ -128,7 +130,7 @@ class ReviewServiceTest {
 
         when(submissionRepository.findById(100L)).thenReturn(Optional.of(first));
         // What the repository holds before the change; the service must not count first's old GOOD.
-        when(submissionRepository
+        when(reviewRepository
                 .findByUserIdAndProblemIdAndConfidenceIsNotNullOrderByReviewedAtAsc(1L, 10L))
                 .thenReturn(List.of(first, second));
 
@@ -151,7 +153,7 @@ class ReviewServiceTest {
         second.setReviewedAt(Instant.parse("2026-01-05T00:00:00Z"));
 
         when(submissionRepository.findById(101L)).thenReturn(Optional.of(second));
-        when(submissionRepository
+        when(reviewRepository
                 .findByUserIdAndProblemIdAndConfidenceIsNotNullOrderByReviewedAtAsc(1L, 10L))
                 .thenReturn(List.of(first, second));
 
@@ -173,7 +175,7 @@ class ReviewServiceTest {
         only.setReviewedAt(Instant.parse("2026-01-01T00:00:00Z"));
 
         when(submissionRepository.findById(100L)).thenReturn(Optional.of(only));
-        when(submissionRepository
+        when(reviewRepository
                 .findByUserIdAndProblemIdAndConfidenceIsNotNullOrderByReviewedAtAsc(1L, 10L))
                 .thenReturn(List.of(only));
 
@@ -188,7 +190,7 @@ class ReviewServiceTest {
         Submission sub = submission(100L, SubmissionStatus.ACCEPTED);
         // Imagine someone clears confidence elsewhere; replay would return empty.
         when(submissionRepository.findById(100L)).thenReturn(Optional.of(sub));
-        when(submissionRepository
+        when(reviewRepository
                 .findByUserIdAndProblemIdAndConfidenceIsNotNullOrderByReviewedAtAsc(1L, 10L))
                 .thenReturn(List.of());
 
@@ -240,7 +242,7 @@ class ReviewServiceTest {
         sub.setNotes("old");
 
         when(submissionRepository.findById(100L)).thenReturn(Optional.of(sub));
-        when(submissionRepository
+        when(reviewRepository
                 .findByUserIdAndProblemIdAndConfidenceIsNotNullOrderByReviewedAtAsc(1L, 10L))
                 .thenReturn(List.of());
 
@@ -255,7 +257,7 @@ class ReviewServiceTest {
         sub.setNotes("kept");
 
         when(submissionRepository.findById(100L)).thenReturn(Optional.of(sub));
-        when(submissionRepository
+        when(reviewRepository
                 .findByUserIdAndProblemIdAndConfidenceIsNotNullOrderByReviewedAtAsc(1L, 10L))
                 .thenReturn(List.of());
 
@@ -273,7 +275,7 @@ class ReviewServiceTest {
         second.setConfidence(Confidence.GOOD);
         second.setReviewedAt(Instant.parse("2026-01-02T00:00:00Z"));
         Submission third = submission(102L, SubmissionStatus.ACCEPTED);
-        when(submissionRepository
+        when(reviewRepository
                 .findByUserIdAndProblemIdAndConfidenceIsNotNullOrderByReviewedAtAsc(1L, 10L))
                 .thenReturn(List.of(first, second));
 
@@ -311,7 +313,7 @@ class ReviewServiceTest {
         second.setReviewedAt(Instant.parse("2026-01-05T00:00:00Z"));
 
         when(problemRepository.findBySlug("two-sum")).thenReturn(Optional.of(problem));
-        when(submissionRepository
+        when(reviewRepository
                 .findByUserIdAndProblemIdAndConfidenceIsNotNullOrderByReviewedAtAsc(1L, 10L))
                 .thenReturn(List.of(first, second));
 
@@ -329,7 +331,7 @@ class ReviewServiceTest {
     @Test
     void getReviewHistory_returnsEmptyWhenNothingRated() {
         when(problemRepository.findBySlug("two-sum")).thenReturn(Optional.of(problem));
-        when(submissionRepository
+        when(reviewRepository
                 .findByUserIdAndProblemIdAndConfidenceIsNotNullOrderByReviewedAtAsc(1L, 10L))
                 .thenReturn(List.of());
 

@@ -70,6 +70,27 @@ A problem whose Review Schedule's next due moment is at or before now.
 **Mastered**:
 A problem with at least three Reviews, the last two Good or Easy, and an interval of 30 days or more; recomputed on every Review and can be lost.
 
+### Progress
+
+**Solved**:
+A problem to which the user has at least one Accepted, non-admin submission. Once Solved, always Solved.
+_Avoid_: Completed, passed, done, "has accepted"
+
+**Attempted**:
+A problem the user has a graded, non-admin submission to but has not Solved. A pending submission makes a problem neither Solved nor Attempted.
+
+**Progress**:
+A user's Solved and Attempted problems, and their counts by difficulty and tag against the published catalogue.
+_Avoid_: Stats, score
+
+**Activity**:
+The number of submissions of any status a user made on a UTC day; the profile heatmap. An Activity day is not a Streak Day unless one of them was Accepted.
+_Avoid_: Active day, heatmap day
+
+**Acceptance Rate**:
+Per problem, the share of graded non-admin submissions that were Accepted, as a percentage to one decimal. A problem nobody has been graded on has none.
+_Avoid_: Pass rate, success rate, solve rate
+
 ### GitHub
 
 **GitHub Link**:

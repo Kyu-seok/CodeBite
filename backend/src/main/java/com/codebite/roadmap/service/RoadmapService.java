@@ -3,17 +3,16 @@ package com.codebite.roadmap.service;
 import com.codebite.problem.entity.Problem;
 import com.codebite.problem.entity.ProblemTranslation;
 import com.codebite.problem.repository.ProblemTranslationRepository;
+import com.codebite.progress.UserProgress;
 import com.codebite.roadmap.dto.RoadmapCategoryDto;
 import com.codebite.roadmap.dto.RoadmapProblemDto;
 import com.codebite.roadmap.dto.RoadmapResponse;
 import com.codebite.roadmap.entity.RoadmapCategory;
 import com.codebite.roadmap.repository.RoadmapCategoryRepository;
-import com.codebite.submission.repository.SubmissionRepository;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -22,28 +21,28 @@ import java.util.stream.Collectors;
 public class RoadmapService {
 
     private final RoadmapCategoryRepository categoryRepository;
-    private final SubmissionRepository submissionRepository;
+    private final UserProgress userProgress;
     private final ProblemTranslationRepository translationRepository;
 
     public RoadmapService(RoadmapCategoryRepository categoryRepository,
-                          SubmissionRepository submissionRepository,
+                          UserProgress userProgress,
                           ProblemTranslationRepository translationRepository) {
         this.categoryRepository = categoryRepository;
-        this.submissionRepository = submissionRepository;
+        this.userProgress = userProgress;
         this.translationRepository = translationRepository;
     }
 
     @Transactional(readOnly = true)
     public RoadmapResponse getRoadmap(Long userId) {
         List<RoadmapCategory> categories = categoryRepository.findAllByOrderByDisplayOrderAsc();
-        Map<Long, String> statusMap = userId != null ? buildStatusMap(userId) : Map.of();
-
-        // Collect all published problem IDs for translation lookup
+        // Every published problem on the roadmap: the ones shown, translated and given a status.
         List<Long> allProblemIds = categories.stream()
                 .flatMap(c -> c.getProblems().stream())
                 .filter(Problem::isPublished)
                 .map(Problem::getId)
                 .toList();
+        Map<Long, UserProgress.Status> statusMap = userId != null
+                ? userProgress.statusByProblem(userId, allProblemIds) : Map.of();
         Map<Long, ProblemTranslation> translationMap = fetchTranslationMap(allProblemIds);
 
         List<RoadmapCategoryDto> dtos = categories.stream()
@@ -53,7 +52,7 @@ public class RoadmapService {
         return new RoadmapResponse(dtos);
     }
 
-    private RoadmapCategoryDto toDto(RoadmapCategory category, Map<Long, String> statusMap,
+    private RoadmapCategoryDto toDto(RoadmapCategory category, Map<Long, UserProgress.Status> statusMap,
                                      Map<Long, ProblemTranslation> translationMap) {
         List<String> prerequisiteSlugs = category.getPrerequisites().stream()
                 .map(RoadmapCategory::getSlug)
@@ -70,7 +69,7 @@ public class RoadmapService {
                             title,
                             p.getSlug(),
                             p.getDifficulty(),
-                            statusMap.getOrDefault(p.getId(), null)
+                            statusMap.containsKey(p.getId()) ? statusMap.get(p.getId()).name() : null
                     );
                 })
                 .toList();
@@ -91,13 +90,5 @@ public class RoadmapService {
         if ("en".equals(locale) || problemIds.isEmpty()) return Map.of();
         return translationRepository.findByProblemIdInAndLocale(problemIds, locale)
                 .stream().collect(Collectors.toMap(t -> t.getProblem().getId(), t -> t));
-    }
-
-    private Map<Long, String> buildStatusMap(Long userId) {
-        Map<Long, String> map = new HashMap<>();
-        for (Object[] row : submissionRepository.findProblemStatusesByUserId(userId)) {
-            map.put((Long) row[0], (String) row[1]);
-        }
-        return map;
     }
 }

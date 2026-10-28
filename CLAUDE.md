@@ -26,18 +26,18 @@ Root `settings.gradle` includes three modules: `common`, `backend`, `worker`. Th
 ### Package Structure (`common/src/main/java/com/codebite/`)
 - `common/base/` — BaseEntity (id, createdAt, updatedAt)
 - `common/exception/` — ApiError, custom exceptions (ResourceNotFoundException, JudgeExecutionException, etc.)
-- `common/time/` — DayRuns (runs of consecutive UTC days behind the Streak and the Review Streak)
+- `common/time/` — DayRuns (runs of consecutive UTC days behind the Streak and the Review Streak), DayCount (a count on one calendar day, the heatmap row)
 - `user/entity/` — User, Role, OAuthProvider, UserOAuthAccount
 - `user/repository/` — UserRepository, UserOAuthAccountRepository
 - `problem/entity/` — Problem, TestCase, Difficulty
 - `problem/repository/` — ProblemRepository, TestCaseRepository
 - `submission/entity/` — Submission, SubmissionResult, SubmissionStatus
-- `submission/repository/` — SubmissionRepository, SubmissionResultRepository
+- `submission/repository/` — SubmissionRepository (lifecycle, Import, re-drive and admin reads; progress reads live in the backend's `progress/`), SubmissionResultRepository
 - `submission/event/` — SubmissionEvent (Kafka message DTO)
 - `streak/entity/` — StreakDay, UserStreak (Repairs held + Repair Progress)
 - `streak/repository/` — StreakDayRepository, UserStreakRepository
 - `review/entity/` — Confidence, ProblemReviewState (the stored snapshot of a Review Schedule, built by `of(userId, problemId, schedule)`, getters only), ProblemReviewStateId
-- `review/repository/` — ProblemReviewStateRepository (`findDue`, `countDue`)
+- `review/repository/` — ProblemReviewStateRepository (`findDue`, `countDue`), ReviewRepository (reads of rated submissions: replay order, stats, heatmap `DayCount`s, `TagConfidenceCount`s, filtered history)
 - `review/schedule/` — Review, ReviewSchedule (SM-2 lite as an immutable value: `replay`, `rate`, `preview`, `mastered`; the only place the numbers live; `review-schedule-golden.csv` in test resources pins them)
 - `github/entity/` — GitHubLink, GitHubLinkStatus (ACTIVE/BROKEN/UNLINKED), GitHubImportState, SolutionCommit, SolutionCommitStatus (PENDING/COMMITTED/FAILED)
 - `github/repository/` — GitHubLinkRepository (`findCurrentByUserId` = the user's current link, ACTIVE or BROKEN), SolutionCommitRepository
@@ -86,10 +86,11 @@ The GitHub App behind Solution Commits is registered by hand: run `scripts/setup
 - `common/exception/` — GlobalExceptionHandler
 - `auth/` — JWT auth + OAuth (controller, service, DTOs, filter, token provider, oauth clients)
 - `user/` — UserService, DTOs
-- `problem/` — Problem CRUD (controllers, service, DTOs)
+- `problem/` — Problems: `ProblemCatalogue` (what users see: the published list with Progress and Acceptance Rate, header counts, random pick, detail) and `ProblemAdminService` (curation behind /api/admin/problems); `ProblemDtos` builds the DTOs both return (controllers, DTOs)
 - `submission/` — Submission flow (controller, service, DTOs, Kafka producer)
 - `run/` — Run flow (controller, service, DTOs — synchronous Judge0 execution, sample test cases only)
 - `streak/` — Streaks and Repairs (controller, service, DTOs, `submission-results` listener); terms in GLOSSARY.md, UTC days per docs/adr/0001
+- `progress/` — typed progress reads (terms in GLOSSARY.md): `UserProgress` owns what Solved and Attempted mean (Accepted/graded, non-admin, PENDING is neither) for the problem list, roadmap and recommendations, and the Solved counts by difficulty and tag over published problems that the profile and list header show, and Activity (every submission, bucketed into UTC days in Java); `ProblemPopularity` (Acceptance Rate from `problem_stats`, maintained by `stats/consumer/SubmissionStatsListener` and backfilled once by V195; a problem with no row reads `Rate.NONE`)
 - `review/` — Reviews (controller, service, DTOs): `ReviewService` rates a submission by replaying the other submissions' Reviews through `ReviewSchedule` and rating on top, stores the snapshot row or deletes it when no Review is left, previews intervals the same way, and lists Due problems from the row; terms in GLOSSARY.md
 - `github/` — GitHub Links via the CodeBite GitHub App (ADR 0003): `gateway/` (`GitHubGateway` seam, `GitHubAppGateway` REST adapter minting installation tokens from an RS256 app JWT, gateway exceptions), `service/` (link + signed install state carrying the chosen Solution Repository name; `SolutionCommitService` + `SolutionLayout` for Solution Commits, `SolutionCommitRecorder` for the row/path, README-first and outcome-counter rules it shares with `GitHubImporter`), `consumer/SolutionCommitListener` (`submission-results`, group `codebite-solution-commits`: every ACCEPTED event of a user with an ACTIVE link becomes a Solution Commit, a problem folder's first one adding README + solution in one commit via `pushCommits`; transient GitHub errors retried with doubling back-off per `app.github.commit-max-tries` / `commit-retry-backoff-ms`, then FAILED; never throws; a gone installation/repository marks the link BROKEN, after which submissions are skipped until relink), Import (`GitHubImportService` starts it and publishes `event/GitHubImportRequestedEvent` through `GitHubImportPublisher` → `kafka/KafkaGitHubImportPublisher` on topic `github-imports`; `consumer/GitHubImportListener`, group `codebite-github-imports`, runs `GitHubImporter`: every earlier Accepted submission not yet COMMITTED through the link goes up in one batch push via `GitHubGateway.pushCommits`, which the real adapter does with JGit in `gateway/GitBatchPush`, remote base `app.github.git-base-url`), controller (plus `GitHubExceptionHandler`, ordered ahead of GlobalExceptionHandler, mapping gateway exceptions to 403/503/502), DTOs. Tests swap in `FakeGitHubGateway` (`backend/src/test/.../github/gateway/`) via `TestGitHubConfig`, and `TestKafkaConfig` runs Imports synchronously
 

@@ -9,7 +9,7 @@ import com.codebite.problem.dto.UpdateProblemRequest;
 import com.codebite.problem.entity.Difficulty;
 import com.codebite.problem.entity.Tag;
 import com.codebite.problem.repository.TagRepository;
-import com.codebite.problem.service.ProblemService;
+import com.codebite.problem.service.ProblemAdminService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,10 +35,10 @@ import java.util.List;
 @PreAuthorize("hasRole('ADMIN')")
 public class AdminProblemController {
 
-    private final ProblemService problemService;
+    private final ProblemAdminService problemService;
     private final TagRepository tagRepository;
 
-    public AdminProblemController(ProblemService problemService, TagRepository tagRepository) {
+    public AdminProblemController(ProblemAdminService problemService, TagRepository tagRepository) {
         this.problemService = problemService;
         this.tagRepository = tagRepository;
     }
