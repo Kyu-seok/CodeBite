@@ -72,6 +72,17 @@ A problem with at least three Reviews, the last two Good or Easy, and an interva
 
 ### Progress
 
+**Solved**:
+A problem to which the user has at least one Accepted, non-admin submission. Once Solved, always Solved.
+_Avoid_: Completed, passed, done, "has accepted"
+
+**Attempted**:
+A problem the user has a graded, non-admin submission to but has not Solved. A pending submission makes a problem neither Solved nor Attempted.
+
+**Progress**:
+A user's Solved and Attempted problems, and their counts by difficulty and tag against the published catalogue.
+_Avoid_: Stats, score
+
 **Acceptance Rate**:
 Per problem, the share of graded non-admin submissions that were Accepted, as a percentage to one decimal. A problem nobody has been graded on has none.
 _Avoid_: Pass rate, success rate, solve rate

@@ -1,6 +1,7 @@
 package com.codebite.recommendation;
 
 import com.codebite.recommendation.dto.WeakCategoryItem;
+import com.codebite.progress.UserProgress;
 import com.codebite.recommendation.service.RecommendationService;
 import com.codebite.review.entity.Confidence;
 import com.codebite.roadmap.repository.RoadmapCategoryRepository;
@@ -21,12 +22,13 @@ class RecommendationServiceTest {
 
     @Mock private SubmissionRepository submissionRepository;
     @Mock private RoadmapCategoryRepository roadmapRepository;
+    @Mock private UserProgress userProgress;
 
     private RecommendationService service;
 
     @BeforeEach
     void setUp() {
-        service = new RecommendationService(submissionRepository, roadmapRepository);
+        service = new RecommendationService(submissionRepository, roadmapRepository, userProgress);
     }
 
     @Test

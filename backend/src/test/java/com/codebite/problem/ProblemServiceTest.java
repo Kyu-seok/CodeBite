@@ -17,6 +17,7 @@ import com.codebite.problem.repository.TestCaseRepository;
 import com.codebite.problem.service.ProblemService;
 import com.codebite.problem.service.StarterCodeLoader;
 import com.codebite.progress.ProblemPopularity;
+import com.codebite.progress.UserProgress;
 import com.codebite.submission.repository.SubmissionRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -63,12 +64,15 @@ class ProblemServiceTest {
     @Mock
     private ProblemPopularity problemPopularity;
 
+    @Mock
+    private UserProgress userProgress;
+
     private ProblemService problemService;
 
     @BeforeEach
     void setUp() {
         problemService = new ProblemService(problemRepository, translationRepository, testCaseRepository,
-                tagRepository, starterCodeLoader, submissionRepository, problemPopularity);
+                tagRepository, starterCodeLoader, submissionRepository, problemPopularity, userProgress);
     }
 
     private Problem buildProblem(Long id, String title, String slug, boolean published) {
