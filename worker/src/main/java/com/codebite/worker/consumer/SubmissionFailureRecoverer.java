@@ -1,6 +1,6 @@
 package com.codebite.worker.consumer;
 
-import com.codebite.submission.entity.SubmissionStatus;
+import com.codebite.submission.entity.Submission;
 import com.codebite.submission.event.SubmissionEvent;
 import com.codebite.submission.event.SubmissionResultEvent;
 import com.codebite.submission.repository.SubmissionRepository;
@@ -46,22 +46,16 @@ public class SubmissionFailureRecoverer implements ConsumerRecordRecoverer {
         Long submissionId = event.submissionId();
         log.error("Submission {} failed after retries; marking INTERNAL_ERROR", submissionId, exception);
 
-        submissionRepository.findById(submissionId).ifPresentOrElse(submission -> {
-            submission.setStatus(SubmissionStatus.INTERNAL_ERROR);
+        // Only a row still PENDING is failed: a re-driven duplicate may have graded it while this
+        // delivery's retries were failing, and that grade must not be overwritten.
+        submissionRepository.findById(submissionId).filter(Submission::isPending).ifPresentOrElse(submission -> {
+            SubmissionResultEvent result = submission.fail();
             submissionRepository.save(submission);
-            submissionMetrics.recordCompleted(event, SubmissionStatus.INTERNAL_ERROR);
+            submissionMetrics.recordCompleted(event, result.status());
 
             // A client waiting on SSE must learn about the failure too, or it hangs until its
             // poll fallback times out. Published AFTER_COMMIT, same as the success path.
-            eventPublisher.publishEvent(new SubmissionResultEvent(
-                    submissionId,
-                    submission.getUser().getId(),
-                    event.problemId(),
-                    SubmissionStatus.INTERNAL_ERROR,
-                    null,
-                    null,
-                    submission.getLanguage(),
-                    event.adminSubmission()));
-        }, () -> log.warn("Submission {} no longer exists; nothing to mark", submissionId));
+            eventPublisher.publishEvent(result);
+        }, () -> log.warn("Submission {} is missing or already terminal; nothing to mark", submissionId));
     }
 }
