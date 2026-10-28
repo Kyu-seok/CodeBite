@@ -246,22 +246,7 @@ class ReviewServiceTest {
     }
 
     @Test
-    void previewIntervals_firstRating_followsTheColdStartLadder() {
-        Submission sub = submission(100L, SubmissionStatus.ACCEPTED);
-        when(submissionRepository
-                .findByUserIdAndProblemIdAndConfidenceIsNotNullOrderByReviewedAtAsc(1L, 10L))
-                .thenReturn(List.of());
-
-        Map<Confidence, Integer> preview = reviewService.previewIntervals(sub);
-
-        assertEquals(Map.of(Confidence.AGAIN, 1, Confidence.HARD, 1,
-                Confidence.GOOD, 2, Confidence.EASY, 4), preview);
-        verify(stateRepository, never()).save(any(ProblemReviewState.class));
-        verify(submissionRepository, never()).save(any(Submission.class));
-    }
-
-    @Test
-    void previewIntervals_matchesWhatSetReviewWouldSchedule() {
+    void previewIntervals_excludesTheSubmissionsOwnReviewAndSavesNothing() {
         Submission first = submission(100L, SubmissionStatus.ACCEPTED);
         first.setConfidence(Confidence.GOOD);
         first.setReviewedAt(Instant.parse("2026-01-01T00:00:00Z"));
@@ -269,7 +254,6 @@ class ReviewServiceTest {
         second.setConfidence(Confidence.GOOD);
         second.setReviewedAt(Instant.parse("2026-01-02T00:00:00Z"));
         Submission third = submission(102L, SubmissionStatus.ACCEPTED);
-        // The second submission's own rating drops out: re-rating it replays it last.
         when(submissionRepository
                 .findByUserIdAndProblemIdAndConfidenceIsNotNullOrderByReviewedAtAsc(1L, 10L))
                 .thenReturn(List.of(first, second));
@@ -277,13 +261,14 @@ class ReviewServiceTest {
         Map<Confidence, Integer> rerate = reviewService.previewIntervals(second);
         Map<Confidence, Integer> fresh = reviewService.previewIntervals(third);
 
-        // One prior GOOD → second rung: HARD 3, GOOD 6, EASY 10; AGAIN always resets to 1.
+        // Re-rating the second submission: only the first GOOD counts, so the second rung.
         assertEquals(Map.of(Confidence.AGAIN, 1, Confidence.HARD, 3,
                 Confidence.GOOD, 6, Confidence.EASY, 10), rerate);
-        // Two prior GOODs (2d → 6d, ease 2.50) → the rating now scales the 6d interval:
-        // HARD 6 × 1.2 = 7.2 → 7, GOOD 6 × 2.50 = 15, EASY 6 × 2.50 × 1.3 = 19.5 → 20.
+        // A fresh submission: both GOODs count.
         assertEquals(Map.of(Confidence.AGAIN, 1, Confidence.HARD, 7,
                 Confidence.GOOD, 15, Confidence.EASY, 20), fresh);
+        verify(stateRepository, never()).save(any(ProblemReviewState.class));
+        verify(submissionRepository, never()).save(any(Submission.class));
     }
 
     @Test

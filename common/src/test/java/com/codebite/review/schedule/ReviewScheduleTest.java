@@ -244,6 +244,23 @@ class ReviewScheduleTest {
     }
 
     @Test
+    void preview_afterOneGood_followsTheSecondRung() {
+        // One prior GOOD → HARD 3, GOOD 6, EASY 10; AGAIN always resets to 1.
+        assertEquals(Map.of(AGAIN, 1, HARD, 3, GOOD, 6, EASY, 10),
+                NONE.rate(GOOD, T0).preview(T0.plus(1, ChronoUnit.DAYS)));
+    }
+
+    @Test
+    void preview_afterTwoGoods_scalesTheSixDayInterval() {
+        // Two prior GOODs (2d → 6d, ease 2.50) → HARD 6 × 1.2 = 7.2 → 7, GOOD 6 × 2.50 = 15,
+        // EASY 6 × 2.50 × 1.3 = 19.5 → 20.
+        ReviewSchedule twoGoods = NONE.rate(GOOD, T0).rate(GOOD, T0.plus(1, ChronoUnit.DAYS));
+
+        assertEquals(Map.of(AGAIN, 1, HARD, 7, GOOD, 15, EASY, 20),
+                twoGoods.preview(T0.plus(7, ChronoUnit.DAYS)));
+    }
+
+    @Test
     void preview_equalsWhatRatingWouldSchedule() {
         ReviewSchedule[] schedules = {
                 NONE,
