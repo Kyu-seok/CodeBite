@@ -17,26 +17,38 @@ import type { TestCase } from '@/types/problem';
 import type {
   CodeError,
   CustomTestCaseInput,
-  RunResponse,
   RunTestCaseResult,
-  SubmissionResponse,
   SubmissionStatus,
 } from '@/types/submission';
+import type { AttemptFailure, JudgeAttempt, JudgeMode } from '@/judge/attempt';
 import { CustomTestsEditor } from './CustomTestsEditor';
 import { STATUS_KEYS } from './submissionDisplay';
-import { estimatedJudgeSeconds, type JudgeMode } from './judgeTimeEstimates';
+import { estimatedJudgeSeconds } from './judgeTimeEstimates';
+
+type JudgingAttempt = Extract<JudgeAttempt, { kind: 'judging' }>;
+type FailedAttempt = Extract<JudgeAttempt, { kind: 'failed' }>;
 
 function hasTemplateError(errs?: CodeError[] | null): boolean {
   return !!errs?.some((e) => !e.inUserCode);
 }
 
-function collectTemplateError(
-  runResult: RunResponse | null,
-  submitResult: SubmissionResponse | null,
-): boolean {
-  if (runResult?.results.some((r) => hasTemplateError(r.errors))) return true;
-  if (submitResult?.results.some((r) => hasTemplateError(r.errors))) return true;
-  return false;
+function collectTemplateError(attempt: JudgeAttempt): boolean {
+  return attempt.kind === 'settled' && attempt.result.results.some((r) => hasTemplateError(r.errors));
+}
+
+// Every failure reason has its message; the Records keep it so when a reason is added.
+const REJECTED_KEYS: Record<JudgeMode, string> = {
+  run: 'workspace.runFailed',
+  submit: 'workspace.submitFailed',
+};
+const WATCH_FAILURE_KEYS: Record<Exclude<AttemptFailure, 'rejected'>, string> = {
+  slow: 'workspace.judgingSlow',
+  unreachable: 'workspace.resultFetchFailed',
+};
+
+/** The i18n key for a failed Attempt, used when the server gave no message of its own. */
+function failureKey(attempt: FailedAttempt): string {
+  return attempt.reason === 'rejected' ? REJECTED_KEYS[attempt.mode] : WATCH_FAILURE_KEYS[attempt.reason];
 }
 
 /** Passed out of judged cases; a custom case without an expected output isn't judged, so it isn't counted. */
@@ -62,14 +74,7 @@ const isMac =
 
 interface TestPanelProps {
   sampleTestCases: TestCase[];
-  runResult: RunResponse | null;
-  runError: string | null;
-  submitResult: SubmissionResponse | null;
-  submitError: string | null;
-  running: boolean;
-  submitting: boolean;
-  submitStartedAt: number | null;
-  runStartedAt: number | null;
+  attempt: JudgeAttempt;
   language: string;
   activeTab: string;
   userSource: string;
@@ -181,39 +186,26 @@ function ErrorDisplay({
   );
 }
 
-type ResultAnnouncerProps = Pick<
-  TestPanelProps,
-  'running' | 'submitting' | 'runResult' | 'runError' | 'submitResult' | 'submitError'
->;
-
 /**
  * The workspace's one live region for Run and Submit. Rendered by the page, not the test panel,
  * so a run started with the shortcut while the panel is folded is still announced.
  */
-export function ResultAnnouncer({
-  running,
-  submitting,
-  runResult,
-  runError,
-  submitResult,
-  submitError,
-}: ResultAnnouncerProps) {
+export function ResultAnnouncer({ attempt }: Pick<TestPanelProps, 'attempt'>) {
   const { t } = useTranslation('problem');
   const { t: tc } = useTranslation('common');
-  const counted = runResult ?? (submitResult?.status !== 'PENDING' ? submitResult : null);
-  const count = counted ? passCount(counted.results) : null;
-  const countText = count && count.total > 0 ? `, ${t('test.passedCount', count)}` : '';
-  const announcement = running
-    ? t('test.running')
-    : submitting
-      ? t('test.judging')
-      : runError || submitError
-        ? (runError || submitError)!
-        : runResult
-          ? `${t('test.runResults')}: ${tc(STATUS_KEYS[runResult.overallStatus])}${countText}`
-          : submitResult
-            ? `${tc(STATUS_KEYS[submitResult.status])}${countText}`
-            : '';
+  let announcement = '';
+  if (attempt.kind === 'judging') {
+    announcement = t(attempt.mode === 'run' ? 'test.running' : 'test.judging');
+  } else if (attempt.kind === 'failed') {
+    announcement = attempt.message ?? t(failureKey(attempt));
+  } else if (attempt.kind === 'settled') {
+    const count = passCount(attempt.result.results);
+    const countText = count.total > 0 ? `, ${t('test.passedCount', count)}` : '';
+    announcement =
+      attempt.mode === 'run'
+        ? `${t('test.runResults')}: ${tc(STATUS_KEYS[attempt.result.overallStatus])}${countText}`
+        : `${tc(STATUS_KEYS[attempt.result.status])}${countText}`;
+  }
   return (
     <p role="status" aria-live="polite" className="sr-only">
       {announcement}
@@ -223,14 +215,7 @@ export function ResultAnnouncer({
 
 export function TestPanel({
   sampleTestCases,
-  runResult,
-  runError,
-  submitResult,
-  submitError,
-  running,
-  submitting,
-  submitStartedAt,
-  runStartedAt,
+  attempt,
   language,
   activeTab,
   userSource,
@@ -246,7 +231,9 @@ export function TestPanel({
   const { t } = useTranslation('problem');
   const scrollRef = useRef<HTMLDivElement>(null);
   const jumpedForRef = useRef<unknown>(null);
-  const settled = running || submitting ? null : (runResult ?? submitResult);
+  const settled = attempt.kind === 'settled' ? attempt.result : null;
+  const running = attempt.kind === 'judging' && attempt.mode === 'run';
+  const submitting = attempt.kind === 'judging' && attempt.mode === 'submit';
 
   // Jump to the first failing case once per result, as soon as the output tab shows it.
   useEffect(() => {
@@ -310,7 +297,7 @@ export function TestPanel({
         </div>
 
         <div ref={scrollRef} className="flex-1 overflow-auto p-3">
-          {collectTemplateError(runResult, submitResult) && (
+          {collectTemplateError(attempt) && (
             <div className="mb-3 rounded-lg border border-warning-200 bg-warning-100 p-3 text-sm text-warning-700 dark:border-warning-900 dark:bg-warning-950 dark:text-warning-400">
               {t('editor.templateErrorBanner')}
             </div>
@@ -362,18 +349,7 @@ export function TestPanel({
 
           {/* Output Tab */}
           <TabsContent value="output" className="mt-0">
-            <OutputContent
-              running={running}
-              submitting={submitting}
-              submitStartedAt={submitStartedAt}
-              runStartedAt={runStartedAt}
-              language={language}
-              runResult={runResult}
-              runError={runError}
-              submitResult={submitResult}
-              submitError={submitError}
-              userSource={userSource}
-            />
+            <OutputContent attempt={attempt} language={language} userSource={userSource} />
           </TabsContent>
         </div>
       </Tabs>
@@ -425,33 +401,14 @@ export function TestPanel({
 /* ── Output tab content ── */
 
 function OutputContent({
-  running,
-  submitting,
-  submitStartedAt,
-  runStartedAt,
+  attempt,
   language,
-  runResult,
-  runError,
-  submitResult,
-  submitError,
   userSource,
-}: Pick<
-  TestPanelProps,
-  | 'running'
-  | 'submitting'
-  | 'submitStartedAt'
-  | 'runStartedAt'
-  | 'language'
-  | 'runResult'
-  | 'runError'
-  | 'submitResult'
-  | 'submitError'
-  | 'userSource'
->) {
+}: Pick<TestPanelProps, 'attempt' | 'language' | 'userSource'>) {
   const { t } = useTranslation('problem');
   const { t: tc } = useTranslation('common');
 
-  if (running || submitting) {
+  if (attempt.kind === 'judging') {
     return (
       <div className="flex flex-col items-center gap-2 py-8">
         {/* Under reduced motion the ticking clock alone shows progress. */}
@@ -459,26 +416,23 @@ function OutputContent({
           <Spinner announce={false} />
         </div>
         <p className="text-sm text-muted-foreground">
-          {t(running ? 'test.running' : 'test.judging')}
+          {t(attempt.mode === 'run' ? 'test.running' : 'test.judging')}
         </p>
-        <JudgingClock
-          startedAt={running ? runStartedAt : submitStartedAt}
-          language={language}
-          mode={running ? 'run' : 'submit'}
-        />
+        <JudgingClock attempt={attempt} language={language} />
       </div>
     );
   }
 
-  if (runError || submitError) {
+  if (attempt.kind === 'failed') {
     return (
       <div className="rounded-lg border border-error-200 bg-error-100 p-3 text-sm text-error-700 dark:border-error-900 dark:bg-error-950 dark:text-error-400">
-        {runError || submitError}
+        {attempt.message ?? t(failureKey(attempt))}
       </div>
     );
   }
 
-  if (runResult) {
+  if (attempt.kind === 'settled' && attempt.mode === 'run') {
+    const runResult = attempt.result;
     const count = passCount(runResult.results);
     const samples = runResult.results.filter((r) => !r.isCustom);
     const customs = runResult.results.filter((r) => r.isCustom);
@@ -513,14 +467,15 @@ function OutputContent({
     );
   }
 
-  if (submitResult) {
+  if (attempt.kind === 'settled') {
+    const submitResult = attempt.result;
     const count = passCount(submitResult.results);
     return (
       <div className="space-y-3">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <StatusBadge status={submitResult.status} />
-            {submitResult.status !== 'PENDING' && count.total > 0 && <PassCount {...count} />}
+            {count.total > 0 && <PassCount {...count} />}
           </div>
           <div className="space-x-3 font-mono text-xs tabular-nums text-muted-foreground">
             {submitResult.runtimeMs != null && (
@@ -601,25 +556,16 @@ function PassCount({ passed, total }: { passed: number; total: number }) {
  * expected. Deliberately not a live region: the page's ResultAnnouncer speaks the start and the
  * result, and a screen reader reaches the current count by reading the panel.
  */
-function JudgingClock({
-  startedAt,
-  language,
-  mode,
-}: {
-  startedAt: number | null;
-  language: string;
-  mode: JudgeMode;
-}) {
+function JudgingClock({ attempt, language }: { attempt: JudgingAttempt; language: string }) {
   const { t } = useTranslation('problem');
+  const { startedAt, mode } = attempt;
   const [now, setNow] = useState(() => Date.now());
 
   useEffect(() => {
-    if (startedAt == null) return;
     const timer = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(timer);
   }, [startedAt]);
 
-  if (startedAt == null) return null;
   const seconds = Math.max(0, Math.floor((now - startedAt) / 1000));
   const typical = estimatedJudgeSeconds(language, mode);
   return (

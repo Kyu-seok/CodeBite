@@ -18,23 +18,18 @@ import { languageLabel } from "./submissionDisplay"
 import { AcceptedModal } from "@/components/review/AcceptedModal"
 import { fireConfetti } from "@/components/review/ConfettiBurst"
 import type { Confidence } from "@/types/review"
-import type {
-  CodeError,
-  CustomTestCaseInput,
-  SubmissionResponse,
-  RunResponse,
-} from "@/types/submission"
+import type { CodeError, CustomTestCaseInput, SubmissionResponse } from "@/types/submission"
 import { AxiosError } from "axios"
 import type { ApiError } from "@/types/api"
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts"
 import { useSubmissionWatch } from "@/hooks/useSubmissionWatch"
-import type { WatchFailure } from "@/judge/watchSubmission"
+import type { JudgeAttempt } from "@/judge/attempt"
 import type { WorkspaceOutletContext } from "@/components/layout/Layout"
 
-// Every way the watch can lose sight of the verdict has its message; the Record keeps it so.
-const WATCH_FAILURE_KEYS: Record<WatchFailure, string> = {
-  slow: "workspace.judgingSlow",
-  unreachable: "workspace.resultFetchFailed",
+/** The server's reason for refusing a Run or Submit, when it gave one; the panel has a generic fallback. */
+function rejectionMessage(err: unknown): string | undefined {
+  if (err instanceof AxiosError && err.response?.data) return (err.response.data as ApiError).message
+  return undefined
 }
 
 export default function ProblemDetailPage() {
@@ -58,20 +53,12 @@ export default function ProblemDetailPage() {
       return {}
     }
   })
-  const [submitting, setSubmitting] = useState(false)
-  const [submitStartedAt, setSubmitStartedAt] = useState<number | null>(null)
-  // The submission whose verdict is being watched; null once it settles or fails.
-  const [watchedSubmissionId, setWatchedSubmissionId] = useState<number | null>(null)
+  // The one Run or Submit in progress or last finished; TestPanel renders it as is.
+  const [attempt, setAttempt] = useState<JudgeAttempt>({ kind: "idle" })
   // A pending overwrite of the editor (reset or load), held until the learner confirms it.
   const [pendingOverwrite, setPendingOverwrite] = useState<
     { kind: "reset" | "load"; lang: string; sourceCode?: string } | null
   >(null)
-  const [result, setResult] = useState<SubmissionResponse | null>(null)
-  const [submitError, setSubmitError] = useState<string | null>(null)
-  const [running, setRunning] = useState(false)
-  const [runStartedAt, setRunStartedAt] = useState<number | null>(null)
-  const [runResult, setRunResult] = useState<RunResponse | null>(null)
-  const [runError, setRunError] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState("testcases")
   const [acceptedModal, setAcceptedModal] = useState<{
     open: boolean
@@ -105,7 +92,7 @@ export default function ProblemDetailPage() {
   useKeyboardShortcuts(
     useCallback(() => runRef.current(), []),
     useCallback(() => submitRef.current(), []),
-    running || submitting,
+    attempt.kind === "judging",
   )
 
   useEffect(() => {
@@ -162,21 +149,24 @@ export default function ProblemDetailPage() {
   }, [slug])
 
   const editorErrors = useMemo<CodeError[]>(() => {
-    const results = runResult?.results ?? result?.results ?? []
+    const results = attempt.kind === "settled" ? attempt.result.results : []
     for (const r of results) {
       if (r.errors && r.errors.length > 0) return r.errors
     }
     return []
-  }, [runResult, result])
+  }, [attempt])
 
   /**
    * The post-submit side effects, run once per verdict because the watch emits once. The order
    * matters: the solve time is saved before the modal opens, so the modal shows it.
    */
   const onSubmitSettled = async (submission: SubmissionResponse) => {
-    setResult(submission)
-    setSubmitting(false)
-    setSubmitStartedAt(null)
+    setAttempt((prev) => ({
+      kind: "settled",
+      mode: "submit",
+      result: submission,
+      startedAt: prev.kind === "judging" ? prev.startedAt : Date.now(),
+    }))
 
     let capturedSolveTime: number | null = null
     if (timerSnapshotRef.current != null && submission.status === "ACCEPTED") {
@@ -205,12 +195,12 @@ export default function ProblemDetailPage() {
     refetchSubmissions()
   }
 
+  // Watched while a Submit is judging and the server has given it an id.
+  const watchedSubmissionId =
+    attempt.kind === "judging" && attempt.mode === "submit" ? (attempt.submissionId ?? null) : null
   useSubmissionWatch(watchedSubmissionId, (ev) => {
-    setWatchedSubmissionId(null)
     if (ev.type === "failed") {
-      setSubmitError(t(WATCH_FAILURE_KEYS[ev.reason]))
-      setSubmitting(false)
-      setSubmitStartedAt(null)
+      setAttempt({ kind: "failed", mode: "submit", reason: ev.reason })
       return
     }
     void onSubmitSettled(ev.submission)
@@ -353,12 +343,11 @@ export default function ProblemDetailPage() {
   }
 
   const handleRun = async () => {
-    setRunning(true)
-    setRunStartedAt(Date.now())
-    setRunError(null)
-    setRunResult(null)
-    setResult(null)
-    setSubmitError(null)
+    // One Attempt at a time: the buttons and page shortcuts are disabled while judging, and the
+    // editor's own shortcut lands here too.
+    if (attempt.kind === "judging") return
+    const startedAt = Date.now()
+    setAttempt({ kind: "judging", mode: "run", startedAt })
     setActiveTab("output")
     try {
       const cleaned = customTests
@@ -369,16 +358,9 @@ export default function ProblemDetailPage() {
         sourceCode: code,
         customTestCases: cleaned.length > 0 ? cleaned : undefined,
       })
-      setRunResult(res.data)
+      setAttempt({ kind: "settled", mode: "run", result: res.data, startedAt })
     } catch (err) {
-      if (err instanceof AxiosError && err.response?.data) {
-        setRunError((err.response.data as ApiError).message)
-      } else {
-        setRunError(t("workspace.runFailed"))
-      }
-    } finally {
-      setRunning(false)
-      setRunStartedAt(null)
+      setAttempt({ kind: "failed", mode: "run", reason: "rejected", message: rejectionMessage(err) })
     }
   }
 
@@ -388,29 +370,20 @@ export default function ProblemDetailPage() {
       navigate("/login")
       return
     }
+    if (attempt.kind === "judging") return
     timerSnapshotRef.current = getTimerSnapshot()
-    setSubmitting(true)
-    setSubmitStartedAt(Date.now())
-    setSubmitError(null)
-    setResult(null)
-    setRunResult(null)
-    setRunError(null)
+    const startedAt = Date.now()
+    setAttempt({ kind: "judging", mode: "submit", startedAt })
     setActiveTab("output")
     try {
       const res = await submitCode(slug!, {
         language: activeLang,
         sourceCode: code,
       })
-      setResult(res.data)
-      setWatchedSubmissionId(res.data.id)
+      // The id starts the watch; the verdict arrives through onSubmitSettled.
+      setAttempt({ kind: "judging", mode: "submit", startedAt, submissionId: res.data.id })
     } catch (err) {
-      if (err instanceof AxiosError && err.response?.data) {
-        setSubmitError((err.response.data as ApiError).message)
-      } else {
-        setSubmitError(t("workspace.submitFailed"))
-      }
-      setSubmitting(false)
-      setSubmitStartedAt(null)
+      setAttempt({ kind: "failed", mode: "submit", reason: "rejected", message: rejectionMessage(err) })
     }
   }
 
@@ -484,14 +457,7 @@ export default function ProblemDetailPage() {
         testPanel={
           <TestPanel
             sampleTestCases={problem.sampleTestCases}
-            runResult={runResult}
-            runError={runError}
-            submitResult={result}
-            submitError={submitError}
-            running={running}
-            submitting={submitting}
-            submitStartedAt={submitStartedAt}
-            runStartedAt={runStartedAt}
+            attempt={attempt}
             language={activeLang}
             activeTab={activeTab}
             userSource={code}
@@ -506,14 +472,7 @@ export default function ProblemDetailPage() {
           />
         }
       />
-      <ResultAnnouncer
-        running={running}
-        submitting={submitting}
-        runResult={runResult}
-        runError={runError}
-        submitResult={result}
-        submitError={submitError}
-      />
+      <ResultAnnouncer attempt={attempt} />
       <AcceptedModal
         open={acceptedModal.open}
         onOpenChange={(open) => setAcceptedModal((prev) => ({ ...prev, open }))}
