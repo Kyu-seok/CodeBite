@@ -3,16 +3,11 @@ package com.codebite.github.service;
 import com.codebite.github.entity.GitHubImportState;
 import com.codebite.github.entity.GitHubLink;
 import com.codebite.github.entity.GitHubLinkStatus;
-import com.codebite.github.entity.SolutionCommit;
-import com.codebite.github.entity.SolutionCommitStatus;
-import com.codebite.github.gateway.BatchCommit;
-import com.codebite.github.gateway.PushedCommit;
-import com.codebite.github.gateway.GitHubAccount;
+import com.codebite.github.gateway.CommittedFile;
 import com.codebite.github.gateway.GitHubGateway;
-import com.codebite.github.gateway.GitHubInstallationGoneException;
+import com.codebite.github.gateway.PushedCommit;
 import com.codebite.github.repository.GitHubLinkRepository;
 import com.codebite.github.repository.SolutionCommitRepository;
-import com.codebite.problem.entity.Problem;
 import com.codebite.submission.entity.Submission;
 import com.codebite.submission.repository.SubmissionRepository;
 import org.slf4j.Logger;
@@ -21,23 +16,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.function.Consumer;
 
 /**
  * Runs a started Import (GLOSSARY.md, ADR 0002): every Accepted submission made before the GitHub
  * Link was created and not yet COMMITTED through it becomes its own Solution Commit, dated at its
  * Accepted time, and all of them go up in one batch push. Same layout, README rule, message and
- * author as live Solution Commits.
+ * author as live Solution Commits, through the same {@link SolutionCommitRecorder}.
  *
- * <p>Like live commits, no transaction is held across the call to GitHub: {@link #prepare} records
- * PENDING Solution Commits and builds the batch, the push runs, then the outcome is recorded. The
- * push is all-or-nothing, so the Import ends DONE or FAILED (and can be started again).
+ * <p>Like live commits, no transaction is held across the call to GitHub: {@link #prepare} checks
+ * the link and finds the submissions, the recorder plans the Solution Commits, the push runs, then
+ * the recorder records the outcome together with the Import's DONE or FAILED. The push is
+ * all-or-nothing, so the Import ends DONE or FAILED (and can be started again).
  */
 @Service
 public class GitHubImporter {
@@ -70,53 +61,30 @@ public class GitHubImporter {
      * redelivered request) is ignored, so running it twice is harmless.
      */
     public void run(Long linkId) {
-        Optional<Batch> prepared = tx.execute(status -> prepare(linkId));
+        Optional<Importable> prepared = tx.execute(status -> prepare(linkId));
         if (prepared == null || prepared.isEmpty()) {
             return;
         }
-        Batch batch = prepared.get();
-        try {
-            List<PushedCommit> pushed = gitHub.pushCommits(batch.installationId(), batch.repositoryFullName(),
-                    batch.branch(), batch.commits());
-            Instant now = Instant.now();
-            tx.executeWithoutResult(status -> {
-                for (int i = 0; i < batch.solutionCommitIds().size(); i++) {
-                    PushedCommit commit = pushed.get(i);
-                    // A commit with nothing left to add (the file was already there) has no sha;
-                    // the row then links to the file, so COMMITTED always has a link.
-                    solutionCommitRepository.findById(batch.solutionCommitIds().get(i))
-                            .filter(sc -> sc.getStatus() != SolutionCommitStatus.COMMITTED)
-                            .ifPresent(sc -> sc.markCommitted(commit.sha(), recorder.commitUrl(commit.url(),
-                                    batch.repositoryFullName(), batch.branch(), sc.getPath()), now));
-                }
-                linkRepository.findById(linkId).ifPresent(GitHubLink::finishImport);
-            });
-            // Imported commits are Solution Commits too: one count per commit in the batch.
-            recorder.countCommitted(batch.commits().size());
-            log.info("Import for link {} pushed {} Solution Commits", linkId, batch.commits().size());
-        } catch (GitHubInstallationGoneException e) {
-            // Same as a live Solution Commit: the link is BROKEN until the user relinks, which
-            // offers a fresh Import.
-            log.warn("Import for link {} found the installation or repository gone: {}", linkId, e.getMessage());
-            recordFailure(linkId, batch, e, GitHubLink::markBroken);
-            recorder.countBroken(batch.commits().size());
-        } catch (RuntimeException e) {
-            log.warn("Import for link {} failed: {}", linkId, e.getMessage());
-            recordFailure(linkId, batch, e, link -> { });
-            recorder.countFailed(batch.commits().size());
+        Plan plan = recorder.plan(prepared.get().link(), prepared.get().submissions());
+        if (plan.isEmpty()) {
+            // Everything was COMMITTED live between the two transactions; nothing to push.
+            recorder.record(plan, plan.commits(), new Outcome.Committed(List.of()), GitHubLink::finishImport);
+            return;
         }
-    }
-
-    private void recordFailure(Long linkId, Batch batch, RuntimeException e, Consumer<GitHubLink> alsoToLink) {
-        tx.executeWithoutResult(status -> {
-            batch.solutionCommitIds().forEach(id -> solutionCommitRepository.findById(id)
-                    .filter(sc -> sc.getStatus() != SolutionCommitStatus.COMMITTED)
-                    .ifPresent(sc -> sc.markFailed(e.getMessage())));
-            linkRepository.findById(linkId).ifPresent(link -> {
-                link.failImport();
-                alsoToLink.accept(link);
-            });
-        });
+        try {
+            List<PushedCommit> pushed = gitHub.pushCommits(plan.installationId(), plan.repositoryFullName(),
+                    plan.branch(), plan.commits().stream().map(PlannedCommit::commit).toList());
+            // A commit with nothing left to add (the file was already there) has no sha or URL;
+            // the recorder then links the row to the file, so COMMITTED always has a link.
+            recorder.record(plan, plan.commits(), new Outcome.Committed(pushed.stream()
+                    .map(p -> new CommittedFile(p.sha(), p.url())).toList()), GitHubLink::finishImport);
+            log.info("Import for link {} pushed {} Solution Commits", linkId, plan.commits().size());
+        } catch (RuntimeException e) {
+            // A gone installation or repository is Broken: the link is BROKEN until the user
+            // relinks, which offers a fresh Import. Anything else leaves the Import FAILED to retry.
+            log.warn("Import for link {} failed: {}", linkId, e.getMessage());
+            recorder.record(plan, plan.commits(), Outcome.failure(e), GitHubLink::failImport);
+        }
     }
 
     /** Marks a RUNNING Import FAILED, e.g. when its request could not be published. */
@@ -124,7 +92,7 @@ public class GitHubImporter {
         tx.executeWithoutResult(status -> linkRepository.findById(linkId).ifPresent(GitHubLink::failImport));
     }
 
-    private Optional<Batch> prepare(Long linkId) {
+    private Optional<Importable> prepare(Long linkId) {
         GitHubLink link = linkRepository.findById(linkId).orElse(null);
         if (link == null || link.getImportState() != GitHubImportState.RUNNING) {
             return Optional.empty();
@@ -139,33 +107,10 @@ public class GitHubImporter {
             link.finishImport();
             return Optional.empty();
         }
-
-        GitHubAccount author = GitHubAccount.of(link);
-        // A problem folder gets its README once, from the first commit that touches it (the same
-        // rule as live Solution Commits); remembered here for the rest of the batch.
-        Map<Long, Boolean> needsReadme = new HashMap<>();
-        List<Long> solutionCommitIds = new ArrayList<>();
-        List<BatchCommit> commits = new ArrayList<>();
-        for (Submission submission : submissions) {
-            Problem problem = submission.getProblem();
-            SolutionCommit solutionCommit = recorder.findOrCreate(link, submission);
-
-            List<BatchCommit.File> files = new ArrayList<>();
-            if (needsReadme.computeIfAbsent(problem.getId(), id -> recorder.needsReadme(link, problem))) {
-                files.add(recorder.readme(problem));
-                needsReadme.put(problem.getId(), false);
-            }
-            files.add(new BatchCommit.File(solutionCommit.getPath(), submission.getSourceCode()));
-            commits.add(new BatchCommit(files, SolutionLayout.commitMessage(problem, submission), author,
-                    submission.getCreatedAt()));
-            solutionCommitIds.add(solutionCommit.getId());
-        }
-        return Optional.of(new Batch(link.getInstallationId(), link.getRepositoryFullName(),
-                link.getDefaultBranch(), solutionCommitIds, commits));
+        return Optional.of(new Importable(link, submissions));
     }
 
-    /** Everything the push needs, read before the transaction closes; ids line up with commits. */
-    private record Batch(long installationId, String repositoryFullName, String branch,
-                         List<Long> solutionCommitIds, List<BatchCommit> commits) {
+    /** The RUNNING link and what its Import covers, problems fetched, read before the transaction closes. */
+    private record Importable(GitHubLink link, List<Submission> submissions) {
     }
 }
