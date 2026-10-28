@@ -1,10 +1,13 @@
 package com.codebite.worker.consumer;
 
+import com.codebite.judge.grader.Verdict;
+import com.codebite.problem.entity.Problem;
 import com.codebite.submission.entity.Submission;
 import com.codebite.submission.entity.SubmissionStatus;
 import com.codebite.submission.event.SubmissionEvent;
 import com.codebite.submission.repository.SubmissionRepository;
 import com.codebite.submission.event.SubmissionResultEvent;
+import com.codebite.user.entity.Role;
 import com.codebite.user.entity.User;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
@@ -17,6 +20,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -47,16 +51,16 @@ class SubmissionFailureRecovererTest {
         return new ConsumerRecord<>("submission-events", 0, 42L, "1", value);
     }
 
-    /** Submissions always have an owner in the schema; the result event carries their id. */
+    /** The result event carries the owner's and problem's ids, so the row needs both. */
     private static Submission pendingSubmission(long id) {
         User user = new User();
         user.setId(77L);
+        user.setRole(Role.USER);
+        Problem problem = new Problem();
+        problem.setId(10L);
 
-        Submission submission = new Submission();
+        Submission submission = Submission.pending(user, problem, "java", "code");
         submission.setId(id);
-        submission.setStatus(SubmissionStatus.PENDING);
-        submission.setUser(user);
-        submission.setLanguage("java");
         return submission;
     }
 
@@ -92,6 +96,25 @@ class SubmissionFailureRecovererTest {
                 new RuntimeException("judge0 down"));
 
         assertEquals(SubmissionStatus.INTERNAL_ERROR, submission.getStatus());
+        assertNull(completedCounter("INTERNAL_ERROR", "java"));
+    }
+
+    /**
+     * A re-driven duplicate can grade the row while this delivery's retries are still failing;
+     * the recoverer must not overwrite that grade with INTERNAL_ERROR.
+     */
+    @Test
+    void accept_leavesAnAlreadyGradedSubmissionAlone() {
+        Submission graded = pendingSubmission(1L);
+        graded.grade(Verdict.empty(), List.of());
+        when(submissionRepository.findById(1L)).thenReturn(Optional.of(graded));
+
+        recoverer.accept(record(new SubmissionEvent(1L, "source", 62, 10L, false, "java")),
+                new RuntimeException("judge0 down"));
+
+        assertEquals(SubmissionStatus.ACCEPTED, graded.getStatus());
+        verify(submissionRepository, never()).save(any());
+        verify(eventPublisher, never()).publishEvent(any(Object.class));
         assertNull(completedCounter("INTERNAL_ERROR", "java"));
     }
 

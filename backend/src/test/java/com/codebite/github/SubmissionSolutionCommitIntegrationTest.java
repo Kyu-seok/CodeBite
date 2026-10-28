@@ -5,11 +5,11 @@ import com.codebite.github.entity.GitHubLink;
 import com.codebite.github.entity.SolutionCommit;
 import com.codebite.github.repository.GitHubLinkRepository;
 import com.codebite.github.repository.SolutionCommitRepository;
+import com.codebite.judge.grader.Verdict;
 import com.codebite.problem.entity.Difficulty;
 import com.codebite.problem.entity.Problem;
 import com.codebite.problem.repository.ProblemRepository;
 import com.codebite.submission.entity.Submission;
-import com.codebite.submission.entity.SubmissionStatus;
 import com.codebite.submission.repository.SubmissionRepository;
 import com.codebite.user.entity.Role;
 import com.codebite.user.entity.User;
@@ -25,6 +25,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.List;
 
 import static org.hamcrest.Matchers.nullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -69,12 +70,8 @@ class SubmissionSolutionCommitIntegrationTest {
         problem.setPublished(true);
         problem = problemRepository.save(problem);
 
-        submission = new Submission();
-        submission.setUser(user);
-        submission.setProblem(problem);
-        submission.setLanguage("python");
-        submission.setSourceCode("print('hi')");
-        submission.setStatus(SubmissionStatus.ACCEPTED);
+        submission = Submission.pending(user, problem, "python", "print('hi')");
+        submission.grade(Verdict.empty(), List.of());
         submission = submissionRepository.save(submission);
     }
 

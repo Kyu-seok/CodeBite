@@ -2,7 +2,6 @@ package com.codebite.submission.service;
 
 import com.codebite.common.service.RateLimiterService;
 import com.codebite.submission.entity.Submission;
-import com.codebite.submission.entity.SubmissionStatus;
 import com.codebite.submission.kafka.SubmissionEventProducer;
 import com.codebite.submission.repository.SubmissionRepository;
 import io.micrometer.core.instrument.Counter;
@@ -30,7 +29,8 @@ import java.util.List;
  * <p>Re-driving is safe because the consumer is idempotent: {@code SubmissionConsumer} skips any
  * submission that is no longer PENDING, so a duplicate event for an already-graded submission is a
  * no-op. Bounding the window on both sides is what prevents an infinite retry loop — a row older
- * than {@code maxAge} is abandoned to INTERNAL_ERROR rather than re-published forever.
+ * than {@code maxAge} is abandoned to INTERNAL_ERROR rather than re-published forever, and its
+ * result event is published like a graded one's so waiting clients and stats hear about it.
  */
 @Component
 @ConditionalOnProperty(name = "app.submission.redrive.enabled", havingValue = "true", matchIfMissing = true)
@@ -44,6 +44,7 @@ public class StuckSubmissionRedriver {
 
     private final SubmissionRepository submissionRepository;
     private final SubmissionService submissionService;
+    private final SubmissionAbandoner abandoner;
     private final SubmissionEventProducer producer;
     private final RateLimiterService rateLimiterService;
     private final Counter redrivenCounter;
@@ -57,6 +58,7 @@ public class StuckSubmissionRedriver {
     public StuckSubmissionRedriver(
             SubmissionRepository submissionRepository,
             SubmissionService submissionService,
+            SubmissionAbandoner abandoner,
             SubmissionEventProducer producer,
             @Autowired(required = false) RateLimiterService rateLimiterService,
             MeterRegistry meterRegistry,
@@ -66,6 +68,7 @@ public class StuckSubmissionRedriver {
             @Value("${app.submission.redrive.lock-ttl-seconds:50}") long lockTtlSeconds) {
         this.submissionRepository = submissionRepository;
         this.submissionService = submissionService;
+        this.abandoner = abandoner;
         this.producer = producer;
         this.rateLimiterService = rateLimiterService;
         this.minAge = Duration.ofSeconds(minAgeSeconds);
@@ -110,22 +113,11 @@ public class StuckSubmissionRedriver {
     }
 
     // Not @Transactional: these are called via this.sweep(), so a Spring proxy would never apply.
-    // saveAll() supplies its own transaction, and findStalePending JOIN FETCHes the problem, so
-    // nothing here touches an uninitialised lazy association outside a transaction.
+    // Abandoning goes through SubmissionAbandoner, a bean of its own, so that it is; re-driving
+    // needs no transaction because findStalePending JOIN FETCHes the problem.
     private void abandonExpired() {
-        Instant cutoff = Instant.now().minus(maxAge);
-        List<Submission> expired =
-                submissionRepository.findByStatusAndCreatedAtBefore(SubmissionStatus.PENDING, cutoff);
-        if (expired.isEmpty()) {
-            return;
-        }
-        for (Submission submission : expired) {
-            log.error("Submission {} still PENDING after {} — abandoning to INTERNAL_ERROR",
-                    submission.getId(), maxAge);
-            submission.setStatus(SubmissionStatus.INTERNAL_ERROR);
-            abandonedCounter.increment();
-        }
-        submissionRepository.saveAll(expired);
+        int abandoned = abandoner.abandonExpired(Instant.now().minus(maxAge));
+        abandonedCounter.increment(abandoned);
     }
 
     private void redriveStale() {

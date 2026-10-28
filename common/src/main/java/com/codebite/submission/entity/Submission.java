@@ -1,8 +1,13 @@
 package com.codebite.submission.entity;
 
 import com.codebite.common.base.BaseEntity;
+import com.codebite.judge.grader.CaseVerdict;
+import com.codebite.judge.grader.Verdict;
 import com.codebite.problem.entity.Problem;
+import com.codebite.problem.entity.TestCase;
 import com.codebite.review.entity.Confidence;
+import com.codebite.submission.event.SubmissionResultEvent;
+import com.codebite.user.entity.Role;
 import com.codebite.user.entity.User;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -19,6 +24,12 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * One attempt at a problem. A submission starts PENDING and moves exactly once to a terminal
+ * status, through {@link #grade}, {@link #fail} or {@link #abandon}; each returns the
+ * {@link SubmissionResultEvent} the caller publishes once the row is committed. Every field the
+ * event carries comes from the row, so a stale message can never disagree with it.
+ */
 @Entity
 @Table(name = "submissions")
 public class Submission extends BaseEntity {
@@ -66,6 +77,95 @@ public class Submission extends BaseEntity {
     @OneToMany(mappedBy = "submission", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SubmissionResult> results = new ArrayList<>();
 
+    /** A new submission awaiting grading. An admin's submission is flagged from the user's role. */
+    public static Submission pending(User user, Problem problem, String language, String sourceCode) {
+        Submission submission = new Submission();
+        submission.user = user;
+        submission.problem = problem;
+        submission.language = language;
+        submission.sourceCode = sourceCode;
+        submission.status = SubmissionStatus.PENDING;
+        submission.adminSubmission = user.getRole() == Role.ADMIN;
+        return submission;
+    }
+
+    public boolean isPending() {
+        return status == SubmissionStatus.PENDING;
+    }
+
+    /**
+     * Records the {@link Verdict} of grading this submission against {@code testCases}, one case
+     * per verdict entry in order: the overall status, the largest runtime and memory any case
+     * used, and one {@link SubmissionResult} per case (persisted by cascade on save).
+     *
+     * @throws IllegalStateException unless PENDING; callers that expect redelivery check
+     *         {@link #isPending()} before paying for a Judge0 run
+     * @throws IllegalArgumentException when the verdict does not have one case per test case
+     */
+    public SubmissionResultEvent grade(Verdict verdict, List<TestCase> testCases) {
+        requirePending("grade");
+        if (verdict.cases().size() != testCases.size()) {
+            throw new IllegalArgumentException("Verdict has " + verdict.cases().size()
+                    + " cases for " + testCases.size() + " test cases");
+        }
+        for (int i = 0; i < testCases.size(); i++) {
+            results.add(toResult(testCases.get(i), verdict.cases().get(i)));
+        }
+        return complete(verdict.overall(), verdict.maxRuntimeMs(), verdict.maxMemoryKb());
+    }
+
+    /**
+     * INTERNAL_ERROR after the worker exhausted its retries; no runtime, memory or results.
+     *
+     * @throws IllegalStateException unless PENDING
+     */
+    public SubmissionResultEvent fail() {
+        requirePending("fail");
+        return complete(SubmissionStatus.INTERNAL_ERROR, null, null);
+    }
+
+    /**
+     * INTERNAL_ERROR without ever being judged: Abandoned by the re-drive sweep after staying
+     * PENDING past its window. Lands where {@link #fail()} does but is a different verb, because
+     * nothing ran and the logs and metrics say so.
+     *
+     * @throws IllegalStateException unless PENDING
+     */
+    public SubmissionResultEvent abandon() {
+        requirePending("abandon");
+        return complete(SubmissionStatus.INTERNAL_ERROR, null, null);
+    }
+
+    private void requirePending(String transition) {
+        if (!isPending()) {
+            throw new IllegalStateException(
+                    "Cannot " + transition + " submission " + getId() + ": status is " + status);
+        }
+    }
+
+    private SubmissionResultEvent complete(SubmissionStatus terminal, Integer runtimeMs, Integer memoryKb) {
+        this.status = terminal;
+        this.runtimeMs = runtimeMs;
+        this.memoryKb = memoryKb;
+        // getId() on an uninitialised lazy proxy returns the identifier without a query.
+        return new SubmissionResultEvent(
+                getId(), user.getId(), problem.getId(), terminal, runtimeMs, memoryKb,
+                language, adminSubmission);
+    }
+
+    private SubmissionResult toResult(TestCase testCase, CaseVerdict verdict) {
+        SubmissionResult result = new SubmissionResult();
+        result.setSubmission(this);
+        result.setTestCase(testCase);
+        result.setStatus(verdict.status());
+        result.setActualOutput(verdict.stdout());
+        result.setStderr(verdict.stderr());
+        result.setCompileOutput(verdict.compileOutput());
+        result.setRuntimeMs(verdict.runtimeMs());
+        result.setMemoryKb(verdict.memoryKb());
+        return result;
+    }
+
     public User getUser() {
         return user;
     }
@@ -98,28 +198,17 @@ public class Submission extends BaseEntity {
         this.sourceCode = sourceCode;
     }
 
+    /** Set only by {@link #grade}, {@link #fail} and {@link #abandon}. */
     public SubmissionStatus getStatus() {
         return status;
-    }
-
-    public void setStatus(SubmissionStatus status) {
-        this.status = status;
     }
 
     public Integer getRuntimeMs() {
         return runtimeMs;
     }
 
-    public void setRuntimeMs(Integer runtimeMs) {
-        this.runtimeMs = runtimeMs;
-    }
-
     public Integer getMemoryKb() {
         return memoryKb;
-    }
-
-    public void setMemoryKb(Integer memoryKb) {
-        this.memoryKb = memoryKb;
     }
 
     public String getNotes() {
@@ -158,15 +247,7 @@ public class Submission extends BaseEntity {
         return adminSubmission;
     }
 
-    public void setAdminSubmission(boolean adminSubmission) {
-        this.adminSubmission = adminSubmission;
-    }
-
     public List<SubmissionResult> getResults() {
         return results;
-    }
-
-    public void setResults(List<SubmissionResult> results) {
-        this.results = results;
     }
 }

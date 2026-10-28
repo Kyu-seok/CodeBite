@@ -1,5 +1,6 @@
 package com.codebite.streak;
 
+import com.codebite.judge.grader.Verdict;
 import com.codebite.problem.entity.Difficulty;
 import com.codebite.problem.entity.Problem;
 import com.codebite.streak.entity.StreakDay;
@@ -8,7 +9,6 @@ import com.codebite.streak.repository.StreakDayRepository;
 import com.codebite.streak.repository.UserStreakRepository;
 import com.codebite.streak.service.StreakService;
 import com.codebite.submission.entity.Submission;
-import com.codebite.submission.entity.SubmissionStatus;
 import com.codebite.user.entity.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,6 +22,7 @@ import org.springframework.test.context.jdbc.Sql;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -73,12 +74,8 @@ class StreakRecordingTest {
 
     /** An Accepted submission made at noon UTC on the given day. */
     private Long acceptedOn(LocalDate day) {
-        Submission submission = new Submission();
-        submission.setUser(user);
-        submission.setProblem(problem);
-        submission.setLanguage("python");
-        submission.setSourceCode("x");
-        submission.setStatus(SubmissionStatus.ACCEPTED);
+        Submission submission = Submission.pending(user, problem, "python", "x");
+        submission.grade(Verdict.empty(), List.of());
         submission = entityManager.persistAndFlush(submission);
 
         // created_at is set by @CreationTimestamp on insert, so backdate it afterwards.

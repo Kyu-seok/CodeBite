@@ -17,9 +17,13 @@ import com.codebite.github.repository.SolutionCommitRepository;
 import com.codebite.github.service.GitHubLinkService;
 import com.codebite.github.service.GitHubLinkStateService;
 import com.codebite.github.service.SolutionCommitService;
+import com.codebite.judge.grader.CaseVerdict;
+import com.codebite.judge.grader.Verdict;
 import com.codebite.problem.entity.Difficulty;
 import com.codebite.problem.entity.Problem;
+import com.codebite.problem.entity.TestCase;
 import com.codebite.problem.repository.ProblemRepository;
+import com.codebite.problem.repository.TestCaseRepository;
 import com.codebite.submission.entity.Submission;
 import com.codebite.submission.entity.SubmissionStatus;
 import com.codebite.submission.event.SubmissionResultEvent;
@@ -38,6 +42,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -63,6 +68,7 @@ class SolutionCommitListenerTest {
     @Autowired private FakeGitHubGateway gitHub;
     @Autowired private UserRepository userRepository;
     @Autowired private ProblemRepository problemRepository;
+    @Autowired private TestCaseRepository testCaseRepository;
     @Autowired private SubmissionRepository submissionRepository;
     @Autowired private GitHubLinkRepository linkRepository;
     @Autowired private SolutionCommitRepository solutionCommitRepository;
@@ -72,6 +78,7 @@ class SolutionCommitListenerTest {
     private SolutionCommitListener listener;
     private User user;
     private Problem problem;
+    private TestCase testCase;
 
     @BeforeEach
     void setUp() {
@@ -92,6 +99,14 @@ class SolutionCommitListenerTest {
         problem.setDifficulty(Difficulty.EASY);
         problem.setPublished(true);
         problem = problemRepository.save(problem);
+
+        testCase = new TestCase();
+        testCase.setProblem(problem);
+        testCase.setInput("1 2");
+        testCase.setExpectedOutput("3");
+        testCase.setSample(true);
+        testCase.setOrderIndex(1);
+        testCase = testCaseRepository.save(testCase);
     }
 
     @Test
@@ -483,14 +498,9 @@ class SolutionCommitListenerTest {
 
     /** An Accepted submission (12 ms, 1536 KB) made at {@code at}. */
     private Submission accepted(User owner, String language, String code, Instant at) {
-        Submission submission = new Submission();
-        submission.setUser(owner);
-        submission.setProblem(problem);
-        submission.setLanguage(language);
-        submission.setSourceCode(code);
-        submission.setStatus(SubmissionStatus.ACCEPTED);
-        submission.setRuntimeMs(12);
-        submission.setMemoryKb(1536);
+        Submission submission = Submission.pending(owner, problem, language, code);
+        submission.grade(Verdict.of(List.of(
+                new CaseVerdict(SubmissionStatus.ACCEPTED, true, "3", null, null, 12, 1536))), List.of(testCase));
         submission = submissionRepository.saveAndFlush(submission);
 
         // created_at is set on insert and not updatable through the entity, so backdate it in SQL.
