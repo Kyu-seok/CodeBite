@@ -27,8 +27,18 @@ public class SubmissionMetrics {
         }
         Counter.builder("codebite.submissions.completed")
                 .tag("status", status.name())
-                .tag("language", Language.fromJudge0Id(event.languageId())
-                        .map(Language::code).orElse("unknown"))
+                .tag("language", languageTag(event))
                 .register(meterRegistry).increment();
+    }
+
+    /**
+     * The event's language code; events published before the field existed carry none, so the
+     * Judge0 id is resolved instead, retired ids included.
+     */
+    private static String languageTag(SubmissionEvent event) {
+        if (event.language() != null && !event.language().isBlank()) {
+            return event.language();
+        }
+        return Language.fromJudge0Id(event.languageId()).map(Language::code).orElse("unknown");
     }
 }

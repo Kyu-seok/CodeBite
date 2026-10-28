@@ -92,7 +92,7 @@ class SubmissionConsumerTest {
                 .thenReturn(List.of(testCase(1L, "1 2", "3")));
         when(grader.grade(any(Program.class), anyList())).thenReturn(Verdict.of(List.of(accepted("3"))));
 
-        consumer.consume(new SubmissionEvent(1L, "source", 62, 10L, false));
+        consumer.consume(new SubmissionEvent(1L, "source", 62, 10L, false, "java"));
 
         assertEquals(SubmissionStatus.ACCEPTED, submission.getStatus());
         verify(submissionResultRepository).saveAll(any());
@@ -112,7 +112,7 @@ class SubmissionConsumerTest {
         when(grader.grade(any(Program.class), anyList()))
                 .thenReturn(Verdict.of(List.of(accepted("3"), accepted("7"))));
 
-        consumer.consume(new SubmissionEvent(1L, "source", 62, 10L, false));
+        consumer.consume(new SubmissionEvent(1L, "source", 62, 10L, false, "java"));
 
         @SuppressWarnings("unchecked")
         ArgumentCaptor<List<TestInput>> inputs = ArgumentCaptor.forClass(List.class);
@@ -133,7 +133,7 @@ class SubmissionConsumerTest {
         when(grader.grade(any(Program.class), anyList())).thenReturn(Verdict.of(List.of(accepted("3"))));
 
         // The admin listener exists to isolate the queue, not to grade differently.
-        consumer.consumeAdmin(new SubmissionEvent(1L, "source", 62, 10L, true));
+        consumer.consumeAdmin(new SubmissionEvent(1L, "source", 62, 10L, true, "java"));
 
         assertEquals(SubmissionStatus.ACCEPTED, submission.getStatus());
         verify(submissionResultRepository).saveAll(any());
@@ -153,7 +153,7 @@ class SubmissionConsumerTest {
                 .thenReturn(List.of(testCase(1L, "1 2", "3")));
         when(grader.grade(any(Program.class), anyList())).thenReturn(Verdict.of(List.of(accepted("3"))));
 
-        consumer.consume(new SubmissionEvent(1L, "source", 62, 10L, false));
+        consumer.consume(new SubmissionEvent(1L, "source", 62, 10L, false, "java"));
 
         ArgumentCaptor<SubmissionResultEvent> published =
                 ArgumentCaptor.forClass(SubmissionResultEvent.class);
@@ -175,7 +175,7 @@ class SubmissionConsumerTest {
 
         when(submissionRepository.findById(1L)).thenReturn(Optional.of(submission));
 
-        consumer.consume(new SubmissionEvent(1L, "source", 62, 10L, false));
+        consumer.consume(new SubmissionEvent(1L, "source", 62, 10L, false, "java"));
 
         verify(grader, never()).grade(any(), anyList());
         verify(submissionResultRepository, never()).saveAll(any());
@@ -200,7 +200,7 @@ class SubmissionConsumerTest {
                 SubmissionStatus.ACCEPTED, true, "7", null, null, 30, 2000);
         when(grader.grade(any(Program.class), anyList())).thenReturn(Verdict.of(List.of(failing, passing)));
 
-        consumer.consume(new SubmissionEvent(1L, "source", 62, 10L, false));
+        consumer.consume(new SubmissionEvent(1L, "source", 62, 10L, false, "java"));
 
         assertEquals(SubmissionStatus.WRONG_ANSWER, submission.getStatus());
         assertEquals(30, submission.getRuntimeMs());
@@ -238,7 +238,7 @@ class SubmissionConsumerTest {
         when(testCaseRepository.findByProblemIdOrderByOrderIndexAsc(10L))
                 .thenThrow(new RuntimeException("DB error"));
 
-        SubmissionEvent event = new SubmissionEvent(1L, "source", 62, 10L, false);
+        SubmissionEvent event = new SubmissionEvent(1L, "source", 62, 10L, false, "java");
         assertThrows(RuntimeException.class, () -> consumer.consume(event));
 
         // The consumer must not settle the status itself — the transaction rolls back and the
