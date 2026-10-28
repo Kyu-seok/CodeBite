@@ -1,6 +1,7 @@
 package com.codebite.review.service;
 
 import com.codebite.common.exception.ResourceNotFoundException;
+import com.codebite.common.time.DayRuns;
 import com.codebite.problem.entity.Difficulty;
 import com.codebite.problem.entity.Problem;
 import com.codebite.problem.entity.Tag;
@@ -209,52 +210,10 @@ public class ReviewService {
         long totalReviews = submissionRepository.countRated(userId);
         long totalSolveTimeSeconds = submissionRepository.sumSolveTimeSecondsForRated(userId);
         List<LocalDate> reviewDates = submissionRepository.findDistinctReviewDates(userId);
-        int currentStreak = computeCurrentStreak(reviewDates, LocalDate.now(ZoneOffset.UTC));
-        int longestStreak = computeLongestStreak(reviewDates);
+        int currentStreak = DayRuns.current(reviewDates, LocalDate.now(ZoneOffset.UTC));
+        int longestStreak = DayRuns.longest(reviewDates);
         return new ReviewStatsResponse(
                 totalReviews, totalSolveTimeSeconds, currentStreak, longestStreak);
-    }
-
-    /**
-     * Current streak = consecutive days ending today (or yesterday) that contain a review.
-     * Yesterday counts so the streak doesn't "die" mid-day before the user reviews again.
-     * `dates` is expected sorted DESC.
-     */
-    public static int computeCurrentStreak(List<LocalDate> dates, LocalDate today) {
-        if (dates.isEmpty()) return 0;
-        LocalDate mostRecent = dates.get(0);
-        if (mostRecent.isBefore(today.minusDays(1))) return 0;
-        int streak = 1;
-        LocalDate prev = mostRecent;
-        for (int i = 1; i < dates.size(); i++) {
-            LocalDate d = dates.get(i);
-            if (d.equals(prev.minusDays(1))) {
-                streak++;
-                prev = d;
-            } else {
-                break;
-            }
-        }
-        return streak;
-    }
-
-    /**
-     * Longest run of consecutive days anywhere in the history. `dates` may be in any order.
-     */
-    public static int computeLongestStreak(List<LocalDate> dates) {
-        if (dates.isEmpty()) return 0;
-        List<LocalDate> sorted = dates.stream().sorted().toList();
-        int longest = 1;
-        int current = 1;
-        for (int i = 1; i < sorted.size(); i++) {
-            if (sorted.get(i).equals(sorted.get(i - 1).plusDays(1))) {
-                current++;
-                if (current > longest) longest = current;
-            } else if (!sorted.get(i).equals(sorted.get(i - 1))) {
-                current = 1;
-            }
-        }
-        return longest;
     }
 
     /**

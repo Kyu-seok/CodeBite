@@ -51,10 +51,10 @@ public interface SubmissionRepository extends JpaRepository<Submission, Long> {
            "WHERE s.user.id = :userId AND s.confidence IS NOT NULL AND s.solveTimeSeconds IS NOT NULL")
     long sumSolveTimeSecondsForRated(@Param("userId") Long userId);
 
-    // Reviews stats: distinct local-dates a user has logged at least one rating on.
+    // Reviews stats: distinct local-dates a user has logged at least one rating on, in no
+    // particular order.
     @Query("SELECT DISTINCT CAST(s.reviewedAt AS LocalDate) FROM Submission s " +
-           "WHERE s.user.id = :userId AND s.confidence IS NOT NULL " +
-           "ORDER BY CAST(s.reviewedAt AS LocalDate) DESC")
+           "WHERE s.user.id = :userId AND s.confidence IS NOT NULL")
     List<LocalDate> findDistinctReviewDates(@Param("userId") Long userId);
 
     // Reviews stats: daily rating counts for the heatmap.
