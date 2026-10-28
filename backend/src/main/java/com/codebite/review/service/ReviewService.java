@@ -16,6 +16,8 @@ import com.codebite.review.dto.TagConfidenceItem;
 import com.codebite.review.entity.Confidence;
 import com.codebite.review.entity.ProblemReviewState;
 import com.codebite.review.repository.ProblemReviewStateRepository;
+import com.codebite.review.schedule.Review;
+import com.codebite.review.schedule.ReviewSchedule;
 import com.codebite.submission.entity.Submission;
 import com.codebite.submission.entity.SubmissionStatus;
 import com.codebite.submission.repository.SubmissionRepository;
@@ -29,7 +31,6 @@ import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.EnumMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,15 +65,19 @@ public class ReviewService {
             throw new IllegalArgumentException("error.review.pending");
         }
 
+        Instant now = Instant.now();
         submission.setConfidence(confidence);
-        submission.setReviewedAt(Instant.now());
+        submission.setReviewedAt(now);
         if (notes != null) {
             submission.setNotes(notes);
         }
         submissionRepository.save(submission);
 
-        ProblemReviewState state = replayState(userId, submission.getProblem().getId());
-        return toStateResponse(state);
+        Long problemId = submission.getProblem().getId();
+        ReviewSchedule schedule = ReviewSchedule
+                .replay(reviewsExcept(userId, problemId, submission.getId()))
+                .rate(confidence, now);
+        return toStateResponse(store(userId, problemId, schedule));
     }
 
     @Transactional
@@ -90,7 +95,9 @@ public class ReviewService {
         submission.setReviewedAt(null);
         submissionRepository.save(submission);
 
-        replayState(userId, submission.getProblem().getId());
+        Long problemId = submission.getProblem().getId();
+        store(userId, problemId,
+                ReviewSchedule.replay(reviewsExcept(userId, problemId, submission.getId())));
     }
 
     @Transactional(readOnly = true)
@@ -217,43 +224,30 @@ public class ReviewService {
     }
 
     /**
-     * Rebuild problem_review_state for (userId, problemId) by replaying every rated
-     * submission in chronological reviewed_at order through SM-2 lite. Source of truth
-     * lives on the submissions, so this is always derivable.
+     * Keep problem_review_state for (userId, problemId) as the snapshot of this schedule. The
+     * Reviews are the source of truth; the row is deleted when none is left and null is returned.
      */
-    private ProblemReviewState replayState(Long userId, Long problemId) {
-        List<Submission> rated = submissionRepository
-                .findByUserIdAndProblemIdAndConfidenceIsNotNullOrderByReviewedAtAsc(
-                        userId, problemId);
-
-        if (rated.isEmpty()) {
+    private ProblemReviewState store(Long userId, Long problemId, ReviewSchedule schedule) {
+        if (schedule.isEmpty()) {
             stateRepository.deleteByUserIdAndProblemId(userId, problemId);
             return null;
         }
-
-        ProblemReviewState state = stateRepository
-                .findByUserIdAndProblemId(userId, problemId)
-                .orElseGet(() -> ProblemReviewState.newFor(userId, problemId));
-        // Reset before replay so re-rating an old submission doesn't compound.
-        ProblemReviewState fresh = replay(userId, problemId, rated);
-        // Copy replayed values onto the persisted (or newly-created) entity instance.
-        state.setReviewCount(fresh.getReviewCount());
-        state.setEaseFactor(fresh.getEaseFactor());
-        state.setIntervalDays(fresh.getIntervalDays());
-        state.setLastReviewedAt(fresh.getLastReviewedAt());
-        state.setLastConfidence(fresh.getLastConfidence());
-        state.setNextDueAt(fresh.getNextDueAt());
-        state.setMastered(isMastered(rated, fresh));
-
-        return stateRepository.save(state);
+        return stateRepository.save(ProblemReviewState.of(userId, problemId, schedule));
     }
 
-    private static ProblemReviewState replay(Long userId, Long problemId, List<Submission> rated) {
-        ProblemReviewState fresh = ProblemReviewState.newFor(userId, problemId);
-        for (Submission s : rated) {
-            fresh.applyReview(s.getConfidence(), s.getReviewedAt());
-        }
-        return fresh;
+    /**
+     * The Reviews of the user's other submissions of the problem: a re-rated submission drops
+     * its earlier Review, so its new one goes in through {@link ReviewSchedule#rate} last, and
+     * a cleared one is simply gone. Neither depends on the submission's own change having been
+     * flushed yet.
+     */
+    private List<Review> reviewsExcept(Long userId, Long problemId, Long submissionId) {
+        return submissionRepository
+                .findByUserIdAndProblemIdAndConfidenceIsNotNullOrderByReviewedAtAsc(userId, problemId)
+                .stream()
+                .filter(s -> !s.getId().equals(submissionId))
+                .map(s -> new Review(s.getConfidence(), s.getReviewedAt()))
+                .toList();
     }
 
     /**
@@ -263,37 +257,9 @@ public class ReviewService {
      */
     @Transactional(readOnly = true)
     public Map<Confidence, Integer> previewIntervals(Submission submission) {
-        Long userId = submission.getUser().getId();
-        Long problemId = submission.getProblem().getId();
-        List<Submission> others = submissionRepository
-                .findByUserIdAndProblemIdAndConfidenceIsNotNullOrderByReviewedAtAsc(userId, problemId)
-                .stream()
-                .filter(s -> !s.getId().equals(submission.getId()))
-                .toList();
-        Instant now = Instant.now();
-        Map<Confidence, Integer> intervals = new EnumMap<>(Confidence.class);
-        for (Confidence c : Confidence.values()) {
-            ProblemReviewState state = replay(userId, problemId, others);
-            state.applyReview(c, now);
-            intervals.put(c, state.getIntervalDays());
-        }
-        return intervals;
-    }
-
-    /**
-     * Mastered = at least 3 reviews, last 2 are GOOD or EASY, current interval ≥ 30 days.
-     * "Last" is by chronological reviewed_at, matching the replay order.
-     */
-    static boolean isMastered(List<Submission> rated, ProblemReviewState state) {
-        if (rated.size() < 3) return false;
-        if (state.getIntervalDays() < 30) return false;
-        Confidence last = rated.get(rated.size() - 1).getConfidence();
-        Confidence prev = rated.get(rated.size() - 2).getConfidence();
-        return isGoodOrEasy(last) && isGoodOrEasy(prev);
-    }
-
-    private static boolean isGoodOrEasy(Confidence c) {
-        return c == Confidence.GOOD || c == Confidence.EASY;
+        List<Review> others = reviewsExcept(
+                submission.getUser().getId(), submission.getProblem().getId(), submission.getId());
+        return ReviewSchedule.replay(others).preview(Instant.now());
     }
 
     private ReviewStateResponse toStateResponse(ProblemReviewState s) {

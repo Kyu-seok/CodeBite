@@ -284,14 +284,15 @@ CREATE TABLE problem_review_state (
 CREATE INDEX idx_review_state_due ON problem_review_state(user_id, next_due_at);
 ```
 
-**Algorithm (SM-2 lite).** On each review the state row is mutated:
+**Algorithm (SM-2 lite).** `ReviewSchedule` (`common/.../review/schedule/`) is the immutable value every Review folds into (`replay`, `rate`, `preview`, `mastered`); the row is `ProblemReviewState.of(userId, problemId, schedule)`. On each Review:
 - `AGAIN` → interval resets to 1d, ease drops 0.20
 - `HARD` → 1st review 1d, 2nd 3d, then max(interval + 1, round(interval × 1.2)); ease drops 0.15
 - `GOOD` → 1st review 2d, 2nd 6d, then max(Hard + 1, round(interval × ease)); ease unchanged
 - `EASY` → 1st review 4d, 2nd 10d, then max(Good + 1, round(interval × ease × 1.3)); ease rises 0.10
 - Each rating uses the ease held before it (half-up rounding); every interval is capped at 36500d
+- Mastered = at least three Reviews, the last two Good or Easy, interval ≥ 30d; recomputed on every Review
 
-Source of truth is the `submissions.confidence` + `submissions.reviewed_at` pair; `problem_review_state` is fully rebuildable by replaying the per-submission ratings in chronological order. Re-rating an old submission updates its `reviewed_at`, which naturally re-orders the replay.
+Source of truth is the `submissions.confidence` + `submissions.reviewed_at` pair; `problem_review_state` is fully rebuildable by replaying the per-submission Reviews in chronological order. Re-rating an old submission updates its `reviewed_at`, which naturally re-orders the replay; the service rates it last on top of the other submissions' Reviews, the same path the interval preview takes. `common/src/test/resources/review-schedule-golden.csv` pins 256 histories to the intervals existing users were given; a change to the numbers needs a new file and a decision on how stored rows are rebuilt.
 
 **GitHub Links** (V190; terms in GLOSSARY.md, model in ADR 0003). One row per link; unlinking keeps the row. `active_user_id` mirrors `user_id` until UNLINKED and then goes NULL, so its UNIQUE constraint allows one current link per user (H2 cannot parse a partial unique index).
 
