@@ -551,27 +551,34 @@ GET /submissions/{id}
 | `submission-events` | 3 | `codebite-worker` | Work queue — one thread per partition (`concurrency: 3`) |
 | `submission-events-admin` | 1 | `codebite-worker-admin` | Work queue, `concurrency: 1`. Isolates admin bulk validation so a batch cannot occupy every user partition |
 | `submission-results` | 3 | `codebite-sse-${random.uuid}` | **Broadcast** — one single-member group per replica, so every replica sees every event |
-| `submission-results` | 3 | `codebite-stats` | Work queue — partitions split across replicas, each event aggregated once |
+| `submission-results` | 3 | `codebite-stats` | Work queue — partitions split across replicas, each event aggregated once. `earliest`: backfills on first deployment |
+| `submission-results` | 3 | `codebite-streaks` | Work queue — each Accepted, non-admin Verdict becomes a Streak Day once. `earliest`; retries with back-off (about a minute) before logging the event for manual replay, because a dropped event is a day the user loses |
+| `submission-results` | 3 | `codebite-solution-commits` | Work queue — each Accepted Verdict of a user with an ACTIVE GitHub Link becomes a Solution Commit. `latest`: earlier solves are the Import's job |
 | `github-imports` | 1 | `codebite-github-imports` | Work queue — one Import request per started Import (key: link id), consumed by the backend so an Import survives a restart |
 
 - Key: `submissionId` — per-user ordering is not required, and `submissionId` spreads load evenly
 - Replication factor 1 throughout (single broker)
 
-**Why the result topic carries two group patterns.** `submission-results` has two independent
-consumers, and they need opposite delivery semantics from the same stream:
+**Why the result topic carries two group patterns.** `submission-results` has four independent
+consumers (SSE push, stats, Streak Days, Solution Commits), and they need opposite delivery
+semantics from the same stream:
 
 - **SSE push** uses a per-instance group id. The connection lives on one specific replica, so a
   shared group would deliver the result to a replica with no connection to push it to, stranding the
   client on its polling fallback. Each replica gets its own single-member group, making it a
   broadcast. The cost is an orphaned group per restart — harmless, since they hold no offsets worth
   keeping and Kafka expires them.
-- **Stats** uses one shared group. Aggregates must be updated once, not once per replica, so the
-  partitions distribute across instances as an ordinary work queue.
+- **Stats, Streak Days and Solution Commits** each use one shared group. Derived state must be
+  updated once, not once per replica, so the partitions distribute across instances as an ordinary
+  work queue.
 
-Consumer groups, not topics, decide whether a subscriber is a queue or a broadcast. The two also
-differ on `auto-offset-reset`: SSE uses `latest` (replaying history would push results nobody is
-waiting for), stats uses `earliest` (it owns durable derived state and must backfill on first
-deployment).
+Consumer groups, not topics, decide whether a subscriber is a queue or a broadcast. The groups also
+differ on `auto-offset-reset`: SSE and Solution Commits use `latest` (replaying history would push
+results nobody is waiting for, or commit old submissions the Import owns), stats and Streak Days use
+`earliest` (they own durable derived state and must backfill on first deployment). Which Verdicts a
+listener then acts on is its `ResultScope` (`ACCEPTED_USERS` for Streak Days, `ACCEPTED_ALL` for
+Solution Commits, `ALL` for SSE and stats). `ResultFanOutWiringTest` checks the groups, resets,
+the Streak back-off and unknown-field tolerance against an embedded broker.
 
 **Stats idempotency.** Delivery is at-least-once, so the stats consumer *recomputes* the affected
 rows from `submissions` rather than incrementing counters. Replaying an event converges on the same

@@ -7,7 +7,7 @@ A code practice platform where users solve problems, submit code for judging, an
 ### Grading
 
 **Verdict**:
-The outcome of grading one program against an ordered list of test cases: a status for each case and an overall status, which is the status of the first judged case that is not Accepted, or Accepted when there is none.
+The outcome of grading one program against an ordered list of test cases: a status for each case and an overall status, which is the status of the first judged case that is not Accepted, or Accepted when there is none. A submission's Verdict is announced to the rest of the system (the live result push, stats, Streak Days, Solution Commits) only once it is stored; the announcement is a notification of the Verdict, not the Verdict itself.
 _Avoid_: Result, outcome, overall status
 
 **Unjudged Case**:

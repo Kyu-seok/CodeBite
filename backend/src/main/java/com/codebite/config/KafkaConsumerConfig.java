@@ -23,12 +23,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Consumer setup for the backend's result listener.
+ * Consumer setup for the backend's listeners.
  *
- * <p>The backend was producer-only until the {@code submission-results} fan-out; this is the only
- * thing it consumes. Kept as an explicit factory rather than Spring Boot's auto-configured one so
- * the broadcast semantics (see {@code SubmissionResultListener}) stay visible next to the config
- * that enables them.
+ * <p>The backend was producer-only until the {@code submission-results} fan-out. It now consumes
+ * that topic in four groups (SSE push, stats, Streak Days, Solution Commits) and
+ * {@code github-imports} in one, each through its own factory below. Kept as explicit factories
+ * rather than Spring Boot's auto-configured one so each group's offset reset and failure policy
+ * stays visible, as a paragraph, next to the config that enables it. Which Verdicts a listener
+ * then acts on is its {@link com.codebite.submission.event.ResultScope}. {@code ResultFanOutWiringTest}
+ * checks the groups, resets and the Streak back-off against an embedded broker.
  */
 @Configuration
 @ConditionalOnProperty(name = "app.kafka.enabled", havingValue = "true", matchIfMissing = true)
