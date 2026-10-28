@@ -1,7 +1,10 @@
 package com.codebite.worker.consumer;
 
-import com.codebite.judge.dto.JudgeResponse;
-import com.codebite.judge.service.JudgeService;
+import com.codebite.judge.grader.CaseVerdict;
+import com.codebite.judge.grader.Grader;
+import com.codebite.judge.grader.Program;
+import com.codebite.judge.grader.TestInput;
+import com.codebite.judge.grader.Verdict;
 import com.codebite.problem.entity.TestCase;
 import com.codebite.problem.repository.TestCaseRepository;
 import com.codebite.submission.entity.Submission;
@@ -25,11 +28,11 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -37,7 +40,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class SubmissionConsumerTest {
 
-    @Mock private JudgeService judgeService;
+    @Mock private Grader grader;
     @Mock private TestCaseRepository testCaseRepository;
     @Mock private SubmissionResultRepository submissionResultRepository;
     @Mock private SubmissionRepository submissionRepository;
@@ -49,7 +52,7 @@ class SubmissionConsumerTest {
     void setUp() {
         SimpleMeterRegistry meterRegistry = new SimpleMeterRegistry();
         consumer = new SubmissionConsumer(
-                judgeService, testCaseRepository,
+                grader, testCaseRepository,
                 submissionResultRepository, submissionRepository,
                 new SubmissionMetrics(meterRegistry), meterRegistry, eventPublisher);
     }
@@ -61,8 +64,20 @@ class SubmissionConsumerTest {
         return user;
     }
 
-    private static JudgeResponse accepted(String stdout) {
-        return new JudgeResponse(null, new JudgeResponse.Status(3, "Accepted"), stdout, null, null, "0.01", 9000);
+    private static TestCase testCase(long id, String input, String expectedOutput) {
+        TestCase testCase = new TestCase();
+        testCase.setId(id);
+        testCase.setInput(input);
+        testCase.setExpectedOutput(expectedOutput);
+        return testCase;
+    }
+
+    private static CaseVerdict accepted(String stdout) {
+        return new CaseVerdict(SubmissionStatus.ACCEPTED, true, stdout, null, null, 10, 9000);
+    }
+
+    private static CaseVerdict wrongAnswer(String stdout) {
+        return new CaseVerdict(SubmissionStatus.WRONG_ANSWER, true, stdout, null, null, 10, 9000);
     }
 
     @Test
@@ -72,16 +87,10 @@ class SubmissionConsumerTest {
         submission.setStatus(SubmissionStatus.PENDING);
         submission.setUser(owner());
 
-        TestCase testCase = new TestCase();
-        testCase.setId(1L);
-        testCase.setInput("1 2");
-        testCase.setExpectedOutput("3");
-
         when(submissionRepository.findById(1L)).thenReturn(Optional.of(submission));
-        when(testCaseRepository.findByProblemIdOrderByOrderIndexAsc(10L)).thenReturn(List.of(testCase));
-        when(judgeService.executeBatch(anyString(), anyInt(), anyList()))
-                .thenReturn(List.of(accepted("3\n")));
-        when(judgeService.mapStatus(any(), anyString())).thenReturn(SubmissionStatus.ACCEPTED);
+        when(testCaseRepository.findByProblemIdOrderByOrderIndexAsc(10L))
+                .thenReturn(List.of(testCase(1L, "1 2", "3")));
+        when(grader.grade(any(Program.class), anyList())).thenReturn(Verdict.of(List.of(accepted("3"))));
 
         consumer.consume(new SubmissionEvent(1L, "source", 62, 10L, false));
 
@@ -91,22 +100,37 @@ class SubmissionConsumerTest {
     }
 
     @Test
+    void consume_gradesTheEventsProgramAgainstEveryTestCaseInOrder() {
+        Submission submission = new Submission();
+        submission.setId(1L);
+        submission.setStatus(SubmissionStatus.PENDING);
+        submission.setUser(owner());
+
+        when(submissionRepository.findById(1L)).thenReturn(Optional.of(submission));
+        when(testCaseRepository.findByProblemIdOrderByOrderIndexAsc(10L))
+                .thenReturn(List.of(testCase(1L, "1 2", "3"), testCase(2L, "3 4", "7")));
+        when(grader.grade(any(Program.class), anyList()))
+                .thenReturn(Verdict.of(List.of(accepted("3"), accepted("7"))));
+
+        consumer.consume(new SubmissionEvent(1L, "source", 62, 10L, false));
+
+        @SuppressWarnings("unchecked")
+        ArgumentCaptor<List<TestInput>> inputs = ArgumentCaptor.forClass(List.class);
+        verify(grader).grade(eq(new Program("source", 62)), inputs.capture());
+        assertEquals(List.of(new TestInput("1 2", "3"), new TestInput("3 4", "7")), inputs.getValue());
+    }
+
+    @Test
     void consumeAdmin_gradesThroughTheSamePathAsUserSubmissions() {
         Submission submission = new Submission();
         submission.setId(1L);
         submission.setStatus(SubmissionStatus.PENDING);
         submission.setUser(owner());
 
-        TestCase testCase = new TestCase();
-        testCase.setId(1L);
-        testCase.setInput("1 2");
-        testCase.setExpectedOutput("3");
-
         when(submissionRepository.findById(1L)).thenReturn(Optional.of(submission));
-        when(testCaseRepository.findByProblemIdOrderByOrderIndexAsc(10L)).thenReturn(List.of(testCase));
-        when(judgeService.executeBatch(anyString(), anyInt(), anyList()))
-                .thenReturn(List.of(accepted("3\n")));
-        when(judgeService.mapStatus(any(), anyString())).thenReturn(SubmissionStatus.ACCEPTED);
+        when(testCaseRepository.findByProblemIdOrderByOrderIndexAsc(10L))
+                .thenReturn(List.of(testCase(1L, "1 2", "3")));
+        when(grader.grade(any(Program.class), anyList())).thenReturn(Verdict.of(List.of(accepted("3"))));
 
         // The admin listener exists to isolate the queue, not to grade differently.
         consumer.consumeAdmin(new SubmissionEvent(1L, "source", 62, 10L, true));
@@ -124,16 +148,10 @@ class SubmissionConsumerTest {
         submission.setUser(owner());
         submission.setLanguage("java");
 
-        TestCase testCase = new TestCase();
-        testCase.setId(1L);
-        testCase.setInput("1 2");
-        testCase.setExpectedOutput("3");
-
         when(submissionRepository.findById(1L)).thenReturn(Optional.of(submission));
-        when(testCaseRepository.findByProblemIdOrderByOrderIndexAsc(10L)).thenReturn(List.of(testCase));
-        when(judgeService.executeBatch(anyString(), anyInt(), anyList()))
-                .thenReturn(List.of(accepted("3\n")));
-        when(judgeService.mapStatus(any(), anyString())).thenReturn(SubmissionStatus.ACCEPTED);
+        when(testCaseRepository.findByProblemIdOrderByOrderIndexAsc(10L))
+                .thenReturn(List.of(testCase(1L, "1 2", "3")));
+        when(grader.grade(any(Program.class), anyList())).thenReturn(Verdict.of(List.of(accepted("3"))));
 
         consumer.consume(new SubmissionEvent(1L, "source", 62, 10L, false));
 
@@ -145,6 +163,8 @@ class SubmissionConsumerTest {
         assertEquals(1L, event.submissionId());
         assertEquals(77L, event.userId());
         assertEquals(SubmissionStatus.ACCEPTED, event.status());
+        assertEquals(10, event.runtimeMs());
+        assertEquals(9000, event.memoryKb());
     }
 
     @Test
@@ -157,45 +177,54 @@ class SubmissionConsumerTest {
 
         consumer.consume(new SubmissionEvent(1L, "source", 62, 10L, false));
 
-        verify(judgeService, never()).executeBatch(anyString(), anyInt(), anyList());
+        verify(grader, never()).grade(any(), anyList());
         verify(submissionResultRepository, never()).saveAll(any());
     }
 
     @Test
-    void consume_wrongAnswer_persistsAllResultsButOverallStatusReflectsFirstFailure() {
+    void consume_persistsOneRowPerCaseVerdictAndTakesTheVerdictsOverall() {
         Submission submission = new Submission();
         submission.setId(1L);
         submission.setStatus(SubmissionStatus.PENDING);
         submission.setUser(owner());
 
-        TestCase tc1 = new TestCase();
-        tc1.setId(1L);
-        tc1.setInput("1 2");
-        tc1.setExpectedOutput("3");
-
-        TestCase tc2 = new TestCase();
-        tc2.setId(2L);
-        tc2.setInput("3 4");
-        tc2.setExpectedOutput("7");
+        TestCase tc1 = testCase(1L, "1 2", "3");
+        TestCase tc2 = testCase(2L, "3 4", "7");
 
         when(submissionRepository.findById(1L)).thenReturn(Optional.of(submission));
         when(testCaseRepository.findByProblemIdOrderByOrderIndexAsc(10L)).thenReturn(List.of(tc1, tc2));
-        // Batch returns one result per test case; the consumer no longer aborts on first failure
-        // because Judge0 has already executed every case.
-        when(judgeService.executeBatch(anyString(), anyInt(), anyList()))
-                .thenReturn(List.of(accepted("wrong\n"), accepted("11\n")));
-        // First mapStatus -> WRONG_ANSWER (fails on tc1), second -> ACCEPTED
-        when(judgeService.mapStatus(any(), anyString()))
-                .thenReturn(SubmissionStatus.WRONG_ANSWER)
-                .thenReturn(SubmissionStatus.ACCEPTED);
+        // The Grader owns the "first failing case wins" rule; the consumer just stores what it says.
+        CaseVerdict failing = new CaseVerdict(
+                SubmissionStatus.WRONG_ANSWER, true, "wrong", "warn", null, 12, 4000);
+        CaseVerdict passing = new CaseVerdict(
+                SubmissionStatus.ACCEPTED, true, "7", null, null, 30, 2000);
+        when(grader.grade(any(Program.class), anyList())).thenReturn(Verdict.of(List.of(failing, passing)));
 
         consumer.consume(new SubmissionEvent(1L, "source", 62, 10L, false));
 
         assertEquals(SubmissionStatus.WRONG_ANSWER, submission.getStatus());
+        assertEquals(30, submission.getRuntimeMs());
+        assertEquals(4000, submission.getMemoryKb());
+
         @SuppressWarnings("unchecked")
         ArgumentCaptor<List<SubmissionResult>> captor = ArgumentCaptor.forClass(List.class);
         verify(submissionResultRepository).saveAll(captor.capture());
-        assertEquals(2, captor.getValue().size());
+        List<SubmissionResult> rows = captor.getValue();
+        assertEquals(2, rows.size());
+
+        SubmissionResult first = rows.get(0);
+        assertSame(submission, first.getSubmission());
+        assertSame(tc1, first.getTestCase());
+        assertEquals(SubmissionStatus.WRONG_ANSWER, first.getStatus());
+        assertEquals("wrong", first.getActualOutput());
+        assertEquals("warn", first.getStderr());
+        assertEquals(12, first.getRuntimeMs());
+        assertEquals(4000, first.getMemoryKb());
+
+        SubmissionResult second = rows.get(1);
+        assertSame(tc2, second.getTestCase());
+        assertEquals(SubmissionStatus.ACCEPTED, second.getStatus());
+        assertEquals("7", second.getActualOutput());
     }
 
     @Test
