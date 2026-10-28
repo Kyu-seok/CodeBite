@@ -6,6 +6,7 @@ import com.codebite.problem.entity.Difficulty;
 import com.codebite.problem.entity.Problem;
 import com.codebite.problem.entity.Tag;
 import com.codebite.problem.entity.TestCase;
+import com.codebite.progress.UserProgress.ActivityDay;
 import com.codebite.progress.UserProgress.Status;
 import com.codebite.progress.UserProgress.TagProgress;
 import com.codebite.submission.entity.Submission;
@@ -22,6 +23,8 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 
+import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.OptionalInt;
@@ -226,6 +229,53 @@ class UserProgressTest {
             entityManager.flush();
 
             assertEquals(List.of(), progress.solvedByTag(user.getId()));
+        }
+    }
+
+    @Nested
+    class Activity {
+
+        @Test
+        void bucketsByUtcDay_everyStatus_sinceInclusive() {
+            submittedAt(submit(user, easy, SubmissionStatus.WRONG_ANSWER), "2026-03-01T23:59:59Z");
+            submittedAt(submit(user, easy, SubmissionStatus.ACCEPTED), "2026-03-02T00:00:01Z");
+            submittedAt(submit(user, medium, SubmissionStatus.PENDING), "2026-03-02T12:00:00Z");
+            submittedAt(submit(user, hard, SubmissionStatus.ACCEPTED), "2026-02-28T23:59:59Z");
+            submittedAt(submit(admin, hard, SubmissionStatus.ACCEPTED), "2026-03-05T00:00:00Z");
+            entityManager.flush();
+            entityManager.clear();
+
+            List<ActivityDay> days = progress.activity(user.getId(), Instant.parse("2026-03-01T23:59:59Z"));
+
+            assertEquals(List.of(
+                            new ActivityDay(LocalDate.parse("2026-03-01"), 1),
+                            new ActivityDay(LocalDate.parse("2026-03-02"), 2)),
+                    days, "a second before and a second after UTC midnight are different days; PENDING counts");
+        }
+
+        @Test
+        void anAdminsOwnSubmissionsAreTheirActivity() {
+            submittedAt(submit(admin, easy, SubmissionStatus.ACCEPTED), "2026-03-05T00:00:00Z");
+            entityManager.flush();
+            entityManager.clear();
+
+            assertEquals(List.of(new ActivityDay(LocalDate.parse("2026-03-05"), 1)),
+                    progress.activity(admin.getId(), Instant.EPOCH));
+        }
+
+        @Test
+        void noSubmissionsIsAnEmptyList() {
+            assertEquals(List.of(), progress.activity(user.getId(), Instant.EPOCH));
+        }
+
+        /** created_at is not updatable through the entity, so it is set as StreakRecordingTest does. */
+        private void submittedAt(Submission submission, String instant) {
+            entityManager.flush();
+            entityManager.getEntityManager()
+                    .createQuery("UPDATE Submission s SET s.createdAt = :at WHERE s.id = :id")
+                    .setParameter("at", Instant.parse(instant))
+                    .setParameter("id", submission.getId())
+                    .executeUpdate();
         }
     }
 

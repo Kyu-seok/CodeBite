@@ -6,6 +6,10 @@ import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -14,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.OptionalInt;
 import java.util.Set;
+import java.util.TreeMap;
 
 /**
  * A user's Progress: the problems they have Solved or Attempted. The one place that says what
@@ -31,6 +36,10 @@ import java.util.Set;
  *   <li>{@link #statusByProblem} has no published filter: the caller passes the ids it shows.
  *       {@link #solvedByDifficulty} and {@link #solvedByTag} count published problems only,
  *       because they are shown against the published totals.</li>
+ *   <li><strong>Activity</strong> is every submission the user made, whatever its status and
+ *       whoever made it: the "did you show up" heatmap, not the Streak. Days are UTC calendar days
+ *       (ADR 0001), bucketed in Java from the submission's instant, never by casting in SQL, whose
+ *       day would depend on the database session's timezone.</li>
  * </ul>
  *
  * <p>The projection records are instantiated by Hibernate from the select list, so their
@@ -54,6 +63,10 @@ public class UserProgress {
 
     /** Solved published problems carrying one tag. */
     public record TagProgress(String slug, String name, Long solved) {
+    }
+
+    /** How many submissions the user made on one UTC day. */
+    public record ActivityDay(LocalDate day, int submissions) {
     }
 
     private static final String GRADED_NON_ADMIN =
@@ -118,6 +131,24 @@ public class UserProgress {
                         TagProgress.class)
                 .setParameter("userId", userId)
                 .getResultList();
+    }
+
+    /** Activity per UTC day from {@code since} (inclusive) on, oldest first; days without any are absent. */
+    @Transactional(readOnly = true)
+    public List<ActivityDay> activity(Long userId, Instant since) {
+        List<Instant> submittedAt = entityManager.createQuery(
+                        "SELECT s.createdAt FROM Submission s WHERE s.user.id = :userId AND s.createdAt >= :since",
+                        Instant.class)
+                .setParameter("userId", userId)
+                .setParameter("since", since)
+                .getResultList();
+        Map<LocalDate, Integer> perDay = new TreeMap<>();
+        for (Instant at : submittedAt) {
+            perDay.merge(at.atZone(ZoneOffset.UTC).toLocalDate(), 1, Integer::sum);
+        }
+        List<ActivityDay> days = new ArrayList<>(perDay.size());
+        perDay.forEach((day, count) -> days.add(new ActivityDay(day, count)));
+        return days;
     }
 
     /** Every problem the user has Solved, published or not. */

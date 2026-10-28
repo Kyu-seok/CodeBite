@@ -89,13 +89,6 @@ public interface SubmissionRepository extends JpaRepository<Submission, Long> {
 
     Optional<Submission> findFirstByUserIdOrderByCreatedAtDesc(Long userId);
 
-    // Profile: daily submission counts for activity heatmap
-    @Query("SELECT CAST(s.createdAt AS LocalDate), COUNT(s) " +
-           "FROM Submission s WHERE s.user.id = :userId AND s.createdAt >= :since " +
-           "GROUP BY CAST(s.createdAt AS LocalDate) " +
-           "ORDER BY CAST(s.createdAt AS LocalDate)")
-    List<Object[]> countDailyActivity(@Param("userId") Long userId, @Param("since") Instant since);
-
     // Profile: recent submissions across all problems
     @Query("SELECT s FROM Submission s JOIN FETCH s.problem " +
            "WHERE s.user.id = :userId ORDER BY s.createdAt DESC")

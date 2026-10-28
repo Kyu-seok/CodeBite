@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -71,11 +70,7 @@ public class ProfileService {
 
         // Active days for the past year
         Instant oneYearAgo = Instant.now().minus(365, ChronoUnit.DAYS);
-        List<Object[]> activityRows = submissionRepository.countDailyActivity(userId, oneYearAgo);
-        List<LocalDate> activeDates = new ArrayList<>();
-        for (Object[] row : activityRows) {
-            activeDates.add((LocalDate) row[0]);
-        }
+        int activeDays = userProgress.activity(userId, oneYearAgo).size();
 
         StreakSummary streak = streakService.getSummary(userId);
 
@@ -88,7 +83,7 @@ public class ProfileService {
                 totalSolved, totalProblems,
                 solvedEasy, solvedMedium, solvedHard,
                 totalEasy, totalMedium, totalHard,
-                streak.currentStreak(), streak.bestStreak(), activeDates.size(),
+                streak.currentStreak(), streak.bestStreak(), activeDays,
                 memberSince
         );
     }
@@ -96,12 +91,9 @@ public class ProfileService {
     @Transactional(readOnly = true)
     public List<ActivityDay> getActivity(Long userId, int months) {
         Instant since = Instant.now().minus(months * 30L, ChronoUnit.DAYS);
-        List<Object[]> rows = submissionRepository.countDailyActivity(userId, since);
-        List<ActivityDay> result = new ArrayList<>();
-        for (Object[] row : rows) {
-            result.add(new ActivityDay((LocalDate) row[0], ((Long) row[1]).intValue()));
-        }
-        return result;
+        return userProgress.activity(userId, since).stream()
+                .map(day -> new ActivityDay(day.day(), day.submissions()))
+                .toList();
     }
 
     @Transactional(readOnly = true)

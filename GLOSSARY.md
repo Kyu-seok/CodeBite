@@ -83,6 +83,10 @@ A problem the user has a graded, non-admin submission to but has not Solved. A p
 A user's Solved and Attempted problems, and their counts by difficulty and tag against the published catalogue.
 _Avoid_: Stats, score
 
+**Activity**:
+The number of submissions of any status a user made on a UTC day; the profile heatmap. An Activity day is not a Streak Day unless one of them was Accepted.
+_Avoid_: Active day, heatmap day
+
 **Acceptance Rate**:
 Per problem, the share of graded non-admin submissions that were Accepted, as a percentage to one decimal. A problem nobody has been graded on has none.
 _Avoid_: Pass rate, success rate, solve rate
