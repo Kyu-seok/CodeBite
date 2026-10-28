@@ -40,7 +40,27 @@ The count of Streak Days, from 0 to 4, toward the next Repair. The fifth earns a
 _Avoid_: Repair streak
 
 **Review Streak**:
-The number of consecutive days with a completed review, ending today or yesterday like the Streak, tracked independently of it.
+The number of consecutive days with a completed Review, ending today or yesterday like the Streak, tracked independently of it.
+
+### Reviews
+
+**Review**:
+A Confidence given to one judged submission, timestamped at that moment. Re-rating a submission replaces its Review and its timestamp.
+_Avoid_: Rating, grade
+
+**Confidence**:
+One of Again, Hard, Good, Easy, chosen in a Review.
+_Avoid_: Score, difficulty felt
+
+**Review Schedule**:
+What replaying all of a user's Reviews of one problem in timestamp order through SM-2 lite yields: review count, ease, interval, next due moment and whether Mastered. The Reviews are the source of truth; the stored row is a snapshot.
+_Avoid_: Review state, SM-2 cache
+
+**Due**:
+A problem whose Review Schedule's next due moment is at or before now.
+
+**Mastered**:
+A problem with at least three Reviews, the last two Good or Easy, and an interval of 30 days or more; recomputed on every Review and can be lost.
 
 ### GitHub
 
