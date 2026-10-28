@@ -176,14 +176,8 @@ public class SubmissionService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("error.user.notFound", userId));
 
-        Submission submission = new Submission();
-        submission.setUser(user);
-        submission.setProblem(problem);
-        submission.setLanguage(request.language().toLowerCase());
-        submission.setSourceCode(request.sourceCode());
-        submission.setStatus(SubmissionStatus.PENDING);
-        submission.setAdminSubmission(user.getRole() == com.codebite.user.entity.Role.ADMIN);
-        return submissionRepository.save(submission);
+        return submissionRepository.save(
+                Submission.pending(user, problem, request.language().toLowerCase(), request.sourceCode()));
     }
 
     private SubmissionResponse toResponse(Submission submission, List<SubmissionResult> results,
