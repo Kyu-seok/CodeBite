@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { getStreamToken, getSubmission, submissionStreamUrl } from "@/api/submissions";
 import { watchSubmission, type WatchDeps, type WatchEvent } from "@/judge/watchSubmission";
+import { browserTimers } from "@/lib/timers";
 
 /**
  * The real parties behind the watch: axios, EventSource and the window's timers. Deliberately
@@ -23,9 +24,7 @@ export const browserWatchDeps: WatchDeps = {
       close: () => source.close(),
     };
   },
-  now: () => Date.now(),
-  setTimeout: (fn, ms) => window.setTimeout(fn, ms),
-  clearTimeout: (handle) => window.clearTimeout(handle as number),
+  ...browserTimers,
 };
 
 /**

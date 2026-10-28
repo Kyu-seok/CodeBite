@@ -23,6 +23,7 @@ import { AxiosError } from "axios"
 import type { ApiError } from "@/types/api"
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts"
 import { useSubmissionWatch } from "@/hooks/useSubmissionWatch"
+import { usePersistedDraft } from "@/hooks/usePersistedDraft"
 import type { JudgeAttempt } from "@/judge/attempt"
 import type { WorkspaceOutletContext } from "@/components/layout/Layout"
 
@@ -45,14 +46,7 @@ export default function ProblemDetailPage() {
   )
 
   const [language, setLanguage] = useState<string>("")
-  const [codeByLang, setCodeByLang] = useState<Record<string, string>>(() => {
-    try {
-      const stored = localStorage.getItem(`code-draft:${slug}`)
-      return stored ? JSON.parse(stored) : {}
-    } catch {
-      return {}
-    }
-  })
+  const [codeByLang, setCodeByLang] = usePersistedDraft<Record<string, string>>(`code-draft:${slug}`, {})
   // The one Run or Submit in progress or last finished; TestPanel renders it as is.
   const [attempt, setAttempt] = useState<JudgeAttempt>({ kind: "idle" })
   // A pending overwrite of the editor (reset or load), held until the learner confirms it.
@@ -66,14 +60,7 @@ export default function ProblemDetailPage() {
     solveTimeSeconds: number | null
     reviewIntervalDays: Record<Confidence, number> | null
   }>({ open: false, submissionId: null, solveTimeSeconds: null, reviewIntervalDays: null })
-  const [customTests, setCustomTests] = useState<CustomTestCaseInput[]>(() => {
-    try {
-      const stored = localStorage.getItem(`custom-tests:${slug}`)
-      return stored ? JSON.parse(stored) : []
-    } catch {
-      return []
-    }
-  })
+  const [customTests, setCustomTests] = usePersistedDraft<CustomTestCaseInput[]>(`custom-tests:${slug}`, [])
   const [leftPanelTab, setLeftPanelTab] = useState('description')
   const [leftCollapsed, setLeftCollapsed] = useState(false)
   const [rightCollapsed, setRightCollapsed] = useState(false)
@@ -84,10 +71,6 @@ export default function ProblemDetailPage() {
   const runRef = useRef<() => void>(() => {})
   const submitRef = useRef<() => void>(() => {})
   const timerSnapshotRef = useRef<number | null>(null)
-  const codeByLangRef = useRef(codeByLang)
-  codeByLangRef.current = codeByLang
-  const customTestsRef = useRef(customTests)
-  customTestsRef.current = customTests
 
   useKeyboardShortcuts(
     useCallback(() => runRef.current(), []),
@@ -98,55 +81,6 @@ export default function ProblemDetailPage() {
   useEffect(() => {
     if (problem) document.title = `${problem.title} | CodeBite`
   }, [problem])
-
-  // Debounced draft persistence — avoid synchronous localStorage I/O on every keystroke.
-  useEffect(() => {
-    if (!slug) return
-    const handle = setTimeout(() => {
-      try {
-        localStorage.setItem(`code-draft:${slug}`, JSON.stringify(codeByLangRef.current))
-      } catch {
-        // storage full / disabled — ignore
-      }
-    }, 300)
-    return () => clearTimeout(handle)
-  }, [codeByLang, slug])
-
-  // Flush latest draft on slug change or unmount so a quick nav-away doesn't drop keystrokes.
-  useEffect(() => {
-    return () => {
-      if (!slug) return
-      try {
-        localStorage.setItem(`code-draft:${slug}`, JSON.stringify(codeByLangRef.current))
-      } catch {
-        // ignore
-      }
-    }
-  }, [slug])
-
-  // Custom tests — debounced persistence + flush on unmount, mirrors code-draft.
-  useEffect(() => {
-    if (!slug) return
-    const handle = setTimeout(() => {
-      try {
-        localStorage.setItem(`custom-tests:${slug}`, JSON.stringify(customTestsRef.current))
-      } catch {
-        // ignore
-      }
-    }, 300)
-    return () => clearTimeout(handle)
-  }, [customTests, slug])
-
-  useEffect(() => {
-    return () => {
-      if (!slug) return
-      try {
-        localStorage.setItem(`custom-tests:${slug}`, JSON.stringify(customTestsRef.current))
-      } catch {
-        // ignore
-      }
-    }
-  }, [slug])
 
   const editorErrors = useMemo<CodeError[]>(() => {
     const results = attempt.kind === "settled" ? attempt.result.results : []
