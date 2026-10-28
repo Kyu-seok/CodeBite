@@ -31,6 +31,7 @@ import org.springframework.data.domain.PageRequest;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -38,6 +39,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -107,6 +110,41 @@ class ProblemServiceTest {
 
         Page<ProblemListItem> result = problemService.listPublishedProblems(Difficulty.EASY, null, null, null, null, PageRequest.of(0, 10));
         assertEquals(1, result.getTotalElements());
+    }
+
+    @Test
+    void getRandomProblemSlug_prefersAProblemTheUserHasNotSolved() {
+        when(userProgress.solvedProblemIds(7L)).thenReturn(Set.of(1L, 2L));
+        when(problemRepository.findRandomPublishedSlugsExcluding(eq(Set.of(1L, 2L)), any(PageRequest.class)))
+                .thenReturn(List.of("fresh"));
+
+        assertEquals("fresh", problemService.getRandomProblemSlug(null, 7L));
+        verify(problemRepository, never()).findRandomPublishedSlugs(any());
+    }
+
+    @Test
+    void getRandomProblemSlug_withNothingSolved_picksAnyWithoutAnEmptyNotIn() {
+        when(userProgress.solvedProblemIds(7L)).thenReturn(Set.of());
+        when(problemRepository.findRandomPublishedSlugs(any(PageRequest.class))).thenReturn(List.of("any"));
+
+        assertEquals("any", problemService.getRandomProblemSlug(null, 7L));
+        verify(problemRepository, never()).findRandomPublishedSlugsExcluding(any(), any());
+    }
+
+    @Test
+    void getRandomProblemSlug_signedOut_picksAny() {
+        when(problemRepository.findRandomPublishedSlugsByDifficulty(eq(Difficulty.HARD), any(PageRequest.class)))
+                .thenReturn(List.of("any-hard"));
+
+        assertEquals("any-hard", problemService.getRandomProblemSlug(Difficulty.HARD, null));
+        verify(userProgress, never()).solvedProblemIds(any());
+    }
+
+    @Test
+    void getRandomProblemSlug_noPublishedProblems_throws() {
+        when(problemRepository.findRandomPublishedSlugs(any(PageRequest.class))).thenReturn(List.of());
+
+        assertThrows(ResourceNotFoundException.class, () -> problemService.getRandomProblemSlug(null, null));
     }
 
     @Test

@@ -12,10 +12,8 @@ import com.codebite.progress.ProblemPopularity;
 import com.codebite.progress.ProblemPopularity.Rate;
 import com.codebite.submission.entity.Submission;
 import com.codebite.submission.repository.SubmissionRepository;
-import com.codebite.user.entity.Role;
 import com.codebite.user.repository.UserRepository;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -98,19 +96,8 @@ public class AdminAnalyticsService {
 
     @Transactional(readOnly = true)
     public Page<AdminUserDto> getUsers(Pageable pageable) {
-        Page<Object[]> page = userRepository.findUsersWithStats(pageable);
-        List<AdminUserDto> users = page.getContent().stream()
-                .map(row -> new AdminUserDto(
-                        (Long) row[0],
-                        (String) row[1],
-                        (String) row[2],
-                        (Role) row[3],
-                        (String) row[4],
-                        (Instant) row[5],
-                        row[6] != null ? (Long) row[6] : 0L,
-                        (Instant) row[7]
-                ))
-                .toList();
-        return new PageImpl<>(users, pageable, page.getTotalElements());
+        return userRepository.findAllOverviews(pageable)
+                .map(u -> new AdminUserDto(u.id(), u.username(), u.email(), u.role(), u.avatarUrl(),
+                        u.createdAt(), u.solvedCount(), u.lastSubmittedAt()));
     }
 }

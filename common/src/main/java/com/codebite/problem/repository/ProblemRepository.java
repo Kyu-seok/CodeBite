@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,15 +38,17 @@ public interface ProblemRepository extends JpaRepository<Problem, Long>, JpaSpec
     @Query("SELECT p.slug FROM Problem p WHERE p.published = true AND p.difficulty = :difficulty ORDER BY RANDOM()")
     List<String> findRandomPublishedSlugsByDifficulty(@Param("difficulty") Difficulty difficulty, Pageable pageable);
 
-    @Query("SELECT p.slug FROM Problem p WHERE p.published = true " +
-           "AND p.id NOT IN (SELECT DISTINCT s.problem.id FROM Submission s WHERE s.user.id = :userId AND s.status = 'ACCEPTED') " +
-           "ORDER BY RANDOM()")
-    List<String> findRandomUnsolvedSlugs(@Param("userId") Long userId, Pageable pageable);
+    // Random pick among published problems other than the given ones (the user's Solved ids from
+    // UserProgress). `excluded` must not be empty: NOT IN () is not SQL; callers use the plain
+    // random query then.
+    @Query("SELECT p.slug FROM Problem p WHERE p.published = true AND p.id NOT IN :excluded ORDER BY RANDOM()")
+    List<String> findRandomPublishedSlugsExcluding(@Param("excluded") Collection<Long> excluded, Pageable pageable);
 
-    @Query("SELECT p.slug FROM Problem p WHERE p.published = true AND p.difficulty = :difficulty " +
-           "AND p.id NOT IN (SELECT DISTINCT s.problem.id FROM Submission s WHERE s.user.id = :userId AND s.status = 'ACCEPTED') " +
-           "ORDER BY RANDOM()")
-    List<String> findRandomUnsolvedSlugsByDifficulty(@Param("difficulty") Difficulty difficulty, @Param("userId") Long userId, Pageable pageable);
+    @Query("SELECT p.slug FROM Problem p WHERE p.published = true AND p.difficulty = :difficulty "
+           + "AND p.id NOT IN :excluded ORDER BY RANDOM()")
+    List<String> findRandomPublishedSlugsByDifficultyExcluding(@Param("difficulty") Difficulty difficulty,
+                                                               @Param("excluded") Collection<Long> excluded,
+                                                               Pageable pageable);
 
     @Query("SELECT p FROM Problem p WHERE p.published = true AND LOWER(p.title) LIKE LOWER(CONCAT('%', :search, '%'))")
     Page<Problem> findByPublishedTrueAndTitleSearch(@Param("search") String search, Pageable pageable);

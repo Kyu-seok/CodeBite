@@ -124,15 +124,16 @@ public class ProblemService {
         Pageable one = PageRequest.of(0, 1);
         List<String> slugs;
 
-        if (userId != null) {
-            // Try unsolved first
+        Set<Long> solved = userId != null ? userProgress.solvedProblemIds(userId) : Set.of();
+        if (!solved.isEmpty()) {
+            // Prefer a problem the user has not Solved
             slugs = difficulty != null
-                    ? problemRepository.findRandomUnsolvedSlugsByDifficulty(difficulty, userId, one)
-                    : problemRepository.findRandomUnsolvedSlugs(userId, one);
+                    ? problemRepository.findRandomPublishedSlugsByDifficultyExcluding(difficulty, solved, one)
+                    : problemRepository.findRandomPublishedSlugsExcluding(solved, one);
             if (!slugs.isEmpty()) return slugs.get(0);
         }
 
-        // Fall back to any random
+        // Nothing Solved, or everything is: any random
         slugs = difficulty != null
                 ? problemRepository.findRandomPublishedSlugsByDifficulty(difficulty, one)
                 : problemRepository.findRandomPublishedSlugs(one);

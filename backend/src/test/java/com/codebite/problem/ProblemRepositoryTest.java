@@ -123,6 +123,23 @@ class ProblemRepositoryTest {
     }
 
     @Test
+    void findRandomPublishedSlugsExcluding_skipsTheGivenIds_andUnpublished() {
+        Problem solved = problemRepository.save(createProblem("Solved", "solved", Difficulty.EASY, true));
+        Problem open = problemRepository.save(createProblem("Open", "open", Difficulty.EASY, true));
+        problemRepository.save(createProblem("Draft", "draft", Difficulty.EASY, false));
+        Problem hardOpen = problemRepository.save(createProblem("Hard", "hard", Difficulty.HARD, true));
+
+        assertEquals(Set.of("open", "hard"), Set.copyOf(
+                problemRepository.findRandomPublishedSlugsExcluding(Set.of(solved.getId()), PageRequest.of(0, 10))));
+        assertEquals(List.of("hard"),
+                problemRepository.findRandomPublishedSlugsByDifficultyExcluding(
+                        Difficulty.HARD, Set.of(solved.getId()), PageRequest.of(0, 10)));
+        assertEquals(List.of(),
+                problemRepository.findRandomPublishedSlugsExcluding(
+                        Set.of(solved.getId(), open.getId(), hardOpen.getId()), PageRequest.of(0, 10)));
+    }
+
+    @Test
     void cascadeDelete_removesTestCases() {
         Problem problem = createProblem("CascadeTest", "cascade-test", Difficulty.EASY, true);
         TestCase tc = new TestCase();
