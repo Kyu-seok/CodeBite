@@ -12,9 +12,13 @@ import com.codebite.github.service.SolutionCommitService;
 import com.codebite.github.gateway.FakeGitHubGateway.RecordedPush;
 import com.codebite.github.gateway.GitHubAccount;
 import com.codebite.github.gateway.GitHubRepo;
+import com.codebite.judge.grader.CaseVerdict;
+import com.codebite.judge.grader.Verdict;
 import com.codebite.problem.entity.Difficulty;
 import com.codebite.problem.entity.Problem;
+import com.codebite.problem.entity.TestCase;
 import com.codebite.problem.repository.ProblemRepository;
+import com.codebite.problem.repository.TestCaseRepository;
 import com.codebite.submission.entity.Submission;
 import com.codebite.submission.entity.SubmissionStatus;
 import com.codebite.submission.repository.SubmissionRepository;
@@ -38,6 +42,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -66,6 +71,7 @@ class GitHubImportIntegrationTest {
     @Autowired private FakeGitHubGateway gitHub;
     @Autowired private UserRepository userRepository;
     @Autowired private ProblemRepository problemRepository;
+    @Autowired private TestCaseRepository testCaseRepository;
     @Autowired private SubmissionRepository submissionRepository;
     @Autowired private EntityManager entityManager;
     @Autowired private SolutionCommitService solutionCommitService;
@@ -413,14 +419,9 @@ class GitHubImportIntegrationTest {
     /** A graded submission (12 ms, 1536 KB) made at {@code at}. */
     private Submission submit(User owner, Problem problem, String language, String code,
                               SubmissionStatus status, String at) {
-        Submission submission = new Submission();
-        submission.setUser(owner);
-        submission.setProblem(problem);
-        submission.setLanguage(language);
-        submission.setSourceCode(code);
-        submission.setStatus(status);
-        submission.setRuntimeMs(12);
-        submission.setMemoryKb(1536);
+        Submission submission = Submission.pending(owner, problem, language, code);
+        submission.grade(Verdict.of(List.of(new CaseVerdict(status, true, "", null, null, 12, 1536))),
+                List.of(testCaseOf(problem)));
         submission = submissionRepository.saveAndFlush(submission);
         // created_at is set on insert and not updatable through the entity, so backdate it in SQL.
         entityManager.createQuery("UPDATE Submission s SET s.createdAt = :at WHERE s.id = :id")
@@ -436,6 +437,21 @@ class GitHubImportIntegrationTest {
                 .setParameter("id", submission.getId())
                 .executeUpdate();
         entityManager.clear();
+    }
+
+    /** The one result row a graded submission needs a test case for. */
+    private TestCase testCaseOf(Problem problem) {
+        return testCaseRepository.findByProblemIdOrderByOrderIndexAsc(problem.getId()).stream()
+                .findFirst()
+                .orElseGet(() -> {
+                    TestCase testCase = new TestCase();
+                    testCase.setProblem(problem);
+                    testCase.setInput("1 2");
+                    testCase.setExpectedOutput("3");
+                    testCase.setSample(true);
+                    testCase.setOrderIndex(1);
+                    return testCaseRepository.save(testCase);
+                });
     }
 
     private User saveUser(String username, Role role) {
