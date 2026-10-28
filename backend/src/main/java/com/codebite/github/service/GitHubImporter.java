@@ -7,7 +7,6 @@ import com.codebite.github.gateway.CommittedFile;
 import com.codebite.github.gateway.GitHubGateway;
 import com.codebite.github.gateway.PushedCommit;
 import com.codebite.github.repository.GitHubLinkRepository;
-import com.codebite.github.repository.SolutionCommitRepository;
 import com.codebite.submission.entity.Submission;
 import com.codebite.submission.repository.SubmissionRepository;
 import org.slf4j.Logger;
@@ -36,20 +35,17 @@ public class GitHubImporter {
     private static final Logger log = LoggerFactory.getLogger(GitHubImporter.class);
 
     private final GitHubLinkRepository linkRepository;
-    private final SolutionCommitRepository solutionCommitRepository;
     private final SubmissionRepository submissionRepository;
     private final GitHubGateway gitHub;
     private final SolutionCommitRecorder recorder;
     private final TransactionTemplate tx;
 
     public GitHubImporter(GitHubLinkRepository linkRepository,
-                          SolutionCommitRepository solutionCommitRepository,
                           SubmissionRepository submissionRepository,
                           GitHubGateway gitHub,
                           SolutionCommitRecorder recorder,
                           PlatformTransactionManager transactionManager) {
         this.linkRepository = linkRepository;
-        this.solutionCommitRepository = solutionCommitRepository;
         this.submissionRepository = submissionRepository;
         this.gitHub = gitHub;
         this.recorder = recorder;
