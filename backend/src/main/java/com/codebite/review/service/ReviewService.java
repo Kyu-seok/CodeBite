@@ -262,24 +262,6 @@ public class ReviewService {
         return ReviewSchedule.replay(others).preview(Instant.now());
     }
 
-    /**
-     * Mastered = at least 3 reviews, last 2 are GOOD or EASY, current interval ≥ 30 days.
-     * "Last" is by chronological reviewed_at, matching the replay order.
-     * Superseded by {@link ReviewSchedule#mastered()}; kept only for ReviewScheduleGoldenCsvTest
-     * until {@code ProblemReviewState.applyReview} goes with it.
-     */
-    static boolean isMastered(List<Submission> rated, ProblemReviewState state) {
-        if (rated.size() < 3) return false;
-        if (state.getIntervalDays() < 30) return false;
-        Confidence last = rated.get(rated.size() - 1).getConfidence();
-        Confidence prev = rated.get(rated.size() - 2).getConfidence();
-        return isGoodOrEasy(last) && isGoodOrEasy(prev);
-    }
-
-    private static boolean isGoodOrEasy(Confidence c) {
-        return c == Confidence.GOOD || c == Confidence.EASY;
-    }
-
     private ReviewStateResponse toStateResponse(ProblemReviewState s) {
         return new ReviewStateResponse(
                 s.getProblemId(),
