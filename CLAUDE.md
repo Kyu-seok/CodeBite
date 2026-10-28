@@ -86,7 +86,7 @@ The GitHub App behind Solution Commits is registered by hand: run `scripts/setup
 - `common/exception/` — GlobalExceptionHandler
 - `auth/` — JWT auth + OAuth (controller, service, DTOs, filter, token provider, oauth clients)
 - `user/` — UserService, DTOs
-- `problem/` — Problem CRUD (controllers, service, DTOs)
+- `problem/` — Problems: `ProblemCatalogue` (what users see: the published list with Progress and Acceptance Rate, header counts, random pick, detail) and `ProblemAdminService` (curation behind /api/admin/problems); `ProblemDtos` builds the DTOs both return (controllers, DTOs)
 - `submission/` — Submission flow (controller, service, DTOs, Kafka producer)
 - `run/` — Run flow (controller, service, DTOs — synchronous Judge0 execution, sample test cases only)
 - `streak/` — Streaks and Repairs (controller, service, DTOs, `submission-results` listener); terms in GLOSSARY.md, UTC days per docs/adr/0001

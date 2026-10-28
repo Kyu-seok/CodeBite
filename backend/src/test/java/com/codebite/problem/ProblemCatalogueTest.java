@@ -1,24 +1,18 @@
 package com.codebite.problem;
 
 import com.codebite.common.exception.ResourceNotFoundException;
-import com.codebite.problem.dto.CreateProblemRequest;
-import com.codebite.problem.dto.CreateTestCaseRequest;
 import com.codebite.problem.dto.ProblemDetail;
-import com.codebite.problem.dto.ProblemListItem;
-import com.codebite.problem.dto.TestCaseDto;
-import com.codebite.problem.dto.UpdateProblemRequest;
 import com.codebite.problem.entity.Difficulty;
 import com.codebite.problem.entity.Problem;
-import com.codebite.problem.entity.TestCase;
 import com.codebite.problem.repository.ProblemRepository;
-import com.codebite.problem.repository.ProblemTranslationRepository;
-import com.codebite.problem.repository.TagRepository;
 import com.codebite.problem.repository.TestCaseRepository;
-import com.codebite.problem.service.ProblemService;
+import com.codebite.problem.service.ProblemDtos;
 import com.codebite.problem.service.StarterCodeLoader;
+import com.codebite.problem.dto.ProblemListItem;
+import com.codebite.problem.repository.ProblemTranslationRepository;
+import com.codebite.problem.service.ProblemCatalogue;
 import com.codebite.progress.ProblemPopularity;
 import com.codebite.progress.UserProgress;
-import com.codebite.submission.repository.SubmissionRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,9 +28,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
@@ -44,38 +36,21 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class ProblemServiceTest {
+class ProblemCatalogueTest {
 
-    @Mock
-    private ProblemRepository problemRepository;
+    @Mock private ProblemRepository problemRepository;
+    @Mock private ProblemTranslationRepository translationRepository;
+    @Mock private TestCaseRepository testCaseRepository;
+    @Mock private StarterCodeLoader starterCodeLoader;
+    @Mock private ProblemPopularity problemPopularity;
+    @Mock private UserProgress userProgress;
 
-    @Mock
-    private ProblemTranslationRepository translationRepository;
-
-    @Mock
-    private TestCaseRepository testCaseRepository;
-
-    @Mock
-    private StarterCodeLoader starterCodeLoader;
-
-    @Mock
-    private TagRepository tagRepository;
-
-    @Mock
-    private SubmissionRepository submissionRepository;
-
-    @Mock
-    private ProblemPopularity problemPopularity;
-
-    @Mock
-    private UserProgress userProgress;
-
-    private ProblemService problemService;
+    private ProblemCatalogue problemService;
 
     @BeforeEach
     void setUp() {
-        problemService = new ProblemService(problemRepository, translationRepository, testCaseRepository,
-                tagRepository, starterCodeLoader, submissionRepository, problemPopularity, userProgress);
+        problemService = new ProblemCatalogue(problemRepository, translationRepository, testCaseRepository,
+                problemPopularity, userProgress, new ProblemDtos(starterCodeLoader));
     }
 
     private Problem buildProblem(Long id, String title, String slug, boolean published) {
@@ -175,91 +150,5 @@ class ProblemServiceTest {
 
         assertThrows(ResourceNotFoundException.class,
                 () -> problemService.getProblemBySlug("draft"));
-    }
-
-    @Test
-    void createProblem_slugifiesTitle() {
-        when(problemRepository.existsBySlug("two-sum")).thenReturn(false);
-        when(problemRepository.save(any())).thenAnswer(inv -> {
-            Problem p = inv.getArgument(0);
-            p.setId(1L);
-            return p;
-        });
-
-        CreateProblemRequest request = new CreateProblemRequest(
-                "Two Sum", "Description", Difficulty.EASY,
-                "constraints", true);
-
-        ProblemDetail result = problemService.createProblem(request);
-        assertEquals("two-sum", result.slug());
-    }
-
-    @Test
-    void createProblem_slugCollision_appendsSuffix() {
-        when(problemRepository.existsBySlug("two-sum")).thenReturn(true);
-        when(problemRepository.existsBySlug("two-sum-2")).thenReturn(false);
-        when(problemRepository.save(any())).thenAnswer(inv -> {
-            Problem p = inv.getArgument(0);
-            p.setId(1L);
-            return p;
-        });
-
-        CreateProblemRequest request = new CreateProblemRequest(
-                "Two Sum", "Description", Difficulty.EASY, null, false);
-
-        ProblemDetail result = problemService.createProblem(request);
-        assertEquals("two-sum-2", result.slug());
-    }
-
-    @Test
-    void updateProblem_partialUpdate() {
-        Problem existing = buildProblem(1L, "Old Title", "old-title", false);
-        when(problemRepository.findById(1L)).thenReturn(Optional.of(existing));
-        when(problemRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
-        when(testCaseRepository.findByProblemIdAndSampleTrueOrderByOrderIndexAsc(1L)).thenReturn(List.of());
-
-        UpdateProblemRequest request = new UpdateProblemRequest(
-                null, null, null, null, true);
-
-        ProblemDetail result = problemService.updateProblem(1L, request);
-        assertTrue(result.published());
-        assertEquals("Old Title", result.title());
-    }
-
-    @Test
-    void updateProblem_notFound_throws() {
-        when(problemRepository.findById(99L)).thenReturn(Optional.empty());
-
-        assertThrows(ResourceNotFoundException.class,
-                () -> problemService.updateProblem(99L, new UpdateProblemRequest(
-                        null, null, null, null, null)));
-    }
-
-    @Test
-    void addTestCase_success() {
-        Problem problem = buildProblem(1L, "Problem", "problem", true);
-        when(problemRepository.findById(1L)).thenReturn(Optional.of(problem));
-        when(testCaseRepository.save(any())).thenAnswer(inv -> {
-            TestCase tc = inv.getArgument(0);
-            tc.setId(1L);
-            return tc;
-        });
-
-        CreateTestCaseRequest request = new CreateTestCaseRequest(
-                "{\"x\": 1}", "1", true, 1);
-
-        TestCaseDto result = problemService.addTestCase(1L, request);
-        assertNotNull(result);
-        assertEquals("{\"x\": 1}", result.input());
-        assertTrue(result.sample());
-    }
-
-    @Test
-    void addTestCase_problemNotFound_throws() {
-        when(problemRepository.findById(99L)).thenReturn(Optional.empty());
-
-        assertThrows(ResourceNotFoundException.class,
-                () -> problemService.addTestCase(99L, new CreateTestCaseRequest(
-                        "input", "output", false, 0)));
     }
 }
