@@ -23,11 +23,12 @@ public record CaseVerdict(SubmissionStatus status,
     }
 
     /**
-     * Maps a terminal Judge0 response. With an expected output, status 3 (program finished) is
-     * ACCEPTED when the trimmed stdout equals the trimmed expected output and WRONG_ANSWER
-     * otherwise. Without one, status 3 is ACCEPTED but unjudged. Every other status is judged
-     * whether or not an expected output exists: a program that does not compile, crashes or
-     * runs out of time has failed regardless of what it was meant to print.
+     * Maps a terminal Judge0 response. With an expected output (even an empty one), status 3
+     * (program finished) is ACCEPTED when the trimmed stdout, null counting as empty, equals the
+     * trimmed expected output and WRONG_ANSWER otherwise. With a null expected output, status 3
+     * is ACCEPTED but unjudged. Every other status is judged whether or not an expected output
+     * exists: a program that does not compile, crashes or runs out of time has failed regardless
+     * of what it was meant to print.
      */
     public static CaseVerdict of(JudgeResponse response, String expectedOrNull) {
         String stdout = response.stdout() != null ? response.stdout().trim() : null;
@@ -36,7 +37,7 @@ public record CaseVerdict(SubmissionStatus status,
         SubmissionStatus status;
         boolean judged = true;
         if (statusId == 3) {
-            if (expectedOrNull == null || expectedOrNull.isBlank()) {
+            if (expectedOrNull == null) {
                 status = SubmissionStatus.ACCEPTED;
                 judged = false;
             } else {

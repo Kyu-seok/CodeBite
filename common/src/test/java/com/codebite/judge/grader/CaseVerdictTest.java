@@ -104,11 +104,17 @@ class CaseVerdictTest {
     }
 
     @Test
-    void status3_blankExpected_treatedAsNoExpected() {
-        CaseVerdict verdict = CaseVerdict.of(finished("anything\n"), "   ");
+    void status3_emptyExpected_isJudged_onlyEmptyOutputPasses() {
+        // A stored test case whose correct answer is nothing at all is still a real answer.
+        CaseVerdict silent = CaseVerdict.of(finished(""), "");
+        CaseVerdict noisy = CaseVerdict.of(finished("x\n"), "");
+        CaseVerdict nullStdout = CaseVerdict.of(finished(null), "  ");
 
-        assertThat(verdict.status()).isEqualTo(SubmissionStatus.ACCEPTED);
-        assertThat(verdict.judged()).isFalse();
+        assertThat(silent.status()).isEqualTo(SubmissionStatus.ACCEPTED);
+        assertThat(silent.judged()).isTrue();
+        assertThat(noisy.status()).isEqualTo(SubmissionStatus.WRONG_ANSWER);
+        assertThat(noisy.judged()).isTrue();
+        assertThat(nullStdout.status()).isEqualTo(SubmissionStatus.ACCEPTED);
     }
 
     @Test

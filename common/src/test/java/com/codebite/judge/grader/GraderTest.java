@@ -75,11 +75,23 @@ class GraderTest {
     void grade_unjudgedCaseThatCrashesStillFails() {
         client.respond("crash", runtimeError("NZEC"));
 
-        Verdict verdict = grader.grade(PROGRAM, List.of(new TestInput("crash", "")));
+        Verdict verdict = grader.grade(PROGRAM, List.of(new TestInput("crash", null)));
 
         assertThat(verdict.overall()).isEqualTo(SubmissionStatus.RUNTIME_ERROR);
         assertThat(verdict.cases().get(0).judged()).isTrue();
         assertThat(verdict.cases().get(0).stderr()).isEqualTo("NZEC");
+    }
+
+    @Test
+    void grade_emptyExpectedOutputIsJudged_outputFailsIt() {
+        client.respond("1", accepted("no valid order\n")).respond("2", accepted(""));
+
+        Verdict verdict = grader.grade(PROGRAM, List.of(new TestInput("1", ""), new TestInput("2", "")));
+
+        assertThat(verdict.overall()).isEqualTo(SubmissionStatus.WRONG_ANSWER);
+        assertThat(verdict.cases()).extracting(CaseVerdict::status)
+                .containsExactly(SubmissionStatus.WRONG_ANSWER, SubmissionStatus.ACCEPTED);
+        assertThat(verdict.cases()).allMatch(CaseVerdict::judged);
     }
 
     @Test

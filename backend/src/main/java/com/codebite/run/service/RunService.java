@@ -73,10 +73,13 @@ public class RunService {
         List<TestInput> sampleInputs = sampleTestCases.stream()
                 .map(tc -> new TestInput(tc.getInput(), tc.getExpectedOutput()))
                 .toList();
+        // A custom case the user left the expected output blank for is an Unjudged Case; a stored
+        // sample's expected output goes through as is, empty included.
         List<TestInput> customInputs = request.customTestCases() == null
                 ? List.of()
                 : request.customTestCases().stream()
-                        .map(tc -> new TestInput(tc.input(), tc.expectedOutput()))
+                        .map(tc -> new TestInput(tc.input(),
+                                tc.expectedOutput() == null || tc.expectedOutput().isBlank() ? null : tc.expectedOutput()))
                         .toList();
 
         // Samples stop at the first failure, and the custom cases run only once every sample has
