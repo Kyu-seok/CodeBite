@@ -16,7 +16,7 @@ class CaseVerdictTest {
         return new JudgeResponse(null, new JudgeResponse.Status(id, "x"), null, stderr, compileOutput, null, null);
     }
 
-    // --- with an expected output (the former JudgeService.mapStatus cases) ---
+    // --- with an expected output ---
 
     @Test
     void status3_outputMatches_accepted() {
