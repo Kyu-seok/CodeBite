@@ -3,11 +3,11 @@ package com.codebite.submission;
 import com.codebite.common.service.RateLimiterService;
 import com.codebite.problem.entity.Problem;
 import com.codebite.submission.entity.Submission;
-import com.codebite.submission.entity.SubmissionStatus;
 import com.codebite.submission.event.SubmissionEvent;
 import com.codebite.submission.kafka.SubmissionEventProducer;
 import com.codebite.submission.repository.SubmissionRepository;
 import com.codebite.submission.service.StuckSubmissionRedriver;
+import com.codebite.submission.service.SubmissionAbandoner;
 import com.codebite.submission.service.SubmissionService;
 import com.codebite.user.entity.Role;
 import com.codebite.user.entity.User;
@@ -25,11 +25,10 @@ import java.time.Instant;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -41,13 +40,16 @@ class StuckSubmissionRedriverTest {
 
     @Mock private SubmissionRepository submissionRepository;
     @Mock private SubmissionService submissionService;
+    @Mock private SubmissionAbandoner abandoner;
     @Mock private SubmissionEventProducer producer;
     @Mock private RateLimiterService rateLimiterService;
 
+    private final SimpleMeterRegistry meterRegistry = new SimpleMeterRegistry();
+
     private StuckSubmissionRedriver redriver(RateLimiterService limiter) {
         return new StuckSubmissionRedriver(
-                submissionRepository, submissionService, producer, limiter,
-                new SimpleMeterRegistry(),
+                submissionRepository, submissionService, abandoner, producer, limiter,
+                meterRegistry,
                 120, 1800, 50, 50);
     }
 
@@ -70,7 +72,6 @@ class StuckSubmissionRedriverTest {
         SubmissionEvent event = new SubmissionEvent(42L, "src", 71, 7L, false, "python");
 
         when(rateLimiterService.isRateLimited(anyString(), anyString(), anyLong())).thenReturn(false);
-        when(submissionRepository.findByStatusAndCreatedAtBefore(any(), any())).thenReturn(List.of());
         when(submissionRepository.findStalePending(any(), any(), any(Pageable.class)))
                 .thenReturn(List.of(stuck));
         when(submissionService.buildEvent(stuck)).thenReturn(event);
@@ -81,23 +82,20 @@ class StuckSubmissionRedriverTest {
     }
 
     @Test
-    void abandonsSubmissionsOlderThanTheMaxAge() {
-        Submission expired = pending(99L);
-
+    void abandonsSubmissionsOlderThanTheMaxAgeAndCountsThem() {
         when(rateLimiterService.isRateLimited(anyString(), anyString(), anyLong())).thenReturn(false);
-        when(submissionRepository.findByStatusAndCreatedAtBefore(eq(SubmissionStatus.PENDING), any()))
-                .thenReturn(List.of(expired));
+        when(abandoner.abandonExpired(any())).thenReturn(2);
         when(submissionRepository.findStalePending(any(), any(), any(Pageable.class)))
                 .thenReturn(List.of());
 
+        Instant before = Instant.now();
         redriver(rateLimiterService).sweep();
 
-        assertFalse(expired.isPending());
-        assertEquals(SubmissionStatus.INTERNAL_ERROR, expired.getStatus());
-
-        ArgumentCaptor<List<Submission>> saved = ArgumentCaptor.forClass(List.class);
-        verify(submissionRepository).saveAll(saved.capture());
-        assertEquals(1, saved.getValue().size());
+        // The cutoff is now - maxAge (1800s); the abandoner owns the transition and its event.
+        ArgumentCaptor<Instant> cutoff = ArgumentCaptor.forClass(Instant.class);
+        verify(abandoner).abandonExpired(cutoff.capture());
+        assertTrue(cutoff.getValue().isBefore(before.minusSeconds(1799)));
+        assertEquals(2.0, meterRegistry.get("codebite.submissions.abandoned").counter().count());
         // An abandoned submission must not also be re-published — that would resurrect it.
         verify(producer, never()).send(any());
     }
@@ -109,12 +107,12 @@ class StuckSubmissionRedriverTest {
         redriver(rateLimiterService).sweep();
 
         verifyNoInteractions(submissionRepository);
+        verifyNoInteractions(abandoner);
         verifyNoInteractions(producer);
     }
 
     @Test
     void sweepsWithoutRedisWhenNoRateLimiterIsPresent() {
-        when(submissionRepository.findByStatusAndCreatedAtBefore(any(), any())).thenReturn(List.of());
         when(submissionRepository.findStalePending(any(), any(), any(Pageable.class)))
                 .thenReturn(List.of());
 
@@ -130,7 +128,6 @@ class StuckSubmissionRedriverTest {
         SubmissionEvent goodEvent = new SubmissionEvent(2L, "src", 71, 7L, false, "python");
 
         when(rateLimiterService.isRateLimited(anyString(), anyString(), anyLong())).thenReturn(false);
-        when(submissionRepository.findByStatusAndCreatedAtBefore(any(), any())).thenReturn(List.of());
         when(submissionRepository.findStalePending(any(), any(), any(Pageable.class)))
                 .thenReturn(List.of(bad, good));
         when(submissionService.buildEvent(bad)).thenThrow(new IllegalStateException("no driver"));
@@ -144,7 +141,6 @@ class StuckSubmissionRedriverTest {
     @Test
     void staleWindowIsBoundedOnBothSides() {
         when(rateLimiterService.isRateLimited(anyString(), anyString(), anyLong())).thenReturn(false);
-        when(submissionRepository.findByStatusAndCreatedAtBefore(any(), any())).thenReturn(List.of());
         when(submissionRepository.findStalePending(any(), any(), any(Pageable.class)))
                 .thenReturn(List.of());
 
@@ -156,7 +152,7 @@ class StuckSubmissionRedriverTest {
         verify(submissionRepository).findStalePending(from.capture(), to.capture(), any(Pageable.class));
 
         // from = now-maxAge (1800s), to = now-minAge (120s): the window must be non-empty and in the past.
-        org.junit.jupiter.api.Assertions.assertTrue(from.getValue().isBefore(to.getValue()));
-        org.junit.jupiter.api.Assertions.assertTrue(to.getValue().isBefore(before));
+        assertTrue(from.getValue().isBefore(to.getValue()));
+        assertTrue(to.getValue().isBefore(before));
     }
 }
