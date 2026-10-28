@@ -1,3 +1,5 @@
+import type { JudgeMode } from '@/judge/attempt';
+
 /**
  * How long a Run or Submit usually takes to judge, per language, in whole seconds.
  *
@@ -7,7 +9,7 @@
  * compilation and JVM startup. Replace this table with estimates derived from real
  * processing durations; callers only depend on `estimatedJudgeSeconds`.
  */
-export type JudgeMode = 'run' | 'submit';
+export type { JudgeMode };
 
 const ESTIMATED_JUDGE_SECONDS: Record<JudgeMode, Record<string, number>> = {
   run: {
