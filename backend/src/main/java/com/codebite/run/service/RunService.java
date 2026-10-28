@@ -3,7 +3,11 @@ package com.codebite.run.service;
 import com.codebite.common.exception.ResourceNotFoundException;
 import com.codebite.common.exception.UnsupportedValueException;
 import com.codebite.judge.dto.CodeError;
-import com.codebite.judge.dto.JudgeResponse;
+import com.codebite.judge.grader.CaseVerdict;
+import com.codebite.judge.grader.Grader;
+import com.codebite.judge.grader.Program;
+import com.codebite.judge.grader.TestInput;
+import com.codebite.judge.grader.Verdict;
 import com.codebite.judge.parser.JudgeErrorParsers;
 import com.codebite.judge.parser.UserCodeLineMapper;
 import com.codebite.judge.service.DriverCodeLoader;
@@ -28,6 +32,7 @@ public class RunService {
     private final ProblemRepository problemRepository;
     private final TestCaseRepository testCaseRepository;
     private final JudgeService judgeService;
+    private final Grader grader;
     private final DriverCodeLoader driverCodeLoader;
     private final JudgeErrorParsers errorParsers;
     private final UserCodeLineMapper lineMapper;
@@ -35,12 +40,14 @@ public class RunService {
     public RunService(ProblemRepository problemRepository,
                       TestCaseRepository testCaseRepository,
                       JudgeService judgeService,
+                      Grader grader,
                       DriverCodeLoader driverCodeLoader,
                       JudgeErrorParsers errorParsers,
                       UserCodeLineMapper lineMapper) {
         this.problemRepository = problemRepository;
         this.testCaseRepository = testCaseRepository;
         this.judgeService = judgeService;
+        this.grader = grader;
         this.driverCodeLoader = driverCodeLoader;
         this.errorParsers = errorParsers;
         this.lineMapper = lineMapper;
@@ -57,99 +64,64 @@ public class RunService {
 
         String driverTemplate = driverCodeLoader.getDriverCode(problem.getSlug(), language);
         String sourceCode = judgeService.buildSourceCode(driverTemplate, request.sourceCode());
-        int languageId = judgeService.mapLanguageToId(language);
+        Program program = new Program(sourceCode, judgeService.mapLanguageToId(language));
         int userCodeStartLine = driverCodeLoader.getUserCodeStartLine(problem.getSlug(), language);
         int userCodeLineCount = countLines(request.sourceCode());
 
         List<TestCase> sampleTestCases = testCaseRepository
                 .findByProblemIdAndSampleTrueOrderByOrderIndexAsc(problem.getId());
+        List<TestInput> sampleInputs = sampleTestCases.stream()
+                .map(tc -> new TestInput(tc.getInput(), tc.getExpectedOutput()))
+                .toList();
+        List<TestInput> customInputs = request.customTestCases() == null
+                ? List.of()
+                : request.customTestCases().stream()
+                        .map(tc -> new TestInput(tc.input(), tc.expectedOutput()))
+                        .toList();
+
+        // Samples stop at the first failure, and the custom cases run only once every sample has
+        // passed; a failing custom case never stops the others (docs/adr/0005).
+        Verdict samples = grader.gradeUntilFailure(program, sampleInputs);
+        Verdict customs = samples.overall() == SubmissionStatus.ACCEPTED && !customInputs.isEmpty()
+                ? grader.grade(program, customInputs)
+                : Verdict.empty();
 
         List<RunTestCaseResult> results = new ArrayList<>();
-        SubmissionStatus overallStatus = SubmissionStatus.ACCEPTED;
-
-        for (TestCase testCase : sampleTestCases) {
-            JudgeResponse response = judgeService.execute(sourceCode, languageId, testCase.getInput());
-            SubmissionStatus caseStatus = judgeService.mapStatus(response, testCase.getExpectedOutput());
-
-            List<CodeError> errors = mapErrors(response, language, userCodeStartLine, userCodeLineCount);
-
-            results.add(new RunTestCaseResult(
-                    testCase.getInput(),
-                    testCase.getExpectedOutput(),
-                    response.stdout() != null ? response.stdout().trim() : null,
-                    caseStatus,
-                    response.stderr(),
-                    response.compileOutput(),
-                    errors,
-                    false,
-                    true
-            ));
-
-            if (caseStatus != SubmissionStatus.ACCEPTED) {
-                overallStatus = caseStatus;
-                return new RunResponse(overallStatus, results);
-            }
+        for (int i = 0; i < samples.cases().size(); i++) {
+            results.add(toResult(sampleInputs.get(i), sampleTestCases.get(i).getExpectedOutput(),
+                    samples.cases().get(i), false, language, userCodeStartLine, userCodeLineCount));
+        }
+        for (int i = 0; i < customs.cases().size(); i++) {
+            TestInput input = customInputs.get(i);
+            results.add(toResult(input, input.expectedOutput(),
+                    customs.cases().get(i), true, language, userCodeStartLine, userCodeLineCount));
         }
 
-        List<CustomTestCaseInput> customs = request.customTestCases() == null
-                ? List.of()
-                : request.customTestCases();
-
-        for (CustomTestCaseInput tc : customs) {
-            JudgeResponse response = judgeService.execute(sourceCode, languageId, tc.input());
-
-            boolean hasExpected = tc.expectedOutput() != null && !tc.expectedOutput().isBlank();
-            SubmissionStatus caseStatus;
-            boolean judged;
-
-            if (hasExpected) {
-                caseStatus = judgeService.mapStatus(response, tc.expectedOutput());
-                judged = true;
-            } else {
-                int statusId = response.status() != null ? response.status().id() : -1;
-                if (statusId == 3) {
-                    caseStatus = SubmissionStatus.ACCEPTED;
-                    judged = false;
-                } else if (statusId == 5) {
-                    caseStatus = SubmissionStatus.TIME_LIMIT_EXCEEDED;
-                    judged = true;
-                } else if (statusId == 6) {
-                    caseStatus = SubmissionStatus.COMPILATION_ERROR;
-                    judged = true;
-                } else if (statusId >= 7 && statusId <= 12) {
-                    caseStatus = SubmissionStatus.RUNTIME_ERROR;
-                    judged = true;
-                } else {
-                    caseStatus = SubmissionStatus.INTERNAL_ERROR;
-                    judged = true;
-                }
-            }
-
-            List<CodeError> errors = mapErrors(response, language, userCodeStartLine, userCodeLineCount);
-
-            results.add(new RunTestCaseResult(
-                    tc.input(),
-                    hasExpected ? tc.expectedOutput() : null,
-                    response.stdout() != null ? response.stdout().trim() : null,
-                    caseStatus,
-                    response.stderr(),
-                    response.compileOutput(),
-                    errors,
-                    true,
-                    judged
-            ));
-
-            if (judged && caseStatus != SubmissionStatus.ACCEPTED && overallStatus == SubmissionStatus.ACCEPTED) {
-                overallStatus = caseStatus;
-            }
-        }
-
+        SubmissionStatus overallStatus = samples.overall() == SubmissionStatus.ACCEPTED
+                ? customs.overall()
+                : samples.overall();
         return new RunResponse(overallStatus, results);
     }
 
-    private List<CodeError> mapErrors(JudgeResponse response, String language,
+    private RunTestCaseResult toResult(TestInput input, String expectedOutput, CaseVerdict verdict,
+                                       boolean isCustom, String language,
+                                       int userCodeStartLine, int userCodeLineCount) {
+        return new RunTestCaseResult(
+                input.stdin(),
+                expectedOutput,
+                verdict.stdout(),
+                verdict.status(),
+                verdict.stderr(),
+                verdict.compileOutput(),
+                mapErrors(verdict, language, userCodeStartLine, userCodeLineCount),
+                isCustom,
+                verdict.judged()
+        );
+    }
+
+    private List<CodeError> mapErrors(CaseVerdict verdict, String language,
                                       int userCodeStartLine, int userCodeLineCount) {
-        List<CodeError> combined = errorParsers.parse(language, response.compileOutput(), response.stderr());
+        List<CodeError> combined = errorParsers.parse(language, verdict.compileOutput(), verdict.stderr());
         return lineMapper.mapToUserSpace(combined, userCodeStartLine, userCodeLineCount);
     }
 
