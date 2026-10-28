@@ -7,6 +7,7 @@ import com.codebite.problem.entity.Problem;
 import com.codebite.problem.entity.Tag;
 import com.codebite.problem.entity.TestCase;
 import com.codebite.progress.UserProgress.ActivityDay;
+import com.codebite.progress.UserProgress.Aggregate;
 import com.codebite.progress.UserProgress.Status;
 import com.codebite.progress.UserProgress.TagProgress;
 import com.codebite.submission.entity.Submission;
@@ -229,6 +230,33 @@ class UserProgressTest {
             entityManager.flush();
 
             assertEquals(List.of(), progress.solvedByTag(user.getId()));
+        }
+    }
+
+    @Nested
+    class AggregateRow {
+
+        @Test
+        void countsSolvedAttemptedTotalAcceptedAndLastSolved_gradedNonAdminOnly() {
+            submit(user, easy, SubmissionStatus.WRONG_ANSWER);
+            submit(user, easy, SubmissionStatus.ACCEPTED);
+            Submission latest = submit(user, easy, SubmissionStatus.ACCEPTED);
+            submit(user, medium, SubmissionStatus.WRONG_ANSWER);
+            submit(user, hard, SubmissionStatus.PENDING);
+            submit(admin, hard, SubmissionStatus.ACCEPTED);
+            entityManager.flush();
+
+            Aggregate aggregate = progress.aggregate(user.getId());
+
+            assertEquals(new Aggregate(1L, 2L, 4L, 2L, latest.getCreatedAt()), aggregate,
+                    "easy Solved once, two problems Attempted, four graded, two Accepted; PENDING and admin ignored");
+            assertEquals(new Aggregate(0L, 0L, 0L, 0L, null), progress.aggregate(admin.getId()));
+        }
+
+        @Test
+        void noSubmissionsIsAllZeros() {
+            assertEquals(new Aggregate(0L, 0L, 0L, 0L, null), progress.aggregate(user.getId()),
+                    "SUM over no rows is null in SQL; the row must still come back as zeros");
         }
     }
 

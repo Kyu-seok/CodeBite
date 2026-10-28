@@ -1,11 +1,14 @@
 package com.codebite.stats.service;
 
+import com.codebite.progress.ProblemPopularity;
+import com.codebite.progress.ProblemPopularity.Rate;
+import com.codebite.progress.UserProgress;
+import com.codebite.progress.UserProgress.Aggregate;
 import com.codebite.stats.dto.LeaderboardEntry;
 import com.codebite.stats.entity.ProblemStats;
 import com.codebite.stats.entity.UserStats;
 import com.codebite.stats.repository.ProblemStatsRepository;
 import com.codebite.stats.repository.UserStatsRepository;
-import com.codebite.submission.repository.SubmissionRepository;
 import com.codebite.user.entity.User;
 import com.codebite.user.repository.UserRepository;
 import org.slf4j.Logger;
@@ -14,7 +17,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -32,22 +34,28 @@ import java.util.stream.Collectors;
  *
  * <p>The cost is one aggregate query per graded submission — roughly 0.65/sec — in exchange for
  * removing a full table group-by from the problem-list read path.
+ *
+ * <p>The aggregates come from {@link UserProgress#aggregate} and {@link ProblemPopularity#recount},
+ * so what this writes and what the pages read are one definition of Solved and Acceptance Rate.
  */
 @Service
 public class StatsService {
 
     private static final Logger log = LoggerFactory.getLogger(StatsService.class);
 
-    private final SubmissionRepository submissionRepository;
+    private final UserProgress userProgress;
+    private final ProblemPopularity problemPopularity;
     private final UserStatsRepository userStatsRepository;
     private final ProblemStatsRepository problemStatsRepository;
     private final UserRepository userRepository;
 
-    public StatsService(SubmissionRepository submissionRepository,
+    public StatsService(UserProgress userProgress,
+                        ProblemPopularity problemPopularity,
                         UserStatsRepository userStatsRepository,
                         ProblemStatsRepository problemStatsRepository,
                         UserRepository userRepository) {
-        this.submissionRepository = submissionRepository;
+        this.userProgress = userProgress;
+        this.problemPopularity = problemPopularity;
         this.userStatsRepository = userStatsRepository;
         this.problemStatsRepository = problemStatsRepository;
         this.userRepository = userRepository;
@@ -92,17 +100,14 @@ public class StatsService {
     }
 
     private void recomputeUser(Long userId) {
-        Object[] row = unwrap(submissionRepository.aggregateForUser(userId));
-        if (row == null) {
-            return;
-        }
+        Aggregate aggregate = userProgress.aggregate(userId);
 
         UserStats stats = userStatsRepository.findById(userId).orElseGet(() -> new UserStats(userId));
-        stats.setSolvedCount(toInt(row[0]));
-        stats.setAttemptedCount(toInt(row[1]));
-        stats.setTotalSubmissions(toInt(row[2]));
-        stats.setAcceptedSubmissions(toInt(row[3]));
-        stats.setLastSolvedAt((Instant) row[4]);
+        stats.setSolvedCount(aggregate.solved().intValue());
+        stats.setAttemptedCount(aggregate.attempted().intValue());
+        stats.setTotalSubmissions(aggregate.total().intValue());
+        stats.setAcceptedSubmissions(aggregate.accepted().intValue());
+        stats.setLastSolvedAt(aggregate.lastSolvedAt());
         userStatsRepository.save(stats);
 
         log.debug("Recomputed user {}: solved={} accepted={}/{}",
@@ -111,34 +116,12 @@ public class StatsService {
     }
 
     private void recomputeProblem(Long problemId) {
-        Object[] row = unwrap(submissionRepository.aggregateForProblem(problemId));
-        if (row == null) {
-            return;
-        }
+        Rate rate = problemPopularity.recount(problemId);
 
         ProblemStats stats = problemStatsRepository.findById(problemId)
                 .orElseGet(() -> new ProblemStats(problemId));
-        stats.setTotalSubmissions(toInt(row[0]));
-        stats.setAcceptedSubmissions(toInt(row[1]));
+        stats.setTotalSubmissions((int) rate.total());
+        stats.setAcceptedSubmissions((int) rate.accepted());
         problemStatsRepository.save(stats);
-    }
-
-    /**
-     * A JPA aggregate projection with several columns arrives as Object[], but some providers wrap
-     * it in a single-element Object[] holding that array. Normalise both shapes.
-     */
-    private static Object[] unwrap(Object[] row) {
-        if (row == null || row.length == 0) {
-            return null;
-        }
-        if (row.length == 1 && row[0] instanceof Object[] inner) {
-            return inner;
-        }
-        return row;
-    }
-
-    /** COUNT yields Long and SUM yields Long or null when no rows matched. */
-    private static int toInt(Object value) {
-        return value == null ? 0 : ((Number) value).intValue();
     }
 }

@@ -40,6 +40,8 @@ import java.util.TreeMap;
  *       whoever made it: the "did you show up" heatmap, not the Streak. Days are UTC calendar days
  *       (ADR 0001), bucketed in Java from the submission's instant, never by casting in SQL, whose
  *       day would depend on the database session's timezone.</li>
+ *   <li>{@link #aggregate} is over graded, non-admin submissions: what {@code StatsService}
+ *       writes to {@code user_stats}, so the consumer and the readers share one definition.</li>
  * </ul>
  *
  * <p>The projection records are instantiated by Hibernate from the select list, so their
@@ -67,6 +69,14 @@ public class UserProgress {
 
     /** How many submissions the user made on one UTC day. */
     public record ActivityDay(LocalDate day, int submissions) {
+    }
+
+    /**
+     * The user's graded, non-admin submissions in one row: problems Solved, problems Attempted or
+     * Solved, submissions made, submissions Accepted, and when the latest Accepted one was made
+     * (null when none). Every count is 0 for a user with no such submission.
+     */
+    public record Aggregate(Long solved, Long attempted, Long total, Long accepted, Instant lastSolvedAt) {
     }
 
     private static final String GRADED_NON_ADMIN =
@@ -149,6 +159,21 @@ public class UserProgress {
         List<ActivityDay> days = new ArrayList<>(perDay.size());
         perDay.forEach((day, count) -> days.add(new ActivityDay(day, count)));
         return days;
+    }
+
+    /** One row, always: see {@link Aggregate}. */
+    @Transactional(readOnly = true)
+    public Aggregate aggregate(Long userId) {
+        return entityManager.createQuery(
+                        "SELECT COUNT(DISTINCT CASE WHEN s.status = com.codebite.submission.entity.SubmissionStatus.ACCEPTED THEN s.problem.id END), "
+                                + "COUNT(DISTINCT s.problem.id), "
+                                + "COUNT(s), "
+                                + "COALESCE(SUM(CASE WHEN s.status = com.codebite.submission.entity.SubmissionStatus.ACCEPTED THEN 1 ELSE 0 END), 0L), "
+                                + "MAX(CASE WHEN s.status = com.codebite.submission.entity.SubmissionStatus.ACCEPTED THEN s.createdAt END) "
+                                + "FROM Submission s WHERE s.user.id = :userId AND " + GRADED_NON_ADMIN,
+                        Aggregate.class)
+                .setParameter("userId", userId)
+                .getSingleResult();
     }
 
     /** Every problem the user has Solved, published or not. */

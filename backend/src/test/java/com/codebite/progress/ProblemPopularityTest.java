@@ -1,10 +1,17 @@
 package com.codebite.progress;
 
+import com.codebite.judge.grader.CaseVerdict;
+import com.codebite.judge.grader.Verdict;
 import com.codebite.problem.entity.Difficulty;
 import com.codebite.problem.entity.Problem;
+import com.codebite.problem.entity.TestCase;
 import com.codebite.progress.ProblemPopularity.Rate;
 import com.codebite.stats.entity.ProblemStats;
 import com.codebite.stats.repository.ProblemStatsRepository;
+import com.codebite.submission.entity.Submission;
+import com.codebite.submission.entity.SubmissionStatus;
+import com.codebite.user.entity.Role;
+import com.codebite.user.entity.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +32,14 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 @DataJpaTest
 @ActiveProfiles("test")
 @Import(ProblemPopularity.class)
-@Sql(statements = {"DELETE FROM problem_stats", "DELETE FROM problems"},
-        executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+@Sql(statements = {
+        "DELETE FROM problem_stats",
+        "DELETE FROM submission_results",
+        "DELETE FROM submissions",
+        "DELETE FROM test_cases",
+        "DELETE FROM problems",
+        "DELETE FROM users"
+}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 class ProblemPopularityTest {
 
     @Autowired private ProblemPopularity popularity;
@@ -80,6 +93,27 @@ class ProblemPopularityTest {
     }
 
     @Test
+    void recountIsLive_gradedNonAdminOnly_andRoundsLikeTheRow() {
+        User user = persistUser("popularity-user", Role.USER);
+        User admin = persistUser("popularity-admin", Role.ADMIN);
+        submit(user, noRow, SubmissionStatus.ACCEPTED);
+        submit(user, noRow, SubmissionStatus.WRONG_ANSWER);
+        submit(user, noRow, SubmissionStatus.WRONG_ANSWER);
+        submit(user, noRow, SubmissionStatus.PENDING);
+        submit(admin, noRow, SubmissionStatus.ACCEPTED);
+        entityManager.flush();
+
+        assertEquals(new Rate(3, 1, 33.3), popularity.recount(noRow.getId()));
+        assertEquals(Rate.NONE, popularity.acceptanceRates(List.of(noRow.getId())).get(noRow.getId()),
+                "a recount is not a read: the row is written by StatsService");
+    }
+
+    @Test
+    void recountOfAProblemNobodyGradedIsNone() {
+        assertEquals(Rate.NONE, popularity.recount(noRow.getId()), "SUM over no rows must come back 0, not null");
+    }
+
+    @Test
     void forAllReturnsOnlyProblemsWithARow() {
         Map<Long, Rate> rates = popularity.acceptanceRatesForAll();
 
@@ -95,6 +129,30 @@ class ProblemPopularityTest {
         problem.setDifficulty(Difficulty.EASY);
         problem.setPublished(true);
         return entityManager.persist(problem);
+    }
+
+    private User persistUser(String name, Role role) {
+        User u = new User();
+        u.setUsername(name);
+        u.setEmail(name + "@test.com");
+        u.setPasswordHash("hash");
+        u.setRole(role);
+        return entityManager.persist(u);
+    }
+
+    private void submit(User owner, Problem problem, SubmissionStatus status) {
+        Submission submission = Submission.pending(owner, problem, "python", "x");
+        if (status != SubmissionStatus.PENDING) {
+            TestCase testCase = new TestCase();
+            testCase.setProblem(problem);
+            testCase.setInput("1");
+            testCase.setExpectedOutput("1");
+            testCase.setOrderIndex(1);
+            testCase = entityManager.persist(testCase);
+            submission.grade(Verdict.of(List.of(new CaseVerdict(status, true, "", null, null, 1, 1))),
+                    List.of(testCase));
+        }
+        entityManager.persist(submission);
     }
 
     private void persistStats(Problem problem, int total, int accepted) {

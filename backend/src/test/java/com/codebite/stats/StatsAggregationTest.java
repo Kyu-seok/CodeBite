@@ -5,6 +5,8 @@ import com.codebite.judge.grader.Verdict;
 import com.codebite.problem.entity.Difficulty;
 import com.codebite.problem.entity.Problem;
 import com.codebite.problem.entity.TestCase;
+import com.codebite.progress.ProblemPopularity;
+import com.codebite.progress.UserProgress;
 import com.codebite.stats.entity.ProblemStats;
 import com.codebite.stats.entity.UserStats;
 import com.codebite.stats.repository.ProblemStatsRepository;
@@ -12,7 +14,6 @@ import com.codebite.stats.repository.UserStatsRepository;
 import com.codebite.stats.service.StatsService;
 import com.codebite.submission.entity.Submission;
 import com.codebite.submission.entity.SubmissionStatus;
-import com.codebite.submission.repository.SubmissionRepository;
 import com.codebite.user.entity.Role;
 import com.codebite.user.entity.User;
 import com.codebite.user.repository.UserRepository;
@@ -32,12 +33,13 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Exercises the aggregate JPQL and the recompute against a real database rather than mocks —
- * COUNT(DISTINCT CASE WHEN ...) is the sort of thing that compiles and then fails at runtime.
+ * Exercises the recompute against a real database rather than mocks — COUNT(DISTINCT CASE WHEN
+ * ...) is the sort of thing that compiles and then fails at runtime. The aggregate queries
+ * themselves are owned by UserProgressTest and ProblemPopularityTest.
  */
 @DataJpaTest
 @ActiveProfiles("test")
-@Import(StatsService.class)
+@Import({StatsService.class, UserProgress.class, ProblemPopularity.class})
 @Sql(statements = {
         "DELETE FROM user_stats",
         "DELETE FROM problem_stats",
@@ -50,7 +52,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class StatsAggregationTest {
 
     @Autowired private StatsService statsService;
-    @Autowired private SubmissionRepository submissionRepository;
     @Autowired private UserStatsRepository userStatsRepository;
     @Autowired private ProblemStatsRepository problemStatsRepository;
     @Autowired private UserRepository userRepository;
