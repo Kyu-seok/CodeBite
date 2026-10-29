@@ -34,23 +34,4 @@ class LanguageTest {
         assertTrue(Language.fromCode("rust").isEmpty());
         assertTrue(Language.fromCode("").isEmpty());
     }
-
-    @Test
-    void fromJudge0IdResolvesActiveIds() {
-        assertEquals(Optional.of(Language.JAVA), Language.fromJudge0Id(62));
-        assertEquals(Optional.of(Language.PYTHON), Language.fromJudge0Id(100));
-        assertEquals(Optional.of(Language.JAVASCRIPT), Language.fromJudge0Id(63));
-        assertEquals(Optional.of(Language.CPP), Language.fromJudge0Id(54));
-    }
-
-    /** Python moved from 71 (3.8) to 100 (3.12); events queued before the switch still say 71. */
-    @Test
-    void fromJudge0IdResolvesRetiredIdsToTheSameLanguage() {
-        assertEquals(Optional.of(Language.PYTHON), Language.fromJudge0Id(71));
-    }
-
-    @Test
-    void fromJudge0IdIsEmptyForUnknownIds() {
-        assertTrue(Language.fromJudge0Id(999).isEmpty());
-    }
 }

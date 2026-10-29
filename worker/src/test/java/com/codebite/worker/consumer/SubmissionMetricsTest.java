@@ -4,8 +4,6 @@ import com.codebite.submission.entity.SubmissionStatus;
 import com.codebite.submission.event.SubmissionEvent;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -26,21 +24,19 @@ class SubmissionMetricsTest {
         assertEquals(1.0, completed("java"));
     }
 
-    // Events published before the language field existed carry none; 100 is Python 3.12 and
-    // 71 (Python 3.8) is still carried by events queued before the switch.
-    @ParameterizedTest
-    @ValueSource(ints = {71, 100})
-    void withoutALanguageFallsBackToTheJudge0IdAndTagsBothPythonIdsAsPython(int languageId) {
+    /** The Judge0 id is never read back into a language: Python's 71 and 100 tag as the event says. */
+    @Test
+    void tagsByTheLanguageCodeNotTheJudge0Id() {
         new SubmissionMetrics(registry).recordCompleted(
-                new SubmissionEvent(1L, "source", languageId, 10L, false, null), SubmissionStatus.ACCEPTED);
+                new SubmissionEvent(1L, "source", 71, 10L, false, "python"), SubmissionStatus.ACCEPTED);
 
         assertEquals(1.0, completed("python"));
     }
 
     @Test
-    void unknownJudge0IdWithoutALanguageTagsUnknown() {
+    void anEventWithoutALanguageTagsUnknown() {
         new SubmissionMetrics(registry).recordCompleted(
-                new SubmissionEvent(1L, "source", 999, 10L, false, null), SubmissionStatus.ACCEPTED);
+                new SubmissionEvent(1L, "source", 62, 10L, false, null), SubmissionStatus.INTERNAL_ERROR);
 
         assertEquals(1.0, completed("unknown"));
     }

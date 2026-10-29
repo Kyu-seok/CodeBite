@@ -1,6 +1,5 @@
 package com.codebite.worker.consumer;
 
-import com.codebite.judge.Language;
 import com.codebite.submission.entity.SubmissionStatus;
 import com.codebite.submission.event.SubmissionEvent;
 import io.micrometer.core.instrument.Counter;
@@ -32,13 +31,11 @@ public class SubmissionMetrics {
     }
 
     /**
-     * The event's language code; events published before the field existed carry none, so the
-     * Judge0 id is resolved instead, retired ids included.
+     * The event's language code. Every event the backend publishes carries one; the guard keeps
+     * the retry-exhausted path, which records whatever event failed, from throwing on one that
+     * does not.
      */
     private static String languageTag(SubmissionEvent event) {
-        if (event.language() != null && !event.language().isBlank()) {
-            return event.language();
-        }
-        return Language.fromJudge0Id(event.languageId()).map(Language::code).orElse("unknown");
+        return event.language() == null || event.language().isBlank() ? "unknown" : event.language();
     }
 }
