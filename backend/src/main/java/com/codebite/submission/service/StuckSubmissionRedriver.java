@@ -1,6 +1,7 @@
 package com.codebite.submission.service;
 
 import com.codebite.common.service.RateLimiterService;
+import com.codebite.judge.program.ProblemAssets;
 import com.codebite.submission.entity.Submission;
 import com.codebite.submission.kafka.SubmissionEventProducer;
 import com.codebite.submission.repository.SubmissionRepository;
@@ -43,7 +44,7 @@ public class StuckSubmissionRedriver {
     private static final String LOCK_KEY = "global";
 
     private final SubmissionRepository submissionRepository;
-    private final SubmissionService submissionService;
+    private final ProblemAssets assets;
     private final SubmissionAbandoner abandoner;
     private final SubmissionEventProducer producer;
     private final RateLimiterService rateLimiterService;
@@ -57,7 +58,7 @@ public class StuckSubmissionRedriver {
 
     public StuckSubmissionRedriver(
             SubmissionRepository submissionRepository,
-            SubmissionService submissionService,
+            ProblemAssets assets,
             SubmissionAbandoner abandoner,
             SubmissionEventProducer producer,
             @Autowired(required = false) RateLimiterService rateLimiterService,
@@ -67,7 +68,7 @@ public class StuckSubmissionRedriver {
             @Value("${app.submission.redrive.batch-size:50}") int batchSize,
             @Value("${app.submission.redrive.lock-ttl-seconds:50}") long lockTtlSeconds) {
         this.submissionRepository = submissionRepository;
-        this.submissionService = submissionService;
+        this.assets = assets;
         this.abandoner = abandoner;
         this.producer = producer;
         this.rateLimiterService = rateLimiterService;
@@ -130,7 +131,11 @@ public class StuckSubmissionRedriver {
         log.warn("Re-driving {} submission(s) stuck in PENDING", stale.size());
         for (Submission submission : stale) {
             try {
-                producer.send(submissionService.buildEvent(submission));
+                // Assembled and built exactly as on submit, so the re-published event is
+                // byte-identical to the original: the source is rebuilt from the stored user code
+                // rather than cached anywhere. A problem that lost the driver throws NoDriverException.
+                producer.send(assets.assemble(submission.getProblem().getSlug(), submission.language(),
+                        submission.getSourceCode()).toEvent(submission));
                 redrivenCounter.increment();
             } catch (Exception e) {
                 // One bad row (e.g. a problem whose driver was deleted) must not stop the batch.

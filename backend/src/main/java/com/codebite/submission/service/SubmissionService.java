@@ -1,7 +1,6 @@
 package com.codebite.submission.service;
 
 import com.codebite.common.exception.ResourceNotFoundException;
-import com.codebite.common.exception.UnsupportedValueException;
 import com.codebite.github.dto.SolutionCommitSummary;
 import com.codebite.github.repository.SolutionCommitRepository;
 import com.codebite.judge.Language;
@@ -20,7 +19,6 @@ import com.codebite.submission.dto.SubmitRequest;
 import com.codebite.submission.entity.Submission;
 import com.codebite.submission.entity.SubmissionResult;
 import com.codebite.submission.entity.SubmissionStatus;
-import com.codebite.submission.event.SubmissionEvent;
 import com.codebite.submission.kafka.SubmissionEventProducer;
 import com.codebite.submission.repository.SubmissionRepository;
 import com.codebite.submission.repository.SubmissionResultRepository;
@@ -76,9 +74,7 @@ public class SubmissionService {
         Problem problem = problemRepository.findBySlug(slug)
                 .orElseThrow(() -> new ResourceNotFoundException("error.problem.notFound", slug));
 
-        Language language = Language.fromCode(request.language())
-                .orElseThrow(() -> new UnsupportedValueException(
-                        "error.language.unsupported", request.language().toLowerCase()));
+        Language language = Language.ofRequest(request.language());
 
         // Assembled before persisting anything, so a problem with no driver for the language
         // fails fast.
@@ -132,20 +128,6 @@ public class SubmissionService {
                 .findByUserIdAndProblemIdOrderByCreatedAtDesc(userId, problem.getId());
 
         return submissions.stream().map(this::toListItem).toList();
-    }
-
-    /**
-     * Builds the Kafka event for a persisted submission, for {@code StuckSubmissionRedriver}. It is
-     * assembled and built exactly as on submit, so a re-published event is byte-identical to the
-     * original — the driver-wrapped source is rebuilt from the stored user code rather than cached
-     * anywhere. Throws {@code NoDriverException} when the problem has lost the driver.
-     */
-    public SubmissionEvent buildEvent(Submission submission) {
-        Language language = Language.fromCode(submission.getLanguage())
-                .orElseThrow(() -> new IllegalStateException(
-                        "Submission " + submission.getId() + " has unknown language " + submission.getLanguage()));
-        return assets.assemble(submission.getProblem().getSlug(), language, submission.getSourceCode())
-                .toEvent(submission);
     }
 
     // Intentionally not @Transactional: this is called via this.submit(), so a Spring proxy would

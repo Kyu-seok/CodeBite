@@ -479,7 +479,7 @@ SubmissionService
 
 ### Key implementation details
 
-**Code wrapping:** Users write a solution function. The backend wraps it with driver code that reads stdin (test input) and prints stdout (output). Driver templates are stored as per-problem, per-language files under `common/src/main/resources/drivers/{slug}/{language}.{ext}` and loaded at startup by `ProblemAssets`. Each template contains a `{USER_CODE}` placeholder that `ProblemAssets.assemble` replaces with the user's code, giving a `Program`. See `docs/DRIVER_CODE.md` for full details.
+**Drivers:** Users write a solution function. The backend puts it into the problem's Driver, which reads stdin (test input), calls the user's code and prints stdout (output). Drivers are stored as per-problem, per-language files under `common/src/main/resources/drivers/{slug}/{language}.{ext}` and loaded at startup by `ProblemAssets`. Each Driver contains a `{USER_CODE}` placeholder that `ProblemAssets.assemble` replaces with the user's code, giving a `Program`. See `docs/DRIVER_CODE.md` for full details.
 
 Example for Java:
 ```
@@ -488,7 +488,7 @@ class Solution {
     public int[] twoSum(int[] nums, int target) { ... }
 }
 
-// driver template wraps it into a runnable program
+// the Driver turns it into a runnable Program
 public class Main {
     public static void main(String[] args) {
         // parse stdin into method arguments

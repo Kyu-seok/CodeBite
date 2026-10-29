@@ -44,7 +44,7 @@ public class ProblemAssets {
     private final Map<Language, Map<String, String>> starters = new EnumMap<>(Language.class);
 
     /** A Driver with its Libraries spliced in, and the line its placeholder is on. */
-    private record Driver(String template, int userCodeStartLine) {
+    private record Driver(String source, int userCodeStartLine) {
     }
 
     public ProblemAssets() {
@@ -75,9 +75,9 @@ public class ProblemAssets {
     public Program assemble(String slug, Language language, String userCode) {
         Driver driver = drivers.get(language).get(slug);
         if (driver == null) {
-            throw new NoDriverException(slug, language.code());
+            throw new NoDriverException(slug, language);
         }
-        return Program.assembled(driver.template().replace(PLACEHOLDER, userCode), language,
+        return Program.assembled(driver.source().replace(PLACEHOLDER, userCode), language,
                 driver.userCodeStartLine(), userCode);
     }
 
@@ -86,9 +86,7 @@ public class ProblemAssets {
      * problem that has since lost the Driver still renders: the Program then has no diagnostics.
      */
     public Program recall(Submission submission) {
-        Language language = Language.fromCode(submission.getLanguage())
-                .orElseThrow(() -> new IllegalStateException(
-                        "Submission " + submission.getId() + " has unknown language " + submission.getLanguage()));
+        Language language = submission.language();
         String slug = submission.getProblem().getSlug();
         return hasDriver(slug, language)
                 ? assemble(slug, language, submission.getSourceCode())
@@ -116,17 +114,13 @@ public class ProblemAssets {
         return new TreeSet<>(drivers.get(language).keySet());
     }
 
-    private Driver toDriver(String slug, Language language, String template) {
-        int placeholderIdx = template.indexOf(PLACEHOLDER);
+    private Driver toDriver(String slug, Language language, String source) {
+        int placeholderIdx = source.indexOf(PLACEHOLDER);
         if (placeholderIdx < 0) {
             throw new IllegalStateException(
-                    "Driver template missing " + PLACEHOLDER + " placeholder: " + slug + ":" + language.code());
+                    "Driver missing " + PLACEHOLDER + " placeholder: " + slug + ":" + language.code());
         }
-        int newlines = 0;
-        for (int i = 0; i < placeholderIdx; i++) {
-            if (template.charAt(i) == '\n') newlines++;
-        }
-        return new Driver(template, newlines + 1);
+        return new Driver(source, Program.newlines(source, placeholderIdx) + 1);
     }
 
     /** {@code <dir>/<slug>/<language>.<ext>} by slug. */
@@ -166,8 +160,8 @@ public class ProblemAssets {
         }
     }
 
-    private static String resolveLibMarkers(String template, Language language, Map<String, String> libraries) {
-        Matcher matcher = LIB_MARKER_PATTERN.matcher(template);
+    private static String resolveLibMarkers(String source, Language language, Map<String, String> libraries) {
+        Matcher matcher = LIB_MARKER_PATTERN.matcher(source);
         StringBuilder result = new StringBuilder();
         while (matcher.find()) {
             String className = matcher.group(1);

@@ -31,7 +31,7 @@ Root `settings.gradle` includes three modules: `common`, `backend`, `worker`. Th
 - `user/repository/` — UserRepository, UserOAuthAccountRepository
 - `problem/entity/` — Problem, TestCase, Difficulty
 - `problem/repository/` — ProblemRepository, TestCaseRepository
-- `submission/entity/` — Submission, SubmissionResult, SubmissionStatus
+- `submission/entity/` — Submission (`language()` = the stored code as a `Language`), SubmissionResult, SubmissionStatus
 - `submission/repository/` — SubmissionRepository (lifecycle, Import, re-drive and admin reads; progress reads live in the backend's `progress/`), SubmissionResultRepository
 - `submission/event/` — SubmissionEvent (Kafka message DTO)
 - `streak/entity/` — StreakDay, UserStreak (Repairs held + Repair Progress)
@@ -41,7 +41,7 @@ Root `settings.gradle` includes three modules: `common`, `backend`, `worker`. Th
 - `review/schedule/` — Review, ReviewSchedule (SM-2 lite as an immutable value: `replay`, `rate`, `preview`, `mastered`; the only place the numbers live; `review-schedule-golden.csv` in test resources pins them)
 - `github/entity/` — GitHubLink, GitHubLinkStatus (ACTIVE/BROKEN/UNLINKED), GitHubImportState, SolutionCommit, SolutionCommitStatus (PENDING/COMMITTED/FAILED)
 - `github/repository/` — GitHubLinkRepository (`findCurrentByUserId` = the user's current link, ACTIVE or BROKEN), SolutionCommitRepository
-- `judge/` — Language (the codes CodeBite accepts, each with its Judge0 id and file extension), JudgeClient, JudgeClientImpl, JudgeService (a plain Judge0 client: `execute`, `executeBatch`), DTOs
+- `judge/` — Language (the codes CodeBite accepts, each with its Judge0 id and file extension; `ofRequest` = 400 for a code it doesn't accept), JudgeClient, JudgeClientImpl, JudgeService (a plain Judge0 client: `execute`, `executeBatch`), DTOs
 - `judge/program/` — ProblemAssets (reads every Driver, Library and Starter Code once at startup, failing on a Driver without `{USER_CODE}`; `assemble` → Program or `NoDriverException`, `recall` for a stored submission, `starters`, `slugsWithDriver`), Program (the assembled source, its Language and Judge0 id; `diagnostics` maps Judge0's errors onto the user's lines; `toEvent`/`fromEvent` for the `SubmissionEvent`), UserCodeLineMapper (package-private)
 - `judge/parser/` — one JudgeErrorParser per Language, in combined-file lines; only Program picks and calls them
 - `judge/grader/` — TestInput, CaseVerdict, Verdict, Grader (grades a Program; `grade` runs every case in one Judge0 batch; `gradeUntilFailure` runs them one at a time and stops at the first failing judged case; the only place Judge0 statuses become SubmissionStatuses, docs/adr/0005)

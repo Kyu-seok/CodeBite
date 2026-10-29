@@ -1,6 +1,8 @@
 package com.codebite.submission;
 
 import com.codebite.common.service.RateLimiterService;
+import com.codebite.judge.Language;
+import com.codebite.judge.program.ProblemAssets;
 import com.codebite.problem.entity.Problem;
 import com.codebite.submission.entity.Submission;
 import com.codebite.submission.event.SubmissionEvent;
@@ -8,7 +10,6 @@ import com.codebite.submission.kafka.SubmissionEventProducer;
 import com.codebite.submission.repository.SubmissionRepository;
 import com.codebite.submission.service.StuckSubmissionRedriver;
 import com.codebite.submission.service.SubmissionAbandoner;
-import com.codebite.submission.service.SubmissionService;
 import com.codebite.user.entity.Role;
 import com.codebite.user.entity.User;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
@@ -39,29 +40,35 @@ import static org.mockito.Mockito.when;
 class StuckSubmissionRedriverTest {
 
     @Mock private SubmissionRepository submissionRepository;
-    @Mock private SubmissionService submissionService;
     @Mock private SubmissionAbandoner abandoner;
     @Mock private SubmissionEventProducer producer;
     @Mock private RateLimiterService rateLimiterService;
+
+    /** A one-problem fixture: {@code pair-sum} has a Java driver and nothing else. */
+    private static final ProblemAssets ASSETS = new ProblemAssets("classpath:problem-assets/");
 
     private final SimpleMeterRegistry meterRegistry = new SimpleMeterRegistry();
 
     private StuckSubmissionRedriver redriver(RateLimiterService limiter) {
         return new StuckSubmissionRedriver(
-                submissionRepository, submissionService, abandoner, producer, limiter,
+                submissionRepository, ASSETS, abandoner, producer, limiter,
                 meterRegistry,
                 120, 1800, 50, 50);
     }
 
     private Submission pending(long id) {
+        return pending(id, "pair-sum");
+    }
+
+    private Submission pending(long id, String slug) {
         User user = new User();
         user.setId(3L);
         user.setRole(Role.USER);
         Problem problem = new Problem();
         problem.setId(7L);
-        problem.setSlug("pair-sum");
+        problem.setSlug(slug);
 
-        Submission submission = Submission.pending(user, problem, "python", "print(1)");
+        Submission submission = Submission.pending(user, problem, "java", "class Solution {}");
         submission.setId(id);
         return submission;
     }
@@ -69,16 +76,16 @@ class StuckSubmissionRedriverTest {
     @Test
     void republishesSubmissionsInsideTheStaleWindow() {
         Submission stuck = pending(42L);
-        SubmissionEvent event = new SubmissionEvent(42L, "src", 71, 7L, false, "python");
 
         when(rateLimiterService.isRateLimited(anyString(), anyString(), anyLong())).thenReturn(false);
         when(submissionRepository.findStalePending(any(), any(), any(Pageable.class)))
                 .thenReturn(List.of(stuck));
-        when(submissionService.buildEvent(stuck)).thenReturn(event);
 
         redriver(rateLimiterService).sweep();
 
-        verify(producer).send(event);
+        verify(producer).send(new SubmissionEvent(42L,
+                ASSETS.assemble("pair-sum", Language.JAVA, "class Solution {}").source(),
+                Language.JAVA.judge0Id(), 7L, false, "java"));
     }
 
     @Test
@@ -123,19 +130,19 @@ class StuckSubmissionRedriverTest {
 
     @Test
     void oneUnbuildableSubmissionDoesNotStopTheBatch() {
-        Submission bad = pending(1L);
+        // The fixture has no driver for this problem, so assembling it throws NoDriverException.
+        Submission bad = pending(1L, "driver-deleted");
         Submission good = pending(2L);
-        SubmissionEvent goodEvent = new SubmissionEvent(2L, "src", 71, 7L, false, "python");
 
         when(rateLimiterService.isRateLimited(anyString(), anyString(), anyLong())).thenReturn(false);
         when(submissionRepository.findStalePending(any(), any(), any(Pageable.class)))
                 .thenReturn(List.of(bad, good));
-        when(submissionService.buildEvent(bad)).thenThrow(new IllegalStateException("no driver"));
-        when(submissionService.buildEvent(good)).thenReturn(goodEvent);
 
         redriver(rateLimiterService).sweep();
 
-        verify(producer).send(goodEvent);
+        ArgumentCaptor<SubmissionEvent> sent = ArgumentCaptor.forClass(SubmissionEvent.class);
+        verify(producer).send(sent.capture());
+        assertEquals(2L, sent.getValue().submissionId());
     }
 
     @Test

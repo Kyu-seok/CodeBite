@@ -1,7 +1,6 @@
 package com.codebite.run.service;
 
 import com.codebite.common.exception.ResourceNotFoundException;
-import com.codebite.common.exception.UnsupportedValueException;
 import com.codebite.judge.Language;
 import com.codebite.judge.grader.CaseVerdict;
 import com.codebite.judge.grader.Grader;
@@ -45,9 +44,7 @@ public class RunService {
         Problem problem = problemRepository.findBySlug(slug)
                 .orElseThrow(() -> new ResourceNotFoundException("error.problem.notFound", slug));
 
-        Language language = Language.fromCode(request.language())
-                .orElseThrow(() -> new UnsupportedValueException(
-                        "error.language.unsupported", request.language().toLowerCase()));
+        Language language = Language.ofRequest(request.language());
         Program program = assets.assemble(problem.getSlug(), language, request.sourceCode());
 
         List<TestCase> sampleTestCases = testCaseRepository

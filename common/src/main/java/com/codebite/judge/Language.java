@@ -1,5 +1,7 @@
 package com.codebite.judge;
 
+import com.codebite.common.exception.UnsupportedValueException;
+
 import java.util.Locale;
 import java.util.Optional;
 
@@ -43,6 +45,15 @@ public enum Language {
     /** File extension without the dot: {@code java}, {@code py}, {@code js}, {@code cpp}. */
     public String extension() {
         return extension;
+    }
+
+    /**
+     * The language a Run or Submit request names, as {@link #fromCode} reads it; a code CodeBite
+     * does not accept is the client's error (400, {@code error.language.unsupported}).
+     */
+    public static Language ofRequest(String code) {
+        return fromCode(code).orElseThrow(() -> new UnsupportedValueException(
+                "error.language.unsupported", code == null ? null : code.toLowerCase(Locale.ROOT)));
     }
 
     /** Case-insensitive; empty for null and for any code CodeBite does not accept (e.g. {@code c}). */

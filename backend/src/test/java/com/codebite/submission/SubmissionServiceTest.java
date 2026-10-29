@@ -144,15 +144,6 @@ class SubmissionServiceTest {
         verify(submissionEventProducer, never()).send(any(SubmissionEvent.class));
     }
 
-    @Test
-    void buildEvent_rebuildsTheEventFromTheStoredCode() {
-        Submission submission = ownedSubmission(SubmissionStatus.PENDING);
-
-        SubmissionEvent event = submissionService.buildEvent(submission);
-
-        assertEquals(ASSETS.assemble("pair-sum", Language.JAVA, "code").toEvent(submission), event);
-    }
-
     // --- submit: problem not found ---
 
     @Test

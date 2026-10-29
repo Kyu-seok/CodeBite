@@ -1,12 +1,15 @@
 package com.codebite.judge;
 
+import com.codebite.common.exception.UnsupportedValueException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class LanguageTest {
@@ -33,5 +36,14 @@ class LanguageTest {
         assertTrue(Language.fromCode("c").isEmpty());
         assertTrue(Language.fromCode("rust").isEmpty());
         assertTrue(Language.fromCode("").isEmpty());
+    }
+
+    @Test
+    void ofRequestReadsTheCodeAndAnswersAnUnacceptedOneWith400() {
+        assertEquals(Language.CPP, Language.ofRequest("CPP"));
+        UnsupportedValueException e = assertThrows(UnsupportedValueException.class, () -> Language.ofRequest("C"));
+        assertEquals("error.language.unsupported", e.getMessageCode());
+        assertArrayEquals(new Object[]{"c"}, e.getMessageArgs());
+        assertThrows(UnsupportedValueException.class, () -> Language.ofRequest(null));
     }
 }

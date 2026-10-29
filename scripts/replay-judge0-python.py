@@ -174,7 +174,7 @@ def judge_for(target, language_id, time_limit=LOCAL_TIME_LIMIT_S):
 
 
 def driver_assembler(root):
-    """Puts a solution into the problem's Python driver, as DriverCodeLoader and JudgeService.buildSourceCode do."""
+    """Puts a solution into the problem's Python driver, as ProblemAssets.assemble does."""
     drivers = root / "common/src/main/resources/drivers"
     lib = re.compile(r"^(?://|#)\s*\{\{LIB:(\w+)}}$", re.M)
 

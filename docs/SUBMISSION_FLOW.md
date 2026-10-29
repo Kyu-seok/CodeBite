@@ -1,4 +1,4 @@
-# Submission Flow & Code Templates
+# Submission Flow, Starter Code & Drivers
 
 ## Overview
 
@@ -8,7 +8,7 @@ When a user submits code on CodeBite, the request flows through a Kafka-based pi
 Frontend → Backend API → Kafka → Worker → Judge0 → DB → Frontend (polling)
 ```
 
-The system uses two types of code templates — **starters** and **drivers** — to bridge between the user's solution code and Judge0's stdin/stdout execution model.
+The system uses two kinds of per-problem source — **starters** and **drivers** — to bridge between the user's solution code and Judge0's stdin/stdout execution model.
 
 ---
 
@@ -34,7 +34,7 @@ class Solution {
 
 ### Driver Code
 
-Driver code is a hidden wrapper template that turns the user's solution into a complete program Judge0 can execute. It handles input parsing (stdin), calling the user's function, and printing the output (stdout).
+A Driver is the hidden per-problem source that turns the user's solution into a complete program Judge0 can execute. It handles input parsing (stdin), calling the user's function, and printing the output (stdout).
 
 **Example** (`drivers/two-sum/java.java`):
 ```java
@@ -55,7 +55,7 @@ public class Main {
 ```
 
 - **Location**: `common/src/main/resources/drivers/{slug}/{language}.{ext}`
-- **Libraries**: `common/src/main/resources/drivers/lib/{language}/*.{ext}` — reusable code (e.g., `JsonOutput`, `TreeNode`, `ListNode`) referenced via `// {{LIB:ClassName}}` markers in templates
+- **Libraries**: `common/src/main/resources/drivers/lib/{language}/*.{ext}` — reusable code (e.g., `JsonOutput`, `TreeNode`, `ListNode`) referenced via `// {{LIB:ClassName}}` markers in Drivers
 - **Loaded by**: `ProblemAssets` (`common/.../judge/program/ProblemAssets.java`), which `assemble`s a `Program` from a Driver and the user's code
 - **When**: Cached on startup. Library markers are resolved at load time (replaced with actual library code), and a Driver without `{USER_CODE}` fails startup.
 - **Used by**: Backend (to build final source code before publishing to Kafka). The user never sees driver code.
@@ -64,7 +64,7 @@ public class Main {
 
 | Aspect | Starters | Drivers |
 |--------|----------|---------|
-| **Purpose** | User-facing boilerplate | Hidden execution wrapper |
+| **Purpose** | User-facing boilerplate | Hidden Driver that runs the user's code |
 | **Contains** | Function signature only | Input parsing + output formatting + `{USER_CODE}` placeholder |
 | **Module** | `common/` (only the API serves them; one `ProblemAssets` reads both) | `common/` (shared — backend builds source with them) |
 | **Visible to user** | Yes (shown in editor) | No (internal only) |

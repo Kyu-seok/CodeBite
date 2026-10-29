@@ -112,9 +112,14 @@ public final class Program {
 
     private static int countLines(String source) {
         if (source == null || source.isEmpty()) return 0;
-        int count = 1;
-        for (int i = 0; i < source.length(); i++) {
-            if (source.charAt(i) == '\n') count++;
+        return newlines(source, source.length()) + 1;
+    }
+
+    /** How many line breaks {@code text} has before {@code end}. */
+    static int newlines(String text, int end) {
+        int count = 0;
+        for (int i = 0; i < end; i++) {
+            if (text.charAt(i) == '\n') count++;
         }
         return count;
     }
