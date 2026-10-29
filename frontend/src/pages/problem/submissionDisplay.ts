@@ -6,15 +6,16 @@ import type { SubmissionStatus } from '@/types/submission';
  * a problem offers is the keys of its starter code (see `problemLanguages`).
  */
 export const MONACO_LANGUAGE: Record<string, string> = {
-  java: 'java',
   python: 'python',
+  java: 'java',
   javascript: 'javascript',
   cpp: 'cpp',
 };
 
+/** In display order. The first is the editor's default for a user with no recent language. */
 export const LANGUAGE_LABELS: Record<string, string> = {
-  java: 'Java',
   python: 'Python',
+  java: 'Java',
   javascript: 'JavaScript',
   cpp: 'C++',
 };
