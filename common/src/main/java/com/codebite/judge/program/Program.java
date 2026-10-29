@@ -7,7 +7,6 @@ import com.codebite.judge.parser.JavaErrorParser;
 import com.codebite.judge.parser.JavaScriptErrorParser;
 import com.codebite.judge.parser.JudgeErrorParser;
 import com.codebite.judge.parser.PythonErrorParser;
-import com.codebite.judge.parser.UserCodeLineMapper;
 import com.codebite.submission.entity.Submission;
 import com.codebite.submission.event.SubmissionEvent;
 

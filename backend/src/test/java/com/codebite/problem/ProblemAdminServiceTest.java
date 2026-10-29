@@ -1,13 +1,13 @@
 package com.codebite.problem;
 
 import com.codebite.common.exception.ResourceNotFoundException;
+import com.codebite.judge.program.ProblemAssets;
 import com.codebite.problem.dto.ProblemDetail;
 import com.codebite.problem.entity.Difficulty;
 import com.codebite.problem.entity.Problem;
 import com.codebite.problem.repository.ProblemRepository;
 import com.codebite.problem.repository.TestCaseRepository;
 import com.codebite.problem.service.ProblemDtos;
-import com.codebite.problem.service.StarterCodeLoader;
 import com.codebite.problem.dto.CreateProblemRequest;
 import com.codebite.problem.dto.CreateTestCaseRequest;
 import com.codebite.problem.dto.TestCaseDto;
@@ -38,7 +38,6 @@ class ProblemAdminServiceTest {
     @Mock private ProblemRepository problemRepository;
     @Mock private TestCaseRepository testCaseRepository;
     @Mock private TagRepository tagRepository;
-    @Mock private StarterCodeLoader starterCodeLoader;
     @Mock private ProblemPopularity problemPopularity;
 
     private ProblemAdminService problemService;
@@ -46,7 +45,7 @@ class ProblemAdminServiceTest {
     @BeforeEach
     void setUp() {
         problemService = new ProblemAdminService(problemRepository, testCaseRepository, tagRepository,
-                problemPopularity, new ProblemDtos(starterCodeLoader));
+                problemPopularity, new ProblemDtos(new ProblemAssets("classpath:problem-assets/")));
     }
 
     private Problem buildProblem(Long id, String title, String slug, boolean published) {

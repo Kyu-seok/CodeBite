@@ -1,13 +1,13 @@
 package com.codebite.problem;
 
 import com.codebite.common.exception.ResourceNotFoundException;
+import com.codebite.judge.program.ProblemAssets;
 import com.codebite.problem.dto.ProblemDetail;
 import com.codebite.problem.entity.Difficulty;
 import com.codebite.problem.entity.Problem;
 import com.codebite.problem.repository.ProblemRepository;
 import com.codebite.problem.repository.TestCaseRepository;
 import com.codebite.problem.service.ProblemDtos;
-import com.codebite.problem.service.StarterCodeLoader;
 import com.codebite.problem.dto.ProblemListItem;
 import com.codebite.problem.repository.ProblemTranslationRepository;
 import com.codebite.problem.service.ProblemCatalogue;
@@ -41,7 +41,6 @@ class ProblemCatalogueTest {
     @Mock private ProblemRepository problemRepository;
     @Mock private ProblemTranslationRepository translationRepository;
     @Mock private TestCaseRepository testCaseRepository;
-    @Mock private StarterCodeLoader starterCodeLoader;
     @Mock private ProblemPopularity problemPopularity;
     @Mock private UserProgress userProgress;
 
@@ -50,7 +49,7 @@ class ProblemCatalogueTest {
     @BeforeEach
     void setUp() {
         problemService = new ProblemCatalogue(problemRepository, translationRepository, testCaseRepository,
-                problemPopularity, userProgress, new ProblemDtos(starterCodeLoader));
+                problemPopularity, userProgress, new ProblemDtos(new ProblemAssets("classpath:problem-assets/")));
     }
 
     private Problem buildProblem(Long id, String title, String slug, boolean published) {
@@ -127,7 +126,6 @@ class ProblemCatalogueTest {
         Problem problem = buildProblem(1L, "Two Sum", "pair-sum", true);
         when(problemRepository.findBySlug("pair-sum")).thenReturn(Optional.of(problem));
         when(testCaseRepository.findByProblemIdAndSampleTrueOrderByOrderIndexAsc(1L)).thenReturn(List.of());
-        when(starterCodeLoader.getStarterCode("pair-sum")).thenReturn(Map.of("java", "class Solution {}"));
 
         ProblemDetail detail = problemService.getProblemBySlug("pair-sum");
         assertEquals("Two Sum", detail.title());
