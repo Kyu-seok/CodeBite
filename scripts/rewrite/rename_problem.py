@@ -36,7 +36,7 @@ from typing import List, Dict
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DRIVERS_DIR = REPO_ROOT / "common" / "src" / "main" / "resources" / "drivers"
-STARTERS_DIR = REPO_ROOT / "backend" / "src" / "main" / "resources" / "starters"
+STARTERS_DIR = REPO_ROOT / "common" / "src" / "main" / "resources" / "starters"
 MIGRATIONS_DIR = REPO_ROOT / "common" / "src" / "main" / "resources" / "db" / "migration"
 
 FILE_NAMES = ["java.java", "python.py", "javascript.js", "cpp.cpp"]

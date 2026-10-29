@@ -2,8 +2,10 @@ package com.codebite.judge.grader;
 
 import com.codebite.common.exception.JudgeExecutionException;
 import com.codebite.judge.dto.JudgeRequest;
+import com.codebite.judge.program.Program;
 import com.codebite.judge.service.JudgeService;
 import com.codebite.submission.entity.SubmissionStatus;
+import com.codebite.submission.event.SubmissionEvent;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -16,7 +18,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class GraderTest {
 
-    private static final Program PROGRAM = new Program("class Solution {}", 62);
+    private static final Program PROGRAM =
+            Program.fromEvent(new SubmissionEvent(1L, "class Solution {}", 62, 1L, false, "java"));
 
     private final ScriptedJudgeClient client = new ScriptedJudgeClient();
     private final Grader grader = new Grader(new JudgeService(client, 1, 1000));

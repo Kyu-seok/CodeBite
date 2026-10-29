@@ -18,7 +18,7 @@ You generate complete problem definitions for CodeBite, a code practice platform
 2. `docs/PROBLEMS.md` — find the problem's **difficulty** (Easy/Medium/Hard) from the Phase tables
 3. `docs/DRIVER_CODE.md` — driver code architecture and conventions
 3. `common/src/main/resources/db/migration/V33__add_phase2_batch1_problems.sql` — SQL migration pattern
-4. Find an existing problem with a **similar data structure** to use as a template:
+4. Find an existing problem with a **similar data structure** to use as a template (both trees live under `common/src/main/resources/`):
    - Array problems: `drivers/pair-sum/` and `starters/pair-sum/`
    - Linked list problems: `drivers/reverse-list/` and `starters/reverse-list/`
    - Tree problems: `drivers/tree-depth/` and `starters/tree-depth/`
@@ -218,7 +218,7 @@ const lines = input.split('\n');
 
 ## Step 6: Write Starter Code
 
-Create 4 starter files at `backend/src/main/resources/starters/{slug}/`:
+Create 4 starter files at `common/src/main/resources/starters/{slug}/`:
 
 ### Java (`java.java`)
 ```java

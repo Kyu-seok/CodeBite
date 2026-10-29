@@ -1,6 +1,7 @@
 package com.codebite.judge.grader;
 
 import com.codebite.judge.dto.JudgeResponse;
+import com.codebite.judge.program.Program;
 import com.codebite.judge.service.JudgeService;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +29,7 @@ public class Grader {
     public Verdict grade(Program program, List<TestInput> cases) {
         List<String> stdins = cases.stream().map(TestInput::stdin).toList();
         List<JudgeResponse> responses = judgeService.executeBatch(
-                program.sourceCode(), program.languageId(), stdins);
+                program.source(), program.judge0Id(), stdins);
 
         List<CaseVerdict> verdicts = new ArrayList<>(cases.size());
         for (int i = 0; i < cases.size(); i++) {
@@ -45,7 +46,7 @@ public class Grader {
         List<CaseVerdict> verdicts = new ArrayList<>();
         for (TestInput input : cases) {
             JudgeResponse response = judgeService.execute(
-                    program.sourceCode(), program.languageId(), input.stdin());
+                    program.source(), program.judge0Id(), input.stdin());
             CaseVerdict verdict = CaseVerdict.of(response, input.expectedOutput());
             verdicts.add(verdict);
             if (verdict.fails()) {

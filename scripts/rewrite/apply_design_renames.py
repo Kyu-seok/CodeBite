@@ -5,7 +5,7 @@ emit a Flyway migration that updates test_cases command-trace strings
 plus problem titles.
 
 Driver files live at common/src/main/resources/drivers/<slug>/<lang>.<ext>.
-Starter files live at backend/src/main/resources/starters/<slug>/<lang>.<ext>.
+Starter files live at common/src/main/resources/starters/<slug>/<lang>.<ext>.
 
 Each rename spec (from design-renames.json) names an old_class → new_class
 plus an optional method_renames map. Class and method strings are replaced
@@ -163,7 +163,7 @@ def main() -> int:
     test_cases = json.loads(Path(args.test_cases).read_text())
     repo = Path(args.repo_root)
     drivers_root = repo / "common/src/main/resources/drivers"
-    starters_root = repo / "backend/src/main/resources/starters"
+    starters_root = repo / "common/src/main/resources/starters"
 
     warnings = check_test_case_collisions(test_cases, spec)
     if warnings:

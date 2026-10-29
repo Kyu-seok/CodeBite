@@ -13,7 +13,7 @@ from pathlib import Path
 JUDGE0, ROOT, SAMPLES = sys.argv[1], Path(sys.argv[2]), Path(sys.argv[3])
 PY38, PY312 = 71, 100
 DRIVERS = ROOT / "common/src/main/resources/drivers"
-STARTERS = ROOT / "backend/src/main/resources/starters"
+STARTERS = ROOT / "common/src/main/resources/starters"
 LIB = re.compile(r"^(?://|#)\s*\{\{LIB:(\w+)}}$", re.M)
 
 b64 = lambda s: base64.b64encode(s.encode()).decode()

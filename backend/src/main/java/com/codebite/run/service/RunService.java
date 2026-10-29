@@ -2,14 +2,16 @@ package com.codebite.run.service;
 
 import com.codebite.common.exception.ResourceNotFoundException;
 import com.codebite.common.exception.UnsupportedValueException;
+import com.codebite.judge.Language;
 import com.codebite.judge.dto.CodeError;
 import com.codebite.judge.grader.CaseVerdict;
 import com.codebite.judge.grader.Grader;
-import com.codebite.judge.grader.Program;
 import com.codebite.judge.grader.TestInput;
 import com.codebite.judge.grader.Verdict;
 import com.codebite.judge.parser.JudgeErrorParsers;
 import com.codebite.judge.parser.UserCodeLineMapper;
+import com.codebite.judge.program.ProblemAssets;
+import com.codebite.judge.program.Program;
 import com.codebite.judge.service.DriverCodeLoader;
 import com.codebite.judge.service.JudgeService;
 import com.codebite.problem.entity.Problem;
@@ -34,6 +36,7 @@ public class RunService {
     private final JudgeService judgeService;
     private final Grader grader;
     private final DriverCodeLoader driverCodeLoader;
+    private final ProblemAssets assets;
     private final JudgeErrorParsers errorParsers;
     private final UserCodeLineMapper lineMapper;
 
@@ -42,6 +45,7 @@ public class RunService {
                       JudgeService judgeService,
                       Grader grader,
                       DriverCodeLoader driverCodeLoader,
+                      ProblemAssets assets,
                       JudgeErrorParsers errorParsers,
                       UserCodeLineMapper lineMapper) {
         this.problemRepository = problemRepository;
@@ -49,6 +53,7 @@ public class RunService {
         this.judgeService = judgeService;
         this.grader = grader;
         this.driverCodeLoader = driverCodeLoader;
+        this.assets = assets;
         this.errorParsers = errorParsers;
         this.lineMapper = lineMapper;
     }
@@ -62,9 +67,8 @@ public class RunService {
             throw new UnsupportedValueException("error.language.unsupported", language);
         }
 
-        String driverTemplate = driverCodeLoader.getDriverCode(problem.getSlug(), language);
-        String sourceCode = judgeService.buildSourceCode(driverTemplate, request.sourceCode());
-        Program program = new Program(sourceCode, judgeService.mapLanguageToId(language));
+        Program program = assets.assemble(problem.getSlug(), Language.fromCode(language).orElseThrow(),
+                request.sourceCode());
         int userCodeStartLine = driverCodeLoader.getUserCodeStartLine(problem.getSlug(), language);
         int userCodeLineCount = countLines(request.sourceCode());
 
