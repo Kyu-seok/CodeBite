@@ -72,9 +72,10 @@ public class ProblemAdminService {
         Problem problem = problemRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("error.problem.notFoundById",id));
 
+        // The Slug stays: the Driver and Starter Code are filed under it, so only a Restatement
+        // migration moves it.
         if (request.title() != null) {
             problem.setTitle(request.title());
-            problem.setSlug(slugify(request.title()));
         }
         if (request.description() != null) {
             problem.setDescription(request.description());
@@ -209,7 +210,7 @@ public class ProblemAdminService {
 
         String slug = base;
         int suffix = 2;
-        while (problemRepository.existsBySlug(slug)) {
+        while (problemRepository.isSlugTaken(slug)) {
             slug = base + "-" + suffix;
             suffix++;
         }

@@ -198,7 +198,7 @@ class ReviewServiceTest {
         // we don't expect this to be hit in production for setReview.
         // But the replayState helper handles it; let's prove via getReviewState path instead.
         when(stateRepository.findByUserIdAndProblemId(1L, 10L)).thenReturn(Optional.empty());
-        when(problemRepository.findBySlug("two-sum")).thenReturn(Optional.of(problem));
+        when(problemRepository.findBySlugOrFormerSlug("two-sum")).thenReturn(Optional.of(problem));
 
         Optional<ReviewStateResponse> resp = reviewService.getReviewState("two-sum", 1L);
         assertEquals(Optional.empty(), resp);
@@ -294,7 +294,7 @@ class ReviewServiceTest {
 
     @Test
     void getReviewState_returnsEmptyWhenNoneRecorded() {
-        when(problemRepository.findBySlug("two-sum")).thenReturn(Optional.of(problem));
+        when(problemRepository.findBySlugOrFormerSlug("two-sum")).thenReturn(Optional.of(problem));
         when(stateRepository.findByUserIdAndProblemId(1L, 10L)).thenReturn(Optional.empty());
 
         Optional<ReviewStateResponse> resp = reviewService.getReviewState("two-sum", 1L);
@@ -312,7 +312,7 @@ class ReviewServiceTest {
         second.setConfidence(Confidence.AGAIN);
         second.setReviewedAt(Instant.parse("2026-01-05T00:00:00Z"));
 
-        when(problemRepository.findBySlug("two-sum")).thenReturn(Optional.of(problem));
+        when(problemRepository.findBySlugOrFormerSlug("two-sum")).thenReturn(Optional.of(problem));
         when(reviewRepository
                 .findByUserIdAndProblemIdAndConfidenceIsNotNullOrderByReviewedAtAsc(1L, 10L))
                 .thenReturn(List.of(first, second));
@@ -330,7 +330,7 @@ class ReviewServiceTest {
 
     @Test
     void getReviewHistory_returnsEmptyWhenNothingRated() {
-        when(problemRepository.findBySlug("two-sum")).thenReturn(Optional.of(problem));
+        when(problemRepository.findBySlugOrFormerSlug("two-sum")).thenReturn(Optional.of(problem));
         when(reviewRepository
                 .findByUserIdAndProblemIdAndConfidenceIsNotNullOrderByReviewedAtAsc(1L, 10L))
                 .thenReturn(List.of());

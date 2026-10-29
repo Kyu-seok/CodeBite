@@ -17,7 +17,20 @@ public interface ProblemRepository extends JpaRepository<Problem, Long>, JpaSpec
 
     Optional<Problem> findBySlug(String slug);
 
+    /** The problem {@code slug} names: by its current Slug, or else by a Former Slug. */
+    default Optional<Problem> findBySlugOrFormerSlug(String slug) {
+        return findBySlug(slug).or(() -> findByFormerSlug(slug));
+    }
+
+    @Query("SELECT f.problem FROM FormerSlug f WHERE f.slug = :slug")
+    Optional<Problem> findByFormerSlug(@Param("slug") String slug);
+
     boolean existsBySlug(String slug);
+
+    /** Whether {@code slug} is, or ever was, a problem's Slug: a new problem may not take it. */
+    @Query("SELECT COUNT(p) > 0 FROM Problem p WHERE p.slug = :slug "
+           + "OR EXISTS (SELECT 1 FROM FormerSlug f WHERE f.slug = :slug)")
+    boolean isSlugTaken(@Param("slug") String slug);
 
     Page<Problem> findByPublishedTrue(Pageable pageable);
 

@@ -29,7 +29,7 @@ Root `settings.gradle` includes three modules: `common`, `backend`, `worker`. Th
 - `common/time/` — DayRuns (runs of consecutive UTC days behind the Streak and the Review Streak), DayCount (a count on one calendar day, the heatmap row)
 - `user/entity/` — User, Role, OAuthProvider, UserOAuthAccount
 - `user/repository/` — UserRepository, UserOAuthAccountRepository
-- `problem/entity/` — Problem, TestCase, Difficulty
+- `problem/entity/` — Problem, TestCase, Difficulty, FormerSlug (a Slug a problem had before a Restatement; `ProblemRepository.findBySlugOrFormerSlug` is every slug lookup, `isSlugTaken` checks both)
 - `problem/repository/` — ProblemRepository, TestCaseRepository
 - `submission/entity/` — Submission (`language()` = the stored code as a `Language`), SubmissionResult, SubmissionStatus
 - `submission/repository/` — SubmissionRepository (lifecycle, Import, re-drive and admin reads; progress reads live in the backend's `progress/`), SubmissionResultRepository
@@ -46,6 +46,9 @@ Root `settings.gradle` includes three modules: `common`, `backend`, `worker`. Th
 - `judge/parser/` — one JudgeErrorParser per Language, in combined-file lines; only Program picks and calls them
 - `judge/grader/` — TestInput, CaseVerdict, Verdict, Grader (grades a Program; `grade` runs every case in one Judge0 batch; `gradeUntilFailure` runs them one at a time and stops at the first failing judged case; the only place Judge0 statuses become SubmissionStatuses, docs/adr/0005)
 - `config/` — JudgeClientConfig
+
+### Restating a problem
+Rewording a problem while its Test Cases stay (Slug, title, description, Starter Code names) is a Restatement: follow `.claude/skills/restate-problem/SKILL.md`. `ProblemSlugsTest` (backend) runs every migration and fails when a Slug and its `drivers/`/`starters/` directories disagree.
 
 ### Resources (`common/src/main/resources/`)
 - `db/migration/` — Flyway SQL migrations
@@ -89,7 +92,7 @@ The GitHub App behind Solution Commits is registered by hand: run `scripts/setup
 - `common/exception/` — GlobalExceptionHandler
 - `auth/` — JWT auth + OAuth (controller, service, DTOs, filter, token provider, oauth clients)
 - `user/` — UserService, DTOs
-- `problem/` — Problems: `ProblemCatalogue` (what users see: the published list with Progress and Acceptance Rate, header counts, random pick, detail) and `ProblemAdminService` (curation behind /api/admin/problems); `ProblemDtos` builds the DTOs both return (controllers, DTOs)
+- `problem/` — Problems: `ProblemCatalogue` (what users see: the published list with Progress and Acceptance Rate, header counts, random pick, detail) and `ProblemAdminService` (curation behind /api/admin/problems; a title edit keeps the Slug, since the Driver and Starter Code are filed under it); `ProblemDtos` builds the DTOs both return (controllers, DTOs)
 - `submission/` — Submission flow (controller, service, DTOs, Kafka producer)
 - `run/` — Run flow (controller, service, DTOs — synchronous Judge0 execution, sample test cases only)
 - `streak/` — Streaks and Repairs (controller, service, DTOs, `submission-results` listener); terms in GLOSSARY.md, UTC days per docs/adr/0001
@@ -114,7 +117,7 @@ The GitHub App behind Solution Commits is registered by hand: run `scripts/setup
 | POST | `/api/auth/logout` | JWT | 204 No Content |
 | GET | `/api/health` | No | 200 + `{status: "UP"}` |
 | GET | `/api/problems` | No | 200 + paginated `{id, title, slug, difficulty}` |
-| GET | `/api/problems/{slug}` | No | 200 + `{id, title, slug, description, difficulty, starterCode, constraints, published, sampleTestCases, createdAt, updatedAt}` |
+| GET | `/api/problems/{slug}` | No | 200 + (a Former Slug works too; `slug` is the current one) `{id, title, slug, description, difficulty, starterCode, constraints, published, sampleTestCases, createdAt, updatedAt}` |
 | POST | `/api/admin/problems` | ADMIN | 201 + problem detail |
 | PUT | `/api/admin/problems/{id}` | ADMIN | 200 + problem detail |
 | POST | `/api/admin/problems/{id}/test-cases` | ADMIN | 201 + test case |

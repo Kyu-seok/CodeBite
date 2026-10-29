@@ -124,7 +124,7 @@ class ProblemCatalogueTest {
     @Test
     void getProblemBySlug_returnsDetail() {
         Problem problem = buildProblem(1L, "Two Sum", "pair-sum", true);
-        when(problemRepository.findBySlug("pair-sum")).thenReturn(Optional.of(problem));
+        when(problemRepository.findBySlugOrFormerSlug("pair-sum")).thenReturn(Optional.of(problem));
         when(testCaseRepository.findByProblemIdAndSampleTrueOrderByOrderIndexAsc(1L)).thenReturn(List.of());
 
         ProblemDetail detail = problemService.getProblemBySlug("pair-sum");
@@ -135,7 +135,7 @@ class ProblemCatalogueTest {
 
     @Test
     void getProblemBySlug_notFound_throws() {
-        when(problemRepository.findBySlug("missing")).thenReturn(Optional.empty());
+        when(problemRepository.findBySlugOrFormerSlug("missing")).thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class,
                 () -> problemService.getProblemBySlug("missing"));
@@ -144,7 +144,7 @@ class ProblemCatalogueTest {
     @Test
     void getProblemBySlug_unpublished_throws() {
         Problem problem = buildProblem(1L, "Draft", "draft", false);
-        when(problemRepository.findBySlug("draft")).thenReturn(Optional.of(problem));
+        when(problemRepository.findBySlugOrFormerSlug("draft")).thenReturn(Optional.of(problem));
 
         assertThrows(ResourceNotFoundException.class,
                 () -> problemService.getProblemBySlug("draft"));

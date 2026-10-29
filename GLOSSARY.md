@@ -4,6 +4,19 @@ A code practice platform where users solve problems, submit code for judging, an
 
 ## Language
 
+### Problems
+
+**Slug**:
+A problem's current name in its URL, and the name its Driver and Starter Code are filed under. It changes only by a Restatement, never by editing the title.
+
+**Former Slug**:
+A Slug a problem had before a Restatement. It still finds the problem, so old links keep working, and is never given to another problem.
+_Avoid_: Old slug, redirect
+
+**Restatement**:
+Rewording a problem without changing what is asked: its Test Cases, and so the algorithm that solves it, stay the same, while its Slug, title, description, constraints and the names in its Starter Code may change. A change to the Test Cases makes it a different problem, not a Restatement.
+_Avoid_: Rename, rewrite, retheme
+
 ### Grading
 
 **Verdict**:

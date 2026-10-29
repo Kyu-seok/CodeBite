@@ -67,6 +67,24 @@ class ProblemRepositoryTest {
     }
 
     @Test
+    void findBySlugOrFormerSlug_findsARestatedProblemByItsFormerSlug() {
+        Problem problem = problemRepository.save(createProblem(
+                "Product of All Other Elements", "product-of-all-other-elements", Difficulty.MEDIUM, true));
+        entityManager.getEntityManager()
+                .createNativeQuery("INSERT INTO problem_former_slugs (slug, problem_id) VALUES (?, ?)")
+                .setParameter(1, "barista-throughput-share")
+                .setParameter(2, problem.getId())
+                .executeUpdate();
+
+        assertEquals(problem.getId(),
+                problemRepository.findBySlugOrFormerSlug("barista-throughput-share").orElseThrow().getId());
+        assertTrue(problemRepository.isSlugTaken("barista-throughput-share"));
+        assertTrue(problemRepository.isSlugTaken("product-of-all-other-elements"));
+        assertFalse(problemRepository.isSlugTaken("nonexistent"));
+        assertTrue(problemRepository.findBySlugOrFormerSlug("nonexistent").isEmpty());
+    }
+
+    @Test
     void findByPublishedTrue_pagination() {
         problemRepository.save(createProblem("P1", "p1", Difficulty.EASY, true));
         problemRepository.save(createProblem("P2", "p2", Difficulty.MEDIUM, true));

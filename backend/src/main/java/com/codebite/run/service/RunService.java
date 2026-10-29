@@ -41,7 +41,7 @@ public class RunService {
     }
 
     public RunResponse run(String slug, RunRequest request) {
-        Problem problem = problemRepository.findBySlug(slug)
+        Problem problem = problemRepository.findBySlugOrFormerSlug(slug)
                 .orElseThrow(() -> new ResourceNotFoundException("error.problem.notFound", slug));
 
         Language language = Language.ofRequest(request.language());

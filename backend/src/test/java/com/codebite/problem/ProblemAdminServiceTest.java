@@ -61,7 +61,7 @@ class ProblemAdminServiceTest {
 
     @Test
     void createProblem_slugifiesTitle() {
-        when(problemRepository.existsBySlug("two-sum")).thenReturn(false);
+        when(problemRepository.isSlugTaken("two-sum")).thenReturn(false);
         when(problemRepository.save(any())).thenAnswer(inv -> {
             Problem p = inv.getArgument(0);
             p.setId(1L);
@@ -78,8 +78,8 @@ class ProblemAdminServiceTest {
 
     @Test
     void createProblem_slugCollision_appendsSuffix() {
-        when(problemRepository.existsBySlug("two-sum")).thenReturn(true);
-        when(problemRepository.existsBySlug("two-sum-2")).thenReturn(false);
+        when(problemRepository.isSlugTaken("two-sum")).thenReturn(true);
+        when(problemRepository.isSlugTaken("two-sum-2")).thenReturn(false);
         when(problemRepository.save(any())).thenAnswer(inv -> {
             Problem p = inv.getArgument(0);
             p.setId(1L);
@@ -106,6 +106,20 @@ class ProblemAdminServiceTest {
         ProblemDetail result = problemService.updateProblem(1L, request);
         assertTrue(result.published());
         assertEquals("Old Title", result.title());
+    }
+
+    @Test
+    void updateProblem_newTitle_keepsSlug() {
+        Problem existing = buildProblem(1L, "Old Title", "old-title", true);
+        when(problemRepository.findById(1L)).thenReturn(Optional.of(existing));
+        when(problemRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+        when(testCaseRepository.findByProblemIdAndSampleTrueOrderByOrderIndexAsc(1L)).thenReturn(List.of());
+
+        ProblemDetail result = problemService.updateProblem(1L, new UpdateProblemRequest(
+                "New Title", null, null, null, null));
+
+        assertEquals("New Title", result.title());
+        assertEquals("old-title", result.slug());
     }
 
     @Test

@@ -93,7 +93,7 @@ class SubmissionServiceTest {
     }
 
     private void setupCommonMocks() {
-        when(problemRepository.findBySlug("pair-sum")).thenReturn(Optional.of(problem));
+        when(problemRepository.findBySlugOrFormerSlug("pair-sum")).thenReturn(Optional.of(problem));
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(submissionRepository.save(any())).thenAnswer(inv -> {
             Submission s = inv.getArgument(0);
@@ -135,7 +135,7 @@ class SubmissionServiceTest {
 
     @Test
     void submit_noDriverForTheLanguage_savesNothing() {
-        when(problemRepository.findBySlug("pair-sum")).thenReturn(Optional.of(problem));
+        when(problemRepository.findBySlugOrFormerSlug("pair-sum")).thenReturn(Optional.of(problem));
 
         // The fixture has only a Java driver.
         assertThrows(NoDriverException.class,
@@ -148,7 +148,7 @@ class SubmissionServiceTest {
 
     @Test
     void submit_problemNotFound() {
-        when(problemRepository.findBySlug("missing")).thenReturn(Optional.empty());
+        when(problemRepository.findBySlugOrFormerSlug("missing")).thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class,
                 () -> submissionService.submit("missing", new SubmitRequest("java", "code"), 1L));
@@ -159,7 +159,7 @@ class SubmissionServiceTest {
 
     @Test
     void submit_unsupportedLanguage() {
-        when(problemRepository.findBySlug("pair-sum")).thenReturn(Optional.of(problem));
+        when(problemRepository.findBySlugOrFormerSlug("pair-sum")).thenReturn(Optional.of(problem));
 
         assertThrows(com.codebite.common.exception.UnsupportedValueException.class,
                 () -> submissionService.submit("pair-sum", new SubmitRequest("rust", "code"), 1L));
