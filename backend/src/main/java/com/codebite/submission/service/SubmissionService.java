@@ -71,7 +71,7 @@ public class SubmissionService {
     }
 
     public SubmissionResponse submit(String slug, SubmitRequest request, Long userId) {
-        Problem problem = problemRepository.findBySlug(slug)
+        Problem problem = problemRepository.findBySlugOrFormerSlug(slug)
                 .orElseThrow(() -> new ResourceNotFoundException("error.problem.notFound", slug));
 
         Language language = Language.ofRequest(request.language());
@@ -121,7 +121,7 @@ public class SubmissionService {
 
     @Transactional(readOnly = true)
     public List<SubmissionListItem> getUserSubmissions(String slug, Long userId) {
-        Problem problem = problemRepository.findBySlug(slug)
+        Problem problem = problemRepository.findBySlugOrFormerSlug(slug)
                 .orElseThrow(() -> new ResourceNotFoundException("error.problem.notFound", slug));
 
         List<Submission> submissions = submissionRepository

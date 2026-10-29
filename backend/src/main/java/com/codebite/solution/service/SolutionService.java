@@ -88,7 +88,7 @@ public class SolutionService {
 
     @Transactional
     public SolutionDetail create(String problemSlug, CreateSolutionRequest request, Long userId) {
-        Problem problem = problemRepository.findBySlug(problemSlug)
+        Problem problem = problemRepository.findBySlugOrFormerSlug(problemSlug)
                 .orElseThrow(() -> new ResourceNotFoundException("error.problem.notFound", problemSlug));
         User author = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("error.user.notFound", userId));

@@ -40,6 +40,10 @@ export default function ProblemDetailPage() {
   const { getTimerSnapshot, stopTimer, notifyEditing } = useOutletContext<WorkspaceOutletContext>()
   const { user, isAuthenticated, loading: authLoading, updateUser } = useAuth()
   const { problem, loading, error, retry: retryProblem } = useProblem(slug!)
+  // A Former Slug still finds the problem; move to its current Slug so links and drafts use that.
+  useEffect(() => {
+    if (problem && problem.slug !== slug) navigate(`/problems/${problem.slug}`, { replace: true })
+  }, [problem, slug, navigate])
   const { submissions, failed: submissionsFailed, refetch: refetchSubmissions, updateNote } = useSubmissions(
     slug!,
     isAuthenticated,

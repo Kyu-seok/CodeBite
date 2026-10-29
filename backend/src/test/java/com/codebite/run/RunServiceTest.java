@@ -98,7 +98,7 @@ class RunServiceTest {
     }
 
     private void setupCommonMocks() {
-        when(problemRepository.findBySlug("pair-sum")).thenReturn(Optional.of(problem));
+        when(problemRepository.findBySlugOrFormerSlug("pair-sum")).thenReturn(Optional.of(problem));
     }
 
     @Test
@@ -164,7 +164,7 @@ class RunServiceTest {
 
     @Test
     void run_problemNotFound_throwsResourceNotFoundException() {
-        when(problemRepository.findBySlug("missing")).thenReturn(Optional.empty());
+        when(problemRepository.findBySlugOrFormerSlug("missing")).thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class,
                 () -> runService.run("missing", new RunRequest("java", "code", null)));
@@ -172,7 +172,7 @@ class RunServiceTest {
 
     @Test
     void run_unsupportedLanguage_throwsUnsupportedValueException() {
-        when(problemRepository.findBySlug("pair-sum")).thenReturn(Optional.of(problem));
+        when(problemRepository.findBySlugOrFormerSlug("pair-sum")).thenReturn(Optional.of(problem));
 
         assertThrows(UnsupportedValueException.class,
                 () -> runService.run("pair-sum", new RunRequest("rust", "code", null)));
@@ -180,7 +180,7 @@ class RunServiceTest {
 
     @Test
     void run_noDriverForTheLanguage_throwsNoDriverException() {
-        when(problemRepository.findBySlug("pair-sum")).thenReturn(Optional.of(problem));
+        when(problemRepository.findBySlugOrFormerSlug("pair-sum")).thenReturn(Optional.of(problem));
 
         // The fixture has only a Java driver.
         assertThrows(NoDriverException.class,

@@ -106,7 +106,7 @@ public class ReviewService {
 
     @Transactional(readOnly = true)
     public Optional<ReviewStateResponse> getReviewState(String slug, Long userId) {
-        Problem problem = problemRepository.findBySlug(slug)
+        Problem problem = problemRepository.findBySlugOrFormerSlug(slug)
                 .orElseThrow(() -> new ResourceNotFoundException("error.problem.notFound", slug));
         return stateRepository.findByUserIdAndProblemId(userId, problem.getId())
                 .map(this::toStateResponse);
@@ -145,7 +145,7 @@ public class ReviewService {
 
     @Transactional(readOnly = true)
     public List<RatingHistoryItem> getReviewHistory(String slug, Long userId) {
-        Problem problem = problemRepository.findBySlug(slug)
+        Problem problem = problemRepository.findBySlugOrFormerSlug(slug)
                 .orElseThrow(() -> new ResourceNotFoundException("error.problem.notFound", slug));
         return reviewRepository
                 .findByUserIdAndProblemIdAndConfidenceIsNotNullOrderByReviewedAtAsc(

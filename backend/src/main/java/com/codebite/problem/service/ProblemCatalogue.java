@@ -138,7 +138,7 @@ public class ProblemCatalogue {
 
     @Transactional(readOnly = true)
     public ProblemDetail getProblemBySlug(String slug) {
-        Problem problem = problemRepository.findBySlug(slug)
+        Problem problem = problemRepository.findBySlugOrFormerSlug(slug)
                 .orElseThrow(() -> new ResourceNotFoundException("error.problem.notFound", slug));
         if (!problem.isPublished()) {
             throw new ResourceNotFoundException("error.problem.notFound", slug);
