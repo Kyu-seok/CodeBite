@@ -4,6 +4,9 @@ import com.codebite.submission.entity.SubmissionStatus;
 import com.codebite.submission.event.SubmissionEvent;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -33,12 +36,23 @@ class SubmissionMetricsTest {
         assertEquals(1.0, completed("python"));
     }
 
-    @Test
-    void anEventWithoutALanguageTagsUnknown() {
+    /** Tag values stay bounded: anything but a Language's code tags as {@code unknown}. */
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = {"c", "rust", "  "})
+    void anEventWithoutAKnownLanguageTagsUnknown(String language) {
         new SubmissionMetrics(registry).recordCompleted(
-                new SubmissionEvent(1L, "source", 62, 10L, false, null), SubmissionStatus.INTERNAL_ERROR);
+                new SubmissionEvent(1L, "source", 62, 10L, false, language), SubmissionStatus.INTERNAL_ERROR);
 
         assertEquals(1.0, completed("unknown"));
+    }
+
+    @Test
+    void aCodeInAnotherCaseTagsAsTheLanguagesCode() {
+        new SubmissionMetrics(registry).recordCompleted(
+                new SubmissionEvent(1L, "source", 62, 10L, false, "Java"), SubmissionStatus.ACCEPTED);
+
+        assertEquals(1.0, completed("java"));
     }
 
     @Test
