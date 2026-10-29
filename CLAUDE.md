@@ -41,13 +41,16 @@ Root `settings.gradle` includes three modules: `common`, `backend`, `worker`. Th
 - `review/schedule/` — Review, ReviewSchedule (SM-2 lite as an immutable value: `replay`, `rate`, `preview`, `mastered`; the only place the numbers live; `review-schedule-golden.csv` in test resources pins them)
 - `github/entity/` — GitHubLink, GitHubLinkStatus (ACTIVE/BROKEN/UNLINKED), GitHubImportState, SolutionCommit, SolutionCommitStatus (PENDING/COMMITTED/FAILED)
 - `github/repository/` — GitHubLinkRepository (`findCurrentByUserId` = the user's current link, ACTIVE or BROKEN), SolutionCommitRepository
-- `judge/` — JudgeClient, JudgeClientImpl, JudgeService, DriverCodeLoader, DTOs
-- `judge/grader/` — Program, TestInput, CaseVerdict, Verdict, Grader (`grade` runs every case in one Judge0 batch; `gradeUntilFailure` runs them one at a time and stops at the first failing judged case; the only place Judge0 statuses become SubmissionStatuses, docs/adr/0005)
+- `judge/` — Language (the codes CodeBite accepts, each with its Judge0 id and file extension), JudgeClient, JudgeClientImpl, JudgeService (a plain Judge0 client: `execute`, `executeBatch`), DTOs
+- `judge/program/` — ProblemAssets (reads every Driver, Library and Starter Code once at startup, failing on a Driver without `{USER_CODE}`; `assemble` → Program or `NoDriverException`, `recall` for a stored submission, `starters`, `slugsWithDriver`), Program (the assembled source, its Language and Judge0 id; `diagnostics` maps Judge0's errors onto the user's lines; `toEvent`/`fromEvent` for the `SubmissionEvent`), UserCodeLineMapper (package-private)
+- `judge/parser/` — one JudgeErrorParser per Language, in combined-file lines; only Program picks and calls them
+- `judge/grader/` — TestInput, CaseVerdict, Verdict, Grader (grades a Program; `grade` runs every case in one Judge0 batch; `gradeUntilFailure` runs them one at a time and stops at the first failing judged case; the only place Judge0 statuses become SubmissionStatuses, docs/adr/0005)
 - `config/` — JudgeClientConfig
 
 ### Resources (`common/src/main/resources/`)
 - `db/migration/` — Flyway SQL migrations
-- `drivers/` — Driver code templates per problem/language
+- `drivers/` — Drivers, `drivers/<slug>/<language>.<ext>`; Libraries under `drivers/lib/<language>/`
+- `starters/` — Starter Code, `starters/<slug>/<language>.<ext>` (served by the backend, but read by the same ProblemAssets)
 
 ## Backend
 
@@ -76,7 +79,7 @@ To sign in locally without OAuth (dev profile only), `POST /api/auth/test-token?
 docker compose -f infra/docker-compose.yml up -d   # start PostgreSQL + Redis + Kafka + Prometheus + Grafana
 ```
 
-Production Judge0 runs `localhost/codebite-judge0` (Judge0 1.13.1 plus newer runtimes as extra language ids), built by hand from `infra/judge0/Dockerfile` with `scripts/build-judge0-image.sh`; compose names it by tag only, never `build:` or pull (docs/adr/0004). Language ids live in `Language` (`common/.../judge/Language.java`), retired ids beside them for in-flight events. Production Judge0 changes image only by a hand cutover at low traffic, never a push (a deploy would restart Judge0 at the end of a backend roll); `scripts/cutover-judge0-py312.sh` is the wizard for the move onto the py312 image, a template for the next one.
+Production Judge0 runs `localhost/codebite-judge0` (Judge0 1.13.1 plus newer runtimes as extra language ids), built by hand from `infra/judge0/Dockerfile` with `scripts/build-judge0-image.sh`; compose names it by tag only, never `build:` or pull (docs/adr/0004). Language ids live in `Language` (`common/.../judge/Language.java`), one constant per language; events carry the language code and the worker sends Judge0 the id its event names, so nothing maps an id back to a language. Production Judge0 changes image only by a hand cutover at low traffic, never a push (a deploy would restart Judge0 at the end of a backend roll); `scripts/cutover-judge0-py312.sh` is the wizard for the move onto the py312 image, a template for the next one.
 
 The GitHub App behind Solution Commits is registered by hand: run `scripts/setup-github-app-dev.sh`, an interactive wizard that walks through GitHub's app settings and writes the `GITHUB_APP_*` values into `infra/.env`. After that, `scripts/verify-github-solution-commits.sh` walks through checking once that GitHub credits live and Imported Solution Commits on the right UTC day. Production needs its own app (callback on code-bite.com): `scripts/setup-github-app-prod.sh` registers it, writes its values to the server over SSH and rolls the backend.
 
@@ -95,11 +98,11 @@ The GitHub App behind Solution Commits is registered by hand: run `scripts/setup
 - `github/` — GitHub Links via the CodeBite GitHub App (ADR 0003): `gateway/` (`GitHubGateway` seam, `GitHubAppGateway` REST adapter minting installation tokens from an RS256 app JWT, gateway exceptions), `service/` (link + signed install state carrying the chosen Solution Repository name; `SolutionCommitService` + `SolutionLayout` for Solution Commits, `SolutionCommitRecorder` for the row/path, README-first and outcome-counter rules it shares with `GitHubImporter`), `consumer/SolutionCommitListener` (`submission-results`, group `codebite-solution-commits`: every ACCEPTED event of a user with an ACTIVE link becomes a Solution Commit, a problem folder's first one adding README + solution in one commit via `pushCommits`; transient GitHub errors retried with doubling back-off per `app.github.commit-max-tries` / `commit-retry-backoff-ms`, then FAILED; never throws; a gone installation/repository marks the link BROKEN, after which submissions are skipped until relink), Import (`GitHubImportService` starts it and publishes `event/GitHubImportRequestedEvent` through `GitHubImportPublisher` → `kafka/KafkaGitHubImportPublisher` on topic `github-imports`; `consumer/GitHubImportListener`, group `codebite-github-imports`, runs `GitHubImporter`: every earlier Accepted submission not yet COMMITTED through the link goes up in one batch push via `GitHubGateway.pushCommits`, which the real adapter does with JGit in `gateway/GitBatchPush`, remote base `app.github.git-base-url`), controller (plus `GitHubExceptionHandler`, ordered ahead of GlobalExceptionHandler, mapping gateway exceptions to 403/503/502), DTOs. Tests swap in `FakeGitHubGateway` (`backend/src/test/.../github/gateway/`) via `TestGitHubConfig`, and `TestKafkaConfig` runs Imports synchronously
 
 ### Run Flow (Synchronous)
-`POST /api/problems/{slug}/run` → `RunService.run()` grades the sample test cases synchronously through the `Grader` (`gradeUntilFailure`, stopping at the first failing sample) and, when they all pass, the request's custom test cases (`grade`, never stopping early), returns results immediately. No data is persisted. No auth required.
+`POST /api/problems/{slug}/run` → `RunService.run()` assembles the Program through `ProblemAssets` and grades the sample test cases synchronously through the `Grader` (`gradeUntilFailure`, stopping at the first failing sample) and, when they all pass, the request's custom test cases (`grade`, never stopping early), returns results immediately. No data is persisted. No auth required.
 
 ### Submission Flow (Kafka-based)
-1. `POST /api/problems/{slug}/submit` → `SubmissionService.submit()` saves PENDING submission, publishes `SubmissionEvent` to Kafka topic `submission-events`
-2. Worker consumes event, grades the code against every test case through the `Grader` (`Grader.grade`, one Judge0 batch), writes one result row per case and the Verdict's overall status to DB
+1. `POST /api/problems/{slug}/submit` → `SubmissionService.submit()` assembles the Program (400 when the problem has no Driver for the language), saves PENDING submission, publishes `program.toEvent(submission)` to Kafka topic `submission-events`
+2. Worker consumes event, reads the Program back with `Program.fromEvent`, grades it against every test case through the `Grader` (`Grader.grade`, one Judge0 batch), writes one result row per case and the Verdict's overall status to DB
 3. Frontend polls `GET /api/submissions/{id}` every 2s until status != PENDING
 
 ### API Endpoints

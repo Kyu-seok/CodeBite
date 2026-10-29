@@ -6,7 +6,7 @@ Status (2026-10-28): steps 1–5 done. Production Judge0 runs the py312 image (d
 
 ## Background
 
-- CodeBite sends Python code to Judge0 as language **71 = Python 3.8.1** (`JudgeService.LANGUAGE_IDS`, `common/src/main/java/com/codebite/judge/service/JudgeService.java:23`). The worker's `SubmissionMetrics.LANGUAGE_NAMES` maps the ids back to names for metrics. Those are the only two places that name the Python language id.
+- CodeBite sends Python code to Judge0 as language **71 = Python 3.8.1**. When this plan was written the id was named in two places, `JudgeService.LANGUAGE_IDS` and the worker's `SubmissionMetrics.LANGUAGE_NAMES`; today it is one constant, `Language.PYTHON` (`common/src/main/java/com/codebite/judge/Language.java`).
 - Production runs `judge0/judge0:1.13.1` (`infra/docker-compose.prod.yml`, services `judge0` and `judge0-workers`) on the mini PC `mini` (192.168.219.200, `~/CodeBite/infra`). The dev backend also uses that Judge0 (`application-dev.yml`: `http://192.168.219.200:2358`).
 - 1.13.1 is the newest Judge0 image published. Its newest Python is 3.8.1. The hosted ce.judge0.com runs an unreleased 1.14.0 with Python 3.11–3.14, but that can't be self-hosted.
 - On 3.8.1, **46 of the 200 Python starters crash before user code runs** because they use `list[...]` hints (`TypeError: 'type' object is not subscriptable`).
@@ -17,7 +17,7 @@ Status (2026-10-28): steps 1–5 done. Production Judge0 runs the py312 image (d
 - **Build a custom image on top of `judge0/judge0:1.13.1`** that adds Python 3.12 next to 3.8.1, as a new language **id 100** (the id hosted Judge0 uses for Python 3.12).
 - **Upgrade in place.** `"python"` means id 100 after the switch; the version is a runtime detail, not a new language in the picker. Submissions keep storing `language = "python"`, so 3.8 and 3.12 results can't be told apart afterwards (accepted).
 - **Id 100 means "the image's current 3.12.x".** A patch upgrade is an image rebuild plus an `active.rb` edit; CodeBite code doesn't change.
-- **Keep language 71 in the image**, so switching back is a one-line change in `JudgeService`.
+- **Keep language 71 in the image**, so switching back is a one-line change in `Language`.
 - **Turn off the int/str digit limit** (`PYTHONINTMAXSTRDIGITS=0`). Python 3.11+ raises `ValueError` when converting an int over 4300 digits to text; 3.8 does not. The limit protects servers parsing untrusted input, which isolate already covers, and leaving it on would break user code that works today.
 - **No registry, no pulls.** The image is tagged `localhost/codebite-judge0:1.13.1-py312` and both services use `pull_policy: never`. A missing image fails loudly instead of compose pulling a `codebite/...` image someone else published on Docker Hub into a privileged container.
 - **Not doing Java batch execution** (all test cases in one run). Dropped: a crash or timeout in one test case would lose the results of the cases after it.
@@ -107,11 +107,10 @@ Proves that working solutions still pass on 3.12, not just that the starters loa
      python3 -I scripts/replay-judge0-python.py /opt/homebrew/bin/python3.12 100 . /tmp/replay-local.json --pause 0 --only spot-duplicate-locker
      ```
 
-  A reference solution is the complete code a user would type into the editor: the starter's `Solution` class and method (`backend/src/main/resources/starters/<slug>/python.py`), or the design class the driver constructs. It may use 3.12 syntax. A problem with an Accepted Python submission in the local database (`snack-drawer-pair` and `valid-anagram` locally) replays that submission instead of its reference solution, as on production.
+  A reference solution is the complete code a user would type into the editor: the starter's `Solution` class and method (`common/src/main/resources/starters/<slug>/python.py`), or the design class the driver constructs. It may use 3.12 syntax. A problem with an Accepted Python submission in the local database (`snack-drawer-pair` and `valid-anagram` locally) replays that submission instead of its reference solution, as on production.
 
 ### 5. Deploy B: switch CodeBite to id 100 (normal push)
-- In `JudgeService.LANGUAGE_IDS`, change `"python", 71` to `"python", 100`. The backend picks the id for both Run and Submit; for Submit it sends the id to the worker in the `SubmissionEvent`.
-- In the worker, `SubmissionMetrics.LANGUAGE_NAMES` (`worker/src/main/java/com/codebite/worker/consumer/SubmissionMetrics.java:18`) maps ids back to names for the `codebite.submissions.completed` metric. Add `100, "python"`, and keep `71`, which events already in Kafka still carry. Without this, Grafana tags every Python submission as `unknown`.
+- In `Language`, change `PYTHON`'s id from 71 to 100. That is the only change: the backend picks the id for both Run and Submit and, for Submit, sends it to the worker in the `SubmissionEvent` beside the language code, which the worker tags metrics with. An event queued before the switch still runs on 71, which the image keeps.
 - Check tests that assert language ids, if any, and update them.
 - After deploy: Run and Submit a Python solution that uses `list[int]` and `match` on the site.
 - To roll back: set it back to 71 and redeploy. The image keeps both languages.
