@@ -168,7 +168,7 @@ export default function ProblemDetailPage() {
     )
   }
 
-  const languages = Object.keys(problem.starterCode)
+  const languages = problemLanguages(problem.starterCode)
   const recentLang = user?.recentLanguage
   const activeLang = language || (recentLang && languages.includes(recentLang) ? recentLang : languages[0]) || ""
   const code =
@@ -356,7 +356,7 @@ export default function ProblemDetailPage() {
             difficulty={problem.difficulty}
             description={problem.description}
             constraints={problem.constraints}
-            languages={problemLanguages(problem.starterCode)}
+            languages={languages}
             isAuthenticated={isAuthenticated}
             submissions={submissions}
             submissionsFailed={submissionsFailed}
