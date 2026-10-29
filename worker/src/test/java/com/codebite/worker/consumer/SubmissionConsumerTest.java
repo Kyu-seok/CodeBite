@@ -2,9 +2,9 @@ package com.codebite.worker.consumer;
 
 import com.codebite.judge.grader.CaseVerdict;
 import com.codebite.judge.grader.Grader;
-import com.codebite.judge.grader.Program;
 import com.codebite.judge.grader.TestInput;
 import com.codebite.judge.grader.Verdict;
+import com.codebite.judge.program.Program;
 import com.codebite.problem.entity.Problem;
 import com.codebite.problem.entity.TestCase;
 import com.codebite.problem.repository.TestCaseRepository;
@@ -108,11 +108,12 @@ class SubmissionConsumerTest {
         when(grader.grade(any(Program.class), anyList()))
                 .thenReturn(Verdict.of(List.of(accepted("3"), accepted("7"))));
 
-        consumer.consume(new SubmissionEvent(1L, "source", 62, 10L, false, "java"));
+        SubmissionEvent event = new SubmissionEvent(1L, "source", 62, 10L, false, "java");
+        consumer.consume(event);
 
         @SuppressWarnings("unchecked")
         ArgumentCaptor<List<TestInput>> inputs = ArgumentCaptor.forClass(List.class);
-        verify(grader).grade(eq(new Program("source", 62)), inputs.capture());
+        verify(grader).grade(eq(Program.fromEvent(event)), inputs.capture());
         assertEquals(List.of(new TestInput("1 2", "3"), new TestInput("3 4", "7")), inputs.getValue());
     }
 

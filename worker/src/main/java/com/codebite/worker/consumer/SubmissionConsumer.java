@@ -1,9 +1,9 @@
 package com.codebite.worker.consumer;
 
 import com.codebite.judge.grader.Grader;
-import com.codebite.judge.grader.Program;
 import com.codebite.judge.grader.TestInput;
 import com.codebite.judge.grader.Verdict;
+import com.codebite.judge.program.Program;
 import com.codebite.problem.entity.TestCase;
 import com.codebite.problem.repository.TestCaseRepository;
 import com.codebite.submission.entity.Submission;
@@ -99,7 +99,7 @@ public class SubmissionConsumer {
         // (docs/adr/0005), and all results are persisted so users see full coverage even on
         // partial failures.
         Verdict verdict = grader.grade(
-                new Program(event.sourceCode(), event.languageId()),
+                Program.fromEvent(event),
                 testCases.stream().map(tc -> new TestInput(tc.getInput(), tc.getExpectedOutput())).toList());
 
         // The row owns the transition; save() cascades the result rows it added.

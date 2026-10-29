@@ -32,13 +32,11 @@ public class SubmissionMetrics {
     }
 
     /**
-     * The event's language code; events published before the field existed carry none, so the
-     * Judge0 id is resolved instead, retired ids included.
+     * The event's language code, read through {@link Language} so the tag only ever takes one of
+     * its codes or {@code unknown}. The retry-exhausted path records whatever event failed, so a
+     * missing or unknown code must tag rather than throw.
      */
     private static String languageTag(SubmissionEvent event) {
-        if (event.language() != null && !event.language().isBlank()) {
-            return event.language();
-        }
-        return Language.fromJudge0Id(event.languageId()).map(Language::code).orElse("unknown");
+        return Language.fromCode(event.language()).map(Language::code).orElse("unknown");
     }
 }

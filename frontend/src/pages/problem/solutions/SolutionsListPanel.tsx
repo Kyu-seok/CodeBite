@@ -8,19 +8,21 @@ import Spinner from "@/components/ui/Spinner"
 import LoadError from "@/components/ui/LoadError"
 import { useSolutionsList } from "@/hooks/useSolutions"
 import { LanguagePill } from "./LanguagePill"
-import { SUPPORTED_LANGUAGES, formatDate, languageLabel } from "../submissionDisplay"
+import { formatDate, languageLabel } from "../submissionDisplay"
 import { AuthorAvatar } from "./AuthorAvatar"
 import type { SolutionListItem, SolutionSort } from "@/types/solution"
 
 interface SolutionsListPanelProps {
   slug: string
+  /** The problem's languages (its starter code's keys), offered as filters. */
+  languages: string[]
   isAuthenticated: boolean
 }
 
 const SORT_OPTIONS: SolutionSort[] = ["NET_SCORE", "RECENT", "COMMENTS", "OLDEST"]
 const SEARCH_DEBOUNCE_MS = 300
 
-export function SolutionsListPanel({ slug, isAuthenticated }: SolutionsListPanelProps) {
+export function SolutionsListPanel({ slug, languages, isAuthenticated }: SolutionsListPanelProps) {
   const { t } = useTranslation("problem")
   const navigate = useNavigate()
   const [language, setLanguage] = useState<string | undefined>(undefined)
@@ -83,7 +85,7 @@ export function SolutionsListPanel({ slug, isAuthenticated }: SolutionsListPanel
             onClick={() => setLanguage(undefined)}>
             {t("solutions.filterAllLanguages")}
           </Button>
-          {SUPPORTED_LANGUAGES.map((code) => (
+          {languages.map((code) => (
             <Button
               key={code}
               variant={language === code ? "secondary" : "ghost"}

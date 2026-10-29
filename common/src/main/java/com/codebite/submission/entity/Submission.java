@@ -1,6 +1,7 @@
 package com.codebite.submission.entity;
 
 import com.codebite.common.base.BaseEntity;
+import com.codebite.judge.Language;
 import com.codebite.judge.grader.CaseVerdict;
 import com.codebite.judge.grader.Verdict;
 import com.codebite.problem.entity.Problem;
@@ -188,6 +189,15 @@ public class Submission extends BaseEntity {
 
     public void setLanguage(String language) {
         this.language = language;
+    }
+
+    /**
+     * The stored code as a {@link Language}. Submit only stores codes {@code Language} accepts, so
+     * an unknown one means the row was written some other way.
+     */
+    public Language language() {
+        return Language.fromCode(language).orElseThrow(() -> new IllegalStateException(
+                "Submission " + getId() + " has unknown language " + language));
     }
 
     public String getSourceCode() {

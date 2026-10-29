@@ -1,35 +1,35 @@
 package com.codebite.judge;
 
+import com.codebite.common.exception.UnsupportedValueException;
+
 import java.util.Locale;
 import java.util.Optional;
-import java.util.Set;
 
 /**
  * One of the codes CodeBite accepts in a submission, each bound to one active Judge0 language id
  * and the file extension its Drivers, Starter Code and Solution Commits use.
  *
  * <p>The one place a language id lives. A runtime upgrade is a new id in the hand-built Judge0
- * image (docs/adr/0004) and a change to the constant here; the id it replaces stays listed as
- * retired so events already queued in Kafka still name a known language.
+ * image (docs/adr/0004) and a change to the constant here. Nothing maps an id back to a
+ * language: events carry the code, and the worker sends Judge0 whatever id its event names, so an
+ * event queued before a switch still runs on the id it was built for.
  */
 public enum Language {
 
     JAVA("java", 62, "java"),
-    /** 100 is Python 3.12 from our own image; 71 (Python 3.8.1) is Judge0's stock id, retired. */
-    PYTHON("python", 100, "py", 71),
+    /** 100 is Python 3.12 from our own image; it replaced Judge0's stock 71 (Python 3.8.1). */
+    PYTHON("python", 100, "py"),
     JAVASCRIPT("javascript", 63, "js"),
     CPP("cpp", 54, "cpp");
 
     private final String code;
     private final int judge0Id;
     private final String extension;
-    private final Set<Integer> retiredJudge0Ids;
 
-    Language(String code, int judge0Id, String extension, Integer... retiredJudge0Ids) {
+    Language(String code, int judge0Id, String extension) {
         this.code = code;
         this.judge0Id = judge0Id;
         this.extension = extension;
-        this.retiredJudge0Ids = Set.of(retiredJudge0Ids);
     }
 
     /** The code as it appears in requests, events and the {@code submissions.language} column. */
@@ -47,6 +47,15 @@ public enum Language {
         return extension;
     }
 
+    /**
+     * The language a Run or Submit request names, as {@link #fromCode} reads it; a code CodeBite
+     * does not accept is the client's error (400, {@code error.language.unsupported}).
+     */
+    public static Language ofRequest(String code) {
+        return fromCode(code).orElseThrow(() -> new UnsupportedValueException(
+                "error.language.unsupported", code == null ? null : code.toLowerCase(Locale.ROOT)));
+    }
+
     /** Case-insensitive; empty for null and for any code CodeBite does not accept (e.g. {@code c}). */
     public static Optional<Language> fromCode(String code) {
         if (code == null) {
@@ -55,16 +64,6 @@ public enum Language {
         String normalized = code.toLowerCase(Locale.ROOT);
         for (Language language : values()) {
             if (language.code.equals(normalized)) {
-                return Optional.of(language);
-            }
-        }
-        return Optional.empty();
-    }
-
-    /** The language sent as this Judge0 id, matching retired ids too so in-flight events resolve. */
-    public static Optional<Language> fromJudge0Id(int judge0Id) {
-        for (Language language : values()) {
-            if (language.judge0Id == judge0Id || language.retiredJudge0Ids.contains(judge0Id)) {
                 return Optional.of(language);
             }
         }

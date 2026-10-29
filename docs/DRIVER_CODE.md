@@ -142,7 +142,7 @@ Problems involving linked lists, trees, or graphs need shared data structure def
    public class Main { ... }
    ```
 
-2. `DriverCodeLoader` scans the template for `// {{LIB:ClassName}}` patterns.
+2. `ProblemAssets` scans the template for `// {{LIB:ClassName}}` patterns.
 
 3. It reads the corresponding utility file from `drivers/lib/{language}/{ClassName}.java` (or the language-appropriate equivalent).
 
@@ -203,19 +203,19 @@ public class Main {
 
 Multiple markers can appear in a single file (e.g., `// {{LIB:ListNode}}` and `// {{LIB:TreeNode}}`).
 
-## `DriverCodeLoader` Service
+## `ProblemAssets` Service
 
-`DriverCodeLoader` is a Spring `@Service` in `com.codebite.judge.service` responsible for loading and caching driver templates.
+`ProblemAssets` is a Spring `@Service` in `com.codebite.judge.program` that loads and caches every Driver and Starter Code (`starters/{slug}/{language}.{ext}`).
 
 ### Behavior
 
-- **Startup:** Scans `classpath:drivers/` and loads all templates into an in-memory `Map<String, String>` keyed by `{slug}:{language}` (e.g., `two-sum:java`)
-- **`getDriverCode(slug, language)`:** Returns the cached template string. Throws if no template exists for the given slug+language combination.
-- **Library resolution:** Before caching, processes `// {{LIB:ClassName}}` markers by reading the corresponding file from `drivers/lib/{language}/` and inlining its contents.
+- **Startup:** Scans `classpath:drivers/` and `classpath:starters/` once, per `Language`.
+- **Library resolution:** Before caching, processes `// {{LIB:ClassName}}` markers by reading the corresponding file from `drivers/lib/{language}/` and inlining its contents. A missing library, or a Driver without `{USER_CODE}`, fails startup.
+- **`assemble(slug, language, userCode)`:** Returns a `Program`: the Driver with the user's code at `{USER_CODE}`, its Judge0 id, and `diagnostics(compileOutput, stderr)` that maps Judge0's errors back onto the user's lines. Throws `NoDriverException` (answered 400) if the problem has no Driver for that language.
 
 ### Integration point
 
-`SubmissionService.submit()` calls `driverCodeLoader.getDriverCode(problem.getSlug(), language)` to get the template, then passes it to `judgeService.buildSourceCode(template, userCode)` for `{USER_CODE}` replacement.
+`RunService.run()` and `SubmissionService.submit()` call `problemAssets.assemble(problem.getSlug(), language, userCode)`; Submit publishes `program.toEvent(submission)` to the worker.
 
 ## Submission Flow
 

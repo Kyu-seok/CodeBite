@@ -1,17 +1,16 @@
 package com.codebite.run;
 
+import com.codebite.common.exception.NoDriverException;
 import com.codebite.common.exception.ResourceNotFoundException;
 import com.codebite.common.exception.UnsupportedValueException;
+import com.codebite.judge.Language;
 import com.codebite.judge.dto.CodeError;
 import com.codebite.judge.grader.CaseVerdict;
 import com.codebite.judge.grader.Grader;
-import com.codebite.judge.grader.Program;
 import com.codebite.judge.grader.TestInput;
 import com.codebite.judge.grader.Verdict;
-import com.codebite.judge.parser.JudgeErrorParsers;
-import com.codebite.judge.parser.UserCodeLineMapper;
-import com.codebite.judge.service.DriverCodeLoader;
-import com.codebite.judge.service.JudgeService;
+import com.codebite.judge.program.ProblemAssets;
+import com.codebite.judge.program.Program;
 import com.codebite.problem.entity.Difficulty;
 import com.codebite.problem.entity.Problem;
 import com.codebite.problem.entity.TestCase;
@@ -39,7 +38,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -48,22 +46,20 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class RunServiceTest {
 
-    private static final Program PROGRAM = new Program("full source", 62);
+    /** A one-problem fixture whose Java driver puts the user's code on line 3. */
+    private static final ProblemAssets ASSETS = new ProblemAssets("classpath:problem-assets/");
+    private static final Program PROGRAM = ASSETS.assemble("pair-sum", Language.JAVA, "code");
 
     @Mock private ProblemRepository problemRepository;
     @Mock private TestCaseRepository testCaseRepository;
-    @Mock private JudgeService judgeService;
     @Mock private Grader grader;
-    @Mock private DriverCodeLoader driverCodeLoader;
 
     private RunService runService;
     private Problem problem;
 
     @BeforeEach
     void setUp() {
-        runService = new RunService(
-                problemRepository, testCaseRepository, judgeService, grader, driverCodeLoader,
-                new JudgeErrorParsers(), new UserCodeLineMapper());
+        runService = new RunService(problemRepository, testCaseRepository, grader, ASSETS);
 
         problem = new Problem();
         problem.setId(1L);
@@ -103,10 +99,6 @@ class RunServiceTest {
 
     private void setupCommonMocks() {
         when(problemRepository.findBySlug("pair-sum")).thenReturn(Optional.of(problem));
-        when(judgeService.isLanguageSupported("java")).thenReturn(true);
-        when(driverCodeLoader.getDriverCode("pair-sum", "java")).thenReturn("template {USER_CODE}");
-        when(judgeService.buildSourceCode(anyString(), anyString())).thenReturn("full source");
-        when(judgeService.mapLanguageToId("java")).thenReturn(62);
     }
 
     @Test
@@ -151,12 +143,11 @@ class RunServiceTest {
     @Test
     void run_mapsJudgeErrorsOntoUserCodeLines() {
         setupCommonMocks();
-        // The driver puts the user's code at line 3 of the combined file, so combined line 5 is
-        // user line 3 of this five-line program.
-        when(driverCodeLoader.getUserCodeStartLine("pair-sum", "java")).thenReturn(3);
+        // The fixture driver puts the user's code at line 3 of the combined file, so combined
+        // line 5 is user line 3 of this five-line program.
         when(testCaseRepository.findByProblemIdAndSampleTrueOrderByOrderIndexAsc(1L))
                 .thenReturn(List.of(sampleTestCase("in", "out", 0)));
-        when(grader.gradeUntilFailure(eq(PROGRAM), anyList()))
+        when(grader.gradeUntilFailure(any(Program.class), anyList()))
                 .thenReturn(Verdict.of(List.of(compilationError(
                         "Main.java:5: error: ';' expected\n        int x = 1\n                 ^\n1 error"))));
 
@@ -182,10 +173,19 @@ class RunServiceTest {
     @Test
     void run_unsupportedLanguage_throwsUnsupportedValueException() {
         when(problemRepository.findBySlug("pair-sum")).thenReturn(Optional.of(problem));
-        when(judgeService.isLanguageSupported("rust")).thenReturn(false);
 
         assertThrows(UnsupportedValueException.class,
                 () -> runService.run("pair-sum", new RunRequest("rust", "code", null)));
+    }
+
+    @Test
+    void run_noDriverForTheLanguage_throwsNoDriverException() {
+        when(problemRepository.findBySlug("pair-sum")).thenReturn(Optional.of(problem));
+
+        // The fixture has only a Java driver.
+        assertThrows(NoDriverException.class,
+                () -> runService.run("pair-sum", new RunRequest("python", "code", null)));
+        verify(grader, never()).gradeUntilFailure(any(), anyList());
     }
 
     // ── Custom test case tests ────────────────────────────────────────────

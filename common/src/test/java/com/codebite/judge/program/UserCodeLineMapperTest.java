@@ -1,4 +1,4 @@
-package com.codebite.judge.parser;
+package com.codebite.judge.program;
 
 import com.codebite.judge.dto.CodeError;
 import org.junit.jupiter.api.Test;

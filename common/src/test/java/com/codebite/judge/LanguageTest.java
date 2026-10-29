@@ -1,12 +1,15 @@
 package com.codebite.judge;
 
+import com.codebite.common.exception.UnsupportedValueException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class LanguageTest {
@@ -36,21 +39,11 @@ class LanguageTest {
     }
 
     @Test
-    void fromJudge0IdResolvesActiveIds() {
-        assertEquals(Optional.of(Language.JAVA), Language.fromJudge0Id(62));
-        assertEquals(Optional.of(Language.PYTHON), Language.fromJudge0Id(100));
-        assertEquals(Optional.of(Language.JAVASCRIPT), Language.fromJudge0Id(63));
-        assertEquals(Optional.of(Language.CPP), Language.fromJudge0Id(54));
-    }
-
-    /** Python moved from 71 (3.8) to 100 (3.12); events queued before the switch still say 71. */
-    @Test
-    void fromJudge0IdResolvesRetiredIdsToTheSameLanguage() {
-        assertEquals(Optional.of(Language.PYTHON), Language.fromJudge0Id(71));
-    }
-
-    @Test
-    void fromJudge0IdIsEmptyForUnknownIds() {
-        assertTrue(Language.fromJudge0Id(999).isEmpty());
+    void ofRequestReadsTheCodeAndAnswersAnUnacceptedOneWith400() {
+        assertEquals(Language.CPP, Language.ofRequest("CPP"));
+        UnsupportedValueException e = assertThrows(UnsupportedValueException.class, () -> Language.ofRequest("C"));
+        assertEquals("error.language.unsupported", e.getMessageCode());
+        assertArrayEquals(new Object[]{"c"}, e.getMessageArgs());
+        assertThrows(UnsupportedValueException.class, () -> Language.ofRequest(null));
     }
 }

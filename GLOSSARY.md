@@ -18,6 +18,19 @@ _Avoid_: Free run, output-only case
 One of the codes CodeBite accepts in a submission (`java`, `python`, `javascript`, `cpp`), each bound to one active Judge0 language id.
 _Avoid_: Runtime, language id (that is Judge0's)
 
+**Driver**:
+The per-problem, per-Language source that reads stdin, calls the user's code at `{USER_CODE}` and prints the answer.
+_Avoid_: Template, harness, wrapper
+
+**Starter Code**:
+The per-problem, per-Language stub shown in the editor, defining the method the Driver calls.
+
+**Program**:
+The Driver with the user's code substituted, as sent to Judge0; the only thing that knows which combined line is which user line.
+
+**Library**:
+Shared Driver source (`ListNode`, `JsonOutput`) spliced in at a `{{LIB:Name}}` marker.
+
 **Abandoned**:
 A submission that stayed PENDING past the re-drive window and was closed as INTERNAL_ERROR without ever being judged. Distinct from a submission that failed after the worker's retries.
 _Avoid_: Expired, timed out

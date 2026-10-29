@@ -1,7 +1,6 @@
-package com.codebite.judge.parser;
+package com.codebite.judge.program;
 
 import com.codebite.judge.dto.CodeError;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,13 +11,12 @@ import java.util.List;
  * single {@code inUserCode=false} banner entry — a wrong underline on user
  * code is worse than no underline when the fault is actually in the driver.
  */
-@Component
-public class UserCodeLineMapper {
+class UserCodeLineMapper {
 
     private static final String TEMPLATE_ERROR_MESSAGE =
             "Internal template error. Please use the Bug report button.";
 
-    public List<CodeError> mapToUserSpace(
+    List<CodeError> mapToUserSpace(
             List<CodeError> combinedFileErrors,
             int userCodeStartLine,
             int userCodeLineCount

@@ -1,5 +1,6 @@
 package com.codebite.problem.service;
 
+import com.codebite.judge.program.ProblemAssets;
 import com.codebite.problem.dto.ProblemDetail;
 import com.codebite.problem.dto.ProblemListItem;
 import com.codebite.problem.dto.TestCaseDto;
@@ -10,6 +11,7 @@ import com.codebite.progress.ProblemPopularity.Rate;
 import com.codebite.progress.UserProgress;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -17,10 +19,10 @@ import java.util.Map;
 @Component
 public class ProblemDtos {
 
-    private final StarterCodeLoader starterCodeLoader;
+    private final ProblemAssets assets;
 
-    public ProblemDtos(StarterCodeLoader starterCodeLoader) {
-        this.starterCodeLoader = starterCodeLoader;
+    public ProblemDtos(ProblemAssets assets) {
+        this.assets = assets;
     }
 
     ProblemListItem toListItem(Problem problem, Map<Long, UserProgress.Status> statusMap,
@@ -66,13 +68,20 @@ public class ProblemDtos {
                 problem.getSlug(),
                 description,
                 problem.getDifficulty(),
-                starterCodeLoader.getStarterCode(problem.getSlug()),
+                starterCode(problem.getSlug()),
                 constraints,
                 problem.isPublished(),
                 sampleCases.stream().map(this::toTestCaseDto).toList(),
                 problem.getCreatedAt(),
                 problem.getUpdatedAt()
         );
+    }
+
+    /** Keyed by language code, as the editor and the Solutions language list read it. */
+    private Map<String, String> starterCode(String slug) {
+        Map<String, String> byCode = new HashMap<>();
+        assets.starters(slug).forEach((language, code) -> byCode.put(language.code(), code));
+        return byCode;
     }
 
     TestCaseDto toTestCaseDto(TestCase tc) {

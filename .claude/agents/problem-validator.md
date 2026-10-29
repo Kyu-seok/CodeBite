@@ -46,10 +46,10 @@ For each file that exists, also verify:
 
 ### 3. Starter Code — All 4 Languages
 Check that all 4 starter files exist:
-- `backend/src/main/resources/starters/{slug}/java.java`
-- `backend/src/main/resources/starters/{slug}/python.py`
-- `backend/src/main/resources/starters/{slug}/cpp.cpp`
-- `backend/src/main/resources/starters/{slug}/javascript.js`
+- `common/src/main/resources/starters/{slug}/java.java`
+- `common/src/main/resources/starters/{slug}/python.py`
+- `common/src/main/resources/starters/{slug}/cpp.cpp`
+- `common/src/main/resources/starters/{slug}/javascript.js`
 
 ### 4. Method Signature Consistency
 For each language, verify the method name in the starter code matches what the driver code calls:

@@ -1,5 +1,6 @@
 package com.codebite.submission.entity;
 
+import com.codebite.judge.Language;
 import com.codebite.judge.grader.CaseVerdict;
 import com.codebite.judge.grader.Verdict;
 import com.codebite.problem.entity.Problem;
@@ -199,5 +200,14 @@ class SubmissionTest {
         assertThrows(IllegalStateException.class, graded::abandon);
         assertThrows(IllegalStateException.class, () -> graded.grade(again, List.of()));
         assertEquals(SubmissionStatus.ACCEPTED, graded.getStatus());
+    }
+
+    @Test
+    void language_isTheStoredCodeAsALanguage_andAnUnknownCodeIsIllegalState() {
+        assertSame(Language.JAVA, pending().language());
+
+        Submission stored = pending();
+        stored.setLanguage("c");
+        assertThrows(IllegalStateException.class, stored::language);
     }
 }

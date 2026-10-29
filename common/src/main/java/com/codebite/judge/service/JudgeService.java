@@ -1,7 +1,6 @@
 package com.codebite.judge.service;
 
 import com.codebite.common.exception.JudgeExecutionException;
-import com.codebite.judge.Language;
 import com.codebite.judge.client.JudgeClient;
 import com.codebite.judge.dto.JudgeRequest;
 import com.codebite.judge.dto.JudgeResponse;
@@ -27,20 +26,6 @@ public class JudgeService {
         this.judgeClient = judgeClient;
         this.pollIntervalMs = pollIntervalMs;
         this.pollTimeoutMs = pollTimeoutMs;
-    }
-
-    public String buildSourceCode(String driverTemplate, String userCode) {
-        return driverTemplate.replace("{USER_CODE}", userCode);
-    }
-
-    public int mapLanguageToId(String language) {
-        return Language.fromCode(language)
-                .map(Language::judge0Id)
-                .orElseThrow(() -> new IllegalArgumentException("Unsupported language: " + language));
-    }
-
-    public boolean isLanguageSupported(String language) {
-        return Language.fromCode(language).isPresent();
     }
 
     public JudgeResponse execute(String sourceCode, int languageId, String stdin) {

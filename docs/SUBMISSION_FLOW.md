@@ -1,4 +1,4 @@
-# Submission Flow & Code Templates
+# Submission Flow, Starter Code & Drivers
 
 ## Overview
 
@@ -8,7 +8,7 @@ When a user submits code on CodeBite, the request flows through a Kafka-based pi
 Frontend → Backend API → Kafka → Worker → Judge0 → DB → Frontend (polling)
 ```
 
-The system uses two types of code templates — **starters** and **drivers** — to bridge between the user's solution code and Judge0's stdin/stdout execution model.
+The system uses two kinds of per-problem source — **starters** and **drivers** — to bridge between the user's solution code and Judge0's stdin/stdout execution model.
 
 ---
 
@@ -27,14 +27,14 @@ class Solution {
 }
 ```
 
-- **Location**: `backend/src/main/resources/starters/{slug}/{language}.{ext}`
-- **Loaded by**: `StarterCodeLoader` (`backend/.../problem/service/StarterCodeLoader.java`)
-- **When**: Cached on startup via `@PostConstruct`. Served as part of the problem detail response (`GET /api/problems/{slug}`)
+- **Location**: `common/src/main/resources/starters/{slug}/{language}.{ext}`
+- **Loaded by**: `ProblemAssets` (`common/.../judge/program/ProblemAssets.java`)
+- **When**: Cached on startup. Served as part of the problem detail response (`GET /api/problems/{slug}`)
 - **Used by**: Frontend only (populates the Monaco editor)
 
 ### Driver Code
 
-Driver code is a hidden wrapper template that turns the user's solution into a complete program Judge0 can execute. It handles input parsing (stdin), calling the user's function, and printing the output (stdout).
+A Driver is the hidden per-problem source that turns the user's solution into a complete program Judge0 can execute. It handles input parsing (stdin), calling the user's function, and printing the output (stdout).
 
 **Example** (`drivers/two-sum/java.java`):
 ```java
@@ -55,18 +55,18 @@ public class Main {
 ```
 
 - **Location**: `common/src/main/resources/drivers/{slug}/{language}.{ext}`
-- **Libraries**: `common/src/main/resources/drivers/lib/{language}/*.{ext}` — reusable code (e.g., `JsonOutput`, `TreeNode`, `ListNode`) referenced via `// {{LIB:ClassName}}` markers in templates
-- **Loaded by**: `DriverCodeLoader` (`common/.../judge/service/DriverCodeLoader.java`)
-- **When**: Cached on startup. Library markers are resolved at load time (replaced with actual library code).
+- **Libraries**: `common/src/main/resources/drivers/lib/{language}/*.{ext}` — reusable code (e.g., `JsonOutput`, `TreeNode`, `ListNode`) referenced via `// {{LIB:ClassName}}` markers in Drivers
+- **Loaded by**: `ProblemAssets` (`common/.../judge/program/ProblemAssets.java`), which `assemble`s a `Program` from a Driver and the user's code
+- **When**: Cached on startup. Library markers are resolved at load time (replaced with actual library code), and a Driver without `{USER_CODE}` fails startup.
 - **Used by**: Backend (to build final source code before publishing to Kafka). The user never sees driver code.
 
 ### Why They're Separate
 
 | Aspect | Starters | Drivers |
 |--------|----------|---------|
-| **Purpose** | User-facing boilerplate | Hidden execution wrapper |
+| **Purpose** | User-facing boilerplate | Hidden Driver that runs the user's code |
 | **Contains** | Function signature only | Input parsing + output formatting + `{USER_CODE}` placeholder |
-| **Module** | `backend/` (only API serves them) | `common/` (shared — backend builds source with them) |
+| **Module** | `common/` (only the API serves them; one `ProblemAssets` reads both) | `common/` (shared — backend builds source with them) |
 | **Visible to user** | Yes (shown in editor) | No (internal only) |
 
 ---
@@ -86,21 +86,21 @@ The user writes code in the Monaco editor and clicks **Submit**.
 
 `SubmissionService.submit()` processes the request synchronously:
 
-1. **Validate** — Problem exists, language is supported
-2. **Load driver template** — `driverCodeLoader.getDriverCode(slug, language)` returns the cached template with library markers already resolved
+1. **Validate** — Problem exists, `Language.fromCode` knows the language
+2. **Assemble the Program** — `problemAssets.assemble(slug, language, userCode)` puts the user's code at the `{USER_CODE}` placeholder of the cached Driver (library markers already resolved) and picks the Judge0 id from `Language` (java→62, python→100, javascript→63, cpp→54); a problem with no Driver for the language fails here, before anything is saved
 3. **Save to DB** — Create `Submission` entity with status `PENDING`, store the user's raw source code
-4. **Build final source** — `judgeService.buildSourceCode(driverTemplate, userCode)` replaces the `{USER_CODE}` placeholder in the driver template with the user's code
-5. **Map language** — Convert language string to Judge0 ID (java→62, python→71, javascript→63, cpp→54)
-6. **Publish to Kafka** — `SubmissionEventProducer.send()` publishes a `SubmissionEvent` to the `submission-events` topic:
+4. **Publish to Kafka** — `SubmissionEventProducer.send(program.toEvent(submission))` publishes a `SubmissionEvent` to the `submission-events` topic:
    ```
    SubmissionEvent {
        submissionId: 42,
        sourceCode: "// full driver + user code merged",
        languageId: 62,
-       problemId: 1
+       problemId: 1,
+       adminSubmission: false,
+       language: "java"
    }
    ```
-7. **Return immediately** — Respond with `201 Created` and the submission in `PENDING` status (empty results)
+5. **Return immediately** — Respond with `201 Created` and the submission in `PENDING` status (empty results)
 
 ### 3. Kafka: Message Queue
 

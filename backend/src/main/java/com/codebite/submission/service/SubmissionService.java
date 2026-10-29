@@ -1,14 +1,11 @@
 package com.codebite.submission.service;
 
 import com.codebite.common.exception.ResourceNotFoundException;
-import com.codebite.common.exception.UnsupportedValueException;
 import com.codebite.github.dto.SolutionCommitSummary;
 import com.codebite.github.repository.SolutionCommitRepository;
-import com.codebite.judge.dto.CodeError;
-import com.codebite.judge.parser.JudgeErrorParsers;
-import com.codebite.judge.parser.UserCodeLineMapper;
-import com.codebite.judge.service.DriverCodeLoader;
-import com.codebite.judge.service.JudgeService;
+import com.codebite.judge.Language;
+import com.codebite.judge.program.ProblemAssets;
+import com.codebite.judge.program.Program;
 import com.codebite.problem.entity.Problem;
 import com.codebite.problem.entity.TestCase;
 import com.codebite.problem.repository.ProblemRepository;
@@ -22,7 +19,6 @@ import com.codebite.submission.dto.SubmitRequest;
 import com.codebite.submission.entity.Submission;
 import com.codebite.submission.entity.SubmissionResult;
 import com.codebite.submission.entity.SubmissionStatus;
-import com.codebite.submission.event.SubmissionEvent;
 import com.codebite.submission.kafka.SubmissionEventProducer;
 import com.codebite.submission.repository.SubmissionRepository;
 import com.codebite.submission.repository.SubmissionResultRepository;
@@ -44,11 +40,8 @@ public class SubmissionService {
     private final ProblemRepository problemRepository;
     private final TestCaseRepository testCaseRepository;
     private final UserRepository userRepository;
-    private final JudgeService judgeService;
-    private final DriverCodeLoader driverCodeLoader;
+    private final ProblemAssets assets;
     private final SubmissionEventProducer submissionEventProducer;
-    private final JudgeErrorParsers errorParsers;
-    private final UserCodeLineMapper lineMapper;
     private final SolutionCommitRepository solutionCommitRepository;
     private final ReviewService reviewService;
     private final Counter submissionsCreatedCounter;
@@ -58,11 +51,8 @@ public class SubmissionService {
                              ProblemRepository problemRepository,
                              TestCaseRepository testCaseRepository,
                              UserRepository userRepository,
-                             JudgeService judgeService,
-                             DriverCodeLoader driverCodeLoader,
+                             ProblemAssets assets,
                              SubmissionEventProducer submissionEventProducer,
-                             JudgeErrorParsers errorParsers,
-                             UserCodeLineMapper lineMapper,
                              SolutionCommitRepository solutionCommitRepository,
                              ReviewService reviewService,
                              MeterRegistry meterRegistry) {
@@ -71,11 +61,8 @@ public class SubmissionService {
         this.problemRepository = problemRepository;
         this.testCaseRepository = testCaseRepository;
         this.userRepository = userRepository;
-        this.judgeService = judgeService;
-        this.driverCodeLoader = driverCodeLoader;
+        this.assets = assets;
         this.submissionEventProducer = submissionEventProducer;
-        this.errorParsers = errorParsers;
-        this.lineMapper = lineMapper;
         this.solutionCommitRepository = solutionCommitRepository;
         this.reviewService = reviewService;
         this.submissionsCreatedCounter = Counter.builder("codebite.submissions.created")
@@ -87,25 +74,23 @@ public class SubmissionService {
         Problem problem = problemRepository.findBySlug(slug)
                 .orElseThrow(() -> new ResourceNotFoundException("error.problem.notFound", slug));
 
-        String language = request.language().toLowerCase();
-        if (!judgeService.isLanguageSupported(language)) {
-            throw new UnsupportedValueException("error.language.unsupported", language);
-        }
+        Language language = Language.ofRequest(request.language());
 
-        // Fail fast before persisting anything if this problem has no driver for the language.
-        driverCodeLoader.getDriverCode(problem.getSlug(), language);
+        // Assembled before persisting anything, so a problem with no driver for the language
+        // fails fast.
+        Program program = assets.assemble(problem.getSlug(), language, request.sourceCode());
 
         // Save submission as PENDING
-        Submission submission = saveSubmission(userId, problem, request);
+        Submission submission = saveSubmission(userId, problem, language, request.sourceCode());
 
-        // Build source code and publish to Kafka for worker processing
-        submissionEventProducer.send(buildEvent(submission));
+        // Publish to Kafka for worker processing
+        submissionEventProducer.send(program.toEvent(submission));
         if (!submission.isAdminSubmission()) {
             submissionsCreatedCounter.increment();
         }
 
         // Return immediately with PENDING status
-        return toResponse(submission, List.of(), problem.getSlug(), List.of(), 0, null, null);
+        return toResponse(submission, List.of(), problem.getSlug(), List.of(), program, null, null);
     }
 
     @Transactional(readOnly = true)
@@ -121,12 +106,6 @@ public class SubmissionService {
         List<TestCase> testCases = testCaseRepository.findByProblemIdOrderByOrderIndexAsc(
                 submission.getProblem().getId());
 
-        int userCodeStartLine = driverCodeLoader.hasDriverCode(
-                submission.getProblem().getSlug(), submission.getLanguage())
-                ? driverCodeLoader.getUserCodeStartLine(
-                        submission.getProblem().getSlug(), submission.getLanguage())
-                : 1;
-
         SolutionCommitSummary solutionCommit = solutionCommitRepository
                 .findFirstBySubmissionIdOrderByIdDesc(id)
                 .map(SolutionCommitSummary::from)
@@ -137,7 +116,7 @@ public class SubmissionService {
                 : reviewService.previewIntervals(submission);
 
         return toResponse(submission, results, submission.getProblem().getSlug(),
-                testCases, userCodeStartLine, solutionCommit, reviewIntervalDays);
+                testCases, assets.recall(submission), solutionCommit, reviewIntervalDays);
     }
 
     @Transactional(readOnly = true)
@@ -151,51 +130,23 @@ public class SubmissionService {
         return submissions.stream().map(this::toListItem).toList();
     }
 
-    /**
-     * Builds the Kafka event for a persisted submission. Shared by the submit path and by
-     * {@code StuckSubmissionRedriver}, so a re-published event is byte-identical to the original —
-     * the driver-wrapped source is rebuilt from the stored user code rather than cached anywhere.
-     */
-    public SubmissionEvent buildEvent(Submission submission) {
-        String language = submission.getLanguage();
-        Problem problem = submission.getProblem();
-        String driverTemplate = driverCodeLoader.getDriverCode(problem.getSlug(), language);
-        return new SubmissionEvent(
-                submission.getId(),
-                judgeService.buildSourceCode(driverTemplate, submission.getSourceCode()),
-                judgeService.mapLanguageToId(language),
-                problem.getId(),
-                submission.isAdminSubmission(),
-                language);
-    }
-
     // Intentionally not @Transactional: this is called via this.submit(), so a Spring proxy would
     // never apply and the annotation would only be documentation that lies. save() supplies its own
     // transaction, which is all a single-row insert needs.
-    private Submission saveSubmission(Long userId, Problem problem, SubmitRequest request) {
+    private Submission saveSubmission(Long userId, Problem problem, Language language, String sourceCode) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("error.user.notFound", userId));
 
-        return submissionRepository.save(
-                Submission.pending(user, problem, request.language().toLowerCase(), request.sourceCode()));
+        return submissionRepository.save(Submission.pending(user, problem, language.code(), sourceCode));
     }
 
     private SubmissionResponse toResponse(Submission submission, List<SubmissionResult> results,
                                           String problemSlug, List<TestCase> allTestCases,
-                                          int userCodeStartLine, SolutionCommitSummary solutionCommit,
+                                          Program program, SolutionCommitSummary solutionCommit,
                                           Map<Confidence, Integer> reviewIntervalDays) {
-        int userCodeLineCount = countLines(submission.getSourceCode());
-        String language = submission.getLanguage();
-
         List<SubmissionResultDto> resultDtos = results.stream().map(r -> {
             TestCase tc = r.getTestCase();
             boolean isSample = tc.isSample();
-
-            List<CodeError> combined = errorParsers.parse(
-                    language, r.getCompileOutput(), r.getStderr());
-            List<CodeError> errors = userCodeStartLine > 0
-                    ? lineMapper.mapToUserSpace(combined, userCodeStartLine, userCodeLineCount)
-                    : List.of();
 
             return new SubmissionResultDto(
                     tc.getId(),
@@ -205,7 +156,7 @@ public class SubmissionService {
                     r.getActualOutput(),
                     r.getRuntimeMs(),
                     r.getMemoryKb(),
-                    errors
+                    program.diagnostics(r.getCompileOutput(), r.getStderr())
             );
         }).toList();
 
@@ -225,15 +176,6 @@ public class SubmissionService {
                 solutionCommit,
                 reviewIntervalDays
         );
-    }
-
-    private static int countLines(String source) {
-        if (source == null || source.isEmpty()) return 0;
-        int count = 1;
-        for (int i = 0; i < source.length(); i++) {
-            if (source.charAt(i) == '\n') count++;
-        }
-        return count;
     }
 
     private SubmissionListItem toListItem(Submission submission) {

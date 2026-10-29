@@ -2,7 +2,7 @@ package com.codebite.solution.service;
 
 import com.codebite.common.exception.ResourceNotFoundException;
 import com.codebite.common.exception.UnsupportedValueException;
-import com.codebite.judge.service.JudgeService;
+import com.codebite.judge.Language;
 import com.codebite.problem.entity.Problem;
 import com.codebite.problem.entity.Tag;
 import com.codebite.problem.repository.ProblemRepository;
@@ -42,22 +42,19 @@ public class SolutionService {
     private final TagRepository tagRepository;
     private final UserRepository userRepository;
     private final SubmissionRepository submissionRepository;
-    private final JudgeService judgeService;
 
     public SolutionService(SolutionRepository solutionRepository,
                            SolutionVoteRepository voteRepository,
                            ProblemRepository problemRepository,
                            TagRepository tagRepository,
                            UserRepository userRepository,
-                           SubmissionRepository submissionRepository,
-                           JudgeService judgeService) {
+                           SubmissionRepository submissionRepository) {
         this.solutionRepository = solutionRepository;
         this.voteRepository = voteRepository;
         this.problemRepository = problemRepository;
         this.tagRepository = tagRepository;
         this.userRepository = userRepository;
         this.submissionRepository = submissionRepository;
-        this.judgeService = judgeService;
     }
 
     @Transactional(readOnly = true)
@@ -162,7 +159,7 @@ public class SolutionService {
 
     private void validateLanguages(Set<String> languages) {
         for (String lang : languages) {
-            if (!judgeService.isLanguageSupported(lang)) {
+            if (Language.fromCode(lang).isEmpty()) {
                 throw new UnsupportedValueException("error.language.unsupported", lang);
             }
         }

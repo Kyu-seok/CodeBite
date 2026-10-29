@@ -1,27 +1,37 @@
 import i18n from '@/lib/i18n';
 import type { SubmissionStatus } from '@/types/submission';
 
-/** Monaco language ids by CodeBite language code. */
+/**
+ * Monaco language ids by CodeBite language code. Display only, like the labels: which languages
+ * a problem offers is the keys of its starter code (see `problemLanguages`).
+ */
 export const MONACO_LANGUAGE: Record<string, string> = {
-  java: 'java',
   python: 'python',
+  java: 'java',
   javascript: 'javascript',
   cpp: 'cpp',
-  c: 'c',
 };
 
+/** In display order. The first is the editor's default for a user with no recent language. */
 export const LANGUAGE_LABELS: Record<string, string> = {
-  java: 'Java',
   python: 'Python',
+  java: 'Java',
   javascript: 'JavaScript',
   cpp: 'C++',
-  c: 'C',
 };
-
-export const SUPPORTED_LANGUAGES = Object.keys(LANGUAGE_LABELS);
 
 export function languageLabel(code: string) {
   return LANGUAGE_LABELS[code] ?? code;
+}
+
+/** The languages a problem offers, from its starter code's keys, in label order (unknown codes last). */
+export function problemLanguages(starterCode: Record<string, string>): string[] {
+  const order = Object.keys(LANGUAGE_LABELS);
+  const rank = (code: string) => {
+    const i = order.indexOf(code);
+    return i < 0 ? order.length : i;
+  };
+  return Object.keys(starterCode).sort((a, b) => rank(a) - rank(b));
 }
 
 /** Text colour for a verdict: the 700 step on paper, the 400 step on night (Wash-and-Text rule). */

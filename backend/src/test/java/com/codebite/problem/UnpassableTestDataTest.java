@@ -1,6 +1,7 @@
 package com.codebite.problem;
 
-import com.codebite.judge.service.DriverCodeLoader;
+import com.codebite.judge.Language;
+import com.codebite.judge.program.ProblemAssets;
 import com.codebite.problem.entity.Problem;
 import com.codebite.problem.entity.TestCase;
 import com.codebite.problem.repository.ProblemRepository;
@@ -159,10 +160,9 @@ class UnpassableTestDataTest {
             "cafe-stop-orders, java,       result.sort(",
             "cafe-stop-orders, cpp,        sort(result.begin(), result.end()",
     })
-    void everyDriverSortsBeforePrinting(String slug, String language, String sortCall) throws Exception {
-        DriverCodeLoader drivers = new DriverCodeLoader();
-        drivers.loadTemplates();
-        assertTrue(drivers.getDriverCode(slug, language).contains(sortCall),
+    void everyDriverSortsBeforePrinting(String slug, String language, String sortCall) {
+        String driver = new ProblemAssets().assemble(slug, Language.fromCode(language).orElseThrow(), "").source();
+        assertTrue(driver.contains(sortCall),
                 slug + " " + language + " driver no longer sorts");
     }
 

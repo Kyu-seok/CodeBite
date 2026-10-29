@@ -1,11 +1,12 @@
 package com.codebite.submission;
 
+import com.codebite.common.exception.NoDriverException;
 import com.codebite.common.exception.ResourceNotFoundException;
+import com.codebite.judge.Language;
+import com.codebite.judge.dto.CodeError;
+import com.codebite.judge.grader.CaseVerdict;
 import com.codebite.judge.grader.Verdict;
-import com.codebite.judge.parser.JudgeErrorParsers;
-import com.codebite.judge.parser.UserCodeLineMapper;
-import com.codebite.judge.service.DriverCodeLoader;
-import com.codebite.judge.service.JudgeService;
+import com.codebite.judge.program.ProblemAssets;
 import com.codebite.problem.entity.Difficulty;
 import com.codebite.problem.entity.Problem;
 import com.codebite.problem.entity.TestCase;
@@ -30,6 +31,7 @@ import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -43,7 +45,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -56,11 +57,12 @@ class SubmissionServiceTest {
     @Mock private ProblemRepository problemRepository;
     @Mock private TestCaseRepository testCaseRepository;
     @Mock private UserRepository userRepository;
-    @Mock private JudgeService judgeService;
-    @Mock private DriverCodeLoader driverCodeLoader;
     @Mock private SubmissionEventProducer submissionEventProducer;
     @Mock private SolutionCommitRepository solutionCommitRepository;
     @Mock private ReviewService reviewService;
+
+    /** A one-problem fixture whose Java driver puts the user's code on line 3. */
+    private static final ProblemAssets ASSETS = new ProblemAssets("classpath:problem-assets/");
 
     private SubmissionService submissionService;
 
@@ -72,8 +74,7 @@ class SubmissionServiceTest {
         submissionService = new SubmissionService(
                 submissionRepository, submissionResultRepository,
                 problemRepository, testCaseRepository, userRepository,
-                judgeService, driverCodeLoader, submissionEventProducer,
-                new JudgeErrorParsers(), new UserCodeLineMapper(),
+                ASSETS, submissionEventProducer,
                 solutionCommitRepository, reviewService, new SimpleMeterRegistry());
 
         problem = new Problem();
@@ -93,10 +94,6 @@ class SubmissionServiceTest {
 
     private void setupCommonMocks() {
         when(problemRepository.findBySlug("pair-sum")).thenReturn(Optional.of(problem));
-        when(judgeService.isLanguageSupported("java")).thenReturn(true);
-        when(driverCodeLoader.getDriverCode("pair-sum", "java")).thenReturn("template {USER_CODE}");
-        when(judgeService.mapLanguageToId("java")).thenReturn(62);
-        when(judgeService.buildSourceCode(anyString(), anyString())).thenReturn("full source");
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(submissionRepository.save(any())).thenAnswer(inv -> {
             Submission s = inv.getArgument(0);
@@ -119,6 +116,34 @@ class SubmissionServiceTest {
         verify(submissionEventProducer).send(any(SubmissionEvent.class));
     }
 
+    @Test
+    void submit_publishesTheAssembledProgram() {
+        setupCommonMocks();
+
+        submissionService.submit("pair-sum", new SubmitRequest("Java", "class Solution {}"), 1L);
+
+        ArgumentCaptor<SubmissionEvent> sent = ArgumentCaptor.forClass(SubmissionEvent.class);
+        verify(submissionEventProducer).send(sent.capture());
+        SubmissionEvent event = sent.getValue();
+        assertEquals(1L, event.submissionId());
+        assertEquals(ASSETS.assemble("pair-sum", Language.JAVA, "class Solution {}").source(), event.sourceCode());
+        assertTrue(event.sourceCode().contains("class Solution {}"));
+        assertEquals(Language.JAVA.judge0Id(), event.languageId());
+        assertEquals(1L, event.problemId());
+        assertEquals("java", event.language());
+    }
+
+    @Test
+    void submit_noDriverForTheLanguage_savesNothing() {
+        when(problemRepository.findBySlug("pair-sum")).thenReturn(Optional.of(problem));
+
+        // The fixture has only a Java driver.
+        assertThrows(NoDriverException.class,
+                () -> submissionService.submit("pair-sum", new SubmitRequest("python", "code"), 1L));
+        verify(submissionRepository, never()).save(any());
+        verify(submissionEventProducer, never()).send(any(SubmissionEvent.class));
+    }
+
     // --- submit: problem not found ---
 
     @Test
@@ -135,7 +160,6 @@ class SubmissionServiceTest {
     @Test
     void submit_unsupportedLanguage() {
         when(problemRepository.findBySlug("pair-sum")).thenReturn(Optional.of(problem));
-        when(judgeService.isLanguageSupported("rust")).thenReturn(false);
 
         assertThrows(com.codebite.common.exception.UnsupportedValueException.class,
                 () -> submissionService.submit("pair-sum", new SubmitRequest("rust", "code"), 1L));
@@ -155,6 +179,49 @@ class SubmissionServiceTest {
         SubmissionResponse response = submissionService.getSubmission(1L, 1L);
         assertNotNull(response);
         assertEquals(1L, response.id());
+    }
+
+    @Test
+    void getSubmission_mapsEachResultsErrorsOntoTheUserCodeLines() {
+        TestCase testCase = new TestCase();
+        testCase.setId(5L);
+        testCase.setProblem(problem);
+        testCase.setSample(true);
+        Submission submission = Submission.pending(user, problem, "java", "a\nb\nint x = 1");
+        submission.setId(1L);
+        // The fixture driver puts the user's code on line 3, so combined line 5 is user line 3.
+        submission.grade(Verdict.of(List.of(new CaseVerdict(SubmissionStatus.COMPILATION_ERROR, true,
+                null, null, "Main.java:5: error: ';' expected\n1 error", null, null))), List.of(testCase));
+        when(submissionRepository.findById(1L)).thenReturn(Optional.of(submission));
+        when(submissionResultRepository.findBySubmissionIdOrderById(1L)).thenReturn(submission.getResults());
+
+        SubmissionResponse response = submissionService.getSubmission(1L, 1L);
+
+        List<CodeError> errors = response.results().get(0).errors();
+        assertEquals(1, errors.size());
+        assertEquals(3, errors.get(0).line());
+        assertTrue(errors.get(0).inUserCode());
+    }
+
+    @Test
+    void getSubmission_problemWithoutTheDriverStillRenders_withoutErrors() {
+        Problem gone = new Problem();
+        gone.setId(2L);
+        gone.setSlug("no-such-driver");
+        TestCase testCase = new TestCase();
+        testCase.setId(6L);
+        testCase.setProblem(gone);
+        Submission submission = Submission.pending(user, gone, "java", "code");
+        submission.setId(1L);
+        submission.grade(Verdict.of(List.of(new CaseVerdict(SubmissionStatus.COMPILATION_ERROR, true,
+                null, null, "Main.java:1: error: x\n1 error", null, null))), List.of(testCase));
+        when(submissionRepository.findById(1L)).thenReturn(Optional.of(submission));
+        when(submissionResultRepository.findBySubmissionIdOrderById(1L)).thenReturn(submission.getResults());
+
+        SubmissionResponse response = submissionService.getSubmission(1L, 1L);
+
+        assertEquals(SubmissionStatus.COMPILATION_ERROR, response.results().get(0).status());
+        assertTrue(response.results().get(0).errors().isEmpty());
     }
 
     // --- getSubmission: review interval previews ---
