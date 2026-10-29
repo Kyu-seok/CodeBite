@@ -2,6 +2,7 @@ package com.codebite.judge.program;
 
 import com.codebite.common.exception.NoDriverException;
 import com.codebite.judge.Language;
+import com.codebite.submission.entity.Submission;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
@@ -78,6 +79,20 @@ public class ProblemAssets {
         }
         return Program.assembled(driver.template().replace(PLACEHOLDER, userCode), language,
                 driver.userCodeStartLine(), userCode);
+    }
+
+    /**
+     * The Program a stored submission was graded as, to show its errors on the user's lines. A
+     * problem that has since lost the Driver still renders: the Program then has no diagnostics.
+     */
+    public Program recall(Submission submission) {
+        Language language = Language.fromCode(submission.getLanguage())
+                .orElseThrow(() -> new IllegalStateException(
+                        "Submission " + submission.getId() + " has unknown language " + submission.getLanguage()));
+        String slug = submission.getProblem().getSlug();
+        return hasDriver(slug, language)
+                ? assemble(slug, language, submission.getSourceCode())
+                : Program.withoutDriver(submission.getSourceCode(), language);
     }
 
     public boolean hasDriver(String slug, Language language) {

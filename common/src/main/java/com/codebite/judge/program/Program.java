@@ -8,6 +8,7 @@ import com.codebite.judge.parser.JavaScriptErrorParser;
 import com.codebite.judge.parser.JudgeErrorParser;
 import com.codebite.judge.parser.PythonErrorParser;
 import com.codebite.judge.parser.UserCodeLineMapper;
+import com.codebite.submission.entity.Submission;
 import com.codebite.submission.event.SubmissionEvent;
 
 import java.util.List;
@@ -18,8 +19,9 @@ import java.util.Objects;
  * it with. Built by {@link ProblemAssets#assemble}, which bakes in where the user's code sits, so
  * {@link #diagnostics} is the only place that knows which combined line is which user line.
  *
- * <p>A Program read back from a {@link SubmissionEvent} was assembled by the backend; it carries
- * what to send to Judge0 but not the user's coordinates, so its diagnostics are always empty.
+ * <p>A Program read back from a {@link SubmissionEvent} was assembled by the backend, and one
+ * recalled for a submission whose problem has lost its Driver has no Driver at all; neither knows
+ * the user's coordinates, so their diagnostics are always empty.
  */
 public final class Program {
 
@@ -29,7 +31,7 @@ public final class Program {
     private static final JudgeErrorParser CPP_PARSER = new CppErrorParser();
     private static final UserCodeLineMapper LINE_MAPPER = new UserCodeLineMapper();
 
-    /** No user coordinates: the Program came from an event. */
+    /** No user coordinates: the Program came from an event or has no Driver. */
     private static final int UNLOCATED = 0;
 
     private final String source;
@@ -52,12 +54,28 @@ public final class Program {
         return new Program(source, language, language.judge0Id(), userCodeStartLine, countLines(userCode));
     }
 
+    /** The user's code alone, for a submission whose problem no longer has this Driver. */
+    static Program withoutDriver(String userCode, Language language) {
+        return new Program(userCode, language, language.judge0Id(), UNLOCATED, 0);
+    }
+
     /** The Program a submission event carries; the event's Judge0 id is kept as sent. */
     public static Program fromEvent(SubmissionEvent event) {
         Language language = Language.fromCode(event.language())
                 .orElseThrow(() -> new IllegalArgumentException(
                         "Submission " + event.submissionId() + " has unknown language " + event.language()));
         return new Program(event.sourceCode(), language, event.languageId(), UNLOCATED, 0);
+    }
+
+    /** The event that asks the worker to grade {@code submission} as this Program. */
+    public SubmissionEvent toEvent(Submission submission) {
+        return new SubmissionEvent(
+                submission.getId(),
+                source,
+                judge0Id,
+                submission.getProblem().getId(),
+                submission.isAdminSubmission(),
+                language.code());
     }
 
     public String source() {
