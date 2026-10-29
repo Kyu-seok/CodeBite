@@ -5,8 +5,9 @@ import { ArrowLeft } from "lucide-react"
 import { AxiosError } from "axios"
 import { Button } from "@/components/ui/Button"
 import Spinner from "@/components/ui/Spinner"
-import LoadError from "@/components/ui/LoadError"
+import LoadError, { InlineLoadError } from "@/components/ui/LoadError"
 import { useAuth } from "@/context/AuthContext"
+import { useProblem } from "@/hooks/useProblem"
 import {
   createSolution,
   getSolution,
@@ -15,7 +16,7 @@ import {
 import { getSubmission } from "@/api/submissions"
 import type { ApiError } from "@/types/api"
 import { LanguagePill } from "./LanguagePill"
-import { SUPPORTED_LANGUAGES, languageLabel } from "../submissionDisplay"
+import { languageLabel, problemLanguages } from "../submissionDisplay"
 import { MarkdownEditor } from "./MarkdownEditor"
 import { TagPicker } from "./TagPicker"
 import { ConfirmDialog } from "../ConfirmDialog"
@@ -48,6 +49,9 @@ export default function SolutionEditorPage({ mode }: SolutionEditorPageProps) {
   const [searchParams] = useSearchParams()
   const fromSubmissionId = searchParams.get("fromSubmission")
   const problemPath = `/problems/${slug}`
+  // The languages a Solution can be tagged with are the problem's own.
+  const { problem, error: problemError, retry: retryProblem } = useProblem(slug!)
+  const languages = problem ? problemLanguages(problem.starterCode) : []
 
   const draftKey = useMemo(
     () => (slug && user ? `solution-draft:${slug}:${user.id}` : null),
@@ -363,7 +367,10 @@ export default function SolutionEditorPage({ mode }: SolutionEditorPageProps) {
             aria-labelledby="solution-languages"
             aria-describedby={describedBy("languages")}
             className="mt-1 flex flex-wrap items-center gap-1.5">
-            {SUPPORTED_LANGUAGES.map((code) => {
+            {problemError && (
+              <InlineLoadError message={t("workspace.problemLoadFailed")} onRetry={retryProblem} />
+            )}
+            {languages.map((code) => {
               const selected = draft.languages.includes(code)
               return (
                 <button

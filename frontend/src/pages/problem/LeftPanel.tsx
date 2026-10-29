@@ -73,6 +73,8 @@ interface LeftPanelProps {
   difficulty: Difficulty;
   description: string;
   constraints: string | null;
+  /** The problem's languages, for the Solutions filter. */
+  languages: string[];
   isAuthenticated: boolean;
   submissions: SubmissionListItem[];
   /** The submissions list request failed; the tab shows an error with a retry instead of "no submissions". */
@@ -93,6 +95,7 @@ export function LeftPanel({
   difficulty,
   description,
   constraints,
+  languages,
   isAuthenticated,
   submissions,
   submissionsFailed,
@@ -195,7 +198,7 @@ export function LeftPanel({
           </TabsContent>
 
           <TabsContent value="solutions" className="mt-0 h-full">
-            <SolutionsListPanel slug={slug} isAuthenticated={isAuthenticated} />
+            <SolutionsListPanel slug={slug} languages={languages} isAuthenticated={isAuthenticated} />
           </TabsContent>
         </div>
       </Tabs>

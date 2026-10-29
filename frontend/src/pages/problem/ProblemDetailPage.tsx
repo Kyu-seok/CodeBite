@@ -14,7 +14,7 @@ import { LeftPanel, CollapsedLeftStrip } from "./LeftPanel"
 import { EditorPanel } from "./EditorPanel"
 import { TestPanel, CollapsedTestStrip, ResultAnnouncer } from "./TestPanel"
 import { ConfirmDialog } from "./ConfirmDialog"
-import { languageLabel } from "./submissionDisplay"
+import { languageLabel, problemLanguages } from "./submissionDisplay"
 import { AcceptedModal } from "@/components/review/AcceptedModal"
 import { fireConfetti } from "@/components/review/ConfettiBurst"
 import type { Confidence } from "@/types/review"
@@ -356,6 +356,7 @@ export default function ProblemDetailPage() {
             difficulty={problem.difficulty}
             description={problem.description}
             constraints={problem.constraints}
+            languages={problemLanguages(problem.starterCode)}
             isAuthenticated={isAuthenticated}
             submissions={submissions}
             submissionsFailed={submissionsFailed}

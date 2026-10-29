@@ -15,14 +15,12 @@ const ESTIMATED_JUDGE_SECONDS: Record<JudgeMode, Record<string, number>> = {
   run: {
     python: 1,
     javascript: 1,
-    c: 2,
     cpp: 3,
     java: 5,
   },
   submit: {
     python: 2,
     javascript: 2,
-    c: 3,
     cpp: 4,
     java: 8,
   },
