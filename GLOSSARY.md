@@ -18,7 +18,7 @@ Rewording a problem without changing what is asked: its Test Cases, and so the a
 _Avoid_: Rename, rewrite, retheme
 
 **Diagram**:
-A picture of an example's input (and, when the problem transforms it, the output), drawn from a short text block in the problem's description and the same in every language. A Restatement keeps it.
+A picture of an example's input (and, when the problem transforms it, the output), or of its output alone when the output is the structure and the input is just a size, drawn from a short text block in the problem's description and the same in every language. A Restatement keeps it.
 _Avoid_: Visual aid, image, illustration
 
 ### Grading
