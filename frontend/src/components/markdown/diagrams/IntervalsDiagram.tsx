@@ -95,6 +95,34 @@ const TOP = 18; // room for point labels
 const AXIS_H = 26;
 const MIN_BAR_W = 4;
 
+type RowKind = "plain" | "highlight" | "added";
+
+/** How each kind of row draws: its label and its bar. */
+const ROW_STYLES: Record<
+  RowKind,
+  { prefix: string; labelWeight: number; labelClass: string; barClass: string; barDash?: string }
+> = {
+  plain: {
+    prefix: "",
+    labelWeight: 500,
+    labelClass: "fill-foreground/80",
+    barClass: "fill-foreground/15 stroke-foreground/60",
+  },
+  highlight: {
+    prefix: "",
+    labelWeight: 600,
+    labelClass: "fill-accent-500",
+    barClass: "fill-accent-500 stroke-accent-500",
+  },
+  added: {
+    prefix: "+ ",
+    labelWeight: 600,
+    labelClass: "fill-accent-500",
+    barClass: "fill-accent-500/20 stroke-accent-500",
+    barDash: "4 2",
+  },
+};
+
 interface IntervalsSvgProps {
   intervals: Interval[];
   highlight?: number[];
@@ -106,16 +134,16 @@ interface IntervalsSvgProps {
 function IntervalsSvg({ intervals, highlight = [], added, points = [], domain }: IntervalsSvgProps) {
   const [lo, hi] = domain;
   const span = hi - lo || 1;
-  const rows: { interval: Interval; kind: "plain" | "highlight" | "added" }[] = intervals.map(
+  const rows: { interval: Interval; kind: RowKind }[] = intervals.map(
     (interval, i) => ({ interval, kind: highlight.includes(i) ? "highlight" : "plain" }),
   );
   if (added) rows.push({ interval: added, kind: "added" });
-  const label = (kind: string, [start, end]: Interval) =>
-    `${kind === "added" ? "+ " : ""}[${start}, ${end}]`;
+  const label = (kind: RowKind, [start, end]: Interval) =>
+    `${ROW_STYLES[kind].prefix}[${start}, ${end}]`;
 
   const labelW = PAD_X + Math.max(...rows.map((r) => label(r.kind, r.interval).length)) * LABEL_CHAR_W;
   const plotX = labelW + PAD_X;
-  const x = (v: number) => plotX + (hi === lo ? PLOT_W / 2 : ((v - lo) / span) * PLOT_W);
+  const xOf = (v: number) => plotX + (hi === lo ? PLOT_W / 2 : ((v - lo) / span) * PLOT_W);
 
   const width = plotX + PLOT_W + PAD_X;
   const plotBottom = TOP + rows.length * ROW_H;
@@ -133,9 +161,9 @@ function IntervalsSvg({ intervals, highlight = [], added, points = [], domain }:
       {guides.map((v) => (
         <line
           key={`g-${v}`}
-          x1={x(v)}
+          x1={xOf(v)}
           y1={TOP - 4}
-          x2={x(v)}
+          x2={xOf(v)}
           y2={plotBottom}
           className="stroke-foreground/30"
           strokeWidth={1}
@@ -146,16 +174,16 @@ function IntervalsSvg({ intervals, highlight = [], added, points = [], domain }:
       {points.map((v, i) => (
         <g key={`p-${i}`}>
           <line
-            x1={x(v)}
+            x1={xOf(v)}
             y1={TOP - 4}
-            x2={x(v)}
+            x2={xOf(v)}
             y2={plotBottom}
             className="stroke-foreground/70"
             strokeWidth={1.5}
             strokeDasharray="4 3"
           />
           <text
-            x={x(v)}
+            x={xOf(v)}
             y={TOP - 8}
             textAnchor="middle"
             fontSize={11}
@@ -170,15 +198,12 @@ function IntervalsSvg({ intervals, highlight = [], added, points = [], domain }:
       {/* One row per interval, in input order */}
       {rows.map(({ interval: [start, end], kind }, i) => {
         const cy = TOP + i * ROW_H + ROW_H / 2;
-        const x1 = x(start);
-        const w = Math.max(x(end) - x1, MIN_BAR_W);
-        const barX = x(end) - x1 < MIN_BAR_W ? x1 - MIN_BAR_W / 2 : x1;
-        const barClass =
-          kind === "highlight"
-            ? "fill-accent-500 stroke-accent-500"
-            : kind === "added"
-              ? "fill-accent-500/20 stroke-accent-500"
-              : "fill-foreground/15 stroke-foreground/60";
+        const style = ROW_STYLES[kind];
+        const barStart = xOf(start);
+        const barLength = xOf(end) - barStart;
+        // A point-like interval still gets a visible bar, centered on its value.
+        const barW = Math.max(barLength, MIN_BAR_W);
+        const barX = barLength < MIN_BAR_W ? barStart - MIN_BAR_W / 2 : barStart;
         return (
           <g key={`r-${i}`}>
             <text
@@ -187,23 +212,21 @@ function IntervalsSvg({ intervals, highlight = [], added, points = [], domain }:
               textAnchor="end"
               dominantBaseline="central"
               fontSize={12}
-              fontWeight={kind === "plain" ? 500 : 600}
-              className={
-                "font-mono " + (kind === "plain" ? "fill-foreground/80" : "fill-accent-500")
-              }
+              fontWeight={style.labelWeight}
+              className={`font-mono ${style.labelClass}`}
             >
               {label(kind, [start, end])}
             </text>
             <rect
               x={barX}
               y={cy - BAR_H / 2}
-              width={w}
+              width={barW}
               height={BAR_H}
               rx={3}
               ry={3}
-              className={barClass}
+              className={style.barClass}
               strokeWidth={1.5}
-              strokeDasharray={kind === "added" ? "4 2" : undefined}
+              strokeDasharray={style.barDash}
             />
           </g>
         );
@@ -221,15 +244,15 @@ function IntervalsSvg({ intervals, highlight = [], added, points = [], domain }:
       {axisTicks(lo, hi).map((v) => (
         <g key={`t-${v}`}>
           <line
-            x1={x(v)}
+            x1={xOf(v)}
             y1={plotBottom + 4}
-            x2={x(v)}
+            x2={xOf(v)}
             y2={plotBottom + 8}
             className="stroke-foreground/50"
             strokeWidth={1}
           />
           <text
-            x={x(v)}
+            x={xOf(v)}
             y={plotBottom + 18}
             textAnchor="middle"
             fontSize={10}
