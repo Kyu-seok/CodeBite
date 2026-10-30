@@ -23,16 +23,8 @@ Work in your own worktree, per CLAUDE.md. One Restatement is one commit.
 
 ## 1. Read the problem as it stands
 
-1. Find the newest text for every piece. With the local database migrated (`docker compose -f infra/docker-compose.yml up -d`, then one `bootRun`), read it directly:
-   ```bash
-   docker exec codebite-postgres psql -U codebite -d codebite -c "
-     SELECT p.id, p.slug, p.title, p.description, p.constraints, t.title, t.description, t.constraints
-     FROM problems p LEFT JOIN problem_translations t ON t.problem_id = p.id AND t.locale = 'ko'
-     WHERE p.slug = '<slug>'"
-   ```
-   Without it, the newest migration that sets each column wins: `grep -ln '<slug>' common/src/main/resources/db/migration/` and read from the highest version down. The problem may appear under a Former Slug in older migrations (`SELECT slug FROM problem_former_slugs WHERE problem_id = …`).
-2. Read the sample Test Cases (`is_sample = true`, by `order_index`) the same way: `SELECT order_index, input, expected_output FROM test_cases WHERE problem_id = … AND is_sample ORDER BY order_index`.
-3. Read all 4 Drivers and all 4 Starter Code files.
+1. Print the problem as it stands, English and Korean text and sample Test Cases: `scripts/problem-text.sh <slug>`. It reads the local database (`docker compose -f infra/docker-compose.yml up -d`) and warns when the database hasn't run this checkout's migrations; start the backend once to apply them. Without a database, the newest migration that sets each column wins: `grep -ln '<slug>' common/src/main/resources/db/migration/` and read from the highest version down, minding Former Slugs in older migrations.
+2. Read all 4 Drivers and all 4 Starter Code files.
 
 Done when you can state, from the Test Cases alone, what the problem computes, and every example in the current description matches a sample case.
 

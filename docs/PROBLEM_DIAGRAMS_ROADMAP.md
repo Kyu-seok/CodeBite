@@ -146,6 +146,8 @@ Rules:
 
 All under `frontend/src/components/markdown/diagrams/` (co-located with the markdown infra since they only render via `MarkdownRenderer`).
 
+Every kind must read at the width of the problem page's description pane (about 400px), the only place Diagrams render: look at a new kind there, pairs included, before it merges.
+
 | File | Purpose |
 |---|---|
 | `TreeDiagram.tsx` | Pure SVG. Naive level-order layout: depth = `floor(log2(i+1))`, x = even spacing. Circles + value labels + parent→child lines. CSS-var-driven colors (auto dark-mode). When `after` is provided, renders pair layout (see "Before/after pairs"). |

@@ -107,9 +107,28 @@ elif (( db < ours )); then
   echo "  BEHIND  this checkout has migrations up to V$ours; start the backend from here to apply them"
   problems=1
 elif (( db > ours )); then
-  echo "database: at V$db, past this checkout's V$ours (another branch's migrations; harmless, Flyway skips them)"
+  echo "database: at V$db, past this checkout's V$ours (another branch's migrations, run by a backend started from its worktree)"
+  echo "  Fine while that branch merges them unchanged. Edited after they ran, every backend fails Flyway's checksum check until 'flyway repair'."
 else
   echo "database: at V$db, this checkout's newest"
+fi
+
+# A version the database ran under another name: two branches took the same
+# number. Flyway refuses to start until one of them is renumbered.
+if [[ -n "$db" ]]; then
+  while IFS='|' read -r version description; do
+    file=$(find "$here/common/src/main/resources/db/migration" "$here/common/src/main/java/db/migration" \
+      -name "V${version}__*" 2>/dev/null | head -n 1)
+    [[ -z "$file" ]] && continue
+    name=$(basename "$file")
+    name=${name#*__}
+    name=${name%.*}
+    if [[ "${name//_/ }" != "$description" ]]; then
+      echo "  CLASH  V$version ran as \"$description\", but here it is $(basename "$file"); renumber this branch's migration"
+      problems=1
+    fi
+  done < <(docker exec codebite-postgres psql -U codebite -d codebite -tAc \
+    "SELECT version, description FROM flyway_schema_history WHERE success AND version ~ '^[0-9]+$'" 2>/dev/null || true)
 fi
 
 if [[ $found -eq 1 && $problems -eq 0 ]]; then
