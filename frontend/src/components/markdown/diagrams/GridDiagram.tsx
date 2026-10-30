@@ -29,19 +29,20 @@ export function GridDiagram({ cells, highlight = [], after, boxes, blank }: Grid
 }
 
 /**
- * Which inner edges of cell (r, c) close a sub-box. The grid's outer edge is
- * drawn by the container, so the last row and column never report one.
+ * Which inner edges of cell (r, c) close a sub-box; none without `boxes`.
+ * The grid's outer edge is drawn by the container, so the last row and
+ * column never report one.
  */
 export function boxEdges(
   r: number,
   c: number,
   rows: number,
   cols: number,
-  boxes: number,
+  boxes?: number,
 ): { right: boolean; bottom: boolean } {
   return {
-    right: (c + 1) % boxes === 0 && c + 1 < cols,
-    bottom: (r + 1) % boxes === 0 && r + 1 < rows,
+    right: !!boxes && (c + 1) % boxes === 0 && c + 1 < cols,
+    bottom: !!boxes && (r + 1) % boxes === 0 && r + 1 < rows,
   };
 }
 
@@ -69,20 +70,17 @@ function SingleGrid({ cells, highlight = [], boxes, blank }: SingleGridProps) {
   const sizeClass =
     cols >= 6 ? "h-8 w-8 text-xs" : cols >= 4 ? "h-10 w-10 text-sm" : "h-12 w-12";
 
-  // With sub-boxes the cells touch, like a Sudoku board: thin lines between
-  // cells, thick ones around each box and the board.
+  // The cells touch, like a board: thin lines between cells, thick ones
+  // around the board and, with `boxes`, around each sub-box.
   return (
     <div
-      className={
-        "mx-auto inline-grid " +
-        (boxes ? "border-2 border-foreground/70" : "gap-1")
-      }
+      className="mx-auto inline-grid border-2 border-foreground/70"
       style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, auto))` }}
     >
       {cells.map((row, r) =>
         row.map((cell, c) => {
           const isHl = highlightSet.has(`${r}|${c}`);
-          const edges = boxes ? boxEdges(r, c, rows, cols, boxes) : undefined;
+          const edges = boxEdges(r, c, rows, cols, boxes);
           return (
             <div
               key={`${r}-${c}`}
@@ -90,15 +88,12 @@ function SingleGrid({ cells, highlight = [], boxes, blank }: SingleGridProps) {
                 "flex items-center justify-center font-mono " +
                 sizeClass +
                 " " +
-                (edges
-                  ? "border-foreground/25 " +
-                    (c + 1 < cols ? (edges.right ? "border-r-2 border-r-foreground/70 " : "border-r ") : "") +
-                    (r + 1 < rows ? (edges.bottom ? "border-b-2 border-b-foreground/70 " : "border-b ") : "")
-                  : "rounded border ") +
+                "border-foreground/25 " +
+                (c + 1 < cols ? (edges.right ? "border-r-2 border-r-foreground/70 " : "border-r ") : "") +
+                (r + 1 < rows ? (edges.bottom ? "border-b-2 border-b-foreground/70 " : "border-b ") : "") +
                 (isHl
-                  ? "border-accent-500 bg-accent-500/15 text-foreground ring-2 ring-accent-500" +
-                    (edges ? " ring-inset" : "")
-                  : (edges ? "" : "border-foreground/30 ") + "bg-background text-foreground")
+                  ? "bg-accent-500/15 text-foreground ring-2 ring-inset ring-accent-500"
+                  : "bg-background text-foreground")
               }
             >
               {cell === blank ? "" : String(cell)}
