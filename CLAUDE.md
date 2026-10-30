@@ -76,8 +76,8 @@ A grid, tree, graph or linked-list example gets a Diagram, a ` ```diagram-* ` bl
 ./gradlew :backend:test            # run backend tests (uses H2, no Docker needed)
 source scripts/dev-env.sh && SPRING_PROFILES_ACTIVE=dev ./gradlew :backend:bootRun  # run locally
 ```
-`scripts/dev-env.sh` loads only the OAuth and GitHub App values from `infra/.env`. That file is the production server's config: sourcing it whole overrides the dev CORS origins, JWT secret, database and Judge0 URL.
-When a local backend or worker answers 403, behaves like old code, or a button "does nothing", run `scripts/dev-status.sh` first. It flags a process older than its source (bootRun doesn't reload) or carrying production values.
+`scripts/dev-env.sh` loads only the OAuth and GitHub App values from `infra/.env` (from a worktree, the main checkout's). That file is the production server's config: sourcing it whole overrides the dev CORS origins, JWT secret, database and Judge0 URL.
+When the local app answers 403, behaves like old code, doesn't show a change, or a button "does nothing", run `scripts/dev-status.sh` from the checkout or worktree whose code you expect. It flags a backend, worker or frontend running another checkout's code, a process older than its source (bootRun doesn't reload) or carrying production values, and a database missing this checkout's migrations.
 To sign in locally without OAuth (dev profile only), `POST /api/auth/test-token?username=<name>&role=ADMIN` returns a JWT; `role` (USER or ADMIN) also switches an existing user, and leaving it out keeps the role (new users are USER). Use an ADMIN token to check admin pages against real data.
 
 ### Infrastructure
@@ -234,4 +234,4 @@ Single-context: one `GLOSSARY.md` and `docs/adr/` at the repo root. See `docs/ag
 
 ### Parallel sessions
 
-Several sessions often run in this repo at once. Leave the main checkout on `master` and do all branch work in your own worktree (`git worktree add <scratchpad>/wt -b <branch> origin/master`, then `(cd <scratchpad>/wt/frontend && npm ci)` before any frontend check: a worktree has no `node_modules`, and the main checkout's may be stale); a `git switch` or commit in the shared checkout moves every other session's files. The pre-commit hook refuses commits on `master`.
+Several sessions often run in this repo at once. Leave the main checkout on `master` and do all branch work in your own worktree (`git worktree add <scratchpad>/wt -b <branch> origin/master`, then `(cd <scratchpad>/wt/frontend && npm ci)` before any frontend check: a worktree has no `node_modules`, and the main checkout's may be stale); a `git switch` or commit in the shared checkout moves every other session's files. The pre-commit hook refuses commits on `master`. Merge with `gh pr merge <n> --squash`, then `git push origin --delete <branch>`: `--delete-branch` also deletes your worktree, so a project hook refuses it.
