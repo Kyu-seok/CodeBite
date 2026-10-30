@@ -48,7 +48,7 @@ Root `settings.gradle` includes three modules: `common`, `backend`, `worker`. Th
 - `config/` — JudgeClientConfig
 
 ### Restating a problem
-Rewording a problem while its Test Cases stay (Slug, title, description, Starter Code names) is a Restatement: follow `.claude/skills/restate-problem/SKILL.md`. `ProblemSlugsTest` (backend) runs every migration and fails when a Slug and its `drivers/`/`starters/` directories disagree.
+Rewording a problem while its Test Cases stay (Slug, title, description, Starter Code names) is a Restatement: follow `.claude/skills/restate-problem/SKILL.md`. `ProblemSlugsTest` (backend) runs every migration and fails when a Slug and its `drivers/`/`starters/` directories disagree; `MigrationSlugReferencesTest` fails when a migration's `slug = …` names a slug that doesn't exist when it runs.
 
 ### Resources (`common/src/main/resources/`)
 - `db/migration/` — Flyway SQL migrations
@@ -231,4 +231,4 @@ Single-context: one `GLOSSARY.md` and `docs/adr/` at the repo root. See `docs/ag
 
 ### Parallel sessions
 
-Several sessions often run in this repo at once. Leave the main checkout on `master` and do all branch work in your own worktree (`git worktree add <scratchpad>/wt -b <branch> origin/master`); a `git switch` or commit in the shared checkout moves every other session's files. The pre-commit hook refuses commits on `master`.
+Several sessions often run in this repo at once. Leave the main checkout on `master` and do all branch work in your own worktree (`git worktree add <scratchpad>/wt -b <branch> origin/master`, then `(cd <scratchpad>/wt/frontend && npm ci)` before any frontend check: a worktree has no `node_modules`, and the main checkout's may be stale); a `git switch` or commit in the shared checkout moves every other session's files. The pre-commit hook refuses commits on `master`.

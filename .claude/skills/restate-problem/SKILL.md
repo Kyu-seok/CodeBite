@@ -84,8 +84,8 @@ Done when that grep finds nothing outside the migrations.
 
 ## 5. Verify
 
-1. `./gradlew :common:test --tests '*DriverStarterMethodTest' --tests '*ProblemAssetsTest'` and `./gradlew :backend:test --tests '*ProblemSlugsTest'`. ProblemSlugsTest runs every migration and goes red when a Slug and its asset directories disagree, or a Former Slug clashes with a Slug.
-2. Apply the migration to the local database (restart `bootRun`), then check that every statement hit its row: an `UPDATE … WHERE slug = …` that matches nothing succeeds silently.
+1. `./gradlew :common:test --tests '*DriverStarterMethodTest' --tests '*ProblemAssetsTest'` and `./gradlew :backend:test --tests '*ProblemSlugsTest' --tests '*MigrationSlugReferencesTest'`. ProblemSlugsTest runs every migration and goes red when a Slug and its asset directories disagree, or a Former Slug clashes with a Slug. MigrationSlugReferencesTest goes red when a `WHERE slug = …` names a slug no problem has when the migration runs (an UPDATE that silently matches nothing), e.g. one another branch Restated first: rebase, and point the migration at the current Slug.
+2. Apply the migration to the local database (restart `bootRun`) and read the result back:
    ```bash
    docker exec codebite-postgres psql -U codebite -d codebite -c "
      SELECT p.slug, p.title, t.title, f.slug AS former
