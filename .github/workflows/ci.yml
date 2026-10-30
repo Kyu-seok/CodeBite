@@ -52,5 +52,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: shellcheck -S warning scripts/*.sh
+      - run: shellcheck -S warning scripts/*.sh .claude/hooks/*.sh
       - run: scripts/dev-env.test.sh
+      - run: scripts/guard-pr-merge.test.sh
