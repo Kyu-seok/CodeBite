@@ -66,20 +66,24 @@ export function IntervalsDiagram({
   values.push(...points);
   const domain: [number, number] = [Math.min(...values), Math.max(...values)];
 
+  const beforeRows: Row[] = intervals.map((interval, i) => ({
+    interval,
+    kind: highlight.includes(i) ? "highlight" : "plain",
+  }));
+  if (added) beforeRows.push({ interval: added, kind: "added" });
+  const afterRows: Row[] = (after ?? []).map((interval) => ({ interval, kind: "plain" }));
+  // One label column too, so a stacked pair's axes sit exactly above each other.
+  const labelChars = Math.max(...[...beforeRows, ...afterRows].map((r) => rowLabel(r).length));
+
   const before = (
-    <IntervalsSvg
-      intervals={intervals}
-      highlight={highlight}
-      added={added}
-      points={points}
-      domain={domain}
-    />
+    <IntervalsSvg rows={beforeRows} points={points} domain={domain} labelChars={labelChars} />
   );
   if (after) {
     return (
       <BeforeAfterPair
+        stackWhenNarrow
         before={before}
-        after={<IntervalsSvg intervals={after} domain={domain} />}
+        after={<IntervalsSvg rows={afterRows} domain={domain} labelChars={labelChars} />}
       />
     );
   }
@@ -123,25 +127,27 @@ const ROW_STYLES: Record<
   },
 };
 
-interface IntervalsSvgProps {
-  intervals: Interval[];
-  highlight?: number[];
-  added?: Interval;
-  points?: number[];
-  domain: [number, number];
+interface Row {
+  interval: Interval;
+  kind: RowKind;
 }
 
-function IntervalsSvg({ intervals, highlight = [], added, points = [], domain }: IntervalsSvgProps) {
+const rowLabel = ({ interval: [start, end], kind }: Row) =>
+  `${ROW_STYLES[kind].prefix}[${start}, ${end}]`;
+
+interface IntervalsSvgProps {
+  rows: Row[];
+  points?: number[];
+  domain: [number, number];
+  /** Width of the label column, in characters. */
+  labelChars: number;
+}
+
+function IntervalsSvg({ rows, points = [], domain, labelChars }: IntervalsSvgProps) {
   const [lo, hi] = domain;
   const span = hi - lo || 1;
-  const rows: { interval: Interval; kind: RowKind }[] = intervals.map(
-    (interval, i) => ({ interval, kind: highlight.includes(i) ? "highlight" : "plain" }),
-  );
-  if (added) rows.push({ interval: added, kind: "added" });
-  const label = (kind: RowKind, [start, end]: Interval) =>
-    `${ROW_STYLES[kind].prefix}[${start}, ${end}]`;
 
-  const labelW = PAD_X + Math.max(...rows.map((r) => label(r.kind, r.interval).length)) * LABEL_CHAR_W;
+  const labelW = PAD_X + labelChars * LABEL_CHAR_W;
   const plotX = labelW + PAD_X;
   const xOf = (v: number) => plotX + (hi === lo ? PLOT_W / 2 : ((v - lo) / span) * PLOT_W);
 
@@ -215,7 +221,7 @@ function IntervalsSvg({ intervals, highlight = [], added, points = [], domain }:
               fontWeight={style.labelWeight}
               className={`font-mono ${style.labelClass}`}
             >
-              {label(kind, [start, end])}
+              {rowLabel({ interval: [start, end], kind })}
             </text>
             <rect
               x={barX}
