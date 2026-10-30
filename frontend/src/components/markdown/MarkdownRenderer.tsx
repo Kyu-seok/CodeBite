@@ -8,11 +8,13 @@ import { TreeDiagram } from "./diagrams/TreeDiagram"
 import { GraphDiagram } from "./diagrams/GraphDiagram"
 import { GridDiagram } from "./diagrams/GridDiagram"
 import { LinkedListDiagram } from "./diagrams/LinkedListDiagram"
+import { IntervalsDiagram } from "./diagrams/IntervalsDiagram"
 import {
   parseTreeDirective,
   parseGraphDirective,
   parseGridDirective,
   parseLinkedListDirective,
+  parseIntervalsDirective,
 } from "./diagrams/parseDirective"
 
 interface MarkdownRendererProps {
@@ -66,6 +68,18 @@ function renderDiagram(language: string, body: string): ReactElement | null {
           cycle_to={spec.cycle_to}
           highlight={spec.highlight}
           after={spec.after}
+        />
+      )
+    }
+    if (language === "diagram-intervals") {
+      const spec = parseIntervalsDirective(body)
+      return (
+        <IntervalsDiagram
+          intervals={spec.intervals}
+          highlight={spec.highlight}
+          after={spec.after}
+          added={spec.added}
+          points={spec.points}
         />
       )
     }

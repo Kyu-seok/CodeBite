@@ -293,3 +293,74 @@ export function parseLinkedListDirective(body: string): LinkedListDirective {
     after,
   };
 }
+
+export type Interval = [number, number];
+
+export interface IntervalsDirective {
+  intervals: Interval[];
+  /** Optional indices into intervals to emphasize (only what the answer points at). */
+  highlight: number[];
+  /** Optional result list for before→after pair (merge, insert). */
+  after?: Interval[];
+  /** Optional interval the input adds (e.g. a new meeting), drawn in an accent style. */
+  added?: Interval;
+  /** Optional values marked by a vertical line across every bar. */
+  points: number[];
+}
+
+function isInterval(v: unknown): v is Interval {
+  return (
+    Array.isArray(v) &&
+    v.length === 2 &&
+    typeof v[0] === "number" &&
+    typeof v[1] === "number" &&
+    v[0] <= v[1]
+  );
+}
+
+function isIntervalArray(v: unknown): v is Interval[] {
+  return Array.isArray(v) && v.every(isInterval);
+}
+
+export function parseIntervalsDirective(body: string): IntervalsDirective {
+  const map = parseKeyValueLines(body);
+
+  const intervals = map.get("intervals");
+  if (!isIntervalArray(intervals) || intervals.length === 0) {
+    throw new Error(
+      "'intervals' must be a non-empty array of [start, end] pairs with start <= end (e.g. intervals: [[1,4],[7,10]])",
+    );
+  }
+
+  const highlightRaw = map.get("highlight") ?? [];
+  if (
+    !Array.isArray(highlightRaw) ||
+    !highlightRaw.every((i) => Number.isInteger(i) && i >= 0 && i < intervals.length)
+  ) {
+    throw new Error("'highlight' must be an array of indices into intervals");
+  }
+
+  const afterRaw = map.get("after");
+  if (afterRaw !== undefined && !isIntervalArray(afterRaw)) {
+    throw new Error("'after' must be an array of [start, end] pairs with start <= end");
+  }
+
+  const addedRaw = map.get("added");
+  if (addedRaw !== undefined && !isInterval(addedRaw)) {
+    throw new Error("'added' must be one [start, end] pair with start <= end (e.g. added: [3,6])");
+  }
+
+  const pointsRaw = map.get("points") ?? [];
+  if (!Array.isArray(pointsRaw) || !pointsRaw.every((p) => typeof p === "number")) {
+    throw new Error("'points' must be an array of numbers (e.g. points: [3,6,9])");
+  }
+
+  const spec: IntervalsDirective = {
+    intervals,
+    highlight: highlightRaw as number[],
+    points: pointsRaw as number[],
+  };
+  if (afterRaw !== undefined) spec.after = afterRaw;
+  if (addedRaw !== undefined) spec.added = addedRaw;
+  return spec;
+}

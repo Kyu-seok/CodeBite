@@ -95,6 +95,26 @@ after: [-4, 0, 2, 3]   # optional — e.g. reversed, reordered
 \`\`\`
 ```
 
+### `diagram-intervals`
+
+```
+\`\`\`diagram-intervals
+intervals: [[1,4],[7,10]]   # one bar each
+after: [[1,6],[7,10]]       # optional — the result list (merge, insert)
+added: [3,6]                # optional — an interval the input adds, accent style
+points: [3,6,9,11]          # optional — vertical markers across all bars
+highlight: [0,1]            # optional — indices into intervals
+\`\`\`
+```
+
+- `intervals`: non-empty list of `[start, end]` pairs with `start <= end`. One row per interval, in input order, labeled `[start, end]`. Nothing is packed into shared rows: for some problems (peak-table-demand) the number of packed rows is the answer.
+- `after` (optional): the result list, laid out the same way as a before/after pair. Both sides use one axis range.
+- `added` (optional): one interval the input adds (slot-a-meeting's new slot), drawn as a last dashed accent row labeled `+ [start, end]`.
+- `points` (optional): values marked by a dashed vertical line across every bar, labeled above (shortest-table-booking's probes).
+- `highlight` (optional): indices into `intervals`; only what the example's answer points at.
+
+The shared axis runs from the smallest to the largest value in the block (`intervals`, `after`, `added` and `points`), labeled at a round step (1, 2 or 5 times a power of ten): the smallest one giving 5–10 ticks, or, when none does, the one whose tick count comes nearest that range. A thin vertical guide line marks every endpoint two intervals share, so touching (`[1,3]` and `[3,8]`) reads differently from overlapping (`[18,20]` and `[19,21]`): the problems disagree on whether touching counts as overlap.
+
 Unrecognized keys are ignored (forward-compatible). Malformed input falls back to rendering the raw block as `<pre>` so the page never breaks on a bad diagram.
 
 ### Before/after pairs
@@ -115,7 +135,7 @@ after: [5, 8, 3, 9, 7, 4, 2]
 ```
 
 Rules:
-- `after` must have the same shape kind as `nodes`/`edges`/`cells` (level-order array, edge list, 2D array respectively).
+- `after` must have the same shape kind as `nodes`/`edges`/`cells`/`intervals` (level-order array, edge list, 2D array, list of `[start, end]` pairs respectively).
 - Highlights apply to the **before** diagram only; if you need separate highlighting on the after, that's a future extension (`highlight_after`) — not in scope today.
 - On narrow viewports the pair wraps to stacked layout automatically, with the arrow re-orienting downward.
 - Apply this whenever the problem has a clear "given X, return Y where Y is a structural transformation of X." Skip it for problems whose output is a scalar (e.g., max depth, count of islands) — there's no "after" to show.
@@ -131,8 +151,9 @@ All under `frontend/src/components/markdown/diagrams/` (co-located with the mark
 | `TreeDiagram.tsx` | Pure SVG. Naive level-order layout: depth = `floor(log2(i+1))`, x = even spacing. Circles + value labels + parent→child lines. CSS-var-driven colors (auto dark-mode). When `after` is provided, renders pair layout (see "Before/after pairs"). |
 | `GraphDiagram.tsx` | Pure SVG. Circular layout (nodes on a circle, edges as chords) — adequate for ≤12 nodes. Optional arrowheads when `directed: true`. Pair layout when `after` is provided. |
 | `GridDiagram.tsx` | Plain CSS grid (no SVG needed). Cells touch like a board, thin lines between them. Highlight is a colored inset ring. Pair layout when `after` is provided. |
-| `BeforeAfterPair.tsx` (shared) | Wraps two diagrams in a flex row with a hollow right-pointing SVG arrow between them. Falls back to stacked layout on narrow viewports. Used by all three diagram components when their `after` field is set. |
-| `parseDirective.ts` | One small parser shared across the three. Each `key: value` line is parsed independently; the value side accepts JSON literals (arrays, numbers, booleans). |
+| `IntervalsDiagram.tsx` | Pure SVG. One row per interval in input order, a `[start, end]` label left of a bar on one shared axis (round-step ticks, see `diagram-intervals`); guide lines at shared endpoints, dashed `points` markers, a dashed accent `added` row. Pair layout when `after` is provided, both sides on the same axis range and label column; the pair stacks (arrow pointing down) until its container is 42rem wide, since side by side in the description pane each chart shrinks to half its size and its labels become unreadable. |
+| `BeforeAfterPair.tsx` (shared) | Wraps two diagrams in a flex row with a hollow right-pointing SVG arrow between them. Falls back to stacked layout on narrow viewports. Used by every diagram component when its `after` field is set. |
+| `parseDirective.ts` | One small parser shared across every diagram kind. Each `key: value` line is parsed independently; the value side accepts JSON literals (arrays, numbers, booleans). |
 
 **Markdown integration** (single edit to `frontend/src/components/markdown/MarkdownRenderer.tsx`):
 
