@@ -8,7 +8,7 @@ import java.sql.ResultSet;
 import java.util.List;
 
 /**
- * Interval Diagrams (#110): one bar per interval, under the examples of the
+ * Interval Diagrams: one bar per interval, under the examples of the
  * seven problems whose input is a list of [start, end] pairs, in the English
  * description and the Korean translation, through V183.injectDiagram.
  *
@@ -17,8 +17,9 @@ import java.util.List;
  *   away); Example 2 shows bookings that only touch, which is allowed.
  * - cover-aquarium-zones: Example 1, without the pellets, which are output
  *   and not unique.
- * - drop-conflicting-classes: Example 1 (one class inside another) and
- *   Example 3 (two classes with a gap, nothing to drop).
+ * - drop-conflicting-classes: Example 1 only (one class inside another).
+ *   Example 3's [1,5] and [6,10] have a gap rather than touching, so a
+ *   Diagram there would not show the touching rule.
  * - merge-reservation-slots: Examples 1 and 2 with the merged output as
  *   `after`; Example 2's [1,3] and [3,8] touch and still merge.
  * - peak-table-demand: Example 1, each visit on its own row, since the
@@ -40,8 +41,6 @@ public class V199__add_interval_diagrams extends BaseJavaMigration {
                     "intervals: [[5,11],[3,9],[8,14],[12,18],[20,25]]"),
             new Diagram("drop-conflicting-classes", 1,
                     "intervals: [[10,20],[12,18],[22,30]]"),
-            new Diagram("drop-conflicting-classes", 3,
-                    "intervals: [[1,5],[6,10]]"),
             new Diagram("merge-reservation-slots", 1,
                     "intervals: [[2,5],[4,7],[9,11],[14,16]]\nafter: [[2,7],[9,11],[14,16]]"),
             new Diagram("merge-reservation-slots", 2,

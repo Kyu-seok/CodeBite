@@ -423,7 +423,7 @@ class DiagramMigrationTest {
                 "Expected the Diagram(s) under Example 1; actual:\n" + desc);
     }
 
-    // ---- V199: interval Diagrams (#110) ----
+    // ---- V199: interval Diagrams ----
 
     /** Each row: slug | example | the block's body, its lines joined by a literal \n. */
     @ParameterizedTest
@@ -432,7 +432,6 @@ class DiagramMigrationTest {
             "can-attend-bookings|2|intervals: [[18,20],[20,22],[22,23]]",
             "cover-aquarium-zones|1|intervals: [[5,11],[3,9],[8,14],[12,18],[20,25]]",
             "drop-conflicting-classes|1|intervals: [[10,20],[12,18],[22,30]]",
-            "drop-conflicting-classes|3|intervals: [[1,5],[6,10]]",
             "merge-reservation-slots|1|intervals: [[2,5],[4,7],[9,11],[14,16]]\\nafter: [[2,7],[9,11],[14,16]]",
             "merge-reservation-slots|2|intervals: [[1,3],[3,8],[10,12]]\\nafter: [[1,8],[10,12]]",
             "peak-table-demand|1|intervals: [[60,180],[90,150],[120,240],[200,300]]",
@@ -453,7 +452,7 @@ class DiagramMigrationTest {
 
     @ParameterizedTest
     @CsvSource({
-            "can-attend-bookings, 2", "cover-aquarium-zones, 1", "drop-conflicting-classes, 2",
+            "can-attend-bookings, 2", "cover-aquarium-zones, 1", "drop-conflicting-classes, 1",
             "merge-reservation-slots, 2", "peak-table-demand, 1", "shortest-table-booking, 1",
             "slot-a-meeting, 1"
     })
