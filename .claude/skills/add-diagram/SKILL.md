@@ -27,7 +27,7 @@ A new problem from the `problem-generator` agent writes its Diagrams straight in
 
 ## 1. Write the directives
 
-1. Read the problem's newest English and Korean descriptions and its sample Test Cases, as in step 1 of `.claude/skills/restate-problem/SKILL.md`.
+1. Read the problem's newest English and Korean descriptions and its sample Test Cases: `scripts/problem-text.sh <slug>`.
 2. Copy each drawn example's input into its directive's data exactly as the example states it.
 
 Done when every value in each directive traces back to its example, and every highlighted cell, node or path is part of that example's answer.

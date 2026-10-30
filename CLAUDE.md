@@ -47,6 +47,9 @@ Root `settings.gradle` includes three modules: `common`, `backend`, `worker`. Th
 - `judge/grader/` — TestInput, CaseVerdict, Verdict, Grader (grades a Program; `grade` runs every case in one Judge0 batch; `gradeUntilFailure` runs them one at a time and stops at the first failing judged case; the only place Judge0 statuses become SubmissionStatuses, docs/adr/0005)
 - `config/` — JudgeClientConfig
 
+### Reading a problem
+`scripts/problem-text.sh <slug>` prints a problem as it stands (English and Korean text, sample Test Cases) from the local database. Migrations are the slow way: the newest one that sets a column wins, and the first grep match is usually stale.
+
 ### Restating a problem
 Rewording a problem while its Test Cases stay (Slug, title, description, Starter Code names) is a Restatement: follow `.claude/skills/restate-problem/SKILL.md`. `ProblemSlugsTest` (backend) runs every migration and fails when a Slug and its `drivers/`/`starters/` directories disagree; `MigrationSlugReferencesTest` fails when a migration's `slug = …` names a slug that doesn't exist when it runs.
 
