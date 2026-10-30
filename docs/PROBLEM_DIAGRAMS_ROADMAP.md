@@ -71,12 +71,27 @@ after: [[0,1], [1,2], [2,3]]   # optional — e.g. MST, transposed, pruned
 cells: [[1,2,3], [4,5,6], [7,8,9]]
 highlight: [[0,0], [1,1], [2,2]]   # optional [row, col] list
 after: [[7,4,1], [8,5,2], [9,6,3]]   # optional — e.g. rotated, set-zeros, transformed
+boxes: 3     # optional — thicker border every 3 rows and columns (Sudoku)
+blank: "."   # optional — cells with this value are drawn empty
 \`\`\`
 ```
 
 - `cells`: 2D array, any primitive type.
 - `highlight` (optional): list of `[row, col]` cells to mark.
 - `after` (optional): a second grid to render side-by-side. Useful for transformation problems (rotate matrix, set zeros, game of life). See "Before/after pairs" below.
+- `boxes` (optional): sub-box size. The cells touch like a board, with a thick line closing every `boxes` rows and columns. `after` gets the same boxes.
+- `blank` (optional): a cell value drawn as an empty square, in `cells` and `after`.
+
+### `diagram-linked-list`
+
+```
+\`\`\`diagram-linked-list
+nodes: [3, 2, 0, -4]
+cycle_to: 1   # optional — array index the tail points back to
+highlight: [1, 2]   # optional — array indices to emphasize
+after: [-4, 0, 2, 3]   # optional — e.g. reversed, reordered
+\`\`\`
+```
 
 Unrecognized keys are ignored (forward-compatible). Malformed input falls back to rendering the raw block as `<pre>` so the page never breaks on a bad diagram.
 

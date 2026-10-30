@@ -78,6 +78,7 @@ Rules:
 - Include 3 examples that demonstrate the typical case, an edge case, and a simple case
 - Keep descriptions concise and clear
 - Use backticks for variable names and code
+- Add a Diagram under an example when the input is a grid, tree, graph or a linked list with a cycle or intersection: the rule and the block format are in `.claude/skills/add-diagram/SKILL.md`. Put the block straight into the description, the same in the Korean translation
 
 ## Step 3: Write Test Cases
 

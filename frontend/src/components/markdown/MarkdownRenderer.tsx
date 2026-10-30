@@ -53,6 +53,8 @@ function renderDiagram(language: string, body: string): ReactElement | null {
           cells={spec.cells}
           highlight={spec.highlight}
           after={spec.after}
+          boxes={spec.boxes}
+          blank={spec.blank}
         />
       )
     }

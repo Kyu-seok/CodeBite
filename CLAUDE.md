@@ -50,6 +50,9 @@ Root `settings.gradle` includes three modules: `common`, `backend`, `worker`. Th
 ### Restating a problem
 Rewording a problem while its Test Cases stay (Slug, title, description, Starter Code names) is a Restatement: follow `.claude/skills/restate-problem/SKILL.md`. `ProblemSlugsTest` (backend) runs every migration and fails when a Slug and its `drivers/`/`starters/` directories disagree; `MigrationSlugReferencesTest` fails when a migration's `slug = …` names a slug that doesn't exist when it runs.
 
+### Diagrams
+A grid, tree, graph or linked-list example gets a Diagram, a ` ```diagram-* ` block in the description that the frontend draws (`frontend/src/components/markdown/diagrams/`): follow `.claude/skills/add-diagram/SKILL.md`.
+
 ### Resources (`common/src/main/resources/`)
 - `db/migration/` — Flyway SQL migrations
 - `drivers/` — Drivers, `drivers/<slug>/<language>.<ext>`; Libraries under `drivers/lib/<language>/`

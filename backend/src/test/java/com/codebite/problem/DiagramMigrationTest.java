@@ -345,4 +345,30 @@ class DiagramMigrationTest {
         assertTrue(t.getDescription().contains("```diagram-linked-list"),
                 "Korean description should also carry the linked-list diagram");
     }
+
+    // ---- V197 Valid Sudoku: a boxed board under each example ----
+
+    @Test
+    void v197_validSudoku_hasBoxedBoardUnderEachExample_inBothLanguages() {
+        Problem p = problemRepository.findBySlug("valid-sudoku").orElseThrow();
+        ProblemTranslation t = translationRepository
+                .findByProblemIdAndLocale(p.getId(), "ko")
+                .orElseThrow();
+        assertSudokuDiagrams(p.getDescription(), "**Example 1:**", "**Example 2:**");
+        assertSudokuDiagrams(t.getDescription(), "**예시 1:**", "**예시 2:**");
+    }
+
+    private static void assertSudokuDiagrams(String desc, String example1, String example2) {
+        String[] parts = desc.split("```diagram-grid", -1);
+        assertEquals(3, parts.length, "Expected two diagram-grid blocks; actual:\n" + desc);
+        int first = desc.indexOf("```diagram-grid");
+        int second = desc.indexOf("```diagram-grid", first + 1);
+        assertTrue(desc.indexOf(example1) < first && first < desc.indexOf(example2)
+                        && desc.indexOf(example2) < second,
+                "Expected one diagram under each example; actual:\n" + desc);
+        assertTrue(parts[1].contains("boxes: 3") && parts[1].contains("blank: \".\""),
+                "Example 1's board should be boxed with blank dots");
+        assertTrue(parts[2].contains("[[\"8\",\"3\"") && parts[2].contains("highlight: [[0,0],[3,0]]"),
+                "Example 2's board should highlight the two clashing 8s");
+    }
 }
