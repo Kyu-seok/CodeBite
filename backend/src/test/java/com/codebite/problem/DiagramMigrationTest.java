@@ -8,6 +8,7 @@ import db.migration.V182__diagram_dedupe;
 import db.migration.V183__add_tree_diagrams_batch1;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -420,5 +421,58 @@ class DiagramMigrationTest {
         int ex2 = desc.indexOf(example2);
         assertTrue(desc.indexOf(example1) < first && (ex2 < 0 || last < ex2),
                 "Expected the Diagram(s) under Example 1; actual:\n" + desc);
+    }
+
+    // ---- V199: interval Diagrams (#110) ----
+
+    /** Each row: slug | example | the block's body, its lines joined by a literal \n. */
+    @ParameterizedTest
+    @CsvSource(delimiter = '|', value = {
+            "can-attend-bookings|1|intervals: [[18,20],[19,21],[22,23]]\\nhighlight: [0,1]",
+            "can-attend-bookings|2|intervals: [[18,20],[20,22],[22,23]]",
+            "cover-aquarium-zones|1|intervals: [[5,11],[3,9],[8,14],[12,18],[20,25]]",
+            "drop-conflicting-classes|1|intervals: [[10,20],[12,18],[22,30]]",
+            "drop-conflicting-classes|3|intervals: [[1,5],[6,10]]",
+            "merge-reservation-slots|1|intervals: [[2,5],[4,7],[9,11],[14,16]]\\nafter: [[2,7],[9,11],[14,16]]",
+            "merge-reservation-slots|2|intervals: [[1,3],[3,8],[10,12]]\\nafter: [[1,8],[10,12]]",
+            "peak-table-demand|1|intervals: [[60,180],[90,150],[120,240],[200,300]]",
+            "shortest-table-booking|1|intervals: [[2,5],[4,7],[1,9],[6,10]]\\npoints: [3,6,9,11]",
+            "slot-a-meeting|1|intervals: [[1,4],[7,10]]\\nadded: [3,6]\\nafter: [[1,6],[7,10]]"
+    })
+    void v199_intervalDiagram_sitsUnderItsExample_inBothLanguages(String slug, int example, String body) {
+        Problem p = problemRepository.findBySlug(slug).orElseThrow();
+        ProblemTranslation t = translationRepository
+                .findByProblemIdAndLocale(p.getId(), "ko")
+                .orElseThrow();
+        String block = "```diagram-intervals\n" + body.replace("\\n", "\n") + "\n```";
+        assertBlockUnderExample(p.getDescription(), "**Example " + example + ":**",
+                "**Example " + (example + 1) + ":**", block);
+        assertBlockUnderExample(t.getDescription(), "**예시 " + example + ":**",
+                "**예시 " + (example + 1) + ":**", block);
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "can-attend-bookings, 2", "cover-aquarium-zones, 1", "drop-conflicting-classes, 2",
+            "merge-reservation-slots, 2", "peak-table-demand, 1", "shortest-table-booking, 1",
+            "slot-a-meeting, 1"
+    })
+    void v199_intervalProblem_hasOnlyItsDrawnDiagrams_inBothLanguages(String slug, int blocks) {
+        Problem p = problemRepository.findBySlug(slug).orElseThrow();
+        ProblemTranslation t = translationRepository
+                .findByProblemIdAndLocale(p.getId(), "ko")
+                .orElseThrow();
+        for (String desc : new String[]{p.getDescription(), t.getDescription()}) {
+            assertEquals(blocks, desc.split("```diagram-intervals", -1).length - 1,
+                    "Expected " + blocks + " diagram-intervals block(s) in " + slug + "; actual:\n" + desc);
+        }
+    }
+
+    private static void assertBlockUnderExample(String desc, String example, String nextExample, String block) {
+        int marker = desc.indexOf(example);
+        int at = desc.indexOf(block);
+        int next = desc.indexOf(nextExample);
+        assertTrue(marker >= 0 && at > marker && (next < 0 || at < next),
+                "Expected\n" + block + "\nunder " + example + "; actual:\n" + desc);
     }
 }
