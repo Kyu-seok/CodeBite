@@ -80,7 +80,7 @@ A grid, tree, graph, linked-list or list-of-intervals example gets a Diagram, a 
 source scripts/dev-env.sh && SPRING_PROFILES_ACTIVE=dev ./gradlew :backend:bootRun  # run locally
 ```
 `scripts/dev-env.sh` loads only the OAuth and GitHub App values from `infra/.env` (from a worktree, the main checkout's). That file is the production server's config: sourcing it whole overrides the dev CORS origins, JWT secret, database and Judge0 URL.
-When the local app answers 403, behaves like old code, doesn't show a change, or a button "does nothing", run `scripts/dev-status.sh` from the checkout or worktree whose code you expect. It flags a backend, worker or frontend running another checkout's code, a process older than its source (bootRun doesn't reload) or carrying production values, and a database missing this checkout's migrations.
+When the local app answers 403, behaves like old code, doesn't show a change, or a button "does nothing", run `scripts/dev-status.sh` from the checkout or worktree whose code you expect. It flags a backend, worker or frontend running another checkout's code, a process older than its source (bootRun doesn't reload) or carrying production values, a database missing this checkout's migrations, and a migration number another branch already ran under another name.
 To sign in locally without OAuth (dev profile only), `POST /api/auth/test-token?username=<name>&role=ADMIN` returns a JWT; `role` (USER or ADMIN) also switches an existing user, and leaving it out keeps the role (new users are USER). Use an ADMIN token to check admin pages against real data.
 
 ### Infrastructure
