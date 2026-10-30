@@ -113,7 +113,7 @@ highlight: [0,1]            # optional — indices into intervals
 - `points` (optional): values marked by a dashed vertical line across every bar, labeled above (shortest-table-booking's probes).
 - `highlight` (optional): indices into `intervals`; only what the example's answer points at.
 
-The shared axis runs from the smallest to the largest value in the block (`intervals`, `after`, `added` and `points`), with at most ten labeled ticks at a round step (1, 2 or 5 times a power of ten). A thin vertical guide line marks every endpoint two intervals share, so touching (`[1,3]` and `[3,8]`) reads differently from overlapping (`[18,20]` and `[19,21]`): the problems disagree on whether touching counts as overlap.
+The shared axis runs from the smallest to the largest value in the block (`intervals`, `after`, `added` and `points`), labeled at a round step (1, 2 or 5 times a power of ten): the smallest one giving 5–10 ticks, or, when none does, the one whose tick count comes nearest that range. A thin vertical guide line marks every endpoint two intervals share, so touching (`[1,3]` and `[3,8]`) reads differently from overlapping (`[18,20]` and `[19,21]`): the problems disagree on whether touching counts as overlap.
 
 Unrecognized keys are ignored (forward-compatible). Malformed input falls back to rendering the raw block as `<pre>` so the page never breaks on a bad diagram.
 

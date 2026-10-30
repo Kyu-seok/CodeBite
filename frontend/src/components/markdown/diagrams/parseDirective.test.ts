@@ -85,6 +85,11 @@ describe("axisTicks", () => {
     expect(axisTicks(0, 12)).toEqual([0, 2, 4, 6, 8, 10, 12]);
   });
 
+  it("takes the step closest to 5–10 ticks when none lands in it", () => {
+    // Step 2 gives 11 ticks, step 5 only 4: eleven is the nearer miss.
+    expect(axisTicks(1, 23)).toEqual([2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22]);
+  });
+
   it("gives one tick when every value is the same", () => {
     expect(axisTicks(5, 5)).toEqual([5]);
   });

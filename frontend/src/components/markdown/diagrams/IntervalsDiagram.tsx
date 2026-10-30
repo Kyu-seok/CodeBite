@@ -13,21 +13,31 @@ interface IntervalsDiagramProps {
   points?: number[];
 }
 
+const MIN_TICKS = 5;
 const MAX_TICKS = 10;
 
 /**
- * Labeled axis ticks between `min` and `max`: every multiple of the smallest
- * round step (1, 2 or 5 times a power of ten) that keeps at most ten of them.
+ * Labeled axis ticks between `min` and `max`: every multiple of a round step
+ * (1, 2 or 5 times a power of ten). The smallest step giving 5–10 ticks wins;
+ * when none does, the step whose count is nearest that range (by ratio).
  */
 export function axisTicks(min: number, max: number): number[] {
+  const ticksAt = (step: number) => {
+    const first = Math.ceil(min / step) * step;
+    const count = Math.floor((max - first) / step) + 1;
+    return Array.from({ length: count }, (_, i) => first + i * step);
+  };
+  const miss = (count: number) =>
+    count < MIN_TICKS ? MIN_TICKS / count : count > MAX_TICKS ? count / MAX_TICKS : 1;
+
+  let best = ticksAt(1);
+  // A larger step never adds ticks, so stop once the count falls below the range.
   for (let power = 1; ; power *= 10) {
     for (const m of [1, 2, 5]) {
-      const step = m * power;
-      const first = Math.ceil(min / step) * step;
-      const count = Math.floor((max - first) / step) + 1;
-      if (count <= MAX_TICKS) {
-        return Array.from({ length: count }, (_, i) => first + i * step);
-      }
+      const ticks = ticksAt(m * power);
+      if (miss(ticks.length) === 1) return ticks;
+      if (miss(ticks.length) < miss(best.length)) best = ticks;
+      if (ticks.length < MIN_TICKS) return best;
     }
   }
 }
