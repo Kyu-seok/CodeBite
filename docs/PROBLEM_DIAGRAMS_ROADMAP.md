@@ -79,7 +79,9 @@ blank: "."   # optional — cells with this value are drawn empty
 - `cells`: 2D array, any primitive type.
 - `highlight` (optional): list of `[row, col]` cells to mark.
 - `after` (optional): a second grid to render side-by-side. Useful for transformation problems (rotate matrix, set zeros, game of life). See "Before/after pairs" below.
-- `boxes` (optional): sub-box size. The cells touch like a board, with a thick line closing every `boxes` rows and columns. `after` gets the same boxes.
+- `boxes` (optional): sub-box size, a thick line closing every `boxes` rows and columns. `after` gets the same boxes.
+
+Every grid draws as a board: the cells touch, with thin lines between them and a thick border around the whole grid.
 - `blank` (optional): a cell value drawn as an empty square, in `cells` and `after`.
 
 ### `diagram-linked-list`
@@ -128,7 +130,7 @@ All under `frontend/src/components/markdown/diagrams/` (co-located with the mark
 |---|---|
 | `TreeDiagram.tsx` | Pure SVG. Naive level-order layout: depth = `floor(log2(i+1))`, x = even spacing. Circles + value labels + parent→child lines. CSS-var-driven colors (auto dark-mode). When `after` is provided, renders pair layout (see "Before/after pairs"). |
 | `GraphDiagram.tsx` | Pure SVG. Circular layout (nodes on a circle, edges as chords) — adequate for ≤12 nodes. Optional arrowheads when `directed: true`. Pair layout when `after` is provided. |
-| `GridDiagram.tsx` | Plain CSS grid (no SVG needed). Cells as styled divs. Highlight is a colored ring. Pair layout when `after` is provided. |
+| `GridDiagram.tsx` | Plain CSS grid (no SVG needed). Cells touch like a board, thin lines between them. Highlight is a colored inset ring. Pair layout when `after` is provided. |
 | `BeforeAfterPair.tsx` (shared) | Wraps two diagrams in a flex row with a hollow right-pointing SVG arrow between them. Falls back to stacked layout on narrow viewports. Used by all three diagram components when their `after` field is set. |
 | `parseDirective.ts` | One small parser shared across the three. Each `key: value` line is parsed independently; the value side accepts JSON literals (arrays, numbers, booleans). |
 

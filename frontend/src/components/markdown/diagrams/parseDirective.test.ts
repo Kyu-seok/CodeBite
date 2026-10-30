@@ -32,6 +32,10 @@ describe("boxEdges", () => {
     expect(boxEdges(4, 4, 9, 9, 3)).toEqual({ right: false, bottom: false });
   });
 
+  it("reports no box edges without boxes, so a plain grid has only thin lines", () => {
+    expect(boxEdges(0, 2, 9, 9)).toEqual({ right: false, bottom: false });
+  });
+
   // The container draws the board's outer border, so the cells must not double it.
   it("never reports the board's outer edge", () => {
     expect(boxEdges(8, 8, 9, 9, 3)).toEqual({ right: false, bottom: false });

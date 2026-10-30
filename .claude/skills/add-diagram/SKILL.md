@@ -17,6 +17,7 @@ A Diagram sits under its example's code block. The one-line `Input:` stays: it i
 | binary tree | always: `diagram-tree` |
 | graph (edge list, adjacency) | always: `diagram-graph` |
 | linked list | only with a cycle, an intersection or a pointer rearrangement: `diagram-linked-list` |
+| a size (`n = 4`) whose output is boards or grids | the output: one `diagram-grid` per board, as in N-Queens |
 | 1D array, string, number | never: the input line already is the picture |
 
 Draw the examples where the picture explains something the line can't. Example 1 is usually enough; draw a later example too when its point is visual (Valid Sudoku's Example 2 is the clash of two 8s). Use `after` when the problem transforms its input into something of the same shape; use `highlight` only for a cell, node or path the example's answer points at unambiguously.
@@ -32,7 +33,7 @@ Done when every value in each directive traces back to its example, and every hi
 
 ## 2. Write the migration
 
-Copy `common/src/main/java/db/migration/V197__add_valid_sudoku_diagrams.java` to `V<next>__add_<slug_with_underscores>_diagrams.java` (`<next>`: one above the highest version on `origin/master`, counting both `common/src/main/resources/db/migration/` and `common/src/main/java/db/migration/`). Replace its `DIAGRAMS` list with one `Diagram(slug, example, body)` per drawn example, and its comment with why each is drawn. Several problems may share one migration.
+Copy `common/src/main/java/db/migration/V198__add_grid_diagrams_batch2.java` to `V<next>__add_<slug_with_underscores>_diagrams.java` (`<next>`: one above the highest version on `origin/master`, counting both `common/src/main/resources/db/migration/` and `common/src/main/java/db/migration/`). Replace its `DIAGRAMS` list with one `Diagram(slug, example, body…)` per drawn example (several bodies draw several grids under one example, in order), and its comment with why each is drawn. Several problems may share one migration.
 
 The migration inserts each block under `**Example N:**` and `**예시 N:**` through `V183.injectDiagram`, and fails when either marker is missing, so a reworded description can't silently go without its Diagram.
 

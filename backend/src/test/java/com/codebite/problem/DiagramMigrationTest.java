@@ -371,4 +371,54 @@ class DiagramMigrationTest {
         assertTrue(parts[2].contains("[[\"8\",\"3\"") && parts[2].contains("highlight: [[0,0],[3,0]]"),
                 "Example 2's board should highlight the two clashing 8s");
     }
+
+    // ---- V198 Stage 5: the remaining grid problems, and N-Queens' output boards ----
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "find-menu-calorie", "find-menu-price", "biggest-clear-floor",
+            "longest-level-up-path", "min-wait-drive"
+    })
+    void v198_gridProblem_hasOneDiagramUnderExample1_inBothLanguages(String slug) {
+        Problem p = problemRepository.findBySlug(slug).orElseThrow();
+        ProblemTranslation t = translationRepository
+                .findByProblemIdAndLocale(p.getId(), "ko")
+                .orElseThrow();
+        assertGridsUnderExample1(p.getDescription(), "**Example 1:**", "**Example 2:**", 1);
+        assertGridsUnderExample1(t.getDescription(), "**예시 1:**", "**예시 2:**", 1);
+    }
+
+    @Test
+    void v198_nQueens_drawsBothOutputBoards_inBothLanguages() {
+        Problem p = problemRepository.findBySlug("n-queens").orElseThrow();
+        ProblemTranslation t = translationRepository
+                .findByProblemIdAndLocale(p.getId(), "ko")
+                .orElseThrow();
+        for (String desc : new String[]{p.getDescription(), t.getDescription()}) {
+            int first = desc.indexOf("cells: [[\".\",\"Q\"");
+            int second = desc.indexOf("cells: [[\".\",\".\",\"Q\"");
+            assertTrue(first > 0 && first < second,
+                    "Expected the .Q.. board before the ..Q. board; actual:\n" + desc);
+        }
+        assertGridsUnderExample1(p.getDescription(), "**Example 1:**", "**Example 2:**", 2);
+        assertGridsUnderExample1(t.getDescription(), "**예시 1:**", "**예시 2:**", 2);
+    }
+
+    @Test
+    void v198_minWaitDrive_highlightsNoRoute() {
+        // Two routes tie at 9, so neither is the answer.
+        Problem p = problemRepository.findBySlug("min-wait-drive").orElseThrow();
+        assertTrue(!p.getDescription().contains("highlight:"),
+                "min-wait-drive should not highlight a route");
+    }
+
+    private static void assertGridsUnderExample1(String desc, String example1, String example2, int grids) {
+        assertEquals(grids, desc.split("```diagram-grid", -1).length - 1,
+                "Expected " + grids + " diagram-grid block(s); actual:\n" + desc);
+        int first = desc.indexOf("```diagram-grid");
+        int last = desc.lastIndexOf("```diagram-grid");
+        int ex2 = desc.indexOf(example2);
+        assertTrue(desc.indexOf(example1) < first && (ex2 < 0 || last < ex2),
+                "Expected the Diagram(s) under Example 1; actual:\n" + desc);
+    }
 }
