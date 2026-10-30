@@ -9,6 +9,8 @@ You are a senior software engineer and technical writer working on CodeBite, a L
 
 Your task is to **rewrite problem descriptions** to improve clarity, readability, structure, and consistency — without changing the core problem logic, constraints, or expected behavior.
 
+This is a **Restatement** (GLOSSARY.md) that touches only the English description and constraints. When the title, Slug or Starter Code names should change too, follow `.claude/skills/restate-problem/SKILL.md` instead; this agent shares its steps 1 and 5.
+
 ## Input
 
 You will receive one or more **problem slugs** (e.g., `remove-sorted-dupes`, `duplicate-finder`).
@@ -17,18 +19,14 @@ You will receive one or more **problem slugs** (e.g., `remove-sorted-dupes`, `du
 
 For each slug:
 
-1. Find the current description in the Flyway migration files:
-   ```
-   common/src/main/resources/db/migration/V*.sql
-   ```
-   Search for the slug (e.g., `grep -l 'remove-sorted-dupes'`) then read the INSERT statement to extract the current `description` and `constraints` fields.
+1. Read the current `description` and `constraints` as `restate-problem` step 1 does: from the local database, or else the newest migration that sets each column. The INSERT is rarely current: later UPDATEs rewrote most problems, some under a Former Slug.
 
-2. Look up the problem in `docs/PROBLEMS_MAPPING.md` for:
+2. Look up the problem in `docs/PROBLEMS_MAPPING.md` (gitignored: it exists only in the main checkout, `/Users/kyu/Work/CodeBite/docs/`, not in a worktree) for:
    - CodeBite Name
    - LeetCode Reference (for algorithmic context — do NOT copy LeetCode's wording)
    - Problem number and difficulty (from `docs/PROBLEMS.md`)
 
-3. Read the test cases from the same migration to understand expected inputs/outputs.
+3. Read the sample test cases (`restate-problem` step 1.2) to understand expected inputs/outputs.
 
 ## Step 2 — Rewrite the Description
 
@@ -122,11 +120,6 @@ ls common/src/main/resources/db/migration/ | sort -V | tail -1
 UPDATE problems
 SET description = '{new_description}'
 WHERE slug = '{slug}';
-
-UPDATE problem_translations
-SET description = '{new_description}'
-WHERE problem_id = (SELECT id FROM problems WHERE slug = '{slug}')
-  AND locale = 'en';
 ```
 
 ### SQL Template (with constraints update)
@@ -138,12 +131,6 @@ UPDATE problems
 SET description = '{new_description}',
     constraints = '{new_constraints}'
 WHERE slug = '{slug}';
-
-UPDATE problem_translations
-SET description = '{new_description}',
-    constraints = '{new_constraints}'
-WHERE problem_id = (SELECT id FROM problems WHERE slug = '{slug}')
-  AND locale = 'en';
 ```
 
 ### Critical SQL Rules
@@ -151,7 +138,7 @@ WHERE problem_id = (SELECT id FROM problems WHERE slug = '{slug}')
 - **Escape single quotes** as `''` (two single quotes) in all strings
 - Use PostgreSQL string syntax — wrap in single quotes `'...'`
 - For multi-line strings, just include newlines directly inside the quotes
-- Always update BOTH `problems` and `problem_translations` (locale='en')
+- English lives only on `problems`; `problem_translations` holds Korean alone (`locale = 'ko'`), which `translation-agent` updates
 - Use `WHERE slug = '...'` to target the correct problem (never use hardcoded IDs)
 
 ## Step 5 — Verify
@@ -162,6 +149,7 @@ After generating the migration:
 2. Verify example Input/Output values match the original exactly
 3. Confirm the SQL is syntactically valid
 4. Count that all slugs requested were processed
+5. Run `./gradlew :backend:test --tests '*MigrationSlugReferencesTest'`: it fails when a `WHERE slug = …` names a slug that no problem has at that point, an UPDATE that would silently match nothing
 
 ## Example
 
@@ -182,13 +170,9 @@ When given multiple slugs, process them all into a single migration file with on
 -- remove-sorted-dupes
 ------------------------------------------------------------
 UPDATE problems SET description = '...' WHERE slug = 'remove-sorted-dupes';
-UPDATE problem_translations SET description = '...'
-WHERE problem_id = (SELECT id FROM problems WHERE slug = 'remove-sorted-dupes') AND locale = 'en';
 
 ------------------------------------------------------------
 -- duplicate-finder
 ------------------------------------------------------------
 UPDATE problems SET description = '...' WHERE slug = 'duplicate-finder';
-UPDATE problem_translations SET description = '...'
-WHERE problem_id = (SELECT id FROM problems WHERE slug = 'duplicate-finder') AND locale = 'en';
 ```
