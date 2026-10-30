@@ -1,11 +1,11 @@
 ---
 name: add-diagram
-description: Add a Diagram (a drawn grid, tree, graph or linked list) under a CodeBite problem's examples, in English and Korean. Use when a problem's example input is hard to read as one line, or a problem should get a diagram.
+description: Add a Diagram (a drawn grid, tree, graph, linked list or set of intervals) under a CodeBite problem's examples, in English and Korean. Use when a problem's example input is hard to read as one line, or a problem should get a diagram.
 ---
 
 # Add a Diagram
 
-A **Diagram** (GLOSSARY.md) is a fenced block in a problem's description whose info string is `diagram-grid`, `diagram-tree`, `diagram-graph` or `diagram-linked-list`. `MarkdownRenderer` draws it; a block it can't parse shows as raw text instead. The body is language-neutral data, so the English description and the Korean translation carry the same block byte for byte. The keys of each kind are in `docs/PROBLEM_DIAGRAMS_ROADMAP.md` under "Directive format".
+A **Diagram** (GLOSSARY.md) is a fenced block in a problem's description whose info string is `diagram-grid`, `diagram-tree`, `diagram-graph`, `diagram-linked-list` or `diagram-intervals`. `MarkdownRenderer` draws it; a block it can't parse shows as raw text instead. The body is language-neutral data, so the English description and the Korean translation carry the same block byte for byte. The keys of each kind are in `docs/PROBLEM_DIAGRAMS_ROADMAP.md` under "Directive format".
 
 A Diagram sits under its example's code block. The one-line `Input:` stays: it is the exact input the user's code receives.
 
@@ -16,6 +16,7 @@ A Diagram sits under its example's code block. The one-line `Input:` stays: it i
 | 2D grid or matrix | always: `diagram-grid` (a Sudoku-like board adds `boxes` and `blank`) |
 | binary tree | always: `diagram-tree` |
 | graph (edge list, adjacency) | always: `diagram-graph` |
+| list of intervals (`[start, end]` pairs) | always: `diagram-intervals` (+ `after` when the output is a list of intervals) |
 | linked list | only with a cycle, an intersection or a pointer rearrangement: `diagram-linked-list` |
 | a size (`n = 4`) whose output is boards or grids | the output: one `diagram-grid` per board, as in N-Queens |
 | 1D array, string, number | never: the input line already is the picture |

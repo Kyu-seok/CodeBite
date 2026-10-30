@@ -95,6 +95,26 @@ after: [-4, 0, 2, 3]   # optional — e.g. reversed, reordered
 \`\`\`
 ```
 
+### `diagram-intervals`
+
+```
+\`\`\`diagram-intervals
+intervals: [[1,4],[7,10]]   # one bar each
+after: [[1,6],[7,10]]       # optional — the result list (merge, insert)
+added: [3,6]                # optional — an interval the input adds, accent style
+points: [3,6,9,11]          # optional — vertical markers across all bars
+highlight: [0,1]            # optional — indices into intervals
+\`\`\`
+```
+
+- `intervals`: non-empty list of `[start, end]` pairs with `start <= end`. One row per interval, in input order, labeled `[start, end]`. Nothing is packed into shared rows: for some problems (peak-table-demand) the number of packed rows is the answer.
+- `after` (optional): the result list, laid out the same way as a before/after pair. Both sides use one axis range.
+- `added` (optional): one interval the input adds (slot-a-meeting's new slot), drawn as a last dashed accent row labeled `+ [start, end]`.
+- `points` (optional): values marked by a dashed vertical line across every bar, labeled above (shortest-table-booking's probes).
+- `highlight` (optional): indices into `intervals`; only what the example's answer points at.
+
+The shared axis runs from the smallest to the largest value in the block (`intervals`, `after`, `added` and `points`), with at most ten labeled ticks at a round step (1, 2 or 5 times a power of ten). A thin vertical guide line marks every endpoint two intervals share, so touching (`[1,3]` and `[3,8]`) reads differently from overlapping (`[18,20]` and `[19,21]`): the problems disagree on whether touching counts as overlap.
+
 Unrecognized keys are ignored (forward-compatible). Malformed input falls back to rendering the raw block as `<pre>` so the page never breaks on a bad diagram.
 
 ### Before/after pairs
