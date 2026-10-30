@@ -39,6 +39,10 @@ export interface GridDirective {
   highlight: CellCoord[];
   /** Optional second grid (e.g. rotated, transformed) for before→after pair. */
   after?: Cell[][];
+  /** Optional sub-box size: a thicker border every `boxes` rows and columns (Sudoku: 3). */
+  boxes?: number;
+  /** Optional cell value drawn as an empty square (Sudoku: "."). */
+  blank?: Cell;
 }
 
 export type ListNode = number | string;
@@ -223,10 +227,22 @@ export function parseGridDirective(body: string): GridDirective {
     after = afterRaw;
   }
 
+  const boxes = map.get("boxes");
+  if (boxes !== undefined && !(Number.isInteger(boxes) && (boxes as number) > 0)) {
+    throw new Error("'boxes' must be a positive whole number (e.g. boxes: 3)");
+  }
+
+  const blank = map.get("blank");
+  if (blank !== undefined && typeof blank !== "number" && typeof blank !== "string") {
+    throw new Error("'blank' must be a single cell value (e.g. blank: \".\")");
+  }
+
   return {
     cells,
     highlight: highlightRaw as CellCoord[],
     after,
+    boxes: boxes as number | undefined,
+    blank: blank as Cell | undefined,
   };
 }
 
