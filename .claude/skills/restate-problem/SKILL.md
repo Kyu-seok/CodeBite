@@ -38,11 +38,11 @@ Done when you can state, from the Test Cases alone, what the problem computes, a
 
 ## 2. Write the new statement
 
-1. Draft the English title, description and constraints, then the Korean ones, following the house style of recent Restatements (`V192__rename_product_of_all_other_elements.sql` is the model: a direct statement, **Example N:** blocks, constraints as a bullet list).
+1. Draft the English title, description and constraints, then the Korean ones, following the house style of recent Restatements (`V192__rename_product_of_all_other_elements.sql` is the model: a direct statement, **Example N:** blocks, constraints as a bullet list). Carry every Diagram (a ` ```diagram-* ` block, `.claude/skills/add-diagram/SKILL.md`) over byte for byte, under the same example in both languages: its data is the Test Cases', which stay.
 2. Pick the Slug: kebab-case of the new title. It must be neither a current Slug nor a Former Slug (`ProblemRepository.isSlugTaken`; check both tables, or `ls common/src/main/resources/drivers/` plus `problem_former_slugs`).
 3. Pick the method and parameter names, if they change. Every name in the description's examples must match a name in the Starter Code.
 
-Done when each example's Input and Output are exactly a sample case's input and expected output (order_index 1 and 2), restated in the new names, and the constraints describe the inputs the Test Cases actually contain.
+Done when each example's Input and Output are exactly a sample case's input and expected output (order_index 1 and 2), restated in the new names, the constraints describe the inputs the Test Cases actually contain, and each language has every Diagram the old description had.
 
 ## 3. Write the migration
 

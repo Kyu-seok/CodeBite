@@ -17,6 +17,10 @@ _Avoid_: Old slug, redirect
 Rewording a problem without changing what is asked: its Test Cases, and so the algorithm that solves it, stay the same, while its Slug, title, description, constraints and the names in its Starter Code may change. A change to the Test Cases makes it a different problem, not a Restatement.
 _Avoid_: Rename, rewrite, retheme
 
+**Diagram**:
+A picture of an example's input (and, when the problem transforms it, the output), drawn from a short text block in the problem's description and the same in every language. A Restatement keeps it.
+_Avoid_: Visual aid, image, illustration
+
 ### Grading
 
 **Verdict**:
