@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { lineToFill, TUTORIAL_STEPS, tutorialSpotlight, type TutorialStepName } from ".";
+import { linesToFill, TUTORIAL_STEPS, tutorialSpotlight, type TutorialStepName } from ".";
 
 const idle = { judging: false, signedIn: true };
 
@@ -71,7 +71,7 @@ describe("tutorialSpotlight", () => {
   });
 });
 
-describe("lineToFill", () => {
+describe("linesToFill", () => {
   it("marks the placeholder comment and the stand-in line after it", () => {
     const java = [
       "class Solution {",
@@ -81,7 +81,7 @@ describe("lineToFill", () => {
       "    }",
       "}",
     ].join("\n");
-    expect(lineToFill(java)).toEqual({ start: 3, end: 4 });
+    expect(linesToFill(java)).toEqual({ start: 3, end: 4 });
 
     const python = [
       "class Solution:",
@@ -89,17 +89,17 @@ describe("lineToFill", () => {
       "        # Write your solution here",
       "        pass",
     ].join("\n");
-    expect(lineToFill(python)).toEqual({ start: 3, end: 4 });
+    expect(linesToFill(python)).toEqual({ start: 3, end: 4 });
   });
 
   it("marks the comment alone when the body closes right after it", () => {
     const js = ["class Solution {", "    totalCoins(firstBank, secondBank) {", "        // Write your solution here", "    }", "}"].join(
       "\n",
     );
-    expect(lineToFill(js)).toEqual({ start: 3, end: 3 });
+    expect(linesToFill(js)).toEqual({ start: 3, end: 3 });
   });
 
   it("marks nothing once the placeholder is gone, so the whole editor is spotlit instead", () => {
-    expect(lineToFill("class Solution:\n    def totalCoins(self, a, b):\n        return a + b")).toBeNull();
+    expect(linesToFill("class Solution:\n    def totalCoins(self, a, b):\n        return a + b")).toBeNull();
   });
 });

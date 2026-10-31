@@ -9,6 +9,7 @@ import { TUTORIAL_STEPS, type Spotlight, type TourTarget } from '@/onboarding';
 
 /** Room left around a spotlit element, in px. */
 const PAD = 6;
+/** The cut-outs' and the anchor ring's corners, in px. */
 const RADIUS = 10;
 
 /** The element a target names: marked `data-tour` in the workspace, the first one on screen. */
@@ -66,17 +67,21 @@ function useBoxes(targets: readonly TourTarget[]): { lit: Box[]; anchor: HTMLEle
 /**
  * A dialog or popup someone else opened (the Accepted modal, a confirmation, the language list).
  * They sit below the spotlight, which sits above the sticky header so the header is dimmed too; while
- * one is open the spotlight steps aside and comes back when it closes.
+ * one is open the spotlight steps aside and comes back when it closes. Dialogs stay mounted while
+ * closing, so they count only while open.
  */
-const OPEN_LAYER =
-  '[role="dialog"][data-state="open"], [role="alertdialog"][data-state="open"], [role="listbox"], [role="menu"]';
+const LAYER_ROLES = ['dialog', 'alertdialog', 'listbox', 'menu'] as const;
+const LAYER = LAYER_ROLES.map((role) => `[role="${role}"]`).join(', ');
+const OPEN_LAYER = LAYER_ROLES.map((role) =>
+  role.endsWith('dialog') ? `[role="${role}"][data-state="open"]` : `[role="${role}"]`,
+).join(', ');
 
 const FOCUSABLE =
   'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
 /** Another dialog or popup on top (the Accepted modal, a confirmation, a language list): not ours to steer. */
 function inForeignLayer(el: Element | null, own: Element | null): boolean {
-  const layer = el?.closest('[role="dialog"], [role="alertdialog"], [role="listbox"], [role="menu"]');
+  const layer = el?.closest(LAYER);
   return layer != null && layer !== own;
 }
 
@@ -220,9 +225,9 @@ export function TutorialSpotlight({
       tabIndex={-1}
       style={desktop ? floatingStyles : undefined}
       className={cn(
-        'z-[55] border border-border bg-card text-sm text-card-foreground shadow-xl outline-none focus-visible:ring-2 focus-visible:ring-ring',
+        'z-[55] border border-border bg-card text-sm text-card-foreground shadow-lg outline-none focus-visible:ring-2 focus-visible:ring-ring',
         desktop
-          ? 'w-80 rounded-xl p-4'
+          ? 'w-80 rounded-lg p-4'
           : dockTop
             ? 'fixed inset-x-0 top-0 rounded-b-2xl px-4 pb-4 pt-[max(1rem,env(safe-area-inset-top))]'
             : 'fixed inset-x-0 bottom-0 rounded-t-2xl px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-4',
@@ -267,12 +272,12 @@ export function TutorialSpotlight({
             ))}
           </mask>
         </defs>
-        <rect width={vw} height={vh} mask={`url(#${maskId})`} className="fill-black/55 dark:fill-black/70" />
+        <rect width={vw} height={vh} mask={`url(#${maskId})`} className="fill-black/50" />
       </svg>
       <div
         aria-hidden
-        className="pointer-events-none fixed z-[55] rounded-[10px] ring-2 ring-accent-500 motion-safe:transition-all motion-safe:duration-300 dark:ring-accent-400"
-        style={{ left: anchorBox.x, top: anchorBox.y, width: anchorBox.w, height: anchorBox.h }}
+        className="pointer-events-none fixed z-[55] ring-2 ring-accent-500 motion-safe:transition-all motion-safe:duration-300 dark:ring-accent-400"
+        style={{ left: anchorBox.x, top: anchorBox.y, width: anchorBox.w, height: anchorBox.h, borderRadius: RADIUS }}
       />
       {coachMark}
       <p className="sr-only" aria-live="polite">

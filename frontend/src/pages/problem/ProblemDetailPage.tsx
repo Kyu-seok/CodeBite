@@ -30,7 +30,7 @@ import type { JudgeAttempt } from "@/judge/attempt"
 import type { WorkspaceOutletContext } from "@/components/layout/Layout"
 import {
   browserStorage,
-  lineToFill,
+  linesToFill,
   markTipSeen,
   readSeenTips,
   tipFor,
@@ -478,7 +478,7 @@ export default function ProblemDetailPage() {
               activeLanguage={activeLang}
               code={code}
               errors={editorErrors}
-              markedLines={spotlight?.step === "function" ? lineToFill(code) : null}
+              markedLines={spotlight?.step === "function" ? linesToFill(code) : null}
               onLanguageChange={handleLanguageChange}
               onCodeChange={handleCodeChange}
               onResetCode={handleResetCode}

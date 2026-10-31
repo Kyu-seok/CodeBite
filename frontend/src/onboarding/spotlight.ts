@@ -58,6 +58,12 @@ export function tutorialSpotlight(step: TutorialStepName, { judging, signedIn }:
   }
 }
 
+/** Lines in the editor, 1-based and inclusive. */
+export interface LineRange {
+  start: number;
+  end: number;
+}
+
 /** The placeholder every Starter Code puts where the answer goes. */
 const PLACEHOLDER = /(\/\/|#)\s*Write your solution here/;
 const CLOSING = /^\s*[}\]);]*\s*$/;
@@ -66,7 +72,7 @@ const CLOSING = /^\s*[}\]);]*\s*$/;
  * The lines (1-based, inclusive) step 2 marks in the editor: the placeholder comment and the
  * stand-in line under it (`return 0;`, `pass`), or null when the placeholder is gone.
  */
-export function lineToFill(code: string): { start: number; end: number } | null {
+export function linesToFill(code: string): LineRange | null {
   const lines = code.split("\n");
   const at = lines.findIndex((line) => PLACEHOLDER.test(line));
   if (at < 0) return null;

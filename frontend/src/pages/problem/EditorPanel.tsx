@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import Editor from '@monaco-editor/react';
 import { KeyMod, KeyCode, Range as MonacoRange, editor as monacoEditor } from 'monaco-editor';
 import type { CodeError } from '@/types/submission';
+import type { LineRange } from '@/onboarding';
 import {
   Select,
   SelectTrigger,
@@ -231,7 +232,7 @@ interface EditorPanelProps {
   code: string;
   errors?: CodeError[];
   /** Lines (1-based, inclusive) the Tutorial marks as where the answer goes; null for none. */
-  markedLines?: { start: number; end: number } | null;
+  markedLines?: LineRange | null;
   onLanguageChange: (lang: string) => void;
   onCodeChange: (value: string | undefined) => void;
   onResetCode?: () => void;

@@ -17,8 +17,9 @@ export {
   type TutorialStepName,
 } from "./tutorial";
 export {
-  lineToFill,
+  linesToFill,
   tutorialSpotlight,
+  type LineRange,
   type Spotlight,
   type SpotlightContext,
   type SpotlightCopy,
