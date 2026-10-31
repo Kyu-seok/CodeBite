@@ -5,7 +5,14 @@ import { autoUpdate, flip, offset, shift, useFloating, type Placement } from '@f
 import { PartyPopper } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/lib/utils';
-import { TUTORIAL_STEPS, type Spotlight, type TourTarget } from '@/onboarding';
+import {
+  afterEditorEscape,
+  tourKeyMove,
+  TUTORIAL_STEPS,
+  type Spotlight,
+  type TourFocus,
+  type TourTarget,
+} from '@/onboarding';
 
 /** Room left around a spotlit element, in px. */
 const PAD = 6;
@@ -120,11 +127,14 @@ const PLACEMENT: Record<TourTarget, Placement> = {
   failingCase: 'left-start',
 };
 
+/** Monaco itself, not the toolbar around it: it keeps its own Tab and Escape. */
+const EDITOR = '[data-tour="editor"] .monaco-editor';
+
 /**
  * The Tutorial as a spotlight with a coach mark (docs/adr/0008). Everything outside the spotlit
  * elements is dimmed and takes no clicks; only Skip ends the Tutorial, never a click on the dimmed
- * page or Escape. Tab cycles through the coach mark and the spotlit elements. `spotlight` comes from
- * `tutorialSpotlight`; this only draws it.
+ * page or Escape. Keys follow `tourKeyMove`. `spotlight` comes from `tutorialSpotlight`; this only
+ * draws it.
  */
 export function TutorialSpotlight({
   spotlight,
@@ -160,6 +170,12 @@ export function TutorialSpotlight({
   const usableElements = () =>
     spotlight.usable.map(tourElement).filter((el): el is HTMLElement => el != null);
   const inUsable = (el: Element | null) => el != null && usableElements().some((usable) => usable.contains(el));
+  const focusOf = (el: Element | null): TourFocus => {
+    if (el && markRef.current?.contains(el)) return 'coachMark';
+    if (el?.closest(EDITOR)) return 'editor';
+    return inUsable(el) ? 'spotlit' : 'elsewhere';
+  };
+  const editorEscapedRef = useRef(false);
 
   // A new step: bring a stacked layout's target into view, then hand the coach mark the focus unless
   // the user is working in a spotlit element (typing in the editor moves step 2 on; it must not
@@ -179,31 +195,46 @@ export function TutorialSpotlight({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [spotlight.copy, shown, desktop]);
 
-  // Tab stays among the coach mark and the spotlit elements; Escape returns to the coach mark from
-  // anywhere else. The editor keeps its own Tab and Escape (indenting, closing suggestions, Vim).
+  // Tab cycles among the coach mark and the usable elements; Escape returns to the coach mark. The
+  // editor keeps its own Tab and Escape, and Escape then Tab leaves it (`tourKeyMove`). A Tab that
+  // leaves the editor is taken before the editor sees it (capture), the rest after (bubble).
   useEffect(() => {
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.defaultPrevented) return;
+    const onKeyDown = (phase: 'before' | 'after') => (e: KeyboardEvent) => {
       const mark = markRef.current;
       const active = document.activeElement;
       if (!mark || inForeignLayer(active, mark)) return;
-      if (e.key === 'Escape') {
-        if (!inUsable(active)) mark.focus({ preventScroll: true });
-        return;
-      }
-      if (e.key !== 'Tab') return;
+      const focus = focusOf(active);
+      const move = tourKeyMove({
+        key: e.key,
+        focus,
+        phase,
+        defaultPrevented: e.defaultPrevented,
+        afterEditorEscape: editorEscapedRef.current,
+      });
+      if (phase === 'after') editorEscapedRef.current = afterEditorEscape(editorEscapedRef.current, e.key, focus);
+      if (move === 'toCoachMark') mark.focus({ preventScroll: true });
+      if (move !== 'cycle') return;
       const stops = [mark, ...usableElements()]
         .flatMap((root) => Array.from(root.querySelectorAll<HTMLElement>(FOCUSABLE)))
         .filter((el) => el.getClientRects().length > 0)
         .sort((a, b) => (a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1));
       if (stops.length === 0) return;
-      const at = active instanceof HTMLElement ? stops.indexOf(active) : -1;
+      // Monaco's own textarea is the editor's stop, wherever in it the focus is.
+      const at = stops.findIndex((stop) => stop === active || (focus === 'editor' && stop.closest(EDITOR) != null));
       const next = at < 0 ? (e.shiftKey ? stops.length - 1 : 0) : (at + (e.shiftKey ? -1 : 1) + stops.length) % stops.length;
       e.preventDefault();
+      e.stopPropagation();
+      editorEscapedRef.current = false;
       stops[next].focus();
     };
-    document.addEventListener('keydown', onKeyDown);
-    return () => document.removeEventListener('keydown', onKeyDown);
+    const before = onKeyDown('before');
+    const after = onKeyDown('after');
+    document.addEventListener('keydown', before, true);
+    document.addEventListener('keydown', after);
+    return () => {
+      document.removeEventListener('keydown', before, true);
+      document.removeEventListener('keydown', after);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [spotlight]);
 

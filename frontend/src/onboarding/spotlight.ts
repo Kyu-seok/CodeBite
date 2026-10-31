@@ -69,6 +69,46 @@ export function tutorialSpotlight(step: TutorialStepName, { judging, signedIn, f
   }
 }
 
+/** Where focus is while a step shows: the coach mark, the editor itself, another spotlit element, or the dimmed page. */
+export type TourFocus = "coachMark" | "editor" | "spotlit" | "elsewhere";
+
+/**
+ * A key pressed while a step shows. `phase` is when the page sees it: `before` the focused element
+ * (the editor indents on Tab and prevents the default), or `after`, with `defaultPrevented` saying
+ * whether something already handled it.
+ */
+export interface TourKeyPress {
+  key: string;
+  focus: TourFocus;
+  phase: "before" | "after";
+  defaultPrevented: boolean;
+  /** The last key in the editor was Escape (see `afterEditorEscape`). */
+  afterEditorEscape: boolean;
+}
+
+/**
+ * What a key does during the Tutorial (docs/adr/0008): Tab and Shift+Tab cycle among the coach mark
+ * and the spotlit elements, and Escape returns to the coach mark. The editor keeps its own Escape
+ * (closing suggestions, Vim) and Tab (indenting); a keyboard user leaves it with Escape then Tab or
+ * Shift+Tab, or by the editor's Tab-focus mode, which lets Tab through.
+ */
+export function tourKeyMove(press: TourKeyPress): "toCoachMark" | "cycle" | null {
+  const { key, focus, phase, defaultPrevented } = press;
+  if (phase === "before") return key === "Tab" && focus === "editor" && press.afterEditorEscape ? "cycle" : null;
+  if (defaultPrevented) return null;
+  if (key === "Escape") return focus === "editor" ? null : "toCoachMark";
+  if (key === "Tab") return "cycle";
+  return null;
+}
+
+const MODIFIERS = new Set(["Shift", "Control", "Alt", "Meta"]);
+
+/** Whether the next Tab leaves the editor: set by Escape there, kept through modifier keys, cleared by anything else. */
+export function afterEditorEscape(was: boolean, key: string, focus: TourFocus): boolean {
+  if (key === "Escape") return focus === "editor";
+  return was && MODIFIERS.has(key);
+}
+
 /** Lines in the editor, 1-based and inclusive. */
 export interface LineRange {
   start: number;

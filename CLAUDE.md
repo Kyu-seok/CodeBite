@@ -190,7 +190,7 @@ Vitest runs in Node with no DOM (no jsdom or Testing Library), so a component te
 - `components/ui/` — DifficultyBadge, StatusBadge, Spinner
 - `pages/` — LoginPage, OAuthCallbackPage, GitHubCallbackPage, ProblemListPage, ProblemDetailPage, NotFoundPage, `profile/` (incl. GitHubLinkCard)
 - `lib/` — pure helpers (e.g. dueWording)
-- `onboarding/` — every Tutorial and Tip decision, free of React, with storage injected (`storage.ts`: `OnboardingStorage`, `browserStorage`, `readStored`/`writeStored`): `tutorial` (the six steps, `tutorialStep`), `spotlight` (`tutorialSpotlight`: what each step spotlights and which elements stay usable, drawn by `pages/problem/TutorialSpotlight.tsx` on elements marked `data-tour`, docs/adr/0008), `milestones` (what the Tutorial reports to `/api/tutorial/milestones`), `tips` + `seenTips`, `banner` (the /problems banner rule)
+- `onboarding/` — every Tutorial and Tip decision, free of React, with storage injected (`storage.ts`: `OnboardingStorage`, `browserStorage`, `readStored`/`writeStored`): `tutorial` (the six steps, `tutorialStep`), `spotlight` (`tutorialSpotlight`: what each step spotlights and which elements stay usable; `tourKeyMove`: what Tab and Escape do, drawn by `pages/problem/TutorialSpotlight.tsx` on elements marked `data-tour`, docs/adr/0008), `milestones` (what the Tutorial reports to `/api/tutorial/milestones`), `tips` + `seenTips`, `banner` (the /problems banner rule)
 - `hooks/` — useProblems, useProblem, useSubmissions
 
 ### Routing

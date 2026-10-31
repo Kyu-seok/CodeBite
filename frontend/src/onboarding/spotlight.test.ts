@@ -1,5 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { linesToFill, TUTORIAL_STEPS, tutorialSpotlight, type TutorialStepName } from ".";
+import {
+  afterEditorEscape,
+  linesToFill,
+  TUTORIAL_STEPS,
+  tourKeyMove,
+  tutorialSpotlight,
+  type TourKeyPress,
+  type TutorialStepName,
+} from ".";
 
 const idle = { judging: false, signedIn: true, failingCase: false };
 
@@ -84,6 +92,68 @@ describe("tutorialSpotlight", () => {
         }
       }
     }
+  });
+});
+
+describe("tourKeyMove", () => {
+  // As the page sees the key once the focused element has had it, unless `phase` says otherwise.
+  const press = (key: string, focus: TourKeyPress["focus"], more: Partial<TourKeyPress> = {}): TourKeyPress => ({
+    key,
+    focus,
+    phase: "after",
+    defaultPrevented: false,
+    afterEditorEscape: false,
+    ...more,
+  });
+
+  it("returns Escape to the coach mark from a spotlit button, the result or the dimmed page", () => {
+    for (const focus of ["spotlit", "elsewhere", "coachMark"] as const) {
+      expect(tourKeyMove(press("Escape", focus))).toBe("toCoachMark");
+    }
+  });
+
+  it("leaves Escape in the editor to the editor (closing suggestions, Vim)", () => {
+    expect(tourKeyMove(press("Escape", "editor"))).toBeNull();
+  });
+
+  it("cycles Tab and Shift+Tab among the coach mark and the spotlit elements", () => {
+    for (const focus of ["spotlit", "elsewhere", "coachMark"] as const) {
+      expect(tourKeyMove(press("Tab", focus))).toBe("cycle");
+    }
+  });
+
+  it("leaves a Tab the editor indented with alone", () => {
+    expect(tourKeyMove(press("Tab", "editor", { defaultPrevented: true }))).toBeNull();
+  });
+
+  it("cycles a Tab the editor let through (its own Tab-focus mode)", () => {
+    expect(tourKeyMove(press("Tab", "editor"))).toBe("cycle");
+  });
+
+  it("takes a Tab right after Escape out of the editor before the editor can indent", () => {
+    expect(tourKeyMove(press("Tab", "editor", { phase: "before", afterEditorEscape: true }))).toBe("cycle");
+    expect(tourKeyMove(press("Tab", "editor", { phase: "before" }))).toBeNull();
+    expect(tourKeyMove(press("Tab", "spotlit", { phase: "before", afterEditorEscape: true }))).toBeNull();
+  });
+
+  it("does nothing with a key someone else already handled, or any other key", () => {
+    expect(tourKeyMove(press("Tab", "spotlit", { defaultPrevented: true }))).toBeNull();
+    expect(tourKeyMove(press("Escape", "elsewhere", { defaultPrevented: true }))).toBeNull();
+    expect(tourKeyMove(press("Enter", "coachMark"))).toBeNull();
+  });
+});
+
+describe("afterEditorEscape", () => {
+  it("is set by Escape in the editor and kept through Shift, so Shift+Tab leaves too", () => {
+    const escaped = afterEditorEscape(false, "Escape", "editor");
+    expect(escaped).toBe(true);
+    expect(afterEditorEscape(escaped, "Shift", "editor")).toBe(true);
+  });
+
+  it("is cleared by any other key, and never set by Escape elsewhere", () => {
+    expect(afterEditorEscape(true, "a", "editor")).toBe(false);
+    expect(afterEditorEscape(true, "Tab", "editor")).toBe(false);
+    expect(afterEditorEscape(false, "Escape", "spotlit")).toBe(false);
   });
 });
 

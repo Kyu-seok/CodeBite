@@ -17,12 +17,16 @@ export {
   type TutorialStepName,
 } from "./tutorial";
 export {
+  afterEditorEscape,
   linesToFill,
+  tourKeyMove,
   tutorialSpotlight,
   type LineRange,
   type Spotlight,
   type SpotlightContext,
   type SpotlightCopy,
+  type TourFocus,
+  type TourKeyPress,
   type TourTarget,
 } from "./spotlight";
 export {
