@@ -7,6 +7,7 @@
 #   STALE      the source changed after the process started; bootRun doesn't reload, so restart it
 #   PROD       it carries a value from the production infra/.env (see scripts/dev-env.sh)
 #   BEHIND     the database lacks a migration this checkout has; the backend applies it on start
+#   UNREACHABLE  Judge0 doesn't answer, so every Run and Submit fails; known before a UI check is planned
 #
 # Branch servers (scripts/dev-branch-servers.sh: own ports, database, Kafka topics) are named as
 # such. Another checkout's branch servers are another session's, never a problem here.
@@ -141,6 +142,26 @@ elif (( db > ours )); then
   echo "  Fine while that branch merges them unchanged. Edited after they ran, every backend fails Flyway's checksum check until 'flyway repair'."
 else
   echo "database: at V$db, this checkout's newest"
+fi
+
+# The Judge0 the dev backend calls: its JUDGE0_URL when one from here sets it, else the dev profile's
+# default. Off the local network it doesn't answer, and every Run and Submit fails.
+judge0_url=""
+for pid in $(pgrep -f "$(app_pattern backend "$here")" || true); do
+  judge0_url=$(env_value "$pid" JUDGE0_URL)
+  [[ -n "$judge0_url" ]] && break
+done
+if [[ -z "$judge0_url" ]]; then
+  judge0_url=$(sed -nE 's/^ *url: \$\{JUDGE0_URL:([^}]+)\}.*/\1/p' "$here/backend/src/main/resources/application-dev.yml" | head -n 1)
+fi
+if [[ -n "$judge0_url" ]]; then
+  if curl -s -f -m 3 -o /dev/null "$judge0_url/about"; then
+    echo "judge0: $judge0_url answers"
+  else
+    echo "judge0: $judge0_url"
+    echo "  UNREACHABLE  Run and Submit fail until it answers; a UI check can only stub their results"
+    problems=1
+  fi
 fi
 
 # A version the database ran under another name: two branches took the same
