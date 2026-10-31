@@ -297,7 +297,7 @@
     "intelliSense": "IntelliSense",
     "intelliSenseDescription": "Type-aware completions, signature help, and error highlighting.",
     "spaces": "{{n}} Spaces",
-    "showFailingCase": "Show failing test case",
+    "showFailingCase": "Show failing case",
     "showFailingCaseDescription": "After a failed submission, show the input, expected and actual output of the case it failed on. Turn off to practise debugging without it."
   },
   "workspace": {

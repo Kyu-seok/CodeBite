@@ -1,6 +1,6 @@
 # A submission reveals its Failing Case, hidden or not
 
-A failed submission shows its Failing Case, the case its Verdict's status comes from, with the input, expected output and actual output, even when that case is hidden. No other hidden case is ever shown. Hidden cases used to be redacted completely: a user saw that case 7 of 42 failed and what it printed, but not what it was given or what it should have printed. Most failures happen on hidden cases (users check the samples with Run first), so the redaction left them guessing exactly when they needed help. A user who wants that guessing on purpose, to practise debugging, turns off "Show failing test case" in the editor settings. That only changes what is shown: the response still carries the case.
+A failed submission shows its Failing Case, the case its Verdict's status comes from, with the input, expected output and actual output, even when that case is hidden. No other hidden case is ever shown. Hidden cases used to be redacted completely: a user saw that case 7 of 42 failed and what it printed, but not what it was given or what it should have printed. Most failures happen on hidden cases (users check the samples with Run first), so the redaction left them guessing exactly when they needed help. A user who wants that guessing on purpose, to practise debugging, turns off "Show failing case" in the editor settings. That only changes what is shown: the response still carries the case.
 
 ## Considered Options
 

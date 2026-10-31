@@ -297,7 +297,7 @@
     "intelliSense": "IntelliSense",
     "intelliSenseDescription": "타입 기반 자동완성, 시그니처 도움말, 에러 강조 표시.",
     "spaces": "{{n}} 칸",
-    "showFailingCase": "실패한 테스트 케이스 보기",
+    "showFailingCase": "실패한 케이스 보기",
     "showFailingCaseDescription": "제출이 실패하면 실패한 케이스의 입력, 예상 출력, 실제 출력을 보여 줍니다. 디버깅을 연습하려면 끄세요."
   },
   "workspace": {

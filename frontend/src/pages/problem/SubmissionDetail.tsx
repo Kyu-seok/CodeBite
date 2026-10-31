@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Editor from '@monaco-editor/react';
@@ -15,6 +15,7 @@ import {
 import { getSubmission } from '@/api/submissions';
 import { useAuth } from '@/context/AuthContext';
 import { useTheme } from '@/context/ThemeContext';
+import { useFlash } from '@/hooks/useFlash';
 import type { CustomTestCaseInput, SolutionCommit, SubmissionResponse } from '@/types/submission';
 import type { AddCustomTestOutcome } from './customTests';
 import { SubmissionOutcomeDetails } from './FailingCaseCard';
@@ -371,33 +372,11 @@ interface CodeActionsProps {
   onLoadIntoEditor?: (code: string, language: string) => void;
 }
 
-type ActionState = 'idle' | 'success' | 'error';
 
 function CodeActions({ sourceCode, language, onLoadIntoEditor }: CodeActionsProps) {
   const { t } = useTranslation('problem');
-  const [copyState, setCopyState] = useState<ActionState>('idle');
-  const [loadState, setLoadState] = useState<ActionState>('idle');
-  const copyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const loadTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => {
-    return () => {
-      if (copyTimerRef.current) clearTimeout(copyTimerRef.current);
-      if (loadTimerRef.current) clearTimeout(loadTimerRef.current);
-    };
-  }, []);
-
-  const flashCopy = (state: ActionState) => {
-    setCopyState(state);
-    if (copyTimerRef.current) clearTimeout(copyTimerRef.current);
-    copyTimerRef.current = setTimeout(() => setCopyState('idle'), 1500);
-  };
-
-  const flashLoad = () => {
-    setLoadState('success');
-    if (loadTimerRef.current) clearTimeout(loadTimerRef.current);
-    loadTimerRef.current = setTimeout(() => setLoadState('idle'), 1500);
-  };
+  const [copyState, flashCopy] = useFlash();
+  const [loadState, flashLoad] = useFlash();
 
   const handleCopy = async () => {
     try {
@@ -410,7 +389,7 @@ function CodeActions({ sourceCode, language, onLoadIntoEditor }: CodeActionsProp
 
   const handleLoad = () => {
     onLoadIntoEditor?.(sourceCode, language);
-    flashLoad();
+    flashLoad('success');
   };
 
   const copyTooltip =

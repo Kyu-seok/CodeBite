@@ -1,10 +1,10 @@
 package com.codebite.submission.dto;
 
 import com.codebite.judge.dto.CodeError;
-import com.codebite.submission.entity.SubmissionResult;
-import com.codebite.submission.entity.SubmissionStatus;
 import com.codebite.judge.program.Program;
 import com.codebite.problem.entity.TestCase;
+import com.codebite.submission.entity.SubmissionResult;
+import com.codebite.submission.entity.SubmissionStatus;
 
 import java.util.List;
 import java.util.Optional;
