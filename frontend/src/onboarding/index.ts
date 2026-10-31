@@ -16,3 +16,9 @@ export {
   type TutorialState,
   type TutorialStepName,
 } from "./tutorial";
+export {
+  milestoneToReport,
+  TUTORIAL_MILESTONES,
+  tutorialMilestone,
+  type TutorialMilestone,
+} from "./milestones";

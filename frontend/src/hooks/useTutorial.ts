@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
+import { reportTutorialStep } from "@/api/tutorial"
 import {
   advanceTutorial,
   browserStorage,
+  milestoneToReport,
   readTutorial,
   TUTORIAL_PROBLEM_SLUG,
   type TutorialEvent,
@@ -15,13 +17,24 @@ export interface TutorialNavigationState {
 }
 
 /**
+ * Moves the Tutorial (from `current`, or what storage holds) and reports the step it reached, if
+ * any, to the step counters. Every move goes through here.
+ */
+function moveTutorial(event: TutorialEvent, current: TutorialState = readTutorial(browserStorage)): TutorialState {
+  const next = advanceTutorial(browserStorage, event, current)
+  const milestone = milestoneToReport(browserStorage, current, event, next)
+  if (milestone != null) reportTutorialStep(milestone)
+  return next
+}
+
+/**
  * The one way into the Tutorial: the "How CodeBite works" link, and later the landing call to
  * action and the /problems banner. It restarts the Tutorial at step 1 and opens the Tutorial Problem.
  */
 export function useStartTutorial(): () => void {
   const navigate = useNavigate()
   return useCallback(() => {
-    advanceTutorial(browserStorage, { type: "replayed" })
+    moveTutorial({ type: "replayed" })
     const state: TutorialNavigationState = { tutorialReplayed: true }
     navigate(`/problems/${TUTORIAL_PROBLEM_SLUG}`, { state })
   }, [navigate])
@@ -48,7 +61,7 @@ export function useTutorial(): { tutorial: TutorialState; dispatch: (event: Tuto
   }, [tutorial])
 
   const dispatch = useCallback((event: TutorialEvent) => {
-    const next = advanceTutorial(browserStorage, event, current.current)
+    const next = moveTutorial(event, current.current)
     current.current = next
     setTutorial(next)
     return next
