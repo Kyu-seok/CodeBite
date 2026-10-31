@@ -35,10 +35,9 @@ public class RoadmapService {
     @Transactional(readOnly = true)
     public RoadmapResponse getRoadmap(Long userId) {
         List<RoadmapCategory> categories = categoryRepository.findAllByOrderByDisplayOrderAsc();
-        // Every published problem on the roadmap: the ones shown, translated and given a status.
+        // Every problem the roadmap offers: the ones shown, translated and given a status.
         List<Long> allProblemIds = categories.stream()
-                .flatMap(c -> c.getProblems().stream())
-                .filter(Problem::isPublished)
+                .flatMap(c -> c.offeredProblems().stream())
                 .map(Problem::getId)
                 .toList();
         Map<Long, UserProgress.Status> statusMap = userId != null
@@ -59,8 +58,7 @@ public class RoadmapService {
                 .sorted()
                 .toList();
 
-        List<RoadmapProblemDto> problems = category.getProblems().stream()
-                .filter(Problem::isPublished)
+        List<RoadmapProblemDto> problems = category.offeredProblems().stream()
                 .map(p -> {
                     ProblemTranslation t = translationMap.get(p.getId());
                     String title = t != null ? t.getTitle() : p.getTitle();
