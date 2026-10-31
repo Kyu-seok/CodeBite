@@ -3,8 +3,8 @@
  * workspace only renders what it returns. Storage is injected; the app passes `localStorage`.
  */
 export { TIPS, tipFor, type JudgedResult, type Tip } from "./tips";
-export { markTipSeen, readSeenTips, type OnboardingStorage } from "./seenTips";
-export { browserStorage } from "./browserStorage";
+export { markTipSeen, readSeenTips } from "./seenTips";
+export { browserStorage, type OnboardingStorage } from "./storage";
 export {
   advanceTutorial,
   NOT_STARTED,

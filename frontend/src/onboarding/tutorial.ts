@@ -1,4 +1,4 @@
-import type { OnboardingStorage } from "./seenTips";
+import { readStored, writeStored, type OnboardingStorage } from "./storage";
 
 /** The Tutorial Problem (GLOSSARY.md, docs/adr/0007), where every way into the Tutorial leads. */
 export const TUTORIAL_PROBLEM_SLUG = "piggy-bank-total";
@@ -85,12 +85,7 @@ function isTutorialState(value: unknown): value is TutorialState {
  * unreadable means not started: it never opens by itself, so nothing is lost but a resume.
  */
 export function readTutorial(storage: OnboardingStorage): TutorialState {
-  try {
-    const stored: unknown = JSON.parse(storage.getItem(TUTORIAL_KEY) ?? "null");
-    return isTutorialState(stored) ? stored : NOT_STARTED;
-  } catch {
-    return NOT_STARTED;
-  }
+  return readStored(storage, TUTORIAL_KEY, (stored) => (isTutorialState(stored) ? stored : NOT_STARTED), NOT_STARTED);
 }
 
 /**
@@ -104,10 +99,6 @@ export function advanceTutorial(
   current: TutorialState = readTutorial(storage),
 ): TutorialState {
   const next = tutorialStep(current, event);
-  try {
-    storage.setItem(TUTORIAL_KEY, JSON.stringify(next));
-  } catch {
-    // storage full / disabled
-  }
+  writeStored(storage, TUTORIAL_KEY, next);
   return next;
 }

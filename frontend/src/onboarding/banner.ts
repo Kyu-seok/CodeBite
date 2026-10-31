@@ -1,4 +1,4 @@
-import type { OnboardingStorage } from "./seenTips";
+import { readStored, writeStored, type OnboardingStorage } from "./storage";
 import type { TutorialState } from "./tutorial";
 
 /**
@@ -21,11 +21,7 @@ const BANNER_DISMISSED_KEY = "onboarding-tutorial-banner-dismissed";
 
 /** Whether the /problems banner was dismissed in this browser; storage that throws or holds junk means not. */
 export function readTutorialBannerDismissed(storage: OnboardingStorage): boolean {
-  try {
-    return JSON.parse(storage.getItem(BANNER_DISMISSED_KEY) ?? "false") === true;
-  } catch {
-    return false;
-  }
+  return readStored(storage, BANNER_DISMISSED_KEY, (stored) => stored === true, false);
 }
 
 /**
@@ -33,10 +29,6 @@ export function readTutorialBannerDismissed(storage: OnboardingStorage): boolean
  * dropped: the banner stays hidden while the page is open and comes back on the next visit.
  */
 export function dismissTutorialBanner(storage: OnboardingStorage): true {
-  try {
-    storage.setItem(BANNER_DISMISSED_KEY, "true");
-  } catch {
-    // storage full / disabled
-  }
+  writeStored(storage, BANNER_DISMISSED_KEY, true);
   return true;
 }
