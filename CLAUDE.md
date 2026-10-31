@@ -29,7 +29,7 @@ Root `settings.gradle` includes three modules: `common`, `backend`, `worker`. Th
 - `common/time/` — DayRuns (runs of consecutive UTC days behind the Streak and the Review Streak), DayCount (a count on one calendar day, the heatmap row)
 - `user/entity/` — User, Role, OAuthProvider, UserOAuthAccount
 - `user/repository/` — UserRepository, UserOAuthAccountRepository
-- `problem/entity/` — Problem, TestCase, Difficulty, FormerSlug (a Slug a problem had before a Restatement; `ProblemRepository.findBySlugOrFormerSlug` is every slug lookup, `isSlugTaken` checks both)
+- `problem/entity/` — Problem, TestCase, Difficulty, Curation (a curated subset numbered 1 to N, so the Tutorial Problem, number 0, is in none; docs/adr/0007), FormerSlug (a Slug a problem had before a Restatement; `ProblemRepository.findBySlugOrFormerSlug` is every slug lookup, `isSlugTaken` checks both)
 - `problem/repository/` — ProblemRepository, TestCaseRepository
 - `submission/entity/` — Submission (`language()` = the stored code as a `Language`), SubmissionResult, SubmissionStatus
 - `submission/repository/` — SubmissionRepository (lifecycle, Import, re-drive and admin reads; progress reads live in the backend's `progress/`), SubmissionResultRepository
@@ -188,6 +188,7 @@ npm test         # unit tests (Vitest); run by pre-commit and CI
 - `components/ui/` — DifficultyBadge, StatusBadge, Spinner
 - `pages/` — LoginPage, OAuthCallbackPage, GitHubCallbackPage, ProblemListPage, ProblemDetailPage, NotFoundPage, `profile/` (incl. GitHubLinkCard)
 - `lib/` — pure helpers (e.g. dueWording)
+- `onboarding/` — every Tutorial and Tip decision, free of React, with storage injected (`storage.ts`: `OnboardingStorage`, `browserStorage`, `readStored`/`writeStored`): `tutorial` (the six steps, `tutorialStep`, `pulsedButton`), `milestones` (what the Tutorial reports to `/api/tutorial/milestones`), `tips` + `seenTips`, `banner` (the /problems banner rule)
 - `hooks/` — useProblems, useProblem, useSubmissions
 
 ### Routing
