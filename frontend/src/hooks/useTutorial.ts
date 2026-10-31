@@ -28,8 +28,8 @@ function moveTutorial(event: TutorialEvent, current: TutorialState = readTutoria
 }
 
 /**
- * The one way into the Tutorial: the "How CodeBite works" link, and later the landing call to
- * action and the /problems banner. It restarts the Tutorial at step 1 and opens the Tutorial Problem.
+ * The one way into the Tutorial, behind the "How CodeBite works" link, the landing call to action
+ * and the /problems banner. It restarts the Tutorial at step 1 and opens the Tutorial Problem.
  */
 export function useStartTutorial(): () => void {
   const navigate = useNavigate()

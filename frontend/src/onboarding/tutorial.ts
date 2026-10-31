@@ -22,8 +22,8 @@ export type TutorialState =
   | { status: "finished" };
 
 /**
- * What happens to the Tutorial. `replayed` is every way in (the "How CodeBite works" link, and
- * later the landing call to action and the /problems banner): it starts at step 1 from anywhere.
+ * What happens to the Tutorial. `replayed` is every way in (the "How CodeBite works" link, the
+ * landing call to action and the /problems banner): it starts at step 1 from anywhere.
  * `read` is the user moving past a reading step (1 or 2). From step 1 every move but `accepted` and
  * `skipped` goes to step 2, so the function step is always shown. `skipped` closes it; after the
  * celebration that is finishing it.
