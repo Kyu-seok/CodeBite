@@ -65,6 +65,15 @@ export interface CreateTestCaseRequest {
 
 // ── Analytics ──
 
+/** Of the non-admin users who signed up in the last `days` days, those Accepted within 24h of signing up. */
+export interface OnboardingSuccess {
+  days: number;
+  signedUp: number;
+  acceptedWithin24h: number;
+  /** One decimal; null when nobody signed up. */
+  percent: number | null;
+}
+
 export interface OverviewStats {
   totalUsers: number;
   totalProblems: number;
