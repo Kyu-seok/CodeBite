@@ -72,6 +72,8 @@ interface LeftPanelProps {
   slug: string;
   title: string;
   difficulty: Difficulty;
+  /** The Tutorial Problem, labelled "Tutorial". */
+  tutorial: boolean;
   description: string;
   constraints: string | null;
   /** The problem's languages, for the Solutions filter. */
@@ -95,6 +97,7 @@ export function LeftPanel({
   slug,
   title,
   difficulty,
+  tutorial,
   description,
   constraints,
   languages,
@@ -180,6 +183,7 @@ export function LeftPanel({
               slug={slug}
               title={title}
               difficulty={difficulty}
+              tutorial={tutorial}
               description={description}
               constraints={constraints}
               isAuthenticated={isAuthenticated}

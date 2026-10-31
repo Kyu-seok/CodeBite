@@ -89,6 +89,17 @@ public class RoadmapCategory extends BaseEntity {
         return problems;
     }
 
+    /**
+     * The problems the Roadmap and its recommendations offer from this category: the published
+     * ones, never the Tutorial Problem (docs/adr/0007), in the category's order.
+     */
+    public List<Problem> offeredProblems() {
+        return problems.stream()
+                .filter(Problem::isPublished)
+                .filter(p -> !p.isTutorial())
+                .toList();
+    }
+
     public void setProblems(List<Problem> problems) {
         this.problems = problems;
     }

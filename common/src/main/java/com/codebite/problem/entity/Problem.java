@@ -22,6 +22,12 @@ import java.util.Set;
 @Table(name = "problems")
 public class Problem extends BaseEntity {
 
+    /**
+     * The Tutorial Problem's number (docs/adr/0007): it is in no {@link Curation}, and the Roadmap,
+     * recommendations and the random pick leave it out.
+     */
+    public static final int TUTORIAL_NUMBER = 0;
+
     @Column(nullable = false)
     private String title;
 
@@ -99,6 +105,11 @@ public class Problem extends BaseEntity {
 
     public void setProblemNumber(Integer problemNumber) {
         this.problemNumber = problemNumber;
+    }
+
+    /** Whether this is the Tutorial Problem, the one numbered {@link #TUTORIAL_NUMBER}. */
+    public boolean isTutorial() {
+        return problemNumber != null && problemNumber == TUTORIAL_NUMBER;
     }
 
     public boolean isPublished() {

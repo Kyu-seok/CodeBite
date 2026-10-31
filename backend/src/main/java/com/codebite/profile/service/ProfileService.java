@@ -28,7 +28,7 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.OptionalInt;
+import java.util.Optional;
 
 @Service
 public class ProfileService {
@@ -57,7 +57,7 @@ public class ProfileService {
         for (DifficultyCount row : problemRepository.countPublishedByDifficulty()) {
             totals.put(row.difficulty(), (int) row.count());
         }
-        Map<Difficulty, Integer> solved = userProgress.solvedByDifficulty(userId, OptionalInt.empty());
+        Map<Difficulty, Integer> solved = userProgress.solvedByDifficulty(userId, Optional.empty());
 
         int totalEasy = totals.getOrDefault(Difficulty.EASY, 0);
         int totalMedium = totals.getOrDefault(Difficulty.MEDIUM, 0);

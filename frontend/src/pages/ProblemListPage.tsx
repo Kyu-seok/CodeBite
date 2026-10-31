@@ -7,6 +7,7 @@ import { useProblems } from "../hooks/useProblems"
 import { useProblemStats } from "../hooks/useProblemStats"
 import { useTags } from "../hooks/useTags"
 import DifficultyBadge from "../components/ui/DifficultyBadge"
+import TutorialBadge from "../components/ui/TutorialBadge"
 import Spinner from "../components/ui/Spinner"
 import { InlineLoadError } from "@/components/ui/LoadError"
 import { Button } from "@/components/ui/Button"
@@ -438,6 +439,11 @@ export default function ProblemListPage() {
                       >
                         {problem.title}
                       </Link>
+                      {problem.tutorial && (
+                        <span className="ml-2 align-middle">
+                          <TutorialBadge />
+                        </span>
+                      )}
                     </td>
                     <td className={cell}>
                       <DifficultyBadge difficulty={problem.difficulty} />

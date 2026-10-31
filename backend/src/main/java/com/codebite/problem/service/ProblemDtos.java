@@ -44,7 +44,8 @@ public class ProblemDtos {
                 problem.getDifficulty(),
                 tagNames,
                 statusMap.containsKey(problem.getId()) ? statusMap.get(problem.getId()).name() : null,
-                acceptanceRates.getOrDefault(problem.getId(), Rate.NONE).percentIfGraded()
+                acceptanceRates.getOrDefault(problem.getId(), Rate.NONE).percentIfGraded(),
+                problem.isTutorial()
         );
     }
 
@@ -73,7 +74,8 @@ public class ProblemDtos {
                 problem.isPublished(),
                 sampleCases.stream().map(this::toTestCaseDto).toList(),
                 problem.getCreatedAt(),
-                problem.getUpdatedAt()
+                problem.getUpdatedAt(),
+                problem.isTutorial()
         );
     }
 

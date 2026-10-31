@@ -375,6 +375,7 @@ export default function ProblemDetailPage() {
             slug={slug!}
             title={problem.title}
             difficulty={problem.difficulty}
+            tutorial={problem.tutorial}
             description={problem.description}
             constraints={problem.constraints}
             languages={languages}
