@@ -180,6 +180,7 @@ npm run dev      # dev server at http://localhost:5173
 npm run build    # production build (includes tsc type check)
 npm test         # unit tests (Vitest); run by pre-commit and CI
 ```
+Vitest runs in Node with no DOM (no jsdom or Testing Library), so a component test needs that setup first. Keep the decisions in pure modules, as `onboarding/` does, and check components in a browser.
 
 ### Directory Structure (`frontend/src/`)
 - `api/` — Axios client and API modules (auth, problems, submissions, streak, github)
