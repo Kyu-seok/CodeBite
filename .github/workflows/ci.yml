@@ -57,3 +57,4 @@ jobs:
       - run: scripts/guard-pr-merge.test.sh
       - run: scripts/dev-branch-servers.test.sh
       - run: scripts/gh-ticket.test.sh
+      - run: scripts/merge-ticket.test.sh
