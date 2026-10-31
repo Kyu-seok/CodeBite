@@ -1,5 +1,8 @@
 import type { OnboardingStorage } from "./seenTips";
 
+/** The Tutorial Problem (GLOSSARY.md, docs/adr/0007), where every way into the Tutorial leads. */
+export const TUTORIAL_PROBLEM_SLUG = "piggy-bank-total";
+
 /**
  * The six steps of the Tutorial (GLOSSARY.md), in order: read the problem, the function, Run, read a
  * failure (only after a failing Run), Submit, Accepted.

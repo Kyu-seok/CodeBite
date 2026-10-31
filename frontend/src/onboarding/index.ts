@@ -9,6 +9,7 @@ export {
   advanceTutorial,
   NOT_STARTED,
   readTutorial,
+  TUTORIAL_PROBLEM_SLUG,
   TUTORIAL_STEPS,
   tutorialStep,
   type TutorialEvent,

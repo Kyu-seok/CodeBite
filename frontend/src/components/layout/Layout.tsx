@@ -1,13 +1,14 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { Link, NavLink, Outlet, useNavigate, useLocation, useMatch } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { X } from 'lucide-react';
+import { CircleHelp, X } from 'lucide-react';
 import i18n from '@/lib/i18n';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { updateThemePreference, updateLocale } from '../../api/user';
 import { NavbarLogo } from '@/components/ui/NavbarLogo';
 import { StreakFlame } from './StreakFlame';
+import { useStartTutorial } from '@/hooks/useTutorial';
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/Tooltip';
 import {
@@ -247,6 +248,9 @@ export default function Layout() {
     }
   };
 
+  // "How CodeBite works": replays the Tutorial from step 1, on the Tutorial Problem.
+  const startTutorial = useStartTutorial();
+
   const navLinks = [
     { to: '/problems', label: t('problems') },
     { to: '/roadmap', label: t('roadmap') },
@@ -285,6 +289,10 @@ export default function Layout() {
                     </NavLink>
                   </DropdownMenuItem>
                 ))}
+                <DropdownMenuItem onSelect={startTutorial}>
+                  <CircleHelp className="h-4 w-4" aria-hidden />
+                  {t('howItWorks')}
+                </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onSelect={handleToggleLanguage}>
                   <LanguageIcon />
@@ -386,6 +394,19 @@ export default function Layout() {
               </div>
             )}
             {isAuthenticated && <StreakFlame />}
+            <Tooltip>
+              <TooltipTrigger className="hidden md:inline-flex">
+                <button
+                  type="button"
+                  onClick={startTutorial}
+                  aria-label={t('howItWorks')}
+                  className={cn(iconButton, 'w-7')}
+                >
+                  <CircleHelp className="h-4 w-4" aria-hidden />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent>{t('howItWorks')}</TooltipContent>
+            </Tooltip>
             <Tooltip>
               <TooltipTrigger className="hidden md:inline-flex">
                 <button

@@ -89,6 +89,8 @@ interface TestPanelProps {
   /** The Tip explaining the settled result, if any (`tipFor`); shown above its cases. */
   tip?: Tip | null;
   onDismissTip?: (tip: Tip) => void;
+  /** The button the Tutorial's current step is about, pulsed so a newcomer finds it. */
+  pulse?: 'run' | 'submit' | null;
   onTabChange: (tab: string) => void;
   onRun: () => void;
   onSubmit: () => void;
@@ -233,6 +235,7 @@ export function TestPanel({
   onAddCustomTest,
   tip,
   onDismissTip,
+  pulse,
   onTabChange,
   onRun,
   onSubmit,
@@ -382,6 +385,7 @@ export function TestPanel({
               <Button
                 variant="secondary"
                 size="lg"
+                className={cn(pulse === 'run' && !running && 'animate-tutorial-pulse')}
                 onClick={onRun}
                 disabled={running || submitting}>
                 {running ? t('test.running') : t('test.run')}
@@ -399,6 +403,7 @@ export function TestPanel({
               <Button
                 variant="accent"
                 size="lg"
+                className={cn(pulse === 'submit' && !submitting && 'animate-tutorial-pulse')}
                 onClick={onSubmit}
                 disabled={submitting || running}>
                 {submitting ? t('test.submitting') : t('test.submit')}
