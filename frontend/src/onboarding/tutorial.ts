@@ -24,7 +24,8 @@ export type TutorialState =
 /**
  * What happens to the Tutorial. `replayed` is every way in (the "How CodeBite works" link, and
  * later the landing call to action and the /problems banner): it starts at step 1 from anywhere.
- * `read` is the user moving past a reading step (1 or 2). `skipped` closes it; after the
+ * `read` is the user moving past a reading step (1 or 2). From step 1 every move but `accepted` and
+ * `skipped` goes to step 2, so the function step is always shown. `skipped` closes it; after the
  * celebration that is finishing it.
  */
 export type TutorialEvent =
@@ -50,13 +51,15 @@ export function tutorialStep(state: TutorialState, event: TutorialEvent): Tutori
   if (event.type === "replayed") return at("read");
   if (state.status !== "active") return state;
   const { step } = state;
+  // Step 2 (the function) is the core lesson: from step 1, reading on, editing, running or
+  // submitting all show it next, so nothing the user does jumps over it.
+  if (step === "read" && event.type !== "accepted" && event.type !== "skipped") return at("function");
   switch (event.type) {
     case "read":
-      return step === "read" ? at("function") : step === "function" ? at("run") : state;
     case "edited":
-      return before(step, "run") ? at("run") : state;
+      return step === "function" ? at("run") : state;
     case "ran":
-      // A Run made before editing counts as the Run step; a first Run that passes skips step 4.
+      // A Run made at step 2 counts as the Run step; a first Run that passes skips step 4.
       if (!before(step, "submit")) return state;
       return at(event.passed ? "submit" : "readFailure");
     case "submitted":
