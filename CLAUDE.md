@@ -57,7 +57,7 @@ Rewording a problem while its Test Cases stay (Slug, title, description, Starter
 Diagrams are ` ```diagram-* ` blocks in a description, drawn by `frontend/src/components/markdown/diagrams/`; the kinds and their keys are in `docs/PROBLEM_DIAGRAMS_ROADMAP.md`. To add one, follow `.claude/skills/add-diagram/SKILL.md`.
 
 ### Resources (`common/src/main/resources/`)
-- `db/migration/` — Flyway SQL migrations
+- `db/migration/` — Flyway SQL migrations; Java ones live in `common/src/main/java/db/migration`, and a version is taken if it is in either
 - `drivers/` — Drivers, `drivers/<slug>/<language>.<ext>`; Libraries under `drivers/lib/<language>/`
 - `starters/` — Starter Code, `starters/<slug>/<language>.<ext>` (served by the backend, but read by the same ProblemAssets)
 
@@ -81,7 +81,7 @@ source scripts/dev-env.sh && SPRING_PROFILES_ACTIVE=dev ./gradlew :backend:bootR
 ```
 `scripts/dev-env.sh` loads only the OAuth and GitHub App values from `infra/.env` (from a worktree, the main checkout's). That file is the production server's config: sourcing it whole overrides the dev CORS origins, JWT secret, database and Judge0 URL.
 When the local app answers 403, behaves like old code, doesn't show a change, or a button "does nothing", run `scripts/dev-status.sh` from the checkout or worktree whose code you expect. It flags a backend, worker or frontend running another checkout's code, a process older than its source (bootRun doesn't reload) or carrying production values, a database missing this checkout's migrations, and a migration number another branch already ran under another name.
-To sign in locally without OAuth (dev profile only), `POST /api/auth/test-token?username=<name>&role=ADMIN` returns a JWT; `role` (USER or ADMIN) also switches an existing user, and leaving it out keeps the role (new users are USER). Use an ADMIN token to check admin pages against real data.
+To sign in locally without OAuth (dev profile only), `POST /api/auth/test-token?username=<name>&role=ADMIN` returns a JWT; `role` (USER or ADMIN) also switches an existing user, and leaving it out keeps the role (new users are USER). Use an ADMIN token to check admin pages against real data. Check the UI from a session of your own: Vite on `127.0.0.1` at an unusual port, signed in by test token. `localhost:5173`/`5174` and the user's Chrome tabs hold their real signed-in sessions, drafts and settings.
 
 ### Infrastructure
 ```bash
