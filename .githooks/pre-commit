@@ -30,7 +30,7 @@ fi
 
 if touches '^frontend/'; then
   echo "pre-commit: frontend lint"
-  (cd frontend && npm run -s lint -- --quiet)
+  (cd frontend && npm run -s lint -- --max-warnings 0)
   echo "pre-commit: frontend tests"
   (cd frontend && npm test -s)
 fi
