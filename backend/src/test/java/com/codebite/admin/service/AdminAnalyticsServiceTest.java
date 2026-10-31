@@ -7,6 +7,7 @@ import com.codebite.problem.entity.Difficulty;
 import com.codebite.problem.entity.Problem;
 import com.codebite.problem.entity.TestCase;
 import com.codebite.progress.ProblemPopularity;
+import com.codebite.progress.UserProgress;
 import com.codebite.submission.entity.Submission;
 import com.codebite.submission.entity.SubmissionStatus;
 import com.codebite.user.entity.Role;
@@ -33,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 @DataJpaTest
 @ActiveProfiles("test")
-@Import({AdminAnalyticsService.class, ProblemPopularity.class})
+@Import({AdminAnalyticsService.class, ProblemPopularity.class, UserProgress.class})
 @Sql(statements = {
         "DELETE FROM submission_results",
         "DELETE FROM submissions",

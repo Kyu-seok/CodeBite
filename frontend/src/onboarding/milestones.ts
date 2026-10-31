@@ -1,9 +1,9 @@
-import type { OnboardingStorage } from "./seenTips";
+import { readStored, writeStored, type OnboardingStorage } from "./storage";
 import type { TutorialEvent, TutorialState } from "./tutorial";
 
 /**
- * What the Tutorial reports, so the step counters (`codebite.tutorial.steps`) show where newcomers
- * drop off. Only the step name leaves the browser.
+ * What the Tutorial reports, so the milestone counters (`codebite.tutorial.milestones`) show where
+ * newcomers drop off. Only the milestone name leaves the browser.
  */
 export const TUTORIAL_MILESTONES = ["started", "ran", "submitted", "accepted", "skipped"] as const;
 
@@ -31,13 +31,12 @@ export function tutorialMilestone(
 
 const REPORTED_KEY = "onboarding-tutorial-reported";
 
+function isMilestone(value: unknown): value is TutorialMilestone {
+  return (TUTORIAL_MILESTONES as readonly unknown[]).includes(value);
+}
+
 function readReported(storage: OnboardingStorage): TutorialMilestone[] {
-  try {
-    const stored: unknown = JSON.parse(storage.getItem(REPORTED_KEY) ?? "[]");
-    return Array.isArray(stored) ? stored.filter((m) => (TUTORIAL_MILESTONES as readonly unknown[]).includes(m)) : [];
-  } catch {
-    return [];
-  }
+  return readStored(storage, REPORTED_KEY, (stored) => (Array.isArray(stored) ? stored.filter(isMilestone) : []), []);
 }
 
 /**
@@ -55,10 +54,6 @@ export function milestoneToReport(
   if (milestone == null) return null;
   const reported = milestone === "started" ? [] : readReported(storage);
   if (reported.includes(milestone)) return null;
-  try {
-    storage.setItem(REPORTED_KEY, JSON.stringify([...reported, milestone]));
-  } catch {
-    // storage full / disabled
-  }
+  writeStored(storage, REPORTED_KEY, [...reported, milestone]);
   return milestone;
 }

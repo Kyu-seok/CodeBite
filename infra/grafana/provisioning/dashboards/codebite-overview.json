@@ -318,8 +318,8 @@
       }
     },
     {
-      "title": "Tutorial Steps (in time range)",
-      "description": "Tutorial steps reached in the selected time range (codebite.tutorial.steps), in funnel order: where newcomers drop off.",
+      "title": "Tutorial Milestones (in time range)",
+      "description": "Tutorial milestones reached in the selected time range (codebite.tutorial.milestones), in funnel order: where newcomers drop off.",
       "type": "bargauge",
       "gridPos": {
         "h": 8,
@@ -356,31 +356,31 @@
       },
       "targets": [
         {
-          "expr": "sum(increase(codebite_tutorial_steps_total{step=\"started\"}[$__range]))",
+          "expr": "sum(increase(codebite_tutorial_milestones_total{milestone=\"started\"}[$__range]))",
           "legendFormat": "started",
           "refId": "A",
           "instant": true
         },
         {
-          "expr": "sum(increase(codebite_tutorial_steps_total{step=\"ran\"}[$__range]))",
+          "expr": "sum(increase(codebite_tutorial_milestones_total{milestone=\"ran\"}[$__range]))",
           "legendFormat": "ran",
           "refId": "B",
           "instant": true
         },
         {
-          "expr": "sum(increase(codebite_tutorial_steps_total{step=\"submitted\"}[$__range]))",
+          "expr": "sum(increase(codebite_tutorial_milestones_total{milestone=\"submitted\"}[$__range]))",
           "legendFormat": "submitted",
           "refId": "C",
           "instant": true
         },
         {
-          "expr": "sum(increase(codebite_tutorial_steps_total{step=\"accepted\"}[$__range]))",
+          "expr": "sum(increase(codebite_tutorial_milestones_total{milestone=\"accepted\"}[$__range]))",
           "legendFormat": "accepted",
           "refId": "D",
           "instant": true
         },
         {
-          "expr": "sum(increase(codebite_tutorial_steps_total{step=\"skipped\"}[$__range]))",
+          "expr": "sum(increase(codebite_tutorial_milestones_total{milestone=\"skipped\"}[$__range]))",
           "legendFormat": "skipped",
           "refId": "E",
           "instant": true

@@ -1,5 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { advanceTutorial, NOT_STARTED, readTutorial, tutorialStep, type OnboardingStorage, type TutorialState } from ".";
+import {
+  advanceTutorial,
+  NOT_STARTED,
+  pulsedButton,
+  readTutorial,
+  tutorialStep,
+  type OnboardingStorage,
+  type TutorialState,
+} from ".";
 
 class MemoryStorage implements OnboardingStorage {
   items = new Map<string, string>();
@@ -32,8 +40,14 @@ describe("tutorialStep", () => {
     expect(tutorialStep(at("function"), { type: "read" })).toEqual(at("run"));
   });
 
-  it("goes to Run once the user edits the code, from either reading step", () => {
-    expect(tutorialStep(at("read"), { type: "edited" })).toEqual(at("run"));
+  it("shows the function step before anything else once the user edits, runs or submits at step 1", () => {
+    expect(tutorialStep(at("read"), { type: "edited" })).toEqual(at("function"));
+    expect(tutorialStep(at("read"), { type: "ran", passed: false })).toEqual(at("function"));
+    expect(tutorialStep(at("read"), { type: "ran", passed: true })).toEqual(at("function"));
+    expect(tutorialStep(at("read"), { type: "submitted" })).toEqual(at("function"));
+  });
+
+  it("goes to Run once the user edits the code at the function step", () => {
     expect(tutorialStep(at("function"), { type: "edited" })).toEqual(at("run"));
   });
 
@@ -50,8 +64,8 @@ describe("tutorialStep", () => {
     expect(tutorialStep(at("readFailure"), { type: "ran", passed: true })).toEqual(at("submit"));
   });
 
-  it("takes a Run made before editing as the Run step", () => {
-    expect(tutorialStep(at("read"), { type: "ran", passed: false })).toEqual(at("readFailure"));
+  it("takes a Run made at the function step as the Run step", () => {
+    expect(tutorialStep(at("function"), { type: "ran", passed: false })).toEqual(at("readFailure"));
     expect(tutorialStep(at("function"), { type: "ran", passed: true })).toEqual(at("submit"));
   });
 
@@ -62,7 +76,7 @@ describe("tutorialStep", () => {
 
   it("goes to Submit when the user submits, even before Running", () => {
     expect(tutorialStep(at("run"), { type: "submitted" })).toEqual(at("submit"));
-    expect(tutorialStep(at("read"), { type: "submitted" })).toEqual(at("submit"));
+    expect(tutorialStep(at("function"), { type: "submitted" })).toEqual(at("submit"));
     expect(tutorialStep(at("submit"), { type: "submitted" })).toEqual(at("submit"));
   });
 
@@ -101,6 +115,21 @@ describe("tutorialStep", () => {
   });
 });
 
+describe("pulsedButton", () => {
+  it("pulses Run at the Run step and Submit at the Submit step", () => {
+    expect(pulsedButton("run")).toBe("run");
+    expect(pulsedButton("submit")).toBe("submit");
+  });
+
+  it.each(["read", "function", "readFailure", "accepted"] as const)("pulses nothing at %s", (step) => {
+    expect(pulsedButton(step)).toBeNull();
+  });
+
+  it("pulses nothing when no Tutorial step is showing", () => {
+    expect(pulsedButton(null)).toBeNull();
+  });
+});
+
 describe("the Tutorial in storage", () => {
   it("has not started in an empty storage", () => {
     expect(readTutorial(new MemoryStorage())).toEqual(NOT_STARTED);
@@ -109,8 +138,8 @@ describe("the Tutorial in storage", () => {
   it("keeps each step it advances to, so a reload or a sign-in resumes there", () => {
     const storage = new MemoryStorage();
     expect(advanceTutorial(storage, { type: "replayed" })).toEqual(at("read"));
-    expect(advanceTutorial(storage, { type: "edited" })).toEqual(at("run"));
-    expect(readTutorial(storage)).toEqual(at("run"));
+    expect(advanceTutorial(storage, { type: "edited" })).toEqual(at("function"));
+    expect(readTutorial(storage)).toEqual(at("function"));
     advanceTutorial(storage, { type: "skipped" });
     expect(readTutorial(storage)).toEqual({ status: "skipped" });
   });

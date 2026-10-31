@@ -20,12 +20,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-/** The Tutorial's step counters: anyone may report a step, and each known step has its own counter. */
+/** The Tutorial's milestone counters: anyone may report a milestone, and each known one has its own counter. */
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @Transactional
-class TutorialStepIntegrationTest {
+class TutorialMilestoneIntegrationTest {
 
     @Autowired private MockMvc mockMvc;
     @Autowired private MeterRegistry meterRegistry;
@@ -34,38 +34,38 @@ class TutorialStepIntegrationTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"started", "ran", "submitted", "accepted", "skipped"})
-    void aKnownStep_fromAnAnonymousVisitor_isCounted(String step) throws Exception {
-        double before = count(step);
+    void aKnownMilestone_fromAnAnonymousVisitor_isCounted(String milestone) throws Exception {
+        double before = count(milestone);
 
-        mockMvc.perform(post("/api/tutorial/steps/{step}", step)).andExpect(status().isNoContent());
+        mockMvc.perform(post("/api/tutorial/milestones/{milestone}", milestone)).andExpect(status().isNoContent());
 
-        assertThat(count(step)).isEqualTo(before + 1);
+        assertThat(count(milestone)).isEqualTo(before + 1);
     }
 
     @Test
     void aSignedInUser_isCountedToo() throws Exception {
         User user = new User();
-        user.setUsername("tutorialstepuser");
-        user.setEmail("tutorialstepuser@test.com");
+        user.setUsername("tutorialmilestoneuser");
+        user.setEmail("tutorialmilestoneuser@test.com");
         user.setRole(Role.USER);
         String token = jwtTokenProvider.generateToken(userRepository.save(user));
         double before = count("ran");
 
-        mockMvc.perform(post("/api/tutorial/steps/ran").header("Authorization", "Bearer " + token))
+        mockMvc.perform(post("/api/tutorial/milestones/ran").header("Authorization", "Bearer " + token))
                 .andExpect(status().isNoContent());
 
         assertThat(count("ran")).isEqualTo(before + 1);
     }
 
     @Test
-    void anUnknownStep_isABadRequest_andCountsNothing() throws Exception {
-        mockMvc.perform(post("/api/tutorial/steps/finished")).andExpect(status().isBadRequest());
+    void anUnknownMilestone_isABadRequest_andCountsNothing() throws Exception {
+        mockMvc.perform(post("/api/tutorial/milestones/finished")).andExpect(status().isBadRequest());
 
-        assertThat(meterRegistry.find("codebite.tutorial.steps").tag("step", "finished").counter()).isNull();
+        assertThat(meterRegistry.find("codebite.tutorial.milestones").tag("milestone", "finished").counter()).isNull();
     }
 
-    private double count(String step) {
-        Counter counter = meterRegistry.find("codebite.tutorial.steps").tag("step", step).counter();
+    private double count(String milestone) {
+        Counter counter = meterRegistry.find("codebite.tutorial.milestones").tag("milestone", milestone).counter();
         return counter == null ? 0 : counter.count();
     }
 }

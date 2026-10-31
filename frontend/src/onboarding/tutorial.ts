@@ -1,4 +1,4 @@
-import type { OnboardingStorage } from "./seenTips";
+import { readStored, writeStored, type OnboardingStorage } from "./storage";
 
 /** The Tutorial Problem (GLOSSARY.md, docs/adr/0007), where every way into the Tutorial leads. */
 export const TUTORIAL_PROBLEM_SLUG = "piggy-bank-total";
@@ -22,9 +22,10 @@ export type TutorialState =
   | { status: "finished" };
 
 /**
- * What happens to the Tutorial. `replayed` is every way in (the "How CodeBite works" link, and
- * later the landing call to action and the /problems banner): it starts at step 1 from anywhere.
- * `read` is the user moving past a reading step (1 or 2). `skipped` closes it; after the
+ * What happens to the Tutorial. `replayed` is every way in (the "How CodeBite works" link, the
+ * landing call to action and the /problems banner): it starts at step 1 from anywhere.
+ * `read` is the user moving past a reading step (1 or 2). From step 1 every move but `accepted` and
+ * `skipped` goes to step 2, so the function step is always shown. `skipped` closes it; after the
  * celebration that is finishing it.
  */
 export type TutorialEvent =
@@ -50,13 +51,15 @@ export function tutorialStep(state: TutorialState, event: TutorialEvent): Tutori
   if (event.type === "replayed") return at("read");
   if (state.status !== "active") return state;
   const { step } = state;
+  // Step 2 (the function) is the core lesson: from step 1, reading on, editing, running or
+  // submitting all show it next, so nothing the user does jumps over it.
+  if (step === "read" && event.type !== "accepted" && event.type !== "skipped") return at("function");
   switch (event.type) {
     case "read":
-      return step === "read" ? at("function") : step === "function" ? at("run") : state;
     case "edited":
-      return before(step, "run") ? at("run") : state;
+      return step === "function" ? at("run") : state;
     case "ran":
-      // A Run made before editing counts as the Run step; a first Run that passes skips step 4.
+      // A Run made at step 2 counts as the Run step; a first Run that passes skips step 4.
       if (!before(step, "submit")) return state;
       return at(event.passed ? "submit" : "readFailure");
     case "submitted":
@@ -66,6 +69,11 @@ export function tutorialStep(state: TutorialState, event: TutorialEvent): Tutori
     case "skipped":
       return { status: step === "accepted" ? "finished" : "skipped" };
   }
+}
+
+/** The button a Tutorial step is about, pulsed so a newcomer finds it; null for none, or no step showing. */
+export function pulsedButton(step: TutorialStepName | null): "run" | "submit" | null {
+  return step === "run" || step === "submit" ? step : null;
 }
 
 const TUTORIAL_KEY = "onboarding-tutorial";
@@ -82,12 +90,7 @@ function isTutorialState(value: unknown): value is TutorialState {
  * unreadable means not started: it never opens by itself, so nothing is lost but a resume.
  */
 export function readTutorial(storage: OnboardingStorage): TutorialState {
-  try {
-    const stored: unknown = JSON.parse(storage.getItem(TUTORIAL_KEY) ?? "null");
-    return isTutorialState(stored) ? stored : NOT_STARTED;
-  } catch {
-    return NOT_STARTED;
-  }
+  return readStored(storage, TUTORIAL_KEY, (stored) => (isTutorialState(stored) ? stored : NOT_STARTED), NOT_STARTED);
 }
 
 /**
@@ -101,10 +104,6 @@ export function advanceTutorial(
   current: TutorialState = readTutorial(storage),
 ): TutorialState {
   const next = tutorialStep(current, event);
-  try {
-    storage.setItem(TUTORIAL_KEY, JSON.stringify(next));
-  } catch {
-    // storage full / disabled
-  }
+  writeStored(storage, TUTORIAL_KEY, next);
   return next;
 }
