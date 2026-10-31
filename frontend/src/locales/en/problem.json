@@ -330,5 +330,77 @@
     "loadConfirmTitle": "Replace your current code?",
     "loadConfirmBody": "Loading this submission replaces the {{language}} code in your editor. Your current code can't be recovered.",
     "loadConfirm": "Replace code"
+  },
+  "tips": {
+    "label": "Tip",
+    "dismiss": "Got it",
+    "dismissLabel": "Dismiss this Tip",
+    "wrongAnswer": {
+      "title": "Wrong Answer: compare the outputs",
+      "body": "Your code ran, but for at least one case it returned something other than the expected answer. Put the failing case's Expected next to your Output, then follow your code by hand with that input to see where the two part ways."
+    },
+    "returnedNothing": {
+      "title": "Your function didn't return anything",
+      "body": "CodeBite calls your function with each input and checks what it returns, not what it prints. Hand your answer back with return instead of printing it (print, console.log or System.out.println)."
+    },
+    "compileError": {
+      "title": "Compile Error: the code couldn't start",
+      "body": "Part of the code isn't valid in this language: a typo, a missing bracket or colon, or a wrong type. The red underline in the editor marks the line where it broke, and the message below says why."
+    },
+    "runtimeError": {
+      "title": "Runtime Error: the code crashed",
+      "body": "Your code started but stopped partway through. Common causes are an index out of range (reading past the end of a list), dividing by zero, or using a value that is null or None. The red underline in the editor and the message below point at the line. In Python, a typo such as an unclosed bracket shows up here too, as a SyntaxError."
+    },
+    "timeLimitExceeded": {
+      "title": "Time Limit Exceeded: right idea, too slow",
+      "body": "Your idea may well be right, but it took too long on the largest inputs. Look for work done over and over, like a loop inside a loop, that a better approach (a hash map, sorting, two pointers) can avoid."
+    },
+    "firstAccepted": {
+      "title": "Accepted! Every case passed",
+      "body": "A problem solved today counts toward your Streak, the flame in the top bar. Rate how confident you felt, now or later from the Submissions tab, and CodeBite will bring this problem back for review when it's due."
+    }
+  },
+  "tutorialBanner": {
+    "label": "New to CodeBite?",
+    "title": "New here? Solve your first problem with a guide",
+    "body": "A short tutorial on a very easy problem shows how practising works: what you write, what Run and Submit do, and how to read a result.",
+    "start": "Start the tutorial",
+    "dismiss": "Dismiss",
+    "dismissLabel": "Hide the tutorial banner"
+  },
+  "tutorial": {
+    "label": "Tutorial: how CodeBite works",
+    "progress": "Step {{step}} of {{total}}",
+    "next": "Next",
+    "skip": "Skip tutorial",
+    "done": "Done",
+    "stepDone": "done",
+    "stepCurrent": "current step",
+    "steps": {
+      "read": {
+        "title": "Read the problem",
+        "body": "Start with the description below: what the function gets, what it should give back, the examples and the constraints."
+      },
+      "function": {
+        "title": "Fill in the function",
+        "body": "You only write the body of the function in the editor. CodeBite calls it with each input and checks what it returns. Ignore the wrapper around it (such as class Solution), and return your answer: printing it is not an answer."
+      },
+      "run": {
+        "title": "Run your code",
+        "body": "Run tries your code on the example cases. It's free and saves nothing, so run as often as you like."
+      },
+      "readFailure": {
+        "title": "Read what went wrong",
+        "body": "The Test panel shows what went wrong: for a wrong answer, each failing case's Expected output next to yours; for a Compile Error, Runtime Error or Time Limit Exceeded, the error message. The Tip next to the result explains this kind of failure. Fix the code and Run again."
+      },
+      "submit": {
+        "title": "Submit",
+        "body": "Submit checks every case, hidden ones included, and saves the result to your submission history."
+      },
+      "accepted": {
+        "title": "Accepted! You solved your first problem",
+        "body": "A problem solved each day keeps your Streak going: the flame in the top bar. Rate how confident you felt, and CodeBite brings the problem back for review when it's due."
+      }
+    }
   }
 }

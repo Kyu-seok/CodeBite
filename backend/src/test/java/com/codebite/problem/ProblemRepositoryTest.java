@@ -1,5 +1,6 @@
 package com.codebite.problem;
 
+import com.codebite.problem.entity.Curation;
 import com.codebite.problem.entity.Difficulty;
 import com.codebite.problem.entity.Problem;
 import com.codebite.problem.entity.Tag;
@@ -108,7 +109,7 @@ class ProblemRepositoryTest {
     @Test
     void countPublishedByDifficulty_countsPublishedOnly_andIsEmptyWithoutAny() {
         assertEquals(List.of(), problemRepository.countPublishedByDifficulty());
-        assertEquals(List.of(), problemRepository.countPublishedByDifficultyAndCuration(50));
+        assertEquals(List.of(), problemRepository.countPublishedByDifficultyIn(Curation.CB50));
 
         Problem e1 = createProblem("E1", "e1", Difficulty.EASY, true);
         e1.setProblemNumber(1);
@@ -119,7 +120,7 @@ class ProblemRepositoryTest {
         problemRepository.save(createProblem("H1", "h1", Difficulty.HARD, false));
 
         assertEquals(List.of(new DifficultyCount(Difficulty.EASY, 2)), problemRepository.countPublishedByDifficulty());
-        assertEquals(List.of(new DifficultyCount(Difficulty.EASY, 1)), problemRepository.countPublishedByDifficultyAndCuration(50));
+        assertEquals(List.of(new DifficultyCount(Difficulty.EASY, 1)), problemRepository.countPublishedByDifficultyIn(Curation.CB50));
     }
 
     @Test

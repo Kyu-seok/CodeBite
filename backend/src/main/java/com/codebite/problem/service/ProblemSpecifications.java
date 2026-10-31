@@ -1,5 +1,6 @@
 package com.codebite.problem.service;
 
+import com.codebite.problem.entity.Curation;
 import com.codebite.problem.entity.Difficulty;
 import com.codebite.problem.entity.Problem;
 import com.codebite.problem.entity.Tag;
@@ -31,7 +32,9 @@ public final class ProblemSpecifications {
         };
     }
 
-    public static Specification<Problem> problemNumberAtMost(int max) {
-        return (root, query, cb) -> cb.lessThanOrEqualTo(root.get("problemNumber"), max);
+    /** The problems in {@code curation}: numbered 1 to its last number, so never the Tutorial Problem. */
+    public static Specification<Problem> inCuration(Curation curation) {
+        return (root, query, cb) ->
+                cb.between(root.get("problemNumber"), curation.firstNumber(), curation.lastNumber());
     }
 }

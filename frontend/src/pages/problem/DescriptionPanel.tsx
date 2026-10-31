@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next"
 import { MarkdownRenderer } from "@/components/markdown/MarkdownRenderer"
 import DifficultyBadge from "@/components/ui/DifficultyBadge"
+import TutorialBadge from "@/components/ui/TutorialBadge"
 import { Stack } from "@/components/layout/Stack"
 import { ReviewBadge } from "@/components/review/ReviewBadge"
 import { ProgressionStrip } from "@/components/review/ProgressionStrip"
@@ -11,6 +12,8 @@ interface DescriptionPanelProps {
   slug: string
   title: string
   difficulty: Difficulty
+  /** The Tutorial Problem, labelled "Tutorial". */
+  tutorial: boolean
   description: string
   constraints: string | null
   isAuthenticated: boolean
@@ -21,6 +24,7 @@ export function DescriptionPanel({
   slug,
   title,
   difficulty,
+  tutorial,
   description,
   constraints,
   isAuthenticated,
@@ -33,6 +37,7 @@ export function DescriptionPanel({
       <Stack direction="horizontal" gap="sm" align="center">
         <h1 className="text-xl font-bold text-foreground">{title}</h1>
         <DifficultyBadge difficulty={difficulty} />
+        {tutorial && <TutorialBadge />}
       </Stack>
 
       {isAuthenticated && (
