@@ -27,7 +27,7 @@ import { useSubmissionWatch } from "@/hooks/useSubmissionWatch"
 import { usePersistedDraft } from "@/hooks/usePersistedDraft"
 import type { JudgeAttempt } from "@/judge/attempt"
 import type { WorkspaceOutletContext } from "@/components/layout/Layout"
-import { browserStorage, markTipSeen, readSeenTips, tipFor, type Tip, type TutorialEvent } from "@/onboarding"
+import { browserStorage, markTipSeen, pulsedButton, readSeenTips, tipFor, type Tip, type TutorialEvent } from "@/onboarding"
 import { useTutorial, type TutorialNavigationState } from "@/hooks/useTutorial"
 import { TutorialCard } from "./TutorialCard"
 import { languageOnReturn, submitReturnUrl } from "@/lib/signInReturn"
@@ -477,7 +477,7 @@ export default function ProblemDetailPage() {
             onAddCustomTest={handleAddCustomTest}
             tip={tip}
             onDismissTip={dismissTip}
-            pulse={tutorialStepNow === "run" ? "run" : tutorialStepNow === "submit" ? "submit" : null}
+            pulse={pulsedButton(tutorialStepNow)}
             onTabChange={setActiveTab}
             onRun={handleRun}
             onSubmit={handleSubmit}

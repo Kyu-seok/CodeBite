@@ -8,6 +8,7 @@ export { browserStorage, type OnboardingStorage } from "./storage";
 export {
   advanceTutorial,
   NOT_STARTED,
+  pulsedButton,
   readTutorial,
   TUTORIAL_PROBLEM_SLUG,
   TUTORIAL_STEPS,

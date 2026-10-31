@@ -1,5 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { advanceTutorial, NOT_STARTED, readTutorial, tutorialStep, type OnboardingStorage, type TutorialState } from ".";
+import {
+  advanceTutorial,
+  NOT_STARTED,
+  pulsedButton,
+  readTutorial,
+  tutorialStep,
+  type OnboardingStorage,
+  type TutorialState,
+} from ".";
 
 class MemoryStorage implements OnboardingStorage {
   items = new Map<string, string>();
@@ -104,6 +112,21 @@ describe("tutorialStep", () => {
     expect(tutorialStep({ status: "skipped" }, { type: "replayed" })).toEqual(at("read"));
     expect(tutorialStep({ status: "finished" }, { type: "replayed" })).toEqual(at("read"));
     expect(tutorialStep(at("submit"), { type: "replayed" })).toEqual(at("read"));
+  });
+});
+
+describe("pulsedButton", () => {
+  it("pulses Run at the Run step and Submit at the Submit step", () => {
+    expect(pulsedButton("run")).toBe("run");
+    expect(pulsedButton("submit")).toBe("submit");
+  });
+
+  it.each(["read", "function", "readFailure", "accepted"] as const)("pulses nothing at %s", (step) => {
+    expect(pulsedButton(step)).toBeNull();
+  });
+
+  it("pulses nothing when no Tutorial step is showing", () => {
+    expect(pulsedButton(null)).toBeNull();
   });
 });
 
