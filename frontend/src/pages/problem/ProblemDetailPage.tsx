@@ -30,6 +30,7 @@ import type { WorkspaceOutletContext } from "@/components/layout/Layout"
 import { browserStorage, markTipSeen, readSeenTips, tipFor, type Tip, type TutorialEvent } from "@/onboarding"
 import { useTutorial, type TutorialNavigationState } from "@/hooks/useTutorial"
 import { TutorialCard } from "./TutorialCard"
+import { languageOnReturn, submitReturnUrl } from "@/lib/signInReturn"
 
 /** The server's reason for refusing a Run or Submit, when it gave one; the panel has a generic fallback. */
 function rejectionMessage(err: unknown): string | undefined {
@@ -81,6 +82,14 @@ export default function ProblemDetailPage() {
   useEffect(() => {
     if (replayRequested && problem) navigate(location.pathname, { replace: true, state: null })
   }, [replayRequested, problem, navigate, location.pathname])
+  // Back from signing in at Submit: the editor takes up the language the code was written in, then
+  // the way back is cleared from the address.
+  const returnedLang = problem ? languageOnReturn(location.search, problemLanguages(problem.starterCode)) : null
+  useEffect(() => {
+    if (!returnedLang) return
+    setLanguage(returnedLang)
+    navigate(location.pathname, { replace: true, state: location.state })
+  }, [returnedLang, navigate, location.pathname, location.state])
   const [acceptedModal, setAcceptedModal] = useState<{
     open: boolean
     submissionId: number | null
@@ -206,7 +215,7 @@ export default function ProblemDetailPage() {
   const recentLang = user?.recentLanguage
   // The language picked here, else the user's recent one, else Python (the least boilerplate for a newcomer).
   const fallbackLang = languages.includes("python") ? "python" : languages[0]
-  const activeLang = language || (recentLang && languages.includes(recentLang) ? recentLang : fallbackLang) || ""
+  const activeLang = language || returnedLang || (recentLang && languages.includes(recentLang) ? recentLang : fallbackLang) || ""
   const code =
     codeByLang[activeLang] ?? problem.starterCode[activeLang] ?? ""
 
@@ -355,7 +364,7 @@ export default function ProblemDetailPage() {
 
   const handleSubmit = async () => {
     if (!isAuthenticated) {
-      sessionStorage.setItem("returnUrl", `/problems/${slug}`)
+      sessionStorage.setItem("returnUrl", submitReturnUrl(slug!, activeLang))
       navigate("/login")
       return
     }
