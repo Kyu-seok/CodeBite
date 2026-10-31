@@ -71,16 +71,6 @@ database_verdict() {
   fi
 }
 
-# $1, a JUDGE0_URL from the shell, when it is a dev one to pass on (the user's Tailscale name for
-# Judge0, say, which the dev profile's LAN default can't stand in for off that network); empty for
-# none or production's (infra/.env's http://judge0:..., a compose service name).
-dev_judge0_url() {
-  case "$1" in
-    "" | http://judge0:*) ;;
-    *) echo "$1" ;;
-  esac
-}
-
 port_busy() {
   lsof -nP -iTCP:"$1" -sTCP:LISTEN >/dev/null 2>&1
 }

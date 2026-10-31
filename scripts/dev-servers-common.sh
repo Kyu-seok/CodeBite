@@ -32,3 +32,13 @@ flyway_version() {
     "SELECT max(version::int) FROM flyway_schema_history WHERE success AND version ~ '^[0-9]+$'" \
     2>/dev/null || true
 }
+
+# $1, a JUDGE0_URL from the shell, when it is a dev one to pass on (the user's Tailscale name for
+# Judge0, say, which the dev profile's LAN default can't stand in for off that network); empty for
+# none or production's (infra/.env's http://judge0:..., a compose service name).
+dev_judge0_url() {
+  case "$1" in
+    "" | http://judge0:*) ;;
+    *) echo "$1" ;;
+  esac
+}

@@ -129,9 +129,9 @@ The GitHub App behind Solution Commits is registered by hand: run `scripts/setup
 | POST | `/api/admin/problems` | ADMIN | 201 + problem detail |
 | PUT | `/api/admin/problems/{id}` | ADMIN | 200 + problem detail |
 | POST | `/api/admin/problems/{id}/test-cases` | ADMIN | 201 + test case |
-| POST | `/api/problems/{slug}/run` | No | 200 + `{overallStatus, results}` |
+| POST | `/api/problems/{slug}/run` | No | 200 + `{overallStatus, results}`; 429 within 5 s of the same IP's last Run (Redis cooldown, `app.cache.enabled`) |
 | POST | `/api/tutorial/milestones/{milestone}` | No | 204 No Content (counts one Tutorial milestone in `codebite.tutorial.milestones`; `milestone` = `started`, `ran`, `submitted`, `accepted` or `skipped`, anything else 400; nothing per user is stored) |
-| POST | `/api/problems/{slug}/submit` | JWT | 201 + `{id, problemSlug, language, status, runtimeMs, memoryKb, results, createdAt}` |
+| POST | `/api/problems/{slug}/submit` | JWT | 201 + `{id, problemSlug, language, status, runtimeMs, memoryKb, results, createdAt}`; 429 within 10 s of the same user's last Submit |
 | GET | `/api/submissions/{id}` | JWT | 200 + submission detail (input/expectedOutput only for sample cases; `solutionCommit: {status: PENDING\|COMMITTED\|FAILED, commitUrl}` or null when there's no Solution Commit; `reviewIntervalDays: {AGAIN, HARD, GOOD, EASY}` = days the review scheduler would set if rated now, null while PENDING; `failingCase: {testCaseId, position, total, hidden, status, input, expectedOutput, actualOutput, errors}` = the Failing Case, revealed even when hidden (docs/adr/0006), null when Accepted, PENDING, a Compilation Error or an Internal Error) |
 | GET | `/api/problems/{slug}/submissions` | JWT | 200 + `[{id, status, language, runtimeMs, memoryKb, createdAt}]` |
 | GET | `/api/streak` | JWT | 200 + `{currentStreak, bestStreak, solvedToday, repairs, repairProgress}` |
