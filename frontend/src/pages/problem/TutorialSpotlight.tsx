@@ -217,13 +217,16 @@ export function TutorialSpotlight({
       if (phase === 'after') editorEscapedRef.current = afterEditorEscape(editorEscapedRef.current, e.key, focus);
       if (move === 'toCoachMark') mark.focus({ preventScroll: true });
       if (move !== 'cycle') return;
-      const stops = [mark, ...usableElements()]
-        .flatMap((root) => Array.from(root.querySelectorAll<HTMLElement>(FOCUSABLE)))
-        .filter((el) => el.getClientRects().length > 0)
+      const all = [mark, ...usableElements()]
+        // A target can be a stop itself (Run and Submit are the buttons).
+        .flatMap((root) => [...(root.matches(FOCUSABLE) ? [root] : []), ...root.querySelectorAll<HTMLElement>(FOCUSABLE)])
+        .filter((el) => el.tabIndex >= 0 && el.getClientRects().length > 0)
         .sort((a, b) => (a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1));
+      // The editor is one stop (Monaco's input, which takes the typing), wherever in it the focus is.
+      const editorStop = all.find((el) => el.closest(EDITOR) != null);
+      const stops = all.filter((el) => el === editorStop || el.closest(EDITOR) == null);
       if (stops.length === 0) return;
-      // Monaco's own textarea is the editor's stop, wherever in it the focus is.
-      const at = stops.findIndex((stop) => stop === active || (focus === 'editor' && stop.closest(EDITOR) != null));
+      const at = stops.findIndex((stop) => stop === (focus === 'editor' ? editorStop : active));
       const next = at < 0 ? (e.shiftKey ? stops.length - 1 : 0) : (at + (e.shiftKey ? -1 : 1) + stops.length) % stops.length;
       e.preventDefault();
       e.stopPropagation();
