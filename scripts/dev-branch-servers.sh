@@ -8,35 +8,65 @@
 #   scripts/dev-branch-servers.sh drop      drop the branch database, Kafka topics and groups, Redis index
 #   scripts/dev-branch-servers.sh name      print the branch database name
 #
-# Each piece is kept off the user's servers and data:
-#   database  codebite_<branch> in the codebite-postgres container, migrated by the backend on start
+# It refuses to run from the main checkout (only name and status work there): the servers there
+# are the shared ones. Each piece is kept off the user's servers and data, and off other sessions':
+#   database  codebite_<branch>_<hash of this worktree's path> in the codebite-postgres container,
+#             migrated by the backend on start; its COMMENT names this worktree, and drop refuses a
+#             database whose comment names another
 #   Kafka     topics and consumer groups prefixed with that name (app.kafka.topic.*, app.kafka.group-prefix),
 #             so neither side takes a share of the other's submissions or results
-#   Redis     its own database index: a fresh database's user ids collide with the shared one's
+#   Redis     a database index of its own (a fresh database's user ids collide with the shared one's),
+#             claimed by an owner key holding the database name; drop flushes only that index, never 0
+#   processes only those started with CODEBITE_DEV_BRANCH=<this database> are ever stopped
 #   ports     free ones from 18080 (backend), 18180 (worker), 15180 (Vite)
 #   browser   Vite on 127.0.0.1, whose localStorage is apart from the user's localhost sessions
 # Sign in with the dev test token (see the printed summary); OAuth redirects to the shared frontend.
 set -euo pipefail
 
+# shellcheck source=SCRIPTDIR/dev-servers-common.sh
+source "$(dirname "${BASH_SOURCE[0]}")/dev-servers-common.sh"
+
 # Ports the shared servers and infra use: never picked, even when free.
 RESERVED_PORTS=(8080 8081 5173 5174 3000 2358 3001 3100 5433 6379 9090 9092)
 
-# The branch database name: codebite_ plus the branch, lowercased, with every run of other
-# characters turned into one underscore, at most 63 characters (PostgreSQL's limit).
+# The key in a Redis database index whose value names the branch database that claimed it.
+REDIS_OWNER_KEY=codebite-dev-branch-owner
+
+# The branch database name for branch $1 in the worktree at $2: codebite_, the branch lowercased
+# with every run of other characters turned into one underscore (cut to fit), then _ and a hash of
+# the worktree's path, so two worktrees never share one even when their branches fold to the same
+# text (feat/a-b, feat/a_b) or share a long prefix. At most 63 characters (PostgreSQL's limit).
 branch_db_name() {
-  local s
+  local s hash
   s=$(printf '%s' "$1" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/_/g; s/^_+//; s/_+$//')
   [[ -z "$s" ]] && s=detached
-  s="codebite_$s"
-  s=${s:0:63}
-  printf '%s\n' "${s%_}"
+  hash=$(printf '%08x' "$(printf '%s' "$2" | cksum | cut -d' ' -f1)")
+  s=${s:0:45}  # 63 - "codebite_" - "_" - 8 hex digits
+  while [[ "$s" == *_ ]]; do s=${s%_}; done
+  printf 'codebite_%s_%s\n' "$s" "$hash"
 }
 
-# Redis database index 1-15 for a name (0 is the shared backend's).
-redis_index() {
-  local sum
-  sum=$(printf '%s' "$1" | cksum | cut -d' ' -f1)
-  echo $(( sum % 15 + 1 ))
+# The COMMENT a branch database carries: the worktree that made it.
+db_owner_comment() {
+  printf 'codebite-dev-branch:%s' "$1"
+}
+
+# $1 quoted as an SQL string literal.
+sql_literal() {
+  printf "'%s'" "$(printf '%s' "$1" | sed "s/'/''/g")"
+}
+
+# What to do with the branch database, given $1 = "x" plus its comment ("" when it doesn't
+# exist) and $2 = the comment this worktree's carries: create, ours, or foreign (another
+# worktree's, or one not made by this script), which nothing here may touch.
+database_verdict() {
+  if [[ -z "$1" ]]; then
+    echo create
+  elif [[ "$1" == "x$2" ]]; then
+    echo ours
+  else
+    echo foreign
+  fi
 }
 
 port_busy() {
@@ -56,10 +86,84 @@ first_free_port() {
   return 1
 }
 
+# Pids of this checkout's apps $@ (backend, worker, frontend; all three when none is named) that
+# were started with CODEBITE_DEV_BRANCH=$db, as cmd_start starts them. Nothing else is ever
+# stopped: not the shared servers, not another worktree's branch servers.
+branch_pids() {
+  local app pid
+  (( $# )) || set -- backend worker frontend
+  for app in "$@"; do
+    for pid in $(pgrep -f "$(app_pattern "$app" "$root")" || true); do
+      if is_ours "$pid"; then echo "$pid"; fi
+    done
+  done
+}
+
+# Whether process $1 was started by this checkout's cmd_start.
+is_ours() {
+  [[ -n "$db" && "$(env_value "$1" CODEBITE_DEV_BRANCH)" == "$db" ]]
+}
+
+redis_cmd() {
+  local index=$1
+  shift
+  docker exec codebite-redis redis-cli -n "$index" "$@"
+}
+
+# The Redis database index (1-15; 0 is the shared backend's) whose owner key names $db; empty
+# when none does.
+owned_redis_index() {
+  local i
+  for (( i = 1; i <= 15; i++ )); do
+    if [[ "$(redis_cmd "$i" GET "$REDIS_OWNER_KEY")" == "$db" ]]; then
+      echo "$i"
+      return 0
+    fi
+  done
+}
+
+# The index $db owns, or else the first empty one without an owner, claimed with SET NX so two
+# sessions starting at once can't both take it. An index holding keys but no owner is skipped:
+# something else uses it.
+claim_redis_index() {
+  local i
+  i=$(owned_redis_index)
+  if [[ -n "$i" ]]; then
+    echo "$i"
+    return 0
+  fi
+  for (( i = 1; i <= 15; i++ )); do
+    [[ "$(redis_cmd "$i" DBSIZE)" == 0 ]] || continue
+    if [[ "$(redis_cmd "$i" SET "$REDIS_OWNER_KEY" "$db" NX)" == OK ]]; then
+      echo "$i"
+      return 0
+    fi
+  done
+  echo "no free Redis database in 1-15 (each has keys or another branch's owner key)" >&2
+  return 1
+}
+
+# Flushes the index $db owns, which also gives up the claim; no other index is touched.
+flush_owned_redis_index() {
+  local i
+  i=$(owned_redis_index)
+  if [[ -z "$i" ]]; then
+    echo "Redis: no database owned by $db"
+    return 0
+  fi
+  redis_cmd "$i" FLUSHDB >/dev/null
+  echo "Redis database $i: flushed"
+}
+
 # ---------------------------------------------------------------------------------------------
 
 psql_admin() {
   docker exec codebite-postgres psql -v ON_ERROR_STOP=1 -U codebite -d postgres -tAc "$1"
+}
+
+# "x" plus the branch database's comment, or nothing when it doesn't exist (see database_verdict).
+database_state() {
+  psql_admin "SELECT 'x' || coalesce(shobj_description(oid, 'pg_database'), '') FROM pg_database WHERE datname = '$db'"
 }
 
 kafka_bin() {
@@ -68,28 +172,23 @@ kafka_bin() {
   docker exec codebite-kafka "/opt/kafka/bin/$tool" --bootstrap-server localhost:9092 "$@"
 }
 
+# Sets the globals the subcommands read: root (this checkout), main (the main checkout), db (the
+# branch database), prefix (its Kafka topic and group prefix) and state (the ports, pids and logs).
 setup() {
   root=$(git rev-parse --show-toplevel)
+  main=$(main_checkout)
   local branch
   branch=$(git -C "$root" branch --show-current)
-  db=$(branch_db_name "${branch:-$(basename "$root")}")
+  db=$(branch_db_name "${branch:-$(basename "$root")}" "$root")
   prefix="$db-"
-  redis_db=$(redis_index "$db")
   state="${TMPDIR:-/tmp}"
   state="${state%/}/codebite-dev-branch/$db"
-}
-
-# Pids of this checkout's backend and worker apps (the JVMs bootRun forks) and its Vite.
-app_pids() {
-  pgrep -f "$root/backend/build/classes/java/main" || true
-  pgrep -f "$root/worker/build/classes/java/main" || true
-  pgrep -f "$root/frontend/node_modules/.bin/vite" || true
 }
 
 summary() {
   # shellcheck disable=SC1091  # written by cmd_start
   source "$state/ports"
-  cat <<EOF
+  cat <<EOS
 
 Branch servers for $(git -C "$root" branch --show-current 2>/dev/null || echo "$root"):
   frontend  http://127.0.0.1:$vite_port          (open this, not localhost: separate sign-in)
@@ -106,7 +205,7 @@ Sign in (dev test token; role ADMIN, or USER):
   then in the branch frontend's console: localStorage.setItem('token', '<token>') and reload
 
 Stop: Ctrl-C here, or scripts/dev-branch-servers.sh stop.  Drop the data: scripts/dev-branch-servers.sh drop
-EOF
+EOS
 }
 
 # Waits until $2 answers or the process $1 dies; on death prints the log's tail.
@@ -132,23 +231,24 @@ stop_all() {
   local pids pid i
   # Tells a foreground start in another shell that this stop is deliberate.
   [[ -d "$state" ]] && touch "$state/stopping"
-  pids=$(app_pids)
+  pids=$(branch_pids)
   if [[ -n "$pids" ]]; then
     echo "stopping branch servers: $(echo "$pids" | tr '\n' ' ')"
     # shellcheck disable=SC2086
     kill $pids 2>/dev/null || true
     for (( i = 0; i < 30; i++ )); do
-      [[ -z "$(app_pids)" ]] && break
+      [[ -z "$(branch_pids)" ]] && break
       sleep 1
     done
-    pids=$(app_pids)
+    pids=$(branch_pids)
     # shellcheck disable=SC2086
     [[ -n "$pids" ]] && kill -9 $pids 2>/dev/null
   fi
-  # The gradlew clients exit once their app does; reap any that are left.
+  # The gradlew clients exit once their app does; reap any that are left, checking each pid is
+  # still one of ours (a pid can be reused once its process is gone).
   if [[ -f "$state/pids" ]]; then
     while read -r pid; do
-      kill "$pid" 2>/dev/null || true
+      if is_ours "$pid"; then kill "$pid" 2>/dev/null || true; fi
     done < "$state/pids"
     rm -f "$state/pids"
   fi
@@ -156,7 +256,7 @@ stop_all() {
 }
 
 cmd_start() {
-  if [[ -n "$(app_pids)" ]]; then
+  if [[ -n "$(branch_pids)" ]]; then
     echo "already running for this checkout:" >&2
     [[ -f "$state/ports" ]] && summary >&2
     exit 1
@@ -168,12 +268,21 @@ cmd_start() {
     exit 1
   fi
 
-  if [[ -z "$(psql_admin "SELECT 1 FROM pg_database WHERE datname = '$db'")" ]]; then
-    psql_admin "CREATE DATABASE \"$db\"" >/dev/null
-    echo "database $db: created (the backend migrates it on start)"
-  else
-    echo "database $db: exists"
-  fi
+  local comment
+  comment=$(db_owner_comment "$root")
+  case "$(database_verdict "$(database_state)" "$comment")" in
+    create)
+      psql_admin "CREATE DATABASE \"$db\"" >/dev/null
+      psql_admin "COMMENT ON DATABASE \"$db\" IS $(sql_literal "$comment")" >/dev/null
+      echo "database $db: created (the backend migrates it on start)" ;;
+    ours) echo "database $db: exists" ;;
+    *)
+      echo "database $db exists but isn't this worktree's (its comment isn't '$comment'); not using it" >&2
+      exit 1 ;;
+  esac
+
+  local redis_db
+  redis_db=$(claim_redis_index)
 
   mkdir -p "$state"
   rm -f "$state/stopping"
@@ -182,8 +291,8 @@ cmd_start() {
   backend_port=$(first_free_port 18080 18179)
   worker_port=$(first_free_port 18180 18279)
   vite_port=$(first_free_port 15180 15279)
-  printf 'backend_port=%s\nworker_port=%s\nvite_port=%s\n' \
-    "$backend_port" "$worker_port" "$vite_port" > "$state/ports"
+  printf 'backend_port=%s\nworker_port=%s\nvite_port=%s\nredis_db=%s\n' \
+    "$backend_port" "$worker_port" "$vite_port" "$redis_db" > "$state/ports"
 
   if [[ ! -d "$root/frontend/node_modules" ]]; then
     echo "frontend: npm ci (a worktree has no node_modules)"
@@ -212,7 +321,9 @@ JSON
     SPRING_PROFILES_ACTIVE SPRING_DATASOURCE_URL SERVER_PORT SPRING_APPLICATION_JSON
   # shellcheck source=SCRIPTDIR/dev-env.sh
   source scripts/dev-env.sh
-  export CODEBITE_DEV_BRANCH="$db"  # how scripts/dev-status.sh tells these from the shared servers
+  # Marks every process started below as this checkout's: branch_pids stops only those, and
+  # scripts/dev-status.sh tells them from the shared servers by it.
+  export CODEBITE_DEV_BRANCH="$db"
   export SPRING_DATASOURCE_URL="jdbc:postgresql://localhost:5433/$db"
   export SPRING_DATA_REDIS_DATABASE="$redis_db"
   export SPRING_APPLICATION_JSON="$json"
@@ -235,13 +346,11 @@ JSON
   echo $! >> "$state/pids"
   wait_for $! "$vite_origin" "$state/vite.log" frontend || exit 1
 
-  local version
-  version=$(docker exec codebite-postgres psql -U codebite -d "$db" -tAc \
-    "SELECT max(version::int) FROM flyway_schema_history WHERE success AND version ~ '^[0-9]+$'")
-  echo "database $db: at V$version"
+  echo "database $db: at V$(flyway_version "$db")"
   summary
 
   # Stay up until Ctrl-C, a stop from another shell, or one of the three dying.
+  local app
   while :; do
     sleep 2
     if [[ -f "$state/stopping" ]]; then
@@ -249,24 +358,31 @@ JSON
       trap - EXIT  # the stop that set the flag is already stopping them
       exit 0
     fi
-    local alive=0
-    pgrep -f "$root/backend/build/classes/java/main" >/dev/null && alive=$((alive + 1))
-    pgrep -f "$root/worker/build/classes/java/main" >/dev/null && alive=$((alive + 1))
-    pgrep -f "$root/frontend/node_modules/.bin/vite" >/dev/null && alive=$((alive + 1))
-    if (( alive < 3 )); then
-      echo "a branch server stopped (see the logs in $state); stopping the rest" >&2
-      exit 1
-    fi
+    for app in backend worker frontend; do
+      if [[ -z "$(branch_pids "$app")" ]]; then
+        echo "the branch $app stopped (see the logs in $state); stopping the rest" >&2
+        exit 1
+      fi
+    done
   done
 }
 
 cmd_drop() {
-  if [[ -n "$(app_pids)" ]]; then
+  if [[ -n "$(branch_pids)" ]]; then
     echo "the branch servers are running; stop them first: scripts/dev-branch-servers.sh stop" >&2
     exit 1
   fi
-  psql_admin "DROP DATABASE IF EXISTS \"$db\" WITH (FORCE)" >/dev/null
-  echo "database $db: dropped"
+  local comment
+  comment=$(db_owner_comment "$root")
+  case "$(database_verdict "$(database_state)" "$comment")" in
+    create) echo "database $db: none" ;;
+    ours)
+      psql_admin "DROP DATABASE IF EXISTS \"$db\" WITH (FORCE)" >/dev/null
+      echo "database $db: dropped" ;;
+    *)
+      echo "database $db isn't this worktree's (its comment isn't '$comment'); dropping nothing" >&2
+      exit 1 ;;
+  esac
   local topics groups g
   topics=$(kafka_bin kafka-topics.sh --list | grep "^$prefix" || true)
   if [[ -n "$topics" ]]; then
@@ -278,21 +394,33 @@ cmd_drop() {
     kafka_bin kafka-consumer-groups.sh --delete --group "$g" >/dev/null 2>&1 || true
   done
   [[ -n "$groups" ]] && echo "Kafka groups: deleted $(echo "$groups" | paste -sd' ' -)"
-  docker exec codebite-redis redis-cli -n "$redis_db" FLUSHDB >/dev/null
-  echo "Redis database $redis_db: flushed"
+  flush_owned_redis_index
   rm -rf "$state"
 }
 
+usage() {
+  sed -n 's/^#   \(scripts\/dev-branch-servers\.sh .*\)/  \1/p' "$0" >&2
+}
+
 main() {
+  local cmd=${1:-start}
+  case "$cmd" in
+    start | stop | status | drop | name) ;;
+    *) usage; exit 2 ;;
+  esac
   setup
-  case "${1:-start}" in
+  if [[ "$cmd" != name && "$cmd" != status && "$root" == "$main" ]]; then
+    echo "dev-branch-servers.sh: $root is the main checkout, whose servers are the shared ones;" \
+      "run it from a worktree (only name and status work here)" >&2
+    exit 1
+  fi
+  case "$cmd" in
     start) cmd_start ;;
     stop) stop_all ;;
     status)
-      if [[ -n "$(app_pids)" && -f "$state/ports" ]]; then summary; else echo "not running ($db)"; fi ;;
+      if [[ -n "$(branch_pids)" && -f "$state/ports" ]]; then summary; else echo "not running ($db)"; fi ;;
     drop) cmd_drop ;;
     name) echo "$db" ;;
-    *) sed -n '2,8p' "$0" >&2; exit 2 ;;
   esac
 }
 
