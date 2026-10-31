@@ -1,8 +1,9 @@
 import type { CodeError, FailingCase, SubmissionResponse } from '@/types/submission';
 
 /**
- * What a submission's result shows below its status line: nothing more when Accepted, its
- * Failing Case, the compiler's errors, or an apology for a failure on CodeBite's side.
+ * What a submission's result shows below its status line: nothing yet while pending, nothing
+ * more when Accepted, its Failing Case, the compiler's errors, or an apology for a failure on
+ * CodeBite's side.
  */
 export type SubmissionOutcome =
   | { kind: 'pending' }

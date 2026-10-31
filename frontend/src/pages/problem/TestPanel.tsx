@@ -24,7 +24,7 @@ import type { AttemptFailure, JudgeAttempt, JudgeMode } from '@/judge/attempt';
 import { CustomTestsEditor } from './CustomTestsEditor';
 import { STATUS_KEYS } from './submissionDisplay';
 import { MAX_CUSTOM_TESTS, type AddCustomTestOutcome } from './customTests';
-import { SubmissionOutcomeDetails } from './FailingCaseCard';
+import { FailingCasePosition, SubmissionOutcomeDetails } from './SubmissionOutcomeDetails';
 import { estimatedJudgeSeconds } from './judgeTimeEstimates';
 
 type JudgingAttempt = Extract<JudgeAttempt, { kind: 'judging' }>;
@@ -487,15 +487,9 @@ function OutputContent({
           <div className="flex items-center gap-2">
             <StatusBadge status={submitResult.status} />
             {submitResult.failingCase && (
-              <span className="text-xs text-muted-foreground">
-                {t('submissions.failingCase.position', {
-                  n: submitResult.failingCase.position,
-                  total: submitResult.failingCase.total,
-                })}
+              <span className="text-xs">
+                <FailingCasePosition failingCase={submitResult.failingCase} />
               </span>
-            )}
-            {submitResult.failingCase && count.total > 0 && (
-              <span aria-hidden="true" className="text-xs text-border">·</span>
             )}
             {count.total > 0 && <PassCount {...count} />}
           </div>

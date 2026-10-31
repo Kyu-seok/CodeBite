@@ -18,7 +18,7 @@ import { useTheme } from '@/context/ThemeContext';
 import { useFlash } from '@/hooks/useFlash';
 import type { CustomTestCaseInput, SolutionCommit, SubmissionResponse } from '@/types/submission';
 import type { AddCustomTestOutcome } from './customTests';
-import { SubmissionOutcomeDetails } from './FailingCaseCard';
+import { FailingCasePosition, SubmissionOutcomeDetails } from './SubmissionOutcomeDetails';
 import { ConfidencePrompt } from '@/components/review/ConfidencePrompt';
 import { useReviewState } from '@/hooks/useReviewState';
 import { useSolutionCommit } from '@/hooks/useSolutionCommit';
@@ -96,7 +96,6 @@ export function SubmissionDetail({
   const passedCount = submission.results.filter((r) => r.status === 'ACCEPTED').length;
   const totalCount = submission.results.length;
   const canReview = isAuthenticated && submission.status !== 'PENDING';
-  const failingCase = submission.failingCase ?? null;
 
   const handleReviewSubmit = async (c: Confidence, notes: string | null) => {
     setReviewBusy(true);
@@ -149,12 +148,7 @@ export function SubmissionDetail({
         <div>
           <h2 className={`text-lg font-semibold ${STATUS_TEXT_CLASS[submission.status]}`}>
             {tc(STATUS_KEYS[submission.status])}
-            {failingCase && (
-              <span className="font-normal text-muted-foreground">
-                {' · '}
-                {t('submissions.failingCase.position', { n: failingCase.position, total: failingCase.total })}
-              </span>
-            )}
+            {submission.failingCase && <FailingCasePosition failingCase={submission.failingCase} />}
           </h2>
           <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
             <span>{formatDate(submission.createdAt, i18n.language, true)}</span>
@@ -371,7 +365,6 @@ interface CodeActionsProps {
   language: string;
   onLoadIntoEditor?: (code: string, language: string) => void;
 }
-
 
 function CodeActions({ sourceCode, language, onLoadIntoEditor }: CodeActionsProps) {
   const { t } = useTranslation('problem');
