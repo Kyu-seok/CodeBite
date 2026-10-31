@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Editor from '@monaco-editor/react';
 import { Check, CircleAlert, Copy, ExternalLink, FileInput, GitCommitHorizontal, Share2, X } from 'lucide-react';
-import { useEditorSettings } from '@/context/EditorSettingsContext';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import Spinner from '@/components/ui/Spinner';
@@ -18,7 +17,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useTheme } from '@/context/ThemeContext';
 import type { CustomTestCaseInput, SolutionCommit, SubmissionResponse } from '@/types/submission';
 import type { AddCustomTestOutcome } from './customTests';
-import { Diagnostics, FailingCaseCard } from './FailingCaseCard';
+import { SubmissionOutcomeDetails } from './FailingCaseCard';
 import { ConfidencePrompt } from '@/components/review/ConfidencePrompt';
 import { useReviewState } from '@/hooks/useReviewState';
 import { useSolutionCommit } from '@/hooks/useSolutionCommit';
@@ -57,7 +56,6 @@ export function SubmissionDetail({
   const [submission, setSubmission] = useState<SubmissionResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [loadAttempt, setLoadAttempt] = useState(0);
-  const { settings: editorSettings } = useEditorSettings();
   const [editingNote, setEditingNote] = useState(false);
   const [noteDraft, setNoteDraft] = useState('');
   const [reviewBusy, setReviewBusy] = useState(false);
@@ -98,9 +96,6 @@ export function SubmissionDetail({
   const totalCount = submission.results.length;
   const canReview = isAuthenticated && submission.status !== 'PENDING';
   const failingCase = submission.failingCase ?? null;
-  // A compile error is the same on every case, so the first result's errors are the compiler's.
-  const compileErrors =
-    submission.status === 'COMPILATION_ERROR' ? (submission.results[0]?.errors ?? []) : [];
 
   const handleReviewSubmit = async (c: Confidence, notes: string | null) => {
     setReviewBusy(true);
@@ -198,33 +193,7 @@ export function SubmissionDetail({
         </div>
 
         {/* What failed: the Failing Case, the compiler's errors, or our own failure */}
-        {failingCase && (
-          <FailingCaseCard
-            key={submission.id}
-            failingCase={failingCase}
-            showByDefault={editorSettings.showFailingCase}
-            onAddCustomTest={onAddCustomTest}
-          />
-        )}
-        {compileErrors.length > 0 && (
-          <section aria-labelledby="compile-errors-heading">
-            <h3
-              id="compile-errors-heading"
-              className="mb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              {t('submissions.compilerOutput')}
-            </h3>
-            <Diagnostics errors={compileErrors} />
-          </section>
-        )}
-        {submission.status === 'INTERNAL_ERROR' && (
-          <div className="flex items-start gap-2.5 rounded-lg border border-border bg-muted/30 px-3 py-2.5 text-sm">
-            <CircleAlert aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
-            <div>
-              <p className="text-foreground">{t('submissions.internalError')}</p>
-              <p className="mt-0.5 text-xs text-muted-foreground">{t('submissions.internalErrorHint')}</p>
-            </div>
-          </div>
-        )}
+        <SubmissionOutcomeDetails submission={submission} onAddCustomTest={onAddCustomTest} />
 
         {/* Confidence prompt — available for any non-PENDING submission */}
         {canReview && (
