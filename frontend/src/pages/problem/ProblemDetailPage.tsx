@@ -27,6 +27,7 @@ import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts"
 import { useSubmissionWatch } from "@/hooks/useSubmissionWatch"
 import { usePersistedDraft } from "@/hooks/usePersistedDraft"
 import type { JudgeAttempt } from "@/judge/attempt"
+import { caseFailed } from "@/judge/caseFailed"
 import type { WorkspaceOutletContext } from "@/components/layout/Layout"
 import {
   browserStorage,
@@ -116,15 +117,19 @@ export default function ProblemDetailPage() {
   const desktop = useMediaQuery(DESKTOP_QUERY)
   // How the Tutorial's step shows (docs/adr/0008); null when no step is showing here.
   const spotlight = tutorialStepNow
-    ? tutorialSpotlight(tutorialStepNow, { judging: attempt.kind === "judging", signedIn: isAuthenticated })
+    ? tutorialSpotlight(tutorialStepNow, {
+        judging: attempt.kind === "judging",
+        signedIn: isAuthenticated,
+        failingCase: attempt.kind === "settled" && attempt.mode === "run" && attempt.result.results.some(caseFailed),
+      })
     : null
   // A step's targets are never behind a collapsed panel or another tab: open them before the
   // spotlight looks for them.
-  const spotlightKey = spotlight ? `${spotlight.anchor}:${spotlight.lit.join(",")}` : null
+  const spotlightKey = spotlight ? `${spotlight.anchor}:${spotlight.usable.join(",")}` : null
   useEffect(() => {
     if (!spotlight) return
     const panels = panelFunctionsRef.current
-    for (const target of spotlight.lit) {
+    for (const target of spotlight.usable) {
       if (target === "description") {
         if (leftCollapsed) panels?.expandLeft()
         setLeftPanelTab("description")
@@ -134,7 +139,7 @@ export default function ProblemDetailPage() {
       if (target === "editor" && editorCollapsed) panels?.expandEditor()
       if (target !== "editor" && testsCollapsed) panels?.expandTests()
     }
-    if (spotlight.anchor === "result") setActiveTab("output")
+    if (spotlight.anchor === "result" || spotlight.anchor === "failingCase") setActiveTab("output")
     // Once per spotlight, not whenever the user folds a panel the step doesn't need.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [spotlightKey])

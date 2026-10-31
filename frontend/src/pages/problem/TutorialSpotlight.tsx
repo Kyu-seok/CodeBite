@@ -32,6 +32,31 @@ function boxOf(el: HTMLElement): Box | null {
   return { x: r.left - PAD, y: r.top - PAD, w: r.width + PAD * 2, h: r.height + PAD * 2 };
 }
 
+/**
+ * The part of `el`'s box that shows: a target inside another (the failing case in the result) is cut
+ * to the scrollers between them, so its cut-out never spills over the panel's header; null when it is
+ * scrolled out of sight. A top-level target is never cut.
+ */
+function visibleBoxOf(el: HTMLElement): Box | null {
+  const box = boxOf(el);
+  const outer = el.parentElement?.closest('[data-tour]');
+  if (!box || !outer) return box;
+  let left = box.x;
+  let top = box.y;
+  let right = box.x + box.w;
+  let bottom = box.y + box.h;
+  for (let at = el.parentElement; at && outer.contains(at); at = at.parentElement) {
+    const { overflowX, overflowY } = getComputedStyle(at);
+    if (overflowX === 'visible' && overflowY === 'visible') continue;
+    const r = at.getBoundingClientRect();
+    left = Math.max(left, r.left);
+    top = Math.max(top, r.top);
+    right = Math.min(right, r.right);
+    bottom = Math.min(bottom, r.bottom);
+  }
+  return right > left && bottom > top ? { x: left, y: top, w: right - left, h: bottom - top } : null;
+}
+
 const sameBoxes = (a: Box[], b: Box[]) =>
   a.length === b.length &&
   a.every((box, i) => box.x === b[i].x && box.y === b[i].y && box.w === b[i].w && box.h === b[i].h);
@@ -49,7 +74,7 @@ function useBoxes(targets: readonly TourTarget[]): { lit: Box[]; anchor: HTMLEle
     let frame = 0;
     const measure = () => {
       const els = key.split(' ').map((t) => tourElement(t as TourTarget));
-      const boxes = els.flatMap((el) => (el ? [boxOf(el)] : [])).filter((b): b is Box => b != null);
+      const boxes = els.flatMap((el) => (el ? [visibleBoxOf(el)] : [])).filter((b): b is Box => b != null);
       setLit((prev) => (sameBoxes(prev, boxes) ? prev : boxes));
       // The anchor (always the first target) counts only once it has a size, so the coach mark
       // never points at nothing while a panel is still opening.
@@ -92,6 +117,7 @@ const PLACEMENT: Record<TourTarget, Placement> = {
   run: 'top-end',
   submit: 'left-end',
   result: 'left-end',
+  failingCase: 'left-start',
 };
 
 /**
@@ -120,7 +146,9 @@ export function TutorialSpotlight({
   const markRef = useRef<HTMLDivElement | null>(null);
   const targets = [spotlight.anchor, ...spotlight.lit.filter((target) => target !== spotlight.anchor)];
   const { lit, anchor, layered } = useBoxes(targets);
-  const anchorBox = anchor && !layered ? boxOf(anchor) : null;
+  const shown = anchor != null && !layered;
+  // The ring around the anchor: what shows of it, so none while it is scrolled out of its panel.
+  const anchorBox = shown ? visibleBoxOf(anchor) : null;
   const { refs, floatingStyles } = useFloating({
     elements: { reference: anchor },
     placement: PLACEMENT[spotlight.anchor],
@@ -128,14 +156,14 @@ export function TutorialSpotlight({
     whileElementsMounted: autoUpdate,
   });
 
-  const litElements = () =>
-    spotlight.lit.map(tourElement).filter((el): el is HTMLElement => el != null);
-  const inLit = (el: Element | null) => el != null && litElements().some((lit) => lit.contains(el));
+  // What the user may click and Tab to: the spotlit elements, and the panel around a nested one.
+  const usableElements = () =>
+    spotlight.usable.map(tourElement).filter((el): el is HTMLElement => el != null);
+  const inUsable = (el: Element | null) => el != null && usableElements().some((usable) => usable.contains(el));
 
   // A new step: bring a stacked layout's target into view, then hand the coach mark the focus unless
   // the user is working in a spotlit element (typing in the editor moves step 2 on; it must not
   // lose the caret).
-  const shown = anchor != null && !layered;
   useLayoutEffect(() => {
     if (!shown) return;
     const el = tourElement(spotlight.anchor);
@@ -144,7 +172,7 @@ export function TutorialSpotlight({
       const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       el.scrollIntoView({ block: big ? 'start' : 'center', behavior: reduce ? 'auto' : 'smooth' });
     }
-    if (!inLit(document.activeElement) && !inForeignLayer(document.activeElement, markRef.current)) {
+    if (!inUsable(document.activeElement) && !inForeignLayer(document.activeElement, markRef.current)) {
       markRef.current?.focus({ preventScroll: true });
     }
     // Once per step and copy, not on every measurement.
@@ -160,11 +188,11 @@ export function TutorialSpotlight({
       const active = document.activeElement;
       if (!mark || inForeignLayer(active, mark)) return;
       if (e.key === 'Escape') {
-        if (!inLit(active)) mark.focus({ preventScroll: true });
+        if (!inUsable(active)) mark.focus({ preventScroll: true });
         return;
       }
       if (e.key !== 'Tab') return;
-      const stops = [mark, ...litElements()]
+      const stops = [mark, ...usableElements()]
         .flatMap((root) => Array.from(root.querySelectorAll<HTMLElement>(FOCUSABLE)))
         .filter((el) => el.getClientRects().length > 0)
         .sort((a, b) => (a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1));
@@ -186,7 +214,7 @@ export function TutorialSpotlight({
     const block = (e: Event) => {
       const target = e.target instanceof Element ? e.target : null;
       const mark = markRef.current;
-      if (!target || !mark || mark.contains(target) || inLit(target) || inForeignLayer(target, mark)) return;
+      if (!target || !mark || mark.contains(target) || inUsable(target) || inForeignLayer(target, mark)) return;
       if (document.querySelector(OPEN_LAYER)) return;
       e.preventDefault();
       e.stopPropagation();
@@ -201,7 +229,7 @@ export function TutorialSpotlight({
 
   // Nothing is dimmed until the target is on screen, so a missing target never leaves the page blocked.
   // The click blocker above stands down too: another layer is open, or nothing is shown.
-  if (!anchorBox) return null;
+  if (!shown) return null;
 
   const index = TUTORIAL_STEPS.indexOf(spotlight.step);
   const progress = t('tutorial.progress', { step: index + 1, total: TUTORIAL_STEPS.length });
@@ -211,7 +239,8 @@ export function TutorialSpotlight({
   const celebrating = spotlight.copy === 'accepted';
   // A narrow screen's sheet docks at the bottom, or at the top when the target sits low (Run and
   // Submit end the stacked column, so no scroll lifts them above a bottom sheet).
-  const dockTop = !desktop && anchorBox.y + anchorBox.h / 2 > vh * 0.55;
+  const anchorRect = anchor.getBoundingClientRect();
+  const dockTop = !desktop && anchorRect.top + anchorRect.height / 2 > vh * 0.55;
 
   const coachMark = (
     <div
@@ -274,11 +303,13 @@ export function TutorialSpotlight({
         </defs>
         <rect width={vw} height={vh} mask={`url(#${maskId})`} className="fill-black/50" />
       </svg>
-      <div
-        aria-hidden
-        className="pointer-events-none fixed z-[55] ring-2 ring-accent-500 motion-safe:transition-all motion-safe:duration-300 dark:ring-accent-400"
-        style={{ left: anchorBox.x, top: anchorBox.y, width: anchorBox.w, height: anchorBox.h, borderRadius: RADIUS }}
-      />
+      {anchorBox && (
+        <div
+          aria-hidden
+          className="pointer-events-none fixed z-[55] ring-2 ring-accent-500 motion-safe:transition-all motion-safe:duration-300 dark:ring-accent-400"
+          style={{ left: anchorBox.x, top: anchorBox.y, width: anchorBox.w, height: anchorBox.h, borderRadius: RADIUS }}
+        />
+      )}
       {coachMark}
       <p className="sr-only" aria-live="polite">
         {`${progress}: ${title}`}
