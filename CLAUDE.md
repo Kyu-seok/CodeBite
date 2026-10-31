@@ -50,6 +50,9 @@ Root `settings.gradle` includes three modules: `common`, `backend`, `worker`. Th
 ### Reading a problem
 `scripts/problem-text.sh <slug>` prints a problem as it stands (English and Korean text, sample Test Cases) from the local database. Migrations are the slow way: the newest one that sets a column wins, and the first grep match is usually stale.
 
+### Judging a problem locally
+`scripts/judge-local.sh <slug> [--languages java,cpp,…] [--cases cases.json]` judges a problem's Test Cases (from the local database, or a JSON list of `{input, expected_output}` not in a migration yet) without Judge0: each Language's reference solution, `scripts/replay-solutions/<slug>.<py|java|js|cpp>` (the `Solution` class only), goes into the Driver and runs on the local `python3.12`, `javac`/`java`, `node` and `g++`, compared trimmed as the Grader does. Exits 1 on a failing case and 2 when a compiler, interpreter or reference solution is missing (`NOT JUDGED`, never a failed case). Java builds with `--release 13` and C++ with `-std=gnu++14` like Judge0; local `node` is newer than Judge0's Node 12. `scripts/replay-local.sh` replays every problem's Python instead.
+
 ### Restating a problem
 Rewording a problem while its Test Cases stay (Slug, title, description, Starter Code names) is a Restatement: follow `.claude/skills/restate-problem/SKILL.md`. `ProblemSlugsTest` (backend) runs every migration and fails when a Slug and its `drivers/`/`starters/` directories disagree; `MigrationSlugReferencesTest` fails when a migration's `slug = …` names a slug that doesn't exist when it runs.
 

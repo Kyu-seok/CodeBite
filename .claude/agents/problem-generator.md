@@ -270,10 +270,22 @@ class Solution {
 - JavaScript: include JSDoc `@param` and `@return`
 - If the problem uses ListNode/TreeNode, include a commented-out definition in the starter so users can see the structure
 
+## Step 7: Judge It Locally
+
+Write a reference solution in each Language, the `Solution` class only as a user would submit it, at `scripts/replay-solutions/{slug}.py`, `.java`, `.js` and `.cpp`. Then judge every Test Case in all four Languages on this machine, no Judge0 needed:
+
+```bash
+scripts/judge-local.sh {slug} --cases cases.json   # before the migration has run: a JSON list of {"input", "expected_output"}
+scripts/judge-local.sh {slug}                      # once the backend has applied the migration
+```
+
+It exits 0 only when every Language is Accepted. A failing case means the Driver, the expected output or the solution is wrong; `NOT JUDGED` means a compiler or interpreter is missing here, not a failure.
+
 ## Output Summary
 
 After completing all steps, list what you created:
 1. SQL migration file path
 2. Driver code paths (4 files)
 3. Starter code paths (4 files)
-4. Brief description of the problem and its difficulty
+4. Reference solution paths (4 files) and the `scripts/judge-local.sh` result per Language
+5. Brief description of the problem and its difficulty
