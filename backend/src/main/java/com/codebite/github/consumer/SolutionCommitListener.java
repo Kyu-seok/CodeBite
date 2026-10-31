@@ -37,7 +37,7 @@ public class SolutionCommitListener {
 
     @KafkaListener(
             topics = "${app.kafka.topic.submission-results}",
-            groupId = "codebite-solution-commits",
+            groupId = "${app.kafka.group-prefix:}codebite-solution-commits",
             containerFactory = "solutionCommitListenerContainerFactory")
     public void onResult(SubmissionResultEvent event) {
         if (!SCOPE.test(event)) {

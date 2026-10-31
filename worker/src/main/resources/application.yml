@@ -24,7 +24,7 @@ spring:
       # submission-events has 3 partitions; one thread per partition.
       concurrency: ${KAFKA_LISTENER_CONCURRENCY:3}
     consumer:
-      group-id: codebite-worker
+      group-id: ${app.kafka.group-prefix:}codebite-worker
       auto-offset-reset: earliest
       # A submission takes seconds to grade, so the default of 500 would blow past
       # max.poll.interval.ms whenever a backlog builds and trigger a rebalance loop.
@@ -59,6 +59,9 @@ management:
 
 app:
   kafka:
+    # Prepended to every consumer group id. Empty in production; scripts/dev-branch-servers.sh sets
+    # it so a branch's worker never joins the shared dev worker's groups.
+    group-prefix: ""
     topic:
       submission: submission-events
       submission-admin: submission-events-admin

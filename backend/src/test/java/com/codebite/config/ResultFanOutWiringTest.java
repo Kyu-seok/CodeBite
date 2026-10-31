@@ -59,6 +59,9 @@ import static org.mockito.Mockito.verify;
  * for itself only: the inlined properties override the profile, so the real producers, the five
  * container factories and the listeners all start, pointed at the embedded broker. The four
  * downstream services are mocks, so nothing here touches the database.
+ *
+ * <p>The group ids asserted below are also the proof that {@code app.kafka.group-prefix} (set only by
+ * {@code scripts/dev-branch-servers.sh}) leaves production's four shared groups unprefixed by default.
  */
 @SpringBootTest(properties = {
         "app.kafka.enabled=true",

@@ -61,6 +61,10 @@ app:
     enabled: ${SCHEDULING_ENABLED:true}
   kafka:
     enabled: ${KAFKA_ENABLED:true}
+    # Prepended to the shared consumer group ids (streaks, stats, Solution Commits, Imports). Empty in
+    # production; scripts/dev-branch-servers.sh sets it so a branch's backend never takes a share of
+    # the shared dev backend's events.
+    group-prefix: ""
     topic:
       submission: submission-events
       submission-admin: submission-events-admin

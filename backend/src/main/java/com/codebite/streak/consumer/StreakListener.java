@@ -35,7 +35,7 @@ public class StreakListener {
 
     @KafkaListener(
             topics = "${app.kafka.topic.submission-results}",
-            groupId = "codebite-streaks",
+            groupId = "${app.kafka.group-prefix:}codebite-streaks",
             containerFactory = "streakListenerContainerFactory")
     public void onResult(SubmissionResultEvent event) {
         if (!SCOPE.test(event)) {

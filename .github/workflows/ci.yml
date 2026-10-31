@@ -55,3 +55,4 @@ jobs:
       - run: shellcheck -S warning scripts/*.sh .claude/hooks/*.sh
       - run: scripts/dev-env.test.sh
       - run: scripts/guard-pr-merge.test.sh
+      - run: scripts/dev-branch-servers.test.sh

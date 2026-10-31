@@ -54,7 +54,7 @@ public class SubmissionConsumer {
     /**
      * User submissions. Runs at the configured concurrency (one thread per partition).
      */
-    @KafkaListener(topics = "${app.kafka.topic.submission}", groupId = "codebite-worker")
+    @KafkaListener(topics = "${app.kafka.topic.submission}", groupId = "${app.kafka.group-prefix:}codebite-worker")
     @Transactional
     public void consume(SubmissionEvent event) {
         grade(event);
@@ -71,7 +71,7 @@ public class SubmissionConsumer {
      */
     @KafkaListener(
             topics = "${app.kafka.topic.submission-admin}",
-            groupId = "codebite-worker-admin",
+            groupId = "${app.kafka.group-prefix:}codebite-worker-admin",
             concurrency = "1")
     @Transactional
     public void consumeAdmin(SubmissionEvent event) {
