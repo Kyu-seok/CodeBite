@@ -20,6 +20,8 @@
 #   processes only those started with CODEBITE_DEV_BRANCH=<this database> are ever stopped
 #   ports     free ones from 18080 (backend), 18180 (worker), 15180 (Vite)
 #   browser   Vite on 127.0.0.1, whose localStorage is apart from the user's localhost sessions
+#   Judge0    the shell's JUDGE0_URL when it is a dev one (a Tailscale name), else the dev profile's
+#             LAN default; never production's http://judge0:...
 # Sign in with the dev test token (see the printed summary); OAuth redirects to the shared frontend.
 set -euo pipefail
 
@@ -67,6 +69,16 @@ database_verdict() {
   else
     echo foreign
   fi
+}
+
+# $1, a JUDGE0_URL from the shell, when it is a dev one to pass on (the user's Tailscale name for
+# Judge0, say, which the dev profile's LAN default can't stand in for off that network); empty for
+# none or production's (infra/.env's http://judge0:..., a compose service name).
+dev_judge0_url() {
+  case "$1" in
+    "" | http://judge0:*) ;;
+    *) echo "$1" ;;
+  esac
 }
 
 port_busy() {
@@ -315,10 +327,13 @@ JSON
   trap 'stop_all' EXIT
 
   cd "$root"
+  local judge0
+  judge0=$(dev_judge0_url "${JUDGE0_URL:-}")
   # Values a shell may carry from the production infra/.env (see scripts/dev-env.sh), and the
-  # shared servers' own settings, must not reach the branch servers.
+  # shared servers' own settings, must not reach the branch servers. A dev JUDGE0_URL does.
   unset CORS_ALLOWED_ORIGINS JWT_SECRET DB_USER DB_PASSWORD DB_URL JUDGE0_URL KAFKA_ENABLED \
     SPRING_PROFILES_ACTIVE SPRING_DATASOURCE_URL SERVER_PORT SPRING_APPLICATION_JSON
+  if [[ -n "$judge0" ]]; then export JUDGE0_URL="$judge0"; fi
   # shellcheck source=SCRIPTDIR/dev-env.sh
   source scripts/dev-env.sh
   # Marks every process started below as this checkout's: branch_pids stops only those, and

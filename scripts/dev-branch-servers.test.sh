@@ -139,5 +139,14 @@ for cmd in '[start]' stop status drop name; do
   [[ "$out" == *"dev-branch-servers.sh $cmd"* ]] || { echo "FAIL: usage lacks $cmd: $out"; fail=1; }
 done
 
+# --- Judge0 -----------------------------------------------------------------------------------
+
+# A dev Judge0 URL (a Tailscale name, a LAN address) reaches the branch servers; the production
+# one (infra/.env's http://judge0:2358, a compose service name) and none fall back to the dev default.
+check "dev URL kept" "$(dev_judge0_url http://nucbox:2358)" http://nucbox:2358
+check "LAN URL kept" "$(dev_judge0_url http://192.168.219.200:2358)" http://192.168.219.200:2358
+check "production URL dropped" "$(dev_judge0_url http://judge0:2358)" ""
+check "unset stays unset" "$(dev_judge0_url '')" ""
+
 (( fail )) && exit 1
-echo "PASS: dev-branch-servers.sh names, ownership, Redis claim, process matching, ports, main-checkout refusal"
+echo "PASS: dev-branch-servers.sh names, ownership, Redis claim, process matching, ports, main-checkout refusal, Judge0 URL"
