@@ -2,8 +2,8 @@ import type { OnboardingStorage } from "./seenTips";
 import type { TutorialEvent, TutorialState } from "./tutorial";
 
 /**
- * What the Tutorial reports, so the step counters (`codebite.tutorial.steps`) show where newcomers
- * drop off. Only the step name leaves the browser.
+ * What the Tutorial reports, so the milestone counters (`codebite.tutorial.milestones`) show where
+ * newcomers drop off. Only the milestone name leaves the browser.
  */
 export const TUTORIAL_MILESTONES = ["started", "ran", "submitted", "accepted", "skipped"] as const;
 

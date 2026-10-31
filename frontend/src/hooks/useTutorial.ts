@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
-import { reportTutorialStep } from "@/api/tutorial"
+import { reportTutorialMilestone } from "@/api/tutorial"
 import {
   advanceTutorial,
   browserStorage,
@@ -23,7 +23,7 @@ export interface TutorialNavigationState {
 function moveTutorial(event: TutorialEvent, current: TutorialState = readTutorial(browserStorage)): TutorialState {
   const next = advanceTutorial(browserStorage, event, current)
   const milestone = milestoneToReport(browserStorage, current, event, next)
-  if (milestone != null) reportTutorialStep(milestone)
+  if (milestone != null) reportTutorialMilestone(milestone)
   return next
 }
 
