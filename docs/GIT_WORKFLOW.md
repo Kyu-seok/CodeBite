@@ -172,6 +172,10 @@ gh api -X DELETE repos/Kyu-seok/CodeBite/git/refs/heads/perf/12-judge0-batch
 
 CodeBite 기본값: **Squash merge**.
 
+### 4.6 여러 티켓을 한 번에: integration 브랜치
+
+여러 티켓을 묶어 작업할 때는 `master` 에서 integration 브랜치 (예: `integration/retro-tickets-nov`) 를 따고, 티켓마다 그 위에서 `ticket/<issue#>-<short>` 브랜치를 만든다. 끝난 티켓 브랜치는 integration 워크트리에서 `scripts/merge-ticket.sh <branch> <title>` 로 `--no-ff` 머지한다 (충돌이면 중단하고 파일을 나열, 백엔드·워커 테스트와 프런트엔드 lint·테스트·빌드가 모두 통과할 때만 push). 모든 티켓이 들어가면 integration 브랜치를 평소처럼 PR 로 올려 `master` 에 squash merge 한다.
+
 ---
 
 ## 5. Issue 관리
