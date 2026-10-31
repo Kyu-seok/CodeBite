@@ -136,7 +136,7 @@ The one real, published problem the Tutorial runs on. Solving it counts like any
 
 **Tip**:
 A short explanation shown to a user the first time something happens to them, on any problem (their first Wrong Answer, their first Accepted, ...), until they dismiss it.
-_Avoid_: Hint (that is help with solving a problem), nudge, coach mark
+_Avoid_: Hint (that is help with solving a problem), nudge
 
 ### GitHub
 
