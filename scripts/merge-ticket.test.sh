@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Checks scripts/merge-ticket.sh without Gradle or npm: when it refuses to merge, the merge commit's
-# message, and (in scratch repositories with the checks faked) that a conflict aborts and lists the
+# message, that the frontend checks lint with no warnings before the tests and build (npm faked), and
+# (in scratch repositories with the checks faked) that a conflict aborts and lists the
 # files, a failing check leaves the merge commit unpushed, and green checks push it.
 set -euo pipefail
 
@@ -29,6 +30,26 @@ check "trailer from MERGE_TICKET_TRAILER" \
   "$(MERGE_TICKET_TRAILER='Co-Authored-By: X <x@x>' merge_message feat/a 'A')" "Merge feat/a: A
 
 Co-Authored-By: X <x@x>"
+
+# --- the frontend checks: lint (no warnings), tests and build, with npm faked ------------------
+
+fe=$(mktemp -d)
+mkdir -p "$fe/frontend/node_modules" "$fe/bin"
+cat > "$fe/bin/npm" <<'NPM'
+#!/usr/bin/env bash
+echo "npm $*" >> "$NPM_LOG"
+[[ "$*" != "${NPM_FAIL:-none}" ]]
+NPM
+chmod +x "$fe/bin/npm"
+fe_run() { (cd "$fe" && PATH="$fe/bin:$PATH" NPM_LOG="$fe/log" frontend_checks) >/dev/null 2>&1; }
+fe_run || { echo "FAIL: green frontend checks failed"; fail=1; }
+check "frontend checks" "$(cat "$fe/log")" "npm run lint -- --max-warnings 0
+npm test
+npm run build"
+rm -f "$fe/log"
+if NPM_FAIL='run lint -- --max-warnings 0' fe_run; then echo "FAIL: a lint warning must fail the frontend checks"; fail=1; fi
+check "lint fails first" "$(cat "$fe/log")" "npm run lint -- --max-warnings 0"
+rm -rf "$fe"
 
 # --- the whole merge, in scratch repositories with the checks faked ---------------------------
 
