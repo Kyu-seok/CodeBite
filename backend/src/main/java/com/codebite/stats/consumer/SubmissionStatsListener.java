@@ -41,7 +41,7 @@ public class SubmissionStatsListener {
 
     @KafkaListener(
             topics = "${app.kafka.topic.submission-results}",
-            groupId = "codebite-stats",
+            groupId = "${app.kafka.group-prefix:}codebite-stats",
             containerFactory = "statsListenerContainerFactory")
     public void onResult(SubmissionResultEvent event) {
         if (!SCOPE.test(event)) {

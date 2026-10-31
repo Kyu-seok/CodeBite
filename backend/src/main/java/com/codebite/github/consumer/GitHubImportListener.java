@@ -28,7 +28,7 @@ public class GitHubImportListener {
 
     @KafkaListener(
             topics = "${app.kafka.topic.github-import}",
-            groupId = "codebite-github-imports",
+            groupId = "${app.kafka.group-prefix:}codebite-github-imports",
             containerFactory = "gitHubImportListenerContainerFactory")
     public void onImportRequested(GitHubImportRequestedEvent event) {
         try {

@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
+import org.springframework.kafka.config.KafkaListenerEndpointRegistry;
+import org.springframework.kafka.listener.MessageListenerContainer;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.annotation.DirtiesContext;
 
@@ -33,11 +35,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 class WorkerApplicationTest {
 
     @Autowired private ApplicationContext context;
+    @Autowired private KafkaListenerEndpointRegistry registry;
 
     @Test
     void startsWithTheGradingBeansAndWithoutProblemAssets() {
         assertThat(context.getBeanNamesForType(SubmissionConsumer.class)).hasSize(1);
         assertThat(context.getBeanNamesForType(Grader.class)).hasSize(1);
         assertThat(context.getBeanNamesForType(ProblemAssets.class)).isEmpty();
+    }
+
+    @Test
+    void consumesInTheSharedGroupsWhenNoGroupPrefixIsSet() {
+        // app.kafka.group-prefix is only for scripts/dev-branch-backend.sh; production's groups stay put.
+        assertThat(registry.getListenerContainers()).extracting(MessageListenerContainer::getGroupId)
+                .containsExactlyInAnyOrder("codebite-worker", "codebite-worker-admin");
     }
 }
