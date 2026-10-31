@@ -369,37 +369,42 @@
     "dismissLabel": "Hide the tutorial banner"
   },
   "tutorial": {
-    "label": "Tutorial: how CodeBite works",
     "progress": "Step {{step}} of {{total}}",
     "next": "Next",
     "skip": "Skip tutorial",
     "done": "Done",
-    "stepDone": "done",
-    "stepCurrent": "current step",
     "steps": {
       "read": {
         "title": "Read the problem",
-        "body": "Start with the description below: what the function gets, what it should give back, the examples and the constraints."
+        "body": "Start here: what the function gets, what it should give back, and the examples. Press Next when you've read it."
       },
       "function": {
-        "title": "Fill in the function",
-        "body": "You only write the body of the function in the editor. CodeBite calls it with each input and checks what it returns. Ignore the wrapper around it (such as class Solution), and return your answer: printing it is not an answer."
+        "title": "Write your answer here",
+        "body": "You only fill in the body of the function. CodeBite calls it with each input and checks what it returns, so return your answer: printing it doesn't count. Start typing on the marked line."
       },
       "run": {
         "title": "Run your code",
-        "body": "Run tries your code on the example cases. It's free and saves nothing, so run as often as you like."
+        "body": "Run tries your code on the example cases. It's free and saves nothing, so run as often as you like. Press Run when you're ready."
       },
       "readFailure": {
         "title": "Read what went wrong",
-        "body": "The Test panel shows what went wrong: for a wrong answer, each failing case's Expected output next to yours; for a Compile Error, Runtime Error or Time Limit Exceeded, the error message. The Tip next to the result explains this kind of failure. Fix the code and Run again."
+        "body": "The result shows what went wrong, and the Tip beside it explains this kind of failure. Fix your code, then Run again."
       },
       "submit": {
         "title": "Submit",
-        "body": "Submit checks every case, hidden ones included, and saves the result to your submission history."
+        "body": "The examples pass. Submit checks every case, hidden ones included, and saves the result to your submission history."
+      },
+      "submitSignIn": {
+        "title": "Sign in to submit",
+        "body": "The examples pass. Submit checks every case, hidden ones included, and saves the result, so it needs an account. Press Submit to sign in: you'll come straight back here with your code."
+      },
+      "judging": {
+        "title": "Checking your code…",
+        "body": "CodeBite is running your code. The result shows here in a moment."
       },
       "accepted": {
         "title": "Accepted! You solved your first problem",
-        "body": "A problem solved each day keeps your Streak going: the flame in the top bar. Rate how confident you felt, and CodeBite brings the problem back for review when it's due."
+        "body": "That's the whole loop: read, write, Run, Submit. Your next problem is waiting in the list whenever you're ready."
       }
     }
   }

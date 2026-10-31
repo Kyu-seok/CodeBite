@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/Tabs';
 import { Button } from '@/components/ui/Button';
@@ -91,8 +91,6 @@ interface LeftPanelProps {
   onFold?: () => void;
   onMaximize?: () => void;
   isMaximized?: boolean;
-  /** The Tutorial's step card, docked above the tabs' content so it stays put while they scroll. */
-  stepCard?: ReactNode;
 }
 
 export function LeftPanel({
@@ -115,7 +113,6 @@ export function LeftPanel({
   onFold,
   onMaximize,
   isMaximized,
-  stepCard,
 }: LeftPanelProps) {
   const { t } = useTranslation('problem');
   const [selectedSubmissionId, setSelectedSubmissionId] = useState<number | null>(null);
@@ -179,8 +176,6 @@ export function LeftPanel({
             </Tooltip>
           </div>
         </div>
-
-        {stepCard}
 
         <div className="flex-1 overflow-auto">
           <TabsContent value="description" className="mt-0">

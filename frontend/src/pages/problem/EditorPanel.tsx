@@ -230,6 +230,8 @@ interface EditorPanelProps {
   activeLanguage: string;
   code: string;
   errors?: CodeError[];
+  /** Lines (1-based, inclusive) the Tutorial marks as where the answer goes; null for none. */
+  markedLines?: { start: number; end: number } | null;
   onLanguageChange: (lang: string) => void;
   onCodeChange: (value: string | undefined) => void;
   onResetCode?: () => void;
@@ -248,6 +250,7 @@ export function EditorPanel({
   activeLanguage,
   code,
   errors,
+  markedLines,
   onLanguageChange,
   onCodeChange,
   onResetCode,
@@ -398,6 +401,22 @@ export function EditorPanel({
       decorationsRef.current = editor.deltaDecorations(decorationsRef.current, []);
     };
   }, [errors, activeLanguage, editorMounted]);
+
+  // The Tutorial's step 2 marks where the answer goes: a tinted band over those lines.
+  const markStart = markedLines?.start;
+  const markEnd = markedLines?.end;
+  useEffect(() => {
+    const editor = editorRef.current;
+    if (!editor || markStart == null || markEnd == null) return;
+    const marks = editor.createDecorationsCollection([
+      {
+        range: new MonacoRange(markStart, 1, markEnd, 1),
+        options: { isWholeLine: true, className: 'cb-editor-tutorial-line' },
+      },
+    ]);
+    editor.revealLinesInCenterIfOutsideViewport(markStart, markEnd);
+    return () => marks.clear();
+  }, [markStart, markEnd, editorMounted]);
 
   return (
     <div className="flex h-full flex-col">

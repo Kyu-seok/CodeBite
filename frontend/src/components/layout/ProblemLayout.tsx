@@ -29,7 +29,7 @@ const LEFT_COLLAPSED_SIZE = `${LEFT_COLLAPSED_PCT}%`;   // string for panel prop
 const TESTS_COLLAPSED_SIZE = `${TESTS_COLLAPSED_PCT}%`; // string for panel props
 
 // Tailwind's `md` breakpoint, where the stacked layout gives way to resizable panels.
-const DESKTOP_QUERY = '(min-width: 768px)';
+export const DESKTOP_QUERY = '(min-width: 768px)';
 
 interface ProblemLayoutProps {
   /** Left panel: tabbed content (description, submissions, solutions) */
