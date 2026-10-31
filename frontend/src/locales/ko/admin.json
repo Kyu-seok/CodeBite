@@ -13,7 +13,10 @@
     "noProblems": "아직 문제가 없습니다",
     "recentSubmissions": "최근 제출",
     "noSubmissions": "아직 제출이 없습니다",
-    "difficulty": "난이도"
+    "difficulty": "난이도",
+    "onboarding": "온보딩 성공률 (최근 30일 가입자)",
+    "onboardingDetail": "신규 사용자 {{signedUp}}명 중 {{accepted}}명이 가입 후 24시간 안에 정답을 제출했습니다",
+    "onboardingNone": "최근 30일 동안 가입한 사용자가 없습니다"
   },
   "problems": {
     "heading": "문제",
