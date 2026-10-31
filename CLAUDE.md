@@ -104,6 +104,7 @@ The GitHub App behind Solution Commits is registered by hand: run `scripts/setup
 - `streak/` — Streaks and Repairs (controller, service, DTOs, `submission-results` listener); terms in GLOSSARY.md, UTC days per docs/adr/0001
 - `progress/` — typed progress reads (terms in GLOSSARY.md): `UserProgress` owns what Solved and Attempted mean (Accepted/graded, non-admin, PENDING is neither) for the problem list, roadmap and recommendations, and the Solved counts by difficulty and tag over published problems that the profile and list header show, and Activity (every submission, bucketed into UTC days in Java); `ProblemPopularity` (Acceptance Rate from `problem_stats`, maintained by `stats/consumer/SubmissionStatsListener` and backfilled once by V195; a problem with no row reads `Rate.NONE`)
 - `review/` — Reviews (controller, service, DTOs): `ReviewService` rates a submission by replaying the other submissions' Reviews through `ReviewSchedule` and rating on top, stores the snapshot row or deletes it when no Review is left, previews intervals the same way, and lists Due problems from the row; terms in GLOSSARY.md
+- `onboarding/` — `TutorialStepController`: the anonymous Tutorial step counters (`codebite.tutorial.steps`)
 - `github/` — GitHub Links via the CodeBite GitHub App (ADR 0003): `gateway/` (`GitHubGateway` seam, `GitHubAppGateway` REST adapter minting installation tokens from an RS256 app JWT, gateway exceptions), `service/` (link + signed install state carrying the chosen Solution Repository name; `SolutionCommitService` + `SolutionLayout` for Solution Commits, `SolutionCommitRecorder` for the row/path, README-first and outcome-counter rules it shares with `GitHubImporter`), `consumer/SolutionCommitListener` (`submission-results`, group `codebite-solution-commits`: every ACCEPTED event of a user with an ACTIVE link becomes a Solution Commit, a problem folder's first one adding README + solution in one commit via `pushCommits`; transient GitHub errors retried with doubling back-off per `app.github.commit-max-tries` / `commit-retry-backoff-ms`, then FAILED; never throws; a gone installation/repository marks the link BROKEN, after which submissions are skipped until relink), Import (`GitHubImportService` starts it and publishes `event/GitHubImportRequestedEvent` through `GitHubImportPublisher` → `kafka/KafkaGitHubImportPublisher` on topic `github-imports`; `consumer/GitHubImportListener`, group `codebite-github-imports`, runs `GitHubImporter`: every earlier Accepted submission not yet COMMITTED through the link goes up in one batch push via `GitHubGateway.pushCommits`, which the real adapter does with JGit in `gateway/GitBatchPush`, remote base `app.github.git-base-url`), controller (plus `GitHubExceptionHandler`, ordered ahead of GlobalExceptionHandler, mapping gateway exceptions to 403/503/502), DTOs. Tests swap in `FakeGitHubGateway` (`backend/src/test/.../github/gateway/`) via `TestGitHubConfig`, and `TestKafkaConfig` runs Imports synchronously
 
 ### Run Flow (Synchronous)
@@ -122,12 +123,13 @@ The GitHub App behind Solution Commits is registered by hand: run `scripts/setup
 | GET | `/api/auth/me` | JWT | 200 + `{id, username, email, role, createdAt}` |
 | POST | `/api/auth/logout` | JWT | 204 No Content |
 | GET | `/api/health` | No | 200 + `{status: "UP"}` |
-| GET | `/api/problems` | No | 200 + paginated `{id, title, slug, difficulty}` |
-| GET | `/api/problems/{slug}` | No | 200 + (a Former Slug works too; `slug` is the current one) `{id, title, slug, description, difficulty, starterCode, constraints, published, sampleTestCases, createdAt, updatedAt}` |
+| GET | `/api/problems` | No | 200 + paginated `{id, title, slug, difficulty, tutorial}` (`tutorial`: this is the Tutorial Problem) |
+| GET | `/api/problems/{slug}` | No | 200 + (a Former Slug works too; `slug` is the current one) `{id, title, slug, description, difficulty, starterCode, constraints, published, sampleTestCases, tutorial, createdAt, updatedAt}` |
 | POST | `/api/admin/problems` | ADMIN | 201 + problem detail |
 | PUT | `/api/admin/problems/{id}` | ADMIN | 200 + problem detail |
 | POST | `/api/admin/problems/{id}/test-cases` | ADMIN | 201 + test case |
 | POST | `/api/problems/{slug}/run` | No | 200 + `{overallStatus, results}` |
+| POST | `/api/tutorial/steps/{step}` | No | 204 No Content (counts one Tutorial step in `codebite.tutorial.steps`; `step` = `started`, `ran`, `submitted`, `accepted` or `skipped`, anything else 400; nothing per user is stored) |
 | POST | `/api/problems/{slug}/submit` | JWT | 201 + `{id, problemSlug, language, status, runtimeMs, memoryKb, results, createdAt}` |
 | GET | `/api/submissions/{id}` | JWT | 200 + submission detail (input/expectedOutput only for sample cases; `solutionCommit: {status: PENDING\|COMMITTED\|FAILED, commitUrl}` or null when there's no Solution Commit; `reviewIntervalDays: {AGAIN, HARD, GOOD, EASY}` = days the review scheduler would set if rated now, null while PENDING; `failingCase: {testCaseId, position, total, hidden, status, input, expectedOutput, actualOutput, errors}` = the Failing Case, revealed even when hidden (docs/adr/0006), null when Accepted, PENDING, a Compilation Error or an Internal Error) |
 | GET | `/api/problems/{slug}/submissions` | JWT | 200 + `[{id, status, language, runtimeMs, memoryKb, createdAt}]` |
@@ -214,6 +216,7 @@ npm test         # unit tests (Vitest); run by pre-commit and CI
 | `codebite.submissions.completed` | Counter | Worker | Submissions completed (tags: `status`, `language`) |
 | `codebite.submissions.processing.duration` | Timer | Worker | Time to process a submission through Judge0 |
 | `codebite.solution.commits` | Counter | Backend | Solution Commits by final outcome after retries (tag: `outcome` = `committed`, `failed`, or `broken` when the installation or repository is gone, which is never retried). An Import counts each commit in its batch |
+| `codebite.tutorial.steps` | Counter | Backend | Tutorial steps reached, each reported once per run of the Tutorial by the browser (tag: `step` = `started`, `ran`, `submitted`, `accepted`, `skipped`); anonymous |
 
 ### Built-in Metrics (via Actuator)
 - `http_server_requests_seconds` — HTTP request rate, latency, status codes per endpoint
