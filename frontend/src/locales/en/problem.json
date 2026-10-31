@@ -360,6 +360,14 @@
       "body": "A problem solved today counts toward your Streak, the flame in the top bar. Rate how confident you felt, now or later from the Submissions tab, and CodeBite will bring this problem back for review when it's due."
     }
   },
+  "tutorialBanner": {
+    "label": "New to CodeBite?",
+    "title": "New here? Solve your first problem with a guide",
+    "body": "A short tutorial on a very easy problem shows how practising works: what you write, what Run and Submit do, and how to read a result.",
+    "start": "Start the tutorial",
+    "dismiss": "Dismiss",
+    "dismissLabel": "Hide the tutorial banner"
+  },
   "tutorial": {
     "label": "Tutorial: how CodeBite works",
     "progress": "Step {{step}} of {{total}}",
