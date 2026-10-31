@@ -1,5 +1,6 @@
 package com.codebite.progress;
 
+import com.codebite.problem.entity.Curation;
 import com.codebite.problem.entity.Difficulty;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -16,7 +17,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.OptionalInt;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -111,18 +112,19 @@ public class UserProgress {
 
     /**
      * Solved published problems per difficulty, with a difficulty absent when none is Solved.
-     * {@code maxProblemNumber} limits the count to a curation (CB50, CB100, ...).
+     * {@code curation} limits the count to that curation's problems, which leaves out the Tutorial
+     * Problem; with none, it counts like any other.
      */
     @Transactional(readOnly = true)
-    public Map<Difficulty, Integer> solvedByDifficulty(Long userId, OptionalInt maxProblemNumber) {
+    public Map<Difficulty, Integer> solvedByDifficulty(Long userId, Optional<Curation> curation) {
         String jpql = "SELECT p.difficulty, COUNT(DISTINCT p.id) FROM Submission s JOIN s.problem p "
                 + "WHERE s.user.id = :userId AND " + ACCEPTED_NON_ADMIN + " AND p.published = true "
-                + (maxProblemNumber.isPresent() ? "AND p.problemNumber <= :maxNumber " : "")
+                + (curation.isPresent() ? "AND p.problemNumber BETWEEN :firstNumber AND :lastNumber " : "")
                 + "GROUP BY p.difficulty";
         var query = entityManager.createQuery(jpql, DifficultySolved.class).setParameter("userId", userId);
-        if (maxProblemNumber.isPresent()) {
-            query.setParameter("maxNumber", maxProblemNumber.getAsInt());
-        }
+        curation.ifPresent(c -> query
+                .setParameter("firstNumber", c.firstNumber())
+                .setParameter("lastNumber", c.lastNumber()));
         Map<Difficulty, Integer> solved = new EnumMap<>(Difficulty.class);
         for (DifficultySolved row : query.getResultList()) {
             solved.put(row.difficulty(), row.solved().intValue());

@@ -1,5 +1,6 @@
 package com.codebite.problem.repository;
 
+import com.codebite.problem.entity.Curation;
 import com.codebite.problem.entity.Difficulty;
 import com.codebite.problem.entity.Problem;
 import org.springframework.data.domain.Page;
@@ -14,6 +15,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ProblemRepository extends JpaRepository<Problem, Long>, JpaSpecificationExecutor<Problem> {
+
+    /** JPQL for "{@code p} is not the Tutorial Problem": the random pick never offers it (docs/adr/0007). */
+    String NOT_TUTORIAL = "(p.problemNumber IS NULL OR p.problemNumber <> " + Problem.TUTORIAL_NUMBER + ")";
 
     Optional<Problem> findBySlug(String slug);
 
@@ -41,24 +45,34 @@ public interface ProblemRepository extends JpaRepository<Problem, Long>, JpaSpec
            + "FROM Problem p WHERE p.published = true GROUP BY p.difficulty")
     List<DifficultyCount> countPublishedByDifficulty();
 
-    @Query("SELECT new com.codebite.problem.repository.DifficultyCount(p.difficulty, COUNT(p)) "
-           + "FROM Problem p WHERE p.published = true AND p.problemNumber <= :maxNumber GROUP BY p.difficulty")
-    List<DifficultyCount> countPublishedByDifficultyAndCuration(@Param("maxNumber") int maxNumber);
+    /** {@link #countPublishedByDifficulty()} over one curation's problems, so without the Tutorial Problem. */
+    default List<DifficultyCount> countPublishedByDifficultyIn(Curation curation) {
+        return countPublishedByDifficultyNumbered(curation.firstNumber(), curation.lastNumber());
+    }
 
-    @Query("SELECT p.slug FROM Problem p WHERE p.published = true ORDER BY RANDOM()")
+    @Query("SELECT new com.codebite.problem.repository.DifficultyCount(p.difficulty, COUNT(p)) "
+           + "FROM Problem p WHERE p.published = true AND p.problemNumber BETWEEN :firstNumber AND :lastNumber "
+           + "GROUP BY p.difficulty")
+    List<DifficultyCount> countPublishedByDifficultyNumbered(@Param("firstNumber") int firstNumber,
+                                                             @Param("lastNumber") int lastNumber);
+
+    // Random picks: published problems other than the Tutorial Problem.
+    @Query("SELECT p.slug FROM Problem p WHERE p.published = true AND " + NOT_TUTORIAL + " ORDER BY RANDOM()")
     List<String> findRandomPublishedSlugs(Pageable pageable);
 
-    @Query("SELECT p.slug FROM Problem p WHERE p.published = true AND p.difficulty = :difficulty ORDER BY RANDOM()")
+    @Query("SELECT p.slug FROM Problem p WHERE p.published = true AND " + NOT_TUTORIAL
+           + " AND p.difficulty = :difficulty ORDER BY RANDOM()")
     List<String> findRandomPublishedSlugsByDifficulty(@Param("difficulty") Difficulty difficulty, Pageable pageable);
 
     // Random pick among published problems other than the given ones (the user's Solved ids from
     // UserProgress). `excluded` must not be empty: NOT IN () is not SQL; callers use the plain
     // random query then.
-    @Query("SELECT p.slug FROM Problem p WHERE p.published = true AND p.id NOT IN :excluded ORDER BY RANDOM()")
+    @Query("SELECT p.slug FROM Problem p WHERE p.published = true AND " + NOT_TUTORIAL
+           + " AND p.id NOT IN :excluded ORDER BY RANDOM()")
     List<String> findRandomPublishedSlugsExcluding(@Param("excluded") Collection<Long> excluded, Pageable pageable);
 
-    @Query("SELECT p.slug FROM Problem p WHERE p.published = true AND p.difficulty = :difficulty "
-           + "AND p.id NOT IN :excluded ORDER BY RANDOM()")
+    @Query("SELECT p.slug FROM Problem p WHERE p.published = true AND " + NOT_TUTORIAL
+           + " AND p.difficulty = :difficulty AND p.id NOT IN :excluded ORDER BY RANDOM()")
     List<String> findRandomPublishedSlugsByDifficultyExcluding(@Param("difficulty") Difficulty difficulty,
                                                                @Param("excluded") Collection<Long> excluded,
                                                                Pageable pageable);
