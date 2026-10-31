@@ -7,11 +7,11 @@ Issues and specs for this repo live as GitHub issues in `Kyu-seok/CodeBite`. Use
 - **Create an issue**: `gh issue create --title "..." --body "..."`. Use a heredoc for multi-line bodies.
 - **Read an issue**: `gh issue view <number> --json number,title,body,labels,comments`.
 - **List issues**: `gh issue list --state open --json number,title,body,labels,comments --jq '[.[] | {number, title, body, labels: [.labels[].name], comments: [.comments[].body]}]'` with appropriate `--label` and `--state` filters.
-- **Make an issue a sub-issue of a parent**: the local `gh` is 2.58, which has no `--parent` or `--add-sub-issue`, so use `gh api --method POST repos/Kyu-seok/CodeBite/issues/<parent>/sub_issues -F sub_issue_id=<child-db-id>` (database id, as in **Blocking** below). If that fails, put `Part of #<parent>` at the top of the child body.
+- **Make an issue a sub-issue of a parent**: `gh issue create --parent <parent>` for a new one, `gh issue edit <child> --parent <parent>` (or `gh issue edit <parent> --add-sub-issue <child>,<child>`) for an existing one; numbers, not database ids (gh 2.103). If that fails, put `Part of #<parent>` at the top of the child body.
 - **Publish several tickets**: one `gh issue create` call per ticket, its title beside its own body file, then attach it and add its blockers using the number that call printed. The shell is zsh, where arrays start at 1, so a loop over a titles array and numbered body files pairs each title with the wrong body.
 - **Comment on an issue**: `gh issue comment <number> --body "..."`
 - **Open or update a PR**: check `gh pr list --head <branch> --json number` first; if the branch already has a PR, update that one instead of creating another.
-- **Edit a PR's title or body**: `gh pr edit` fails on gh 2.58 (`Projects (classic) is being deprecated`), so use `gh api --method PATCH repos/Kyu-seok/CodeBite/pulls/<n> -f title="..." -F body=@<file>`.
+- **Edit a PR's or an issue's title or body**: `gh pr edit <n>` / `gh issue edit <n>` with `--title` and `--body-file` (the `gh api --method PATCH` workaround was for gh 2.58).
 - **Apply / remove labels**: `gh issue edit <number> --add-label "..."` / `--remove-label "..."`
 - **Close**: `gh issue close <number> --comment "..."`
 
@@ -43,7 +43,7 @@ Used by `/wayfinder`. The **map** is a single issue with **child** issues as tic
 
 - **Map**: a single issue labelled `wayfinder:map`, holding the Notes / Decisions-so-far / Fog body. `gh issue create --label wayfinder:map`.
 - **Child ticket**: an issue linked to the map as a GitHub sub-issue (see **Make an issue a sub-issue of a parent**). Where sub-issues aren't enabled, add the child to a task list in the map body and put `Part of #<map>` at the top of the child body. Labels: `wayfinder:<type>` (`research`/`prototype`/`grilling`/`task`). Once claimed, the ticket is assigned to the driving dev.
-- **Blocking**: GitHub's **native issue dependencies**, the canonical, UI-visible representation. Add an edge with `gh api --method POST repos/<owner>/<repo>/issues/<child>/dependencies/blocked_by -F issue_id=<blocker-db-id>`, where `<blocker-db-id>` is the blocker's numeric **database id** (`gh api repos/<owner>/<repo>/issues/<n> --jq .id`, _not_ the `#number` or `node_id`). GitHub reports `issue_dependencies_summary.blocked_by` (open blockers only, the live gate). Where dependencies aren't available, fall back to a `Blocked by: #<n>, #<n>` line at the top of the child body. A ticket is unblocked when every blocker is closed.
+- **Blocking**: GitHub's **native issue dependencies**, the canonical, UI-visible representation. Add an edge with `gh issue create --blocked-by <n>,<n>` or `gh issue edit <child> --add-blocked-by <n>` (issue numbers). GitHub reports `issue_dependencies_summary.blocked_by` (open blockers only, the live gate). Where dependencies aren't available, fall back to a `Blocked by: #<n>, #<n>` line at the top of the child body. A ticket is unblocked when every blocker is closed.
 - **Frontier query**: list the map's open children (`gh issue list --state open`, scoped to the map's sub-issues / task list), drop any with an open blocker (`issue_dependencies_summary.blocked_by > 0`, or an open issue in the `Blocked by` line) or an assignee; first in map order wins.
 - **Claim**: `gh issue edit <n> --add-assignee @me`, the session's first write.
 - **Resolve**: `gh issue comment <n> --body "<answer>"`, then `gh issue close <n>`, then append a context pointer (gist + link) to the map's Decisions-so-far.
