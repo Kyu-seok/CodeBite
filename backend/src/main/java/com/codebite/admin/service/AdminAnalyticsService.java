@@ -3,6 +3,7 @@ package com.codebite.admin.service;
 import com.codebite.admin.dto.AdminRecentSubmission;
 import com.codebite.admin.dto.AdminUserDto;
 import com.codebite.admin.dto.DailySubmissionDto;
+import com.codebite.admin.dto.OnboardingSuccess;
 import com.codebite.admin.dto.OverviewStats;
 import com.codebite.admin.dto.ProblemAnalyticsDto;
 import com.codebite.problem.entity.Difficulty;
@@ -12,6 +13,7 @@ import com.codebite.progress.ProblemPopularity;
 import com.codebite.progress.ProblemPopularity.Rate;
 import com.codebite.submission.entity.Submission;
 import com.codebite.submission.repository.SubmissionRepository;
+import com.codebite.user.repository.SignUp;
 import com.codebite.user.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,6 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
@@ -27,6 +30,9 @@ import java.util.Map;
 
 @Service
 public class AdminAnalyticsService {
+
+    /** How soon after signing up a first Accepted counts as onboarding having worked. */
+    private static final Duration ONBOARDING_WINDOW = Duration.ofHours(24);
 
     private final UserRepository userRepository;
     private final ProblemRepository problemRepository;
@@ -61,6 +67,19 @@ public class AdminAnalyticsService {
         return submissionRepository.countDailySubmissions(since).stream()
                 .map(day -> new DailySubmissionDto(day.day(), day.count()))
                 .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public OnboardingSuccess getOnboardingSuccess(int days) {
+        Instant since = LocalDate.now(ZoneOffset.UTC).minusDays(days).atStartOfDay(ZoneOffset.UTC).toInstant();
+        List<SignUp> signUps = userRepository.findSignUpsSince(since);
+        long accepted = signUps.stream()
+                .filter(s -> s.firstAcceptedAt() != null
+                        && !s.firstAcceptedAt().isAfter(s.signedUpAt().plus(ONBOARDING_WINDOW)))
+                .count();
+        Double percent = signUps.isEmpty() ? null
+                : Math.round(accepted * 1000.0 / signUps.size()) / 10.0;
+        return new OnboardingSuccess(days, signUps.size(), accepted, percent);
     }
 
     @Transactional(readOnly = true)
