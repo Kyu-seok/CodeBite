@@ -9,6 +9,8 @@ export interface ProblemListItem {
   tags: string[];
   status: "SOLVED" | "ATTEMPTED" | null;
   acceptanceRate: number | null;
+  /** The Tutorial Problem, labelled "Tutorial". */
+  tutorial: boolean;
 }
 
 export interface TagDto {
@@ -46,4 +48,6 @@ export interface ProblemDetail {
   sampleTestCases: TestCase[];
   createdAt: string;
   updatedAt: string;
+  /** The Tutorial Problem, labelled "Tutorial". */
+  tutorial: boolean;
 }
