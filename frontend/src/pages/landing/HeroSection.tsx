@@ -1,7 +1,6 @@
 import { useTranslation } from "react-i18next"
-import { Link } from "react-router-dom"
-import { buttonVariants } from "@/components/ui/Button"
 import { Button } from "@/components/ui/Button"
+import { useStartTutorial } from "@/hooks/useTutorial"
 import { Badge } from "@/components/ui/Badge"
 
 function GrowthChart() {
@@ -75,6 +74,8 @@ function GrowthChart() {
 
 export function HeroSection() {
   const { t } = useTranslation("landing")
+  // The main call to action starts the Tutorial on the Tutorial Problem.
+  const startTutorial = useStartTutorial()
   return (
     <section className="relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-b from-accent-50/50 via-accent-50/20 to-transparent dark:from-accent-950/20 dark:via-accent-950/10 dark:to-transparent" />
@@ -108,12 +109,9 @@ export function HeroSection() {
               className="animate-fade-up mt-8 flex flex-col items-center gap-3 sm:flex-row lg:items-start"
               style={{ animationDelay: "300ms" }}
             >
-              <Link
-                to="/problems"
-                className={buttonVariants({ variant: "accent", size: "lg" })}
-              >
-                {t("hero.startPracticing")}
-              </Link>
+              <Button variant="accent" size="lg" onClick={startTutorial}>
+                {t("hero.solveFirstProblem")}
+              </Button>
               <Button
                 variant="outline"
                 size="lg"

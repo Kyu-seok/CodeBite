@@ -2,6 +2,7 @@ package com.codebite.progress;
 
 import com.codebite.judge.grader.CaseVerdict;
 import com.codebite.judge.grader.Verdict;
+import com.codebite.problem.entity.Curation;
 import com.codebite.problem.entity.Difficulty;
 import com.codebite.problem.entity.Problem;
 import com.codebite.problem.entity.Tag;
@@ -28,7 +29,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
-import java.util.OptionalInt;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -170,7 +171,7 @@ class UserProgressTest {
             entityManager.flush();
 
             assertEquals(Map.of(Difficulty.EASY, 2),
-                    progress.solvedByDifficulty(user.getId(), OptionalInt.empty()),
+                    progress.solvedByDifficulty(user.getId(), Optional.empty()),
                     "two Accepted on one problem count once; unpublished, attempted and admin do not count");
         }
 
@@ -183,9 +184,23 @@ class UserProgressTest {
             entityManager.flush();
 
             assertEquals(Map.of(Difficulty.EASY, 1, Difficulty.HARD, 1),
-                    progress.solvedByDifficulty(user.getId(), OptionalInt.empty()));
+                    progress.solvedByDifficulty(user.getId(), Optional.empty()));
             assertEquals(Map.of(Difficulty.EASY, 1),
-                    progress.solvedByDifficulty(user.getId(), OptionalInt.of(100)));
+                    progress.solvedByDifficulty(user.getId(), Optional.of(Curation.CB100)));
+        }
+
+        @Test
+        void theTutorialProblemIsSolvedButInNoCuration() {
+            easy.setProblemNumber(0);
+            medium.setProblemNumber(1);
+            submit(user, easy, SubmissionStatus.ACCEPTED);
+            submit(user, medium, SubmissionStatus.ACCEPTED);
+            entityManager.flush();
+
+            assertEquals(Map.of(Difficulty.EASY, 1, Difficulty.MEDIUM, 1),
+                    progress.solvedByDifficulty(user.getId(), Optional.empty()));
+            assertEquals(Map.of(Difficulty.MEDIUM, 1),
+                    progress.solvedByDifficulty(user.getId(), Optional.of(Curation.CB50)));
         }
 
         @Test
@@ -193,7 +208,7 @@ class UserProgressTest {
             submit(user, easy, SubmissionStatus.WRONG_ANSWER);
             entityManager.flush();
 
-            assertEquals(Map.of(), progress.solvedByDifficulty(user.getId(), OptionalInt.empty()));
+            assertEquals(Map.of(), progress.solvedByDifficulty(user.getId(), Optional.empty()));
         }
     }
 

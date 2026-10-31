@@ -3,6 +3,7 @@ package com.codebite.admin.controller;
 import com.codebite.admin.dto.AdminRecentSubmission;
 import com.codebite.admin.dto.AdminUserDto;
 import com.codebite.admin.dto.DailySubmissionDto;
+import com.codebite.admin.dto.OnboardingSuccess;
 import com.codebite.admin.dto.OverviewStats;
 import com.codebite.admin.dto.ProblemAnalyticsDto;
 import com.codebite.admin.service.AdminAnalyticsService;
@@ -36,6 +37,11 @@ public class AdminAnalyticsController {
     @GetMapping("/submissions")
     public List<DailySubmissionDto> getDailySubmissions(@RequestParam(defaultValue = "30") int days) {
         return analyticsService.getDailySubmissions(days);
+    }
+
+    @GetMapping("/onboarding")
+    public OnboardingSuccess getOnboardingSuccess(@RequestParam(defaultValue = "30") int days) {
+        return analyticsService.getOnboardingSuccess(days);
     }
 
     @GetMapping("/problems")

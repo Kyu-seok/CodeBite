@@ -4,6 +4,7 @@ import com.codebite.common.exception.ResourceNotFoundException;
 import com.codebite.problem.dto.ProblemDetail;
 import com.codebite.problem.dto.ProblemListItem;
 import com.codebite.problem.dto.ProblemStats;
+import com.codebite.problem.entity.Curation;
 import com.codebite.problem.entity.Difficulty;
 import com.codebite.problem.entity.Problem;
 import com.codebite.problem.entity.ProblemTranslation;
@@ -26,7 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-import java.util.OptionalInt;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -71,9 +72,9 @@ public class ProblemCatalogue {
         if (tag != null && !tag.isBlank()) {
             spec = spec.and(ProblemSpecifications.hasTag(tag));
         }
-        Integer maxNumber = parseCuration(curation);
-        if (maxNumber != null) {
-            spec = spec.and(ProblemSpecifications.problemNumberAtMost(maxNumber));
+        Optional<Curation> chosen = Curation.ofRequest(curation);
+        if (chosen.isPresent()) {
+            spec = spec.and(ProblemSpecifications.inCuration(chosen.get()));
         }
 
         Page<Problem> page = problemRepository.findAll(spec, pageable);
@@ -87,18 +88,17 @@ public class ProblemCatalogue {
 
     @Transactional(readOnly = true)
     public ProblemStats getStats(Long userId, String curation) {
-        Integer maxNumber = parseCuration(curation);
+        Optional<Curation> chosen = Curation.ofRequest(curation);
         Map<Difficulty, Integer> totals = new EnumMap<>(Difficulty.class);
-        List<DifficultyCount> totalRows = maxNumber != null
-                ? problemRepository.countPublishedByDifficultyAndCuration(maxNumber)
+        List<DifficultyCount> totalRows = chosen.isPresent()
+                ? problemRepository.countPublishedByDifficultyIn(chosen.get())
                 : problemRepository.countPublishedByDifficulty();
         for (DifficultyCount row : totalRows) {
             totals.put(row.difficulty(), (int) row.count());
         }
 
         Map<Difficulty, Integer> solved = userId != null
-                ? userProgress.solvedByDifficulty(userId,
-                        maxNumber != null ? OptionalInt.of(maxNumber) : OptionalInt.empty())
+                ? userProgress.solvedByDifficulty(userId, chosen)
                 : Map.of();
 
         return new ProblemStats(
@@ -147,15 +147,6 @@ public class ProblemCatalogue {
                 .findByProblemIdAndSampleTrueOrderByOrderIndexAsc(problem.getId());
         ProblemTranslation translation = fetchTranslation(problem.getId());
         return dtos.toDetail(problem, sampleCases, translation);
-    }
-
-    private static final Map<String, Integer> CURATION_LIMITS = Map.of(
-            "CB50", 50, "CB100", 100, "CB200", 200
-    );
-
-    private Integer parseCuration(String curation) {
-        if (curation == null || curation.isBlank()) return null;
-        return CURATION_LIMITS.get(curation.toUpperCase());
     }
 
     private String currentLocale() {

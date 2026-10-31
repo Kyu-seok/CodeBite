@@ -25,5 +25,6 @@
     "reset": "타이머 초기화",
     "nudge": "타이머를 켜면 이 문제를 푸는 데 걸린 시간이 기록돼요.",
     "nudgeDismiss": "다시 알리지 않기"
-  }
+  },
+  "howItWorks": "CodeBite 사용법"
 }

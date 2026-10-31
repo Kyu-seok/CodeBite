@@ -13,7 +13,10 @@
     "noProblems": "No problems yet",
     "recentSubmissions": "Recent Submissions",
     "noSubmissions": "No submissions yet",
-    "difficulty": "Difficulty"
+    "difficulty": "Difficulty",
+    "onboarding": "Onboarding Success (Sign-ups, Last 30 Days)",
+    "onboardingDetail": "{{accepted}} of {{signedUp}} new users had an Accepted submission within 24 hours of signing up",
+    "onboardingNone": "No new users in the last 30 days"
   },
   "problems": {
     "heading": "Problems",

@@ -125,6 +125,19 @@ _Avoid_: Active day, heatmap day
 Per problem, the share of graded non-admin submissions that were Accepted, as a percentage to one decimal. A problem nobody has been graded on has none.
 _Avoid_: Pass rate, success rate, solve rate
 
+### Onboarding
+
+**Tutorial**:
+A newcomer's guided first solve of the Tutorial Problem, from reading it to its first Accepted. Anyone can start it, signed in or not; it can be skipped at any step and replayed from the start.
+_Avoid_: Onboarding tour, walkthrough
+
+**Tutorial Problem**:
+The one real, published problem the Tutorial runs on. Solving it counts like any other problem (Solved, a Streak Day, a Solution Commit), but it belongs to no curation and is never recommended.
+
+**Tip**:
+A short explanation shown to a user the first time something happens to them, on any problem (their first Wrong Answer, their first Accepted, ...), until they dismiss it.
+_Avoid_: Hint (that is help with solving a problem), nudge, coach mark
+
 ### GitHub
 
 **GitHub Link**:

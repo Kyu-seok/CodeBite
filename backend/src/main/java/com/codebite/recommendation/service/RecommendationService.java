@@ -63,22 +63,20 @@ public class RecommendationService {
 
     /**
      * Roadmap categories whose prerequisites are all "fully solved" by the user
-     * but which themselves still have unsolved published problems.
+     * but which themselves still have unsolved offered problems (published, never the Tutorial Problem).
      */
     @Transactional(readOnly = true)
     public List<RoadmapNextItem> getRoadmapNext(Long userId) {
         List<RoadmapCategory> categories = roadmapRepository.findAllByOrderByDisplayOrderAsc();
         Set<Long> solvedProblemIds = userProgress.solvedProblemIds(userId);
 
-        // Determine which categories are fully solved (all published problems solved).
+        // Determine which categories are fully solved (every offered problem solved).
         Map<Long, Boolean> isCategorySolved = new HashMap<>();
         for (RoadmapCategory cat : categories) {
-            boolean allSolved = cat.getProblems().stream()
-                    .filter(Problem::isPublished)
-                    .allMatch(p -> solvedProblemIds.contains(p.getId()));
-            // Treat a category with zero published problems as not-solved (nothing to suggest, skip below).
-            boolean hasPublished = cat.getProblems().stream().anyMatch(Problem::isPublished);
-            isCategorySolved.put(cat.getId(), hasPublished && allSolved);
+            List<Problem> offered = cat.offeredProblems();
+            boolean allSolved = offered.stream().allMatch(p -> solvedProblemIds.contains(p.getId()));
+            // Treat a category with nothing offered as not-solved (nothing to suggest, skip below).
+            isCategorySolved.put(cat.getId(), !offered.isEmpty() && allSolved);
         }
 
         return categories.stream()
@@ -86,8 +84,7 @@ public class RecommendationService {
                     boolean prereqsCleared = cat.getPrerequisites().stream()
                             .allMatch(p -> isCategorySolved.getOrDefault(p.getId(), false));
                     boolean selfNotDone = !isCategorySolved.get(cat.getId());
-                    boolean hasUnsolvedPublished = cat.getProblems().stream()
-                            .filter(Problem::isPublished)
+                    boolean hasUnsolvedPublished = cat.offeredProblems().stream()
                             .anyMatch(p -> !solvedProblemIds.contains(p.getId()));
                     return prereqsCleared && selfNotDone && hasUnsolvedPublished;
                 })
@@ -95,8 +92,7 @@ public class RecommendationService {
                         cat.getSlug(),
                         cat.getName(),
                         cat.getDescription(),
-                        cat.getProblems().stream()
-                                .filter(Problem::isPublished)
+                        cat.offeredProblems().stream()
                                 .filter(p -> !solvedProblemIds.contains(p.getId()))
                                 .limit(3)
                                 .map(p -> new RoadmapNextProblem(

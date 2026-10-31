@@ -7,6 +7,8 @@ import { useProblems } from "../hooks/useProblems"
 import { useProblemStats } from "../hooks/useProblemStats"
 import { useTags } from "../hooks/useTags"
 import DifficultyBadge from "../components/ui/DifficultyBadge"
+import TutorialBadge from "../components/ui/TutorialBadge"
+import { TutorialBanner } from "./TutorialBanner"
 import Spinner from "../components/ui/Spinner"
 import { InlineLoadError } from "@/components/ui/LoadError"
 import { Button } from "@/components/ui/Button"
@@ -297,6 +299,8 @@ export default function ProblemListPage() {
         </div>
       </div>
 
+      <TutorialBanner />
+
       {randomError && (
         <p role="alert" className="mb-4 text-sm text-error-700 dark:text-error-400">
           {t("list.randomError")}
@@ -438,6 +442,11 @@ export default function ProblemListPage() {
                       >
                         {problem.title}
                       </Link>
+                      {problem.tutorial && (
+                        <span className="ml-2 align-middle">
+                          <TutorialBadge />
+                        </span>
+                      )}
                     </td>
                     <td className={cell}>
                       <DifficultyBadge difficulty={problem.difficulty} />
