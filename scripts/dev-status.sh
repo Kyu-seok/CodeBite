@@ -144,13 +144,15 @@ else
   echo "database: at V$db, this checkout's newest"
 fi
 
-# The Judge0 the dev backend calls: its JUDGE0_URL when one from here sets it, else the dev profile's
-# default. Off the local network it doesn't answer, and every Run and Submit fails.
+# The Judge0 this checkout's servers call, in the order they pick it: a running backend's
+# JUDGE0_URL, else the shell's dev one (scripts/dev-branch-servers.sh passes it on), else the dev
+# profile's default, a LAN address that doesn't answer off that network.
 judge0_url=""
 for pid in $(pgrep -f "$(app_pattern backend "$here")" || true); do
   judge0_url=$(env_value "$pid" JUDGE0_URL)
   [[ -n "$judge0_url" ]] && break
 done
+[[ -z "$judge0_url" ]] && judge0_url=$(dev_judge0_url "${JUDGE0_URL:-}")
 if [[ -z "$judge0_url" ]]; then
   judge0_url=$(sed -nE 's/^ *url: \$\{JUDGE0_URL:([^}]+)\}.*/\1/p' "$here/backend/src/main/resources/application-dev.yml" | head -n 1)
 fi
@@ -159,7 +161,7 @@ if [[ -n "$judge0_url" ]]; then
     echo "judge0: $judge0_url answers"
   else
     echo "judge0: $judge0_url"
-    echo "  UNREACHABLE  Run and Submit fail until it answers; a UI check can only stub their results"
+    echo "  UNREACHABLE  Run and Submit fail until it answers; set JUDGE0_URL to one that does (a Tailscale name, say) and restart the servers from that shell"
     problems=1
   fi
 fi
