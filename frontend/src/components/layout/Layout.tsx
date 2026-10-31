@@ -95,13 +95,6 @@ function formatTime(seconds: number) {
   return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
 }
 
-export function formatElapsed(seconds: number) {
-  const m = Math.floor(seconds / 60);
-  const s = seconds % 60;
-  if (m > 0) return `${m}m ${s}s`;
-  return `${s}s`;
-}
-
 export interface WorkspaceOutletContext {
   /**
    * Seconds on the solve timer, or null when it never ran (no time, rather than 0:00).

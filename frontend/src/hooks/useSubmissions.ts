@@ -18,6 +18,7 @@ export function useSubmissions(slug: string, enabled: boolean) {
   }, [slug, enabled]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- fetch() marks the request it starts as in flight.
     fetch();
   }, [fetch]);
 

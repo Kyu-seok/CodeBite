@@ -15,6 +15,7 @@ export function useProblems(page: number, size: number, difficulty?: Difficulty,
   useEffect(() => {
     // Filters change faster than the API answers; only the latest request may land.
     let current = true;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Marks the fetch this effect starts as in flight.
     setLoading(true);
     getProblems(page, size, difficulty, search, sort, tag, curation)
       .then((res) => {

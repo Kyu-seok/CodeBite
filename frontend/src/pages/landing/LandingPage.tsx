@@ -11,7 +11,7 @@ export default function LandingPage() {
 
   useEffect(() => {
     document.title = t('meta.title')
-  }, [])
+  }, [t])
 
   return (
     <>
