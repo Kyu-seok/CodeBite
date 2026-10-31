@@ -115,6 +115,7 @@ export default function ProblemDetailPage() {
   const [testsCollapsed, setTestsCollapsed] = useState(false)
   const panelFunctionsRef = useRef<PanelFunctions | null>(null)
   const desktop = useMediaQuery(DESKTOP_QUERY)
+  const [tutorialAnnouncer, setTutorialAnnouncer] = useState<HTMLElement | null>(null)
   // How the Tutorial's step shows (docs/adr/0008); null when no step is showing here.
   const spotlight = tutorialStepNow
     ? tutorialSpotlight(tutorialStepNow, {
@@ -521,9 +522,12 @@ export default function ProblemDetailPage() {
         }
       />
       <ResultAnnouncer attempt={attempt} />
+      {/* Mounted for as long as the page is, so a step is announced when its text arrives. */}
+      <p ref={setTutorialAnnouncer} className="sr-only" aria-live="polite" />
       {spotlight && (
         <TutorialSpotlight
           spotlight={spotlight}
+          announcer={tutorialAnnouncer}
           desktop={desktop}
           onNext={() => tutorialEvent({ type: "read" })}
           onSkip={() => tutorialEvent({ type: "skipped" })}

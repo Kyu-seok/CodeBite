@@ -133,16 +133,19 @@ const EDITOR = '[data-tour="editor"] .monaco-editor';
 /**
  * The Tutorial as a spotlight with a coach mark (docs/adr/0008). Everything outside the spotlit
  * elements is dimmed and takes no clicks; only Skip ends the Tutorial, never a click on the dimmed
- * page or Escape. Keys follow `tourKeyMove`. `spotlight` comes from `tutorialSpotlight`; this only
- * draws it.
+ * page or Escape. Keys follow `tourKeyMove`. Each step's title is announced through `announcer`, a
+ * live region the page keeps mounted. `spotlight` comes from `tutorialSpotlight`; this only draws it.
  */
 export function TutorialSpotlight({
   spotlight,
+  announcer,
   desktop,
   onNext,
   onSkip,
 }: {
   spotlight: Spotlight;
+  /** A polite live region mounted for as long as the page is; a live region added already filled goes unannounced. */
+  announcer: HTMLElement | null;
   /** Wide layout: the coach mark sits beside its target; narrow, it is a sheet at the bottom or top. */
   desktop: boolean;
   /** Moves past a reading step (1 or 2). */
@@ -258,13 +261,16 @@ export function TutorialSpotlight({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [spotlight]);
 
-  // Nothing is dimmed until the target is on screen, so a missing target never leaves the page blocked.
-  // The click blocker above stands down too: another layer is open, or nothing is shown.
-  if (!shown) return null;
-
   const index = TUTORIAL_STEPS.indexOf(spotlight.step);
   const progress = t('tutorial.progress', { step: index + 1, total: TUTORIAL_STEPS.length });
   const title = t(`tutorial.steps.${spotlight.copy}.title`);
+  // Filled only while the step shows, so it is announced when it appears: step 1 once its panel
+  // opens, step 6 once the Accepted modal closes.
+  const announcement = announcer && createPortal(shown ? `${progress}: ${title}` : '', announcer);
+
+  // Nothing is dimmed until the target is on screen, so a missing target never leaves the page blocked.
+  // The click blocker above stands down too: another layer is open, or nothing is shown.
+  if (!shown) return announcement;
   const vw = window.innerWidth;
   const vh = window.innerHeight;
   const celebrating = spotlight.copy === 'accepted';
@@ -320,32 +326,34 @@ export function TutorialSpotlight({
     </div>
   );
 
-  return createPortal(
+  return (
     <>
-      <svg className="pointer-events-none fixed inset-0 z-[55] h-full w-full" aria-hidden>
-        <defs>
-          {/* A mask, so cut-outs that overlap or nest (Submit inside the result) merge into one. */}
-          <mask id={maskId}>
-            <rect width={vw} height={vh} fill="white" />
-            {lit.map((box, i) => (
-              <rect key={i} x={box.x} y={box.y} width={box.w} height={box.h} rx={RADIUS} fill="black" />
-            ))}
-          </mask>
-        </defs>
-        <rect width={vw} height={vh} mask={`url(#${maskId})`} className="fill-black/50" />
-      </svg>
-      {anchorBox && (
-        <div
-          aria-hidden
-          className="pointer-events-none fixed z-[55] ring-2 ring-accent-500 motion-safe:transition-all motion-safe:duration-300 dark:ring-accent-400"
-          style={{ left: anchorBox.x, top: anchorBox.y, width: anchorBox.w, height: anchorBox.h, borderRadius: RADIUS }}
-        />
+      {announcement}
+      {createPortal(
+        <>
+          <svg className="pointer-events-none fixed inset-0 z-[55] h-full w-full" aria-hidden>
+            <defs>
+              {/* A mask, so cut-outs that overlap or nest (Submit inside the result) merge into one. */}
+              <mask id={maskId}>
+                <rect width={vw} height={vh} fill="white" />
+                {lit.map((box, i) => (
+                  <rect key={i} x={box.x} y={box.y} width={box.w} height={box.h} rx={RADIUS} fill="black" />
+                ))}
+              </mask>
+            </defs>
+            <rect width={vw} height={vh} mask={`url(#${maskId})`} className="fill-black/50" />
+          </svg>
+          {anchorBox && (
+            <div
+              aria-hidden
+              className="pointer-events-none fixed z-[55] ring-2 ring-accent-500 motion-safe:transition-all motion-safe:duration-300 dark:ring-accent-400"
+              style={{ left: anchorBox.x, top: anchorBox.y, width: anchorBox.w, height: anchorBox.h, borderRadius: RADIUS }}
+            />
+          )}
+          {coachMark}
+        </>,
+        document.body,
       )}
-      {coachMark}
-      <p className="sr-only" aria-live="polite">
-        {`${progress}: ${title}`}
-      </p>
-    </>,
-    document.body,
+    </>
   );
 }
