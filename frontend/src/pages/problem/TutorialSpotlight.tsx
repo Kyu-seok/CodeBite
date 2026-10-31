@@ -40,7 +40,7 @@ function boxOf(el: HTMLElement): Box | null {
 }
 
 /**
- * The part of `el`'s box that shows: a target inside another (the failing case in the result) is cut
+ * The part of `el`'s box that shows: a target inside another (the failed row in the result) is cut
  * to the scrollers between them, so its cut-out never spills over the panel's header; null when it is
  * scrolled out of sight. A top-level target is never cut.
  */
@@ -124,7 +124,7 @@ const PLACEMENT: Record<TourTarget, Placement> = {
   run: 'top-end',
   submit: 'left-end',
   result: 'left-end',
-  failingCase: 'left-start',
+  failedRow: 'left-start',
 };
 
 /** Monaco itself, not the toolbar around it: it keeps its own Tab and Escape. */
@@ -176,7 +176,7 @@ export function TutorialSpotlight({
   const focusOf = (el: Element | null): TourFocus => {
     if (el && markRef.current?.contains(el)) return 'coachMark';
     if (el?.closest(EDITOR)) return 'editor';
-    return inUsable(el) ? 'spotlit' : 'elsewhere';
+    return inUsable(el) ? 'usable' : 'elsewhere';
   };
   const editorEscapedRef = useRef(false);
 
@@ -202,7 +202,7 @@ export function TutorialSpotlight({
   // editor keeps its own Tab and Escape, and Escape then Tab leaves it (`tourKeyMove`). A Tab that
   // leaves the editor is taken before the editor sees it (capture), the rest after (bubble).
   useEffect(() => {
-    const onKeyDown = (phase: 'before' | 'after') => (e: KeyboardEvent) => {
+    const keyHandlerFor = (phase: 'before' | 'after') => (e: KeyboardEvent) => {
       const mark = markRef.current;
       const active = document.activeElement;
       if (!mark || inForeignLayer(active, mark)) return;
@@ -233,8 +233,8 @@ export function TutorialSpotlight({
       editorEscapedRef.current = false;
       stops[next].focus();
     };
-    const before = onKeyDown('before');
-    const after = onKeyDown('after');
+    const before = keyHandlerFor('before');
+    const after = keyHandlerFor('after');
     document.addEventListener('keydown', before, true);
     document.addEventListener('keydown', after);
     return () => {

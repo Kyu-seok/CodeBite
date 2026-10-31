@@ -9,7 +9,7 @@ import {
   type TutorialStepName,
 } from ".";
 
-const idle = { judging: false, signedIn: true, failingCase: false };
+const idle = { judging: false, signedIn: true, failedRow: false };
 
 describe("tutorialSpotlight", () => {
   it("spotlights the description for step 1 and moves on with Next", () => {
@@ -31,18 +31,18 @@ describe("tutorialSpotlight", () => {
     expect(tutorialSpotlight("run", idle)).toMatchObject({ anchor: "run", lit: ["editor", "run"], action: null });
   });
 
-  it("points at the Failing Case for step 4, lighting it and the editor while the rest of the result stays usable", () => {
-    expect(tutorialSpotlight("readFailure", { ...idle, failingCase: true })).toEqual({
+  it("points at the first failed row for step 4, lighting it and the editor while the rest of the result stays usable", () => {
+    expect(tutorialSpotlight("readFailure", { ...idle, failedRow: true })).toEqual({
       step: "readFailure",
-      anchor: "failingCase",
-      lit: ["failingCase", "editor"],
-      usable: ["failingCase", "editor", "result"],
+      anchor: "failedRow",
+      lit: ["failedRow", "editor"],
+      usable: ["failedRow", "editor", "result"],
       copy: "readFailure",
       action: null,
     });
   });
 
-  it("points at the whole result for step 4 when no failing case is on screen (a reload, a rejected Run)", () => {
+  it("points at the whole result for step 4 when no failed row is on screen (a reload, a rejected Run)", () => {
     expect(tutorialSpotlight("readFailure", idle)).toMatchObject({
       anchor: "result",
       lit: ["result", "editor"],
@@ -71,7 +71,7 @@ describe("tutorialSpotlight", () => {
 
   it("moves to the result while a Run or Submit is judging, so nothing points at a button that has done its job", () => {
     for (const step of ["run", "readFailure", "submit"] as const) {
-      expect(tutorialSpotlight(step, { judging: true, signedIn: true, failingCase: true })).toEqual({
+      expect(tutorialSpotlight(step, { judging: true, signedIn: true, failedRow: true })).toEqual({
         step,
         anchor: "result",
         lit: ["result"],
@@ -85,8 +85,8 @@ describe("tutorialSpotlight", () => {
   it("lights its anchor on every step and keeps everything it lights usable", () => {
     for (const step of TUTORIAL_STEPS as readonly TutorialStepName[]) {
       for (const judging of [false, true]) {
-        for (const failingCase of [false, true]) {
-          const spotlight = tutorialSpotlight(step, { judging, signedIn: false, failingCase });
+        for (const failedRow of [false, true]) {
+          const spotlight = tutorialSpotlight(step, { judging, signedIn: false, failedRow });
           expect(spotlight.lit).toContain(spotlight.anchor);
           for (const target of spotlight.lit) expect(spotlight.usable).toContain(target);
         }
@@ -106,8 +106,8 @@ describe("tourKeyMove", () => {
     ...more,
   });
 
-  it("returns Escape to the coach mark from a spotlit button, the result or the dimmed page", () => {
-    for (const focus of ["spotlit", "elsewhere", "coachMark"] as const) {
+  it("returns Escape to the coach mark from a usable button, the result or the dimmed page", () => {
+    for (const focus of ["usable", "elsewhere", "coachMark"] as const) {
       expect(tourKeyMove(press("Escape", focus))).toBe("toCoachMark");
     }
   });
@@ -116,8 +116,8 @@ describe("tourKeyMove", () => {
     expect(tourKeyMove(press("Escape", "editor"))).toBeNull();
   });
 
-  it("cycles Tab and Shift+Tab among the coach mark and the spotlit elements", () => {
-    for (const focus of ["spotlit", "elsewhere", "coachMark"] as const) {
+  it("cycles Tab and Shift+Tab among the coach mark and the usable elements", () => {
+    for (const focus of ["usable", "elsewhere", "coachMark"] as const) {
       expect(tourKeyMove(press("Tab", focus))).toBe("cycle");
     }
   });
@@ -133,11 +133,11 @@ describe("tourKeyMove", () => {
   it("takes a Tab right after Escape out of the editor before the editor can indent", () => {
     expect(tourKeyMove(press("Tab", "editor", { phase: "before", afterEditorEscape: true }))).toBe("cycle");
     expect(tourKeyMove(press("Tab", "editor", { phase: "before" }))).toBeNull();
-    expect(tourKeyMove(press("Tab", "spotlit", { phase: "before", afterEditorEscape: true }))).toBeNull();
+    expect(tourKeyMove(press("Tab", "usable", { phase: "before", afterEditorEscape: true }))).toBeNull();
   });
 
   it("does nothing with a key someone else already handled, or any other key", () => {
-    expect(tourKeyMove(press("Tab", "spotlit", { defaultPrevented: true }))).toBeNull();
+    expect(tourKeyMove(press("Tab", "usable", { defaultPrevented: true }))).toBeNull();
     expect(tourKeyMove(press("Escape", "elsewhere", { defaultPrevented: true }))).toBeNull();
     expect(tourKeyMove(press("Enter", "coachMark"))).toBeNull();
   });
@@ -153,7 +153,7 @@ describe("afterEditorEscape", () => {
   it("is cleared by any other key, and never set by Escape elsewhere", () => {
     expect(afterEditorEscape(true, "a", "editor")).toBe(false);
     expect(afterEditorEscape(true, "Tab", "editor")).toBe(false);
-    expect(afterEditorEscape(false, "Escape", "spotlit")).toBe(false);
+    expect(afterEditorEscape(false, "Escape", "usable")).toBe(false);
   });
 });
 

@@ -123,7 +123,7 @@ export default function ProblemDetailPage() {
         signedIn: isAuthenticated,
         // Only while the Output tab shows it: the user may switch tabs, and step 4 then lights the
         // whole result instead of losing its anchor.
-        failingCase:
+        failedRow:
           activeTab === "output" &&
           attempt.kind === "settled" &&
           attempt.mode === "run" &&
@@ -146,8 +146,8 @@ export default function ProblemDetailPage() {
       if (target === "editor" && editorCollapsed) panels?.expandEditor()
       if (target !== "editor" && testsCollapsed) panels?.expandTests()
     }
-    // Step 4 without its failing case is the user on another tab: leave them there.
-    const reading = spotlight.anchor === "failingCase" || (spotlight.anchor === "result" && spotlight.step !== "readFailure")
+    // Step 4 without its failed row is the user on another tab: leave them there.
+    const reading = spotlight.anchor === "failedRow" || (spotlight.anchor === "result" && spotlight.step !== "readFailure")
     if (reading) setActiveTab("output")
     // Once per spotlight, not whenever the user folds a panel the step doesn't need.
     // eslint-disable-next-line react-hooks/exhaustive-deps

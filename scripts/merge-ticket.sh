@@ -7,9 +7,9 @@
 # the attribution trailer (MERGE_TICKET_TRAILER overrides it). It refuses on master, a detached HEAD,
 # a dirty tree, or a branch already merged. On a conflict it aborts the merge and lists the files.
 # Then it runs the checks git skips on a clean merge (no pre-commit hook runs): the backend and
-# worker tests, forced past UP-TO-DATE, then the frontend tests and build. It pushes the integration
-# branch only when all of them pass; otherwise it names the failed check and leaves the merge commit
-# unpushed (undo it with `git reset --hard HEAD~1`).
+# worker tests, forced past UP-TO-DATE, then the frontend lint (no warnings), tests and build. It
+# pushes the integration branch only when all of them pass; otherwise it names the failed check and
+# leaves the merge commit unpushed (undo it with `git reset --hard HEAD~1`).
 set -euo pipefail
 
 # Why not to merge, or nothing: on branch $1 (empty when detached), with `git status --porcelain`
@@ -39,12 +39,13 @@ backend_checks() {
   ./gradlew :backend:test --rerun :worker:test --rerun
 }
 
-# The frontend tests and build (which type-checks), installing dependencies first in a fresh worktree.
+# The frontend lint with no warnings allowed (as CI and the pre-commit hook run it), tests and build
+# (which type-checks), installing dependencies first in a fresh worktree.
 frontend_checks() {
   (
     cd frontend
     [[ -d node_modules ]] || npm ci
-    npm test && npm run build
+    npm run lint -- --max-warnings 0 && npm test && npm run build
   )
 }
 
