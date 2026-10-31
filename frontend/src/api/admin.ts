@@ -8,6 +8,7 @@ import type {
   UpdateProblemRequest,
   CreateTestCaseRequest,
   OverviewStats,
+  OnboardingSuccess,
   DailySubmission,
   ProblemAnalytics,
   AdminRecentSubmission,
@@ -86,6 +87,10 @@ export function getOverviewStats() {
 
 export function getDailySubmissions(days = 30) {
   return client.get<DailySubmission[]>('/admin/analytics/submissions', { params: { days } });
+}
+
+export function getOnboardingSuccess(days = 30) {
+  return client.get<OnboardingSuccess>('/admin/analytics/onboarding', { params: { days } });
 }
 
 export function getProblemAnalytics() {

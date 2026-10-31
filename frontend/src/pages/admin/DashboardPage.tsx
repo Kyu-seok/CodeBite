@@ -2,8 +2,20 @@ import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { getOverviewStats, getDailySubmissions, getProblemAnalytics, getRecentSubmissions } from '@/api/admin';
-import type { OverviewStats, DailySubmission, ProblemAnalytics, AdminRecentSubmission } from '@/types/admin';
+import {
+  getOverviewStats,
+  getDailySubmissions,
+  getOnboardingSuccess,
+  getProblemAnalytics,
+  getRecentSubmissions,
+} from '@/api/admin';
+import type {
+  OverviewStats,
+  DailySubmission,
+  OnboardingSuccess,
+  ProblemAnalytics,
+  AdminRecentSubmission,
+} from '@/types/admin';
 import DifficultyBadge from '@/components/ui/DifficultyBadge';
 import type { Difficulty } from '@/types/problem';
 import type { SubmissionStatus } from '@/types/submission';
@@ -17,6 +29,7 @@ type SortField = 'totalSubmissions' | 'acceptanceRate';
 interface DashboardData {
   stats: OverviewStats;
   daily: DailySubmission[];
+  onboarding: OnboardingSuccess;
   problems: ProblemAnalytics[];
   recent: AdminRecentSubmission[];
 }
@@ -59,11 +72,12 @@ export default function DashboardPage() {
     Promise.all([
       getOverviewStats(),
       getDailySubmissions(30),
+      getOnboardingSuccess(30),
       getProblemAnalytics(),
       getRecentSubmissions(10),
     ])
-      .then(([s, d, p, r]) => {
-        setData({ stats: s.data, daily: d.data, problems: p.data, recent: r.data });
+      .then(([s, d, o, p, r]) => {
+        setData({ stats: s.data, daily: d.data, onboarding: o.data, problems: p.data, recent: r.data });
         setStatus('ready');
       })
       .catch(() => setStatus('failed'));
@@ -95,7 +109,7 @@ export default function DashboardPage() {
     );
   }
 
-  const { stats, daily, problems, recent } = data;
+  const { stats, daily, onboarding, problems, recent } = data;
   const sortedProblems = [...problems].sort((a, b) =>
     sortAsc ? a[sortField] - b[sortField] : b[sortField] - a[sortField],
   );
@@ -151,6 +165,27 @@ export default function DashboardPage() {
             </div>
           </div>
         ))}
+      </div>
+
+      {/* Onboarding Success: does a newcomer reach a first Accepted within a day of signing up? */}
+      <div className="rounded-xl border border-border bg-card p-4">
+        <h2 className="mb-3 text-sm font-semibold text-foreground">{t('dashboard.onboarding')}</h2>
+        <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
+          <p className="text-2xl font-bold tabular-nums text-foreground">
+            {/* Nobody signed up reads as no figure, not as a confident 0%. */}
+            {onboarding.percent == null
+              ? '—'
+              : `${onboarding.percent.toLocaleString(i18n.language, { maximumFractionDigits: 1 })}%`}
+          </p>
+          <p className="text-xs text-muted-foreground">
+            {onboarding.signedUp === 0
+              ? t('dashboard.onboardingNone')
+              : t('dashboard.onboardingDetail', {
+                  accepted: onboarding.acceptedWithin24h.toLocaleString(i18n.language),
+                  signedUp: onboarding.signedUp.toLocaleString(i18n.language),
+                })}
+          </p>
+        </div>
       </div>
 
       {/* Submission Trend Chart */}
