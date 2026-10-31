@@ -36,30 +36,32 @@ function wrongOutputs(judged: JudgedResult): (string | null)[] {
     .map((r) => r.actualOutput);
 }
 
-/** The Tips that would explain this result, the most specific first. */
-function candidates(result: JudgedResult): Tip[] {
+/** The Tip that explains this result, seen or not. */
+function explaining(result: JudgedResult): Tip | null {
   switch (statusOf(result)) {
     case "WRONG_ANSWER":
-      return wrongOutputs(result).some(isNothing) ? ["returnedNothing", "wrongAnswer"] : ["wrongAnswer"];
+      return wrongOutputs(result).some(isNothing) ? "returnedNothing" : "wrongAnswer";
     case "COMPILATION_ERROR":
-      return ["compileError"];
+      return "compileError";
     case "RUNTIME_ERROR":
-      return ["runtimeError"];
+      return "runtimeError";
     case "TIME_LIMIT_EXCEEDED":
-      return ["timeLimitExceeded"];
+      return "timeLimitExceeded";
     case "ACCEPTED":
       // A passing Run saves nothing; the first Accepted Tip points at the Streak and the Review.
-      return result.mode === "submit" ? ["firstAccepted"] : [];
+      return result.mode === "submit" ? "firstAccepted" : null;
     default:
       // Pending has nothing to explain yet; an Internal Error is CodeBite's fault, not the code's.
-      return [];
+      return null;
   }
 }
 
 /**
- * The one Tip to show next to a Run or Submit result, or null. "Returned nothing" wins over the
- * plain Wrong Answer Tip; once it has been seen, a Wrong Answer that printed nothing gets the plain one.
+ * The one Tip to show next to a Run or Submit result, or null when it has been seen. "Returned
+ * nothing" wins over the plain Wrong Answer Tip, and once seen it is not replaced by it: dismissing
+ * a Tip never swaps another in on the same result.
  */
 export function tipFor(result: JudgedResult, seenTips: ReadonlySet<Tip>): Tip | null {
-  return candidates(result).find((tip) => !seenTips.has(tip)) ?? null;
+  const tip = explaining(result);
+  return tip && !seenTips.has(tip) ? tip : null;
 }

@@ -99,9 +99,9 @@ describe("tipFor", () => {
     expect(tipFor(ran("WRONG_ANSWER", [runCase("WRONG_ANSWER", "4")]), new Set<Tip>(["wrongAnswer"]))).toBeNull();
   });
 
-  it("falls back to the Wrong Answer Tip once the returned-nothing Tip is seen", () => {
+  it("gives a function that returned nothing no other Tip once that one is seen", () => {
+    // Dismissing it must not swap in the Wrong Answer Tip on the same result.
     const result = submitted("WRONG_ANSWER", failingCase("WRONG_ANSWER", "None"));
-    expect(tipFor(result, new Set<Tip>(["returnedNothing"]))).toBe("wrongAnswer");
-    expect(tipFor(result, new Set<Tip>(["returnedNothing", "wrongAnswer"]))).toBeNull();
+    expect(tipFor(result, new Set<Tip>(["returnedNothing"]))).toBeNull();
   });
 });
