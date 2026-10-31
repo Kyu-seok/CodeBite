@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Editor from '@monaco-editor/react';
 import { Check, CircleAlert, Copy, ExternalLink, FileInput, GitCommitHorizontal, Share2, X } from 'lucide-react';
+import { useEditorSettings } from '@/context/EditorSettingsContext';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import Spinner from '@/components/ui/Spinner';
@@ -15,7 +16,9 @@ import {
 import { getSubmission } from '@/api/submissions';
 import { useAuth } from '@/context/AuthContext';
 import { useTheme } from '@/context/ThemeContext';
-import type { SolutionCommit, SubmissionResponse } from '@/types/submission';
+import type { CustomTestCaseInput, SolutionCommit, SubmissionResponse } from '@/types/submission';
+import type { AddCustomTestOutcome } from './customTests';
+import { Diagnostics, FailingCaseCard } from './FailingCaseCard';
 import { ConfidencePrompt } from '@/components/review/ConfidencePrompt';
 import { useReviewState } from '@/hooks/useReviewState';
 import { useSolutionCommit } from '@/hooks/useSolutionCommit';
@@ -36,6 +39,7 @@ interface SubmissionDetailProps {
   onBack: () => void;
   onUpdateNote?: (id: number, notes: string) => void;
   onLoadIntoEditor?: (code: string, language: string) => void;
+  onAddCustomTest?: (tc: CustomTestCaseInput) => AddCustomTestOutcome;
 }
 
 export function SubmissionDetail({
@@ -43,6 +47,7 @@ export function SubmissionDetail({
   onBack,
   onUpdateNote,
   onLoadIntoEditor,
+  onAddCustomTest,
 }: SubmissionDetailProps) {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
@@ -52,7 +57,7 @@ export function SubmissionDetail({
   const [submission, setSubmission] = useState<SubmissionResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [loadAttempt, setLoadAttempt] = useState(0);
-  const [expandedCase, setExpandedCase] = useState<number | null>(null);
+  const { settings: editorSettings } = useEditorSettings();
   const [editingNote, setEditingNote] = useState(false);
   const [noteDraft, setNoteDraft] = useState('');
   const [reviewBusy, setReviewBusy] = useState(false);
@@ -92,6 +97,10 @@ export function SubmissionDetail({
   const passedCount = submission.results.filter((r) => r.status === 'ACCEPTED').length;
   const totalCount = submission.results.length;
   const canReview = isAuthenticated && submission.status !== 'PENDING';
+  const failingCase = submission.failingCase ?? null;
+  // A compile error is the same on every case, so the first result's errors are the compiler's.
+  const compileErrors =
+    submission.status === 'COMPILATION_ERROR' ? (submission.results[0]?.errors ?? []) : [];
 
   const handleReviewSubmit = async (c: Confidence, notes: string | null) => {
     setReviewBusy(true);
@@ -144,6 +153,12 @@ export function SubmissionDetail({
         <div>
           <h2 className={`text-lg font-semibold ${STATUS_TEXT_CLASS[submission.status]}`}>
             {tc(STATUS_KEYS[submission.status])}
+            {failingCase && (
+              <span className="font-normal text-muted-foreground">
+                {' · '}
+                {t('submissions.failingCase.position', { n: failingCase.position, total: failingCase.total })}
+              </span>
+            )}
           </h2>
           <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
             <span>{formatDate(submission.createdAt, i18n.language, true)}</span>
@@ -181,6 +196,35 @@ export function SubmissionDetail({
             </Button>
           </div>
         </div>
+
+        {/* What failed: the Failing Case, the compiler's errors, or our own failure */}
+        {failingCase && (
+          <FailingCaseCard
+            key={submission.id}
+            failingCase={failingCase}
+            showByDefault={editorSettings.showFailingCase}
+            onAddCustomTest={onAddCustomTest}
+          />
+        )}
+        {compileErrors.length > 0 && (
+          <section aria-labelledby="compile-errors-heading">
+            <h3
+              id="compile-errors-heading"
+              className="mb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+              {t('submissions.compilerOutput')}
+            </h3>
+            <Diagnostics errors={compileErrors} />
+          </section>
+        )}
+        {submission.status === 'INTERNAL_ERROR' && (
+          <div className="flex items-start gap-2.5 rounded-lg border border-border bg-muted/30 px-3 py-2.5 text-sm">
+            <CircleAlert aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
+            <div>
+              <p className="text-foreground">{t('submissions.internalError')}</p>
+              <p className="mt-0.5 text-xs text-muted-foreground">{t('submissions.internalErrorHint')}</p>
+            </div>
+          </div>
+        )}
 
         {/* Confidence prompt — available for any non-PENDING submission */}
         {canReview && (
@@ -261,93 +305,6 @@ export function SubmissionDetail({
             />
           </div>
         </div>
-
-        {/* Test case results */}
-        {submission.results.length > 0 && (
-          <div>
-            <h3 className="mb-2 text-xs font-medium text-muted-foreground uppercase tracking-wider">
-              {t('submissions.testCases')}
-            </h3>
-            <div className="space-y-1">
-              {submission.results.map((r, i) => {
-                const isExpanded = expandedCase === i;
-                const passed = r.status === 'ACCEPTED';
-                const hasSampleData = r.input != null;
-
-                return (
-                  <div key={r.testCaseId} className="rounded-lg border border-border overflow-hidden">
-                    <CaseRow
-                      expandable={hasSampleData}
-                      expanded={isExpanded}
-                      onToggle={() => setExpandedCase(isExpanded ? null : i)}
-                    >
-                      {/* Pass/fail icon */}
-                      <span className="sr-only">{tc(STATUS_KEYS[r.status])}</span>
-                      {passed ? (
-                        <svg aria-hidden="true" className="h-4 w-4 shrink-0 text-success-600 dark:text-success-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                          <polyline points="20 6 9 17 4 12" />
-                        </svg>
-                      ) : (
-                        <svg aria-hidden="true" className="h-4 w-4 shrink-0 text-destructive" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                          <line x1="18" y1="6" x2="6" y2="18" />
-                          <line x1="6" y1="6" x2="18" y2="18" />
-                        </svg>
-                      )}
-                      <span className="flex-1 text-left text-foreground">
-                        {t('test.case', { n: i + 1 })}
-                        {!hasSampleData && (
-                          <span className="ml-1.5 text-xs text-muted-foreground">{t('submissions.hidden')}</span>
-                        )}
-                      </span>
-                      {r.runtimeMs != null && (
-                        <span className="font-mono text-xs tabular-nums text-muted-foreground">{r.runtimeMs} ms</span>
-                      )}
-                      {hasSampleData && (
-                        <svg
-                          aria-hidden="true"
-                          className={`h-3.5 w-3.5 text-muted-foreground transition-transform ${isExpanded ? 'rotate-180' : ''}`}
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <polyline points="6 9 12 15 18 9" />
-                        </svg>
-                      )}
-                    </CaseRow>
-
-                    {isExpanded && hasSampleData && (
-                      <div className="border-t border-border bg-muted/20 px-3 py-2 space-y-2 text-xs">
-                        <div>
-                          <div className="font-medium text-muted-foreground mb-0.5">{t('test.input')}</div>
-                          <pre className="rounded bg-muted px-2 py-1 text-foreground whitespace-pre-wrap break-all">
-                            {r.input}
-                          </pre>
-                        </div>
-                        <div>
-                          <div className="font-medium text-muted-foreground mb-0.5">{t('submissions.expectedOutput')}</div>
-                          <pre className="rounded bg-muted px-2 py-1 text-foreground whitespace-pre-wrap break-all">
-                            {r.expectedOutput}
-                          </pre>
-                        </div>
-                        {r.actualOutput != null && (
-                          <div>
-                            <div className="font-medium text-muted-foreground mb-0.5">{t('submissions.yourOutput')}</div>
-                            <pre className={`rounded px-2 py-1 whitespace-pre-wrap break-all ${passed ? 'bg-success-100 text-success-700 dark:bg-success-950 dark:text-success-400' : 'bg-error-100 text-error-700 dark:bg-error-950 dark:text-error-400'}`}>
-                              {r.actualOutput}
-                            </pre>
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
 
         {/* Notes */}
         <div>
@@ -436,32 +393,6 @@ function SolutionCommitLine({ solutionCommit }: { solutionCommit: SolutionCommit
         </>
       )}
     </div>
-  );
-}
-
-/** A test-case header: a disclosure button when its sample data can be shown, plain text otherwise. */
-function CaseRow({
-  expandable,
-  expanded,
-  onToggle,
-  children,
-}: {
-  expandable: boolean;
-  expanded: boolean;
-  onToggle: () => void;
-  children: ReactNode;
-}) {
-  const className = 'flex w-full items-center gap-2 px-3 py-2 text-sm';
-  if (!expandable) return <div className={className}>{children}</div>;
-  return (
-    <button
-      type="button"
-      aria-expanded={expanded}
-      onClick={onToggle}
-      className={`${className} hover:bg-muted/50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring`}
-    >
-      {children}
-    </button>
   );
 }
 

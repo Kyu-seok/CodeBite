@@ -6,6 +6,8 @@ export interface EditorSettings {
   tabSize: number;
   keyBindings: "normal" | "vim" | "emacs";
   intelliSense: boolean;
+  /** Show a failed submission's Failing Case; off for practising debugging without it. */
+  showFailingCase: boolean;
 }
 
 interface EditorSettingsContextType {
@@ -21,6 +23,7 @@ const DEFAULTS: EditorSettings = {
   tabSize: 4,
   keyBindings: "normal",
   intelliSense: true,
+  showFailingCase: true,
 };
 
 function loadSettings(): EditorSettings {

@@ -27,6 +27,8 @@ public record SubmissionResponse(
          * Days until the problem comes back for each confidence, if this submission were rated
          * now (the review scheduler's real result). Null while PENDING, and outside submission detail.
          */
-        Map<Confidence, Integer> reviewIntervalDays
+        Map<Confidence, Integer> reviewIntervalDays,
+        /** Null when the submission has no Failing Case (see {@link FailingCase#of}). */
+        FailingCase failingCase
 ) {
 }

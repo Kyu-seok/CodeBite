@@ -137,6 +137,22 @@ export function SettingsDialog() {
               onCheckedChange={(v) => updateSettings({ intelliSense: v })}
             />
           </div>
+
+          {/* Failing Case */}
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <p id="setting-showFailingCase" className="text-sm font-medium">{t("settings.showFailingCase")}</p>
+              <p id="setting-showFailingCase-hint" className="text-xs text-muted-foreground">
+                {t("settings.showFailingCaseDescription")}
+              </p>
+            </div>
+            <Switch
+              aria-labelledby="setting-showFailingCase"
+              aria-describedby="setting-showFailingCase-hint"
+              checked={settings.showFailingCase}
+              onCheckedChange={(v) => updateSettings({ showFailingCase: v })}
+            />
+          </div>
         </div>
 
         <DialogFooter className="mt-6">

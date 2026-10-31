@@ -7,7 +7,8 @@ import { DescriptionPanel } from './DescriptionPanel';
 import { SubmissionsPanel } from './SubmissionsPanel';
 import { SolutionsListPanel } from './solutions/SolutionsListPanel';
 import type { Difficulty } from '@/types/problem';
-import type { SubmissionListItem } from '@/types/submission';
+import type { CustomTestCaseInput, SubmissionListItem } from '@/types/submission';
+import type { AddCustomTestOutcome } from './customTests';
 import { PanelLeftClose, PanelLeftOpen, Maximize2, Minimize2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -84,6 +85,7 @@ interface LeftPanelProps {
   onTabChange: (tab: string) => void;
   onUpdateNote?: (id: number, notes: string) => void;
   onLoadIntoEditor?: (code: string, language: string) => void;
+  onAddCustomTest?: (tc: CustomTestCaseInput) => AddCustomTestOutcome;
   onFold?: () => void;
   onMaximize?: () => void;
   isMaximized?: boolean;
@@ -104,6 +106,7 @@ export function LeftPanel({
   onTabChange,
   onUpdateNote,
   onLoadIntoEditor,
+  onAddCustomTest,
   onFold,
   onMaximize,
   isMaximized,
@@ -194,6 +197,7 @@ export function LeftPanel({
               onSelectSubmission={setSelectedSubmissionId}
               onUpdateNote={onUpdateNote}
               onLoadIntoEditor={onLoadIntoEditor}
+              onAddCustomTest={onAddCustomTest}
             />
           </TabsContent>
 

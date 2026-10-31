@@ -19,6 +19,7 @@ import { AcceptedModal } from "@/components/review/AcceptedModal"
 import { fireConfetti } from "@/components/review/ConfettiBurst"
 import type { Confidence } from "@/types/review"
 import type { CodeError, CustomTestCaseInput, SubmissionResponse } from "@/types/submission"
+import { addCustomTest, type AddCustomTestOutcome } from "./customTests"
 import { AxiosError } from "axios"
 import type { ApiError } from "@/types/api"
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts"
@@ -221,6 +222,17 @@ export default function ProblemDetailPage() {
     else loadIntoEditor(sourceCode, lang)
   }
 
+  // Adds a submission's Failing Case to the custom test cases and brings the Test panel up on them.
+  const handleAddCustomTest = (tc: CustomTestCaseInput): AddCustomTestOutcome => {
+    const { tests, outcome } = addCustomTest(customTests, tc)
+    if (outcome === "added") setCustomTests(tests)
+    if (outcome !== "full") {
+      setActiveTab("testcases")
+      if (testsCollapsed) panelFunctionsRef.current?.expandTests()
+    }
+    return outcome
+  }
+
   const confirmOverwrite = () => {
     if (!pendingOverwrite) return
     if (pendingOverwrite.kind === "reset") resetCode(pendingOverwrite.lang)
@@ -369,6 +381,7 @@ export default function ProblemDetailPage() {
             onTabChange={setLeftPanelTab}
             onUpdateNote={updateNote}
             onLoadIntoEditor={handleLoadIntoEditor}
+            onAddCustomTest={handleAddCustomTest}
             onFold={handleFoldLeft}
             onMaximize={handleMaximizeLeft}
             isMaximized={rightCollapsed}

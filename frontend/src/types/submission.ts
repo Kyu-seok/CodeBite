@@ -49,6 +49,26 @@ export interface SubmissionResponse {
   solutionCommit: SolutionCommit | null;
   /** Days until review for each rating if this submission were rated now; null while PENDING. */
   reviewIntervalDays?: Record<Confidence, number> | null;
+  /**
+   * The Failing Case (GLOSSARY.md): the first case, in order, that is not Accepted. Null when
+   * Accepted, still pending, a Compilation Error or an Internal Error. Given even when hidden.
+   */
+  failingCase?: FailingCase | null;
+}
+
+/** The Failing Case of a submission; the one hidden case a submission reveals (docs/adr/0006). */
+export interface FailingCase {
+  testCaseId: number;
+  /** 1-based, among `total` graded cases. */
+  position: number;
+  total: number;
+  hidden: boolean;
+  status: SubmissionStatus;
+  input: string;
+  expectedOutput: string;
+  /** Null when the program printed nothing (or crashed / timed out before it did). */
+  actualOutput: string | null;
+  errors: CodeError[];
 }
 
 export type SolutionCommitStatus = "PENDING" | "COMMITTED" | "FAILED";
