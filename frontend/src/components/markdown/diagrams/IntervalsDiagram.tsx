@@ -21,6 +21,7 @@ const MAX_TICKS = 10;
  * (1, 2 or 5 times a power of ten). The smallest step giving 5–10 ticks wins;
  * when none does, the step whose count is nearest that range (by ratio).
  */
+// eslint-disable-next-line react-refresh/only-export-components -- Pure helper kept beside the axis it draws; exported for its unit test.
 export function axisTicks(min: number, max: number): number[] {
   const ticksAt = (step: number) => {
     const first = Math.ceil(min / step) * step;
@@ -46,6 +47,7 @@ export function axisTicks(min: number, max: number): number[] {
  * Every value that is an endpoint of two or more intervals, ascending. A
  * guide line there tells touching ([1,3] and [3,8]) apart from overlapping.
  */
+// eslint-disable-next-line react-refresh/only-export-components -- Pure helper kept beside the guides it draws; exported for its unit test.
 export function sharedEndpoints(intervals: Interval[]): number[] {
   const seen = new Map<number, number>();
   for (const [start, end] of intervals) {

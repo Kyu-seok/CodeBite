@@ -1,4 +1,4 @@
-import { type ReactNode, type RefObject, useRef, useState } from 'react';
+import { type ReactNode, type RefObject, useImperativeHandle, useRef, useState } from 'react';
 import {
   ResizablePanelGroup,
   ResizablePanel,
@@ -103,29 +103,25 @@ export function ProblemLayout({
   const leftCollapsed = leftSize <= LEFT_COLLAPSED_PCT;
   const testsCollapsed = testsSize <= TESTS_COLLAPSED_PCT;
 
-  if (resetLayoutRef) {
-    resetLayoutRef.current = () => {
-      rightRef.current?.expand();
-      editorRef.current?.expand();
-      hGroupRef.current?.setLayout({ left: 50, right: 50 });
-      vGroupRef.current?.setLayout({ editor: 60, tests: 40 });
-    };
-  }
+  useImperativeHandle(resetLayoutRef, () => () => {
+    rightRef.current?.expand();
+    editorRef.current?.expand();
+    hGroupRef.current?.setLayout({ left: 50, right: 50 });
+    vGroupRef.current?.setLayout({ editor: 60, tests: 40 });
+  }, [hGroupRef, vGroupRef, rightRef, editorRef]);
 
-  if (panelFunctionsRef) {
-    panelFunctionsRef.current = {
-      // Left/tests use resize() with % strings — they have a hard minSize floor.
-      collapseLeft: () => leftRef.current?.resize(LEFT_COLLAPSED_SIZE),
-      expandLeft: () => leftRef.current?.resize(`${prevExpandedLeftSize.current}%`),
-      // Right/editor are collapsible to 0%.
-      collapseRight: () => rightRef.current?.collapse(),
-      expandRight: () => rightRef.current?.expand(),
-      collapseEditor: () => editorRef.current?.collapse(),
-      expandEditor: () => editorRef.current?.expand(),
-      collapseTests: () => testsRef.current?.resize(TESTS_COLLAPSED_SIZE),
-      expandTests: () => testsRef.current?.resize(`${prevExpandedTestsSize.current}%`),
-    };
-  }
+  useImperativeHandle(panelFunctionsRef, () => ({
+    // Left/tests use resize() with % strings — they have a hard minSize floor.
+    collapseLeft: () => leftRef.current?.resize(LEFT_COLLAPSED_SIZE),
+    expandLeft: () => leftRef.current?.resize(`${prevExpandedLeftSize.current}%`),
+    // Right/editor are collapsible to 0%.
+    collapseRight: () => rightRef.current?.collapse(),
+    expandRight: () => rightRef.current?.expand(),
+    collapseEditor: () => editorRef.current?.collapse(),
+    expandEditor: () => editorRef.current?.expand(),
+    collapseTests: () => testsRef.current?.resize(TESTS_COLLAPSED_SIZE),
+    expandTests: () => testsRef.current?.resize(`${prevExpandedTestsSize.current}%`),
+  }), [leftRef, rightRef, editorRef, testsRef]);
 
   return (
     <PageLayout variant="workspace" className={cn('px-2 pb-2', className)}>

@@ -33,6 +33,7 @@ export function GridDiagram({ cells, highlight = [], after, boxes, blank }: Grid
  * The grid's outer edge is drawn by the container, so the last row and
  * column never report one.
  */
+// eslint-disable-next-line react-refresh/only-export-components -- Pure helper kept beside the grid it draws; exported for its unit test.
 export function boxEdges(
   r: number,
   c: number,

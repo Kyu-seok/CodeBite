@@ -24,7 +24,7 @@ import { useReviewState } from '@/hooks/useReviewState';
 import { useSolutionCommit } from '@/hooks/useSolutionCommit';
 import { clearSubmissionReview } from '@/api/reviews';
 import type { Confidence } from '@/types/review';
-import { formatElapsed } from '@/components/layout/Layout';
+import { formatElapsed } from '@/lib/formatElapsed';
 import {
   MONACO_LANGUAGE,
   STATUS_KEYS,
