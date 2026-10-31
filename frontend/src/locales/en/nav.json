@@ -26,5 +26,6 @@
     "reset": "Reset timer",
     "nudge": "Start the timer to record how long this problem takes you.",
     "nudgeDismiss": "Don't remind me"
-  }
+  },
+  "howItWorks": "How CodeBite works"
 }

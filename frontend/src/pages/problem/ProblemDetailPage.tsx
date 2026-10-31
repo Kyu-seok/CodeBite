@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
-import { Link, useParams, useNavigate, useOutletContext } from "react-router-dom"
+import { Link, useLocation, useParams, useNavigate, useOutletContext } from "react-router-dom"
 import { useTranslation } from "react-i18next"
 import { useProblem } from "@/hooks/useProblem"
 import { useSubmissions } from "@/hooks/useSubmissions"
@@ -27,7 +27,9 @@ import { useSubmissionWatch } from "@/hooks/useSubmissionWatch"
 import { usePersistedDraft } from "@/hooks/usePersistedDraft"
 import type { JudgeAttempt } from "@/judge/attempt"
 import type { WorkspaceOutletContext } from "@/components/layout/Layout"
-import { browserStorage, markTipSeen, readSeenTips, tipFor, type Tip } from "@/onboarding"
+import { browserStorage, markTipSeen, readSeenTips, tipFor, type Tip, type TutorialEvent } from "@/onboarding"
+import { useTutorial, type TutorialNavigationState } from "@/hooks/useTutorial"
+import { TutorialCard } from "./TutorialCard"
 
 /** The server's reason for refusing a Run or Submit, when it gave one; the panel has a generic fallback. */
 function rejectionMessage(err: unknown): string | undefined {
@@ -64,6 +66,21 @@ export default function ProblemDetailPage() {
   const [seenTips, setSeenTips] = useState(() => readSeenTips(browserStorage))
   const tip = attempt.kind === "settled" ? tipFor(attempt, seenTips) : null
   const dismissTip = (dismissed: Tip) => setSeenTips((seen) => markTipSeen(browserStorage, dismissed, seen))
+  // The Tutorial runs only on the Tutorial Problem; elsewhere what the user does leaves it be.
+  const location = useLocation()
+  const { tutorial, dispatch: dispatchTutorial } = useTutorial()
+  const onTutorialProblem = problem?.tutorial === true
+  const tutorialStepNow = onTutorialProblem && tutorial.status === "active" ? tutorial.step : null
+  const tutorialEvent = (event: TutorialEvent) => {
+    if (onTutorialProblem) dispatchTutorial(event)
+  }
+  // The navigation that (re)started the Tutorial: the editor is offered back its Starter Code once,
+  // then the flag is cleared from history so a reload doesn't offer it again.
+  const replayRequested = (location.state as TutorialNavigationState | null)?.tutorialReplayed === true
+  const [replayHandledFor, setReplayHandledFor] = useState<string | null>(null)
+  useEffect(() => {
+    if (replayRequested && problem) navigate(location.pathname, { replace: true, state: null })
+  }, [replayRequested, problem, navigate, location.pathname])
   const [acceptedModal, setAcceptedModal] = useState<{
     open: boolean
     submissionId: number | null
@@ -111,6 +128,13 @@ export default function ProblemDetailPage() {
       result: submission,
       startedAt: prev.kind === "judging" ? prev.startedAt : Date.now(),
     }))
+    // Step 6's celebration takes the place of the first-Accepted Tip, so the user isn't
+    // congratulated twice. Set with the result, before any await, so the Tip never flashes.
+    if (submission.status === "ACCEPTED" && onTutorialProblem) {
+      if (dispatchTutorial({ type: "accepted" }).status === "active") {
+        setSeenTips((seen) => markTipSeen(browserStorage, "firstAccepted", seen))
+      }
+    }
 
     let capturedSolveTime: number | null = null
     if (timerSnapshotRef.current != null && submission.status === "ACCEPTED") {
@@ -180,7 +204,9 @@ export default function ProblemDetailPage() {
 
   const languages = problemLanguages(problem.starterCode)
   const recentLang = user?.recentLanguage
-  const activeLang = language || (recentLang && languages.includes(recentLang) ? recentLang : languages[0]) || ""
+  // The language picked here, else the user's recent one, else Python (the least boilerplate for a newcomer).
+  const fallbackLang = languages.includes("python") ? "python" : languages[0]
+  const activeLang = language || (recentLang && languages.includes(recentLang) ? recentLang : fallbackLang) || ""
   const code =
     codeByLang[activeLang] ?? problem.starterCode[activeLang] ?? ""
 
@@ -193,6 +219,12 @@ export default function ProblemDetailPage() {
   const hasOwnCode = (lang: string, incoming?: string) => {
     const current = codeByLang[lang]
     return current != null && current !== problem.starterCode[lang] && current !== incoming
+  }
+
+  // Replaying the Tutorial starts again from Starter Code, after the usual confirmation.
+  if (replayRequested && onTutorialProblem && replayHandledFor !== location.key) {
+    setReplayHandledFor(location.key)
+    if (hasOwnCode(activeLang)) setPendingOverwrite({ kind: "reset", lang: activeLang })
   }
 
   const resetCode = (lang: string) => {
@@ -212,6 +244,7 @@ export default function ProblemDetailPage() {
     if (value !== undefined) {
       setCodeByLang((prev) => ({ ...prev, [activeLang]: value }))
       notifyEditing()
+      tutorialEvent({ type: "edited" })
     }
   }
 
@@ -314,6 +347,7 @@ export default function ProblemDetailPage() {
         customTestCases: cleaned.length > 0 ? cleaned : undefined,
       })
       setAttempt({ kind: "settled", mode: "run", result: res.data, startedAt })
+      tutorialEvent({ type: "ran", passed: res.data.overallStatus === "ACCEPTED" })
     } catch (err) {
       setAttempt({ kind: "failed", mode: "run", reason: "rejected", message: rejectionMessage(err) })
     }
@@ -326,6 +360,7 @@ export default function ProblemDetailPage() {
       return
     }
     if (attempt.kind === "judging") return
+    tutorialEvent({ type: "submitted" })
     timerSnapshotRef.current = getTimerSnapshot()
     const startedAt = Date.now()
     setAttempt({ kind: "judging", mode: "submit", startedAt })
@@ -391,6 +426,15 @@ export default function ProblemDetailPage() {
             onFold={handleFoldLeft}
             onMaximize={handleMaximizeLeft}
             isMaximized={rightCollapsed}
+            stepCard={
+              tutorialStepNow && (
+                <TutorialCard
+                  step={tutorialStepNow}
+                  onNext={() => tutorialEvent({ type: "read" })}
+                  onSkip={() => tutorialEvent({ type: "skipped" })}
+                />
+              )
+            }
           />
         }
         editor={
@@ -424,6 +468,7 @@ export default function ProblemDetailPage() {
             onAddCustomTest={handleAddCustomTest}
             tip={tip}
             onDismissTip={dismissTip}
+            pulse={tutorialStepNow === "run" ? "run" : tutorialStepNow === "submit" ? "submit" : null}
             onTabChange={setActiveTab}
             onRun={handleRun}
             onSubmit={handleSubmit}
