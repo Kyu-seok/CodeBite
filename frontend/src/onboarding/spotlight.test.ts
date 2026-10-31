@@ -1,7 +1,15 @@
 import { describe, expect, it } from "vitest";
-import { lineToFill, TUTORIAL_STEPS, tutorialSpotlight, type TutorialStepName } from ".";
+import {
+  afterEditorEscape,
+  linesToFill,
+  TUTORIAL_STEPS,
+  tourKeyMove,
+  tutorialSpotlight,
+  type TourKeyPress,
+  type TutorialStepName,
+} from ".";
 
-const idle = { judging: false, signedIn: true };
+const idle = { judging: false, signedIn: true, failingCase: false };
 
 describe("tutorialSpotlight", () => {
   it("spotlights the description for step 1 and moves on with Next", () => {
@@ -9,6 +17,7 @@ describe("tutorialSpotlight", () => {
       step: "read",
       anchor: "description",
       lit: ["description"],
+      usable: ["description"],
       copy: "read",
       action: "next",
     });
@@ -22,12 +31,22 @@ describe("tutorialSpotlight", () => {
     expect(tutorialSpotlight("run", idle)).toMatchObject({ anchor: "run", lit: ["editor", "run"], action: null });
   });
 
-  it("points at the failing result for step 4 and keeps the editor usable to fix it", () => {
+  it("points at the Failing Case for step 4, lighting it and the editor while the rest of the result stays usable", () => {
+    expect(tutorialSpotlight("readFailure", { ...idle, failingCase: true })).toEqual({
+      step: "readFailure",
+      anchor: "failingCase",
+      lit: ["failingCase", "editor"],
+      usable: ["failingCase", "editor", "result"],
+      copy: "readFailure",
+      action: null,
+    });
+  });
+
+  it("points at the whole result for step 4 when no failing case is on screen (a reload, a rejected Run)", () => {
     expect(tutorialSpotlight("readFailure", idle)).toMatchObject({
       anchor: "result",
       lit: ["result", "editor"],
-      copy: "readFailure",
-      action: null,
+      usable: ["result", "editor"],
     });
   });
 
@@ -36,7 +55,7 @@ describe("tutorialSpotlight", () => {
   });
 
   it("says before step 5's Submit that it needs signing in, when signed out", () => {
-    expect(tutorialSpotlight("submit", { judging: false, signedIn: false }).copy).toBe("submitSignIn");
+    expect(tutorialSpotlight("submit", { ...idle, signedIn: false }).copy).toBe("submitSignIn");
   });
 
   it("celebrates on the result for step 6 and closes with Done", () => {
@@ -44,6 +63,7 @@ describe("tutorialSpotlight", () => {
       step: "accepted",
       anchor: "result",
       lit: ["result"],
+      usable: ["result"],
       copy: "accepted",
       action: "done",
     });
@@ -51,27 +71,93 @@ describe("tutorialSpotlight", () => {
 
   it("moves to the result while a Run or Submit is judging, so nothing points at a button that has done its job", () => {
     for (const step of ["run", "readFailure", "submit"] as const) {
-      expect(tutorialSpotlight(step, { judging: true, signedIn: true })).toEqual({
+      expect(tutorialSpotlight(step, { judging: true, signedIn: true, failingCase: true })).toEqual({
         step,
         anchor: "result",
         lit: ["result"],
+        usable: ["result"],
         copy: "judging",
         action: null,
       });
     }
   });
 
-  it("lights its anchor on every step, judging or not", () => {
+  it("lights its anchor on every step and keeps everything it lights usable", () => {
     for (const step of TUTORIAL_STEPS as readonly TutorialStepName[]) {
       for (const judging of [false, true]) {
-        const spotlight = tutorialSpotlight(step, { judging, signedIn: false });
-        expect(spotlight.lit).toContain(spotlight.anchor);
+        for (const failingCase of [false, true]) {
+          const spotlight = tutorialSpotlight(step, { judging, signedIn: false, failingCase });
+          expect(spotlight.lit).toContain(spotlight.anchor);
+          for (const target of spotlight.lit) expect(spotlight.usable).toContain(target);
+        }
       }
     }
   });
 });
 
-describe("lineToFill", () => {
+describe("tourKeyMove", () => {
+  // As the page sees the key once the focused element has had it, unless `phase` says otherwise.
+  const press = (key: string, focus: TourKeyPress["focus"], more: Partial<TourKeyPress> = {}): TourKeyPress => ({
+    key,
+    focus,
+    phase: "after",
+    defaultPrevented: false,
+    afterEditorEscape: false,
+    ...more,
+  });
+
+  it("returns Escape to the coach mark from a spotlit button, the result or the dimmed page", () => {
+    for (const focus of ["spotlit", "elsewhere", "coachMark"] as const) {
+      expect(tourKeyMove(press("Escape", focus))).toBe("toCoachMark");
+    }
+  });
+
+  it("leaves Escape in the editor to the editor (closing suggestions, Vim)", () => {
+    expect(tourKeyMove(press("Escape", "editor"))).toBeNull();
+  });
+
+  it("cycles Tab and Shift+Tab among the coach mark and the spotlit elements", () => {
+    for (const focus of ["spotlit", "elsewhere", "coachMark"] as const) {
+      expect(tourKeyMove(press("Tab", focus))).toBe("cycle");
+    }
+  });
+
+  it("leaves a Tab the editor indented with alone", () => {
+    expect(tourKeyMove(press("Tab", "editor", { defaultPrevented: true }))).toBeNull();
+  });
+
+  it("cycles a Tab the editor let through (its own Tab-focus mode)", () => {
+    expect(tourKeyMove(press("Tab", "editor"))).toBe("cycle");
+  });
+
+  it("takes a Tab right after Escape out of the editor before the editor can indent", () => {
+    expect(tourKeyMove(press("Tab", "editor", { phase: "before", afterEditorEscape: true }))).toBe("cycle");
+    expect(tourKeyMove(press("Tab", "editor", { phase: "before" }))).toBeNull();
+    expect(tourKeyMove(press("Tab", "spotlit", { phase: "before", afterEditorEscape: true }))).toBeNull();
+  });
+
+  it("does nothing with a key someone else already handled, or any other key", () => {
+    expect(tourKeyMove(press("Tab", "spotlit", { defaultPrevented: true }))).toBeNull();
+    expect(tourKeyMove(press("Escape", "elsewhere", { defaultPrevented: true }))).toBeNull();
+    expect(tourKeyMove(press("Enter", "coachMark"))).toBeNull();
+  });
+});
+
+describe("afterEditorEscape", () => {
+  it("is set by Escape in the editor and kept through Shift, so Shift+Tab leaves too", () => {
+    const escaped = afterEditorEscape(false, "Escape", "editor");
+    expect(escaped).toBe(true);
+    expect(afterEditorEscape(escaped, "Shift", "editor")).toBe(true);
+  });
+
+  it("is cleared by any other key, and never set by Escape elsewhere", () => {
+    expect(afterEditorEscape(true, "a", "editor")).toBe(false);
+    expect(afterEditorEscape(true, "Tab", "editor")).toBe(false);
+    expect(afterEditorEscape(false, "Escape", "spotlit")).toBe(false);
+  });
+});
+
+describe("linesToFill", () => {
   it("marks the placeholder comment and the stand-in line after it", () => {
     const java = [
       "class Solution {",
@@ -81,7 +167,7 @@ describe("lineToFill", () => {
       "    }",
       "}",
     ].join("\n");
-    expect(lineToFill(java)).toEqual({ start: 3, end: 4 });
+    expect(linesToFill(java)).toEqual({ start: 3, end: 4 });
 
     const python = [
       "class Solution:",
@@ -89,17 +175,17 @@ describe("lineToFill", () => {
       "        # Write your solution here",
       "        pass",
     ].join("\n");
-    expect(lineToFill(python)).toEqual({ start: 3, end: 4 });
+    expect(linesToFill(python)).toEqual({ start: 3, end: 4 });
   });
 
   it("marks the comment alone when the body closes right after it", () => {
     const js = ["class Solution {", "    totalCoins(firstBank, secondBank) {", "        // Write your solution here", "    }", "}"].join(
       "\n",
     );
-    expect(lineToFill(js)).toEqual({ start: 3, end: 3 });
+    expect(linesToFill(js)).toEqual({ start: 3, end: 3 });
   });
 
   it("marks nothing once the placeholder is gone, so the whole editor is spotlit instead", () => {
-    expect(lineToFill("class Solution:\n    def totalCoins(self, a, b):\n        return a + b")).toBeNull();
+    expect(linesToFill("class Solution:\n    def totalCoins(self, a, b):\n        return a + b")).toBeNull();
   });
 });

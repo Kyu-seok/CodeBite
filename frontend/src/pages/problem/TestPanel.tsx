@@ -21,6 +21,7 @@ import type {
   SubmissionStatus,
 } from '@/types/submission';
 import type { AttemptFailure, JudgeAttempt, JudgeMode } from '@/judge/attempt';
+import { caseFailed } from '@/judge/caseFailed';
 import { CustomTestsEditor } from './CustomTestsEditor';
 import { STATUS_KEYS } from './submissionDisplay';
 import { MAX_CUSTOM_TESTS, type AddCustomTestOutcome } from './customTests';
@@ -62,15 +63,6 @@ function passCount(results: { status: string; judged?: boolean }[]) {
     passed: judged.filter((r) => r.status === 'ACCEPTED').length,
     total: judged.length,
   };
-}
-
-/** A case that didn't pass. An unjudged custom case fails only when it crashed or timed out. */
-function caseFailed(r: { status: SubmissionStatus; judged?: boolean }) {
-  if (r.status === 'ACCEPTED' || r.status === 'PENDING') return false;
-  if (r.judged === false) {
-    return r.status === 'RUNTIME_ERROR' || r.status === 'TIME_LIMIT_EXCEEDED' || r.status === 'COMPILATION_ERROR';
-  }
-  return true;
 }
 
 const isMac =
@@ -594,6 +586,8 @@ function RunResultsSection({
         <div
           key={i}
           data-failed={caseFailed(r) || undefined}
+          // The Tutorial's step 4 points at the first of these.
+          data-tour={caseFailed(r) ? 'failingCase' : undefined}
           className="border-t border-border pt-2 text-sm first:border-t-0 first:pt-0">
           <div className="mb-1 flex items-center justify-between">
             <span className="font-medium text-muted-foreground">

@@ -5,10 +5,18 @@ import { autoUpdate, flip, offset, shift, useFloating, type Placement } from '@f
 import { PartyPopper } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/lib/utils';
-import { TUTORIAL_STEPS, type Spotlight, type TourTarget } from '@/onboarding';
+import {
+  afterEditorEscape,
+  tourKeyMove,
+  TUTORIAL_STEPS,
+  type Spotlight,
+  type TourFocus,
+  type TourTarget,
+} from '@/onboarding';
 
 /** Room left around a spotlit element, in px. */
 const PAD = 6;
+/** The cut-outs' and the anchor ring's corners, in px. */
 const RADIUS = 10;
 
 /** The element a target names: marked `data-tour` in the workspace, the first one on screen. */
@@ -31,6 +39,31 @@ function boxOf(el: HTMLElement): Box | null {
   return { x: r.left - PAD, y: r.top - PAD, w: r.width + PAD * 2, h: r.height + PAD * 2 };
 }
 
+/**
+ * The part of `el`'s box that shows: a target inside another (the failing case in the result) is cut
+ * to the scrollers between them, so its cut-out never spills over the panel's header; null when it is
+ * scrolled out of sight. A top-level target is never cut.
+ */
+function visibleBoxOf(el: HTMLElement): Box | null {
+  const box = boxOf(el);
+  const outer = el.parentElement?.closest('[data-tour]');
+  if (!box || !outer) return box;
+  let left = box.x;
+  let top = box.y;
+  let right = box.x + box.w;
+  let bottom = box.y + box.h;
+  for (let at = el.parentElement; at && outer.contains(at); at = at.parentElement) {
+    const { overflowX, overflowY } = getComputedStyle(at);
+    if (overflowX === 'visible' && overflowY === 'visible') continue;
+    const r = at.getBoundingClientRect();
+    left = Math.max(left, r.left);
+    top = Math.max(top, r.top);
+    right = Math.min(right, r.right);
+    bottom = Math.min(bottom, r.bottom);
+  }
+  return right > left && bottom > top ? { x: left, y: top, w: right - left, h: bottom - top } : null;
+}
+
 const sameBoxes = (a: Box[], b: Box[]) =>
   a.length === b.length &&
   a.every((box, i) => box.x === b[i].x && box.y === b[i].y && box.w === b[i].w && box.h === b[i].h);
@@ -48,7 +81,7 @@ function useBoxes(targets: readonly TourTarget[]): { lit: Box[]; anchor: HTMLEle
     let frame = 0;
     const measure = () => {
       const els = key.split(' ').map((t) => tourElement(t as TourTarget));
-      const boxes = els.flatMap((el) => (el ? [boxOf(el)] : [])).filter((b): b is Box => b != null);
+      const boxes = els.flatMap((el) => (el ? [visibleBoxOf(el)] : [])).filter((b): b is Box => b != null);
       setLit((prev) => (sameBoxes(prev, boxes) ? prev : boxes));
       // The anchor (always the first target) counts only once it has a size, so the coach mark
       // never points at nothing while a panel is still opening.
@@ -66,17 +99,21 @@ function useBoxes(targets: readonly TourTarget[]): { lit: Box[]; anchor: HTMLEle
 /**
  * A dialog or popup someone else opened (the Accepted modal, a confirmation, the language list).
  * They sit below the spotlight, which sits above the sticky header so the header is dimmed too; while
- * one is open the spotlight steps aside and comes back when it closes.
+ * one is open the spotlight steps aside and comes back when it closes. Dialogs stay mounted while
+ * closing, so they count only while open.
  */
-const OPEN_LAYER =
-  '[role="dialog"][data-state="open"], [role="alertdialog"][data-state="open"], [role="listbox"], [role="menu"]';
+const LAYER_ROLES = ['dialog', 'alertdialog', 'listbox', 'menu'] as const;
+const LAYER = LAYER_ROLES.map((role) => `[role="${role}"]`).join(', ');
+const OPEN_LAYER = LAYER_ROLES.map((role) =>
+  role.endsWith('dialog') ? `[role="${role}"][data-state="open"]` : `[role="${role}"]`,
+).join(', ');
 
 const FOCUSABLE =
   'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
 /** Another dialog or popup on top (the Accepted modal, a confirmation, a language list): not ours to steer. */
 function inForeignLayer(el: Element | null, own: Element | null): boolean {
-  const layer = el?.closest('[role="dialog"], [role="alertdialog"], [role="listbox"], [role="menu"]');
+  const layer = el?.closest(LAYER);
   return layer != null && layer !== own;
 }
 
@@ -87,21 +124,28 @@ const PLACEMENT: Record<TourTarget, Placement> = {
   run: 'top-end',
   submit: 'left-end',
   result: 'left-end',
+  failingCase: 'left-start',
 };
+
+/** Monaco itself, not the toolbar around it: it keeps its own Tab and Escape. */
+const EDITOR = '[data-tour="editor"] .monaco-editor';
 
 /**
  * The Tutorial as a spotlight with a coach mark (docs/adr/0008). Everything outside the spotlit
  * elements is dimmed and takes no clicks; only Skip ends the Tutorial, never a click on the dimmed
- * page or Escape. Tab cycles through the coach mark and the spotlit elements. `spotlight` comes from
- * `tutorialSpotlight`; this only draws it.
+ * page or Escape. Keys follow `tourKeyMove`. Each step's title is announced through `announcer`, a
+ * live region the page keeps mounted. `spotlight` comes from `tutorialSpotlight`; this only draws it.
  */
 export function TutorialSpotlight({
   spotlight,
+  announcer,
   desktop,
   onNext,
   onSkip,
 }: {
   spotlight: Spotlight;
+  /** A polite live region mounted for as long as the page is; a live region added already filled goes unannounced. */
+  announcer: HTMLElement | null;
   /** Wide layout: the coach mark sits beside its target; narrow, it is a sheet at the bottom or top. */
   desktop: boolean;
   /** Moves past a reading step (1 or 2). */
@@ -115,7 +159,9 @@ export function TutorialSpotlight({
   const markRef = useRef<HTMLDivElement | null>(null);
   const targets = [spotlight.anchor, ...spotlight.lit.filter((target) => target !== spotlight.anchor)];
   const { lit, anchor, layered } = useBoxes(targets);
-  const anchorBox = anchor && !layered ? boxOf(anchor) : null;
+  const shown = anchor != null && !layered;
+  // The ring around the anchor: what shows of it, so none while it is scrolled out of its panel.
+  const anchorBox = shown ? visibleBoxOf(anchor) : null;
   const { refs, floatingStyles } = useFloating({
     elements: { reference: anchor },
     placement: PLACEMENT[spotlight.anchor],
@@ -123,14 +169,20 @@ export function TutorialSpotlight({
     whileElementsMounted: autoUpdate,
   });
 
-  const litElements = () =>
-    spotlight.lit.map(tourElement).filter((el): el is HTMLElement => el != null);
-  const inLit = (el: Element | null) => el != null && litElements().some((lit) => lit.contains(el));
+  // What the user may click and Tab to: the spotlit elements, and the panel around a nested one.
+  const usableElements = () =>
+    spotlight.usable.map(tourElement).filter((el): el is HTMLElement => el != null);
+  const inUsable = (el: Element | null) => el != null && usableElements().some((usable) => usable.contains(el));
+  const focusOf = (el: Element | null): TourFocus => {
+    if (el && markRef.current?.contains(el)) return 'coachMark';
+    if (el?.closest(EDITOR)) return 'editor';
+    return inUsable(el) ? 'spotlit' : 'elsewhere';
+  };
+  const editorEscapedRef = useRef(false);
 
   // A new step: bring a stacked layout's target into view, then hand the coach mark the focus unless
   // the user is working in a spotlit element (typing in the editor moves step 2 on; it must not
   // lose the caret).
-  const shown = anchor != null && !layered;
   useLayoutEffect(() => {
     if (!shown) return;
     const el = tourElement(spotlight.anchor);
@@ -139,38 +191,56 @@ export function TutorialSpotlight({
       const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       el.scrollIntoView({ block: big ? 'start' : 'center', behavior: reduce ? 'auto' : 'smooth' });
     }
-    if (!inLit(document.activeElement) && !inForeignLayer(document.activeElement, markRef.current)) {
+    if (!inUsable(document.activeElement) && !inForeignLayer(document.activeElement, markRef.current)) {
       markRef.current?.focus({ preventScroll: true });
     }
     // Once per step and copy, not on every measurement.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [spotlight.copy, shown, desktop]);
 
-  // Tab stays among the coach mark and the spotlit elements; Escape returns to the coach mark from
-  // anywhere else. The editor keeps its own Tab and Escape (indenting, closing suggestions, Vim).
+  // Tab cycles among the coach mark and the usable elements; Escape returns to the coach mark. The
+  // editor keeps its own Tab and Escape, and Escape then Tab leaves it (`tourKeyMove`). A Tab that
+  // leaves the editor is taken before the editor sees it (capture), the rest after (bubble).
   useEffect(() => {
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.defaultPrevented) return;
+    const onKeyDown = (phase: 'before' | 'after') => (e: KeyboardEvent) => {
       const mark = markRef.current;
       const active = document.activeElement;
       if (!mark || inForeignLayer(active, mark)) return;
-      if (e.key === 'Escape') {
-        if (!inLit(active)) mark.focus({ preventScroll: true });
-        return;
-      }
-      if (e.key !== 'Tab') return;
-      const stops = [mark, ...litElements()]
-        .flatMap((root) => Array.from(root.querySelectorAll<HTMLElement>(FOCUSABLE)))
-        .filter((el) => el.getClientRects().length > 0)
+      const focus = focusOf(active);
+      const move = tourKeyMove({
+        key: e.key,
+        focus,
+        phase,
+        defaultPrevented: e.defaultPrevented,
+        afterEditorEscape: editorEscapedRef.current,
+      });
+      if (phase === 'after') editorEscapedRef.current = afterEditorEscape(editorEscapedRef.current, e.key, focus);
+      if (move === 'toCoachMark') mark.focus({ preventScroll: true });
+      if (move !== 'cycle') return;
+      const all = [mark, ...usableElements()]
+        // A target can be a stop itself (Run and Submit are the buttons).
+        .flatMap((root) => [...(root.matches(FOCUSABLE) ? [root] : []), ...root.querySelectorAll<HTMLElement>(FOCUSABLE)])
+        .filter((el) => el.tabIndex >= 0 && el.getClientRects().length > 0)
         .sort((a, b) => (a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1));
+      // The editor is one stop (Monaco's input, which takes the typing), wherever in it the focus is.
+      const editorStop = all.find((el) => el.closest(EDITOR) != null);
+      const stops = all.filter((el) => el === editorStop || el.closest(EDITOR) == null);
       if (stops.length === 0) return;
-      const at = active instanceof HTMLElement ? stops.indexOf(active) : -1;
+      const at = stops.findIndex((stop) => stop === (focus === 'editor' ? editorStop : active));
       const next = at < 0 ? (e.shiftKey ? stops.length - 1 : 0) : (at + (e.shiftKey ? -1 : 1) + stops.length) % stops.length;
       e.preventDefault();
+      e.stopPropagation();
+      editorEscapedRef.current = false;
       stops[next].focus();
     };
-    document.addEventListener('keydown', onKeyDown);
-    return () => document.removeEventListener('keydown', onKeyDown);
+    const before = onKeyDown('before');
+    const after = onKeyDown('after');
+    document.addEventListener('keydown', before, true);
+    document.addEventListener('keydown', after);
+    return () => {
+      document.removeEventListener('keydown', before, true);
+      document.removeEventListener('keydown', after);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [spotlight]);
 
@@ -181,7 +251,7 @@ export function TutorialSpotlight({
     const block = (e: Event) => {
       const target = e.target instanceof Element ? e.target : null;
       const mark = markRef.current;
-      if (!target || !mark || mark.contains(target) || inLit(target) || inForeignLayer(target, mark)) return;
+      if (!target || !mark || mark.contains(target) || inUsable(target) || inForeignLayer(target, mark)) return;
       if (document.querySelector(OPEN_LAYER)) return;
       e.preventDefault();
       e.stopPropagation();
@@ -194,19 +264,23 @@ export function TutorialSpotlight({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [spotlight]);
 
-  // Nothing is dimmed until the target is on screen, so a missing target never leaves the page blocked.
-  // The click blocker above stands down too: another layer is open, or nothing is shown.
-  if (!anchorBox) return null;
-
   const index = TUTORIAL_STEPS.indexOf(spotlight.step);
   const progress = t('tutorial.progress', { step: index + 1, total: TUTORIAL_STEPS.length });
   const title = t(`tutorial.steps.${spotlight.copy}.title`);
+  // Filled only while the step shows, so it is announced when it appears: step 1 once its panel
+  // opens, step 6 once the Accepted modal closes.
+  const announcement = announcer && createPortal(shown ? `${progress}: ${title}` : '', announcer);
+
+  // Nothing is dimmed until the target is on screen, so a missing target never leaves the page blocked.
+  // The click blocker above stands down too: another layer is open, or nothing is shown.
+  if (!shown) return announcement;
   const vw = window.innerWidth;
   const vh = window.innerHeight;
   const celebrating = spotlight.copy === 'accepted';
   // A narrow screen's sheet docks at the bottom, or at the top when the target sits low (Run and
   // Submit end the stacked column, so no scroll lifts them above a bottom sheet).
-  const dockTop = !desktop && anchorBox.y + anchorBox.h / 2 > vh * 0.55;
+  const anchorRect = anchor.getBoundingClientRect();
+  const dockTop = !desktop && anchorRect.top + anchorRect.height / 2 > vh * 0.55;
 
   const coachMark = (
     <div
@@ -220,9 +294,9 @@ export function TutorialSpotlight({
       tabIndex={-1}
       style={desktop ? floatingStyles : undefined}
       className={cn(
-        'z-[55] border border-border bg-card text-sm text-card-foreground shadow-xl outline-none focus-visible:ring-2 focus-visible:ring-ring',
+        'z-[55] border border-border bg-card text-sm text-card-foreground shadow-lg outline-none focus-visible:ring-2 focus-visible:ring-ring',
         desktop
-          ? 'w-80 rounded-xl p-4'
+          ? 'w-80 rounded-lg p-4'
           : dockTop
             ? 'fixed inset-x-0 top-0 rounded-b-2xl px-4 pb-4 pt-[max(1rem,env(safe-area-inset-top))]'
             : 'fixed inset-x-0 bottom-0 rounded-t-2xl px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-4',
@@ -255,30 +329,34 @@ export function TutorialSpotlight({
     </div>
   );
 
-  return createPortal(
+  return (
     <>
-      <svg className="pointer-events-none fixed inset-0 z-[55] h-full w-full" aria-hidden>
-        <defs>
-          {/* A mask, so cut-outs that overlap or nest (Submit inside the result) merge into one. */}
-          <mask id={maskId}>
-            <rect width={vw} height={vh} fill="white" />
-            {lit.map((box, i) => (
-              <rect key={i} x={box.x} y={box.y} width={box.w} height={box.h} rx={RADIUS} fill="black" />
-            ))}
-          </mask>
-        </defs>
-        <rect width={vw} height={vh} mask={`url(#${maskId})`} className="fill-black/55 dark:fill-black/70" />
-      </svg>
-      <div
-        aria-hidden
-        className="pointer-events-none fixed z-[55] rounded-[10px] ring-2 ring-accent-500 motion-safe:transition-all motion-safe:duration-300 dark:ring-accent-400"
-        style={{ left: anchorBox.x, top: anchorBox.y, width: anchorBox.w, height: anchorBox.h }}
-      />
-      {coachMark}
-      <p className="sr-only" aria-live="polite">
-        {`${progress}: ${title}`}
-      </p>
-    </>,
-    document.body,
+      {announcement}
+      {createPortal(
+        <>
+          <svg className="pointer-events-none fixed inset-0 z-[55] h-full w-full" aria-hidden>
+            <defs>
+              {/* A mask, so cut-outs that overlap or nest (Submit inside the result) merge into one. */}
+              <mask id={maskId}>
+                <rect width={vw} height={vh} fill="white" />
+                {lit.map((box, i) => (
+                  <rect key={i} x={box.x} y={box.y} width={box.w} height={box.h} rx={RADIUS} fill="black" />
+                ))}
+              </mask>
+            </defs>
+            <rect width={vw} height={vh} mask={`url(#${maskId})`} className="fill-black/50" />
+          </svg>
+          {anchorBox && (
+            <div
+              aria-hidden
+              className="pointer-events-none fixed z-[55] ring-2 ring-accent-500 motion-safe:transition-all motion-safe:duration-300 dark:ring-accent-400"
+              style={{ left: anchorBox.x, top: anchorBox.y, width: anchorBox.w, height: anchorBox.h, borderRadius: RADIUS }}
+            />
+          )}
+          {coachMark}
+        </>,
+        document.body,
+      )}
+    </>
   );
 }

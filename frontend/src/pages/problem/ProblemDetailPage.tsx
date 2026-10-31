@@ -27,10 +27,11 @@ import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts"
 import { useSubmissionWatch } from "@/hooks/useSubmissionWatch"
 import { usePersistedDraft } from "@/hooks/usePersistedDraft"
 import type { JudgeAttempt } from "@/judge/attempt"
+import { caseFailed } from "@/judge/caseFailed"
 import type { WorkspaceOutletContext } from "@/components/layout/Layout"
 import {
   browserStorage,
-  lineToFill,
+  linesToFill,
   markTipSeen,
   readSeenTips,
   tipFor,
@@ -114,17 +115,28 @@ export default function ProblemDetailPage() {
   const [testsCollapsed, setTestsCollapsed] = useState(false)
   const panelFunctionsRef = useRef<PanelFunctions | null>(null)
   const desktop = useMediaQuery(DESKTOP_QUERY)
+  const [tutorialAnnouncer, setTutorialAnnouncer] = useState<HTMLElement | null>(null)
   // How the Tutorial's step shows (docs/adr/0008); null when no step is showing here.
   const spotlight = tutorialStepNow
-    ? tutorialSpotlight(tutorialStepNow, { judging: attempt.kind === "judging", signedIn: isAuthenticated })
+    ? tutorialSpotlight(tutorialStepNow, {
+        judging: attempt.kind === "judging",
+        signedIn: isAuthenticated,
+        // Only while the Output tab shows it: the user may switch tabs, and step 4 then lights the
+        // whole result instead of losing its anchor.
+        failingCase:
+          activeTab === "output" &&
+          attempt.kind === "settled" &&
+          attempt.mode === "run" &&
+          attempt.result.results.some(caseFailed),
+      })
     : null
   // A step's targets are never behind a collapsed panel or another tab: open them before the
   // spotlight looks for them.
-  const spotlightKey = spotlight ? `${spotlight.anchor}:${spotlight.lit.join(",")}` : null
+  const spotlightKey = spotlight ? `${spotlight.anchor}:${spotlight.usable.join(",")}` : null
   useEffect(() => {
     if (!spotlight) return
     const panels = panelFunctionsRef.current
-    for (const target of spotlight.lit) {
+    for (const target of spotlight.usable) {
       if (target === "description") {
         if (leftCollapsed) panels?.expandLeft()
         setLeftPanelTab("description")
@@ -134,7 +146,9 @@ export default function ProblemDetailPage() {
       if (target === "editor" && editorCollapsed) panels?.expandEditor()
       if (target !== "editor" && testsCollapsed) panels?.expandTests()
     }
-    if (spotlight.anchor === "result") setActiveTab("output")
+    // Step 4 without its failing case is the user on another tab: leave them there.
+    const reading = spotlight.anchor === "failingCase" || (spotlight.anchor === "result" && spotlight.step !== "readFailure")
+    if (reading) setActiveTab("output")
     // Once per spotlight, not whenever the user folds a panel the step doesn't need.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [spotlightKey])
@@ -478,7 +492,7 @@ export default function ProblemDetailPage() {
               activeLanguage={activeLang}
               code={code}
               errors={editorErrors}
-              markedLines={spotlight?.step === "function" ? lineToFill(code) : null}
+              markedLines={spotlight?.step === "function" ? linesToFill(code) : null}
               onLanguageChange={handleLanguageChange}
               onCodeChange={handleCodeChange}
               onResetCode={handleResetCode}
@@ -516,9 +530,12 @@ export default function ProblemDetailPage() {
         }
       />
       <ResultAnnouncer attempt={attempt} />
+      {/* Mounted for as long as the page is, so a step is announced when its text arrives. */}
+      <p ref={setTutorialAnnouncer} className="sr-only" aria-live="polite" />
       {spotlight && (
         <TutorialSpotlight
           spotlight={spotlight}
+          announcer={tutorialAnnouncer}
           desktop={desktop}
           onNext={() => tutorialEvent({ type: "read" })}
           onSkip={() => tutorialEvent({ type: "skipped" })}
