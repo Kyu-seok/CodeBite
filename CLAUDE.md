@@ -57,7 +57,7 @@ Rewording a problem while its Test Cases stay (Slug, title, description, Starter
 Diagrams are ` ```diagram-* ` blocks in a description, drawn by `frontend/src/components/markdown/diagrams/`; the kinds and their keys are in `docs/PROBLEM_DIAGRAMS_ROADMAP.md`. To add one, follow `.claude/skills/add-diagram/SKILL.md`.
 
 ### Resources (`common/src/main/resources/`)
-- `db/migration/` — Flyway SQL migrations
+- `db/migration/` — Flyway SQL migrations; Java ones live in `common/src/main/java/db/migration`, and a version is taken if it is in either
 - `drivers/` — Drivers, `drivers/<slug>/<language>.<ext>`; Libraries under `drivers/lib/<language>/`
 - `starters/` — Starter Code, `starters/<slug>/<language>.<ext>` (served by the backend, but read by the same ProblemAssets)
 
