@@ -65,7 +65,8 @@ export interface FailingCase {
   hidden: boolean;
   status: SubmissionStatus;
   input: string;
-  expectedOutput: string;
+  /** Null for a case with no expected output (never stored today, docs/adr/0005). */
+  expectedOutput: string | null;
   /** Null when the program printed nothing (or crashed / timed out before it did). */
   actualOutput: string | null;
   errors: CodeError[];

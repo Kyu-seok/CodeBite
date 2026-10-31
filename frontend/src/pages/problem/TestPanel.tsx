@@ -23,7 +23,8 @@ import type {
 import type { AttemptFailure, JudgeAttempt, JudgeMode } from '@/judge/attempt';
 import { CustomTestsEditor } from './CustomTestsEditor';
 import { STATUS_KEYS } from './submissionDisplay';
-import { MAX_CUSTOM_TESTS } from './customTests';
+import { MAX_CUSTOM_TESTS, type AddCustomTestOutcome } from './customTests';
+import { FailingCasePosition, SubmissionOutcomeDetails } from './SubmissionOutcomeDetails';
 import { estimatedJudgeSeconds } from './judgeTimeEstimates';
 
 type JudgingAttempt = Extract<JudgeAttempt, { kind: 'judging' }>;
@@ -81,6 +82,8 @@ interface TestPanelProps {
   userSource: string;
   customTests: CustomTestCaseInput[];
   onCustomTestsChange: (next: CustomTestCaseInput[]) => void;
+  /** Adds a submission's Failing Case to the custom test cases. */
+  onAddCustomTest?: (tc: CustomTestCaseInput) => AddCustomTestOutcome;
   onTabChange: (tab: string) => void;
   onRun: () => void;
   onSubmit: () => void;
@@ -222,6 +225,7 @@ export function TestPanel({
   userSource,
   customTests,
   onCustomTestsChange,
+  onAddCustomTest,
   onTabChange,
   onRun,
   onSubmit,
@@ -350,7 +354,12 @@ export function TestPanel({
 
           {/* Output Tab */}
           <TabsContent value="output" className="mt-0">
-            <OutputContent attempt={attempt} language={language} userSource={userSource} />
+            <OutputContent
+              attempt={attempt}
+              language={language}
+              userSource={userSource}
+              onAddCustomTest={onAddCustomTest}
+            />
           </TabsContent>
         </div>
       </Tabs>
@@ -405,7 +414,8 @@ function OutputContent({
   attempt,
   language,
   userSource,
-}: Pick<TestPanelProps, 'attempt' | 'language' | 'userSource'>) {
+  onAddCustomTest,
+}: Pick<TestPanelProps, 'attempt' | 'language' | 'userSource' | 'onAddCustomTest'>) {
   const { t } = useTranslation('problem');
   const { t: tc } = useTranslation('common');
 
@@ -476,6 +486,11 @@ function OutputContent({
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <StatusBadge status={submitResult.status} />
+            {submitResult.failingCase && (
+              <span className="text-xs">
+                <FailingCasePosition failingCase={submitResult.failingCase} />
+              </span>
+            )}
             {count.total > 0 && <PassCount {...count} />}
           </div>
           <div className="space-x-3 font-mono text-xs tabular-nums text-muted-foreground">
@@ -487,51 +502,7 @@ function OutputContent({
             )}
           </div>
         </div>
-        {submitResult.results.length > 0 && (
-          <div className="space-y-2">
-            <h3 className="text-sm font-semibold text-foreground">
-              {t('test.testResults')}
-            </h3>
-            {submitResult.results.map((r, i) => (
-              <div
-                key={r.testCaseId}
-                data-failed={caseFailed(r) || undefined}
-                className="border-t border-border pt-2 text-sm first:border-t-0 first:pt-0">
-                <div className="mb-1 flex items-center justify-between">
-                  <span className="font-medium text-muted-foreground">
-                    {t('test.test', { n: i + 1 })}
-                  </span>
-                  <StatusBadge status={r.status} />
-                </div>
-                {r.input && (
-                  <p>
-                    <span className="text-muted-foreground">{t('test.input')}</span>
-                    <code className="rounded bg-muted px-1 font-mono text-foreground">
-                      {r.input}
-                    </code>
-                  </p>
-                )}
-                {r.expectedOutput && (
-                  <p>
-                    <span className="text-muted-foreground">{t('test.expected')}</span>
-                    <code className="rounded bg-muted px-1 font-mono text-foreground">
-                      {r.expectedOutput}
-                    </code>
-                  </p>
-                )}
-                {r.actualOutput && (
-                  <p>
-                    <span className="text-muted-foreground">{t('test.outputLabel')}</span>
-                    <code className="rounded bg-muted px-1 font-mono text-foreground">
-                      {r.actualOutput}
-                    </code>
-                  </p>
-                )}
-                <CaseOutput status={r.status} errors={r.errors} userSource={userSource} />
-              </div>
-            ))}
-          </div>
-        )}
+        <SubmissionOutcomeDetails submission={submitResult} onAddCustomTest={onAddCustomTest} />
       </div>
     );
   }

@@ -88,7 +88,6 @@
     "compilationError": "컴파일 에러:",
     "runtimeError": "런타임 에러:",
     "noErrorDetails": "채점 서버가 자세한 내용을 보내지 않았습니다.",
-    "testResults": "테스트 결과",
     "test": "테스트 {{n}}",
     "judging": "채점 중...",
     "placeholder": "코드를 실행하거나 제출해 보세요",
@@ -297,7 +296,7 @@
     "intelliSense": "IntelliSense",
     "intelliSenseDescription": "타입 기반 자동완성, 시그니처 도움말, 에러 강조 표시.",
     "spaces": "{{n}} 칸",
-    "showFailingCase": "실패한 테스트 케이스 보기",
+    "showFailingCase": "실패한 케이스 보기",
     "showFailingCaseDescription": "제출이 실패하면 실패한 케이스의 입력, 예상 출력, 실제 출력을 보여 줍니다. 디버깅을 연습하려면 끄세요."
   },
   "workspace": {

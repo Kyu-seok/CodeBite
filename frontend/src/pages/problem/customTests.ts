@@ -7,7 +7,7 @@ export type AddCustomTestOutcome = 'added' | 'duplicate' | 'full';
 
 /**
  * Adds a case to the custom test cases unless one with the same input is already there or the
- * list is full. Inputs and outputs are compared trimmed, the way the judge compares them.
+ * list is full. Only inputs are compared, trimmed: the same input expects the same output.
  */
 export function addCustomTest(
   current: CustomTestCaseInput[],

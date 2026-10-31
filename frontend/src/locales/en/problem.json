@@ -88,7 +88,6 @@
     "compilationError": "Compilation Error:",
     "runtimeError": "Runtime Error:",
     "noErrorDetails": "The judge reported no further details.",
-    "testResults": "Test Results",
     "test": "Test {{n}}",
     "judging": "Judging...",
     "placeholder": "Run or submit your code to see results",
@@ -297,7 +296,7 @@
     "intelliSense": "IntelliSense",
     "intelliSenseDescription": "Type-aware completions, signature help, and error highlighting.",
     "spaces": "{{n}} Spaces",
-    "showFailingCase": "Show failing test case",
+    "showFailingCase": "Show failing case",
     "showFailingCaseDescription": "After a failed submission, show the input, expected and actual output of the case it failed on. Turn off to practise debugging without it."
   },
   "workspace": {

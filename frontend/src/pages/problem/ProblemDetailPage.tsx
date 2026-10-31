@@ -415,6 +415,7 @@ export default function ProblemDetailPage() {
             userSource={code}
             customTests={customTests}
             onCustomTestsChange={setCustomTests}
+            onAddCustomTest={handleAddCustomTest}
             onTabChange={setActiveTab}
             onRun={handleRun}
             onSubmit={handleSubmit}

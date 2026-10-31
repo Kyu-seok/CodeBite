@@ -112,7 +112,7 @@ The GitHub App behind Solution Commits is registered by hand: run `scripts/setup
 ### Submission Flow (Kafka-based)
 1. `POST /api/problems/{slug}/submit` → `SubmissionService.submit()` assembles the Program (400 when the problem has no Driver for the language), saves PENDING submission, publishes `program.toEvent(submission)` to Kafka topic `submission-events`
 2. Worker consumes event, reads the Program back with `Program.fromEvent`, grades it against every test case through the `Grader` (`Grader.grade`, one Judge0 batch), writes one result row per case and the Verdict's overall status to DB
-3. Frontend polls `GET /api/submissions/{id}` every 2s until status != PENDING
+3. The backend announces the Verdict over SSE (`submission/sse/`) and `frontend/src/judge/watchSubmission.ts` then fetches `GET /api/submissions/{id}`, polling instead when the stream can't open. The result shows in two places: `TestPanel`'s Output tab right after Submit, and `SubmissionDetail` (Submissions tab) for past submissions; a change to how a result looks touches both
 
 ### API Endpoints
 | Method | Path | Auth | Response |

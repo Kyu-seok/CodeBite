@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from 'react';
+import { useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Check, Copy, Eye, EyeOff, ListPlus, X } from 'lucide-react';
+import { useFlash } from '@/hooks/useFlash';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import type { CodeError, CustomTestCaseInput, FailingCase } from '@/types/submission';
@@ -8,7 +9,7 @@ import { MAX_CUSTOM_TESTS, type AddCustomTestOutcome } from './customTests';
 
 interface FailingCaseCardProps {
   failingCase: FailingCase;
-  /** The user's "Show failing test case" setting; off shows only the case number and errors. */
+  /** The user's "Show failing case" setting; off shows only the case number and errors. */
   showByDefault: boolean;
   /** Adds the case to the Test panel's custom test cases; absent outside the problem workspace. */
   onAddCustomTest?: (tc: CustomTestCaseInput) => AddCustomTestOutcome;
@@ -24,17 +25,18 @@ export function FailingCaseCard({ failingCase, showByDefault, onAddCustomTest }:
   const [revealed, setRevealed] = useState(false);
   const [added, setAdded] = useState<AddCustomTestOutcome | null>(null);
   const visible = showByDefault || revealed;
+  const headingId = useId();
   const { status, input, expectedOutput, actualOutput, errors, hidden } = failingCase;
 
   return (
-    <section aria-labelledby="failing-case-heading">
+    <section aria-labelledby={headingId} data-failed>
       <div className="mb-2 flex items-center gap-2">
         <h3
-          id="failing-case-heading"
+          id={headingId}
           className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
           {t('submissions.failingCase.heading')}
         </h3>
-        <Badge variant={hidden ? 'outline' : 'secondary'} className="px-1.5 py-0 text-[11px]">
+        <Badge variant={hidden ? 'outline' : 'secondary'} className="px-1.5 py-0 text-xs">
           {t(hidden ? 'submissions.failingCase.hidden' : 'submissions.failingCase.sample')}
         </Badge>
       </div>
@@ -43,7 +45,9 @@ export function FailingCaseCard({ failingCase, showByDefault, onAddCustomTest }:
         {visible ? (
           <>
             <CaseField label={t('submissions.failingCase.input')} value={input} />
-            <CaseField label={t('submissions.expectedOutput')} value={expectedOutput} />
+            {expectedOutput != null && (
+              <CaseField label={t('submissions.expectedOutput')} value={expectedOutput} />
+            )}
             {status === 'WRONG_ANSWER' && (
               <CaseField label={t('submissions.yourOutput')} value={actualOutput ?? ''} failed />
             )}
@@ -77,7 +81,7 @@ export function FailingCaseCard({ failingCase, showByDefault, onAddCustomTest }:
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => setAdded(onAddCustomTest({ input, expectedOutput }))}>
+                  onClick={() => setAdded(onAddCustomTest({ input, expectedOutput: expectedOutput ?? '' }))}>
                   <ListPlus className="h-3.5 w-3.5" />
                   {t('submissions.failingCase.addAsCustom')}
                 </Button>
@@ -118,21 +122,15 @@ export function Diagnostics({ errors }: { errors: CodeError[] }) {
 /** One labelled block of case text, scrollable past a few lines and copyable. */
 function CaseField({ label, value, failed = false }: { label: string; value: string; failed?: boolean }) {
   const { t } = useTranslation('problem');
-  const [copy, setCopy] = useState<'idle' | 'success' | 'error'>('idle');
-  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  useEffect(() => () => {
-    if (timer.current) clearTimeout(timer.current);
-  }, []);
+  const [copy, flashCopy] = useFlash();
 
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(value);
-      setCopy('success');
+      flashCopy('success');
     } catch {
-      setCopy('error');
+      flashCopy('error');
     }
-    if (timer.current) clearTimeout(timer.current);
-    timer.current = setTimeout(() => setCopy('idle'), 1500);
   };
 
   const copyLabel =
