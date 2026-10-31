@@ -15,6 +15,7 @@ export function useProblem(slug: string) {
   const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Marks the fetch this effect starts as in flight.
     setLoading(true);
     setError(null);
     getProblemBySlug(slug)

@@ -53,5 +53,6 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 )
 Button.displayName = "Button"
 
+// eslint-disable-next-line react-refresh/only-export-components -- buttonVariants styles links as buttons; it belongs with Button, and HMR falling back to a reload for this file is fine.
 export { Button, buttonVariants }
 export type { ButtonProps }

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
 import { getStreamToken, getSubmission, submissionStreamUrl } from "@/api/submissions";
 import { watchSubmission, type WatchDeps, type WatchEvent } from "@/judge/watchSubmission";
 import { browserTimers } from "@/lib/timers";
@@ -34,7 +34,9 @@ export const browserWatchDeps: WatchDeps = {
  */
 export function useSubmissionWatch(id: number | null, onEvent: (ev: WatchEvent) => void) {
   const latest = useRef(onEvent);
-  latest.current = onEvent;
+  useLayoutEffect(() => {
+    latest.current = onEvent;
+  });
   useEffect(() => {
     if (id == null) return;
     const watch = watchSubmission(id, browserWatchDeps);

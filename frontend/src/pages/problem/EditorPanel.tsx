@@ -110,6 +110,7 @@ function BugReportDialog({
 
   useEffect(() => {
     if (open) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- The dialog stays mounted while closed; each opening starts a blank report.
       setCategory(BUG_CATEGORY_KEYS[0]);
       setDescription('');
       setIssueUrl(null);
