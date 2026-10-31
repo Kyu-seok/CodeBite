@@ -27,6 +27,7 @@ import { useSubmissionWatch } from "@/hooks/useSubmissionWatch"
 import { usePersistedDraft } from "@/hooks/usePersistedDraft"
 import type { JudgeAttempt } from "@/judge/attempt"
 import type { WorkspaceOutletContext } from "@/components/layout/Layout"
+import { browserStorage, markTipSeen, readSeenTips, tipFor, type Tip } from "@/onboarding"
 
 /** The server's reason for refusing a Run or Submit, when it gave one; the panel has a generic fallback. */
 function rejectionMessage(err: unknown): string | undefined {
@@ -59,6 +60,10 @@ export default function ProblemDetailPage() {
     { kind: "reset" | "load"; lang: string; sourceCode?: string } | null
   >(null)
   const [activeTab, setActiveTab] = useState("testcases")
+  // Tips dismissed in this browser; a dismissal holds for the page even when storage can't keep it.
+  const [seenTips, setSeenTips] = useState(() => readSeenTips(browserStorage))
+  const tip = attempt.kind === "settled" ? tipFor(attempt, seenTips) : null
+  const dismissTip = (dismissed: Tip) => setSeenTips((seen) => markTipSeen(browserStorage, dismissed, seen))
   const [acceptedModal, setAcceptedModal] = useState<{
     open: boolean
     submissionId: number | null
@@ -416,6 +421,8 @@ export default function ProblemDetailPage() {
             customTests={customTests}
             onCustomTestsChange={setCustomTests}
             onAddCustomTest={handleAddCustomTest}
+            tip={tip}
+            onDismissTip={dismissTip}
             onTabChange={setActiveTab}
             onRun={handleRun}
             onSubmit={handleSubmit}

@@ -26,6 +26,8 @@ import { STATUS_KEYS } from './submissionDisplay';
 import { MAX_CUSTOM_TESTS, type AddCustomTestOutcome } from './customTests';
 import { FailingCasePosition, SubmissionOutcomeDetails } from './SubmissionOutcomeDetails';
 import { estimatedJudgeSeconds } from './judgeTimeEstimates';
+import { TipCard } from './TipCard';
+import type { Tip } from '@/onboarding';
 
 type JudgingAttempt = Extract<JudgeAttempt, { kind: 'judging' }>;
 type FailedAttempt = Extract<JudgeAttempt, { kind: 'failed' }>;
@@ -84,6 +86,9 @@ interface TestPanelProps {
   onCustomTestsChange: (next: CustomTestCaseInput[]) => void;
   /** Adds a submission's Failing Case to the custom test cases. */
   onAddCustomTest?: (tc: CustomTestCaseInput) => AddCustomTestOutcome;
+  /** The Tip explaining the settled result, if any (`tipFor`); shown above its cases. */
+  tip?: Tip | null;
+  onDismissTip?: (tip: Tip) => void;
   onTabChange: (tab: string) => void;
   onRun: () => void;
   onSubmit: () => void;
@@ -226,6 +231,8 @@ export function TestPanel({
   customTests,
   onCustomTestsChange,
   onAddCustomTest,
+  tip,
+  onDismissTip,
   onTabChange,
   onRun,
   onSubmit,
@@ -359,6 +366,8 @@ export function TestPanel({
               language={language}
               userSource={userSource}
               onAddCustomTest={onAddCustomTest}
+              tip={tip}
+              onDismissTip={onDismissTip}
             />
           </TabsContent>
         </div>
@@ -415,7 +424,9 @@ function OutputContent({
   language,
   userSource,
   onAddCustomTest,
-}: Pick<TestPanelProps, 'attempt' | 'language' | 'userSource' | 'onAddCustomTest'>) {
+  tip,
+  onDismissTip,
+}: Pick<TestPanelProps, 'attempt' | 'language' | 'userSource' | 'onAddCustomTest' | 'tip' | 'onDismissTip'>) {
   const { t } = useTranslation('problem');
   const { t: tc } = useTranslation('common');
 
@@ -442,6 +453,8 @@ function OutputContent({
     );
   }
 
+  const tipCard = tip && onDismissTip ? <TipCard tip={tip} onDismiss={onDismissTip} /> : null;
+
   if (attempt.kind === 'settled' && attempt.mode === 'run') {
     const runResult = attempt.result;
     const count = passCount(runResult.results);
@@ -458,6 +471,7 @@ function OutputContent({
             <StatusBadge status={runResult.overallStatus} />
           </div>
         </div>
+        {tipCard}
         {samples.length > 0 && (
           <RunResultsSection
             heading={customs.length > 0 ? t('test.sampleTestsHeading') : null}
@@ -502,6 +516,7 @@ function OutputContent({
             )}
           </div>
         </div>
+        {tipCard}
         <SubmissionOutcomeDetails submission={submitResult} onAddCustomTest={onAddCustomTest} />
       </div>
     );

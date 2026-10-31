@@ -4,3 +4,4 @@
  */
 export { TIPS, tipFor, type JudgedResult, type Tip } from "./tips";
 export { markTipSeen, readSeenTips, type OnboardingStorage } from "./seenTips";
+export { browserStorage } from "./browserStorage";
