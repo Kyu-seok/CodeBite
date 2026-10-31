@@ -180,7 +180,9 @@ export default function ProblemDetailPage() {
 
   const languages = problemLanguages(problem.starterCode)
   const recentLang = user?.recentLanguage
-  const activeLang = language || (recentLang && languages.includes(recentLang) ? recentLang : languages[0]) || ""
+  // The language picked here, else the user's recent one, else Python (the least boilerplate for a newcomer).
+  const fallbackLang = languages.includes("python") ? "python" : languages[0]
+  const activeLang = language || (recentLang && languages.includes(recentLang) ? recentLang : fallbackLang) || ""
   const code =
     codeByLang[activeLang] ?? problem.starterCode[activeLang] ?? ""
 
