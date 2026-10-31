@@ -390,8 +390,8 @@
         "body": "Run tries your code on the example cases. It's free and saves nothing, so run as often as you like."
       },
       "readFailure": {
-        "title": "Read the failure",
-        "body": "The Test panel shows each failing case's Expected output next to yours. Find where they differ, fix the code and Run again."
+        "title": "Read what went wrong",
+        "body": "The Test panel shows what went wrong: for a wrong answer, each failing case's Expected output next to yours; for a Compile Error, Runtime Error or Time Limit Exceeded, the error message. The Tip next to the result explains this kind of failure. Fix the code and Run again."
       },
       "submit": {
         "title": "Submit",
