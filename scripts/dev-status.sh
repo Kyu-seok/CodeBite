@@ -8,7 +8,7 @@
 #   PROD       it carries a value from the production infra/.env (see scripts/dev-env.sh)
 #   BEHIND     the database lacks a migration this checkout has; the backend applies it on start
 #
-# Branch servers (scripts/dev-branch-backend.sh: own ports, database, Kafka topics) are named as
+# Branch servers (scripts/dev-branch-servers.sh: own ports, database, Kafka topics) are named as
 # such. Another checkout's branch servers are another session's, never a problem here.
 #
 # Run from the root of the checkout or worktree whose code you want to see:  scripts/dev-status.sh
@@ -52,10 +52,10 @@ report_checkout() {
   branch=$(git -C "$root" branch --show-current 2>/dev/null || true)
   echo "  from $root (${branch:-detached})"
   if [[ -n "$branch_db" ]]; then
-    echo "  branch server (scripts/dev-branch-backend.sh), database $branch_db, not a shared dev server"
+    echo "  branch server (scripts/dev-branch-servers.sh), database $branch_db, not a shared dev server"
   elif [[ "$root" != "$here" ]]; then
     if [[ "$here" != "$main" && "$root" == "$main" ]]; then
-      echo "  ELSEWHERE  the shared dev server runs $main; don't restart it, run scripts/dev-branch-backend.sh to see this branch"
+      echo "  ELSEWHERE  the shared dev server runs $main; don't restart it, run scripts/dev-branch-servers.sh to see this branch"
     else
       echo "  ELSEWHERE  not this checkout ($here); restart it from here to run this branch's code"
     fi
@@ -128,7 +128,7 @@ ours=$(newest_migration "$here")
 if [[ "$here" == "$main" ]]; then
   start_hint="start the backend from here to apply them"
 else
-  start_hint="the shared backend runs $main; scripts/dev-branch-backend.sh migrates a database of this branch's own"
+  start_hint="the shared backend runs $main; scripts/dev-branch-servers.sh migrates a database of this branch's own"
 fi
 if [[ -z "$db" ]]; then
   echo "database: not reachable (docker container codebite-postgres)"
@@ -161,15 +161,15 @@ if [[ -n "$db" ]]; then
     "SELECT version, description FROM flyway_schema_history WHERE success AND version ~ '^[0-9]+$'" 2>/dev/null || true)
 fi
 
-# This checkout's branch database, when scripts/dev-branch-backend.sh has made one.
-branch_db=$("$here/scripts/dev-branch-backend.sh" name 2>/dev/null || true)
+# This checkout's branch database, when scripts/dev-branch-servers.sh has made one.
+branch_db=$("$here/scripts/dev-branch-servers.sh" name 2>/dev/null || true)
 if [[ -n "$branch_db" ]]; then
   bdb=$(docker exec codebite-postgres psql -U codebite -d "$branch_db" -tAc \
     "SELECT max(version::int) FROM flyway_schema_history WHERE success AND version ~ '^[0-9]+$'" 2>/dev/null || true)
   if [[ -n "$bdb" ]]; then
     echo "branch database $branch_db: at V$bdb"
     if (( bdb < ours )); then
-      echo "  BEHIND  this checkout has migrations up to V$ours; restart scripts/dev-branch-backend.sh to apply them"
+      echo "  BEHIND  this checkout has migrations up to V$ours; restart scripts/dev-branch-servers.sh to apply them"
       problems=1
     fi
   fi

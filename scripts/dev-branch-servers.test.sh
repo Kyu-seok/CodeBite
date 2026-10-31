@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# Checks the pure parts of scripts/dev-branch-backend.sh: the branch database name (which also
+# Checks the pure parts of scripts/dev-branch-servers.sh: the branch database name (which also
 # prefixes its Kafka topics and groups), the Redis index and the port picking.
 set -euo pipefail
 
-# shellcheck source=SCRIPTDIR/dev-branch-backend.sh
-source "$(dirname "$0")/dev-branch-backend.sh"
+# shellcheck source=SCRIPTDIR/dev-branch-servers.sh
+source "$(dirname "$0")/dev-branch-servers.sh"
 
 fail=0
 check() { [[ "$2" == "$3" ]] || { echo "FAIL: $1: expected '$3', got '$2'"; fail=1; }; }
@@ -33,4 +33,4 @@ check "never a shared server's port, even when free" "$(first_free_port 5173 517
 if first_free_port 18080 18081 2>/dev/null; then echo "FAIL: a full range must fail"; fail=1; fi
 
 (( fail )) && exit 1
-echo "PASS: dev-branch-backend.sh names, Redis index and ports"
+echo "PASS: dev-branch-servers.sh names, Redis index and ports"

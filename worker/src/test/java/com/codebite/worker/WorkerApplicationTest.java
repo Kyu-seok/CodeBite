@@ -46,7 +46,7 @@ class WorkerApplicationTest {
 
     @Test
     void consumesInTheSharedGroupsWhenNoGroupPrefixIsSet() {
-        // app.kafka.group-prefix is only for scripts/dev-branch-backend.sh; production's groups stay put.
+        // app.kafka.group-prefix is only for scripts/dev-branch-servers.sh; production's groups stay put.
         assertThat(registry.getListenerContainers()).extracting(MessageListenerContainer::getGroupId)
                 .containsExactlyInAnyOrder("codebite-worker", "codebite-worker-admin");
     }

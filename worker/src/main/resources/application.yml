@@ -59,7 +59,7 @@ management:
 
 app:
   kafka:
-    # Prepended to every consumer group id. Empty in production; scripts/dev-branch-backend.sh sets
+    # Prepended to every consumer group id. Empty in production; scripts/dev-branch-servers.sh sets
     # it so a branch's worker never joins the shared dev worker's groups.
     group-prefix: ""
     topic:

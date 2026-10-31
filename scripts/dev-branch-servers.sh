@@ -2,11 +2,11 @@
 # Runs this checkout's backend, worker and Vite beside the shared dev servers (8080, 8081, 5173),
 # so a branch's migrations, endpoints and problems can be seen working end to end:
 #
-#   scripts/dev-branch-backend.sh [start]   start all three and stay in the foreground; Ctrl-C stops them
-#   scripts/dev-branch-backend.sh stop      stop them from another shell
-#   scripts/dev-branch-backend.sh status    print where they run (ports, database, logs)
-#   scripts/dev-branch-backend.sh drop      drop the branch database, Kafka topics and groups, Redis index
-#   scripts/dev-branch-backend.sh name      print the branch database name
+#   scripts/dev-branch-servers.sh [start]   start all three and stay in the foreground; Ctrl-C stops them
+#   scripts/dev-branch-servers.sh stop      stop them from another shell
+#   scripts/dev-branch-servers.sh status    print where they run (ports, database, logs)
+#   scripts/dev-branch-servers.sh drop      drop the branch database, Kafka topics and groups, Redis index
+#   scripts/dev-branch-servers.sh name      print the branch database name
 #
 # Each piece is kept off the user's servers and data:
 #   database  codebite_<branch> in the codebite-postgres container, migrated by the backend on start
@@ -105,7 +105,7 @@ Sign in (dev test token; role ADMIN, or USER):
   curl -s -X POST 'http://127.0.0.1:$backend_port/api/auth/test-token?username=<name>&role=ADMIN'
   then in the branch frontend's console: localStorage.setItem('token', '<token>') and reload
 
-Stop: Ctrl-C here, or scripts/dev-branch-backend.sh stop.  Drop the data: scripts/dev-branch-backend.sh drop
+Stop: Ctrl-C here, or scripts/dev-branch-servers.sh stop.  Drop the data: scripts/dev-branch-servers.sh drop
 EOF
 }
 
@@ -262,7 +262,7 @@ JSON
 
 cmd_drop() {
   if [[ -n "$(app_pids)" ]]; then
-    echo "the branch servers are running; stop them first: scripts/dev-branch-backend.sh stop" >&2
+    echo "the branch servers are running; stop them first: scripts/dev-branch-servers.sh stop" >&2
     exit 1
   fi
   psql_admin "DROP DATABASE IF EXISTS \"$db\" WITH (FORCE)" >/dev/null
