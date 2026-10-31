@@ -23,7 +23,8 @@ import java.util.TreeMap;
 
 /**
  * A user's Progress: the problems they have Solved or Attempted. The one place that says what
- * those words mean, in queries over {@code submissions} bounded to one user.
+ * those words mean, in queries over {@code submissions} bounded to one user, and in
+ * {@link #signUpsSince}, the one read across users (each sign-up's first Accepted submission).
  *
  * <p>Invariants, held by every method here:
  * <ul>
@@ -84,6 +85,13 @@ public class UserProgress {
             "s.adminSubmission = false AND s.status <> com.codebite.submission.entity.SubmissionStatus.PENDING";
     private static final String ACCEPTED_NON_ADMIN =
             "s.adminSubmission = false AND s.status = com.codebite.submission.entity.SubmissionStatus.ACCEPTED";
+
+    /**
+     * A non-admin user's sign-up and their first Accepted, non-admin submission, or null when they
+     * have none: the row behind the admin dashboard's onboarding success figure.
+     */
+    public record SignUp(Instant signedUpAt, Instant firstAcceptedAt) {
+    }
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -176,6 +184,19 @@ public class UserProgress {
                         Aggregate.class)
                 .setParameter("userId", userId)
                 .getSingleResult();
+    }
+
+    /** Every non-admin user who signed up from {@code since} (inclusive) on, with their first Accepted submission. */
+    @Transactional(readOnly = true)
+    public List<SignUp> signUpsSince(Instant since) {
+        return entityManager.createQuery(
+                        "SELECT new com.codebite.progress.UserProgress$SignUp(u.createdAt, MIN(s.createdAt)) "
+                                + "FROM User u LEFT JOIN Submission s ON s.user.id = u.id AND " + ACCEPTED_NON_ADMIN + " "
+                                + "WHERE u.createdAt >= :since AND u.role <> com.codebite.user.entity.Role.ADMIN "
+                                + "GROUP BY u.id, u.createdAt",
+                        SignUp.class)
+                .setParameter("since", since)
+                .getResultList();
     }
 
     /** Every problem the user has Solved, published or not. */
