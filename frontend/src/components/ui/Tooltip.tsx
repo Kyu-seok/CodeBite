@@ -127,12 +127,12 @@ const TooltipContent = forwardRef<HTMLDivElement, TooltipContentProps>(
     const [visible, setVisible] = useState(false);
 
     useEffect(() => {
-      if (open) {
-        const frame = requestAnimationFrame(() => setVisible(true));
-        return () => cancelAnimationFrame(frame);
-      } else {
+      if (!open) return;
+      const frame = requestAnimationFrame(() => setVisible(true));
+      return () => {
+        cancelAnimationFrame(frame);
         setVisible(false);
-      }
+      };
     }, [open]);
 
     if (!open || !triggerRect) return null;

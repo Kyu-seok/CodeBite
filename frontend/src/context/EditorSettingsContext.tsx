@@ -84,6 +84,7 @@ export function EditorSettingsProvider({ children }: { children: ReactNode }) {
   );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- The hook pairs with its provider and reads the context this file keeps private.
 export function useEditorSettings() {
   const context = useContext(EditorSettingsContext);
   if (!context) throw new Error("useEditorSettings must be used within EditorSettingsProvider");
