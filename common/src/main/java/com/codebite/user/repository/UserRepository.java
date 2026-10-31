@@ -5,6 +5,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import java.time.Instant;
+import java.util.List;
 
 import java.util.Optional;
 
@@ -30,4 +34,14 @@ public interface UserRepository extends JpaRepository<User, Long> {
            + "GROUP BY u.id, u.username, u.email, u.role, u.avatarUrl, u.createdAt",
            countQuery = "SELECT COUNT(u) FROM User u")
     Page<UserOverview> findAllOverviews(Pageable pageable);
+
+    // Admin dashboard, onboarding success: every non-admin user who signed up since then, with
+    // their first Accepted, non-admin submission (null when there is none).
+    @Query("SELECT new com.codebite.user.repository.SignUp(u.createdAt, MIN(s.createdAt)) "
+           + "FROM User u LEFT JOIN Submission s ON s.user.id = u.id "
+           + "AND s.status = com.codebite.submission.entity.SubmissionStatus.ACCEPTED "
+           + "AND s.adminSubmission = false "
+           + "WHERE u.createdAt >= :since AND u.role <> com.codebite.user.entity.Role.ADMIN "
+           + "GROUP BY u.id, u.createdAt")
+    List<SignUp> findSignUpsSince(@Param("since") Instant since);
 }
