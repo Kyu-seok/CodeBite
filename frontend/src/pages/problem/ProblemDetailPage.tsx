@@ -121,7 +121,13 @@ export default function ProblemDetailPage() {
     ? tutorialSpotlight(tutorialStepNow, {
         judging: attempt.kind === "judging",
         signedIn: isAuthenticated,
-        failingCase: attempt.kind === "settled" && attempt.mode === "run" && attempt.result.results.some(caseFailed),
+        // Only while the Output tab shows it: the user may switch tabs, and step 4 then lights the
+        // whole result instead of losing its anchor.
+        failingCase:
+          activeTab === "output" &&
+          attempt.kind === "settled" &&
+          attempt.mode === "run" &&
+          attempt.result.results.some(caseFailed),
       })
     : null
   // A step's targets are never behind a collapsed panel or another tab: open them before the
@@ -140,7 +146,9 @@ export default function ProblemDetailPage() {
       if (target === "editor" && editorCollapsed) panels?.expandEditor()
       if (target !== "editor" && testsCollapsed) panels?.expandTests()
     }
-    if (spotlight.anchor === "result" || spotlight.anchor === "failingCase") setActiveTab("output")
+    // Step 4 without its failing case is the user on another tab: leave them there.
+    const reading = spotlight.anchor === "failingCase" || (spotlight.anchor === "result" && spotlight.step !== "readFailure")
+    if (reading) setActiveTab("output")
     // Once per spotlight, not whenever the user folds a panel the step doesn't need.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [spotlightKey])
