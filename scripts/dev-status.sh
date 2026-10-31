@@ -8,6 +8,9 @@
 #   PROD       it carries a value from the production infra/.env (see scripts/dev-env.sh)
 #   BEHIND     the database lacks a migration this checkout has; the backend applies it on start
 #
+# Branch servers (scripts/dev-branch-backend.sh: own ports, database, Kafka topics) are named as
+# such. Another checkout's branch servers are another session's, never a problem here.
+#
 # Run from the root of the checkout or worktree whose code you want to see:  scripts/dev-status.sh
 set -euo pipefail
 # ps prints, and date parses, the start time in the C locale's English month and day names.
@@ -24,6 +27,8 @@ to_stamp() {
 }
 
 here=$(git rev-parse --show-toplevel)
+# The main checkout runs the shared dev servers; a worktree must not restart them.
+main=$(dirname "$(git rev-parse --path-format=absolute --git-common-dir)")
 problems=0
 found=0
 
@@ -34,14 +39,26 @@ checkout_of() {
     END { print r }'
 }
 
-# Prints where a process runs from; ELSEWHERE when that isn't this checkout.
+# The value of $2 in the environment process $1 started with.
+env_value() {
+  ps eww -o command= -p "$1" | tr ' ' '\n' | sed -n "s/^$2=//p" | head -n 1
+}
+
+# Prints where a process runs from; ELSEWHERE when that isn't this checkout, unless it is a
+# branch server ($2 = its database), which belongs to whichever session started it.
 report_checkout() {
-  local root=$1
+  local root=$1 branch_db=${2:-}
   local branch
   branch=$(git -C "$root" branch --show-current 2>/dev/null || true)
   echo "  from $root (${branch:-detached})"
-  if [[ "$root" != "$here" ]]; then
-    echo "  ELSEWHERE  not this checkout ($here); restart it from here to run this branch's code"
+  if [[ -n "$branch_db" ]]; then
+    echo "  branch server (scripts/dev-branch-backend.sh), database $branch_db, not a shared dev server"
+  elif [[ "$root" != "$here" ]]; then
+    if [[ "$here" != "$main" && "$root" == "$main" ]]; then
+      echo "  ELSEWHERE  the shared dev server runs $main; don't restart it, run scripts/dev-branch-backend.sh to see this branch"
+    else
+      echo "  ELSEWHERE  not this checkout ($here); restart it from here to run this branch's code"
+    fi
     problems=1
   fi
 }
@@ -61,16 +78,24 @@ for module in backend worker; do
   for pid in $pids; do
     found=1
     started=$(ps -o lstart= -p "$pid" | sed 's/^ *//; s/ *$//')
-    echo "$module: pid $pid, started $started"
+    branch_db=$(env_value "$pid" CODEBITE_DEV_BRANCH)
+    port=$(env_value "$pid" SERVER_PORT)
+    echo "$module: pid $pid, started $started${port:+, port $port}"
     root=$(checkout_of "$pid" "$module/build/classes/java/main")
-    report_checkout "$root"
+    report_checkout "$root" "$branch_db"
+    # Another session's branch server: its staleness and values are that session's business.
+    [[ -n "$branch_db" && "$root" != "$here" ]] && continue
 
     marker=$(mktemp)
     touch -t "$(to_stamp "$(to_epoch "$started")")" "$marker"
     changed=$(find "$root/$module/src/main" "$root/common/src/main" -type f -newer "$marker" 2>/dev/null | head -n 3)
     rm -f "$marker"
     if [[ -n "$changed" ]]; then
-      echo "  STALE  source changed since it started, restart it:"
+      if [[ "$here" != "$main" && "$root" == "$main" ]]; then
+        echo "  STALE  source changed since it started (the shared server: the user restarts it, not a worktree session):"
+      else
+        echo "  STALE  source changed since it started, restart it:"
+      fi
       sed 's/^/           /' <<<"$changed"
       problems=1
     fi
@@ -94,18 +119,23 @@ fi
 for pid in $pids; do
   found=1
   echo "frontend: pid $pid (vite reloads on change)"
-  report_checkout "$(checkout_of "$pid" "frontend/node_modules/.bin/vite")"
+  report_checkout "$(checkout_of "$pid" "frontend/node_modules/.bin/vite")" "$(env_value "$pid" CODEBITE_DEV_BRANCH)"
 done
 
 db=$(docker exec codebite-postgres psql -U codebite -d codebite -tAc \
   "SELECT max(version::int) FROM flyway_schema_history WHERE success AND version ~ '^[0-9]+$'" 2>/dev/null || true)
 ours=$(newest_migration "$here")
+if [[ "$here" == "$main" ]]; then
+  start_hint="start the backend from here to apply them"
+else
+  start_hint="the shared backend runs $main; scripts/dev-branch-backend.sh migrates a database of this branch's own"
+fi
 if [[ -z "$db" ]]; then
   echo "database: not reachable (docker container codebite-postgres)"
 elif (( db < ours )); then
   echo "database: at V$db"
-  echo "  BEHIND  this checkout has migrations up to V$ours; start the backend from here to apply them"
-  problems=1
+  echo "  BEHIND  this checkout has migrations up to V$ours; $start_hint"
+  [[ "$here" == "$main" ]] && problems=1
 elif (( db > ours )); then
   echo "database: at V$db, past this checkout's V$ours (another branch's migrations, run by a backend started from its worktree)"
   echo "  Fine while that branch merges them unchanged. Edited after they ran, every backend fails Flyway's checksum check until 'flyway repair'."
@@ -129,6 +159,20 @@ if [[ -n "$db" ]]; then
     fi
   done < <(docker exec codebite-postgres psql -U codebite -d codebite -tAc \
     "SELECT version, description FROM flyway_schema_history WHERE success AND version ~ '^[0-9]+$'" 2>/dev/null || true)
+fi
+
+# This checkout's branch database, when scripts/dev-branch-backend.sh has made one.
+branch_db=$("$here/scripts/dev-branch-backend.sh" name 2>/dev/null || true)
+if [[ -n "$branch_db" ]]; then
+  bdb=$(docker exec codebite-postgres psql -U codebite -d "$branch_db" -tAc \
+    "SELECT max(version::int) FROM flyway_schema_history WHERE success AND version ~ '^[0-9]+$'" 2>/dev/null || true)
+  if [[ -n "$bdb" ]]; then
+    echo "branch database $branch_db: at V$bdb"
+    if (( bdb < ours )); then
+      echo "  BEHIND  this checkout has migrations up to V$ours; restart scripts/dev-branch-backend.sh to apply them"
+      problems=1
+    fi
+  fi
 fi
 
 if [[ $found -eq 1 && $problems -eq 0 ]]; then
