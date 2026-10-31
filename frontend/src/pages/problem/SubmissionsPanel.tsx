@@ -10,7 +10,8 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/Dialog"
-import type { SubmissionListItem } from "@/types/submission"
+import type { CustomTestCaseInput, SubmissionListItem } from "@/types/submission"
+import type { AddCustomTestOutcome } from "./customTests"
 import { confidenceChipClass, useConfidenceLabel } from "@/lib/confidenceColors"
 import { SubmissionDetail } from "./SubmissionDetail"
 import {
@@ -91,6 +92,7 @@ interface SubmissionsPanelProps {
   onSelectSubmission: (id: number | null) => void
   onUpdateNote?: (id: number, notes: string) => void
   onLoadIntoEditor?: (code: string, language: string) => void
+  onAddCustomTest?: (tc: CustomTestCaseInput) => AddCustomTestOutcome
 }
 
 export function SubmissionsPanel({
@@ -102,6 +104,7 @@ export function SubmissionsPanel({
   onSelectSubmission,
   onUpdateNote,
   onLoadIntoEditor,
+  onAddCustomTest,
 }: SubmissionsPanelProps) {
   const { t, i18n } = useTranslation("problem")
   const { t: tc } = useTranslation("common")
@@ -118,6 +121,7 @@ export function SubmissionsPanel({
         onBack={() => onSelectSubmission(null)}
         onUpdateNote={onUpdateNote}
         onLoadIntoEditor={onLoadIntoEditor}
+        onAddCustomTest={onAddCustomTest}
       />
     )
   }

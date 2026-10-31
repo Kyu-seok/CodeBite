@@ -23,6 +23,7 @@ import type {
 import type { AttemptFailure, JudgeAttempt, JudgeMode } from '@/judge/attempt';
 import { CustomTestsEditor } from './CustomTestsEditor';
 import { STATUS_KEYS } from './submissionDisplay';
+import { MAX_CUSTOM_TESTS } from './customTests';
 import { estimatedJudgeSeconds } from './judgeTimeEstimates';
 
 type JudgingAttempt = Extract<JudgeAttempt, { kind: 'judging' }>;
@@ -343,7 +344,7 @@ export function TestPanel({
               onChange={onCustomTestsChange}
               hintInput={sampleTestCases[0]?.input}
               hintExpected={sampleTestCases[0]?.expectedOutput}
-              maxCases={5}
+              maxCases={MAX_CUSTOM_TESTS}
             />
           </TabsContent>
 

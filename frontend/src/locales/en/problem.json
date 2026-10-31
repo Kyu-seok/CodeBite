@@ -241,8 +241,6 @@
     "copied": "Copied!",
     "loadedIntoEditor": "Loaded into editor",
     "copyFailed": "Failed to copy",
-    "testCases": "Test Cases",
-    "hidden": "(hidden)",
     "expectedOutput": "Expected Output",
     "yourOutput": "Your Output",
     "clickToAddNote": "Click to add a note...",
@@ -260,7 +258,31 @@
     "markForReview": "Mark this for review",
     "markForReviewHint": "Choose how confident you felt. We'll bring it back later for spaced review.",
     "openSubmission": "Open submission from {{date}}",
-    "editNote": "Edit note"
+    "editNote": "Edit note",
+    "line": "Line {{n}}",
+    "compilerOutput": "Compiler errors",
+    "internalError": "Something went wrong on our side, not in your code.",
+    "internalErrorHint": "Submit again; it usually goes through.",
+    "failingCase": {
+      "heading": "Failing case",
+      "position": "case {{n}} of {{total}}",
+      "sample": "Sample",
+      "hidden": "Hidden",
+      "input": "Input",
+      "empty": "(empty)",
+      "copyField": "Copy {{field}}",
+      "hiddenBySetting": "This case is hidden, as your settings ask.",
+      "hiddenBySettingHint": "Work out what breaks from the case number and your code, or reveal it for this submission.",
+      "reveal": "Reveal this case",
+      "timedOut": "Your program didn't finish within the time limit on this case.",
+      "crashed": "Your program crashed on this case.",
+      "addAsCustom": "Add as custom test case",
+      "addOutcome": {
+        "added": "Added to your custom test cases",
+        "duplicate": "Already in your custom test cases",
+        "full": "Custom test cases are full ({{max}}). Remove one first."
+      }
+    }
   },
   "settings": {
     "title": "Settings",
@@ -274,7 +296,9 @@
     "normal": "Normal",
     "intelliSense": "IntelliSense",
     "intelliSenseDescription": "Type-aware completions, signature help, and error highlighting.",
-    "spaces": "{{n}} Spaces"
+    "spaces": "{{n}} Spaces",
+    "showFailingCase": "Show failing test case",
+    "showFailingCaseDescription": "After a failed submission, show the input, expected and actual output of the case it failed on. Turn off to practise debugging without it."
   },
   "workspace": {
     "foldPanel": "Fold panel",
