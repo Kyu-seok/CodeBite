@@ -250,6 +250,95 @@ class SubmissionServiceTest {
         assertEquals(preview, response.reviewIntervalDays());
     }
 
+    // --- getSubmission: the Failing Case ---
+
+    @Test
+    void getSubmission_wrongAnswerOnAHiddenCase_revealsThatCaseOnly() {
+        List<TestCase> cases = List.of(testCase(1L, true, "1", "1"), testCase(2L, false, "2", "4"),
+                testCase(3L, false, "3", "9"));
+        SubmissionResponse response = graded(cases,
+                passed("1"), new CaseVerdict(SubmissionStatus.WRONG_ANSWER, true, "5", null, null, 3, 100),
+                new CaseVerdict(SubmissionStatus.WRONG_ANSWER, true, "7", null, null, 3, 100));
+
+        assertEquals(SubmissionStatus.WRONG_ANSWER, response.failingCase().status());
+        assertEquals(2L, response.failingCase().testCaseId());
+        assertEquals(2, response.failingCase().position());
+        assertEquals(3, response.failingCase().total());
+        assertTrue(response.failingCase().hidden());
+        assertEquals("2", response.failingCase().input());
+        assertEquals("4", response.failingCase().expectedOutput());
+        assertEquals("5", response.failingCase().actualOutput());
+        // The case list itself stays redacted, the later hidden failure included.
+        assertNull(response.results().get(1).input());
+        assertNull(response.results().get(2).expectedOutput());
+    }
+
+    @Test
+    void getSubmission_runtimeErrorOnASample_isTheFailingCase() {
+        List<TestCase> cases = List.of(testCase(1L, true, "1", "1"));
+        SubmissionResponse response = graded(cases,
+                new CaseVerdict(SubmissionStatus.RUNTIME_ERROR, true, null, "boom", null, 3, 100));
+
+        assertEquals(SubmissionStatus.RUNTIME_ERROR, response.failingCase().status());
+        assertEquals(false, response.failingCase().hidden());
+        assertEquals("1", response.failingCase().expectedOutput());
+    }
+
+    @Test
+    void getSubmission_accepted_hasNoFailingCase() {
+        SubmissionResponse response = graded(List.of(testCase(1L, false, "1", "1")), passed("1"));
+
+        assertEquals(SubmissionStatus.ACCEPTED, response.status());
+        assertNull(response.failingCase());
+    }
+
+    @Test
+    void getSubmission_compilationError_hasNoFailingCase() {
+        SubmissionResponse response = graded(List.of(testCase(1L, false, "1", "1")),
+                new CaseVerdict(SubmissionStatus.COMPILATION_ERROR, true, null, null, "error", null, null));
+
+        assertNull(response.failingCase());
+    }
+
+    @Test
+    void getSubmission_internalError_hasNoFailingCase() {
+        SubmissionResponse response = graded(List.of(testCase(1L, false, "1", "1")),
+                new CaseVerdict(SubmissionStatus.INTERNAL_ERROR, true, null, null, null, null, null));
+
+        assertEquals(SubmissionStatus.INTERNAL_ERROR, response.status());
+        assertNull(response.failingCase());
+    }
+
+    @Test
+    void getSubmission_pending_hasNoFailingCase() {
+        when(submissionRepository.findById(1L)).thenReturn(Optional.of(ownedSubmission(SubmissionStatus.PENDING)));
+
+        assertNull(submissionService.getSubmission(1L, 1L).failingCase());
+    }
+
+    private SubmissionResponse graded(List<TestCase> cases, CaseVerdict... verdicts) {
+        Submission submission = Submission.pending(user, problem, "java", "code");
+        submission.setId(1L);
+        submission.grade(Verdict.of(List.of(verdicts)), cases);
+        when(submissionRepository.findById(1L)).thenReturn(Optional.of(submission));
+        when(submissionResultRepository.findBySubmissionIdOrderById(1L)).thenReturn(submission.getResults());
+        return submissionService.getSubmission(1L, 1L);
+    }
+
+    private static CaseVerdict passed(String stdout) {
+        return new CaseVerdict(SubmissionStatus.ACCEPTED, true, stdout, null, null, 3, 100);
+    }
+
+    private TestCase testCase(Long id, boolean sample, String input, String expected) {
+        TestCase tc = new TestCase();
+        tc.setId(id);
+        tc.setProblem(problem);
+        tc.setSample(sample);
+        tc.setInput(input);
+        tc.setExpectedOutput(expected);
+        return tc;
+    }
+
     /** PENDING, or Accepted with no result rows. */
     private Submission ownedSubmission(SubmissionStatus status) {
         Submission submission = Submission.pending(user, problem, "java", "code");

@@ -12,6 +12,7 @@ import com.codebite.problem.repository.ProblemRepository;
 import com.codebite.problem.repository.TestCaseRepository;
 import com.codebite.review.entity.Confidence;
 import com.codebite.review.service.ReviewService;
+import com.codebite.submission.dto.FailingCase;
 import com.codebite.submission.dto.SubmissionListItem;
 import com.codebite.submission.dto.SubmissionResponse;
 import com.codebite.submission.dto.SubmissionResultDto;
@@ -174,7 +175,8 @@ public class SubmissionService {
                 submission.getConfidence(),
                 submission.getSolveTimeSeconds(),
                 solutionCommit,
-                reviewIntervalDays
+                reviewIntervalDays,
+                FailingCase.of(submission.getStatus(), results, program).orElse(null)
         );
     }
 

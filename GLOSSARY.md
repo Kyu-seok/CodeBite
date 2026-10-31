@@ -27,6 +27,10 @@ _Avoid_: Visual aid, image, illustration
 The outcome of grading one program against an ordered list of test cases: a status for each case and an overall status, which is the status of the first judged case that is not Accepted, or Accepted when there is none. A submission's Verdict is announced to the rest of the system (the live result push, stats, Streak Days, Solution Commits) only once it is stored; the announcement is a notification of the Verdict, not the Verdict itself.
 _Avoid_: Result, outcome, overall status
 
+**Failing Case**:
+The case a Verdict's overall status comes from: the first judged case, in order, that is not Accepted. An Accepted Verdict has none, and neither does a program that failed to compile or a case CodeBite itself failed to run. A submission shows its Failing Case's input, expected output and actual output, hidden or not, unless the user has chosen not to see them.
+_Avoid_: Failed test, first failure, wrong case
+
 **Unjudged Case**:
 A custom test case the user gave no expected output for. It runs and shows its output, and counts against the Verdict only if the program fails to compile, crashes or exceeds its time limit.
 _Avoid_: Free run, output-only case
