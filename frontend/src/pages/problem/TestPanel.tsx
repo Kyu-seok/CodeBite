@@ -587,7 +587,7 @@ function RunResultsSection({
           key={i}
           data-failed={caseFailed(r) || undefined}
           // The Tutorial's step 4 points at the first of these.
-          data-tour={caseFailed(r) ? 'failingCase' : undefined}
+          data-tour={caseFailed(r) ? 'failedRow' : undefined}
           className="border-t border-border pt-2 text-sm first:border-t-0 first:pt-0">
           <div className="mb-1 flex items-center justify-between">
             <span className="font-medium text-muted-foreground">
