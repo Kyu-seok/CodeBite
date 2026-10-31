@@ -186,29 +186,14 @@ html {
   animation: draw-line 2s ease-out forwards;
 }
 
-/* ── Tutorial: a gentle pulse on the button the current step is about ── */
-@keyframes tutorial-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--ring) 55%, transparent); }
-  50% { box-shadow: 0 0 0 6px color-mix(in srgb, var(--ring) 0%, transparent); }
-}
-
-.animate-tutorial-pulse {
-  animation: tutorial-pulse 2s ease-in-out infinite;
-}
-
 /* Reduced motion: content and charts are simply there, no slide-in or self-drawing lines. */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
   }
   .animate-fade-up,
-  .animate-draw,
-  .animate-tutorial-pulse {
+  .animate-draw {
     animation: none;
-  }
-  /* The Tutorial's button is still marked, by a steady ring instead of a pulse. */
-  .animate-tutorial-pulse {
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--ring) 45%, transparent);
   }
   .animate-draw {
     stroke-dasharray: none;
@@ -273,6 +258,11 @@ html {
 
 .dark *::-webkit-scrollbar-thumb {
   background-color: #3a4250;
+}
+
+/* ── Monaco: the Tutorial's step 2 marks the lines where the answer goes ── */
+.cb-editor-tutorial-line {
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
 }
 
 /* ── Monaco judge-error underline ── */

@@ -11,6 +11,7 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@floating-ui/react-dom": "^2.1.8",
     "@monaco-editor/react": "^4.7.0",
     "@radix-ui/react-dialog": "^1.1.15",
     "@radix-ui/react-dropdown-menu": "^2.1.16",

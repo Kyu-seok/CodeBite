@@ -8,7 +8,6 @@ export { browserStorage, type OnboardingStorage } from "./storage";
 export {
   advanceTutorial,
   NOT_STARTED,
-  pulsedButton,
   readTutorial,
   TUTORIAL_PROBLEM_SLUG,
   TUTORIAL_STEPS,
@@ -17,6 +16,14 @@ export {
   type TutorialState,
   type TutorialStepName,
 } from "./tutorial";
+export {
+  lineToFill,
+  tutorialSpotlight,
+  type Spotlight,
+  type SpotlightContext,
+  type SpotlightCopy,
+  type TourTarget,
+} from "./spotlight";
 export {
   milestoneToReport,
   TUTORIAL_MILESTONES,

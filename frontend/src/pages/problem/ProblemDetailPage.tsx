@@ -7,7 +7,8 @@ import { useAuth } from "@/context/AuthContext"
 import { submitCode, runCode, setSolveTime } from "@/api/submissions"
 import { setSubmissionReview } from "@/api/reviews"
 import { notifyStreakChanged } from "@/api/streak"
-import { ProblemLayout, type PanelFunctions } from "@/components/layout/ProblemLayout"
+import { DESKTOP_QUERY, ProblemLayout, type PanelFunctions } from "@/components/layout/ProblemLayout"
+import { useMediaQuery } from "@/hooks/useMediaQuery"
 import Spinner from "@/components/ui/Spinner"
 import { Button } from "@/components/ui/Button"
 import { LeftPanel, CollapsedLeftStrip } from "./LeftPanel"
@@ -27,9 +28,18 @@ import { useSubmissionWatch } from "@/hooks/useSubmissionWatch"
 import { usePersistedDraft } from "@/hooks/usePersistedDraft"
 import type { JudgeAttempt } from "@/judge/attempt"
 import type { WorkspaceOutletContext } from "@/components/layout/Layout"
-import { browserStorage, markTipSeen, pulsedButton, readSeenTips, tipFor, type Tip, type TutorialEvent } from "@/onboarding"
+import {
+  browserStorage,
+  lineToFill,
+  markTipSeen,
+  readSeenTips,
+  tipFor,
+  tutorialSpotlight,
+  type Tip,
+  type TutorialEvent,
+} from "@/onboarding"
 import { useTutorial, type TutorialNavigationState } from "@/hooks/useTutorial"
-import { TutorialCard } from "./TutorialCard"
+import { TutorialSpotlight } from "./TutorialSpotlight"
 import { languageOnReturn, submitReturnUrl } from "@/lib/signInReturn"
 
 /** The server's reason for refusing a Run or Submit, when it gave one; the panel has a generic fallback. */
@@ -103,6 +113,31 @@ export default function ProblemDetailPage() {
   const [editorCollapsed, setEditorCollapsed] = useState(false)
   const [testsCollapsed, setTestsCollapsed] = useState(false)
   const panelFunctionsRef = useRef<PanelFunctions | null>(null)
+  const desktop = useMediaQuery(DESKTOP_QUERY)
+  // How the Tutorial's step shows (docs/adr/0008); null when no step is showing here.
+  const spotlight = tutorialStepNow
+    ? tutorialSpotlight(tutorialStepNow, { judging: attempt.kind === "judging", signedIn: isAuthenticated })
+    : null
+  // A step's targets are never behind a collapsed panel or another tab: open them before the
+  // spotlight looks for them.
+  const spotlightKey = spotlight ? `${spotlight.anchor}:${spotlight.lit.join(",")}` : null
+  useEffect(() => {
+    if (!spotlight) return
+    const panels = panelFunctionsRef.current
+    for (const target of spotlight.lit) {
+      if (target === "description") {
+        if (leftCollapsed) panels?.expandLeft()
+        setLeftPanelTab("description")
+        continue
+      }
+      if (rightCollapsed) panels?.expandRight()
+      if (target === "editor" && editorCollapsed) panels?.expandEditor()
+      if (target !== "editor" && testsCollapsed) panels?.expandTests()
+    }
+    if (spotlight.anchor === "result") setActiveTab("output")
+    // Once per spotlight, not whenever the user folds a panel the step doesn't need.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [spotlightKey])
   const resetLayoutRef = useRef<(() => void) | null>(null)
   const runRef = useRef<() => void>(() => {})
   const submitRef = useRef<() => void>(() => {})
@@ -137,13 +172,8 @@ export default function ProblemDetailPage() {
       result: submission,
       startedAt: prev.kind === "judging" ? prev.startedAt : Date.now(),
     }))
-    // Step 6's celebration takes the place of the first-Accepted Tip, so the user isn't
-    // congratulated twice. Set with the result, before any await, so the Tip never flashes.
-    if (submission.status === "ACCEPTED" && onTutorialProblem) {
-      if (dispatchTutorial({ type: "accepted" }).status === "active") {
-        setSeenTips((seen) => markTipSeen(browserStorage, "firstAccepted", seen))
-      }
-    }
+    // Step 6 celebrates on the result; the first-Accepted Tip beside it says what the Accepted gave.
+    if (submission.status === "ACCEPTED") tutorialEvent({ type: "accepted" })
 
     let capturedSolveTime: number | null = null
     if (timerSnapshotRef.current != null && submission.status === "ACCEPTED") {
@@ -415,79 +445,85 @@ export default function ProblemDetailPage() {
           />
         }
         leftPanel={
-          <LeftPanel
-            slug={slug!}
-            title={problem.title}
-            difficulty={problem.difficulty}
-            tutorial={problem.tutorial}
-            description={problem.description}
-            constraints={problem.constraints}
-            languages={languages}
-            isAuthenticated={isAuthenticated}
-            submissions={submissions}
-            submissionsFailed={submissionsFailed}
-            onRetrySubmissions={refetchSubmissions}
-            activeTab={leftPanelTab}
-            onTabChange={setLeftPanelTab}
-            onUpdateNote={updateNote}
-            onLoadIntoEditor={handleLoadIntoEditor}
-            onAddCustomTest={handleAddCustomTest}
-            onFold={handleFoldLeft}
-            onMaximize={handleMaximizeLeft}
-            isMaximized={rightCollapsed}
-            stepCard={
-              tutorialStepNow && (
-                <TutorialCard
-                  step={tutorialStepNow}
-                  onNext={() => tutorialEvent({ type: "read" })}
-                  onSkip={() => tutorialEvent({ type: "skipped" })}
-                />
-              )
-            }
-          />
+          // `data-tour` names what the Tutorial can spotlight.
+          <div data-tour="description" className="h-full">
+            <LeftPanel
+              slug={slug!}
+              title={problem.title}
+              difficulty={problem.difficulty}
+              tutorial={problem.tutorial}
+              description={problem.description}
+              constraints={problem.constraints}
+              languages={languages}
+              isAuthenticated={isAuthenticated}
+              submissions={submissions}
+              submissionsFailed={submissionsFailed}
+              onRetrySubmissions={refetchSubmissions}
+              activeTab={leftPanelTab}
+              onTabChange={setLeftPanelTab}
+              onUpdateNote={updateNote}
+              onLoadIntoEditor={handleLoadIntoEditor}
+              onAddCustomTest={handleAddCustomTest}
+              onFold={handleFoldLeft}
+              onMaximize={handleMaximizeLeft}
+              isMaximized={rightCollapsed}
+            />
+          </div>
         }
         editor={
-          <EditorPanel
-            problemSlug={slug!}
-            languages={languages}
-            activeLanguage={activeLang}
-            code={code}
-            errors={editorErrors}
-            onLanguageChange={handleLanguageChange}
-            onCodeChange={handleCodeChange}
-            onResetCode={handleResetCode}
-            onResetLayout={() => resetLayoutRef.current?.()}
-            onRun={handleRun}
-            onSubmit={handleSubmit}
-            onToggleTests={handleToggleTests}
-            onMaximize={handleMaximizeEditor}
-            testsCollapsed={testsCollapsed}
-            isMaximized={leftCollapsed && testsCollapsed}
-          />
+          <div data-tour="editor" className="h-full">
+            <EditorPanel
+              problemSlug={slug!}
+              languages={languages}
+              activeLanguage={activeLang}
+              code={code}
+              errors={editorErrors}
+              markedLines={spotlight?.step === "function" ? lineToFill(code) : null}
+              onLanguageChange={handleLanguageChange}
+              onCodeChange={handleCodeChange}
+              onResetCode={handleResetCode}
+              onResetLayout={() => resetLayoutRef.current?.()}
+              onRun={handleRun}
+              onSubmit={handleSubmit}
+              onToggleTests={handleToggleTests}
+              onMaximize={handleMaximizeEditor}
+              testsCollapsed={testsCollapsed}
+              isMaximized={leftCollapsed && testsCollapsed}
+            />
+          </div>
         }
         testPanel={
-          <TestPanel
-            sampleTestCases={problem.sampleTestCases}
-            attempt={attempt}
-            language={activeLang}
-            activeTab={activeTab}
-            userSource={code}
-            customTests={customTests}
-            onCustomTestsChange={setCustomTests}
-            onAddCustomTest={handleAddCustomTest}
-            tip={tip}
-            onDismissTip={dismissTip}
-            pulse={pulsedButton(tutorialStepNow)}
-            onTabChange={setActiveTab}
-            onRun={handleRun}
-            onSubmit={handleSubmit}
-            onFold={handleFoldTests}
-            onMaximize={handleMaximizeTests}
-            isMaximized={editorCollapsed}
-          />
+          <div data-tour="result" className="h-full">
+            <TestPanel
+              sampleTestCases={problem.sampleTestCases}
+              attempt={attempt}
+              language={activeLang}
+              activeTab={activeTab}
+              userSource={code}
+              customTests={customTests}
+              onCustomTestsChange={setCustomTests}
+              onAddCustomTest={handleAddCustomTest}
+              tip={tip}
+              onDismissTip={dismissTip}
+              onTabChange={setActiveTab}
+              onRun={handleRun}
+              onSubmit={handleSubmit}
+              onFold={handleFoldTests}
+              onMaximize={handleMaximizeTests}
+              isMaximized={editorCollapsed}
+            />
+          </div>
         }
       />
       <ResultAnnouncer attempt={attempt} />
+      {spotlight && (
+        <TutorialSpotlight
+          spotlight={spotlight}
+          desktop={desktop}
+          onNext={() => tutorialEvent({ type: "read" })}
+          onSkip={() => tutorialEvent({ type: "skipped" })}
+        />
+      )}
       <AcceptedModal
         open={acceptedModal.open}
         onOpenChange={(open) => setAcceptedModal((prev) => ({ ...prev, open }))}

@@ -71,11 +71,6 @@ export function tutorialStep(state: TutorialState, event: TutorialEvent): Tutori
   }
 }
 
-/** The button a Tutorial step is about, pulsed so a newcomer finds it; null for none, or no step showing. */
-export function pulsedButton(step: TutorialStepName | null): "run" | "submit" | null {
-  return step === "run" || step === "submit" ? step : null;
-}
-
 const TUTORIAL_KEY = "onboarding-tutorial";
 
 function isTutorialState(value: unknown): value is TutorialState {
