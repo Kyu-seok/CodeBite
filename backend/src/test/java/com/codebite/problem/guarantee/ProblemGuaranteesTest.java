@@ -34,7 +34,8 @@ class ProblemGuaranteesTest {
             "jdbc:h2:mem:problem-guarantees;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1";
 
     /** One per problem whose Test Cases have been checked against its statement. */
-    static final List<ProblemGuarantee> GUARANTEES = List.of();
+    static final List<ProblemGuarantee> GUARANTEES = List.of(
+            new TwoMenuSumGuarantee());
 
     private record Case(int position, boolean sample, String input, String expectedOutput) {
         String name() {
