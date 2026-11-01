@@ -63,6 +63,10 @@ Each test case needs:
 
 ## Step 4: Validate
 
+### Against the statement (always)
+
+Reference solutions can't tell a case with two right answers from a sound one; the problem's Guarantee can. Write one if the problem has none, as steps 1–2 of `.claude/skills/correct-test-cases/SKILL.md` describe, then run `./gradlew :backend:test --tests '*ProblemGuaranteesTest' --tests '*TestCasePositionsTest'` once your migration exists. Replace any input it rejects or that has more than one right output.
+
 ### Locally (the default)
 
 Write a reference solution in each language, the `Solution` class only, at `scripts/replay-solutions/{slug}.py`, `.java`, `.js` and `.cpp` (some problems already have the `.py`). Put the new test cases in a JSON list, `[{"input": "...", "expected_output": "..."}, ...]`, and judge them in all four languages:
@@ -160,3 +164,4 @@ Report:
 2. Number of new test cases added
 3. Validation results: how many test cases passed in each language
 4. Any test cases that were generated but excluded (and why)
+5. Guarantee path and the `ProblemGuaranteesTest` result

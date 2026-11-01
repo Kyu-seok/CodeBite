@@ -281,6 +281,10 @@ scripts/judge-local.sh {slug}                      # once the backend has applie
 
 It exits 0 only when every Language is Accepted. A failing case means the Driver, the expected output or the solution is wrong; `NOT JUDGED` means a compiler or interpreter is missing here, not a failure.
 
+## Step 8: Write Its Guarantee
+
+Write the problem's Guarantee as steps 1–2 of `.claude/skills/correct-test-cases/SKILL.md` describe, and run `./gradlew :backend:test --tests '*ProblemGuaranteesTest'`. A red case gets a new input, not a looser Guarantee.
+
 ## Output Summary
 
 After completing all steps, list what you created:
@@ -288,4 +292,5 @@ After completing all steps, list what you created:
 2. Driver code paths (4 files)
 3. Starter code paths (4 files)
 4. Reference solution paths (4 files) and the `scripts/judge-local.sh` result per Language
-5. Brief description of the problem and its difficulty
+5. Guarantee path and the `ProblemGuaranteesTest` result
+6. Brief description of the problem and its difficulty

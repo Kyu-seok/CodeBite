@@ -1,17 +1,12 @@
 package com.codebite.problem;
 
-import org.flywaydb.core.Flyway;
 import org.flywaydb.core.api.MigrationInfo;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -33,8 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class MigrationSlugReferencesTest {
 
-    private static final String URL =
-            "jdbc:h2:mem:migration-slug-references;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1";
+    private static final MigratedDatabase DATABASE = new MigratedDatabase("migration-slug-references");
     private static final Pattern SLUG_REFERENCE =
             Pattern.compile("(?i)(?<![\\w])slug\\s*=\\s*(?:'([^']+)'|\\$\\$([^$]+)\\$\\$)");
     private static final List<String> SLUG_TABLES =
@@ -48,11 +42,11 @@ class MigrationSlugReferencesTest {
 
     @Test
     void everySlugAMigrationNamesExistsWhenItRuns() throws Exception {
-        MigrationInfo[] migrations = flyway(null).info().pending();
+        MigrationInfo[] migrations = DATABASE.flyway(null).info().pending();
         List<String> missing = new ArrayList<>();
         for (MigrationInfo migration : migrations) {
             Set<String> known = slugs();
-            flyway(migration.getVersion().getVersion()).migrate();
+            DATABASE.flyway(migration.getVersion().getVersion()).migrate();
             known.addAll(slugs());
             if (KNOWN_NO_OPS.containsKey(migration.getScript())) continue;
             for (String slug : references(migration.getScript())) {
@@ -61,11 +55,6 @@ class MigrationSlugReferencesTest {
         }
         assertTrue(missing.isEmpty(), "Migrations naming a slug no problem, tag or roadmap category has "
                 + "when they run, so their statements match nothing (Restated on another branch?): " + missing);
-    }
-
-    private static Flyway flyway(String target) {
-        var config = Flyway.configure().dataSource(URL, "sa", "").locations("classpath:db/migration");
-        return (target == null ? config : config.target(target)).load();
     }
 
     private static Set<String> references(String script) throws IOException {
@@ -78,16 +67,13 @@ class MigrationSlugReferencesTest {
         return slugs;
     }
 
-    private static Set<String> slugs() throws SQLException {
+    private static Set<String> slugs() {
         Set<String> slugs = new HashSet<>();
-        try (Connection connection = DriverManager.getConnection(URL, "sa", "");
-             Statement statement = connection.createStatement()) {
-            for (String table : SLUG_TABLES) {
-                try (ResultSet rows = statement.executeQuery("SELECT slug FROM " + table)) {
-                    while (rows.next()) slugs.add(rows.getString(1));
-                } catch (SQLException tableNotYetCreated) {
-                    // the migration that creates it hasn't run yet
-                }
+        for (String table : SLUG_TABLES) {
+            try {
+                slugs.addAll(DATABASE.strings("SELECT slug FROM " + table));
+            } catch (SQLException tableNotYetCreated) {
+                // the migration that creates it hasn't run yet
             }
         }
         return slugs;
