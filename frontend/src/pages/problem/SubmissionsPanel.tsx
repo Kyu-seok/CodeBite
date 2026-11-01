@@ -38,6 +38,7 @@ function NoteModal({
   const [draft, setDraft] = useState("")
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- The dialog stays mounted while closed; each opening starts from the saved note.
     if (open) setDraft(value || "")
   }, [open, value])
 

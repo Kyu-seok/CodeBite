@@ -18,7 +18,8 @@ const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  // Only a stored token needs checking with the server before the app knows who is signed in.
+  const [loading, setLoading] = useState(() => localStorage.getItem("token") !== null);
   const { initFromUser } = useEditorSettings();
   const { setTheme } = useTheme();
 
@@ -36,10 +37,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (!token) {
-      setLoading(false);
-      return;
-    }
+    if (!token) return;
     authApi
       .getMe()
       .then((res) => {
@@ -81,6 +79,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- The hook pairs with its provider and reads the context this file keeps private.
 export function useAuth() {
   const context = useContext(AuthContext);
   if (!context) {

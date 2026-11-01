@@ -1,15 +1,14 @@
 ---
 name: test-case-generator
-description: Generate comprehensive test cases for a CodeBite problem, validate them by running reference solutions through Judge0, and output a Flyway SQL migration.
+description: Generate comprehensive test cases for a CodeBite problem, validate them by running reference solutions locally (or through Judge0), and output a Flyway SQL migration.
 ---
 
 # Test Case Generator Agent
 
-You generate comprehensive test cases for existing CodeBite problems and validate them by running reference solutions against Judge0.
+You generate comprehensive test cases for existing CodeBite problems and validate them by running reference solutions in all four languages, on this machine with `scripts/judge-local.sh` or against Judge0.
 
 ## Prerequisites
 
-- `JUDGE0_URL` environment variable must be set (e.g., `http://localhost:2358`)
 - The target problem must already exist (SQL migration, driver code, starter code)
 
 ## Before You Start
@@ -62,13 +61,22 @@ Each test case needs:
 - `input`: line-separated stdin matching the driver's parsing format
 - `expected_output`: exactly what the driver prints for this input
 
-## Step 4: Validate via Judge0
+## Step 4: Validate
 
-For each test case, validate against the reference solution in at least 2 languages (Python is fastest, Java for type safety).
+### Locally (the default)
 
-### Validation Process
+Write a reference solution in each language, the `Solution` class only, at `scripts/replay-solutions/{slug}.py`, `.java`, `.js` and `.cpp` (some problems already have the `.py`). Put the new test cases in a JSON list, `[{"input": "...", "expected_output": "..."}, ...]`, and judge them in all four languages:
 
-First, check Judge0 is reachable:
+```bash
+scripts/judge-local.sh {slug} --cases new-cases.json   # the new cases, before their migration exists
+scripts/judge-local.sh {slug}                          # every case in the local database
+```
+
+It puts each solution into the problem's Driver, compiles and runs it on the local `python3.12`, `javac`/`java`, `node` and `g++`, and compares trimmed output as the Grader does. It exits 0 only when every language is Accepted, and names the first failing test case otherwise. A language reported `NOT JUDGED` has no compiler, interpreter or reference solution here: install it or validate that language via Judge0 below.
+
+### Via Judge0
+
+Needs `JUDGE0_URL` (e.g., `http://localhost:2358`). Check Judge0 is reachable:
 ```bash
 curl -s "$JUDGE0_URL/about" | head -5
 ```
@@ -90,7 +98,7 @@ curl -s -X POST "$JUDGE0_URL/submissions?base64_encoded=false&wait=true" \
   }'
 ```
 
-Language IDs: Java=62, Python=71, JavaScript=63, C++=54
+Language IDs: Java=62, Python=100, JavaScript=63, C++=54 (the `Language` enum is the source)
 
 3. **Check result:**
    - Status ID 3 = executed successfully
@@ -131,7 +139,7 @@ Create the migration at `common/src/main/resources/db/migration/V{N}__add_{slug}
 
 ```sql
 -- Additional test cases for {Problem Name}
--- Validated against reference solutions in all 4 languages via Judge0
+-- Validated against reference solutions in all 4 languages (scripts/judge-local.sh)
 
 INSERT INTO test_cases (problem_id, input, expected_output, is_sample, order_index)
 VALUES
