@@ -53,10 +53,4 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: shellcheck -S warning scripts/*.sh .claude/hooks/*.sh
-      - run: scripts/dev-env.test.sh
-      - run: scripts/guard-pr-merge.test.sh
-      - run: scripts/dev-branch-servers.test.sh
-      - run: scripts/judge-local.test.sh
-      - run: python3 -I scripts/judge-local.test.py
-      - run: scripts/gh-ticket.test.sh
-      - run: scripts/merge-ticket.test.sh
+      - run: scripts/run-script-tests.sh

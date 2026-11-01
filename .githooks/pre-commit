@@ -35,12 +35,13 @@ if touches '^frontend/'; then
   (cd frontend && npm test -s)
 fi
 
-if touches '^scripts/.*\.sh$|^\.shellcheckrc$'; then
+if touches '^scripts/|^\.shellcheckrc$'; then
   if command -v shellcheck >/dev/null 2>&1; then
     echo "pre-commit: shellcheck"
     shellcheck -S warning scripts/*.sh
   else
     echo "pre-commit: shellcheck not installed, skipping (CI still runs it)"
   fi
-  scripts/dev-env.test.sh
+  echo "pre-commit: script tests"
+  scripts/run-script-tests.sh
 fi
