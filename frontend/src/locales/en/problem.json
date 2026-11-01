@@ -58,17 +58,21 @@
     "description": "Reports are filed as issues on CodeBite's public GitHub repository.",
     "category": "Category",
     "descriptionLabel": "Description",
+    "descriptionLabelOptional": "Description (optional)",
     "placeholder": "Describe the issue...",
+    "placeholderCase": "Why should your output be accepted?",
     "submit": "Open issue on GitHub",
-    "wrongTestCase": "Wrong test case",
-    "wrongExpectedOutput": "Wrong expected output",
+    "wrongTestCase": "Test case is wrong",
+    "wrongTestCaseHint": "Your answer should have been accepted, or a case's input breaks the rules in the description.",
     "descriptionUnclear": "Description unclear",
     "starterCodeIssue": "Starter code issue",
     "other": "Other",
     "githubNote": "A prefilled GitHub issue opens in a new tab. Nothing is sent until you submit it there, which needs a GitHub account.",
     "opened": "Issue draft opened in a new tab",
     "openedHint": "Nothing has been sent yet. Submit the issue on GitHub to send your report.",
-    "openManually": "Tab didn't open? Open the issue on GitHub"
+    "openManually": "Tab didn't open? Open the issue on GitHub",
+    "attachedHidden": "Attached: case {{n}} of {{total}} (hidden, so only its number and your output are shared) and your submission.",
+    "attachedSample": "Attached: case {{n}} of {{total}} (a sample: its input, expected output and your output) and your submission."
   },
   "test": {
     "testCases": "Test Cases",
@@ -280,7 +284,8 @@
         "added": "Added to your custom test cases",
         "duplicate": "Already in your custom test cases",
         "full": "Custom test cases are full ({{max}}). Remove one first."
-      }
+      },
+      "report": "Report this case"
     }
   },
   "settings": {

@@ -1,11 +1,12 @@
 import { useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Check, Copy, Eye, EyeOff, ListPlus, X } from 'lucide-react';
+import { Check, Copy, Eye, EyeOff, Flag, ListPlus, X } from 'lucide-react';
 import { useFlash } from '@/hooks/useFlash';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import type { CodeError, CustomTestCaseInput, FailingCase } from '@/types/submission';
 import { MAX_CUSTOM_TESTS, type AddCustomTestOutcome } from './customTests';
+import { ProblemReportDialog } from './ProblemReportDialog';
 
 interface FailingCaseCardProps {
   failingCase: FailingCase;
@@ -13,6 +14,8 @@ interface FailingCaseCardProps {
   showByDefault: boolean;
   /** Adds the case to the Test panel's custom test cases; absent outside the problem workspace. */
   onAddCustomTest?: (tc: CustomTestCaseInput) => AddCustomTestOutcome;
+  /** The submission that failed it, for a Problem Report about this case. */
+  submission: { id: number; problemSlug: string; language: string };
 }
 
 /**
@@ -20,10 +23,11 @@ interface FailingCaseCardProps {
  * or, for a crash or a timeout, what went wrong instead. Hidden behind a one-off Reveal when the
  * user has turned the setting off.
  */
-export function FailingCaseCard({ failingCase, showByDefault, onAddCustomTest }: FailingCaseCardProps) {
+export function FailingCaseCard({ failingCase, showByDefault, onAddCustomTest, submission }: FailingCaseCardProps) {
   const { t } = useTranslation('problem');
   const [revealed, setRevealed] = useState(false);
   const [added, setAdded] = useState<AddCustomTestOutcome | null>(null);
+  const [reportOpen, setReportOpen] = useState(false);
   const visible = showByDefault || revealed;
   const headingId = useId();
   const { status, input, expectedOutput, actualOutput, errors, hidden } = failingCase;
@@ -96,8 +100,19 @@ export function FailingCaseCard({ failingCase, showByDefault, onAddCustomTest }:
               {t('submissions.failingCase.reveal')}
             </Button>
           )}
+          <Button variant="ghost" size="sm" className="ml-auto text-muted-foreground" onClick={() => setReportOpen(true)}>
+            <Flag className="h-3.5 w-3.5" />
+            {t('submissions.failingCase.report')}
+          </Button>
         </div>
       </div>
+      <ProblemReportDialog
+        open={reportOpen}
+        onClose={() => setReportOpen(false)}
+        problemSlug={submission.problemSlug}
+        language={submission.language}
+        reportedCase={{ submissionId: submission.id, failingCase }}
+      />
     </section>
   );
 }
