@@ -28,5 +28,14 @@ subprojects {
 
     tasks.named('test') {
         useJUnitPlatform()
+        // Print a failing test's assertion and stack trace, even under -q (the pre-commit hook's mode).
+        testLogging {
+            events 'failed'
+            exceptionFormat 'full'
+            quiet {
+                events 'failed'
+                exceptionFormat 'full'
+            }
+        }
     }
 }

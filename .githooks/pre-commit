@@ -19,6 +19,10 @@ touches() { grep -qE "$1" <<<"$staged"; }
 # them too, so the Import tests' scratch repositories would act on this repository's index and fail.
 while IFS= read -r var; do unset "$var"; done < <(compgen -e | grep '^GIT_')
 
+# Every commit: a document or comment pointing at a path or glossary term that isn't there.
+echo "pre-commit: doc references"
+python3 -I scripts/check-doc-references.py
+
 if touches '^(common|backend|worker)/|^(build|settings)\.gradle'; then
   modules=()
   touches '^common/|^(build|settings)\.gradle' && modules+=(:common:test :backend:test :worker:test)
