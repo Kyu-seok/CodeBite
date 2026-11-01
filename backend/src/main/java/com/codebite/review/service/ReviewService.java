@@ -291,7 +291,7 @@ public class ReviewService {
         );
     }
 
-    /** Whole days past the due moment, 0 before it; the due list and the review state both use it. */
+    /** Whole days past the due moment, 0 before it; the due list and ReviewStateResponse both use it. */
     private static long daysOverdue(ProblemReviewState s, Instant now) {
         return Math.max(0, ChronoUnit.DAYS.between(s.getNextDueAt(), now));
     }
