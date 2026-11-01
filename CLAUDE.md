@@ -120,6 +120,8 @@ The GitHub App behind Solution Commits is registered by hand: run `scripts/setup
 3. The backend announces the Verdict over SSE (`submission/sse/`) and `frontend/src/judge/watchSubmission.ts` then fetches `GET /api/submissions/{id}`, polling instead when the stream can't open. The result shows in two places: `TestPanel`'s Output tab right after Submit, and `SubmissionDetail` (Submissions tab) for past submissions; a change to how a result looks touches both
 
 ### API Endpoints
+The table is partial: every endpoint is an `@*Mapping` in `backend/src/main/java/com/codebite/*/controller/`, its request body the `*Request` record in that package's `dto/`.
+
 | Method | Path | Auth | Response |
 |--------|------|------|----------|
 | GET | `/api/auth/oauth/{provider}` | No | 200 + `{authorizationUrl}` |
@@ -134,9 +136,12 @@ The GitHub App behind Solution Commits is registered by hand: run `scripts/setup
 | POST | `/api/admin/problems/{id}/test-cases` | ADMIN | 201 + test case |
 | POST | `/api/problems/{slug}/run` | No | 200 + `{overallStatus, results}`; 429 within 5 s of the same IP's last Run (Redis cooldown, `app.cache.enabled`) |
 | POST | `/api/tutorial/milestones/{milestone}` | No | 204 No Content (counts one Tutorial milestone in `codebite.tutorial.milestones`; `milestone` = `started`, `ran`, `submitted`, `accepted` or `skipped`, anything else 400; nothing per user is stored) |
-| POST | `/api/problems/{slug}/submit` | JWT | 201 + `{id, problemSlug, language, status, runtimeMs, memoryKb, results, createdAt}`; 429 within 10 s of the same user's last Submit |
+| POST | `/api/problems/{slug}/submit` | JWT | (body `{language, sourceCode}`) 201 + `{id, problemSlug, language, status, runtimeMs, memoryKb, results, createdAt}`; 429 within 10 s of the same user's last Submit |
 | GET | `/api/submissions/{id}` | JWT | 200 + submission detail (input/expectedOutput only for sample cases; `solutionCommit: {status: PENDING\|COMMITTED\|FAILED, commitUrl}` or null when there's no Solution Commit; `reviewIntervalDays: {AGAIN, HARD, GOOD, EASY}` = days the review scheduler would set if rated now, null while PENDING; `failingCase: {testCaseId, position, total, hidden, status, input, expectedOutput, actualOutput, errors}` = the Failing Case, revealed even when hidden (docs/adr/0006), null when Accepted, PENDING, a Compilation Error or an Internal Error) |
 | GET | `/api/problems/{slug}/submissions` | JWT | 200 + `[{id, status, language, runtimeMs, memoryKb, createdAt}]` |
+| PUT | `/api/submissions/{id}/review` | JWT | 200 + review state (body `{confidence, notes?}`); DELETE clears it, 204 |
+| GET | `/api/problems/{slug}/review-state` | JWT | 200 + `{problemId, reviewCount, easeFactor, intervalDays, lastReviewedAt, lastConfidence, nextDueAt, mastered, daysOverdue}` (the Review Schedule's snapshot), or 204 if never rated |
+| GET | `/api/reviews/due` | JWT | 200 + paginated `{problemId, slug, title, …, nextDueAt, daysOverdue}` of Due problems; `/api/reviews/due/count` → `{count}` |
 | GET | `/api/streak` | JWT | 200 + `{currentStreak, bestStreak, solvedToday, repairs, repairProgress}` |
 | GET | `/api/streak/days?month=yyyy-MM` | JWT | 200 + `{month, today, firstStreakDate, days: [{date, repaired}]}` |
 | POST | `/api/streak/repairs` | JWT | 200 + streak summary (body `{date}`; 400 if not a Missed Day or no Repairs, 409 if already counted) |
@@ -182,7 +187,9 @@ cd frontend
 npm run dev      # dev server at http://localhost:5173
 npm run build    # production build (includes tsc type check)
 npm test         # unit tests (Vitest); run by pre-commit and CI
+npm run check    # tsc, ESLint (React purity rules too) and Vitest: what pre-commit and CI fail on; run it while building, not only at commit
 ```
+Vitest runs in Asia/Seoul (`vite.config.ts`), whatever the shell's zone: a date that should be a UTC day but is formatted in the browser's zone fails there, not only for users in Korea.
 Vitest runs in Node with no DOM (no jsdom or Testing Library), so a component test needs that setup first. Keep the decisions in pure modules, as `onboarding/` does, and check components in a browser.
 
 ### Directory Structure (`frontend/src/`)
