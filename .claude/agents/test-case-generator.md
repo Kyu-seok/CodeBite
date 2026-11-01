@@ -65,7 +65,7 @@ Each test case needs:
 
 ### Against the statement (always)
 
-A reference solution proves only that one right answer is expected; a case with two right answers passes it and fails every user who finds the other. The problem's `ProblemGuarantee` (`backend/src/test/java/com/codebite/problem/guarantee/`) checks each case against the statement instead. Write one if the problem has none, as step 2 of `.claude/skills/correct-test-cases/SKILL.md` describes, then run `./gradlew :backend:test --tests '*ProblemGuaranteesTest'` once your migration exists. Replace any input it rejects or that has more than one right output.
+Reference solutions can't tell a case with two right answers from a sound one; the problem's Guarantee can. Write one if the problem has none, as steps 1–2 of `.claude/skills/correct-test-cases/SKILL.md` describe, then run `./gradlew :backend:test --tests '*ProblemGuaranteesTest' --tests '*TestCasePositionsTest'` once your migration exists. Replace any input it rejects or that has more than one right output.
 
 ### Locally (the default)
 

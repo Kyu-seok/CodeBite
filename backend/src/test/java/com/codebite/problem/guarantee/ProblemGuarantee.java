@@ -4,14 +4,13 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * What one problem's statement promises about a case, written from the statement alone and never
- * from a solution: a reference solution that picks one of two right answers passes a case that
- * has both, which is how a case with two answers gets in.
+ * A problem's Guarantee (GLOSSARY.md): what its statement promises about every case, written from
+ * the statement alone; {@code .claude/skills/correct-test-cases/SKILL.md} says why and how.
  *
  * <p>{@link ProblemGuaranteesTest} runs each one over every case of its problem. The Grader compares
  * output exactly, so a case is sound only when {@link #correctOutputs} is exactly its expected
- * output: a second correct output is a correct program judged Wrong Answer. A Test Case Correction
- * (GLOSSARY.md, {@code .claude/skills/correct-test-cases/SKILL.md}) starts by writing one.
+ * output, for every problem: where a statement accepts several answers ("in any order"), its
+ * Driver prints them in one fixed form, and this returns that form.
  */
 public interface ProblemGuarantee {
 

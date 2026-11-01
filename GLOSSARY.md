@@ -21,6 +21,10 @@ _Avoid_: Rename, rewrite, retheme
 Changing a problem's Test Cases so they agree with its statement, where a case breaks what the statement promises about its input or expects a wrong output. The statement is the truth and the problem stays the same problem; a statement that promises the wrong thing calls for a Restatement instead.
 _Avoid_: Regenerating test cases, test case fix
 
+**Guarantee**:
+What a problem's statement promises about every Test Case: that its input keeps the constraints and other promises ("sorted", "exactly one pair"), and that its expected output is the only answer the statement accepts. It is worked out from the statement alone, never from a solution, since a solution finds only one of several right answers.
+_Avoid_: Checker, validator, invariant
+
 **Problem Report**:
 A user's report that something in a problem is wrong (a Test Case, the description, the Starter Code), made from the problem page or from a Failing Case. CodeBite doesn't receive it: the user posts it publicly themselves, so it never carries a hidden case's input or expected output.
 _Avoid_: Bug report, feedback, ticket
