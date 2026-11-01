@@ -48,7 +48,7 @@ Root `settings.gradle` includes three modules: `common`, `backend`, `worker`. Th
 - `config/` — JudgeClientConfig
 
 ### Reading a problem
-`scripts/problem-text.sh <slug>` prints a problem as it stands (English and Korean text, sample Test Cases) from the local database. Migrations are the slow way: the newest one that sets a column wins, and the first grep match is usually stale.
+`scripts/problem-text.sh <slug> [--all]` prints a problem as it stands (English and Korean text, sample Test Cases, or every case by `order_index` with `--all`) from the local database. Migrations are the slow way: the newest one that sets a column wins, and the first grep match is usually stale.
 
 ### Judging a problem locally
 `scripts/judge-local.sh <slug> [--languages java,cpp,…] [--cases cases.json]` judges a problem's Test Cases (from the local database, or a JSON list of `{input, expected_output}` not in a migration yet) without Judge0: each Language's reference solution, `scripts/replay-solutions/<slug>.<py|java|js|cpp>` (the `Solution` class only), goes into the Driver and runs on the local `python3.12`, `javac`/`java`, `node` and `g++`, compared trimmed as the Grader does. Exits 1 on a failing case and 2 when a compiler, interpreter or reference solution is missing (`NOT JUDGED`, never a failed case). Java builds with `--release 13` and C++ with `-std=gnu++14` like Judge0; local `node` is newer than Judge0's Node 12. `scripts/replay-local.sh` replays every problem's Python instead.
@@ -57,7 +57,7 @@ Root `settings.gradle` includes three modules: `common`, `backend`, `worker`. Th
 Rewording a problem while its Test Cases stay (Slug, title, description, Starter Code names) is a Restatement: follow `.claude/skills/restate-problem/SKILL.md`. `ProblemSlugsTest` (backend) runs every migration and fails when a Slug and its `drivers/`/`starters/` directories disagree; `MigrationSlugReferencesTest` fails when a migration's `slug = …` names a slug that doesn't exist when it runs.
 
 ### Correcting a problem's Test Cases
-A case that breaks what the statement promises (two right answers where it says exactly one, an input outside the constraints) or expects a wrong output gets a Test Case Correction: follow `.claude/skills/correct-test-cases/SKILL.md`. `ProblemGuaranteesTest` (backend) runs every migration and checks each problem that has a `ProblemGuarantee` (`backend/src/test/.../problem/guarantee/`): every input allowed, its expected output the only right one. `TestCasePositionsTest` fails on two cases of a problem at one `order_index`. Both run the migrations on a `MigratedDatabase` (backend tests), which also undoes the `E'…\n…'` escapes H2 keeps.
+`.claude/skills/correct-test-cases/SKILL.md`. `ProblemGuaranteesTest` and `TestCasePositionsTest` (backend) check every migrated case; tests that read migrated rows use `MigratedDatabase`, since H2 keeps `E'…\n…'` escapes as a backslash and an `n`.
 
 ### Diagrams
 Diagrams are ` ```diagram-* ` blocks in a description, drawn by `frontend/src/components/markdown/diagrams/`; the kinds and their keys are in `docs/PROBLEM_DIAGRAMS_ROADMAP.md`. To add one, follow `.claude/skills/add-diagram/SKILL.md`.

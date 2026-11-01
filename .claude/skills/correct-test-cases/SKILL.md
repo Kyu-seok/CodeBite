@@ -13,14 +13,8 @@ Input is a Problem Report (`gh issue view <n>`: the problem, the case's position
 
 ## 1. Read the problem and its cases
 
-1. `scripts/problem-text.sh <slug>` for the statement in English and Korean.
-2. Every case, hidden ones too, in grading order:
-   ```bash
-   docker exec codebite-postgres psql -U codebite -d codebite -c "
-     SELECT t.order_index, t.is_sample, t.input, t.expected_output FROM test_cases t
-     JOIN problems p ON p.id = t.problem_id WHERE p.slug = '<slug>' ORDER BY t.order_index, t.id"
-   ```
-3. The Python Driver, `common/src/main/resources/drivers/<slug>/python.py`: how it reads each input line and prints the result.
+1. `scripts/problem-text.sh <slug> --all`: the statement in English and Korean, then every case, hidden ones too, by `order_index`.
+2. The Python Driver, `common/src/main/resources/drivers/<slug>/python.py`: how it reads each input line and prints the result.
 
 Done when you can list every promise the statement makes about an input (each constraint, "sorted", "exactly one ...") and say exactly how the Driver prints an answer. Where the statement accepts several answers ("in any order"), that is the one fixed form the Driver prints them in.
 
