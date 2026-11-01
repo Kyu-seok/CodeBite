@@ -56,6 +56,9 @@ Root `settings.gradle` includes three modules: `common`, `backend`, `worker`. Th
 ### Restating a problem
 Rewording a problem while its Test Cases stay (Slug, title, description, Starter Code names) is a Restatement: follow `.claude/skills/restate-problem/SKILL.md`. `ProblemSlugsTest` (backend) runs every migration and fails when a Slug and its `drivers/`/`starters/` directories disagree; `MigrationSlugReferencesTest` fails when a migration's `slug = …` names a slug that doesn't exist when it runs.
 
+### Correcting a problem's Test Cases
+A case that breaks what the statement promises (two right answers where it says exactly one, an input outside the constraints) or expects a wrong output gets a Test Case Correction: follow `.claude/skills/correct-test-cases/SKILL.md`. `ProblemGuaranteesTest` (backend) runs every migration and checks each problem that has a `ProblemGuarantee` (`backend/src/test/.../problem/guarantee/`): every input allowed, its expected output the only right one. It also fails on two cases of a problem at one `order_index`.
+
 ### Diagrams
 Diagrams are ` ```diagram-* ` blocks in a description, drawn by `frontend/src/components/markdown/diagrams/`; the kinds and their keys are in `docs/PROBLEM_DIAGRAMS_ROADMAP.md`. To add one, follow `.claude/skills/add-diagram/SKILL.md`.
 

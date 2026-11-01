@@ -14,8 +14,16 @@ A Slug a problem had before a Restatement. It still finds the problem, so old li
 _Avoid_: Old slug, redirect
 
 **Restatement**:
-Rewording a problem without changing what is asked: its Test Cases, and so the algorithm that solves it, stay the same, while its Slug, title, description, constraints and the names in its Starter Code may change. A change to the Test Cases makes it a different problem, not a Restatement.
+Rewording a problem without changing what is asked: its Test Cases, and so the algorithm that solves it, stay the same, while its Slug, title, description, constraints and the names in its Starter Code may change. A change to the Test Cases makes it a different problem, not a Restatement, unless it is a Test Case Correction.
 _Avoid_: Rename, rewrite, retheme
+
+**Test Case Correction**:
+Changing a problem's Test Cases so they agree with its statement, where a case breaks what the statement promises about its input or expects a wrong output. The statement is the truth and the problem stays the same problem; a statement that promises the wrong thing calls for a Restatement instead.
+_Avoid_: Regenerating test cases, test case fix
+
+**Problem Report**:
+A user's report that something in a problem is wrong (a Test Case, the description, the Starter Code), made from the problem page or from a Failing Case. CodeBite doesn't receive it: the user posts it publicly themselves, so it never carries a hidden case's input or expected output.
+_Avoid_: Bug report, feedback, ticket
 
 **Diagram**:
 A picture of an example's input (and, when the problem transforms it, the output), or of its output alone when the output is the structure and the input is just a size, drawn from a short text block in the problem's description and the same in every language. A Restatement keeps it.
