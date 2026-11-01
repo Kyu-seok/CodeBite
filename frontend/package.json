@@ -8,7 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "vitest run"
+    "test": "vitest run",
+    "check": "tsc -b && eslint . --max-warnings 0 && vitest run"
   },
   "dependencies": {
     "@floating-ui/react-dom": "^2.1.8",

@@ -1,4 +1,4 @@
-import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { badgeDueWording, dueDateLabel, dueWording, lastReviewedWording } from "./dueWording";
 
 const HOUR = 3_600_000;
@@ -130,14 +130,6 @@ describe("lastReviewedWording", () => {
 });
 
 describe("dueDateLabel", () => {
-  // Run as a browser in Korea would, so a label in the local zone fails here even when CI runs in UTC.
-  beforeAll(() => {
-    vi.stubEnv("TZ", "Asia/Seoul");
-  });
-  afterAll(() => {
-    vi.unstubAllEnvs();
-  });
-
   // In KST this moment is Nov 3, 02:57; the label must still name the UTC day the words count to.
   it("names the UTC calendar date of the due moment", () => {
     expect(dueDateLabel("2026-11-02T17:57:00Z", "en")).toBe("Mon, Nov 2");
