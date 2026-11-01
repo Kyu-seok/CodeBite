@@ -16,11 +16,11 @@ Edit the "Label in our tracker" column to match whatever vocabulary you actually
 
 ## Problem Reports
 
-Problem Reports (GLOSSARY.md) come in through the `problem-bug` issue form, labelled `problem-bug` and `needs-triage`: `gh issue list -l problem-bug`. Each names its category in the title; route by it:
+Problem Reports (GLOSSARY.md) come in through the `problem-bug` issue form, labelled `problem-bug` and `needs-triage`: `gh issue list -l problem-bug`. Each names its category in the title and the Category field, by its English label: `problemReport.<category>` in `frontend/src/locales/en/problem.json`. Route by the category:
 
 | Category | Handled by |
 | --- | --- |
-| Test case is wrong | `.claude/skills/correct-test-cases/SKILL.md`, given the issue number |
-| Description unclear | `.claude/skills/restate-problem/SKILL.md` |
-| Starter code issue | by hand: the Starter Code and Driver in `common/src/main/resources/{starters,drivers}/<slug>/` |
-| Other | read it and pick a role above |
+| `wrongTestCase` | `.claude/skills/correct-test-cases/SKILL.md`, given the issue number |
+| `descriptionUnclear` | `.claude/skills/restate-problem/SKILL.md` |
+| `starterCodeIssue` | by hand: the Starter Code and Driver in `common/src/main/resources/{starters,drivers}/<slug>/` |
+| `other` | read it and pick a role above |

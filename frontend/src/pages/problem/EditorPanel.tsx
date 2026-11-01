@@ -114,7 +114,7 @@ export function EditorPanel({
   onRunRef.current = onRun;
   onSubmitRef.current = onSubmit;
   const [editorMounted, setEditorMounted] = useState(false);
-  const [bugReportOpen, setBugReportOpen] = useState(false);
+  const [reportOpen, setReportOpen] = useState(false);
   const moreActionsRef = useRef<HTMLButtonElement | null>(null);
 
   const handleMount = (editor: monacoEditor.IStandaloneCodeEditor) => {
@@ -318,9 +318,9 @@ export function EditorPanel({
                 <Columns2 className="h-3.5 w-3.5 text-muted-foreground" />
                 {t('editor.resetLayout')}
               </DropdownMenuItem>
-              <DropdownMenuItem onSelect={() => setBugReportOpen(true)}>
+              <DropdownMenuItem onSelect={() => setReportOpen(true)}>
                 <Bug className="h-3.5 w-3.5 text-muted-foreground" />
-                {t('editor.reportBug')}
+                {t('editor.reportProblem')}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -356,8 +356,8 @@ export function EditorPanel({
         />
       )}
       <ProblemReportDialog
-        open={bugReportOpen}
-        onClose={() => setBugReportOpen(false)}
+        open={reportOpen}
+        onClose={() => setReportOpen(false)}
         problemSlug={problemSlug}
         language={activeLanguage}
         returnFocusRef={moreActionsRef}

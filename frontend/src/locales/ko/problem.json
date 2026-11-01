@@ -44,7 +44,7 @@
   },
   "editor": {
     "languages": "언어",
-    "reportBug": "버그 신고",
+    "reportProblem": "버그 신고",
     "resetCode": "코드 초기화",
     "resetLayout": "레이아웃 초기화",
     "moreActions": "더보기",
@@ -53,7 +53,7 @@
     "submitCode": "코드 제출",
     "templateErrorBanner": "테스트 환경 자체의 문제로 보입니다. 에디터의 더보기 메뉴에서 버그 신고를 이용해 주세요."
   },
-  "bugReport": {
+  "problemReport": {
     "title": "버그 신고",
     "description": "신고는 CodeBite의 공개 GitHub 저장소에 이슈로 등록됩니다.",
     "category": "카테고리",

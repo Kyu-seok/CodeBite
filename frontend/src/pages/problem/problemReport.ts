@@ -8,9 +8,16 @@ import type { FailingCase } from '@/types/submission';
 export const ISSUE_FORM_URL = 'https://github.com/Kyu-seok/CodeBite/issues/new';
 export const ISSUE_FORM_TEMPLATE = 'problem-bug.yml';
 
-/** In the order the dialog lists them; `wrongTestCase` is the one a Test Case Correction answers. */
+/**
+ * In the order the dialog lists them. Each one's English label in `locales/en/problem.json`
+ * (`problemReport.<category>`) is what the issue says, and what triage routes on
+ * (docs/agents/triage-labels.md).
+ */
 export const REPORT_CATEGORIES = ['wrongTestCase', 'descriptionUnclear', 'starterCodeIssue', 'other'] as const;
 export type ReportCategory = (typeof REPORT_CATEGORIES)[number];
+
+/** The category a Test Case Correction answers, and the only one that carries a Failing Case. */
+export const TEST_CASE_CATEGORY: ReportCategory = 'wrongTestCase';
 
 /** Case text longer than this is cut, so the issue URL stays short enough to open. */
 export const MAX_CASE_TEXT = 1000;
@@ -64,6 +71,11 @@ export function problemReportUrl(report: ProblemReport): string {
     ...problemReportFields(report),
   });
   return `${ISSUE_FORM_URL}?${params}`;
+}
+
+/** The case a report carries: the one it was made from, while the report is about a Test Case. */
+export function attachedCase(category: ReportCategory, reportedCase?: ReportedCase | null): ReportedCase | null {
+  return category === TEST_CASE_CATEGORY ? reportedCase ?? null : null;
 }
 
 /** A report from a Failing Case says enough on its own; any other needs the user's words. */

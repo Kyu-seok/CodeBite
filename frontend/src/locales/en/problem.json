@@ -44,7 +44,7 @@
   },
   "editor": {
     "languages": "Languages",
-    "reportBug": "Report Bug",
+    "reportProblem": "Report Bug",
     "resetCode": "Reset Code",
     "resetLayout": "Reset Layout",
     "moreActions": "More actions",
@@ -53,7 +53,7 @@
     "submitCode": "Submit Code",
     "templateErrorBanner": "This looks like a bug in our test harness. Please report it with Report Bug in the editor's More actions menu."
   },
-  "bugReport": {
+  "problemReport": {
     "title": "Report a Bug",
     "description": "Reports are filed as issues on CodeBite's public GitHub repository.",
     "category": "Category",

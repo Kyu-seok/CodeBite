@@ -4,7 +4,7 @@ import { Check, Copy, Eye, EyeOff, Flag, ListPlus, X } from 'lucide-react';
 import { useFlash } from '@/hooks/useFlash';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
-import type { CodeError, CustomTestCaseInput, FailingCase } from '@/types/submission';
+import type { CodeError, CustomTestCaseInput, FailingCase, SubmissionResponse } from '@/types/submission';
 import { MAX_CUSTOM_TESTS, type AddCustomTestOutcome } from './customTests';
 import { ProblemReportDialog } from './ProblemReportDialog';
 
@@ -15,7 +15,7 @@ interface FailingCaseCardProps {
   /** Adds the case to the Test panel's custom test cases; absent outside the problem workspace. */
   onAddCustomTest?: (tc: CustomTestCaseInput) => AddCustomTestOutcome;
   /** The submission that failed it, for a Problem Report about this case. */
-  submission: { id: number; problemSlug: string; language: string };
+  submission: Pick<SubmissionResponse, 'id' | 'problemSlug' | 'language'>;
 }
 
 /**

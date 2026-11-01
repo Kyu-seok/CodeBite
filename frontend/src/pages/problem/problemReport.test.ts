@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import type { FailingCase } from '@/types/submission';
 import {
   MAX_CASE_TEXT,
+  attachedCase,
   canSendReport,
   problemReportFields,
   problemReportUrl,
@@ -79,6 +80,15 @@ describe('problemReportUrl', () => {
     expect(url.searchParams.get('template')).toBe('problem-bug.yml');
     expect(url.searchParams.get('title')).toBe('[Problem bug] two-menu-sum: Test case is wrong');
     expect(url.searchParams.get('problem')).toBe('two-menu-sum');
+  });
+});
+
+describe('attachedCase', () => {
+  it('carries the Failing Case only while the report is about a Test Case', () => {
+    const reported = { submissionId: 1, failingCase: failingCase() };
+    expect(attachedCase('wrongTestCase', reported)).toBe(reported);
+    expect(attachedCase('descriptionUnclear', reported)).toBeNull();
+    expect(attachedCase('wrongTestCase')).toBeNull();
   });
 });
 
