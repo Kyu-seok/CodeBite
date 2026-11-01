@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState, type ReactNode, type RefObject } from 'react';
+import { useRef, useEffect, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import Editor from '@monaco-editor/react';
 import { KeyMod, KeyCode, Range as MonacoRange, editor as monacoEditor } from 'monaco-editor';
@@ -21,18 +21,11 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from '@/components/ui/DropdownMenu';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from '@/components/ui/Dialog';
 import Spinner from '@/components/ui/Spinner';
 import { useTheme } from '@/context/ThemeContext';
 import { useEditorSettings } from '@/context/EditorSettingsContext';
 import { SettingsDialog } from './SettingsDialog';
+import { ProblemReportDialog } from './ProblemReportDialog';
 import { MONACO_LANGUAGE, languageLabel } from './submissionDisplay';
 import {
   Bug,
@@ -42,7 +35,6 @@ import {
   PanelBottomClose,
   Maximize2,
   Minimize2,
-  ExternalLink,
   Ellipsis,
 } from 'lucide-react';
 
@@ -70,160 +62,6 @@ function ToolbarButton({
 
 function ToolbarDivider() {
   return <div aria-hidden className="mx-1 h-4 w-px bg-muted-foreground/30" />;
-}
-
-const ISSUES_NEW_URL = 'https://github.com/Kyu-seok/CodeBite/issues/new';
-
-const BUG_CATEGORY_KEYS = [
-  'wrongTestCase',
-  'wrongExpectedOutput',
-  'descriptionUnclear',
-  'starterCodeIssue',
-  'other',
-] as const;
-
-type BugCategoryKey = typeof BUG_CATEGORY_KEYS[number];
-
-/**
- * There is no report endpoint, so a report becomes a prefilled GitHub issue the learner posts
- * themselves; the dialog says so instead of pretending the report was sent.
- */
-function BugReportDialog({
-  open,
-  onClose,
-  problemSlug,
-  language,
-  returnFocusRef,
-}: {
-  open: boolean;
-  onClose: () => void;
-  problemSlug: string;
-  language: string;
-  /** Opened from a menu item that is gone by close time, so focus goes back to the menu's trigger. */
-  returnFocusRef: RefObject<HTMLButtonElement | null>;
-}) {
-  const { t } = useTranslation('problem');
-  const { t: tc } = useTranslation('common');
-  const [category, setCategory] = useState<BugCategoryKey>(BUG_CATEGORY_KEYS[0]);
-  const [description, setDescription] = useState('');
-  // The issue URL once opened; kept so a blocked popup still has a way through.
-  const [issueUrl, setIssueUrl] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (open) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- The dialog stays mounted while closed; each opening starts a blank report.
-      setCategory(BUG_CATEGORY_KEYS[0]);
-      setDescription('');
-      setIssueUrl(null);
-    }
-  }, [open]);
-
-  const handleSubmit = () => {
-    // Issues are triaged in English, whatever the UI locale.
-    const categoryLabel = t(`bugReport.${category}`, { lng: 'en' });
-    const body = [
-      `**Problem:** \`${problemSlug}\``,
-      `**Language:** ${languageLabel(language)}`,
-      `**Category:** ${categoryLabel}`,
-      `**Page:** ${window.location.href}`,
-      '',
-      description.trim(),
-    ].join('\n');
-    const params = new URLSearchParams({
-      title: `[Problem bug] ${problemSlug}: ${categoryLabel}`,
-      body,
-    });
-    const url = `${ISSUES_NEW_URL}?${params}`;
-    // With noopener, window.open returns null even on success, so a blocked popup can't be
-    // detected; the confirmation always offers the link as well.
-    window.open(url, '_blank', 'noopener,noreferrer');
-    setIssueUrl(url);
-  };
-
-  return (
-    <Dialog open={open} onOpenChange={(isOpen) => { if (!isOpen) onClose(); }}>
-      <DialogContent
-        className="max-w-md"
-        onCloseAutoFocus={(e) => {
-          e.preventDefault();
-          returnFocusRef.current?.focus();
-        }}>
-        <DialogHeader>
-          <DialogTitle>{t('bugReport.title')}</DialogTitle>
-          <DialogDescription>
-            {t('bugReport.description')}
-          </DialogDescription>
-        </DialogHeader>
-        {issueUrl ? (
-          <div className="py-6 text-center" role="status">
-            <p className="text-sm font-medium text-foreground">{t('bugReport.opened')}</p>
-            <p className="mt-1 text-xs text-muted-foreground">{t('bugReport.openedHint')}</p>
-            <a
-              href={issueUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-3 inline-flex items-center gap-1 text-xs text-accent-700 underline-offset-4 hover:underline dark:text-accent-400">
-              {t('bugReport.openManually')}
-              <ExternalLink className="h-3 w-3" />
-            </a>
-            <div>
-              <Button variant="outline" size="sm" className="mt-4" onClick={onClose}>
-                {tc('button.close')}
-              </Button>
-            </div>
-          </div>
-        ) : (
-          <>
-            <div className="mt-2 space-y-4">
-              <div>
-                <label htmlFor="bug-category" className="mb-1.5 block text-sm font-medium text-foreground">
-                  {t('bugReport.category')}
-                </label>
-                <select
-                  id="bug-category"
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value as BugCategoryKey)}
-                  className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-                >
-                  {BUG_CATEGORY_KEYS.map((c) => (
-                    <option key={c} value={c}>{t(`bugReport.${c}`)}</option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label htmlFor="bug-description" className="mb-1.5 block text-sm font-medium text-foreground">
-                  {t('bugReport.descriptionLabel')}
-                </label>
-                <textarea
-                  id="bug-description"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  maxLength={1000}
-                  rows={4}
-                  placeholder={t('bugReport.placeholder')}
-                  className="w-full resize-none rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-                />
-              </div>
-              <p className="text-xs text-muted-foreground">{t('bugReport.githubNote')}</p>
-            </div>
-            <DialogFooter className="mt-4">
-              <Button variant="outline" size="sm" onClick={onClose}>
-                {tc('button.cancel')}
-              </Button>
-              <Button
-                size="sm"
-                onClick={handleSubmit}
-                disabled={!description.trim()}
-              >
-                {t('bugReport.submit')}
-                <ExternalLink className="h-3.5 w-3.5" />
-              </Button>
-            </DialogFooter>
-          </>
-        )}
-      </DialogContent>
-    </Dialog>
-  );
 }
 
 interface EditorPanelProps {
@@ -276,7 +114,7 @@ export function EditorPanel({
   onRunRef.current = onRun;
   onSubmitRef.current = onSubmit;
   const [editorMounted, setEditorMounted] = useState(false);
-  const [bugReportOpen, setBugReportOpen] = useState(false);
+  const [reportOpen, setReportOpen] = useState(false);
   const moreActionsRef = useRef<HTMLButtonElement | null>(null);
 
   const handleMount = (editor: monacoEditor.IStandaloneCodeEditor) => {
@@ -480,9 +318,9 @@ export function EditorPanel({
                 <Columns2 className="h-3.5 w-3.5 text-muted-foreground" />
                 {t('editor.resetLayout')}
               </DropdownMenuItem>
-              <DropdownMenuItem onSelect={() => setBugReportOpen(true)}>
+              <DropdownMenuItem onSelect={() => setReportOpen(true)}>
                 <Bug className="h-3.5 w-3.5 text-muted-foreground" />
-                {t('editor.reportBug')}
+                {t('editor.reportProblem')}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -517,9 +355,9 @@ export function EditorPanel({
           className="border-t border-border bg-muted px-3 py-0.5 text-xs font-mono text-muted-foreground"
         />
       )}
-      <BugReportDialog
-        open={bugReportOpen}
-        onClose={() => setBugReportOpen(false)}
+      <ProblemReportDialog
+        open={reportOpen}
+        onClose={() => setReportOpen(false)}
         problemSlug={problemSlug}
         language={activeLanguage}
         returnFocusRef={moreActionsRef}

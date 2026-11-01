@@ -44,7 +44,7 @@
   },
   "editor": {
     "languages": "언어",
-    "reportBug": "버그 신고",
+    "reportProblem": "버그 신고",
     "resetCode": "코드 초기화",
     "resetLayout": "레이아웃 초기화",
     "moreActions": "더보기",
@@ -53,22 +53,26 @@
     "submitCode": "코드 제출",
     "templateErrorBanner": "테스트 환경 자체의 문제로 보입니다. 에디터의 더보기 메뉴에서 버그 신고를 이용해 주세요."
   },
-  "bugReport": {
+  "problemReport": {
     "title": "버그 신고",
     "description": "신고는 CodeBite의 공개 GitHub 저장소에 이슈로 등록됩니다.",
     "category": "카테고리",
     "descriptionLabel": "설명",
+    "descriptionLabelOptional": "설명 (선택)",
     "placeholder": "문제를 설명해 주세요...",
+    "placeholderCase": "내 출력이 정답이어야 하는 이유는 무엇인가요?",
     "submit": "GitHub에서 이슈 열기",
-    "wrongTestCase": "잘못된 테스트 케이스",
-    "wrongExpectedOutput": "잘못된 예상 출력",
+    "wrongTestCase": "테스트 케이스가 잘못됨",
+    "wrongTestCaseHint": "정답이 통과했어야 하거나, 케이스의 입력이 문제 설명의 조건을 벗어납니다.",
     "descriptionUnclear": "설명이 불명확함",
     "starterCodeIssue": "스타터 코드 문제",
     "other": "기타",
     "githubNote": "내용이 미리 채워진 GitHub 이슈 작성 화면이 새 탭에서 열립니다. 그곳에서 등록하기 전까지는 아무것도 전송되지 않으며, 등록하려면 GitHub 계정이 필요합니다.",
     "opened": "새 탭에서 이슈 작성 화면을 열었습니다",
     "openedHint": "아직 전송되지 않았습니다. GitHub에서 이슈를 등록해야 신고가 접수됩니다.",
-    "openManually": "새 탭이 열리지 않았나요? GitHub에서 이슈 열기"
+    "openManually": "새 탭이 열리지 않았나요? GitHub에서 이슈 열기",
+    "attachedHidden": "첨부: 케이스 {{n}}/{{total}}(숨김 케이스라 번호와 내 출력만 공유됩니다)와 내 제출.",
+    "attachedSample": "첨부: 케이스 {{n}}/{{total}}(예제: 입력, 예상 출력, 내 출력)와 내 제출."
   },
   "test": {
     "testCases": "테스트 케이스",
@@ -280,7 +284,8 @@
         "added": "커스텀 테스트 케이스에 추가했습니다",
         "duplicate": "이미 커스텀 테스트 케이스에 있습니다",
         "full": "커스텀 테스트 케이스가 가득 찼습니다({{max}}개). 하나를 먼저 삭제하세요."
-      }
+      },
+      "report": "이 케이스 신고"
     }
   },
   "settings": {

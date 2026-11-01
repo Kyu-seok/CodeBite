@@ -43,6 +43,7 @@ export function SubmissionOutcomeDetails({
           failingCase={outcome.failingCase}
           showByDefault={settings.showFailingCase}
           onAddCustomTest={onAddCustomTest}
+          submission={submission}
         />
       );
     case 'compileErrors':

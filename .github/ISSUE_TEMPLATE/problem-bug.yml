@@ -1,0 +1,49 @@
+# A Problem Report (GLOSSARY.md). The problem page fills these fields by id through the URL
+# (frontend/src/pages/problem/problemReport.ts); keep the ids in step with problemReportFields.
+name: Problem bug
+description: Something in a problem is wrong (a test case, the description, the starter code).
+title: "[Problem bug] "
+labels: ["problem-bug", "needs-triage"]
+body:
+  - type: input
+    id: problem
+    attributes:
+      label: Problem
+      description: The problem's slug, from its URL.
+    validations:
+      required: true
+  - type: input
+    id: category
+    attributes:
+      label: Category
+      description: As chosen on the problem page.
+    validations:
+      required: true
+  - type: input
+    id: language
+    attributes:
+      label: Language
+  - type: input
+    id: page
+    attributes:
+      label: Page
+  - type: input
+    id: submission
+    attributes:
+      label: Submission
+      description: The submission whose Failing Case this is about, if any.
+  - type: textarea
+    id: case
+    attributes:
+      label: Case
+      description: Which case. A hidden case's input and expected output stay out of this public issue.
+      render: text
+  - type: textarea
+    id: output
+    attributes:
+      label: Your output
+      render: text
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
