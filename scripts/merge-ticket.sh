@@ -10,6 +10,10 @@
 # worker tests, forced past UP-TO-DATE, then the frontend lint (no warnings), tests and build. It
 # pushes the integration branch only when all of them pass; otherwise it names the failed check and
 # leaves the merge commit unpushed (undo it with `git reset --hard HEAD~1`).
+#
+# A merge that changes this script hands the checks and the push to the merged copy, run as
+# `scripts/merge-ticket.sh --checks-and-push`: bash read this copy before the merge, so its checks are
+# the old ones. Keep that mode in every later version.
 set -euo pipefail
 
 # Why not to merge, or nothing: on branch $1 (empty when detached), with `git status --porcelain`
@@ -49,8 +53,28 @@ frontend_checks() {
   )
 }
 
+# The checks, then the push of branch $1 when all of them pass.
+check_and_push() {
+  local current=$1 check
+  for check in backend frontend; do
+    echo "merge-ticket: running the $check checks"
+    if ! "${check}_checks"; then
+      echo "merge-ticket: $check checks failed; the merge commit $(git rev-parse --short HEAD) is not pushed" >&2
+      return 1
+    fi
+  done
+
+  git push -q origin "HEAD:refs/heads/$current"
+  echo "merge-ticket: pushed $(git rev-parse --short HEAD) to $current"
+}
+
+# Hands the checks and the push of branch $1 to the copy of this script the merge just brought in.
+run_merged_copy() {
+  bash scripts/merge-ticket.sh --checks-and-push "$1"
+}
+
 merge_ticket() {
-  local branch=$1 title=$2 current ref merged=no check conflicts
+  local branch=$1 title=$2 current ref merged=no conflicts
   current=$(git branch --show-current)
   git fetch -q origin
   if git rev-parse -q --verify "refs/remotes/origin/$branch" >/dev/null; then
@@ -78,19 +102,20 @@ merge_ticket() {
     return 1
   fi
 
-  for check in backend frontend; do
-    echo "merge-ticket: running the $check checks"
-    if ! "${check}_checks"; then
-      echo "merge-ticket: $check checks failed; the merge commit $(git rev-parse --short HEAD) is not pushed" >&2
-      return 1
-    fi
-  done
-
-  git push -q origin "HEAD:refs/heads/$current"
-  echo "merge-ticket: merged $branch into $current and pushed $(git rev-parse --short HEAD)"
+  if git diff --name-only HEAD^1 HEAD | grep -qx scripts/merge-ticket.sh; then
+    echo "merge-ticket: the merge changes merge-ticket.sh; its merged copy runs the checks"
+    run_merged_copy "$current"
+  else
+    check_and_push "$current"
+  fi
 }
 
 if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+  if [[ "${1:-}" == --checks-and-push && $# -eq 2 ]]; then
+    cd "$(git rev-parse --show-toplevel)"
+    check_and_push "$2"
+    exit
+  fi
   if [[ $# -ne 2 ]]; then
     echo "usage: scripts/merge-ticket.sh <branch> <title>" >&2
     exit 2

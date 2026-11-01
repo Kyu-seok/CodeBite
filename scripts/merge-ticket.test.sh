@@ -2,7 +2,8 @@
 # Checks scripts/merge-ticket.sh without Gradle or npm: when it refuses to merge, the merge commit's
 # message, that the frontend checks lint with no warnings before the tests and build (npm faked), and
 # (in scratch repositories with the checks faked) that a conflict aborts and lists the
-# files, a failing check leaves the merge commit unpushed, and green checks push it.
+# files, a failing check leaves the merge commit unpushed, green checks push it, and a merge that
+# changes merge-ticket.sh hands the checks and the push to the merged copy.
 set -euo pipefail
 
 script="$(cd "$(dirname "$0")" && pwd)/merge-ticket.sh"
@@ -105,6 +106,17 @@ check "green: trailer" "$(git -C "$scratch/work" log -1 --format=%B | sed "/^$/d
 if out=$(run_merge ticket/ok 'Ok ticket'); then echo "FAIL: merging twice must fail"; fail=1; fi
 grep -q 'already merged' <<<"$out" || { echo "FAIL: must say already merged: $out"; fail=1; }
 if out=$(run_merge ticket/none 'None'); then echo "FAIL: an unknown branch must fail"; fail=1; fi
+# A ticket that changes merge-ticket.sh itself: this copy was read before the merge, so the checks
+# and the push are handed to the merged copy.
+(cd "$scratch/seed" && g fetch -q origin && g switch -q --detach origin/integration/x \
+  && g switch -qc ticket/self && mkdir -p scripts && echo new > scripts/merge-ticket.sh \
+  && g add . && g commit -qm self && g push -q origin ticket/self)
+run_merged_copy() { echo "merged-copy-ran on $1"; }
+if ! out=$(run_merge ticket/self 'Self'); then echo "FAIL: self merge failed: $out"; fail=1; fi
+grep -q 'merged-copy-ran on integration/x' <<<"$out" || { echo "FAIL: the merged copy must run the checks: $out"; fail=1; }
+grep -q backend-ran <<<"$out" && { echo "FAIL: the old copy ran the checks: $out"; fail=1; }
+check "self: push left to the merged copy" "$(remote_head)" "$(git -C "$scratch/work" rev-parse HEAD^1)"
+
 echo dirt > "$scratch/work/dirt.txt"
 if out=$(run_merge ticket/clash 'Clash'); then echo "FAIL: a dirty tree must fail"; fail=1; fi
 grep -q 'dirty tree' <<<"$out" || { echo "FAIL: must say dirty tree: $out"; fail=1; }
