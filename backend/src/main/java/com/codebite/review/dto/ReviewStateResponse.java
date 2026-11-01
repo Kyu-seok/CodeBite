@@ -5,6 +5,7 @@ import com.codebite.review.entity.Confidence;
 import java.math.BigDecimal;
 import java.time.Instant;
 
+/** {@code daysOverdue}: whole days past {@code nextDueAt}, counted as the due list counts them ({@link DueReviewItem}). */
 public record ReviewStateResponse(
         Long problemId,
         int reviewCount,
@@ -13,6 +14,7 @@ public record ReviewStateResponse(
         Instant lastReviewedAt,
         Confidence lastConfidence,
         Instant nextDueAt,
-        boolean mastered
+        boolean mastered,
+        long daysOverdue
 ) {
 }

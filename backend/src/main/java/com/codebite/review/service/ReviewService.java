@@ -81,7 +81,7 @@ public class ReviewService {
         ReviewSchedule schedule = ReviewSchedule
                 .replay(reviewsExcept(userId, problemId, submission.getId()))
                 .rate(confidence, now);
-        return toStateResponse(store(userId, problemId, schedule));
+        return toStateResponse(store(userId, problemId, schedule), now);
     }
 
     @Transactional
@@ -109,7 +109,7 @@ public class ReviewService {
         Problem problem = problemRepository.findBySlugOrFormerSlug(slug)
                 .orElseThrow(() -> new ResourceNotFoundException("error.problem.notFound", slug));
         return stateRepository.findByUserIdAndProblemId(userId, problem.getId())
-                .map(this::toStateResponse);
+                .map(s -> toStateResponse(s, Instant.now()));
     }
 
     @Transactional(readOnly = true)
@@ -258,7 +258,7 @@ public class ReviewService {
         return ReviewSchedule.replay(others).preview(Instant.now());
     }
 
-    private ReviewStateResponse toStateResponse(ProblemReviewState s) {
+    private ReviewStateResponse toStateResponse(ProblemReviewState s, Instant now) {
         return new ReviewStateResponse(
                 s.getProblemId(),
                 s.getReviewCount(),
@@ -267,7 +267,8 @@ public class ReviewService {
                 s.getLastReviewedAt(),
                 s.getLastConfidence(),
                 s.getNextDueAt(),
-                s.isMastered()
+                s.isMastered(),
+                daysOverdue(s, now)
         );
     }
 
@@ -276,8 +277,6 @@ public class ReviewService {
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "error.problem.notFound", s.getProblemId()));
         List<String> tagSlugs = problem.getTags().stream().map(Tag::getSlug).sorted().toList();
-        long overdueDays = Math.max(0,
-                ChronoUnit.DAYS.between(s.getNextDueAt(), now));
         return new DueReviewItem(
                 problem.getId(),
                 problem.getSlug(),
@@ -288,7 +287,12 @@ public class ReviewService {
                 s.getLastConfidence(),
                 s.getLastReviewedAt(),
                 s.getNextDueAt(),
-                overdueDays
+                daysOverdue(s, now)
         );
+    }
+
+    /** Whole days past the due moment, 0 before it; the due list and the review state both use it. */
+    private static long daysOverdue(ProblemReviewState s, Instant now) {
+        return Math.max(0, ChronoUnit.DAYS.between(s.getNextDueAt(), now));
     }
 }
