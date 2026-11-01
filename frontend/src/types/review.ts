@@ -9,6 +9,8 @@ export interface ReviewState {
   lastConfidence: Confidence;
   nextDueAt: string;
   mastered: boolean;
+  /** Whole days past nextDueAt, as the due list counts them; 0 before it. */
+  daysOverdue: number;
 }
 
 export interface SetReviewRequest {

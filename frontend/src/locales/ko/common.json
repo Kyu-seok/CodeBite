@@ -94,6 +94,7 @@
       "monthsAgo_other": "{{count}}개월 전",
       "overdue_other": "{{count}}일 지남",
       "dueNow": "지금 복습",
+      "dueToday": "오늘 복습",
       "dueTomorrow": "내일 복습",
       "dueIn_other": "{{count}}일 후 복습",
       "mastered": "마스터",

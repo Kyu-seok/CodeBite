@@ -13,6 +13,8 @@ import com.codebite.review.entity.Confidence;
 import com.codebite.review.entity.ProblemReviewState;
 import com.codebite.review.repository.ProblemReviewStateRepository;
 import com.codebite.review.repository.ReviewRepository;
+import com.codebite.review.schedule.Review;
+import com.codebite.review.schedule.ReviewSchedule;
 import com.codebite.review.service.ReviewService;
 import com.codebite.submission.entity.Submission;
 import com.codebite.submission.entity.SubmissionStatus;
@@ -290,6 +292,31 @@ class ReviewServiceTest {
                 Confidence.GOOD, 15, Confidence.EASY, 20), fresh);
         verify(stateRepository, never()).save(any(ProblemReviewState.class));
         verify(submissionRepository, never()).save(any(Submission.class));
+    }
+
+    private void storedState(Instant reviewedAt) {
+        ProblemReviewState state = ProblemReviewState.of(1L, 10L,
+                ReviewSchedule.replay(List.of(new Review(Confidence.GOOD, reviewedAt)))); // due 2 days on
+        when(problemRepository.findBySlugOrFormerSlug("two-sum")).thenReturn(Optional.of(problem));
+        when(stateRepository.findByUserIdAndProblemId(1L, 10L)).thenReturn(Optional.of(state));
+    }
+
+    @Test
+    void getReviewState_countsWholeDaysOverdueLikeTheDueList() {
+        storedState(Instant.now().minus(5, ChronoUnit.DAYS).minus(1, ChronoUnit.HOURS));
+
+        ReviewStateResponse resp = reviewService.getReviewState("two-sum", 1L).orElseThrow();
+
+        assertEquals(3, resp.daysOverdue());
+    }
+
+    @Test
+    void getReviewState_isNotOverdueBeforeTheDueMoment() {
+        storedState(Instant.now());
+
+        ReviewStateResponse resp = reviewService.getReviewState("two-sum", 1L).orElseThrow();
+
+        assertEquals(0, resp.daysOverdue());
     }
 
     @Test

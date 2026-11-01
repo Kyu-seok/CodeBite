@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/Dialog";
 import { ConfidencePrompt } from "./ConfidencePrompt";
 import { useConfidenceLabel } from "@/lib/confidenceColors";
+import { dueDateLabel } from "@/lib/dueWording";
 import { findNextProblem, type NextProblem } from "@/lib/nextProblem";
 import { cn, focusRing } from "@/lib/utils";
 import type { Confidence, ReviewState } from "@/types/review";
@@ -108,13 +109,7 @@ export function AcceptedModal({
     }
   };
 
-  const dueDate = done
-    ? new Date(done.state.nextDueAt).toLocaleDateString(i18n.language, {
-        weekday: "short",
-        month: "short",
-        day: "numeric",
-      })
-    : "";
+  const dueDate = done ? dueDateLabel(done.state.nextDueAt, i18n.language) : "";
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

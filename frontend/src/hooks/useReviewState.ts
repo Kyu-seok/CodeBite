@@ -7,6 +7,8 @@ export function useReviewState(slug: string | undefined, enabled: boolean) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [loaded, setLoaded] = useState(false);
+  // When the state last arrived (epoch ms): the "now" its dates are worded against.
+  const [fetchedAt, setFetchedAt] = useState(0);
 
   const fetchState = useCallback(async () => {
     if (!slug || !enabled) return;
@@ -20,6 +22,7 @@ export function useReviewState(slug: string | undefined, enabled: boolean) {
       } else {
         setState(res.data as ReviewState);
       }
+      setFetchedAt(Date.now());
       setLoaded(true);
     } catch {
       setError(true);
@@ -51,10 +54,11 @@ export function useReviewState(slug: string | undefined, enabled: boolean) {
         notes: notes ?? undefined,
       });
       setState(res.data);
+      setFetchedAt(Date.now());
       return res.data;
     },
     [],
   );
 
-  return { state, loading, error, loaded, submit, refetch: fetchState };
+  return { state, fetchedAt, loading, error, loaded, submit, refetch: fetchState };
 }

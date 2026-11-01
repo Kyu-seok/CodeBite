@@ -99,6 +99,7 @@
       "overdue_one": "Overdue by {{count}} day",
       "overdue_other": "Overdue by {{count}} days",
       "dueNow": "Due now",
+      "dueToday": "Due today",
       "dueTomorrow": "Due tomorrow",
       "dueIn_one": "Due in {{count}} day",
       "dueIn_other": "Due in {{count}} days",

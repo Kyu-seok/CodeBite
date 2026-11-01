@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
-import type { TFunction } from "i18next";
 import { Star } from "lucide-react";
 import { useReviewState } from "@/hooks/useReviewState";
+import { badgeDueWording, lastReviewedWording } from "@/lib/dueWording";
 import { confidenceTextClass, useConfidenceLabel } from "@/lib/confidenceColors";
 import { cn, focusRing } from "@/lib/utils";
 
@@ -9,25 +9,6 @@ interface ReviewBadgeProps {
   slug: string;
   enabled: boolean;
   refreshKey?: unknown;
-}
-
-const DAY_MS = 1000 * 60 * 60 * 24;
-
-function dueText(iso: string, t: TFunction): string {
-  const diffMs = new Date(iso).getTime() - Date.now();
-  const count = Math.floor(Math.abs(diffMs) / DAY_MS);
-  if (diffMs < -DAY_MS) return t("review.badge.overdue", { count });
-  if (diffMs <= DAY_MS) return t("review.badge.dueNow");
-  if (count === 1) return t("review.badge.dueTomorrow");
-  return t("review.badge.dueIn", { count });
-}
-
-function lastReviewedText(iso: string, t: TFunction): string {
-  const days = Math.floor((Date.now() - new Date(iso).getTime()) / DAY_MS);
-  if (days < 1) return t("review.badge.today");
-  if (days === 1) return t("review.badge.yesterday");
-  if (days < 30) return t("review.badge.daysAgo", { count: days });
-  return t("review.badge.monthsAgo", { count: Math.floor(days / 30) });
 }
 
 const Sep = () => (
@@ -39,9 +20,11 @@ const Sep = () => (
 export function ReviewBadge({ slug, enabled }: ReviewBadgeProps) {
   const { t } = useTranslation("common");
   const confidenceLabel = useConfidenceLabel();
-  const { state, loading, error, loaded, refetch } = useReviewState(slug, enabled);
+  const { state, fetchedAt: now, loading, error, loaded, refetch } = useReviewState(slug, enabled);
 
   if (!enabled) return null;
+
+  const words = ({ key, ...values }: { key: string; count?: number }) => t(key, values);
 
   const shell =
     "flex min-h-8 flex-wrap items-center gap-x-3 gap-y-1 rounded-md border border-border bg-muted/30 px-3 py-1.5 text-xs";
@@ -93,7 +76,7 @@ export function ReviewBadge({ slug, enabled }: ReviewBadgeProps) {
           )}
           <span className="inline-flex items-baseline gap-1.5">
             <span className="text-muted-foreground">{t("review.badge.reviewed")}</span>
-            <span className="text-foreground">{lastReviewedText(state.lastReviewedAt, t)}</span>
+            <span className="text-foreground">{words(lastReviewedWording(state.lastReviewedAt, now))}</span>
           </span>
           <Sep />
           <span className="inline-flex items-baseline gap-1.5">
@@ -103,7 +86,7 @@ export function ReviewBadge({ slug, enabled }: ReviewBadgeProps) {
             </span>
           </span>
           <Sep />
-          <span className="font-medium text-foreground">{dueText(state.nextDueAt, t)}</span>
+          <span className="font-medium text-foreground">{words(badgeDueWording(state.nextDueAt, state.daysOverdue, now))}</span>
         </>
       ) : (
         <span className="text-muted-foreground">{t("review.badge.empty")}</span>
