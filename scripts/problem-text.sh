@@ -24,7 +24,7 @@ here=$(cd "$(dirname "$0")/.." && pwd)
 psql() { docker exec -i codebite-postgres psql -U codebite -d codebite -X -q -v ON_ERROR_STOP=1 "$@"; }
 
 if ! db=$(psql -tAc "SELECT max(version::int) FROM flyway_schema_history WHERE success AND version ~ '^[0-9]+\$'" 2>/dev/null); then
-  echo "problem-text.sh: database not reachable (docker container codebite-postgres)" >&2
+  echo "problem-text.sh: database not reachable (docker container codebite-postgres); start it: open -a Docker, then docker compose -f infra/docker-compose.yml up -d postgres" >&2
   exit 1
 fi
 ours=$(find "$here/common/src/main/resources/db/migration" "$here/common/src/main/java/db/migration" \

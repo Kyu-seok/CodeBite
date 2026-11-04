@@ -137,7 +137,7 @@ after: [5, 8, 3, 9, 7, 4, 2]
 Rules:
 - `after` must have the same shape kind as `nodes`/`edges`/`cells`/`intervals` (level-order array, edge list, 2D array, list of `[start, end]` pairs respectively).
 - Highlights apply to the **before** diagram only; if you need separate highlighting on the after, that's a future extension (`highlight_after`) — not in scope today.
-- On narrow viewports the pair wraps to stacked layout automatically, with the arrow re-orienting downward.
+- A pair stays side by side and scales to fit its pane, unless its diagram passes `stackWhenNarrow` (intervals, linked lists): those stack below a 42rem container, the arrow pointing down.
 - Apply this whenever the problem has a clear "given X, return Y where Y is a structural transformation of X." Skip it for problems whose output is a scalar (e.g., max depth, count of islands) — there's no "after" to show.
 
 ---

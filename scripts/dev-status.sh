@@ -132,7 +132,7 @@ else
   start_hint="the shared backend runs $main; scripts/dev-branch-servers.sh migrates a database of this branch's own"
 fi
 if [[ -z "$db" ]]; then
-  echo "database: not reachable (docker container codebite-postgres)"
+  echo "database: not reachable (docker container codebite-postgres); start it: open -a Docker, then docker compose -f infra/docker-compose.yml up -d postgres"
 elif (( db < ours )); then
   echo "database: at V$db"
   echo "  BEHIND  this checkout has migrations up to V$ours; $start_hint"

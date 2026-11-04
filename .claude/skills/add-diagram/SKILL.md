@@ -38,11 +38,13 @@ Copy `common/src/main/java/db/migration/V198__add_grid_diagrams_batch2.java` to 
 
 The migration inserts each block under `**Example N:**` and `**예시 N:**` through `V183.injectDiagram`, and fails when either marker is missing, so a reworded description can't silently go without its Diagram.
 
+A migration that replaces an existing block fails when that text has changed. Before merging one, run `scripts/prod-text.sh <slug> --contains <file holding the old block>` for each, since an edit through the admin page would stop the deploy.
+
 ## 3. Verify
 
-1. Add a test to `backend/src/test/java/com/codebite/problem/DiagramMigrationTest.java` that reads the problem's English and Korean descriptions and checks each block sits under its example (the V197 test is the model). Run `./gradlew :backend:test --tests '*DiagramMigrationTest' --tests '*DiagramsMatchExamplesTest'`. The second leaves `highlight`, `highlight_path`, `cycle_to`, `added`, `points` and a copied graph's `directed` to you.
-2. Open `/problems/<slug>` in the running app (the `run` skill), in English and Korean, light and dark: every Diagram draws (a raw `diagram-*` block means it failed to parse) and matches its example.
+1. Run `./gradlew :backend:test --tests '*DiagramsMatchExamplesTest'`. It reads every Diagram in English and Korean, and leaves to you `cycle_to`, `added`, `points`, a copied graph's `directed`, and whether a highlight is part of the answer.
+2. Open `/problems/<slug>` in the running app (the `run` skill), light and dark: every Diagram draws (a raw `diagram-*` block means it failed to parse) and matches its example. One language is enough, since the block is the same in both.
 
-Done when both tests are green and you have looked at every Diagram in both languages and both themes.
+Done when the test is green and you have looked at every Diagram in both themes.
 
 Commit `feat(problem): Diagrams for <slug>`.

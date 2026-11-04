@@ -13,3 +13,15 @@ _Example:_ `GitHubAppProperties.setSolutionRepositoryTemplate` rejects anything 
 A value with parts (`owner/name`, `yyyy-MM`, a slug path) is taken apart by one accessor on its type, and every caller uses that accessor. Each `substring`/`split` call site is a separate copy of the format, and the copies drift apart.
 
 _Example:_ `GitHubRepo.name()` gives `codebite-solutions` from `octocat/codebite-solutions`.
+
+## A guard test shows what it catches
+
+A test that guards data (every migrated Diagram, every Test Case) has cases showing wrong data failing it, one for each way the data can go wrong. Passing on today's data says nothing about the check, and a loose comparison passes on anything.
+
+_Example:_ `DiagramsMatchExamplesTest.aWrongDiagramIsCaught` holds a wrong Diagram for each way one could slip through: one row of a grid, a pinned Diagram under the wrong example, `after` copied from the input.
+
+## A highlight marks what its example points at
+
+A Diagram's `highlight` or `highlight_path` marks part of its example's answer, or the inputs the example asks about. A count or a time as the answer usually means no highlight. `.claude/skills/add-diagram/SKILL.md` has the rule; tests check only that a highlight exists in the Diagram.
+
+_Example:_ `lca-bst` highlights `p` and `q`; `count-desk-clusters`, whose answer is a count, highlights nothing.
