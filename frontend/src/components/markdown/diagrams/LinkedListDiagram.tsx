@@ -26,6 +26,7 @@ export function LinkedListDiagram({
   if (after) {
     return (
       <BeforeAfterPair
+        stackWhenNarrow
         before={<SingleListSvg nodes={nodes} cycle_to={cycle_to} highlight={highlight} />}
         after={<SingleListSvg nodes={after} />}
       />
