@@ -259,7 +259,7 @@ class DiagramMigrationTest {
 
     @ParameterizedTest
     @ValueSource(strings = {
-            "rotate-pet-cafe-map", "spiral-shelf-walk", "zero-out-rows-cols",
+            "spiral-shelf-walk", "zero-out-rows-cols",
             "count-desk-clusters", "capture-enclosed-tiles", "walls-and-gates",
             "dual-waterbowl-flow", "rotting-donuts", "shortest-dungeon-path",
             "count-dungeon-paths", "rising-water-path", "word-search", "word-search-ii"
@@ -465,6 +465,23 @@ class DiagramMigrationTest {
             assertEquals(blocks, desc.split("```diagram-intervals", -1).length - 1,
                     "Expected " + blocks + " diagram-intervals block(s) in " + slug + "; actual:\n" + desc);
         }
+    }
+
+    // ---- V203: rotate-pet-cafe-map draws both examples ----
+
+    @Test
+    void v203_rotatePetCafeMap_drawsBothExamples_inBothLanguages() {
+        Problem p = problemRepository.findBySlug("rotate-pet-cafe-map").orElseThrow();
+        ProblemTranslation t = translationRepository
+                .findByProblemIdAndLocale(p.getId(), "ko")
+                .orElseThrow();
+        String first = "```diagram-grid\ncells: [[2,4,6],[8,1,3],[5,7,9]]\nafter: [[5,8,2],[7,1,4],[9,3,6]]\n```";
+        String second = "```diagram-grid\ncells: [[5,7,2,9],[1,3,4,6],[8,12,10,11],[14,13,15,16]]"
+                + "\nafter: [[14,8,1,5],[13,12,3,7],[15,10,4,2],[16,11,6,9]]\n```";
+        assertBlockUnderExample(p.getDescription(), "**Example 1:**", "**Example 2:**", first);
+        assertBlockUnderExample(p.getDescription(), "**Example 2:**", "**Example 3:**", second);
+        assertBlockUnderExample(t.getDescription(), "**예시 1:**", "**예시 2:**", first);
+        assertBlockUnderExample(t.getDescription(), "**예시 2:**", "**예시 3:**", second);
     }
 
     private static void assertBlockUnderExample(String desc, String example, String nextExample, String block) {

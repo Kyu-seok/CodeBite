@@ -28,7 +28,7 @@ A new problem from the `problem-generator` agent writes its Diagrams straight in
 ## 1. Write the directives
 
 1. Read the problem's newest English and Korean descriptions and its sample Test Cases: `scripts/problem-text.sh <slug>`.
-2. Copy each drawn example's input into its directive's data exactly as the example states it.
+2. Copy each drawn example's input into its directive's data exactly as the example states it. `DiagramsMatchExamplesTest` fails on a Diagram that isn't a copy of its example; one that can't be (an adjacency list drawn as edges, a shortened label) needs an entry there saying how it comes from the example.
 
 Done when every value in each directive traces back to its example, and every highlighted cell, node or path is part of that example's answer.
 
@@ -40,7 +40,7 @@ The migration inserts each block under `**Example N:**` and `**예시 N:**` thro
 
 ## 3. Verify
 
-1. Add a test to `backend/src/test/java/com/codebite/problem/DiagramMigrationTest.java` that reads the problem's English and Korean descriptions and checks each block sits under its example (the V197 test is the model). Run `./gradlew :backend:test --tests '*DiagramMigrationTest'`.
+1. Add a test to `backend/src/test/java/com/codebite/problem/DiagramMigrationTest.java` that reads the problem's English and Korean descriptions and checks each block sits under its example (the V197 test is the model). Run `./gradlew :backend:test --tests '*DiagramMigrationTest' --tests '*DiagramsMatchExamplesTest'`. The second never checks `highlight`, so check that by hand.
 2. Open `/problems/<slug>` in the running app (the `run` skill), in English and Korean, light and dark: every Diagram draws (a raw `diagram-*` block means it failed to parse) and matches its example.
 
 Done when the test is green and you have looked at every Diagram in both languages and both themes.
