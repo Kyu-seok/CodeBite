@@ -18,8 +18,8 @@ import java.util.List;
  * Example 2: a 4x4 grid has no fixed centre, and two rings turn separately.
  *
  * word-ladder keeps V194's path and gains the two edges it left out (dot-lot and dog-log are one
- * letter apart too). merge-duplicate-contacts shortens its emails to fit the node circles, and shows the second Maya
- * apart from the first, which is that example's point.
+ * letter apart too). merge-duplicate-contacts shortens its emails to fit the node circles, and
+ * shows the second Maya apart from the first, which is that example's point.
  */
 public class V203__diagrams_match_their_examples extends BaseJavaMigration {
 
@@ -45,8 +45,7 @@ public class V203__diagrams_match_their_examples extends BaseJavaMigration {
             new Redraw("count-desk-clusters", "grid", 1,
                     "cells: [[\"1\",\"1\",\"0\",\"0\"],[\"1\",\"1\",\"0\",\"0\"],[\"0\",\"0\",\"1\",\"0\"],[\"0\",\"0\",\"0\",\"1\"]]" + "\n"
                             + "highlight: [[2,2],[3,3]]",
-                    "cells: [[\"0\",\"1\",\"1\",\"0\",\"0\",\"1\"],[\"1\",\"1\",\"0\",\"0\",\"0\",\"1\"],[\"0\",\"0\",\"0\",\"1\",\"0\",\"0\"],[\"1\",\"0\",\"0\",\"1\",\"1\",\"0\"],[\"1\",\"0\",\"0\",\"0\",\"0\",\"1\"]]" + "\n"
-                            + "highlight: [[0,1],[0,2],[1,0],[1,1]]"),
+                    "cells: [[\"0\",\"1\",\"1\",\"0\",\"0\",\"1\"],[\"1\",\"1\",\"0\",\"0\",\"0\",\"1\"],[\"0\",\"0\",\"0\",\"1\",\"0\",\"0\"],[\"1\",\"0\",\"0\",\"1\",\"1\",\"0\"],[\"1\",\"0\",\"0\",\"0\",\"0\",\"1\"]]"),
             new Redraw("capture-enclosed-tiles", "grid", 1,
                     "cells: [[\"X\",\"X\",\"X\",\"X\"],[\"X\",\"O\",\"O\",\"X\"],[\"X\",\"X\",\"O\",\"X\"],[\"X\",\"O\",\"X\",\"X\"]]" + "\n"
                             + "after: [[\"X\",\"X\",\"X\",\"X\"],[\"X\",\"X\",\"X\",\"X\"],[\"X\",\"X\",\"X\",\"X\"],[\"X\",\"O\",\"X\",\"X\"]]",
@@ -60,8 +59,7 @@ public class V203__diagrams_match_their_examples extends BaseJavaMigration {
             new Redraw("rotting-donuts", "grid", 1,
                     "cells: [[2,1,1],[1,1,0],[0,1,1]]" + "\n"
                             + "highlight: [[0,0]]",
-                    "cells: [[2,1,1],[1,0,1],[1,1,1]]" + "\n"
-                            + "highlight: [[0,0]]"),
+                    "cells: [[2,1,1],[1,0,1],[1,1,1]]"),
             new Redraw("shortest-dungeon-path", "grid", 2,
                     "cells: [[0,0,0],[1,1,0],[1,1,0]]" + "\n"
                             + "highlight: [[0,0],[0,1],[0,2],[1,2],[2,2]]",

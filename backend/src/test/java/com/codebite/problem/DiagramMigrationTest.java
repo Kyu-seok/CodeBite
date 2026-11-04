@@ -284,15 +284,6 @@ class DiagramMigrationTest {
     }
 
     @Test
-    void v185_islandProblem_carriesHighlight() {
-        // count-desk-clusters (number of islands) — highlight one island so the
-        // "what counts as a connected component" intuition reads visually.
-        Problem p = problemRepository.findBySlug("count-desk-clusters").orElseThrow();
-        assertTrue(p.getDescription().contains("highlight: ["),
-                "count-desk-clusters should highlight an island");
-    }
-
-    @Test
     void v185_appliesToKoreanTranslationsToo() {
         Problem p = problemRepository.findBySlug("rotate-pet-cafe-map").orElseThrow();
         ProblemTranslation t = translationRepository
