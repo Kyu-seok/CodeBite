@@ -21,16 +21,16 @@ A Diagram sits under its example's code block. The one-line `Input:` stays: it i
 | a size (`n = 4`) whose output is boards or grids | the output: one `diagram-grid` per board, as in N-Queens |
 | 1D array, string, number | never: the input line already is the picture |
 
-Draw the examples where the picture explains something the line can't. Example 1 is usually enough; draw a later example too when its point is visual (Valid Sudoku's Example 2 is the clash of two 8s). Use `after` when the problem transforms its input into something of the same shape; use `highlight` only for a cell, node or path the example's answer points at unambiguously.
+Draw the examples where the picture explains something the line can't. Example 1 is usually enough; draw a later example too when its point is visual (Valid Sudoku's Example 2 is the clash of two 8s). Use `after` when the problem transforms its input into something of the same shape; use `highlight` only for a cell, node or path the example's answer points at unambiguously, or the inputs the example asks about (a lowest-common-ancestor example's `p` and `q`).
 
 A new problem from the `problem-generator` agent writes its Diagrams straight into the description in its own migration and skips step 2 below.
 
 ## 1. Write the directives
 
 1. Read the problem's newest English and Korean descriptions and its sample Test Cases: `scripts/problem-text.sh <slug>`.
-2. Copy each drawn example's input into its directive's data exactly as the example states it.
+2. Copy each drawn example's input into its directive's data exactly as the example states it. `DiagramsMatchExamplesTest` fails on a Diagram whose main value isn't the example's first array or whose `after` isn't its output; one that can't be (an adjacency list drawn as edges, a shortened label) needs a rule there saying how it comes from the example.
 
-Done when every value in each directive traces back to its example, and every highlighted cell, node or path is part of that example's answer.
+Done when every value in each directive traces back to its example, and every highlighted cell, node or path is part of that example's answer or one of the inputs it asks about.
 
 ## 2. Write the migration
 
@@ -40,9 +40,9 @@ The migration inserts each block under `**Example N:**` and `**예시 N:**` thro
 
 ## 3. Verify
 
-1. Add a test to `backend/src/test/java/com/codebite/problem/DiagramMigrationTest.java` that reads the problem's English and Korean descriptions and checks each block sits under its example (the V197 test is the model). Run `./gradlew :backend:test --tests '*DiagramMigrationTest'`.
+1. Add a test to `backend/src/test/java/com/codebite/problem/DiagramMigrationTest.java` that reads the problem's English and Korean descriptions and checks each block sits under its example (the V197 test is the model). Run `./gradlew :backend:test --tests '*DiagramMigrationTest' --tests '*DiagramsMatchExamplesTest'`. The second leaves `highlight`, `highlight_path`, `cycle_to`, `added`, `points` and a copied graph's `directed` to you.
 2. Open `/problems/<slug>` in the running app (the `run` skill), in English and Korean, light and dark: every Diagram draws (a raw `diagram-*` block means it failed to parse) and matches its example.
 
-Done when the test is green and you have looked at every Diagram in both languages and both themes.
+Done when both tests are green and you have looked at every Diagram in both languages and both themes.
 
 Commit `feat(problem): Diagrams for <slug>`.

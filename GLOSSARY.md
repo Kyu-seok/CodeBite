@@ -30,7 +30,7 @@ A user's report that something in a problem is wrong (a Test Case, the descripti
 _Avoid_: Bug report, feedback, ticket
 
 **Diagram**:
-A picture of an example's input (and, when the problem transforms it, the output), or of its output alone when the output is the structure and the input is just a size, drawn from a short text block in the problem's description and the same in every language. A Restatement keeps it.
+A picture of an example's input (and, when the problem transforms it, the output), or of its output alone when the output is the structure and the input only describes it (a size, a tree's traversals), drawn from a short text block in the problem's description and the same in every language. A Restatement keeps it.
 _Avoid_: Visual aid, image, illustration
 
 ### Grading
