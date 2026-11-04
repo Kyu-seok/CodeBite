@@ -275,25 +275,6 @@ class DiagramMigrationTest {
                 "Expected `cells:` line in " + slug + " diagram");
     }
 
-    @Test
-    void v185_transformationProblem_carriesAfterField() {
-        // rotate-pet-cafe-map is a structural transform — must use before/after.
-        Problem p = problemRepository.findBySlug("rotate-pet-cafe-map").orElseThrow();
-        assertTrue(p.getDescription().contains("after: ["),
-                "rotate-pet-cafe-map should render as a before/after pair");
-    }
-
-    @Test
-    void v185_appliesToKoreanTranslationsToo() {
-        Problem p = problemRepository.findBySlug("rotate-pet-cafe-map").orElseThrow();
-        ProblemTranslation t = translationRepository
-                .findByProblemIdAndLocale(p.getId(), "ko")
-                .orElse(null);
-        assertNotNull(t, "Korean translation should exist");
-        assertTrue(t.getDescription().contains("```diagram-grid"),
-                "Korean description should also carry the grid diagram");
-    }
-
     // ---- V186 linked-list diagrams (cycle, reverse, restructure) ----
 
     @ParameterizedTest

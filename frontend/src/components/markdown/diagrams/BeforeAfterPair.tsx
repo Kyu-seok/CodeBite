@@ -15,10 +15,6 @@ interface BeforeAfterPairProps {
  * Renders two diagrams side-by-side with a hollow right-pointing arrow
  * between them — the LeetCode "before / after" convention used for
  * transformation problems (invert tree, rotate matrix, MST, etc.).
- *
- * On narrow viewports the pair wraps to a stacked layout and the arrow
- * keeps pointing right (acceptable on mobile; vertical re-orientation is
- * a future polish if it actually bothers anyone).
  */
 export function BeforeAfterPair({ before, after, stackWhenNarrow = false }: BeforeAfterPairProps) {
   if (stackWhenNarrow) {

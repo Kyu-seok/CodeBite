@@ -26,8 +26,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Every Diagram draws the example it sits under (GLOSSARY.md): its main value is the example's
  * first array, and its `after` the example's output. A Diagram that can't be a copy has a rule
  * below saying how it comes from the example, so a new exception is a decision and not an accident.
- * `highlight`, `highlight_path`, `cycle_to`, `added`, `points` and a copied graph's `directed` are
- * for a person to check.
+ * Every Diagram is also well formed: its lines parse as the frontend parses them, and its
+ * highlights and `cycle_to` exist in what it draws. Whether a highlight is part of the answer,
+ * and `added`, `points` and a copied graph's `directed`, are for a person to check.
  */
 class DiagramsMatchExamplesTest {
 
@@ -35,7 +36,7 @@ class DiagramsMatchExamplesTest {
 
     private static final Pattern EXAMPLE = Pattern.compile("\\*\\*(?:Example|예시) (\\d+):\\*\\*");
     private static final Pattern DIAGRAM =
-            Pattern.compile("```diagram-[a-z-]+\\n(.*?)\\n```", Pattern.DOTALL);
+            Pattern.compile("```diagram-([a-z-]+)\\n(.*?)\\n```", Pattern.DOTALL);
     private static final Pattern BODY_KEY = Pattern.compile("(?m)^([a-z_]+):");
     private static final Pattern OUTPUT_LINE = Pattern.compile("(?m)^(?:Output|출력):\\s*(.*)$");
 
@@ -197,6 +198,119 @@ class DiagramsMatchExamplesTest {
         assertNotNull(mismatchOf(slug, number, codeBlock.replace("\\n", "\n"), body.replace("\\n", "\n")));
     }
 
+    @Test
+    void everyDiagramIsWellFormed() throws Exception {
+        List<String> problems = new ArrayList<>();
+        Map<String, String> all = new LinkedHashMap<>();
+        descriptions("SELECT slug, description FROM problems").forEach((slug, text) -> all.put(slug + " (en)", text));
+        descriptions("SELECT p.slug, pt.description FROM problem_translations pt "
+                + "JOIN problems p ON pt.problem_id = p.id WHERE pt.locale = 'ko'")
+                .forEach((slug, text) -> all.put(slug + " (ko)", text));
+        for (var entry : all.entrySet()) {
+            Matcher diagrams = DIAGRAM.matcher(entry.getValue());
+            while (diagrams.find()) {
+                String problem = malformation(diagrams.group(1), diagrams.group(2));
+                if (problem != null) problems.add(entry.getKey() + ": " + problem);
+            }
+        }
+        assertTrue(problems.isEmpty(), String.join("\n", problems));
+    }
+
+    @ParameterizedTest(name = "{0}: {1}")
+    @CsvSource(delimiter = '|', value = {
+            "grid | cells: [[1,2],[3,4]]\\nhighlight: [[2,0]]",
+            "grid | cells: [[1,2],[3,4]]\\nhighlight: [[0,2]]",
+            "grid | cells: [[1,2],[3]]",
+            "grid | cells: [[1,2]",
+            "tree | nodes: [1,null,3]\\nhighlight: [3]",
+            "tree | nodes: [1,null,3]\\nhighlight: [1]",
+            "linked-list | nodes: [1,2]\\nhighlight: [2]",
+            "linked-list | nodes: [1,2]\\ncycle_to: 2",
+            "graph | edges: [[1,2],[2,3]]\\nhighlight_path: [1,3]",
+            "graph | edges: [[1,2]]\\ndirected: true\\nhighlight_path: [2,1]",
+            "intervals | intervals: [[1,2]]\\nhighlight: [1]",
+            "grid | not a directive",
+    })
+    void aMalformedDiagramIsCaught(String kind, String body) throws Exception {
+        assertNotNull(malformation(kind, body.replace("\\n", "\n")));
+    }
+
+    @ParameterizedTest(name = "{0}: {1}")
+    @CsvSource(delimiter = '|', value = {
+            "grid | cells: [[1,2],[3,4]]\\nhighlight: [[1,1]]",
+            "tree | nodes: [1,null,3]\\nhighlight: [2]",
+            "linked-list | nodes: [1,2]\\nhighlight: [1]\\ncycle_to: 0",
+            "graph | edges: [[1,2],[2,3]]\\nhighlight_path: [3,2,1]",
+            "graph | edges: [[1,2]]\\ndirected: true\\nhighlight_path: [1,2]",
+            "intervals | intervals: [[1,2]]\\nhighlight: [0]",
+    })
+    void aWellFormedDiagramPasses(String kind, String body) throws Exception {
+        assertNull(malformation(kind, body.replace("\\n", "\n")));
+    }
+
+    /** What's structurally wrong with a Diagram body, or null. Lines parse as parseDirective.ts parses them. */
+    private static String malformation(String kind, String body) {
+        Map<String, JsonNode> values = new LinkedHashMap<>();
+        for (String line : body.split("\n")) {
+            String trimmed = line.trim();
+            if (trimmed.isEmpty() || trimmed.startsWith("#")) continue;
+            int colon = trimmed.indexOf(':');
+            if (colon < 0) return "not a key and value: " + trimmed;
+            try {
+                values.put(trimmed.substring(0, colon).trim(), JSON.readTree(trimmed.substring(colon + 1)));
+            } catch (Exception e) {
+                return "can't parse: " + trimmed;
+            }
+        }
+        return switch (kind) {
+            case "grid" -> gridMalformation(values);
+            case "tree", "linked-list" -> listMalformation(values, "nodes");
+            case "intervals" -> listMalformation(values, "intervals");
+            case "graph" -> pathMalformation(values);
+            default -> "unknown kind " + kind;
+        };
+    }
+
+    private static String gridMalformation(Map<String, JsonNode> values) {
+        JsonNode cells = values.get("cells");
+        if (cells == null || !cells.isArray() || cells.isEmpty()) return "no cells";
+        int width = cells.get(0).size();
+        for (JsonNode row : cells) {
+            if (row.size() != width) return "rows of different lengths";
+        }
+        for (JsonNode cell : values.getOrDefault("highlight", JSON.createArrayNode())) {
+            int row = cell.get(0).asInt();
+            int column = cell.get(1).asInt();
+            if (row < 0 || row >= cells.size() || column < 0 || column >= width) return "highlight outside the grid: " + cell;
+        }
+        return null;
+    }
+
+    private static String listMalformation(Map<String, JsonNode> values, String key) {
+        JsonNode items = values.get(key);
+        if (items == null || !items.isArray()) return "no " + key;
+        for (JsonNode index : values.getOrDefault("highlight", JSON.createArrayNode())) {
+            JsonNode item = items.get(index.asInt());
+            if (item == null || item.isNull()) return "highlight on nothing: " + index;
+        }
+        JsonNode cycleTo = values.get("cycle_to");
+        if (cycleTo != null && items.get(cycleTo.asInt()) == null) return "cycle_to outside the list: " + cycleTo;
+        return null;
+    }
+
+    private static String pathMalformation(Map<String, JsonNode> values) {
+        JsonNode pairs = values.get("edges");
+        if (pairs == null || !pairs.isArray()) return "no edges";
+        boolean directed = values.containsKey("directed") && values.get("directed").asBoolean();
+        Set<Edge> edges = directed ? edges(pairs) : unordered(edges(pairs));
+        JsonNode path = values.getOrDefault("highlight_path", JSON.createArrayNode());
+        for (int i = 0; i + 1 < path.size(); i++) {
+            Edge step = new Edge(path.get(i).asText(), path.get(i + 1).asText());
+            if (!edges.contains(directed ? step : step.unordered())) return "highlight_path uses no edge: " + step;
+        }
+        return null;
+    }
+
     private static Map<String, String> descriptions(String sql) throws Exception {
         Map<String, String> bySlug = new LinkedHashMap<>();
         for (Map.Entry<String, String> row : database.query(
@@ -230,7 +344,7 @@ class DiagramsMatchExamplesTest {
                 mismatches.add(where + "a Diagram under an example with no code block");
                 continue;
             }
-            String mismatch = mismatchOf(slug, numbers.get(section), parts[1], diagrams.group(1));
+            String mismatch = mismatchOf(slug, numbers.get(section), parts[1], diagrams.group(2));
             if (mismatch != null) mismatches.add(where + mismatch);
         }
     }
