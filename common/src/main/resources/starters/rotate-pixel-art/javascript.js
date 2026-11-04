@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {number[][]} cafeMap
+     * @param {number[][]} image
      * @return {void}
      */
-    rotateParkMap(cafeMap) {
+    rotateImage(image) {
         // Write your solution here
     }
 }

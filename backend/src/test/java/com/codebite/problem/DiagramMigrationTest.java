@@ -439,11 +439,11 @@ class DiagramMigrationTest {
         }
     }
 
-    // ---- V203: rotate-pet-cafe-map draws both examples ----
+    // ---- V203: rotate-pixel-art draws both examples ----
 
     @Test
-    void v203_rotatePetCafeMap_drawsBothExamples_inBothLanguages() {
-        Problem p = problemRepository.findBySlug("rotate-pet-cafe-map").orElseThrow();
+    void v203_rotatePixelArt_drawsBothExamples_inBothLanguages() {
+        Problem p = problemRepository.findBySlug("rotate-pixel-art").orElseThrow();
         ProblemTranslation t = translationRepository
                 .findByProblemIdAndLocale(p.getId(), "ko")
                 .orElseThrow();

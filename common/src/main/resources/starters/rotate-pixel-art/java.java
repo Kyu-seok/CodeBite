@@ -1,5 +1,5 @@
 class Solution {
-    public void rotateParkMap(int[][] cafeMap) {
+    public void rotateImage(int[][] image) {
         // Write your solution here
     }
 }

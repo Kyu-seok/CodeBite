@@ -12,7 +12,7 @@ int main() {
     string line;
     getline(cin, line);
     // Parse [[1,2,3],[4,5,6],[7,8,9]]
-    vector<vector<int>> matrix;
+    vector<vector<int>> image;
     int i = 0;
     while (i < (int)line.size()) {
         if (line[i] == '[' && i > 0) {
@@ -24,13 +24,13 @@ int main() {
             while (getline(ss, token, ',')) {
                 row.push_back(stoi(token));
             }
-            matrix.push_back(row);
+            image.push_back(row);
             i = j + 1;
         } else {
             i++;
         }
     }
-    Solution().rotateParkMap(matrix);
-    cout << JsonOutput::intVector2D(matrix) << endl;
+    Solution().rotateImage(image);
+    cout << JsonOutput::intVector2D(image) << endl;
     return 0;
 }
