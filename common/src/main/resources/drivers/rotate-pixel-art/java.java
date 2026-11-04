@@ -24,8 +24,8 @@ public class Main {
                 i++;
             }
         }
-        int[][] matrix = rows.toArray(new int[0][]);
-        new Solution().rotateParkMap(matrix);
-        System.out.println(JsonOutput.intArray2D(matrix));
+        int[][] image = rows.toArray(new int[0][]);
+        new Solution().rotateImage(image);
+        System.out.println(JsonOutput.intArray2D(image));
     }
 }

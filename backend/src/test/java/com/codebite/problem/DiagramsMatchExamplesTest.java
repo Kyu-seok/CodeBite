@@ -176,9 +176,9 @@ class DiagramsMatchExamplesTest {
             // Pinned, but under the wrong example.
             "count-dungeon-paths | 2 | Input: rows = 2, cols = 6 | cells: [[\".\",\".\",\".\",\".\",\".\"],[\".\",\".\",\".\",\".\",\".\"],[\".\",\".\",\".\",\".\",\".\"],[\".\",\".\",\".\",\".\",\".\"]]\\nblank: \".\"",
             // `after` the same as the input.
-            "rotate-pet-cafe-map | 1 | Input: cafeMap = [[1,2],[3,4]]\\nOutput: [[3,1],[4,2]] | cells: [[1,2],[3,4]]\\nafter: [[1,2],[3,4]]",
+            "rotate-pixel-art | 1 | Input: image = [[1,2],[3,4]]\\nOutput: [[3,1],[4,2]] | cells: [[1,2],[3,4]]\\nafter: [[1,2],[3,4]]",
             // `after` only in the explanation.
-            "rotate-pet-cafe-map | 1 | Input: cafeMap = [[1,2],[3,4]]\\nOutput: [[3,1],[4,2]]\\nExplanation: not [9,9] | cells: [[1,2],[3,4]]\\nafter: [9,9]",
+            "rotate-pixel-art | 1 | Input: image = [[1,2],[3,4]]\\nOutput: [[3,1],[4,2]]\\nExplanation: not [9,9] | cells: [[1,2],[3,4]]\\nafter: [9,9]",
             // A graph's isolated node left out.
             "merge-duplicate-contacts | 1 | Input: accounts = [] | edges: [[\"dp\",\"lens\"],[\"lens\",\"cam\"]]\\nnodes: [\"dp\",\"lens\",\"cam\",\"leo\"]\\ndirected: false",
             // One row of the grid.
