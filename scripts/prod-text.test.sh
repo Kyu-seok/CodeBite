@@ -9,8 +9,8 @@ cat > "$tmp/bin/curl" <<'STUB'
 #!/usr/bin/env bash
 case "$*" in
   *missing*) exit 22 ;;
-  *"Accept-Language: ko"*) printf '%s' '{"description":"한국어\nshared block"}' ;;
-  *) printf '%s' '{"description":"English\nshared block\nonly english"}' ;;
+  *"Accept-Language: ko"*) printf '%s' '{"title":"제목","description":"한국어\nshared block","constraints":"- 제약"}' ;;
+  *) printf '%s' '{"title":"Title","description":"English\nshared block\nonly english","constraints":"- limit"}' ;;
 esac
 STUB
 chmod +x "$tmp/bin/curl"
@@ -25,7 +25,10 @@ printf 'only english' > "$tmp/one"
 if run some-slug --contains "$tmp/one" >"$tmp/out"; then fail "text in one language should fail"; fi
 grep -q '^ko: NOT FOUND$' "$tmp/out" || fail "should name the language missing the text"
 
-run some-slug | grep -q '^--- ko ---$' || fail "plain output should print both languages"
+run some-slug > "$tmp/plain"
+grep -q '^--- ko ---$' "$tmp/plain" || fail "plain output should print both languages"
+grep -q '^title: 제목$' "$tmp/plain" || fail "plain output should print the title"
+grep -q '^- limit$' "$tmp/plain" || fail "plain output should print the constraints"
 
 code=0
 run missing >/dev/null 2>&1 || code=$?

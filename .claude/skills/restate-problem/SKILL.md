@@ -23,15 +23,15 @@ Work in your own worktree, per CLAUDE.md. One Restatement is one commit.
 
 ## 1. Read the problem as it stands
 
-1. Print the problem as it stands, English and Korean text and sample Test Cases: `scripts/problem-text.sh <slug>`. It reads the local database (`docker compose -f infra/docker-compose.yml up -d`) and warns when the database hasn't run this checkout's migrations; start the backend once to apply them. Without a database, the newest migration that sets each column wins: `grep -ln '<slug>' common/src/main/resources/db/migration/` and read from the highest version down, minding Former Slugs in older migrations.
+1. From your worktree, print the problem as it stands, English and Korean text and sample Test Cases: `scripts/problem-text.sh <slug>`. It reads the local database (`docker compose -f infra/docker-compose.yml up -d`) and warns when the database hasn't run this checkout's migrations; the main checkout can trail `origin/master` along with its database, and then nothing warns. On that warning, start `scripts/dev-branch-servers.sh` and rerun with `CODEBITE_DB=<the database it prints>`. Without a database, the newest migration that sets each column wins: `grep -ln '<slug>' common/src/main/resources/db/migration/` and read from the highest version down, minding Former Slugs in older migrations.
 2. Read all 4 Drivers and all 4 Starter Code files.
-3. Compare with production, since a Restatement overwrites any edit made through the admin page: `scripts/prod-text.sh <slug>`.
+3. Compare with production, since a Restatement overwrites any edit made through the admin page: `scripts/prod-text.sh <slug>` prints each language's title, description and constraints. A difference from step 1 is such an edit: carry it into the new statement.
 
-Done when you can state, from the Test Cases alone, what the problem computes, and every example in the current description matches a sample case.
+Done when you can state, from the Test Cases alone, what the problem computes, every example in the current description matches a sample case, and every production edit is noted.
 
 ## 2. Write the new statement
 
-1. Draft the English title, description and constraints, then the Korean ones, following the house style of recent Restatements (`V192__rename_product_of_all_other_elements.sql` is the model: a direct statement, **Example N:** blocks, constraints as a bullet list). Carry every Diagram (a ` ```diagram-* ` block, `.claude/skills/add-diagram/SKILL.md`) over byte for byte, under the same example in both languages: its data is the Test Cases', which stay.
+1. Draft the English title, description and constraints, then the Korean ones, following the house style of recent Restatements (`V192__rename_product_of_all_other_elements.sql` is the model: a direct statement, **Example N:** blocks, constraints as a bullet list). Keep each example's Input and Output on one line each, even when the requested text wraps them: `DiagramsMatchExamplesTest` reads the `Output:` line alone. Carry every Diagram (a ` ```diagram-* ` block, `.claude/skills/add-diagram/SKILL.md`) over byte for byte, under the same example in both languages: its data is the Test Cases', which stay.
 2. Pick the Slug: kebab-case of the new title. It must be neither a current Slug nor a Former Slug (`ProblemRepository.isSlugTaken`; check both tables, or `ls common/src/main/resources/drivers/` plus `problem_former_slugs`).
 3. Pick the method and parameter names, if they change. Every name in the description's examples must match a name in the Starter Code.
 
@@ -79,20 +79,20 @@ Done when that grep finds nothing outside the migrations and the problem's row i
 
 ## 5. Verify
 
-1. `./gradlew :common:test --tests '*DriverStarterMethodTest' --tests '*ProblemAssetsTest'` and `./gradlew :backend:test --tests '*ProblemSlugsTest' --tests '*MigrationSlugReferencesTest' --tests '*ProblemGuaranteesTest'`. ProblemSlugsTest runs every migration and goes red when a Slug and its asset directories disagree, or a Former Slug clashes with a Slug. MigrationSlugReferencesTest goes red when a `WHERE slug = …` names a slug no problem has when the migration runs (an UPDATE that silently matches nothing), e.g. one another branch Restated first: rebase, and point the migration at the current Slug.
-2. Apply the migration to the local database (restart `bootRun`) and read the result back:
+1. `./gradlew :common:test --tests '*DriverStarterMethodTest' --tests '*ProblemAssetsTest'` and `./gradlew :backend:test --tests '*ProblemSlugsTest' --tests '*MigrationSlugReferencesTest' --tests '*ProblemGuaranteesTest' --tests '*DiagramMigrationTest' --tests '*DiagramsMatchExamplesTest'`. ProblemSlugsTest runs every migration and goes red when a Slug and its asset directories disagree, or a Former Slug clashes with a Slug. MigrationSlugReferencesTest goes red when a `WHERE slug = …` names a slug no problem has when the migration runs (an UPDATE that silently matches nothing), e.g. one another branch Restated first: rebase, and point the migration at the current Slug.
+2. Start `scripts/dev-branch-servers.sh` from your worktree: it migrates a database of its own and prints that database and the backend and frontend ports. Read the result back:
    ```bash
-   docker exec codebite-postgres psql -U codebite -d codebite -c "
+   docker exec codebite-postgres psql -U codebite -d <its database> -c "
      SELECT p.slug, p.title, t.title, f.slug AS former
      FROM problems p JOIN problem_translations t ON t.problem_id = p.id AND t.locale = 'ko'
      LEFT JOIN problem_former_slugs f ON f.problem_id = p.id
      WHERE p.slug = '<new-slug>'"
    ```
-3. Run a reference solution written against the new Starter Code through the Run endpoint, so Java and C++ compile against the renamed Drivers and every sample passes:
-   `curl -s -X POST localhost:8080/api/problems/<new-slug>/run -H 'Content-Type: application/json' -d '{"language":"<language>","sourceCode":"…"}'` for each of the 4 Languages.
-4. Open `http://localhost:5173/problems/<old-slug>`: the page lands on `/problems/<new-slug>`.
+3. Run a reference solution written against the new Starter Code through the Run endpoint, so Java and C++ compile against the renamed Drivers and every sample passes, one Run every 5 s (a sooner one answers 429):
+   `curl -s -X POST http://127.0.0.1:<backend port>/api/problems/<new-slug>/run -H 'Content-Type: application/json' -d '{"language":"<language>","sourceCode":"…"}'` for each of the 4 Languages.
+4. Open `http://127.0.0.1:<frontend port>/problems/<old-slug>`: the page lands on `/problems/<new-slug>`.
 
-Done when all four are green for all 4 Languages.
+Done when all four are green for all 4 Languages. Then `scripts/dev-branch-servers.sh stop`.
 
 ## 6. Commit and PR
 
