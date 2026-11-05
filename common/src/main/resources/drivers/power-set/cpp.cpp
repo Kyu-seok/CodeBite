@@ -17,7 +17,7 @@ int main() {
     stringstream ss(inner);
     string token;
     while (getline(ss, token, ',')) nums.push_back(stoi(token));
-    vector<vector<int>> result = Solution().subsetsWithDup(nums);
+    vector<vector<int>> result = Solution().powerSet(nums);
     for (auto& s : result) sort(s.begin(), s.end());
     sort(result.begin(), result.end());
     cout << JsonOutput::intVector2D(result) << endl;

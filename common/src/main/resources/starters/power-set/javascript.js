@@ -3,7 +3,7 @@ class Solution {
      * @param {number[]} nums
      * @return {number[][]}
      */
-    subsetsWithDup(nums) {
+    powerSet(nums) {
         // Write your solution here
     }
 }

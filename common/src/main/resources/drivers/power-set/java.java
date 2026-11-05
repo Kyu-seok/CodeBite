@@ -12,7 +12,7 @@ public class Main {
         String[] parts = inner.split(",");
         int[] nums = new int[parts.length];
         for (int i = 0; i < parts.length; i++) nums[i] = Integer.parseInt(parts[i].trim());
-        List<List<Integer>> result = new Solution().subsetsWithDup(nums);
+        List<List<Integer>> result = new Solution().powerSet(nums);
         for (List<Integer> sub : result) Collections.sort(sub);
         result.sort((a, b) -> {
             for (int i = 0; i < Math.min(a.size(), b.size()); i++) {

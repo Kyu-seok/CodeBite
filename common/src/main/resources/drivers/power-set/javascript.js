@@ -2,7 +2,7 @@
 
 const input = require('fs').readFileSync('/dev/stdin', 'utf8').trim();
 const nums = JSON.parse(input);
-const result = new Solution().subsetsWithDup(nums);
+const result = new Solution().powerSet(nums);
 result.forEach(s => s.sort((a, b) => a - b));
 result.sort((a, b) => {
     for (let i = 0; i < Math.min(a.length, b.length); i++) {
