@@ -73,8 +73,9 @@ Leave out the `problem_former_slugs` insert and the `slug =` line when the Slug 
 2. When the method or parameter names change: edit all 4 Starter Code files and all 4 Drivers together. The Driver's call (`new Solution().<method>(…)`, `Solution().<method>(…)`) must name the Starter Code's method. Rename the Driver's local variables to match too, so the files read alike. Touch nothing in a Driver beyond names: its parsing and printing are what make the Test Cases pass.
 3. When the Slug changes and the problem has a Guarantee (`backend/src/test/java/com/codebite/problem/guarantee/`), rename it and its `slug()` to match; `ProblemGuaranteesTest` fails on a Guarantee whose Slug no problem has.
 4. `git grep -n '<old-slug>\|<oldMethod>'` outside `db/migration/` and update every hit: tests, frontend, docs. Older migrations stay as they are: Flyway runs them before yours, under the old names.
+5. When the Slug or title changes: update the CodeBite Name and CodeBite Slug in the problem's row of `docs/PROBLEMS_MAPPING.md` (gitignored: it exists only in the main checkout, `/Users/kyu/Work/CodeBite/docs/`, so that grep misses it and the commit leaves it out). The problem number and LeetCode columns stay.
 
-Done when that grep finds nothing outside the migrations.
+Done when that grep finds nothing outside the migrations and the problem's row in `PROBLEMS_MAPPING.md` shows its new title and Slug.
 
 ## 5. Verify
 
