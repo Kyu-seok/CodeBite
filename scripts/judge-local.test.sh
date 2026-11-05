@@ -56,6 +56,21 @@ run piggy-bank-total --languages python
 check "a problem without Test Cases fails" "$code" 1
 contains "no Test Cases is said" "$out" "NO_TEST_CASES"
 
+# --- from another database ----------------------------------------------------------------------
+
+rm -f "$fake/docker.log"
+echo '{"slug": "piggy-bank-total", "test_cases": [{"input": "3\n4", "expected_output": "7"}]}' > "$fake/export.json"
+run piggy-bank-total --languages python
+contains "the codebite database is the default" "$(cat "$fake/docker.log")" "-d codebite "
+
+rm -f "$fake/docker.log"
+export CODEBITE_DB=codebite_branch
+run piggy-bank-total --languages python
+unset CODEBITE_DB
+check "a branch database's cases pass" "$code" 0
+contains "CODEBITE_DB names the database" "$(cat "$fake/docker.log")" "-d codebite_branch "
+if grep -q -- "-d codebite " "$fake/docker.log"; then echo "FAIL: CODEBITE_DB should replace the default"; fail=1; fi
+
 # --- from a file, before the migration exists -------------------------------------------------
 
 rm -f "$fake/docker.log"
