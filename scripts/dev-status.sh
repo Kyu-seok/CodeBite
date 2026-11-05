@@ -8,6 +8,7 @@
 #   PROD       it carries a value from the production infra/.env (see scripts/dev-env.sh)
 #   BEHIND     the database lacks a migration this checkout has; the backend applies it on start
 #   UNREACHABLE  Judge0 doesn't answer, so every Run and Submit fails; known before a UI check is planned
+#   MAPPING    a row of the main checkout's gitignored docs/PROBLEMS_MAPPING.md disagrees with the database
 #
 # Branch servers (scripts/dev-branch-servers.sh: own ports, database, Kafka topics) are named as
 # such. Another checkout's branch servers are another session's, never a problem here.
@@ -195,6 +196,14 @@ if [[ -n "$branch_db" ]]; then
       problems=1
     fi
   fi
+fi
+
+# Only against a database that isn't BEHIND: a newer checkout's Restatement would read as a difference.
+mapping="$main/docs/PROBLEMS_MAPPING.md"
+if [[ -f "$mapping" && -n "$db" ]] && (( db >= ours )); then
+  docker exec codebite-postgres psql -U codebite -d codebite -tAF $'\t' \
+    -c "SELECT problem_number, title, slug FROM problems WHERE problem_number IS NOT NULL ORDER BY problem_number" 2>/dev/null \
+    | python3 -I "$here/scripts/check-problems-mapping.py" "$mapping" || problems=1
 fi
 
 if [[ $found -eq 1 && $problems -eq 0 ]]; then
