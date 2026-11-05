@@ -1,4 +1,8 @@
 import { describe, expect, it } from "vitest";
+import cppStarter from "../../../common/src/main/resources/starters/piggy-bank-total/cpp.cpp?raw";
+import javaStarter from "../../../common/src/main/resources/starters/piggy-bank-total/java.java?raw";
+import javascriptStarter from "../../../common/src/main/resources/starters/piggy-bank-total/javascript.js?raw";
+import pythonStarter from "../../../common/src/main/resources/starters/piggy-bank-total/python.py?raw";
 import {
   afterEditorEscape,
   linesToFill,
@@ -195,6 +199,21 @@ describe("linesToFill", () => {
       "\n",
     );
     expect(linesToFill(js)).toEqual({ start: 3, end: 3 });
+  });
+
+  // The real files: a reworded Starter Code would otherwise lose the mark with every test still green.
+  it.each([
+    ["python", pythonStarter, "pass"],
+    ["java", javaStarter, "return 0;"],
+    ["cpp", cppStarter, "return 0;"],
+    ["javascript", javascriptStarter, "Write your solution here"],
+  ])("marks the placeholder in the Tutorial Problem's %s starter", (_language, code, standIn) => {
+    const lines = code.split("\n");
+    const marked = linesToFill(code);
+    expect(marked).not.toBeNull();
+    expect(lines[marked!.start - 1]).toContain("Write your solution here");
+    expect(lines[marked!.end - 1]).toContain(standIn);
+    expect(lines.slice(0, marked!.start - 1).join("\n")).toContain("firstBank + secondBank");
   });
 
   it("marks nothing once the placeholder is gone, so the whole editor is spotlit instead", () => {
