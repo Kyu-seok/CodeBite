@@ -6,6 +6,8 @@
 #   scripts/judge-local.sh <slug>                                # Test Cases from the local database
 #   scripts/judge-local.sh <slug> --languages java,cpp           # just those Languages
 #   scripts/judge-local.sh <slug> --cases cases.json             # Test Cases not in a migration yet
+#   CODEBITE_DB=<database> scripts/judge-local.sh <slug>         # a database other than codebite, such as
+#                                                                # the one scripts/dev-branch-servers.sh prints
 #
 # Reference solutions are scripts/replay-solutions/<slug>.<py|java|js|cpp>, Solution class only, as
 # a user would submit it. A Former Slug works for the database. cases.json is a list of
@@ -36,7 +38,8 @@ work=$(mktemp -d "${TMPDIR:-/tmp}/judge-local.XXXXXX")
 trap 'rm -rf "$work"' EXIT
 
 if [[ -z "$cases_file" ]]; then
-  psql() { docker exec -i codebite-postgres psql -U codebite -d codebite -X -q -v ON_ERROR_STOP=1 -tA "$@"; }
+  database=${CODEBITE_DB:-codebite}
+  psql() { docker exec -i codebite-postgres psql -U codebite -d "$database" -X -q -v ON_ERROR_STOP=1 -tA "$@"; }
   if ! db=$(psql -c "SELECT max(version::int) FROM flyway_schema_history WHERE success AND version ~ '^[0-9]+\$'" </dev/null 2>/dev/null); then
     echo "judge-local.sh: database not reachable (docker container codebite-postgres); pass --cases instead" >&2
     exit 2
@@ -44,7 +47,7 @@ if [[ -z "$cases_file" ]]; then
   ours=$(find "$root/common/src/main/resources/db/migration" "$root/common/src/main/java/db/migration" \
     -name 'V*__*' | sed -E 's|.*/V([0-9]+)__.*|\1|' | sort -n | tail -n 1)
   if (( db < ours )); then
-    echo "WARNING: database at V$db, this checkout's migrations reach V$ours; start the backend to apply them" >&2
+    echo "WARNING: database $database at V$db, this checkout's migrations reach V$ours; start scripts/dev-branch-servers.sh and rerun with CODEBITE_DB=<the database it prints>" >&2
   fi
   psql -v slug="$slug" > "$work/export.json" <<'SQL'
 SELECT json_build_object(
@@ -57,7 +60,7 @@ WHERE p.slug = :'slug'
    OR p.id IN (SELECT problem_id FROM problem_former_slugs WHERE slug = :'slug');
 SQL
   if [[ ! -s "$work/export.json" ]]; then
-    echo "judge-local.sh: no problem $slug in the local database (a slug or Former Slug)" >&2
+    echo "judge-local.sh: no problem $slug in database $database (a slug or Former Slug)" >&2
     exit 2
   fi
   # The current slug names the Driver, and the Test Cases go to the judge on their own.
