@@ -1,6 +1,6 @@
 class Solution {
 public:
-    vector<vector<int>> subsetsWithDup(vector<int>& nums) {
+    vector<vector<int>> powerSet(vector<int>& nums) {
         // Write your solution here
     }
 };

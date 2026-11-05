@@ -1,5 +1,5 @@
 class Solution {
-    public List<List<Integer>> subsetsWithDup(int[] nums) {
+    public List<List<Integer>> powerSet(int[] nums) {
         // Write your solution here
     }
 }

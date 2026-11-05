@@ -1,5 +1,5 @@
 class Solution:
-    def subsetsWithDup(self, nums: list[int]) -> list[list[int]]:
+    def powerSet(self, nums: list[int]) -> list[list[int]]:
         nums = sorted(nums)
         subsets: list[list[int]] = []
 
