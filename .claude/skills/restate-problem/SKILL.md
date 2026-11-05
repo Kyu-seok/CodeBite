@@ -80,7 +80,7 @@ Done when that grep finds nothing outside the migrations and the problem's row i
 
 ## 5. Verify
 
-1. `./gradlew :common:test --tests '*DriverStarterMethodTest' --tests '*ProblemAssetsTest'` and `./gradlew :backend:test --tests '*ProblemSlugsTest' --tests '*MigrationSlugReferencesTest' --tests '*ProblemGuaranteesTest' --tests '*DiagramMigrationTest' --tests '*DiagramsMatchExamplesTest'`. ProblemSlugsTest runs every migration and goes red when a Slug and its asset directories disagree, or a Former Slug clashes with a Slug. MigrationSlugReferencesTest goes red when a `WHERE slug = …` names a slug no problem has when the migration runs (an UPDATE that silently matches nothing), e.g. one another branch Restated first: rebase, and point the migration at the current Slug.
+1. `./gradlew :common:test --tests '*DriverStarterMethodTest' --tests '*ProblemAssetsTest'` and `./gradlew :backend:test --tests '*ProblemSlugsTest' --tests '*MigrationSlugReferencesTest' --tests '*ProblemGuaranteesTest' --tests '*DiagramMigrationTest' --tests '*DiagramsMatchExamplesTest' --tests '*StatementsMatchTestCasesTest'`. ProblemSlugsTest runs every migration and goes red when a Slug and its asset directories disagree, or a Former Slug clashes with a Slug. MigrationSlugReferencesTest goes red when a `WHERE slug = …` names a slug no problem has when the migration runs (an UPDATE that silently matches nothing), e.g. one another branch Restated first: rebase, and point the migration at the current Slug.
 2. Start `scripts/dev-branch-servers.sh` from your worktree: it migrates a database of its own and prints that database and the backend and frontend ports. Read the result back:
    ```bash
    docker exec codebite-postgres psql -U codebite -d <its database> -c "
