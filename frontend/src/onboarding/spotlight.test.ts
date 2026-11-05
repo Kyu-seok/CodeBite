@@ -178,6 +178,18 @@ describe("linesToFill", () => {
     expect(linesToFill(python)).toEqual({ start: 3, end: 4 });
   });
 
+  it("marks the placeholder, not the guide comments above it", () => {
+    const python = [
+      "class Solution:",
+      "    def totalCoins(self, firstBank: int, secondBank: int) -> int:",
+      "        # Add the two banks and return the total:",
+      "        # return firstBank + secondBank",
+      "        # Write your solution here",
+      "        pass",
+    ].join("\n");
+    expect(linesToFill(python)).toEqual({ start: 5, end: 6 });
+  });
+
   it("marks the comment alone when the body closes right after it", () => {
     const js = ["class Solution {", "    totalCoins(firstBank, secondBank) {", "        // Write your solution here", "    }", "}"].join(
       "\n",
