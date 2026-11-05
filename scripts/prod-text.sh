@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
-# Reads a problem's description from production's public API, English and Korean.
+# Reads a problem from production's public API, English and Korean.
 #
-#   scripts/prod-text.sh <slug>                  # prints both
+#   scripts/prod-text.sh <slug>                  # prints each language's title, description, constraints
 #   scripts/prod-text.sh <slug> --contains <file>
-#       exits 0 when both contain the file's text exactly, 1 when one doesn't
+#       exits 0 when both descriptions contain the file's text exactly, 1 when one doesn't
 #
 # Run --contains before merging a migration that replaces exact text and fails
 # without it: an edit through the admin page would otherwise stop the deploy.
 # Compare the plain output with scripts/problem-text.sh before a migration that
-# overwrites a description, which would discard such an edit.
+# overwrites a problem's text, which would discard such an edit.
 set -euo pipefail
 
 usage() { echo "usage: scripts/prod-text.sh <slug> [--contains <file>]" >&2; exit 2; }
@@ -29,11 +29,13 @@ for locale in en ko; do
   fi
   PROD_TEXT_NEEDLE_FILE=$needle_file PROD_TEXT_LOCALE=$locale python3 -I -c '
 import json, os, sys
-description = json.loads(sys.stdin.read())["description"]
+problem = json.loads(sys.stdin.read())
+description = problem["description"]
 locale = os.environ["PROD_TEXT_LOCALE"]
 needle_file = os.environ["PROD_TEXT_NEEDLE_FILE"]
 if not needle_file:
-    print(f"--- {locale} ---\n{description}")
+    title, constraints = problem.get("title"), problem.get("constraints")
+    print(f"--- {locale} ---\ntitle: {title}\n\n{description}\n\nconstraints:\n{constraints}")
     sys.exit(0)
 needle = open(needle_file, encoding="utf-8").read().removesuffix("\n")
 found = needle in description

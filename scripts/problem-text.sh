@@ -4,6 +4,8 @@
 #
 #   scripts/problem-text.sh <slug>         # a Former Slug works too
 #   scripts/problem-text.sh <slug> --all   # every Test Case, hidden ones too, by order_index
+#   CODEBITE_DB=<database> scripts/problem-text.sh <slug>   # a database other than codebite,
+#                                          # such as the one dev-branch-servers.sh prints
 #
 # Reading migrations instead means finding the newest one that sets each
 # column; the oldest grep match is usually stale. The database is only as new
@@ -21,7 +23,8 @@ if [[ $# -eq 2 ]]; then
 fi
 here=$(cd "$(dirname "$0")/.." && pwd)
 
-psql() { docker exec -i codebite-postgres psql -U codebite -d codebite -X -q -v ON_ERROR_STOP=1 "$@"; }
+database=${CODEBITE_DB:-codebite}
+psql() { docker exec -i codebite-postgres psql -U codebite -d "$database" -X -q -v ON_ERROR_STOP=1 "$@"; }
 
 if ! db=$(psql -tAc "SELECT max(version::int) FROM flyway_schema_history WHERE success AND version ~ '^[0-9]+\$'" 2>/dev/null); then
   echo "problem-text.sh: database not reachable (docker container codebite-postgres); start it: open -a Docker, then docker compose -f infra/docker-compose.yml up -d postgres" >&2
@@ -30,7 +33,7 @@ fi
 ours=$(find "$here/common/src/main/resources/db/migration" "$here/common/src/main/java/db/migration" \
   -name 'V*__*' | sed -E 's|.*/V([0-9]+)__.*|\1|' | sort -n | tail -n 1)
 if (( db < ours )); then
-  echo "WARNING: database at V$db, this checkout's migrations reach V$ours; start the backend to apply them" >&2
+  echo "WARNING: database $database at V$db, this checkout's migrations reach V$ours; start scripts/dev-branch-servers.sh and rerun with CODEBITE_DB=<the database it prints>" >&2
 fi
 
 out=$(psql -tA -v slug="$slug" -v all="$all" <<'SQL'
