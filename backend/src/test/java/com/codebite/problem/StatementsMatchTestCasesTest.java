@@ -46,7 +46,7 @@ class StatementsMatchTestCasesTest {
             "populating-next-pointers", "queue-from-stacks", "random-pick-bag",
             "reverse-linked-list", "running-median-timer", "sort-colors",
             "sum-root-to-leaf", "timestamp-value-store", "trapping-rain-water",
-            "valid-anagram", "valid-sudoku", "versioned-cells",
+            "valid-sudoku", "versioned-cells",
             "walls-and-gates", "wildcard-lexicon", "word-ladder",
             "word-search", "word-search-ii");
 
@@ -61,7 +61,7 @@ class StatementsMatchTestCasesTest {
     private static final Set<String> CONSTRAINTS_NAME_NO_PARAMETER = Set.of(
             "graph-valid-tree", "group-anagrams", "largest-rectangle-histogram",
             "longest-palindromic-substring", "peak-score-streak", "sort-colors",
-            "trapping-rain-water", "valid-anagram", "valid-sudoku",
+            "trapping-rain-water", "valid-sudoku",
             "walls-and-gates", "word-ladder", "word-search-ii");
 
     private static final Pattern MARKER = Pattern.compile("\\*\\*(?:Example|예시)(?: (\\d+))?:\\*\\*");
