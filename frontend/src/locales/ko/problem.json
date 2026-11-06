@@ -28,7 +28,8 @@
     "randomError": "랜덤 문제를 가져오지 못했습니다. 다시 시도해 주세요.",
     "tagsLoadError": "태그를 불러오지 못했습니다.",
     "statsLoadError": "진행 상황을 불러오지 못했습니다.",
-    "clearFilters": "필터 지우기"
+    "clearFilters": "필터 지우기",
+    "metaDescription": "주제와 난이도별 CodeBite 문제 전체와 정답률. Java, Python, JavaScript, C++로 풀고 즉시 채점받으세요."
   },
   "tabs": {
     "description": "설명",

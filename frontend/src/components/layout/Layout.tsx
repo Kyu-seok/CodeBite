@@ -230,6 +230,11 @@ export default function Layout() {
 
   const userInitial = user?.username?.charAt(0).toUpperCase() ?? '?';
   const isKorean = i18n.language === 'ko';
+
+  // The document's language follows the UI's, for screen readers and search engines alike.
+  useEffect(() => {
+    document.documentElement.lang = isKorean ? 'ko' : 'en'
+  }, [isKorean])
   const themeLabel = theme === 'light' ? t('switchToDark') : t('switchToLight');
 
   const handleToggleLanguage = () => {

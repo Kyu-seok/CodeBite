@@ -9,6 +9,8 @@ import { setSubmissionReview } from "@/api/reviews"
 import { notifyStreakChanged } from "@/api/streak"
 import { DESKTOP_QUERY, ProblemLayout, type PanelFunctions } from "@/components/layout/ProblemLayout"
 import { useMediaQuery } from "@/hooks/useMediaQuery"
+import { useDocumentMeta } from "@/hooks/useDocumentMeta"
+import { problemSummary } from "@/lib/headMeta"
 import Spinner from "@/components/ui/Spinner"
 import { Button } from "@/components/ui/Button"
 import { LeftPanel, CollapsedLeftStrip } from "./LeftPanel"
@@ -163,9 +165,19 @@ export default function ProblemDetailPage() {
     attempt.kind === "judging",
   )
 
-  useEffect(() => {
-    if (problem) document.title = `${problem.title} | CodeBite`
-  }, [problem])
+  // The canonical path uses the current Slug, so a Former Slug's page points at the current one;
+  // a slug that names nothing is marked noindex instead of being indexed as a page.
+  useDocumentMeta(
+    problem
+      ? {
+          title: `${problem.title} | CodeBite`,
+          description: problemSummary(problem.description),
+          path: `/problems/${problem.slug}`,
+        }
+      : error === "notFound"
+        ? { title: t("workspace.problemNotFound"), noindex: true }
+        : null,
+  )
 
   const editorErrors = useMemo<CodeError[]>(() => {
     const results = attempt.kind === "settled" ? attempt.result.results : []
