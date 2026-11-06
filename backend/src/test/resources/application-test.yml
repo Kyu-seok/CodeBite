@@ -16,6 +16,8 @@ spring:
     enabled: true
 
 app:
+  site:
+    base-url: https://code-bite.test
   kafka:
     enabled: false
   cache:
