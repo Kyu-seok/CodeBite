@@ -6,7 +6,10 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
-/** {@code tutorial}: this is the Tutorial Problem, which the detail page labels "Tutorial". */
+/**
+ * {@code tutorial}: this is the Tutorial Problem, which the detail page labels "Tutorial".
+ * {@code tags}: the problem's topics, as the list shows them, so the page can place it in the roadmap.
+ */
 public record ProblemDetail(
         Long id,
         Integer problemNumber,
@@ -20,6 +23,7 @@ public record ProblemDetail(
         List<TestCaseDto> sampleTestCases,
         Instant createdAt,
         Instant updatedAt,
-        boolean tutorial
+        boolean tutorial,
+        List<TagDto> tags
 ) {
 }

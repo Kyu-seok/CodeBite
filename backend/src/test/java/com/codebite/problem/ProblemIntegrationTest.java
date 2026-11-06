@@ -101,6 +101,8 @@ class ProblemIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("Snack Drawer Pair"))
                 .andExpect(jsonPath("$.slug").value("snack-drawer-pair"))
+                .andExpect(jsonPath("$.tags[0].name").value("Arrays & Hashing"))
+                .andExpect(jsonPath("$.tags[0].slug").value("arrays-and-hashing"))
                 .andExpect(jsonPath("$.description").isNotEmpty())
                 .andExpect(jsonPath("$.difficulty").value("EASY"))
                 .andExpect(jsonPath("$.starterCode.java").isNotEmpty())

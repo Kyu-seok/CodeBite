@@ -15,6 +15,8 @@ export interface PageMeta {
   path?: string
   /** A page that exists only to say something is missing: search engines must not index it. */
   noindex?: boolean
+  /** Schema.org JSON-LD describing the page (see lib/jsonLd). */
+  jsonLd?: object
 }
 
 export interface HeadTag {
