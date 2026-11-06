@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef } from 'react';
+import { Suspense, useState, useEffect, useMemo, useRef } from 'react';
 import { Link, NavLink, Outlet, useNavigate, useLocation, useMatch } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { CircleHelp, X } from 'lucide-react';
@@ -10,6 +10,7 @@ import { NavbarLogo } from '@/components/ui/NavbarLogo';
 import { StreakFlame } from './StreakFlame';
 import { useStartTutorial } from '@/hooks/useTutorial';
 import { cn } from '@/lib/utils';
+import Spinner from '@/components/ui/Spinner';
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/Tooltip';
 import {
   DropdownMenu,
@@ -502,7 +503,10 @@ export default function Layout() {
         </div>
       </header>
       <main id="main" tabIndex={-1} className="outline-none">
-        <Outlet context={outletContext} />
+        {/* A lazy page's chunk loads under the nav bar, not in place of it. */}
+        <Suspense fallback={<Spinner />}>
+          <Outlet context={outletContext} />
+        </Suspense>
       </main>
     </div>
   );
