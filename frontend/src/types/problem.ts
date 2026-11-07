@@ -50,4 +50,6 @@ export interface ProblemDetail {
   updatedAt: string;
   /** The Tutorial Problem, labelled "Tutorial". */
   tutorial: boolean;
+  /** The problem's topics, as the list shows them. */
+  tags: TagDto[];
 }

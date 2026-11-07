@@ -1,6 +1,7 @@
 {
   "meta": {
-    "title": "CodeBite"
+    "title": "CodeBite",
+    "description": "무료 코딩 인터뷰 연습: 19개 주제의 오리지널 알고리즘 문제 200개, Java·Python·JavaScript·C++ 즉시 채점, 간격 반복 복습."
   },
   "hero": {
     "badge": "《1만 시간의 재발견》 기반 학습 설계",

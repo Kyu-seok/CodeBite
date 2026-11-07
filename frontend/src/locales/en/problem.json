@@ -28,7 +28,8 @@
     "randomError": "Couldn't pick a random problem. Try again.",
     "tagsLoadError": "Couldn't load tags.",
     "statsLoadError": "Couldn't load your progress.",
-    "clearFilters": "Clear filters"
+    "clearFilters": "Clear filters",
+    "metaDescription": "All CodeBite problems by topic and difficulty, with acceptance rates. Solve in Java, Python, JavaScript or C++ and get judged instantly."
   },
   "tabs": {
     "description": "Description",

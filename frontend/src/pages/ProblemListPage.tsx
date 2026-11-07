@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next"
 import { useAuth } from "@/context/AuthContext"
 import { updateCuration as saveCuration, updateSinglePage as saveSinglePage } from "@/api/user"
 import { useProblems } from "../hooks/useProblems"
+import { useDocumentMeta } from "@/hooks/useDocumentMeta"
 import { useProblemStats } from "../hooks/useProblemStats"
 import { useTags } from "../hooks/useTags"
 import DifficultyBadge from "../components/ui/DifficultyBadge"
@@ -142,9 +143,8 @@ export default function ProblemListPage() {
     showAll ? 0 : page, pageSize, undefined, search || undefined, sort, tag || undefined, curation
   )
 
-  useEffect(() => {
-    document.title = t("list.title")
-  }, [t])
+  // One canonical URL for the list whatever filter, page or curation is in the query string.
+  useDocumentMeta({ title: t("list.title"), description: t("list.metaDescription"), path: "/problems" })
 
   // Debounce search input → URL param
   useEffect(() => {

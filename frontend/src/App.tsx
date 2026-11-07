@@ -1,4 +1,5 @@
 import "@/lib/i18n";
+import { lazy, Suspense } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { ThemeProvider } from "./context/ThemeContext";
@@ -8,21 +9,24 @@ import LandingPage from "./pages/landing";
 import LoginPage from "./pages/LoginPage";
 import OAuthCallbackPage from "./pages/OAuthCallbackPage";
 import ProblemListPage from "./pages/ProblemListPage";
-import ProblemDetailPage from "./pages/problem";
-import SolutionDetailPage from "./pages/problem/solutions/SolutionDetailPage";
-import SolutionEditorPage from "./pages/problem/solutions/SolutionEditorPage";
+// The problem workspace (with the Monaco editor), the solution editor and the admin pages load
+// on demand: the landing and list pages are visited far more often and need none of that code.
+const ProblemDetailPage = lazy(() => import("./pages/problem"));
+const SolutionDetailPage = lazy(() => import("./pages/problem/solutions/SolutionDetailPage"));
+const SolutionEditorPage = lazy(() => import("./pages/problem/solutions/SolutionEditorPage"));
 import RoadmapPage from "./pages/roadmap";
 import ProfilePage from "./pages/profile/ProfilePage";
 import GitHubCallbackPage from "./pages/GitHubCallbackPage";
 import ReviewsPage from "./pages/reviews/ReviewsPage";
 import ProtectedRoute from "./components/layout/ProtectedRoute";
-import AdminLayout from "./pages/admin/AdminLayout";
-import AdminDashboardPage from "./pages/admin/DashboardPage";
-import AdminProblemListPage from "./pages/admin/ProblemListPage";
-import AdminProblemEditPage from "./pages/admin/ProblemEditPage";
-import AdminUserListPage from "./pages/admin/UserListPage";
-import AdminUserSubmissionsPage from "./pages/admin/UserSubmissionsPage";
+const AdminLayout = lazy(() => import("./pages/admin/AdminLayout"));
+const AdminDashboardPage = lazy(() => import("./pages/admin/DashboardPage"));
+const AdminProblemListPage = lazy(() => import("./pages/admin/ProblemListPage"));
+const AdminProblemEditPage = lazy(() => import("./pages/admin/ProblemEditPage"));
+const AdminUserListPage = lazy(() => import("./pages/admin/UserListPage"));
+const AdminUserSubmissionsPage = lazy(() => import("./pages/admin/UserSubmissionsPage"));
 import NotFoundPage from "./pages/NotFoundPage";
+import Spinner from "./components/ui/Spinner";
 
 function App() {
   return (
@@ -30,6 +34,7 @@ function App() {
       <EditorSettingsProvider>
         <AuthProvider>
           <BrowserRouter>
+            <Suspense fallback={<Spinner />}>
             <Routes>
               <Route path="/login" element={<LoginPage />} />
               <Route path="/auth/callback/:provider" element={<OAuthCallbackPage />} />
@@ -68,6 +73,7 @@ function App() {
                 <Route path="*" element={<NotFoundPage />} />
               </Route>
             </Routes>
+            </Suspense>
           </BrowserRouter>
         </AuthProvider>
       </EditorSettingsProvider>

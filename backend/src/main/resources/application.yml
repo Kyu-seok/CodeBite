@@ -57,6 +57,8 @@ management:
         http.server.requests: true
 
 app:
+  site:
+    base-url: ${CODEBITE_BASE_URL:https://code-bite.com}  # the public origin the sitemap lists pages under
   scheduling:
     enabled: ${SCHEDULING_ENABLED:true}
   kafka:
