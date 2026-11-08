@@ -126,6 +126,10 @@ contains "--run reports its message" "$out" "  expected ACCEPTED but was WRONG_A
 contains "--run ends with the summary" "$out" "1 of 1 failed"
 lacks "--run keeps Gradle's own trace output out of the report" "$out" "at org.junit.Gradle"
 contains "--run names the log holding Gradle's output" "$out" "worker/build/test-failures-gradle.log"
+set +e; stdout=$(CODEBITE_ROOT=$fake "$script" worker --run 2>"$fake/stderr"); set -e
+lacks "--run keeps the log line off stdout, so stdout is only the report" "$stdout" "test-failures-gradle.log"
+check "--run's stdout starts with the report" "$(head -n 1 <<<"$stdout")" "com.codebite.worker.SubmissionConsumerTest > gradesEveryCase()"
+contains "--run names the log on stderr" "$(cat "$fake/stderr")" "worker/build/test-failures-gradle.log"
 contains "the log holds Gradle's output" "$(cat "$fake/worker/build/test-failures-gradle.log")" "at org.junit.Gradle"
 
 rm -r "$fake/worker/build/test-results"

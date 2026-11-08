@@ -156,6 +156,7 @@ Every kind must read at the width of the problem page's description pane (about 
 | `IntervalsDiagram.tsx` | Pure SVG. One row per interval in input order, a `[start, end]` label left of a bar on one shared axis (round-step ticks, see `diagram-intervals`); guide lines at shared endpoints, dashed `points` markers, a dashed accent `added` row. Pair layout when `after` is provided, both sides on the same axis range and label column; the pair stacks (arrow pointing down) until its container is 42rem wide, since side by side in the description pane each chart shrinks to half its size and its labels become unreadable. |
 | `BeforeAfterPair.tsx` (shared) | Wraps two diagrams in a flex row with a hollow right-pointing SVG arrow between them. Falls back to stacked layout on narrow viewports. Used by every diagram component when its `after` field is set. |
 | `parseDirective.ts` | One small parser shared across every diagram kind. Each `key: value` line is parsed independently; the value side accepts JSON literals (arrays, numbers, booleans). |
+| `parseDiagram.ts` | The one map from a fence's info string (`diagram-tree`, …) to its parser: `parseDiagram(info, body)` returns the tagged spec or the message saying why the block isn't drawn. `MarkdownRenderer` and the dev gallery (`pages/dev/diagramGallery.ts`) both call it, so a new kind is one entry here plus its component case in the renderer. |
 
 **Markdown integration** (single edit to `frontend/src/components/markdown/MarkdownRenderer.tsx`):
 

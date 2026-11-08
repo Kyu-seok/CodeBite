@@ -9,25 +9,18 @@ import { GraphDiagram } from "./diagrams/GraphDiagram"
 import { GridDiagram } from "./diagrams/GridDiagram"
 import { LinkedListDiagram } from "./diagrams/LinkedListDiagram"
 import { IntervalsDiagram } from "./diagrams/IntervalsDiagram"
-import {
-  parseTreeDirective,
-  parseGraphDirective,
-  parseGridDirective,
-  parseLinkedListDirective,
-  parseIntervalsDirective,
-} from "./diagrams/parseDirective"
+import { parseDiagram, type ParsedDiagram } from "./diagrams/parseDiagram"
 
 interface MarkdownRendererProps {
   source: string
   className?: string
 }
 
-// Render a `diagram-*` fenced block as a custom component. On parse error,
-// returns null so the caller renders the raw code block as a fallback.
-function renderDiagram(language: string, body: string): ReactElement | null {
-  try {
-    if (language === "diagram-tree") {
-      const spec = parseTreeDirective(body)
+// Draw a parsed `diagram-*` block as its component; one case per kind parseDiagram knows.
+function drawDiagram(diagram: ParsedDiagram): ReactElement {
+  switch (diagram.info) {
+    case "diagram-tree": {
+      const spec = diagram.spec
       return (
         <TreeDiagram
           nodes={spec.nodes}
@@ -36,8 +29,8 @@ function renderDiagram(language: string, body: string): ReactElement | null {
         />
       )
     }
-    if (language === "diagram-graph") {
-      const spec = parseGraphDirective(body)
+    case "diagram-graph": {
+      const spec = diagram.spec
       return (
         <GraphDiagram
           edges={spec.edges}
@@ -48,8 +41,8 @@ function renderDiagram(language: string, body: string): ReactElement | null {
         />
       )
     }
-    if (language === "diagram-grid") {
-      const spec = parseGridDirective(body)
+    case "diagram-grid": {
+      const spec = diagram.spec
       return (
         <GridDiagram
           cells={spec.cells}
@@ -60,8 +53,8 @@ function renderDiagram(language: string, body: string): ReactElement | null {
         />
       )
     }
-    if (language === "diagram-linked-list") {
-      const spec = parseLinkedListDirective(body)
+    case "diagram-linked-list": {
+      const spec = diagram.spec
       return (
         <LinkedListDiagram
           nodes={spec.nodes}
@@ -71,8 +64,8 @@ function renderDiagram(language: string, body: string): ReactElement | null {
         />
       )
     }
-    if (language === "diagram-intervals") {
-      const spec = parseIntervalsDirective(body)
+    case "diagram-intervals": {
+      const spec = diagram.spec
       return (
         <IntervalsDiagram
           intervals={spec.intervals}
@@ -83,10 +76,7 @@ function renderDiagram(language: string, body: string): ReactElement | null {
         />
       )
     }
-  } catch {
-    // Fall through — caller renders the raw block instead.
   }
-  return null
 }
 
 const components: Components = {
@@ -95,9 +85,9 @@ const components: Components = {
     const language = match?.[1]
     if (language?.startsWith("diagram-")) {
       const body = String(children).replace(/\n$/, "")
-      const rendered = renderDiagram(language, body)
-      if (rendered) return rendered
-      // Parse error → fall through to default code rendering with the raw body.
+      const parsed = parseDiagram(language, body)
+      if (parsed.ok) return drawDiagram(parsed.diagram)
+      // Unknown kind or parse error → fall through to default code rendering with the raw body.
     }
     return (
       <code className={className} {...props}>

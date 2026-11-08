@@ -24,7 +24,7 @@ const REVERSE_LIST = [
 ].join("\n");
 
 describe("findDiagramBlocks", () => {
-  it("finds a Diagram with its kind, body and the Example it sits under", () => {
+  it("finds a Diagram with its kind, body and the example it sits under", () => {
     expect(findDiagramBlocks(REVERSE_LIST)).toEqual([
       {
         info: "diagram-linked-list",
@@ -38,7 +38,7 @@ describe("findDiagramBlocks", () => {
 });
 
 describe("findDiagramBlocks across examples", () => {
-  it("credits each Diagram to the Example above it and skips the Input fences", () => {
+  it("credits each Diagram to the example above it and skips the Input fences", () => {
     const sudoku = [
       "**Example 1:**",
       "```",
@@ -62,7 +62,7 @@ describe("findDiagramBlocks across examples", () => {
     ]);
   });
 
-  it("reports no Example for a Diagram above the first marker", () => {
+  it("reports no example for a Diagram above the first marker", () => {
     const blocks = findDiagramBlocks("Intro.\n```diagram-tree\nnodes: [1]\n```\n**Example 1:**\n```\nInput: x\n```");
     expect(blocks).toHaveLength(1);
     expect(blocks[0].example).toBeNull();

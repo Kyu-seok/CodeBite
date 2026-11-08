@@ -89,11 +89,11 @@ The GitHub App behind Solution Commits is registered by hand: run `scripts/setup
 ### Layout and gotchas
 `docs/agents/backend.md` lists which package holds what, and the test doubles; open it to place a class or find one. What an `ls` won't tell you:
 - `ProblemAdminService`: a title edit keeps the Slug, since the Driver and Starter Code are filed under it.
-- `progress/UserProgress` owns what Solved and Attempted mean (Accepted/graded, non-admin, PENDING is neither); `ProblemPopularity` reads the Acceptance Rate from `problem_stats` (maintained by `stats/consumer/SubmissionStatsListener`, backfilled once by V195), and a problem with no row reads `Rate.NONE`.
-- `ReviewService` rates a submission by replaying the other submissions' Reviews through `ReviewSchedule` and rating on top, stores the snapshot row or deletes it when no Review is left, and previews intervals the same way.
+- `progress/UserProgress` owns what Solved and Attempted mean: Accepted/graded, non-admin, PENDING is neither.
+- `ReviewService` rates a submission by replaying the other submissions' Reviews through `ReviewSchedule` and rating on top (a preview runs the same replay), stores the snapshot row or deletes it when no Review is left, and lists Due problems from that stored row.
 - Streak days are UTC days (docs/adr/0001); terms in GLOSSARY.md.
 - `KafkaConsumerConfig` has one container factory per `submission-results` listener plus one for `github-imports`; a new listener needs its own group and factory.
-- `SolutionCommitListener` never throws: every ACCEPTED event of a user with an ACTIVE link becomes a Solution Commit (a problem folder's first one adds README + solution in one commit via `pushCommits`); transient GitHub errors retry with doubling back-off per `app.github.commit-max-tries` / `commit-retry-backoff-ms`, then FAILED; a gone installation or repository marks the link BROKEN, after which submissions are skipped until relink.
+- `SolutionCommitListener` never throws: a transient GitHub error retries with doubling back-off and then marks the Solution Commit FAILED, while a gone installation or repository marks the link BROKEN and every later submission is skipped until relink.
 - An Import pushes every earlier Accepted submission not yet COMMITTED through the link in one batch (`GitHubGateway.pushCommits`, JGit in `gateway/GitBatchPush`, remote base `app.github.git-base-url`).
 - `GitHubExceptionHandler` is ordered ahead of `GlobalExceptionHandler`, mapping gateway exceptions to 403/503/502.
 - Tests swap in `FakeGitHubGateway` via `TestGitHubConfig`; `TestKafkaConfig` runs Imports synchronously.

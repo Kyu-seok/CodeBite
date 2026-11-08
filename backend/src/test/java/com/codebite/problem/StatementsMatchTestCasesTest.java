@@ -157,18 +157,18 @@ class StatementsMatchTestCasesTest {
             List<String> problems = check.apply(statement);
             if (problems.isEmpty()) continue;
             breaking.add(statement.slug());
-            findings.add(new Finding(statement.slug(), statement.locale(), problems));
+            findings.add(new Finding(statement.slug(), statement.name(), problems));
             if (!listed.contains(statement.slug())) messages.add(statement.name() + ": " + problems);
         }
-        report(name, listed, findings);
+        report(name, listed, breaking, findings);
         stale(listed, breaking).ifPresent(messages::add);
         assertTrue(messages.isEmpty(), String.join("\n", messages)
                 + "\nbreaking now (" + breaking.size() + "): " + breaking);
     }
 
-    private static void report(String name, Set<String> listed, List<Finding> findings) {
+    private static void report(String name, Set<String> listed, Set<String> breaking, List<Finding> findings) {
         try {
-            StatementReport.write(StatementReport.DIRECTORY, name, listed, findings);
+            StatementReport.write(StatementReport.DIRECTORY, name, listed, breaking, findings);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }

@@ -162,7 +162,7 @@ export default function DiagramGalleryPage() {
                   {slug}
                 </Link>
                 <span className="text-muted-foreground">
-                  {block.example === null ? "no Example" : `Example ${block.example}`} · {block.kind}
+                  {block.example === null ? "no example" : `Example ${block.example}`} · {block.kind}
                 </span>
                 {!published && (
                   <span className="rounded bg-muted px-1.5 py-0.5 text-xs text-muted-foreground">unpublished</span>

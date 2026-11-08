@@ -8,7 +8,8 @@
 #                                              # <module>/build/test-results/test/TEST-*.xml
 #   scripts/test-failures.sh <module> --run    # ./gradlew :<module>:test -q first, then reports;
 #                                              # Gradle's own output (the full traces) goes to
-#                                              # <module>/build/test-failures-gradle.log
+#                                              # <module>/build/test-failures-gradle.log, named
+#                                              # on stderr so stdout stays the report alone
 #
 # Plain text, no colour: it is read by agents more than by people. Gradle's own output keeps the
 # full traces (root build.gradle, testLogging exceptionFormat 'full') for whoever wants them.
@@ -30,7 +31,7 @@ log=$module/build/test-failures-gradle.log
 if $run; then
   mkdir -p "$root/$module/build"
   (cd "$root" && ./gradlew ":$module:test" -q) >"$root/$log" 2>&1 || true
-  echo "test-failures.sh: Gradle's output is in $log"
+  echo "test-failures.sh: Gradle's output is in $log" >&2
 fi
 
 if ! compgen -G "$results/TEST-*.xml" >/dev/null; then
@@ -51,13 +52,13 @@ total = failed = 0
 for path in sorted(glob.glob(sys.argv[1] + "/TEST-*.xml")):
     for case in ET.parse(path).getroot().iter("testcase"):
         total += 1
-        problem = case.find("failure")
-        if problem is None:
-            problem = case.find("error")
-        if problem is None:
+        failure = case.find("failure")
+        if failure is None:
+            failure = case.find("error")
+        if failure is None:
             continue
         failed += 1
-        message = problem.get("message") or problem.get("type") or "(no message)"
+        message = failure.get("message") or failure.get("type") or "(no message)"
         print(f"{case.get('classname')} > {case.get('name')}")
         for line in message.splitlines() or [message]:
             print(f"  {line}")
