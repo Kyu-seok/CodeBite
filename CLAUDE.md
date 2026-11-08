@@ -63,7 +63,7 @@ Rewording a problem while its Test Cases stay (Slug, title, description, Starter
 `.claude/skills/correct-test-cases/SKILL.md`. `ProblemGuaranteesTest` and `TestCasePositionsTest` (backend) check every migrated case; tests that read migrated rows use `MigratedDatabase`, since H2 keeps `E'…\n…'` escapes as a backslash and an `n`.
 
 ### Diagrams
-Diagrams are ` ```diagram-* ` blocks in a description, drawn by `frontend/src/components/markdown/diagrams/`; the kinds and their keys are in `docs/PROBLEM_DIAGRAMS_ROADMAP.md`. To add one, follow `.claude/skills/add-diagram/SKILL.md`.
+Diagrams are ` ```diagram-* ` blocks in a description, drawn by `frontend/src/components/markdown/diagrams/`; the kinds and their keys are in `docs/PROBLEM_DIAGRAMS_ROADMAP.md`. To add one, follow `.claude/skills/add-diagram/SKILL.md`. To look at them all, `/dev/diagrams` (Vite dev mode only, ADMIN session) draws every problem's Diagrams on one page at 360, 640 or 900px, published or not, flagging a directive that doesn't parse; the decisions behind it are the pure `frontend/src/pages/dev/diagramGallery.ts`.
 
 ### Resources (`common/src/main/resources/`)
 - `db/migration/` — Flyway SQL migrations; Java ones live in `common/src/main/java/db/migration`, and a version is taken if it is in either
@@ -221,6 +221,7 @@ Vitest runs in Node with no DOM (no jsdom or Testing Library), so a component te
 | `/problems/:slug` | ProblemDetailPage | No (submit requires auth) |
 | `/profile` | ProfilePage | Yes |
 | `/github/callback` | GitHubCallbackPage (GitHub App install redirect; links the Solution Repository named on the profile card, with a retry on failure) | Yes |
+| `/dev/diagrams` | DiagramGalleryPage (Vite dev mode only, see Diagrams above; 404 in a production build) | ADMIN |
 | `*` | NotFoundPage | No |
 
 The problem workspace, solution pages and admin pages are `lazy` routes in `App.tsx`, so the Monaco editor is downloaded only when one of them opens; a page that must not reach the entry bundle is imported that way, never statically.
