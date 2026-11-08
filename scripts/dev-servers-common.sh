@@ -1,5 +1,6 @@
 # shellcheck shell=bash
-# Helpers scripts/dev-status.sh and scripts/dev-branch-servers.sh share. Sourcing it runs nothing.
+# Helpers scripts/dev-status.sh, scripts/dev-branch-servers.sh, scripts/problem-text.sh and
+# scripts/db-sql.sh share. Sourcing it runs nothing.
 
 # The main checkout, which runs the shared dev servers: the parent of the common .git, the same
 # from the main checkout and from every worktree.
@@ -26,11 +27,43 @@ env_value() {
   { ps eww -o command= -p "$1" 2>/dev/null || true; } | tr ' ' '\n' | sed -n "s/^$2=//p" | head -n 1
 }
 
-# The newest numbered migration database $1 has run; empty when it can't be read.
+# psql on the local database $1 (the codebite-postgres container), the rest of the arguments
+# psql's own; stdin goes through, so a query can arrive as a heredoc. Stops at the first error.
+db_psql() {
+  local database=$1
+  shift
+  docker exec -i codebite-postgres psql -U codebite -d "$database" -X -q -v ON_ERROR_STOP=1 "$@"
+}
+
+# The newest numbered migration database $1 has run; empty when it can't be read. Reads nothing
+# from stdin, so a query piped to the caller (scripts/db-sql.sh) stays for the caller.
 flyway_version() {
-  docker exec codebite-postgres psql -U codebite -d "$1" -tAc \
+  db_psql "$1" -tAc \
     "SELECT max(version::int) FROM flyway_schema_history WHERE success AND version ~ '^[0-9]+$'" \
-    2>/dev/null || true
+    </dev/null 2>/dev/null || true
+}
+
+# Highest Flyway version among checkout $1's migrations, SQL and Java.
+newest_migration() {
+  find "$1/common/src/main/resources/db/migration" "$1/common/src/main/java/db/migration" \
+    -name 'V*__*' 2>/dev/null | sed -E 's|.*/V([0-9]+)__.*|\1|' | sort -n | tail -n 1
+}
+
+# For a script reading database $1 from checkout $2: the database is only as new as the last
+# backend start, so this warns on stderr (BEHIND) when the checkout has migrations the database
+# hasn't run, naming both versions. Returns 1, with the message $3 (the script's name) prefixes,
+# when the database can't be read.
+warn_if_behind() {
+  local database=$1 here=$2 script=$3 db ours
+  db=$(flyway_version "$database")
+  if [[ -z "$db" ]]; then
+    echo "$script: database $database not reachable (docker container codebite-postgres); start it: open -a Docker, then docker compose -f infra/docker-compose.yml up -d postgres" >&2
+    return 1
+  fi
+  ours=$(newest_migration "$here")
+  if (( db < ours )); then
+    echo "WARNING: database $database at V$db, this checkout's migrations reach V$ours; start scripts/dev-branch-servers.sh and rerun with CODEBITE_DB=<the database it prints>" >&2
+  fi
 }
 
 # $1, a JUDGE0_URL from the shell, when it is a dev one to pass on (the user's Tailscale name for
