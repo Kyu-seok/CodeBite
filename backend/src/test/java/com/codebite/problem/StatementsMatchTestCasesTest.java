@@ -2,11 +2,14 @@ package com.codebite.problem;
 
 import com.codebite.judge.Language;
 import com.codebite.judge.program.ProblemAssets;
+import com.codebite.problem.StatementReport.Finding;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,6 +33,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * CONSTRAINTS_NAME_NO_PARAMETER hold the problems that break this today. They only shrink: an entry
  * that now passes, or names no problem (a Restatement renamed it), is a failure. A Restatement
  * fixes the problem and removes its entry.
+ *
+ * <p>A failure names only the unlisted problems. Every run also writes each check's mismatch lines,
+ * listed problems marked {@code [listed]}, to {@code backend/build/reports/statements/examples.txt}
+ * and {@code constraints.txt} ({@link StatementReport}): read those to see why a listed problem is
+ * listed, instead of emptying its set.
  */
 class StatementsMatchTestCasesTest {
 
@@ -110,7 +118,7 @@ class StatementsMatchTestCasesTest {
 
     @Test
     void everyExampleShowsItsSample() {
-        assertListed(EXAMPLES_DIFFER_FROM_SAMPLES, statement -> mismatches(statement.description(), samplesOf(statement),
+        assertListed("examples", EXAMPLES_DIFFER_FROM_SAMPLES, statement -> mismatches(statement.description(), samplesOf(statement),
                 !DRIVER_PRINTS_ANOTHER_FORM.contains(statement.slug())));
     }
 
@@ -129,7 +137,7 @@ class StatementsMatchTestCasesTest {
 
     @Test
     void constraintsNameOnlyParameters() {
-        assertListed(CONSTRAINTS_NAME_NO_PARAMETER, statement -> {
+        assertListed("constraints", CONSTRAINTS_NAME_NO_PARAMETER, statement -> {
             String starter = ASSETS.starters(statement.slug()).get(Language.PYTHON);
             if (starter == null) return List.of("no Python Starter Code");
             return namesOutsideParameters(statement.constraints(), starter);
@@ -140,18 +148,30 @@ class StatementsMatchTestCasesTest {
         return SAMPLES.getOrDefault(statement.slug(), List.of());
     }
 
-    private static void assertListed(Set<String> listed, Function<Statement, List<String>> check) {
+    /** Fails on an unlisted breaking problem or a stale entry; writes {@code <name>.txt} either way. */
+    private static void assertListed(String name, Set<String> listed, Function<Statement, List<String>> check) {
         Set<String> breaking = new TreeSet<>();
         List<String> messages = new ArrayList<>();
+        List<Finding> findings = new ArrayList<>();
         for (Statement statement : statements) {
             List<String> problems = check.apply(statement);
             if (problems.isEmpty()) continue;
             breaking.add(statement.slug());
+            findings.add(new Finding(statement.slug(), statement.name(), problems));
             if (!listed.contains(statement.slug())) messages.add(statement.name() + ": " + problems);
         }
+        report(name, listed, breaking, findings);
         stale(listed, breaking).ifPresent(messages::add);
         assertTrue(messages.isEmpty(), String.join("\n", messages)
                 + "\nbreaking now (" + breaking.size() + "): " + breaking);
+    }
+
+    private static void report(String name, Set<String> listed, Set<String> breaking, List<Finding> findings) {
+        try {
+            StatementReport.write(StatementReport.DIRECTORY, name, listed, breaking, findings);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
     private static Optional<String> stale(Set<String> listed, Set<String> breaking) {

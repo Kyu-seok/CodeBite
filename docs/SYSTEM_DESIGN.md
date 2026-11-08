@@ -353,37 +353,101 @@ _accounts
 
 ## 5. API Endpoints
 
-### Authentication (OAuth only — Google & GitHub)
-| Method | Path                                   | Description              | Auth |
-|--------|----------------------------------------|--------------------------|------|
-| GET    | /api/auth/oauth/{provider}             | Get authorization URL    | No   |
-| POST   | /api/auth/oauth/{provider}/callback    | Exchange code for JWT    | No   |
-| GET    | /api/auth/me                           | Get current user         | Yes  |
+Every endpoint is an `@*Mapping` in a backend controller (`backend/src/main/java/com/codebite/*/controller/`, plus `sitemap/SitemapController` and `onboarding/TutorialMilestoneController`); its request body is the `*Request` record in that package's `dto/`, its response the record the method returns. Auth: **No** = `permitAll` in `SecurityConfig`, **Yes** = a JWT (`anyRequest().authenticated()`), **ADMIN** = the controller's `@PreAuthorize("hasRole('ADMIN')")`.
 
-### Problems
-| Method | Path                          | Description                  | Auth  |
-|--------|-------------------------------|------------------------------|-------|
-| GET    | /api/problems                 | List problems (paginated)    | No    |
-| GET    | /api/problems/{slug}          | Problem detail + sample cases| No    |
-| POST   | /api/admin/problems           | Create problem               | ADMIN |
-| PUT    | /api/admin/problems/{id}      | Update problem               | ADMIN |
-| POST   | /api/admin/problems/{id}/test-cases | Add test case           | ADMIN |
+### Authentication (OAuth only — Google & GitHub)
+| Method | Path                                   | Description                                        | Auth |
+|--------|----------------------------------------|----------------------------------------------------|------|
+| GET    | /api/auth/oauth/{provider}             | Get authorization URL                              | No   |
+| POST   | /api/auth/oauth/{provider}/callback    | Exchange code for JWT + user                       | No   |
+| GET    | /api/auth/me                           | Current user (Redis-cached profile)                | Yes  |
+| POST   | /api/auth/logout                       | Blacklist the JWT (204)                            | Yes  |
+| POST   | /api/auth/test-token                   | Dev profile only: a JWT for `?username=&role=`     | No   |
+
+### Problems (public reads)
+| Method | Path                            | Description                                                        | Auth |
+|--------|---------------------------------|--------------------------------------------------------------------|------|
+| GET    | /api/problems                   | Published list, paginated; `difficulty`, `search`, `tag`, `curation` filters; Progress when signed in | No |
+| GET    | /api/problems/random            | `{slug}` of a random problem (`?difficulty`), unsolved first when signed in | No |
+| GET    | /api/problems/stats             | Header counts by difficulty (`?curation`)                          | No   |
+| GET    | /api/problems/{slug}            | Detail + sample cases; a Former Slug works, `slug` is the current one | No |
+| GET    | /api/tags                       | Every tag                                                          | No   |
+| GET    | /api/roadmap                    | The roadmap, with Progress when signed in                          | No   |
+| GET    | /api/leaderboard                | Top solvers                                                        | No   |
+| POST   | /api/problems/{slug}/run        | Grade the sample cases and custom cases now, nothing stored; 429 within 5 s of the same IP's last Run | No |
+| POST   | /api/tutorial/milestones/{milestone} | Count one Tutorial milestone (204; 400 for an unknown one) | No |
+
+### Admin problems
+| Method | Path                                            | Description                        | Auth  |
+|--------|-------------------------------------------------|------------------------------------|-------|
+| GET    | /api/admin/problems                             | Every problem, published or not    | ADMIN |
+| GET    | /api/admin/problems/{id}                        | Problem detail                     | ADMIN |
+| POST   | /api/admin/problems                             | Create problem (201)               | ADMIN |
+| PUT    | /api/admin/problems/{id}                        | Update problem (a title edit keeps the Slug) | ADMIN |
+| DELETE | /api/admin/problems/{id}                        | Delete problem                     | ADMIN |
+| GET    | /api/admin/problems/{id}/test-cases             | Every Test Case                    | ADMIN |
+| POST   | /api/admin/problems/{id}/test-cases             | Add test case (201)                | ADMIN |
+| PUT    | /api/admin/problems/{id}/test-cases/{testCaseId} | Update test case                  | ADMIN |
+| DELETE | /api/admin/problems/{id}/test-cases/{testCaseId} | Delete test case                  | ADMIN |
+| GET    | /api/admin/problems/tags                        | Every tag                          | ADMIN |
+| GET    | /api/admin/problems/{id}/tags                   | A problem's tags                   | ADMIN |
+| PUT    | /api/admin/problems/{id}/tags                   | Replace a problem's tags           | ADMIN |
 
 ### Submissions
-| Method | Path                              | Description                      | Auth |
-|--------|-----------------------------------|----------------------------------|------|
-| POST   | /api/problems/{slug}/submit       | Submit code for a problem        | Yes  |
-| GET    | /api/submissions/{id}             | Get submission result            | Yes  |
-| GET    | /api/problems/{slug}/submissions  | User's submissions for a problem | Yes  |
+| Method | Path                                   | Description                                                                 | Auth |
+|--------|----------------------------------------|-----------------------------------------------------------------------------|------|
+| POST   | /api/problems/{slug}/submit            | 201 + the PENDING submission; grading is asynchronous; 429 within 10 s of the user's last Submit | Yes |
+| GET    | /api/submissions/{id}                  | Submission detail: results (input/expected only for samples), `failingCase`, `solutionCommit`, `reviewIntervalDays` | Yes |
+| GET    | /api/problems/{slug}/submissions       | The user's submissions for a problem                                        | Yes  |
+| PATCH  | /api/submissions/{id}/note             | Set the submission's notes                                                  | Yes  |
+| PATCH  | /api/submissions/{id}/solve-time       | Set `solve_time_seconds` (auto-captured from the timer)                     | Yes  |
+| POST   | /api/submissions/{id}/stream-token     | Short-lived token for the stream below (404 when Redis is disabled)         | Yes  |
+| GET    | /api/submissions/{id}/stream           | SSE: the Verdict when it lands; authenticated by `?token=` since EventSource sends no header | No (token) |
 
 ### Reviews (Spaced Repetition)
 | Method | Path                                       | Description                                          | Auth |
 |--------|--------------------------------------------|------------------------------------------------------|------|
 | PUT    | /api/submissions/{id}/review               | Set/replace confidence on a submission; replays SM-2 | Yes  |
-| PATCH  | /api/submissions/{id}/solve-time           | Set `solve_time_seconds` (auto-captured from timer)  | Yes  |
-| GET    | /api/problems/{slug}/review-state          | Per-problem review state (200 / 204 if none)         | Yes  |
+| DELETE | /api/submissions/{id}/review               | Clear the rating (204)                               | Yes  |
+| GET    | /api/problems/{slug}/review-state          | Per-problem review state (200 / 204 if never rated)  | Yes  |
+| GET    | /api/problems/{slug}/review-history        | The problem's ratings in order                       | Yes  |
 | GET    | /api/reviews/due?page=&size=               | Paginated list of due/overdue problems               | Yes  |
 | GET    | /api/reviews/due/count                     | `{ "count": N }` for the profile widget              | Yes  |
+| GET    | /api/reviews/stats                         | Review totals and the Review Streak                  | Yes  |
+| GET    | /api/reviews/activity                      | Ratings per UTC day (heatmap)                        | Yes  |
+| GET    | /api/reviews/tag-confidence                | Last confidence per tag                              | Yes  |
+| GET    | /api/reviews/history                       | Paginated, filtered rating history                   | Yes  |
+
+### Streak, profile, recommendations, settings
+| Method | Path                                   | Description                                                        | Auth |
+|--------|----------------------------------------|--------------------------------------------------------------------|------|
+| GET    | /api/streak                            | `{currentStreak, bestStreak, solvedToday, repairs, repairProgress}` | Yes |
+| GET    | /api/streak/days?month=yyyy-MM         | The month's Streak Days (`{date, repaired}`), `today`, `firstStreakDate` | Yes |
+| POST   | /api/streak/repairs                    | Spend a Repair on `{date}`: 400 if not a Missed Day or no Repairs, 409 if already counted | Yes |
+| GET    | /api/profile/stats                     | Solved counts by difficulty, totals                                | Yes  |
+| GET    | /api/profile/activity                  | Submissions per UTC day (heatmap)                                  | Yes  |
+| GET    | /api/profile/tag-proficiency           | Solved per tag                                                     | Yes  |
+| GET    | /api/profile/recent-submissions        | Paginated recent submissions                                       | Yes  |
+| GET    | /api/recommendations/weak-tags         | Tags to practise                                                   | Yes  |
+| GET    | /api/recommendations/roadmap-next      | Next roadmap problems                                              | Yes  |
+| PATCH  | /api/users/settings                    | Editor, theme, locale, curation and layout settings                | Yes  |
+
+### Solutions
+| Method | Path                                   | Description                             | Auth |
+|--------|----------------------------------------|-----------------------------------------|------|
+| GET    | /api/problems/{slug}/solutions         | Paginated, sortable list                | No   |
+| GET    | /api/solutions/{id}                    | Solution detail                         | No   |
+| GET    | /api/solutions/{id}/comments           | Paginated comments                      | No   |
+| POST   | /api/problems/{slug}/solutions         | Post a solution (201)                   | Yes  |
+| PUT    | /api/solutions/{id}                    | Edit own solution                       | Yes  |
+| DELETE | /api/solutions/{id}                    | Delete own solution                     | Yes  |
+| POST   | /api/solutions/{id}/vote               | Vote                                    | Yes  |
+| DELETE | /api/solutions/{id}/vote               | Clear vote                              | Yes  |
+| POST   | /api/solutions/{id}/comments           | Comment (201)                           | Yes  |
+| PUT    | /api/comments/{id}                     | Edit own comment                        | Yes  |
+| DELETE | /api/comments/{id}                     | Delete own comment                      | Yes  |
+| POST   | /api/solutions/{id}/report             | Report a solution                       | Yes  |
+| POST   | /api/comments/{id}/report              | Report a comment                        | Yes  |
 
 ### GitHub Link (GitHub App, ADR 0003)
 | Method | Path                          | Description                                                        | Auth |
@@ -394,6 +458,29 @@ _accounts
 | DELETE | /api/github/link              | Unlink: mark the current link UNLINKED (row kept); no GitHub call, repository untouched | Yes  |
 | POST   | /api/github/link/import       | Start the Import: 202 + link (RUNNING) when AVAILABLE/FAILED; 409 when RUNNING, DONE or the link is BROKEN; 404 without a link | Yes  |
 
+### Admin dashboard and moderation
+| Method | Path                                        | Description                                  | Auth  |
+|--------|---------------------------------------------|----------------------------------------------|-------|
+| GET    | /api/admin/analytics/overview               | Totals                                       | ADMIN |
+| GET    | /api/admin/analytics/submissions?days=      | Submissions per day                          | ADMIN |
+| GET    | /api/admin/analytics/onboarding?days=       | Sign-ups and their first Accepted submission | ADMIN |
+| GET    | /api/admin/analytics/problems               | Per-problem submission figures               | ADMIN |
+| GET    | /api/admin/analytics/recent-submissions?limit= | Latest submissions                        | ADMIN |
+| GET    | /api/admin/analytics/users                  | Paginated users                              | ADMIN |
+| GET    | /api/admin/users/{userId}/submissions       | A user's submissions                         | ADMIN |
+| DELETE | /api/admin/submissions/{id}                 | Delete a submission                          | ADMIN |
+| GET    | /api/admin/reports                          | Paginated Problem and Solution Reports       | ADMIN |
+| POST   | /api/admin/reports/{id}/resolve             | Resolve a report                             | ADMIN |
+| POST   | /api/admin/solutions/{id}/hide              | Hide a solution                              | ADMIN |
+| POST   | /api/admin/solutions/{id}/unhide            | Show it again                                | ADMIN |
+
+### Operational
+| Method | Path                | Description                                                              | Auth |
+|--------|---------------------|--------------------------------------------------------------------------|------|
+| GET    | /api/health         | `{status: "UP"}`                                                         | No   |
+| GET    | /api/sitemap.xml    | The XML sitemap nginx serves as `/sitemap.xml` (`/`, `/problems`, `/roadmap`, every published problem with `lastmod`) | No |
+| GET    | /actuator/**        | Health and Prometheus metrics                                            | No   |
+
 **Request/Response examples:**
 
 ```
@@ -403,11 +490,7 @@ POST /api/problems/two-sum/submit
     "sourceCode": "class Solution { ... }"
 }
 
-Response 201:
-{
-    "submissionId": 42,
-    "status": "PENDING"
-}
+Response 201: the submission detail below, with "status": "PENDING" and no results yet.
 ```
 
 ```
@@ -431,6 +514,9 @@ Response 200:
             "runtimeMs": 4
         }
     ],
+    "solutionCommit": null,                      // or {status, commitUrl}
+    "reviewIntervalDays": {"AGAIN": 1, "HARD": 3, "GOOD": 6, "EASY": 10},
+    "failingCase": null,                         // the first failing case, revealed even when hidden
     "createdAt": "2026-03-13T10:30:00Z"
 }
 ```

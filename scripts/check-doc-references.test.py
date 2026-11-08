@@ -2,10 +2,14 @@
 
 Run: python3 -I scripts/check-doc-references.test.py
 """
-import shutil, subprocess, sys, tempfile, unittest
+import importlib.util, shutil, subprocess, sys, tempfile, unittest
 from pathlib import Path
 
 SCRIPT = Path(__file__).with_name("check-doc-references.py")
+spec = importlib.util.spec_from_file_location("check_doc_references", SCRIPT)
+checker = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(checker)
+CEILING = checker.CLAUDE_MD_CEILING
 
 GLOSSARY = """# Glossary
 
@@ -74,6 +78,18 @@ class CheckDocReferences(unittest.TestCase):
     def test_a_table_followed_by_a_blank_line_and_a_paragraph_passes(self):
         self.write("CLAUDE.md", "| Path | Page |\n|---|---|\n| `/a` | A |\n\nA paragraph after it.\n"
                    "| not a table row on its own |\n\n```\n| a | fenced |\ntext\n| b | table |\n```\n")
+        self.assertEqual(self.check(), (0, ""))
+
+    def test_a_claude_md_over_the_byte_ceiling_fails_and_says_why(self):
+        self.write("CLAUDE.md", "x" * CEILING + "\n")
+        code, out = self.check()
+        self.assertEqual(code, 1)
+        self.assertIn(f"CLAUDE.md: {CEILING + 1} bytes is over the {CEILING}-byte ceiling", out)
+        self.assertIn("loads on every turn", out)
+        self.assertIn("CLAUDE_MD_CEILING", out)
+
+    def test_a_claude_md_at_the_ceiling_passes(self):
+        self.write("CLAUDE.md", "x" * (CEILING - 1) + "\n")
         self.assertEqual(self.check(), (0, ""))
 
 

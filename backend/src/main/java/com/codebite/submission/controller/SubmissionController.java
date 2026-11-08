@@ -55,6 +55,11 @@ public class SubmissionController {
         this.streamTimeoutMs = streamTimeoutMs;
     }
 
+    /**
+     * 201 with the PENDING submission (grading is asynchronous), 400 when the problem has no
+     * Driver for the language, 429 within 10 s of the same user's last Submit (a Redis cooldown
+     * absent when {@code app.cache.enabled} is false).
+     */
     @PostMapping("/problems/{slug}/submit")
     public ResponseEntity<SubmissionResponse> submit(
             @PathVariable String slug,

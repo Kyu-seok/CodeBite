@@ -30,7 +30,11 @@ public class GitHubLinkController {
         this.importService = importService;
     }
 
-    /** The current link, or 204 when the user has none. */
+    /**
+     * The current link, or 204 when the user has none. An ACTIVE link is read from the row, never
+     * from GitHub; a BROKEN one is re-checked through {@code GitHubGateway.isRepositoryReachable}
+     * and recovered to ACTIVE when its repository is reachable again.
+     */
     @GetMapping
     public ResponseEntity<GitHubLinkResponse> getLink(@AuthenticationPrincipal JwtUserPrincipal principal) {
         return linkService.getLink(principal.id())
@@ -38,14 +42,21 @@ public class GitHubLinkController {
                 .orElseGet(() -> ResponseEntity.noContent().build());
     }
 
-    /** Unlinks; the Solution Repository is left untouched. 204 whether or not a link existed. */
+    /**
+     * Marks the current link UNLINKED, keeping the row; no GitHub call, the Solution Repository is
+     * left untouched. 204 whether or not a link existed.
+     */
     @DeleteMapping
     public ResponseEntity<Void> unlink(@AuthenticationPrincipal JwtUserPrincipal principal) {
         linkService.unlink(principal.id());
         return ResponseEntity.noContent().build();
     }
 
-    /** The GitHub pages that create the named Solution Repository and install the App on it. */
+    /**
+     * The GitHub pages that create the named Solution Repository (from the
+     * {@code app.github.solution-repository-template} template) and install the App on it: 400 for
+     * a name or visibility GitHub wouldn't accept, 503 when the App is not configured.
+     */
     @GetMapping("/install")
     public ResponseEntity<GitHubLinkPagesResponse> linkPages(
             @AuthenticationPrincipal JwtUserPrincipal principal,
@@ -54,7 +65,12 @@ public class GitHubLinkController {
         return ResponseEntity.ok(linkService.linkPages(principal.id(), repositoryName, visibility));
     }
 
-    /** Completes the install GitHub redirected back from, linking the chosen Solution Repository. */
+    /**
+     * Completes the install GitHub redirected back from: links the granted repository named in the
+     * state (case-insensitively), or the only granted one when none has that name. 400 when several
+     * were granted and none has it, 401 for a state not issued to this user, 403 when the
+     * installation is not the signed-in GitHub account's.
+     */
     @PostMapping("/callback")
     public ResponseEntity<GitHubLinkResponse> callback(
             @AuthenticationPrincipal JwtUserPrincipal principal,
@@ -64,7 +80,8 @@ public class GitHubLinkController {
 
     /**
      * Starts the Import: 202 with the link (import state RUNNING) while it is AVAILABLE or FAILED,
-     * 409 when it is RUNNING or DONE. It runs in the background; poll {@code GET /api/github/link}.
+     * 409 when it is RUNNING or DONE or the link is BROKEN, 404 without a link. It runs in the
+     * background through the {@code github-imports} topic; poll {@code GET /api/github/link}.
      */
     @PostMapping("/import")
     public ResponseEntity<GitHubLinkResponse> startImport(@AuthenticationPrincipal JwtUserPrincipal principal) {

@@ -23,32 +23,20 @@ Root `settings.gradle` includes three modules: `common`, `backend`, `worker`. Th
 
 ## Common Module
 
-### Package Structure (`common/src/main/java/com/codebite/`)
-- `common/base/` — BaseEntity (id, createdAt, updatedAt)
-- `common/exception/` — ApiError, custom exceptions (ResourceNotFoundException, JudgeExecutionException, etc.)
-- `common/time/` — DayRuns (runs of consecutive UTC days behind the Streak and the Review Streak), DayCount (a count on one calendar day, the heatmap row)
-- `user/entity/` — User, Role, OAuthProvider, UserOAuthAccount
-- `user/repository/` — UserRepository, UserOAuthAccountRepository
-- `problem/entity/` — Problem, TestCase, Difficulty, Curation (a curated subset numbered 1 to N, so the Tutorial Problem, number 0, is in none; docs/adr/0007), FormerSlug (a Slug a problem had before a Restatement; `ProblemRepository.findBySlugOrFormerSlug` is every slug lookup, `isSlugTaken` checks both)
-- `problem/repository/` — ProblemRepository, TestCaseRepository
-- `submission/entity/` — Submission (`language()` = the stored code as a `Language`), SubmissionResult, SubmissionStatus
-- `submission/repository/` — SubmissionRepository (lifecycle, Import, re-drive and admin reads; progress reads live in the backend's `progress/`), SubmissionResultRepository
-- `submission/event/` — SubmissionEvent (Kafka message DTO)
-- `streak/entity/` — StreakDay, UserStreak (Repairs held + Repair Progress)
-- `streak/repository/` — StreakDayRepository, UserStreakRepository
-- `review/entity/` — Confidence, ProblemReviewState (the stored snapshot of a Review Schedule, built by `of(userId, problemId, schedule)`, getters only), ProblemReviewStateId
-- `review/repository/` — ProblemReviewStateRepository (`findDue`, `countDue`), ReviewRepository (reads of rated submissions: replay order, stats, heatmap `DayCount`s, `TagConfidenceCount`s, filtered history)
-- `review/schedule/` — Review, ReviewSchedule (SM-2 lite as an immutable value: `replay`, `rate`, `preview`, `mastered`; the only place the numbers live; `review-schedule-golden.csv` in test resources pins them)
-- `github/entity/` — GitHubLink, GitHubLinkStatus (ACTIVE/BROKEN/UNLINKED), GitHubImportState, SolutionCommit, SolutionCommitStatus (PENDING/COMMITTED/FAILED)
-- `github/repository/` — GitHubLinkRepository (`findCurrentByUserId` = the user's current link, ACTIVE or BROKEN), SolutionCommitRepository
-- `judge/` — Language (the codes CodeBite accepts, each with its Judge0 id and file extension; `ofRequest` = 400 for a code it doesn't accept), JudgeClient, JudgeClientImpl, JudgeService (a plain Judge0 client: `execute`, `executeBatch`), DTOs
-- `judge/program/` — ProblemAssets (backend only; reads every Driver, Library and Starter Code once at startup, failing on a Driver without `{USER_CODE}`; `assemble` → Program or `NoDriverException`, `recall` for a stored submission, `starters`, `slugsWithDriver`), Program (the assembled source, its Language and Judge0 id; `diagnostics` maps Judge0's errors onto the user's lines; `toEvent`/`fromEvent` for the `SubmissionEvent`), UserCodeLineMapper (package-private)
-- `judge/parser/` — one JudgeErrorParser per Language, in combined-file lines; only Program picks and calls them
-- `judge/grader/` — TestInput, CaseVerdict, Verdict, Grader (grades a Program; `grade` runs every case in one Judge0 batch; `gradeUntilFailure` runs them one at a time and stops at the first failing judged case; the only place Judge0 statuses become SubmissionStatuses, docs/adr/0005)
-- `config/` — JudgeClientConfig
+### Layout and gotchas
+`docs/agents/common.md` lists which package and resource directory holds what; open it to place a class or find one. What an `ls` won't tell you:
+- Every slug lookup is `ProblemRepository.findBySlugOrFormerSlug` and `isSlugTaken` checks both: a Restatement leaves a FormerSlug behind, so old links still resolve.
+- A Curation numbers its subset 1 to N, so the Tutorial Problem, number 0, is in none (docs/adr/0007).
+- `review/schedule/ReviewSchedule` is the only place the SM-2 numbers live (`review-schedule-golden.csv` in test resources pins them); `ProblemReviewState` is a stored snapshot of it, getters only.
+- `judge/grader/Grader` is the only place Judge0 statuses become SubmissionStatuses (docs/adr/0005): `grade` runs every case in one Judge0 batch, `gradeUntilFailure` runs them one at a time and stops at the first failing judged case.
+- `Language.ofRequest` is the 400 for a code CodeBite doesn't accept.
+- `ProblemAssets` is backend only: it reads every Driver, Library and Starter Code once at startup and fails on a Driver without `{USER_CODE}`; only `Program` picks and calls the per-Language `JudgeErrorParser`s.
+- Progress reads (Solved, Attempted) live in the backend's `progress/`, not in `SubmissionRepository`.
+- A Flyway version is taken if it is in either `db/migration/` (SQL) or `common/src/main/java/db/migration` (Java).
+- `GitHubLinkRepository.findCurrentByUserId` is the user's current link, ACTIVE or BROKEN; UNLINKED rows stay.
 
 ### Reading a problem
-`scripts/problem-text.sh <slug> [--all]` prints a problem as it stands (English and Korean text, sample Test Cases, or every case by `order_index` with `--all`) from the local database, or a branch's with `CODEBITE_DB=<database>`. Migrations are the slow way: the newest one that sets a column wins, and the first grep match is usually stale.
+`scripts/problem-text.sh <slug> [--all]` prints a problem as it stands (English and Korean text, sample Test Cases, or every case by `order_index` with `--all`) from the local database, or a branch's with `CODEBITE_DB=<database>`. Anything beyond one problem (a fact across problems, a count, the largest case) is `scripts/db-sql.sh "<sql>"`, the same connection, warning and `CODEBITE_DB`. Migrations are the slow way: the newest one that sets a column wins, and the first grep match is usually stale.
 
 ### Judging a problem locally
 `scripts/judge-local.sh <slug> [--languages java,cpp,…] [--cases cases.json]` judges a problem's Test Cases (from the local database, a branch's with `CODEBITE_DB=<database>`, or a JSON list of `{input, expected_output}` not in a migration yet) without Judge0: each Language's reference solution, `scripts/replay-solutions/<slug>.<py|java|js|cpp>` (the `Solution` class only; most problems have only a Python one, so the others report `NOT JUDGED`), goes into the Driver and runs on the local `python3.12`, `javac`/`java`, `node` and `g++`, compared trimmed as the Grader does. Exits 1 on a failing case and 2 when a compiler, interpreter or reference solution is missing (`NOT JUDGED`, never a failed case). Java builds with `--release 13` and C++ with `-std=gnu++14` like Judge0; local `node` is newer than Judge0's Node 12. `scripts/replay-local.sh` replays every problem's Python instead.
@@ -57,18 +45,13 @@ Root `settings.gradle` includes three modules: `common`, `backend`, `worker`. Th
 `scripts/check-doc-references.py` (pre-commit and CI) fails when CLAUDE.md, a skill, an agent or `docs/agents/` names a repo path that doesn't exist, or anything cites a glossary term (`… (GLOSSARY.md)`) the glossary lacks: the usual cause is a branch citing what another unmerged branch adds.
 
 ### Restating a problem
-Rewording a problem while its Test Cases stay (Slug, title, description, Starter Code names) is a Restatement: follow `.claude/skills/restate-problem/SKILL.md`. `ProblemSlugsTest` (backend) runs every migration and fails when a Slug and its `drivers/`/`starters/` directories disagree; `MigrationSlugReferencesTest` fails when a migration's `slug = …` names a slug that doesn't exist when it runs. `StatementsMatchTestCasesTest`'s exemption sets (`EXAMPLES_DIFFER_FROM_SAMPLES`, `CONSTRAINTS_NAME_NO_PARAMETER`) are the list of known statement defects: a fix removes its slug, and the test fails on a listed slug that passes.
+Rewording a problem while its Test Cases stay (Slug, title, description, Starter Code names) is a Restatement: follow `.claude/skills/restate-problem/SKILL.md`. `ProblemSlugsTest` (backend) runs every migration and fails when a Slug and its `drivers/`/`starters/` directories disagree; `MigrationSlugReferencesTest` fails when a migration's `slug = …` names a slug that doesn't exist when it runs. `StatementsMatchTestCasesTest`'s exemption sets (`EXAMPLES_DIFFER_FROM_SAMPLES`, `CONSTRAINTS_NAME_NO_PARAMETER`) are the list of known statement defects: a fix removes its slug, and the test fails on a listed slug that passes; every run writes each problem's mismatch lines, listed ones marked, to `backend/build/reports/statements/<check>.txt`.
 
 ### Correcting a problem's Test Cases
 `.claude/skills/correct-test-cases/SKILL.md`. `ProblemGuaranteesTest` and `TestCasePositionsTest` (backend) check every migrated case; tests that read migrated rows use `MigratedDatabase`, since H2 keeps `E'…\n…'` escapes as a backslash and an `n`.
 
 ### Diagrams
-Diagrams are ` ```diagram-* ` blocks in a description, drawn by `frontend/src/components/markdown/diagrams/`; the kinds and their keys are in `docs/PROBLEM_DIAGRAMS_ROADMAP.md`. To add one, follow `.claude/skills/add-diagram/SKILL.md`.
-
-### Resources (`common/src/main/resources/`)
-- `db/migration/` — Flyway SQL migrations; Java ones live in `common/src/main/java/db/migration`, and a version is taken if it is in either
-- `drivers/` — Drivers, `drivers/<slug>/<language>.<ext>`; Libraries under `drivers/lib/<language>/`
-- `starters/` — Starter Code, `starters/<slug>/<language>.<ext>` (served by the backend, but read by the same ProblemAssets)
+Diagrams are ` ```diagram-* ` blocks in a description, drawn by `frontend/src/components/markdown/diagrams/`; the kinds and their keys are in `docs/PROBLEM_DIAGRAMS_ROADMAP.md`. To add one, follow `.claude/skills/add-diagram/SKILL.md`. To look at them all, `/dev/diagrams` (Vite dev mode only, ADMIN session) draws every problem's Diagrams on one page at 360, 640 or 900px, published or not, flagging a directive that doesn't parse; the decisions behind it are the pure `frontend/src/pages/dev/diagramGallery.ts`.
 
 ## Backend
 
@@ -86,6 +69,7 @@ Diagrams are ` ```diagram-* ` blocks in a description, drawn by `frontend/src/co
 ```bash
 ./gradlew :backend:compileJava     # compile backend
 ./gradlew :backend:test            # run backend tests (uses H2, no Docker needed)
+scripts/test-failures.sh backend [--run]  # a failing run's tests and messages only, no traces (also common, worker)
 source scripts/dev-env.sh && SPRING_PROFILES_ACTIVE=dev ./gradlew :backend:bootRun  # run locally
 ```
 `scripts/dev-env.sh` loads only the OAuth and GitHub App values from `infra/.env` (from a worktree, the main checkout's). That file is the production server's config: sourcing it whole overrides the dev CORS origins, JWT secret, database and Judge0 URL.
@@ -102,20 +86,17 @@ Production Judge0 runs `localhost/codebite-judge0` (Judge0 1.13.1 plus newer run
 
 The GitHub App behind Solution Commits is registered by hand: run `scripts/setup-github-app-dev.sh`, an interactive wizard that walks through GitHub's app settings and writes the `GITHUB_APP_*` values into `infra/.env`. After that, `scripts/verify-github-solution-commits.sh` walks through checking once that GitHub credits live and Imported Solution Commits on the right UTC day. Production needs its own app (callback on code-bite.com): `scripts/setup-github-app-prod.sh` registers it, writes its values to the server over SSH and rolls the backend.
 
-### Package Structure (`backend/src/main/java/com/codebite/`)
-- `config/` — SecurityConfig, WebConfig, OAuthProperties, GitHubAppProperties (`app.github.*`, optional), RedisConfig, KafkaTopicConfig, KafkaConsumerConfig (one container factory per `submission-results` listener, plus one for `github-imports`)
-- `common/controller/` — HealthController
-- `common/exception/` — GlobalExceptionHandler
-- `auth/` — JWT auth + OAuth (controller, service, DTOs, filter, token provider, oauth clients)
-- `user/` — UserService, DTOs
-- `problem/` — Problems: `ProblemCatalogue` (what users see: the published list with Progress and Acceptance Rate, header counts, random pick, detail) and `ProblemAdminService` (curation behind /api/admin/problems; a title edit keeps the Slug, since the Driver and Starter Code are filed under it); `ProblemDtos` builds the DTOs both return (controllers, DTOs)
-- `submission/` — Submission flow (controller, service, DTOs, Kafka producer)
-- `run/` — Run flow (controller, service, DTOs — synchronous Judge0 execution, sample test cases only)
-- `streak/` — Streaks and Repairs (controller, service, DTOs, `submission-results` listener); terms in GLOSSARY.md, UTC days per docs/adr/0001
-- `progress/` — typed progress reads (terms in GLOSSARY.md): `UserProgress` owns what Solved and Attempted mean (Accepted/graded, non-admin, PENDING is neither) for the problem list, roadmap and recommendations, and the Solved counts by difficulty and tag over published problems that the profile and list header show, Activity (every submission, bucketed into UTC days in Java), and `signUpsSince` (each non-admin sign-up with its first Accepted submission, for the admin dashboard's onboarding success figure); `ProblemPopularity` (Acceptance Rate from `problem_stats`, maintained by `stats/consumer/SubmissionStatsListener` and backfilled once by V195; a problem with no row reads `Rate.NONE`)
-- `review/` — Reviews (controller, service, DTOs): `ReviewService` rates a submission by replaying the other submissions' Reviews through `ReviewSchedule` and rating on top, stores the snapshot row or deletes it when no Review is left, previews intervals the same way, and lists Due problems from the row; terms in GLOSSARY.md
-- `onboarding/` — `TutorialMilestoneController` and the `TutorialMilestone` enum: the anonymous Tutorial milestone counters (`codebite.tutorial.milestones`)
-- `github/` — GitHub Links via the CodeBite GitHub App (ADR 0003): `gateway/` (`GitHubGateway` seam, `GitHubAppGateway` REST adapter minting installation tokens from an RS256 app JWT, gateway exceptions), `service/` (link + signed install state carrying the chosen Solution Repository name; `SolutionCommitService` + `SolutionLayout` for Solution Commits, `SolutionCommitRecorder` for the row/path, README-first and outcome-counter rules it shares with `GitHubImporter`), `consumer/SolutionCommitListener` (`submission-results`, group `codebite-solution-commits`: every ACCEPTED event of a user with an ACTIVE link becomes a Solution Commit, a problem folder's first one adding README + solution in one commit via `pushCommits`; transient GitHub errors retried with doubling back-off per `app.github.commit-max-tries` / `commit-retry-backoff-ms`, then FAILED; never throws; a gone installation/repository marks the link BROKEN, after which submissions are skipped until relink), Import (`GitHubImportService` starts it and publishes `event/GitHubImportRequestedEvent` through `GitHubImportPublisher` → `kafka/KafkaGitHubImportPublisher` on topic `github-imports`; `consumer/GitHubImportListener`, group `codebite-github-imports`, runs `GitHubImporter`: every earlier Accepted submission not yet COMMITTED through the link goes up in one batch push via `GitHubGateway.pushCommits`, which the real adapter does with JGit in `gateway/GitBatchPush`, remote base `app.github.git-base-url`), controller (plus `GitHubExceptionHandler`, ordered ahead of GlobalExceptionHandler, mapping gateway exceptions to 403/503/502), DTOs. Tests swap in `FakeGitHubGateway` (`backend/src/test/.../github/gateway/`) via `TestGitHubConfig`, and `TestKafkaConfig` runs Imports synchronously
+### Layout and gotchas
+`docs/agents/backend.md` lists which package holds what, and the test doubles; open it to place a class or find one. What an `ls` won't tell you:
+- `ProblemAdminService`: a title edit keeps the Slug, since the Driver and Starter Code are filed under it.
+- `progress/UserProgress` owns what Solved and Attempted mean: Accepted/graded, non-admin, PENDING is neither.
+- `ReviewService` rates a submission by replaying the other submissions' Reviews through `ReviewSchedule` and rating on top (a preview runs the same replay), stores the snapshot row or deletes it when no Review is left, and lists Due problems from that stored row.
+- Streak days are UTC days (docs/adr/0001); terms in GLOSSARY.md.
+- `KafkaConsumerConfig` has one container factory per `submission-results` listener plus one for `github-imports`; a new listener needs its own group and factory.
+- `SolutionCommitListener` never throws: a transient GitHub error retries with doubling back-off and then marks the Solution Commit FAILED, while a gone installation or repository marks the link BROKEN and every later submission is skipped until relink.
+- An Import pushes every earlier Accepted submission not yet COMMITTED through the link in one batch (`GitHubGateway.pushCommits`, JGit in `gateway/GitBatchPush`, remote base `app.github.git-base-url`).
+- `GitHubExceptionHandler` is ordered ahead of `GlobalExceptionHandler`, mapping gateway exceptions to 403/503/502.
+- Tests swap in `FakeGitHubGateway` via `TestGitHubConfig`; `TestKafkaConfig` runs Imports synchronously.
 
 ### Run Flow (Synchronous)
 `POST /api/problems/{slug}/run` → `RunService.run()` assembles the Program through `ProblemAssets` and grades the sample test cases synchronously through the `Grader` (`gradeUntilFailure`, stopping at the first failing sample) and, when they all pass, the request's custom test cases (`grade`, never stopping early), returns results immediately. No data is persisted. No auth required.
@@ -126,37 +107,7 @@ The GitHub App behind Solution Commits is registered by hand: run `scripts/setup
 3. The backend announces the Verdict over SSE (`submission/sse/`) and `frontend/src/judge/watchSubmission.ts` then fetches `GET /api/submissions/{id}`, polling instead when the stream can't open. The result shows in two places: `TestPanel`'s Output tab right after Submit, and `SubmissionDetail` (Submissions tab) for past submissions; a change to how a result looks touches both
 
 ### API Endpoints
-The table is partial: every endpoint is an `@*Mapping` in `backend/src/main/java/com/codebite/*/controller/`, its request body the `*Request` record in that package's `dto/`.
-
-| Method | Path | Auth | Response |
-|--------|------|------|----------|
-| GET | `/api/auth/oauth/{provider}` | No | 200 + `{authorizationUrl}` |
-| POST | `/api/auth/oauth/{provider}/callback` | No | 200 + `{token, tokenType, user}` |
-| GET | `/api/auth/me` | JWT | 200 + `{id, username, email, role, createdAt}` |
-| POST | `/api/auth/logout` | JWT | 204 No Content |
-| GET | `/api/health` | No | 200 + `{status: "UP"}` |
-| GET | `/sitemap.xml` | No | 200 + XML sitemap (nginx proxies it to `/api/sitemap.xml`): `/`, `/problems`, `/roadmap` and every published problem with its `lastmod`, under `app.site.base-url`; robots.txt names it |
-| GET | `/api/problems` | No | 200 + paginated `{id, title, slug, difficulty, tutorial}` (`tutorial`: this is the Tutorial Problem) |
-| GET | `/api/problems/{slug}` | No | 200 + (a Former Slug works too; `slug` is the current one) `{id, title, slug, description, difficulty, starterCode, constraints, published, sampleTestCases, tutorial, tags: [{name, slug}], createdAt, updatedAt}` |
-| POST | `/api/admin/problems` | ADMIN | 201 + problem detail |
-| PUT | `/api/admin/problems/{id}` | ADMIN | 200 + problem detail |
-| POST | `/api/admin/problems/{id}/test-cases` | ADMIN | 201 + test case |
-| POST | `/api/problems/{slug}/run` | No | 200 + `{overallStatus, results}`; 429 within 5 s of the same IP's last Run (Redis cooldown, `app.cache.enabled`) |
-| POST | `/api/tutorial/milestones/{milestone}` | No | 204 No Content (counts one Tutorial milestone in `codebite.tutorial.milestones`; `milestone` = `started`, `ran`, `submitted`, `accepted` or `skipped`, anything else 400; nothing per user is stored) |
-| POST | `/api/problems/{slug}/submit` | JWT | (body `{language, sourceCode}`) 201 + `{id, problemSlug, language, status, runtimeMs, memoryKb, results, createdAt}`; 429 within 10 s of the same user's last Submit |
-| GET | `/api/submissions/{id}` | JWT | 200 + submission detail (input/expectedOutput only for sample cases; `solutionCommit: {status: PENDING\|COMMITTED\|FAILED, commitUrl}` or null when there's no Solution Commit; `reviewIntervalDays: {AGAIN, HARD, GOOD, EASY}` = days the review scheduler would set if rated now, null while PENDING; `failingCase: {testCaseId, position, total, hidden, status, input, expectedOutput, actualOutput, errors}` = the Failing Case, revealed even when hidden (docs/adr/0006), null when Accepted, PENDING, a Compilation Error or an Internal Error) |
-| GET | `/api/problems/{slug}/submissions` | JWT | 200 + `[{id, status, language, runtimeMs, memoryKb, createdAt}]` |
-| PUT | `/api/submissions/{id}/review` | JWT | 200 + review state (body `{confidence, notes?}`); DELETE clears it, 204 |
-| GET | `/api/problems/{slug}/review-state` | JWT | 200 + `{problemId, reviewCount, easeFactor, intervalDays, lastReviewedAt, lastConfidence, nextDueAt, mastered, daysOverdue}` (the Review Schedule's snapshot), or 204 if never rated |
-| GET | `/api/reviews/due` | JWT | 200 + paginated `{problemId, slug, title, …, nextDueAt, daysOverdue}` of Due problems; `/api/reviews/due/count` → `{count}` |
-| GET | `/api/streak` | JWT | 200 + `{currentStreak, bestStreak, solvedToday, repairs, repairProgress}` |
-| GET | `/api/streak/days?month=yyyy-MM` | JWT | 200 + `{month, today, firstStreakDate, days: [{date, repaired}]}` |
-| POST | `/api/streak/repairs` | JWT | 200 + streak summary (body `{date}`; 400 if not a Missed Day or no Repairs, 409 if already counted) |
-| GET | `/api/github/link` | JWT | 200 + `{githubAccountId, githubLogin, repositoryId, repositoryFullName, repositoryUrl, defaultBranch, repositoryPrivate, status, importState, createdAt}`, or 204 if none (a BROKEN link is re-checked via `GitHubGateway.isRepositoryReachable` and recovered to ACTIVE if reachable; ACTIVE reads never call GitHub) |
-| GET | `/api/github/link/install?repositoryName=&visibility=public\|private` | JWT | 200 + `{installUrl, createRepositoryUrl}` (GitHub App install page with a `state` bound to the user and the chosen Solution Repository name; GitHub's new-repository page prefilled with that name, the visibility and the `app.github.solution-repository-template` template; 400 for a name GitHub wouldn't accept, 503 if the App is not configured) |
-| POST | `/api/github/link/callback` | JWT | 200 + link (body `{code, installationId, state}`; links the granted repo named as in the state, case-insensitively, or the only granted repo when none has that name; 400 when several were granted and none has it, 401 bad state, 403 installation not authorised by that account) |
-| DELETE | `/api/github/link` | JWT | 204 No Content (marks the current link UNLINKED, keeping the row; no GitHub call, repository untouched; 204 even with no link) |
-| POST | `/api/github/link/import` | JWT | 202 + link with `importState: RUNNING` when AVAILABLE or FAILED; 409 when RUNNING, DONE or the link is BROKEN; 404 without a link. Runs in the background via Kafka topic `github-imports`; poll `GET /api/github/link` |
+Every endpoint is an `@*Mapping` in `backend/src/main/java/com/codebite/*/controller/` (plus `sitemap/SitemapController` and `onboarding/TutorialMilestoneController`), its request body the `*Request` record in that package's `dto/` and its response the record the method returns, whose comment says what a field means (`failingCase`, `reviewIntervalDays`, `solutionCommit` on `SubmissionResponse`). Auth is the rule in `config/SecurityConfig`: a request needs a JWT unless it is one of the `permitAll` reads (problem list and detail, roadmap, tags, Solution reads, leaderboard, health, the sitemap), Run, a Tutorial milestone, OAuth or the SSE stream (its own short-lived token); `/api/admin/**` controllers carry `@PreAuthorize("hasRole('ADMIN')")`. Run and Submit have Redis cooldowns: 429 within 5 s of the same IP's last Run and within 10 s of the same user's last Submit. `docs/SYSTEM_DESIGN.md` §5 is the prose overview and the endpoint list.
 
 ## Worker
 
@@ -199,16 +150,11 @@ npm run check    # tsc, ESLint (React purity rules too) and Vitest: what pre-com
 Vitest runs in Asia/Seoul (`vite.config.ts`), whatever the shell's zone: a date that should be a UTC day but is formatted in the browser's zone fails there, not only for users in Korea.
 Vitest runs in Node with no DOM (no jsdom or Testing Library), so a component test needs that setup first. Keep the decisions in pure modules, as `onboarding/` does, and check components in a browser.
 
-### Directory Structure (`frontend/src/`)
-- `api/` — Axios client and API modules (auth, problems, submissions, streak, github)
-- `types/` — TypeScript interfaces matching backend DTOs
-- `context/` — AuthContext (JWT auth state + localStorage persistence)
-- `components/layout/` — Layout (nav bar), ProtectedRoute
-- `components/ui/` — DifficultyBadge, StatusBadge, Spinner
-- `pages/` — LoginPage, OAuthCallbackPage, GitHubCallbackPage, ProblemListPage, ProblemDetailPage, NotFoundPage, `profile/` (incl. GitHubLinkCard)
-- `lib/` — pure helpers (e.g. dueWording)
-- `onboarding/` — every Tutorial and Tip decision, free of React, with storage injected (`storage.ts`: `OnboardingStorage`, `browserStorage`, `readStored`/`writeStored`): `tutorial` (the six steps, `tutorialStep`), `spotlight` (what each step spotlights, which elements stay usable, and what Tab and Escape do; drawn by `pages/problem/TutorialSpotlight.tsx` on elements marked `data-tour`, docs/adr/0008), `milestones` (what the Tutorial reports to `/api/tutorial/milestones`), `tips` + `seenTips`, `banner` (the /problems banner rule)
-- `hooks/` — useProblems, useProblem, useSubmissions, `useDocumentMeta` (a route's title, description, canonical, Open Graph, JSON-LD and noindex, from the pure `lib/headMeta` and `lib/jsonLd`; `useDocumentTitle` delegates to it)
+### Layout and gotchas
+`docs/agents/frontend.md` lists which directory holds what; open it to place a module or find one. What an `ls` won't tell you:
+- `onboarding/` holds every Tutorial and Tip decision free of React, with storage injected; `pages/problem/TutorialSpotlight.tsx` only draws what `spotlight` decides, on elements marked `data-tour` (docs/adr/0008).
+- A route's head tags (title, description, canonical, Open Graph, JSON-LD, noindex) come from `useDocumentMeta` and the pure `lib/headMeta` and `lib/jsonLd`; `useDocumentTitle` delegates to it.
+- `api/client.ts` attaches the JWT that AuthContext keeps in localStorage.
 
 ### Routing
 | Path | Page | Auth |
@@ -220,6 +166,7 @@ Vitest runs in Node with no DOM (no jsdom or Testing Library), so a component te
 | `/problems/:slug` | ProblemDetailPage | No (submit requires auth) |
 | `/profile` | ProfilePage | Yes |
 | `/github/callback` | GitHubCallbackPage (GitHub App install redirect; links the Solution Repository named on the profile card, with a retry on failure) | Yes |
+| `/dev/diagrams` | DiagramGalleryPage (Vite dev mode only, see Diagrams above; 404 in a production build) | ADMIN |
 | `*` | NotFoundPage | No |
 
 The problem workspace, solution pages and admin pages are `lazy` routes in `App.tsx`, so the Monaco editor is downloaded only when one of them opens; a page that must not reach the entry bundle is imported that way, never statically.

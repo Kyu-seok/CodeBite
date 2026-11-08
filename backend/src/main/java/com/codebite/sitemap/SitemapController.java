@@ -32,6 +32,7 @@ public class SitemapController {
         this.baseUrl = site.baseUrl();
     }
 
+    /** Every URL under {@code app.site.base-url}; a problem's {@code lastmod} is its last update. */
     @GetMapping(value = "/api/sitemap.xml", produces = MediaType.APPLICATION_XML_VALUE)
     public ResponseEntity<String> sitemap() {
         StringBuilder xml = new StringBuilder("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n")

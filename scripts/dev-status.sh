@@ -66,12 +66,6 @@ report_checkout() {
   fi
 }
 
-# Highest Flyway version among a checkout's migrations, SQL and Java.
-newest_migration() {
-  find "$1/common/src/main/resources/db/migration" "$1/common/src/main/java/db/migration" \
-    -name 'V*__*' 2>/dev/null | sed -E 's|.*/V([0-9]+)__.*|\1|' | sort -n | tail -n 1
-}
-
 for module in backend worker; do
   pids=$(pgrep -f "$(app_pattern "$module")" || true)
   if [[ -z "$pids" ]]; then
@@ -133,7 +127,7 @@ else
   start_hint="the shared backend runs $main; scripts/dev-branch-servers.sh migrates a database of this branch's own"
 fi
 if [[ -z "$db" ]]; then
-  echo "database: not reachable (docker container codebite-postgres); start it: open -a Docker, then docker compose -f infra/docker-compose.yml up -d postgres"
+  echo "database: $(db_unreachable_message)"
 elif (( db < ours )); then
   echo "database: at V$db"
   echo "  BEHIND  this checkout has migrations up to V$ours; $start_hint"

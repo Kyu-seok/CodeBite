@@ -57,6 +57,7 @@ public class ReviewController {
         return ResponseEntity.noContent().build();
     }
 
+    /** The problem's stored Review Schedule snapshot, or 204 when it was never rated. */
     @GetMapping("/problems/{slug}/review-state")
     public ResponseEntity<ReviewStateResponse> getReviewState(
             @PathVariable String slug,
