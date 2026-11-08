@@ -767,11 +767,11 @@ CodeBite/
 **Deliverable:** Fully functional end-to-end flow in browser.
 
 ### Milestone 5: Redis Rate Limiting
-- [ ] Add Redis to docker-compose
-- [ ] Implement `RateLimiterService` using Redis sliding window counter
-- [ ] Add `RateLimitInterceptor` to submission endpoint
-- [ ] Return `429 Too Many Requests` with `Retry-After` header when exceeded
-- [ ] Configure limits via `application.yml` (e.g., 5 submissions / 60s)
+- [x] Add Redis to docker-compose
+- [x] Implement `RateLimiterService` — a Redis `SET NX EX` cooldown key per action and identifier (`app.cache.enabled`), not a sliding window counter: one request per window is enough for a judge
+- [x] Apply it to the endpoints — in the controllers (`SubmissionController` 10 s per user, `RunController` 5 s per IP), not an interceptor
+- [x] Return `429 Too Many Requests` when exceeded — no `Retry-After` header
+- [ ] Configure limits via `application.yml` — the windows are literals in the controllers
 - [ ] Write integration tests for rate limiting
 
 **Deliverable:** Submissions are rate-limited per user. Works correctly across multiple backend instances.
