@@ -24,3 +24,7 @@ Problem Reports (GLOSSARY.md) come in through the `problem-bug` issue form, labe
 | `descriptionUnclear` | `.claude/skills/restate-problem/SKILL.md` |
 | `starterCodeIssue` | by hand: the Starter Code and Driver in `common/src/main/resources/{starters,drivers}/<slug>/` |
 | `other` | read it and pick a role above |
+
+### Verifying a statement claim
+
+A Problem Report's claim about a statement or a Test Case is checked against the database, never against a migration (the newest one that sets a column wins, and the first grep match is usually stale). Read the problem with `scripts/problem-text.sh <slug> --all`; when it warns that the database is BEHIND this checkout, start `scripts/dev-branch-servers.sh` and rerun with the `CODEBITE_DB` it prints. A fact across problems (the largest case of several, every description with a word, both languages' constraints) is one `scripts/db-sql.sh "<sql>"`, same warning and `CODEBITE_DB`. The exemption sets in `StatementsMatchTestCasesTest` (backend) are the list of known statement defects: a claim they already name is a known defect, not news.
