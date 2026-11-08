@@ -2,6 +2,7 @@ import { useId } from "react";
 import { useTranslation } from "react-i18next";
 import { ChevronRight } from "lucide-react";
 import { confidenceChipClass, useConfidenceLabel } from "@/lib/confidenceColors";
+import { reviewDateLabel } from "@/lib/dueWording";
 import { cn, focusRing } from "@/lib/utils";
 import { STATUS_KEYS } from "@/pages/problem/submissionDisplay";
 import type { RatingHistoryItem } from "@/types/review";
@@ -19,8 +20,9 @@ export function ProgressionStrip({ history, onPillClick }: ProgressionStripProps
 
   if (history.length === 0) return null;
 
-  const shortDate = (iso: string) =>
-    new Date(iso).toLocaleDateString(i18n.language, { month: "short", day: "numeric" });
+  // The pill names the review's UTC day, the day the badge beside it counts (ADR 0009); the
+  // tooltip below shows the moment, so it stays in the browser's zone.
+  const shortDate = (iso: string) => reviewDateLabel(iso, i18n.language);
   const fullDate = (iso: string) =>
     new Date(iso).toLocaleString(i18n.language, {
       month: "short",

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { badgeDueWording, dueDateLabel, dueWording, lastReviewedWording } from "./dueWording";
+import { badgeDueWording, dueDateLabel, dueWording, lastReviewedWording, reviewDateLabel } from "./dueWording";
 
 const HOUR = 3_600_000;
 const at = (iso: string) => new Date(iso).getTime();
@@ -138,5 +138,19 @@ describe("dueDateLabel", () => {
 
   it("names the UTC date just before UTC midnight, whatever the browser's zone", () => {
     expect(dueDateLabel("2026-11-02T23:59:00Z", "en")).toBe("Mon, Nov 2");
+  });
+});
+
+describe("reviewDateLabel", () => {
+  // The bug in #144: Vitest runs in Asia/Seoul, where this moment is already Nov 2, but the review
+  // badge beside the pill says "Reviewed today" on Nov 1 (UTC), so the pill must say Nov 1 too.
+  it("names the UTC day of a review made late in the UTC day", () => {
+    expect(reviewDateLabel("2026-11-01T17:00:00Z", "en")).toBe("Nov 1");
+    expect(reviewDateLabel("2026-11-01T17:00:00Z", "ko")).toBe("11월 1일");
+  });
+
+  it("adds the year for the history list", () => {
+    expect(reviewDateLabel("2026-11-01T17:00:00Z", "en", true)).toBe("Nov 1, 2026");
+    expect(reviewDateLabel("2026-11-01T17:00:00Z", "ko", true)).toBe("2026년 11월 1일");
   });
 });
