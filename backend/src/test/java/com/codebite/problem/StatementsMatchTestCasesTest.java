@@ -59,7 +59,7 @@ class StatementsMatchTestCasesTest {
             "dedupe-textbook-shelf", "order-group-tasks", "space-cookie-bakes");
 
     private static final Set<String> CONSTRAINTS_NAME_NO_PARAMETER = Set.of(
-            "longest-palindromic-substring", "walls-and-gates", "word-ladder");
+            "longest-palindromic-substring", "walls-and-gates");
 
     private static final Pattern MARKER = Pattern.compile("\\*\\*(?:Example|예시)(?: (\\d+))?:\\*\\*");
     private static final Pattern INPUT_AND_OUTPUT = Pattern.compile(
