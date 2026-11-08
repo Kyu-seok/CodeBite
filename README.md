@@ -209,7 +209,7 @@ graph TB
 
 ## 5. 운영 — 미니 PC 한 대
 
-전 스택(PostgreSQL, Redis, Kafka, Backend ×3, Worker, Judge0, Nginx, Prometheus, Grafana, Loki)을 집에 있는 **미니 PC 한 대**에 docker-compose로 올리고, 공유기 포트포워딩으로 외부에 노출해 실제 서비스처럼 운영하고 있습니다.
+전 스택(PostgreSQL, Redis, Kafka, Backend ×3, Worker, Judge0, Nginx, Prometheus, Grafana, Loki)을 집에 있는 **미니 PC 한 대**에 docker-compose로 올리고, Cloudflare Tunnel로 외부에 노출해 실제 서비스처럼 운영하고 있습니다.
 
 - **Nginx** — `/api/` 요청을 백엔드 3대에 나눠 보냅니다. 단, 채점 결과를 실시간으로 흘려보내는 연결은 중간에 다른 서버로 옮기면 처음부터 다시 기다리게 되므로, 이 경로만 따로 떼어 재시도하지 않도록 설정했습니다
 - **배포** — GitHub Actions가 SSH로 접속해 무중단 배포 (백엔드를 3대에서 6대로 늘려 새 버전을 띄우고, 정상 동작을 확인한 뒤 구버전을 내림)

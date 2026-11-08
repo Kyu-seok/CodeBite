@@ -226,6 +226,9 @@ services:
     volumes:
       - ./prometheus/prometheus-prod.yml:/etc/prometheus/prometheus.yml:ro
       - codebite-prometheus:/prometheus
+    # Scrapes the portfolio-ask gateway and llama-server on the host (prometheus-prod.yml).
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     networks:
       - codebite
 
