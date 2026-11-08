@@ -59,8 +59,7 @@ class StatementsMatchTestCasesTest {
             "dedupe-textbook-shelf", "order-group-tasks", "space-cookie-bakes");
 
     private static final Set<String> CONSTRAINTS_NAME_NO_PARAMETER = Set.of(
-            "graph-valid-tree", "largest-rectangle-histogram",
-            "longest-palindromic-substring", "walls-and-gates", "word-ladder");
+            "graph-valid-tree", "longest-palindromic-substring", "walls-and-gates", "word-ladder");
 
     private static final Pattern MARKER = Pattern.compile("\\*\\*(?:Example|예시)(?: (\\d+))?:\\*\\*");
     private static final Pattern INPUT_AND_OUTPUT = Pattern.compile(
