@@ -14,8 +14,11 @@ import java.util.TreeSet;
  */
 final class StatementReport {
 
-    /** One statement's mismatch lines; a statement with none has no Finding. */
-    record Finding(String slug, String locale, List<String> lines) {
+    /**
+     * One statement's mismatch lines under the statement's name ({@code slug (locale)}, as the test's
+     * failure message prints it); a statement with none has no Finding.
+     */
+    record Finding(String slug, String name, List<String> lines) {
     }
 
     /** Gradle runs the tests from the backend module, so this is {@code backend/build/reports/statements}. */
@@ -25,25 +28,23 @@ final class StatementReport {
     }
 
     /** Writes {@code <directory>/<check>.txt}, creating the directory, and returns it. */
-    static Path write(Path directory, String check, Set<String> listed, List<Finding> findings) throws IOException {
+    static Path write(Path directory, String check, Set<String> listed, Set<String> breaking, List<Finding> findings)
+            throws IOException {
         Files.createDirectories(directory);
         Path file = directory.resolve(check + ".txt");
-        Files.writeString(file, render(check, listed, findings));
+        Files.writeString(file, render(check, listed, breaking, findings));
         return file;
     }
 
-    static String render(String check, Set<String> listed, List<Finding> findings) {
-        Set<String> breaking = new TreeSet<>();
-        Set<String> breakingListed = new TreeSet<>();
-        for (Finding finding : findings) {
-            breaking.add(finding.slug());
-            if (listed.contains(finding.slug())) breakingListed.add(finding.slug());
-        }
+    /** {@code breaking} is every slug the findings name, as the check already gathered it. */
+    static String render(String check, Set<String> listed, Set<String> breaking, List<Finding> findings) {
+        Set<String> breakingListed = new TreeSet<>(breaking);
+        breakingListed.retainAll(listed);
         StringBuilder out = new StringBuilder();
         out.append(check).append(": ").append(breaking.size()).append(" problems break the check, ")
                 .append(breakingListed.size()).append(" listed. A problem absent here passes.\n");
         for (Finding finding : findings) {
-            out.append('\n').append(finding.slug()).append(" (").append(finding.locale()).append(')');
+            out.append('\n').append(finding.name());
             if (listed.contains(finding.slug())) out.append(" [listed]");
             out.append('\n');
             for (String line : finding.lines()) out.append("  ").append(line).append('\n');
