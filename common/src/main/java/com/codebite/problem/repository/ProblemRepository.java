@@ -56,6 +56,11 @@ public interface ProblemRepository extends JpaRepository<Problem, Long>, JpaSpec
     List<DifficultyCount> countPublishedByDifficultyNumbered(@Param("firstNumber") int firstNumber,
                                                              @Param("lastNumber") int lastNumber);
 
+    /** Every published problem for the sitemap, in catalogue order; the Tutorial Problem is a public page too. */
+    @Query("SELECT new com.codebite.problem.repository.SitemapEntry(p.slug, p.updatedAt) "
+           + "FROM Problem p WHERE p.published = true ORDER BY p.problemNumber ASC, p.id ASC")
+    List<SitemapEntry> findSitemapEntries();
+
     // Random picks: published problems other than the Tutorial Problem.
     @Query("SELECT p.slug FROM Problem p WHERE p.published = true AND " + NOT_TUTORIAL + " ORDER BY RANDOM()")
     List<String> findRandomPublishedSlugs(Pageable pageable);

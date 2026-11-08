@@ -87,5 +87,6 @@
       "name": "Design",
       "description": "Implement data structures and system components from scratch"
     }
-  }
+  },
+  "metaDescription": "The CodeBite learning roadmap: 19 algorithm topics in the order to learn them, from Arrays & Hashing to Design, each with its problems."
 }

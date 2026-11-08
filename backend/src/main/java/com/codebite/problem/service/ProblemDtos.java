@@ -2,6 +2,7 @@ package com.codebite.problem.service;
 
 import com.codebite.judge.program.ProblemAssets;
 import com.codebite.problem.dto.ProblemDetail;
+import com.codebite.problem.dto.TagDto;
 import com.codebite.problem.dto.ProblemListItem;
 import com.codebite.problem.dto.TestCaseDto;
 import com.codebite.problem.entity.Problem;
@@ -11,6 +12,7 @@ import com.codebite.progress.ProblemPopularity.Rate;
 import com.codebite.progress.UserProgress;
 import org.springframework.stereotype.Component;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -75,7 +77,11 @@ public class ProblemDtos {
                 sampleCases.stream().map(this::toTestCaseDto).toList(),
                 problem.getCreatedAt(),
                 problem.getUpdatedAt(),
-                problem.isTutorial()
+                problem.isTutorial(),
+                problem.getTags().stream()
+                        .map(t -> new TagDto(t.getName(), t.getSlug()))
+                        .sorted(Comparator.comparing(TagDto::name))
+                        .toList()
         );
     }
 

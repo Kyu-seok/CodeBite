@@ -9,6 +9,9 @@ import { setSubmissionReview } from "@/api/reviews"
 import { notifyStreakChanged } from "@/api/streak"
 import { DESKTOP_QUERY, ProblemLayout, type PanelFunctions } from "@/components/layout/ProblemLayout"
 import { useMediaQuery } from "@/hooks/useMediaQuery"
+import { useDocumentMeta } from "@/hooks/useDocumentMeta"
+import { problemSummary } from "@/lib/headMeta"
+import { problemGraph } from "@/lib/jsonLd"
 import Spinner from "@/components/ui/Spinner"
 import { Button } from "@/components/ui/Button"
 import { LeftPanel, CollapsedLeftStrip } from "./LeftPanel"
@@ -52,7 +55,7 @@ function rejectionMessage(err: unknown): string | undefined {
 export default function ProblemDetailPage() {
   const { slug } = useParams<{ slug: string }>()
   const navigate = useNavigate()
-  const { t } = useTranslation("problem")
+  const { t, i18n } = useTranslation("problem")
   const { getTimerSnapshot, stopTimer, notifyEditing } = useOutletContext<WorkspaceOutletContext>()
   const { user, isAuthenticated, loading: authLoading, updateUser } = useAuth()
   const { problem, loading, error, retry: retryProblem } = useProblem(slug!)
@@ -163,9 +166,21 @@ export default function ProblemDetailPage() {
     attempt.kind === "judging",
   )
 
-  useEffect(() => {
-    if (problem) document.title = `${problem.title} | CodeBite`
-  }, [problem])
+  // The canonical path uses the current Slug, so a Former Slug's page points at the current one;
+  // a slug that names nothing is marked noindex instead of being indexed as a page.
+  const summary = problem ? problemSummary(problem.description) : ""
+  useDocumentMeta(
+    problem
+      ? {
+          title: `${problem.title} | CodeBite`,
+          description: summary,
+          path: `/problems/${problem.slug}`,
+          jsonLd: problemGraph({ ...problem, description: summary }, i18n.language),
+        }
+      : error === "notFound"
+        ? { title: t("workspace.problemNotFound"), noindex: true }
+        : null,
+  )
 
   const editorErrors = useMemo<CodeError[]>(() => {
     const results = attempt.kind === "settled" ? attempt.result.results : []

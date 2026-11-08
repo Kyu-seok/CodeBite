@@ -1,6 +1,7 @@
 {
   "meta": {
-    "title": "CodeBite — Master Coding Through Deliberate Practice"
+    "title": "CodeBite — Master Coding Through Deliberate Practice",
+    "description": "Free coding-interview practice: 200 original algorithm problems in 19 topics, an instant judge in Java, Python, JavaScript and C++, and spaced-repetition reviews."
   },
   "hero": {
     "badge": "Backed by expertise research",

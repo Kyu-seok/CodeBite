@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { useTranslation } from "react-i18next"
 import { List, Network } from "lucide-react"
 import { useRoadmap } from "@/hooks/useRoadmap"
 import { useMediaQuery } from "@/hooks/useMediaQuery"
+import { useDocumentMeta } from "@/hooks/useDocumentMeta"
 import Spinner from "@/components/ui/Spinner"
 import LoadError from "@/components/ui/LoadError"
 import { Button } from "@/components/ui/Button"
@@ -21,9 +22,7 @@ export default function RoadmapPage() {
   // would rather read the topics in order than pan a graph.
   const [listOnDesktop, setListOnDesktop] = useState(false)
 
-  useEffect(() => {
-    document.title = t("title")
-  }, [t])
+  useDocumentMeta({ title: t("title"), description: t("metaDescription"), path: "/roadmap" })
 
   if (loading) return <Spinner />
 

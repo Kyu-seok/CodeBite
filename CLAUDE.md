@@ -135,8 +135,9 @@ The table is partial: every endpoint is an `@*Mapping` in `backend/src/main/java
 | GET | `/api/auth/me` | JWT | 200 + `{id, username, email, role, createdAt}` |
 | POST | `/api/auth/logout` | JWT | 204 No Content |
 | GET | `/api/health` | No | 200 + `{status: "UP"}` |
+| GET | `/sitemap.xml` | No | 200 + XML sitemap (nginx proxies it to `/api/sitemap.xml`): `/`, `/problems`, `/roadmap` and every published problem with its `lastmod`, under `app.site.base-url`; robots.txt names it |
 | GET | `/api/problems` | No | 200 + paginated `{id, title, slug, difficulty, tutorial}` (`tutorial`: this is the Tutorial Problem) |
-| GET | `/api/problems/{slug}` | No | 200 + (a Former Slug works too; `slug` is the current one) `{id, title, slug, description, difficulty, starterCode, constraints, published, sampleTestCases, tutorial, createdAt, updatedAt}` |
+| GET | `/api/problems/{slug}` | No | 200 + (a Former Slug works too; `slug` is the current one) `{id, title, slug, description, difficulty, starterCode, constraints, published, sampleTestCases, tutorial, tags: [{name, slug}], createdAt, updatedAt}` |
 | POST | `/api/admin/problems` | ADMIN | 201 + problem detail |
 | PUT | `/api/admin/problems/{id}` | ADMIN | 200 + problem detail |
 | POST | `/api/admin/problems/{id}/test-cases` | ADMIN | 201 + test case |
@@ -207,7 +208,7 @@ Vitest runs in Node with no DOM (no jsdom or Testing Library), so a component te
 - `pages/` — LoginPage, OAuthCallbackPage, GitHubCallbackPage, ProblemListPage, ProblemDetailPage, NotFoundPage, `profile/` (incl. GitHubLinkCard)
 - `lib/` — pure helpers (e.g. dueWording)
 - `onboarding/` — every Tutorial and Tip decision, free of React, with storage injected (`storage.ts`: `OnboardingStorage`, `browserStorage`, `readStored`/`writeStored`): `tutorial` (the six steps, `tutorialStep`), `spotlight` (what each step spotlights, which elements stay usable, and what Tab and Escape do; drawn by `pages/problem/TutorialSpotlight.tsx` on elements marked `data-tour`, docs/adr/0008), `milestones` (what the Tutorial reports to `/api/tutorial/milestones`), `tips` + `seenTips`, `banner` (the /problems banner rule)
-- `hooks/` — useProblems, useProblem, useSubmissions
+- `hooks/` — useProblems, useProblem, useSubmissions, `useDocumentMeta` (a route's title, description, canonical, Open Graph, JSON-LD and noindex, from the pure `lib/headMeta` and `lib/jsonLd`; `useDocumentTitle` delegates to it)
 
 ### Routing
 | Path | Page | Auth |
@@ -220,6 +221,8 @@ Vitest runs in Node with no DOM (no jsdom or Testing Library), so a component te
 | `/profile` | ProfilePage | Yes |
 | `/github/callback` | GitHubCallbackPage (GitHub App install redirect; links the Solution Repository named on the profile card, with a retry on failure) | Yes |
 | `*` | NotFoundPage | No |
+
+The problem workspace, solution pages and admin pages are `lazy` routes in `App.tsx`, so the Monaco editor is downloaded only when one of them opens; a page that must not reach the entry bundle is imported that way, never statically.
 
 ## Monitoring
 
