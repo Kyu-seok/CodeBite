@@ -24,7 +24,7 @@ Work in your own worktree, per CLAUDE.md. One Restatement is one commit.
 
 ## 1. Read the problem as it stands
 
-1. From your worktree, print the problem as it stands, English and Korean text and every Test Case, hidden ones too: `scripts/problem-text.sh <slug> --all`. It reads the local database (`docker compose -f infra/docker-compose.yml up -d`) and warns when the database hasn't run this checkout's migrations; the main checkout can trail `origin/master` along with its database, and then nothing warns. On that warning, start `scripts/dev-branch-servers.sh` and rerun with `CODEBITE_DB=<the database it prints>`. Without a database, the newest migration that sets each column wins: `grep -ln '<slug>' common/src/main/resources/db/migration/` and read from the highest version down, minding Former Slugs in older migrations.
+1. From your worktree, print the problem as it stands, English and Korean text and every Test Case, hidden ones too: `scripts/problem-text.sh <slug> --all`. It reads the local database (`docker compose -f infra/docker-compose.yml up -d`) and warns when the database hasn't run this checkout's migrations; the main checkout can trail `origin/master` along with its database, and then nothing warns. On that warning, start `scripts/dev-branch-servers.sh` and rerun with `CODEBITE_DB=<the database it prints>`; or, when no migration newer than the database's version names the slug (`grep -l '<slug>' common/src/main/resources/db/migration/V<version+1 and up>__*.sql` finds nothing), the database's text is current and the output stands. Without a database, the newest migration that sets each column wins: `grep -ln '<slug>' common/src/main/resources/db/migration/` and read from the highest version down, minding Former Slugs in older migrations.
 2. Read all 4 Drivers and all 4 Starter Code files.
 3. Compare with production, since a Restatement overwrites any edit made through the admin page: `scripts/prod-text.sh <slug>` prints each language's title, description and constraints. A difference from step 1 is such an edit: carry it into the new statement.
 
@@ -80,7 +80,9 @@ Done when that grep finds nothing outside the migrations and the problem's row i
 
 ## 5. Verify
 
-1. `./gradlew :common:test --tests '*DriverStarterMethodTest' --tests '*ProblemAssetsTest'` and `./gradlew :backend:test --tests '*ProblemSlugsTest' --tests '*MigrationSlugReferencesTest' --tests '*ProblemGuaranteesTest' --tests '*DiagramMigrationTest' --tests '*DiagramsMatchExamplesTest' --tests '*StatementsMatchTestCasesTest'`. ProblemSlugsTest runs every migration and goes red when a Slug and its asset directories disagree, or a Former Slug clashes with a Slug. MigrationSlugReferencesTest goes red when a `WHERE slug = …` names a slug no problem has when the migration runs (an UPDATE that silently matches nothing), e.g. one another branch Restated first: rebase, and point the migration at the current Slug.
+A **text-only Restatement** (the Slug, the method and parameter names, the Drivers and the Starter Code all stay, so only `problems` and `problem_translations` columns change) is verified by step 1 alone: the other steps exercise files it didn't touch. Everything else runs all five.
+
+1. `./gradlew :common:test --tests '*DriverStarterMethodTest' --tests '*ProblemAssetsTest'` and `./gradlew :backend:test --tests '*ProblemSlugsTest' --tests '*MigrationSlugReferencesTest' --tests '*ProblemGuaranteesTest' --tests '*DiagramMigrationTest' --tests '*DiagramsMatchExamplesTest' --tests '*StatementsMatchTestCasesTest'`. ProblemSlugsTest runs every migration and goes red when a Slug and its asset directories disagree, or a Former Slug clashes with a Slug. `StatementsMatchTestCasesTest`'s exemption sets list the known statement defects; when the Restatement fixes one, remove its slug from the set in the same commit, since the test also goes red on a listed slug that passes. MigrationSlugReferencesTest goes red when a `WHERE slug = …` names a slug no problem has when the migration runs (an UPDATE that silently matches nothing), e.g. one another branch Restated first: rebase, and point the migration at the current Slug.
 2. Start `scripts/dev-branch-servers.sh` from your worktree: it migrates a database of its own and prints that database and the backend and frontend ports. Read the result back:
    ```bash
    docker exec codebite-postgres psql -U codebite -d <its database> -c "
@@ -94,11 +96,11 @@ Done when that grep finds nothing outside the migrations and the problem's row i
    `curl -s -X POST http://127.0.0.1:<backend port>/api/problems/<new-slug>/run -H 'Content-Type: application/json' -d '{"language":"<language>","sourceCode":"…"}'` for each of the 4 Languages.
 5. Open `http://127.0.0.1:<frontend port>/problems/<old-slug>`: the page lands on `/problems/<new-slug>`.
 
-Done when all five are green and `judge-local.sh` says ACCEPTED for all 4 Languages. Then `scripts/dev-branch-servers.sh stop`.
+Done when all five are green and `judge-local.sh` says ACCEPTED for all 4 Languages (step 1 green, for a text-only Restatement). Then `scripts/dev-branch-servers.sh stop`.
 
 ## 6. Commit and PR
 
-Commit `refactor(problem): restate <old-slug> as <new-slug>` (or `restate <slug>` when it stays) with the migration, the moved assets, the reference solutions and the grep fixes together. In the PR body, state what users will notice:
+Commit `refactor(problem): restate <old-slug> as <new-slug>` (or `restate <slug>` when it stays) with the migration, the moved assets, the reference solutions and the grep fixes together. Open the PR, then merge it with `scripts/ship-branch.sh <branch>` from the main checkout. In the PR body, state what users will notice:
 
 - When the method or parameter names changed: earlier code calling the old names no longer compiles, if resubmitted or loaded from a past submission. Stored Verdicts are untouched.
 - When the Slug changed: editor drafts saved in the browser under the old Slug are left behind; Solution Repositories keep the old folder, and new Solution Commits go to `<new-slug>/`; old links and READMEs still reach the problem through the Former Slug.
