@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# Refuses a commit whose subject runs past 72 characters (docs/GIT_WORKFLOW.md): GitHub and
+# `git log --oneline` truncate longer ones, and a squash-merge keeps the PR title that came
+# from it. A fixup!/squash! prefix is not counted; a merge or revert subject is left alone.
+# Enabled by the same `git config core.hooksPath .githooks` as pre-commit.
+set -euo pipefail
+subject=$(grep -v '^#' "$1" | grep -m1 . || true)
+subject=${subject#fixup! }
+subject=${subject#squash! }
+case "$subject" in
+  "Merge "*|"Revert "*) exit 0 ;;
+esac
+if (( ${#subject} > 72 )); then
+  echo "commit-msg: subject is ${#subject} characters, the limit is 72 (docs/GIT_WORKFLOW.md):" >&2
+  echo "  $subject" >&2
+  exit 1
+fi

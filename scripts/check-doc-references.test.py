@@ -64,6 +64,18 @@ class CheckDocReferences(unittest.TestCase):
         self.write("docs/adr/0001-x.md", "A spike (`scripts/prototype-spike/`) confirmed it.\n")
         self.assertEqual(self.check(), (0, ""))
 
+    def test_a_paragraph_inside_a_table_fails_with_its_line(self):
+        self.write("CLAUDE.md", "| Path | Page |\n|---|---|\n| `/a` | A |\n"
+                   "A paragraph pasted into the table.\n| `/b` | B |\n")
+        code, out = self.check()
+        self.assertEqual(code, 1)
+        self.assertIn("CLAUDE.md:4: splits a table", out)
+
+    def test_a_table_followed_by_a_blank_line_and_a_paragraph_passes(self):
+        self.write("CLAUDE.md", "| Path | Page |\n|---|---|\n| `/a` | A |\n\nA paragraph after it.\n"
+                   "| not a table row on its own |\n\n```\n| a | fenced |\ntext\n| b | table |\n```\n")
+        self.assertEqual(self.check(), (0, ""))
+
 
 if __name__ == "__main__":
     unittest.main()
