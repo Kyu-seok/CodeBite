@@ -15,6 +15,8 @@ Agents trust pointers, so a dangling one costs a search, or worse, a wrong guess
 cites a glossary entry or skill another branch adds would merge with a dangling pointer.
 A third check keeps the same documents' tables whole: a line that is neither blank nor a row
 between two rows of a table (a paragraph pasted into the middle) cuts the rows after it off.
+A fourth keeps CLAUDE.md under CLAUDE_MD_CEILING bytes: it loads on every turn of every session,
+so layout and reference belong in docs/agents/ behind a pointer (#151).
 
     scripts/check-doc-references.py [repo-root]
 
@@ -42,6 +44,9 @@ GLOSSARY_CITE = re.compile(r"(?:\*\*)?([A-Z][a-z]+(?: [A-Z][a-z]+)*)(?:\*\*)? \(
 GLOSSARY_ENTRY = re.compile(r"^(?:\*\*(.+?)\*\*:|#{2,} (.+?)\s*)$", re.M)
 ARTICLE = re.compile(r"^(?:A|An|The|Each|Every) ")
 TABLE_ROW = re.compile(r"^\s*\|")
+# CLAUDE.md's size after #151 (21.8KB) plus about ten percent headroom, to a whole KB. Raising it is
+# a decision to make on purpose, in its own commit, not a fix for a check that went red.
+CLAUDE_MD_CEILING = 24_000
 
 
 def files(root, patterns):
@@ -113,8 +118,20 @@ def table_problems(root, path, text):
             yield f"{path.relative_to(root)}:{number}: splits a table (the rows after it are cut off)"
 
 
+def size_problems(root):
+    claude_md = root / "CLAUDE.md"
+    if not claude_md.exists():
+        return
+    size = claude_md.stat().st_size
+    if size > CLAUDE_MD_CEILING:
+        yield (f"CLAUDE.md: {size} bytes is over the {CLAUDE_MD_CEILING}-byte ceiling; it loads on every "
+               "turn, so move layout or reference to docs/agents/ behind a pointer (raising "
+               "CLAUDE_MD_CEILING is a decision to make on purpose)")
+
+
 def problems(root):
     terms = known_terms(root)
+    yield from size_problems(root)
     for path in files(root, DOCS):
         text = path.read_text()
         yield from path_problems(root, path, text)
