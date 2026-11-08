@@ -13,6 +13,8 @@ Two kinds of pointer are checked:
 
 Agents trust pointers, so a dangling one costs a search, or worse, a wrong guess: a branch that
 cites a glossary entry or skill another branch adds would merge with a dangling pointer.
+A third check keeps the same documents' tables whole: a line that is neither blank nor a row
+between two rows of a table (a paragraph pasted into the middle) cuts the rows after it off.
 
     scripts/check-doc-references.py [repo-root]
 
@@ -39,6 +41,7 @@ PATH = re.compile(r"^(?:%s)/[^\s]*$" % "|".join(re.escape(d) for d in TOP_DIRS))
 GLOSSARY_CITE = re.compile(r"(?:\*\*)?([A-Z][a-z]+(?: [A-Z][a-z]+)*)(?:\*\*)? \(GLOSSARY\.md\)")
 GLOSSARY_ENTRY = re.compile(r"^(?:\*\*(.+?)\*\*:|#{2,} (.+?)\s*)$", re.M)
 ARTICLE = re.compile(r"^(?:A|An|The|Each|Every) ")
+TABLE_ROW = re.compile(r"^\s*\|")
 
 
 def files(root, patterns):
@@ -95,12 +98,28 @@ def glossary_problems(root, path, text, terms):
                 yield f"{path.relative_to(root)}:{number}: \"{cited}\" is not a GLOSSARY.md entry"
 
 
+def table_problems(root, path, text):
+    lines = text.splitlines()
+    in_fence = False
+    for number, line in enumerate(lines, 1):
+        if FENCE.match(line):
+            in_fence = not in_fence
+            continue
+        if in_fence or not line.strip() or TABLE_ROW.match(line):
+            continue
+        before = lines[number - 2] if number >= 2 else ""
+        after = lines[number] if number < len(lines) else ""
+        if TABLE_ROW.match(before) and TABLE_ROW.match(after):
+            yield f"{path.relative_to(root)}:{number}: splits a table (the rows after it are cut off)"
+
+
 def problems(root):
     terms = known_terms(root)
     for path in files(root, DOCS):
         text = path.read_text()
         yield from path_problems(root, path, text)
         yield from glossary_problems(root, path, text, terms)
+        yield from table_problems(root, path, text)
     for path in files(root, RECORDS + SOURCES):
         yield from glossary_problems(root, path, path.read_text(), terms)
 
@@ -111,7 +130,7 @@ def main(argv):
     for problem in found:
         print(problem)
     if found:
-        print(f"check-doc-references: {len(found)} dangling pointer(s)", file=sys.stderr)
+        print(f"check-doc-references: {len(found)} problem(s)", file=sys.stderr)
         return 1
     return 0
 
