@@ -38,6 +38,15 @@ Mini PC (Linux)
 └── GitHub Actions      (self-hosted runner OR SSH deploy)
 ```
 
+**Public entry, as actually run:** a Cloudflare Tunnel (`cloudflared` systemd service on the box, config in
+`/etc/cloudflared/config.yml`, root-owned). Each public hostname is an ingress rule there, e.g.
+`code-bite.com → http://localhost:80` and `ask.code-bite.com → http://localhost:8090` (the portfolio chat
+gateway, a separate Compose project). Adding a hostname means a proxied CNAME in Cloudflare DNS plus an
+ingress rule and `sudo systemctl restart cloudflared`; nothing is port-forwarded except SSH for deploys.
+
+**Judge0 gotcha:** on our Judge0 image, `POST /submissions?wait=true` returns an internal error (no sandbox
+on the API container). Submit with `wait=false` and poll `GET /submissions/{token}`, as the worker does.
+
 All services run as Docker containers. The frontend is built into static files and served by Nginx (not Vite dev server).
 
 ---
