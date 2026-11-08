@@ -2,8 +2,9 @@
 # Checks scripts/merge-ticket.sh without Gradle or npm: when it refuses to merge, the merge commit's
 # message, that the frontend checks lint with no warnings before the tests and build (npm faked), and
 # (in scratch repositories with the checks faked) that a conflict aborts and lists the
-# files, a failing check leaves the merge commit unpushed, green checks push it, and a merge that
-# changes merge-ticket.sh hands the checks and the push to the merged copy.
+# files, a failing check leaves the merge commit unpushed, green checks push it, a ticket that already
+# contains the integration branch's HEAD is pushed with no checks, and a merge that changes
+# merge-ticket.sh hands the checks and the push to the merged copy.
 set -euo pipefail
 
 script="$(cd "$(dirname "$0")" && pwd)/merge-ticket.sh"
@@ -26,7 +27,7 @@ check "clean and unmerged" "$(merge_refusal integration/x '' no)" ""
 check "message" "$(merge_message ticket/130-merge-ticket 'Merge a ticket branch in one command')" \
   "Merge ticket/130-merge-ticket: Merge a ticket branch in one command
 
-Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
+Co-Authored-By: Claude <noreply@anthropic.com>"
 check "trailer from MERGE_TICKET_TRAILER" \
   "$(MERGE_TICKET_TRAILER='Co-Authored-By: X <x@x>' merge_message feat/a 'A')" "Merge feat/a: A
 
@@ -101,14 +102,27 @@ if ! out=$(run_merge ticket/ok 'Ok ticket'); then echo "FAIL: green merge failed
 [[ "$out" == *backend-ran*frontend-ran* ]] || { echo "FAIL: checks not run: $out"; fail=1; }
 check "green: pushed" "$(remote_head)" "$(git -C "$scratch/work" rev-parse HEAD)"
 check "green: trailer" "$(git -C "$scratch/work" log -1 --format=%B | sed "/^$/d" | tail -1)" \
-  "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
+  "Co-Authored-By: Claude <noreply@anthropic.com>"
 
 if out=$(run_merge ticket/ok 'Ok ticket'); then echo "FAIL: merging twice must fail"; fail=1; fi
 grep -q 'already merged' <<<"$out" || { echo "FAIL: must say already merged: $out"; fail=1; }
 if out=$(run_merge ticket/none 'None'); then echo "FAIL: an unknown branch must fail"; fail=1; fi
-# A ticket that changes merge-ticket.sh itself: this copy was read before the merge, so the checks
-# and the push are handed to the merged copy.
+# A ticket that already contains the integration branch's HEAD: the merge's tree is the ticket's own,
+# which CI checked, so no check runs and the merge commit is pushed straight away.
 (cd "$scratch/seed" && g fetch -q origin && g switch -q --detach origin/integration/x \
+  && g switch -qc ticket/ontop && echo top > top.txt && g add . && g commit -qm top \
+  && g push -q origin ticket/ontop)
+if ! out=$(run_merge ticket/ontop 'On top'); then echo "FAIL: on-top merge failed: $out"; fail=1; fi
+grep -q 'ticket/ontop already contains integration/x; skipping the checks' <<<"$out" \
+  || { echo "FAIL: must say why the checks are skipped: $out"; fail=1; }
+[[ "$out" == *-ran* ]] && { echo "FAIL: checks ran on a ticket that contains HEAD: $out"; fail=1; }
+check "on top: pushed" "$(remote_head)" "$(git -C "$scratch/work" rev-parse HEAD)"
+check "on top: two parents" "$(git -C "$scratch/work" rev-list --parents -1 HEAD | wc -w | tr -d ' ')" 3
+
+# A ticket that changes merge-ticket.sh itself (based on ticket/ok, so it lacks HEAD and the checks
+# are due): this copy was read before the merge, so the checks and the push are handed to the merged
+# copy.
+(cd "$scratch/seed" && g switch -q --detach ticket/ok \
   && g switch -qc ticket/self && mkdir -p scripts && echo new > scripts/merge-ticket.sh \
   && g add . && g commit -qm self && g push -q origin ticket/self)
 run_merged_copy() { echo "merged-copy-ran on $1"; }
@@ -122,4 +136,4 @@ if out=$(run_merge ticket/clash 'Clash'); then echo "FAIL: a dirty tree must fai
 grep -q 'dirty tree' <<<"$out" || { echo "FAIL: must say dirty tree: $out"; fail=1; }
 
 (( fail )) && exit 1
-echo "PASS: merge-ticket.sh refuses, aborts on conflicts and pushes only when green"
+echo "PASS: merge-ticket.sh refuses, aborts on conflicts, pushes only when green or CI-checked"
