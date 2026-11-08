@@ -48,7 +48,7 @@ Root `settings.gradle` includes three modules: `common`, `backend`, `worker`. Th
 - `config/` — JudgeClientConfig
 
 ### Reading a problem
-`scripts/problem-text.sh <slug> [--all]` prints a problem as it stands (English and Korean text, sample Test Cases, or every case by `order_index` with `--all`) from the local database, or a branch's with `CODEBITE_DB=<database>`. Migrations are the slow way: the newest one that sets a column wins, and the first grep match is usually stale.
+`scripts/problem-text.sh <slug> [--all]` prints a problem as it stands (English and Korean text, sample Test Cases, or every case by `order_index` with `--all`) from the local database, or a branch's with `CODEBITE_DB=<database>`. Anything beyond one problem (a fact across problems, a count, the largest case) is `scripts/db-sql.sh "<sql>"`, the same connection, warning and `CODEBITE_DB`. Migrations are the slow way: the newest one that sets a column wins, and the first grep match is usually stale.
 
 ### Judging a problem locally
 `scripts/judge-local.sh <slug> [--languages java,cpp,…] [--cases cases.json]` judges a problem's Test Cases (from the local database, a branch's with `CODEBITE_DB=<database>`, or a JSON list of `{input, expected_output}` not in a migration yet) without Judge0: each Language's reference solution, `scripts/replay-solutions/<slug>.<py|java|js|cpp>` (the `Solution` class only; most problems have only a Python one, so the others report `NOT JUDGED`), goes into the Driver and runs on the local `python3.12`, `javac`/`java`, `node` and `g++`, compared trimmed as the Grader does. Exits 1 on a failing case and 2 when a compiler, interpreter or reference solution is missing (`NOT JUDGED`, never a failed case). Java builds with `--release 13` and C++ with `-std=gnu++14` like Judge0; local `node` is newer than Judge0's Node 12. `scripts/replay-local.sh` replays every problem's Python instead.
@@ -57,7 +57,7 @@ Root `settings.gradle` includes three modules: `common`, `backend`, `worker`. Th
 `scripts/check-doc-references.py` (pre-commit and CI) fails when CLAUDE.md, a skill, an agent or `docs/agents/` names a repo path that doesn't exist, or anything cites a glossary term (`… (GLOSSARY.md)`) the glossary lacks: the usual cause is a branch citing what another unmerged branch adds.
 
 ### Restating a problem
-Rewording a problem while its Test Cases stay (Slug, title, description, Starter Code names) is a Restatement: follow `.claude/skills/restate-problem/SKILL.md`. `ProblemSlugsTest` (backend) runs every migration and fails when a Slug and its `drivers/`/`starters/` directories disagree; `MigrationSlugReferencesTest` fails when a migration's `slug = …` names a slug that doesn't exist when it runs. `StatementsMatchTestCasesTest`'s exemption sets (`EXAMPLES_DIFFER_FROM_SAMPLES`, `CONSTRAINTS_NAME_NO_PARAMETER`) are the list of known statement defects: a fix removes its slug, and the test fails on a listed slug that passes.
+Rewording a problem while its Test Cases stay (Slug, title, description, Starter Code names) is a Restatement: follow `.claude/skills/restate-problem/SKILL.md`. `ProblemSlugsTest` (backend) runs every migration and fails when a Slug and its `drivers/`/`starters/` directories disagree; `MigrationSlugReferencesTest` fails when a migration's `slug = …` names a slug that doesn't exist when it runs. `StatementsMatchTestCasesTest`'s exemption sets (`EXAMPLES_DIFFER_FROM_SAMPLES`, `CONSTRAINTS_NAME_NO_PARAMETER`) are the list of known statement defects: a fix removes its slug, and the test fails on a listed slug that passes; every run writes each problem's mismatch lines, listed ones marked, to `backend/build/reports/statements/<check>.txt`.
 
 ### Correcting a problem's Test Cases
 `.claude/skills/correct-test-cases/SKILL.md`. `ProblemGuaranteesTest` and `TestCasePositionsTest` (backend) check every migrated case; tests that read migrated rows use `MigratedDatabase`, since H2 keeps `E'…\n…'` escapes as a backslash and an `n`.
@@ -86,6 +86,7 @@ Diagrams are ` ```diagram-* ` blocks in a description, drawn by `frontend/src/co
 ```bash
 ./gradlew :backend:compileJava     # compile backend
 ./gradlew :backend:test            # run backend tests (uses H2, no Docker needed)
+scripts/test-failures.sh backend [--run]  # a failing run's tests and messages only, no traces (also common, worker)
 source scripts/dev-env.sh && SPRING_PROFILES_ACTIVE=dev ./gradlew :backend:bootRun  # run locally
 ```
 `scripts/dev-env.sh` loads only the OAuth and GitHub App values from `infra/.env` (from a worktree, the main checkout's). That file is the production server's config: sourcing it whole overrides the dev CORS origins, JWT secret, database and Judge0 URL.
