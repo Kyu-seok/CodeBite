@@ -86,6 +86,7 @@ Diagrams are ` ```diagram-* ` blocks in a description, drawn by `frontend/src/co
 ```bash
 ./gradlew :backend:compileJava     # compile backend
 ./gradlew :backend:test            # run backend tests (uses H2, no Docker needed)
+scripts/test-failures.sh backend [--run]  # a failing run's tests and messages only, no traces (also common, worker)
 source scripts/dev-env.sh && SPRING_PROFILES_ACTIVE=dev ./gradlew :backend:bootRun  # run locally
 ```
 `scripts/dev-env.sh` loads only the OAuth and GitHub App values from `infra/.env` (from a worktree, the main checkout's). That file is the production server's config: sourcing it whole overrides the dev CORS origins, JWT secret, database and Judge0 URL.
