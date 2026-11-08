@@ -90,3 +90,17 @@ export function dueDateLabel(nextDueAt: string, locale: string): string {
     timeZone: "UTC",
   });
 }
+
+/**
+ * The calendar date a review was made on, as in "Nov 1" (or "Nov 1, 2026" with the year): its UTC
+ * date, the day `lastReviewedWording` counts from, so a pill and the badge beside it name the same
+ * day. A label that shows a time of day shows a moment, not a day, and is not worded here.
+ */
+export function reviewDateLabel(reviewedAt: string, locale: string, withYear = false): string {
+  return new Date(reviewedAt).toLocaleDateString(locale, {
+    month: "short",
+    day: "numeric",
+    ...(withYear ? { year: "numeric" as const } : {}),
+    timeZone: "UTC",
+  });
+}

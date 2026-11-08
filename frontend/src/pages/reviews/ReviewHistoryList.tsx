@@ -15,6 +15,7 @@ import {
 import { getReviewHistoryFiltered } from "@/api/reviews";
 import { getTags } from "@/api/tags";
 import { CONFIDENCE_ORDER, useConfidenceLabel } from "@/lib/confidenceColors";
+import { reviewDateLabel } from "@/lib/dueWording";
 import type { Confidence, ReviewHistoryPage } from "@/types/review";
 import type { Difficulty, TagDto } from "@/types/problem";
 import { formatSolveTime } from "./formatDuration";
@@ -149,8 +150,7 @@ export function ReviewHistoryList() {
   const tagName = (slug: string) => tags.find((tg) => tg.slug === slug)?.name ?? slug;
   const items = data?.content ?? [];
   const totalPages = data?.totalPages ?? 0;
-  const formatDate = (iso: string) =>
-    new Date(iso).toLocaleDateString(i18n.language, { month: "short", day: "numeric", year: "numeric" });
+  const formatDate = (iso: string) => reviewDateLabel(iso, i18n.language, true);
 
   return (
     <section className="rounded-xl border border-border bg-card p-5">
