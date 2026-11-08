@@ -59,7 +59,7 @@ class StatementsMatchTestCasesTest {
             "dedupe-textbook-shelf", "order-group-tasks", "space-cookie-bakes");
 
     private static final Set<String> CONSTRAINTS_NAME_NO_PARAMETER = Set.of(
-            "graph-valid-tree", "group-anagrams", "largest-rectangle-histogram",
+            "graph-valid-tree", "largest-rectangle-histogram",
             "longest-palindromic-substring", "peak-score-streak", "sort-colors",
             "trapping-rain-water", "walls-and-gates", "word-ladder", "word-search-ii");
 
