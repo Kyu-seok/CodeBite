@@ -58,8 +58,7 @@ class StatementsMatchTestCasesTest {
     private static final Set<String> DRIVER_PRINTS_ANOTHER_FORM = Set.of(
             "dedupe-textbook-shelf", "order-group-tasks", "space-cookie-bakes");
 
-    private static final Set<String> CONSTRAINTS_NAME_NO_PARAMETER = Set.of(
-            "walls-and-gates");
+    private static final Set<String> CONSTRAINTS_NAME_NO_PARAMETER = Set.of();
 
     private static final Pattern MARKER = Pattern.compile("\\*\\*(?:Example|예시)(?: (\\d+))?:\\*\\*");
     private static final Pattern INPUT_AND_OUTPUT = Pattern.compile(
