@@ -26,7 +26,7 @@ check "clean and unmerged" "$(merge_refusal integration/x '' no)" ""
 check "message" "$(merge_message ticket/130-merge-ticket 'Merge a ticket branch in one command')" \
   "Merge ticket/130-merge-ticket: Merge a ticket branch in one command
 
-Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
+Co-Authored-By: Claude <noreply@anthropic.com>"
 check "trailer from MERGE_TICKET_TRAILER" \
   "$(MERGE_TICKET_TRAILER='Co-Authored-By: X <x@x>' merge_message feat/a 'A')" "Merge feat/a: A
 
@@ -101,7 +101,7 @@ if ! out=$(run_merge ticket/ok 'Ok ticket'); then echo "FAIL: green merge failed
 [[ "$out" == *backend-ran*frontend-ran* ]] || { echo "FAIL: checks not run: $out"; fail=1; }
 check "green: pushed" "$(remote_head)" "$(git -C "$scratch/work" rev-parse HEAD)"
 check "green: trailer" "$(git -C "$scratch/work" log -1 --format=%B | sed "/^$/d" | tail -1)" \
-  "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
+  "Co-Authored-By: Claude <noreply@anthropic.com>"
 
 if out=$(run_merge ticket/ok 'Ok ticket'); then echo "FAIL: merging twice must fail"; fail=1; fi
 grep -q 'already merged' <<<"$out" || { echo "FAIL: must say already merged: $out"; fail=1; }

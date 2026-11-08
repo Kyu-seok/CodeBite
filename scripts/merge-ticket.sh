@@ -34,7 +34,7 @@ merge_refusal() {
 # The merge commit's message for branch $1 titled $2, ending in the attribution trailer.
 merge_message() {
   printf 'Merge %s: %s\n\n%s\n' "$1" "$2" \
-    "${MERGE_TICKET_TRAILER:-Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>}"
+    "${MERGE_TICKET_TRAILER:-Co-Authored-By: Claude <noreply@anthropic.com>}"
 }
 
 # The backend and worker tests, forced to run: a merge can leave Gradle's inputs looking unchanged,
