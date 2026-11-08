@@ -1,14 +1,8 @@
 // The decisions behind the dev-only Diagram gallery (/dev/diagrams), free of React so Vitest can
-// check them: which fenced blocks of a description are Diagrams, which Example each sits under, and
+// check them: which fenced blocks of a description are Diagrams, which example each sits under, and
 // whether its directive parses.
 
-import {
-  parseGraphDirective,
-  parseGridDirective,
-  parseIntervalsDirective,
-  parseLinkedListDirective,
-  parseTreeDirective,
-} from "@/components/markdown/diagrams/parseDirective";
+import { parseDiagram } from "@/components/markdown/diagrams/parseDiagram";
 
 /** One `diagram-*` fenced block of a description. */
 export interface DiagramBlock {
@@ -18,7 +12,7 @@ export interface DiagramBlock {
   kind: string;
   /** The block's lines between the fences. */
   body: string;
-  /** The N of the nearest `**Example N:**` above the block, or null before any example. */
+  /** The N of the nearest `**Example N:**` marker above the block, or null before any. */
   example: number | null;
   /** The block as it stands in the description, fences included: what the renderer draws. */
   source: string;
@@ -57,15 +51,6 @@ export function findDiagramBlocks(description: string): DiagramBlock[] {
   return blocks;
 }
 
-// The same parser per info string as MarkdownRenderer.renderDiagram picks.
-const PARSERS: Record<string, (body: string) => unknown> = {
-  "diagram-tree": parseTreeDirective,
-  "diagram-graph": parseGraphDirective,
-  "diagram-grid": parseGridDirective,
-  "diagram-linked-list": parseLinkedListDirective,
-  "diagram-intervals": parseIntervalsDirective,
-};
-
 export type DiagramParseStatus = { ok: true } | { ok: false; message: string };
 
 /**
@@ -73,14 +58,8 @@ export type DiagramParseStatus = { ok: true } | { ok: false; message: string };
  * when it falls back: the tile shows the raw block either way, this says why.
  */
 export function diagramParseStatus(block: DiagramBlock): DiagramParseStatus {
-  const parse = PARSERS[block.info];
-  if (!parse) return { ok: false, message: `Unknown Diagram kind: ${block.info}` };
-  try {
-    parse(block.body);
-    return { ok: true };
-  } catch (e) {
-    return { ok: false, message: e instanceof Error ? e.message : String(e) };
-  }
+  const parsed = parseDiagram(block.info, block.body);
+  return parsed.ok ? { ok: true } : parsed;
 }
 
 /** Tile widths in px: a narrowed description pane, the default half-window pane, a wide one. */
