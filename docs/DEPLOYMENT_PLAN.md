@@ -438,12 +438,12 @@ The backend's `JUDGE0_URL` already defaults to `http://judge0:2358`. No backend 
 - [x] Create `infra/docker-compose.prod.yml` and `infra/.env.example`
 - [x] Add `infra/.env` to `.gitignore`
 - [x] Test full stack locally with `docker compose -f infra/docker-compose.prod.yml up --build`
-- [ ] Set up mini PC (Docker, clone repo, create `.env`)
-- [ ] Manual deploy and verify on mini PC
-- [ ] Create `.github/workflows/ci.yml`
-- [ ] Create `.github/workflows/deploy.yml`
-- [ ] Configure GitHub secrets and SSH keys
-- [ ] Push and verify CI/CD pipeline runs end-to-end
-- [ ] (Optional) Add Caddy for HTTPS
+- [x] Set up mini PC (Docker, clone repo, create `.env`)
+- [x] Manual deploy and verify on mini PC
+- [x] Create `.github/workflows/ci.yml`
+- [x] Create `.github/workflows/deploy.yml`
+- [x] Configure GitHub secrets and SSH keys
+- [x] Push and verify CI/CD pipeline runs end-to-end
+- [x] (Optional) HTTPS — a Cloudflare Tunnel, not Caddy (see "Public entry, as actually run" above)
 - [x] (Optional) Add Judge0 CE
 - [ ] (Optional) Add Postgres backup cron
