@@ -29,15 +29,17 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Every statement against what a user is judged on, in both languages: it has an Example, Example N
  * shows sample N's input and expected output, and every array or string the constraints index or
- * measure is a parameter of the Python Starter Code. EXAMPLES_DIFFER_FROM_SAMPLES and
- * CONSTRAINTS_NAME_NO_PARAMETER hold the problems that break this today. They only shrink: an entry
- * that now passes, or names no problem (a Restatement renamed it), is a failure. A Restatement
- * fixes the problem and removes its entry.
+ * measure is a parameter of the Python Starter Code, and the Korean constraints carry the English
+ * ones' inline-code spans (every measure, name and bound sits in backticks, so equal spans means
+ * equal bounds). EXAMPLES_DIFFER_FROM_SAMPLES, CONSTRAINTS_NAME_NO_PARAMETER and
+ * CONSTRAINTS_DIFFER_BETWEEN_LANGUAGES hold the problems that break this today. They only shrink:
+ * an entry that now passes, or names no problem (a Restatement renamed it), is a failure. A
+ * Restatement fixes the problem and removes its entry.
  *
  * <p>A failure names only the unlisted problems. Every run also writes each check's mismatch lines,
- * listed problems marked {@code [listed]}, to {@code backend/build/reports/statements/examples.txt}
- * and {@code constraints.txt} ({@link StatementReport}): read those to see why a listed problem is
- * listed, instead of emptying its set.
+ * listed problems marked {@code [listed]}, to {@code backend/build/reports/statements/examples.txt},
+ * {@code constraints.txt} and {@code translated-constraints.txt} ({@link StatementReport}): read
+ * those to see why a listed problem is listed, instead of emptying its set.
  */
 class StatementsMatchTestCasesTest {
 
@@ -67,6 +69,28 @@ class StatementsMatchTestCasesTest {
             "dedupe-textbook-shelf", "order-group-tasks", "space-cookie-bakes");
 
     private static final Set<String> CONSTRAINTS_NAME_NO_PARAMETER = Set.of();
+
+    /** The Korean constraints' code spans aren't the English ones, in the same order. */
+    private static final Set<String> CONSTRAINTS_DIFFER_BETWEEN_LANGUAGES = Set.of(
+            "best-skill-tree-path", "brawler-lane-collision", "chat-ring-buffer",
+            "count-cipher-decodings", "count-task-orderings", "detect-portal-loop",
+            "drop-nth-reservation", "dual-waterbowl-flow", "fewest-candy-bags",
+            "find-battery-peak", "find-menu-calorie", "finish-the-level",
+            "fizz-buzz", "flip-chunks-of-k", "flip-phone-codes",
+            "group-anagrams", "group-car-packs", "kth-top-score-stream",
+            "largest-rectangle-histogram", "lonely-candy", "longest-folder-path",
+            "longest-palindromic-substring", "longest-quiz-streak", "low-score-stack",
+            "lru-cache", "merge-duplicate-contacts", "merge-reservation-slots",
+            "merged-price-median", "micro-feed", "min-daily-brew",
+            "multiply-as-text", "n-queens", "order-group-tasks",
+            "peak-score-streak", "queue-from-stacks", "random-pick-bag",
+            "reverse-linked-list", "running-median-timer", "snack-stock-map",
+            "sort-colors", "sort-latte-squared", "swap-print-pairs",
+            "timestamp-value-store", "top-espresso-machines", "top-raid-score",
+            "trapping-rain-water", "trending-chat-topics", "username-trie",
+            "validate-homework-id", "versioned-cells", "wildcard-lexicon",
+            "word-break-chat", "word-search", "word-search-ii",
+            "zigzag-yearbook-order");
 
     private static final Pattern MARKER = Pattern.compile("\\*\\*(?:Example|예시)(?: (\\d+))?:\\*\\*");
     private static final Pattern INPUT_AND_OUTPUT = Pattern.compile(
@@ -142,6 +166,18 @@ class StatementsMatchTestCasesTest {
             if (starter == null) return List.of("no Python Starter Code");
             return namesOutsideParameters(statement.constraints(), starter);
         });
+    }
+
+    @Test
+    void translatedConstraintsCarryTheEnglishCodeSpans() {
+        Map<String, String> english = new HashMap<>();
+        for (Statement statement : statements) {
+            if (statement.locale().equals("en")) english.put(statement.slug(), statement.constraints());
+        }
+        assertListed("translated-constraints", CONSTRAINTS_DIFFER_BETWEEN_LANGUAGES, statement ->
+                statement.locale().equals("en")
+                        ? List.of()
+                        : codeSpanDifferences(english.get(statement.slug()), statement.constraints()));
     }
 
     private static List<Sample> samplesOf(Statement statement) {
@@ -288,6 +324,34 @@ class StatementsMatchTestCasesTest {
         return List.copyOf(unknown);
     }
 
+    /**
+     * One line per position where the translation's code spans leave the English ones: another span,
+     * one missing, or one too many. Constraints that are null have no spans.
+     */
+    private static List<String> codeSpanDifferences(String english, String translated) {
+        List<String> expected = codeSpans(english);
+        List<String> actual = codeSpans(translated);
+        List<String> differences = new ArrayList<>();
+        for (int i = 0; i < Math.max(expected.size(), actual.size()); i++) {
+            if (i >= expected.size()) {
+                differences.add("extra `" + actual.get(i) + "`");
+            } else if (i >= actual.size()) {
+                differences.add("missing `" + expected.get(i) + "`");
+            } else if (!expected.get(i).equals(actual.get(i))) {
+                differences.add("`" + actual.get(i) + "` isn't `" + expected.get(i) + "`");
+            }
+        }
+        return differences;
+    }
+
+    private static List<String> codeSpans(String text) {
+        List<String> spans = new ArrayList<>();
+        if (text == null) return spans;
+        Matcher span = CODE_SPAN.matcher(text);
+        while (span.find()) spans.add(span.group(1));
+        return spans;
+    }
+
     /** Every method's parameters: the constructor's and each method's, for a design problem. */
     private static Set<String> pythonParameters(String starter) {
         Set<String> parameters = new TreeSet<>();
@@ -393,6 +457,19 @@ class StatementsMatchTestCasesTest {
         assertEquals(List.of("barrels"), namesOutsideParameters("- `1 <= barrels.length`", starter));
         assertEquals(List.of("solve"), namesOutsideParameters("- `solve.length`", starter));
         assertEquals(List.of("helper"), namesOutsideParameters("- `helper[i]`", starter));
+    }
+
+    @Test
+    void aTranslatedConstraintWithOtherCodeSpansIsCaught() {
+        String english = "- `1 <= nums.length <= 2 * 10^5`\n- `|nums[i]| <= 10^8`";
+        assertEquals(List.of(), codeSpanDifferences(english, "- `1 <= nums.length <= 2 * 10^5`입니다.\n- `|nums[i]| <= 10^8`"));
+        assertEquals(List.of("`1 <= nums.length <= 10^5` isn't `1 <= nums.length <= 2 * 10^5`"),
+                codeSpanDifferences(english, "- `1 <= nums.length <= 10^5`\n- `|nums[i]| <= 10^8`"));
+        assertEquals(List.of("missing `|nums[i]| <= 10^8`"),
+                codeSpanDifferences(english, "- `1 <= nums.length <= 2 * 10^5`"));
+        assertEquals(List.of("extra `k`"), codeSpanDifferences(english, english + "\n- `k`"));
+        assertEquals(List.of("extra `k`"), codeSpanDifferences(null, "`k`"));
+        assertEquals(List.of(), codeSpanDifferences(null, null));
     }
 
     @Test
