@@ -43,8 +43,8 @@ A migration that replaces an existing block fails when that text has changed. Be
 ## 3. Verify
 
 1. Run `./gradlew :backend:test --tests '*DiagramsMatchExamplesTest'`. It reads every Diagram in English and Korean, and leaves to you `cycle_to`, `added`, `points`, a copied graph's `directed`, and whether a highlight is part of the answer.
-2. Open `/problems/<slug>` in the running app (the `run` skill), light and dark: every Diagram draws (a raw `diagram-*` block means it failed to parse) and matches its example. One language is enough, since the block is the same in both.
+2. Open `/dev/diagrams` on a branch server (`scripts/dev-branch-servers.sh` from the worktree; Vite dev mode only, signed in by an ADMIN test token): every problem's Diagrams on one page, each tile captioned with its slug, Example and kind. Find the slug's tiles and look at them light and dark, at 360px and 640px (the width buttons at the top): each draws (a tile whose directive fails to parse says so above the raw block) and matches its example. One language is enough, since the block is the same in both.
 
-Done when the test is green and you have looked at every Diagram in both themes.
+Done when the test is green and you have looked at every Diagram at both widths in both themes.
 
 Commit `feat(problem): Diagrams for <slug>`.

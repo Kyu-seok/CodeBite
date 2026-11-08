@@ -45,13 +45,13 @@ Root `settings.gradle` includes three modules: `common`, `backend`, `worker`. Th
 `scripts/check-doc-references.py` (pre-commit and CI) fails when CLAUDE.md, a skill, an agent or `docs/agents/` names a repo path that doesn't exist, or anything cites a glossary term (`… (GLOSSARY.md)`) the glossary lacks: the usual cause is a branch citing what another unmerged branch adds.
 
 ### Restating a problem
-Rewording a problem while its Test Cases stay (Slug, title, description, Starter Code names) is a Restatement: follow `.claude/skills/restate-problem/SKILL.md`. `ProblemSlugsTest` (backend) runs every migration and fails when a Slug and its `drivers/`/`starters/` directories disagree; `MigrationSlugReferencesTest` fails when a migration's `slug = …` names a slug that doesn't exist when it runs. `StatementsMatchTestCasesTest`'s exemption sets (`EXAMPLES_DIFFER_FROM_SAMPLES`, `CONSTRAINTS_NAME_NO_PARAMETER`) are the list of known statement defects: a fix removes its slug, and the test fails on a listed slug that passes.
+Rewording a problem while its Test Cases stay (Slug, title, description, Starter Code names) is a Restatement: follow `.claude/skills/restate-problem/SKILL.md`. `ProblemSlugsTest` (backend) runs every migration and fails when a Slug and its `drivers/`/`starters/` directories disagree; `MigrationSlugReferencesTest` fails when a migration's `slug = …` names a slug that doesn't exist when it runs. `StatementsMatchTestCasesTest`'s exemption sets (`EXAMPLES_DIFFER_FROM_SAMPLES`, `CONSTRAINTS_NAME_NO_PARAMETER`) are the list of known statement defects: a fix removes its slug, and the test fails on a listed slug that passes; every run writes each problem's mismatch lines, listed ones marked, to `backend/build/reports/statements/<check>.txt`.
 
 ### Correcting a problem's Test Cases
 `.claude/skills/correct-test-cases/SKILL.md`. `ProblemGuaranteesTest` and `TestCasePositionsTest` (backend) check every migrated case; tests that read migrated rows use `MigratedDatabase`, since H2 keeps `E'…\n…'` escapes as a backslash and an `n`.
 
 ### Diagrams
-Diagrams are ` ```diagram-* ` blocks in a description, drawn by `frontend/src/components/markdown/diagrams/`; the kinds and their keys are in `docs/PROBLEM_DIAGRAMS_ROADMAP.md`. To add one, follow `.claude/skills/add-diagram/SKILL.md`.
+Diagrams are ` ```diagram-* ` blocks in a description, drawn by `frontend/src/components/markdown/diagrams/`; the kinds and their keys are in `docs/PROBLEM_DIAGRAMS_ROADMAP.md`. To add one, follow `.claude/skills/add-diagram/SKILL.md`. To look at them all, `/dev/diagrams` (Vite dev mode only, ADMIN session) draws every problem's Diagrams on one page at 360, 640 or 900px, published or not, flagging a directive that doesn't parse; the decisions behind it are the pure `frontend/src/pages/dev/diagramGallery.ts`.
 
 ## Backend
 
@@ -166,6 +166,7 @@ Vitest runs in Node with no DOM (no jsdom or Testing Library), so a component te
 | `/problems/:slug` | ProblemDetailPage | No (submit requires auth) |
 | `/profile` | ProfilePage | Yes |
 | `/github/callback` | GitHubCallbackPage (GitHub App install redirect; links the Solution Repository named on the profile card, with a retry on failure) | Yes |
+| `/dev/diagrams` | DiagramGalleryPage (Vite dev mode only, see Diagrams above; 404 in a production build) | ADMIN |
 | `*` | NotFoundPage | No |
 
 The problem workspace, solution pages and admin pages are `lazy` routes in `App.tsx`, so the Monaco editor is downloaded only when one of them opens; a page that must not reach the entry bundle is imported that way, never statically.

@@ -26,6 +26,9 @@ const AdminProblemEditPage = lazy(() => import("./pages/admin/ProblemEditPage"))
 const AdminUserListPage = lazy(() => import("./pages/admin/UserListPage"));
 const AdminUserSubmissionsPage = lazy(() => import("./pages/admin/UserSubmissionsPage"));
 import NotFoundPage from "./pages/NotFoundPage";
+// The Diagram gallery exists only in Vite dev mode: the constant folds to null in a production build,
+// so its chunk is never emitted there and /dev/diagrams falls through to NotFoundPage.
+const DiagramGalleryPage = import.meta.env.DEV ? lazy(() => import("./pages/dev/DiagramGalleryPage")) : null;
 import Spinner from "./components/ui/Spinner";
 
 function App() {
@@ -70,6 +73,7 @@ function App() {
                 <Route path="profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
                 <Route path="github/callback" element={<ProtectedRoute><GitHubCallbackPage /></ProtectedRoute>} />
                 <Route path="reviews" element={<ProtectedRoute><ReviewsPage /></ProtectedRoute>} />
+                {DiagramGalleryPage && <Route path="dev/diagrams" element={<DiagramGalleryPage />} />}
                 <Route path="*" element={<NotFoundPage />} />
               </Route>
             </Routes>
