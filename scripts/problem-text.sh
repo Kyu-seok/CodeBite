@@ -10,7 +10,7 @@
 # Reading migrations instead means finding the newest one that sets each
 # column; the oldest grep match is usually stale. The database is only as new
 # as the last backend start, so the script warns when this checkout has
-# migrations the database hasn't run.
+# migrations the database hasn't run. For a query across problems, scripts/db-sql.sh.
 set -euo pipefail
 
 usage() { echo "usage: scripts/problem-text.sh <slug> [--all]" >&2; exit 2; }
@@ -23,18 +23,11 @@ if [[ $# -eq 2 ]]; then
 fi
 here=$(cd "$(dirname "$0")/.." && pwd)
 
+# shellcheck source=SCRIPTDIR/dev-servers-common.sh
+source "$here/scripts/dev-servers-common.sh"
 database=${CODEBITE_DB:-codebite}
-psql() { docker exec -i codebite-postgres psql -U codebite -d "$database" -X -q -v ON_ERROR_STOP=1 "$@"; }
-
-if ! db=$(psql -tAc "SELECT max(version::int) FROM flyway_schema_history WHERE success AND version ~ '^[0-9]+\$'" 2>/dev/null); then
-  echo "problem-text.sh: database not reachable (docker container codebite-postgres); start it: open -a Docker, then docker compose -f infra/docker-compose.yml up -d postgres" >&2
-  exit 1
-fi
-ours=$(find "$here/common/src/main/resources/db/migration" "$here/common/src/main/java/db/migration" \
-  -name 'V*__*' | sed -E 's|.*/V([0-9]+)__.*|\1|' | sort -n | tail -n 1)
-if (( db < ours )); then
-  echo "WARNING: database $database at V$db, this checkout's migrations reach V$ours; start scripts/dev-branch-servers.sh and rerun with CODEBITE_DB=<the database it prints>" >&2
-fi
+warn_if_behind "$database" "$here" problem-text.sh || exit 1
+psql() { db_psql "$database" "$@"; }
 
 out=$(psql -tA -v slug="$slug" -v all="$all" <<'SQL'
 WITH p AS (

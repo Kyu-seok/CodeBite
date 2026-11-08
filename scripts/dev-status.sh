@@ -66,12 +66,6 @@ report_checkout() {
   fi
 }
 
-# Highest Flyway version among a checkout's migrations, SQL and Java.
-newest_migration() {
-  find "$1/common/src/main/resources/db/migration" "$1/common/src/main/java/db/migration" \
-    -name 'V*__*' 2>/dev/null | sed -E 's|.*/V([0-9]+)__.*|\1|' | sort -n | tail -n 1
-}
-
 for module in backend worker; do
   pids=$(pgrep -f "$(app_pattern "$module")" || true)
   if [[ -z "$pids" ]]; then
