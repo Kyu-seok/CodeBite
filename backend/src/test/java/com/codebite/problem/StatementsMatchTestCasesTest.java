@@ -60,7 +60,7 @@ class StatementsMatchTestCasesTest {
 
     private static final Set<String> CONSTRAINTS_NAME_NO_PARAMETER = Set.of(
             "graph-valid-tree", "largest-rectangle-histogram",
-            "longest-palindromic-substring", "peak-score-streak", "sort-colors",
+            "longest-palindromic-substring", "sort-colors",
             "trapping-rain-water", "walls-and-gates", "word-ladder", "word-search-ii");
 
     private static final Pattern MARKER = Pattern.compile("\\*\\*(?:Example|예시)(?: (\\d+))?:\\*\\*");
