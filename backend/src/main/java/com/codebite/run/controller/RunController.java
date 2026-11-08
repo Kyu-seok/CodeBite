@@ -28,6 +28,11 @@ public class RunController {
         this.runService = runService;
     }
 
+    /**
+     * No auth, nothing persisted: the sample cases and the request's custom cases, graded now.
+     * 429 within 5 s of the same IP's last Run, a Redis cooldown absent when
+     * {@code app.cache.enabled} is false.
+     */
     @PostMapping("/problems/{slug}/run")
     public ResponseEntity<RunResponse> run(
             @PathVariable String slug,

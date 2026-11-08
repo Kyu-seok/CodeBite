@@ -72,6 +72,7 @@ public class ProblemController {
         return ResponseEntity.ok(problemService.getStats(userId, curation));
     }
 
+    /** A Former Slug works too; the response's {@code slug} is the current one. */
     @GetMapping("/{slug}")
     public ResponseEntity<ProblemDetail> getProblem(@PathVariable String slug) {
         return ResponseEntity.ok(problemService.getProblemBySlug(slug));

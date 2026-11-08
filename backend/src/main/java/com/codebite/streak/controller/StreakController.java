@@ -41,7 +41,10 @@ public class StreakController {
         return ResponseEntity.ok(streakService.getCalendar(principal.id(), month));
     }
 
-    /** Spends one Repair to turn the given Missed Day into a Repaired Day. */
+    /**
+     * Spends one Repair to turn the given Missed Day into a Repaired Day: 400 when the day is not
+     * a Missed Day or the user has no Repairs, 409 when it already counts.
+     */
     @PostMapping("/repairs")
     public ResponseEntity<StreakSummary> repair(
             @AuthenticationPrincipal JwtUserPrincipal principal,
