@@ -71,26 +71,7 @@ class StatementsMatchTestCasesTest {
     private static final Set<String> CONSTRAINTS_NAME_NO_PARAMETER = Set.of();
 
     /** The Korean constraints' code spans aren't the English ones, in the same order. */
-    private static final Set<String> CONSTRAINTS_DIFFER_BETWEEN_LANGUAGES = Set.of(
-            "best-skill-tree-path", "brawler-lane-collision", "chat-ring-buffer",
-            "count-cipher-decodings", "count-task-orderings", "detect-portal-loop",
-            "drop-nth-reservation", "dual-waterbowl-flow", "fewest-candy-bags",
-            "find-battery-peak", "find-menu-calorie", "finish-the-level",
-            "fizz-buzz", "flip-chunks-of-k", "flip-phone-codes",
-            "group-anagrams", "group-car-packs", "kth-top-score-stream",
-            "largest-rectangle-histogram", "lonely-candy", "longest-folder-path",
-            "longest-palindromic-substring", "longest-quiz-streak", "low-score-stack",
-            "lru-cache", "merge-duplicate-contacts", "merge-reservation-slots",
-            "merged-price-median", "micro-feed", "min-daily-brew",
-            "multiply-as-text", "n-queens", "order-group-tasks",
-            "peak-score-streak", "queue-from-stacks", "random-pick-bag",
-            "reverse-linked-list", "running-median-timer", "snack-stock-map",
-            "sort-colors", "sort-latte-squared", "swap-print-pairs",
-            "timestamp-value-store", "top-espresso-machines", "top-raid-score",
-            "trapping-rain-water", "trending-chat-topics", "username-trie",
-            "validate-homework-id", "versioned-cells", "wildcard-lexicon",
-            "word-break-chat", "word-search", "word-search-ii",
-            "zigzag-yearbook-order");
+    private static final Set<String> CONSTRAINTS_DIFFER_BETWEEN_LANGUAGES = Set.of();
 
     private static final Pattern MARKER = Pattern.compile("\\*\\*(?:Example|예시)(?: (\\d+))?:\\*\\*");
     private static final Pattern INPUT_AND_OUTPUT = Pattern.compile(
