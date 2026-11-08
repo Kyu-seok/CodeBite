@@ -49,19 +49,25 @@ newest_migration() {
     -name 'V*__*' 2>/dev/null | sed -E 's|.*/V([0-9]+)__.*|\1|' | sort -n | tail -n 1
 }
 
+# What follows a database's name when it can't be read: the container, and how to start it.
+db_unreachable_message() {
+  echo "not reachable (docker container codebite-postgres); start it: open -a Docker, then docker compose -f infra/docker-compose.yml up -d postgres"
+}
+
 # For a script reading database $1 from checkout $2: the database is only as new as the last
 # backend start, so this warns on stderr (BEHIND) when the checkout has migrations the database
-# hasn't run, naming both versions. Returns 1, with the message $3 (the script's name) prefixes,
-# when the database can't be read.
+# hasn't run, naming both versions; a checkout with no migrations at all has nothing to be behind.
+# Returns 1, with db_unreachable_message prefixed by $3 (the script's name), when the database
+# can't be read.
 warn_if_behind() {
   local database=$1 here=$2 script=$3 db ours
   db=$(flyway_version "$database")
   if [[ -z "$db" ]]; then
-    echo "$script: database $database not reachable (docker container codebite-postgres); start it: open -a Docker, then docker compose -f infra/docker-compose.yml up -d postgres" >&2
+    echo "$script: database $database $(db_unreachable_message)" >&2
     return 1
   fi
   ours=$(newest_migration "$here")
-  if (( db < ours )); then
+  if [[ -n "$ours" ]] && (( db < ours )); then
     echo "WARNING: database $database at V$db, this checkout's migrations reach V$ours; start scripts/dev-branch-servers.sh and rerun with CODEBITE_DB=<the database it prints>" >&2
   fi
 }

@@ -51,4 +51,23 @@ grep -q 'relation "boom" does not exist' "$tmp/err" || fail "a failing query sho
 
 if STUB_VERSION=999999 run a b >/dev/null 2>&1; then fail "two arguments should be a usage error"; fi
 
+# warn_if_behind itself, as every reader shares it: a checkout without migrations (a worktree before
+# common/ exists, say) neither warns nor errors, and an unreachable database prints the one message
+# dev-status.sh prints too, prefixed by the script's name.
+mkdir "$tmp/bare"
+(
+  set -euo pipefail
+  # shellcheck source=SCRIPTDIR/dev-servers-common.sh
+  source "$here/dev-servers-common.sh"
+  PATH="$tmp/bin:$PATH" STUB_VERSION=7 warn_if_behind codebite "$tmp/bare" db-sql.sh 2>"$tmp/err" \
+    || fail "a checkout with no migrations should not fail the check: $(cat "$tmp/err")"
+  [[ ! -s "$tmp/err" ]] || fail "a checkout with no migrations should not warn: $(cat "$tmp/err")"
+  if PATH="$tmp/bin:$PATH" STUB_VERSION='' warn_if_behind codebite "$tmp/bare" db-sql.sh 2>"$tmp/err"; then
+    fail "an unreachable database should return 1"
+  fi
+  [[ "$(cat "$tmp/err")" == "db-sql.sh: database codebite $(db_unreachable_message)" ]] \
+    || fail "the unreachable message should be the shared one, prefixed by the script: $(cat "$tmp/err")"
+  grep -q 'open -a Docker' "$tmp/err" || fail "the unreachable message should say how to start the database"
+)
+
 echo "db-sql.test.sh: ok"
