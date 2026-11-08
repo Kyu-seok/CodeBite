@@ -11,6 +11,10 @@
 # pushes the integration branch only when all of them pass; otherwise it names the failed check and
 # leaves the merge commit unpushed (undo it with `git reset --hard HEAD~1`).
 #
+# When the ticket branch already contains the integration branch's HEAD, the merge's tree is the
+# ticket branch's own tree, which its PR's CI checked on push, so the checks are skipped and the
+# merge commit pushed straight away, with one line saying why.
+#
 # A merge that changes this script hands the checks and the push to the merged copy, run as
 # `scripts/merge-ticket.sh --checks-and-push`: bash read this copy before the merge, so its checks are
 # the old ones. Keep that mode in every later version.
@@ -53,6 +57,12 @@ frontend_checks() {
   )
 }
 
+# The push of HEAD to branch $1.
+push_merge() {
+  git push -q origin "HEAD:refs/heads/$1"
+  echo "merge-ticket: pushed $(git rev-parse --short HEAD) to $1"
+}
+
 # The checks, then the push of branch $1 when all of them pass.
 check_and_push() {
   local current=$1 check
@@ -64,8 +74,14 @@ check_and_push() {
     fi
   done
 
-  git push -q origin "HEAD:refs/heads/$current"
-  echo "merge-ticket: pushed $(git rev-parse --short HEAD) to $current"
+  push_merge "$current"
+}
+
+# The push of branch $1 with no checks, after merging $2, which already contained $1: the merge's
+# tree is $2's own tree, and its PR's CI checked that on push.
+push_checked_by_ci() {
+  echo "merge-ticket: $2 already contains $1; skipping the checks (CI gates the pushed tree)"
+  push_merge "$1"
 }
 
 # Hands the checks and the push of branch $1 to the copy of this script the merge just brought in.
@@ -74,7 +90,7 @@ run_merged_copy() {
 }
 
 merge_ticket() {
-  local branch=$1 title=$2 current ref merged=no conflicts
+  local branch=$1 title=$2 current ref merged=no contains_head=no conflicts
   current=$(git branch --show-current)
   git fetch -q origin
   if git rev-parse -q --verify "refs/remotes/origin/$branch" >/dev/null; then
@@ -86,6 +102,7 @@ merge_ticket() {
     return 1
   fi
   git merge-base --is-ancestor "$ref" HEAD && merged=yes
+  git merge-base --is-ancestor HEAD "$ref" && contains_head=yes
   local refusal
   refusal=$(merge_refusal "$current" "$(git status --porcelain)" "$merged")
   if [[ -n "$refusal" ]]; then
@@ -102,7 +119,9 @@ merge_ticket() {
     return 1
   fi
 
-  if git diff --name-only HEAD^1 HEAD | grep -qx scripts/merge-ticket.sh; then
+  if [[ "$contains_head" == yes ]]; then
+    push_checked_by_ci "$current" "$ref"
+  elif git diff --name-only HEAD^1 HEAD | grep -qx scripts/merge-ticket.sh; then
     echo "merge-ticket: the merge changes merge-ticket.sh; its merged copy runs the checks"
     run_merged_copy "$current"
   else
