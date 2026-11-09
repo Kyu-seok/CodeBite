@@ -70,7 +70,6 @@ class StatementsMatchTestCasesTest {
             "versioned-cells",
             "walls-and-gates",
             "wildcard-lexicon",
-            "word-ladder",
             "word-search",
             "word-search-ii");
 
