@@ -295,9 +295,8 @@ class StatementsMatchTestCasesTest {
         if (constraints == null) return List.of();
         Set<String> parameters = pythonParameters(pythonStarter);
         Set<String> unknown = new TreeSet<>();
-        Matcher span = CODE_SPAN.matcher(constraints);
-        while (span.find()) {
-            Matcher name = MEASURED_NAME.matcher(span.group(1));
+        for (String span : codeSpans(constraints)) {
+            Matcher name = MEASURED_NAME.matcher(span);
             while (name.find()) {
                 if (!parameters.contains(name.group(1))) unknown.add(name.group(1));
             }

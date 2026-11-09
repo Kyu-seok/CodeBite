@@ -7,7 +7,7 @@
 UPDATE problem_translations SET
     constraints = $$- `1 <= key.length, value.length <= 100`
 - `1 <= timestamp <= 10^7`
-- `write`에 전달되는 timestamp는 같은 `key`에 대해 엄격히 증가합니다.
+- `write`에 전달되는 타임스탬프는 같은 `key`에 대해 엄격히 증가합니다.
 - `write`와 `readAt` 호출은 합쳐서 최대 `2 * 10^5`번입니다.$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$timestamp-value-store$$);

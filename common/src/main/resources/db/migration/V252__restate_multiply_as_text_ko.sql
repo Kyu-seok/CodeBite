@@ -6,7 +6,7 @@
 
 UPDATE problem_translations SET
     constraints = $$- `1 <= left.length, right.length <= 200`
-- `left`와 `right`는 십진 숫자만으로 이루어집니다
-- `left`와 `right` 모두 값이 `0`인 경우를 제외하면 앞자리에 0이 오지 않습니다$$
+- `left`와 `right`는 십진 숫자만으로 이루어집니다.
+- `left`와 `right` 모두 값이 `0`인 경우를 제외하면 앞자리에 0이 오지 않습니다.$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$multiply-as-text$$);
