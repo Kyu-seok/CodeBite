@@ -58,7 +58,6 @@ class StatementsMatchTestCasesTest {
             "kth-top-score-stream",
             "largest-rectangle-histogram",
             "lca-binary-tree",
-            "lca-bst",
             "longest-palindromic-substring",
             "lru-cache",
             "n-queens",
