@@ -48,17 +48,37 @@ class StatementsMatchTestCasesTest {
 
     /** Example N isn't sample N, or the statement has no Example with an Input and Output to compare. */
     private static final Set<String> EXAMPLES_DIFFER_FROM_SAMPLES = Set.of(
-            "binary-tree-level-order", "capture-enclosed-tiles", "chat-log-codec",
-            "chat-ring-buffer", "fizz-buzz", "graph-valid-tree",
-            "group-anagrams", "kth-top-score-stream", "largest-rectangle-histogram",
-            "lca-binary-tree", "lca-bst", "longest-palindromic-substring",
-            "lru-cache", "n-queens", "peak-score-streak",
-            "populating-next-pointers", "queue-from-stacks", "random-pick-bag",
-            "reverse-linked-list", "running-median-timer", "sort-colors",
-            "sum-root-to-leaf", "timestamp-value-store", "trapping-rain-water",
-            "valid-sudoku", "versioned-cells",
-            "walls-and-gates", "wildcard-lexicon", "word-ladder",
-            "word-search", "word-search-ii");
+            "binary-tree-level-order",
+            "capture-enclosed-tiles",
+            "chat-log-codec",
+            "chat-ring-buffer",
+            "fizz-buzz",
+            "graph-valid-tree",
+            "group-anagrams",
+            "kth-top-score-stream",
+            "largest-rectangle-histogram",
+            "lca-binary-tree",
+            "lca-bst",
+            "longest-palindromic-substring",
+            "lru-cache",
+            "n-queens",
+            "peak-score-streak",
+            "populating-next-pointers",
+            "queue-from-stacks",
+            "random-pick-bag",
+            "reverse-linked-list",
+            "running-median-timer",
+            "sort-colors",
+            "sum-root-to-leaf",
+            "timestamp-value-store",
+            "trapping-rain-water",
+            "valid-sudoku",
+            "versioned-cells",
+            "walls-and-gates",
+            "wildcard-lexicon",
+            "word-ladder",
+            "word-search",
+            "word-search-ii");
 
     /**
      * Not a defect, and for outputs only: the Example shows the answer a user returns and the Driver
