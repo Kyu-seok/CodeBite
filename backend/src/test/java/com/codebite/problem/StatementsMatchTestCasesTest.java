@@ -69,7 +69,6 @@ class StatementsMatchTestCasesTest {
             "versioned-cells",
             "wildcard-lexicon",
             "word-ladder",
-            "word-search",
             "word-search-ii");
 
     /**
