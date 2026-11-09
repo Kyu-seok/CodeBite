@@ -71,8 +71,7 @@ class StatementsMatchTestCasesTest {
             "walls-and-gates",
             "wildcard-lexicon",
             "word-ladder",
-            "word-search",
-            "word-search-ii");
+            "word-search");
 
     /**
      * Not a defect, and for outputs only: the Example shows the answer a user returns and the Driver
