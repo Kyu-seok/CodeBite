@@ -51,7 +51,6 @@ class StatementsMatchTestCasesTest {
             "capture-enclosed-tiles",
             "chat-log-codec",
             "chat-ring-buffer",
-            "fizz-buzz",
             "group-anagrams",
             "kth-top-score-stream",
             "largest-rectangle-histogram",
