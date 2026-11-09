@@ -65,7 +65,6 @@ class StatementsMatchTestCasesTest {
             "sort-colors",
             "timestamp-value-store",
             "trapping-rain-water",
-            "valid-sudoku",
             "versioned-cells",
             "wildcard-lexicon",
             "word-ladder",
