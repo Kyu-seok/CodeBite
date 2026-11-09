@@ -53,7 +53,6 @@ class StatementsMatchTestCasesTest {
             "chat-log-codec",
             "chat-ring-buffer",
             "fizz-buzz",
-            "graph-valid-tree",
             "group-anagrams",
             "kth-top-score-stream",
             "largest-rectangle-histogram",
