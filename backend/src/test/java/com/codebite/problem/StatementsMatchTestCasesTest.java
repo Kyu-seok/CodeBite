@@ -65,11 +65,8 @@ class StatementsMatchTestCasesTest {
             "sort-colors",
             "timestamp-value-store",
             "trapping-rain-water",
-            "valid-sudoku",
             "versioned-cells",
             "wildcard-lexicon");
-            "word-search",
-            "word-search-ii");
 
     /**
      * Not a defect, and for outputs only: the Example shows the answer a user returns and the Driver
