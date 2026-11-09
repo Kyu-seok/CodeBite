@@ -74,7 +74,6 @@ class StatementsMatchTestCasesTest {
             "trapping-rain-water",
             "valid-sudoku",
             "versioned-cells",
-            "walls-and-gates",
             "wildcard-lexicon",
             "word-ladder",
             "word-search",
