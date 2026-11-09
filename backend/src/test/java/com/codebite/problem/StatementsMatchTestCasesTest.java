@@ -63,12 +63,10 @@ class StatementsMatchTestCasesTest {
             "random-pick-bag",
             "running-median-timer",
             "sort-colors",
-            "sum-root-to-leaf",
             "timestamp-value-store",
             "trapping-rain-water",
             "valid-sudoku",
             "versioned-cells",
-            "walls-and-gates",
             "wildcard-lexicon",
             "word-search",
             "word-search-ii");
