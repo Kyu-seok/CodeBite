@@ -69,7 +69,6 @@ class StatementsMatchTestCasesTest {
             "reverse-linked-list",
             "running-median-timer",
             "sort-colors",
-            "sum-root-to-leaf",
             "timestamp-value-store",
             "trapping-rain-water",
             "valid-sudoku",
