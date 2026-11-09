@@ -55,7 +55,6 @@ class StatementsMatchTestCasesTest {
             "group-anagrams",
             "kth-top-score-stream",
             "largest-rectangle-histogram",
-            "lca-bst",
             "longest-palindromic-substring",
             "lru-cache",
             "n-queens",
