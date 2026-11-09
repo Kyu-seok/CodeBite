@@ -31,11 +31,6 @@ Input: rooms = [[0,2147483647,2147483647],[-1,2147483647,-1],[2147483647,2147483
 Output: [[0,1,2],[-1,2,-1],[2,1,0]]
 ```
 
-```diagram-grid
-cells: [[0,"INF","INF"],[-1,"INF",-1],["INF","INF",0]]
-after: [[0,1,2],[-1,2,-1],[2,1,0]]
-```
-
 There are two gates, at `(0, 0)` and `(2, 2)`. Each room takes the distance to whichever gate is nearer; the centre room is 2 steps from both. Walls stay `-1`.$$
 WHERE slug = $$walls-and-gates$$;
 
@@ -64,11 +59,6 @@ after: [[1,0],[2,1]]
 ```
 입력: rooms = [[0,2147483647,2147483647],[-1,2147483647,-1],[2147483647,2147483647,0]]
 출력: [[0,1,2],[-1,2,-1],[2,1,0]]
-```
-
-```diagram-grid
-cells: [[0,"INF","INF"],[-1,"INF",-1],["INF","INF",0]]
-after: [[0,1,2],[-1,2,-1],[2,1,0]]
 ```
 
 문이 `(0, 0)`과 `(2, 2)` 두 곳에 있습니다. 각 방은 더 가까운 문까지의 거리를 가지며, 가운데 방은 두 문 모두에서 2칸입니다. 벽은 `-1` 그대로입니다.$$
