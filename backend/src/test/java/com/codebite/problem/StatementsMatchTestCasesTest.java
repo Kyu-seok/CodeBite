@@ -66,7 +66,6 @@ class StatementsMatchTestCasesTest {
             "populating-next-pointers",
             "queue-from-stacks",
             "random-pick-bag",
-            "reverse-linked-list",
             "running-median-timer",
             "sort-colors",
             "sum-root-to-leaf",
