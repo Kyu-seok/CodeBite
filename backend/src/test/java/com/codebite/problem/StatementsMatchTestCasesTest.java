@@ -68,8 +68,7 @@ class StatementsMatchTestCasesTest {
             "valid-sudoku",
             "versioned-cells",
             "wildcard-lexicon",
-            "word-ladder",
-            "word-search-ii");
+            "word-ladder");
 
     /**
      * Not a defect, and for outputs only: the Example shows the answer a user returns and the Driver
