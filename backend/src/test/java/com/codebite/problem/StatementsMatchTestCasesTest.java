@@ -52,7 +52,6 @@ class StatementsMatchTestCasesTest {
             "chat-log-codec",
             "chat-ring-buffer",
             "group-anagrams",
-            "kth-top-score-stream",
             "largest-rectangle-histogram",
             "longest-palindromic-substring",
             "lru-cache",
