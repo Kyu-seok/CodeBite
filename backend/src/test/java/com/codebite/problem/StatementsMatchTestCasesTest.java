@@ -50,7 +50,6 @@ class StatementsMatchTestCasesTest {
     private static final Set<String> EXAMPLES_DIFFER_FROM_SAMPLES = Set.of(
             "chat-log-codec",
             "chat-ring-buffer",
-            "kth-top-score-stream",
             "largest-rectangle-histogram",
             "longest-palindromic-substring",
             "lru-cache",
