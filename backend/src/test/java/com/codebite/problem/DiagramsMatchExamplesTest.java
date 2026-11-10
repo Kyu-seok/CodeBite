@@ -116,11 +116,11 @@ class DiagramsMatchExamplesTest {
                     edges: [["dp","lens"],["lens","cam"]]
                     nodes: ["dp","lens","cam","leo","solo"]
                     directed: false""")),
-            // Words one letter apart, from beginWord and wordList.
+            // Words one letter apart, from beginWord and wordList; here every pair is.
             Map.entry("word-ladder", pinned(1, """
-                    edges: [["hit","hot"],["hot","dot"],["hot","lot"],["dot","lot"],["dot","dog"],["lot","log"],["dog","log"],["dog","cog"],["log","cog"]]
+                    edges: [["pet","pit"],["pet","pot"],["pet","pat"],["pit","pot"],["pit","pat"],["pot","pat"]]
                     directed: false
-                    highlight_path: ["hit","hot","dot","dog","cog"]""")),
+                    highlight_path: ["pet","pot"]""")),
             // Player 5 is in no relay, so the Diagram names every player.
             Map.entry("count-voice-parties", pinned(1, """
                     edges: [[0,1],[2,3],[3,4]]

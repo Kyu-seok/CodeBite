@@ -50,7 +50,6 @@ class StatementsMatchTestCasesTest {
     private static final Set<String> EXAMPLES_DIFFER_FROM_SAMPLES = Set.of(
             "chat-log-codec",
             "chat-ring-buffer",
-            "fizz-buzz",
             "group-anagrams",
             "kth-top-score-stream",
             "largest-rectangle-histogram",
@@ -64,10 +63,8 @@ class StatementsMatchTestCasesTest {
             "sort-colors",
             "timestamp-value-store",
             "trapping-rain-water",
-            "valid-sudoku",
             "versioned-cells",
-            "wildcard-lexicon",
-            "word-ladder");
+            "wildcard-lexicon");
 
     /**
      * Not a defect, and for outputs only: the Example shows the answer a user returns and the Driver
