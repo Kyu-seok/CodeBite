@@ -3,7 +3,7 @@ class Solution {
      * @param {string} feed
      * @return {number}
      */
-    longestFreshFeed(feed) {
+    longestGenreWindow(feed) {
         // Write your solution here
     }
 }

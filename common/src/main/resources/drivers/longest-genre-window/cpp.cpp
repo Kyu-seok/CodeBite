@@ -7,9 +7,9 @@ using namespace std;
 {USER_CODE}
 
 int main() {
-    string s;
-    getline(cin, s);
-    int result = Solution().longestFreshFeed(s);
+    string feed;
+    getline(cin, feed);
+    int result = Solution().longestGenreWindow(feed);
     cout << result << endl;
     return 0;
 }

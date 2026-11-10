@@ -1,5 +1,5 @@
 class Solution {
-    public int longestFreshFeed(String feed) {
+    public int longestGenreWindow(String feed) {
         // Write your solution here
     }
 }
