@@ -52,7 +52,6 @@ class StatementsMatchTestCasesTest {
             "chat-ring-buffer",
             "n-queens",
             "peak-score-streak",
-            "queue-from-stacks",
             "random-pick-bag",
             "running-median-timer",
             "sort-colors",
