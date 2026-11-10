@@ -48,7 +48,7 @@ class StatementsMatchTestCasesTest {
 
     /** Example N isn't sample N, or the statement has no Example with an Input and Output to compare. */
     private static final Set<String> EXAMPLES_DIFFER_FROM_SAMPLES = Set.of(
-            "wildcard-lexicon");
+);
 
     /**
      * Not a defect, and for outputs only: the Example shows the answer a user returns and the Driver
