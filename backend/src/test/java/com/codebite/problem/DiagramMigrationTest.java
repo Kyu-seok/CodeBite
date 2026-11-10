@@ -370,10 +370,11 @@ class DiagramMigrationTest {
                 .findByProblemIdAndLocale(p.getId(), "ko")
                 .orElseThrow();
         for (String desc : new String[]{p.getDescription(), t.getDescription()}) {
-            int first = desc.indexOf("cells: [[\".\",\"Q\"");
-            int second = desc.indexOf("cells: [[\".\",\".\",\"Q\"");
+            // V286: two of the ten n = 5 boards, in the Output's order.
+            int first = desc.indexOf("cells: [[\".\",\".\",\"Q\",\".\",\".\"]");
+            int second = desc.indexOf("cells: [[\".\",\"Q\",\".\",\".\",\".\"]");
             assertTrue(first > 0 && first < second,
-                    "Expected the .Q.. board before the ..Q. board; actual:\n" + desc);
+                    "Expected the ..Q.. board before the .Q... board; actual:\n" + desc);
         }
         assertGridsUnderExample1(p.getDescription(), "**Example 1:**", "**Example 2:**", 2);
         assertGridsUnderExample1(t.getDescription(), "**예시 1:**", "**예시 2:**", 2);
