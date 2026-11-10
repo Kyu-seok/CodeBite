@@ -21,7 +21,7 @@ A Diagram sits under its example's code block. The one-line `Input:` stays: it i
 | a size (`n = 4`) whose output is boards or grids | the output: one `diagram-grid` per board, as in N-Queens |
 | 1D array, string, number | never: the input line already is the picture |
 
-Draw the examples where the picture explains something the line can't. Example 1 is usually enough; draw a later example too when its point is visual (Valid Sudoku's Example 2 is the clash of two 8s). Use `after` when the problem transforms its input into something of the same shape; use `highlight` only for a cell, node or path the example's answer points at unambiguously, or the inputs the example asks about (a lowest-common-ancestor example's `p` and `q`).
+Draw the examples where the picture explains something the line can't. Example 1 is usually enough; draw a later example too when its point is visual (Valid Sudoku's Example 2 is the clash of two 1s in the second row). Use `after` when the problem transforms its input into something of the same shape; use `highlight` only for a cell, node or path the example's answer points at unambiguously, or the inputs the example asks about (a lowest-common-ancestor example's `p` and `q`).
 
 A new problem from the `problem-generator` agent writes its Diagrams straight into the description in its own migration and skips step 2 below.
 

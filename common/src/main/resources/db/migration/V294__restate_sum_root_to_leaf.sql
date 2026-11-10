@@ -1,8 +1,8 @@
--- V294: sum-root-to-leaf, examples restated to show the sample test cases
--- (order_index 1 and 2), which are unchanged: Example 1 is [2,5,8] -> 53 and
--- Example 2 is [3,6,1,4,0] -> 755, in English and Korean. The Diagram under
--- Example 1 is redrawn to the new data. Slug, title, constraints, Drivers and
--- Starter Code stay. Issue #226 (part of #193).
+-- V294: restate sum-root-to-leaf (#226, part of #193). The examples now show the
+-- sample test cases (order_index 1 and 2), which are unchanged: Example 1 is
+-- [2,5,8] -> 53 and Example 2 is [3,6,1,4,0] -> 755, in English and Korean. The
+-- Diagram under Example 1 is redrawn to the new data. Slug, title, constraints,
+-- Drivers and Starter Code stay.
 
 UPDATE problems SET
     description = $$The root-to-leaf path of a binary tree spells a non-negative integer when its node values are read top to bottom (each node holds a single digit `0`–`9`). For example, the path `4 → 9 → 5` spells `495`.

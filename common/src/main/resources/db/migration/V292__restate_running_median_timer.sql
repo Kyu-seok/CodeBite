@@ -24,11 +24,11 @@ Output
 Explanation
 StreamMedian collector = new StreamMedian();
 collector.record(1);
-collector.median();    // 1.0
+collector.median();    // returns 1.0
 collector.record(2);
-collector.median();    // (1 + 2) / 2 = 1.5
+collector.median();    // returns 1.5, (1 + 2) / 2
 collector.record(3);
-collector.median();    // middle of [1, 2, 3] = 2.0
+collector.median();    // returns 2.0, the middle of [1, 2, 3]
 ```
 
 **Example 2:**
@@ -64,11 +64,11 @@ UPDATE problem_translations SET
 설명
 StreamMedian collector = new StreamMedian();
 collector.record(1);
-collector.median();    // 1.0
+collector.median();    // 1.0 반환
 collector.record(2);
-collector.median();    // (1 + 2) / 2 = 1.5
+collector.median();    // 1.5 반환, (1 + 2) / 2
 collector.record(3);
-collector.median();    // [1, 2, 3]의 가운데 값 = 2.0
+collector.median();    // 2.0 반환, [1, 2, 3]의 가운데 값
 ```
 
 **예시 2:**

@@ -23,11 +23,11 @@ Output
 [null,null,0,null,5]
 
 Explanation
-cells = new VersionedCells(3)
-cells.set(0, 5)
-cells.commit()        // returns 0; snapshot 0 is [5, 0, 0]
-cells.set(0, 6)       // live row is now [6, 0, 0]
-cells.readAt(0, 0)    // 5 -- value of cell 0 in snapshot 0
+VersionedCells cells = new VersionedCells(3);
+cells.set(0, 5);
+cells.commit();       // returns 0, snapshot 0 is [5, 0, 0]
+cells.set(0, 6);      // live row is now [6, 0, 0]
+cells.readAt(0, 0);   // returns 5, the value of cell 0 in snapshot 0
 ```
 
 **Example 2:**
@@ -39,14 +39,14 @@ Output
 [null,null,null,0,null,1,10,30]
 
 Explanation
-cells = new VersionedCells(2)
-cells.set(0, 10)
-cells.set(1, 20)
-cells.commit()        // returns 0; snapshot 0 is [10, 20]
-cells.set(0, 30)
-cells.commit()        // returns 1; snapshot 1 is [30, 20]
-cells.readAt(0, 0)    // 10 -- cell 0 in snapshot 0
-cells.readAt(0, 1)    // 30 -- cell 0 in snapshot 1
+VersionedCells cells = new VersionedCells(2);
+cells.set(0, 10);
+cells.set(1, 20);
+cells.commit();       // returns 0, snapshot 0 is [10, 20]
+cells.set(0, 30);
+cells.commit();       // returns 1, snapshot 1 is [30, 20]
+cells.readAt(0, 0);   // returns 10, cell 0 in snapshot 0
+cells.readAt(0, 1);   // returns 30, cell 0 in snapshot 1
 ```$$
 WHERE slug = $$versioned-cells$$;
 
@@ -69,11 +69,11 @@ UPDATE problem_translations SET
 [null,null,0,null,5]
 
 설명
-cells = new VersionedCells(3)
-cells.set(0, 5)
-cells.commit()        // 0을 반환; 스냅샷 0은 [5, 0, 0]
-cells.set(0, 6)       // 살아 있는 행은 이제 [6, 0, 0]
-cells.readAt(0, 0)    // 5 -- 스냅샷 0의 셀 0 값
+VersionedCells cells = new VersionedCells(3);
+cells.set(0, 5);
+cells.commit();       // 0 반환, 스냅샷 0은 [5, 0, 0]
+cells.set(0, 6);      // 살아 있는 행은 이제 [6, 0, 0]
+cells.readAt(0, 0);   // 5 반환, 스냅샷 0의 셀 0 값
 ```
 
 **예시 2:**
@@ -85,14 +85,14 @@ cells.readAt(0, 0)    // 5 -- 스냅샷 0의 셀 0 값
 [null,null,null,0,null,1,10,30]
 
 설명
-cells = new VersionedCells(2)
-cells.set(0, 10)
-cells.set(1, 20)
-cells.commit()        // 0을 반환; 스냅샷 0은 [10, 20]
-cells.set(0, 30)
-cells.commit()        // 1을 반환; 스냅샷 1은 [30, 20]
-cells.readAt(0, 0)    // 10 -- 스냅샷 0의 셀 0 값
-cells.readAt(0, 1)    // 30 -- 스냅샷 1의 셀 0 값
+VersionedCells cells = new VersionedCells(2);
+cells.set(0, 10);
+cells.set(1, 20);
+cells.commit();       // 0 반환, 스냅샷 0은 [10, 20]
+cells.set(0, 30);
+cells.commit();       // 1 반환, 스냅샷 1은 [30, 20]
+cells.readAt(0, 0);   // 10 반환, 스냅샷 0의 셀 0 값
+cells.readAt(0, 1);   // 30 반환, 스냅샷 1의 셀 0 값
 ```$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$versioned-cells$$);

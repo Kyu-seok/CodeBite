@@ -1,8 +1,8 @@
 -- V299: restate walls-and-gates (#231, part of #193). The Examples showed a 4x4 grid
 -- and a lone wall that are no sample Test Case; they now show samples 1 and 2
--- (order_index 1 and 2), with the Diagram redrawn to Example 1's data and a second
--- Diagram under Example 2, in English and Korean. Text only: Slug, title,
--- constraints, Test Cases, Starter Code and Drivers are unchanged.
+-- (order_index 1 and 2), with the Diagram under Example 1 redrawn to its data, in
+-- English and Korean. Text only: Slug, title, constraints, Test Cases, Starter Code
+-- and Drivers are unchanged.
 
 UPDATE problems SET
     description = $$You're given an `m × n` grid `rooms`, where each cell is one of:
