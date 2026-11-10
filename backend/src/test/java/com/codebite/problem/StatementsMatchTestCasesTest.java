@@ -54,7 +54,6 @@ class StatementsMatchTestCasesTest {
             "queue-from-stacks",
             "random-pick-bag",
             "running-median-timer",
-            "sort-colors",
             "timestamp-value-store",
             "trapping-rain-water",
             "versioned-cells",
