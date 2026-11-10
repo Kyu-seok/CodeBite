@@ -61,7 +61,6 @@ class StatementsMatchTestCasesTest {
             "running-median-timer",
             "sort-colors",
             "timestamp-value-store",
-            "trapping-rain-water",
             "versioned-cells",
             "wildcard-lexicon");
 
