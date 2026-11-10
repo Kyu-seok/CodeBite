@@ -1,7 +1,7 @@
 -- V300: restate wildcard-lexicon (#232, part of #193). The description had no Example;
--- it now shows sample 1 as Example 1, with a call trace as its Explanation, and Test Case 2
--- as Example 2 (the problem has a single sample, so Example 2 has no sample to match), in
--- the operations form, in both languages. Only the descriptions change; Slug, title,
+-- it now shows sample 1 as Example 1, with a call trace as its Explanation, in the
+-- operations form, in both languages. The problem has a single sample, so there is no
+-- Example 2 (showing a hidden Test Case would reveal it). Only the descriptions change; Slug, title,
 -- constraints, Test Cases, Starter Code and Drivers are unchanged.
 
 UPDATE problems SET
@@ -32,15 +32,6 @@ lexicon.match("pad");  // returns false, no saved word starts with p
 lexicon.match("bad");  // returns true, "bad" is saved
 lexicon.match(".ad");  // returns true, "bad", "dad" and "mad" all fit
 lexicon.match("b..");  // returns true, "bad" fits
-```
-
-**Example 2:**
-```
-Input
-["WildcardLexicon","enroll","enroll","match","match","match"]
-[[],["hello"],["world"],["hello"],["worl."],["....d"]]
-Output
-[null,null,null,true,true,true]
 ```$$
 WHERE slug = $$wildcard-lexicon$$;
 
@@ -72,15 +63,6 @@ lexicon.match("pad");  // false 반환, p로 시작하는 저장 단어가 없�
 lexicon.match("bad");  // true 반환, "bad"가 저장되어 있음
 lexicon.match(".ad");  // true 반환, "bad", "dad", "mad" 모두 매칭됨
 lexicon.match("b..");  // true 반환, "bad"가 매칭됨
-```
-
-**예시 2:**
-```
-입력
-["WildcardLexicon","enroll","enroll","match","match","match"]
-[[],["hello"],["world"],["hello"],["worl."],["....d"]]
-출력
-[null,null,null,true,true,true]
 ```$$
 WHERE locale = 'ko'
   AND problem_id = (SELECT id FROM problems WHERE slug = $$wildcard-lexicon$$);
