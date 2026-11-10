@@ -51,7 +51,6 @@ class StatementsMatchTestCasesTest {
             "capture-enclosed-tiles",
             "chat-log-codec",
             "chat-ring-buffer",
-            "fizz-buzz",
             "kth-top-score-stream",
             "largest-rectangle-histogram",
             "longest-palindromic-substring",
@@ -64,10 +63,8 @@ class StatementsMatchTestCasesTest {
             "sort-colors",
             "timestamp-value-store",
             "trapping-rain-water",
-            "valid-sudoku",
             "versioned-cells",
-            "wildcard-lexicon",
-            "word-ladder");
+            "wildcard-lexicon");
 
     /**
      * Not a defect, and for outputs only: the Example shows the answer a user returns and the Driver

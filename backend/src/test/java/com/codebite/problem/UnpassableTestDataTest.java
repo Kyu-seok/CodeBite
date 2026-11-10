@@ -113,8 +113,10 @@ class UnpassableTestDataTest {
     @Test
     void wordLadderDiagramDrawsExampleOnesShortestPath() {
         for (String text : List.of(description("word-ladder"), korean("word-ladder"))) {
-            assertFalse(text.contains("\"pet\""), "diagram still draws pet -> pit -> pot");
-            assertTrue(text.contains("highlight_path: [\"hit\",\"hot\",\"dot\",\"dog\",\"cog\"]"));
+            assertFalse(text.contains("highlight_path: [\"pet\",\"pit\",\"pot\"]"),
+                    "diagram still draws the two-step pet -> pit -> pot");
+            assertTrue(text.contains("highlight_path: [\"pet\",\"pot\"]"),
+                    "diagram should highlight Example 1's one-step path pet -> pot");
         }
     }
 

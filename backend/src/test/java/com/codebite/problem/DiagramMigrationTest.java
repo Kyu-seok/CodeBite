@@ -342,8 +342,9 @@ class DiagramMigrationTest {
                 "Expected one diagram under each example; actual:\n" + desc);
         assertTrue(parts[1].contains("boxes: 3") && parts[1].contains("blank: \".\""),
                 "Example 1's board should be boxed with blank dots");
-        assertTrue(parts[2].contains("[[\"8\",\"3\"") && parts[2].contains("highlight: [[0,0],[3,0]]"),
-                "Example 2's board should highlight the two clashing 8s");
+        assertTrue(parts[2].contains("[\".\",\"1\",\".\",\".\",\"2\",\".\",\".\",\"1\",\".\"]")
+                        && parts[2].contains("highlight: [[1,1],[1,7]]"),
+                "Example 2's board should highlight the two clashing 1s in its second row");
     }
 
     // ---- V198 Stage 5: the remaining grid problems, and N-Queens' output boards ----
