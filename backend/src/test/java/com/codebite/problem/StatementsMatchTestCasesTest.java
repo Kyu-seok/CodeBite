@@ -50,8 +50,7 @@ class StatementsMatchTestCasesTest {
     private static final Set<String> EXAMPLES_DIFFER_FROM_SAMPLES = Set.of(
             "chat-log-codec",
             "timestamp-value-store",
-            "versioned-cells",
-            "wildcard-lexicon");
+            "versioned-cells");
 
     /**
      * Not a defect, and for outputs only: the Example shows the answer a user returns and the Driver
