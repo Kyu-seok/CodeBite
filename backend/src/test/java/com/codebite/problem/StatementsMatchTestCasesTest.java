@@ -50,7 +50,6 @@ class StatementsMatchTestCasesTest {
     private static final Set<String> EXAMPLES_DIFFER_FROM_SAMPLES = Set.of(
             "chat-log-codec",
             "random-pick-bag",
-            "running-median-timer",
             "timestamp-value-store",
             "versioned-cells",
             "wildcard-lexicon");
