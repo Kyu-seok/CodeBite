@@ -1,5 +1,5 @@
 {USER_CODE}
 
-s = input().strip()
-result = Solution().longestFreshFeed(s)
+feed = input().strip()
+result = Solution().longestGenreWindow(feed)
 print(result)

@@ -1,5 +1,5 @@
 class Solution:
-    def longestFreshFeed(self, feed: str) -> int:
+    def longestGenreWindow(self, feed: str) -> int:
         last_seen: dict[str, int] = {}
         start = 0
         best = 0

@@ -5,8 +5,8 @@ import java.util.*;
 public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        String s = sc.nextLine().trim();
-        int result = new Solution().longestFreshFeed(s);
+        String feed = sc.nextLine().trim();
+        int result = new Solution().longestGenreWindow(feed);
         System.out.println(result);
     }
 }

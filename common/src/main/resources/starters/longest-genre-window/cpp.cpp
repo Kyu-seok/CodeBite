@@ -1,6 +1,6 @@
 class Solution {
 public:
-    int longestFreshFeed(string feed) {
+    int longestGenreWindow(string feed) {
         // Write your solution here
     }
 };
