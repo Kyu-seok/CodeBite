@@ -3,8 +3,9 @@
 # message, that the frontend checks lint with no warnings before the tests and build (npm faked), and
 # (in scratch repositories with the checks faked) that a conflict aborts and lists the
 # files, a failing check leaves the merge commit unpushed, green checks push it, a ticket that already
-# contains the integration branch's HEAD is pushed with no checks, and a merge that changes
-# merge-ticket.sh hands the checks and the push to the merged copy.
+# contains the integration branch's HEAD is pushed with no checks, a merge that changes
+# merge-ticket.sh hands the checks and the push to the merged copy, and two tickets in one call get
+# one run of the checks and one push, or stop at a conflict on the second with the first unpushed.
 set -euo pipefail
 
 script="$(cd "$(dirname "$0")" && pwd)/merge-ticket.sh"
@@ -130,6 +131,32 @@ if ! out=$(run_merge ticket/self 'Self'); then echo "FAIL: self merge failed: $o
 grep -q 'merged-copy-ran on integration/x' <<<"$out" || { echo "FAIL: the merged copy must run the checks: $out"; fail=1; }
 grep -q backend-ran <<<"$out" && { echo "FAIL: the old copy ran the checks: $out"; fail=1; }
 check "self: push left to the merged copy" "$(remote_head)" "$(git -C "$scratch/work" rev-parse HEAD^1)"
+g -C "$scratch/work" reset -q --hard "$(remote_head)"
+
+# Two tickets in one call: both merge in order, then the checks run once and one push carries both.
+# ticket/two-a contains HEAD but ticket/two-b doesn't, so the checks are still due.
+(cd "$scratch/seed" && g fetch -q origin && g switch -q --detach origin/integration/x \
+  && g switch -qc ticket/two-a && echo a > two-a.txt && g add . && g commit -qm two-a && g push -q origin ticket/two-a \
+  && g switch -q --detach origin/integration/x~1 \
+  && g switch -qc ticket/two-b && echo b > two-b.txt && g add . && g commit -qm two-b && g push -q origin ticket/two-b)
+if ! out=$(run_merge ticket/two-a 'Two A' ticket/two-b 'Two B'); then echo "FAIL: two-ticket merge failed: $out"; fail=1; fi
+check "two: checks ran once" "$(grep -c backend-ran <<<"$out")" 1
+check "two: one push" "$(grep -c 'merge-ticket: pushed' <<<"$out")" 1
+check "two: pushed" "$(remote_head)" "$(git -C "$scratch/work" rev-parse HEAD)"
+check "two: merged in order" "$(git -C "$scratch/work" log -2 --format=%s)" "Merge ticket/two-b: Two B
+Merge ticket/two-a: Two A"
+
+# A conflict on the second ticket aborts that merge and stops: the first stays committed, unpushed.
+before=$(remote_head)
+(cd "$scratch/seed" && g fetch -q origin && g switch -q --detach origin/integration/x \
+  && g switch -qc ticket/two-c && echo c > two-c.txt && g add . && g commit -qm two-c && g push -q origin ticket/two-c)
+if out=$(run_merge ticket/two-c 'Two C' ticket/clash 'Clash'); then echo "FAIL: a second-ticket conflict must fail"; fail=1; fi
+grep -q 'shared.txt' <<<"$out" || { echo "FAIL: conflict must list shared.txt: $out"; fail=1; }
+grep -q backend-ran <<<"$out" && { echo "FAIL: checks ran after a conflict: $out"; fail=1; }
+check "two-conflict: clean tree" "$(git -C "$scratch/work" status --porcelain)" ""
+check "two-conflict: first merge kept" "$(git -C "$scratch/work" log -1 --format=%s)" "Merge ticket/two-c: Two C"
+check "two-conflict: not pushed" "$(remote_head)" "$before"
+g -C "$scratch/work" reset -q --hard "$before"
 
 echo dirt > "$scratch/work/dirt.txt"
 if out=$(run_merge ticket/clash 'Clash'); then echo "FAIL: a dirty tree must fail"; fail=1; fi

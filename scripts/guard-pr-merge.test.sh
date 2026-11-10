@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Checks .claude/hooks/guard-pr-merge.sh: it must refuse `gh pr merge` with
-# --delete-branch or -d (which also deletes the branch's worktree) and let
-# every other command through.
+# --delete-branch or -d (which also deletes the branch's worktree) and
+# `gradlew --stop` (which stops every session's Gradle daemons), and let every
+# other command through.
 set -euo pipefail
 
 hook="$(dirname "$0")/../.claude/hooks/guard-pr-merge.sh"
@@ -18,6 +19,10 @@ allows 'gh pr merge 108 --squash'
 allows 'gh pr merge 108 --squash --admin'
 allows 'git push origin --delete feat/x'
 allows 'gh pr view 108 --json state'
+blocks './gradlew --stop'
+blocks 'cd /repo && /repo/gradlew --stop'
+allows './gradlew :backend:test --tests com.codebite.problem.*'
+allows 'ps aux | grep gradlew'
 
 (( fail )) && exit 1
-echo "PASS: guard-pr-merge.sh blocks only gh pr merge --delete-branch"
+echo "PASS: guard-pr-merge.sh blocks only gh pr merge --delete-branch and gradlew --stop"

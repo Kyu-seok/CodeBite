@@ -31,14 +31,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * shows sample N's input and expected output, and every array or string the constraints index or
  * measure is a parameter of the Python Starter Code, and the Korean constraints carry the English
  * ones' inline-code spans (every measure, name and bound sits in backticks, so equal spans means
- * equal bounds). EXAMPLES_DIFFER_FROM_SAMPLES, CONSTRAINTS_NAME_NO_PARAMETER and
+ * equal bounds). No Example shows a hidden Test Case's input and output, so a statement never reveals
+ * one. EXAMPLES_DIFFER_FROM_SAMPLES, EXAMPLES_SHOW_HIDDEN_CASES, CONSTRAINTS_NAME_NO_PARAMETER and
  * CONSTRAINTS_DIFFER_BETWEEN_LANGUAGES hold the problems that break this today. They only shrink:
  * an entry that now passes, or names no problem (a Restatement renamed it), is a failure. A
  * Restatement fixes the problem and removes its entry.
  *
  * <p>A failure names only the unlisted problems. Every run also writes each check's mismatch lines,
  * listed problems marked {@code [listed]}, to {@code backend/build/reports/statements/examples.txt},
- * {@code constraints.txt} and {@code translated-constraints.txt} ({@link StatementReport}): read
+ * {@code hidden-cases.txt}, {@code constraints.txt} and {@code translated-constraints.txt} ({@link StatementReport}): read
  * those to see why a listed problem is listed, instead of emptying its set.
  */
 class StatementsMatchTestCasesTest {
@@ -58,6 +59,9 @@ class StatementsMatchTestCasesTest {
             "dedupe-textbook-shelf", "order-group-tasks", "space-cookie-bakes");
 
     private static final Set<String> CONSTRAINTS_NAME_NO_PARAMETER = Set.of();
+
+    /** An Example shows a hidden (non-sample) Test Case's input and expected output. */
+    private static final Set<String> EXAMPLES_SHOW_HIDDEN_CASES = Set.of("group-anagrams");
 
     /** The Korean constraints' code spans aren't the English ones, in the same order. */
     private static final Set<String> CONSTRAINTS_DIFFER_BETWEEN_LANGUAGES = Set.of();
@@ -80,12 +84,17 @@ class StatementsMatchTestCasesTest {
     private record Sample(String input, String output) {
     }
 
+    /** A non-sample Test Case and its {@code order_index}. */
+    private record Hidden(int orderIndex, String input, String output) {
+    }
+
     /** One Example's number and its Input and Output text; both null when it has no such lines. */
     private record Example(int number, String input, String output) {
     }
 
     private static List<Statement> statements;
     private static final Map<String, List<Sample>> SAMPLES = new HashMap<>();
+    private static final Map<String, List<Hidden>> HIDDEN = new HashMap<>();
 
     @BeforeAll
     static void migrate() throws SQLException {
@@ -106,6 +115,13 @@ class StatementsMatchTestCasesTest {
                 row -> SAMPLES.computeIfAbsent(row.getString(1), slug -> new ArrayList<>())
                         .add(new Sample(MigratedDatabase.postgresText(row.getString(2)),
                                 MigratedDatabase.postgresText(row.getString(3)))));
+        DATABASE.query("""
+                        SELECT p.slug, t.order_index, t.input, t.expected_output
+                        FROM test_cases t JOIN problems p ON p.id = t.problem_id
+                        WHERE NOT t.is_sample ORDER BY p.slug, t.order_index, t.id""",
+                row -> HIDDEN.computeIfAbsent(row.getString(1), slug -> new ArrayList<>())
+                        .add(new Hidden(row.getInt(2), MigratedDatabase.postgresText(row.getString(3)),
+                                MigratedDatabase.postgresText(row.getString(4)))));
     }
 
     // --- every problem ---------------------------------------------------------------------------
@@ -114,6 +130,13 @@ class StatementsMatchTestCasesTest {
     void everyExampleShowsItsSample() {
         assertListed("examples", EXAMPLES_DIFFER_FROM_SAMPLES, statement -> mismatches(statement.description(), samplesOf(statement),
                 !DRIVER_PRINTS_ANOTHER_FORM.contains(statement.slug())));
+    }
+
+    @Test
+    void noExampleShowsAHiddenCase() {
+        assertListed("hidden-cases", EXAMPLES_SHOW_HIDDEN_CASES, statement ->
+                revealedHiddenCases(statement.description(), samplesOf(statement),
+                        HIDDEN.getOrDefault(statement.slug(), List.of())));
     }
 
     @Test
@@ -210,6 +233,26 @@ class StatementsMatchTestCasesTest {
             }
         }
         return mismatches;
+    }
+
+    /**
+     * One line per Example whose Input and Output are a hidden case's input and expected output. A
+     * hidden case that repeats a sample is no secret, so it is skipped.
+     */
+    private static List<String> revealedHiddenCases(String description, List<Sample> samples, List<Hidden> hidden) {
+        List<String> revealed = new ArrayList<>();
+        for (Example example : examples(description)) {
+            if (example.input() == null) continue;
+            List<String> input = values(example.input());
+            List<String> output = values(example.output());
+            for (Hidden test : hidden) {
+                if (samples.contains(new Sample(test.input(), test.output()))) continue;
+                if (input.equals(sampleValues(test.input())) && output.equals(sampleValues(test.output()))) {
+                    revealed.add("Example " + example.number() + " shows hidden case " + test.orderIndex());
+                }
+            }
+        }
+        return revealed;
     }
 
     /** An unnumbered Example is the first. */
@@ -439,6 +482,24 @@ class StatementsMatchTestCasesTest {
         assertEquals(List.of("extra `k`"), codeSpanDifferences(english, english + "\n- `k`"));
         assertEquals(List.of("extra `k`"), codeSpanDifferences(null, "`k`"));
         assertEquals(List.of(), codeSpanDifferences(null, null));
+    }
+
+    @Test
+    void anExampleShowingAHiddenCaseIsCaught() {
+        String two = "**Example 1:**\nInput: 1\nOutput: 2\n\n**Example 2:**\nInput: nums = [3, 4]\nOutput: 7\n";
+        List<Sample> oneSample = List.of(new Sample("1", "2"));
+        assertEquals(List.of("Example 2 shows hidden case 5"),
+                revealedHiddenCases(two, oneSample, List.of(new Hidden(5, "[3,4]", "7"))));
+        assertEquals(List.of("Example 1 shows hidden case 2"),
+                revealedHiddenCases(two, List.of(), List.of(new Hidden(2, "1", "2"))));
+        assertEquals(List.of(), revealedHiddenCases(two, oneSample, List.of(new Hidden(5, "[3,4]", "8"))));
+        assertEquals(List.of(), revealedHiddenCases(two, oneSample, List.of(new Hidden(5, "[3,5]", "7"))));
+    }
+
+    @Test
+    void aHiddenCaseRepeatingASampleRevealsNothing() {
+        String one = "**Example 1:**\nInput: 1\nOutput: 2\n";
+        assertEquals(List.of(), revealedHiddenCases(one, List.of(new Sample("1", "2")), List.of(new Hidden(4, "1", "2"))));
     }
 
     @Test

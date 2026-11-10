@@ -1,19 +1,21 @@
 #!/usr/bin/env bash
-# Merges a finished ticket branch into the integration branch checked out in this worktree:
+# Merges finished ticket branches into the integration branch checked out in this worktree:
 #
-#   scripts/merge-ticket.sh <branch> <title>
+#   scripts/merge-ticket.sh <branch> <title> [<branch> <title> ...]
 #
-# It takes origin/<branch> when that exists, else the local branch, and merges it with --no-ff and
-# the attribution trailer (MERGE_TICKET_TRAILER overrides it). It refuses on master, a detached HEAD,
-# a dirty tree, or a branch already merged. On a conflict it aborts the merge and lists the files.
-# Then it runs the checks git skips on a clean merge (no pre-commit hook runs): the backend and
+# For each branch in order, it takes origin/<branch> when that exists, else the local branch, and
+# merges it with --no-ff and the attribution trailer (MERGE_TICKET_TRAILER overrides it). It refuses
+# on master, a detached HEAD, a dirty tree, or a branch already merged. On a conflict it aborts that
+# merge, lists the files and stops: earlier merges stay committed and unpushed. After the last merge
+# it runs, once, the checks git skips on a clean merge (no pre-commit hook runs): the backend and
 # worker tests, forced past UP-TO-DATE, then the frontend lint (no warnings), tests and build. It
-# pushes the integration branch only when all of them pass; otherwise it names the failed check and
-# leaves the merge commit unpushed (undo it with `git reset --hard HEAD~1`).
+# pushes the integration branch once, only when all of them pass; otherwise it names the failed
+# check and leaves the merge commits unpushed (undo them with `git reset --hard origin/<integration>`).
 #
-# When the ticket branch already contains the integration branch's HEAD, the merge's tree is the
-# ticket branch's own tree, which its PR's CI checked on push, so the checks are skipped and the
-# merge commit pushed straight away, with one line saying why.
+# When every ticket branch already contained the integration branch's HEAD before its merge (in
+# practice, one branch), the merge's tree is the ticket branch's own tree, which its PR's CI checked
+# on push, so the checks are skipped and the merge commit pushed straight away, with one line saying
+# why.
 #
 # A merge that changes this script hands the checks and the push to the merged copy, run as
 # `scripts/merge-ticket.sh --checks-and-push`: bash read this copy before the merge, so its checks are
@@ -89,10 +91,11 @@ run_merged_copy() {
   bash scripts/merge-ticket.sh --checks-and-push "$1"
 }
 
-merge_ticket() {
-  local branch=$1 title=$2 current ref merged=no contains_head=no conflicts
-  current=$(git branch --show-current)
-  git fetch -q origin
+# Merges branch $1 titled $2 into branch $3 (no checks, no push). Sets contains_head=yes when the
+# branch already contained HEAD before the merge, and ref to what was merged.
+merge_one() {
+  local branch=$1 title=$2 current=$3 merged=no conflicts
+  contains_head=no
   if git rev-parse -q --verify "refs/remotes/origin/$branch" >/dev/null; then
     ref=origin/$branch
   elif git rev-parse -q --verify "refs/heads/$branch" >/dev/null; then
@@ -118,10 +121,27 @@ merge_ticket() {
     sed 's/^/  /' <<<"$conflicts" >&2
     return 1
   fi
+}
 
-  if [[ "$contains_head" == yes ]]; then
+# Merges each <branch> <title> pair in order, then checks and pushes once.
+merge_ticket() {
+  local current start all_contain_head=yes ref contains_head
+  current=$(git branch --show-current)
+  start=$(git rev-parse HEAD)
+  git fetch -q origin
+  while (( $# >= 2 )); do
+    if ! merge_one "$1" "$2" "$current"; then
+      [[ "$(git rev-parse HEAD)" == "$start" ]] \
+        || echo "merge-ticket: stopped at $1; the merges before it are committed and not pushed" >&2
+      return 1
+    fi
+    [[ "$contains_head" == yes ]] || all_contain_head=no
+    shift 2
+  done
+
+  if [[ "$all_contain_head" == yes ]]; then
     push_checked_by_ci "$current" "$ref"
-  elif git diff --name-only HEAD^1 HEAD | grep -qx scripts/merge-ticket.sh; then
+  elif git diff --name-only "$start" HEAD | grep -qx scripts/merge-ticket.sh; then
     echo "merge-ticket: the merge changes merge-ticket.sh; its merged copy runs the checks"
     run_merged_copy "$current"
   else
@@ -135,10 +155,10 @@ if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
     check_and_push "$2"
     exit
   fi
-  if [[ $# -ne 2 ]]; then
-    echo "usage: scripts/merge-ticket.sh <branch> <title>" >&2
+  if (( $# < 2 || $# % 2 != 0 )); then
+    echo "usage: scripts/merge-ticket.sh <branch> <title> [<branch> <title> ...]" >&2
     exit 2
   fi
   cd "$(git rev-parse --show-toplevel)"
-  merge_ticket "$1" "$2"
+  merge_ticket "$@"
 fi
