@@ -114,16 +114,17 @@ class DiagramMigrationTest {
         assertNotNull(V182__diagram_dedupe.keepOnlyFirstDiagramTree("ok"));
     }
 
-    // ---- Spot-checks for the V183 Stage 2 batch (sampling 4 representative cases) ----
+    // ---- Spot-checks for the V183 Stage 2 batch (sampling 4 representative cases). The lca-bst
+    // Diagram is pinned as V283 redrew it, to the sample tree. ----
 
     @Test
     void v183_lcaBst_descriptionHasDiagramWithHighlight() {
         Problem p = problemRepository.findBySlug("lca-bst").orElseThrow();
         String desc = p.getDescription();
         assertTrue(desc.contains("```diagram-tree"), "Expected diagram in lca-bst");
-        assertTrue(desc.contains("nodes: [6, 2, 8, 0, 4, 7, 9, null, null, 3, 5]"),
+        assertTrue(desc.contains("nodes: [20, 10, 30, 5, 15, 25, 40, null, 8, 12, 18]"),
                 "Expected lca-bst input tree");
-        assertTrue(desc.contains("highlight: [1, 2]"),
+        assertTrue(desc.contains("highlight: [8, 9]"),
                 "Expected p,q indices highlighted");
     }
 
@@ -145,7 +146,7 @@ class DiagramMigrationTest {
         assertNotNull(t);
         assertTrue(t.getDescription().contains("```diagram-tree"),
                 "Expected diagram in ko description for lca-bst");
-        assertTrue(t.getDescription().contains("nodes: [6, 2, 8, 0, 4, 7, 9, null, null, 3, 5]"),
+        assertTrue(t.getDescription().contains("nodes: [20, 10, 30, 5, 15, 25, 40, null, 8, 12, 18]"),
                 "Korean diagram body should match en");
     }
 
@@ -341,8 +342,9 @@ class DiagramMigrationTest {
                 "Expected one diagram under each example; actual:\n" + desc);
         assertTrue(parts[1].contains("boxes: 3") && parts[1].contains("blank: \".\""),
                 "Example 1's board should be boxed with blank dots");
-        assertTrue(parts[2].contains("[[\"8\",\"3\"") && parts[2].contains("highlight: [[0,0],[3,0]]"),
-                "Example 2's board should highlight the two clashing 8s");
+        assertTrue(parts[2].contains("[\".\",\"1\",\".\",\".\",\"2\",\".\",\".\",\"1\",\".\"]")
+                        && parts[2].contains("highlight: [[1,1],[1,7]]"),
+                "Example 2's board should highlight the two clashing 1s in its second row");
     }
 
     // ---- V198 Stage 5: the remaining grid problems, and N-Queens' output boards ----
@@ -368,10 +370,11 @@ class DiagramMigrationTest {
                 .findByProblemIdAndLocale(p.getId(), "ko")
                 .orElseThrow();
         for (String desc : new String[]{p.getDescription(), t.getDescription()}) {
-            int first = desc.indexOf("cells: [[\".\",\"Q\"");
-            int second = desc.indexOf("cells: [[\".\",\".\",\"Q\"");
+            // V286: two of the ten n = 5 boards, in the Output's order.
+            int first = desc.indexOf("cells: [[\".\",\".\",\"Q\",\".\",\".\"]");
+            int second = desc.indexOf("cells: [[\".\",\"Q\",\".\",\".\",\".\"]");
             assertTrue(first > 0 && first < second,
-                    "Expected the .Q.. board before the ..Q. board; actual:\n" + desc);
+                    "Expected the ..Q.. board before the .Q... board; actual:\n" + desc);
         }
         assertGridsUnderExample1(p.getDescription(), "**Example 1:**", "**Example 2:**", 2);
         assertGridsUnderExample1(t.getDescription(), "**예시 1:**", "**예시 2:**", 2);
