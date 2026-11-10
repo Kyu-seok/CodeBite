@@ -61,7 +61,7 @@ class StatementsMatchTestCasesTest {
     private static final Set<String> CONSTRAINTS_NAME_NO_PARAMETER = Set.of();
 
     /** An Example shows a hidden (non-sample) Test Case's input and expected output. */
-    private static final Set<String> EXAMPLES_SHOW_HIDDEN_CASES = Set.of("group-anagrams");
+    private static final Set<String> EXAMPLES_SHOW_HIDDEN_CASES = Set.of();
 
     /** The Korean constraints' code spans aren't the English ones, in the same order. */
     private static final Set<String> CONSTRAINTS_DIFFER_BETWEEN_LANGUAGES = Set.of();
