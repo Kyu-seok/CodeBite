@@ -49,12 +49,9 @@ class StatementsMatchTestCasesTest {
     /** Example N isn't sample N, or the statement has no Example with an Input and Output to compare. */
     private static final Set<String> EXAMPLES_DIFFER_FROM_SAMPLES = Set.of(
             "chat-ring-buffer",
-            "n-queens",
-            "queue-from-stacks",
             "random-pick-bag",
             "running-median-timer",
             "timestamp-value-store",
-            "trapping-rain-water",
             "versioned-cells",
             "wildcard-lexicon");
 
