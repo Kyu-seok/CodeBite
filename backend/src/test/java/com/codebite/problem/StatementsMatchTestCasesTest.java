@@ -55,7 +55,6 @@ class StatementsMatchTestCasesTest {
             "kth-top-score-stream",
             "largest-rectangle-histogram",
             "longest-palindromic-substring",
-            "lru-cache",
             "n-queens",
             "peak-score-streak",
             "queue-from-stacks",
