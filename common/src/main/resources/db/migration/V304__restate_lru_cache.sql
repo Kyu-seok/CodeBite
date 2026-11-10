@@ -1,6 +1,6 @@
 -- V304: restate lru-cache (#237). Both languages' constraints named the operations
--- `lookup` and `store` (left from the RecentRegistry theme, V140, and copied into the
--- Korean by V246), but the description, Starter Code and Drivers use `get` and `put`.
+-- `lookup` and `store` (set by the casual retheme, V133, and copied into the Korean by
+-- V246), but the description, Starter Code and Drivers use `get` and `put`.
 -- Only the constraints change, every bound kept; Slug, title, description, Test Cases,
 -- Starter Code and Drivers are unchanged.
 
