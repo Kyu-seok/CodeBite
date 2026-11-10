@@ -53,7 +53,6 @@ class StatementsMatchTestCasesTest {
             "n-queens",
             "peak-score-streak",
             "queue-from-stacks",
-            "random-pick-bag",
             "running-median-timer",
             "sort-colors",
             "timestamp-value-store",
