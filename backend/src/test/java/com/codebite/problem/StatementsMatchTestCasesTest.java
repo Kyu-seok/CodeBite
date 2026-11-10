@@ -54,7 +54,6 @@ class StatementsMatchTestCasesTest {
             "random-pick-bag",
             "running-median-timer",
             "timestamp-value-store",
-            "trapping-rain-water",
             "versioned-cells",
             "wildcard-lexicon");
 
