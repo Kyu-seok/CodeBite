@@ -4,5 +4,5 @@ const input = require('fs').readFileSync('/dev/stdin', 'utf8').trim();
 const lines = input.split('\n');
 const s = lines[0].trim();
 const k = parseInt(lines[1]);
-const result = new Solution().shiftLetters(s, k);
+const result = new Solution().longestSameLetterRun(s, k);
 console.log(result);

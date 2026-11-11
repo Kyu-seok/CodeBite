@@ -7,7 +7,7 @@ public class Main {
         Scanner sc = new Scanner(System.in);
         String s = sc.nextLine().trim();
         int k = Integer.parseInt(sc.nextLine().trim());
-        int result = new Solution().shiftLetters(s, k);
+        int result = new Solution().longestSameLetterRun(s, k);
         System.out.println(result);
     }
 }
