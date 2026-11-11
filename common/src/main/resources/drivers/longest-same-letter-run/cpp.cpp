@@ -11,7 +11,7 @@ int main() {
     getline(cin, s);
     int k;
     cin >> k;
-    int result = Solution().shiftLetters(s, k);
+    int result = Solution().longestSameLetterRun(s, k);
     cout << result << endl;
     return 0;
 }

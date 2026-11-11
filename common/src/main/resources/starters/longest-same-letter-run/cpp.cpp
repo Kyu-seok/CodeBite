@@ -1,6 +1,6 @@
 class Solution {
 public:
-    int shiftLetters(string code, int k) {
+    int longestSameLetterRun(string s, int k) {
         // Write your solution here
     }
 };

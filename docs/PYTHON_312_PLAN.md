@@ -64,7 +64,7 @@ Things that matter about it:
 - **Do not add `build:` to the Judge0 services in `docker-compose.prod.yml`** (ADR 0004). Reference the pre-built image by tag only.
 
 ### 2. Fix the four broken Python drivers (issue #47)
-`count-desk-clusters`, `detect-portal-loop`, `longest-combo-run` and `verify-task-order`: each Python driver calls the old method name. Change it to the name the starter defines. Verify each on Judge0 with a correct solution against all of the problem's test cases. Independent of Python 3.12; can ship first.
+`count-desk-clusters`, `detect-portal-loop`, `longest-same-letter-run` and `verify-task-order`: each Python driver calls the old method name. Change it to the name the starter defines. Verify each on Judge0 with a correct solution against all of the problem's test cases. Independent of Python 3.12; can ship first.
 
 ### 3. Deploy A: swap the Judge0 image, by hand (no user-visible change)
 `scripts/cutover-judge0-py312.sh` is a wizard for the steps below: it pushes the swap commit only if it says `[skip ci]`, pulls on `mini`, asks before restarting Judge0, then checks `/languages`, runs `print(6*7)` on both ids through a worker, and offers a rollback to `judge0/judge0:1.13.1` through a compose override outside the checkout.

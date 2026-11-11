@@ -1,5 +1,5 @@
 class Solution {
-    public int shiftLetters(String code, int k) {
+    public int longestSameLetterRun(String s, int k) {
         // Write your solution here
     }
 }

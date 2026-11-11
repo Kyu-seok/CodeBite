@@ -2,5 +2,5 @@
 
 s = input().strip()
 k = int(input())
-result = Solution().shiftLetters(s, k)
+result = Solution().longestSameLetterRun(s, k)
 print(result)

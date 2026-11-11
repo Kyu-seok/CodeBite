@@ -1,10 +1,10 @@
 class Solution {
     /**
-     * @param {string} code
+     * @param {string} s
      * @param {number} k
      * @return {number}
      */
-    shiftLetters(code, k) {
+    longestSameLetterRun(s, k) {
         // Write your solution here
     }
 }
