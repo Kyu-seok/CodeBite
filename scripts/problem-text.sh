@@ -9,8 +9,8 @@
 #
 # Reading migrations instead means finding the newest one that sets each
 # column; the oldest grep match is usually stale. The database is only as new
-# as the last backend start, so the script warns when this checkout has
-# migrations the database hasn't run. For a query across problems, scripts/db-sql.sh.
+# as the last backend start, so the script refuses one missing migrations this
+# checkout has (CODEBITE_ALLOW_STALE=1 reads it anyway, with a warning). For a query across problems, scripts/db-sql.sh.
 set -euo pipefail
 
 usage() { echo "usage: scripts/problem-text.sh <slug> [--all]" >&2; exit 2; }
@@ -26,7 +26,7 @@ here=$(cd "$(dirname "$0")/.." && pwd)
 # shellcheck source=SCRIPTDIR/dev-servers-common.sh
 source "$here/scripts/dev-servers-common.sh"
 database=${CODEBITE_DB:-codebite}
-warn_if_behind "$database" "$here" problem-text.sh || exit 1
+require_current_db "$database" "$here" problem-text.sh || exit 1
 psql() { db_psql "$database" "$@"; }
 
 out=$(psql -tA -v slug="$slug" -v all="$all" <<'SQL'
