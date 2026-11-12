@@ -1,0 +1,163 @@
+<!doctype html>
+<!-- PROTOTYPE (throwaway): Walkthrough style comparison. Built by build.mjs; ?style=flat|iso, &run=0.. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>__TITLE__ Walkthrough</title>
+<style>
+:root {
+  --bg: #f6f5f1; --card: #ffffff; --ink: #1d1d1b; --mid: #6b6a65; --lo: #a9a7a0; --faint: #e4e2dc;
+  --accent: #d9480f; --accent-soft: #fde4d6; --good: #2b8a3e; --good-soft: #d3f0da; --bad: #c92a2a; --bad-soft: #fde2e2;
+  --fresh: #f2c14e; --fresh-ink: #9a6b00; --stale: #7a8b5a; --stale-ink: #4a5636;
+  --mono: ui-monospace, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #121211; --card: #1b1b1a; --ink: #ecebe6; --mid: #a3a29b; --lo: #6b6a64; --faint: #2c2c2a;
+    --accent: #ff8a4c; --accent-soft: #4a2414; --good: #69db7c; --good-soft: #173a20; --bad: #ff6b6b; --bad-soft: #3d1717;
+    --fresh: #f2c14e; --fresh-ink: #f7d98a; --stale: #8fa267; --stale-ink: #c4d39f;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 -apple-system, "Segoe UI", system-ui, sans-serif; }
+main { max-width: 880px; margin: 0 auto; padding: 24px 16px 120px; }
+h1 { font-size: 20px; margin: 0 0 4px; }
+.approach { color: var(--mid); margin: 0 0 16px; }
+.runs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+.runs button { border: 1px solid var(--faint); background: var(--card); color: var(--mid); border-radius: 999px; padding: 4px 12px; font: inherit; font-size: 13px; cursor: pointer; }
+.runs button[aria-pressed="true"] { border-color: var(--ink); color: var(--ink); font-weight: 600; }
+.card { background: var(--card); border: 1px solid var(--faint); border-radius: 14px; overflow: hidden; }
+.card-head { display: flex; justify-content: space-between; gap: 12px; padding: 10px 14px; font-size: 12px; color: var(--mid); border-bottom: 1px solid var(--faint); }
+.card-head code { font-family: var(--mono); color: var(--ink); overflow-wrap: anywhere; }
+#stage { min-height: 320px; display: flex; justify-content: center; align-items: center; padding: 8px; }
+#stage svg { display: block; max-width: 100%; height: auto; }
+.caption { min-height: 3.2em; padding: 12px 14px; border-top: 1px solid var(--faint); font-size: 15px; }
+.caption.done { background: var(--good-soft); }
+.caption.fail { background: var(--bad-soft); }
+.controls { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-top: 1px solid var(--faint); }
+.controls button { border: 1px solid var(--faint); background: var(--card); color: var(--ink); border-radius: 8px; min-width: 36px; height: 32px; font: inherit; cursor: pointer; }
+.controls button:disabled { opacity: .35; cursor: default; }
+.controls input[type=range] { flex: 1; accent-color: var(--accent); }
+.controls .count { font: 12px var(--mono); color: var(--mid); min-width: 52px; text-align: right; }
+.hint { font-size: 12px; color: var(--lo); margin-top: 8px; }
+.switcher { position: fixed; left: 50%; bottom: 16px; transform: translateX(-50%); display: flex; align-items: center; gap: 4px; background: #111; color: #fff; border-radius: 999px; padding: 4px; box-shadow: 0 6px 24px rgba(0,0,0,.3); font-size: 13px; z-index: 10; }
+.switcher button { background: transparent; color: #bbb; border: 0; border-radius: 999px; padding: 6px 14px; font: inherit; cursor: pointer; }
+.switcher button[aria-pressed="true"] { background: #fff; color: #111; font-weight: 600; }
+.switcher .tag { padding: 0 8px 0 10px; color: #888; font-size: 11px; letter-spacing: .04em; text-transform: uppercase; }
+@media (max-width: 520px) {
+  #stage { min-height: 0; padding: 4px; }
+  .controls { gap: 6px; padding: 10px; }
+  .controls #first { display: none; }
+  .controls input[type=range] { min-width: 0; }
+  .controls .count { min-width: 0; }
+  .card-head { flex-direction: column; gap: 2px; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+__STYLE_CSS__
+</style>
+</head>
+<body>
+<main>
+  <h1>__TITLE__</h1>
+  <p class="approach" id="approach"></p>
+  <div class="runs" id="runs" role="tablist"></div>
+  <div class="card">
+    <div class="card-head"><code id="input"></code><span id="expected"></span></div>
+    <div id="stage"></div>
+    <div class="caption" id="caption" aria-live="polite"></div>
+    <div class="controls">
+      <button id="first" aria-label="First step">⏮</button>
+      <button id="prev" aria-label="Previous step">◀</button>
+      <button id="play" aria-label="Play">▶</button>
+      <button id="next" aria-label="Next step">▶︎|</button>
+      <input type="range" id="scrub" min="0" value="0" aria-label="Step">
+      <span class="count" id="count"></span>
+    </div>
+  </div>
+  <p class="hint">← → step · space plays · [ ] switches style</p>
+</main>
+<div class="switcher" id="switcher"><span class="tag">Prototype style</span></div>
+<script>window.WT_DATA = __DATA__; window.WT_STYLES = {};</script>
+<script>__STYLE_JS__</script>
+<script>
+(() => {
+  const data = window.WT_DATA, styles = window.WT_STYLES, names = Object.keys(styles);
+  const params = new URLSearchParams(location.search);
+  let style = names.includes(params.get('style')) ? params.get('style') : names[0];
+  let runIdx = Math.min(+params.get('run') || 0, data.runs.length - 1);
+  let frame = 0, view = null, timer = null;
+  const $ = id => document.getElementById(id);
+  $('approach').textContent = data.approach;
+
+  const sw = $('switcher');
+  names.forEach(n => {
+    const b = document.createElement('button'); b.textContent = styles[n].label; b.dataset.style = n;
+    b.onclick = () => setStyle(n); sw.appendChild(b);
+  });
+  data.runs.forEach((r, i) => {
+    const b = document.createElement('button'); b.textContent = r.label; b.onclick = () => setRun(i); $('runs').appendChild(b);
+  });
+
+  function syncUrl() {
+    const p = new URLSearchParams(location.search); p.set('style', style); p.set('run', runIdx);
+    history.replaceState(null, '', '?' + p);
+  }
+  function mount() {
+    stop();
+    const run = data.runs[runIdx];
+    $('stage').innerHTML = '';
+    view = styles[style].mount($('stage'), data, run);
+    $('input').textContent = run.input;
+    $('expected').textContent = 'expected ' + run.expected;
+    $('scrub').max = run.frames.length - 1;
+    [...$('runs').children].forEach((b, i) => b.setAttribute('aria-pressed', i === runIdx));
+    [...sw.querySelectorAll('button')].forEach(b => b.setAttribute('aria-pressed', b.dataset.style === style));
+    syncUrl();
+    show(Math.min(frame, run.frames.length - 1), null);
+  }
+  function show(i, from) {
+    const run = data.runs[runIdx];
+    frame = Math.max(0, Math.min(i, run.frames.length - 1));
+    const f = run.frames[frame];
+    view.show(frame, from);
+    $('caption').textContent = f.caption;
+    $('caption').className = 'caption' + (f.answer == null ? '' : f.answer === -1 ? ' fail' : ' done');
+    $('scrub').value = frame;
+    $('count').textContent = (frame + 1) + ' / ' + run.frames.length;
+    $('first').disabled = $('prev').disabled = frame === 0;
+    $('next').disabled = frame === run.frames.length - 1;
+  }
+  const step = d => show(frame + d, frame);
+  function play() {
+    if (timer) return stop();
+    if (frame === data.runs[runIdx].frames.length - 1) show(0, null);
+    $('play').textContent = '⏸';
+    timer = setInterval(() => { if (frame >= data.runs[runIdx].frames.length - 1) stop(); else step(1); }, 1400);
+  }
+  function stop() { clearInterval(timer); timer = null; $('play').textContent = '▶'; }
+  function setRun(i) { runIdx = i; frame = 0; mount(); }
+  function setStyle(n) { style = n; mount(); }
+
+  $('first').onclick = () => { stop(); show(0, null); };
+  $('prev').onclick = () => { stop(); step(-1); };
+  $('next').onclick = () => { stop(); step(1); };
+  $('play').onclick = play;
+  $('scrub').oninput = e => { stop(); show(+e.target.value, frame); };
+  addEventListener('keydown', e => {
+    if (e.target.closest && e.target.closest('input,textarea,[contenteditable]') && e.target.type !== 'range') return;
+    if (e.key === 'ArrowRight') { stop(); step(1); e.preventDefault(); }
+    else if (e.key === 'ArrowLeft') { stop(); step(-1); e.preventDefault(); }
+    else if (e.key === ' ') { play(); e.preventDefault(); }
+    else if (e.key === 'Home') { stop(); show(0, frame); }
+    else if (e.key === 'End') { stop(); show(1e9, frame); }
+    else if (e.key === ']' || e.key === '[') {
+      const k = names.indexOf(style) + (e.key === ']' ? 1 : -1);
+      setStyle(names[(k + names.length) % names.length]);
+    }
+  });
+  mount();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,2620 @@
+<!doctype html>
+<!-- PROTOTYPE (throwaway): Walkthrough style comparison. Built by build.mjs; ?style=flat|iso, &run=0.. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cheapest Courier Route Walkthrough</title>
+<style>
+:root {
+  --bg: #f6f5f1; --card: #ffffff; --ink: #1d1d1b; --mid: #6b6a65; --lo: #a9a7a0; --faint: #e4e2dc;
+  --accent: #d9480f; --accent-soft: #fde4d6; --good: #2b8a3e; --good-soft: #d3f0da; --bad: #c92a2a; --bad-soft: #fde2e2;
+  --fresh: #f2c14e; --fresh-ink: #9a6b00; --stale: #7a8b5a; --stale-ink: #4a5636;
+  --mono: ui-monospace, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #121211; --card: #1b1b1a; --ink: #ecebe6; --mid: #a3a29b; --lo: #6b6a64; --faint: #2c2c2a;
+    --accent: #ff8a4c; --accent-soft: #4a2414; --good: #69db7c; --good-soft: #173a20; --bad: #ff6b6b; --bad-soft: #3d1717;
+    --fresh: #f2c14e; --fresh-ink: #f7d98a; --stale: #8fa267; --stale-ink: #c4d39f;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 -apple-system, "Segoe UI", system-ui, sans-serif; }
+main { max-width: 880px; margin: 0 auto; padding: 24px 16px 120px; }
+h1 { font-size: 20px; margin: 0 0 4px; }
+.approach { color: var(--mid); margin: 0 0 16px; }
+.runs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+.runs button { border: 1px solid var(--faint); background: var(--card); color: var(--mid); border-radius: 999px; padding: 4px 12px; font: inherit; font-size: 13px; cursor: pointer; }
+.runs button[aria-pressed="true"] { border-color: var(--ink); color: var(--ink); font-weight: 600; }
+.card { background: var(--card); border: 1px solid var(--faint); border-radius: 14px; overflow: hidden; }
+.card-head { display: flex; justify-content: space-between; gap: 12px; padding: 10px 14px; font-size: 12px; color: var(--mid); border-bottom: 1px solid var(--faint); }
+.card-head code { font-family: var(--mono); color: var(--ink); overflow-wrap: anywhere; }
+#stage { min-height: 320px; display: flex; justify-content: center; align-items: center; padding: 8px; }
+#stage svg { display: block; max-width: 100%; height: auto; }
+.caption { min-height: 3.2em; padding: 12px 14px; border-top: 1px solid var(--faint); font-size: 15px; }
+.caption.done { background: var(--good-soft); }
+.caption.fail { background: var(--bad-soft); }
+.controls { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-top: 1px solid var(--faint); }
+.controls button { border: 1px solid var(--faint); background: var(--card); color: var(--ink); border-radius: 8px; min-width: 36px; height: 32px; font: inherit; cursor: pointer; }
+.controls button:disabled { opacity: .35; cursor: default; }
+.controls input[type=range] { flex: 1; accent-color: var(--accent); }
+.controls .count { font: 12px var(--mono); color: var(--mid); min-width: 52px; text-align: right; }
+.hint { font-size: 12px; color: var(--lo); margin-top: 8px; }
+.switcher { position: fixed; left: 50%; bottom: 16px; transform: translateX(-50%); display: flex; align-items: center; gap: 4px; background: #111; color: #fff; border-radius: 999px; padding: 4px; box-shadow: 0 6px 24px rgba(0,0,0,.3); font-size: 13px; z-index: 10; }
+.switcher button { background: transparent; color: #bbb; border: 0; border-radius: 999px; padding: 6px 14px; font: inherit; cursor: pointer; }
+.switcher button[aria-pressed="true"] { background: #fff; color: #111; font-weight: 600; }
+.switcher .tag { padding: 0 8px 0 10px; color: #888; font-size: 11px; letter-spacing: .04em; text-transform: uppercase; }
+@media (max-width: 520px) {
+  #stage { min-height: 0; padding: 4px; }
+  .controls { gap: 6px; padding: 10px; }
+  .controls #first { display: none; }
+  .controls input[type=range] { min-width: 0; }
+  .controls .count { min-width: 0; }
+  .card-head { flex-direction: column; gap: 2px; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+/* PROTOTYPE: flat style */
+.fl text { font-family: -apple-system, "Segoe UI", system-ui, sans-serif; fill: var(--ink); }
+.fl-label { font-size: 11px; letter-spacing: .08em; fill: var(--mid) !important; font-weight: 600; }
+.fl-big { font: 600 30px var(--mono); fill: var(--ink); }
+.fl-big.bad { fill: var(--bad) !important; }
+.fl-axis { font-size: 11px; fill: var(--lo) !important; letter-spacing: .08em; text-transform: uppercase; }
+.fl-empty { font-size: 13px; fill: var(--lo) !important; font-style: italic; }
+.fl-chip { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1; }
+.fl-chipt { font: 600 12px var(--mono); fill: var(--accent) !important; }
+/* grid cells */
+.fl-cell { fill: var(--bg); stroke: var(--faint); stroke-width: 1; }
+.fl-ring { fill: none; stroke: transparent; stroke-width: 3; transition: stroke .3s; }
+.fl-rc { font: 11px var(--mono); fill: var(--lo) !important; }
+.fl-when { font: 600 10px var(--mono); fill: var(--stale-ink) !important; }
+.fl-donut { transition: transform .45s cubic-bezier(.2,.8,.2,1), opacity .3s; }
+.fl-dough { fill: none; stroke-width: 13; transition: stroke .5s; }
+.fl-hole { fill: var(--bg); }
+.fl-spot { fill: var(--stale-ink); opacity: 0; transition: opacity .5s; }
+.fl-c.v0 .fl-donut { opacity: 0; }
+.fl-c.v0 .fl-cell { fill: transparent; stroke-dasharray: 4 4; }
+.fl-c.v1 .fl-dough { stroke: var(--fresh); }
+.fl-c.v2 .fl-dough { stroke: var(--stale); }
+.fl-c.v2 .fl-spot { opacity: .9; }
+.fl-c.wave .fl-ring { stroke: var(--accent); stroke-dasharray: 6 4; }
+.fl-c.lit .fl-ring { stroke: var(--accent); stroke-dasharray: none; }
+.fl-c.lit .fl-cell { fill: var(--accent-soft); }
+.fl-c.lit .fl-donut { animation: fl-pop .5s cubic-bezier(.2,.8,.2,1); }
+.fl-c.stuck .fl-ring { stroke: var(--bad); stroke-dasharray: none; }
+.fl-c.stuck .fl-cell { fill: var(--bad-soft); }
+@keyframes fl-pop { 0% { transform: translate(34px,40px) scale(.7); } 60% { transform: translate(34px,40px) scale(1.12); } 100% { transform: translate(34px,40px) scale(1); } }
+/* graph */
+.fl-edge { fill: none; stroke: var(--lo); stroke-width: 1.6; transition: stroke .3s, stroke-width .3s; }
+.fl-ah { fill: var(--lo); }
+.fl-ah.lit { fill: var(--accent); } .fl-ah.good { fill: var(--good); } .fl-ah.path { fill: var(--accent); }
+.fl-e.lit .fl-edge { stroke: var(--accent); stroke-width: 2.6; stroke-dasharray: 5 4; }
+.fl-e.good .fl-edge { stroke: var(--good); stroke-width: 3; }
+.fl-e.path .fl-edge { stroke: var(--accent); stroke-width: 3.4; }
+.fl-wbg { fill: var(--card); stroke: var(--faint); }
+.fl-w { font: 600 11px var(--mono); fill: var(--mid) !important; }
+.fl-e.lit .fl-w, .fl-e.path .fl-w { fill: var(--accent) !important; }
+.fl-e.good .fl-w { fill: var(--good) !important; }
+.fl-node { fill: var(--card); stroke: var(--ink); stroke-width: 2; transition: fill .3s, stroke .3s; }
+.fl-nid { font: 700 15px var(--mono); }
+.fl-tag { font-size: 10px; letter-spacing: .08em; text-transform: uppercase; fill: var(--mid) !important; font-weight: 600; }
+.fl-cost { font: 600 13px var(--mono); }
+.fl-n.unreached .fl-node { stroke: var(--lo); stroke-dasharray: 3 3; }
+.fl-n.unreached .fl-nid, .fl-n.unreached .fl-cost { fill: var(--lo) !important; }
+.fl-n.reading .fl-node { stroke: var(--accent); stroke-width: 3; }
+.fl-n.changed .fl-node { fill: var(--good-soft); stroke: var(--good); stroke-width: 3; }
+.fl-n.changed .fl-cost { fill: var(--good) !important; }
+.fl-n.onpath .fl-node { stroke: var(--accent); stroke-width: 3; fill: var(--accent-soft); }
+.fl-rowl { font-size: 12px; fill: var(--mid) !important; }
+.fl-colh { font-size: 10px; fill: var(--lo) !important; }
+.fl-tc { fill: var(--bg); stroke: var(--faint); transition: fill .3s, stroke .3s; }
+.fl-tv { font: 600 13px var(--mono); }
+.fl-tcell.inf .fl-tv { fill: var(--lo) !important; }
+.fl-tcell.read .fl-tc { stroke: var(--accent); stroke-width: 2; fill: var(--accent-soft); }
+.fl-tcell.changed .fl-tc { stroke: var(--good); stroke-width: 2; fill: var(--good-soft); }
+.fl-tcell.changed .fl-tv { fill: var(--good) !important; }
+
+/* PROTOTYPE: isometric style (anatomy kit look). Colour only where colour is the subject: fresh vs stale dough. */
+.wt-iso { width: 100%; background: var(--anatomy-card); color: var(--anatomy-text); border-radius: 10px; padding: 6px 4px 10px; }
+.wt-iso { --wt-ease: cubic-bezier(.32,.72,0,1);
+  --wt-fresh-top: #f1c46a; --wt-fresh-0: #9c6a1e; --wt-fresh-1: #b47d27; --wt-fresh-2: #c88f33; --wt-fresh-3: #d9a043; --wt-glaze: #f7dba0;
+  --wt-stale-top: #5d6a45; --wt-stale-0: #2c3322; --wt-stale-1: #343d28; --wt-stale-2: #3d472f; --wt-stale-3: #465136; --wt-stale-glaze: #6c7a51;
+  --wt-good: var(--anatomy-green); --wt-bed: #0d0d0d; }
+.wt-iso[data-theme="light"] {
+  --wt-fresh-top: #f4cf7f; --wt-fresh-0: #c08a3a; --wt-fresh-1: #d29b47; --wt-fresh-2: #ddaa58; --wt-fresh-3: #e6b968; --wt-glaze: #fae3b0;
+  --wt-stale-top: #8e9a72; --wt-stale-0: #5f6a48; --wt-stale-1: #6b7752; --wt-stale-2: #77845d; --wt-stale-3: #839068; --wt-stale-glaze: #a3ae86;
+  --wt-bed: #e9e9e5; }
+.wt-iso svg { max-width: 100%; }
+.wt-iso .iso-svg text { user-select: none; }
+/* donuts */
+.wt-dough-fresh > .iso-top { fill: var(--wt-fresh-top); }
+.wt-dough-fresh > .iso-shade[data-shade="0"] { fill: var(--wt-fresh-0); } .wt-dough-fresh > .iso-shade[data-shade="1"] { fill: var(--wt-fresh-1); }
+.wt-dough-fresh > .iso-shade[data-shade="2"] { fill: var(--wt-fresh-2); } .wt-dough-fresh > .iso-shade[data-shade="3"] { fill: var(--wt-fresh-3); }
+.wt-dough-stale > .iso-top { fill: var(--wt-stale-top); }
+.wt-dough-stale > .iso-shade[data-shade="0"] { fill: var(--wt-stale-0); } .wt-dough-stale > .iso-shade[data-shade="1"] { fill: var(--wt-stale-1); }
+.wt-dough-stale > .iso-shade[data-shade="2"] { fill: var(--wt-stale-2); } .wt-dough-stale > .iso-shade[data-shade="3"] { fill: var(--wt-stale-3); }
+.wt-fresh .wt-glaze { fill: var(--wt-glaze); opacity: .55; }
+.wt-stale .wt-glaze { fill: var(--wt-stale-glaze); opacity: .45; }
+.wt-hole { fill: var(--anatomy-shade-0); }
+.wt-donut { opacity: 0; transition: opacity .5s var(--wt-ease), transform .55s var(--wt-ease); }
+.wt-cell[data-v="1"] .wt-fresh { opacity: 1; }
+.wt-cell[data-v="2"] .wt-stale { opacity: 1; }
+.wt-cell[data-v="2"] .wt-fresh { transform: translateY(4px); }
+.wt-cell[data-new] .wt-stale { animation: wt-sink .6s var(--wt-ease); }
+@keyframes wt-sink { from { transform: translateY(-5px); } to { transform: none; } }
+.wt-wave, .wt-stuck { opacity: 0; transition: opacity .35s var(--wt-ease); stroke-width: 1.4px !important; }
+.wt-cell[data-wave] .wt-wave { opacity: 1; }
+.wt-cell[data-stuck] .wt-stuck { opacity: 1; animation: wt-blink 1.6s ease-in-out infinite; }
+@keyframes wt-blink { 50% { opacity: .35; } }
+.wt-cell[data-v="0"] .wt-well .iso-line { stroke-dasharray: 2 3; }
+.wt-stamp { opacity: 0; transition: opacity .4s; }
+.wt-cell[data-stamped] .wt-stamp { opacity: 1; }
+/* courier board */
+.wt-bed { fill: none; stroke: var(--wt-bed); stroke-width: 4.2px; stroke-linecap: round; opacity: .9; }
+.wt-groove { stroke: var(--anatomy-mid) !important; stroke-width: 1px !important; transition: stroke .3s; }
+.wt-chev { stroke: var(--anatomy-mid) !important; stroke-width: 1.1px !important; }
+.wt-wplate { fill: var(--anatomy-face); stroke: var(--anatomy-lo); stroke-width: .6px; }
+.wt-route[data-s="lit"] .wt-groove, .wt-route[data-s="lit"] .wt-chev { stroke: var(--anatomy-lit) !important; stroke-width: 1.8px !important; stroke-dasharray: 3 3; animation: iso-flow 1600ms linear infinite; }
+.wt-route[data-s="skip"] .wt-groove { stroke: var(--anatomy-lo) !important; stroke-dasharray: 2 4; }
+.wt-route[data-s="good"] .wt-groove, .wt-route[data-s="good"] .wt-chev { stroke: var(--wt-good) !important; stroke-width: 2.2px !important; }
+.wt-route[data-s="path"] .wt-groove, .wt-route[data-s="path"] .wt-chev { stroke: var(--anatomy-lit) !important; stroke-width: 2.6px !important; }
+.wt-route[data-s="good"] .iso-face-text { fill: var(--wt-good); }
+.wt-route[data-s="lit"] .iso-face-text, .wt-route[data-s="path"] .iso-face-text { fill: var(--anatomy-hi); }
+.wt-cafe[data-unreached] .wt-cost text { fill: var(--anatomy-lo); }
+.wt-cafe[data-unreached] .wt-disp .iso-edge { stroke-dasharray: 2 2; }
+.wt-cafe[data-changed] .wt-disp .iso-top { fill: var(--wt-good); opacity: .9; }
+.wt-cafe[data-changed] .iso-face-text { fill: var(--anatomy-card) !important; font-weight: 700; }
+.wt-cafe[data-reading] .wt-puck .iso-edge, .wt-cafe[data-path] .wt-puck .iso-edge { stroke: var(--anatomy-lit); stroke-width: 1.4px; }
+.wt-cafe[data-path] .wt-disp .iso-top { fill: var(--anatomy-lit-top); }
+.wt-cafe[data-path] .wt-disp .iso-edge { stroke: var(--anatomy-lit); }
+.wt-disp .iso-top { transition: fill .35s var(--wt-ease); }
+.wt-token { transition: opacity .25s; }
+/* working-state strip, set like the kit's readout */
+.wt-strip { display: flex; flex-wrap: wrap; gap: 6px 18px; justify-content: center; align-items: baseline; margin: 2px 10px 0; padding-top: 8px; border-top: 1px solid var(--anatomy-faint); font: 13px var(--anatomy-mono); color: var(--anatomy-strong); }
+.wt-strip b { font-weight: 600; font-size: 10.5px; letter-spacing: .08em; color: var(--anatomy-muted); margin-right: 4px; }
+.wt-strip i { font-style: normal; }
+.wt-strip i.bad { color: var(--anatomy-red); }
+.wt-strip em { font-style: normal; display: inline-block; border: 1px solid var(--anatomy-lit); border-radius: 999px; padding: 0 7px; margin: 0 2px; font-size: 12px; }
+.wt-strip u { text-decoration: none; color: var(--anatomy-muted); font-style: italic; }
+.wt-strip small { color: var(--anatomy-muted); font-size: 11px; margin-left: 6px; }
+.wt-table { flex-direction: column; align-items: center; }
+.wt-table table { border-collapse: separate; border-spacing: 3px; font: 12.5px var(--anatomy-mono); }
+.wt-table th { font-weight: 500; color: var(--anatomy-muted); font-size: 11px; text-align: right; padding-right: 6px; }
+.wt-table thead th { text-align: center; padding: 0; }
+.wt-table td { min-width: 34px; text-align: center; border: 1px solid var(--anatomy-faint); border-radius: 5px; padding: 2px 4px; color: var(--anatomy-strong); transition: background .3s, border-color .3s; }
+.wt-table td.inf { color: var(--anatomy-muted); }
+.wt-table td.read { border-color: var(--anatomy-lit); }
+.wt-table td.changed { border-color: var(--wt-good); color: var(--wt-good); font-weight: 700; }
+@media (max-width: 480px) { .wt-strip { font-size: 12px; gap: 4px 12px; } .wt-table table { font-size: 11px; } .wt-table td { min-width: 26px; } }
+
+</style>
+</head>
+<body>
+<main>
+  <h1>Cheapest Courier Route</h1>
+  <p class="approach" id="approach"></p>
+  <div class="runs" id="runs" role="tablist"></div>
+  <div class="card">
+    <div class="card-head"><code id="input"></code><span id="expected"></span></div>
+    <div id="stage"></div>
+    <div class="caption" id="caption" aria-live="polite"></div>
+    <div class="controls">
+      <button id="first" aria-label="First step">⏮</button>
+      <button id="prev" aria-label="Previous step">◀</button>
+      <button id="play" aria-label="Play">▶</button>
+      <button id="next" aria-label="Next step">▶︎|</button>
+      <input type="range" id="scrub" min="0" value="0" aria-label="Step">
+      <span class="count" id="count"></span>
+    </div>
+  </div>
+  <p class="hint">← → step · space plays · [ ] switches style</p>
+</main>
+<div class="switcher" id="switcher"><span class="tag">Prototype style</span></div>
+<script>window.WT_DATA = {
+ "slug": "cheapest-courier-route",
+ "title": "Cheapest Courier Route",
+ "kind": "graph",
+ "approach": "Bellman-Ford limited to maxHops + 1 rounds: round r finds the cheapest route using at most r legs.",
+ "runs": [
+  {
+   "label": "Example 1",
+   "input": "n = 5, links = [[0,1,50],[1,2,40],[0,2,200],[2,3,30],[3,4,20],[1,3,150]], src = 0, dst = 4, maxHops = 2",
+   "expected": 220,
+   "n": 5,
+   "links": [
+    [
+     0,
+     1,
+     50
+    ],
+    [
+     1,
+     2,
+     40
+    ],
+    [
+     0,
+     2,
+     200
+    ],
+    [
+     2,
+     3,
+     30
+    ],
+    [
+     3,
+     4,
+     20
+    ],
+    [
+     1,
+     3,
+     150
+    ]
+   ],
+   "src": 0,
+   "dst": 4,
+   "frames": [
+    {
+     "caption": "Only cafe 0 is reachable before any leg: cost 0 there, \u221e elsewhere. maxHops = 2 allows 3 legs, so 3 rounds of relaxing.",
+     "graph": {
+      "edge": null,
+      "improved": false,
+      "path": [],
+      "pathCosts": null
+     },
+     "vars": {
+      "round": 0,
+      "rounds": 3,
+      "cost": [
+       0,
+       null,
+       null,
+       null,
+       null
+      ],
+      "updated": [
+       0,
+       null,
+       null,
+       null,
+       null
+      ]
+     },
+     "answer": null
+    },
+    {
+     "caption": "Round 1: copy last round's costs. This round reads only last round's row, so each round adds at most one leg.",
+     "graph": {
+      "edge": null,
+      "improved": false,
+      "path": [],
+      "pathCosts": null
+     },
+     "vars": {
+      "round": 1,
+      "rounds": 3,
+      "cost": [
+       0,
+       null,
+       null,
+       null,
+       null
+      ],
+      "updated": [
+       0,
+       null,
+       null,
+       null,
+       null
+      ]
+     },
+     "answer": null
+    },
+    {
+     "caption": "Leg 0\u21921: 0 + 50 = 50 beats \u221e, so cafe 1 costs 50 now.",
+     "graph": {
+      "edge": 0,
+      "improved": true,
+      "path": [],
+      "pathCosts": null
+     },
+     "vars": {
+      "round": 1,
+      "rounds": 3,
+      "cost": [
+       0,
+       null,
+       null,
+       null,
+       null
+      ],
+      "updated": [
+       0,
+       50,
+       null,
+       null,
+       null
+      ]
+     },
+     "answer": null
+    },
+    {
+     "caption": "Leg 1\u21922: cafe 1 wasn't reachable last round, skip.",
+     "graph": {
+      "edge": 1,
+      "improved": false,
+      "path": [],
+      "pathCosts": null
+     },
+     "vars": {
+      "round": 1,
+      "rounds": 3,
+      "cost": [
+       0,
+       null,
+       null,
+       null,
+       null
+      ],
+      "updated": [
+       0,
+       50,
+       null,
+       null,
+       null
+      ]
+     },
+     "answer": null
+    },
+    {
+     "caption": "Leg 0\u21922: 0 + 200 = 200 beats \u221e, so cafe 2 costs 200 now.",
+     "graph": {
+      "edge": 2,
+      "improved": true,
+      "path": [],
+      "pathCosts": null
+     },
+     "vars": {
+      "round": 1,
+      "rounds": 3,
+      "cost": [
+       0,
+       null,
+       null,
+       null,
+       null
+      ],
+      "updated": [
+       0,
+       50,
+       200,
+       null,
+       null
+      ]
+     },
+     "answer": null
+    },
+    {
+     "caption": "Leg 2\u21923: cafe 2 wasn't reachable last round, skip.",
+     "graph": {
+      "edge": 3,
+      "improved": false,
+      "path": [],
+      "pathCosts": null
+     },
+     "vars": {
+      "round": 1,
+      "rounds": 3,
+      "cost": [
+       0,
+       null,
+       null,
+       null,
+       null
+      ],
+      "updated": [
+       0,
+       50,
+       200,
+       null,
+       null
+      ]
+     },
+     "answer": null
+    },
+    {
+     "caption": "Leg 3\u21924: cafe 3 wasn't reachable last round, skip.",
+     "graph": {
+      "edge": 4,
+      "improved": false,
+      "path": [],
+      "pathCosts": null
+     },
+     "vars": {
+      "round": 1,
+      "rounds": 3,
+      "cost": [
+       0,
+       null,
+       null,
+       null,
+       null
+      ],
+      "updated": [
+       0,
+       50,
+       200,
+       null,
+       null
+      ]
+     },
+     "answer": null
+    },
+    {
+     "caption": "Leg 1\u21923: cafe 1 wasn't reachable last round, skip.",
+     "graph": {
+      "edge": 5,
+      "improved": false,
+      "path": [],
+      "pathCosts": null
+     },
+     "vars": {
+      "round": 1,
+      "rounds": 3,
+      "cost": [
+       0,
+       null,
+       null,
+       null,
+       null
+      ],
+      "updated": [
+       0,
+       50,
+       200,
+       null,
+       null
+      ]
+     },
+     "answer": null
+    },
+    {
+     "caption": "Round 2: copy last round's costs. This round reads only last round's row, so each round adds at most one leg.",
+     "graph": {
+      "edge": null,
+      "improved": false,
+      "path": [],
+      "pathCosts": null
+     },
+     "vars": {
+      "round": 2,
+      "rounds": 3,
+      "cost": [
+       0,
+       50,
+       200,
+       null,
+       null
+      ],
+      "updated": [
+       0,
+       50,
+       200,
+       null,
+       null
+      ]
+     },
+     "answer": null
+    },
+    {
+     "caption": "Leg 0\u21921: 0 + 50 = 50 doesn't beat 50, keep it.",
+     "graph": {
+      "edge": 0,
+      "improved": false,
+      "path": [],
+      "pathCosts": null
+     },
+     "vars": {
+      "round": 2,
+      "rounds": 3,
+      "cost": [
+       0,
+       50,
+       200,
+       null,
+       null
+      ],
+      "updated": [
+       0,
+       50,
+       200,
+       null,
+       null
+      ]
+     },
+     "answer": null
+    },
+    {
+     "caption": "Leg 1\u21922: 50 + 40 = 90 beats 200, so cafe 2 costs 90 now.",
+     "graph": {
+      "edge": 1,
+      "improved": true,
+      "path": [],
+      "pathCosts": null
+     },
+     "vars": {
+      "round": 2,
+      "rounds": 3,
+      "cost": [
+       0,
+       50,
+       200,
+       null,
+       null
+      ],
+      "updated": [
+       0,
+       50,
+       90,
+       null,
+       null
+      ]
+     },
+     "answer": null
+    },
+    {
+     "caption": "Leg 0\u21922: 0 + 200 = 200 doesn't beat 90, keep it.",
+     "graph": {
+      "edge": 2,
+      "improved": false,
+      "path": [],
+      "pathCosts": null
+     },
+     "vars": {
+      "round": 2,
+      "rounds": 3,
+      "cost": [
+       0,
+       50,
+       200,
+       null,
+       null
+      ],
+      "updated": [
+       0,
+       50,
+       90,
+       null,
+       null
+      ]
+     },
+     "answer": null
+    },
+    {
+     "caption": "Leg 2\u21923: 200 + 30 = 230 beats \u221e, so cafe 3 costs 230 now.",
+     "graph": {
+      "edge": 3,
+      "improved": true,
+      "path": [],
+      "pathCosts": null
+     },
+     "vars": {
+      "round": 2,
+      "rounds": 3,
+      "cost": [
+       0,
+       50,
+       200,
+       null,
+       null
+      ],
+      "updated": [
+       0,
+       50,
+       90,
+       230,
+       null
+      ]
+     },
+     "answer": null
+    },
+    {
+     "caption": "Leg 3\u21924: cafe 3 wasn't reachable last round, skip.",
+     "graph": {
+      "edge": 4,
+      "improved": false,
+      "path": [],
+      "pathCosts": null
+     },
+     "vars": {
+      "round": 2,
+      "rounds": 3,
+      "cost": [
+       0,
+       50,
+       200,
+       null,
+       null
+      ],
+      "updated": [
+       0,
+       50,
+       90,
+       230,
+       null
+      ]
+     },
+     "answer": null
+    },
+    {
+     "caption": "Leg 1\u21923: 50 + 150 = 200 beats 230, so cafe 3 costs 200 now.",
+     "graph": {
+      "edge": 5,
+      "improved": true,
+      "path": [],
+      "pathCosts": null
+     },
+     "vars": {
+      "round": 2,
+      "rounds": 3,
+      "cost": [
+       0,
+       50,
+       200,
+       null,
+       null
+      ],
+      "updated": [
+       0,
+       50,
+       90,
+       200,
+       null
+      ]
+     },
+     "answer": null
+    },
+    {
+     "caption": "Round 3: copy last round's costs. This round reads only last round's row, so each round adds at most one leg.",
+     "graph": {
+      "edge": null,
+      "improved": false,
+      "path": [],
+      "pathCosts": null
+     },
+     "vars": {
+      "round": 3,
+      "rounds": 3,
+      "cost": [
+       0,
+       50,
+       90,
+       200,
+       null
+      ],
+      "updated": [
+       0,
+       50,
+       90,
+       200,
+       null
+      ]
+     },
+     "answer": null
+    },
+    {
+     "caption": "Leg 0\u21921: 0 + 50 = 50 doesn't beat 50, keep it.",
+     "graph": {
+      "edge": 0,
+      "improved": false,
+      "path": [],
+      "pathCosts": null
+     },
+     "vars": {
+      "round": 3,
+      "rounds": 3,
+      "cost": [
+       0,
+       50,
+       90,
+       200,
+       null
+      ],
+      "updated": [
+       0,
+       50,
+       90,
+       200,
+       null
+      ]
+     },
+     "answer": null
+    },
+    {
+     "caption": "Leg 1\u21922: 50 + 40 = 90 doesn't beat 90, keep it.",
+     "graph": {
+      "edge": 1,
+      "improved": false,
+      "path": [],
+      "pathCosts": null
+     },
+     "vars": {
+      "round": 3,
+      "rounds": 3,
+      "cost": [
+       0,
+       50,
+       90,
+       200,
+       null
+      ],
+      "updated": [
+       0,
+       50,
+       90,
+       200,
+       null
+      ]
+     },
+     "answer": null
+    },
+    {
+     "caption": "Leg 0\u21922: 0 + 200 = 200 doesn't beat 90, keep it.",
+     "graph": {
+      "edge": 2,
+      "improved": false,
+      "path": [],
+      "pathCosts": null
+     },
+     "vars": {
+      "round": 3,
+      "rounds": 3,
+      "cost": [
+       0,
+       50,
+       90,
+       200,
+       null
+      ],
+      "updated": [
+       0,
+       50,
+       90,
+       200,
+       null
+      ]
+     },
+     "answer": null
+    },
+    {
+     "caption": "Leg 2\u21923: 90 + 30 = 120 beats 200, so cafe 3 costs 120 now.",
+     "graph": {
+      "edge": 3,
+      "improved": true,
+      "path": [],
+      "pathCosts": null
+     },
+     "vars": {
+      "round": 3,
+      "rounds": 3,
+      "cost": [
+       0,
+       50,
+       90,
+       200,
+       null
+      ],
+      "updated": [
+       0,
+       50,
+       90,
+       120,
+       null
+      ]
+     },
+     "answer": null
+    },
+    {
+     "caption": "Leg 3\u21924: 200 + 20 = 220 beats \u221e, so cafe 4 costs 220 now.",
+     "graph": {
+      "edge": 4,
+      "improved": true,
+      "path": [],
+      "pathCosts": null
+     },
+     "vars": {
+      "round": 3,
+      "rounds": 3,
+      "cost": [
+       0,
+       50,
+       90,
+       200,
+       null
+      ],
+      "updated": [
+       0,
+       50,
+       90,
+       120,
+       220
+      ]
+     },
+     "answer": null
+    },
+    {
+     "caption": "Leg 1\u21923: 50 + 150 = 200 doesn't beat 120, keep it.",
+     "graph": {
+      "edge": 5,
+      "improved": false,
+      "path": [],
+      "pathCosts": null
+     },
+     "vars": {
+      "round": 3,
+      "rounds": 3,
+      "cost": [
+       0,
+       50,
+       90,
+       200,
+       null
+      ],
+      "updated": [
+       0,
+       50,
+       90,
+       120,
+       220
+      ]
+     },
+     "answer": null
+    },
+    {
+     "caption": "After 3 rounds cafe 4 costs 220, via 0 \u2192 1 \u2192 3 \u2192 4: answer 220. Cafe 3 shows 200, the cost it had when the route used it: its final 120 needs more legs, and one more leg from there would break maxHops.",
+     "graph": {
+      "edge": null,
+      "improved": false,
+      "path": [
+       0,
+       1,
+       3,
+       4
+      ],
+      "pathCosts": [
+       0,
+       50,
+       null,
+       200,
+       220
+      ]
+     },
+     "vars": {
+      "round": 3,
+      "rounds": 3,
+      "cost": [
+       0,
+       50,
+       90,
+       120,
+       220
+      ],
+      "updated": [
+       0,
+       50,
+       90,
+       120,
+       220
+      ]
+     },
+     "answer": 220
+    }
+   ]
+  },
+  {
+   "label": "Example 2",
+   "input": "n = 4, links = [[0,1,80],[1,2,40],[0,2,300],[2,3,90],[0,3,400]], src = 0, dst = 3, maxHops = 0",
+   "expected": 400,
+   "n": 4,
+   "links": [
+    [
+     0,
+     1,
+     80
+    ],
+    [
+     1,
+     2,
+     40
+    ],
+    [
+     0,
+     2,
+     300
+    ],
+    [
+     2,
+     3,
+     90
+    ],
+    [
+     0,
+     3,
+     400
+    ]
+   ],
+   "src": 0,
+   "dst": 3,
+   "frames": [
+    {
+     "caption": "Only cafe 0 is reachable before any leg: cost 0 there, \u221e elsewhere. maxHops = 0 allows 1 leg, so 1 round of relaxing.",
+     "graph": {
+      "edge": null,
+      "improved": false,
+      "path": [],
+      "pathCosts": null
+     },
+     "vars": {
+      "round": 0,
+      "rounds": 1,
+      "cost": [
+       0,
+       null,
+       null,
+       null
+      ],
+      "updated": [
+       0,
+       null,
+       null,
+       null
+      ]
+     },
+     "answer": null
+    },
+    {
+     "caption": "Round 1: copy last round's costs. This round reads only last round's row, so each round adds at most one leg.",
+     "graph": {
+      "edge": null,
+      "improved": false,
+      "path": [],
+      "pathCosts": null
+     },
+     "vars": {
+      "round": 1,
+      "rounds": 1,
+      "cost": [
+       0,
+       null,
+       null,
+       null
+      ],
+      "updated": [
+       0,
+       null,
+       null,
+       null
+      ]
+     },
+     "answer": null
+    },
+    {
+     "caption": "Leg 0\u21921: 0 + 80 = 80 beats \u221e, so cafe 1 costs 80 now.",
+     "graph": {
+      "edge": 0,
+      "improved": true,
+      "path": [],
+      "pathCosts": null
+     },
+     "vars": {
+      "round": 1,
+      "rounds": 1,
+      "cost": [
+       0,
+       null,
+       null,
+       null
+      ],
+      "updated": [
+       0,
+       80,
+       null,
+       null
+      ]
+     },
+     "answer": null
+    },
+    {
+     "caption": "Leg 1\u21922: cafe 1 wasn't reachable last round, skip.",
+     "graph": {
+      "edge": 1,
+      "improved": false,
+      "path": [],
+      "pathCosts": null
+     },
+     "vars": {
+      "round": 1,
+      "rounds": 1,
+      "cost": [
+       0,
+       null,
+       null,
+       null
+      ],
+      "updated": [
+       0,
+       80,
+       null,
+       null
+      ]
+     },
+     "answer": null
+    },
+    {
+     "caption": "Leg 0\u21922: 0 + 300 = 300 beats \u221e, so cafe 2 costs 300 now.",
+     "graph": {
+      "edge": 2,
+      "improved": true,
+      "path": [],
+      "pathCosts": null
+     },
+     "vars": {
+      "round": 1,
+      "rounds": 1,
+      "cost": [
+       0,
+       null,
+       null,
+       null
+      ],
+      "updated": [
+       0,
+       80,
+       300,
+       null
+      ]
+     },
+     "answer": null
+    },
+    {
+     "caption": "Leg 2\u21923: cafe 2 wasn't reachable last round, skip.",
+     "graph": {
+      "edge": 3,
+      "improved": false,
+      "path": [],
+      "pathCosts": null
+     },
+     "vars": {
+      "round": 1,
+      "rounds": 1,
+      "cost": [
+       0,
+       null,
+       null,
+       null
+      ],
+      "updated": [
+       0,
+       80,
+       300,
+       null
+      ]
+     },
+     "answer": null
+    },
+    {
+     "caption": "Leg 0\u21923: 0 + 400 = 400 beats \u221e, so cafe 3 costs 400 now.",
+     "graph": {
+      "edge": 4,
+      "improved": true,
+      "path": [],
+      "pathCosts": null
+     },
+     "vars": {
+      "round": 1,
+      "rounds": 1,
+      "cost": [
+       0,
+       null,
+       null,
+       null
+      ],
+      "updated": [
+       0,
+       80,
+       300,
+       400
+      ]
+     },
+     "answer": null
+    },
+    {
+     "caption": "After 1 round cafe 3 costs 400, via 0 \u2192 3: answer 400.",
+     "graph": {
+      "edge": null,
+      "improved": false,
+      "path": [
+       0,
+       3
+      ],
+      "pathCosts": [
+       0,
+       null,
+       null,
+       400
+      ]
+     },
+     "vars": {
+      "round": 1,
+      "rounds": 1,
+      "cost": [
+       0,
+       80,
+       300,
+       400
+      ],
+      "updated": [
+       0,
+       80,
+       300,
+       400
+      ]
+     },
+     "answer": 400
+    }
+   ]
+  },
+  {
+   "label": "Sample 3",
+   "input": "n = 3, links = [[0,1,100],[1,2,100],[0,2,500]], src = 0, dst = 2, maxHops = 0",
+   "expected": 500,
+   "n": 3,
+   "links": [
+    [
+     0,
+     1,
+     100
+    ],
+    [
+     1,
+     2,
+     100
+    ],
+    [
+     0,
+     2,
+     500
+    ]
+   ],
+   "src": 0,
+   "dst": 2,
+   "frames": [
+    {
+     "caption": "Only cafe 0 is reachable before any leg: cost 0 there, \u221e elsewhere. maxHops = 0 allows 1 leg, so 1 round of relaxing.",
+     "graph": {
+      "edge": null,
+      "improved": false,
+      "path": [],
+      "pathCosts": null
+     },
+     "vars": {
+      "round": 0,
+      "rounds": 1,
+      "cost": [
+       0,
+       null,
+       null
+      ],
+      "updated": [
+       0,
+       null,
+       null
+      ]
+     },
+     "answer": null
+    },
+    {
+     "caption": "Round 1: copy last round's costs. This round reads only last round's row, so each round adds at most one leg.",
+     "graph": {
+      "edge": null,
+      "improved": false,
+      "path": [],
+      "pathCosts": null
+     },
+     "vars": {
+      "round": 1,
+      "rounds": 1,
+      "cost": [
+       0,
+       null,
+       null
+      ],
+      "updated": [
+       0,
+       null,
+       null
+      ]
+     },
+     "answer": null
+    },
+    {
+     "caption": "Leg 0\u21921: 0 + 100 = 100 beats \u221e, so cafe 1 costs 100 now.",
+     "graph": {
+      "edge": 0,
+      "improved": true,
+      "path": [],
+      "pathCosts": null
+     },
+     "vars": {
+      "round": 1,
+      "rounds": 1,
+      "cost": [
+       0,
+       null,
+       null
+      ],
+      "updated": [
+       0,
+       100,
+       null
+      ]
+     },
+     "answer": null
+    },
+    {
+     "caption": "Leg 1\u21922: cafe 1 wasn't reachable last round, skip.",
+     "graph": {
+      "edge": 1,
+      "improved": false,
+      "path": [],
+      "pathCosts": null
+     },
+     "vars": {
+      "round": 1,
+      "rounds": 1,
+      "cost": [
+       0,
+       null,
+       null
+      ],
+      "updated": [
+       0,
+       100,
+       null
+      ]
+     },
+     "answer": null
+    },
+    {
+     "caption": "Leg 0\u21922: 0 + 500 = 500 beats \u221e, so cafe 2 costs 500 now.",
+     "graph": {
+      "edge": 2,
+      "improved": true,
+      "path": [],
+      "pathCosts": null
+     },
+     "vars": {
+      "round": 1,
+      "rounds": 1,
+      "cost": [
+       0,
+       null,
+       null
+      ],
+      "updated": [
+       0,
+       100,
+       500
+      ]
+     },
+     "answer": null
+    },
+    {
+     "caption": "After 1 round cafe 2 costs 500, via 0 \u2192 2: answer 500.",
+     "graph": {
+      "edge": null,
+      "improved": false,
+      "path": [
+       0,
+       2
+      ],
+      "pathCosts": [
+       0,
+       null,
+       500
+      ]
+     },
+     "vars": {
+      "round": 1,
+      "rounds": 1,
+      "cost": [
+       0,
+       100,
+       500
+      ],
+      "updated": [
+       0,
+       100,
+       500
+      ]
+     },
+     "answer": 500
+    }
+   ]
+  }
+ ]
+}; window.WT_STYLES = {};</script>
+<script>const AZIMUTH = 45;
+const ELEVATION = 30;
+const SHADES = 4;
+const RADIANS = Math.PI / 180;
+const UNIT = Math.sqrt(1.6);
+function cameraOf({ scale, azimuth = AZIMUTH, elevation = ELEVATION }) {
+    const a = azimuth * RADIANS;
+    const e = elevation * RADIANS;
+    return { sinA: Math.sin(a), cosA: Math.cos(a), sinE: Math.sin(e), cosE: Math.cos(e), k: scale * UNIT };
+}
+function iso([x, y, z], projection) {
+    const { origin } = projection;
+    const { sinA, cosA, sinE, cosE, k } = cameraOf(projection);
+    return [origin[0] + (x * sinA - y * cosA) * k, origin[1] + ((x * cosA + y * sinA) * sinE - z * cosE) * k];
+}
+function towardViewer(projection) {
+    const { sinA, cosA } = cameraOf(projection);
+    return [cosA, sinA];
+}
+function depthOf([x, y, z], projection) {
+    const { sinA, cosA, sinE, cosE } = cameraOf(projection);
+    return (x * cosA + y * sinA) * cosE + z * sinE;
+}
+const tenth = (value) => {
+    const text = (Math.round(value * 10) / 10).toFixed(1).replace(/\.0$/, "");
+    return text === "-0" ? "0" : text;
+};
+function pathOf(points, closed = false) {
+    if (!points.length)
+        return "";
+    return points.map(([x, y], at) => `${at ? "L" : "M"}${tenth(x)} ${tenth(y)}`).join("") + (closed ? "Z" : "");
+}
+const joinPaths = (paths) => paths.filter(Boolean).join("");
+function roundedPlan({ x, y, w, d, r }, steps = 8) {
+    const radius = Math.max(0, Math.min(r, w / 2, d / 2));
+    const corners = [
+        [x + w - radius, y + radius, -90],
+        [x + w - radius, y + d - radius, 0],
+        [x + radius, y + d - radius, 90],
+        [x + radius, y + radius, 180],
+    ];
+    const out = [];
+    for (const [cx, cy, start] of corners) {
+        const count = radius > 0 ? steps : 0;
+        for (let step = 0; step <= count; step++) {
+            const angle = (start + (count ? (90 * step) / count : 45)) * RADIANS;
+            out.push([cx + radius * Math.cos(angle), cy + radius * Math.sin(angle)]);
+        }
+    }
+    return out;
+}
+function signedArea(points) {
+    let area = 0;
+    for (let index = 0; index < points.length; index++) {
+        const [ax, ay] = points[index];
+        const [bx, by] = points[(index + 1) % points.length];
+        area += ax * by - bx * ay;
+    }
+    return area / 2;
+}
+const oriented = (points) => (signedArea(points) < 0 ? [...points].reverse() : points);
+function convexHull(points) {
+    const sorted = [...points].sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+    if (sorted.length < 3)
+        return sorted;
+    const cross = (o, a, b) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
+    const lower = [];
+    for (const point of sorted) {
+        while (lower.length >= 2 && cross(lower[lower.length - 2], lower[lower.length - 1], point) <= 0)
+            lower.pop();
+        lower.push(point);
+    }
+    const upper = [];
+    for (let index = sorted.length - 1; index >= 0; index--) {
+        const point = sorted[index];
+        while (upper.length >= 2 && cross(upper[upper.length - 2], upper[upper.length - 1], point) <= 0)
+            upper.pop();
+        upper.push(point);
+    }
+    return [...lower.slice(0, -1), ...upper.slice(0, -1)];
+}
+function runsOf(flags, want) {
+    const count = flags.length;
+    const runs = [];
+    const start = flags.findIndex((flag, index) => flag !== flags[(index + count - 1) % count]);
+    if (start < 0)
+        return flags[0] === want ? [Array.from({ length: count + 1 }, (_, index) => index % count)] : [];
+    let run = null;
+    for (let step = 0; step < count; step++) {
+        const index = (start + step) % count;
+        if (flags[index] === want) {
+            if (!run)
+                run = [index];
+            run.push((index + 1) % count);
+        }
+        else if (run) {
+            runs.push(run);
+            run = null;
+        }
+    }
+    if (run)
+        runs.push(run);
+    return runs;
+}
+function extrude(ring, z, height, projection, options = {}) {
+    const convex = options.convex ?? true;
+    const count = ring.length;
+    const counter = signedArea(ring) > 0;
+    const [vx, vy] = towardViewer(projection);
+    const { sinA, cosA } = cameraOf(projection);
+    const normals = ring.map(([ax, ay], index) => {
+        const [bx, by] = ring[(index + 1) % count];
+        const dx = bx - ax;
+        const dy = by - ay;
+        const length = Math.hypot(dx, dy) || 1;
+        return (counter ? [dy / length, -dx / length] : [-dy / length, dx / length]);
+    });
+    const facing = normals.map(([nx, ny]) => nx * vx + ny * vy > 1e-9);
+    const top = ring.map(([x, y]) => iso([x, y, z + height], projection));
+    const bottom = ring.map(([x, y]) => iso([x, y, z], projection));
+    const outline = [];
+    const crease = [];
+    for (const run of runsOf(facing, false))
+        outline.push(pathOf(run.map((index) => top[index])));
+    for (const run of runsOf(facing, true)) {
+        crease.push(pathOf(run.map((index) => top[index])));
+        if (height > 0)
+            outline.push(pathOf(run.map((index) => bottom[index])));
+    }
+    if (height > 0) {
+        for (let index = 0; index < count; index++) {
+            if (facing[(index + count - 1) % count] !== facing[index])
+                outline.push(pathOf([top[index], bottom[index]]));
+        }
+    }
+    let fill;
+    if (convex) {
+        fill = pathOf(convexHull([...top, ...bottom]), true);
+    }
+    else {
+        const parts = [pathOf(oriented(top), true), pathOf(oriented(bottom), true)];
+        for (let index = 0; index < count; index++) {
+            if (!facing[index])
+                continue;
+            const next = (index + 1) % count;
+            parts.push(pathOf(oriented([top[index], top[next], bottom[next], bottom[index]]), true));
+        }
+        fill = parts.join("");
+    }
+    const buckets = Array.from({ length: SHADES }, () => []);
+    if (height > 0) {
+        const [lx, ly] = [-sinA, cosA];
+        for (let index = 0; index < count; index++) {
+            if (!facing[index])
+                continue;
+            const [nx, ny] = normals[index];
+            const lit = (nx * lx + ny * ly + 1) / 2;
+            const shade = Math.min(SHADES - 1, Math.max(0, Math.floor(lit * SHADES)));
+            const next = (index + 1) % count;
+            buckets[shade].push(pathOf(oriented([top[index], top[next], bottom[next], bottom[index]]), true));
+        }
+    }
+    let bevel;
+    if (options.bevel && options.bevel > 0) {
+        const by = options.bevel;
+        const inset = ring.map(([x, y], index) => {
+            const [ax, ay] = normals[(index + count - 1) % count];
+            const [bx, by2] = normals[index];
+            const mx = ax + bx;
+            const my = ay + by2;
+            const length = Math.hypot(mx, my) || 1;
+            return [x - (mx / length) * by, y - (my / length) * by];
+        });
+        const insetTop = inset.map(([x, y]) => iso([x, y, z + height], projection));
+        bevel = runsOf(facing, true)
+            .map((run) => pathOf([top[run[0]], ...run.slice(1, -1).map((index) => insetTop[index]), top[run[run.length - 1]]]))
+            .join("");
+    }
+    return {
+        fill,
+        outline: outline.join(""),
+        crease: crease.join(""),
+        top: pathOf(oriented(top), true),
+        shades: buckets.map((paths) => paths.join("")),
+        bevel,
+    };
+}
+const ringOf = (plan, steps = 8) => roundedPlan(plan, steps);
+function slabOf(plan, z, height, projection, steps = 8, bevel = 0) {
+    return extrude(ringOf(plan, steps), z, height, projection, { convex: true, bevel });
+}
+function circleRing(cx, cy, radius, steps = 40) {
+    return Array.from({ length: steps }, (_, step) => {
+        const angle = (step / steps) * Math.PI * 2;
+        return [cx + radius * Math.cos(angle), cy + radius * Math.sin(angle)];
+    });
+}
+function cylinder(cx, cy, radius, z, height, projection, steps = 32, bevel = 0) {
+    return extrude(circleRing(cx, cy, radius, steps), z, height, projection, { convex: true, bevel });
+}
+const insetPlan = ({ x, y, w, d, r }, by) => ({ x: x + by, y: y + by, w: w - by * 2, d: d - by * 2, r: Math.max(0, r - by) });
+function onTop(points, z, projection, closed = false) {
+    return pathOf(points.map(([x, y]) => iso([x, y, z], projection)), closed);
+}
+const planOutline = (plan, z, projection, steps = 8) => onTop(ringOf(plan, steps), z, projection, true);
+const lineOnTop = (from, to, z, projection) => onTop([from, to], z, projection);
+const segment = (from, to, projection) => pathOf([iso(from, projection), iso(to, projection)]);
+const rise = (at, from, to, projection) => segment([at[0], at[1], from], [at[0], at[1], to], projection);
+const ring = (cx, cy, radius, z, projection, steps = 40) => onTop(circleRing(cx, cy, radius, steps), z, projection, true);
+const pointsAt = (points, projection) => points.map((point) => iso(point, projection));
+function dotGrid(x, y, columns, rows, gap, z, projection) {
+    const dots = [];
+    for (let row = 0; row < rows; row++) {
+        for (let column = 0; column < columns; column++)
+            dots.push(iso([x + column * gap, y + row * gap, z], projection));
+    }
+    return dots;
+}
+function corners({ x, y, w, d }, inset = 0) {
+    return [
+        [x + inset, y + inset],
+        [x + w - inset, y + inset],
+        [x + inset, y + d - inset],
+        [x + w - inset, y + d - inset],
+    ];
+}
+function boxCorners({ x, y, w, d }, z0, z1) {
+    const out = [];
+    for (const px of [x, x + w])
+        for (const py of [y, y + d])
+            for (const z of [z0, z1])
+                out.push([px, py, z]);
+    return out;
+}
+function knurl(cx, cy, radius, z0, z1, count, projection, inset = 0.4) {
+    const [vx, vy] = towardViewer(projection);
+    const lines = [];
+    for (let index = 0; index < count; index++) {
+        const angle = (index / count) * Math.PI * 2;
+        const nx = Math.cos(angle);
+        const ny = Math.sin(angle);
+        if (nx * vx + ny * vy < 0.15)
+            continue;
+        lines.push(segment([cx + radius * nx, cy + radius * ny, z0 + inset], [cx + radius * nx, cy + radius * ny, z1 - inset], projection));
+    }
+    return lines.join("");
+}
+function sideArc(cx, cy, radius, z, projection, steps = 24) {
+    const [vx, vy] = towardViewer(projection);
+    const facing = Math.atan2(vy, vx);
+    const points = [];
+    for (let step = 0; step <= steps; step++) {
+        const angle = facing - Math.PI / 2 + (step / steps) * Math.PI;
+        points.push(iso([cx + radius * Math.cos(angle), cy + radius * Math.sin(angle), z], projection));
+    }
+    return pathOf(points);
+}
+function ringSeam(ring, z, projection) {
+    const count = ring.length;
+    const counter = signedArea(ring) > 0;
+    const [vx, vy] = towardViewer(projection);
+    const facing = ring.map(([ax, ay], index) => {
+        const [bx, by] = ring[(index + 1) % count];
+        const dx = bx - ax;
+        const dy = by - ay;
+        const [nx, ny] = counter ? [dy, -dx] : [-dy, dx];
+        return nx * vx + ny * vy > 1e-9;
+    });
+    return runsOf(facing, true).map((run) => pathOf(run.map((index) => iso([ring[index][0], ring[index][1], z], projection)))).join("");
+}
+const sideSeam = (plan, z, projection, steps = 8) => ringSeam(ringOf(plan, steps), z, projection);
+function sideRing(center, radius, axis, projection, steps = 20) {
+    const [px, py, pz] = center;
+    const points = [];
+    for (let step = 0; step < steps; step++) {
+        const angle = (step / steps) * Math.PI * 2;
+        const u = radius * Math.cos(angle);
+        const v = radius * Math.sin(angle);
+        points.push(iso(axis === "x" ? [px, py + u, pz + v] : [px + u, py, pz + v], projection));
+    }
+    return pathOf(points, true);
+}
+function coil(from, to, center, radius, turns, axis, projection, perTurn = 16) {
+    const count = Math.max(1, Math.round(turns * perTurn));
+    const back = [];
+    const front = [];
+    let run = [];
+    let near = null;
+    for (let index = 0; index <= count; index++) {
+        const share = index / count;
+        const angle = share * turns * Math.PI * 2;
+        const u = radius * Math.cos(angle);
+        const v = radius * Math.sin(angle);
+        const along = from + (to - from) * share;
+        const point = axis === "x" ? [along, center[0] + u, center[1] + v] : [center[0] + u, along, center[1] + v];
+        const normal = axis === "x" ? [0, Math.cos(angle), Math.sin(angle)] : [Math.cos(angle), 0, Math.sin(angle)];
+        const facing = depthOf(normal, projection) > 0;
+        const flat = iso(point, projection);
+        if (near === null)
+            near = facing;
+        if (facing !== near) {
+            run.push(flat);
+            (near ? front : back).push(pathOf(run));
+            run = [flat];
+            near = facing;
+            continue;
+        }
+        run.push(flat);
+    }
+    if (run.length > 1)
+        (near ? front : back).push(pathOf(run));
+    return { back: back.join(""), front: front.join("") };
+}
+function topTicks(from, to, step, every, edge, z, lengths, projection, axis = "x") {
+    const minor = [];
+    const major = [];
+    const first = Math.ceil(from / step) * step;
+    for (let at = first, index = Math.round(first / step); at <= to + 1e-9; at += step, index++) {
+        const big = index % every === 0;
+        const length = big ? lengths[1] : lengths[0];
+        const a = axis === "x" ? [at, edge] : [edge, at];
+        const b = axis === "x" ? [at, edge + length] : [edge + length, at];
+        (big ? major : minor).push(lineOnTop(a, b, z, projection));
+    }
+    return { minor: minor.join(""), major: major.join("") };
+}
+function sideTicks(from, to, step, every, face, top, lengths, projection, axis = "x") {
+    const minor = [];
+    const major = [];
+    const first = Math.ceil(from / step) * step;
+    for (let at = first, index = Math.round(first / step); at <= to + 1e-9; at += step, index++) {
+        const big = index % every === 0;
+        const length = big ? lengths[1] : lengths[0];
+        const a = axis === "x" ? [at, face, top] : [face, at, top];
+        const b = axis === "x" ? [at, face, top - length] : [face, at, top - length];
+        (big ? major : minor).push(segment(a, b, projection));
+    }
+    return { minor: minor.join(""), major: major.join("") };
+}
+function radialTicks(cx, cy, radius, count, every, z, lengths, projection, from = 0, span = Math.PI * 2) {
+    const minor = [];
+    const major = [];
+    const closed = Math.abs(span - Math.PI * 2) < 1e-9;
+    const steps = closed ? count : count + 1;
+    for (let index = 0; index < steps; index++) {
+        const angle = from + (index / count) * span;
+        const big = index % every === 0;
+        const inner = radius - (big ? lengths[1] : lengths[0]);
+        const sx = Math.sin(angle);
+        const sy = -Math.cos(angle);
+        (big ? major : minor).push(lineOnTop([cx + sx * inner, cy + sy * inner], [cx + sx * radius, cy + sy * radius], z, projection));
+    }
+    return { minor: minor.join(""), major: major.join("") };
+}
+const haloOf = (plan, z, height, projection) => slabOf(plan, z, height, projection).fill;
+function axisVector(projection, [dx, dy, dz]) {
+    const origin = iso([0, 0, 0], projection);
+    const moved = iso([dx, dy, dz], projection);
+    return [moved[0] - origin[0], moved[1] - origin[1]];
+}
+const fine = (value) => Math.round(value * 100) / 100;
+function translateAlong(projection, by) {
+    const [x, y] = axisVector(projection, by);
+    return `translate(${fine(x)} ${fine(y)})`;
+}
+const thousandth = (value) => Math.round(value * 1000) / 1000;
+function axesAt(at, z, projection) {
+    const origin = iso([at[0], at[1], z], projection);
+    const along = (point) => {
+        const [px, py] = iso(point, projection);
+        return [px - origin[0], py - origin[1]];
+    };
+    return { origin, x: along([at[0] + 1, at[1], z]), y: along([at[0], at[1] + 1, z]), z: along([at[0], at[1], z + 1]) };
+}
+const matrixOf = (u, v, origin) => `matrix(${thousandth(u[0])} ${thousandth(u[1])} ${thousandth(v[0])} ${thousandth(v[1])} ${thousandth(origin[0])} ${thousandth(origin[1])})`;
+function holdStill(element, [dx, dy]) {
+    const text = dx || dy ? `translate(${-dx} ${-dy})` : "";
+    element.querySelectorAll("[data-hold]").forEach((node) => (text ? node.setAttribute("transform", text) : node.removeAttribute("transform")));
+}
+function topMatrix(at, z, projection, along = "x") {
+    const { origin, x, y } = axesAt(at, z, projection);
+    return along === "x" ? matrixOf(x, y, origin) : matrixOf([-y[0], -y[1]], x, origin);
+}
+function sideMatrix(at, z, projection, face) {
+    const { origin, x, y, z: up } = axesAt(at, z, projection);
+    const down = [-up[0], -up[1]];
+    return face === "left" ? matrixOf(x, down, origin) : matrixOf([-y[0], -y[1]], down, origin);
+}
+function screenRise(height, projection) {
+    const { cosE, k } = cameraOf(projection);
+    return height * cosE * k;
+}
+function fitProjection(points, width, height, { pad = 24, headroom = 0, azimuth = AZIMUTH, elevation = ELEVATION } = {}) {
+    const unit = { origin: [0, 0], scale: 1, azimuth, elevation };
+    const flat = points.map((point) => iso(point, unit));
+    const xs = flat.map(([x]) => x);
+    const ys = flat.map(([, y]) => y);
+    const left = Math.min(...xs);
+    const right = Math.max(...xs);
+    const up = Math.min(...ys);
+    const down = Math.max(...ys);
+    const scale = Math.min((width - pad * 2) / (right - left), (height - pad * 2 - headroom) / (down - up));
+    return {
+        origin: [width / 2 - ((left + right) / 2) * scale, headroom + (height - headroom) / 2 - ((up + down) / 2) * scale],
+        scale,
+        azimuth,
+        elevation,
+    };
+}
+const escape = (text) => text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+const attrs = (pairs) => Object.entries(pairs)
+    .filter(([, value]) => value !== undefined && value !== false)
+    .map(([key, value]) => ` ${key}="${escape(String(value))}"`)
+    .join("");
+function solidSvg(paths, { tone = "hi", crease = "faint", halo = false, lit = false, flat = false, className, inner = "" } = {}) {
+    const parts = [];
+    if (halo)
+        parts.push(`<path class="iso-halo" d="${paths.fill}"/>`);
+    parts.push(`<path class="iso-fill" d="${paths.fill}"/>`);
+    if (!flat) {
+        paths.shades.forEach((d, shade) => {
+            if (d)
+                parts.push(`<path class="iso-shade" data-shade="${shade}" d="${d}"/>`);
+        });
+        parts.push(`<path class="iso-top" d="${paths.top}"/>`);
+    }
+    if (crease !== "none" && paths.crease)
+        parts.push(`<path class="iso-line iso-crease" data-tone="${crease}" d="${paths.crease}"/>`);
+    if (crease !== "none" && paths.bevel)
+        parts.push(`<path class="iso-line iso-bevel" data-tone="${crease}" d="${paths.bevel}"/>`);
+    if (inner)
+        parts.push(inner);
+    parts.push(`<path class="iso-line iso-edge" data-tone="${tone}" d="${paths.outline}"/>`);
+    return `<g${attrs({ class: className ? `iso-solid ${className}` : "iso-solid", "data-lit": lit ? "" : undefined, "data-seamless": paths.seamless ? "" : undefined })}>${parts.join("")}</g>`;
+}
+function lineSvg(d, { tone = "lo", dotted = false, dashed = false, flow = false, className, free } = {}) {
+    if (!d)
+        return "";
+    return `<path${attrs({
+        class: className ? `iso-line ${className}` : "iso-line",
+        "data-tone": tone,
+        "data-free": free === true ? "" : free || undefined,
+        "data-dotted": dotted ? "" : undefined,
+        "data-dashed": dashed ? "" : undefined,
+        "data-flow": flow ? "" : undefined,
+        d,
+    })}/>`;
+}
+function dotsSvg(points, { size = 0.5, tone = "mid", pulse = false } = {}) {
+    const dots = points
+        .map(([x, y, alpha], index) => `<circle cx="${tenth(x)}" cy="${tenth(y)}" r="${size}"${alpha !== undefined && alpha < 1 ? ` fill-opacity="${Math.max(0, alpha).toFixed(2)}"` : ""}${pulse ? ` data-pulse="" style="--pulse-at:${(index * 137) % 1600}ms"` : ""}/>`)
+        .join("");
+    return `<g class="iso-dots" data-tone="${tone}">${dots}</g>`;
+}
+function fadedSvg(list, style = {}) {
+    const groups = new Map();
+    for (const entry of list) {
+        const [d, alpha] = Array.isArray(entry) ? entry : [entry.d, entry.alpha];
+        if (!d || !(alpha > 0.02))
+            continue;
+        const level = Math.min(1, Math.round(alpha * 20) / 20);
+        groups.set(level, (groups.get(level) ?? "") + d);
+    }
+    return [...groups].map(([alpha, d]) => (alpha >= 1 ? lineSvg(d, style) : `<g opacity="${alpha.toFixed(2)}">${lineSvg(d, style)}</g>`)).join("");
+}
+function fadeLineSvg(points, { fade = [0, 0], tone = "lo", className, stops = 6 } = {}) {
+    if (points.length < 2)
+        return "";
+    const ease = (t) => t * t * (3 - 2 * t);
+    const hashOf = (text) => {
+        let hash = 2166136261;
+        for (let index = 0; index < text.length; index++)
+            hash = Math.imul(hash ^ text.charCodeAt(index), 16777619);
+        return (hash >>> 0).toString(36);
+    };
+    const lengths = [0];
+    for (let index = 1; index < points.length; index++)
+        lengths.push(lengths[index - 1] + Math.hypot(points[index][0] - points[index - 1][0], points[index][1] - points[index - 1][1]));
+    const at = (length) => {
+        let index = 1;
+        while (index < points.length - 1 && lengths[index] < length)
+            index++;
+        const span = lengths[index] - lengths[index - 1] || 1;
+        const t = Math.max(0, Math.min(1, (length - lengths[index - 1]) / span));
+        return [points[index - 1][0] + (points[index][0] - points[index - 1][0]) * t, points[index - 1][1] + (points[index][1] - points[index - 1][1]) * t];
+    };
+    const pieceOf = (from, to) => [at(from), ...points.filter((_, index) => lengths[index] > from + 1e-6 && lengths[index] < to - 1e-6), at(to)];
+    const total = lengths[lengths.length - 1];
+    if (total < 1e-6)
+        return "";
+    let [start, end] = Array.isArray(fade) ? fade : [fade, fade];
+    if (start + end > total) {
+        const share = total / (start + end);
+        start *= share;
+        end *= share;
+    }
+    const paint = `var(--anatomy-${tone})`;
+    const ramp = (piece, rising) => {
+        const d = pathOf(piece);
+        const [x1, y1] = piece[0];
+        const [x2, y2] = piece[piece.length - 1];
+        const id = `iso-fade-${hashOf(`${d}|${tone}|${rising}`)}`;
+        const marks = Array.from({ length: stops + 1 }, (_, index) => {
+            const t = index / stops;
+            const alpha = ease(rising ? t : 1 - t);
+            return `<stop offset="${t.toFixed(3)}" stop-opacity="${alpha.toFixed(3)}" style="stop-color:${paint}"/>`;
+        }).join("");
+        const gradient = `<linearGradient id="${id}" gradientUnits="userSpaceOnUse" x1="${tenth(x1)}" y1="${tenth(y1)}" x2="${tenth(x2)}" y2="${tenth(y2)}">${marks}</linearGradient>`;
+        return `<defs>${gradient}</defs><path${attrs({ class: className ? `iso-line ${className}` : "iso-line", "data-tone": tone, "data-free": rising ? "start" : "end", d, style: `stroke:url(#${id})` })}/>`;
+    };
+    const parts = [];
+    if (start > 0.05)
+        parts.push(ramp(pieceOf(0, start), true));
+    if (total - end - start > 0.05)
+        parts.push(lineSvg(pathOf(pieceOf(start, total - end)), { tone, className }));
+    if (end > 0.05)
+        parts.push(ramp(pieceOf(total - end, total), false));
+    return `<g class="iso-fade">${parts.join("")}</g>`;
+}
+function wireSvg(from, to, { via = [], tone = "lo", dotted = false, dashed = false, flow = false, ends = "both", size = 1.2 } = {}) {
+    const d = pathOf([from, ...via, to]);
+    const end = ([x, y]) => `<circle class="iso-wire-end" cx="${tenth(x)}" cy="${tenth(y)}" r="${size}"/>`;
+    return `<g class="iso-wire" data-tone="${tone}">${lineSvg(d, { tone, dotted, dashed, flow })}${ends === "both" || ends === "from" ? end(from) : ""}${ends === "both" || ends === "to" ? end(to) : ""}</g>`;
+}
+function faceTextSvg(transform, text, { size = 3, tone = "mid", anchor = "start" } = {}) {
+    return `<text class="iso-face-text" data-tone="${tone}" transform="${transform}" font-size="${size}" text-anchor="${anchor}">${escape(text)}</text>`;
+}
+function groupSvg(children, extra = {}) {
+    return `<g${attrs(extra)}>${Array.isArray(children) ? children.join("") : children}</g>`;
+}
+function figureSvg({ width, height, label, body, standalone = false, className }) {
+    const style = standalone ? `<style>${ISO_CSS}</style>` : "";
+    return `<svg${attrs({
+        xmlns: "http://www.w3.org/2000/svg",
+        class: `iso-svg${standalone ? " iso" : ""}${className ? ` ${className}` : ""}`,
+        "data-theme": standalone || undefined,
+        viewBox: `0 0 ${width} ${height}`,
+        role: "img",
+        "aria-label": label,
+    })}>${style}${Array.isArray(body) ? body.join("") : body}</svg>`;
+}
+function swatchSvg(mark) {
+    if (mark === "raised" || mark === "flat" || mark === "lit") {
+        const body = mark === "flat" ? "M2 6.5 8 3.5 14 6.5 8 9.5Z" : "M2 4.5 8 1.5 14 4.5 14 6 8 9 2 6Z";
+        const crease = mark === "flat" ? "" : `<path class="iso-swatch-crease" d="M2 4.5 8 7.5 14 4.5"/>`;
+        return `<svg class="iso-swatch" data-mark="${mark}" viewBox="0 0 16 10" aria-hidden="true"><path d="${body}"/>${crease}</svg>`;
+    }
+    return `<svg class="iso-swatch" data-mark="${mark}" viewBox="0 0 16 10" aria-hidden="true"><path d="M1.5 5h13"/></svg>`;
+}
+function plateHtml({ fig, title, hint, readout = "", keys = [], caption, body }) {
+    const corner = (name, text, extra = "") => `<span class="iso-plate-corner" data-corner="${name}"${extra}>${escape(text)}</span>`;
+    const legend = keys.length || caption
+        ? `<figcaption class="iso-legend">${keys.length ? `<span class="iso-keys">${keys.map((key) => `<span class="iso-key">${swatchSvg(key.mark)}${escape(key.label)}</span>`).join("")}</span>` : ""}${caption ? `<span class="iso-caption">${escape(caption)}</span>` : ""}</figcaption>`
+        : "";
+    return `<figure class="iso-figure"><div class="iso-plate"><div class="iso-plate-corners" aria-hidden="true">${corner("fig", fig)}${title ? corner("title", title) : ""}${hint ? corner("hint", hint) : ""}${corner("readout", readout, " data-readout")}</div>${body}</div>${legend}</figure>`;
+}
+function pageHtml({ title, theme = "dark", body, script = "", width = 650 }) {
+    return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${escape(title)}</title><style>${ISO_CSS}${PAGE_CSS.replace("__WIDTH__", String(width))}</style></head><body class="iso" data-theme="${theme}"><main class="iso-page">${body}</main>${script ? `<script type="module">${script.replace(/<\/(script)/gi, "<\\/$1")}<\/script>` : ""}</body></html>`;
+}
+const PAGE_CSS = `
+*{box-sizing:border-box}
+html{color-scheme:dark}
+body[data-theme="light"]{color-scheme:light}
+body{margin:0;background:var(--anatomy-page);color:var(--anatomy-text);font:14px/1.6 ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+.iso-page{width:min(__WIDTH__px,100% - 32px);margin:64px auto 96px}
+`;
+const ISO_CSS = `
+.iso{
+  --anatomy-page:#0b0b0b;--anatomy-card:#131313;--anatomy-text:#a3a3a3;--anatomy-strong:#e6e6e6;--anatomy-muted:#6e6e6e;
+  --anatomy-paper:#131313;--anatomy-face:#1b1b1b;--anatomy-top:#1c1c1c;
+  --anatomy-shade-0:#0f0f0f;--anatomy-shade-1:#121212;--anatomy-shade-2:#151515;--anatomy-shade-3:#181818;
+  --anatomy-lit-top:#262626;--anatomy-lit-shade:#1d1d1d;
+  --anatomy-hi:#d4d4d4;--anatomy-mid:#6a6a6a;--anatomy-lo:#3e3e3e;--anatomy-faint:#2a2a2a;--anatomy-lit:#ffffff;
+  --anatomy-halo:#050505;--anatomy-halo-opacity:.9;--anatomy-dot:#e6e6e6;
+  --anatomy-red:#ff6b6b;--anatomy-green:#6be0a0;--anatomy-blue:#6b9bff;
+  --anatomy-weight:.6px;--anatomy-ease:cubic-bezier(.32,.72,0,1);
+  --anatomy-mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  --anatomy-lift:inset 0 1px 0 0 #ffffff0a,inset 0 0 0 1px #ffffff06,0 0 0 1px #00000026,0 1px 1px -.5px #00000014,0 3px 3px -1.5px #00000014,0 6px 6px -3px #00000014,0 12px 12px -6px #00000014;
+}
+.iso[data-theme="light"]{
+  --anatomy-page:#f2f2ef;--anatomy-card:#fbfbfa;--anatomy-text:#57575a;--anatomy-strong:#18181a;--anatomy-muted:#8c8c90;
+  --anatomy-paper:#fbfbfa;--anatomy-face:#ffffff;--anatomy-top:#ffffff;
+  --anatomy-shade-0:#dcdcd9;--anatomy-shade-1:#e5e5e2;--anatomy-shade-2:#ededea;--anatomy-shade-3:#f4f4f1;
+  --anatomy-lit-top:#ffffff;--anatomy-lit-shade:#eeeeeb;
+  --anatomy-hi:#26262a;--anatomy-mid:#8a8a8f;--anatomy-lo:#b4b4b8;--anatomy-faint:#d4d4d6;--anatomy-lit:#000000;
+  --anatomy-halo:#8a8a80;--anatomy-halo-opacity:.32;--anatomy-dot:#3a3a3e;
+  --anatomy-red:#e5484d;--anatomy-green:#30a46c;--anatomy-blue:#3e63dd;
+  --anatomy-lift:inset 0 1px 0 0 #ffffff,0 0 0 1px #0000000f,0 1px 1px -.5px #0000000a,0 3px 3px -1.5px #0000000a,0 6px 6px -3px #0000000a,0 12px 12px -6px #0000000a;
+}
+.iso-svg{display:block;width:100%;height:auto;overflow:visible}
+.iso-svg path,.iso-svg circle{vector-effect:non-scaling-stroke}
+.iso-fill{fill:var(--anatomy-paper);stroke:none}
+.iso-solid[data-lit]>.iso-fill{fill:var(--anatomy-face)}
+.iso-shade,.iso-top{stroke:none}
+.iso-shade[data-shade="0"]{fill:var(--anatomy-shade-0)}
+.iso-shade[data-shade="1"]{fill:var(--anatomy-shade-1)}
+.iso-shade[data-shade="2"]{fill:var(--anatomy-shade-2)}
+.iso-shade[data-shade="3"]{fill:var(--anatomy-shade-3)}
+.iso-top{fill:var(--anatomy-top)}
+.iso-solid[data-lit]>.iso-top{fill:var(--anatomy-lit-top)}
+.iso-solid[data-lit]>.iso-shade{fill:var(--anatomy-lit-shade)}
+.iso-solid[data-seamless]>.iso-shade,.iso-solid[data-seamless]>.iso-top{stroke-width:.4;stroke-linejoin:round}
+.iso-solid[data-seamless]>.iso-shade[data-shade="0"]{stroke:var(--anatomy-shade-0)}
+.iso-solid[data-seamless]>.iso-shade[data-shade="1"]{stroke:var(--anatomy-shade-1)}
+.iso-solid[data-seamless]>.iso-shade[data-shade="2"]{stroke:var(--anatomy-shade-2)}
+.iso-solid[data-seamless]>.iso-shade[data-shade="3"]{stroke:var(--anatomy-shade-3)}
+.iso-solid[data-seamless]>.iso-top{stroke:var(--anatomy-top)}
+.iso-solid[data-seamless][data-lit]>.iso-top{stroke:var(--anatomy-lit-top)}
+.iso-solid[data-seamless][data-lit]>.iso-shade{stroke:var(--anatomy-lit-shade)}
+.iso-solid[data-lit]>.iso-edge{stroke:var(--anatomy-lit)}
+.iso-halo{fill:var(--anatomy-halo);stroke:none;filter:blur(9px);opacity:var(--anatomy-halo-opacity);transform:translateY(3px)}
+.iso-line{fill:none;stroke:var(--anatomy-lo);stroke-width:var(--anatomy-weight);stroke-linecap:round;stroke-linejoin:round}
+.iso-line[data-tone="hi"]{stroke:var(--anatomy-hi)}
+.iso-line[data-tone="mid"]{stroke:var(--anatomy-mid)}
+.iso-line[data-tone="lo"]{stroke:var(--anatomy-lo)}
+.iso-line[data-tone="faint"]{stroke:var(--anatomy-faint)}
+.iso-line[data-tone="lit"]{stroke:var(--anatomy-lit)}
+.iso-line[data-tone="red"]{stroke:var(--anatomy-red)}
+.iso-line[data-tone="green"]{stroke:var(--anatomy-green)}
+.iso-line[data-tone="blue"]{stroke:var(--anatomy-blue)}
+.iso-line[data-dotted]{stroke-dasharray:.01 3.5;stroke-width:1}
+.iso-line[data-dashed]{stroke-dasharray:3 3}
+.iso-line[data-flow]{stroke-dasharray:2 6}
+.iso-wire-end{fill:var(--anatomy-paper);stroke:var(--anatomy-lo);stroke-width:var(--anatomy-weight)}
+.iso-wire[data-tone="hi"] .iso-wire-end{stroke:var(--anatomy-hi)}
+.iso-wire[data-tone="mid"] .iso-wire-end{stroke:var(--anatomy-mid)}
+.iso-wire[data-tone="faint"] .iso-wire-end{stroke:var(--anatomy-faint)}
+.iso-wire[data-tone="lit"] .iso-wire-end{stroke:var(--anatomy-lit)}
+.iso-dots circle{fill:var(--anatomy-dot);stroke:none;opacity:.32}
+.iso-dots[data-tone="hi"] circle{opacity:.85}
+.iso-dots[data-tone="mid"] circle{opacity:.45}
+.iso-dots[data-tone="lo"] circle{opacity:.22}
+.iso-dots[data-tone="faint"] circle{opacity:.12}
+.iso-face-text{fill:var(--anatomy-mid);font-family:var(--anatomy-mono);letter-spacing:.04em}
+.iso-face-text[data-tone="hi"]{fill:var(--anatomy-hi)}
+.iso-face-text[data-tone="lo"]{fill:var(--anatomy-lo)}
+.iso-face-text[data-tone="faint"]{fill:var(--anatomy-faint)}
+.tb-body{fill:var(--anatomy-shade-2);stroke:none}
+.tb-shine{fill:var(--anatomy-top);stroke:none}
+.tb-shade{fill:var(--anatomy-shade-0);stroke:none}
+.tb-ring{fill:none;stroke:var(--anatomy-lo);stroke-width:.45;stroke-linecap:butt;stroke-linejoin:round}
+.tb-ring[data-tone="mid"]{stroke:var(--anatomy-mid)}
+.tb-ring[data-tone="faint"]{stroke:var(--anatomy-faint)}
+.tb-ring[data-tone="hi"]{stroke:var(--anatomy-hi)}
+@keyframes iso-flow{to{stroke-dashoffset:-32}}
+@keyframes iso-pulse{0%,100%{opacity:.18}12%{opacity:1}40%{opacity:.18}}
+.iso-line[data-flow]{animation:iso-flow 1600ms linear infinite}
+.iso-dots circle[data-pulse]{animation:iso-pulse 1600ms steps(1,end) infinite;animation-delay:var(--pulse-at,0ms)}
+.iso-figure{margin:32px 0 36px}
+.iso-plate{position:relative;padding:52px 24px;border-radius:0;background:var(--anatomy-card);box-shadow:0 0 0 1px var(--anatomy-mid);--anatomy-paper:var(--anatomy-card)}
+.iso-plate-corners{position:absolute;inset:18px 20px;pointer-events:none}
+.iso-plate-corner{position:absolute;color:var(--anatomy-muted);font-family:var(--anatomy-mono);font-size:10.5px;line-height:1;letter-spacing:.04em;white-space:nowrap}
+.iso-plate-corner[data-corner="fig"]{top:0;left:0;color:var(--anatomy-text)}
+.iso-plate-corner[data-corner="title"]{top:0;right:0;text-transform:uppercase;letter-spacing:.1em}
+.iso-plate-corner[data-corner="hint"]{bottom:0;left:0;text-transform:uppercase;letter-spacing:.1em}
+.iso-plate-corner[data-corner="readout"]{right:0;bottom:0;color:var(--anatomy-text);font-variant-numeric:tabular-nums}
+.iso-plate .iso-svg{margin:0 auto}
+.iso-legend{display:grid;gap:8px;margin-top:12px;color:var(--anatomy-muted);font-size:13px;line-height:1.55}
+.iso-keys{display:flex;flex-wrap:wrap;gap:6px 18px}
+.iso-key{display:inline-flex;align-items:center;gap:7px}
+.iso-swatch{width:16px;height:10px;flex:none;overflow:visible}
+.iso-swatch path{fill:none;stroke:var(--anatomy-hi);stroke-width:1;vector-effect:non-scaling-stroke;stroke-linejoin:round;stroke-linecap:round}
+.iso-swatch[data-mark="raised"] path,.iso-swatch[data-mark="flat"] path{stroke:var(--anatomy-mid)}
+.iso-swatch[data-mark="lit"] path{stroke:var(--anatomy-lit)}
+.iso-swatch[data-mark="dim"] path{stroke:var(--anatomy-lo)}
+.iso-swatch[data-mark="dotted"] path{stroke-dasharray:.01 3;stroke-width:1.4}
+.iso-swatch[data-mark="dashed"] path{stroke-dasharray:3 2.5}
+.iso-swatch[data-mark="red"] path{stroke:var(--anatomy-red)}
+.iso-swatch[data-mark="green"] path{stroke:var(--anatomy-green)}
+.iso-swatch[data-mark="blue"] path{stroke:var(--anatomy-blue)}
+.iso-swatch-crease{stroke:var(--anatomy-lo)!important}
+@media (max-width:560px){.iso-plate{padding:48px 12px 70px}.iso-plate-corner[data-corner="hint"]{bottom:18px}}
+@media (prefers-reduced-motion:reduce){.iso-line[data-flow],.iso-dots circle[data-pulse]{animation:none}}
+`;
+
+;
+// PROTOTYPE (throwaway): flat 2D Walkthrough style. Registers WT_STYLES.flat and the shared helpers on window.WT.
+(() => {
+const NS = 'http://www.w3.org/2000/svg';
+const el = (tag, attrs = {}, parent) => {
+  const n = document.createElementNS(NS, tag);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(n);
+  return n;
+};
+const key = (r, c) => r + ',' + c;
+
+// Shared, derived only from the trace: the minute each cell went stale (frame index of the minute it first shows as 2).
+function staleMinutes(run) {
+  const when = {};
+  run.frames.forEach((f, i) => f.grid.cells.forEach((row, r) => row.forEach((v, c) => {
+    if (v === 2 && !(key(r, c) in when)) when[key(r, c)] = { minute: f.vars.minute, frame: i };
+  })));
+  return when;
+}
+
+// Shared graph layout: longest-path layers when acyclic (a chain reads as "hops from src"), BFS layers otherwise.
+function layoutGraph(run) {
+  const n = run.n, out = Array.from({ length: n }, () => []);
+  const indeg = new Array(n).fill(0);
+  run.links.forEach(([a, b]) => { out[a].push(b); indeg[b]++; });
+  const layer = new Array(n).fill(0), order = [], q = [];
+  const deg = indeg.slice();
+  for (let i = 0; i < n; i++) if (!deg[i]) q.push(i);
+  while (q.length) { const v = q.shift(); order.push(v); out[v].forEach(w => { layer[w] = Math.max(layer[w], layer[v] + 1); if (!--deg[w]) q.push(w); }); }
+  if (order.length < n) { // cyclic: BFS from src
+    layer.fill(-1); layer[run.src] = 0; const bq = [run.src];
+    while (bq.length) { const v = bq.shift(); out[v].forEach(w => { if (layer[w] < 0) { layer[w] = layer[v] + 1; bq.push(w); } }); }
+    const maxL = Math.max(...layer); layer.forEach((l, i) => { if (l < 0) layer[i] = maxL + 1; });
+  }
+  const byLayer = {};
+  layer.forEach((l, i) => (byLayer[l] = byLayer[l] || []).push(i));
+  const pos = [];
+  Object.entries(byLayer).forEach(([l, vs]) => vs.forEach((v, j) => { pos[v] = { col: +l, row: j - (vs.length - 1) / 2 }; }));
+  return { pos, cols: Math.max(...layer) + 1, rows: Math.max(...Object.values(byLayer).map(v => v.length)) };
+}
+window.WT = { el, key, staleMinutes, layoutGraph };
+
+// ---------- grid ----------
+function mountGrid(stage, data, run) {
+  const rows = run.frames[0].grid.cells.length, cols = run.frames[0].grid.cells[0].length;
+  const S = 68, G = 8, pad = 26, gw = cols * S + (cols - 1) * G, gh = rows * S + (rows - 1) * G;
+  const panelW = 190, W = pad * 2 + gw + 28 + panelW, H = Math.max(gh + pad * 2 + 18, 230);
+  const svg = el('svg', { viewBox: `0 0 ${W} ${H}`, width: W, class: 'fl' }, stage);
+  const when = staleMinutes(run);
+  const cells = [];
+  for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+    const x = pad + c * (S + G), y = pad + 18 + r * (S + G);
+    const g = el('g', { transform: `translate(${x},${y})` }, svg);
+    el('rect', { width: S, height: S, rx: 10, class: 'fl-cell' }, g);
+    const donut = el('g', { class: 'fl-donut', transform: `translate(${S / 2},${S / 2 + 6})` }, g);
+    el('circle', { r: 17, class: 'fl-dough' }, donut);
+    el('circle', { r: 5.5, class: 'fl-hole' }, donut);
+    [[-8, -8], [9, -4], [-3, 10], [10, 8]].forEach(([dx, dy]) => el('circle', { cx: dx, cy: dy, r: 2.6, class: 'fl-spot' }, donut));
+    const t = el('text', { x: S / 2, y: 13, 'text-anchor': 'middle', class: 'fl-when' }, g);
+    el('rect', { width: S, height: S, rx: 10, class: 'fl-ring' }, g);
+    if (c === 0) el('text', { x: -8, y: S / 2 + 4, 'text-anchor': 'end', class: 'fl-rc' }, g).textContent = r;
+    if (r === 0) el('text', { x: S / 2, y: -6, 'text-anchor': 'middle', class: 'fl-rc' }, g).textContent = c;
+    cells.push({ r, c, g, t });
+  }
+    // working-state panel
+  const px = pad + gw + 28;
+  const panel = el('g', { transform: `translate(${px},${pad + 18})` }, svg);
+  const stat = (y, label) => {
+    el('text', { x: 0, y, class: 'fl-label' }, panel).textContent = label;
+    return el('text', { x: 0, y: y + 30, class: 'fl-big' }, panel);
+  };
+  const minuteT = stat(0, 'MINUTE'), freshT = stat(62, 'FRESH LEFT');
+  el('text', { x: 0, y: 124, class: 'fl-label' }, panel).textContent = 'WAVE (QUEUE)';
+  const waveG = el('g', { transform: 'translate(0,136)' }, panel);
+
+  return {
+    show(i) {
+      const f = run.frames[i], lit = new Set(f.grid.lit.map(p => key(...p))), ring = new Set(f.grid.ring.map(p => key(...p)));
+      const stuck = new Set(f.grid.stuck.map(p => key(...p)));
+      cells.forEach(({ r, c, g, t }) => {
+        const v = f.grid.cells[r][c], k = key(r, c);
+        g.setAttribute('class', 'fl-c v' + v + (lit.has(k) ? ' lit' : '') + (ring.has(k) ? ' wave' : '') + (stuck.has(k) ? ' stuck' : ''));
+        t.textContent = v === 2 && when[k] && when[k].frame <= i ? (when[k].minute === 0 ? 'start' : 'min ' + when[k].minute) : '';
+      });
+      minuteT.textContent = f.vars.minute;
+      freshT.textContent = f.vars.fresh;
+      freshT.setAttribute('class', 'fl-big' + (f.answer === -1 && f.vars.fresh ? ' bad' : ''));
+      waveG.innerHTML = '';
+      if (!f.vars.wave.length) el('text', { x: 0, y: 16, class: 'fl-empty' }, waveG).textContent = 'empty';
+      f.vars.wave.forEach(([r, c], j) => {
+        const cg = el('g', { transform: `translate(${(j % 3) * 58},${Math.floor(j / 3) * 30})` }, waveG);
+        el('rect', { width: 52, height: 24, rx: 12, class: 'fl-chip' }, cg);
+        el('text', { x: 26, y: 16, 'text-anchor': 'middle', class: 'fl-chipt' }, cg).textContent = `${r},${c}`;
+      });
+    },
+  };
+}
+
+// ---------- graph ----------
+function mountGraph(stage, data, run) {
+  const { pos, cols, rows } = layoutGraph(run);
+  const DX = 132, DY = 96, R = 22, padX = 44;
+  const ARC = 96;
+  const top = 46 + (rows > 1 ? (rows - 1) / 2 * DY : 0) + ARC;
+  const gw = (cols - 1) * DX + padX * 2;
+  const tableY = top + (rows - 1) / 2 * DY + ARC + 64;
+  const W = Math.max(gw, 140 + run.n * 64), H = tableY + 96;
+  const offX = (W - gw) / 2;
+  const P = v => [offX + padX + pos[v].col * DX, top + pos[v].row * DY];
+  const svg = el('svg', { viewBox: `0 0 ${W} ${H}`, width: W, class: 'fl' }, stage);
+  const defs = el('defs', {}, svg);
+  ['base', 'lit', 'good', 'path'].forEach(t => {
+    const m = el('marker', { id: 'ah-' + t, viewBox: '0 0 10 10', refX: 9, refY: 5, markerWidth: 7, markerHeight: 7, orient: 'auto-start-reverse' }, defs);
+    el('path', { d: 'M0,0 L10,5 L0,10 z', class: 'fl-ah ' + t }, m);
+  });
+  // edges: straight between adjacent columns, arcs (alternating) for skips and same-column
+  let arcFlip = 1;
+  const edges = run.links.map(([a, b, w], i) => {
+    const [x1, y1] = P(a), [x2, y2] = P(b);
+    const span = Math.abs(pos[b].col - pos[a].col);
+    const g = el('g', { class: 'fl-e' }, svg);
+    let d, mx, my;
+    const dx = x2 - x1, dy = y2 - y1, len = Math.hypot(dx, dy), ux = dx / len, uy = dy / len;
+    if (span === 1 || (span === 0 && Math.abs(pos[b].row - pos[a].row) === 1) || len < 1) {
+      d = `M${x1 + ux * R},${y1 + uy * R} L${x2 - ux * (R + 3)},${y2 - uy * (R + 3)}`; mx = (x1 + x2) / 2 - uy * 12; my = (y1 + y2) / 2 + ux * 12 - 4;
+    } else {
+      const bend = arcFlip * (130 + 24 * span); arcFlip = -arcFlip;
+      const cx = (x1 + x2) / 2 - uy * bend, cy = (y1 + y2) / 2 + ux * bend;
+      const sx = x1 + (cx - x1) / Math.hypot(cx - x1, cy - y1) * R, sy = y1 + (cy - y1) / Math.hypot(cx - x1, cy - y1) * R;
+      const ex = x2 + (cx - x2) / Math.hypot(cx - x2, cy - y2) * (R + 3), ey = y2 + (cy - y2) / Math.hypot(cx - x2, cy - y2) * (R + 3);
+      d = `M${sx},${sy} Q${cx},${cy} ${ex},${ey}`; mx = (x1 + 2 * cx + x2) / 4; my = (y1 + 2 * cy + y2) / 4 + 4;
+    }
+    const path = el('path', { d, class: 'fl-edge', 'marker-end': 'url(#ah-base)' }, g);
+    const lbg = el('rect', { x: mx - 17, y: my - 12, width: 34, height: 18, rx: 9, class: 'fl-wbg' }, g);
+    el('text', { x: mx, y: my + 1, 'text-anchor': 'middle', class: 'fl-w' }, g).textContent = w;
+    return { g, path, a, b };
+  });
+  const nodes = [];
+  for (let v = 0; v < run.n; v++) {
+    const [x, y] = P(v);
+    const g = el('g', { transform: `translate(${x},${y})` }, svg);
+    el('circle', { r: R, class: 'fl-node' }, g);
+    el('text', { y: 5, 'text-anchor': 'middle', class: 'fl-nid' }, g).textContent = v;
+    const tag = v === run.src ? 'src' : v === run.dst ? 'dst' : '';
+    if (tag) el('text', { y: -R - 8, 'text-anchor': 'middle', class: 'fl-tag' }, g).textContent = tag;
+    const cost = el('text', { y: R + 20, 'text-anchor': 'middle', class: 'fl-cost' }, g);
+    nodes.push({ g, cost });
+  }
+  // two-row cost table: last round vs this round
+  const tx = (W - (96 + run.n * 52)) / 2;
+  const table = el('g', { transform: `translate(${tx},${tableY})` }, svg);
+  const roundT = el('text', { x: 0, y: -30, class: 'fl-label' }, table);
+  const cellsT = [[], []];
+  ['last round', 'this round'].forEach((label, row) => {
+    el('text', { x: 0, y: row * 32 + 20, class: 'fl-rowl' }, table).textContent = label;
+    for (let v = 0; v < run.n; v++) {
+      const g = el('g', { transform: `translate(${96 + v * 52},${row * 32})` }, table);
+      if (row === 0) el('text', { x: 23, y: -4, 'text-anchor': 'middle', class: 'fl-colh' }, g).textContent = 'cafe ' + v;
+      const rect = el('rect', { width: 46, height: 28, rx: 6, class: 'fl-tc' }, g);
+      const t = el('text', { x: 23, y: 19, 'text-anchor': 'middle', class: 'fl-tv' }, g);
+      cellsT[row].push({ rect, t, g });
+    }
+  });
+  const fmt = c => (c == null ? '∞' : c);
+
+  return {
+    show(i) {
+      const f = run.frames[i], prev = run.frames[i - 1];
+      const pathEdges = new Set();
+      for (let j = 1; j < f.graph.path.length; j++) {
+        const k = run.links.findIndex(([a, b]) => a === f.graph.path[j - 1] && b === f.graph.path[j]); pathEdges.add(k);
+      }
+      const reading = f.graph.edge != null ? run.links[f.graph.edge][0] : null;
+      edges.forEach(({ g, path }, k) => {
+        let s = 'base';
+        if (pathEdges.has(k)) s = 'path';
+        else if (k === f.graph.edge) s = f.graph.improved ? 'good' : 'lit';
+        g.setAttribute('class', 'fl-e ' + s);
+        path.setAttribute('marker-end', `url(#ah-${s})`);
+      });
+      nodes.forEach(({ g, cost }, v) => {
+        const c = f.graph.pathCosts && f.graph.pathCosts[v] != null ? f.graph.pathCosts[v] : f.vars.updated[v];
+        cost.textContent = fmt(c);
+        const changed = f.graph.improved && run.links[f.graph.edge][1] === v;
+        g.setAttribute('class', 'fl-n' + (c == null ? ' unreached' : '') + (changed ? ' changed' : '') + (v === reading ? ' reading' : '') + (f.graph.path.includes(v) ? ' onpath' : ''));
+      });
+      roundT.textContent = f.vars.round ? `ROUND ${f.vars.round} OF ${f.vars.rounds}  ·  round r allows r legs` : `BEFORE ROUND 1  ·  ${f.vars.rounds} round${f.vars.rounds > 1 ? 's' : ''} to go`;
+      [f.vars.cost, f.vars.updated].forEach((row, ri) => row.forEach((c, v) => {
+        const cell = cellsT[ri][v];
+        cell.t.textContent = fmt(c);
+        const changed = ri === 1 && f.graph.improved && run.links[f.graph.edge][1] === v;
+        const read = ri === 0 && v === reading;
+        cell.g.setAttribute('class', 'fl-tcell' + (changed ? ' changed' : '') + (read ? ' read' : '') + (c == null ? ' inf' : ''));
+      }));
+    },
+  };
+}
+
+window.WT_STYLES.flat = {
+  label: 'Flat',
+  mount(stage, data, run) { return data.kind === 'grid' ? mountGrid(stage, data, run) : mountGraph(stage, data, run); },
+};
+})();
+
+;
+// PROTOTYPE (throwaway): isometric Walkthrough style built on the anatomy kit (inlined before this file by build.mjs).
+// Registers WT_STYLES.iso. Every drawn value comes from the frame; geometry is built once per mount, show() only
+// toggles attributes and eases the moving parts (timer needle, courier token).
+(() => {
+const still = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+const dark = () => matchMedia('(prefers-color-scheme: dark)').matches && document.documentElement.dataset.theme !== 'light';
+if (!document.getElementById('iso-kit-css')) {
+  const s = document.createElement('style'); s.id = 'iso-kit-css'; s.textContent = ISO_CSS; document.head.appendChild(s);
+}
+const FT = (m, text, style) => faceTextSvg(m, String(text), style);
+const S = (paths, style) => solidSvg(paths, style);
+const L = (d, style) => lineSvg(d, style);
+const D = (points, style) => dotsSvg(points, style);
+const T = (at, z, P, text, style) => FT(topMatrix(at, z, P, 'x'), text, style);
+const esc = s => String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' })[c]);
+
+function wrap(stage) {
+  const box = document.createElement('div');
+  box.className = 'iso wt-iso';
+  box.dataset.theme = dark() ? 'dark' : 'light';
+  stage.appendChild(box);
+  return box;
+}
+// Crop the figure's viewBox to what is drawn, so the scene fills the card at every width.
+function crop(svg, pad = 10) {
+  const b = svg.getBBox();
+  svg.setAttribute('viewBox', `${b.x - pad} ${b.y - pad} ${b.width + 2 * pad} ${b.height + 2 * pad}`);
+}
+
+// Eased scalar follower driven by rAF; settles and stops.
+function follower(apply, seconds = 0.45) {
+  let value = null, target = 0, raf = 0, last = 0;
+  const tick = now => {
+    const dt = last ? Math.min((now - last) / 1000, 1 / 30) : 1 / 60; last = now;
+    value += (target - value) * (1 - Math.exp(-dt / (seconds / 4)));
+    if (Math.abs(target - value) < 1e-3) value = target;
+    apply(value);
+    raf = value === target ? 0 : requestAnimationFrame(tick);
+  };
+  return to => {
+    target = to;
+    if (value === null || still()) { value = to; apply(value); return; }
+    if (!raf) { last = 0; raf = requestAnimationFrame(tick); }
+  };
+}
+
+// ---------------------------------------------------------------- grid: a bakery tray
+function mountGrid(stage, data, run) {
+  const rows = run.frames[0].grid.cells.length, cols = run.frames[0].grid.cells[0].length;
+  const PITCH = 34, R = 11, WELL = 13.2, M = 12, TRAY_H = 7, FOOT = 4;
+  const tray = { x: -M, y: -M, w: cols * PITCH + 2 * M, d: rows * PITCH + 2 * M, r: 6 };
+  const maxMin = Math.max(1, ...run.frames.map(f => f.vars.minute));
+  const TIMER = [tray.x + tray.w + 26, tray.y + tray.d / 2], TR = 15, TZ = -TRAY_H - FOOT, TH = 14;
+  const W = 620, H = 330;
+  const P = fitProjection([...boxCorners(tray, -TRAY_H - FOOT, 12), [TIMER[0] + TR, TIMER[1] + TR, TZ + TH], [TIMER[0] - TR, TIMER[1] - TR, TZ]], W, H, { pad: 14, azimuth: 60, elevation: 34 });
+  const at = p => iso(p, P);
+  const centre = (r, c) => [c * PITCH + PITCH / 2, r * PITCH + PITCH / 2];
+  const when = window.WT.staleMinutes(run);
+
+  const out = [];
+  // tray: feet, body, rim groove, corner screws, engraved row/column indices
+  out.push(`<path class="iso-halo" d="${haloOf(tray, -TRAY_H - FOOT, TRAY_H, P)}"/>`);
+  for (const [x, y] of corners(tray, 12).sort((a, b) => depthOf([...a, 0], P) - depthOf([...b, 0], P))) {
+    out.push(S(cylinder(x, y, 5, -TRAY_H - FOOT, FOOT, P, 24), { tone: 'lo' }));
+  }
+  out.push(S(slabOf(tray, -TRAY_H, TRAY_H, P, 8, 1.2), { tone: 'mid' }));
+  out.push(L(planOutline(insetPlan(tray, 4), 0, P), { tone: 'lo' }));
+  const screws = corners(tray, 6.5);
+  out.push(L(screws.map(([x, y]) => ring(x, y, 1.8, 0, P, 14)).join(''), { tone: 'lo' }));
+  out.push(D(screws.map(([x, y]) => at([x, y, 0])), { size: 0.45 }));
+  for (let c = 0; c < cols; c++) out.push(T([centre(0, c)[0], -5], 0, P, c, { size: 4.2, tone: 'mid', anchor: 'middle' }));
+  for (let r = 0; r < rows; r++) out.push(T([-7, centre(r, 0)[1] + 1.5], 0, P, r, { size: 4.2, tone: 'mid', anchor: 'middle' }));
+  out.push(FT(topMatrix([tray.x + tray.w - 6, tray.y + tray.d - 7], 0, P, 'x'), 'ward', { size: 3.4, tone: 'faint', anchor: 'end' }));
+
+  // kitchen timer beside the tray: reads the minute
+  out.push(`<path class="iso-halo" d="${haloOf({ x: TIMER[0] - TR, y: TIMER[1] - TR, w: 2 * TR, d: 2 * TR, r: TR }, TZ, TH, P)}"/>`);
+  out.push(S(cylinder(TIMER[0], TIMER[1], TR + 1.5, TZ, 2.5, P, 48), { tone: 'lo' }));
+  out.push(S(cylinder(TIMER[0], TIMER[1], TR, TZ + 2.5, TH - 2.5, P, 64, 0.8), { tone: 'hi', crease: 'lo' }));
+  out.push(L(knurl(TIMER[0], TIMER[1], TR, TZ + TH - 4, TZ + TH, 64, P, 0.3), { tone: 'lo' }));
+  out.push(L(ring(TIMER[0], TIMER[1], TR - 2, TZ + TH, P, 48), { tone: 'lo' }));
+  const SPAN = Math.PI * 1.5, FROM = -Math.PI * 0.75;
+  const ticks = radialTicks(TIMER[0], TIMER[1], TR - 2.6, maxMin * 4, 4, TZ + TH, [1.1, 2.4], P, FROM, SPAN);
+  out.push(L(ticks.minor, { tone: 'lo' }), L(ticks.major, { tone: 'mid' }));
+  for (let m = 0; m <= maxMin; m++) {
+    const a = FROM + (m / maxMin) * SPAN;
+    out.push(T([TIMER[0] + Math.sin(a) * (TR - 6.6), TIMER[1] - Math.cos(a) * (TR - 6.6) + 1.2], TZ + TH, P, m, { size: 2.8, tone: 'mid', anchor: 'middle' }));
+  }
+  out.push(T([TIMER[0], TIMER[1] + 6.5], TZ + TH, P, 'MIN', { size: 2.4, tone: 'lo', anchor: 'middle' }));
+  out.push(`<path data-part="needle" class="iso-line" data-tone="lit" data-free="start" style="stroke-width:1.3px" d=""/>`);
+  out.push(L(ring(TIMER[0], TIMER[1], 1.4, TZ + TH, P, 12), { tone: 'mid' }));
+
+  // cells, back to front: well, wave ring, stuck ring, fresh donut, stale donut, minute stamp
+  const order = [];
+  for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) order.push([r, c]);
+  order.sort((a, b) => depthOf([...centre(...a), 0], P) - depthOf([...centre(...b), 0], P));
+  const donut = (cx, cy, h, cls) => {
+    const top = h;
+    const parts = [S(cylinder(cx, cy, R, 0, h, P, 48, 0.6), { tone: 'hi', crease: 'lo', className: cls })];
+    parts.push(`<path class="wt-glaze" d="${onTop(circleRing(cx, cy, R - 2.6, 40), top, P, true)}"/>`);
+    parts.push(`<path class="wt-hole" d="${onTop(circleRing(cx, cy, 3.4, 24), top, P, true)}"/>`);
+    parts.push(L(ring(cx, cy, 3.4, top, P, 24), { tone: 'mid' }));
+    return parts.join('');
+  };
+  for (const [r, c] of order) {
+    const [cx, cy] = centre(r, c);
+    const g = [];
+    g.push(`<g class="wt-well">${L(ring(cx, cy, WELL, 0, P, 48), { tone: 'lo' })}${L(ring(cx, cy, WELL - 1, 0, P, 48), { tone: 'faint' })}</g>`);
+    g.push(`<path class="iso-line wt-wave" data-tone="lit" d="${ring(cx, cy, WELL + 1.6, 0, P, 56)}"/>`);
+    g.push(`<path class="iso-line wt-stuck" data-tone="red" d="${ring(cx, cy, WELL + 1.6, 0, P, 56)}"/>`);
+    // sprinkles on the fresh glaze: fixed, decorative parts of the donut itself
+    const spr = [0.4, 1.5, 2.6, 3.7, 4.8, 5.7].map(a => at([cx + Math.cos(a) * (R - 4.6), cy + Math.sin(a) * (R - 4.6), 7]));
+    g.push(`<g class="wt-donut wt-fresh">${donut(cx, cy, 7, 'wt-dough-fresh')}${D(spr, { size: 0.55, tone: 'hi' })}</g>`);
+    const spots = [0.9, 2.2, 3.4, 4.6, 5.8].map(a => at([cx + Math.cos(a) * (R - 4.2), cy + Math.sin(a) * (R - 4.2), 4]));
+    g.push(`<g class="wt-donut wt-stale">${donut(cx, cy, 4, 'wt-dough-stale')}<g class="wt-spots">${D(spots, { size: 0.7, tone: 'mid' })}</g></g>`);
+    g.push(`<g class="wt-stamp">${T([cx, cy + 9], 4, P, when[r + ',' + c] ? (when[r + ',' + c].minute === 0 ? 'start' : 'min ' + when[r + ',' + c].minute) : '', { size: 3.2, tone: 'hi', anchor: 'middle' })}</g>`);
+    out.push(`<g class="wt-cell" data-rc="${r},${c}">${g.join('')}</g>`);
+  }
+
+  const box = wrap(stage);
+  box.innerHTML = figureSvg({ width: W, height: H, label: `A baking tray of ${rows} by ${cols} wells. Fresh donuts are tall and glazed; stale ones sink and darken. A lit ring marks the current wave, and a kitchen timer counts the minutes.`, body: out })
+    + `<div class="wt-strip"><span><b>MINUTE</b> <i data-k="minute"></i></span><span><b>FRESH LEFT</b> <i data-k="fresh"></i></span><span class="wt-q"><b>WAVE</b> <i data-k="wave"></i></span></div>`;
+  const svg = box.querySelector('svg');
+  crop(svg);
+  const cellEls = new Map([...svg.querySelectorAll('.wt-cell')].map(e => [e.dataset.rc, e]));
+  const needle = svg.querySelector('[data-part="needle"]');
+  const setNeedle = follower(m => {
+    const a = FROM + (m / maxMin) * SPAN;
+    needle.setAttribute('d', lineOnTop([TIMER[0] - Math.sin(a) * 2.6, TIMER[1] + Math.cos(a) * 2.6], [TIMER[0] + Math.sin(a) * (TR - 4), TIMER[1] - Math.cos(a) * (TR - 4)], TZ + TH + 0.2, P));
+  }, 0.6);
+  const k = n => box.querySelector(`[data-k="${n}"]`);
+  return {
+    show(i) {
+      const f = run.frames[i];
+      const lit = new Set(f.grid.lit.map(p => p.join(','))), ring_ = new Set(f.grid.ring.map(p => p.join(','))), stuck = new Set(f.grid.stuck.map(p => p.join(',')));
+      cellEls.forEach((e, rc) => {
+        const [r, c] = rc.split(',').map(Number), v = f.grid.cells[r][c];
+        e.dataset.v = v;
+        e.toggleAttribute('data-wave', ring_.has(rc));
+        e.toggleAttribute('data-new', lit.has(rc));
+        e.toggleAttribute('data-stuck', stuck.has(rc));
+        e.toggleAttribute('data-stamped', v === 2 && !!when[rc] && when[rc].frame <= i);
+      });
+      setNeedle(f.vars.minute);
+      k('minute').textContent = f.vars.minute;
+      k('fresh').textContent = f.vars.fresh;
+      k('fresh').className = f.answer === -1 && f.vars.fresh ? 'bad' : '';
+      k('wave').innerHTML = f.vars.wave.length ? f.vars.wave.map(([r, c]) => `<em>${r},${c}</em>`).join('') : '<u>empty</u>';
+    },
+  };
+}
+
+// ---------------------------------------------------------------- graph: a courier dispatch board
+function mountGraph(stage, data, run) {
+  const { pos, cols, rows } = window.WT.layoutGraph(run);
+  const DX = 72, DY = 62, PR = 10, PH = 7, BOARD_H = 6, FOOT = 4, M = 24;
+  // a narrow card stands the chain on end, so the board runs down the screen instead of across it
+  const tall = stage.clientWidth < 520;
+  const node = v => tall ? [pos[v].row * DY, pos[v].col * DX] : [pos[v].col * DX, pos[v].row * DY];
+
+  // edge routes on the board top (z = 0): straight for neighbours, quadratic arcs (alternating) for skips
+  let flip = 1;
+  const routes = run.links.map(([a, b]) => {
+    const A = node(a), B = node(b);
+    const dx = B[0] - A[0], dy = B[1] - A[1], len = Math.hypot(dx, dy) || 1, ux = dx / len, uy = dy / len;
+    const span = Math.abs(pos[b].col - pos[a].col);
+    const straight = span === 1 || (span === 0 && Math.abs(pos[b].row - pos[a].row) === 1);
+    let pts;
+    if (straight) pts = [A, B];
+    else {
+      const bend = flip * (30 + 14 * span); flip = -flip;
+      const C = [(A[0] + B[0]) / 2 - uy * bend, (A[1] + B[1]) / 2 + ux * bend];
+      pts = Array.from({ length: 25 }, (_, t) => { t /= 24; return [(1 - t) ** 2 * A[0] + 2 * (1 - t) * t * C[0] + t * t * B[0], (1 - t) ** 2 * A[1] + 2 * (1 - t) * t * C[1] + t * t * B[1]]; });
+    }
+    // trim to the puck rims
+    const trim = (p, from, d) => {
+      let acc = 0, q = from === 0 ? p : [...p].reverse();
+      for (let i = 1; i < q.length; i++) {
+        const seg = Math.hypot(q[i][0] - q[i - 1][0], q[i][1] - q[i - 1][1]);
+        if (acc + seg >= d) { const t = (d - acc) / seg; const s = [q[i - 1][0] + (q[i][0] - q[i - 1][0]) * t, q[i - 1][1] + (q[i][1] - q[i - 1][1]) * t]; q = [s, ...q.slice(i)]; break; }
+        acc += seg;
+      }
+      return from === 0 ? q : q.reverse();
+    };
+    pts = trim(trim(pts, 0, PR + 3), 1, PR + 4);
+    return pts;
+  });
+  // the board covers every cafe and every route with a margin
+  const fx = [...Array(run.n).keys()].map(node).concat(...routes);
+  const bx0 = Math.min(...fx.map(p => p[0])) - M, bx1 = Math.max(...fx.map(p => p[0])) + M;
+  const by0 = Math.min(...fx.map(p => p[1])) - M, by1 = Math.max(...fx.map(p => p[1])) + M;
+  const board = { x: bx0, y: by0, w: bx1 - bx0, d: by1 - by0, r: 8 };
+  const W = 640, H = 380;
+  const P = fitProjection([...boxCorners(board, -BOARD_H - FOOT, PH + 12)], W, H, { pad: 10, azimuth: 66, elevation: tall ? 48 : 36 });
+  const at = p => iso(p, P);
+  const lengthOf = pts => pts.slice(1).reduce((s, p, i) => s + Math.hypot(p[0] - pts[i][0], p[1] - pts[i][1]), 0);
+  const pointAt = (pts, d) => {
+    for (let i = 1; i < pts.length; i++) {
+      const seg = Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]);
+      if (d <= seg) { const t = d / seg; return [pts[i - 1][0] + (pts[i][0] - pts[i - 1][0]) * t, pts[i - 1][1] + (pts[i][1] - pts[i - 1][1]) * t]; }
+      d -= seg;
+    }
+    return pts[pts.length - 1];
+  };
+
+  const out = [];
+  out.push(`<path class="iso-halo" d="${haloOf(board, -BOARD_H - FOOT, BOARD_H, P)}"/>`);
+  for (const [x, y] of corners(board, 14).sort((a, b) => depthOf([...a, 0], P) - depthOf([...b, 0], P))) out.push(S(cylinder(x, y, 5, -BOARD_H - FOOT, FOOT, P, 24), { tone: 'lo' }));
+  out.push(S(slabOf(board, -BOARD_H, BOARD_H, P, 8, 1.2), { tone: 'mid' }));
+  out.push(L(planOutline(insetPlan(board, 4), 0, P), { tone: 'lo' }));
+  const screws = corners(board, 7);
+  out.push(L(screws.map(([x, y]) => ring(x, y, 1.8, 0, P, 14)).join(''), { tone: 'lo' }));
+  out.push(D(screws.map(([x, y]) => at([x, y, 0])), { size: 0.45 }));
+  out.push(FT(topMatrix([board.x + board.w - 8, board.y + board.d - 8], 0, P, 'x'), 'courier links', { size: 3.4, tone: 'faint', anchor: 'end' }));
+
+  // routes: an engraved groove (two lines) plus a chevron at the head, and the minutes engraved beside the middle
+  routes.forEach((pts, i) => {
+    const [, , w] = run.links[i];
+    const tip = pts[pts.length - 1], prev = pointAt(pts, lengthOf(pts) - 5);
+    const ux = tip[0] - prev[0], uy = tip[1] - prev[1], l = Math.hypot(ux, uy), nx = -uy / l * 3, ny = ux / l * 3;
+    const back = [tip[0] - ux / l * 6, tip[1] - uy / l * 6];
+    const chev = onTop([[back[0] + nx, back[1] + ny], tip, [back[0] - nx, back[1] - ny]], 0, P);
+    const mid = pointAt(pts, lengthOf(pts) / 2);
+    const nmx = -(pointAt(pts, lengthOf(pts) / 2 + 1)[1] - pointAt(pts, lengthOf(pts) / 2 - 1)[1]) / 2, nmy = (pointAt(pts, lengthOf(pts) / 2 + 1)[0] - pointAt(pts, lengthOf(pts) / 2 - 1)[0]) / 2;
+    const lab = [mid[0] + nmx * 9, mid[1] + nmy * 9 + 1.9];
+    out.push(`<g class="wt-route" data-i="${i}">`
+      + `<path class="wt-bed" d="${onTop(pts, 0, P)}"/>`
+      + `<path class="iso-line wt-groove" d="${onTop(pts, 0, P)}"/>`
+      + `<path class="iso-line wt-chev" d="${chev}"/>`
+      + `<path class="wt-wplate" d="${onTop(circleRing(lab[0], lab[1] - 1.9, 6.6, 24), 0, P, true)}"/>`
+      + FT(topMatrix(lab, 0, P, 'x'), w, { size: 5, tone: 'mid', anchor: 'middle' })
+      + `</g>`);
+  });
+
+  // cafes back to front: puck, engraved id, display block with the cost on its top
+  const order = [...Array(run.n).keys()].sort((a, b) => depthOf([...node(a), 0], P) - depthOf([...node(b), 0], P));
+  const DISP = { w: 28, d: 17 };
+  for (const v of order) {
+    const [x, y] = node(v);
+    const g = [];
+    g.push(`<path class="iso-halo" d="${haloOf({ x: x - PR, y: y - PR, w: 2 * PR, d: 2 * PR, r: PR }, 0, PH, P)}" style="filter:blur(4px)"/>`);
+    g.push(S(cylinder(x, y, PR + 1.2, 0, 1.4, P, 40), { tone: 'lo' }));
+    g.push(`<g class="wt-puck">${S(cylinder(x, y, PR, 1.4, PH - 1.4, P, 48, 0.6), { tone: 'hi', crease: 'lo' })}</g>`);
+    g.push(L(sideArc(x, y, PR, 4, P, 24), { tone: 'faint' }));
+    const plan = { x: x - DISP.w / 2, y: y - DISP.d / 2, w: DISP.w, d: DISP.d, r: 2 };
+    g.push(`<g class="wt-disp">${S(slabOf(plan, PH, 5, P, 3, 0.5), { tone: 'hi', crease: 'lo' })}</g>`);
+    g.push(L(planOutline(insetPlan(plan, 1.6), PH + 5, P, 3), { tone: 'faint' }));
+    g.push(FT(topMatrix([x, y - 2.6], PH + 5, P, 'x'), '#' + v + (v === run.src ? ' SRC' : v === run.dst ? ' DST' : ''), { size: 4.2, tone: v === run.src || v === run.dst ? 'hi' : 'mid', anchor: 'middle' }));
+    g.push(`<g class="wt-cost">${FT(topMatrix([x, y + 6.3], PH + 5, P, 'x'), '∞', { size: 8, tone: 'hi', anchor: 'middle' })}</g>`);
+    out.push(`<g class="wt-cafe" data-v="${v}">${g.join('')}</g>`);
+  }
+  // the courier token: a small lit puck that rides the leg being relaxed (drawn last, it is the one moving part)
+  out.push(`<g data-part="token" class="wt-token">${S(cylinder(0, 0, 3.4, 0, 3, P, 24), { tone: 'hi', lit: true })}</g>`);
+
+  const box = wrap(stage);
+  box.innerHTML = figureSvg({ width: W, height: H, label: `A dispatch board with ${run.n} cafe pucks joined by engraved one-way courier links, each marked with its minutes. Each cafe carries a display with its cheapest known cost; a lit token rides the link being relaxed.`, body: out })
+    + `<div class="wt-strip wt-table"><span class="wt-round"></span><table><thead><tr><th></th>${[...Array(run.n).keys()].map(v => `<th>${v}</th>`).join('')}</tr></thead><tbody><tr data-row="0"><th>last round</th>${'<td></td>'.repeat(run.n)}</tr><tr data-row="1"><th>this round</th>${'<td></td>'.repeat(run.n)}</tr></tbody></table></div>`;
+  const svg = box.querySelector('svg');
+  crop(svg);
+  const routeEls = [...svg.querySelectorAll('.wt-route')];
+  const cafeEls = new Map([...svg.querySelectorAll('.wt-cafe')].map(e => [+e.dataset.v, e]));
+  const token = svg.querySelector('[data-part="token"]');
+  let tokenRaf = 0;
+  const rideToken = (i, animate) => {
+    cancelAnimationFrame(tokenRaf);
+    if (i == null) { token.style.opacity = 0; return; }
+    const pts = routes[i], len = lengthOf(pts);
+    token.style.opacity = 1;
+    const place = t => { const [x, y] = pointAt(pts, len * t); token.setAttribute('transform', translateAlong(P, [x, y, 0])); };
+    if (!animate || still()) { place(1); return; }
+    let t0 = 0;
+    const tick = now => { if (!t0) t0 = now; const u = Math.min(1, (now - t0) / 650); place(1 - (1 - u) ** 3); if (u < 1) tokenRaf = requestAnimationFrame(tick); };
+    place(0); tokenRaf = requestAnimationFrame(tick);
+  };
+  const fmt = c => (c == null ? '∞' : c);
+  return {
+    show(i, from) {
+      const f = run.frames[i];
+      const pathEdges = new Set();
+      for (let j = 1; j < f.graph.path.length; j++) pathEdges.add(run.links.findIndex(([a, b]) => a === f.graph.path[j - 1] && b === f.graph.path[j]));
+      const changedNode = f.graph.improved ? run.links[f.graph.edge][1] : null;
+      const reading = f.graph.edge != null ? run.links[f.graph.edge][0] : null;
+      routeEls.forEach((e, k) => {
+        e.dataset.s = pathEdges.has(k) ? 'path' : k === f.graph.edge ? (f.graph.improved ? 'good' : f.vars.cost[run.links[k][0]] == null ? 'skip' : 'lit') : '';
+      });
+      cafeEls.forEach((e, v) => {
+        e.querySelector('.wt-cost text').textContent = fmt(f.graph.pathCosts && f.graph.pathCosts[v] != null ? f.graph.pathCosts[v] : f.vars.updated[v]);
+        e.toggleAttribute('data-unreached', f.vars.updated[v] == null);
+        e.toggleAttribute('data-changed', v === changedNode);
+        e.toggleAttribute('data-reading', v === reading);
+        e.toggleAttribute('data-path', f.graph.path.includes(v));
+      });
+      rideToken(f.graph.edge, from != null && Math.abs(i - from) === 1);
+      box.querySelector('.wt-round').innerHTML = f.vars.round ? `<b>ROUND</b> ${f.vars.round} / ${f.vars.rounds} <small>round r allows r legs</small>` : `<b>BEFORE ROUND 1</b> <small>${f.vars.rounds} round${f.vars.rounds > 1 ? 's' : ''} to go</small>`;
+      [f.vars.cost, f.vars.updated].forEach((row, ri) => {
+        const tds = box.querySelectorAll(`tr[data-row="${ri}"] td`);
+        row.forEach((c, v) => {
+          tds[v].textContent = fmt(c);
+          tds[v].className = (c == null ? 'inf ' : '') + (ri === 1 && v === changedNode ? 'changed' : '') + (ri === 0 && v === reading ? 'read' : '');
+        });
+      });
+    },
+  };
+}
+
+window.WT_STYLES.iso = {
+  label: 'Isometric',
+  mount(stage, data, run) { return data.kind === 'grid' ? mountGrid(stage, data, run) : mountGraph(stage, data, run); },
+};
+})();
+</script>
+<script>
+(() => {
+  const data = window.WT_DATA, styles = window.WT_STYLES, names = Object.keys(styles);
+  const params = new URLSearchParams(location.search);
+  let style = names.includes(params.get('style')) ? params.get('style') : names[0];
+  let runIdx = Math.min(+params.get('run') || 0, data.runs.length - 1);
+  let frame = 0, view = null, timer = null;
+  const $ = id => document.getElementById(id);
+  $('approach').textContent = data.approach;
+
+  const sw = $('switcher');
+  names.forEach(n => {
+    const b = document.createElement('button'); b.textContent = styles[n].label; b.dataset.style = n;
+    b.onclick = () => setStyle(n); sw.appendChild(b);
+  });
+  data.runs.forEach((r, i) => {
+    const b = document.createElement('button'); b.textContent = r.label; b.onclick = () => setRun(i); $('runs').appendChild(b);
+  });
+
+  function syncUrl() {
+    const p = new URLSearchParams(location.search); p.set('style', style); p.set('run', runIdx);
+    history.replaceState(null, '', '?' + p);
+  }
+  function mount() {
+    stop();
+    const run = data.runs[runIdx];
+    $('stage').innerHTML = '';
+    view = styles[style].mount($('stage'), data, run);
+    $('input').textContent = run.input;
+    $('expected').textContent = 'expected ' + run.expected;
+    $('scrub').max = run.frames.length - 1;
+    [...$('runs').children].forEach((b, i) => b.setAttribute('aria-pressed', i === runIdx));
+    [...sw.querySelectorAll('button')].forEach(b => b.setAttribute('aria-pressed', b.dataset.style === style));
+    syncUrl();
+    show(Math.min(frame, run.frames.length - 1), null);
+  }
+  function show(i, from) {
+    const run = data.runs[runIdx];
+    frame = Math.max(0, Math.min(i, run.frames.length - 1));
+    const f = run.frames[frame];
+    view.show(frame, from);
+    $('caption').textContent = f.caption;
+    $('caption').className = 'caption' + (f.answer == null ? '' : f.answer === -1 ? ' fail' : ' done');
+    $('scrub').value = frame;
+    $('count').textContent = (frame + 1) + ' / ' + run.frames.length;
+    $('first').disabled = $('prev').disabled = frame === 0;
+    $('next').disabled = frame === run.frames.length - 1;
+  }
+  const step = d => show(frame + d, frame);
+  function play() {
+    if (timer) return stop();
+    if (frame === data.runs[runIdx].frames.length - 1) show(0, null);
+    $('play').textContent = '⏸';
+    timer = setInterval(() => { if (frame >= data.runs[runIdx].frames.length - 1) stop(); else step(1); }, 1400);
+  }
+  function stop() { clearInterval(timer); timer = null; $('play').textContent = '▶'; }
+  function setRun(i) { runIdx = i; frame = 0; mount(); }
+  function setStyle(n) { style = n; mount(); }
+
+  $('first').onclick = () => { stop(); show(0, null); };
+  $('prev').onclick = () => { stop(); step(-1); };
+  $('next').onclick = () => { stop(); step(1); };
+  $('play').onclick = play;
+  $('scrub').oninput = e => { stop(); show(+e.target.value, frame); };
+  addEventListener('keydown', e => {
+    if (e.target.closest && e.target.closest('input,textarea,[contenteditable]') && e.target.type !== 'range') return;
+    if (e.key === 'ArrowRight') { stop(); step(1); e.preventDefault(); }
+    else if (e.key === 'ArrowLeft') { stop(); step(-1); e.preventDefault(); }
+    else if (e.key === ' ') { play(); e.preventDefault(); }
+    else if (e.key === 'Home') { stop(); show(0, frame); }
+    else if (e.key === 'End') { stop(); show(1e9, frame); }
+    else if (e.key === ']' || e.key === '[') {
+      const k = names.indexOf(style) + (e.key === ']' ? 1 : -1);
+      setStyle(names[(k + names.length) % names.length]);
+    }
+  });
+  mount();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,552 @@
+{
+ "slug": "rotting-donuts",
+ "title": "Rotting Donuts",
+ "kind": "grid",
+ "approach": "Multi-source BFS: every stale donut starts at once, and each wave is one minute.",
+ "legend": {
+  "0": "empty slot",
+  "1": "fresh",
+  "2": "stale"
+ },
+ "runs": [
+  {
+   "label": "Example 1",
+   "input": "ward = [[2,1,1],[1,0,1],[1,1,1]]",
+   "expected": 4,
+   "frames": [
+    {
+     "caption": "Count 7 fresh donuts and put every stale one into the first wave.",
+     "grid": {
+      "cells": [
+       [
+        2,
+        1,
+        1
+       ],
+       [
+        1,
+        0,
+        1
+       ],
+       [
+        1,
+        1,
+        1
+       ]
+      ],
+      "lit": [],
+      "ring": [
+       [
+        0,
+        0
+       ]
+      ],
+      "stuck": []
+     },
+     "vars": {
+      "minute": 0,
+      "fresh": 7,
+      "wave": [
+       [
+        0,
+        0
+       ]
+      ]
+     },
+     "answer": null
+    },
+    {
+     "caption": "Minute 1: the wave touches 2 fresh neighbours; they go stale and become the next wave. 5 fresh left.",
+     "grid": {
+      "cells": [
+       [
+        2,
+        2,
+        1
+       ],
+       [
+        2,
+        0,
+        1
+       ],
+       [
+        1,
+        1,
+        1
+       ]
+      ],
+      "lit": [
+       [
+        1,
+        0
+       ],
+       [
+        0,
+        1
+       ]
+      ],
+      "ring": [
+       [
+        1,
+        0
+       ],
+       [
+        0,
+        1
+       ]
+      ],
+      "stuck": []
+     },
+     "vars": {
+      "minute": 1,
+      "fresh": 5,
+      "wave": [
+       [
+        1,
+        0
+       ],
+       [
+        0,
+        1
+       ]
+      ]
+     },
+     "answer": null
+    },
+    {
+     "caption": "Minute 2: the wave touches 2 fresh neighbours; they go stale and become the next wave. 3 fresh left.",
+     "grid": {
+      "cells": [
+       [
+        2,
+        2,
+        2
+       ],
+       [
+        2,
+        0,
+        1
+       ],
+       [
+        2,
+        1,
+        1
+       ]
+      ],
+      "lit": [
+       [
+        2,
+        0
+       ],
+       [
+        0,
+        2
+       ]
+      ],
+      "ring": [
+       [
+        2,
+        0
+       ],
+       [
+        0,
+        2
+       ]
+      ],
+      "stuck": []
+     },
+     "vars": {
+      "minute": 2,
+      "fresh": 3,
+      "wave": [
+       [
+        2,
+        0
+       ],
+       [
+        0,
+        2
+       ]
+      ]
+     },
+     "answer": null
+    },
+    {
+     "caption": "Minute 3: the wave touches 2 fresh neighbours; they go stale and become the next wave. 1 fresh left.",
+     "grid": {
+      "cells": [
+       [
+        2,
+        2,
+        2
+       ],
+       [
+        2,
+        0,
+        2
+       ],
+       [
+        2,
+        2,
+        1
+       ]
+      ],
+      "lit": [
+       [
+        2,
+        1
+       ],
+       [
+        1,
+        2
+       ]
+      ],
+      "ring": [
+       [
+        2,
+        1
+       ],
+       [
+        1,
+        2
+       ]
+      ],
+      "stuck": []
+     },
+     "vars": {
+      "minute": 3,
+      "fresh": 1,
+      "wave": [
+       [
+        2,
+        1
+       ],
+       [
+        1,
+        2
+       ]
+      ]
+     },
+     "answer": null
+    },
+    {
+     "caption": "Minute 4: the wave touches 1 fresh neighbour; it goes stale and becomes the next wave. 0 fresh left.",
+     "grid": {
+      "cells": [
+       [
+        2,
+        2,
+        2
+       ],
+       [
+        2,
+        0,
+        2
+       ],
+       [
+        2,
+        2,
+        2
+       ]
+      ],
+      "lit": [
+       [
+        2,
+        2
+       ]
+      ],
+      "ring": [
+       [
+        2,
+        2
+       ]
+      ],
+      "stuck": []
+     },
+     "vars": {
+      "minute": 4,
+      "fresh": 0,
+      "wave": [
+       [
+        2,
+        2
+       ]
+      ]
+     },
+     "answer": null
+    },
+    {
+     "caption": "No fresh donut is left. It took 4 waves, one per minute: answer 4.",
+     "grid": {
+      "cells": [
+       [
+        2,
+        2,
+        2
+       ],
+       [
+        2,
+        0,
+        2
+       ],
+       [
+        2,
+        2,
+        2
+       ]
+      ],
+      "lit": [],
+      "ring": [],
+      "stuck": []
+     },
+     "vars": {
+      "minute": 4,
+      "fresh": 0,
+      "wave": [
+       [
+        2,
+        2
+       ]
+      ]
+     },
+     "answer": 4
+    }
+   ]
+  },
+  {
+   "label": "Example 2",
+   "input": "ward = [[2,0,1],[0,0,1],[1,1,1]]",
+   "expected": -1,
+   "frames": [
+    {
+     "caption": "Count 5 fresh donuts and put every stale one into the first wave.",
+     "grid": {
+      "cells": [
+       [
+        2,
+        0,
+        1
+       ],
+       [
+        0,
+        0,
+        1
+       ],
+       [
+        1,
+        1,
+        1
+       ]
+      ],
+      "lit": [],
+      "ring": [
+       [
+        0,
+        0
+       ]
+      ],
+      "stuck": []
+     },
+     "vars": {
+      "minute": 0,
+      "fresh": 5,
+      "wave": [
+       [
+        0,
+        0
+       ]
+      ]
+     },
+     "answer": null
+    },
+    {
+     "caption": "Minute 1: no fresh neighbour next to the wave, so the wave dies out.",
+     "grid": {
+      "cells": [
+       [
+        2,
+        0,
+        1
+       ],
+       [
+        0,
+        0,
+        1
+       ],
+       [
+        1,
+        1,
+        1
+       ]
+      ],
+      "lit": [],
+      "ring": [
+       [
+        0,
+        0
+       ]
+      ],
+      "stuck": []
+     },
+     "vars": {
+      "minute": 1,
+      "fresh": 5,
+      "wave": []
+     },
+     "answer": null
+    },
+    {
+     "caption": "The wave is gone but 5 fresh donuts are still walled off by empty slots: answer -1.",
+     "grid": {
+      "cells": [
+       [
+        2,
+        0,
+        1
+       ],
+       [
+        0,
+        0,
+        1
+       ],
+       [
+        1,
+        1,
+        1
+       ]
+      ],
+      "lit": [],
+      "ring": [],
+      "stuck": [
+       [
+        0,
+        2
+       ],
+       [
+        1,
+        2
+       ],
+       [
+        2,
+        0
+       ],
+       [
+        2,
+        1
+       ],
+       [
+        2,
+        2
+       ]
+      ]
+     },
+     "vars": {
+      "minute": 1,
+      "fresh": 5,
+      "wave": []
+     },
+     "answer": -1
+    }
+   ]
+  },
+  {
+   "label": "Example 3",
+   "input": "ward = [[2,0],[0,1]]",
+   "expected": -1,
+   "frames": [
+    {
+     "caption": "Count 1 fresh donuts and put every stale one into the first wave.",
+     "grid": {
+      "cells": [
+       [
+        2,
+        0
+       ],
+       [
+        0,
+        1
+       ]
+      ],
+      "lit": [],
+      "ring": [
+       [
+        0,
+        0
+       ]
+      ],
+      "stuck": []
+     },
+     "vars": {
+      "minute": 0,
+      "fresh": 1,
+      "wave": [
+       [
+        0,
+        0
+       ]
+      ]
+     },
+     "answer": null
+    },
+    {
+     "caption": "Minute 1: no fresh neighbour next to the wave, so the wave dies out.",
+     "grid": {
+      "cells": [
+       [
+        2,
+        0
+       ],
+       [
+        0,
+        1
+       ]
+      ],
+      "lit": [],
+      "ring": [
+       [
+        0,
+        0
+       ]
+      ],
+      "stuck": []
+     },
+     "vars": {
+      "minute": 1,
+      "fresh": 1,
+      "wave": []
+     },
+     "answer": null
+    },
+    {
+     "caption": "The wave is gone but 1 fresh donut is still walled off by empty slots: answer -1.",
+     "grid": {
+      "cells": [
+       [
+        2,
+        0
+       ],
+       [
+        0,
+        1
+       ]
+      ],
+      "lit": [],
+      "ring": [],
+      "stuck": [
+       [
+        1,
+        1
+       ]
+      ]
+     },
+     "vars": {
+      "minute": 1,
+      "fresh": 1,
+      "wave": []
+     },
+     "answer": -1
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,72 @@
+/* PROTOTYPE: isometric style (anatomy kit look). Colour only where colour is the subject: fresh vs stale dough. */
+.wt-iso { width: 100%; background: var(--anatomy-card); color: var(--anatomy-text); border-radius: 10px; padding: 6px 4px 10px; }
+.wt-iso { --wt-ease: cubic-bezier(.32,.72,0,1);
+  --wt-fresh-top: #f1c46a; --wt-fresh-0: #9c6a1e; --wt-fresh-1: #b47d27; --wt-fresh-2: #c88f33; --wt-fresh-3: #d9a043; --wt-glaze: #f7dba0;
+  --wt-stale-top: #5d6a45; --wt-stale-0: #2c3322; --wt-stale-1: #343d28; --wt-stale-2: #3d472f; --wt-stale-3: #465136; --wt-stale-glaze: #6c7a51;
+  --wt-good: var(--anatomy-green); --wt-bed: #0d0d0d; }
+.wt-iso[data-theme="light"] {
+  --wt-fresh-top: #f4cf7f; --wt-fresh-0: #c08a3a; --wt-fresh-1: #d29b47; --wt-fresh-2: #ddaa58; --wt-fresh-3: #e6b968; --wt-glaze: #fae3b0;
+  --wt-stale-top: #8e9a72; --wt-stale-0: #5f6a48; --wt-stale-1: #6b7752; --wt-stale-2: #77845d; --wt-stale-3: #839068; --wt-stale-glaze: #a3ae86;
+  --wt-bed: #e9e9e5; }
+.wt-iso svg { max-width: 100%; }
+.wt-iso .iso-svg text { user-select: none; }
+/* donuts */
+.wt-dough-fresh > .iso-top { fill: var(--wt-fresh-top); }
+.wt-dough-fresh > .iso-shade[data-shade="0"] { fill: var(--wt-fresh-0); } .wt-dough-fresh > .iso-shade[data-shade="1"] { fill: var(--wt-fresh-1); }
+.wt-dough-fresh > .iso-shade[data-shade="2"] { fill: var(--wt-fresh-2); } .wt-dough-fresh > .iso-shade[data-shade="3"] { fill: var(--wt-fresh-3); }
+.wt-dough-stale > .iso-top { fill: var(--wt-stale-top); }
+.wt-dough-stale > .iso-shade[data-shade="0"] { fill: var(--wt-stale-0); } .wt-dough-stale > .iso-shade[data-shade="1"] { fill: var(--wt-stale-1); }
+.wt-dough-stale > .iso-shade[data-shade="2"] { fill: var(--wt-stale-2); } .wt-dough-stale > .iso-shade[data-shade="3"] { fill: var(--wt-stale-3); }
+.wt-fresh .wt-glaze { fill: var(--wt-glaze); opacity: .55; }
+.wt-stale .wt-glaze { fill: var(--wt-stale-glaze); opacity: .45; }
+.wt-hole { fill: var(--anatomy-shade-0); }
+.wt-donut { opacity: 0; transition: opacity .5s var(--wt-ease), transform .55s var(--wt-ease); }
+.wt-cell[data-v="1"] .wt-fresh { opacity: 1; }
+.wt-cell[data-v="2"] .wt-stale { opacity: 1; }
+.wt-cell[data-v="2"] .wt-fresh { transform: translateY(4px); }
+.wt-cell[data-new] .wt-stale { animation: wt-sink .6s var(--wt-ease); }
+@keyframes wt-sink { from { transform: translateY(-5px); } to { transform: none; } }
+.wt-wave, .wt-stuck { opacity: 0; transition: opacity .35s var(--wt-ease); stroke-width: 1.4px !important; }
+.wt-cell[data-wave] .wt-wave { opacity: 1; }
+.wt-cell[data-stuck] .wt-stuck { opacity: 1; animation: wt-blink 1.6s ease-in-out infinite; }
+@keyframes wt-blink { 50% { opacity: .35; } }
+.wt-cell[data-v="0"] .wt-well .iso-line { stroke-dasharray: 2 3; }
+.wt-stamp { opacity: 0; transition: opacity .4s; }
+.wt-cell[data-stamped] .wt-stamp { opacity: 1; }
+/* courier board */
+.wt-bed { fill: none; stroke: var(--wt-bed); stroke-width: 4.2px; stroke-linecap: round; opacity: .9; }
+.wt-groove { stroke: var(--anatomy-mid) !important; stroke-width: 1px !important; transition: stroke .3s; }
+.wt-chev { stroke: var(--anatomy-mid) !important; stroke-width: 1.1px !important; }
+.wt-wplate { fill: var(--anatomy-face); stroke: var(--anatomy-lo); stroke-width: .6px; }
+.wt-route[data-s="lit"] .wt-groove, .wt-route[data-s="lit"] .wt-chev { stroke: var(--anatomy-lit) !important; stroke-width: 1.8px !important; stroke-dasharray: 3 3; animation: iso-flow 1600ms linear infinite; }
+.wt-route[data-s="skip"] .wt-groove { stroke: var(--anatomy-lo) !important; stroke-dasharray: 2 4; }
+.wt-route[data-s="good"] .wt-groove, .wt-route[data-s="good"] .wt-chev { stroke: var(--wt-good) !important; stroke-width: 2.2px !important; }
+.wt-route[data-s="path"] .wt-groove, .wt-route[data-s="path"] .wt-chev { stroke: var(--anatomy-lit) !important; stroke-width: 2.6px !important; }
+.wt-route[data-s="good"] .iso-face-text { fill: var(--wt-good); }
+.wt-route[data-s="lit"] .iso-face-text, .wt-route[data-s="path"] .iso-face-text { fill: var(--anatomy-hi); }
+.wt-cafe[data-unreached] .wt-cost text { fill: var(--anatomy-lo); }
+.wt-cafe[data-unreached] .wt-disp .iso-edge { stroke-dasharray: 2 2; }
+.wt-cafe[data-changed] .wt-disp .iso-top { fill: var(--wt-good); opacity: .9; }
+.wt-cafe[data-changed] .iso-face-text { fill: var(--anatomy-card) !important; font-weight: 700; }
+.wt-cafe[data-reading] .wt-puck .iso-edge, .wt-cafe[data-path] .wt-puck .iso-edge { stroke: var(--anatomy-lit); stroke-width: 1.4px; }
+.wt-cafe[data-path] .wt-disp .iso-top { fill: var(--anatomy-lit-top); }
+.wt-cafe[data-path] .wt-disp .iso-edge { stroke: var(--anatomy-lit); }
+.wt-disp .iso-top { transition: fill .35s var(--wt-ease); }
+.wt-token { transition: opacity .25s; }
+/* working-state strip, set like the kit's readout */
+.wt-strip { display: flex; flex-wrap: wrap; gap: 6px 18px; justify-content: center; align-items: baseline; margin: 2px 10px 0; padding-top: 8px; border-top: 1px solid var(--anatomy-faint); font: 13px var(--anatomy-mono); color: var(--anatomy-strong); }
+.wt-strip b { font-weight: 600; font-size: 10.5px; letter-spacing: .08em; color: var(--anatomy-muted); margin-right: 4px; }
+.wt-strip i { font-style: normal; }
+.wt-strip i.bad { color: var(--anatomy-red); }
+.wt-strip em { font-style: normal; display: inline-block; border: 1px solid var(--anatomy-lit); border-radius: 999px; padding: 0 7px; margin: 0 2px; font-size: 12px; }
+.wt-strip u { text-decoration: none; color: var(--anatomy-muted); font-style: italic; }
+.wt-strip small { color: var(--anatomy-muted); font-size: 11px; margin-left: 6px; }
+.wt-table { flex-direction: column; align-items: center; }
+.wt-table table { border-collapse: separate; border-spacing: 3px; font: 12.5px var(--anatomy-mono); }
+.wt-table th { font-weight: 500; color: var(--anatomy-muted); font-size: 11px; text-align: right; padding-right: 6px; }
+.wt-table thead th { text-align: center; padding: 0; }
+.wt-table td { min-width: 34px; text-align: center; border: 1px solid var(--anatomy-faint); border-radius: 5px; padding: 2px 4px; color: var(--anatomy-strong); transition: background .3s, border-color .3s; }
+.wt-table td.inf { color: var(--anatomy-muted); }
+.wt-table td.read { border-color: var(--anatomy-lit); }
+.wt-table td.changed { border-color: var(--wt-good); color: var(--wt-good); font-weight: 700; }
+@media (max-width: 480px) { .wt-strip { font-size: 12px; gap: 4px 12px; } .wt-table table { font-size: 11px; } .wt-table td { min-width: 26px; } }
