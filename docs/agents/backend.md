@@ -10,7 +10,7 @@ Each feature package holds `controller/`, `service/` and `dto/` (the `*Request` 
 - `common/controller/` — HealthController; `common/exception/` — GlobalExceptionHandler
 - `auth/` — JWT auth + OAuth (controller, service, DTOs, filter, token provider, oauth clients); `TestTokenController` (dev profile)
 - `user/` — UserService, DTOs, settings endpoint
-- `problem/` — `ProblemCatalogue` (what users see: the published list with Progress and Acceptance Rate, header counts, random pick, detail), `ProblemAdminService` (curation behind /api/admin/problems), `ProblemDtos` (builds the DTOs both return), controllers, DTOs
+- `problem/` — `ProblemCatalogue` (what users see: the published list with Progress and Acceptance Rate, header counts, random pick, detail), `ProblemAdminService` (curation behind /api/admin/problems), `ProblemDtos` (builds the DTOs both return), `Walkthroughs` (every `walkthroughs/<slug>.json` read once at startup: `has`, `of`, `slugs`), controllers, DTOs
 - `submission/` — Submission flow (controller, service, DTOs, Kafka producer), `sse/` (the Verdict announcement stream)
 - `run/` — Run flow (controller, service, DTOs — synchronous Judge0 execution, sample test cases only)
 - `streak/` — Streaks and Repairs (controller, service, DTOs, `submission-results` listener)
