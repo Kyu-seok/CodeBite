@@ -152,7 +152,8 @@ export function LeftPanel({
         className="flex h-full flex-col"
       >
         <div className="group flex items-center justify-between border-b border-border bg-muted">
-          <TabsList>
+          {/* Four tabs don't fit a phone as they are: there they drop their icons and some padding, and scroll if still too wide. */}
+          <TabsList className="min-w-0 justify-start overflow-x-auto max-sm:[&_svg]:hidden max-sm:[&>button]:px-2 max-sm:[&>button]:text-[13px]">
             <TabsTrigger value="description" className="gap-1.5">
               <DescriptionIcon />
               {t('tabs.description')}
@@ -172,7 +173,8 @@ export function LeftPanel({
               </TabsTrigger>
             )}
           </TabsList>
-          <div className="flex items-center pr-1 opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100 [@media(hover:none)]:opacity-100">
+          {/* Fold and maximize work only in the desktop split, so the stacked layout leaves them out. */}
+          <div className="flex shrink-0 items-center pr-1 max-md:hidden opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100 [@media(hover:none)]:opacity-100">
             <Tooltip>
               <TooltipTrigger>
                 <Button
