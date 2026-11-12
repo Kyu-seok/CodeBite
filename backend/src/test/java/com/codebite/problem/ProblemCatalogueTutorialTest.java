@@ -10,6 +10,7 @@ import com.codebite.problem.entity.Problem;
 import com.codebite.problem.entity.TestCase;
 import com.codebite.problem.service.ProblemCatalogue;
 import com.codebite.problem.service.ProblemDtos;
+import com.codebite.problem.service.Walkthroughs;
 import com.codebite.progress.ProblemPopularity;
 import com.codebite.progress.UserProgress;
 import com.codebite.submission.entity.Submission;
@@ -59,6 +60,11 @@ class ProblemCatalogueTutorialTest {
         @Bean
         ProblemAssets problemAssets() {
             return new ProblemAssets("classpath:problem-assets/");
+        }
+
+        @Bean
+        Walkthroughs walkthroughs() {
+            return new Walkthroughs("classpath:walkthrough-fixtures/none/");
         }
     }
 

@@ -22,9 +22,11 @@ import java.util.Map;
 public class ProblemDtos {
 
     private final ProblemAssets assets;
+    private final Walkthroughs walkthroughs;
 
-    public ProblemDtos(ProblemAssets assets) {
+    public ProblemDtos(ProblemAssets assets, Walkthroughs walkthroughs) {
         this.assets = assets;
+        this.walkthroughs = walkthroughs;
     }
 
     ProblemListItem toListItem(Problem problem, Map<Long, UserProgress.Status> statusMap,
@@ -81,7 +83,8 @@ public class ProblemDtos {
                 problem.getTags().stream()
                         .map(t -> new TagDto(t.getName(), t.getSlug()))
                         .sorted(Comparator.comparing(TagDto::name))
-                        .toList()
+                        .toList(),
+                walkthroughs.has(problem.getSlug())
         );
     }
 

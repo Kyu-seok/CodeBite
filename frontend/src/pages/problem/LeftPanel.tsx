@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { lazy, Suspense, useState, type ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/Tabs';
 import { Button } from '@/components/ui/Button';
@@ -9,7 +9,12 @@ import { SolutionsListPanel } from './solutions/SolutionsListPanel';
 import type { Difficulty } from '@/types/problem';
 import type { CustomTestCaseInput, SubmissionListItem } from '@/types/submission';
 import type { AddCustomTestOutcome } from './customTests';
-import { PanelLeftClose, PanelLeftOpen, Maximize2, Minimize2 } from 'lucide-react';
+import { PanelLeftClose, PanelLeftOpen, Maximize2, Minimize2, Footprints } from 'lucide-react';
+import Spinner from '@/components/ui/Spinner';
+import { leftTabs, type LeftTab, type WalkthroughPlace } from './walkthrough/walkthroughTab';
+
+// The player downloads only when the Walkthrough tab opens.
+const WalkthroughPanel = lazy(() => import('./walkthrough/WalkthroughPanel'));
 import { cn } from '@/lib/utils';
 
 function DescriptionIcon() {
@@ -68,6 +73,10 @@ function LightbulbIcon() {
   );
 }
 
+function WalkthroughIcon() {
+  return <Footprints className="h-3.5 w-3.5" aria-hidden="true" />;
+}
+
 interface LeftPanelProps {
   slug: string;
   title: string;
@@ -91,6 +100,12 @@ interface LeftPanelProps {
   onFold?: () => void;
   onMaximize?: () => void;
   isMaximized?: boolean;
+  /** The problem has a Walkthrough: the tab shows after Solutions. */
+  hasWalkthrough: boolean;
+  /** Where the learner is in the Walkthrough, kept by the page so it survives switching tabs. */
+  walkthroughPlace: WalkthroughPlace;
+  onRevealWalkthrough: () => void;
+  onWalkthroughStep: (run: number, frame: number) => void;
 }
 
 export function LeftPanel({
@@ -113,6 +128,10 @@ export function LeftPanel({
   onFold,
   onMaximize,
   isMaximized,
+  hasWalkthrough,
+  walkthroughPlace,
+  onRevealWalkthrough,
+  onWalkthroughStep,
 }: LeftPanelProps) {
   const { t } = useTranslation('problem');
   const [selectedSubmissionId, setSelectedSubmissionId] = useState<number | null>(null);
@@ -133,7 +152,8 @@ export function LeftPanel({
         className="flex h-full flex-col"
       >
         <div className="group flex items-center justify-between border-b border-border bg-muted">
-          <TabsList>
+          {/* Four tabs don't fit a phone as they are: there they drop their icons and some padding, and scroll if still too wide. */}
+          <TabsList className="min-w-0 justify-start overflow-x-auto max-sm:[&_svg]:hidden max-sm:[&>button]:px-2 max-sm:[&>button]:text-[13px]">
             <TabsTrigger value="description" className="gap-1.5">
               <DescriptionIcon />
               {t('tabs.description')}
@@ -146,8 +166,15 @@ export function LeftPanel({
               <LightbulbIcon />
               {t('tabs.solutions')}
             </TabsTrigger>
+            {hasWalkthrough && (
+              <TabsTrigger value="walkthrough" className="gap-1.5">
+                <WalkthroughIcon />
+                {t('tabs.walkthrough')}
+              </TabsTrigger>
+            )}
           </TabsList>
-          <div className="flex items-center pr-1 opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100 [@media(hover:none)]:opacity-100">
+          {/* Fold and maximize work only in the desktop split, so the stacked layout leaves them out. */}
+          <div className="flex shrink-0 items-center pr-1 max-md:hidden opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100 [@media(hover:none)]:opacity-100">
             <Tooltip>
               <TooltipTrigger>
                 <Button
@@ -208,17 +235,31 @@ export function LeftPanel({
           <TabsContent value="solutions" className="mt-0 h-full">
             <SolutionsListPanel slug={slug} languages={languages} isAuthenticated={isAuthenticated} />
           </TabsContent>
+
+          {hasWalkthrough && (
+            <TabsContent value="walkthrough" className="mt-0">
+              <Suspense fallback={<Spinner size="sm" />}>
+                <WalkthroughPanel
+                  slug={slug}
+                  place={walkthroughPlace}
+                  onReveal={onRevealWalkthrough}
+                  onStep={onWalkthroughStep}
+                />
+              </Suspense>
+            </TabsContent>
+          )}
         </div>
       </Tabs>
     </div>
   );
 }
 
-const STRIP_TABS = [
-  { id: 'description', Icon: DescriptionIcon, labelKey: 'tabs.description' as const },
-  { id: 'submissions', Icon: HistoryIcon,     labelKey: 'tabs.submissions' as const },
-  { id: 'solutions',  Icon: LightbulbIcon,   labelKey: 'tabs.solutions' as const },
-] as const;
+const STRIP_TABS: Record<LeftTab, { Icon: () => ReactElement; labelKey: `tabs.${LeftTab}` }> = {
+  description: { Icon: DescriptionIcon, labelKey: 'tabs.description' },
+  submissions: { Icon: HistoryIcon, labelKey: 'tabs.submissions' },
+  solutions: { Icon: LightbulbIcon, labelKey: 'tabs.solutions' },
+  walkthrough: { Icon: WalkthroughIcon, labelKey: 'tabs.walkthrough' },
+};
 
 interface CollapsedLeftStripProps {
   activeTab: string;
@@ -226,10 +267,12 @@ interface CollapsedLeftStripProps {
   onExpand: () => void;
   onMaximize: () => void;
   isMaximized: boolean;
+  hasWalkthrough: boolean;
 }
 
 export function CollapsedLeftStrip({
   activeTab,
+  hasWalkthrough,
   onTabSelect,
   onExpand,
   onMaximize,
@@ -241,7 +284,9 @@ export function CollapsedLeftStrip({
     <div className="group/strip flex h-full flex-col items-center py-2">
       {/* Tab buttons — clicking sets the active tab without expanding */}
       <div className="flex flex-1 flex-col items-center gap-1 w-full">
-        {STRIP_TABS.map(({ id, Icon, labelKey }) => (
+        {leftTabs(hasWalkthrough).map((id) => {
+          const { Icon, labelKey } = STRIP_TABS[id];
+          return (
           <Tooltip key={id}>
             <TooltipTrigger asChild>
               <button
@@ -262,7 +307,8 @@ export function CollapsedLeftStrip({
             </TooltipTrigger>
             <TooltipContent side="right">{t(labelKey)}</TooltipContent>
           </Tooltip>
-        ))}
+          );
+        })}
       </div>
 
       {/* Bottom buttons — visible on hover */}

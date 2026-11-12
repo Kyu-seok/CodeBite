@@ -42,6 +42,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/roadmap").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/problems", "/api/problems/*").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/problems/*/solutions").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/problems/*/walkthrough").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/solutions/*").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/solutions/*/comments").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/tags").permitAll()

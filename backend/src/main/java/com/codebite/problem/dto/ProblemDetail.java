@@ -9,6 +9,8 @@ import java.util.Map;
 /**
  * {@code tutorial}: this is the Tutorial Problem, which the detail page labels "Tutorial".
  * {@code tags}: the problem's topics, as the list shows them, so the page can place it in the roadmap.
+ * {@code hasWalkthrough}: {@code GET /api/problems/{slug}/walkthrough} has one, so the page shows its
+ * Walkthrough tab without a request that 404s.
  */
 public record ProblemDetail(
         Long id,
@@ -24,6 +26,7 @@ public record ProblemDetail(
         Instant createdAt,
         Instant updatedAt,
         boolean tutorial,
-        List<TagDto> tags
+        List<TagDto> tags,
+        boolean hasWalkthrough
 ) {
 }

@@ -35,7 +35,8 @@
     "description": "Description",
     "submissions": "Submissions",
     "solutions": "Solutions",
-    "solutionsComingSoon": "Solutions coming soon"
+    "solutionsComingSoon": "Solutions coming soon",
+    "walkthrough": "Walkthrough"
   },
   "description": {
     "constraints": "Constraints",
@@ -413,5 +414,21 @@
         "body": "That's the whole loop: read, write, Run, Submit. Your next problem is waiting in the list whenever you're ready."
       }
     }
+  },
+  "walkthrough": {
+    "intro": "See one approach run on each Example, step by step: how the data changes and where the answer comes from.",
+    "spoiler": "It shows how the problem is solved. Try it yourself first if you want the challenge.",
+    "reveal": "Show how it's solved",
+    "loading": "Loading the Walkthrough…",
+    "loadError": "The Walkthrough couldn't be loaded.",
+    "expected": "expected",
+    "extra": "not an Example",
+    "step": "Step",
+    "first": "First step",
+    "prev": "Previous step",
+    "next": "Next step",
+    "play": "Play",
+    "pause": "Pause",
+    "hint": "Click here, then ← → step · Space plays · Home/End jump"
   }
 }

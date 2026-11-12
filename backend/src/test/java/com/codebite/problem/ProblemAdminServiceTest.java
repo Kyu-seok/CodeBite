@@ -8,6 +8,7 @@ import com.codebite.problem.entity.Problem;
 import com.codebite.problem.repository.ProblemRepository;
 import com.codebite.problem.repository.TestCaseRepository;
 import com.codebite.problem.service.ProblemDtos;
+import com.codebite.problem.service.Walkthroughs;
 import com.codebite.problem.dto.CreateProblemRequest;
 import com.codebite.problem.dto.CreateTestCaseRequest;
 import com.codebite.problem.dto.TestCaseDto;
@@ -45,7 +46,7 @@ class ProblemAdminServiceTest {
     @BeforeEach
     void setUp() {
         problemService = new ProblemAdminService(problemRepository, testCaseRepository, tagRepository,
-                problemPopularity, new ProblemDtos(new ProblemAssets("classpath:problem-assets/")));
+                problemPopularity, new ProblemDtos(new ProblemAssets("classpath:problem-assets/"), new Walkthroughs("classpath:walkthrough-fixtures/none/")));
     }
 
     private Problem buildProblem(Long id, String title, String slug, boolean published) {

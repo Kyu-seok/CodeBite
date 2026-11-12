@@ -52,4 +52,6 @@ export interface ProblemDetail {
   tutorial: boolean;
   /** The problem's topics, as the list shows them. */
   tags: TagDto[];
+  /** The problem has a Walkthrough, so the page shows its tab. */
+  hasWalkthrough: boolean;
 }

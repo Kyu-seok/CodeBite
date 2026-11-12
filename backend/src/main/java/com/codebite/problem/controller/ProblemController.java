@@ -10,6 +10,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.CacheControl;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.Duration;
 import java.util.Map;
 import java.util.Set;
 
@@ -76,5 +79,16 @@ public class ProblemController {
     @GetMapping("/{slug}")
     public ResponseEntity<ProblemDetail> getProblem(@PathVariable String slug) {
         return ResponseEntity.ok(problemService.getProblemBySlug(slug));
+    }
+
+    /**
+     * The problem's Walkthrough (format {@code walkthrough/1}) as its file holds it; a Former Slug
+     * works too. It changes only with a deploy, so a browser may keep it for an hour.
+     */
+    @GetMapping(value = "/{slug}/walkthrough", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> getWalkthrough(@PathVariable String slug) {
+        return ResponseEntity.ok()
+                .cacheControl(CacheControl.maxAge(Duration.ofHours(1)).cachePublic())
+                .body(problemService.getWalkthrough(slug));
     }
 }

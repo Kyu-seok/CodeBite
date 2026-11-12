@@ -15,6 +15,7 @@ import { problemGraph } from "@/lib/jsonLd"
 import Spinner from "@/components/ui/Spinner"
 import { Button } from "@/components/ui/Button"
 import { LeftPanel, CollapsedLeftStrip } from "./LeftPanel"
+import { forProblem, NO_WALKTHROUGH_YET, revealed, shownLeftTab, stepped } from "./walkthrough/walkthroughTab"
 import { EditorPanel } from "./EditorPanel"
 import { TestPanel, CollapsedTestStrip, ResultAnnouncer } from "./TestPanel"
 import { ConfirmDialog } from "./ConfirmDialog"
@@ -112,6 +113,8 @@ export default function ProblemDetailPage() {
   }>({ open: false, submissionId: null, solveTimeSeconds: null, reviewIntervalDays: null })
   const [customTests, setCustomTests] = usePersistedDraft<CustomTestCaseInput[]>(`custom-tests:${slug}`, [])
   const [leftPanelTab, setLeftPanelTab] = useState('description')
+  // Where the learner is in the Walkthrough: kept here so switching tabs doesn't lose it.
+  const [walkthroughPlace, setWalkthroughPlace] = useState(NO_WALKTHROUGH_YET)
   const [leftCollapsed, setLeftCollapsed] = useState(false)
   const [rightCollapsed, setRightCollapsed] = useState(false)
   const [editorCollapsed, setEditorCollapsed] = useState(false)
@@ -459,7 +462,8 @@ export default function ProblemDetailPage() {
         onTestsCollapsed={setTestsCollapsed}
         collapsedLeftContent={
           <CollapsedLeftStrip
-            activeTab={leftPanelTab}
+            activeTab={shownLeftTab(leftPanelTab, problem.hasWalkthrough)}
+            hasWalkthrough={problem.hasWalkthrough}
             onTabSelect={setLeftPanelTab}
             onExpand={() => panelFunctionsRef.current?.expandLeft()}
             onMaximize={handleMaximizeLeft}
@@ -488,8 +492,14 @@ export default function ProblemDetailPage() {
               submissions={submissions}
               submissionsFailed={submissionsFailed}
               onRetrySubmissions={refetchSubmissions}
-              activeTab={leftPanelTab}
+              activeTab={shownLeftTab(leftPanelTab, problem.hasWalkthrough)}
               onTabChange={setLeftPanelTab}
+              hasWalkthrough={problem.hasWalkthrough}
+              walkthroughPlace={forProblem(walkthroughPlace, problem.slug)}
+              onRevealWalkthrough={() => setWalkthroughPlace((p) => revealed(forProblem(p, problem.slug)))}
+              onWalkthroughStep={(run, frame) =>
+                setWalkthroughPlace((p) => stepped(forProblem(p, problem.slug), run, frame))
+              }
               onUpdateNote={updateNote}
               onLoadIntoEditor={handleLoadIntoEditor}
               onAddCustomTest={handleAddCustomTest}
