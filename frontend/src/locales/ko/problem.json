@@ -35,7 +35,8 @@
     "description": "설명",
     "submissions": "제출 내역",
     "solutions": "풀이",
-    "solutionsComingSoon": "풀이는 준비 중입니다"
+    "solutionsComingSoon": "풀이는 준비 중입니다",
+    "walkthrough": "풀이 과정"
   },
   "description": {
     "constraints": "제약 조건",
@@ -413,5 +414,21 @@
         "body": "읽고, 작성하고, 실행하고, 제출하기. 이것이 전부입니다. 준비되면 목록에서 다음 문제를 골라 보세요."
       }
     }
+  },
+  "walkthrough": {
+    "intro": "한 가지 풀이 방법이 각 예시에서 한 단계씩 실행되는 모습을 봅니다. 데이터가 어떻게 바뀌고 답이 어디서 나오는지 보여 줍니다.",
+    "spoiler": "문제를 푸는 방법이 그대로 드러납니다. 직접 도전해 보고 싶다면 먼저 풀어 보세요.",
+    "reveal": "풀이 과정 보기",
+    "loading": "풀이 과정을 불러오는 중…",
+    "loadError": "풀이 과정을 불러오지 못했습니다.",
+    "expected": "기대값",
+    "extra": "예시 아님",
+    "step": "단계",
+    "first": "처음 단계",
+    "prev": "이전 단계",
+    "next": "다음 단계",
+    "play": "재생",
+    "pause": "일시정지",
+    "hint": "여기를 누른 뒤 ← → 단계 이동 · 스페이스 재생 · Home/End 처음/끝"
   }
 }
