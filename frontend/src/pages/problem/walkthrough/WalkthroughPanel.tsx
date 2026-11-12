@@ -8,8 +8,8 @@ import Spinner from "@/components/ui/Spinner"
 import { useTheme } from "@/context/ThemeContext"
 import { getWalkthrough } from "@/api/problems"
 import { Walkthrough } from "@/components/walkthrough/react/Walkthrough"
-import type { Walkthrough as WalkthroughData } from "@/components/walkthrough/walkthrough.js"
-import { textIn, walkthroughLang, type WalkthroughPlace } from "./walkthroughTab"
+import { textOf, type Walkthrough as WalkthroughData } from "@/components/walkthrough/walkthrough.js"
+import { walkthroughLang, type WalkthroughPlace } from "./walkthroughTab"
 
 interface WalkthroughPanelProps {
   slug: string
@@ -89,8 +89,8 @@ function RevealedWalkthrough({ slug, place, onStep }: Omit<WalkthroughPanelProps
   }
   return (
     <div className="p-4">
-      <h2 className="text-lg font-semibold">{textIn(load.data.title, lang)}</h2>
-      <p className="mb-3 text-sm text-muted-foreground">{textIn(load.data.approach, lang)}</p>
+      <h2 className="text-lg font-semibold">{textOf(load.data.title, lang)}</h2>
+      <p className="mb-3 text-sm text-muted-foreground">{textOf(load.data.approach, lang)}</p>
       <Walkthrough
         data={load.data}
         lang={lang}
