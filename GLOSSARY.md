@@ -33,6 +33,10 @@ _Avoid_: Bug report, feedback, ticket
 A picture of an example's input (and, when the problem transforms it, the output), or of its output alone when the output is the structure and the input only describes it (a size, a tree's traversals), drawn from a short text block in the problem's description and the same in every language. A Restatement keeps it.
 _Avoid_: Visual aid, image, illustration
 
+**Walkthrough**:
+A stepped picture of one approach to a problem running on each of its sample Test Cases (and on any extra input the samples leave out, labelled as such), frame by frame from the input to the answer, each frame showing the data's state as the approach actually computed it and what just changed. Unlike a Diagram, which shows an example, a Walkthrough shows how the answer is reached.
+_Avoid_: Visualization, solution animation, trace
+
 ### Grading
 
 **Verdict**:
