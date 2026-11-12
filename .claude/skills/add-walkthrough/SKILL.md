@@ -48,7 +48,7 @@ Done when both captures end `✓ no console errors, no sideways scroll` and ever
 ./gradlew :backend:test --tests 'com.codebite.problem.WalkthroughsMatchSamplesTest' --tests 'com.codebite.problem.ProblemSlugsTest'
 ```
 
-`WalkthroughsMatchSamplesTest` checks every file in `walkthroughs/` against the migrated samples (one run per sample, in order, by `sampleInput` and `expected`, each ending on its answer) and the format; `ProblemSlugsTest` that the file names a current Slug. Don't run it while `dev-branch-servers.sh` is compiling the backend: two Gradle builds in one worktree corrupt `backend/build` (`./gradlew :backend:clean` recovers). Done when both are green.
+`WalkthroughsMatchSamplesTest` checks every file in `walkthroughs/` against the migrated samples (one run per sample, in order, by `sampleInput` and `expected`, each ending on its answer) and the format; `ProblemSlugsTest` that the file names a current Slug. Don't run it while `dev-branch-servers.sh` is compiling the backend: two Gradle builds in one worktree corrupt the backend build output (`./gradlew :backend:clean` recovers). Done when both are green.
 
 ## 5. Check the tab
 
