@@ -55,11 +55,12 @@ db_unreachable_message() {
 }
 
 # For a script reading database $1 from checkout $2: the database is only as new as the last
-# backend start, so this warns on stderr (BEHIND) when the checkout has migrations the database
-# hasn't run, naming both versions; a checkout with no migrations at all has nothing to be behind.
-# Returns 1, with db_unreachable_message prefixed by $3 (the script's name), when the database
-# can't be read.
-warn_if_behind() {
+# backend start, so a database missing migrations this checkout has (BEHIND) would show problems as
+# they were, not as they are. This refuses one on stderr, naming both versions, and returns 1; with
+# CODEBITE_ALLOW_STALE=1 it only warns. A checkout with no migrations at all has nothing to be
+# behind. Returns 1, with db_unreachable_message prefixed by $3 (the script's name), when the
+# database can't be read.
+require_current_db() {
   local database=$1 here=$2 script=$3 db ours
   db=$(flyway_version "$database")
   if [[ -z "$db" ]]; then
@@ -68,7 +69,12 @@ warn_if_behind() {
   fi
   ours=$(newest_migration "$here")
   if [[ -n "$ours" ]] && (( db < ours )); then
-    echo "WARNING: database $database at V$db, this checkout's migrations reach V$ours; start scripts/dev-branch-servers.sh and rerun with CODEBITE_DB=<the database it prints>" >&2
+    if [[ "${CODEBITE_ALLOW_STALE:-}" == 1 ]]; then
+      echo "WARNING: database $database at V$db, this checkout's migrations reach V$ours; reading it anyway (CODEBITE_ALLOW_STALE=1)" >&2
+    else
+      echo "$script: database $database at V$db, this checkout's migrations reach V$ours, so it may show problems as they were; start scripts/dev-branch-servers.sh and rerun with CODEBITE_DB=<the database it prints>, or set CODEBITE_ALLOW_STALE=1 to read it anyway" >&2
+      return 1
+    fi
   fi
 }
 

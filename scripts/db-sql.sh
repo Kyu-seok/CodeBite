@@ -13,8 +13,8 @@
 #
 # Reads only: the session is read-only, so a write fails; a change to a problem goes in
 # a migration. The database is only as new as the last backend start, so the script
-# warns (BEHIND) when this checkout has migrations the database hasn't run. A query
-# error exits non-zero with psql's message.
+# refuses one missing migrations this checkout has (BEHIND; CODEBITE_ALLOW_STALE=1
+# reads it anyway, with a warning). A query error exits non-zero with psql's message.
 set -euo pipefail
 
 usage() { echo 'usage: scripts/db-sql.sh "<sql>"   or   scripts/db-sql.sh < query.sql' >&2; exit 2; }
@@ -25,7 +25,7 @@ here=$(cd "$(dirname "$0")/.." && pwd)
 source "$here/scripts/dev-servers-common.sh"
 
 database=${CODEBITE_DB:-codebite}
-warn_if_behind "$database" "$here" db-sql.sh || exit 1
+require_current_db "$database" "$here" db-sql.sh || exit 1
 
 {
   echo 'SET default_transaction_read_only = on;'
