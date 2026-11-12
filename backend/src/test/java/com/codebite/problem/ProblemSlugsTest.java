@@ -2,6 +2,7 @@ package com.codebite.problem;
 
 import com.codebite.judge.Language;
 import com.codebite.judge.program.ProblemAssets;
+import com.codebite.problem.service.Walkthroughs;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -15,9 +16,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * The Slugs every migration leaves behind against the Driver and Starter Code directories filed
- * under them, so a Restatement that moves one without the other fails here rather than in
- * production (a problem nobody can Run or Submit, or an editor with no Starter Code).
+ * The Slugs every migration leaves behind against the Driver and Starter Code directories and the
+ * Walkthrough files filed under them, so a Restatement that moves one without the other fails here
+ * rather than in production (a problem nobody can Run or Submit, an editor with no Starter Code, or
+ * a Walkthrough tab that silently disappears).
  *
  */
 class ProblemSlugsTest {
@@ -58,6 +60,14 @@ class ProblemSlugsTest {
         }
         assertTrue(orphans.isEmpty(), "Drivers no problem has as its Slug (a directory renamed "
                 + "without its Restatement migration, or a Former Slug left behind?): " + orphans);
+    }
+
+    @Test
+    void everyWalkthroughIsFiledUnderAProblemsSlug() {
+        Set<String> orphans = new TreeSet<>(new Walkthroughs().slugs());
+        orphans.removeAll(slugs);
+        assertTrue(orphans.isEmpty(), "Walkthroughs no problem has as its Slug (a Restatement without "
+                + "the git mv of walkthroughs/<slug>.json?): " + orphans);
     }
 
     @Test

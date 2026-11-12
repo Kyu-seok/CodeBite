@@ -16,6 +16,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Every problem's Walkthrough, read once from {@code walkthroughs/<slug>.json} on the classpath
@@ -59,6 +61,11 @@ public class Walkthroughs {
     /** The Walkthrough filed under {@code slug}, as its JSON text. */
     public Optional<String> of(String slug) {
         return Optional.ofNullable(bySlug.get(slug));
+    }
+
+    /** Every Slug a Walkthrough is filed under, in order. */
+    public Set<String> slugs() {
+        return new TreeSet<>(bySlug.keySet());
     }
 
     private static Resource[] find(String pattern) {
