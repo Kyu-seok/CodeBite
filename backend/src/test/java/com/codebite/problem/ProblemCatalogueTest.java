@@ -8,6 +8,7 @@ import com.codebite.problem.entity.Problem;
 import com.codebite.problem.repository.ProblemRepository;
 import com.codebite.problem.repository.TestCaseRepository;
 import com.codebite.problem.service.ProblemDtos;
+import com.codebite.problem.service.Walkthroughs;
 import com.codebite.problem.dto.ProblemListItem;
 import com.codebite.problem.repository.ProblemTranslationRepository;
 import com.codebite.problem.service.ProblemCatalogue;
@@ -49,7 +50,8 @@ class ProblemCatalogueTest {
     @BeforeEach
     void setUp() {
         problemService = new ProblemCatalogue(problemRepository, translationRepository, testCaseRepository,
-                problemPopularity, userProgress, new ProblemDtos(new ProblemAssets("classpath:problem-assets/")));
+                problemPopularity, userProgress, new ProblemDtos(new ProblemAssets("classpath:problem-assets/"), new Walkthroughs("classpath:walkthrough-fixtures/none/")),
+                new Walkthroughs("classpath:walkthrough-fixtures/none/"));
     }
 
     private Problem buildProblem(Long id, String title, String slug, boolean published) {
