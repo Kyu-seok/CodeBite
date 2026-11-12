@@ -95,7 +95,7 @@ def solve(ward, run):
     if fresh:
         stuck = [(r, c) for r in range(rows) for c in range(cols) if ward[r][c] == 1]
         frame({"en": f"The wave is gone but {fresh} fresh {plural(fresh, 'donut is', 'donuts are')} walled off "
-                     f"by empty slots and never go stale: answer -1.",
+                     f"by empty slots and never {plural(fresh, 'goes', 'go')} stale: answer -1.",
                "ko": f"물결은 끝났지만 신선한 도넛 {fresh}개가 빈 자리에 막혀 끝내 상하지 않습니다: 답 -1."},
               bad=stuck, answer=str(answer))
     else:

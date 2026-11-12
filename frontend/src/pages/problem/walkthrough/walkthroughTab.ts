@@ -1,6 +1,6 @@
 // The Walkthrough tab's decisions, free of React (docs/adr/0011): which left-panel tabs a problem
 // shows, where the learner is in its Walkthrough while they move between tabs, and which language a
-// Walkthrough's text shows in.
+// Walkthrough shows in.
 
 export type LeftTab = "description" | "submissions" | "solutions" | "walkthrough"
 
@@ -42,17 +42,10 @@ export function stepped(place: WalkthroughPlace, run: number, frame: number): Wa
   return { ...place, run, frame }
 }
 
-/** A Walkthrough Text field: one string, or one per language. */
-export type Text = string | { [lang: string]: string }
-
-/** The language a Walkthrough shows in, from the UI language ("ko-KR" reads as "ko"). */
+/**
+ * The language a Walkthrough shows in, from the UI language ("ko-KR" reads as "ko"). The page reads
+ * its Text fields with the player's own `textOf`, so the title and the frames pick a language alike.
+ */
 export function walkthroughLang(uiLanguage: string | undefined): string {
   return (uiLanguage ?? "en").split("-")[0] || "en"
-}
-
-/** A Text field in `lang`, or in English when that language's text is missing or empty. */
-export function textIn(text: Text | null | undefined, lang: string): string {
-  if (text == null) return ""
-  if (typeof text === "string") return text
-  return text[lang] || text.en || ""
 }

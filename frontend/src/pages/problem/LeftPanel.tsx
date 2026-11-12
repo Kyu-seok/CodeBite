@@ -12,10 +12,10 @@ import type { AddCustomTestOutcome } from './customTests';
 import { PanelLeftClose, PanelLeftOpen, Maximize2, Minimize2, Footprints } from 'lucide-react';
 import Spinner from '@/components/ui/Spinner';
 import { leftTabs, type LeftTab, type WalkthroughPlace } from './walkthrough/walkthroughTab';
+import { cn } from '@/lib/utils';
 
 // The player downloads only when the Walkthrough tab opens.
 const WalkthroughPanel = lazy(() => import('./walkthrough/WalkthroughPanel'));
-import { cn } from '@/lib/utils';
 
 function DescriptionIcon() {
   return (

@@ -44,7 +44,7 @@ Create `common/src/main/resources/db/migration/V<next>__correct_<slug_with_under
    WHERE problem_id = (SELECT id FROM problems WHERE slug = '<slug>')
      AND is_sample = FALSE AND order_index = 8 AND input = E'[1,3,5,7,9]\n10';
    ```
-2. A corrected sample is also an example: update that **Example N** in `problems.description` and the Korean `problem_translations` row, and its Diagram if it has one (`.claude/skills/add-diagram/SKILL.md`).
+2. A corrected sample is also an example: update that **Example N** in `problems.description` and the Korean `problem_translations` row, and its Diagram if it has one (`.claude/skills/add-diagram/SKILL.md`). It is also a Walkthrough run when `common/src/main/resources/walkthroughs/<slug>.json` exists: `WalkthroughsMatchSamplesTest` goes red until you rerun the tracer per `.claude/skills/add-walkthrough/SKILL.md` ("When a problem changes") and commit the new JSON in the same commit.
 3. Two cases at one `order_index`: move the hidden ones up, as V201 did, before any `UPDATE` that names a case by its position.
 4. Head the migration with what was wrong, the change, and the Guarantee that checks it (V202 is the model).
 

@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest"
+import { textOf } from "@/components/walkthrough/walkthrough.js"
 import {
   leftTabs,
   shownLeftTab,
   walkthroughLang,
-  textIn,
   NO_WALKTHROUGH_YET,
   forProblem,
   revealed,
@@ -56,11 +56,10 @@ describe("a Walkthrough's text in the UI language", () => {
     expect(walkthroughLang(undefined)).toBe("en")
   })
 
-  it("shows the language's text, falling back to English per field", () => {
-    expect(textIn({ en: "Example 1", ko: "예시 1" }, "ko")).toBe("예시 1")
-    expect(textIn({ en: "Example 1" }, "ko")).toBe("Example 1")
-    expect(textIn({ en: "Example 1", ko: "" }, "ko")).toBe("Example 1")
-    expect(textIn("plain", "ko")).toBe("plain")
-    expect(textIn(undefined, "en")).toBe("")
+  it("shows the language's text, falling back to English per field, as the player does", () => {
+    expect(textOf({ en: "Example 1", ko: "예시 1" }, "ko")).toBe("예시 1")
+    expect(textOf({ en: "Example 1" }, "ko")).toBe("Example 1")
+    expect(textOf("plain", "ko")).toBe("plain")
+    expect(textOf(undefined, "en")).toBe("")
   })
 })

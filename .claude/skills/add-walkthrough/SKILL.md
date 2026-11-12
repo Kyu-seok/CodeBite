@@ -61,4 +61,4 @@ Commit `feat(problem): Walkthrough for <slug>` with the tracer and the JSON toge
 ## When a problem changes
 
 - **A sample Test Case changes** (`correct-test-cases`): `WalkthroughsMatchSamplesTest` goes red; run the tracer against a database with the correction and commit the new JSON with it.
-- **The Slug changes** (`restate-problem`): `git mv` the JSON and the tracer to the new Slug and update the tracer's `SLUG`; `ProblemSlugsTest` goes red on a file left under the old one.
+- **The Slug, title or parameter names change**: `.claude/skills/restate-problem/SKILL.md`, step 4, moves or regenerates the Walkthrough.
