@@ -195,6 +195,7 @@
 .wt-mapcard.wt-dim, .wt-mapcard.wt-unranked:not(.wt-path) { opacity: .4; }
 
 /* map slots: a map that holds at most k keys; a key beyond them is red, and a key whose count reached 0 is struck */
+.wt-mapspace { width: 62px; height: 0; visibility: hidden; } /* room kept for a card a later frame adds */
 .wt-mapslot { min-width: 62px; min-height: 58px; border: 2px dashed var(--wt-faint); border-radius: 10px; }
 .wt-mapcard.wt-over { border-color: var(--wt-bad); background: var(--wt-bad-soft); }
 .wt-mapcard.wt-struck { border-style: dashed; border-color: var(--wt-bad); background: transparent; opacity: .55; }
@@ -210,6 +211,7 @@
 /* output: the box the answer's values move into */
 .wt-output { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; min-width: 96px; min-height: 46px; padding: 6px; border: 2px solid var(--wt-lo); border-radius: 10px; background: var(--wt-bg); }
 .wt-output > .wt-empty { padding: 0 6px; }
+.wt-outchip.wt-outspace { visibility: hidden; } /* room kept for a value a later frame adds */
 .wt-outchip { font: 700 15px var(--wt-mono); padding: 5px 10px; border-radius: 7px; color: var(--wt-card); background: var(--wt-accent); }
 .wt-outchip.wt-good { background: var(--wt-good); }
 .wt-outchip.wt-dim { opacity: .4; }

@@ -48,7 +48,7 @@ export interface GraphState {
 export interface TableState { columns?: Text[]; rows: { label: Text; cells: unknown[] }[]; marks?: Marks<[number, number]> }
 export interface VarsState { items: { label: Text; value: unknown; mark?: Mark | null; empty?: Text }[] }
 
-/** A place in a view: an array or output index, a map key, an intervals [group, index]. Each view type that holds values defines its `at`. */
+/** A place in a view: an array or output index, a map key, a table [row, col], an intervals [group, index]. Each view type that holds values defines its `at`. */
 export interface Address { view: string; at: number | string | [number, number] }
 /** A value going from one place to another. No `from`: created at `to`; no `to`: dropped from `from`.
  *  `value` is the chip's text (default: the source's); `mark` overrides the colour (default: path into an output, bad when dropped, else good). */

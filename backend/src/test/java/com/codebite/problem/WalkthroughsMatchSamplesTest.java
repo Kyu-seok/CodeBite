@@ -156,6 +156,24 @@ class WalkthroughsMatchSamplesTest {
         assertFalse(found.isEmpty(), breakage + " was not caught");
     }
 
+    // --- table cells, on a copy of group-anagrams ------------------------------------------------------
+
+    @ParameterizedTest(name = "{0}")
+    @ValueSource(strings = {"move from a row that isn't there", "move from a column that isn't there", "move from a bare index"})
+    void aBrokenTableAddressIsCaught(String breakage) throws Exception {
+        ObjectNode walkthrough = (ObjectNode) JSON.readTree(WALKTHROUGHS.of("group-anagrams").orElseThrow());
+        ArrayNode frames = (ArrayNode) walkthrough.get("runs").get(0).get("frames");
+        ObjectNode from = (ObjectNode) frames.get(1).get("moves").get(0).get("from");
+        switch (breakage) {
+            case "move from a row that isn't there" -> from.set("at", JSON.readTree("[99, 0]"));
+            case "move from a column that isn't there" -> from.set("at", JSON.readTree("[0, 9]"));
+            case "move from a bare index" -> from.put("at", 0);
+            default -> throw new IllegalArgumentException(breakage);
+        }
+        List<String> found = mismatches("group-anagrams", walkthrough, SAMPLES.get("group-anagrams"));
+        assertTrue(found.stream().anyMatch(m -> m.contains("is not a [row, col] of table")), breakage + " was not caught: " + found);
+    }
+
     // --- intervals, on a copy of merge-reservation-slots ---------------------------------------------
 
     @ParameterizedTest(name = "{0}")
@@ -387,7 +405,7 @@ class WalkthroughsMatchSamplesTest {
 
     /**
      * What is wrong with one move: each end it has must name a place that exists in that frame's state of its view
-     * (the skill's {@code ADDRESSES}: an array or output index, a map key).
+     * (the skill's {@code ADDRESSES}: an array or output index, a map key, a table [row, col], an intervals [group, index]).
      */
     private static List<String> move(JsonNode move, Map<String, JsonNode> views, JsonNode setup, JsonNode states) {
         if (!move.isObject() || (!move.hasNonNull("from") && !move.hasNonNull("to"))) return List.of("no from and no to");
@@ -407,7 +425,7 @@ class WalkthroughsMatchSamplesTest {
             }
             String type = view.path("type").asText();
             String where = end + " " + address;
-            if (!List.of("array", "map", "output", "intervals").contains(type)) {
+            if (!List.of("array", "map", "output", "table", "intervals").contains(type)) {
                 p.add(where + ": view type \"" + type + "\" has no addresses");
                 continue;
             }
@@ -421,12 +439,15 @@ class WalkthroughsMatchSamplesTest {
             JsonNode at = address.get("at");
             boolean exists = switch (type) {
                 case "map" -> keys(state).contains(key(at));
+                case "table" -> at != null && at.isArray() && at.size() == 2 && index(at.get(0), state.path("rows"))
+                        && index(at.get(1), state.path("rows").path(at.get(0).asInt()).path("cells"));
                 case "intervals" -> at != null && at.isArray() && at.size() == 2 && index(at.get(0), state.path("groups"))
                         && index(at.get(1), state.path("groups").path(at.get(0).asInt()).path("intervals"));
                 default -> index(at, state.path("values"));
             };
             String what = switch (type) {
                 case "map" -> "a key";
+                case "table" -> "a [row, col]";
                 case "intervals" -> "a [group, index]";
                 default -> "an index";
             };
