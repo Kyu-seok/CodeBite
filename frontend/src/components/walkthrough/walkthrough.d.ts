@@ -48,6 +48,8 @@ export interface IntervalsState {
   points?: { at: number; label?: Text; mark?: Mark }[];
   domain?: [number, number];
 }
+/** Address: a node id, or an edge as [from, to] (either order when the view isn't `directed`). A move from a node
+ *  carries the value under it, one from an edge its label. */
 export interface GraphState {
   nodes: { id: string | number; label?: Text; tag?: Text }[];
   edges: { from: string | number; to: string | number; label?: Text }[];
@@ -56,8 +58,8 @@ export interface GraphState {
 export interface TableState { columns?: Text[]; rows: { label: Text; cells: unknown[] }[]; marks?: Marks<[number, number]> }
 export interface VarsState { items: { label: Text; value: unknown; mark?: Mark | null; empty?: Text }[] }
 
-/** A place in a view: an array or output index, a map key, a set member, a queue position from the front, a grid [row, col], a table [row, col], an intervals [group, index]. Each view type that holds values defines its `at`. */
-export interface Address { view: string; at: number | string | [number, number] }
+/** A place in a view: an array or output index, a map key, a set member, a queue position from the front, a grid [row, col], a table [row, col], an intervals [group, index], a graph node id or [from, to] edge. Each view type that holds values defines its `at`. */
+export interface Address { view: string; at: number | string | [number, number] | [string | number, string | number] }
 /** A value going from one place to another. No `from`: created at `to`; no `to`: dropped from `from`.
  *  `value` is the chip's text (default: the source's); `mark` overrides the colour (default: path into an output, bad when dropped, else good). */
 export interface Move { from?: Address; to?: Address; value?: unknown; mark?: 'good' | 'bad' | 'path' }
@@ -76,6 +78,8 @@ export interface MountOptions {
 }
 export interface Player { show(run: number, frame: number | 'last'): void; destroy(): void }
 export function mount(root: HTMLElement, walkthrough: Walkthrough, options?: MountOptions): Player;
+/** The index of the edge a graph address `[from, to]` names, or -1; an undirected edge answers to either order. */
+export function edgeAt(edges: GraphState['edges'], at: [string | number, string | number], directed: boolean): number;
 export function layoutGraph(nodes: GraphState['nodes'], edges: GraphState['edges'], directed: boolean): { pos: Map<string, { col: number; row: number }>; cols: number; rows: number };
 export function axisTicks(min: number, max: number): number[];
 export function textOf(text: Text | null | undefined, lang: string): string;

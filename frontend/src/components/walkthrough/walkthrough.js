@@ -74,6 +74,13 @@ export function layoutGraph(nodes, edges, directed) {
   return { pos, cols: Math.max(...layer.values()) + 1, rows: Math.max(...[...byLayer.values()].map(v => v.length)) };
 }
 
+// The index of the edge a graph address `[from, to]` names (the first, if several do), or -1; an undirected edge
+// answers to either order.
+export function edgeAt(edges, [a, b], directed) {
+  const is = (x, y) => String(x) === String(y);
+  return (edges || []).findIndex(e => (is(e.from, a) && is(e.to, b)) || (!directed && is(e.from, b) && is(e.to, a)));
+}
+
 // ---------- views ----------
 // Each view type: mount(host, config, ctx) -> { update(state), locate?(at), prepare?(states) }. `state` is the run's
 // setup merged with the frame's; `prepare` gets every frame's state once per run, before the first update. `locate(at)`
@@ -522,33 +529,43 @@ VIEWS.graph = (host, config, ctx) => {
       }
       const g = svg('g', {}, eg);
       const path = svg('path', { d, class: 'wt-edge' }, g);
-      let label = null;
+      // a move to or from the edge lands on its label chip, or on a dot at its middle when it has no label
+      let spot;
       if (e.label != null) {
         const t = textOf(e.label, ctx.lang), w = 10 + 7.5 * t.length;
-        svg('rect', { x: mx - w / 2, y: my - 9, width: w, height: 18, rx: 9, class: 'wt-chipbg' }, g);
-        label = svg('text', { x: mx, y: my + 4, 'text-anchor': 'middle', class: 'wt-elabel' }, g);
-        label.textContent = t;
-      }
-      return { g, path, directed };
+        spot = svg('rect', { x: mx - w / 2, y: my - 9, width: w, height: 18, rx: 9, class: 'wt-chipbg' }, g);
+        svg('text', { x: mx, y: my + 4, 'text-anchor': 'middle', class: 'wt-elabel' }, g).textContent = t;
+        spot.dataset.token = t;
+      } else spot = svg('circle', { cx: mx, cy: my, r: 1, class: 'wt-espot' }, g);
+      return { g, path, directed, spot };
     });
     const nodeEls = new Map();
     for (const n of nodes) {
       const [x, y] = P(n.id);
       const g = svg('g', { transform: `translate(${x},${y})` }, root);
-      svg('circle', { r: R, class: 'wt-node' }, g);
-      svg('text', { y: 5, 'text-anchor': 'middle', class: 'wt-nid' }, g).textContent = n.label != null ? textOf(n.label, ctx.lang) : fmt(n.id);
+      const circle = svg('circle', { r: R, class: 'wt-node' }, g);
+      const name = n.label != null ? textOf(n.label, ctx.lang) : fmt(n.id);
+      svg('text', { y: 5, 'text-anchor': 'middle', class: 'wt-nid' }, g).textContent = name;
       if (n.tag != null) svg('text', { y: -R - 8, 'text-anchor': 'middle', class: 'wt-tag wt-ntag' }, g).textContent = textOf(n.tag, ctx.lang);
       const val = svg('text', { y: R + 19, 'text-anchor': 'middle', class: 'wt-val wt-val-sm' }, g);
-      nodeEls.set(keyOf(n.id), { g, val });
+      nodeEls.set(keyOf(n.id), { g, val, circle, name });
     }
     // crop to what was drawn: arcs only take the side they bend to
     try {
       const b = root.getBBox();
       if (b.width && b.height) { root.setAttribute('viewBox', `${b.x - 6} ${b.y - 6} ${b.width + 12} ${b.height + 12}`); root.setAttribute('width', b.width + 12); }
     } catch {}
-    return { nodes, edges, edgeEls, nodeEls };
+    return { nodes, edges, edgeEls, nodeEls, directed };
   }
   return {
+    // A node's address is its id, an edge's [from, to]; a move from a node carries the value under it (else its name),
+    // one from an edge its label.
+    locate: at => {
+      if (!built) return null;
+      if (!Array.isArray(at)) return built.nodeEls.get(keyOf(at))?.circle || null;
+      const i = at.length === 2 ? edgeAt(built.edges, at, built.directed) : -1;
+      return i >= 0 ? built.edgeEls[i].spot : null;
+    },
     update(s) {
       if (!built || built.nodes !== s.nodes || built.edges !== s.edges) built = build(s.nodes || [], s.edges || []);
       const nm = markMap(s.nodeMarks), em = markMap(s.edgeMarks), values = s.values || {};
@@ -557,9 +574,10 @@ VIEWS.graph = (host, config, ctx) => {
         g.setAttribute('class', 'wt-e wt-' + m);
         if (directed) path.setAttribute('marker-end', `url(#${ctx.uid}-ah-${m})`);
       });
-      for (const [id, { g, val }] of built.nodeEls) {
+      for (const [id, { g, val, circle, name }] of built.nodeEls) {
         g.setAttribute('class', 'wt-n' + markClass(nm, id));
         val.textContent = fmt(values[id]);
+        circle.dataset.token = val.textContent || name;
       }
     },
   };
