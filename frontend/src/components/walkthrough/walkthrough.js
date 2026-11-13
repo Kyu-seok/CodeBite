@@ -75,7 +75,9 @@ export function layoutGraph(nodes, edges, directed) {
 }
 
 // ---------- views ----------
-// Each view type: mount(host, config, ctx) -> { update(state) }. `state` is the run's setup merged with the frame's.
+// Each view type: mount(host, config, ctx) -> { update(state), locate?(at) }. `state` is the run's setup merged with
+// the frame's. `locate(at)` returns the element a move's address names (an array index, a map key), or null: a view
+// type that holds values defines it, and scripts/validate.mjs's ADDRESSES says which `at` it takes.
 export const VIEWS = {};
 
 VIEWS.grid = (host, config, ctx) => {
@@ -146,6 +148,7 @@ VIEWS.array = (host, config, ctx) => {
     return { n, max, items, unit, top, barH };
   }
   return {
+    locate: at => (built && Number.isInteger(at) && built.items[at] ? built.items[at].g : null),
     update(s) {
       const vals = s.values || [], fills = s.fill || [];
       const max = bars ? Math.max(1, ...vals.map((v, i) => (+v || 0) + (+fills[i] || 0)), config.max || 0) : 0;
@@ -164,6 +167,62 @@ VIEWS.array = (host, config, ctx) => {
           fill.style.height = f + 'px'; fill.style.y = top + barH - h - f + 'px';
         }
       });
+    },
+  };
+};
+
+// A hash map: one card per key in insertion order. A count is drawn as dots and the number, a list as chips.
+const MAX_DOTS = 10;
+VIEWS.map = (host, config, ctx) => {
+  host.innerHTML = '';
+  const box = html('div', 'wt-map', host);
+  const cards = new Map(); // String(key) -> card element, kept so marks transition
+  let empty = null;
+  return {
+    locate: at => cards.get(String(at)) || null,
+    update(s) {
+      const m = markMap(s.marks), entries = s.entries || [];
+      const rank = new Map((s.ranks || []).map((k, i) => [String(k), i + 1]));
+      const live = new Set(entries.map(e => String(e.key)));
+      for (const [k, el] of cards) if (!live.has(k)) { el.remove(); cards.delete(k); }
+      if (empty) { empty.remove(); empty = null; }
+      if (!entries.length) empty = html('span', 'wt-empty', box, config.empty != null ? textOf(config.empty, ctx.lang) : 'empty');
+      for (const e of entries) {
+        const k = String(e.key);
+        let card = cards.get(k);
+        if (!card) { card = html('div', null, null); cards.set(k, card); }
+        box.appendChild(card); // insertion order
+        card.className = 'wt-mapcard' + markClass(m, e.key) + (rank.size && !rank.has(k) ? ' wt-unranked' : '');
+        card.dataset.token = fmt(e.key);
+        card.innerHTML = '';
+        if (rank.has(k)) html('span', 'wt-rank', card, '#' + rank.get(k));
+        html('div', 'wt-mapkey', card, fmt(e.key));
+        const v = e.value;
+        if (Array.isArray(v)) {
+          const chips = html('div', 'wt-chips', card);
+          v.forEach(x => html('span', 'wt-chip', chips, fmt(x)));
+        } else if (Number.isInteger(v) && v >= 0 && v <= MAX_DOTS) {
+          const dots = html('div', 'wt-dots', card);
+          for (let i = 0; i < v; i++) html('span', 'wt-dot', dots);
+          html('div', 'wt-mapval', card, fmt(v));
+        } else html('div', 'wt-mapval', card, fmt(v));
+      }
+    },
+  };
+};
+
+// The answer as it forms: a box its values move into, one chip per value.
+VIEWS.output = (host, config, ctx) => {
+  host.innerHTML = '';
+  const box = html('div', 'wt-output', host);
+  let chips = [];
+  return {
+    locate: at => (Number.isInteger(at) && chips[at]) || null,
+    update(s) {
+      const m = markMap(s.marks), values = s.values || [];
+      box.innerHTML = '';
+      if (!values.length) html('span', 'wt-empty', box, config.empty != null ? textOf(config.empty, ctx.lang) : 'empty');
+      chips = values.map((v, i) => html('span', 'wt-outchip' + markClass(m, i), box, fmt(v)));
     },
   };
 };
@@ -291,6 +350,95 @@ VIEWS.vars = (host, config, ctx) => {
   };
 };
 
+// ---------- moves ----------
+// A frame's `moves` are drawn over the stage: a dashed arrow from each source to its target, and on a step forward
+// (without reduced motion) a chip flying along it first. No `from`: the value is created at `to`; no `to`: dropped.
+const FLIGHT_MS = 550;
+function createMoves(layer, stage, ctx, viewById) {
+  const overlay = svg('svg', { class: 'wt-movesvg', 'aria-hidden': 'true' }, layer);
+  const defs = svg('defs', {}, overlay);
+  for (const m of ['good', 'bad', 'path']) {
+    const mk = svg('marker', { id: `${ctx.uid}-mv-${m}`, viewBox: '0 0 10 10', refX: 9, refY: 5, markerWidth: 6, markerHeight: 6, orient: 'auto-start-reverse' }, defs);
+    svg('path', { d: 'M0,0 L10,5 L0,10 z', class: 'wt-ah wt-ah-' + m }, mk);
+  }
+  const arrows = svg('g', {}, overlay);
+  let current = [], flights = [];
+  const locate = a => {
+    if (!a) return null;
+    const v = viewById(a.view);
+    return v && !v.box.hidden && v.view.locate ? v.view.locate(a.at) : null;
+  };
+  const tone = mv => mv.mark || (!mv.to ? 'bad' : viewById(mv.to.view)?.type === 'output' ? 'path' : 'good');
+  function rect(el) {
+    const a = el.getBoundingClientRect(), b = stage.getBoundingClientRect();
+    return { x: a.left - b.left, y: a.top - b.top, w: a.width, h: a.height };
+  }
+  const STUB = 30;
+  function geometry(mv) {
+    const s = locate(mv.from), t = locate(mv.to);
+    if ((mv.from && !s) || (mv.to && !t) || (!s && !t)) return null;
+    const rs = s && rect(s), rt = t && rect(t);
+    let d, x1, y1, x2, y2;
+    if (rs && rt) {
+      const down = rt.y >= rs.y + rs.h - 1, up = rt.y + rt.h <= rs.y + 1;
+      if (down || up) {
+        x1 = rs.x + rs.w / 2; y1 = down ? rs.y + rs.h : rs.y; x2 = rt.x + rt.w / 2; y2 = down ? rt.y - 2 : rt.y + rt.h + 2;
+        const my = (y1 + y2) / 2;
+        d = `M${x1},${y1} C${x1},${my} ${x2},${my} ${x2},${y2}`;
+      } else { // side by side: dip under both, so the arrow never crosses the cells between them
+        x1 = rs.x + rs.w / 2; y1 = rs.y + rs.h; x2 = rt.x + rt.w / 2; y2 = rt.y + rt.h + 2;
+        const low = Math.max(y1, y2) + Math.min(56, 18 + Math.abs(x2 - x1) / 12);
+        d = `M${x1},${y1} C${x1},${low} ${x2},${low} ${x2},${y2}`;
+      }
+    } else if (rt) { // created here
+      x2 = x1 = rt.x + rt.w / 2; y2 = rt.y - 2; y1 = y2 - STUB; d = `M${x1},${y1} L${x2},${y2}`;
+    } else { // dropped
+      x2 = x1 = rs.x + rs.w / 2; y1 = rs.y; y2 = y1 - STUB; d = `M${x1},${y1} L${x2},${y2}`;
+    }
+    return { d, x1, y1, x2, y2, src: s, dst: t };
+  }
+  function draw() {
+    arrows.replaceChildren();
+    const r = stage.getBoundingClientRect();
+    overlay.setAttribute('width', r.width); overlay.setAttribute('height', r.height);
+    const drawn = [];
+    for (const mv of current) {
+      const g = geometry(mv);
+      if (!g) continue;
+      const m = tone(mv);
+      svg('path', { d: g.d, class: 'wt-movearrow wt-' + m, 'marker-end': `url(#${ctx.uid}-mv-${m})` }, arrows);
+      drawn.push({ mv, g, m });
+    }
+    return drawn;
+  }
+  function land() { for (const f of flights) f.cancel(); flights = []; layer.querySelectorAll('.wt-flychip').forEach(n => n.remove()); }
+  const reduced = () => typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function show(list, forward) {
+    land();
+    current = list;
+    const drawn = draw();
+    if (!forward || reduced() || !drawn.length || typeof Element.prototype.animate !== 'function') return;
+    flights.push(arrows.animate([{ opacity: 0 }, { opacity: 0, offset: 0.8 }, { opacity: 1 }], { duration: FLIGHT_MS + 150 }));
+    for (const { mv, g, m } of drawn) {
+      const chip = html('span', 'wt-flychip wt-' + m, layer, mv.value !== undefined ? fmt(mv.value) : (g.src?.dataset?.token ?? g.src?.textContent ?? g.dst?.dataset?.token ?? g.dst?.textContent ?? '').trim());
+      chip.style.left = g.x1 + 'px'; chip.style.top = g.y1 + 'px';
+      const dx = g.x2 - g.x1, dy = g.y2 - g.y1, lift = Math.min(40, 14 + Math.hypot(dx, dy) / 6);
+      const a = chip.animate([
+        { transform: 'translate(-50%,-50%) scale(1)', opacity: mv.from ? 1 : 0 },
+        { transform: `translate(calc(${dx / 2}px - 50%), calc(${dy / 2 - lift}px - 50%)) scale(1.12)`, opacity: 1, offset: 0.5 },
+        { transform: `translate(calc(${dx}px - 50%), calc(${dy}px - 50%)) scale(.9)`, opacity: mv.to ? 0.25 : 0 },
+      ], { duration: FLIGHT_MS, easing: 'cubic-bezier(.4,0,.2,1)' });
+      a.finished.then(() => chip.remove(), () => chip.remove());
+      flights.push(a);
+    }
+  }
+  const redraw = () => { if (current.length) draw(); };
+  const ro = typeof ResizeObserver === 'function' ? new ResizeObserver(redraw) : null;
+  if (ro) ro.observe(stage);
+  stage.addEventListener('scroll', redraw, true);
+  return { show, destroy() { land(); if (ro) ro.disconnect(); stage.removeEventListener('scroll', redraw, true); } };
+}
+
 // ---------- the player ----------
 const UI = {
   en: { expected: 'expected', extra: 'extra input', step: 'Step', first: 'First step', prev: 'Previous step', next: 'Next step', play: 'Play', pause: 'Pause', hint: '← → step · space plays' },
@@ -313,6 +461,7 @@ export function mount(root, wt, options = {}) {
   const head = html('div', 'wt-head', card);
   const inputEl = html('code', 'wt-input', head), expectedEl = html('span', 'wt-expected', head);
   const stage = html('div', 'wt-stage', card);
+  const movesLayer = html('div', 'wt-moves', null);
   const caption = html('div', 'wt-caption', card);
   caption.setAttribute('aria-live', 'polite');
   const controls = html('div', 'wt-controls', card);
@@ -332,17 +481,19 @@ export function mount(root, wt, options = {}) {
   if (wt.runs.length < 2) runsBar.hidden = true;
 
   let runIdx = -1, frameIdx = 0, views = [], timer = null;
+  const moves = createMoves(movesLayer, stage, ctx, id => views.find(v => v.id === id));
   function mountRun(i) {
     runIdx = i;
     const run = wt.runs[i];
     stage.innerHTML = '';
+    stage.appendChild(movesLayer);
     views = wt.views.map(v => {
       const box = html('figure', 'wt-view wt-view-' + v.type, stage);
       if (v.title != null) html('figcaption', 'wt-viewtitle', box, textOf(v.title, lang));
       const host = html('div', 'wt-viewbody', box);
       const make = VIEWS[v.type];
       if (!make) throw new Error(`walkthrough: no view type "${v.type}"`);
-      return { id: v.id, box, view: make(host, v, ctx), setup: (run.setup || {})[v.id] || {} };
+      return { id: v.id, type: v.type, box, view: make(host, v, ctx), setup: (run.setup || {})[v.id] || {} };
     });
     inputEl.textContent = run.input == null ? '' : fmt(run.input);
     expectedEl.textContent = run.expected === undefined ? '' : `${ui.expected} ${fmt(run.expected)}`;
@@ -350,6 +501,7 @@ export function mount(root, wt, options = {}) {
     runButtons.forEach((b, j) => b.setAttribute('aria-selected', j === i));
   }
   function show(i, f) {
+    const before = i === runIdx ? frameIdx : -2;
     if (i !== runIdx) { stop(); mountRun(i); }
     const run = wt.runs[runIdx];
     frameIdx = Math.max(0, Math.min(f, run.frames.length - 1));
@@ -359,6 +511,7 @@ export function mount(root, wt, options = {}) {
       v.box.hidden = st === undefined && !Object.keys(v.setup).length;
       if (!v.box.hidden) v.view.update({ ...v.setup, ...(st || {}) });
     }
+    moves.show(frame.moves || [], frameIdx === before + 1); // only a step forward flies
     caption.textContent = textOf(frame.caption, lang);
     caption.classList.toggle('wt-done', 'answer' in frame);
     scrub.value = frameIdx;
@@ -397,6 +550,6 @@ export function mount(root, wt, options = {}) {
   show(r0, start.frame === 'last' ? 1e9 : +start.frame || 0);
   return {
     show: (r, f) => show(r, f === 'last' ? 1e9 : f),
-    destroy() { stop(); root.removeEventListener('keydown', onKey); root.innerHTML = ''; root.classList.remove('wt'); },
+    destroy() { stop(); moves.destroy(); root.removeEventListener('keydown', onKey); root.innerHTML = ''; root.classList.remove('wt'); },
   };
 }
