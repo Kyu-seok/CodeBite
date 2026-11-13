@@ -10,7 +10,11 @@ on:
   workflow_call:
 
 jobs:
+  # A PR from an integration branch (spec/**, integration/**) skips its jobs: the push trigger above
+  # already runs them on the same commit, and the PR's checks list those runs (gh pr checks counts the
+  # skipped ones as passing).
   backend-test:
+    if: ${{ github.event_name != 'pull_request' || !(startsWith(github.head_ref, 'spec/') || startsWith(github.head_ref, 'integration/')) }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -22,6 +26,7 @@ jobs:
       - run: ./gradlew :common:test :backend:test
 
   worker-test:
+    if: ${{ github.event_name != 'pull_request' || !(startsWith(github.head_ref, 'spec/') || startsWith(github.head_ref, 'integration/')) }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -33,6 +38,7 @@ jobs:
       - run: ./gradlew :worker:test
 
   frontend-check:
+    if: ${{ github.event_name != 'pull_request' || !(startsWith(github.head_ref, 'spec/') || startsWith(github.head_ref, 'integration/')) }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -51,6 +57,7 @@ jobs:
         working-directory: frontend
 
   scripts-check:
+    if: ${{ github.event_name != 'pull_request' || !(startsWith(github.head_ref, 'spec/') || startsWith(github.head_ref, 'integration/')) }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
