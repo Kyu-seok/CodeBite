@@ -102,14 +102,18 @@ VIEWS.grid = (host, config, ctx) => {
   }
   const values = config.values || {};
   return {
+    // A cell's address is [row, col]; a move starts from or lands on its tile, carrying the value drawn there.
+    locate: at => (built && Array.isArray(at) && at.length === 2 && Number.isInteger(at[0]) && Number.isInteger(at[1]) &&
+      at[0] >= 0 && at[0] < built.rows && at[1] >= 0 && at[1] < built.cols ? built.cells[at[0] * built.cols + at[1]].tile : null),
     update(s) {
       const rows = s.cells.length, cols = rows ? s.cells[0].length : 0;
       if (!built || built.rows !== rows || built.cols !== cols) built = build(rows, cols);
       const m = markMap(s.marks), tags = new Map((s.tags || []).map(([r, c, t]) => [r + ',' + c, t]));
-      for (const { r, c, g, val, tag } of built.cells) {
+      for (const { r, c, g, tile, val, tag } of built.cells) {
         const v = s.cells[r][c], spec = values[keyOf(v)] || {};
         g.setAttribute('class', 'wt-cell wt-tone-' + (spec.tone || 'plain') + markClass(m, [r, c]));
         val.textContent = spec.glyph != null ? spec.glyph : config.showValues === false ? '' : fmt(v);
+        tile.dataset.token = val.textContent || `${r},${c}`;
         tag.textContent = textOf(tags.get(r + ',' + c), ctx.lang);
       }
     },
@@ -309,6 +313,40 @@ VIEWS.output = (host, config, ctx) => {
       if (!values.length) html('span', 'wt-empty', box, config.empty != null ? textOf(config.empty, ctx.lang) : 'empty');
       chips = values.map((v, i) => html('span', 'wt-outchip' + markClass(m, i), box, fmt(v)));
       for (const v of fullest.slice(values.length)) html('span', 'wt-outchip wt-outspace', box, fmt(v));
+    },
+  };
+};
+
+// A queue as a horizontal pipe, front on the left: values join at the back (right) and leave from the front (left).
+// `deque: true` opens both ends. A value's address is its position from the front; `tags` label positions above.
+VIEWS.queue = (host, config, ctx) => {
+  host.innerHTML = '';
+  const deque = config.deque === true;
+  const box = html('div', 'wt-queue' + (deque ? ' wt-deque' : ''), host);
+  const end = (cls, arrow, word) => {
+    const e = html('div', 'wt-qend ' + cls, box);
+    html('span', 'wt-qarrow', e, arrow);
+    html('span', 'wt-qword', e, word);
+    return e;
+  };
+  end('wt-qfront', deque ? '⇆' : '←', ctx.ui.front);
+  const pipe = html('div', 'wt-qpipe', box);
+  end('wt-qback', deque ? '⇆' : '←', ctx.ui.back);
+  let items = [];
+  return {
+    locate: at => (Number.isInteger(at) && items[at]) || null,
+    update(s) {
+      const m = markMap(s.marks), values = s.values || [];
+      const tags = new Map((s.tags || []).map(([i, t]) => [i, t]));
+      pipe.innerHTML = '';
+      if (!values.length) html('span', 'wt-empty', pipe, config.empty != null ? textOf(config.empty, ctx.lang) : ctx.ui.empty);
+      items = values.map((v, i) => {
+        const it = html('div', 'wt-qitem' + markClass(m, i), pipe);
+        it.dataset.token = fmt(v);
+        html('span', 'wt-qtag', it, textOf(tags.get(i), ctx.lang));
+        html('span', 'wt-qval', it, fmt(v));
+        return it;
+      });
     },
   };
 };
@@ -605,14 +643,14 @@ function createMoves(layer, stage, ctx, viewById) {
 
 // ---------- the player ----------
 const UI = {
-  en: { expected: 'expected', extra: 'extra input', step: 'Step', first: 'First step', prev: 'Previous step', next: 'Next step', play: 'Play', pause: 'Pause', hint: '← → step · space plays' },
-  ko: { expected: '기대값', extra: '추가 입력', step: '단계', first: '처음', prev: '이전 단계', next: '다음 단계', play: '재생', pause: '일시정지', hint: '← → 단계 이동 · 스페이스 재생' },
+  en: { front: 'front', back: 'back', empty: 'empty', expected: 'expected', extra: 'extra input', step: 'Step', first: 'First step', prev: 'Previous step', next: 'Next step', play: 'Play', pause: 'Pause', hint: '← → step · space plays' },
+  ko: { front: '앞', back: '뒤', empty: '비어 있음', expected: '기대값', extra: '추가 입력', step: '단계', first: '처음', prev: '이전 단계', next: '다음 단계', play: '재생', pause: '일시정지', hint: '← → 단계 이동 · 스페이스 재생' },
 };
 let uidSeq = 0;
 
 export function mount(root, wt, options = {}) {
   const lang = options.lang || 'en', ui = { ...UI.en, ...(UI[lang] || {}), ...(options.ui || {}) };
-  const ctx = { lang, uid: 'wt' + ++uidSeq };
+  const ctx = { lang, ui, uid: 'wt' + ++uidSeq };
   const speed = options.interval || 1400;
   root.classList.add('wt');
   if (options.theme) root.dataset.theme = options.theme;

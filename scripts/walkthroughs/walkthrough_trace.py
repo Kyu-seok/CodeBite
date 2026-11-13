@@ -12,7 +12,8 @@
     run.frame("Answer 4.", answer=4, board=...)   # the last frame carries the answer
     wt.write("walkthrough.json")                  # fails if a run's answer is not its expected output
 
-A value going from one place to another is a move, by address (an array index, a map key, an output index):
+A value going from one place to another is a move, by address (an array index, a map key, an output index, a queue
+position from the front, a grid [row, col]):
 
     from walkthrough_trace import at, move, map_entries, span
     run.frame("4 goes into the map.", xs={"values": nums}, uses={"entries": map_entries(counts)},
@@ -44,7 +45,7 @@ def _snapshot(value, where):
 
 
 def at(view, where):
-    """An address: a place in a view (an array or output index, a map key)."""
+    """An address: a place in a view (an array or output index, a map key, a queue position, a grid [row, col])."""
     return {"view": view, "at": where}
 
 

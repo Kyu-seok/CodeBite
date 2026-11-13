@@ -216,6 +216,22 @@
 .wt-outchip.wt-good { background: var(--wt-good); }
 .wt-outchip.wt-dim { opacity: .4; }
 
+/* queue: a horizontal pipe open at the back (in, right) and the front (out, left); a deque is open at both */
+.wt-queue { display: flex; align-items: center; gap: 6px; }
+.wt-qend { display: flex; flex-direction: column; align-items: center; min-width: 30px; font: 600 10px var(--wt-sans); letter-spacing: .06em; text-transform: uppercase; color: var(--wt-mid); }
+.wt-qarrow { font: 600 16px/1 var(--wt-sans); color: var(--wt-lo); }
+.wt-qpipe { display: flex; align-items: flex-end; gap: 6px; min-width: 96px; min-height: 62px; padding: 6px 8px; border-top: 2px solid var(--wt-lo); border-bottom: 2px solid var(--wt-lo); background: var(--wt-bg); }
+.wt-qpipe > .wt-empty { align-self: center; padding: 0 6px; }
+.wt-qitem { display: flex; flex-direction: column; align-items: center; gap: 2px; transition: opacity .3s; }
+.wt-qtag { font: 600 10px var(--wt-mono); color: var(--wt-mid); min-height: 13px; white-space: nowrap; }
+.wt-qval { font: 600 13px var(--wt-mono); min-width: 44px; padding: 7px 8px; text-align: center; white-space: nowrap; background: var(--wt-card); border: 2px solid var(--wt-faint); border-radius: 8px; transition: border-color .3s, background .3s; }
+.wt-qitem.wt-lit .wt-qval { border-color: var(--wt-accent); background: var(--wt-accent-soft); }
+.wt-qitem.wt-good .wt-qval { border-color: var(--wt-good); background: var(--wt-good-soft); }
+.wt-qitem.wt-good .wt-qtag { color: var(--wt-good); }
+.wt-qitem.wt-bad .wt-qval { border-color: var(--wt-bad); background: var(--wt-bad-soft); }
+.wt-qitem.wt-path .wt-qval { border-color: var(--wt-accent); color: var(--wt-card); background: var(--wt-accent); }
+.wt-qitem.wt-dim { opacity: .35; }
+
 /* intervals: bars on one number line, as a problem's intervals Diagram draws them */
 .wt-intervals .wt-ivgroup { font: 600 10px var(--wt-sans); letter-spacing: .08em; text-transform: uppercase; fill: var(--wt-mid) !important; }
 .wt-intervals .wt-ivempty { font: italic 12px var(--wt-sans); fill: var(--wt-lo) !important; }
