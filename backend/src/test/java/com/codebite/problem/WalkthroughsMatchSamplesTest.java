@@ -29,7 +29,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Every Walkthrough (GLOSSARY.md, ADR 0011) shows the samples it claims to: its problem exists
  * under the Slug it is filed under; it is a well-formed {@code walkthrough/1} document (the public
  * walkthrough skill's {@code references/format.md}: known view types, marks inside the data they
- * name, moves whose addresses exist in that frame, unique map keys, the answer on the last frame only); its sample runs are, in order, exactly the problem's
+ * name, moves whose addresses exist in that frame, unique map keys, spans inside their array, map slots a
+ * non-negative integer, the answer on the last frame only); its sample runs are, in order, exactly the problem's
  * sample Test Cases by {@code sampleInput} and {@code expected}, compared trimmed as the Grader
  * compares; each run ends on its {@code expected}; and any run marked {@code extra} comes after
  * the sample runs; and every caption is one or two sentences in each language (#258). Correcting, adding or reordering a sample without regenerating the Walkthrough
@@ -148,6 +149,35 @@ class WalkthroughsMatchSamplesTest {
             default -> throw new IllegalArgumentException(breakage);
         }
         List<String> found = mismatches("top-espresso-machines", walkthrough, SAMPLES.get("top-espresso-machines"));
+        assertFalse(found.isEmpty(), breakage + " was not caught");
+    }
+
+    // --- spans and slots, on a copy of unique-genre-window ------------------------------------------
+
+    @ParameterizedTest(name = "{0}")
+    @ValueSource(strings = {
+            "span past the array's end", "span turned around", "span with an unknown mark", "negative slots",
+            "fractional slots", "unread outside the array", "label under outside the array", "struck key not held",
+    })
+    void aBrokenSpanOrSlotIsCaught(String breakage) throws Exception {
+        ObjectNode walkthrough = (ObjectNode) JSON.readTree(WALKTHROUGHS.of("unique-genre-window").orElseThrow());
+        ObjectNode frame = (ObjectNode) walkthrough.get("runs").get(0).get("frames").get(1);
+        ObjectNode queue = (ObjectNode) frame.get("views").get("queue");
+        ObjectNode window = (ObjectNode) queue.get("spans").get("window");
+        ObjectNode genres = (ObjectNode) frame.get("views").get("window");
+        int n = queue.get("values").size();
+        switch (breakage) {
+            case "span past the array's end" -> window.put("to", n);
+            case "span turned around" -> window.put("from", window.get("to").asInt() + 1);
+            case "span with an unknown mark" -> window.put("mark", "loud");
+            case "negative slots" -> genres.put("slots", -1);
+            case "fractional slots" -> genres.put("slots", 1.5);
+            case "unread outside the array" -> queue.putArray("unread").add(n);
+            case "label under outside the array" -> queue.putArray("under").addArray().add(n).add("x");
+            case "struck key not held" -> genres.putArray("struck").add("no such genre");
+            default -> throw new IllegalArgumentException(breakage);
+        }
+        List<String> found = mismatches("unique-genre-window", walkthrough, SAMPLES.get("unique-genre-window"));
         assertFalse(found.isEmpty(), breakage + " was not caught");
     }
 
@@ -414,6 +444,21 @@ class WalkthroughsMatchSamplesTest {
                 });
                 if (s.has("fill") && s.get("fill").size() != values.size()) p.add("fill and values differ in length");
                 for (JsonNode tag : s.path("tags")) if (!inside.test(tag.path(0))) p.add("tag " + tag + " is outside the array");
+                s.path("spans").fields().forEachRemaining(named -> {
+                    JsonNode span = named.getValue();
+                    if (span.isNull()) return;
+                    JsonNode from = span.path("from"), to = span.path("to");
+                    if (!inside.test(from) || !inside.test(to) || from.asInt() > to.asInt()) {
+                        p.add("span \"" + named.getKey() + "\" (" + from + ".." + to + ") is outside the array");
+                    }
+                    JsonNode mark = span.get("mark");
+                    if (mark != null && !mark.isNull() && !MARKS.contains(mark.asText())) {
+                        p.add("span \"" + named.getKey() + "\" has unknown mark " + mark);
+                    }
+                    if (span.has("label") && !isText(span.get("label"))) p.add("span \"" + named.getKey() + "\" has a label that is not Text");
+                });
+                for (JsonNode i : s.path("unread")) if (!inside.test(i)) p.add("unread names " + i + ", not an index");
+                for (JsonNode under : s.path("under")) if (!inside.test(under.path(0))) p.add("label under " + under + " is outside the array");
                 yield p;
             }
             case "map" -> {
@@ -427,6 +472,9 @@ class WalkthroughsMatchSamplesTest {
                     else if (!seen.add(k)) p.add("key " + k + " repeats");
                 }
                 p.addAll(marks(s.get("marks"), k -> seen.contains(key(k)), "key"));
+                JsonNode slots = s.get("slots");
+                if (slots != null && !(slots.isIntegralNumber() && slots.asLong() >= 0)) p.add("slots " + slots + " is not a non-negative integer");
+                for (JsonNode k : s.path("struck")) if (!seen.contains(key(k))) p.add("struck names " + k + ", not a key");
                 JsonNode ranks = s.get("ranks");
                 if (ranks != null && !ranks.isArray()) {
                     p.add("ranks must be a list of keys, first is #1");
