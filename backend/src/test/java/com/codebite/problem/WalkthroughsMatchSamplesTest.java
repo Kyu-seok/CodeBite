@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Every Walkthrough (GLOSSARY.md, ADR 0011) shows the samples it claims to: its problem exists
  * under the Slug it is filed under; it is a well-formed {@code walkthrough/1} document (the public
  * walkthrough skill's {@code references/format.md}: known view types, marks inside the data they
- * name, the answer on the last frame only); its sample runs are, in order, exactly the problem's
+ * name, moves whose addresses exist in that frame, unique map keys, the answer on the last frame only); its sample runs are, in order, exactly the problem's
  * sample Test Cases by {@code sampleInput} and {@code expected}, compared trimmed as the Grader
  * compares; each run ends on its {@code expected}; and any run marked {@code extra} comes after
  * the sample runs; and every caption is one or two sentences in each language (#258). Correcting, adding or reordering a sample without regenerating the Walkthrough
@@ -41,7 +41,7 @@ class WalkthroughsMatchSamplesTest {
     private static final MigratedDatabase DATABASE = new MigratedDatabase("walkthroughs-match-samples");
     private static final Walkthroughs WALKTHROUGHS = new Walkthroughs();
 
-    private static final List<String> VIEW_TYPES = List.of("grid", "array", "graph", "table", "vars");
+    private static final List<String> VIEW_TYPES = List.of("grid", "array", "map", "output", "graph", "table", "vars");
     private static final List<String> MARKS = List.of("lit", "good", "bad", "path", "dim");
 
     /**
@@ -123,6 +123,32 @@ class WalkthroughsMatchSamplesTest {
         List<String> found = mismatches("rotting-donuts", walkthrough, SAMPLES.get("rotting-donuts"));
         assertFalse(found.isEmpty(), breakage + " was not caught");
         assertTrue(found.stream().allMatch(m -> m.startsWith("rotting-donuts")), "Unnamed: " + found);
+    }
+
+    // --- moves and the map, on a copy of top-espresso-machines ---------------------------------------
+
+    @ParameterizedTest(name = "{0}")
+    @ValueSource(strings = {
+            "move to a missing key", "move from outside the array", "move to an unknown view", "move with no ends",
+            "move to a view type without addresses", "repeated map key", "rank of a missing key",
+    })
+    void aBrokenMoveOrMapIsCaught(String breakage) throws Exception {
+        ObjectNode walkthrough = (ObjectNode) JSON.readTree(WALKTHROUGHS.of("top-espresso-machines").orElseThrow());
+        ArrayNode frames = (ArrayNode) walkthrough.get("runs").get(0).get("frames");
+        ObjectNode move = (ObjectNode) frames.get(1).get("moves").get(0);
+        ObjectNode uses = (ObjectNode) frames.get(1).get("views").get("uses");
+        switch (breakage) {
+            case "move to a missing key" -> ((ObjectNode) move.get("to")).put("at", 99);
+            case "move from outside the array" -> ((ObjectNode) move.get("from")).put("at", 99);
+            case "move to an unknown view" -> ((ObjectNode) move.get("to")).put("view", "nope");
+            case "move with no ends" -> move.removeAll();
+            case "move to a view type without addresses" -> ((ObjectNode) move.get("to")).put("view", "state");
+            case "repeated map key" -> ((ArrayNode) uses.get("entries")).add(uses.get("entries").get(0).deepCopy());
+            case "rank of a missing key" -> uses.putArray("ranks").add(99);
+            default -> throw new IllegalArgumentException(breakage);
+        }
+        List<String> found = mismatches("top-espresso-machines", walkthrough, SAMPLES.get("top-espresso-machines"));
+        assertFalse(found.isEmpty(), breakage + " was not caught");
     }
 
     @Test
@@ -257,6 +283,16 @@ class WalkthroughsMatchSamplesTest {
                         }
                     });
                 }
+                JsonNode moves = frame.get("moves");
+                if (moves != null && !moves.isArray()) {
+                    p.add(at + ": moves is not a list");
+                } else if (moves != null) {
+                    for (int m = 0; m < moves.size(); m++) {
+                        for (String problem : move(moves.get(m), views, run.path("setup"), frame.path("views"))) {
+                            p.add(at + " move " + m + ": " + problem);
+                        }
+                    }
+                }
                 if (frame.has("answer") && f != frames.size() - 1) {
                     p.add(at + ": answer " + frame.get("answer") + " on a frame before the last; only the last "
                             + "frame carries the answer");
@@ -286,6 +322,61 @@ class WalkthroughsMatchSamplesTest {
             }
         }
         return p;
+    }
+
+    private static final List<String> MOVE_MARKS = List.of("good", "bad", "path");
+
+    /**
+     * What is wrong with one move: each end it has must name a place that exists in that frame's state of its view
+     * (the skill's {@code ADDRESSES}: an array or output index, a map key).
+     */
+    private static List<String> move(JsonNode move, Map<String, JsonNode> views, JsonNode setup, JsonNode states) {
+        if (!move.isObject() || (!move.hasNonNull("from") && !move.hasNonNull("to"))) return List.of("no from and no to");
+        List<String> p = new ArrayList<>();
+        JsonNode mark = move.get("mark");
+        if (mark != null && !mark.isNull() && !MOVE_MARKS.contains(mark.asText())) {
+            p.add("unknown mark " + mark + " (one of " + MOVE_MARKS + ")");
+        }
+        for (String end : List.of("from", "to")) {
+            JsonNode address = move.get(end);
+            if (address == null || address.isNull()) continue;
+            String id = address.path("view").asText();
+            JsonNode view = views.get(id);
+            if (view == null) {
+                p.add(end + " names unknown view \"" + id + "\"");
+                continue;
+            }
+            String type = view.path("type").asText();
+            String where = end + " " + address;
+            if (!List.of("array", "map", "output").contains(type)) {
+                p.add(where + ": view type \"" + type + "\" has no addresses");
+                continue;
+            }
+            if (!states.has(id) && !setup.has(id)) {
+                p.add(where + ": view \"" + id + "\" is not drawn in this frame");
+                continue;
+            }
+            ObjectNode state = JSON.createObjectNode();
+            if (setup.get(id) instanceof ObjectNode own) state.setAll(own);
+            if (states.get(id) instanceof ObjectNode own) state.setAll(own);
+            JsonNode at = address.get("at");
+            boolean exists = type.equals("map")
+                    ? keys(state).contains(key(at))
+                    : at != null && at.isInt() && at.asInt() >= 0 && at.asInt() < state.path("values").size();
+            if (!exists) p.add(where + " is not " + (type.equals("map") ? "a key" : "an index") + " of " + type + " \"" + id + "\"");
+        }
+        return p;
+    }
+
+    /** A map key as the player compares it: a string or a number, by its text. Null for anything else. */
+    private static String key(JsonNode k) {
+        return k != null && (k.isTextual() || k.isNumber()) ? k.asText() : null;
+    }
+
+    private static List<String> keys(JsonNode map) {
+        List<String> keys = new ArrayList<>();
+        for (JsonNode entry : map.path("entries")) keys.add(key(entry.get("key")));
+        return keys;
     }
 
     /** Text compared trimmed, as the Grader compares output; anything else as JSON. */
@@ -324,6 +415,35 @@ class WalkthroughsMatchSamplesTest {
                 if (s.has("fill") && s.get("fill").size() != values.size()) p.add("fill and values differ in length");
                 for (JsonNode tag : s.path("tags")) if (!inside.test(tag.path(0))) p.add("tag " + tag + " is outside the array");
                 yield p;
+            }
+            case "map" -> {
+                JsonNode entries = s.get("entries");
+                if (entries == null || !entries.isArray()) yield List.of("entries must be a list of { key, value }");
+                List<String> p = new ArrayList<>();
+                Set<String> seen = new HashSet<>();
+                for (JsonNode entry : entries) {
+                    String k = key(entry.get("key"));
+                    if (k == null) p.add("entry " + entry + " has no key (a string or a number)");
+                    else if (!seen.add(k)) p.add("key " + k + " repeats");
+                }
+                p.addAll(marks(s.get("marks"), k -> seen.contains(key(k)), "key"));
+                JsonNode ranks = s.get("ranks");
+                if (ranks != null && !ranks.isArray()) {
+                    p.add("ranks must be a list of keys, first is #1");
+                } else if (ranks != null) {
+                    Set<String> ranked = new HashSet<>();
+                    for (int i = 0; i < ranks.size(); i++) {
+                        String k = key(ranks.get(i));
+                        if (!seen.contains(k)) p.add("rank " + (i + 1) + " names " + ranks.get(i) + ", not a key");
+                        else if (!ranked.add(k)) p.add("rank " + (i + 1) + " repeats key " + k);
+                    }
+                }
+                yield p;
+            }
+            case "output" -> {
+                JsonNode values = s.get("values");
+                if (values == null || !values.isArray()) yield List.of("values must be a list");
+                yield marks(s.get("marks"), i -> i.isInt() && i.asInt() >= 0 && i.asInt() < values.size(), "index");
             }
             case "graph" -> {
                 JsonNode nodes = s.get("nodes"), edges = s.get("edges");
