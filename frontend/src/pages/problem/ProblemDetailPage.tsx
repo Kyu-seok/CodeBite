@@ -15,6 +15,7 @@ import { problemGraph } from "@/lib/jsonLd"
 import Spinner from "@/components/ui/Spinner"
 import { Button } from "@/components/ui/Button"
 import { LeftPanel, CollapsedLeftStrip } from "./LeftPanel"
+import { forProblem, NO_WALKTHROUGH_YET, revealed, shownLeftTab, stepped } from "./walkthrough/walkthroughTab"
 import { EditorPanel } from "./EditorPanel"
 import { TestPanel, CollapsedTestStrip, ResultAnnouncer } from "./TestPanel"
 import { ConfirmDialog } from "./ConfirmDialog"
@@ -112,6 +113,8 @@ export default function ProblemDetailPage() {
   }>({ open: false, submissionId: null, solveTimeSeconds: null, reviewIntervalDays: null })
   const [customTests, setCustomTests] = usePersistedDraft<CustomTestCaseInput[]>(`custom-tests:${slug}`, [])
   const [leftPanelTab, setLeftPanelTab] = useState('description')
+  // Where the learner is in the Walkthrough: kept here so switching tabs doesn't lose it.
+  const [walkthroughPlace, setWalkthroughPlace] = useState(NO_WALKTHROUGH_YET)
   const [leftCollapsed, setLeftCollapsed] = useState(false)
   const [rightCollapsed, setRightCollapsed] = useState(false)
   const [editorCollapsed, setEditorCollapsed] = useState(false)
@@ -271,6 +274,8 @@ export default function ProblemDetailPage() {
   }
 
   const languages = problemLanguages(problem.starterCode)
+  const leftTab = shownLeftTab(leftPanelTab, problem.hasWalkthrough)
+  const problemWalkthroughPlace = forProblem(walkthroughPlace, problem.slug)
   const recentLang = user?.recentLanguage
   // The language picked here, else the user's recent one, else Python (the least boilerplate for a newcomer).
   const fallbackLang = languages.includes("python") ? "python" : languages[0]
@@ -459,7 +464,8 @@ export default function ProblemDetailPage() {
         onTestsCollapsed={setTestsCollapsed}
         collapsedLeftContent={
           <CollapsedLeftStrip
-            activeTab={leftPanelTab}
+            activeTab={leftTab}
+            hasWalkthrough={problem.hasWalkthrough}
             onTabSelect={setLeftPanelTab}
             onExpand={() => panelFunctionsRef.current?.expandLeft()}
             onMaximize={handleMaximizeLeft}
@@ -488,8 +494,12 @@ export default function ProblemDetailPage() {
               submissions={submissions}
               submissionsFailed={submissionsFailed}
               onRetrySubmissions={refetchSubmissions}
-              activeTab={leftPanelTab}
+              activeTab={leftTab}
               onTabChange={setLeftPanelTab}
+              hasWalkthrough={problem.hasWalkthrough}
+              walkthroughPlace={problemWalkthroughPlace}
+              onRevealWalkthrough={() => setWalkthroughPlace(revealed(problemWalkthroughPlace))}
+              onWalkthroughStep={(run, frame) => setWalkthroughPlace(stepped(problemWalkthroughPlace, run, frame))}
               onUpdateNote={updateNote}
               onLoadIntoEditor={handleLoadIntoEditor}
               onAddCustomTest={handleAddCustomTest}

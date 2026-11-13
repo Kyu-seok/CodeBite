@@ -371,6 +371,7 @@ Every endpoint is an `@*Mapping` in a backend controller (`backend/src/main/java
 | GET    | /api/problems/random            | `{slug}` of a random problem (`?difficulty`), unsolved first when signed in | No |
 | GET    | /api/problems/stats             | Header counts by difficulty (`?curation`)                          | No   |
 | GET    | /api/problems/{slug}            | Detail + sample cases; a Former Slug works, `slug` is the current one | No |
+| GET    | /api/problems/{slug}/walkthrough | The problem's Walkthrough JSON as its file holds it (404 when it has none; `hasWalkthrough` on the detail says which) | No |
 | GET    | /api/tags                       | Every tag                                                          | No   |
 | GET    | /api/roadmap                    | The roadmap, with Progress when signed in                          | No   |
 | GET    | /api/leaderboard                | Top solvers                                                        | No   |

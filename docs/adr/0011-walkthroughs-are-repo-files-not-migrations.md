@@ -9,4 +9,4 @@ Every other piece of a problem (description, Test Cases, translations, Diagrams)
 
 ## Consequences
 
-A Walkthrough can fall out of step with its problem, since a migration that corrects a sample Test Case does not touch the file. One backend test therefore fails when a sample Test Case has no run in its problem's Walkthrough or a run's last frame does not equal that sample's expected output, compared trimmed as the Grader compares. A Restatement that changes a Slug must also rename the Walkthrough file, as it renames the Driver and Starter Code directories.
+A Walkthrough can fall out of step with its problem, since a migration that corrects a sample Test Case does not touch the file. One backend test therefore fails when a sample Test Case has no run in its problem's Walkthrough or a run's last frame does not equal that sample's expected output, compared trimmed as the Grader compares. A Restatement that changes a Slug moves the Walkthrough with the Driver and Starter Code (`.claude/skills/restate-problem/SKILL.md`, step 4).

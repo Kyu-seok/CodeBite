@@ -45,19 +45,22 @@ public class ProblemCatalogue {
     private final ProblemPopularity problemPopularity;
     private final UserProgress userProgress;
     private final ProblemDtos dtos;
+    private final Walkthroughs walkthroughs;
 
     public ProblemCatalogue(ProblemRepository problemRepository,
                             ProblemTranslationRepository translationRepository,
                             TestCaseRepository testCaseRepository,
                             ProblemPopularity problemPopularity,
                             UserProgress userProgress,
-                            ProblemDtos dtos) {
+                            ProblemDtos dtos,
+                            Walkthroughs walkthroughs) {
         this.problemRepository = problemRepository;
         this.translationRepository = translationRepository;
         this.testCaseRepository = testCaseRepository;
         this.problemPopularity = problemPopularity;
         this.userProgress = userProgress;
         this.dtos = dtos;
+        this.walkthroughs = walkthroughs;
     }
 
     @Transactional(readOnly = true)
@@ -138,15 +141,32 @@ public class ProblemCatalogue {
 
     @Transactional(readOnly = true)
     public ProblemDetail getProblemBySlug(String slug) {
+        Problem problem = publishedProblem(slug);
+        List<TestCase> sampleCases = testCaseRepository
+                .findByProblemIdAndSampleTrueOrderByOrderIndexAsc(problem.getId());
+        ProblemTranslation translation = fetchTranslation(problem.getId());
+        return dtos.toDetail(problem, sampleCases, translation);
+    }
+
+    /**
+     * The Walkthrough of the published problem {@code slug} names (a Former Slug too), as its JSON
+     * text: the file filed under the problem's current Slug. 404 as the problem read is, and for a
+     * problem without one.
+     */
+    @Transactional(readOnly = true)
+    public String getWalkthrough(String slug) {
+        Problem problem = publishedProblem(slug);
+        return walkthroughs.of(problem.getSlug())
+                .orElseThrow(() -> new ResourceNotFoundException("error.walkthrough.notFound", slug));
+    }
+
+    private Problem publishedProblem(String slug) {
         Problem problem = problemRepository.findBySlugOrFormerSlug(slug)
                 .orElseThrow(() -> new ResourceNotFoundException("error.problem.notFound", slug));
         if (!problem.isPublished()) {
             throw new ResourceNotFoundException("error.problem.notFound", slug);
         }
-        List<TestCase> sampleCases = testCaseRepository
-                .findByProblemIdAndSampleTrueOrderByOrderIndexAsc(problem.getId());
-        ProblemTranslation translation = fetchTranslation(problem.getId());
-        return dtos.toDetail(problem, sampleCases, translation);
+        return problem;
     }
 
     private String currentLocale() {

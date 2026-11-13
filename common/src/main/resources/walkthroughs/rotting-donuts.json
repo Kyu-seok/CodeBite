@@ -1,0 +1,1274 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Rotting Donuts",
+  "ko": "도넛 상함 전파"
+ },
+ "approach": {
+  "en": "Multi-source BFS: every stale donut spreads at once, and each wave is one minute.",
+  "ko": "다중 출발 BFS: 상한 도넛이 모두 동시에 번지고, 한 번의 물결이 1분입니다."
+ },
+ "views": [
+  {
+   "id": "tray",
+   "type": "grid",
+   "title": {
+    "en": "tray",
+    "ko": "트레이"
+   },
+   "showValues": false,
+   "values": {
+    "0": {
+     "label": {
+      "en": "empty slot",
+      "ko": "빈 자리"
+     },
+     "tone": "empty"
+    },
+    "1": {
+     "label": {
+      "en": "fresh",
+      "ko": "신선"
+     },
+     "tone": "a",
+     "glyph": "●"
+    },
+    "2": {
+     "label": {
+      "en": "stale",
+      "ko": "상함"
+     },
+     "tone": "b",
+     "glyph": "●"
+    }
+   }
+  },
+  {
+   "id": "state",
+   "type": "vars"
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "ward = [[2,1,1],[1,0,1],[1,1,1]]",
+   "expected": "4",
+   "frames": [
+    {
+     "caption": {
+      "en": "Count 7 fresh donuts and put the 1 stale one into the first wave.",
+      "ko": "신선한 도넛 7개를 세고, 상한 도넛 1개를 첫 물결에 넣습니다."
+     },
+     "views": {
+      "tray": {
+       "cells": [
+        [
+         2,
+         1,
+         1
+        ],
+        [
+         1,
+         0,
+         1
+        ],
+        [
+         1,
+         1,
+         1
+        ]
+       ],
+       "tags": [
+        [
+         0,
+         0,
+         {
+          "en": "start",
+          "ko": "시작"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          0,
+          0
+         ]
+        ],
+        "good": [],
+        "bad": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "minute",
+          "ko": "분"
+         },
+         "value": 0
+        },
+        {
+         "label": {
+          "en": "fresh left",
+          "ko": "남은 신선"
+         },
+         "value": 7,
+         "mark": null
+        },
+        {
+         "label": {
+          "en": "wave (queue)",
+          "ko": "물결 (큐)"
+         },
+         "value": [
+          "0,0"
+         ],
+         "empty": {
+          "en": "empty",
+          "ko": "비어 있음"
+         }
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Minute 1: the wave reaches 2 fresh neighbours; they go stale and become the next wave. 5 fresh left.",
+      "ko": "1분: 물결이 이웃한 신선한 도넛 2개에 닿아 상하게 하고, 그 도넛들이 다음 물결이 됩니다. 신선한 도넛 5개 남음."
+     },
+     "views": {
+      "tray": {
+       "cells": [
+        [
+         2,
+         2,
+         1
+        ],
+        [
+         2,
+         0,
+         1
+        ],
+        [
+         1,
+         1,
+         1
+        ]
+       ],
+       "tags": [
+        [
+         0,
+         0,
+         {
+          "en": "start",
+          "ko": "시작"
+         }
+        ],
+        [
+         1,
+         0,
+         {
+          "en": "min 1",
+          "ko": "1분"
+         }
+        ],
+        [
+         0,
+         1,
+         {
+          "en": "min 1",
+          "ko": "1분"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          0,
+          0
+         ]
+        ],
+        "good": [
+         [
+          1,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ],
+        "bad": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "minute",
+          "ko": "분"
+         },
+         "value": 1
+        },
+        {
+         "label": {
+          "en": "fresh left",
+          "ko": "남은 신선"
+         },
+         "value": 5,
+         "mark": null
+        },
+        {
+         "label": {
+          "en": "wave (queue)",
+          "ko": "물결 (큐)"
+         },
+         "value": [
+          "1,0",
+          "0,1"
+         ],
+         "empty": {
+          "en": "empty",
+          "ko": "비어 있음"
+         }
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Minute 2: the wave reaches 2 fresh neighbours; they go stale and become the next wave. 3 fresh left.",
+      "ko": "2분: 물결이 이웃한 신선한 도넛 2개에 닿아 상하게 하고, 그 도넛들이 다음 물결이 됩니다. 신선한 도넛 3개 남음."
+     },
+     "views": {
+      "tray": {
+       "cells": [
+        [
+         2,
+         2,
+         2
+        ],
+        [
+         2,
+         0,
+         1
+        ],
+        [
+         2,
+         1,
+         1
+        ]
+       ],
+       "tags": [
+        [
+         0,
+         0,
+         {
+          "en": "start",
+          "ko": "시작"
+         }
+        ],
+        [
+         1,
+         0,
+         {
+          "en": "min 1",
+          "ko": "1분"
+         }
+        ],
+        [
+         0,
+         1,
+         {
+          "en": "min 1",
+          "ko": "1분"
+         }
+        ],
+        [
+         2,
+         0,
+         {
+          "en": "min 2",
+          "ko": "2분"
+         }
+        ],
+        [
+         0,
+         2,
+         {
+          "en": "min 2",
+          "ko": "2분"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          1,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ],
+        "good": [
+         [
+          2,
+          0
+         ],
+         [
+          0,
+          2
+         ]
+        ],
+        "bad": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "minute",
+          "ko": "분"
+         },
+         "value": 2
+        },
+        {
+         "label": {
+          "en": "fresh left",
+          "ko": "남은 신선"
+         },
+         "value": 3,
+         "mark": null
+        },
+        {
+         "label": {
+          "en": "wave (queue)",
+          "ko": "물결 (큐)"
+         },
+         "value": [
+          "2,0",
+          "0,2"
+         ],
+         "empty": {
+          "en": "empty",
+          "ko": "비어 있음"
+         }
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Minute 3: the wave reaches 2 fresh neighbours; they go stale and become the next wave. 1 fresh left.",
+      "ko": "3분: 물결이 이웃한 신선한 도넛 2개에 닿아 상하게 하고, 그 도넛들이 다음 물결이 됩니다. 신선한 도넛 1개 남음."
+     },
+     "views": {
+      "tray": {
+       "cells": [
+        [
+         2,
+         2,
+         2
+        ],
+        [
+         2,
+         0,
+         2
+        ],
+        [
+         2,
+         2,
+         1
+        ]
+       ],
+       "tags": [
+        [
+         0,
+         0,
+         {
+          "en": "start",
+          "ko": "시작"
+         }
+        ],
+        [
+         1,
+         0,
+         {
+          "en": "min 1",
+          "ko": "1분"
+         }
+        ],
+        [
+         0,
+         1,
+         {
+          "en": "min 1",
+          "ko": "1분"
+         }
+        ],
+        [
+         2,
+         0,
+         {
+          "en": "min 2",
+          "ko": "2분"
+         }
+        ],
+        [
+         0,
+         2,
+         {
+          "en": "min 2",
+          "ko": "2분"
+         }
+        ],
+        [
+         2,
+         1,
+         {
+          "en": "min 3",
+          "ko": "3분"
+         }
+        ],
+        [
+         1,
+         2,
+         {
+          "en": "min 3",
+          "ko": "3분"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          2,
+          0
+         ],
+         [
+          0,
+          2
+         ]
+        ],
+        "good": [
+         [
+          2,
+          1
+         ],
+         [
+          1,
+          2
+         ]
+        ],
+        "bad": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "minute",
+          "ko": "분"
+         },
+         "value": 3
+        },
+        {
+         "label": {
+          "en": "fresh left",
+          "ko": "남은 신선"
+         },
+         "value": 1,
+         "mark": null
+        },
+        {
+         "label": {
+          "en": "wave (queue)",
+          "ko": "물결 (큐)"
+         },
+         "value": [
+          "2,1",
+          "1,2"
+         ],
+         "empty": {
+          "en": "empty",
+          "ko": "비어 있음"
+         }
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Minute 4: the wave reaches 1 fresh neighbour; it goes stale and becomes the next wave. 0 fresh left.",
+      "ko": "4분: 물결이 이웃한 신선한 도넛 1개에 닿아 상하게 하고, 그 도넛들이 다음 물결이 됩니다. 신선한 도넛 0개 남음."
+     },
+     "views": {
+      "tray": {
+       "cells": [
+        [
+         2,
+         2,
+         2
+        ],
+        [
+         2,
+         0,
+         2
+        ],
+        [
+         2,
+         2,
+         2
+        ]
+       ],
+       "tags": [
+        [
+         0,
+         0,
+         {
+          "en": "start",
+          "ko": "시작"
+         }
+        ],
+        [
+         1,
+         0,
+         {
+          "en": "min 1",
+          "ko": "1분"
+         }
+        ],
+        [
+         0,
+         1,
+         {
+          "en": "min 1",
+          "ko": "1분"
+         }
+        ],
+        [
+         2,
+         0,
+         {
+          "en": "min 2",
+          "ko": "2분"
+         }
+        ],
+        [
+         0,
+         2,
+         {
+          "en": "min 2",
+          "ko": "2분"
+         }
+        ],
+        [
+         2,
+         1,
+         {
+          "en": "min 3",
+          "ko": "3분"
+         }
+        ],
+        [
+         1,
+         2,
+         {
+          "en": "min 3",
+          "ko": "3분"
+         }
+        ],
+        [
+         2,
+         2,
+         {
+          "en": "min 4",
+          "ko": "4분"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          2,
+          1
+         ],
+         [
+          1,
+          2
+         ]
+        ],
+        "good": [
+         [
+          2,
+          2
+         ]
+        ],
+        "bad": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "minute",
+          "ko": "분"
+         },
+         "value": 4
+        },
+        {
+         "label": {
+          "en": "fresh left",
+          "ko": "남은 신선"
+         },
+         "value": 0,
+         "mark": null
+        },
+        {
+         "label": {
+          "en": "wave (queue)",
+          "ko": "물결 (큐)"
+         },
+         "value": [
+          "2,2"
+         ],
+         "empty": {
+          "en": "empty",
+          "ko": "비어 있음"
+         }
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "No fresh donut is left. It took 4 waves, one per minute: answer 4.",
+      "ko": "신선한 도넛이 하나도 남지 않았습니다. 물결 4번, 한 번에 1분씩 걸렸으므로 답은 4입니다."
+     },
+     "views": {
+      "tray": {
+       "cells": [
+        [
+         2,
+         2,
+         2
+        ],
+        [
+         2,
+         0,
+         2
+        ],
+        [
+         2,
+         2,
+         2
+        ]
+       ],
+       "tags": [
+        [
+         0,
+         0,
+         {
+          "en": "start",
+          "ko": "시작"
+         }
+        ],
+        [
+         1,
+         0,
+         {
+          "en": "min 1",
+          "ko": "1분"
+         }
+        ],
+        [
+         0,
+         1,
+         {
+          "en": "min 1",
+          "ko": "1분"
+         }
+        ],
+        [
+         2,
+         0,
+         {
+          "en": "min 2",
+          "ko": "2분"
+         }
+        ],
+        [
+         0,
+         2,
+         {
+          "en": "min 2",
+          "ko": "2분"
+         }
+        ],
+        [
+         2,
+         1,
+         {
+          "en": "min 3",
+          "ko": "3분"
+         }
+        ],
+        [
+         1,
+         2,
+         {
+          "en": "min 3",
+          "ko": "3분"
+         }
+        ],
+        [
+         2,
+         2,
+         {
+          "en": "min 4",
+          "ko": "4분"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [],
+        "bad": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "minute",
+          "ko": "분"
+         },
+         "value": 4
+        },
+        {
+         "label": {
+          "en": "fresh left",
+          "ko": "남은 신선"
+         },
+         "value": 0,
+         "mark": null
+        },
+        {
+         "label": {
+          "en": "wave (queue)",
+          "ko": "물결 (큐)"
+         },
+         "value": [
+          "2,2"
+         ],
+         "empty": {
+          "en": "empty",
+          "ko": "비어 있음"
+         }
+        }
+       ]
+      }
+     },
+     "answer": "4"
+    }
+   ],
+   "sampleInput": "[[2,1,1],[1,0,1],[1,1,1]]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "ward = [[2,0,1],[0,0,1],[1,1,1]]",
+   "expected": "-1",
+   "frames": [
+    {
+     "caption": {
+      "en": "Count 5 fresh donuts and put the 1 stale one into the first wave.",
+      "ko": "신선한 도넛 5개를 세고, 상한 도넛 1개를 첫 물결에 넣습니다."
+     },
+     "views": {
+      "tray": {
+       "cells": [
+        [
+         2,
+         0,
+         1
+        ],
+        [
+         0,
+         0,
+         1
+        ],
+        [
+         1,
+         1,
+         1
+        ]
+       ],
+       "tags": [
+        [
+         0,
+         0,
+         {
+          "en": "start",
+          "ko": "시작"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          0,
+          0
+         ]
+        ],
+        "good": [],
+        "bad": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "minute",
+          "ko": "분"
+         },
+         "value": 0
+        },
+        {
+         "label": {
+          "en": "fresh left",
+          "ko": "남은 신선"
+         },
+         "value": 5,
+         "mark": null
+        },
+        {
+         "label": {
+          "en": "wave (queue)",
+          "ko": "물결 (큐)"
+         },
+         "value": [
+          "0,0"
+         ],
+         "empty": {
+          "en": "empty",
+          "ko": "비어 있음"
+         }
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Minute 1: no fresh donut sits next to the wave, so the wave dies out.",
+      "ko": "1분: 물결 옆에 신선한 도넛이 없어 물결이 끊깁니다."
+     },
+     "views": {
+      "tray": {
+       "cells": [
+        [
+         2,
+         0,
+         1
+        ],
+        [
+         0,
+         0,
+         1
+        ],
+        [
+         1,
+         1,
+         1
+        ]
+       ],
+       "tags": [
+        [
+         0,
+         0,
+         {
+          "en": "start",
+          "ko": "시작"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          0,
+          0
+         ]
+        ],
+        "good": [],
+        "bad": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "minute",
+          "ko": "분"
+         },
+         "value": 1
+        },
+        {
+         "label": {
+          "en": "fresh left",
+          "ko": "남은 신선"
+         },
+         "value": 5,
+         "mark": null
+        },
+        {
+         "label": {
+          "en": "wave (queue)",
+          "ko": "물결 (큐)"
+         },
+         "value": [],
+         "empty": {
+          "en": "empty",
+          "ko": "비어 있음"
+         }
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "The wave is gone but 5 fresh donuts are walled off by empty slots and never go stale: answer -1.",
+      "ko": "물결은 끝났지만 신선한 도넛 5개가 빈 자리에 막혀 끝내 상하지 않습니다: 답 -1."
+     },
+     "views": {
+      "tray": {
+       "cells": [
+        [
+         2,
+         0,
+         1
+        ],
+        [
+         0,
+         0,
+         1
+        ],
+        [
+         1,
+         1,
+         1
+        ]
+       ],
+       "tags": [
+        [
+         0,
+         0,
+         {
+          "en": "start",
+          "ko": "시작"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [],
+        "bad": [
+         [
+          0,
+          2
+         ],
+         [
+          1,
+          2
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          2,
+          2
+         ]
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "minute",
+          "ko": "분"
+         },
+         "value": 1
+        },
+        {
+         "label": {
+          "en": "fresh left",
+          "ko": "남은 신선"
+         },
+         "value": 5,
+         "mark": "bad"
+        },
+        {
+         "label": {
+          "en": "wave (queue)",
+          "ko": "물결 (큐)"
+         },
+         "value": [],
+         "empty": {
+          "en": "empty",
+          "ko": "비어 있음"
+         }
+        }
+       ]
+      }
+     },
+     "answer": "-1"
+    }
+   ],
+   "sampleInput": "[[2,0,1],[0,0,1],[1,1,1]]"
+  },
+  {
+   "label": {
+    "en": "Example 3",
+    "ko": "예시 3"
+   },
+   "input": "ward = [[2,0],[0,1]]",
+   "expected": "-1",
+   "frames": [
+    {
+     "caption": {
+      "en": "Count 1 fresh donut and put the 1 stale one into the first wave.",
+      "ko": "신선한 도넛 1개를 세고, 상한 도넛 1개를 첫 물결에 넣습니다."
+     },
+     "views": {
+      "tray": {
+       "cells": [
+        [
+         2,
+         0
+        ],
+        [
+         0,
+         1
+        ]
+       ],
+       "tags": [
+        [
+         0,
+         0,
+         {
+          "en": "start",
+          "ko": "시작"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          0,
+          0
+         ]
+        ],
+        "good": [],
+        "bad": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "minute",
+          "ko": "분"
+         },
+         "value": 0
+        },
+        {
+         "label": {
+          "en": "fresh left",
+          "ko": "남은 신선"
+         },
+         "value": 1,
+         "mark": null
+        },
+        {
+         "label": {
+          "en": "wave (queue)",
+          "ko": "물결 (큐)"
+         },
+         "value": [
+          "0,0"
+         ],
+         "empty": {
+          "en": "empty",
+          "ko": "비어 있음"
+         }
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Minute 1: no fresh donut sits next to the wave, so the wave dies out.",
+      "ko": "1분: 물결 옆에 신선한 도넛이 없어 물결이 끊깁니다."
+     },
+     "views": {
+      "tray": {
+       "cells": [
+        [
+         2,
+         0
+        ],
+        [
+         0,
+         1
+        ]
+       ],
+       "tags": [
+        [
+         0,
+         0,
+         {
+          "en": "start",
+          "ko": "시작"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          0,
+          0
+         ]
+        ],
+        "good": [],
+        "bad": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "minute",
+          "ko": "분"
+         },
+         "value": 1
+        },
+        {
+         "label": {
+          "en": "fresh left",
+          "ko": "남은 신선"
+         },
+         "value": 1,
+         "mark": null
+        },
+        {
+         "label": {
+          "en": "wave (queue)",
+          "ko": "물결 (큐)"
+         },
+         "value": [],
+         "empty": {
+          "en": "empty",
+          "ko": "비어 있음"
+         }
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "The wave is gone but 1 fresh donut is walled off by empty slots and never goes stale: answer -1.",
+      "ko": "물결은 끝났지만 신선한 도넛 1개가 빈 자리에 막혀 끝내 상하지 않습니다: 답 -1."
+     },
+     "views": {
+      "tray": {
+       "cells": [
+        [
+         2,
+         0
+        ],
+        [
+         0,
+         1
+        ]
+       ],
+       "tags": [
+        [
+         0,
+         0,
+         {
+          "en": "start",
+          "ko": "시작"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [],
+        "bad": [
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "minute",
+          "ko": "분"
+         },
+         "value": 1
+        },
+        {
+         "label": {
+          "en": "fresh left",
+          "ko": "남은 신선"
+         },
+         "value": 1,
+         "mark": "bad"
+        },
+        {
+         "label": {
+          "en": "wave (queue)",
+          "ko": "물결 (큐)"
+         },
+         "value": [],
+         "empty": {
+          "en": "empty",
+          "ko": "비어 있음"
+         }
+        }
+       ]
+      }
+     },
+     "answer": "-1"
+    }
+   ],
+   "sampleInput": "[[2,0],[0,1]]"
+  }
+ ]
+}
