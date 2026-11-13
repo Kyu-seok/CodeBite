@@ -6,7 +6,8 @@
 #
 #   scripts/test-failures.sh <module>          # backend, common or worker; reads
 #                                              # <module>/build/test-results/test/TEST-*.xml
-#   scripts/test-failures.sh <module> --run    # ./gradlew :<module>:test -q first, then reports;
+#   scripts/test-failures.sh <module> --run    # :<module>:test -q first (through gradle-test.sh,
+#                                              # one Gradle run at a time), then reports;
 #                                              # Gradle's own output (the full traces) goes to
 #                                              # <module>/build/test-failures-gradle.log, named
 #                                              # on stderr so stdout stays the report alone
@@ -30,7 +31,7 @@ results=$root/$module/build/test-results/test
 log=$module/build/test-failures-gradle.log
 if $run; then
   mkdir -p "$root/$module/build"
-  (cd "$root" && ./gradlew ":$module:test" -q) >"$root/$log" 2>&1 || true
+  CODEBITE_ROOT=$root "$(dirname "$0")/gradle-test.sh" ":$module:test" -q >"$root/$log" 2>&1 || true
   echo "test-failures.sh: Gradle's output is in $log" >&2
 fi
 

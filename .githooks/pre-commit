@@ -28,8 +28,8 @@ if touches '^(common|backend|worker)/|^(build|settings)\.gradle'; then
   touches '^common/|^(build|settings)\.gradle' && modules+=(:common:test :backend:test :worker:test)
   touches '^backend/' && modules+=(:backend:test)
   touches '^worker/' && modules+=(:worker:test)
-  echo "pre-commit: ./gradlew ${modules[*]}"
-  ./gradlew -q "${modules[@]}"
+  echo "pre-commit: scripts/gradle-test.sh ${modules[*]}"
+  scripts/gradle-test.sh -q "${modules[@]}"
 fi
 
 if touches '^frontend/'; then

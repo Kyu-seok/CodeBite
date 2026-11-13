@@ -52,7 +52,7 @@ merge_message() {
 # The backend and worker tests, forced to run: a merge can leave Gradle's inputs looking unchanged,
 # and git runs no pre-commit hook on a clean merge, so UP-TO-DATE would mean they never ran.
 backend_checks() {
-  ./gradlew :backend:test --rerun :worker:test --rerun
+  scripts/gradle-test.sh :backend:test --rerun :worker:test --rerun
 }
 
 # The frontend lint with no warnings allowed (as CI and the pre-commit hook run it), tests and build

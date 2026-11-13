@@ -6,6 +6,7 @@ set -euo pipefail
 script="$(cd "$(dirname "$0")" && pwd)/test-failures.sh"
 fake=$(mktemp -d)
 trap 'rm -rf "$fake"' EXIT
+export CODEBITE_GRADLE_LOCK=$fake/gradle.lock
 fail=0
 check() { [[ "$2" == "$3" ]] || { echo "FAIL: $1: expected '$3', got '$2'"; fail=1; }; }
 contains() { grep -qF -- "$3" <<<"$2" || { echo "FAIL: $1: no '$3' in:"; echo "$2"; fail=1; }; }
