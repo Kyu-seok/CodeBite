@@ -1,0 +1,902 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Dedupe Textbook Shelf",
+  "ko": "책꽂이 중복 정리"
+ },
+ "approach": {
+  "en": "The shelf is sorted, so a repeat sits right after its copy: compare each book with the last one kept (books[k-1]) and copy it to slot k only when it differs.",
+  "ko": "책꽂이가 정렬되어 있어 같은 책은 바로 붙어 있습니다. 각 책을 마지막으로 남긴 책(books[k-1])과 비교해, 다를 때만 k 자리에 옮겨 씁니다."
+ },
+ "views": [
+  {
+   "id": "books",
+   "type": "array",
+   "title": {
+    "en": "books",
+    "ko": "books (책꽂이)"
+   }
+  },
+  {
+   "id": "state",
+   "type": "vars"
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "books = [2,2,5]",
+   "expected": "2\n[2,5]",
+   "frames": [
+    {
+     "caption": {
+      "en": "3 books, and the first is always kept, so k starts at 1: books[0..k-1] is the compacted front. Read on from index 1.",
+      "ko": "책 3권 중 첫 책은 항상 남으므로 k는 1에서 시작하고, 정리된 앞쪽은 books[0..k-1]입니다. 인덱스 1부터 읽습니다."
+     },
+     "views": {
+      "books": {
+       "values": [
+        2,
+        2,
+        5
+       ],
+       "pointers": {
+        "k": 1,
+        "i": null
+       },
+       "marks": {
+        "dim": [
+         1,
+         2
+        ],
+        "path": [],
+        "good": [
+         0
+        ],
+        "lit": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "k (books kept)",
+          "ko": "k (남긴 책 수)"
+         },
+         "value": 1,
+         "mark": null
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "books[1] = 2 equals the last kept book: a repeat. Skip it; k stays 1.",
+      "ko": "books[1] = 2 = 2(마지막으로 남긴 책): 중복입니다. 건너뛰고 k = 1 그대로입니다."
+     },
+     "views": {
+      "books": {
+       "values": [
+        2,
+        2,
+        5
+       ],
+       "pointers": {
+        "k": 1,
+        "i": 1
+       },
+       "marks": {
+        "dim": [
+         2
+        ],
+        "path": [],
+        "good": [],
+        "lit": [
+         1,
+         0
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "k (books kept)",
+          "ko": "k (남긴 책 수)"
+         },
+         "value": 1,
+         "mark": null
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "books[2] = 5 differs from the last kept book, 2: a new value. Write it to slot 1 and k becomes 2.",
+      "ko": "books[2] = 5 ≠ 2(마지막으로 남긴 책): 새 값입니다. 1번 자리에 쓰고 k를 늘려 k = 2입니다."
+     },
+     "views": {
+      "books": {
+       "values": [
+        2,
+        5,
+        5
+       ],
+       "pointers": {
+        "k": 2,
+        "i": 2
+       },
+       "marks": {
+        "dim": [],
+        "path": [],
+        "good": [
+         1
+        ],
+        "lit": [
+         2
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "k (books kept)",
+          "ko": "k (남긴 책 수)"
+         },
+         "value": 2,
+         "mark": "good"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Every book read, so the front holds the 2 distinct values in order, and slots from 2 on aren't checked. The Driver prints k = 2, then the front: [2,5].",
+      "ko": "모든 책을 읽었으므로 앞쪽에 서로 다른 값 2개가 순서대로 남았습니다(2번 자리부터는 검사하지 않습니다). 답은 두 줄입니다: k = 2, 앞쪽 [2,5]."
+     },
+     "views": {
+      "books": {
+       "values": [
+        2,
+        5,
+        5
+       ],
+       "pointers": {
+        "k": 2,
+        "i": null
+       },
+       "marks": {
+        "dim": [
+         2
+        ],
+        "path": [
+         0,
+         1
+        ],
+        "good": [],
+        "lit": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "k (books kept)",
+          "ko": "k (남긴 책 수)"
+         },
+         "value": 2,
+         "mark": "good"
+        }
+       ]
+      }
+     },
+     "answer": "2\n[2,5]"
+    }
+   ],
+   "sampleInput": "[2,2,5]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "books = [1,1,2,2,3,4,4,6,6,6]",
+   "expected": "5\n[1,2,3,4,6]",
+   "frames": [
+    {
+     "caption": {
+      "en": "10 books, and the first is always kept, so k starts at 1: books[0..k-1] is the compacted front. Read on from index 1.",
+      "ko": "책 10권 중 첫 책은 항상 남으므로 k는 1에서 시작하고, 정리된 앞쪽은 books[0..k-1]입니다. 인덱스 1부터 읽습니다."
+     },
+     "views": {
+      "books": {
+       "values": [
+        1,
+        1,
+        2,
+        2,
+        3,
+        4,
+        4,
+        6,
+        6,
+        6
+       ],
+       "pointers": {
+        "k": 1,
+        "i": null
+       },
+       "marks": {
+        "dim": [
+         1,
+         2,
+         3,
+         4,
+         5,
+         6,
+         7,
+         8,
+         9
+        ],
+        "path": [],
+        "good": [
+         0
+        ],
+        "lit": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "k (books kept)",
+          "ko": "k (남긴 책 수)"
+         },
+         "value": 1,
+         "mark": null
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "books[1] = 1 equals the last kept book: a repeat. Skip it; k stays 1.",
+      "ko": "books[1] = 1 = 1(마지막으로 남긴 책): 중복입니다. 건너뛰고 k = 1 그대로입니다."
+     },
+     "views": {
+      "books": {
+       "values": [
+        1,
+        1,
+        2,
+        2,
+        3,
+        4,
+        4,
+        6,
+        6,
+        6
+       ],
+       "pointers": {
+        "k": 1,
+        "i": 1
+       },
+       "marks": {
+        "dim": [
+         2,
+         3,
+         4,
+         5,
+         6,
+         7,
+         8,
+         9
+        ],
+        "path": [],
+        "good": [],
+        "lit": [
+         1,
+         0
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "k (books kept)",
+          "ko": "k (남긴 책 수)"
+         },
+         "value": 1,
+         "mark": null
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "books[2] = 2 differs from the last kept book, 1: a new value. Write it to slot 1 and k becomes 2.",
+      "ko": "books[2] = 2 ≠ 1(마지막으로 남긴 책): 새 값입니다. 1번 자리에 쓰고 k를 늘려 k = 2입니다."
+     },
+     "views": {
+      "books": {
+       "values": [
+        1,
+        2,
+        2,
+        2,
+        3,
+        4,
+        4,
+        6,
+        6,
+        6
+       ],
+       "pointers": {
+        "k": 2,
+        "i": 2
+       },
+       "marks": {
+        "dim": [
+         3,
+         4,
+         5,
+         6,
+         7,
+         8,
+         9
+        ],
+        "path": [],
+        "good": [
+         1
+        ],
+        "lit": [
+         2
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "k (books kept)",
+          "ko": "k (남긴 책 수)"
+         },
+         "value": 2,
+         "mark": "good"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "books[3] = 2 equals the last kept book: a repeat. Skip it; k stays 2.",
+      "ko": "books[3] = 2 = 2(마지막으로 남긴 책): 중복입니다. 건너뛰고 k = 2 그대로입니다."
+     },
+     "views": {
+      "books": {
+       "values": [
+        1,
+        2,
+        2,
+        2,
+        3,
+        4,
+        4,
+        6,
+        6,
+        6
+       ],
+       "pointers": {
+        "k": 2,
+        "i": 3
+       },
+       "marks": {
+        "dim": [
+         2,
+         4,
+         5,
+         6,
+         7,
+         8,
+         9
+        ],
+        "path": [],
+        "good": [],
+        "lit": [
+         3,
+         1
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "k (books kept)",
+          "ko": "k (남긴 책 수)"
+         },
+         "value": 2,
+         "mark": null
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "books[4] = 3 differs from the last kept book, 2: a new value. Write it to slot 2 and k becomes 3.",
+      "ko": "books[4] = 3 ≠ 2(마지막으로 남긴 책): 새 값입니다. 2번 자리에 쓰고 k를 늘려 k = 3입니다."
+     },
+     "views": {
+      "books": {
+       "values": [
+        1,
+        2,
+        3,
+        2,
+        3,
+        4,
+        4,
+        6,
+        6,
+        6
+       ],
+       "pointers": {
+        "k": 3,
+        "i": 4
+       },
+       "marks": {
+        "dim": [
+         3,
+         5,
+         6,
+         7,
+         8,
+         9
+        ],
+        "path": [],
+        "good": [
+         2
+        ],
+        "lit": [
+         4
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "k (books kept)",
+          "ko": "k (남긴 책 수)"
+         },
+         "value": 3,
+         "mark": "good"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "books[5] = 4 differs from the last kept book, 3: a new value. Write it to slot 3 and k becomes 4.",
+      "ko": "books[5] = 4 ≠ 3(마지막으로 남긴 책): 새 값입니다. 3번 자리에 쓰고 k를 늘려 k = 4입니다."
+     },
+     "views": {
+      "books": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        3,
+        4,
+        4,
+        6,
+        6,
+        6
+       ],
+       "pointers": {
+        "k": 4,
+        "i": 5
+       },
+       "marks": {
+        "dim": [
+         4,
+         6,
+         7,
+         8,
+         9
+        ],
+        "path": [],
+        "good": [
+         3
+        ],
+        "lit": [
+         5
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "k (books kept)",
+          "ko": "k (남긴 책 수)"
+         },
+         "value": 4,
+         "mark": "good"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "books[6] = 4 equals the last kept book: a repeat. Skip it; k stays 4.",
+      "ko": "books[6] = 4 = 4(마지막으로 남긴 책): 중복입니다. 건너뛰고 k = 4 그대로입니다."
+     },
+     "views": {
+      "books": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        3,
+        4,
+        4,
+        6,
+        6,
+        6
+       ],
+       "pointers": {
+        "k": 4,
+        "i": 6
+       },
+       "marks": {
+        "dim": [
+         4,
+         5,
+         7,
+         8,
+         9
+        ],
+        "path": [],
+        "good": [],
+        "lit": [
+         6,
+         3
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "k (books kept)",
+          "ko": "k (남긴 책 수)"
+         },
+         "value": 4,
+         "mark": null
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "books[7] = 6 differs from the last kept book, 4: a new value. Write it to slot 4 and k becomes 5.",
+      "ko": "books[7] = 6 ≠ 4(마지막으로 남긴 책): 새 값입니다. 4번 자리에 쓰고 k를 늘려 k = 5입니다."
+     },
+     "views": {
+      "books": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        6,
+        4,
+        4,
+        6,
+        6,
+        6
+       ],
+       "pointers": {
+        "k": 5,
+        "i": 7
+       },
+       "marks": {
+        "dim": [
+         5,
+         6,
+         8,
+         9
+        ],
+        "path": [],
+        "good": [
+         4
+        ],
+        "lit": [
+         7
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "k (books kept)",
+          "ko": "k (남긴 책 수)"
+         },
+         "value": 5,
+         "mark": "good"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "books[8] = 6 equals the last kept book: a repeat. Skip it; k stays 5.",
+      "ko": "books[8] = 6 = 6(마지막으로 남긴 책): 중복입니다. 건너뛰고 k = 5 그대로입니다."
+     },
+     "views": {
+      "books": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        6,
+        4,
+        4,
+        6,
+        6,
+        6
+       ],
+       "pointers": {
+        "k": 5,
+        "i": 8
+       },
+       "marks": {
+        "dim": [
+         5,
+         6,
+         7,
+         9
+        ],
+        "path": [],
+        "good": [],
+        "lit": [
+         8,
+         4
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "k (books kept)",
+          "ko": "k (남긴 책 수)"
+         },
+         "value": 5,
+         "mark": null
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "books[9] = 6 equals the last kept book: a repeat. Skip it; k stays 5.",
+      "ko": "books[9] = 6 = 6(마지막으로 남긴 책): 중복입니다. 건너뛰고 k = 5 그대로입니다."
+     },
+     "views": {
+      "books": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        6,
+        4,
+        4,
+        6,
+        6,
+        6
+       ],
+       "pointers": {
+        "k": 5,
+        "i": 9
+       },
+       "marks": {
+        "dim": [
+         5,
+         6,
+         7,
+         8
+        ],
+        "path": [],
+        "good": [],
+        "lit": [
+         9,
+         4
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "k (books kept)",
+          "ko": "k (남긴 책 수)"
+         },
+         "value": 5,
+         "mark": null
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Every book read, so the front holds the 5 distinct values in order, and slots from 5 on aren't checked. The Driver prints k = 5, then the front: [1,2,3,4,6].",
+      "ko": "모든 책을 읽었으므로 앞쪽에 서로 다른 값 5개가 순서대로 남았습니다(5번 자리부터는 검사하지 않습니다). 답은 두 줄입니다: k = 5, 앞쪽 [1,2,3,4,6]."
+     },
+     "views": {
+      "books": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        6,
+        4,
+        4,
+        6,
+        6,
+        6
+       ],
+       "pointers": {
+        "k": 5,
+        "i": null
+       },
+       "marks": {
+        "dim": [
+         5,
+         6,
+         7,
+         8,
+         9
+        ],
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ],
+        "good": [],
+        "lit": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "k (books kept)",
+          "ko": "k (남긴 책 수)"
+         },
+         "value": 5,
+         "mark": "good"
+        }
+       ]
+      }
+     },
+     "answer": "5\n[1,2,3,4,6]"
+    }
+   ],
+   "sampleInput": "[1,1,2,2,3,4,4,6,6,6]"
+  },
+  {
+   "label": {
+    "en": "Example 3",
+    "ko": "예시 3"
+   },
+   "input": "books = [8]",
+   "expected": "1\n[8]",
+   "frames": [
+    {
+     "caption": {
+      "en": "1 book, and the first is always kept, so k starts at 1: books[0..k-1] is the compacted front. There is no other book to read.",
+      "ko": "책 1권 중 첫 책은 항상 남으므로 k는 1에서 시작하고, 정리된 앞쪽은 books[0..k-1]입니다. 더 읽을 책이 없습니다."
+     },
+     "views": {
+      "books": {
+       "values": [
+        8
+       ],
+       "pointers": {
+        "k": null,
+        "i": null
+       },
+       "marks": {
+        "dim": [],
+        "path": [],
+        "good": [
+         0
+        ],
+        "lit": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "k (books kept)",
+          "ko": "k (남긴 책 수)"
+         },
+         "value": 1,
+         "mark": null
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "One book, nothing to compare. The Driver prints k = 1, then the front: [8].",
+      "ko": "책이 한 권이라 비교할 것이 없습니다. 답은 두 줄입니다: k = 1, 앞쪽 [8]."
+     },
+     "views": {
+      "books": {
+       "values": [
+        8
+       ],
+       "pointers": {
+        "k": null,
+        "i": null
+       },
+       "marks": {
+        "dim": [],
+        "path": [
+         0
+        ],
+        "good": [],
+        "lit": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "k (books kept)",
+          "ko": "k (남긴 책 수)"
+         },
+         "value": 1,
+         "mark": "good"
+        }
+       ]
+      }
+     },
+     "answer": "1\n[8]"
+    }
+   ],
+   "sampleInput": "[8]"
+  }
+ ]
+}

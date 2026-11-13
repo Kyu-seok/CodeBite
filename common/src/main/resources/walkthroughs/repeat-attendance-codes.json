@@ -1,0 +1,1736 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Repeat Attendance Codes",
+  "ko": "두 번 찍힌 출석 코드"
+ },
+ "approach": {
+  "en": "Codes run 1..n, so slot c-1 can stand for code c: the first scan of c makes that slot negative, and finding it already negative means c was scanned before.",
+  "ko": "코드가 1..n이므로 c-1번 칸이 코드 c를 맡습니다. c를 처음 읽으면 그 칸을 음수로 바꾸고, 이미 음수라면 c는 앞에서 한 번 찍힌 것입니다."
+ },
+ "views": [
+  {
+   "id": "codes",
+   "type": "array",
+   "title": {
+    "en": "codes (tag: the code a slot stands for)",
+    "ko": "codes (태그: 칸이 맡은 코드)"
+   }
+  },
+  {
+   "id": "state",
+   "type": "vars"
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "codes = [5,2,6,3,2,1,4,6]",
+   "expected": "[2,6]",
+   "frames": [
+    {
+     "caption": {
+      "en": "8 scans of codes 1..8, so slot c-1 stands for code c (its tag). Read the scans left to right; a negative slot will mean its code was already scanned.",
+      "ko": "코드 1..8의 스캔 8개이므로 c-1번 칸이 코드 c를 맡습니다(태그). 스캔을 왼쪽부터 읽고, 음수인 칸은 그 코드가 이미 찍혔다는 뜻입니다."
+     },
+     "views": {
+      "codes": {
+       "values": [
+        5,
+        2,
+        6,
+        3,
+        2,
+        1,
+        4,
+        6
+       ],
+       "pointers": {
+        "i": null,
+        "c-1": null
+       },
+       "tags": [
+        [
+         0,
+         "#1"
+        ],
+        [
+         1,
+         "#2"
+        ],
+        [
+         2,
+         "#3"
+        ],
+        [
+         3,
+         "#4"
+        ],
+        [
+         4,
+         "#5"
+        ],
+        [
+         5,
+         "#6"
+        ],
+        [
+         6,
+         "#7"
+        ],
+        [
+         7,
+         "#8"
+        ]
+       ],
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "repeated",
+          "ko": "repeated (두 번 찍힌 코드)"
+         },
+         "value": [],
+         "empty": {
+          "en": "none yet",
+          "ko": "아직 없음"
+         },
+         "mark": null
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "codes[0] = 5, and slot 4 is positive: the first scan of code 5. Flip it, 2 → -2.",
+      "ko": "codes[0] = 5: 4번 칸이 양수이므로 5번 코드의 첫 스캔입니다. 부호를 바꿉니다, 2 → -2."
+     },
+     "views": {
+      "codes": {
+       "values": [
+        5,
+        2,
+        6,
+        3,
+        -2,
+        1,
+        4,
+        6
+       ],
+       "pointers": {
+        "i": 0,
+        "c-1": 4
+       },
+       "tags": [
+        [
+         0,
+         "#1"
+        ],
+        [
+         1,
+         "#2"
+        ],
+        [
+         2,
+         "#3"
+        ],
+        [
+         3,
+         "#4"
+        ],
+        [
+         4,
+         "#5"
+        ],
+        [
+         5,
+         "#6"
+        ],
+        [
+         6,
+         "#7"
+        ],
+        [
+         7,
+         "#8"
+        ]
+       ],
+       "marks": {
+        "path": [],
+        "good": [
+         4
+        ],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "repeated",
+          "ko": "repeated (두 번 찍힌 코드)"
+         },
+         "value": [],
+         "empty": {
+          "en": "none yet",
+          "ko": "아직 없음"
+         },
+         "mark": null
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "codes[1] = 2, and slot 1 is positive: the first scan of code 2. Flip it, 2 → -2.",
+      "ko": "codes[1] = 2: 1번 칸이 양수이므로 2번 코드의 첫 스캔입니다. 부호를 바꿉니다, 2 → -2."
+     },
+     "views": {
+      "codes": {
+       "values": [
+        5,
+        -2,
+        6,
+        3,
+        -2,
+        1,
+        4,
+        6
+       ],
+       "pointers": {
+        "i": 1,
+        "c-1": 1
+       },
+       "tags": [
+        [
+         0,
+         "#1"
+        ],
+        [
+         1,
+         "#2"
+        ],
+        [
+         2,
+         "#3"
+        ],
+        [
+         3,
+         "#4"
+        ],
+        [
+         4,
+         "#5"
+        ],
+        [
+         5,
+         "#6"
+        ],
+        [
+         6,
+         "#7"
+        ],
+        [
+         7,
+         "#8"
+        ]
+       ],
+       "marks": {
+        "path": [],
+        "good": [
+         1
+        ],
+        "lit": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "repeated",
+          "ko": "repeated (두 번 찍힌 코드)"
+         },
+         "value": [],
+         "empty": {
+          "en": "none yet",
+          "ko": "아직 없음"
+         },
+         "mark": null
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "codes[2] = 6, and slot 5 is positive: the first scan of code 6. Flip it, 1 → -1.",
+      "ko": "codes[2] = 6: 5번 칸이 양수이므로 6번 코드의 첫 스캔입니다. 부호를 바꿉니다, 1 → -1."
+     },
+     "views": {
+      "codes": {
+       "values": [
+        5,
+        -2,
+        6,
+        3,
+        -2,
+        -1,
+        4,
+        6
+       ],
+       "pointers": {
+        "i": 2,
+        "c-1": 5
+       },
+       "tags": [
+        [
+         0,
+         "#1"
+        ],
+        [
+         1,
+         "#2"
+        ],
+        [
+         2,
+         "#3"
+        ],
+        [
+         3,
+         "#4"
+        ],
+        [
+         4,
+         "#5"
+        ],
+        [
+         5,
+         "#6"
+        ],
+        [
+         6,
+         "#7"
+        ],
+        [
+         7,
+         "#8"
+        ]
+       ],
+       "marks": {
+        "path": [],
+        "good": [
+         5
+        ],
+        "lit": [
+         2
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "repeated",
+          "ko": "repeated (두 번 찍힌 코드)"
+         },
+         "value": [],
+         "empty": {
+          "en": "none yet",
+          "ko": "아직 없음"
+         },
+         "mark": null
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "codes[3] = 3, and slot 2 is positive: the first scan of code 3. Flip it, 6 → -6.",
+      "ko": "codes[3] = 3: 2번 칸이 양수이므로 3번 코드의 첫 스캔입니다. 부호를 바꿉니다, 6 → -6."
+     },
+     "views": {
+      "codes": {
+       "values": [
+        5,
+        -2,
+        -6,
+        3,
+        -2,
+        -1,
+        4,
+        6
+       ],
+       "pointers": {
+        "i": 3,
+        "c-1": 2
+       },
+       "tags": [
+        [
+         0,
+         "#1"
+        ],
+        [
+         1,
+         "#2"
+        ],
+        [
+         2,
+         "#3"
+        ],
+        [
+         3,
+         "#4"
+        ],
+        [
+         4,
+         "#5"
+        ],
+        [
+         5,
+         "#6"
+        ],
+        [
+         6,
+         "#7"
+        ],
+        [
+         7,
+         "#8"
+        ]
+       ],
+       "marks": {
+        "path": [],
+        "good": [
+         2
+        ],
+        "lit": [
+         3
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "repeated",
+          "ko": "repeated (두 번 찍힌 코드)"
+         },
+         "value": [],
+         "empty": {
+          "en": "none yet",
+          "ko": "아직 없음"
+         },
+         "mark": null
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "|codes[4]| = 2, and slot 1 is already negative (-2): code 2 was scanned before. Add 2 to repeated.",
+      "ko": "|codes[4]| = 2: 1번 칸이 이미 음수(-2)이므로 2번 코드는 앞에서 찍혔습니다. repeated에 추가: 2."
+     },
+     "views": {
+      "codes": {
+       "values": [
+        5,
+        -2,
+        -6,
+        3,
+        -2,
+        -1,
+        4,
+        6
+       ],
+       "pointers": {
+        "i": 4,
+        "c-1": 1
+       },
+       "tags": [
+        [
+         0,
+         "#1"
+        ],
+        [
+         1,
+         "#2"
+        ],
+        [
+         2,
+         "#3"
+        ],
+        [
+         3,
+         "#4"
+        ],
+        [
+         4,
+         "#5"
+        ],
+        [
+         5,
+         "#6"
+        ],
+        [
+         6,
+         "#7"
+        ],
+        [
+         7,
+         "#8"
+        ]
+       ],
+       "marks": {
+        "path": [
+         1
+        ],
+        "good": [],
+        "lit": [
+         4
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "repeated",
+          "ko": "repeated (두 번 찍힌 코드)"
+         },
+         "value": [
+          2
+         ],
+         "empty": {
+          "en": "none yet",
+          "ko": "아직 없음"
+         },
+         "mark": "good"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "|codes[5]| = 1, and slot 0 is positive: the first scan of code 1. Flip it, 5 → -5.",
+      "ko": "|codes[5]| = 1: 0번 칸이 양수이므로 1번 코드의 첫 스캔입니다. 부호를 바꿉니다, 5 → -5."
+     },
+     "views": {
+      "codes": {
+       "values": [
+        -5,
+        -2,
+        -6,
+        3,
+        -2,
+        -1,
+        4,
+        6
+       ],
+       "pointers": {
+        "i": 5,
+        "c-1": 0
+       },
+       "tags": [
+        [
+         0,
+         "#1"
+        ],
+        [
+         1,
+         "#2"
+        ],
+        [
+         2,
+         "#3"
+        ],
+        [
+         3,
+         "#4"
+        ],
+        [
+         4,
+         "#5"
+        ],
+        [
+         5,
+         "#6"
+        ],
+        [
+         6,
+         "#7"
+        ],
+        [
+         7,
+         "#8"
+        ]
+       ],
+       "marks": {
+        "path": [],
+        "good": [
+         0
+        ],
+        "lit": [
+         5
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "repeated",
+          "ko": "repeated (두 번 찍힌 코드)"
+         },
+         "value": [
+          2
+         ],
+         "empty": {
+          "en": "none yet",
+          "ko": "아직 없음"
+         },
+         "mark": null
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "codes[6] = 4, and slot 3 is positive: the first scan of code 4. Flip it, 3 → -3.",
+      "ko": "codes[6] = 4: 3번 칸이 양수이므로 4번 코드의 첫 스캔입니다. 부호를 바꿉니다, 3 → -3."
+     },
+     "views": {
+      "codes": {
+       "values": [
+        -5,
+        -2,
+        -6,
+        -3,
+        -2,
+        -1,
+        4,
+        6
+       ],
+       "pointers": {
+        "i": 6,
+        "c-1": 3
+       },
+       "tags": [
+        [
+         0,
+         "#1"
+        ],
+        [
+         1,
+         "#2"
+        ],
+        [
+         2,
+         "#3"
+        ],
+        [
+         3,
+         "#4"
+        ],
+        [
+         4,
+         "#5"
+        ],
+        [
+         5,
+         "#6"
+        ],
+        [
+         6,
+         "#7"
+        ],
+        [
+         7,
+         "#8"
+        ]
+       ],
+       "marks": {
+        "path": [],
+        "good": [
+         3
+        ],
+        "lit": [
+         6
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "repeated",
+          "ko": "repeated (두 번 찍힌 코드)"
+         },
+         "value": [
+          2
+         ],
+         "empty": {
+          "en": "none yet",
+          "ko": "아직 없음"
+         },
+         "mark": null
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "codes[7] = 6, and slot 5 is already negative (-1): code 6 was scanned before. Add 6 to repeated.",
+      "ko": "codes[7] = 6: 5번 칸이 이미 음수(-1)이므로 6번 코드는 앞에서 찍혔습니다. repeated에 추가: 6."
+     },
+     "views": {
+      "codes": {
+       "values": [
+        -5,
+        -2,
+        -6,
+        -3,
+        -2,
+        -1,
+        4,
+        6
+       ],
+       "pointers": {
+        "i": 7,
+        "c-1": 5
+       },
+       "tags": [
+        [
+         0,
+         "#1"
+        ],
+        [
+         1,
+         "#2"
+        ],
+        [
+         2,
+         "#3"
+        ],
+        [
+         3,
+         "#4"
+        ],
+        [
+         4,
+         "#5"
+        ],
+        [
+         5,
+         "#6"
+        ],
+        [
+         6,
+         "#7"
+        ],
+        [
+         7,
+         "#8"
+        ]
+       ],
+       "marks": {
+        "path": [
+         5
+        ],
+        "good": [],
+        "lit": [
+         7
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "repeated",
+          "ko": "repeated (두 번 찍힌 코드)"
+         },
+         "value": [
+          2,
+          6
+         ],
+         "empty": {
+          "en": "none yet",
+          "ko": "아직 없음"
+         },
+         "mark": "good"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Every scan read, and the codes that met a negative slot were scanned twice: 2, 6. Answer [2,6].",
+      "ko": "모든 스캔을 읽었고, 음수 칸을 만난 코드 2, 6번이 두 번 찍힌 코드입니다. 답은 [2,6]입니다."
+     },
+     "views": {
+      "codes": {
+       "values": [
+        -5,
+        -2,
+        -6,
+        -3,
+        -2,
+        -1,
+        4,
+        6
+       ],
+       "pointers": {
+        "i": null,
+        "c-1": null
+       },
+       "tags": [
+        [
+         0,
+         "#1"
+        ],
+        [
+         1,
+         "#2"
+        ],
+        [
+         2,
+         "#3"
+        ],
+        [
+         3,
+         "#4"
+        ],
+        [
+         4,
+         "#5"
+        ],
+        [
+         5,
+         "#6"
+        ],
+        [
+         6,
+         "#7"
+        ],
+        [
+         7,
+         "#8"
+        ]
+       ],
+       "marks": {
+        "path": [
+         1,
+         5
+        ],
+        "good": [],
+        "lit": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "repeated",
+          "ko": "repeated (두 번 찍힌 코드)"
+         },
+         "value": [
+          2,
+          6
+         ],
+         "empty": {
+          "en": "none yet",
+          "ko": "아직 없음"
+         },
+         "mark": "good"
+        }
+       ]
+      }
+     },
+     "answer": "[2,6]"
+    }
+   ],
+   "sampleInput": "[5,2,6,3,2,1,4,6]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "codes = [3,3,1,2]",
+   "expected": "[3]",
+   "frames": [
+    {
+     "caption": {
+      "en": "4 scans of codes 1..4, so slot c-1 stands for code c (its tag). Read the scans left to right; a negative slot will mean its code was already scanned.",
+      "ko": "코드 1..4의 스캔 4개이므로 c-1번 칸이 코드 c를 맡습니다(태그). 스캔을 왼쪽부터 읽고, 음수인 칸은 그 코드가 이미 찍혔다는 뜻입니다."
+     },
+     "views": {
+      "codes": {
+       "values": [
+        3,
+        3,
+        1,
+        2
+       ],
+       "pointers": {
+        "i": null,
+        "c-1": null
+       },
+       "tags": [
+        [
+         0,
+         "#1"
+        ],
+        [
+         1,
+         "#2"
+        ],
+        [
+         2,
+         "#3"
+        ],
+        [
+         3,
+         "#4"
+        ]
+       ],
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "repeated",
+          "ko": "repeated (두 번 찍힌 코드)"
+         },
+         "value": [],
+         "empty": {
+          "en": "none yet",
+          "ko": "아직 없음"
+         },
+         "mark": null
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "codes[0] = 3, and slot 2 is positive: the first scan of code 3. Flip it, 1 → -1.",
+      "ko": "codes[0] = 3: 2번 칸이 양수이므로 3번 코드의 첫 스캔입니다. 부호를 바꿉니다, 1 → -1."
+     },
+     "views": {
+      "codes": {
+       "values": [
+        3,
+        3,
+        -1,
+        2
+       ],
+       "pointers": {
+        "i": 0,
+        "c-1": 2
+       },
+       "tags": [
+        [
+         0,
+         "#1"
+        ],
+        [
+         1,
+         "#2"
+        ],
+        [
+         2,
+         "#3"
+        ],
+        [
+         3,
+         "#4"
+        ]
+       ],
+       "marks": {
+        "path": [],
+        "good": [
+         2
+        ],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "repeated",
+          "ko": "repeated (두 번 찍힌 코드)"
+         },
+         "value": [],
+         "empty": {
+          "en": "none yet",
+          "ko": "아직 없음"
+         },
+         "mark": null
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "codes[1] = 3, and slot 2 is already negative (-1): code 3 was scanned before. Add 3 to repeated.",
+      "ko": "codes[1] = 3: 2번 칸이 이미 음수(-1)이므로 3번 코드는 앞에서 찍혔습니다. repeated에 추가: 3."
+     },
+     "views": {
+      "codes": {
+       "values": [
+        3,
+        3,
+        -1,
+        2
+       ],
+       "pointers": {
+        "i": 1,
+        "c-1": 2
+       },
+       "tags": [
+        [
+         0,
+         "#1"
+        ],
+        [
+         1,
+         "#2"
+        ],
+        [
+         2,
+         "#3"
+        ],
+        [
+         3,
+         "#4"
+        ]
+       ],
+       "marks": {
+        "path": [
+         2
+        ],
+        "good": [],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "repeated",
+          "ko": "repeated (두 번 찍힌 코드)"
+         },
+         "value": [
+          3
+         ],
+         "empty": {
+          "en": "none yet",
+          "ko": "아직 없음"
+         },
+         "mark": "good"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "|codes[2]| = 1, and slot 0 is positive: the first scan of code 1. Flip it, 3 → -3.",
+      "ko": "|codes[2]| = 1: 0번 칸이 양수이므로 1번 코드의 첫 스캔입니다. 부호를 바꿉니다, 3 → -3."
+     },
+     "views": {
+      "codes": {
+       "values": [
+        -3,
+        3,
+        -1,
+        2
+       ],
+       "pointers": {
+        "i": 2,
+        "c-1": 0
+       },
+       "tags": [
+        [
+         0,
+         "#1"
+        ],
+        [
+         1,
+         "#2"
+        ],
+        [
+         2,
+         "#3"
+        ],
+        [
+         3,
+         "#4"
+        ]
+       ],
+       "marks": {
+        "path": [],
+        "good": [
+         0
+        ],
+        "lit": [
+         2
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "repeated",
+          "ko": "repeated (두 번 찍힌 코드)"
+         },
+         "value": [
+          3
+         ],
+         "empty": {
+          "en": "none yet",
+          "ko": "아직 없음"
+         },
+         "mark": null
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "codes[3] = 2, and slot 1 is positive: the first scan of code 2. Flip it, 3 → -3.",
+      "ko": "codes[3] = 2: 1번 칸이 양수이므로 2번 코드의 첫 스캔입니다. 부호를 바꿉니다, 3 → -3."
+     },
+     "views": {
+      "codes": {
+       "values": [
+        -3,
+        -3,
+        -1,
+        2
+       ],
+       "pointers": {
+        "i": 3,
+        "c-1": 1
+       },
+       "tags": [
+        [
+         0,
+         "#1"
+        ],
+        [
+         1,
+         "#2"
+        ],
+        [
+         2,
+         "#3"
+        ],
+        [
+         3,
+         "#4"
+        ]
+       ],
+       "marks": {
+        "path": [],
+        "good": [
+         1
+        ],
+        "lit": [
+         3
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "repeated",
+          "ko": "repeated (두 번 찍힌 코드)"
+         },
+         "value": [
+          3
+         ],
+         "empty": {
+          "en": "none yet",
+          "ko": "아직 없음"
+         },
+         "mark": null
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Every scan read, and the codes that met a negative slot were scanned twice: 3. Answer [3].",
+      "ko": "모든 스캔을 읽었고, 음수 칸을 만난 코드 3번이 두 번 찍힌 코드입니다. 답은 [3]입니다."
+     },
+     "views": {
+      "codes": {
+       "values": [
+        -3,
+        -3,
+        -1,
+        2
+       ],
+       "pointers": {
+        "i": null,
+        "c-1": null
+       },
+       "tags": [
+        [
+         0,
+         "#1"
+        ],
+        [
+         1,
+         "#2"
+        ],
+        [
+         2,
+         "#3"
+        ],
+        [
+         3,
+         "#4"
+        ]
+       ],
+       "marks": {
+        "path": [
+         2
+        ],
+        "good": [],
+        "lit": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "repeated",
+          "ko": "repeated (두 번 찍힌 코드)"
+         },
+         "value": [
+          3
+         ],
+         "empty": {
+          "en": "none yet",
+          "ko": "아직 없음"
+         },
+         "mark": "good"
+        }
+       ]
+      }
+     },
+     "answer": "[3]"
+    }
+   ],
+   "sampleInput": "[3,3,1,2]"
+  },
+  {
+   "label": {
+    "en": "Case 3",
+    "ko": "케이스 3"
+   },
+   "input": "codes = [1,2,3,4,5]",
+   "expected": "[]",
+   "frames": [
+    {
+     "caption": {
+      "en": "5 scans of codes 1..5, so slot c-1 stands for code c (its tag). Read the scans left to right; a negative slot will mean its code was already scanned.",
+      "ko": "코드 1..5의 스캔 5개이므로 c-1번 칸이 코드 c를 맡습니다(태그). 스캔을 왼쪽부터 읽고, 음수인 칸은 그 코드가 이미 찍혔다는 뜻입니다."
+     },
+     "views": {
+      "codes": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5
+       ],
+       "pointers": {
+        "i": null,
+        "c-1": null
+       },
+       "tags": [
+        [
+         0,
+         "#1"
+        ],
+        [
+         1,
+         "#2"
+        ],
+        [
+         2,
+         "#3"
+        ],
+        [
+         3,
+         "#4"
+        ],
+        [
+         4,
+         "#5"
+        ]
+       ],
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "repeated",
+          "ko": "repeated (두 번 찍힌 코드)"
+         },
+         "value": [],
+         "empty": {
+          "en": "none yet",
+          "ko": "아직 없음"
+         },
+         "mark": null
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "codes[0] = 1, and slot 0 is positive: the first scan of code 1. Flip it, 1 → -1.",
+      "ko": "codes[0] = 1: 0번 칸이 양수이므로 1번 코드의 첫 스캔입니다. 부호를 바꿉니다, 1 → -1."
+     },
+     "views": {
+      "codes": {
+       "values": [
+        -1,
+        2,
+        3,
+        4,
+        5
+       ],
+       "pointers": {
+        "i": 0,
+        "c-1": 0
+       },
+       "tags": [
+        [
+         0,
+         "#1"
+        ],
+        [
+         1,
+         "#2"
+        ],
+        [
+         2,
+         "#3"
+        ],
+        [
+         3,
+         "#4"
+        ],
+        [
+         4,
+         "#5"
+        ]
+       ],
+       "marks": {
+        "path": [],
+        "good": [
+         0
+        ],
+        "lit": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "repeated",
+          "ko": "repeated (두 번 찍힌 코드)"
+         },
+         "value": [],
+         "empty": {
+          "en": "none yet",
+          "ko": "아직 없음"
+         },
+         "mark": null
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "codes[1] = 2, and slot 1 is positive: the first scan of code 2. Flip it, 2 → -2.",
+      "ko": "codes[1] = 2: 1번 칸이 양수이므로 2번 코드의 첫 스캔입니다. 부호를 바꿉니다, 2 → -2."
+     },
+     "views": {
+      "codes": {
+       "values": [
+        -1,
+        -2,
+        3,
+        4,
+        5
+       ],
+       "pointers": {
+        "i": 1,
+        "c-1": 1
+       },
+       "tags": [
+        [
+         0,
+         "#1"
+        ],
+        [
+         1,
+         "#2"
+        ],
+        [
+         2,
+         "#3"
+        ],
+        [
+         3,
+         "#4"
+        ],
+        [
+         4,
+         "#5"
+        ]
+       ],
+       "marks": {
+        "path": [],
+        "good": [
+         1
+        ],
+        "lit": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "repeated",
+          "ko": "repeated (두 번 찍힌 코드)"
+         },
+         "value": [],
+         "empty": {
+          "en": "none yet",
+          "ko": "아직 없음"
+         },
+         "mark": null
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "codes[2] = 3, and slot 2 is positive: the first scan of code 3. Flip it, 3 → -3.",
+      "ko": "codes[2] = 3: 2번 칸이 양수이므로 3번 코드의 첫 스캔입니다. 부호를 바꿉니다, 3 → -3."
+     },
+     "views": {
+      "codes": {
+       "values": [
+        -1,
+        -2,
+        -3,
+        4,
+        5
+       ],
+       "pointers": {
+        "i": 2,
+        "c-1": 2
+       },
+       "tags": [
+        [
+         0,
+         "#1"
+        ],
+        [
+         1,
+         "#2"
+        ],
+        [
+         2,
+         "#3"
+        ],
+        [
+         3,
+         "#4"
+        ],
+        [
+         4,
+         "#5"
+        ]
+       ],
+       "marks": {
+        "path": [],
+        "good": [
+         2
+        ],
+        "lit": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "repeated",
+          "ko": "repeated (두 번 찍힌 코드)"
+         },
+         "value": [],
+         "empty": {
+          "en": "none yet",
+          "ko": "아직 없음"
+         },
+         "mark": null
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "codes[3] = 4, and slot 3 is positive: the first scan of code 4. Flip it, 4 → -4.",
+      "ko": "codes[3] = 4: 3번 칸이 양수이므로 4번 코드의 첫 스캔입니다. 부호를 바꿉니다, 4 → -4."
+     },
+     "views": {
+      "codes": {
+       "values": [
+        -1,
+        -2,
+        -3,
+        -4,
+        5
+       ],
+       "pointers": {
+        "i": 3,
+        "c-1": 3
+       },
+       "tags": [
+        [
+         0,
+         "#1"
+        ],
+        [
+         1,
+         "#2"
+        ],
+        [
+         2,
+         "#3"
+        ],
+        [
+         3,
+         "#4"
+        ],
+        [
+         4,
+         "#5"
+        ]
+       ],
+       "marks": {
+        "path": [],
+        "good": [
+         3
+        ],
+        "lit": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "repeated",
+          "ko": "repeated (두 번 찍힌 코드)"
+         },
+         "value": [],
+         "empty": {
+          "en": "none yet",
+          "ko": "아직 없음"
+         },
+         "mark": null
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "codes[4] = 5, and slot 4 is positive: the first scan of code 5. Flip it, 5 → -5.",
+      "ko": "codes[4] = 5: 4번 칸이 양수이므로 5번 코드의 첫 스캔입니다. 부호를 바꿉니다, 5 → -5."
+     },
+     "views": {
+      "codes": {
+       "values": [
+        -1,
+        -2,
+        -3,
+        -4,
+        -5
+       ],
+       "pointers": {
+        "i": 4,
+        "c-1": 4
+       },
+       "tags": [
+        [
+         0,
+         "#1"
+        ],
+        [
+         1,
+         "#2"
+        ],
+        [
+         2,
+         "#3"
+        ],
+        [
+         3,
+         "#4"
+        ],
+        [
+         4,
+         "#5"
+        ]
+       ],
+       "marks": {
+        "path": [],
+        "good": [
+         4
+        ],
+        "lit": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "repeated",
+          "ko": "repeated (두 번 찍힌 코드)"
+         },
+         "value": [],
+         "empty": {
+          "en": "none yet",
+          "ko": "아직 없음"
+         },
+         "mark": null
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Every scan read and each one found its slot positive: no code was scanned twice. Answer [].",
+      "ko": "모든 스캔을 읽는 동안 음수 칸을 만난 적이 없으므로 두 번 찍힌 코드가 없습니다. 답은 []입니다."
+     },
+     "views": {
+      "codes": {
+       "values": [
+        -1,
+        -2,
+        -3,
+        -4,
+        -5
+       ],
+       "pointers": {
+        "i": null,
+        "c-1": null
+       },
+       "tags": [
+        [
+         0,
+         "#1"
+        ],
+        [
+         1,
+         "#2"
+        ],
+        [
+         2,
+         "#3"
+        ],
+        [
+         3,
+         "#4"
+        ],
+        [
+         4,
+         "#5"
+        ]
+       ],
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "repeated",
+          "ko": "repeated (두 번 찍힌 코드)"
+         },
+         "value": [],
+         "empty": {
+          "en": "none yet",
+          "ko": "아직 없음"
+         },
+         "mark": null
+        }
+       ]
+      }
+     },
+     "answer": "[]"
+    }
+   ],
+   "sampleInput": "[1,2,3,4,5]"
+  }
+ ]
+}

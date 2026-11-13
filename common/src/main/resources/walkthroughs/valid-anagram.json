@@ -1,0 +1,2543 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Valid Anagram",
+  "ko": "애너그램 확인"
+ },
+ "approach": {
+  "en": "Count each letter in both strings: t is an anagram of s exactly when every letter's two counts match.",
+  "ko": "두 문자열의 글자를 각각 셉니다: 모든 글자의 두 개수가 같을 때만 t가 s의 애너그램입니다."
+ },
+ "views": [
+  {
+   "id": "s",
+   "type": "array",
+   "title": "s"
+  },
+  {
+   "id": "t",
+   "type": "array",
+   "title": "t"
+  },
+  {
+   "id": "counts",
+   "type": "table",
+   "title": {
+    "en": "letter counts",
+    "ko": "글자별 개수"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "s = \"butter\", t = \"bruett\"",
+   "expected": "true",
+   "frames": [
+    {
+     "caption": {
+      "en": "Count how many times each letter appears in s, then in t. Every count starts at 0.",
+      "ko": "s에서 각 글자가 몇 번 나오는지 세고, 이어서 t에서도 셉니다. 모든 개수는 0에서 시작합니다."
+     },
+     "views": {
+      "s": {
+       "values": [
+        "b",
+        "u",
+        "t",
+        "t",
+        "e",
+        "r"
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "t": {
+       "values": [
+        "b",
+        "r",
+        "u",
+        "e",
+        "t",
+        "t"
+       ],
+       "pointers": {
+        "j": null
+       },
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "counts": {
+       "columns": [
+        "b",
+        "e",
+        "r",
+        "t",
+        "u"
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "in s",
+          "ko": "s 안"
+         },
+         "cells": [
+          0,
+          0,
+          0,
+          0,
+          0
+         ]
+        },
+        {
+         "label": {
+          "en": "in t",
+          "ko": "t 안"
+         },
+         "cells": [
+          0,
+          0,
+          0,
+          0,
+          0
+         ]
+        }
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "s[0] is 'b': s now has 1 × 'b'.",
+      "ko": "s[0] = 'b': s의 'b' 개수는 이제 1개입니다."
+     },
+     "views": {
+      "s": {
+       "values": [
+        "b",
+        "u",
+        "t",
+        "t",
+        "e",
+        "r"
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ],
+        "dim": [
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "t": {
+       "values": [
+        "b",
+        "r",
+        "u",
+        "e",
+        "t",
+        "t"
+       ],
+       "pointers": {
+        "j": null
+       },
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "counts": {
+       "columns": [
+        "b",
+        "e",
+        "r",
+        "t",
+        "u"
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "in s",
+          "ko": "s 안"
+         },
+         "cells": [
+          1,
+          0,
+          0,
+          0,
+          0
+         ]
+        },
+        {
+         "label": {
+          "en": "in t",
+          "ko": "t 안"
+         },
+         "cells": [
+          0,
+          0,
+          0,
+          0,
+          0
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         [
+          0,
+          0
+         ]
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "s[1] is 'u': s now has 1 × 'u'.",
+      "ko": "s[1] = 'u': s의 'u' 개수는 이제 1개입니다."
+     },
+     "views": {
+      "s": {
+       "values": [
+        "b",
+        "u",
+        "t",
+        "t",
+        "e",
+        "r"
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "marks": {
+        "lit": [
+         1
+        ],
+        "dim": [
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "t": {
+       "values": [
+        "b",
+        "r",
+        "u",
+        "e",
+        "t",
+        "t"
+       ],
+       "pointers": {
+        "j": null
+       },
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "counts": {
+       "columns": [
+        "b",
+        "e",
+        "r",
+        "t",
+        "u"
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "in s",
+          "ko": "s 안"
+         },
+         "cells": [
+          1,
+          0,
+          0,
+          0,
+          1
+         ]
+        },
+        {
+         "label": {
+          "en": "in t",
+          "ko": "t 안"
+         },
+         "cells": [
+          0,
+          0,
+          0,
+          0,
+          0
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         [
+          0,
+          4
+         ]
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "s[2] is 't': s now has 1 × 't'.",
+      "ko": "s[2] = 't': s의 't' 개수는 이제 1개입니다."
+     },
+     "views": {
+      "s": {
+       "values": [
+        "b",
+        "u",
+        "t",
+        "t",
+        "e",
+        "r"
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "marks": {
+        "lit": [
+         2
+        ],
+        "dim": [
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "t": {
+       "values": [
+        "b",
+        "r",
+        "u",
+        "e",
+        "t",
+        "t"
+       ],
+       "pointers": {
+        "j": null
+       },
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "counts": {
+       "columns": [
+        "b",
+        "e",
+        "r",
+        "t",
+        "u"
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "in s",
+          "ko": "s 안"
+         },
+         "cells": [
+          1,
+          0,
+          0,
+          1,
+          1
+         ]
+        },
+        {
+         "label": {
+          "en": "in t",
+          "ko": "t 안"
+         },
+         "cells": [
+          0,
+          0,
+          0,
+          0,
+          0
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         [
+          0,
+          3
+         ]
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "s[3] is 't': s now has 2 × 't'.",
+      "ko": "s[3] = 't': s의 't' 개수는 이제 2개입니다."
+     },
+     "views": {
+      "s": {
+       "values": [
+        "b",
+        "u",
+        "t",
+        "t",
+        "e",
+        "r"
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "marks": {
+        "lit": [
+         3
+        ],
+        "dim": [
+         4,
+         5
+        ]
+       }
+      },
+      "t": {
+       "values": [
+        "b",
+        "r",
+        "u",
+        "e",
+        "t",
+        "t"
+       ],
+       "pointers": {
+        "j": null
+       },
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "counts": {
+       "columns": [
+        "b",
+        "e",
+        "r",
+        "t",
+        "u"
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "in s",
+          "ko": "s 안"
+         },
+         "cells": [
+          1,
+          0,
+          0,
+          2,
+          1
+         ]
+        },
+        {
+         "label": {
+          "en": "in t",
+          "ko": "t 안"
+         },
+         "cells": [
+          0,
+          0,
+          0,
+          0,
+          0
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         [
+          0,
+          3
+         ]
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "s[4] is 'e': s now has 1 × 'e'.",
+      "ko": "s[4] = 'e': s의 'e' 개수는 이제 1개입니다."
+     },
+     "views": {
+      "s": {
+       "values": [
+        "b",
+        "u",
+        "t",
+        "t",
+        "e",
+        "r"
+       ],
+       "pointers": {
+        "i": 4
+       },
+       "marks": {
+        "lit": [
+         4
+        ],
+        "dim": [
+         5
+        ]
+       }
+      },
+      "t": {
+       "values": [
+        "b",
+        "r",
+        "u",
+        "e",
+        "t",
+        "t"
+       ],
+       "pointers": {
+        "j": null
+       },
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "counts": {
+       "columns": [
+        "b",
+        "e",
+        "r",
+        "t",
+        "u"
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "in s",
+          "ko": "s 안"
+         },
+         "cells": [
+          1,
+          1,
+          0,
+          2,
+          1
+         ]
+        },
+        {
+         "label": {
+          "en": "in t",
+          "ko": "t 안"
+         },
+         "cells": [
+          0,
+          0,
+          0,
+          0,
+          0
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         [
+          0,
+          1
+         ]
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "s[5] is 'r': s now has 1 × 'r'.",
+      "ko": "s[5] = 'r': s의 'r' 개수는 이제 1개입니다."
+     },
+     "views": {
+      "s": {
+       "values": [
+        "b",
+        "u",
+        "t",
+        "t",
+        "e",
+        "r"
+       ],
+       "pointers": {
+        "i": 5
+       },
+       "marks": {
+        "lit": [
+         5
+        ],
+        "dim": []
+       }
+      },
+      "t": {
+       "values": [
+        "b",
+        "r",
+        "u",
+        "e",
+        "t",
+        "t"
+       ],
+       "pointers": {
+        "j": null
+       },
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "counts": {
+       "columns": [
+        "b",
+        "e",
+        "r",
+        "t",
+        "u"
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "in s",
+          "ko": "s 안"
+         },
+         "cells": [
+          1,
+          1,
+          1,
+          2,
+          1
+         ]
+        },
+        {
+         "label": {
+          "en": "in t",
+          "ko": "t 안"
+         },
+         "cells": [
+          0,
+          0,
+          0,
+          0,
+          0
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         [
+          0,
+          2
+         ]
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "t[0] is 'b': t now has 1 × 'b'.",
+      "ko": "t[0] = 'b': t의 'b' 개수는 이제 1개입니다."
+     },
+     "views": {
+      "s": {
+       "values": [
+        "b",
+        "u",
+        "t",
+        "t",
+        "e",
+        "r"
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {}
+      },
+      "t": {
+       "values": [
+        "b",
+        "r",
+        "u",
+        "e",
+        "t",
+        "t"
+       ],
+       "pointers": {
+        "j": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ],
+        "dim": [
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "counts": {
+       "columns": [
+        "b",
+        "e",
+        "r",
+        "t",
+        "u"
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "in s",
+          "ko": "s 안"
+         },
+         "cells": [
+          1,
+          1,
+          1,
+          2,
+          1
+         ]
+        },
+        {
+         "label": {
+          "en": "in t",
+          "ko": "t 안"
+         },
+         "cells": [
+          1,
+          0,
+          0,
+          0,
+          0
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         [
+          1,
+          0
+         ]
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "t[1] is 'r': t now has 1 × 'r'.",
+      "ko": "t[1] = 'r': t의 'r' 개수는 이제 1개입니다."
+     },
+     "views": {
+      "s": {
+       "values": [
+        "b",
+        "u",
+        "t",
+        "t",
+        "e",
+        "r"
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {}
+      },
+      "t": {
+       "values": [
+        "b",
+        "r",
+        "u",
+        "e",
+        "t",
+        "t"
+       ],
+       "pointers": {
+        "j": 1
+       },
+       "marks": {
+        "lit": [
+         1
+        ],
+        "dim": [
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "counts": {
+       "columns": [
+        "b",
+        "e",
+        "r",
+        "t",
+        "u"
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "in s",
+          "ko": "s 안"
+         },
+         "cells": [
+          1,
+          1,
+          1,
+          2,
+          1
+         ]
+        },
+        {
+         "label": {
+          "en": "in t",
+          "ko": "t 안"
+         },
+         "cells": [
+          1,
+          0,
+          1,
+          0,
+          0
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         [
+          1,
+          2
+         ]
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "t[2] is 'u': t now has 1 × 'u'.",
+      "ko": "t[2] = 'u': t의 'u' 개수는 이제 1개입니다."
+     },
+     "views": {
+      "s": {
+       "values": [
+        "b",
+        "u",
+        "t",
+        "t",
+        "e",
+        "r"
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {}
+      },
+      "t": {
+       "values": [
+        "b",
+        "r",
+        "u",
+        "e",
+        "t",
+        "t"
+       ],
+       "pointers": {
+        "j": 2
+       },
+       "marks": {
+        "lit": [
+         2
+        ],
+        "dim": [
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "counts": {
+       "columns": [
+        "b",
+        "e",
+        "r",
+        "t",
+        "u"
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "in s",
+          "ko": "s 안"
+         },
+         "cells": [
+          1,
+          1,
+          1,
+          2,
+          1
+         ]
+        },
+        {
+         "label": {
+          "en": "in t",
+          "ko": "t 안"
+         },
+         "cells": [
+          1,
+          0,
+          1,
+          0,
+          1
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         [
+          1,
+          4
+         ]
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "t[3] is 'e': t now has 1 × 'e'.",
+      "ko": "t[3] = 'e': t의 'e' 개수는 이제 1개입니다."
+     },
+     "views": {
+      "s": {
+       "values": [
+        "b",
+        "u",
+        "t",
+        "t",
+        "e",
+        "r"
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {}
+      },
+      "t": {
+       "values": [
+        "b",
+        "r",
+        "u",
+        "e",
+        "t",
+        "t"
+       ],
+       "pointers": {
+        "j": 3
+       },
+       "marks": {
+        "lit": [
+         3
+        ],
+        "dim": [
+         4,
+         5
+        ]
+       }
+      },
+      "counts": {
+       "columns": [
+        "b",
+        "e",
+        "r",
+        "t",
+        "u"
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "in s",
+          "ko": "s 안"
+         },
+         "cells": [
+          1,
+          1,
+          1,
+          2,
+          1
+         ]
+        },
+        {
+         "label": {
+          "en": "in t",
+          "ko": "t 안"
+         },
+         "cells": [
+          1,
+          1,
+          1,
+          0,
+          1
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "t[4] is 't': t now has 1 × 't'.",
+      "ko": "t[4] = 't': t의 't' 개수는 이제 1개입니다."
+     },
+     "views": {
+      "s": {
+       "values": [
+        "b",
+        "u",
+        "t",
+        "t",
+        "e",
+        "r"
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {}
+      },
+      "t": {
+       "values": [
+        "b",
+        "r",
+        "u",
+        "e",
+        "t",
+        "t"
+       ],
+       "pointers": {
+        "j": 4
+       },
+       "marks": {
+        "lit": [
+         4
+        ],
+        "dim": [
+         5
+        ]
+       }
+      },
+      "counts": {
+       "columns": [
+        "b",
+        "e",
+        "r",
+        "t",
+        "u"
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "in s",
+          "ko": "s 안"
+         },
+         "cells": [
+          1,
+          1,
+          1,
+          2,
+          1
+         ]
+        },
+        {
+         "label": {
+          "en": "in t",
+          "ko": "t 안"
+         },
+         "cells": [
+          1,
+          1,
+          1,
+          1,
+          1
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         [
+          1,
+          3
+         ]
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "t[5] is 't': t now has 2 × 't'.",
+      "ko": "t[5] = 't': t의 't' 개수는 이제 2개입니다."
+     },
+     "views": {
+      "s": {
+       "values": [
+        "b",
+        "u",
+        "t",
+        "t",
+        "e",
+        "r"
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {}
+      },
+      "t": {
+       "values": [
+        "b",
+        "r",
+        "u",
+        "e",
+        "t",
+        "t"
+       ],
+       "pointers": {
+        "j": 5
+       },
+       "marks": {
+        "lit": [
+         5
+        ],
+        "dim": []
+       }
+      },
+      "counts": {
+       "columns": [
+        "b",
+        "e",
+        "r",
+        "t",
+        "u"
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "in s",
+          "ko": "s 안"
+         },
+         "cells": [
+          1,
+          1,
+          1,
+          2,
+          1
+         ]
+        },
+        {
+         "label": {
+          "en": "in t",
+          "ko": "t 안"
+         },
+         "cells": [
+          1,
+          1,
+          1,
+          2,
+          1
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         [
+          1,
+          3
+         ]
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Every letter's count is the same in s and t (5 letters checked), so t is an anagram of s. Answer true.",
+      "ko": "모든 글자(5종류)의 개수가 s와 t에서 같으므로 t는 s의 애너그램입니다. 답은 true입니다."
+     },
+     "views": {
+      "s": {
+       "values": [
+        "b",
+        "u",
+        "t",
+        "t",
+        "e",
+        "r"
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {}
+      },
+      "t": {
+       "values": [
+        "b",
+        "r",
+        "u",
+        "e",
+        "t",
+        "t"
+       ],
+       "pointers": {
+        "j": null
+       },
+       "marks": {}
+      },
+      "counts": {
+       "columns": [
+        "b",
+        "e",
+        "r",
+        "t",
+        "u"
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "in s",
+          "ko": "s 안"
+         },
+         "cells": [
+          1,
+          1,
+          1,
+          2,
+          1
+         ]
+        },
+        {
+         "label": {
+          "en": "in t",
+          "ko": "t 안"
+         },
+         "cells": [
+          1,
+          1,
+          1,
+          2,
+          1
+         ]
+        }
+       ],
+       "marks": {
+        "path": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          0,
+          2
+         ],
+         [
+          0,
+          3
+         ],
+         [
+          0,
+          4
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          1,
+          2
+         ],
+         [
+          1,
+          3
+         ],
+         [
+          1,
+          4
+         ]
+        ]
+       }
+      }
+     },
+     "answer": "true"
+    }
+   ],
+   "sampleInput": "butter\nbruett"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "s = \"yeast\", t = \"toast\"",
+   "expected": "false",
+   "frames": [
+    {
+     "caption": {
+      "en": "Count how many times each letter appears in s, then in t. Every count starts at 0.",
+      "ko": "s에서 각 글자가 몇 번 나오는지 세고, 이어서 t에서도 셉니다. 모든 개수는 0에서 시작합니다."
+     },
+     "views": {
+      "s": {
+       "values": [
+        "y",
+        "e",
+        "a",
+        "s",
+        "t"
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      },
+      "t": {
+       "values": [
+        "t",
+        "o",
+        "a",
+        "s",
+        "t"
+       ],
+       "pointers": {
+        "j": null
+       },
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      },
+      "counts": {
+       "columns": [
+        "a",
+        "e",
+        "o",
+        "s",
+        "t",
+        "y"
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "in s",
+          "ko": "s 안"
+         },
+         "cells": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+         ]
+        },
+        {
+         "label": {
+          "en": "in t",
+          "ko": "t 안"
+         },
+         "cells": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+         ]
+        }
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "s[0] is 'y': s now has 1 × 'y'.",
+      "ko": "s[0] = 'y': s의 'y' 개수는 이제 1개입니다."
+     },
+     "views": {
+      "s": {
+       "values": [
+        "y",
+        "e",
+        "a",
+        "s",
+        "t"
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ],
+        "dim": [
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      },
+      "t": {
+       "values": [
+        "t",
+        "o",
+        "a",
+        "s",
+        "t"
+       ],
+       "pointers": {
+        "j": null
+       },
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      },
+      "counts": {
+       "columns": [
+        "a",
+        "e",
+        "o",
+        "s",
+        "t",
+        "y"
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "in s",
+          "ko": "s 안"
+         },
+         "cells": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+         ]
+        },
+        {
+         "label": {
+          "en": "in t",
+          "ko": "t 안"
+         },
+         "cells": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         [
+          0,
+          5
+         ]
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "s[1] is 'e': s now has 1 × 'e'.",
+      "ko": "s[1] = 'e': s의 'e' 개수는 이제 1개입니다."
+     },
+     "views": {
+      "s": {
+       "values": [
+        "y",
+        "e",
+        "a",
+        "s",
+        "t"
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "marks": {
+        "lit": [
+         1
+        ],
+        "dim": [
+         2,
+         3,
+         4
+        ]
+       }
+      },
+      "t": {
+       "values": [
+        "t",
+        "o",
+        "a",
+        "s",
+        "t"
+       ],
+       "pointers": {
+        "j": null
+       },
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      },
+      "counts": {
+       "columns": [
+        "a",
+        "e",
+        "o",
+        "s",
+        "t",
+        "y"
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "in s",
+          "ko": "s 안"
+         },
+         "cells": [
+          0,
+          1,
+          0,
+          0,
+          0,
+          1
+         ]
+        },
+        {
+         "label": {
+          "en": "in t",
+          "ko": "t 안"
+         },
+         "cells": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         [
+          0,
+          1
+         ]
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "s[2] is 'a': s now has 1 × 'a'.",
+      "ko": "s[2] = 'a': s의 'a' 개수는 이제 1개입니다."
+     },
+     "views": {
+      "s": {
+       "values": [
+        "y",
+        "e",
+        "a",
+        "s",
+        "t"
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "marks": {
+        "lit": [
+         2
+        ],
+        "dim": [
+         3,
+         4
+        ]
+       }
+      },
+      "t": {
+       "values": [
+        "t",
+        "o",
+        "a",
+        "s",
+        "t"
+       ],
+       "pointers": {
+        "j": null
+       },
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      },
+      "counts": {
+       "columns": [
+        "a",
+        "e",
+        "o",
+        "s",
+        "t",
+        "y"
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "in s",
+          "ko": "s 안"
+         },
+         "cells": [
+          1,
+          1,
+          0,
+          0,
+          0,
+          1
+         ]
+        },
+        {
+         "label": {
+          "en": "in t",
+          "ko": "t 안"
+         },
+         "cells": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         [
+          0,
+          0
+         ]
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "s[3] is 's': s now has 1 × 's'.",
+      "ko": "s[3] = 's': s의 's' 개수는 이제 1개입니다."
+     },
+     "views": {
+      "s": {
+       "values": [
+        "y",
+        "e",
+        "a",
+        "s",
+        "t"
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "marks": {
+        "lit": [
+         3
+        ],
+        "dim": [
+         4
+        ]
+       }
+      },
+      "t": {
+       "values": [
+        "t",
+        "o",
+        "a",
+        "s",
+        "t"
+       ],
+       "pointers": {
+        "j": null
+       },
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      },
+      "counts": {
+       "columns": [
+        "a",
+        "e",
+        "o",
+        "s",
+        "t",
+        "y"
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "in s",
+          "ko": "s 안"
+         },
+         "cells": [
+          1,
+          1,
+          0,
+          1,
+          0,
+          1
+         ]
+        },
+        {
+         "label": {
+          "en": "in t",
+          "ko": "t 안"
+         },
+         "cells": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         [
+          0,
+          3
+         ]
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "s[4] is 't': s now has 1 × 't'.",
+      "ko": "s[4] = 't': s의 't' 개수는 이제 1개입니다."
+     },
+     "views": {
+      "s": {
+       "values": [
+        "y",
+        "e",
+        "a",
+        "s",
+        "t"
+       ],
+       "pointers": {
+        "i": 4
+       },
+       "marks": {
+        "lit": [
+         4
+        ],
+        "dim": []
+       }
+      },
+      "t": {
+       "values": [
+        "t",
+        "o",
+        "a",
+        "s",
+        "t"
+       ],
+       "pointers": {
+        "j": null
+       },
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      },
+      "counts": {
+       "columns": [
+        "a",
+        "e",
+        "o",
+        "s",
+        "t",
+        "y"
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "in s",
+          "ko": "s 안"
+         },
+         "cells": [
+          1,
+          1,
+          0,
+          1,
+          1,
+          1
+         ]
+        },
+        {
+         "label": {
+          "en": "in t",
+          "ko": "t 안"
+         },
+         "cells": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         [
+          0,
+          4
+         ]
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "t[0] is 't': t now has 1 × 't'.",
+      "ko": "t[0] = 't': t의 't' 개수는 이제 1개입니다."
+     },
+     "views": {
+      "s": {
+       "values": [
+        "y",
+        "e",
+        "a",
+        "s",
+        "t"
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {}
+      },
+      "t": {
+       "values": [
+        "t",
+        "o",
+        "a",
+        "s",
+        "t"
+       ],
+       "pointers": {
+        "j": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ],
+        "dim": [
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      },
+      "counts": {
+       "columns": [
+        "a",
+        "e",
+        "o",
+        "s",
+        "t",
+        "y"
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "in s",
+          "ko": "s 안"
+         },
+         "cells": [
+          1,
+          1,
+          0,
+          1,
+          1,
+          1
+         ]
+        },
+        {
+         "label": {
+          "en": "in t",
+          "ko": "t 안"
+         },
+         "cells": [
+          0,
+          0,
+          0,
+          0,
+          1,
+          0
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         [
+          1,
+          4
+         ]
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "t[1] is 'o': t now has 1 × 'o'.",
+      "ko": "t[1] = 'o': t의 'o' 개수는 이제 1개입니다."
+     },
+     "views": {
+      "s": {
+       "values": [
+        "y",
+        "e",
+        "a",
+        "s",
+        "t"
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {}
+      },
+      "t": {
+       "values": [
+        "t",
+        "o",
+        "a",
+        "s",
+        "t"
+       ],
+       "pointers": {
+        "j": 1
+       },
+       "marks": {
+        "lit": [
+         1
+        ],
+        "dim": [
+         2,
+         3,
+         4
+        ]
+       }
+      },
+      "counts": {
+       "columns": [
+        "a",
+        "e",
+        "o",
+        "s",
+        "t",
+        "y"
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "in s",
+          "ko": "s 안"
+         },
+         "cells": [
+          1,
+          1,
+          0,
+          1,
+          1,
+          1
+         ]
+        },
+        {
+         "label": {
+          "en": "in t",
+          "ko": "t 안"
+         },
+         "cells": [
+          0,
+          0,
+          1,
+          0,
+          1,
+          0
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         [
+          1,
+          2
+         ]
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "t[2] is 'a': t now has 1 × 'a'.",
+      "ko": "t[2] = 'a': t의 'a' 개수는 이제 1개입니다."
+     },
+     "views": {
+      "s": {
+       "values": [
+        "y",
+        "e",
+        "a",
+        "s",
+        "t"
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {}
+      },
+      "t": {
+       "values": [
+        "t",
+        "o",
+        "a",
+        "s",
+        "t"
+       ],
+       "pointers": {
+        "j": 2
+       },
+       "marks": {
+        "lit": [
+         2
+        ],
+        "dim": [
+         3,
+         4
+        ]
+       }
+      },
+      "counts": {
+       "columns": [
+        "a",
+        "e",
+        "o",
+        "s",
+        "t",
+        "y"
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "in s",
+          "ko": "s 안"
+         },
+         "cells": [
+          1,
+          1,
+          0,
+          1,
+          1,
+          1
+         ]
+        },
+        {
+         "label": {
+          "en": "in t",
+          "ko": "t 안"
+         },
+         "cells": [
+          1,
+          0,
+          1,
+          0,
+          1,
+          0
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         [
+          1,
+          0
+         ]
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "t[3] is 's': t now has 1 × 's'.",
+      "ko": "t[3] = 's': t의 's' 개수는 이제 1개입니다."
+     },
+     "views": {
+      "s": {
+       "values": [
+        "y",
+        "e",
+        "a",
+        "s",
+        "t"
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {}
+      },
+      "t": {
+       "values": [
+        "t",
+        "o",
+        "a",
+        "s",
+        "t"
+       ],
+       "pointers": {
+        "j": 3
+       },
+       "marks": {
+        "lit": [
+         3
+        ],
+        "dim": [
+         4
+        ]
+       }
+      },
+      "counts": {
+       "columns": [
+        "a",
+        "e",
+        "o",
+        "s",
+        "t",
+        "y"
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "in s",
+          "ko": "s 안"
+         },
+         "cells": [
+          1,
+          1,
+          0,
+          1,
+          1,
+          1
+         ]
+        },
+        {
+         "label": {
+          "en": "in t",
+          "ko": "t 안"
+         },
+         "cells": [
+          1,
+          0,
+          1,
+          1,
+          1,
+          0
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         [
+          1,
+          3
+         ]
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "t[4] is 't': t now has 2 × 't'.",
+      "ko": "t[4] = 't': t의 't' 개수는 이제 2개입니다."
+     },
+     "views": {
+      "s": {
+       "values": [
+        "y",
+        "e",
+        "a",
+        "s",
+        "t"
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {}
+      },
+      "t": {
+       "values": [
+        "t",
+        "o",
+        "a",
+        "s",
+        "t"
+       ],
+       "pointers": {
+        "j": 4
+       },
+       "marks": {
+        "lit": [
+         4
+        ],
+        "dim": []
+       }
+      },
+      "counts": {
+       "columns": [
+        "a",
+        "e",
+        "o",
+        "s",
+        "t",
+        "y"
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "in s",
+          "ko": "s 안"
+         },
+         "cells": [
+          1,
+          1,
+          0,
+          1,
+          1,
+          1
+         ]
+        },
+        {
+         "label": {
+          "en": "in t",
+          "ko": "t 안"
+         },
+         "cells": [
+          1,
+          0,
+          1,
+          1,
+          2,
+          0
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         [
+          1,
+          4
+         ]
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "The counts differ ('e' 1 vs 0, 'o' 0 vs 1, 't' 1 vs 2, 'y' 1 vs 0), so t is not an anagram of s. A false answer is made of no letters, so nothing is marked as its path, only the counts that rule t out: answer false.",
+      "ko": "개수가 다른 글자가 있으므로('e' 1개 대 0개, 'o' 0개 대 1개, 't' 1개 대 2개, 'y' 1개 대 0개) t는 s의 애너그램이 아닙니다. false라는 답은 어떤 글자로 이루어진 것이 아니라서 답의 경로는 표시하지 않고, 애너그램이 아닌 이유인 개수만 표시합니다(답은 false)."
+     },
+     "views": {
+      "s": {
+       "values": [
+        "y",
+        "e",
+        "a",
+        "s",
+        "t"
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "bad": [
+         0,
+         1,
+         4
+        ]
+       }
+      },
+      "t": {
+       "values": [
+        "t",
+        "o",
+        "a",
+        "s",
+        "t"
+       ],
+       "pointers": {
+        "j": null
+       },
+       "marks": {
+        "bad": [
+         0,
+         1,
+         4
+        ]
+       }
+      },
+      "counts": {
+       "columns": [
+        "a",
+        "e",
+        "o",
+        "s",
+        "t",
+        "y"
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "in s",
+          "ko": "s 안"
+         },
+         "cells": [
+          1,
+          1,
+          0,
+          1,
+          1,
+          1
+         ]
+        },
+        {
+         "label": {
+          "en": "in t",
+          "ko": "t 안"
+         },
+         "cells": [
+          1,
+          0,
+          1,
+          1,
+          2,
+          0
+         ]
+        }
+       ],
+       "marks": {
+        "bad": [
+         [
+          0,
+          1
+         ],
+         [
+          0,
+          2
+         ],
+         [
+          0,
+          4
+         ],
+         [
+          0,
+          5
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          1,
+          2
+         ],
+         [
+          1,
+          4
+         ],
+         [
+          1,
+          5
+         ]
+        ]
+       }
+      }
+     },
+     "answer": "false"
+    }
+   ],
+   "sampleInput": "yeast\ntoast"
+  }
+ ]
+}

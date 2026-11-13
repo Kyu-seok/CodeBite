@@ -1,0 +1,1853 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Longest Seat Run",
+  "ko": "가장 긴 좌석 구간"
+ },
+ "approach": {
+  "en": "Put the seats in a hash set and count up only from a seat whose seat - 1 is missing: each run is walked once, from its first seat, so the whole scan is O(n).",
+  "ko": "좌석을 해시 집합에 넣고, seat - 1이 없는 좌석에서만 위로 세어 나갑니다. 구간마다 첫 좌석에서 한 번만 걸으므로 전체가 O(n)입니다."
+ },
+ "views": [
+  {
+   "id": "seats",
+   "type": "array",
+   "title": {
+    "en": "seat set, in loop order",
+    "ko": "좌석 집합 (순회 순서)"
+   }
+  },
+  {
+   "id": "state",
+   "type": "vars"
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "seatIds = [42,7,41,40,9,8,43]",
+   "expected": "4",
+   "frames": [
+    {
+     "caption": {
+      "en": "Put the 7 seat ids in a hash set (7 distinct), so asking \"is seat x free?\" takes O(1). Then visit each seat once.",
+      "ko": "좌석 번호 7개를 해시 집합에 넣어(서로 다른 번호 7개) \"좌석 x가 비어 있나?\"를 O(1)에 확인합니다. 그다음 좌석을 하나씩 봅니다."
+     },
+     "views": {
+      "seats": {
+       "values": [
+        7,
+        40,
+        41,
+        42,
+        9,
+        8,
+        43
+       ],
+       "pointers": {
+        "seat": null
+       },
+       "tags": [],
+       "marks": {
+        "lit": [],
+        "good": [],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "runs walked",
+          "ko": "걸어 본 구간"
+         },
+         "value": [],
+         "empty": {
+          "en": "none yet",
+          "ko": "아직 없음"
+         }
+        },
+        {
+         "label": {
+          "en": "longest",
+          "ko": "longest (최장 길이)"
+         },
+         "value": 0,
+         "mark": null
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Seat 7: seat 6 is missing, so a run starts here. Counting up while the next seat is in the set gives 7, 8, 9, length 3, which beats 0, so longest is now 3.",
+      "ko": "좌석 7: 좌석 6이 없으므로 여기서 구간이 시작됩니다. 다음 좌석이 집합에 있는 동안 위로 세면 7, 8, 9, 길이 3으로 이전 최댓값 0보다 길어 이제 longest = 3입니다."
+     },
+     "views": {
+      "seats": {
+       "values": [
+        7,
+        40,
+        41,
+        42,
+        9,
+        8,
+        43
+       ],
+       "pointers": {
+        "seat": 0
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "len 3",
+          "ko": "길이 3"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         5,
+         4
+        ],
+        "good": [
+         0
+        ],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "runs walked",
+          "ko": "걸어 본 구간"
+         },
+         "value": [
+          "7–9"
+         ],
+         "empty": {
+          "en": "none yet",
+          "ko": "아직 없음"
+         }
+        },
+        {
+         "label": {
+          "en": "longest",
+          "ko": "longest (최장 길이)"
+         },
+         "value": 3,
+         "mark": "good"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Seat 40: seat 39 is missing, so a run starts here. Counting up while the next seat is in the set gives 40, 41, 42, 43, length 4, which beats 3, so longest is now 4.",
+      "ko": "좌석 40: 좌석 39가 없으므로 여기서 구간이 시작됩니다. 다음 좌석이 집합에 있는 동안 위로 세면 40, 41, 42, 43, 길이 4로 이전 최댓값 3보다 길어 이제 longest = 4입니다."
+     },
+     "views": {
+      "seats": {
+       "values": [
+        7,
+        40,
+        41,
+        42,
+        9,
+        8,
+        43
+       ],
+       "pointers": {
+        "seat": 1
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "len 3",
+          "ko": "길이 3"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "len 4",
+          "ko": "길이 4"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         2,
+         3,
+         6
+        ],
+        "good": [
+         1
+        ],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "runs walked",
+          "ko": "걸어 본 구간"
+         },
+         "value": [
+          "7–9",
+          "40–43"
+         ],
+         "empty": {
+          "en": "none yet",
+          "ko": "아직 없음"
+         }
+        },
+        {
+         "label": {
+          "en": "longest",
+          "ko": "longest (최장 길이)"
+         },
+         "value": 4,
+         "mark": "good"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Seat 41: seat 40 is in the set too, so 41 is not the first seat of its run. Skip it; the walk from that run's first seat counts it.",
+      "ko": "좌석 41: 좌석 40도 집합에 있으니 좌석 41은 구간의 첫 좌석이 아니므로 건너뜁니다. 이 구간의 첫 좌석에서 걸을 때 함께 셉니다."
+     },
+     "views": {
+      "seats": {
+       "values": [
+        7,
+        40,
+        41,
+        42,
+        9,
+        8,
+        43
+       ],
+       "pointers": {
+        "seat": 2
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "len 3",
+          "ko": "길이 3"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "len 4",
+          "ko": "길이 4"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         2,
+         1
+        ],
+        "good": [],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "runs walked",
+          "ko": "걸어 본 구간"
+         },
+         "value": [
+          "7–9",
+          "40–43"
+         ],
+         "empty": {
+          "en": "none yet",
+          "ko": "아직 없음"
+         }
+        },
+        {
+         "label": {
+          "en": "longest",
+          "ko": "longest (최장 길이)"
+         },
+         "value": 4,
+         "mark": null
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Seat 42: seat 41 is in the set too, so 42 is not the first seat of its run. Skip it; the walk from that run's first seat counts it.",
+      "ko": "좌석 42: 좌석 41도 집합에 있으니 좌석 42는 구간의 첫 좌석이 아니므로 건너뜁니다. 이 구간의 첫 좌석에서 걸을 때 함께 셉니다."
+     },
+     "views": {
+      "seats": {
+       "values": [
+        7,
+        40,
+        41,
+        42,
+        9,
+        8,
+        43
+       ],
+       "pointers": {
+        "seat": 3
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "len 3",
+          "ko": "길이 3"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "len 4",
+          "ko": "길이 4"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         3,
+         2
+        ],
+        "good": [],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "runs walked",
+          "ko": "걸어 본 구간"
+         },
+         "value": [
+          "7–9",
+          "40–43"
+         ],
+         "empty": {
+          "en": "none yet",
+          "ko": "아직 없음"
+         }
+        },
+        {
+         "label": {
+          "en": "longest",
+          "ko": "longest (최장 길이)"
+         },
+         "value": 4,
+         "mark": null
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Seat 9: seat 8 is in the set too, so 9 is not the first seat of its run. Skip it; the walk from that run's first seat counts it.",
+      "ko": "좌석 9: 좌석 8도 집합에 있으니 좌석 9는 구간의 첫 좌석이 아니므로 건너뜁니다. 이 구간의 첫 좌석에서 걸을 때 함께 셉니다."
+     },
+     "views": {
+      "seats": {
+       "values": [
+        7,
+        40,
+        41,
+        42,
+        9,
+        8,
+        43
+       ],
+       "pointers": {
+        "seat": 4
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "len 3",
+          "ko": "길이 3"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "len 4",
+          "ko": "길이 4"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         4,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         4,
+         5
+        ],
+        "good": [],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "runs walked",
+          "ko": "걸어 본 구간"
+         },
+         "value": [
+          "7–9",
+          "40–43"
+         ],
+         "empty": {
+          "en": "none yet",
+          "ko": "아직 없음"
+         }
+        },
+        {
+         "label": {
+          "en": "longest",
+          "ko": "longest (최장 길이)"
+         },
+         "value": 4,
+         "mark": null
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Seat 8: seat 7 is in the set too, so 8 is not the first seat of its run. Skip it; the walk from that run's first seat counts it.",
+      "ko": "좌석 8: 좌석 7도 집합에 있으니 좌석 8은 구간의 첫 좌석이 아니므로 건너뜁니다. 이 구간의 첫 좌석에서 걸을 때 함께 셉니다."
+     },
+     "views": {
+      "seats": {
+       "values": [
+        7,
+        40,
+        41,
+        42,
+        9,
+        8,
+        43
+       ],
+       "pointers": {
+        "seat": 5
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "len 3",
+          "ko": "길이 3"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "len 4",
+          "ko": "길이 4"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         4,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         5,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         5,
+         0
+        ],
+        "good": [],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "runs walked",
+          "ko": "걸어 본 구간"
+         },
+         "value": [
+          "7–9",
+          "40–43"
+         ],
+         "empty": {
+          "en": "none yet",
+          "ko": "아직 없음"
+         }
+        },
+        {
+         "label": {
+          "en": "longest",
+          "ko": "longest (최장 길이)"
+         },
+         "value": 4,
+         "mark": null
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Seat 43: seat 42 is in the set too, so 43 is not the first seat of its run. Skip it; the walk from that run's first seat counts it.",
+      "ko": "좌석 43: 좌석 42도 집합에 있으니 좌석 43은 구간의 첫 좌석이 아니므로 건너뜁니다. 이 구간의 첫 좌석에서 걸을 때 함께 셉니다."
+     },
+     "views": {
+      "seats": {
+       "values": [
+        7,
+        40,
+        41,
+        42,
+        9,
+        8,
+        43
+       ],
+       "pointers": {
+        "seat": 6
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "len 3",
+          "ko": "길이 3"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "len 4",
+          "ko": "길이 4"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         4,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         5,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         6,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         6,
+         3
+        ],
+        "good": [],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "runs walked",
+          "ko": "걸어 본 구간"
+         },
+         "value": [
+          "7–9",
+          "40–43"
+         ],
+         "empty": {
+          "en": "none yet",
+          "ko": "아직 없음"
+         }
+        },
+        {
+         "label": {
+          "en": "longest",
+          "ko": "longest (최장 길이)"
+         },
+         "value": 4,
+         "mark": null
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Every seat is visited, and each run was walked once, from its first seat. The longest run is 40–43: answer 4.",
+      "ko": "모든 좌석을 봤고, 구간마다 첫 좌석에서 한 번씩만 걸었습니다. 가장 긴 구간은 40–43이므로 답은 4입니다."
+     },
+     "views": {
+      "seats": {
+       "values": [
+        7,
+        40,
+        41,
+        42,
+        9,
+        8,
+        43
+       ],
+       "pointers": {
+        "seat": null
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "len 3",
+          "ko": "길이 3"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "len 4",
+          "ko": "길이 4"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         4,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         5,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         6,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [],
+        "path": [
+         1,
+         2,
+         3,
+         6
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "runs walked",
+          "ko": "걸어 본 구간"
+         },
+         "value": [
+          "7–9",
+          "40–43"
+         ],
+         "empty": {
+          "en": "none yet",
+          "ko": "아직 없음"
+         }
+        },
+        {
+         "label": {
+          "en": "longest",
+          "ko": "longest (최장 길이)"
+         },
+         "value": 4,
+         "mark": null
+        }
+       ]
+      }
+     },
+     "answer": "4"
+    }
+   ],
+   "sampleInput": "[42,7,41,40,9,8,43]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "seatIds = [11,13,12,15,16,14,20,19,18]",
+   "expected": "6",
+   "frames": [
+    {
+     "caption": {
+      "en": "Put the 9 seat ids in a hash set (9 distinct), so asking \"is seat x free?\" takes O(1). Then visit each seat once.",
+      "ko": "좌석 번호 9개를 해시 집합에 넣어(서로 다른 번호 9개) \"좌석 x가 비어 있나?\"를 O(1)에 확인합니다. 그다음 좌석을 하나씩 봅니다."
+     },
+     "views": {
+      "seats": {
+       "values": [
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        18,
+        19,
+        20
+       ],
+       "pointers": {
+        "seat": null
+       },
+       "tags": [],
+       "marks": {
+        "lit": [],
+        "good": [],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "runs walked",
+          "ko": "걸어 본 구간"
+         },
+         "value": [],
+         "empty": {
+          "en": "none yet",
+          "ko": "아직 없음"
+         }
+        },
+        {
+         "label": {
+          "en": "longest",
+          "ko": "longest (최장 길이)"
+         },
+         "value": 0,
+         "mark": null
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Seat 11: seat 10 is missing, so a run starts here. Counting up while the next seat is in the set gives 11, 12, …, 16, length 6, which beats 0, so longest is now 6.",
+      "ko": "좌석 11: 좌석 10이 없으므로 여기서 구간이 시작됩니다. 다음 좌석이 집합에 있는 동안 위로 세면 11, 12, …, 16, 길이 6으로 이전 최댓값 0보다 길어 이제 longest = 6입니다."
+     },
+     "views": {
+      "seats": {
+       "values": [
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        18,
+        19,
+        20
+       ],
+       "pointers": {
+        "seat": 0
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "len 6",
+          "ko": "길이 6"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         1,
+         2,
+         3,
+         4,
+         5
+        ],
+        "good": [
+         0
+        ],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "runs walked",
+          "ko": "걸어 본 구간"
+         },
+         "value": [
+          "11–16"
+         ],
+         "empty": {
+          "en": "none yet",
+          "ko": "아직 없음"
+         }
+        },
+        {
+         "label": {
+          "en": "longest",
+          "ko": "longest (최장 길이)"
+         },
+         "value": 6,
+         "mark": "good"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Seat 12: seat 11 is in the set too, so 12 is not the first seat of its run. Skip it; the walk from that run's first seat counts it.",
+      "ko": "좌석 12: 좌석 11도 집합에 있으니 좌석 12는 구간의 첫 좌석이 아니므로 건너뜁니다. 이 구간의 첫 좌석에서 걸을 때 함께 셉니다."
+     },
+     "views": {
+      "seats": {
+       "values": [
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        18,
+        19,
+        20
+       ],
+       "pointers": {
+        "seat": 1
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "len 6",
+          "ko": "길이 6"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         1,
+         0
+        ],
+        "good": [],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "runs walked",
+          "ko": "걸어 본 구간"
+         },
+         "value": [
+          "11–16"
+         ],
+         "empty": {
+          "en": "none yet",
+          "ko": "아직 없음"
+         }
+        },
+        {
+         "label": {
+          "en": "longest",
+          "ko": "longest (최장 길이)"
+         },
+         "value": 6,
+         "mark": null
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Seat 13: seat 12 is in the set too, so 13 is not the first seat of its run. Skip it; the walk from that run's first seat counts it.",
+      "ko": "좌석 13: 좌석 12도 집합에 있으니 좌석 13은 구간의 첫 좌석이 아니므로 건너뜁니다. 이 구간의 첫 좌석에서 걸을 때 함께 셉니다."
+     },
+     "views": {
+      "seats": {
+       "values": [
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        18,
+        19,
+        20
+       ],
+       "pointers": {
+        "seat": 2
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "len 6",
+          "ko": "길이 6"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         2,
+         1
+        ],
+        "good": [],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "runs walked",
+          "ko": "걸어 본 구간"
+         },
+         "value": [
+          "11–16"
+         ],
+         "empty": {
+          "en": "none yet",
+          "ko": "아직 없음"
+         }
+        },
+        {
+         "label": {
+          "en": "longest",
+          "ko": "longest (최장 길이)"
+         },
+         "value": 6,
+         "mark": null
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Seat 14: seat 13 is in the set too, so 14 is not the first seat of its run. Skip it; the walk from that run's first seat counts it.",
+      "ko": "좌석 14: 좌석 13도 집합에 있으니 좌석 14는 구간의 첫 좌석이 아니므로 건너뜁니다. 이 구간의 첫 좌석에서 걸을 때 함께 셉니다."
+     },
+     "views": {
+      "seats": {
+       "values": [
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        18,
+        19,
+        20
+       ],
+       "pointers": {
+        "seat": 3
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "len 6",
+          "ko": "길이 6"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         3,
+         2
+        ],
+        "good": [],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "runs walked",
+          "ko": "걸어 본 구간"
+         },
+         "value": [
+          "11–16"
+         ],
+         "empty": {
+          "en": "none yet",
+          "ko": "아직 없음"
+         }
+        },
+        {
+         "label": {
+          "en": "longest",
+          "ko": "longest (최장 길이)"
+         },
+         "value": 6,
+         "mark": null
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Seat 15: seat 14 is in the set too, so 15 is not the first seat of its run. Skip it; the walk from that run's first seat counts it.",
+      "ko": "좌석 15: 좌석 14도 집합에 있으니 좌석 15는 구간의 첫 좌석이 아니므로 건너뜁니다. 이 구간의 첫 좌석에서 걸을 때 함께 셉니다."
+     },
+     "views": {
+      "seats": {
+       "values": [
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        18,
+        19,
+        20
+       ],
+       "pointers": {
+        "seat": 4
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "len 6",
+          "ko": "길이 6"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         4,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         4,
+         3
+        ],
+        "good": [],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "runs walked",
+          "ko": "걸어 본 구간"
+         },
+         "value": [
+          "11–16"
+         ],
+         "empty": {
+          "en": "none yet",
+          "ko": "아직 없음"
+         }
+        },
+        {
+         "label": {
+          "en": "longest",
+          "ko": "longest (최장 길이)"
+         },
+         "value": 6,
+         "mark": null
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Seat 16: seat 15 is in the set too, so 16 is not the first seat of its run. Skip it; the walk from that run's first seat counts it.",
+      "ko": "좌석 16: 좌석 15도 집합에 있으니 좌석 16은 구간의 첫 좌석이 아니므로 건너뜁니다. 이 구간의 첫 좌석에서 걸을 때 함께 셉니다."
+     },
+     "views": {
+      "seats": {
+       "values": [
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        18,
+        19,
+        20
+       ],
+       "pointers": {
+        "seat": 5
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "len 6",
+          "ko": "길이 6"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         4,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         5,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         5,
+         4
+        ],
+        "good": [],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "runs walked",
+          "ko": "걸어 본 구간"
+         },
+         "value": [
+          "11–16"
+         ],
+         "empty": {
+          "en": "none yet",
+          "ko": "아직 없음"
+         }
+        },
+        {
+         "label": {
+          "en": "longest",
+          "ko": "longest (최장 길이)"
+         },
+         "value": 6,
+         "mark": null
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Seat 18: seat 17 is missing, so a run starts here. Counting up while the next seat is in the set gives 18, 19, 20, length 3, which does not beat 6.",
+      "ko": "좌석 18: 좌석 17이 없으므로 여기서 구간이 시작됩니다. 다음 좌석이 집합에 있는 동안 위로 세면 18, 19, 20, 길이 3으로 longest 6보다 길지 않습니다."
+     },
+     "views": {
+      "seats": {
+       "values": [
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        18,
+        19,
+        20
+       ],
+       "pointers": {
+        "seat": 6
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "len 6",
+          "ko": "길이 6"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         4,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         5,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         6,
+         {
+          "en": "len 3",
+          "ko": "길이 3"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         7,
+         8
+        ],
+        "good": [
+         6
+        ],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "runs walked",
+          "ko": "걸어 본 구간"
+         },
+         "value": [
+          "11–16",
+          "18–20"
+         ],
+         "empty": {
+          "en": "none yet",
+          "ko": "아직 없음"
+         }
+        },
+        {
+         "label": {
+          "en": "longest",
+          "ko": "longest (최장 길이)"
+         },
+         "value": 6,
+         "mark": null
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Seat 19: seat 18 is in the set too, so 19 is not the first seat of its run. Skip it; the walk from that run's first seat counts it.",
+      "ko": "좌석 19: 좌석 18도 집합에 있으니 좌석 19는 구간의 첫 좌석이 아니므로 건너뜁니다. 이 구간의 첫 좌석에서 걸을 때 함께 셉니다."
+     },
+     "views": {
+      "seats": {
+       "values": [
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        18,
+        19,
+        20
+       ],
+       "pointers": {
+        "seat": 7
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "len 6",
+          "ko": "길이 6"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         4,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         5,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         6,
+         {
+          "en": "len 3",
+          "ko": "길이 3"
+         }
+        ],
+        [
+         7,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         7,
+         6
+        ],
+        "good": [],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "runs walked",
+          "ko": "걸어 본 구간"
+         },
+         "value": [
+          "11–16",
+          "18–20"
+         ],
+         "empty": {
+          "en": "none yet",
+          "ko": "아직 없음"
+         }
+        },
+        {
+         "label": {
+          "en": "longest",
+          "ko": "longest (최장 길이)"
+         },
+         "value": 6,
+         "mark": null
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Seat 20: seat 19 is in the set too, so 20 is not the first seat of its run. Skip it; the walk from that run's first seat counts it.",
+      "ko": "좌석 20: 좌석 19도 집합에 있으니 좌석 20은 구간의 첫 좌석이 아니므로 건너뜁니다. 이 구간의 첫 좌석에서 걸을 때 함께 셉니다."
+     },
+     "views": {
+      "seats": {
+       "values": [
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        18,
+        19,
+        20
+       ],
+       "pointers": {
+        "seat": 8
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "len 6",
+          "ko": "길이 6"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         4,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         5,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         6,
+         {
+          "en": "len 3",
+          "ko": "길이 3"
+         }
+        ],
+        [
+         7,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         8,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         8,
+         7
+        ],
+        "good": [],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "runs walked",
+          "ko": "걸어 본 구간"
+         },
+         "value": [
+          "11–16",
+          "18–20"
+         ],
+         "empty": {
+          "en": "none yet",
+          "ko": "아직 없음"
+         }
+        },
+        {
+         "label": {
+          "en": "longest",
+          "ko": "longest (최장 길이)"
+         },
+         "value": 6,
+         "mark": null
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Every seat is visited, and each run was walked once, from its first seat. The longest run is 11–16: answer 6.",
+      "ko": "모든 좌석을 봤고, 구간마다 첫 좌석에서 한 번씩만 걸었습니다. 가장 긴 구간은 11–16이므로 답은 6입니다."
+     },
+     "views": {
+      "seats": {
+       "values": [
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        18,
+        19,
+        20
+       ],
+       "pointers": {
+        "seat": null
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "len 6",
+          "ko": "길이 6"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         4,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         5,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         6,
+         {
+          "en": "len 3",
+          "ko": "길이 3"
+         }
+        ],
+        [
+         7,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         8,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [],
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "runs walked",
+          "ko": "걸어 본 구간"
+         },
+         "value": [
+          "11–16",
+          "18–20"
+         ],
+         "empty": {
+          "en": "none yet",
+          "ko": "아직 없음"
+         }
+        },
+        {
+         "label": {
+          "en": "longest",
+          "ko": "longest (최장 길이)"
+         },
+         "value": 6,
+         "mark": null
+        }
+       ]
+      }
+     },
+     "answer": "6"
+    }
+   ],
+   "sampleInput": "[11,13,12,15,16,14,20,19,18]"
+  }
+ ]
+}

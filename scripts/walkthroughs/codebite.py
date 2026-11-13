@@ -5,6 +5,9 @@ sample runs pinned to them (docs/adr/0011).
     run = sample_run(wt, 1, samples[0], input=f"ward = {samples[0]['input']}")
     ...
     run.frame(..., answer="4")                         # the answer as the Driver prints it
+    run.frame(..., answer=driver_list(result))         # a list, printed as the Driver prints one
+
+Captions share driver_list, plural (English) and josa (a Korean particle after a number).
     wt.write(walkthrough_path("rotting-donuts"))
 
 The samples come through scripts/db-sql.sh, so the local database (or CODEBITE_DB's) must be at this
@@ -59,3 +62,32 @@ def sample_run(wt, number, sample, input, setup=None):
 
 def walkthrough_path(slug):
     return os.path.join(ROOT, "common", "src", "main", "resources", "walkthroughs", f"{slug}.json")
+
+
+def driver_list(values):
+    """`values` as the Python Drivers print a list: compact JSON, json.dumps(values, separators=(',', ':'))."""
+    return json.dumps(values, separators=(",", ":"))
+
+
+def plural(n, one, many):
+    """`one` when n is 1, else `many`: f"{n} {plural(n, 'window', 'windows')}"."""
+    return one if n == 1 else many
+
+
+_PARTICLES = {"은는", "이가", "을를", "과와", "(으)로"}
+
+
+def josa(n, particle):
+    """The whole number `n` followed by the Korean particle that fits how n is read aloud, as
+    "41은" (사십일) but "42는" (사십이). `particle` is "은는", "이가", "을를" or "과와" (the form after a
+    final consonant first), or "(으)로".
+
+    A number's last sound is its last digit's: 영 일 이 삼 사 오 육 칠 팔 구, or, for a final 0 after
+    other digits, 십 백 천 만, which all end in a consonant. So 2, 4, 5 and 9 take the vowel form.
+    (으)로 also drops 으 after ㄹ, so 1, 7 and 8 (일, 칠, 팔) take 로 as well."""
+    if particle not in _PARTICLES:
+        raise ValueError(f"josa: {particle!r} is not one of {sorted(_PARTICLES)}")
+    last = abs(n) % 10
+    if particle == "(으)로":
+        return f"{n}{'로' if last in (1, 2, 4, 5, 7, 8, 9) else '으로'}"
+    return f"{n}{particle[1] if last in (2, 4, 5, 9) else particle[0]}"

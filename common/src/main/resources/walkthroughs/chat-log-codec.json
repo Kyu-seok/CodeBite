@@ -1,0 +1,3587 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Chat Log Codec",
+  "ko": "채팅 로그 코덱"
+ },
+ "approach": {
+  "en": "Write each message as its length, a #, then the message: unpack reads the length first and takes exactly that many characters, so a # or a digit inside a message is never mistaken for a marker.",
+  "ko": "메시지마다 길이, #, 메시지 순으로 적습니다. unpack은 길이를 먼저 읽고 정확히 그만큼의 문자를 가져오므로 메시지 안의 # 기호나 숫자를 구분자로 착각하지 않습니다."
+ },
+ "views": [
+  {
+   "id": "messages",
+   "type": "table",
+   "title": {
+    "en": "messages (sender)",
+    "ko": "messages (보내는 쪽)"
+   }
+  },
+  {
+   "id": "blob",
+   "type": "array",
+   "title": {
+    "en": "blob",
+    "ko": "blob"
+   }
+  },
+  {
+   "id": "unpacked",
+   "type": "table",
+   "title": {
+    "en": "unpack(blob) (receiver)",
+    "ko": "unpack(blob) (받는 쪽)"
+   }
+  },
+  {
+   "id": "state",
+   "type": "vars"
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "messages = [\"hello\",\"world\"]",
+   "expected": "[\"hello\",\"world\"]",
+   "frames": [
+    {
+     "caption": {
+      "en": "pack gets 2 messages. It writes each one as its length, a #, then the message itself, so the receiver never has to guess where a message ends.",
+      "ko": "pack이 메시지 2개를 받습니다. 메시지마다 길이, #, 메시지 순으로 적으므로 받는 쪽은 메시지가 어디서 끝나는지 추측할 필요가 없습니다."
+     },
+     "views": {
+      "messages": {
+       "columns": [
+        {
+         "en": "text",
+         "ko": "내용"
+        },
+        {
+         "en": "length",
+         "ko": "길이"
+        }
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "message 1",
+          "ko": "메시지 1"
+         },
+         "cells": [
+          "\"hello\"",
+          5
+         ]
+        },
+        {
+         "label": {
+          "en": "message 2",
+          "ko": "메시지 2"
+         },
+         "cells": [
+          "\"world\"",
+          5
+         ]
+        }
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "blob": {
+       "values": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "lit": [],
+        "good": []
+       }
+      },
+      "unpacked": {
+       "columns": [
+        {
+         "en": "text",
+         "ko": "내용"
+        },
+        {
+         "en": "length",
+         "ko": "길이"
+        }
+       ],
+       "rows": [],
+       "marks": {
+        "good": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "i",
+         "value": "–"
+        },
+        {
+         "label": {
+          "en": "length",
+          "ko": "length (길이)"
+         },
+         "value": "–"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Message 1, \"hello\", is 5 characters: append 5#hello.",
+      "ko": "메시지 1(\"hello\"): 문자 5개입니다. blob 끝에 이어 붙입니다: 5#hello"
+     },
+     "views": {
+      "messages": {
+       "columns": [
+        {
+         "en": "text",
+         "ko": "내용"
+        },
+        {
+         "en": "length",
+         "ko": "길이"
+        }
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "message 1",
+          "ko": "메시지 1"
+         },
+         "cells": [
+          "\"hello\"",
+          5
+         ]
+        },
+        {
+         "label": {
+          "en": "message 2",
+          "ko": "메시지 2"
+         },
+         "cells": [
+          "\"world\"",
+          5
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ]
+       }
+      },
+      "blob": {
+       "values": [
+        "5",
+        "#",
+        "h",
+        "e",
+        "l",
+        "l",
+        "o",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "lit": [],
+        "good": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5,
+         6
+        ]
+       }
+      },
+      "unpacked": {
+       "columns": [
+        {
+         "en": "text",
+         "ko": "내용"
+        },
+        {
+         "en": "length",
+         "ko": "길이"
+        }
+       ],
+       "rows": [],
+       "marks": {
+        "good": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "i",
+         "value": "–"
+        },
+        {
+         "label": {
+          "en": "length",
+          "ko": "length (길이)"
+         },
+         "value": "–"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Message 2, \"world\", is 5 characters: append 5#world.",
+      "ko": "메시지 2(\"world\"): 문자 5개입니다. blob 끝에 이어 붙입니다: 5#world"
+     },
+     "views": {
+      "messages": {
+       "columns": [
+        {
+         "en": "text",
+         "ko": "내용"
+        },
+        {
+         "en": "length",
+         "ko": "길이"
+        }
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "message 1",
+          "ko": "메시지 1"
+         },
+         "cells": [
+          "\"hello\"",
+          5
+         ]
+        },
+        {
+         "label": {
+          "en": "message 2",
+          "ko": "메시지 2"
+         },
+         "cells": [
+          "\"world\"",
+          5
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "blob": {
+       "values": [
+        "5",
+        "#",
+        "h",
+        "e",
+        "l",
+        "l",
+        "o",
+        "5",
+        "#",
+        "w",
+        "o",
+        "r",
+        "l",
+        "d"
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "lit": [],
+        "good": [
+         7,
+         8,
+         9,
+         10,
+         11,
+         12,
+         13
+        ]
+       }
+      },
+      "unpacked": {
+       "columns": [
+        {
+         "en": "text",
+         "ko": "내용"
+        },
+        {
+         "en": "length",
+         "ko": "길이"
+        }
+       ],
+       "rows": [],
+       "marks": {
+        "good": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "i",
+         "value": "–"
+        },
+        {
+         "label": {
+          "en": "length",
+          "ko": "length (길이)"
+         },
+         "value": "–"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "pack returns the blob 5#hello5#world, 14 characters. unpack gets only this string and reads it from i = 0.",
+      "ko": "pack이 돌려준 문자열은 5#hello5#world, 문자 14개입니다. unpack은 이 문자열만 받아 i = 0부터 읽습니다."
+     },
+     "views": {
+      "messages": {
+       "columns": [
+        {
+         "en": "text",
+         "ko": "내용"
+        },
+        {
+         "en": "length",
+         "ko": "길이"
+        }
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "message 1",
+          "ko": "메시지 1"
+         },
+         "cells": [
+          "\"hello\"",
+          5
+         ]
+        },
+        {
+         "label": {
+          "en": "message 2",
+          "ko": "메시지 2"
+         },
+         "cells": [
+          "\"world\"",
+          5
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "blob": {
+       "values": [
+        "5",
+        "#",
+        "h",
+        "e",
+        "l",
+        "l",
+        "o",
+        "5",
+        "#",
+        "w",
+        "o",
+        "r",
+        "l",
+        "d"
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "marks": {
+        "lit": [],
+        "good": []
+       }
+      },
+      "unpacked": {
+       "columns": [
+        {
+         "en": "text",
+         "ko": "내용"
+        },
+        {
+         "en": "length",
+         "ko": "길이"
+        }
+       ],
+       "rows": [],
+       "marks": {
+        "good": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "i",
+         "value": 0
+        },
+        {
+         "label": {
+          "en": "length",
+          "ko": "length (길이)"
+         },
+         "value": "–"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "At i = 0, the digits up to the next # read 5: take the next 5 characters, \"hello\", as message 1, whatever they are, then jump to i = 7.",
+      "ko": "i = 0에서 다음 #까지의 숫자 5를 읽고, 그 뒤의 문자 5개(\"hello\")를 내용과 상관없이 1번째 메시지로 가져와 i = 7로 건너뜁니다."
+     },
+     "views": {
+      "messages": {
+       "columns": [
+        {
+         "en": "text",
+         "ko": "내용"
+        },
+        {
+         "en": "length",
+         "ko": "길이"
+        }
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "message 1",
+          "ko": "메시지 1"
+         },
+         "cells": [
+          "\"hello\"",
+          5
+         ]
+        },
+        {
+         "label": {
+          "en": "message 2",
+          "ko": "메시지 2"
+         },
+         "cells": [
+          "\"world\"",
+          5
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "blob": {
+       "values": [
+        "5",
+        "#",
+        "h",
+        "e",
+        "l",
+        "l",
+        "o",
+        "5",
+        "#",
+        "w",
+        "o",
+        "r",
+        "l",
+        "d"
+       ],
+       "pointers": {
+        "i": 7
+       },
+       "marks": {
+        "lit": [
+         0,
+         1
+        ],
+        "good": [
+         2,
+         3,
+         4,
+         5,
+         6
+        ]
+       }
+      },
+      "unpacked": {
+       "columns": [
+        {
+         "en": "text",
+         "ko": "내용"
+        },
+        {
+         "en": "length",
+         "ko": "길이"
+        }
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "message 1",
+          "ko": "메시지 1"
+         },
+         "cells": [
+          "\"hello\"",
+          5
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "i",
+         "value": 7
+        },
+        {
+         "label": {
+          "en": "length",
+          "ko": "length (길이)"
+         },
+         "value": 5
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "At i = 7, the digits up to the next # read 5: take the next 5 characters, \"world\", as message 2, whatever they are, then jump to i = 14.",
+      "ko": "i = 7에서 다음 #까지의 숫자 5를 읽고, 그 뒤의 문자 5개(\"world\")를 내용과 상관없이 2번째 메시지로 가져와 i = 14로 건너뜁니다."
+     },
+     "views": {
+      "messages": {
+       "columns": [
+        {
+         "en": "text",
+         "ko": "내용"
+        },
+        {
+         "en": "length",
+         "ko": "길이"
+        }
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "message 1",
+          "ko": "메시지 1"
+         },
+         "cells": [
+          "\"hello\"",
+          5
+         ]
+        },
+        {
+         "label": {
+          "en": "message 2",
+          "ko": "메시지 2"
+         },
+         "cells": [
+          "\"world\"",
+          5
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "blob": {
+       "values": [
+        "5",
+        "#",
+        "h",
+        "e",
+        "l",
+        "l",
+        "o",
+        "5",
+        "#",
+        "w",
+        "o",
+        "r",
+        "l",
+        "d"
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "lit": [
+         7,
+         8
+        ],
+        "good": [
+         9,
+         10,
+         11,
+         12,
+         13
+        ]
+       }
+      },
+      "unpacked": {
+       "columns": [
+        {
+         "en": "text",
+         "ko": "내용"
+        },
+        {
+         "en": "length",
+         "ko": "길이"
+        }
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "message 1",
+          "ko": "메시지 1"
+         },
+         "cells": [
+          "\"hello\"",
+          5
+         ]
+        },
+        {
+         "label": {
+          "en": "message 2",
+          "ko": "메시지 2"
+         },
+         "cells": [
+          "\"world\"",
+          5
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "i",
+         "value": 14
+        },
+        {
+         "label": {
+          "en": "length",
+          "ko": "length (길이)"
+         },
+         "value": 5
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "i = 14 is the end of the blob, so unpack stops with 2 messages, the same as the sender's: answer [\"hello\",\"world\"].",
+      "ko": "i = 14에서 문자열이 끝나므로 unpack이 메시지 2개로 멈춥니다. 보낸 쪽과 같으므로 답은 [\"hello\",\"world\"]입니다."
+     },
+     "views": {
+      "messages": {
+       "columns": [
+        {
+         "en": "text",
+         "ko": "내용"
+        },
+        {
+         "en": "length",
+         "ko": "길이"
+        }
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "message 1",
+          "ko": "메시지 1"
+         },
+         "cells": [
+          "\"hello\"",
+          5
+         ]
+        },
+        {
+         "label": {
+          "en": "message 2",
+          "ko": "메시지 2"
+         },
+         "cells": [
+          "\"world\"",
+          5
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "blob": {
+       "values": [
+        "5",
+        "#",
+        "h",
+        "e",
+        "l",
+        "l",
+        "o",
+        "5",
+        "#",
+        "w",
+        "o",
+        "r",
+        "l",
+        "d"
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "lit": [],
+        "good": []
+       }
+      },
+      "unpacked": {
+       "columns": [
+        {
+         "en": "text",
+         "ko": "내용"
+        },
+        {
+         "en": "length",
+         "ko": "길이"
+        }
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "message 1",
+          "ko": "메시지 1"
+         },
+         "cells": [
+          "\"hello\"",
+          5
+         ]
+        },
+        {
+         "label": {
+          "en": "message 2",
+          "ko": "메시지 2"
+         },
+         "cells": [
+          "\"world\"",
+          5
+         ]
+        }
+       ],
+       "marks": {
+        "path": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "i",
+         "value": 14
+        },
+        {
+         "label": {
+          "en": "length",
+          "ko": "length (길이)"
+         },
+         "value": 5
+        }
+       ]
+      }
+     },
+     "answer": "[\"hello\",\"world\"]"
+    }
+   ],
+   "sampleInput": "[\"hello\",\"world\"]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "messages = [\"\"]",
+   "expected": "[\"\"]",
+   "frames": [
+    {
+     "caption": {
+      "en": "pack gets 1 message. It writes each one as its length, a #, then the message itself, so the receiver never has to guess where a message ends.",
+      "ko": "pack이 메시지 1개를 받습니다. 메시지마다 길이, #, 메시지 순으로 적으므로 받는 쪽은 메시지가 어디서 끝나는지 추측할 필요가 없습니다."
+     },
+     "views": {
+      "messages": {
+       "columns": [
+        {
+         "en": "text",
+         "ko": "내용"
+        },
+        {
+         "en": "length",
+         "ko": "길이"
+        }
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "message 1",
+          "ko": "메시지 1"
+         },
+         "cells": [
+          "\"\"",
+          0
+         ]
+        }
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "blob": {
+       "values": [
+        "",
+        ""
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "lit": [],
+        "good": []
+       }
+      },
+      "unpacked": {
+       "columns": [
+        {
+         "en": "text",
+         "ko": "내용"
+        },
+        {
+         "en": "length",
+         "ko": "길이"
+        }
+       ],
+       "rows": [],
+       "marks": {
+        "good": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "i",
+         "value": "–"
+        },
+        {
+         "label": {
+          "en": "length",
+          "ko": "length (길이)"
+         },
+         "value": "–"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Message 1, \"\", is an empty message, so nothing follows the #: append 0#.",
+      "ko": "메시지 1(\"\"): 빈 메시지라 # 뒤에 아무것도 붙지 않습니다. blob 끝에 이어 붙입니다: 0#"
+     },
+     "views": {
+      "messages": {
+       "columns": [
+        {
+         "en": "text",
+         "ko": "내용"
+        },
+        {
+         "en": "length",
+         "ko": "길이"
+        }
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "message 1",
+          "ko": "메시지 1"
+         },
+         "cells": [
+          "\"\"",
+          0
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ]
+       }
+      },
+      "blob": {
+       "values": [
+        "0",
+        "#"
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "lit": [],
+        "good": [
+         0,
+         1
+        ]
+       }
+      },
+      "unpacked": {
+       "columns": [
+        {
+         "en": "text",
+         "ko": "내용"
+        },
+        {
+         "en": "length",
+         "ko": "길이"
+        }
+       ],
+       "rows": [],
+       "marks": {
+        "good": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "i",
+         "value": "–"
+        },
+        {
+         "label": {
+          "en": "length",
+          "ko": "length (길이)"
+         },
+         "value": "–"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "pack returns the blob 0#, 2 characters. unpack gets only this string and reads it from i = 0.",
+      "ko": "pack이 돌려준 문자열은 0#, 문자 2개입니다. unpack은 이 문자열만 받아 i = 0부터 읽습니다."
+     },
+     "views": {
+      "messages": {
+       "columns": [
+        {
+         "en": "text",
+         "ko": "내용"
+        },
+        {
+         "en": "length",
+         "ko": "길이"
+        }
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "message 1",
+          "ko": "메시지 1"
+         },
+         "cells": [
+          "\"\"",
+          0
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ]
+       }
+      },
+      "blob": {
+       "values": [
+        "0",
+        "#"
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "marks": {
+        "lit": [],
+        "good": []
+       }
+      },
+      "unpacked": {
+       "columns": [
+        {
+         "en": "text",
+         "ko": "내용"
+        },
+        {
+         "en": "length",
+         "ko": "길이"
+        }
+       ],
+       "rows": [],
+       "marks": {
+        "good": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "i",
+         "value": 0
+        },
+        {
+         "label": {
+          "en": "length",
+          "ko": "length (길이)"
+         },
+         "value": "–"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "At i = 0, the digits up to the next # read 0: take 0 characters, so message 1 is the empty message \"\", then jump to i = 2.",
+      "ko": "i = 0에서 다음 #까지의 숫자 0을 읽고, 문자를 0개 가져와 1번째 메시지를 빈 메시지로 두고 i = 2로 건너뜁니다."
+     },
+     "views": {
+      "messages": {
+       "columns": [
+        {
+         "en": "text",
+         "ko": "내용"
+        },
+        {
+         "en": "length",
+         "ko": "길이"
+        }
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "message 1",
+          "ko": "메시지 1"
+         },
+         "cells": [
+          "\"\"",
+          0
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ]
+       }
+      },
+      "blob": {
+       "values": [
+        "0",
+        "#"
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "lit": [
+         0,
+         1
+        ],
+        "good": []
+       }
+      },
+      "unpacked": {
+       "columns": [
+        {
+         "en": "text",
+         "ko": "내용"
+        },
+        {
+         "en": "length",
+         "ko": "길이"
+        }
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "message 1",
+          "ko": "메시지 1"
+         },
+         "cells": [
+          "\"\"",
+          0
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "i",
+         "value": 2
+        },
+        {
+         "label": {
+          "en": "length",
+          "ko": "length (길이)"
+         },
+         "value": 0
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "i = 2 is the end of the blob, so unpack stops with 1 message, the same as the sender's: answer [\"\"].",
+      "ko": "i = 2에서 문자열이 끝나므로 unpack이 메시지 1개로 멈춥니다. 보낸 쪽과 같으므로 답은 [\"\"]입니다."
+     },
+     "views": {
+      "messages": {
+       "columns": [
+        {
+         "en": "text",
+         "ko": "내용"
+        },
+        {
+         "en": "length",
+         "ko": "길이"
+        }
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "message 1",
+          "ko": "메시지 1"
+         },
+         "cells": [
+          "\"\"",
+          0
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ]
+       }
+      },
+      "blob": {
+       "values": [
+        "0",
+        "#"
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "lit": [],
+        "good": []
+       }
+      },
+      "unpacked": {
+       "columns": [
+        {
+         "en": "text",
+         "ko": "내용"
+        },
+        {
+         "en": "length",
+         "ko": "길이"
+        }
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "message 1",
+          "ko": "메시지 1"
+         },
+         "cells": [
+          "\"\"",
+          0
+         ]
+        }
+       ],
+       "marks": {
+        "path": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "i",
+         "value": 2
+        },
+        {
+         "label": {
+          "en": "length",
+          "ko": "length (길이)"
+         },
+         "value": 0
+        }
+       ]
+      }
+     },
+     "answer": "[\"\"]"
+    }
+   ],
+   "sampleInput": "[\"\"]"
+  },
+  {
+   "label": {
+    "en": "Case 3",
+    "ko": "케이스 3"
+   },
+   "input": "messages = [\"\",\"\",\"\"]",
+   "expected": "[\"\",\"\",\"\"]",
+   "frames": [
+    {
+     "caption": {
+      "en": "pack gets 3 messages. It writes each one as its length, a #, then the message itself, so the receiver never has to guess where a message ends.",
+      "ko": "pack이 메시지 3개를 받습니다. 메시지마다 길이, #, 메시지 순으로 적으므로 받는 쪽은 메시지가 어디서 끝나는지 추측할 필요가 없습니다."
+     },
+     "views": {
+      "messages": {
+       "columns": [
+        {
+         "en": "text",
+         "ko": "내용"
+        },
+        {
+         "en": "length",
+         "ko": "길이"
+        }
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "message 1",
+          "ko": "메시지 1"
+         },
+         "cells": [
+          "\"\"",
+          0
+         ]
+        },
+        {
+         "label": {
+          "en": "message 2",
+          "ko": "메시지 2"
+         },
+         "cells": [
+          "\"\"",
+          0
+         ]
+        },
+        {
+         "label": {
+          "en": "message 3",
+          "ko": "메시지 3"
+         },
+         "cells": [
+          "\"\"",
+          0
+         ]
+        }
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "blob": {
+       "values": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "lit": [],
+        "good": []
+       }
+      },
+      "unpacked": {
+       "columns": [
+        {
+         "en": "text",
+         "ko": "내용"
+        },
+        {
+         "en": "length",
+         "ko": "길이"
+        }
+       ],
+       "rows": [],
+       "marks": {
+        "good": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "i",
+         "value": "–"
+        },
+        {
+         "label": {
+          "en": "length",
+          "ko": "length (길이)"
+         },
+         "value": "–"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Message 1, \"\", is an empty message, so nothing follows the #: append 0#.",
+      "ko": "메시지 1(\"\"): 빈 메시지라 # 뒤에 아무것도 붙지 않습니다. blob 끝에 이어 붙입니다: 0#"
+     },
+     "views": {
+      "messages": {
+       "columns": [
+        {
+         "en": "text",
+         "ko": "내용"
+        },
+        {
+         "en": "length",
+         "ko": "길이"
+        }
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "message 1",
+          "ko": "메시지 1"
+         },
+         "cells": [
+          "\"\"",
+          0
+         ]
+        },
+        {
+         "label": {
+          "en": "message 2",
+          "ko": "메시지 2"
+         },
+         "cells": [
+          "\"\"",
+          0
+         ]
+        },
+        {
+         "label": {
+          "en": "message 3",
+          "ko": "메시지 3"
+         },
+         "cells": [
+          "\"\"",
+          0
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ]
+       }
+      },
+      "blob": {
+       "values": [
+        "0",
+        "#",
+        "",
+        "",
+        "",
+        ""
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "lit": [],
+        "good": [
+         0,
+         1
+        ]
+       }
+      },
+      "unpacked": {
+       "columns": [
+        {
+         "en": "text",
+         "ko": "내용"
+        },
+        {
+         "en": "length",
+         "ko": "길이"
+        }
+       ],
+       "rows": [],
+       "marks": {
+        "good": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "i",
+         "value": "–"
+        },
+        {
+         "label": {
+          "en": "length",
+          "ko": "length (길이)"
+         },
+         "value": "–"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Message 2, \"\", is an empty message, so nothing follows the #: append 0#.",
+      "ko": "메시지 2(\"\"): 빈 메시지라 # 뒤에 아무것도 붙지 않습니다. blob 끝에 이어 붙입니다: 0#"
+     },
+     "views": {
+      "messages": {
+       "columns": [
+        {
+         "en": "text",
+         "ko": "내용"
+        },
+        {
+         "en": "length",
+         "ko": "길이"
+        }
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "message 1",
+          "ko": "메시지 1"
+         },
+         "cells": [
+          "\"\"",
+          0
+         ]
+        },
+        {
+         "label": {
+          "en": "message 2",
+          "ko": "메시지 2"
+         },
+         "cells": [
+          "\"\"",
+          0
+         ]
+        },
+        {
+         "label": {
+          "en": "message 3",
+          "ko": "메시지 3"
+         },
+         "cells": [
+          "\"\"",
+          0
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "blob": {
+       "values": [
+        "0",
+        "#",
+        "0",
+        "#",
+        "",
+        ""
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "lit": [],
+        "good": [
+         2,
+         3
+        ]
+       }
+      },
+      "unpacked": {
+       "columns": [
+        {
+         "en": "text",
+         "ko": "내용"
+        },
+        {
+         "en": "length",
+         "ko": "길이"
+        }
+       ],
+       "rows": [],
+       "marks": {
+        "good": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "i",
+         "value": "–"
+        },
+        {
+         "label": {
+          "en": "length",
+          "ko": "length (길이)"
+         },
+         "value": "–"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Message 3, \"\", is an empty message, so nothing follows the #: append 0#.",
+      "ko": "메시지 3(\"\"): 빈 메시지라 # 뒤에 아무것도 붙지 않습니다. blob 끝에 이어 붙입니다: 0#"
+     },
+     "views": {
+      "messages": {
+       "columns": [
+        {
+         "en": "text",
+         "ko": "내용"
+        },
+        {
+         "en": "length",
+         "ko": "길이"
+        }
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "message 1",
+          "ko": "메시지 1"
+         },
+         "cells": [
+          "\"\"",
+          0
+         ]
+        },
+        {
+         "label": {
+          "en": "message 2",
+          "ko": "메시지 2"
+         },
+         "cells": [
+          "\"\"",
+          0
+         ]
+        },
+        {
+         "label": {
+          "en": "message 3",
+          "ko": "메시지 3"
+         },
+         "cells": [
+          "\"\"",
+          0
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ]
+       }
+      },
+      "blob": {
+       "values": [
+        "0",
+        "#",
+        "0",
+        "#",
+        "0",
+        "#"
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "lit": [],
+        "good": [
+         4,
+         5
+        ]
+       }
+      },
+      "unpacked": {
+       "columns": [
+        {
+         "en": "text",
+         "ko": "내용"
+        },
+        {
+         "en": "length",
+         "ko": "길이"
+        }
+       ],
+       "rows": [],
+       "marks": {
+        "good": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "i",
+         "value": "–"
+        },
+        {
+         "label": {
+          "en": "length",
+          "ko": "length (길이)"
+         },
+         "value": "–"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "pack returns the blob 0#0#0#, 6 characters. unpack gets only this string and reads it from i = 0.",
+      "ko": "pack이 돌려준 문자열은 0#0#0#, 문자 6개입니다. unpack은 이 문자열만 받아 i = 0부터 읽습니다."
+     },
+     "views": {
+      "messages": {
+       "columns": [
+        {
+         "en": "text",
+         "ko": "내용"
+        },
+        {
+         "en": "length",
+         "ko": "길이"
+        }
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "message 1",
+          "ko": "메시지 1"
+         },
+         "cells": [
+          "\"\"",
+          0
+         ]
+        },
+        {
+         "label": {
+          "en": "message 2",
+          "ko": "메시지 2"
+         },
+         "cells": [
+          "\"\"",
+          0
+         ]
+        },
+        {
+         "label": {
+          "en": "message 3",
+          "ko": "메시지 3"
+         },
+         "cells": [
+          "\"\"",
+          0
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ]
+       }
+      },
+      "blob": {
+       "values": [
+        "0",
+        "#",
+        "0",
+        "#",
+        "0",
+        "#"
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "marks": {
+        "lit": [],
+        "good": []
+       }
+      },
+      "unpacked": {
+       "columns": [
+        {
+         "en": "text",
+         "ko": "내용"
+        },
+        {
+         "en": "length",
+         "ko": "길이"
+        }
+       ],
+       "rows": [],
+       "marks": {
+        "good": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "i",
+         "value": 0
+        },
+        {
+         "label": {
+          "en": "length",
+          "ko": "length (길이)"
+         },
+         "value": "–"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "At i = 0, the digits up to the next # read 0: take 0 characters, so message 1 is the empty message \"\", then jump to i = 2.",
+      "ko": "i = 0에서 다음 #까지의 숫자 0을 읽고, 문자를 0개 가져와 1번째 메시지를 빈 메시지로 두고 i = 2로 건너뜁니다."
+     },
+     "views": {
+      "messages": {
+       "columns": [
+        {
+         "en": "text",
+         "ko": "내용"
+        },
+        {
+         "en": "length",
+         "ko": "길이"
+        }
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "message 1",
+          "ko": "메시지 1"
+         },
+         "cells": [
+          "\"\"",
+          0
+         ]
+        },
+        {
+         "label": {
+          "en": "message 2",
+          "ko": "메시지 2"
+         },
+         "cells": [
+          "\"\"",
+          0
+         ]
+        },
+        {
+         "label": {
+          "en": "message 3",
+          "ko": "메시지 3"
+         },
+         "cells": [
+          "\"\"",
+          0
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ]
+       }
+      },
+      "blob": {
+       "values": [
+        "0",
+        "#",
+        "0",
+        "#",
+        "0",
+        "#"
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "marks": {
+        "lit": [
+         0,
+         1
+        ],
+        "good": []
+       }
+      },
+      "unpacked": {
+       "columns": [
+        {
+         "en": "text",
+         "ko": "내용"
+        },
+        {
+         "en": "length",
+         "ko": "길이"
+        }
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "message 1",
+          "ko": "메시지 1"
+         },
+         "cells": [
+          "\"\"",
+          0
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "i",
+         "value": 2
+        },
+        {
+         "label": {
+          "en": "length",
+          "ko": "length (길이)"
+         },
+         "value": 0
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "At i = 2, the digits up to the next # read 0: take 0 characters, so message 2 is the empty message \"\", then jump to i = 4.",
+      "ko": "i = 2에서 다음 #까지의 숫자 0을 읽고, 문자를 0개 가져와 2번째 메시지를 빈 메시지로 두고 i = 4로 건너뜁니다."
+     },
+     "views": {
+      "messages": {
+       "columns": [
+        {
+         "en": "text",
+         "ko": "내용"
+        },
+        {
+         "en": "length",
+         "ko": "길이"
+        }
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "message 1",
+          "ko": "메시지 1"
+         },
+         "cells": [
+          "\"\"",
+          0
+         ]
+        },
+        {
+         "label": {
+          "en": "message 2",
+          "ko": "메시지 2"
+         },
+         "cells": [
+          "\"\"",
+          0
+         ]
+        },
+        {
+         "label": {
+          "en": "message 3",
+          "ko": "메시지 3"
+         },
+         "cells": [
+          "\"\"",
+          0
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ]
+       }
+      },
+      "blob": {
+       "values": [
+        "0",
+        "#",
+        "0",
+        "#",
+        "0",
+        "#"
+       ],
+       "pointers": {
+        "i": 4
+       },
+       "marks": {
+        "lit": [
+         2,
+         3
+        ],
+        "good": []
+       }
+      },
+      "unpacked": {
+       "columns": [
+        {
+         "en": "text",
+         "ko": "내용"
+        },
+        {
+         "en": "length",
+         "ko": "길이"
+        }
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "message 1",
+          "ko": "메시지 1"
+         },
+         "cells": [
+          "\"\"",
+          0
+         ]
+        },
+        {
+         "label": {
+          "en": "message 2",
+          "ko": "메시지 2"
+         },
+         "cells": [
+          "\"\"",
+          0
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "i",
+         "value": 4
+        },
+        {
+         "label": {
+          "en": "length",
+          "ko": "length (길이)"
+         },
+         "value": 0
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "At i = 4, the digits up to the next # read 0: take 0 characters, so message 3 is the empty message \"\", then jump to i = 6.",
+      "ko": "i = 4에서 다음 #까지의 숫자 0을 읽고, 문자를 0개 가져와 3번째 메시지를 빈 메시지로 두고 i = 6으로 건너뜁니다."
+     },
+     "views": {
+      "messages": {
+       "columns": [
+        {
+         "en": "text",
+         "ko": "내용"
+        },
+        {
+         "en": "length",
+         "ko": "길이"
+        }
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "message 1",
+          "ko": "메시지 1"
+         },
+         "cells": [
+          "\"\"",
+          0
+         ]
+        },
+        {
+         "label": {
+          "en": "message 2",
+          "ko": "메시지 2"
+         },
+         "cells": [
+          "\"\"",
+          0
+         ]
+        },
+        {
+         "label": {
+          "en": "message 3",
+          "ko": "메시지 3"
+         },
+         "cells": [
+          "\"\"",
+          0
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ]
+       }
+      },
+      "blob": {
+       "values": [
+        "0",
+        "#",
+        "0",
+        "#",
+        "0",
+        "#"
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "lit": [
+         4,
+         5
+        ],
+        "good": []
+       }
+      },
+      "unpacked": {
+       "columns": [
+        {
+         "en": "text",
+         "ko": "내용"
+        },
+        {
+         "en": "length",
+         "ko": "길이"
+        }
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "message 1",
+          "ko": "메시지 1"
+         },
+         "cells": [
+          "\"\"",
+          0
+         ]
+        },
+        {
+         "label": {
+          "en": "message 2",
+          "ko": "메시지 2"
+         },
+         "cells": [
+          "\"\"",
+          0
+         ]
+        },
+        {
+         "label": {
+          "en": "message 3",
+          "ko": "메시지 3"
+         },
+         "cells": [
+          "\"\"",
+          0
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "i",
+         "value": 6
+        },
+        {
+         "label": {
+          "en": "length",
+          "ko": "length (길이)"
+         },
+         "value": 0
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "i = 6 is the end of the blob, so unpack stops with 3 messages, the same as the sender's: answer [\"\",\"\",\"\"].",
+      "ko": "i = 6에서 문자열이 끝나므로 unpack이 메시지 3개로 멈춥니다. 보낸 쪽과 같으므로 답은 [\"\",\"\",\"\"]입니다."
+     },
+     "views": {
+      "messages": {
+       "columns": [
+        {
+         "en": "text",
+         "ko": "내용"
+        },
+        {
+         "en": "length",
+         "ko": "길이"
+        }
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "message 1",
+          "ko": "메시지 1"
+         },
+         "cells": [
+          "\"\"",
+          0
+         ]
+        },
+        {
+         "label": {
+          "en": "message 2",
+          "ko": "메시지 2"
+         },
+         "cells": [
+          "\"\"",
+          0
+         ]
+        },
+        {
+         "label": {
+          "en": "message 3",
+          "ko": "메시지 3"
+         },
+         "cells": [
+          "\"\"",
+          0
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ]
+       }
+      },
+      "blob": {
+       "values": [
+        "0",
+        "#",
+        "0",
+        "#",
+        "0",
+        "#"
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "lit": [],
+        "good": []
+       }
+      },
+      "unpacked": {
+       "columns": [
+        {
+         "en": "text",
+         "ko": "내용"
+        },
+        {
+         "en": "length",
+         "ko": "길이"
+        }
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "message 1",
+          "ko": "메시지 1"
+         },
+         "cells": [
+          "\"\"",
+          0
+         ]
+        },
+        {
+         "label": {
+          "en": "message 2",
+          "ko": "메시지 2"
+         },
+         "cells": [
+          "\"\"",
+          0
+         ]
+        },
+        {
+         "label": {
+          "en": "message 3",
+          "ko": "메시지 3"
+         },
+         "cells": [
+          "\"\"",
+          0
+         ]
+        }
+       ],
+       "marks": {
+        "path": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "i",
+         "value": 6
+        },
+        {
+         "label": {
+          "en": "length",
+          "ko": "length (길이)"
+         },
+         "value": 0
+        }
+       ]
+      }
+     },
+     "answer": "[\"\",\"\",\"\"]"
+    }
+   ],
+   "sampleInput": "[\"\",\"\",\"\"]"
+  },
+  {
+   "label": {
+    "en": "Markers inside",
+    "ko": "메시지 안의 구분자"
+   },
+   "input": "messages = [\"7#x\",\"#\"]",
+   "expected": "[\"7#x\",\"#\"]",
+   "frames": [
+    {
+     "caption": {
+      "en": "pack gets 2 messages. It writes each one as its length, a #, then the message itself, so the receiver never has to guess where a message ends.",
+      "ko": "pack이 메시지 2개를 받습니다. 메시지마다 길이, #, 메시지 순으로 적으므로 받는 쪽은 메시지가 어디서 끝나는지 추측할 필요가 없습니다."
+     },
+     "views": {
+      "messages": {
+       "columns": [
+        {
+         "en": "text",
+         "ko": "내용"
+        },
+        {
+         "en": "length",
+         "ko": "길이"
+        }
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "message 1",
+          "ko": "메시지 1"
+         },
+         "cells": [
+          "\"7#x\"",
+          3
+         ]
+        },
+        {
+         "label": {
+          "en": "message 2",
+          "ko": "메시지 2"
+         },
+         "cells": [
+          "\"#\"",
+          1
+         ]
+        }
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "blob": {
+       "values": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "lit": [],
+        "good": []
+       }
+      },
+      "unpacked": {
+       "columns": [
+        {
+         "en": "text",
+         "ko": "내용"
+        },
+        {
+         "en": "length",
+         "ko": "길이"
+        }
+       ],
+       "rows": [],
+       "marks": {
+        "good": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "i",
+         "value": "–"
+        },
+        {
+         "label": {
+          "en": "length",
+          "ko": "length (길이)"
+         },
+         "value": "–"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Message 1, \"7#x\", is 3 characters: append 3#7#x.",
+      "ko": "메시지 1(\"7#x\"): 문자 3개입니다. blob 끝에 이어 붙입니다: 3#7#x"
+     },
+     "views": {
+      "messages": {
+       "columns": [
+        {
+         "en": "text",
+         "ko": "내용"
+        },
+        {
+         "en": "length",
+         "ko": "길이"
+        }
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "message 1",
+          "ko": "메시지 1"
+         },
+         "cells": [
+          "\"7#x\"",
+          3
+         ]
+        },
+        {
+         "label": {
+          "en": "message 2",
+          "ko": "메시지 2"
+         },
+         "cells": [
+          "\"#\"",
+          1
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ]
+       }
+      },
+      "blob": {
+       "values": [
+        "3",
+        "#",
+        "7",
+        "#",
+        "x",
+        "",
+        "",
+        ""
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "lit": [],
+        "good": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      },
+      "unpacked": {
+       "columns": [
+        {
+         "en": "text",
+         "ko": "내용"
+        },
+        {
+         "en": "length",
+         "ko": "길이"
+        }
+       ],
+       "rows": [],
+       "marks": {
+        "good": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "i",
+         "value": "–"
+        },
+        {
+         "label": {
+          "en": "length",
+          "ko": "length (길이)"
+         },
+         "value": "–"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Message 2, \"#\", is 1 character: append 1##.",
+      "ko": "메시지 2(\"#\"): 문자 1개입니다. blob 끝에 이어 붙입니다: 1##"
+     },
+     "views": {
+      "messages": {
+       "columns": [
+        {
+         "en": "text",
+         "ko": "내용"
+        },
+        {
+         "en": "length",
+         "ko": "길이"
+        }
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "message 1",
+          "ko": "메시지 1"
+         },
+         "cells": [
+          "\"7#x\"",
+          3
+         ]
+        },
+        {
+         "label": {
+          "en": "message 2",
+          "ko": "메시지 2"
+         },
+         "cells": [
+          "\"#\"",
+          1
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "blob": {
+       "values": [
+        "3",
+        "#",
+        "7",
+        "#",
+        "x",
+        "1",
+        "#",
+        "#"
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "lit": [],
+        "good": [
+         5,
+         6,
+         7
+        ]
+       }
+      },
+      "unpacked": {
+       "columns": [
+        {
+         "en": "text",
+         "ko": "내용"
+        },
+        {
+         "en": "length",
+         "ko": "길이"
+        }
+       ],
+       "rows": [],
+       "marks": {
+        "good": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "i",
+         "value": "–"
+        },
+        {
+         "label": {
+          "en": "length",
+          "ko": "length (길이)"
+         },
+         "value": "–"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "pack returns the blob 3#7#x1##, 8 characters. unpack gets only this string and reads it from i = 0.",
+      "ko": "pack이 돌려준 문자열은 3#7#x1##, 문자 8개입니다. unpack은 이 문자열만 받아 i = 0부터 읽습니다."
+     },
+     "views": {
+      "messages": {
+       "columns": [
+        {
+         "en": "text",
+         "ko": "내용"
+        },
+        {
+         "en": "length",
+         "ko": "길이"
+        }
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "message 1",
+          "ko": "메시지 1"
+         },
+         "cells": [
+          "\"7#x\"",
+          3
+         ]
+        },
+        {
+         "label": {
+          "en": "message 2",
+          "ko": "메시지 2"
+         },
+         "cells": [
+          "\"#\"",
+          1
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "blob": {
+       "values": [
+        "3",
+        "#",
+        "7",
+        "#",
+        "x",
+        "1",
+        "#",
+        "#"
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "marks": {
+        "lit": [],
+        "good": []
+       }
+      },
+      "unpacked": {
+       "columns": [
+        {
+         "en": "text",
+         "ko": "내용"
+        },
+        {
+         "en": "length",
+         "ko": "길이"
+        }
+       ],
+       "rows": [],
+       "marks": {
+        "good": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "i",
+         "value": 0
+        },
+        {
+         "label": {
+          "en": "length",
+          "ko": "length (길이)"
+         },
+         "value": "–"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "At i = 0, the digits up to the next # read 3: take the next 3 characters, \"7#x\", as message 1, whatever they are, then jump to i = 5. The # inside it is only a character: unpack never searches the counted characters for a marker.",
+      "ko": "i = 0에서 다음 #까지의 숫자 3을 읽고, 그 뒤의 문자 3개(\"7#x\")를 내용과 상관없이 1번째 메시지로 가져와 i = 5로 건너뜁니다. 그 안의 # 기호는 그냥 문자일 뿐, unpack은 길이만큼 가져오는 문자 안에서 구분자를 찾지 않습니다."
+     },
+     "views": {
+      "messages": {
+       "columns": [
+        {
+         "en": "text",
+         "ko": "내용"
+        },
+        {
+         "en": "length",
+         "ko": "길이"
+        }
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "message 1",
+          "ko": "메시지 1"
+         },
+         "cells": [
+          "\"7#x\"",
+          3
+         ]
+        },
+        {
+         "label": {
+          "en": "message 2",
+          "ko": "메시지 2"
+         },
+         "cells": [
+          "\"#\"",
+          1
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "blob": {
+       "values": [
+        "3",
+        "#",
+        "7",
+        "#",
+        "x",
+        "1",
+        "#",
+        "#"
+       ],
+       "pointers": {
+        "i": 5
+       },
+       "marks": {
+        "lit": [
+         0,
+         1
+        ],
+        "good": [
+         2,
+         3,
+         4
+        ]
+       }
+      },
+      "unpacked": {
+       "columns": [
+        {
+         "en": "text",
+         "ko": "내용"
+        },
+        {
+         "en": "length",
+         "ko": "길이"
+        }
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "message 1",
+          "ko": "메시지 1"
+         },
+         "cells": [
+          "\"7#x\"",
+          3
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "i",
+         "value": 5
+        },
+        {
+         "label": {
+          "en": "length",
+          "ko": "length (길이)"
+         },
+         "value": 3
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "At i = 5, the digits up to the next # read 1: take the next 1 character, \"#\", as message 2, whatever they are, then jump to i = 8. The # inside it is only a character: unpack never searches the counted characters for a marker.",
+      "ko": "i = 5에서 다음 #까지의 숫자 1을 읽고, 그 뒤의 문자 1개(\"#\")를 내용과 상관없이 2번째 메시지로 가져와 i = 8로 건너뜁니다. 그 안의 # 기호는 그냥 문자일 뿐, unpack은 길이만큼 가져오는 문자 안에서 구분자를 찾지 않습니다."
+     },
+     "views": {
+      "messages": {
+       "columns": [
+        {
+         "en": "text",
+         "ko": "내용"
+        },
+        {
+         "en": "length",
+         "ko": "길이"
+        }
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "message 1",
+          "ko": "메시지 1"
+         },
+         "cells": [
+          "\"7#x\"",
+          3
+         ]
+        },
+        {
+         "label": {
+          "en": "message 2",
+          "ko": "메시지 2"
+         },
+         "cells": [
+          "\"#\"",
+          1
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "blob": {
+       "values": [
+        "3",
+        "#",
+        "7",
+        "#",
+        "x",
+        "1",
+        "#",
+        "#"
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "lit": [
+         5,
+         6
+        ],
+        "good": [
+         7
+        ]
+       }
+      },
+      "unpacked": {
+       "columns": [
+        {
+         "en": "text",
+         "ko": "내용"
+        },
+        {
+         "en": "length",
+         "ko": "길이"
+        }
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "message 1",
+          "ko": "메시지 1"
+         },
+         "cells": [
+          "\"7#x\"",
+          3
+         ]
+        },
+        {
+         "label": {
+          "en": "message 2",
+          "ko": "메시지 2"
+         },
+         "cells": [
+          "\"#\"",
+          1
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "i",
+         "value": 8
+        },
+        {
+         "label": {
+          "en": "length",
+          "ko": "length (길이)"
+         },
+         "value": 1
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "i = 8 is the end of the blob, so unpack stops with 2 messages, the same as the sender's: answer [\"7#x\",\"#\"].",
+      "ko": "i = 8에서 문자열이 끝나므로 unpack이 메시지 2개로 멈춥니다. 보낸 쪽과 같으므로 답은 [\"7#x\",\"#\"]입니다."
+     },
+     "views": {
+      "messages": {
+       "columns": [
+        {
+         "en": "text",
+         "ko": "내용"
+        },
+        {
+         "en": "length",
+         "ko": "길이"
+        }
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "message 1",
+          "ko": "메시지 1"
+         },
+         "cells": [
+          "\"7#x\"",
+          3
+         ]
+        },
+        {
+         "label": {
+          "en": "message 2",
+          "ko": "메시지 2"
+         },
+         "cells": [
+          "\"#\"",
+          1
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "blob": {
+       "values": [
+        "3",
+        "#",
+        "7",
+        "#",
+        "x",
+        "1",
+        "#",
+        "#"
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "lit": [],
+        "good": []
+       }
+      },
+      "unpacked": {
+       "columns": [
+        {
+         "en": "text",
+         "ko": "내용"
+        },
+        {
+         "en": "length",
+         "ko": "길이"
+        }
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "message 1",
+          "ko": "메시지 1"
+         },
+         "cells": [
+          "\"7#x\"",
+          3
+         ]
+        },
+        {
+         "label": {
+          "en": "message 2",
+          "ko": "메시지 2"
+         },
+         "cells": [
+          "\"#\"",
+          1
+         ]
+        }
+       ],
+       "marks": {
+        "path": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "i",
+         "value": 8
+        },
+        {
+         "label": {
+          "en": "length",
+          "ko": "length (길이)"
+         },
+         "value": 1
+        }
+       ]
+      }
+     },
+     "answer": "[\"7#x\",\"#\"]"
+    }
+   ],
+   "extra": true
+  }
+ ]
+}

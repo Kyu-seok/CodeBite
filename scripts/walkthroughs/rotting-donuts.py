@@ -13,7 +13,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough  # noqa: E402
 
 SLUG = "rotting-donuts"
@@ -30,10 +30,6 @@ wt = Walkthrough(
         {"id": "state", "type": "vars"},
     ],
 )
-
-
-def plural(n, one, many):
-    return one if n == 1 else many
 
 
 def solve(ward, run):

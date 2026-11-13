@@ -15,13 +15,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 /**
  * {@code GET /api/problems/{slug}/walkthrough} and {@code ProblemDetail.hasWalkthrough}, against the
- * committed {@code walkthroughs/} files: {@code rotting-donuts} has one, {@code snack-drawer-pair} doesn't.
+ * committed {@code walkthroughs/} files: {@code rotting-donuts} has one. A problem without one is
+ * {@code rotting-donuts} renamed in the test to a Slug no file is named for, since every problem is
+ * meant to get a Walkthrough in time.
  */
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @Transactional
 class WalkthroughEndpointTest {
+
+    private static final String WITHOUT_WALKTHROUGH = "a-problem-with-no-walkthrough";
 
     @Autowired
     private MockMvc mockMvc;
@@ -47,9 +51,15 @@ class WalkthroughEndpointTest {
                 .andExpect(jsonPath("$.format").value("walkthrough/1"));
     }
 
+    private void renameRottingDonutsToASlugWithNoFile() {
+        jdbc.update("UPDATE problems SET slug = ? WHERE slug = 'rotting-donuts'", WITHOUT_WALKTHROUGH);
+    }
+
     @Test
     void aProblemWithoutAWalkthroughIs404() throws Exception {
-        mockMvc.perform(get("/api/problems/snack-drawer-pair/walkthrough"))
+        renameRottingDonutsToASlugWithNoFile();
+
+        mockMvc.perform(get("/api/problems/" + WITHOUT_WALKTHROUGH + "/walkthrough"))
                 .andExpect(status().isNotFound());
     }
 
@@ -70,11 +80,16 @@ class WalkthroughEndpointTest {
     }
 
     @Test
-    void theDetailSaysWhetherAProblemHasAWalkthrough() throws Exception {
+    void theDetailSaysAProblemHasAWalkthrough() throws Exception {
         mockMvc.perform(get("/api/problems/rotting-donuts"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.hasWalkthrough").value(true));
-        mockMvc.perform(get("/api/problems/snack-drawer-pair"))
+    }
+
+    @Test
+    void theDetailSaysAProblemHasNoWalkthrough() throws Exception {
+        renameRottingDonutsToASlugWithNoFile();
+        mockMvc.perform(get("/api/problems/" + WITHOUT_WALKTHROUGH))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.hasWalkthrough").value(false));
     }

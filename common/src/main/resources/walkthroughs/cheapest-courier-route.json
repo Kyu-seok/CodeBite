@@ -2514,7 +2514,7 @@
     {
      "caption": {
       "en": "After 3 rounds cafe 4 costs 220, by 0 → 1 → 3 → 4 (3 legs): answer 220. Cafe 3 shows 200, its cost when the route left it: its final 120 takes 3 legs (0 → 1 → 2 → 3), and the leg on from cafe 3 would make 4, more than the 3 legs maxHops = 2 allows.",
-      "ko": "3라운드 뒤 카페 4의 비용은 220분이고, 경로는 0 → 1 → 3 → 4(구간 3개)입니다. 답: 220. 카페 3에 200분이 표시되는 것은 경로가 그 카페를 떠날 때의 비용이기 때문입니다. 최종 120분은 구간 3개(0 → 1 → 2 → 3)가 필요해서, 카페 3에서 한 구간 더 가면 4개가 되어 maxHops = 2일 때 허용되는 3개를 넘습니다."
+      "ko": "3라운드 뒤 카페 4의 비용은 220분, 경로는 0 → 1 → 3 → 4(구간 3개)이므로 답은 220입니다. 카페 3의 200분은 경로가 그 카페를 떠날 때의 비용이고, 최종 120분은 구간 3개(0 → 1 → 2 → 3)가 필요해 카페 3에서 한 구간 더 가면 4개로 maxHops = 2일 때 허용되는 3개를 넘습니다."
      },
      "views": {
       "cafes": {
@@ -3445,7 +3445,7 @@
     {
      "caption": {
       "en": "After 1 round cafe 3 costs 400, by 0 → 3 (1 leg): answer 400. The cheaper 0 → 1 → 2 → 3 (210) takes 3 legs, more than the 1 leg maxHops = 0 allows.",
-      "ko": "1라운드 뒤 카페 3의 비용은 400분이고, 경로는 0 → 3(구간 1개)입니다. 답: 400. 더 싼 0 → 1 → 2 → 3(210분)은 구간 3개가 필요해 maxHops = 0일 때 허용되는 1개를 넘습니다."
+      "ko": "1라운드 뒤 카페 3의 비용은 400분, 경로는 0 → 3(구간 1개)이므로 답은 400입니다. 더 싼 0 → 1 → 2 → 3(210분)은 구간 3개가 필요해 maxHops = 0일 때 허용되는 1개를 넘습니다."
      },
      "views": {
       "cafes": {
@@ -4093,7 +4093,7 @@
     {
      "caption": {
       "en": "After 1 round cafe 2 costs 500, by 0 → 2 (1 leg): answer 500. The cheaper 0 → 1 → 2 (200) takes 2 legs, more than the 1 leg maxHops = 0 allows.",
-      "ko": "1라운드 뒤 카페 2의 비용은 500분이고, 경로는 0 → 2(구간 1개)입니다. 답: 500. 더 싼 0 → 1 → 2(200분)은 구간 2개가 필요해 maxHops = 0일 때 허용되는 1개를 넘습니다."
+      "ko": "1라운드 뒤 카페 2의 비용은 500분, 경로는 0 → 2(구간 1개)이므로 답은 500입니다. 더 싼 0 → 1 → 2(200분)은 구간 2개가 필요해 maxHops = 0일 때 허용되는 1개를 넘습니다."
      },
      "views": {
       "cafes": {

@@ -13,7 +13,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import driver_list, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough  # noqa: E402
 
 SLUG = "cheapest-courier-route"
@@ -36,10 +36,6 @@ wt = Walkthrough(
 
 def show(x):
     return "∞" if x == INF else x
-
-
-def plural(n, one, many):
-    return one if n == 1 else many
 
 
 def arrow(route):
@@ -173,7 +169,7 @@ def solve(n, links, src, dst, k, run):
     legs = len(path) - 1
     en = (f"After {rounds} {plural(rounds, 'round', 'rounds')} cafe {dst} costs {cost[dst]}, by {arrow(path)} "
           f"({legs} {plural(legs, 'leg', 'legs')}): answer {cost[dst]}.")
-    ko = f"{rounds}라운드 뒤 카페 {dst}의 비용은 {cost[dst]}분이고, 경로는 {arrow(path)}(구간 {legs}개)입니다. 답: {cost[dst]}."
+    ko = f"{rounds}라운드 뒤 카페 {dst}의 비용은 {cost[dst]}분, 경로는 {arrow(path)}(구간 {legs}개)이므로 답은 {cost[dst]}입니다."
     for v in path:
         if used[v] != cost[v]:
             # the route left v earlier, at the cost a shorter prefix gave it; its final cost needs more legs
@@ -182,8 +178,8 @@ def solve(n, links, src, dst, k, run):
             en += (f" Cafe {v} shows {used[v]}, its cost when the route left it: its final {cost[v]} takes {more} "
                    f"legs ({arrow(better)}), and the leg on from cafe {v} would make {more + 1}, more than "
                    f"the {rounds} legs maxHops = {k} allows.")
-            ko += (f" 카페 {v}에 {used[v]}분이 표시되는 것은 경로가 그 카페를 떠날 때의 비용이기 때문입니다. 최종 {cost[v]}분은 "
-                   f"구간 {more}개({arrow(better)})가 필요해서, 카페 {v}에서 한 구간 더 가면 {more + 1}개가 되어 "
+            ko += (f" 카페 {v}의 {used[v]}분은 경로가 그 카페를 떠날 때의 비용이고, 최종 {cost[v]}분은 "
+                   f"구간 {more}개({arrow(better)})가 필요해 카페 {v}에서 한 구간 더 가면 {more + 1}개로 "
                    f"maxHops = {k}일 때 허용되는 {rounds}개를 넘습니다.")
     cheaper, route = cheapest_any_legs(n, links, src, dst)
     if cheaper < cost[dst] and not any(used[v] != cost[v] for v in path):
@@ -204,7 +200,7 @@ for number, sample in enumerate(sample_cases(SLUG), start=1):
                                  for v in range(n)],
                        "edges": [{"from": a, "to": b, "label": w} for a, b, w in links]}}
     run = sample_run(wt, number, sample, setup=setup,
-                     input=f"n = {n}, links = {json.dumps(links, separators=(',', ':'))}, "
+                     input=f"n = {n}, links = {driver_list(links)}, "
                            f"src = {src}, dst = {dst}, maxHops = {k}")
     solve(n, links, src, dst, k, run)
 wt.write(walkthrough_path(SLUG))
