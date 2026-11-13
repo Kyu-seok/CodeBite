@@ -1,7 +1,9 @@
 #!/usr/bin/env python3.12
 """unique-genre-window's Walkthrough: the reference solution
-(scripts/replay-solutions/unique-genre-window.py), a sliding window with a count per genre, recording one
-frame per tag added (its shrink, if any, in the same frame) on each sample Test Case.
+(scripts/replay-solutions/unique-genre-window.py), a sliding window with a count per genre. The window is a span
+above the queue and the best so far a dashed span below it; the counts are a map with k slots. Each tag added moves
+into its genre's card, and each tag dropped from the left is its own frame, moving back out in red, on each sample
+Test Case.
 
     CODEBITE_DB=<database> scripts/walkthroughs/unique-genre-window.py
 
@@ -9,14 +11,14 @@ writes common/src/main/resources/walkthroughs/unique-genre-window.json.
 """
 import os
 import sys
-from collections import Counter
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
 from codebite import josa, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
-from walkthrough_trace import Walkthrough  # noqa: E402
+from walkthrough_trace import Walkthrough, at, map_entries, move, span  # noqa: E402
 
 SLUG = "unique-genre-window"
+EMPTY = {"en": "empty", "ko": "비어 있음"}
 
 wt = Walkthrough(
     {"en": "Unique Genre Window", "ko": "장르 제한 몰아보기 구간"},
@@ -26,101 +28,107 @@ wt = Walkthrough(
            "태그를 뺍니다. 그렇게 지나가는 구간이 모두 후보입니다."},
     views=[
         {"id": "queue", "type": "array", "title": {"en": "queue", "ko": "queue (재생 큐)"}},
-        {"id": "window", "type": "table", "title": {"en": "window (genre → count)", "ko": "window (장르 → 개수)"}},
+        {"id": "window", "type": "map", "title": {"en": "window (genre → count)", "ko": "window (장르 → 개수)"},
+         "empty": EMPTY},
         {"id": "state", "type": "vars"},
     ],
 )
 
 
 def solve(queue, k, run):
-    """Solution.k_distinct_window with a frame per tag added. Returns the answer as the Driver prints it."""
+    """Solution.k_distinct_window with a frame per tag added and per tag dropped."""
     n = len(queue)
-    window = Counter()
-    best = 0
-    best_span = None  # (left, right) of the first window of length best, for the last frame
-    left = 0
-    right = None
+    window = {}  # genre -> count, in insertion order as Counter keeps it
+    best, best_span, left, right = 0, None, 0, None
 
-    def frame(caption, good=(), bad=(), path=(), row_good=None, best_mark=None, **answer):
-        # the last frame shows the best window, the one the answer used, not the window the run ended on
-        showing = right is not None and not path
-        in_window = set(range(left, right + 1)) if showing else set()
-        counts = Counter(queue[j] for j in path) if path else window
-        keys = list(counts)
+    def frame(caption, marks=None, struck=(), moves=None, window_mark="lit", beaten=False, done=False, **answer):
+        spans = {}
+        if right is not None and not done:
+            length = right - left + 1
+            spans["window"] = span(left, right, {"en": f"window {length}", "ko": f"구간 {length}"},
+                                   mark=window_mark, fade=True)
+        if best_span:
+            spans["best"] = span(*best_span, f"best = {best}", below=True,
+                                 mark="path" if done else "good" if beaten else None)
+        read = n if done else 0 if right is None else right + 1
         run.frame(caption,
-                  queue={"values": list(queue), "pointers": {"left": left if showing else None,
-                                                             "right": right if showing else None},
-                         "marks": {"dim": [j for j in range(n) if j not in in_window and j not in [*bad, *path]],
-                                   "path": list(path), "bad": list(bad), "good": list(good)}},
-                  window={"columns": [{"en": "count", "ko": "개수"}],
-                          "rows": [{"label": g, "cells": [c]} for g, c in counts.items()],
-                          "marks": ({"path": [[r, 0] for r in range(len(keys))]} if path
-                                    else {"good": [[keys.index(row_good), 0]]} if row_good in window else {})},
-                  state={"items": [{"label": "k", "value": k},
-                                   {"label": {"en": "genres in window", "ko": "구간의 장르 수"}, "value": len(counts)},
-                                   {"label": {"en": "window length", "ko": "구간 길이"},
-                                    "value": len(path) if path else 0 if right is None else right - left + 1},
-                                   {"label": {"en": "best", "ko": "best (최장 길이)"}, "value": best, "mark": best_mark}]},
-                  **answer)
+                  queue={"values": list(queue), "spans": spans, "unread": list(range(read, n)),
+                         "pointers": {"left": None if right is None or done else left,
+                                      "right": None if done else right},
+                         "marks": ({"path": list(range(best_span[0], best_span[1] + 1))} if done and best_span
+                                   else {"lit": [right]} if right is not None and not done else {})},
+                  window={"entries": map_entries(window), "slots": k, "struck": list(struck),
+                          "marks": marks or ({"dim": list(window)} if done else {})},
+                  state={"items": [{"label": "k", "value": k}]},
+                  moves=moves, **answer)
 
     if k == 0:
-        frame({"en": "k = 0: no window may hold a genre, so not even one tag fits. Answer 0.",
-               "ko": "k = 0이면 어떤 장르도 넣을 수 없어 태그 하나도 들어가지 않습니다. 답은 0입니다."},
-              answer="0")
+        frame({"en": "k = 0: the window holds no genre, so not even one tag fits. Answer 0.",
+               "ko": "k = 0이면 구간에 장르를 하나도 넣을 수 없어 태그 하나도 들어가지 않습니다. 답은 0입니다."},
+              done=True, answer="0")
         return
-    frame({"en": f"{n} tags, at most k = {k} {plural(k, 'genre', 'genres')} per window. "
-                 f"The window starts empty; add tags from the left.",
-           "ko": f"태그 {n}개, 구간마다 장르는 최대 k = {k}입니다. 빈 구간에서 시작해 왼쪽부터 태그를 넣습니다."})
+    frame({"en": f"{n} tags, and the window holds at most k = {k} {plural(k, 'genre', 'genres')}. "
+                 f"It starts empty; tags join from the left.",
+           "ko": f"태그 {n}개, 구간에는 장르가 최대 k = {k}종류까지 들어갑니다. 빈 구간에서 시작해 왼쪽부터 태그를 넣습니다."})
     for right, tag in enumerate(queue):
-        window[tag] += 1
-        added = (f"queue[{right}] = '{tag}' joins the window",
-                 f"queue[{right}] = '{tag}': 구간에 넣으면")
-        dropped = []
+        window[tag] = window.get(tag, 0) + 1
+        joins = [move(at("queue", right), at("window", tag))]
         if len(window) > k:
-            too_many = len(window)
+            frame({"en": f"queue[{right}] = '{tag}' joins: {len(window)} genres, more than k = {k}, "
+                         f"so tags leave from the left until it is back to {k}.",
+                   "ko": f"queue[{right}] = '{tag}' 추가: 장르가 {len(window)}종류로 k = {k}보다 많아, "
+                         f"다시 {k}종류가 될 때까지 왼쪽에서 태그를 뺍니다."},
+                  marks={"bad": [tag]}, moves=joins, window_mark="bad")
             while len(window) > k:
-                window[queue[left]] -= 1
-                if window[queue[left]] == 0:
-                    del window[queue[left]]
-                dropped.append(left)
+                out = queue[left]
+                window[out] -= 1
+                gone = window[out] == 0
                 left += 1
+                fits = len(window) - gone <= k
+                beaten = False
+                tail_en = tail_ko = ""
+                if fits:
+                    length = right - left + 1
+                    beaten = length > best
+                    if beaten:
+                        best, best_span = length, (left, right)
+                    verdict_en = f"a new best, {best}" if beaten else f"best stays {best}"
+                    verdict_ko = f"best = {josa(best, '(으)로')} 갱신" if beaten else f"best = {best} 그대로"
+                    tail_en = f" Back to {k} {plural(k, 'genre', 'genres')}: window length {length}, {verdict_en}."
+                    tail_ko = f" 다시 장르 {k}종류: 구간 길이 {length}, {verdict_ko}."
+                count = f"{window[out] + 1} → {window[out]}"
+                frame({"en": f"queue[{left - 1}] = '{out}' leaves: its genre's count goes {count}"
+                             f"{', so the genre leaves the window' if gone else ''}.{tail_en}",
+                       "ko": f"queue[{left - 1}] = '{out}' 제거: 장르 '{out}' 개수 {count}"
+                             f"{', 구간에서 이 장르가 빠집니다' if gone else ''}.{tail_ko}"},
+                      marks={} if gone else {"bad": [out]}, struck=[out] if gone else [],
+                      moves=[move(at("window", out), at("queue", left - 1), mark="bad")],
+                      window_mark="lit" if fits else "bad", beaten=beaten)
+                if gone:
+                    del window[out]
+            continue
         length = right - left + 1
-        improved = length > best
-        if improved:
-            best = length
-            best_span = (left, right)
-        verdict_en = f"length {length} beats best, so best = {best}." if improved else f"length {length}, best stays {best}."
-        verdict_ko = f"길이 {josa(length, '(으)로')} best보다 길어 best = {best}." if improved else f"길이 {length}, best = {best} 그대로."
-        if dropped:
-            gone = "".join(queue[j] for j in dropped)
-            emptied = ", ".join(sorted({queue[j] for j in dropped} - set(window)))  # genres whose count hit 0
-            frame({"en": f"{added[0]}: that makes {too_many} genres, more than {k}, so drop from the left until "
-                         f"it is back to {k}: \"{gone}\" leaves, genre {emptied} drops to 0 and left = {left}. "
-                         f"Window \"{queue[left:right + 1]}\": {verdict_en}",
-                   "ko": f"{added[1]} 장르가 {too_many}종류로 k = {k}보다 많아, {k}종류가 될 때까지 왼쪽에서 "
-                         f"\"{gone}\" 태그를 빼고 left = {left}입니다(장르 {emptied}의 개수가 0). "
-                         f"구간 \"{queue[left:right + 1]}\": {verdict_ko}"},
-                  good=[right], bad=dropped, row_good=tag, best_mark="good" if improved else None)
-        else:
-            frame({"en": f"{added[0]}: {len(window)} {plural(len(window), 'genre', 'genres')}, within k = {k}. "
-                         f"Window \"{queue[left:right + 1]}\": {verdict_en}",
-                   "ko": f"{added[1]} 장르 {len(window)}종류로 k = {k} 이내입니다. "
-                         f"구간 \"{queue[left:right + 1]}\": {verdict_ko}"},
-                  good=[right], row_good=tag, best_mark="good" if improved else None)
+        beaten = length > best
+        if beaten:
+            best, best_span = length, (left, right)
+        verdict_en = f"a new best, {best}" if beaten else f"best stays {best}"
+        verdict_ko = f"길이 {josa(length, '(으)로')} best = {best} 갱신" if beaten else f"길이 {length}, best = {best} 그대로"
+        frame({"en": f"queue[{right}] = '{tag}' joins: {len(window)} {plural(len(window), 'genre', 'genres')}, "
+                     f"within k = {k}. Window length {length}: {verdict_en}.",
+               "ko": f"queue[{right}] = '{tag}' 추가: 장르 {len(window)}종류로 k = {k} 이내입니다. 구간 {verdict_ko}."},
+              marks={"good": [tag]}, moves=joins, beaten=beaten)
     a, b = best_span
     if (a, b) == (left, right):
-        caption = {"en": f"Every tag added, and the longest window seen was the last one, \"{queue[a:b + 1]}\" "
+        caption = {"en": f"Every tag is in, and the longest window was the last one, \"{queue[a:b + 1]}\" "
                          f"(queue[{a}..{b}]), length {best}. Answer {best}.",
                    "ko": f"모든 태그를 넣었고, 가장 긴 구간은 마지막 구간 \"{queue[a:b + 1]}\"(queue[{a}..{b}]), "
                          f"길이 {best}입니다. 답은 {best}입니다."}
     else:
-        caption = {"en": f"Every tag added: the run ended on \"{queue[left:right + 1]}\" (queue[{left}..{right}]), "
-                         f"but best = {best} came from \"{queue[a:b + 1]}\" (queue[{a}..{b}]), so that window is drawn. "
-                         f"Answer {best}.",
-                   "ko": f"모든 태그를 넣었습니다. 실행은 \"{queue[left:right + 1]}\"(queue[{left}..{right}]) 구간에서 "
-                         f"끝났지만 best = {josa(best, "은는")} \"{queue[a:b + 1]}\"(queue[{a}..{b}]) 구간의 길이라서 그 구간을 "
-                         f"그렸고, 답은 {best}입니다."}
-    frame(caption, path=range(a, b + 1), best_mark="path", answer=str(best))
+        caption = {"en": f"Every tag is in: the run ended on queue[{left}..{right}], but the best window was "
+                         f"\"{queue[a:b + 1]}\" (queue[{a}..{b}]), length {best}. Answer {best}.",
+                   "ko": f"모든 태그를 넣었습니다. 실행은 queue[{left}..{right}]에서 끝났지만 가장 긴 구간은 "
+                         f"\"{queue[a:b + 1]}\"(queue[{a}..{b}]), 길이 {best}이고, 답은 {best}입니다."}
+    frame(caption, done=True, answer=str(best))
 
 
 for number, sample in enumerate(sample_cases(SLUG), start=1):
