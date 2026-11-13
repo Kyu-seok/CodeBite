@@ -1,0 +1,591 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Snack Drawer Pair",
+  "ko": "간식 서랍 짝 찾기"
+ },
+ "approach": {
+  "en": "One pass with a hash map: each snack asks whether its partner (target − calories) was seen already, and is stored by its calories otherwise.",
+  "ko": "해시 맵으로 한 번 훑기: 간식마다 짝(target − 칼로리)을 이미 본 적이 있는지 묻고, 없으면 자기 칼로리로 저장합니다."
+ },
+ "views": [
+  {
+   "id": "snacks",
+   "type": "array",
+   "title": {
+    "en": "snacks (calories)",
+    "ko": "snacks (칼로리)"
+   }
+  },
+  {
+   "id": "seen",
+   "type": "table",
+   "title": {
+    "en": "seen: calories → index",
+    "ko": "seen: 칼로리 → 인덱스"
+   }
+  },
+  {
+   "id": "state",
+   "type": "vars"
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "snacks = [4, 11, 19, 23], target = 30",
+   "expected": "[1,2]",
+   "frames": [
+    {
+     "caption": {
+      "en": "Walk the drawer once with an empty map. For each snack, its partner is the one that brings the sum to 30.",
+      "ko": "빈 맵으로 서랍을 한 번 훑습니다. 간식마다 더해서 30칼로리가 되는 간식이 그 짝입니다."
+     },
+     "views": {
+      "snacks": {
+       "values": [
+        4,
+        11,
+        19,
+        23
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "lit": [],
+        "good": [],
+        "path": [],
+        "dim": []
+       }
+      },
+      "seen": {
+       "columns": [
+        {
+         "en": "index",
+         "ko": "인덱스"
+        }
+       ],
+       "rows": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "target",
+         "value": 30
+        },
+        {
+         "label": {
+          "en": "partner needed",
+          "ko": "필요한 짝"
+         },
+         "value": "–"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Snack 0 has 4, so it needs 30 − 4 = 26. No snack so far has 26, so store 4 → 0.",
+      "ko": "인덱스 0의 간식은 4칼로리라서 30 − 4 = 26칼로리가 필요합니다. 지금까지 26칼로리 간식이 없으니 4 → 0 항목을 저장합니다."
+     },
+     "views": {
+      "snacks": {
+       "values": [
+        4,
+        11,
+        19,
+        23
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": [],
+        "path": [],
+        "dim": [
+         1,
+         2,
+         3
+        ]
+       }
+      },
+      "seen": {
+       "columns": [
+        {
+         "en": "index",
+         "ko": "인덱스"
+        }
+       ],
+       "rows": [
+        {
+         "label": "4",
+         "cells": [
+          0
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         [
+          0,
+          0
+         ]
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "target",
+         "value": 30
+        },
+        {
+         "label": {
+          "en": "partner needed",
+          "ko": "필요한 짝"
+         },
+         "value": 26
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Snack 1 has 11, so it needs 30 − 11 = 19. No snack so far has 19, so store 11 → 1.",
+      "ko": "인덱스 1의 간식은 11칼로리라서 30 − 11 = 19칼로리가 필요합니다. 지금까지 19칼로리 간식이 없으니 11 → 1 항목을 저장합니다."
+     },
+     "views": {
+      "snacks": {
+       "values": [
+        4,
+        11,
+        19,
+        23
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "marks": {
+        "lit": [
+         1
+        ],
+        "good": [],
+        "path": [],
+        "dim": [
+         2,
+         3
+        ]
+       }
+      },
+      "seen": {
+       "columns": [
+        {
+         "en": "index",
+         "ko": "인덱스"
+        }
+       ],
+       "rows": [
+        {
+         "label": "4",
+         "cells": [
+          0
+         ]
+        },
+        {
+         "label": "11",
+         "cells": [
+          1
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         [
+          1,
+          0
+         ]
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "target",
+         "value": 30
+        },
+        {
+         "label": {
+          "en": "partner needed",
+          "ko": "필요한 짝"
+         },
+         "value": 19
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Snack 2 has 19, so it needs 30 − 19 = 11. 11 is in the map at index 1: snacks 1 and 2 sum to 30. Answer [1,2].",
+      "ko": "인덱스 2의 간식은 19칼로리라서 30 − 19 = 11칼로리가 필요합니다. 맵의 인덱스 1에 11칼로리가 있으니 간식 1, 2의 합이 30칼로리입니다. 답: [1,2]."
+     },
+     "views": {
+      "snacks": {
+       "values": [
+        4,
+        11,
+        19,
+        23
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "marks": {
+        "lit": [],
+        "good": [],
+        "path": [
+         1,
+         2
+        ],
+        "dim": [
+         3
+        ]
+       }
+      },
+      "seen": {
+       "columns": [
+        {
+         "en": "index",
+         "ko": "인덱스"
+        }
+       ],
+       "rows": [
+        {
+         "label": "4",
+         "cells": [
+          0
+         ]
+        },
+        {
+         "label": "11",
+         "cells": [
+          1
+         ]
+        }
+       ],
+       "marks": {
+        "path": [
+         [
+          1,
+          0
+         ]
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "target",
+         "value": 30
+        },
+        {
+         "label": {
+          "en": "partner needed",
+          "ko": "필요한 짝"
+         },
+         "value": 11
+        }
+       ]
+      }
+     },
+     "answer": "[1,2]"
+    }
+   ],
+   "sampleInput": "[4,11,19,23]\n30"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "snacks = [8, 14, 6], target = 14",
+   "expected": "[0,2]",
+   "frames": [
+    {
+     "caption": {
+      "en": "Walk the drawer once with an empty map. For each snack, its partner is the one that brings the sum to 14.",
+      "ko": "빈 맵으로 서랍을 한 번 훑습니다. 간식마다 더해서 14칼로리가 되는 간식이 그 짝입니다."
+     },
+     "views": {
+      "snacks": {
+       "values": [
+        8,
+        14,
+        6
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "lit": [],
+        "good": [],
+        "path": [],
+        "dim": []
+       }
+      },
+      "seen": {
+       "columns": [
+        {
+         "en": "index",
+         "ko": "인덱스"
+        }
+       ],
+       "rows": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "target",
+         "value": 14
+        },
+        {
+         "label": {
+          "en": "partner needed",
+          "ko": "필요한 짝"
+         },
+         "value": "–"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Snack 0 has 8, so it needs 14 − 8 = 6. No snack so far has 6, so store 8 → 0.",
+      "ko": "인덱스 0의 간식은 8칼로리라서 14 − 8 = 6칼로리가 필요합니다. 지금까지 6칼로리 간식이 없으니 8 → 0 항목을 저장합니다."
+     },
+     "views": {
+      "snacks": {
+       "values": [
+        8,
+        14,
+        6
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": [],
+        "path": [],
+        "dim": [
+         1,
+         2
+        ]
+       }
+      },
+      "seen": {
+       "columns": [
+        {
+         "en": "index",
+         "ko": "인덱스"
+        }
+       ],
+       "rows": [
+        {
+         "label": "8",
+         "cells": [
+          0
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         [
+          0,
+          0
+         ]
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "target",
+         "value": 14
+        },
+        {
+         "label": {
+          "en": "partner needed",
+          "ko": "필요한 짝"
+         },
+         "value": 6
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Snack 1 has 14, so it needs 14 − 14 = 0. No snack so far has 0, so store 14 → 1.",
+      "ko": "인덱스 1의 간식은 14칼로리라서 14 − 14 = 0칼로리가 필요합니다. 지금까지 0칼로리 간식이 없으니 14 → 1 항목을 저장합니다."
+     },
+     "views": {
+      "snacks": {
+       "values": [
+        8,
+        14,
+        6
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "marks": {
+        "lit": [
+         1
+        ],
+        "good": [],
+        "path": [],
+        "dim": [
+         2
+        ]
+       }
+      },
+      "seen": {
+       "columns": [
+        {
+         "en": "index",
+         "ko": "인덱스"
+        }
+       ],
+       "rows": [
+        {
+         "label": "8",
+         "cells": [
+          0
+         ]
+        },
+        {
+         "label": "14",
+         "cells": [
+          1
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         [
+          1,
+          0
+         ]
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "target",
+         "value": 14
+        },
+        {
+         "label": {
+          "en": "partner needed",
+          "ko": "필요한 짝"
+         },
+         "value": 0
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Snack 2 has 6, so it needs 14 − 6 = 8. 8 is in the map at index 0: snacks 0 and 2 sum to 14. Answer [0,2].",
+      "ko": "인덱스 2의 간식은 6칼로리라서 14 − 6 = 8칼로리가 필요합니다. 맵의 인덱스 0에 8칼로리가 있으니 간식 0, 2의 합이 14칼로리입니다. 답: [0,2]."
+     },
+     "views": {
+      "snacks": {
+       "values": [
+        8,
+        14,
+        6
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "marks": {
+        "lit": [],
+        "good": [],
+        "path": [
+         0,
+         2
+        ],
+        "dim": []
+       }
+      },
+      "seen": {
+       "columns": [
+        {
+         "en": "index",
+         "ko": "인덱스"
+        }
+       ],
+       "rows": [
+        {
+         "label": "8",
+         "cells": [
+          0
+         ]
+        },
+        {
+         "label": "14",
+         "cells": [
+          1
+         ]
+        }
+       ],
+       "marks": {
+        "path": [
+         [
+          0,
+          0
+         ]
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "target",
+         "value": 14
+        },
+        {
+         "label": {
+          "en": "partner needed",
+          "ko": "필요한 짝"
+         },
+         "value": 8
+        }
+       ]
+      }
+     },
+     "answer": "[0,2]"
+    }
+   ],
+   "sampleInput": "[8,14,6]\n14"
+  }
+ ]
+}

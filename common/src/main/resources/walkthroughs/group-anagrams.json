@@ -1,0 +1,1193 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Group Anagrams",
+  "ko": "그룹 애너그램"
+ },
+ "approach": {
+  "en": "Anagrams have the same letters, so sorting a word's letters gives every anagram the same key: a hash map from key to group collects them in one pass.",
+  "ko": "애너그램은 글자 구성이 같아서 글자를 정렬하면 모두 같은 키가 됩니다: 키에서 그룹으로 가는 해시 맵이 한 번 훑으며 그룹을 모읍니다."
+ },
+ "views": [
+  {
+   "id": "words",
+   "type": "table",
+   "title": "strs"
+  },
+  {
+   "id": "groups",
+   "type": "table",
+   "title": {
+    "en": "groups: key → words",
+    "ko": "groups: 키 → 단어"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "strs = [\"oakvanilla\",\"vanillaoak\",\"plum\",\"lump\",\"berrytannin\",\"tanninberry\",\"oak\"]",
+   "expected": "[[\"berrytannin\",\"tanninberry\"],[\"lump\",\"plum\"],[\"oak\"],[\"oakvanilla\",\"vanillaoak\"]]",
+   "frames": [
+    {
+     "caption": {
+      "en": "Read the 7 words in order, starting with an empty map of groups.",
+      "ko": "단어 7개를 차례로 읽습니다. 그룹 맵은 비어 있습니다."
+     },
+     "views": {
+      "words": {
+       "columns": [
+        {
+         "en": "word",
+         "ko": "단어"
+        },
+        {
+         "en": "sorted letters",
+         "ko": "정렬한 글자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "oakvanilla",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "vanillaoak",
+          ""
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "plum",
+          ""
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "lump",
+          ""
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "berrytannin",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "tanninberry",
+          ""
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "oak",
+          ""
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "groups": {
+       "rows": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "\"oakvanilla\" sorted is \"aaaikllnov\". No group has that key yet, so start one.",
+      "ko": "\"oakvanilla\"의 글자를 정렬하면 \"aaaikllnov\"입니다. 이 키의 그룹이 아직 없으니 새로 만듭니다."
+     },
+     "views": {
+      "words": {
+       "columns": [
+        {
+         "en": "word",
+         "ko": "단어"
+        },
+        {
+         "en": "sorted letters",
+         "ko": "정렬한 글자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "oakvanilla",
+          "aaaikllnov"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "vanillaoak",
+          ""
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "plum",
+          ""
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "lump",
+          ""
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "berrytannin",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "tanninberry",
+          ""
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "oak",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         [
+          0,
+          0
+         ]
+        ],
+        "good": [
+         [
+          0,
+          1
+         ]
+        ]
+       }
+      },
+      "groups": {
+       "rows": [
+        {
+         "label": "aaaikllnov",
+         "cells": [
+          "oakvanilla"
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         [
+          0,
+          0
+         ]
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "\"vanillaoak\" sorted is \"aaaikllnov\", the same key as \"oakvanilla\", so it joins that group.",
+      "ko": "\"vanillaoak\"의 글자를 정렬하면 \"aaaikllnov\"입니다. \"oakvanilla\"의 키와 같으므로 그 그룹에 들어갑니다."
+     },
+     "views": {
+      "words": {
+       "columns": [
+        {
+         "en": "word",
+         "ko": "단어"
+        },
+        {
+         "en": "sorted letters",
+         "ko": "정렬한 글자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "oakvanilla",
+          "aaaikllnov"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "vanillaoak",
+          "aaaikllnov"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "plum",
+          ""
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "lump",
+          ""
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "berrytannin",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "tanninberry",
+          ""
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "oak",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         [
+          1,
+          0
+         ]
+        ],
+        "good": [
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "groups": {
+       "rows": [
+        {
+         "label": "aaaikllnov",
+         "cells": [
+          "oakvanilla",
+          "vanillaoak"
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         [
+          0,
+          1
+         ]
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "\"plum\" sorted is \"lmpu\". No group has that key yet, so start one.",
+      "ko": "\"plum\"의 글자를 정렬하면 \"lmpu\"입니다. 이 키의 그룹이 아직 없으니 새로 만듭니다."
+     },
+     "views": {
+      "words": {
+       "columns": [
+        {
+         "en": "word",
+         "ko": "단어"
+        },
+        {
+         "en": "sorted letters",
+         "ko": "정렬한 글자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "oakvanilla",
+          "aaaikllnov"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "vanillaoak",
+          "aaaikllnov"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "plum",
+          "lmpu"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "lump",
+          ""
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "berrytannin",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "tanninberry",
+          ""
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "oak",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         [
+          2,
+          0
+         ]
+        ],
+        "good": [
+         [
+          2,
+          1
+         ]
+        ]
+       }
+      },
+      "groups": {
+       "rows": [
+        {
+         "label": "aaaikllnov",
+         "cells": [
+          "oakvanilla",
+          "vanillaoak"
+         ]
+        },
+        {
+         "label": "lmpu",
+         "cells": [
+          "plum"
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         [
+          1,
+          0
+         ]
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "\"lump\" sorted is \"lmpu\", the same key as \"plum\", so it joins that group.",
+      "ko": "\"lump\"의 글자를 정렬하면 \"lmpu\"입니다. \"plum\"의 키와 같으므로 그 그룹에 들어갑니다."
+     },
+     "views": {
+      "words": {
+       "columns": [
+        {
+         "en": "word",
+         "ko": "단어"
+        },
+        {
+         "en": "sorted letters",
+         "ko": "정렬한 글자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "oakvanilla",
+          "aaaikllnov"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "vanillaoak",
+          "aaaikllnov"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "plum",
+          "lmpu"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "lump",
+          "lmpu"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "berrytannin",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "tanninberry",
+          ""
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "oak",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         [
+          3,
+          0
+         ]
+        ],
+        "good": [
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      },
+      "groups": {
+       "rows": [
+        {
+         "label": "aaaikllnov",
+         "cells": [
+          "oakvanilla",
+          "vanillaoak"
+         ]
+        },
+        {
+         "label": "lmpu",
+         "cells": [
+          "plum",
+          "lump"
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "\"berrytannin\" sorted is \"abeinnnrrty\". No group has that key yet, so start one.",
+      "ko": "\"berrytannin\"의 글자를 정렬하면 \"abeinnnrrty\"입니다. 이 키의 그룹이 아직 없으니 새로 만듭니다."
+     },
+     "views": {
+      "words": {
+       "columns": [
+        {
+         "en": "word",
+         "ko": "단어"
+        },
+        {
+         "en": "sorted letters",
+         "ko": "정렬한 글자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "oakvanilla",
+          "aaaikllnov"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "vanillaoak",
+          "aaaikllnov"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "plum",
+          "lmpu"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "lump",
+          "lmpu"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "berrytannin",
+          "abeinnnrrty"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "tanninberry",
+          ""
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "oak",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         [
+          4,
+          0
+         ]
+        ],
+        "good": [
+         [
+          4,
+          1
+         ]
+        ]
+       }
+      },
+      "groups": {
+       "rows": [
+        {
+         "label": "aaaikllnov",
+         "cells": [
+          "oakvanilla",
+          "vanillaoak"
+         ]
+        },
+        {
+         "label": "lmpu",
+         "cells": [
+          "plum",
+          "lump"
+         ]
+        },
+        {
+         "label": "abeinnnrrty",
+         "cells": [
+          "berrytannin"
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         [
+          2,
+          0
+         ]
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "\"tanninberry\" sorted is \"abeinnnrrty\", the same key as \"berrytannin\", so it joins that group.",
+      "ko": "\"tanninberry\"의 글자를 정렬하면 \"abeinnnrrty\"입니다. \"berrytannin\"의 키와 같으므로 그 그룹에 들어갑니다."
+     },
+     "views": {
+      "words": {
+       "columns": [
+        {
+         "en": "word",
+         "ko": "단어"
+        },
+        {
+         "en": "sorted letters",
+         "ko": "정렬한 글자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "oakvanilla",
+          "aaaikllnov"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "vanillaoak",
+          "aaaikllnov"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "plum",
+          "lmpu"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "lump",
+          "lmpu"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "berrytannin",
+          "abeinnnrrty"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "tanninberry",
+          "abeinnnrrty"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "oak",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         [
+          5,
+          0
+         ]
+        ],
+        "good": [
+         [
+          5,
+          1
+         ]
+        ]
+       }
+      },
+      "groups": {
+       "rows": [
+        {
+         "label": "aaaikllnov",
+         "cells": [
+          "oakvanilla",
+          "vanillaoak"
+         ]
+        },
+        {
+         "label": "lmpu",
+         "cells": [
+          "plum",
+          "lump"
+         ]
+        },
+        {
+         "label": "abeinnnrrty",
+         "cells": [
+          "berrytannin",
+          "tanninberry"
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         [
+          2,
+          1
+         ]
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "\"oak\" sorted is \"ako\". No group has that key yet, so start one.",
+      "ko": "\"oak\"의 글자를 정렬하면 \"ako\"입니다. 이 키의 그룹이 아직 없으니 새로 만듭니다."
+     },
+     "views": {
+      "words": {
+       "columns": [
+        {
+         "en": "word",
+         "ko": "단어"
+        },
+        {
+         "en": "sorted letters",
+         "ko": "정렬한 글자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "oakvanilla",
+          "aaaikllnov"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "vanillaoak",
+          "aaaikllnov"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "plum",
+          "lmpu"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "lump",
+          "lmpu"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "berrytannin",
+          "abeinnnrrty"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "tanninberry",
+          "abeinnnrrty"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "oak",
+          "ako"
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         [
+          6,
+          0
+         ]
+        ],
+        "good": [
+         [
+          6,
+          1
+         ]
+        ]
+       }
+      },
+      "groups": {
+       "rows": [
+        {
+         "label": "aaaikllnov",
+         "cells": [
+          "oakvanilla",
+          "vanillaoak"
+         ]
+        },
+        {
+         "label": "lmpu",
+         "cells": [
+          "plum",
+          "lump"
+         ]
+        },
+        {
+         "label": "abeinnnrrty",
+         "cells": [
+          "berrytannin",
+          "tanninberry"
+         ]
+        },
+        {
+         "label": "ako",
+         "cells": [
+          "oak"
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         [
+          3,
+          0
+         ]
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Every word is in the group of its key: 4 groups. Printed with each group sorted and the groups in order: [[\"berrytannin\",\"tanninberry\"],[\"lump\",\"plum\"],[\"oak\"],[\"oakvanilla\",\"vanillaoak\"]].",
+      "ko": "모든 단어가 자기 키의 그룹에 들어갔습니다: 그룹 4개. 그룹 안과 그룹끼리 정렬해 출력하면 [[\"berrytannin\",\"tanninberry\"],[\"lump\",\"plum\"],[\"oak\"],[\"oakvanilla\",\"vanillaoak\"]]입니다."
+     },
+     "views": {
+      "words": {
+       "columns": [
+        {
+         "en": "word",
+         "ko": "단어"
+        },
+        {
+         "en": "sorted letters",
+         "ko": "정렬한 글자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "oakvanilla",
+          "aaaikllnov"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "vanillaoak",
+          "aaaikllnov"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "plum",
+          "lmpu"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "lump",
+          "lmpu"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "berrytannin",
+          "abeinnnrrty"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "tanninberry",
+          "abeinnnrrty"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "oak",
+          "ako"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "groups": {
+       "rows": [
+        {
+         "label": "aaaikllnov",
+         "cells": [
+          "oakvanilla",
+          "vanillaoak"
+         ]
+        },
+        {
+         "label": "lmpu",
+         "cells": [
+          "plum",
+          "lump"
+         ]
+        },
+        {
+         "label": "abeinnnrrty",
+         "cells": [
+          "berrytannin",
+          "tanninberry"
+         ]
+        },
+        {
+         "label": "ako",
+         "cells": [
+          "oak"
+         ]
+        }
+       ],
+       "marks": {
+        "path": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ]
+        ]
+       }
+      }
+     },
+     "answer": "[[\"berrytannin\",\"tanninberry\"],[\"lump\",\"plum\"],[\"oak\"],[\"oakvanilla\",\"vanillaoak\"]]"
+    }
+   ],
+   "sampleInput": "[\"oakvanilla\",\"vanillaoak\",\"plum\",\"lump\",\"berrytannin\",\"tanninberry\",\"oak\"]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "strs = [\"merlot\"]",
+   "expected": "[[\"merlot\"]]",
+   "frames": [
+    {
+     "caption": {
+      "en": "Read the 1 word in order, starting with an empty map of groups.",
+      "ko": "단어 1개를 차례로 읽습니다. 그룹 맵은 비어 있습니다."
+     },
+     "views": {
+      "words": {
+       "columns": [
+        {
+         "en": "word",
+         "ko": "단어"
+        },
+        {
+         "en": "sorted letters",
+         "ko": "정렬한 글자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "merlot",
+          ""
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "groups": {
+       "rows": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "\"merlot\" sorted is \"elmort\". No group has that key yet, so start one.",
+      "ko": "\"merlot\"의 글자를 정렬하면 \"elmort\"입니다. 이 키의 그룹이 아직 없으니 새로 만듭니다."
+     },
+     "views": {
+      "words": {
+       "columns": [
+        {
+         "en": "word",
+         "ko": "단어"
+        },
+        {
+         "en": "sorted letters",
+         "ko": "정렬한 글자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "merlot",
+          "elmort"
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         [
+          0,
+          0
+         ]
+        ],
+        "good": [
+         [
+          0,
+          1
+         ]
+        ]
+       }
+      },
+      "groups": {
+       "rows": [
+        {
+         "label": "elmort",
+         "cells": [
+          "merlot"
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         [
+          0,
+          0
+         ]
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Every word is in the group of its key: 1 group. Printed with each group sorted and the groups in order: [[\"merlot\"]].",
+      "ko": "모든 단어가 자기 키의 그룹에 들어갔습니다: 그룹 1개. 그룹 안과 그룹끼리 정렬해 출력하면 [[\"merlot\"]]입니다."
+     },
+     "views": {
+      "words": {
+       "columns": [
+        {
+         "en": "word",
+         "ko": "단어"
+        },
+        {
+         "en": "sorted letters",
+         "ko": "정렬한 글자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "merlot",
+          "elmort"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "groups": {
+       "rows": [
+        {
+         "label": "elmort",
+         "cells": [
+          "merlot"
+         ]
+        }
+       ],
+       "marks": {
+        "path": [
+         [
+          0,
+          0
+         ]
+        ]
+       }
+      }
+     },
+     "answer": "[[\"merlot\"]]"
+    }
+   ],
+   "sampleInput": "[\"merlot\"]"
+  }
+ ]
+}
