@@ -13,9 +13,11 @@
 # check and leaves the merge commits unpushed (undo them with `git reset --hard origin/<integration>`).
 #
 # When every ticket branch already contained the integration branch's HEAD before its merge (in
-# practice, one branch), the merge's tree is the ticket branch's own tree, which its PR's CI checked
-# on push, so the checks are skipped and the merge commit pushed straight away, with one line saying
-# why.
+# practice, one branch) and the integration branch is one CI runs on when pushed (`integration/` or
+# `spec/`, as .github/workflows/ci.yml lists), the merge's tree is the ticket branch's own tree and
+# CI checks it after the push, so the local checks are skipped and the merge commit pushed straight
+# away, with one line saying why. Ticket branches have no PR of their own, so on any other branch
+# the checks run.
 #
 # A merge that changes this script hands the checks and the push to the merged copy, run as
 # `scripts/merge-ticket.sh --checks-and-push`: bash read this copy before the merge, so its checks are
@@ -79,8 +81,13 @@ check_and_push() {
   push_merge "$current"
 }
 
+# Whether CI runs on a push to branch $1: keep in step with ci.yml's `push: branches`.
+ci_checks_pushes() {
+  [[ "$1" == integration/* || "$1" == spec/* ]]
+}
+
 # The push of branch $1 with no checks, after merging $2, which already contained $1: the merge's
-# tree is $2's own tree, and its PR's CI checked that on push.
+# tree is $2's own tree, and CI checks it on this push.
 push_checked_by_ci() {
   echo "merge-ticket: $2 already contains $1; skipping the checks (CI gates the pushed tree)"
   push_merge "$1"
@@ -139,7 +146,7 @@ merge_ticket() {
     shift 2
   done
 
-  if [[ "$all_contain_head" == yes ]]; then
+  if [[ "$all_contain_head" == yes ]] && ci_checks_pushes "$current"; then
     push_checked_by_ci "$current" "$ref"
   elif git diff --name-only "$start" HEAD | grep -qx scripts/merge-ticket.sh; then
     echo "merge-ticket: the merge changes merge-ticket.sh; its merged copy runs the checks"

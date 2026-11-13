@@ -2,7 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [master]
+    # Integration branches too: scripts/merge-ticket.sh skips its local checks on a merge whose
+    # tree a ticket branch already had, trusting this run (ci_checks_pushes there).
+    branches: [master, 'integration/**', 'spec/**']
   pull_request:
     branches: [master]
   workflow_call:

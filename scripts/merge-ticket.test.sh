@@ -15,6 +15,12 @@ source "$script"
 fail=0
 check() { [[ "$2" == "$3" ]] || { echo "FAIL: $1: expected '$3', got '$2'"; fail=1; }; }
 
+# --- which integration branches CI checks on push (ci.yml) -------------------------------------
+
+check "integration/ pushes run CI" "$(ci_checks_pushes integration/x && echo yes || echo no)" yes
+check "spec/ pushes run CI" "$(ci_checks_pushes spec/258-walkthroughs && echo yes || echo no)" yes
+check "other pushes run no CI" "$(ci_checks_pushes feat/x && echo yes || echo no)" no
+
 # --- refusals ----------------------------------------------------------------------------------
 
 check "on master" "$(merge_refusal master '' no)" "refusing to merge on master; check out the integration branch"

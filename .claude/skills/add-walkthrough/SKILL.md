@@ -52,9 +52,15 @@ Done when both captures end `✓ no console errors, no sideways scroll` and ever
 
 ## 5. Check the tab
 
-The backend reads `walkthroughs/` once at startup, so restart the branch servers (`stop`, then start again) after the file changes. Sign in with a test token from the branch backend (`POST /api/auth/test-token?username=<name>`, in CLAUDE.md) and open `/problems/<slug>` on the branch Vite: the Walkthrough tab, "Show how it's solved", every run. Look at it at 1440 and 390 wide, dark and light, English and Korean, signed out and signed in: the tab, the reveal, the first and last frame of Example 1, and a switch to another run. Step with ←/→ with focus on the player, then press them in the editor and see the frame stay.
+The backend reads `walkthroughs/` once at startup, so restart the branch servers (`stop`, then start again) after the file changes. Then run the app check headless against the URLs the servers printed:
 
-Done when every combination shows the player in the page's theme and language with no sideways scroll, and the arrow keys move the frame only from the player. Stop the servers with `scripts/dev-branch-servers.sh stop`.
+```bash
+node scripts/walkthrough-app-check.mjs <vite url> <backend api url> <scratchpad>/shots/<slug>-app <slug>
+```
+
+It drives `/problems/<slug>` signed out and signed in, at 1440 and 390, dark and light, English and Korean: the tab, the reveal, the player's theme, language and labels, sideways scroll, ←/→ stepping only while the player has focus and never from the editor, the run kept across a tab switch, and no tab on a problem without a Walkthrough. Read its shots, the `-3b-last` ones above all: the last frame is where a wrong answer path or an unexplained value shows.
+
+Done when the check exits 0 and the shots show the drawing as the capture.mjs sheets did. Stop the servers with `scripts/dev-branch-servers.sh stop`.
 
 Commit `feat(problem): Walkthrough for <slug>` with the tracer and the JSON together.
 
