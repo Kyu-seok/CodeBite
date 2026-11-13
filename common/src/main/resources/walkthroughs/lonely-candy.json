@@ -1,0 +1,1019 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Lonely Candy",
+  "ko": "외톨이 사탕 찾기"
+ },
+ "approach": {
+  "en": "XOR every flavor into one number: x ^ x = 0, so each pair cancels and only the loner's bits stay.",
+  "ko": "모든 맛을 XOR로 한 수에 모읍니다: x ^ x = 0이라 짝은 서로 지워지고 외톨이의 비트만 남습니다."
+ },
+ "views": [
+  {
+   "id": "candies",
+   "type": "array",
+   "title": {
+    "en": "frames (tag: bits)",
+    "ko": "frames (태그: 비트)"
+   }
+  },
+  {
+   "id": "state",
+   "type": "vars"
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "frames = [5,5,3]",
+   "expected": "3",
+   "frames": [
+    {
+     "caption": {
+      "en": "3 candies. Start loner at 0 and XOR each candy into it; XOR flips the bits where the candy has a 1.",
+      "ko": "사탕 3개입니다. loner를 0에서 시작해 사탕마다 XOR합니다. XOR은 사탕의 비트가 1인 자리를 뒤집습니다."
+     },
+     "views": {
+      "candies": {
+       "values": [
+        5,
+        5,
+        3
+       ],
+       "pointers": {
+        "i": null
+       },
+       "tags": [
+        [
+         0,
+         "101"
+        ],
+        [
+         1,
+         "101"
+        ],
+        [
+         2,
+         "011"
+        ]
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [],
+        "good": [],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "loner (running XOR)",
+          "ko": "loner (누적 XOR)"
+         },
+         "value": 0,
+         "mark": null
+        },
+        {
+         "label": {
+          "en": "loner in bits",
+          "ko": "loner의 비트"
+         },
+         "value": "000"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "0 ^ 5 = 5 (000 ^ 101 = 101). The first 5 so far: its bits are now in loner.",
+      "ko": "0 ^ 5 = 5 (000 ^ 101 = 101). 이 맛은 처음 나왔으므로 그 비트가 loner에 들어갑니다."
+     },
+     "views": {
+      "candies": {
+       "values": [
+        5,
+        5,
+        3
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "tags": [
+        [
+         0,
+         "101"
+        ],
+        [
+         1,
+         "101"
+        ],
+        [
+         2,
+         "011"
+        ]
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         0
+        ],
+        "good": [
+         0
+        ],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "loner (running XOR)",
+          "ko": "loner (누적 XOR)"
+         },
+         "value": 5,
+         "mark": "good"
+        },
+        {
+         "label": {
+          "en": "loner in bits",
+          "ko": "loner의 비트"
+         },
+         "value": "101"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "5 ^ 5 = 0 (101 ^ 101 = 000). This is the second 5: it flips back exactly the bits the first one flipped, so the pair cancels.",
+      "ko": "5 ^ 5 = 0 (101 ^ 101 = 000). 같은 맛의 두 번째 사탕이라 첫 번째가 뒤집은 비트를 그대로 되돌리므로, 짝이 지워집니다."
+     },
+     "views": {
+      "candies": {
+       "values": [
+        5,
+        5,
+        3
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "tags": [
+        [
+         0,
+         "101"
+        ],
+        [
+         1,
+         "101"
+        ],
+        [
+         2,
+         "011"
+        ]
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1
+        ],
+        "lit": [
+         0,
+         1
+        ],
+        "good": [],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "loner (running XOR)",
+          "ko": "loner (누적 XOR)"
+         },
+         "value": 0,
+         "mark": null
+        },
+        {
+         "label": {
+          "en": "loner in bits",
+          "ko": "loner의 비트"
+         },
+         "value": "000"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "0 ^ 3 = 3 (000 ^ 011 = 011). The first 3 so far: its bits are now in loner.",
+      "ko": "0 ^ 3 = 3 (000 ^ 011 = 011). 이 맛은 처음 나왔으므로 그 비트가 loner에 들어갑니다."
+     },
+     "views": {
+      "candies": {
+       "values": [
+        5,
+        5,
+        3
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "tags": [
+        [
+         0,
+         "101"
+        ],
+        [
+         1,
+         "101"
+        ],
+        [
+         2,
+         "011"
+        ]
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1
+        ],
+        "lit": [
+         2
+        ],
+        "good": [
+         2
+        ],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "loner (running XOR)",
+          "ko": "loner (누적 XOR)"
+         },
+         "value": 3,
+         "mark": "good"
+        },
+        {
+         "label": {
+          "en": "loner in bits",
+          "ko": "loner의 비트"
+         },
+         "value": "011"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Every pair cancelled to 0, so loner holds only the unpaired candy: answer 3.",
+      "ko": "모든 짝이 0으로 지워졌으므로 loner에는 짝 없는 사탕만 남습니다. 답은 3입니다."
+     },
+     "views": {
+      "candies": {
+       "values": [
+        5,
+        5,
+        3
+       ],
+       "pointers": {
+        "i": null
+       },
+       "tags": [
+        [
+         0,
+         "101"
+        ],
+        [
+         1,
+         "101"
+        ],
+        [
+         2,
+         "011"
+        ]
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1
+        ],
+        "lit": [],
+        "good": [],
+        "path": [
+         2
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "loner (running XOR)",
+          "ko": "loner (누적 XOR)"
+         },
+         "value": 3,
+         "mark": "good"
+        },
+        {
+         "label": {
+          "en": "loner in bits",
+          "ko": "loner의 비트"
+         },
+         "value": "011"
+        }
+       ]
+      }
+     },
+     "answer": "3"
+    }
+   ],
+   "sampleInput": "[5,5,3]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "frames = [8,2,6,2,6]",
+   "expected": "8",
+   "frames": [
+    {
+     "caption": {
+      "en": "5 candies. Start loner at 0 and XOR each candy into it; XOR flips the bits where the candy has a 1.",
+      "ko": "사탕 5개입니다. loner를 0에서 시작해 사탕마다 XOR합니다. XOR은 사탕의 비트가 1인 자리를 뒤집습니다."
+     },
+     "views": {
+      "candies": {
+       "values": [
+        8,
+        2,
+        6,
+        2,
+        6
+       ],
+       "pointers": {
+        "i": null
+       },
+       "tags": [
+        [
+         0,
+         "1000"
+        ],
+        [
+         1,
+         "0010"
+        ],
+        [
+         2,
+         "0110"
+        ],
+        [
+         3,
+         "0010"
+        ],
+        [
+         4,
+         "0110"
+        ]
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [],
+        "good": [],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "loner (running XOR)",
+          "ko": "loner (누적 XOR)"
+         },
+         "value": 0,
+         "mark": null
+        },
+        {
+         "label": {
+          "en": "loner in bits",
+          "ko": "loner의 비트"
+         },
+         "value": "0000"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "0 ^ 8 = 8 (0000 ^ 1000 = 1000). The first 8 so far: its bits are now in loner.",
+      "ko": "0 ^ 8 = 8 (0000 ^ 1000 = 1000). 이 맛은 처음 나왔으므로 그 비트가 loner에 들어갑니다."
+     },
+     "views": {
+      "candies": {
+       "values": [
+        8,
+        2,
+        6,
+        2,
+        6
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "tags": [
+        [
+         0,
+         "1000"
+        ],
+        [
+         1,
+         "0010"
+        ],
+        [
+         2,
+         "0110"
+        ],
+        [
+         3,
+         "0010"
+        ],
+        [
+         4,
+         "0110"
+        ]
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         0
+        ],
+        "good": [
+         0
+        ],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "loner (running XOR)",
+          "ko": "loner (누적 XOR)"
+         },
+         "value": 8,
+         "mark": "good"
+        },
+        {
+         "label": {
+          "en": "loner in bits",
+          "ko": "loner의 비트"
+         },
+         "value": "1000"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "8 ^ 2 = 10 (1000 ^ 0010 = 1010). The first 2 so far: its bits are now in loner.",
+      "ko": "8 ^ 2 = 10 (1000 ^ 0010 = 1010). 이 맛은 처음 나왔으므로 그 비트가 loner에 들어갑니다."
+     },
+     "views": {
+      "candies": {
+       "values": [
+        8,
+        2,
+        6,
+        2,
+        6
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "tags": [
+        [
+         0,
+         "1000"
+        ],
+        [
+         1,
+         "0010"
+        ],
+        [
+         2,
+         "0110"
+        ],
+        [
+         3,
+         "0010"
+        ],
+        [
+         4,
+         "0110"
+        ]
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         1
+        ],
+        "good": [
+         1
+        ],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "loner (running XOR)",
+          "ko": "loner (누적 XOR)"
+         },
+         "value": 10,
+         "mark": "good"
+        },
+        {
+         "label": {
+          "en": "loner in bits",
+          "ko": "loner의 비트"
+         },
+         "value": "1010"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "10 ^ 6 = 12 (1010 ^ 0110 = 1100). The first 6 so far: its bits are now in loner.",
+      "ko": "10 ^ 6 = 12 (1010 ^ 0110 = 1100). 이 맛은 처음 나왔으므로 그 비트가 loner에 들어갑니다."
+     },
+     "views": {
+      "candies": {
+       "values": [
+        8,
+        2,
+        6,
+        2,
+        6
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "tags": [
+        [
+         0,
+         "1000"
+        ],
+        [
+         1,
+         "0010"
+        ],
+        [
+         2,
+         "0110"
+        ],
+        [
+         3,
+         "0010"
+        ],
+        [
+         4,
+         "0110"
+        ]
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         2
+        ],
+        "good": [
+         2
+        ],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "loner (running XOR)",
+          "ko": "loner (누적 XOR)"
+         },
+         "value": 12,
+         "mark": "good"
+        },
+        {
+         "label": {
+          "en": "loner in bits",
+          "ko": "loner의 비트"
+         },
+         "value": "1100"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "12 ^ 2 = 14 (1100 ^ 0010 = 1110). This is the second 2: it flips back exactly the bits the first one flipped, so the pair cancels.",
+      "ko": "12 ^ 2 = 14 (1100 ^ 0010 = 1110). 같은 맛의 두 번째 사탕이라 첫 번째가 뒤집은 비트를 그대로 되돌리므로, 짝이 지워집니다."
+     },
+     "views": {
+      "candies": {
+       "values": [
+        8,
+        2,
+        6,
+        2,
+        6
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "tags": [
+        [
+         0,
+         "1000"
+        ],
+        [
+         1,
+         "0010"
+        ],
+        [
+         2,
+         "0110"
+        ],
+        [
+         3,
+         "0010"
+        ],
+        [
+         4,
+         "0110"
+        ]
+       ],
+       "marks": {
+        "dim": [
+         1,
+         3
+        ],
+        "lit": [
+         1,
+         3
+        ],
+        "good": [],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "loner (running XOR)",
+          "ko": "loner (누적 XOR)"
+         },
+         "value": 14,
+         "mark": null
+        },
+        {
+         "label": {
+          "en": "loner in bits",
+          "ko": "loner의 비트"
+         },
+         "value": "1110"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "14 ^ 6 = 8 (1110 ^ 0110 = 1000). This is the second 6: it flips back exactly the bits the first one flipped, so the pair cancels.",
+      "ko": "14 ^ 6 = 8 (1110 ^ 0110 = 1000). 같은 맛의 두 번째 사탕이라 첫 번째가 뒤집은 비트를 그대로 되돌리므로, 짝이 지워집니다."
+     },
+     "views": {
+      "candies": {
+       "values": [
+        8,
+        2,
+        6,
+        2,
+        6
+       ],
+       "pointers": {
+        "i": 4
+       },
+       "tags": [
+        [
+         0,
+         "1000"
+        ],
+        [
+         1,
+         "0010"
+        ],
+        [
+         2,
+         "0110"
+        ],
+        [
+         3,
+         "0010"
+        ],
+        [
+         4,
+         "0110"
+        ]
+       ],
+       "marks": {
+        "dim": [
+         1,
+         3,
+         2,
+         4
+        ],
+        "lit": [
+         2,
+         4
+        ],
+        "good": [],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "loner (running XOR)",
+          "ko": "loner (누적 XOR)"
+         },
+         "value": 8,
+         "mark": null
+        },
+        {
+         "label": {
+          "en": "loner in bits",
+          "ko": "loner의 비트"
+         },
+         "value": "1000"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Every pair cancelled to 0, so loner holds only the unpaired candy: answer 8.",
+      "ko": "모든 짝이 0으로 지워졌으므로 loner에는 짝 없는 사탕만 남습니다. 답은 8입니다."
+     },
+     "views": {
+      "candies": {
+       "values": [
+        8,
+        2,
+        6,
+        2,
+        6
+       ],
+       "pointers": {
+        "i": null
+       },
+       "tags": [
+        [
+         0,
+         "1000"
+        ],
+        [
+         1,
+         "0010"
+        ],
+        [
+         2,
+         "0110"
+        ],
+        [
+         3,
+         "0010"
+        ],
+        [
+         4,
+         "0110"
+        ]
+       ],
+       "marks": {
+        "dim": [
+         1,
+         3,
+         2,
+         4
+        ],
+        "lit": [],
+        "good": [],
+        "path": [
+         0
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "loner (running XOR)",
+          "ko": "loner (누적 XOR)"
+         },
+         "value": 8,
+         "mark": "good"
+        },
+        {
+         "label": {
+          "en": "loner in bits",
+          "ko": "loner의 비트"
+         },
+         "value": "1000"
+        }
+       ]
+      }
+     },
+     "answer": "8"
+    }
+   ],
+   "sampleInput": "[8,2,6,2,6]"
+  },
+  {
+   "label": {
+    "en": "Case 3",
+    "ko": "케이스 3"
+   },
+   "input": "frames = [7]",
+   "expected": "7",
+   "frames": [
+    {
+     "caption": {
+      "en": "1 candy. Start loner at 0 and XOR each candy into it; XOR flips the bits where the candy has a 1.",
+      "ko": "사탕 1개입니다. loner를 0에서 시작해 사탕마다 XOR합니다. XOR은 사탕의 비트가 1인 자리를 뒤집습니다."
+     },
+     "views": {
+      "candies": {
+       "values": [
+        7
+       ],
+       "pointers": {
+        "i": null
+       },
+       "tags": [
+        [
+         0,
+         "111"
+        ]
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [],
+        "good": [],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "loner (running XOR)",
+          "ko": "loner (누적 XOR)"
+         },
+         "value": 0,
+         "mark": null
+        },
+        {
+         "label": {
+          "en": "loner in bits",
+          "ko": "loner의 비트"
+         },
+         "value": "000"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "0 ^ 7 = 7 (000 ^ 111 = 111). The first 7 so far: its bits are now in loner.",
+      "ko": "0 ^ 7 = 7 (000 ^ 111 = 111). 이 맛은 처음 나왔으므로 그 비트가 loner에 들어갑니다."
+     },
+     "views": {
+      "candies": {
+       "values": [
+        7
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "tags": [
+        [
+         0,
+         "111"
+        ]
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         0
+        ],
+        "good": [
+         0
+        ],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "loner (running XOR)",
+          "ko": "loner (누적 XOR)"
+         },
+         "value": 7,
+         "mark": "good"
+        },
+        {
+         "label": {
+          "en": "loner in bits",
+          "ko": "loner의 비트"
+         },
+         "value": "111"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "There is no pair to cancel, so loner is the one candy: answer 7.",
+      "ko": "지울 짝이 없으므로 loner는 사탕 하나 그대로입니다. 답은 7입니다."
+     },
+     "views": {
+      "candies": {
+       "values": [
+        7
+       ],
+       "pointers": {
+        "i": null
+       },
+       "tags": [
+        [
+         0,
+         "111"
+        ]
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [],
+        "good": [],
+        "path": [
+         0
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "loner (running XOR)",
+          "ko": "loner (누적 XOR)"
+         },
+         "value": 7,
+         "mark": "good"
+        },
+        {
+         "label": {
+          "en": "loner in bits",
+          "ko": "loner의 비트"
+         },
+         "value": "111"
+        }
+       ]
+      }
+     },
+     "answer": "7"
+    }
+   ],
+   "sampleInput": "[7]"
+  }
+ ]
+}

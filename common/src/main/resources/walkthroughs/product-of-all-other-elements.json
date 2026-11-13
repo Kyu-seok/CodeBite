@@ -1,0 +1,1354 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Product of All Other Elements",
+  "ko": "자기 자신을 제외한 모든 원소의 곱"
+ },
+ "approach": {
+  "en": "answer[i] is the product of everything left of i times the product of everything right of i: one pass left to right writes the left products, one pass right to left multiplies in the right ones.",
+  "ko": "answer[i]는 i 왼쪽 원소들의 곱 × i 오른쪽 원소들의 곱입니다. 왼쪽에서 오른쪽으로 한 번 훑으며 왼쪽 곱을 적고, 오른쪽에서 왼쪽으로 한 번 더 훑으며 오른쪽 곱을 곱해 넣습니다."
+ },
+ "views": [
+  {
+   "id": "nums",
+   "type": "array",
+   "title": {
+    "en": "nums",
+    "ko": "nums"
+   }
+  },
+  {
+   "id": "result",
+   "type": "array",
+   "title": {
+    "en": "answer",
+    "ko": "answer"
+   }
+  },
+  {
+   "id": "state",
+   "type": "vars"
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "nums = [2,3,5,4]",
+   "expected": "[60,40,24,30]",
+   "frames": [
+    {
+     "caption": {
+      "en": "Without division, answer[i] is (product of everything left of i) × (product of everything right of i). First pass: walk left to right, carrying the left product in prefix, which starts at 1.",
+      "ko": "나눗셈 없이, answer[i]는 (i 왼쪽 원소들의 곱) × (i 오른쪽 원소들의 곱)입니다. 첫 번째 단계: 왼쪽에서 오른쪽으로 훑으며 왼쪽 곱을 prefix에 들고 갑니다. prefix는 1에서 시작합니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        2,
+        3,
+        5,
+        4
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "result": {
+       "values": [
+        "",
+        "",
+        "",
+        ""
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "good": [],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "prefix",
+         "value": 1
+        },
+        {
+         "label": "suffix",
+         "value": 1
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Nothing is left of index 0, so answer[0] = prefix = 1. Then prefix takes in nums[0]: 1 × 2 = 2.",
+      "ko": "인덱스 0의 왼쪽에는 아무것도 없으므로 answer[0] = prefix = 1입니다. 그다음 prefix에 nums[0]의 값을 곱합니다: 1 × 2 = 2."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        2,
+        3,
+        5,
+        4
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "result": {
+       "values": [
+        1,
+        "",
+        "",
+        ""
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "marks": {
+        "good": [
+         0
+        ],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "prefix",
+         "value": 2
+        },
+        {
+         "label": "suffix",
+         "value": 1
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "answer[1] = prefix = 2 = 2, the product of everything left of index 1. Then prefix takes in nums[1]: 2 × 3 = 6.",
+      "ko": "answer[1] = prefix = 2 = 2, 인덱스 1 왼쪽 원소들의 곱입니다. 그다음 prefix에 nums[1]의 값을 곱합니다: 2 × 3 = 6."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        2,
+        3,
+        5,
+        4
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        1,
+        2,
+        "",
+        ""
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "marks": {
+        "good": [
+         1
+        ],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "prefix",
+         "value": 6
+        },
+        {
+         "label": "suffix",
+         "value": 1
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "answer[2] = prefix = 2 × 3 = 6, the product of everything left of index 2. Then prefix takes in nums[2]: 6 × 5 = 30.",
+      "ko": "answer[2] = prefix = 2 × 3 = 6, 인덱스 2 왼쪽 원소들의 곱입니다. 그다음 prefix에 nums[2]의 값을 곱합니다: 6 × 5 = 30."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        2,
+        3,
+        5,
+        4
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "marks": {
+        "lit": [
+         0,
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        1,
+        2,
+        6,
+        ""
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "marks": {
+        "good": [
+         2
+        ],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "prefix",
+         "value": 30
+        },
+        {
+         "label": "suffix",
+         "value": 1
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "answer[3] = prefix = 2 × 3 × 5 = 30, the product of everything left of index 3. Then prefix takes in nums[3]: 30 × 4 = 120.",
+      "ko": "answer[3] = prefix = 2 × 3 × 5 = 30, 인덱스 3 왼쪽 원소들의 곱입니다. 그다음 prefix에 nums[3]의 값을 곱합니다: 30 × 4 = 120."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        2,
+        3,
+        5,
+        4
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "marks": {
+        "lit": [
+         0,
+         1,
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        1,
+        2,
+        6,
+        30
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "marks": {
+        "good": [
+         3
+        ],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "prefix",
+         "value": 120
+        },
+        {
+         "label": "suffix",
+         "value": 1
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Every answer[i] now holds its left product. Second pass: walk right to left, carrying the right product in suffix, which starts at 1, and multiply it in.",
+      "ko": "이제 모든 answer[i]에 왼쪽 곱이 들어 있습니다. 두 번째 단계: 오른쪽에서 왼쪽으로 훑으며 오른쪽 곱을 suffix에 들고 가서 곱해 넣습니다. suffix는 1에서 시작합니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        2,
+        3,
+        5,
+        4
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "result": {
+       "values": [
+        1,
+        2,
+        6,
+        30
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "good": [],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "prefix",
+         "value": 120
+        },
+        {
+         "label": "suffix",
+         "value": 1
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Nothing is right of index 3, so suffix = 1 and answer[3] stays 30 × 1 = 30. Then suffix takes in nums[3]: 1 × 4 = 4.",
+      "ko": "인덱스 3의 오른쪽에는 아무것도 없어 suffix = 1이므로 answer[3] = 30 × 1 = 30 그대로입니다. 그다음 suffix에 nums[3]의 값을 곱합니다: 1 × 4 = 4."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        2,
+        3,
+        5,
+        4
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "result": {
+       "values": [
+        1,
+        2,
+        6,
+        30
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "marks": {
+        "good": [
+         3
+        ],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "prefix",
+         "value": 120
+        },
+        {
+         "label": "suffix",
+         "value": 4
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "suffix = 4 = 4, the product of everything right of index 2: answer[2] = 6 × 4 = 24. Then suffix takes in nums[2]: 4 × 5 = 20.",
+      "ko": "suffix = 4 = 4, 인덱스 2 오른쪽 원소들의 곱입니다: answer[2] = 6 × 4 = 24. 그다음 suffix에 nums[2]의 값을 곱합니다: 4 × 5 = 20."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        2,
+        3,
+        5,
+        4
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        1,
+        2,
+        24,
+        30
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "marks": {
+        "good": [
+         2
+        ],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "prefix",
+         "value": 120
+        },
+        {
+         "label": "suffix",
+         "value": 20
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "suffix = 5 × 4 = 20, the product of everything right of index 1: answer[1] = 2 × 20 = 40. Then suffix takes in nums[1]: 20 × 3 = 60.",
+      "ko": "suffix = 5 × 4 = 20, 인덱스 1 오른쪽 원소들의 곱입니다: answer[1] = 2 × 20 = 40. 그다음 suffix에 nums[1]의 값을 곱합니다: 20 × 3 = 60."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        2,
+        3,
+        5,
+        4
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "marks": {
+        "lit": [
+         2,
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        1,
+        40,
+        24,
+        30
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "marks": {
+        "good": [
+         1
+        ],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "prefix",
+         "value": 120
+        },
+        {
+         "label": "suffix",
+         "value": 60
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "suffix = 3 × 5 × 4 = 60, the product of everything right of index 0: answer[0] = 1 × 60 = 60. Then suffix takes in nums[0]: 60 × 2 = 120.",
+      "ko": "suffix = 3 × 5 × 4 = 60, 인덱스 0 오른쪽 원소들의 곱입니다: answer[0] = 1 × 60 = 60. 그다음 suffix에 nums[0]의 값을 곱합니다: 60 × 2 = 120."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        2,
+        3,
+        5,
+        4
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "marks": {
+        "lit": [
+         1,
+         2,
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        60,
+        40,
+        24,
+        30
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "marks": {
+        "good": [
+         0
+        ],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "prefix",
+         "value": 120
+        },
+        {
+         "label": "suffix",
+         "value": 120
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Both passes are done: each answer[i] is its left product times its right product, with nums[i] itself never multiplied in. Answer [60,40,24,30].",
+      "ko": "두 단계가 끝났습니다. 각 answer[i]는 왼쪽 곱 × 오른쪽 곱이고, nums[i] 자신은 한 번도 곱해지지 않았습니다. 답은 [60,40,24,30]입니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        2,
+        3,
+        5,
+        4
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "result": {
+       "values": [
+        60,
+        40,
+        24,
+        30
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "good": [],
+        "path": [
+         0,
+         1,
+         2,
+         3
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "prefix",
+         "value": 120
+        },
+        {
+         "label": "suffix",
+         "value": 120
+        }
+       ]
+      }
+     },
+     "answer": "[60,40,24,30]"
+    }
+   ],
+   "sampleInput": "[2,3,5,4]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "nums = [-2,1,0,4,-1]",
+   "expected": "[0,0,8,0,0]",
+   "frames": [
+    {
+     "caption": {
+      "en": "Without division, answer[i] is (product of everything left of i) × (product of everything right of i). First pass: walk left to right, carrying the left product in prefix, which starts at 1.",
+      "ko": "나눗셈 없이, answer[i]는 (i 왼쪽 원소들의 곱) × (i 오른쪽 원소들의 곱)입니다. 첫 번째 단계: 왼쪽에서 오른쪽으로 훑으며 왼쪽 곱을 prefix에 들고 갑니다. prefix는 1에서 시작합니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        -2,
+        1,
+        0,
+        4,
+        -1
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "result": {
+       "values": [
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "good": [],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "prefix",
+         "value": 1
+        },
+        {
+         "label": "suffix",
+         "value": 1
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Nothing is left of index 0, so answer[0] = prefix = 1. Then prefix takes in nums[0]: 1 × (-2) = -2.",
+      "ko": "인덱스 0의 왼쪽에는 아무것도 없으므로 answer[0] = prefix = 1입니다. 그다음 prefix에 nums[0]의 값을 곱합니다: 1 × (-2) = -2."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        -2,
+        1,
+        0,
+        4,
+        -1
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "result": {
+       "values": [
+        1,
+        "",
+        "",
+        "",
+        ""
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "marks": {
+        "good": [
+         0
+        ],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "prefix",
+         "value": -2
+        },
+        {
+         "label": "suffix",
+         "value": 1
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "answer[1] = prefix = (-2) = -2, the product of everything left of index 1. Then prefix takes in nums[1]: -2 × 1 = -2.",
+      "ko": "answer[1] = prefix = (-2) = -2, 인덱스 1 왼쪽 원소들의 곱입니다. 그다음 prefix에 nums[1]의 값을 곱합니다: -2 × 1 = -2."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        -2,
+        1,
+        0,
+        4,
+        -1
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        1,
+        -2,
+        "",
+        "",
+        ""
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "marks": {
+        "good": [
+         1
+        ],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "prefix",
+         "value": -2
+        },
+        {
+         "label": "suffix",
+         "value": 1
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "answer[2] = prefix = (-2) × 1 = -2, the product of everything left of index 2. Then prefix takes in nums[2]: -2 × 0 = 0.",
+      "ko": "answer[2] = prefix = (-2) × 1 = -2, 인덱스 2 왼쪽 원소들의 곱입니다. 그다음 prefix에 nums[2]의 값을 곱합니다: -2 × 0 = 0."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        -2,
+        1,
+        0,
+        4,
+        -1
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "marks": {
+        "lit": [
+         0,
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        1,
+        -2,
+        -2,
+        "",
+        ""
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "marks": {
+        "good": [
+         2
+        ],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "prefix",
+         "value": 0
+        },
+        {
+         "label": "suffix",
+         "value": 1
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "answer[3] = prefix = (-2) × 1 × 0 = 0, the product of everything left of index 3. Then prefix takes in nums[3]: 0 × 4 = 0.",
+      "ko": "answer[3] = prefix = (-2) × 1 × 0 = 0, 인덱스 3 왼쪽 원소들의 곱입니다. 그다음 prefix에 nums[3]의 값을 곱합니다: 0 × 4 = 0."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        -2,
+        1,
+        0,
+        4,
+        -1
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "marks": {
+        "lit": [
+         0,
+         1,
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        1,
+        -2,
+        -2,
+        0,
+        ""
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "marks": {
+        "good": [
+         3
+        ],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "prefix",
+         "value": 0
+        },
+        {
+         "label": "suffix",
+         "value": 1
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "answer[4] = prefix = (-2) × 1 × 0 × 4 = 0, the product of everything left of index 4. Then prefix takes in nums[4]: 0 × (-1) = 0.",
+      "ko": "answer[4] = prefix = (-2) × 1 × 0 × 4 = 0, 인덱스 4 왼쪽 원소들의 곱입니다. 그다음 prefix에 nums[4]의 값을 곱합니다: 0 × (-1) = 0."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        -2,
+        1,
+        0,
+        4,
+        -1
+       ],
+       "pointers": {
+        "i": 4
+       },
+       "marks": {
+        "lit": [
+         0,
+         1,
+         2,
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        1,
+        -2,
+        -2,
+        0,
+        0
+       ],
+       "pointers": {
+        "i": 4
+       },
+       "marks": {
+        "good": [
+         4
+        ],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "prefix",
+         "value": 0
+        },
+        {
+         "label": "suffix",
+         "value": 1
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Every answer[i] now holds its left product. Second pass: walk right to left, carrying the right product in suffix, which starts at 1, and multiply it in.",
+      "ko": "이제 모든 answer[i]에 왼쪽 곱이 들어 있습니다. 두 번째 단계: 오른쪽에서 왼쪽으로 훑으며 오른쪽 곱을 suffix에 들고 가서 곱해 넣습니다. suffix는 1에서 시작합니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        -2,
+        1,
+        0,
+        4,
+        -1
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "result": {
+       "values": [
+        1,
+        -2,
+        -2,
+        0,
+        0
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "good": [],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "prefix",
+         "value": 0
+        },
+        {
+         "label": "suffix",
+         "value": 1
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Nothing is right of index 4, so suffix = 1 and answer[4] stays 0 × 1 = 0. Then suffix takes in nums[4]: 1 × (-1) = -1.",
+      "ko": "인덱스 4의 오른쪽에는 아무것도 없어 suffix = 1이므로 answer[4] = 0 × 1 = 0 그대로입니다. 그다음 suffix에 nums[4]의 값을 곱합니다: 1 × (-1) = -1."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        -2,
+        1,
+        0,
+        4,
+        -1
+       ],
+       "pointers": {
+        "i": 4
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "result": {
+       "values": [
+        1,
+        -2,
+        -2,
+        0,
+        0
+       ],
+       "pointers": {
+        "i": 4
+       },
+       "marks": {
+        "good": [
+         4
+        ],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "prefix",
+         "value": 0
+        },
+        {
+         "label": "suffix",
+         "value": -1
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "suffix = (-1) = -1, the product of everything right of index 3: answer[3] = 0 × (-1) = 0. Then suffix takes in nums[3]: -1 × 4 = -4.",
+      "ko": "suffix = (-1) = -1, 인덱스 3 오른쪽 원소들의 곱입니다: answer[3] = 0 × (-1) = 0. 그다음 suffix에 nums[3]의 값을 곱합니다: -1 × 4 = -4."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        -2,
+        1,
+        0,
+        4,
+        -1
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "marks": {
+        "lit": [
+         4
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        1,
+        -2,
+        -2,
+        0,
+        0
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "marks": {
+        "good": [
+         3
+        ],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "prefix",
+         "value": 0
+        },
+        {
+         "label": "suffix",
+         "value": -4
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "suffix = 4 × (-1) = -4, the product of everything right of index 2: answer[2] = -2 × (-4) = 8. Then suffix takes in nums[2]: -4 × 0 = 0.",
+      "ko": "suffix = 4 × (-1) = -4, 인덱스 2 오른쪽 원소들의 곱입니다: answer[2] = -2 × (-4) = 8. 그다음 suffix에 nums[2]의 값을 곱합니다: -4 × 0 = 0."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        -2,
+        1,
+        0,
+        4,
+        -1
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "marks": {
+        "lit": [
+         3,
+         4
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        1,
+        -2,
+        8,
+        0,
+        0
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "marks": {
+        "good": [
+         2
+        ],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "prefix",
+         "value": 0
+        },
+        {
+         "label": "suffix",
+         "value": 0
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "suffix = 0 × 4 × (-1) = 0, the product of everything right of index 1: answer[1] = -2 × 0 = 0. Then suffix takes in nums[1]: 0 × 1 = 0.",
+      "ko": "suffix = 0 × 4 × (-1) = 0, 인덱스 1 오른쪽 원소들의 곱입니다: answer[1] = -2 × 0 = 0. 그다음 suffix에 nums[1]의 값을 곱합니다: 0 × 1 = 0."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        -2,
+        1,
+        0,
+        4,
+        -1
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "marks": {
+        "lit": [
+         2,
+         3,
+         4
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        1,
+        0,
+        8,
+        0,
+        0
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "marks": {
+        "good": [
+         1
+        ],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "prefix",
+         "value": 0
+        },
+        {
+         "label": "suffix",
+         "value": 0
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "suffix = 1 × 0 × 4 × (-1) = 0, the product of everything right of index 0: answer[0] = 1 × 0 = 0. Then suffix takes in nums[0]: 0 × (-2) = 0.",
+      "ko": "suffix = 1 × 0 × 4 × (-1) = 0, 인덱스 0 오른쪽 원소들의 곱입니다: answer[0] = 1 × 0 = 0. 그다음 suffix에 nums[0]의 값을 곱합니다: 0 × (-2) = 0."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        -2,
+        1,
+        0,
+        4,
+        -1
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "marks": {
+        "lit": [
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        0,
+        0,
+        8,
+        0,
+        0
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "marks": {
+        "good": [
+         0
+        ],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "prefix",
+         "value": 0
+        },
+        {
+         "label": "suffix",
+         "value": 0
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Both passes are done: each answer[i] is its left product times its right product, with nums[i] itself never multiplied in. Answer [0,0,8,0,0].",
+      "ko": "두 단계가 끝났습니다. 각 answer[i]는 왼쪽 곱 × 오른쪽 곱이고, nums[i] 자신은 한 번도 곱해지지 않았습니다. 답은 [0,0,8,0,0]입니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        -2,
+        1,
+        0,
+        4,
+        -1
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "result": {
+       "values": [
+        0,
+        0,
+        8,
+        0,
+        0
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "good": [],
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "prefix",
+         "value": 0
+        },
+        {
+         "label": "suffix",
+         "value": 0
+        }
+       ]
+      }
+     },
+     "answer": "[0,0,8,0,0]"
+    }
+   ],
+   "sampleInput": "[-2,1,0,4,-1]"
+  }
+ ]
+}
