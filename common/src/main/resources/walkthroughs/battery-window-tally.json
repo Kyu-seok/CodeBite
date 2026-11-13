@@ -13,13 +13,13 @@
    "id": "readings",
    "type": "array",
    "title": {
-    "en": "readings (tag: running total)",
-    "ko": "readings (태그: 누적합)"
+    "en": "readings (under: running total)",
+    "ko": "readings (아래: 누적합)"
    }
   },
   {
    "id": "seen",
-   "type": "table",
+   "type": "map",
    "title": {
     "en": "seen (running total → times)",
     "ko": "seen (누적합 → 횟수)"
@@ -54,50 +54,33 @@
        "pointers": {
         "i": null
        },
-       "tags": [],
-       "marks": {
-        "dim": [
-         0,
-         1,
-         2
-        ],
-        "path": [],
-        "lit": []
-       }
-      },
-      "seen": {
-       "columns": [
-        {
-         "en": "times",
-         "ko": "횟수"
-        }
-       ],
-       "rows": [
-        {
-         "label": "0",
-         "cells": [
-          1
-         ]
-        }
+       "under": [],
+       "spans": {},
+       "unread": [
+        0,
+        1,
+        2
        ],
        "marks": {}
+      },
+      "seen": {
+       "entries": [
+        {
+         "key": 0,
+         "value": 1
+        }
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
       },
       "state": {
        "items": [
         {
          "label": "k",
          "value": 4
-        },
-        {
-         "label": {
-          "en": "total",
-          "ko": "total (누적합)"
-         },
-         "value": 0
-        },
-        {
-         "label": "total - k",
-         "value": "–"
         },
         {
          "label": {
@@ -113,7 +96,7 @@
     },
     {
      "caption": {
-      "en": "total = 0 + 2 = 2; total - k = 2 - 4 = -2, not in seen: no window ending here sums to 4. Record 2.",
+      "en": "total = 0 + 2 = 2; total - k = 2 - 4 = -2, not in seen: no window ending here sums to 4. Then record 2.",
       "ko": "total = 0 + 2 = 2; total - k = 2 - 4 = -2이고 seen에 없으므로 여기서 끝나며 합이 4인 구간은 없습니다. 누적합 2의 횟수를 1 늘립니다."
      },
      "views": {
@@ -126,51 +109,43 @@
        "pointers": {
         "i": 0
        },
-       "tags": [
+       "under": [
         [
          0,
          "Σ2"
         ]
        ],
+       "spans": {},
+       "unread": [
+        1,
+        2
+       ],
        "marks": {
-        "dim": [
-         1,
-         2
-        ],
-        "path": [],
         "lit": [
          0
         ]
        }
       },
       "seen": {
-       "columns": [
+       "entries": [
         {
-         "en": "times",
-         "ko": "횟수"
-        }
-       ],
-       "rows": [
-        {
-         "label": "0",
-         "cells": [
-          1
-         ]
+         "key": 0,
+         "value": 1
         },
         {
-         "label": "2",
-         "cells": [
-          1
-         ]
+         "key": 2,
+         "value": 1
         }
        ],
        "marks": {
         "good": [
-         [
-          1,
-          0
-         ]
+         2
         ]
+       },
+       "probe": {
+        "key": -2,
+        "label": "2 − 4 = -2",
+        "hit": false
        }
       },
       "state": {
@@ -178,17 +153,6 @@
         {
          "label": "k",
          "value": 4
-        },
-        {
-         "label": {
-          "en": "total",
-          "ko": "total (누적합)"
-         },
-         "value": 2
-        },
-        {
-         "label": "total - k",
-         "value": -2
         },
         {
          "label": {
@@ -200,7 +164,20 @@
         }
        ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "readings",
+        "at": 0
+       },
+       "to": {
+        "view": "seen",
+        "at": 2
+       },
+       "value": "Σ2"
+      }
+     ]
     },
     {
      "caption": {
@@ -217,7 +194,7 @@
        "pointers": {
         "i": 1
        },
-       "tags": [
+       "under": [
         [
          0,
          "Σ2"
@@ -227,55 +204,50 @@
          "Σ4"
         ]
        ],
-       "marks": {
-        "dim": [],
-        "path": [
-         0,
-         1
-        ],
-        "lit": []
-       }
-      },
-      "seen": {
-       "columns": [
-        {
-         "en": "times",
-         "ko": "횟수"
+       "spans": {
+        "w0": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "sum 4",
+          "ko": "합 4"
+         },
+         "mark": "good"
         }
-       ],
-       "rows": [
-        {
-         "label": "0",
-         "cells": [
-          1
-         ]
-        },
-        {
-         "label": "2",
-         "cells": [
-          1
-         ]
-        },
-        {
-         "label": "4",
-         "cells": [
-          1
-         ]
-        }
+       },
+       "unread": [
+        2
        ],
        "marks": {
         "lit": [
-         [
-          0,
-          0
-         ]
-        ],
-        "good": [
-         [
-          2,
-          0
-         ]
+         1
         ]
+       }
+      },
+      "seen": {
+       "entries": [
+        {
+         "key": 0,
+         "value": 1
+        },
+        {
+         "key": 2,
+         "value": 1
+        },
+        {
+         "key": 4,
+         "value": 1
+        }
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       },
+       "probe": {
+        "key": 0,
+        "label": "4 − 4 = 0",
+        "hit": true
        }
       },
       "state": {
@@ -283,17 +255,6 @@
         {
          "label": "k",
          "value": 4
-        },
-        {
-         "label": {
-          "en": "total",
-          "ko": "total (누적합)"
-         },
-         "value": 4
-        },
-        {
-         "label": "total - k",
-         "value": 0
         },
         {
          "label": {
@@ -305,7 +266,20 @@
         }
        ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "readings",
+        "at": 1
+       },
+       "to": {
+        "view": "seen",
+        "at": 4
+       },
+       "value": "Σ4"
+      }
+     ]
     },
     {
      "caption": {
@@ -322,7 +296,7 @@
        "pointers": {
         "i": 2
        },
-       "tags": [
+       "under": [
         [
          0,
          "Σ2"
@@ -336,61 +310,52 @@
          "Σ6"
         ]
        ],
+       "spans": {
+        "w0": {
+         "from": 1,
+         "to": 2,
+         "label": {
+          "en": "sum 4",
+          "ko": "합 4"
+         },
+         "mark": "good"
+        }
+       },
+       "unread": [],
        "marks": {
-        "dim": [],
-        "path": [
-         1,
+        "lit": [
          2
-        ],
-        "lit": []
+        ]
        }
       },
       "seen": {
-       "columns": [
+       "entries": [
         {
-         "en": "times",
-         "ko": "횟수"
-        }
-       ],
-       "rows": [
-        {
-         "label": "0",
-         "cells": [
-          1
-         ]
+         "key": 0,
+         "value": 1
         },
         {
-         "label": "2",
-         "cells": [
-          1
-         ]
+         "key": 2,
+         "value": 1
         },
         {
-         "label": "4",
-         "cells": [
-          1
-         ]
+         "key": 4,
+         "value": 1
         },
         {
-         "label": "6",
-         "cells": [
-          1
-         ]
+         "key": 6,
+         "value": 1
         }
        ],
        "marks": {
-        "lit": [
-         [
-          1,
-          0
-         ]
-        ],
         "good": [
-         [
-          3,
-          0
-         ]
+         6
         ]
+       },
+       "probe": {
+        "key": 2,
+        "label": "6 − 4 = 2",
+        "hit": true
        }
       },
       "state": {
@@ -398,17 +363,6 @@
         {
          "label": "k",
          "value": 4
-        },
-        {
-         "label": {
-          "en": "total",
-          "ko": "total (누적합)"
-         },
-         "value": 6
-        },
-        {
-         "label": "total - k",
-         "value": 2
         },
         {
          "label": {
@@ -420,7 +374,20 @@
         }
        ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "readings",
+        "at": 2
+       },
+       "to": {
+        "view": "seen",
+        "at": 6
+       },
+       "value": "Σ6"
+      }
+     ]
     },
     {
      "caption": {
@@ -437,7 +404,7 @@
        "pointers": {
         "i": null
        },
-       "tags": [
+       "under": [
         [
          0,
          "Σ2"
@@ -451,47 +418,33 @@
          "Σ6"
         ]
        ],
+       "spans": {},
+       "unread": [],
        "marks": {
-        "dim": [],
         "path": [
          0,
          1,
          2
-        ],
-        "lit": []
+        ]
        }
       },
       "seen": {
-       "columns": [
+       "entries": [
         {
-         "en": "times",
-         "ko": "횟수"
-        }
-       ],
-       "rows": [
-        {
-         "label": "0",
-         "cells": [
-          1
-         ]
+         "key": 0,
+         "value": 1
         },
         {
-         "label": "2",
-         "cells": [
-          1
-         ]
+         "key": 2,
+         "value": 1
         },
         {
-         "label": "4",
-         "cells": [
-          1
-         ]
+         "key": 4,
+         "value": 1
         },
         {
-         "label": "6",
-         "cells": [
-          1
-         ]
+         "key": 6,
+         "value": 1
         }
        ],
        "marks": {}
@@ -504,22 +457,11 @@
         },
         {
          "label": {
-          "en": "total",
-          "ko": "total (누적합)"
-         },
-         "value": 6
-        },
-        {
-         "label": "total - k",
-         "value": "–"
-        },
-        {
-         "label": {
           "en": "count",
           "ko": "count (구간 수)"
          },
          "value": 2,
-         "mark": "good"
+         "mark": "path"
         }
        ]
       }
@@ -553,51 +495,34 @@
        "pointers": {
         "i": null
        },
-       "tags": [],
-       "marks": {
-        "dim": [
-         0,
-         1,
-         2,
-         3
-        ],
-        "path": [],
-        "lit": []
-       }
-      },
-      "seen": {
-       "columns": [
-        {
-         "en": "times",
-         "ko": "횟수"
-        }
-       ],
-       "rows": [
-        {
-         "label": "0",
-         "cells": [
-          1
-         ]
-        }
+       "under": [],
+       "spans": {},
+       "unread": [
+        0,
+        1,
+        2,
+        3
        ],
        "marks": {}
+      },
+      "seen": {
+       "entries": [
+        {
+         "key": 0,
+         "value": 1
+        }
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
       },
       "state": {
        "items": [
         {
          "label": "k",
          "value": 6
-        },
-        {
-         "label": {
-          "en": "total",
-          "ko": "total (누적합)"
-         },
-         "value": 0
-        },
-        {
-         "label": "total - k",
-         "value": "–"
         },
         {
          "label": {
@@ -613,7 +538,7 @@
     },
     {
      "caption": {
-      "en": "total = 0 + 3 = 3; total - k = 3 - 6 = -3, not in seen: no window ending here sums to 6. Record 3.",
+      "en": "total = 0 + 3 = 3; total - k = 3 - 6 = -3, not in seen: no window ending here sums to 6. Then record 3.",
       "ko": "total = 0 + 3 = 3; total - k = 3 - 6 = -3이고 seen에 없으므로 여기서 끝나며 합이 6인 구간은 없습니다. 누적합 3의 횟수를 1 늘립니다."
      },
      "views": {
@@ -627,52 +552,44 @@
        "pointers": {
         "i": 0
        },
-       "tags": [
+       "under": [
         [
          0,
          "Σ3"
         ]
        ],
+       "spans": {},
+       "unread": [
+        1,
+        2,
+        3
+       ],
        "marks": {
-        "dim": [
-         1,
-         2,
-         3
-        ],
-        "path": [],
         "lit": [
          0
         ]
        }
       },
       "seen": {
-       "columns": [
+       "entries": [
         {
-         "en": "times",
-         "ko": "횟수"
-        }
-       ],
-       "rows": [
-        {
-         "label": "0",
-         "cells": [
-          1
-         ]
+         "key": 0,
+         "value": 1
         },
         {
-         "label": "3",
-         "cells": [
-          1
-         ]
+         "key": 3,
+         "value": 1
         }
        ],
        "marks": {
         "good": [
-         [
-          1,
-          0
-         ]
+         3
         ]
+       },
+       "probe": {
+        "key": -3,
+        "label": "3 − 6 = -3",
+        "hit": false
        }
       },
       "state": {
@@ -680,17 +597,6 @@
         {
          "label": "k",
          "value": 6
-        },
-        {
-         "label": {
-          "en": "total",
-          "ko": "total (누적합)"
-         },
-         "value": 3
-        },
-        {
-         "label": "total - k",
-         "value": -3
         },
         {
          "label": {
@@ -702,11 +608,24 @@
         }
        ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "readings",
+        "at": 0
+       },
+       "to": {
+        "view": "seen",
+        "at": 3
+       },
+       "value": "Σ3"
+      }
+     ]
     },
     {
      "caption": {
-      "en": "total = 3 + 1 = 4; total - k = 4 - 6 = -2, not in seen: no window ending here sums to 6. Record 4.",
+      "en": "total = 3 + 1 = 4; total - k = 4 - 6 = -2, not in seen: no window ending here sums to 6. Then record 4.",
       "ko": "total = 3 + 1 = 4; total - k = 4 - 6 = -2이고 seen에 없으므로 여기서 끝나며 합이 6인 구간은 없습니다. 누적합 4의 횟수를 1 늘립니다."
      },
      "views": {
@@ -720,7 +639,7 @@
        "pointers": {
         "i": 1
        },
-       "tags": [
+       "under": [
         [
          0,
          "Σ3"
@@ -730,51 +649,41 @@
          "Σ4"
         ]
        ],
+       "spans": {},
+       "unread": [
+        2,
+        3
+       ],
        "marks": {
-        "dim": [
-         2,
-         3
-        ],
-        "path": [],
         "lit": [
          1
         ]
        }
       },
       "seen": {
-       "columns": [
+       "entries": [
         {
-         "en": "times",
-         "ko": "횟수"
-        }
-       ],
-       "rows": [
-        {
-         "label": "0",
-         "cells": [
-          1
-         ]
+         "key": 0,
+         "value": 1
         },
         {
-         "label": "3",
-         "cells": [
-          1
-         ]
+         "key": 3,
+         "value": 1
         },
         {
-         "label": "4",
-         "cells": [
-          1
-         ]
+         "key": 4,
+         "value": 1
         }
        ],
        "marks": {
         "good": [
-         [
-          2,
-          0
-         ]
+         4
         ]
+       },
+       "probe": {
+        "key": -2,
+        "label": "4 − 6 = -2",
+        "hit": false
        }
       },
       "state": {
@@ -782,17 +691,6 @@
         {
          "label": "k",
          "value": 6
-        },
-        {
-         "label": {
-          "en": "total",
-          "ko": "total (누적합)"
-         },
-         "value": 4
-        },
-        {
-         "label": "total - k",
-         "value": -2
         },
         {
          "label": {
@@ -804,7 +702,20 @@
         }
        ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "readings",
+        "at": 1
+       },
+       "to": {
+        "view": "seen",
+        "at": 4
+       },
+       "value": "Σ4"
+      }
+     ]
     },
     {
      "caption": {
@@ -822,7 +733,7 @@
        "pointers": {
         "i": 2
        },
-       "tags": [
+       "under": [
         [
          0,
          "Σ3"
@@ -836,62 +747,54 @@
          "Σ6"
         ]
        ],
-       "marks": {
-        "dim": [],
-        "path": [
-         0,
-         1,
-         2
-        ],
-        "lit": []
-       }
-      },
-      "seen": {
-       "columns": [
-        {
-         "en": "times",
-         "ko": "횟수"
+       "spans": {
+        "w0": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "sum 6",
+          "ko": "합 6"
+         },
+         "mark": "good"
         }
-       ],
-       "rows": [
-        {
-         "label": "0",
-         "cells": [
-          1
-         ]
-        },
-        {
-         "label": "3",
-         "cells": [
-          1
-         ]
-        },
-        {
-         "label": "4",
-         "cells": [
-          1
-         ]
-        },
-        {
-         "label": "6",
-         "cells": [
-          1
-         ]
-        }
+       },
+       "unread": [
+        3
        ],
        "marks": {
         "lit": [
-         [
-          0,
-          0
-         ]
-        ],
-        "good": [
-         [
-          3,
-          0
-         ]
+         2
         ]
+       }
+      },
+      "seen": {
+       "entries": [
+        {
+         "key": 0,
+         "value": 1
+        },
+        {
+         "key": 3,
+         "value": 1
+        },
+        {
+         "key": 4,
+         "value": 1
+        },
+        {
+         "key": 6,
+         "value": 1
+        }
+       ],
+       "marks": {
+        "good": [
+         6
+        ]
+       },
+       "probe": {
+        "key": 0,
+        "label": "6 − 6 = 0",
+        "hit": true
        }
       },
       "state": {
@@ -899,17 +802,6 @@
         {
          "label": "k",
          "value": 6
-        },
-        {
-         "label": {
-          "en": "total",
-          "ko": "total (누적합)"
-         },
-         "value": 6
-        },
-        {
-         "label": "total - k",
-         "value": 0
         },
         {
          "label": {
@@ -921,7 +813,20 @@
         }
        ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "readings",
+        "at": 2
+       },
+       "to": {
+        "view": "seen",
+        "at": 6
+       },
+       "value": "Σ6"
+      }
+     ]
     },
     {
      "caption": {
@@ -939,7 +844,7 @@
        "pointers": {
         "i": 3
        },
-       "tags": [
+       "under": [
         [
          0,
          "Σ3"
@@ -957,67 +862,56 @@
          "Σ10"
         ]
        ],
+       "spans": {
+        "w0": {
+         "from": 2,
+         "to": 3,
+         "label": {
+          "en": "sum 6",
+          "ko": "합 6"
+         },
+         "mark": "good"
+        }
+       },
+       "unread": [],
        "marks": {
-        "dim": [],
-        "path": [
-         2,
+        "lit": [
          3
-        ],
-        "lit": []
+        ]
        }
       },
       "seen": {
-       "columns": [
+       "entries": [
         {
-         "en": "times",
-         "ko": "횟수"
-        }
-       ],
-       "rows": [
-        {
-         "label": "0",
-         "cells": [
-          1
-         ]
+         "key": 0,
+         "value": 1
         },
         {
-         "label": "3",
-         "cells": [
-          1
-         ]
+         "key": 3,
+         "value": 1
         },
         {
-         "label": "4",
-         "cells": [
-          1
-         ]
+         "key": 4,
+         "value": 1
         },
         {
-         "label": "6",
-         "cells": [
-          1
-         ]
+         "key": 6,
+         "value": 1
         },
         {
-         "label": "10",
-         "cells": [
-          1
-         ]
+         "key": 10,
+         "value": 1
         }
        ],
        "marks": {
-        "lit": [
-         [
-          2,
-          0
-         ]
-        ],
         "good": [
-         [
-          4,
-          0
-         ]
+         10
         ]
+       },
+       "probe": {
+        "key": 4,
+        "label": "10 − 6 = 4",
+        "hit": true
        }
       },
       "state": {
@@ -1025,17 +919,6 @@
         {
          "label": "k",
          "value": 6
-        },
-        {
-         "label": {
-          "en": "total",
-          "ko": "total (누적합)"
-         },
-         "value": 10
-        },
-        {
-         "label": "total - k",
-         "value": 4
         },
         {
          "label": {
@@ -1047,7 +930,20 @@
         }
        ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "readings",
+        "at": 3
+       },
+       "to": {
+        "view": "seen",
+        "at": 10
+       },
+       "value": "Σ10"
+      }
+     ]
     },
     {
      "caption": {
@@ -1065,7 +961,7 @@
        "pointers": {
         "i": null
        },
-       "tags": [
+       "under": [
         [
          0,
          "Σ3"
@@ -1083,54 +979,38 @@
          "Σ10"
         ]
        ],
+       "spans": {},
+       "unread": [],
        "marks": {
-        "dim": [],
         "path": [
          0,
          1,
          2,
          3
-        ],
-        "lit": []
+        ]
        }
       },
       "seen": {
-       "columns": [
+       "entries": [
         {
-         "en": "times",
-         "ko": "횟수"
-        }
-       ],
-       "rows": [
-        {
-         "label": "0",
-         "cells": [
-          1
-         ]
+         "key": 0,
+         "value": 1
         },
         {
-         "label": "3",
-         "cells": [
-          1
-         ]
+         "key": 3,
+         "value": 1
         },
         {
-         "label": "4",
-         "cells": [
-          1
-         ]
+         "key": 4,
+         "value": 1
         },
         {
-         "label": "6",
-         "cells": [
-          1
-         ]
+         "key": 6,
+         "value": 1
         },
         {
-         "label": "10",
-         "cells": [
-          1
-         ]
+         "key": 10,
+         "value": 1
         }
        ],
        "marks": {}
@@ -1143,22 +1023,11 @@
         },
         {
          "label": {
-          "en": "total",
-          "ko": "total (누적합)"
-         },
-         "value": 10
-        },
-        {
-         "label": "total - k",
-         "value": "–"
-        },
-        {
-         "label": {
           "en": "count",
           "ko": "count (구간 수)"
          },
          "value": 2,
-         "mark": "good"
+         "mark": "path"
         }
        ]
       }
@@ -1191,50 +1060,33 @@
        "pointers": {
         "i": null
        },
-       "tags": [],
-       "marks": {
-        "dim": [
-         0,
-         1,
-         2
-        ],
-        "path": [],
-        "lit": []
-       }
-      },
-      "seen": {
-       "columns": [
-        {
-         "en": "times",
-         "ko": "횟수"
-        }
-       ],
-       "rows": [
-        {
-         "label": "0",
-         "cells": [
-          1
-         ]
-        }
+       "under": [],
+       "spans": {},
+       "unread": [
+        0,
+        1,
+        2
        ],
        "marks": {}
+      },
+      "seen": {
+       "entries": [
+        {
+         "key": 0,
+         "value": 1
+        }
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
       },
       "state": {
        "items": [
         {
          "label": "k",
          "value": 0
-        },
-        {
-         "label": {
-          "en": "total",
-          "ko": "total (누적합)"
-         },
-         "value": 0
-        },
-        {
-         "label": "total - k",
-         "value": "–"
         },
         {
          "label": {
@@ -1250,7 +1102,7 @@
     },
     {
      "caption": {
-      "en": "total = 0 + 4 = 4; total - k = 4 - 0 = 4, not in seen: no window ending here sums to 0. Record 4.",
+      "en": "total = 0 + 4 = 4; total - k = 4 - 0 = 4, not in seen: no window ending here sums to 0. Then record 4.",
       "ko": "total = 0 + 4 = 4; total - k = 4 - 0 = 4이고 seen에 없으므로 여기서 끝나며 합이 0인 구간은 없습니다. 누적합 4의 횟수를 1 늘립니다."
      },
      "views": {
@@ -1263,51 +1115,43 @@
        "pointers": {
         "i": 0
        },
-       "tags": [
+       "under": [
         [
          0,
          "Σ4"
         ]
        ],
+       "spans": {},
+       "unread": [
+        1,
+        2
+       ],
        "marks": {
-        "dim": [
-         1,
-         2
-        ],
-        "path": [],
         "lit": [
          0
         ]
        }
       },
       "seen": {
-       "columns": [
+       "entries": [
         {
-         "en": "times",
-         "ko": "횟수"
-        }
-       ],
-       "rows": [
-        {
-         "label": "0",
-         "cells": [
-          1
-         ]
+         "key": 0,
+         "value": 1
         },
         {
-         "label": "4",
-         "cells": [
-          1
-         ]
+         "key": 4,
+         "value": 1
         }
        ],
        "marks": {
         "good": [
-         [
-          1,
-          0
-         ]
+         4
         ]
+       },
+       "probe": {
+        "key": 4,
+        "label": "4 − 0 = 4",
+        "hit": false
        }
       },
       "state": {
@@ -1315,17 +1159,6 @@
         {
          "label": "k",
          "value": 0
-        },
-        {
-         "label": {
-          "en": "total",
-          "ko": "total (누적합)"
-         },
-         "value": 4
-        },
-        {
-         "label": "total - k",
-         "value": 4
         },
         {
          "label": {
@@ -1337,7 +1170,20 @@
         }
        ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "readings",
+        "at": 0
+       },
+       "to": {
+        "view": "seen",
+        "at": 4
+       },
+       "value": "Σ4"
+      }
+     ]
     },
     {
      "caption": {
@@ -1354,70 +1200,62 @@
        "pointers": {
         "i": 1
        },
-       "tags": [
-        [
-         1,
-         "Σ0"
-        ],
+       "under": [
         [
          0,
          "Σ4"
+        ],
+        [
+         1,
+         "Σ0"
         ]
        ],
+       "spans": {
+        "w0": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "sum 0",
+          "ko": "합 0"
+         },
+         "mark": "good"
+        }
+       },
+       "unread": [
+        2
+       ],
        "marks": {
-        "dim": [],
-        "path": [
-         0,
+        "lit": [
          1
-        ],
-        "lit": []
+        ]
        }
       },
       "seen": {
-       "columns": [
+       "entries": [
         {
-         "en": "times",
-         "ko": "횟수"
-        }
-       ],
-       "rows": [
-        {
-         "label": "0",
-         "cells": [
-          2
-         ]
+         "key": 0,
+         "value": 2
         },
         {
-         "label": "4",
-         "cells": [
-          1
-         ]
+         "key": 4,
+         "value": 1
         }
        ],
        "marks": {
         "good": [
-         [
-          0,
-          0
-         ]
+         0
         ]
+       },
+       "probe": {
+        "key": 0,
+        "label": "0 − 0 = 0",
+        "hit": true
        }
       },
       "state": {
        "items": [
         {
          "label": "k",
-         "value": 0
-        },
-        {
-         "label": {
-          "en": "total",
-          "ko": "total (누적합)"
-         },
-         "value": 0
-        },
-        {
-         "label": "total - k",
          "value": 0
         },
         {
@@ -1430,7 +1268,20 @@
         }
        ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "readings",
+        "at": 1
+       },
+       "to": {
+        "view": "seen",
+        "at": 0
+       },
+       "value": "Σ0"
+      }
+     ]
     },
     {
      "caption": {
@@ -1447,7 +1298,11 @@
        "pointers": {
         "i": 2
        },
-       "tags": [
+       "under": [
+        [
+         0,
+         "Σ4"
+        ],
         [
          1,
          "Σ0"
@@ -1455,67 +1310,62 @@
         [
          2,
          "Σ0"
-        ],
-        [
-         0,
-         "Σ4"
         ]
        ],
+       "spans": {
+        "w0": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "sum 0",
+          "ko": "합 0"
+         },
+         "mark": "good"
+        },
+        "w1": {
+         "from": 2,
+         "to": 2,
+         "label": {
+          "en": "sum 0",
+          "ko": "합 0"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "unread": [],
        "marks": {
-        "dim": [],
-        "path": [
-         0,
-         1,
+        "lit": [
          2
-        ],
-        "lit": []
+        ]
        }
       },
       "seen": {
-       "columns": [
+       "entries": [
         {
-         "en": "times",
-         "ko": "횟수"
-        }
-       ],
-       "rows": [
-        {
-         "label": "0",
-         "cells": [
-          3
-         ]
+         "key": 0,
+         "value": 3
         },
         {
-         "label": "4",
-         "cells": [
-          1
-         ]
+         "key": 4,
+         "value": 1
         }
        ],
        "marks": {
         "good": [
-         [
-          0,
-          0
-         ]
+         0
         ]
+       },
+       "probe": {
+        "key": 0,
+        "label": "0 − 0 = 0",
+        "hit": true
        }
       },
       "state": {
        "items": [
         {
          "label": "k",
-         "value": 0
-        },
-        {
-         "label": {
-          "en": "total",
-          "ko": "total (누적합)"
-         },
-         "value": 0
-        },
-        {
-         "label": "total - k",
          "value": 0
         },
         {
@@ -1528,7 +1378,20 @@
         }
        ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "readings",
+        "at": 2
+       },
+       "to": {
+        "view": "seen",
+        "at": 0
+       },
+       "value": "Σ0"
+      }
+     ]
     },
     {
      "caption": {
@@ -1545,7 +1408,11 @@
        "pointers": {
         "i": null
        },
-       "tags": [
+       "under": [
+        [
+         0,
+         "Σ4"
+        ],
         [
          1,
          "Σ0"
@@ -1553,41 +1420,27 @@
         [
          2,
          "Σ0"
-        ],
-        [
-         0,
-         "Σ4"
         ]
        ],
+       "spans": {},
+       "unread": [],
        "marks": {
-        "dim": [],
         "path": [
          0,
          1,
          2
-        ],
-        "lit": []
+        ]
        }
       },
       "seen": {
-       "columns": [
+       "entries": [
         {
-         "en": "times",
-         "ko": "횟수"
-        }
-       ],
-       "rows": [
-        {
-         "label": "0",
-         "cells": [
-          3
-         ]
+         "key": 0,
+         "value": 3
         },
         {
-         "label": "4",
-         "cells": [
-          1
-         ]
+         "key": 4,
+         "value": 1
         }
        ],
        "marks": {}
@@ -1600,22 +1453,11 @@
         },
         {
          "label": {
-          "en": "total",
-          "ko": "total (누적합)"
-         },
-         "value": 0
-        },
-        {
-         "label": "total - k",
-         "value": "–"
-        },
-        {
-         "label": {
           "en": "count",
           "ko": "count (구간 수)"
          },
          "value": 3,
-         "mark": "good"
+         "mark": "path"
         }
        ]
       }
