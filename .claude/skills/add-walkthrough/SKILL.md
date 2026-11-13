@@ -49,10 +49,10 @@ Done when both captures end `✓ no console errors, no sideways scroll` and ever
 ## 4. Run the answer test
 
 ```sh
-./gradlew :backend:test --tests 'com.codebite.problem.WalkthroughsMatchSamplesTest' --tests 'com.codebite.problem.ProblemSlugsTest'
+./gradlew :backend:test --tests 'com.codebite.problem.*'
 ```
 
-`WalkthroughsMatchSamplesTest` checks every file in `walkthroughs/` against the migrated samples (one run per sample, in order, by `sampleInput` and `expected`, each ending on its answer) and the format; `ProblemSlugsTest` that the file names a current Slug. It also fails on a caption of three or more sentences in either language. Wait until no other worktree's Gradle test run is going (`pgrep -f "Gradle Test Executor"` prints nothing): the machine fits one. Don't run it while `dev-branch-servers.sh` is compiling the backend: two Gradle builds in one worktree corrupt the backend build output (`./gradlew :backend:clean` recovers). Done when both are green.
+`WalkthroughsMatchSamplesTest` checks every file in `walkthroughs/` against the migrated samples (one run per sample, in order, by `sampleInput` and `expected`, each ending on its answer) and the format; `ProblemSlugsTest` that the file names a current Slug. The rest of the package runs too because a new file changes what the endpoint and `hasWalkthrough` answer: #264's first file broke `WalkthroughEndpointTest`. It also fails on a caption of three or more sentences in either language. Wait until no other worktree's Gradle test run is going (`pgrep -f "Gradle Test Executor"` prints nothing): the machine fits one. Don't run it while `dev-branch-servers.sh` is compiling the backend: two Gradle builds in one worktree corrupt the backend build output (`./gradlew :backend:clean` recovers). Done when the package is green.
 
 ## 5. Check the tab
 

@@ -20,6 +20,12 @@ A test that guards data (every migrated Diagram, every Test Case) has cases show
 
 _Example:_ `DiagramsMatchExamplesTest.aWrongDiagramIsCaught` holds a wrong Diagram for each way one could slip through: one row of a grid, a pinned Diagram under the wrong example, `after` copied from the input.
 
+## A test makes the missing asset it needs
+
+A test that needs a problem without some optional asset (a Walkthrough, a Diagram, a Solution, a Driver for a language) makes that state itself: it renames the problem to a Slug no file is named for, deletes the row, or uses a fixture. It doesn't name a real problem that lacks the asset today, since filling the gaps is ongoing work and the next ticket turns such a test red.
+
+_Example:_ `WalkthroughEndpointTest` renames `rotting-donuts` to a Slug with no Walkthrough file instead of naming `snack-drawer-pair`, which #264 gave one.
+
 ## A highlight marks what its example points at
 
 A Diagram's `highlight` or `highlight_path` marks part of its example's answer, or the inputs the example asks about. A count or a time as the answer usually means no highlight. `.claude/skills/add-diagram/SKILL.md` has the rule; tests check only that a highlight exists in the Diagram.

@@ -19,6 +19,10 @@
 # away, with one line saying why. Ticket branches have no PR of their own, so on any other branch
 # the checks run.
 #
+# It refuses, before merging anything, when a CI run on the integration branch's HEAD failed or was
+# cancelled: a skipped-check push (above) is checked only by that run, and a merge stacked on a red
+# tip hides which merge broke it (#264). A pending run doesn't stop it.
+#
 # A merge that changes this script hands the checks and the push to the merged copy, run as
 # `scripts/merge-ticket.sh --checks-and-push`: bash read this copy before the merge, so its checks are
 # the old ones. Keep that mode in every later version.
@@ -81,6 +85,23 @@ check_and_push() {
   push_merge "$current"
 }
 
+# CI's runs on commit $1, one "<conclusion> <url>" line each (conclusion empty while running); nothing
+# when gh is missing or can't answer.
+ci_runs() {
+  gh run list --commit "$1" --workflow CI --json conclusion,url --jq '.[] | "\(.conclusion) \(.url)"' 2>/dev/null || true
+}
+
+# Why not to merge onto a tip whose CI runs are $1 (ci_runs lines), or nothing.
+red_tip_refusal() {
+  local conclusion url
+  while read -r conclusion url; do
+    if [[ "$conclusion" == failure || "$conclusion" == cancelled || "$conclusion" == timed_out ]]; then
+      echo "refusing to merge onto a red integration tip: CI $conclusion $url; fix it first (scripts/test-failures.sh)"
+      return
+    fi
+  done <<<"$1"
+}
+
 # Whether CI runs on a push to branch $1: keep in step with ci.yml's `push: branches`.
 ci_checks_pushes() {
   [[ "$1" == integration/* || "$1" == spec/* ]]
@@ -91,6 +112,7 @@ ci_checks_pushes() {
 push_checked_by_ci() {
   echo "merge-ticket: $2 already contains $1; skipping the checks (CI gates the pushed tree)"
   push_merge "$1"
+  echo "merge-ticket: CI now checks $(git rev-parse --short HEAD); the next merge refuses if it goes red (gh run list --commit $(git rev-parse HEAD))"
 }
 
 # Hands the checks and the push of branch $1 to the copy of this script the merge just brought in.
@@ -132,10 +154,15 @@ merge_one() {
 
 # Merges each <branch> <title> pair in order, then checks and pushes once.
 merge_ticket() {
-  local current start all_contain_head=yes ref contains_head
+  local current start all_contain_head=yes ref contains_head red
   current=$(git branch --show-current)
   start=$(git rev-parse HEAD)
   git fetch -q origin
+  red=$(red_tip_refusal "$(ci_runs "$start")")
+  if [[ -n "$red" ]]; then
+    echo "merge-ticket: $red" >&2
+    return 1
+  fi
   while (( $# >= 2 )); do
     if ! merge_one "$1" "$2" "$current"; then
       [[ "$(git rev-parse HEAD)" == "$start" ]] \
