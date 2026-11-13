@@ -18,11 +18,27 @@
    }
   },
   {
-   "id": "counts",
-   "type": "table",
+   "id": "uses",
+   "type": "map",
    "title": {
     "en": "uses per machine (hash map)",
     "ko": "머신별 사용 횟수 (해시 맵)"
+   },
+   "empty": {
+    "en": "empty",
+    "ko": "비어 있음"
+   }
+  },
+  {
+   "id": "board",
+   "type": "output",
+   "title": {
+    "en": "whiteboard",
+    "ko": "화이트보드"
+   },
+   "empty": {
+    "en": "empty",
+    "ko": "비어 있음"
    }
   },
   {
@@ -42,7 +58,7 @@
     {
      "caption": {
       "en": "Walk the 6 check-ins once and count each machine's uses in a hash map; then post the 2 machines with the most uses.",
-      "ko": "체크인 6개를 한 번 훑으며 머신마다 사용 횟수를 해시 맵에 셉니다. 그다음 가장 많이 쓰인 머신 2개를 적습니다."
+      "ko": "체크인 6개를 한 번 훑으며 머신마다 사용 횟수를 해시 맵에 셉니다. 그다음 가장 많이 쓰인 머신 2개를 화이트보드에 적습니다."
      },
      "views": {
       "log": {
@@ -61,33 +77,18 @@
         "lit": []
        }
       },
-      "counts": {
-       "columns": [
-        {
-         "en": "uses",
-         "ko": "사용 횟수"
-        }
-       ],
-       "rows": [],
+      "uses": {
+       "entries": [],
        "marks": {}
+      },
+      "board": {
+       "values": []
       },
       "state": {
        "items": [
         {
          "label": "k",
          "value": 2
-        },
-        {
-         "label": {
-          "en": "whiteboard",
-          "ko": "화이트보드"
-         },
-         "value": [],
-         "empty": {
-          "en": "empty",
-          "ko": "비어 있음"
-         },
-         "mark": null
         }
        ]
       }
@@ -95,8 +96,8 @@
     },
     {
      "caption": {
-      "en": "checkIns[0] is machine 4, not in the map yet: add it with count 1.",
-      "ko": "checkIns[0] = 4: 아직 맵에 없는 머신이므로 사용 횟수 1로 추가합니다."
+      "en": "checkIns[0] is machine 4, not in the map yet: it goes in with count 1.",
+      "ko": "checkIns[0] = 4: 아직 맵에 없는 머신이므로 사용 횟수 1로 들어갑니다."
      },
      "views": {
       "log": {
@@ -117,54 +118,43 @@
         ]
        }
       },
-      "counts": {
-       "columns": [
+      "uses": {
+       "entries": [
         {
-         "en": "uses",
-         "ko": "사용 횟수"
-        }
-       ],
-       "rows": [
-        {
-         "label": {
-          "en": "machine 4",
-          "ko": "머신 4"
-         },
-         "cells": [
-          1
-         ]
+         "key": 4,
+         "value": 1
         }
        ],
        "marks": {
         "good": [
-         [
-          0,
-          0
-         ]
+         4
         ]
        }
+      },
+      "board": {
+       "values": []
       },
       "state": {
        "items": [
         {
          "label": "k",
          "value": 2
-        },
-        {
-         "label": {
-          "en": "whiteboard",
-          "ko": "화이트보드"
-         },
-         "value": [],
-         "empty": {
-          "en": "empty",
-          "ko": "비어 있음"
-         },
-         "mark": null
         }
        ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "log",
+        "at": 0
+       },
+       "to": {
+        "view": "uses",
+        "at": 4
+       }
+      }
+     ]
     },
     {
      "caption": {
@@ -190,54 +180,43 @@
         ]
        }
       },
-      "counts": {
-       "columns": [
+      "uses": {
+       "entries": [
         {
-         "en": "uses",
-         "ko": "사용 횟수"
-        }
-       ],
-       "rows": [
-        {
-         "label": {
-          "en": "machine 4",
-          "ko": "머신 4"
-         },
-         "cells": [
-          2
-         ]
+         "key": 4,
+         "value": 2
         }
        ],
        "marks": {
         "good": [
-         [
-          0,
-          0
-         ]
+         4
         ]
        }
+      },
+      "board": {
+       "values": []
       },
       "state": {
        "items": [
         {
          "label": "k",
          "value": 2
-        },
-        {
-         "label": {
-          "en": "whiteboard",
-          "ko": "화이트보드"
-         },
-         "value": [],
-         "empty": {
-          "en": "empty",
-          "ko": "비어 있음"
-         },
-         "mark": null
         }
        ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "log",
+        "at": 1
+       },
+       "to": {
+        "view": "uses",
+        "at": 4
+       }
+      }
+     ]
     },
     {
      "caption": {
@@ -263,59 +242,48 @@
         ]
        }
       },
-      "counts": {
-       "columns": [
+      "uses": {
+       "entries": [
         {
-         "en": "uses",
-         "ko": "사용 횟수"
-        }
-       ],
-       "rows": [
-        {
-         "label": {
-          "en": "machine 4",
-          "ko": "머신 4"
-         },
-         "cells": [
-          3
-         ]
+         "key": 4,
+         "value": 3
         }
        ],
        "marks": {
         "good": [
-         [
-          0,
-          0
-         ]
+         4
         ]
        }
+      },
+      "board": {
+       "values": []
       },
       "state": {
        "items": [
         {
          "label": "k",
          "value": 2
-        },
-        {
-         "label": {
-          "en": "whiteboard",
-          "ko": "화이트보드"
-         },
-         "value": [],
-         "empty": {
-          "en": "empty",
-          "ko": "비어 있음"
-         },
-         "mark": null
         }
        ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "log",
+        "at": 2
+       },
+       "to": {
+        "view": "uses",
+        "at": 4
+       }
+      }
+     ]
     },
     {
      "caption": {
-      "en": "checkIns[3] is machine 7, not in the map yet: add it with count 1.",
-      "ko": "checkIns[3] = 7: 아직 맵에 없는 머신이므로 사용 횟수 1로 추가합니다."
+      "en": "checkIns[3] is machine 7, not in the map yet: it goes in with count 1.",
+      "ko": "checkIns[3] = 7: 아직 맵에 없는 머신이므로 사용 횟수 1로 들어갑니다."
      },
      "views": {
       "log": {
@@ -336,63 +304,47 @@
         ]
        }
       },
-      "counts": {
-       "columns": [
+      "uses": {
+       "entries": [
         {
-         "en": "uses",
-         "ko": "사용 횟수"
-        }
-       ],
-       "rows": [
-        {
-         "label": {
-          "en": "machine 4",
-          "ko": "머신 4"
-         },
-         "cells": [
-          3
-         ]
+         "key": 4,
+         "value": 3
         },
         {
-         "label": {
-          "en": "machine 7",
-          "ko": "머신 7"
-         },
-         "cells": [
-          1
-         ]
+         "key": 7,
+         "value": 1
         }
        ],
        "marks": {
         "good": [
-         [
-          1,
-          0
-         ]
+         7
         ]
        }
+      },
+      "board": {
+       "values": []
       },
       "state": {
        "items": [
         {
          "label": "k",
          "value": 2
-        },
-        {
-         "label": {
-          "en": "whiteboard",
-          "ko": "화이트보드"
-         },
-         "value": [],
-         "empty": {
-          "en": "empty",
-          "ko": "비어 있음"
-         },
-         "mark": null
         }
        ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "log",
+        "at": 3
+       },
+       "to": {
+        "view": "uses",
+        "at": 7
+       }
+      }
+     ]
     },
     {
      "caption": {
@@ -418,68 +370,52 @@
         ]
        }
       },
-      "counts": {
-       "columns": [
+      "uses": {
+       "entries": [
         {
-         "en": "uses",
-         "ko": "사용 횟수"
-        }
-       ],
-       "rows": [
-        {
-         "label": {
-          "en": "machine 4",
-          "ko": "머신 4"
-         },
-         "cells": [
-          3
-         ]
+         "key": 4,
+         "value": 3
         },
         {
-         "label": {
-          "en": "machine 7",
-          "ko": "머신 7"
-         },
-         "cells": [
-          2
-         ]
+         "key": 7,
+         "value": 2
         }
        ],
        "marks": {
         "good": [
-         [
-          1,
-          0
-         ]
+         7
         ]
        }
+      },
+      "board": {
+       "values": []
       },
       "state": {
        "items": [
         {
          "label": "k",
          "value": 2
-        },
-        {
-         "label": {
-          "en": "whiteboard",
-          "ko": "화이트보드"
-         },
-         "value": [],
-         "empty": {
-          "en": "empty",
-          "ko": "비어 있음"
-         },
-         "mark": null
         }
        ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "log",
+        "at": 4
+       },
+       "to": {
+        "view": "uses",
+        "at": 7
+       }
+      }
+     ]
     },
     {
      "caption": {
-      "en": "checkIns[5] is machine 5, not in the map yet: add it with count 1.",
-      "ko": "checkIns[5] = 5: 아직 맵에 없는 머신이므로 사용 횟수 1로 추가합니다."
+      "en": "checkIns[5] is machine 5, not in the map yet: it goes in with count 1.",
+      "ko": "checkIns[5] = 5: 아직 맵에 없는 머신이므로 사용 횟수 1로 들어갑니다."
      },
      "views": {
       "log": {
@@ -500,77 +436,56 @@
         ]
        }
       },
-      "counts": {
-       "columns": [
+      "uses": {
+       "entries": [
         {
-         "en": "uses",
-         "ko": "사용 횟수"
-        }
-       ],
-       "rows": [
-        {
-         "label": {
-          "en": "machine 4",
-          "ko": "머신 4"
-         },
-         "cells": [
-          3
-         ]
+         "key": 4,
+         "value": 3
         },
         {
-         "label": {
-          "en": "machine 7",
-          "ko": "머신 7"
-         },
-         "cells": [
-          2
-         ]
+         "key": 7,
+         "value": 2
         },
         {
-         "label": {
-          "en": "machine 5",
-          "ko": "머신 5"
-         },
-         "cells": [
-          1
-         ]
+         "key": 5,
+         "value": 1
         }
        ],
        "marks": {
         "good": [
-         [
-          2,
-          0
-         ]
+         5
         ]
        }
+      },
+      "board": {
+       "values": []
       },
       "state": {
        "items": [
         {
          "label": "k",
          "value": 2
-        },
-        {
-         "label": {
-          "en": "whiteboard",
-          "ko": "화이트보드"
-         },
-         "value": [],
-         "empty": {
-          "en": "empty",
-          "ko": "비어 있음"
-         },
-         "mark": null
         }
        ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "log",
+        "at": 5
+       },
+       "to": {
+        "view": "uses",
+        "at": 5
+       }
+      }
+     ]
     },
     {
      "caption": {
-      "en": "Every check-in is counted, and ranked by uses they are 4 (3), 7 (2), 5 (1). The top 2 are 4, 7: answer [4,7].",
-      "ko": "체크인을 모두 세어 사용 횟수 순으로 놓으면 4 (3), 7 (2), 5 (1)입니다. 상위 2개는 머신 4, 7이므로 답은 [4,7]입니다."
+      "en": "Every check-in is counted; ranked by uses, the machines are 4 (3), 7 (2), 5 (1). The top 2 go on the whiteboard.",
+      "ko": "체크인을 모두 세었고, 사용 횟수 순으로 놓으면 4 (3), 7 (2), 5 (1)입니다. 상위 2가 화이트보드에 올라갑니다."
      },
      "views": {
       "log": {
@@ -589,85 +504,207 @@
         "lit": []
        }
       },
-      "counts": {
-       "columns": [
+      "uses": {
+       "entries": [
         {
-         "en": "uses",
-         "ko": "사용 횟수"
-        }
-       ],
-       "rows": [
-        {
-         "label": {
-          "en": "machine 4",
-          "ko": "머신 4"
-         },
-         "cells": [
-          3
-         ]
+         "key": 4,
+         "value": 3
         },
         {
-         "label": {
-          "en": "machine 7",
-          "ko": "머신 7"
-         },
-         "cells": [
-          2
-         ]
+         "key": 7,
+         "value": 2
         },
         {
-         "label": {
-          "en": "machine 5",
-          "ko": "머신 5"
-         },
-         "cells": [
-          1
-         ]
+         "key": 5,
+         "value": 1
         }
        ],
        "marks": {
         "path": [
-         [
-          0,
-          0
-         ],
-         [
-          1,
-          0
-         ]
+         4,
+         7
         ],
         "dim": [
-         [
-          2,
-          0
-         ]
+         5
         ]
-       }
+       },
+       "ranks": [
+        4,
+        7,
+        5
+       ]
+      },
+      "board": {
+       "values": []
       },
       "state": {
        "items": [
         {
          "label": "k",
          "value": 2
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "#1 is machine 4 with 3 uses: it goes on the whiteboard.",
+      "ko": "1위는 머신 4(사용 횟수 3회)이므로 화이트보드에 적습니다."
+     },
+     "views": {
+      "log": {
+       "values": [
+        4,
+        4,
+        4,
+        7,
+        7,
+        5
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "uses": {
+       "entries": [
+        {
+         "key": 4,
+         "value": 3
         },
         {
-         "label": {
-          "en": "whiteboard",
-          "ko": "화이트보드"
-         },
-         "value": [
-          4,
-          7
-         ],
-         "empty": {
-          "en": "empty",
-          "ko": "비어 있음"
-         },
-         "mark": "path"
+         "key": 7,
+         "value": 2
+        },
+        {
+         "key": 5,
+         "value": 1
+        }
+       ],
+       "marks": {
+        "path": [
+         4,
+         7
+        ],
+        "dim": [
+         5
+        ]
+       },
+       "ranks": [
+        4,
+        7,
+        5
+       ]
+      },
+      "board": {
+       "values": [
+        4
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 2
         }
        ]
       }
      },
+     "moves": [
+      {
+       "from": {
+        "view": "uses",
+        "at": 4
+       },
+       "to": {
+        "view": "board",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "#2 is machine 7 with 2 uses, the last of the top 2. The whiteboard reads [4,7]: the answer.",
+      "ko": "2위는 머신 7(사용 횟수 2회)으로 상위 2개의 마지막입니다. 답은 [4,7]입니다."
+     },
+     "views": {
+      "log": {
+       "values": [
+        4,
+        4,
+        4,
+        7,
+        7,
+        5
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "uses": {
+       "entries": [
+        {
+         "key": 4,
+         "value": 3
+        },
+        {
+         "key": 7,
+         "value": 2
+        },
+        {
+         "key": 5,
+         "value": 1
+        }
+       ],
+       "marks": {
+        "path": [
+         4,
+         7
+        ],
+        "dim": [
+         5
+        ]
+       },
+       "ranks": [
+        4,
+        7,
+        5
+       ]
+      },
+      "board": {
+       "values": [
+        4,
+        7
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 2
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "uses",
+        "at": 7
+       },
+       "to": {
+        "view": "board",
+        "at": 1
+       }
+      }
+     ],
      "answer": "[4,7]"
     }
    ],
@@ -684,7 +721,7 @@
     {
      "caption": {
       "en": "Walk the 1 check-ins once and count each machine's uses in a hash map; then post the 1 machines with the most uses.",
-      "ko": "체크인 1개를 한 번 훑으며 머신마다 사용 횟수를 해시 맵에 셉니다. 그다음 가장 많이 쓰인 머신 1개를 적습니다."
+      "ko": "체크인 1개를 한 번 훑으며 머신마다 사용 횟수를 해시 맵에 셉니다. 그다음 가장 많이 쓰인 머신 1개를 화이트보드에 적습니다."
      },
      "views": {
       "log": {
@@ -698,33 +735,18 @@
         "lit": []
        }
       },
-      "counts": {
-       "columns": [
-        {
-         "en": "uses",
-         "ko": "사용 횟수"
-        }
-       ],
-       "rows": [],
+      "uses": {
+       "entries": [],
        "marks": {}
+      },
+      "board": {
+       "values": []
       },
       "state": {
        "items": [
         {
          "label": "k",
          "value": 1
-        },
-        {
-         "label": {
-          "en": "whiteboard",
-          "ko": "화이트보드"
-         },
-         "value": [],
-         "empty": {
-          "en": "empty",
-          "ko": "비어 있음"
-         },
-         "mark": null
         }
        ]
       }
@@ -732,8 +754,8 @@
     },
     {
      "caption": {
-      "en": "checkIns[0] is machine 9, not in the map yet: add it with count 1.",
-      "ko": "checkIns[0] = 9: 아직 맵에 없는 머신이므로 사용 횟수 1로 추가합니다."
+      "en": "checkIns[0] is machine 9, not in the map yet: it goes in with count 1.",
+      "ko": "checkIns[0] = 9: 아직 맵에 없는 머신이므로 사용 횟수 1로 들어갑니다."
      },
      "views": {
       "log": {
@@ -749,59 +771,48 @@
         ]
        }
       },
-      "counts": {
-       "columns": [
+      "uses": {
+       "entries": [
         {
-         "en": "uses",
-         "ko": "사용 횟수"
-        }
-       ],
-       "rows": [
-        {
-         "label": {
-          "en": "machine 9",
-          "ko": "머신 9"
-         },
-         "cells": [
-          1
-         ]
+         "key": 9,
+         "value": 1
         }
        ],
        "marks": {
         "good": [
-         [
-          0,
-          0
-         ]
+         9
         ]
        }
+      },
+      "board": {
+       "values": []
       },
       "state": {
        "items": [
         {
          "label": "k",
          "value": 1
-        },
-        {
-         "label": {
-          "en": "whiteboard",
-          "ko": "화이트보드"
-         },
-         "value": [],
-         "empty": {
-          "en": "empty",
-          "ko": "비어 있음"
-         },
-         "mark": null
         }
        ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "log",
+        "at": 0
+       },
+       "to": {
+        "view": "uses",
+        "at": 9
+       }
+      }
+     ]
     },
     {
      "caption": {
-      "en": "Every check-in is counted, and ranked by uses they are 9 (1). The top 1 is 9: answer [9].",
-      "ko": "체크인을 모두 세어 사용 횟수 순으로 놓으면 9 (1)입니다. 상위 1개는 머신 9이므로 답은 [9]입니다."
+      "en": "Every check-in is counted; ranked by uses, the machines are 9 (1). The top 1 go on the whiteboard.",
+      "ko": "체크인을 모두 세었고, 사용 횟수 순으로 놓으면 9 (1)입니다. 상위 1이 화이트보드에 올라갑니다."
      },
      "views": {
       "log": {
@@ -815,57 +826,96 @@
         "lit": []
        }
       },
-      "counts": {
-       "columns": [
+      "uses": {
+       "entries": [
         {
-         "en": "uses",
-         "ko": "사용 횟수"
-        }
-       ],
-       "rows": [
-        {
-         "label": {
-          "en": "machine 9",
-          "ko": "머신 9"
-         },
-         "cells": [
-          1
-         ]
+         "key": 9,
+         "value": 1
         }
        ],
        "marks": {
         "path": [
-         [
-          0,
-          0
-         ]
+         9
         ],
         "dim": []
-       }
+       },
+       "ranks": [
+        9
+       ]
+      },
+      "board": {
+       "values": []
       },
       "state": {
        "items": [
         {
          "label": "k",
          "value": 1
-        },
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "#1 is machine 9 with 1 use, the last of the top 1. The whiteboard reads [9]: the answer.",
+      "ko": "1위는 머신 9(사용 횟수 1회)으로 상위 1개의 마지막입니다. 답은 [9]입니다."
+     },
+     "views": {
+      "log": {
+       "values": [
+        9
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "uses": {
+       "entries": [
         {
-         "label": {
-          "en": "whiteboard",
-          "ko": "화이트보드"
-         },
-         "value": [
-          9
-         ],
-         "empty": {
-          "en": "empty",
-          "ko": "비어 있음"
-         },
-         "mark": "path"
+         "key": 9,
+         "value": 1
+        }
+       ],
+       "marks": {
+        "path": [
+         9
+        ],
+        "dim": []
+       },
+       "ranks": [
+        9
+       ]
+      },
+      "board": {
+       "values": [
+        9
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
         }
        ]
       }
      },
+     "moves": [
+      {
+       "from": {
+        "view": "uses",
+        "at": 9
+       },
+       "to": {
+        "view": "board",
+        "at": 0
+       }
+      }
+     ],
      "answer": "[9]"
     }
    ],
