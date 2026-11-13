@@ -780,8 +780,8 @@
     },
     {
      "caption": {
-      "en": "Every tag added, and the longest window seen was \"xzxxz\" (queue[2..6]), length 5. Answer 5.",
-      "ko": "모든 태그를 넣었고, 가장 긴 구간은 \"xzxxz\"(queue[2..6]), 길이 5입니다. 답은 5입니다."
+      "en": "Every tag added, and the longest window seen was the last one, \"xzxxz\" (queue[2..6]), length 5. Answer 5.",
+      "ko": "모든 태그를 넣었고, 가장 긴 구간은 마지막 구간 \"xzxxz\"(queue[2..6]), 길이 5입니다. 답은 5입니다."
      },
      "views": {
       "queue": {
@@ -835,7 +835,18 @@
          ]
         }
        ],
-       "marks": {}
+       "marks": {
+        "path": [
+         [
+          0,
+          0
+         ],
+         [
+          1,
+          0
+         ]
+        ]
+       }
       },
       "state": {
        "items": [
@@ -863,7 +874,7 @@
           "ko": "best (최장 길이)"
          },
          "value": 5,
-         "mark": "good"
+         "mark": "path"
         }
        ]
       }
@@ -1482,8 +1493,8 @@
     },
     {
      "caption": {
-      "en": "Every tag added, and the longest window seen was \"rrrrrr\" (queue[0..5]), length 6. Answer 6.",
-      "ko": "모든 태그를 넣었고, 가장 긴 구간은 \"rrrrrr\"(queue[0..5]), 길이 6입니다. 답은 6입니다."
+      "en": "Every tag added, and the longest window seen was the last one, \"rrrrrr\" (queue[0..5]), length 6. Answer 6.",
+      "ko": "모든 태그를 넣었고, 가장 긴 구간은 마지막 구간 \"rrrrrr\"(queue[0..5]), 길이 6입니다. 답은 6입니다."
      },
      "views": {
       "queue": {
@@ -1528,7 +1539,14 @@
          ]
         }
        ],
-       "marks": {}
+       "marks": {
+        "path": [
+         [
+          0,
+          0
+         ]
+        ]
+       }
       },
       "state": {
        "items": [
@@ -1556,7 +1574,7 @@
           "ko": "best (최장 길이)"
          },
          "value": 6,
-         "mark": "good"
+         "mark": "path"
         }
        ]
       }
@@ -2196,8 +2214,8 @@
     },
     {
      "caption": {
-      "en": "Every tag added, and the longest window seen was \"q\" (queue[0..0]), length 1. Answer 1.",
-      "ko": "모든 태그를 넣었고, 가장 긴 구간은 \"q\"(queue[0..0]), 길이 1입니다. 답은 1입니다."
+      "en": "Every tag added: the run ended on \"y\" (queue[5..5]), but best = 1 came from \"q\" (queue[0..0]), so that window is drawn. Answer 1.",
+      "ko": "모든 태그를 넣었습니다. 실행은 \"y\"(queue[5..5]) 구간에서 끝났지만 best = 1은 \"q\"(queue[0..0]) 구간의 길이라서 그 구간을 그렸고, 답은 1입니다."
      },
      "views": {
       "queue": {
@@ -2237,13 +2255,20 @@
        ],
        "rows": [
         {
-         "label": "y",
+         "label": "q",
          "cells": [
           1
          ]
         }
        ],
-       "marks": {}
+       "marks": {
+        "path": [
+         [
+          0,
+          0
+         ]
+        ]
+       }
       },
       "state": {
        "items": [
@@ -2271,7 +2296,7 @@
           "ko": "best (최장 길이)"
          },
          "value": 1,
-         "mark": "good"
+         "mark": "path"
         }
        ]
       }

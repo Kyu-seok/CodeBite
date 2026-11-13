@@ -42,22 +42,24 @@ def solve(queue, k, run):
     right = None
 
     def frame(caption, good=(), bad=(), path=(), row_good=None, best_mark=None, **answer):
-        keys = list(window)
-        # the last frame shows only the best window, so the window the run ended on steps back
+        # the last frame shows the best window, the one the answer used, not the window the run ended on
         showing = right is not None and not path
         in_window = set(range(left, right + 1)) if showing else set()
+        counts = Counter(queue[j] for j in path) if path else window
+        keys = list(counts)
         run.frame(caption,
                   queue={"values": list(queue), "pointers": {"left": left if showing else None,
                                                              "right": right if showing else None},
                          "marks": {"dim": [j for j in range(n) if j not in in_window and j not in [*bad, *path]],
                                    "path": list(path), "bad": list(bad), "good": list(good)}},
                   window={"columns": [{"en": "count", "ko": "개수"}],
-                          "rows": [{"label": g, "cells": [c]} for g, c in window.items()],
-                          "marks": {"good": [[keys.index(row_good), 0]]} if row_good in window else {}},
+                          "rows": [{"label": g, "cells": [c]} for g, c in counts.items()],
+                          "marks": ({"path": [[r, 0] for r in range(len(keys))]} if path
+                                    else {"good": [[keys.index(row_good), 0]]} if row_good in window else {})},
                   state={"items": [{"label": "k", "value": k},
-                                   {"label": {"en": "genres in window", "ko": "구간의 장르 수"}, "value": len(window)},
+                                   {"label": {"en": "genres in window", "ko": "구간의 장르 수"}, "value": len(counts)},
                                    {"label": {"en": "window length", "ko": "구간 길이"},
-                                    "value": 0 if right is None else right - left + 1},
+                                    "value": len(path) if path else 0 if right is None else right - left + 1},
                                    {"label": {"en": "best", "ko": "best (최장 길이)"}, "value": best, "mark": best_mark}]},
                   **answer)
 
@@ -106,11 +108,19 @@ def solve(queue, k, run):
                          f"구간 \"{queue[left:right + 1]}\": {verdict_ko}"},
                   good=[right], row_good=tag, best_mark="good" if improved else None)
     a, b = best_span
-    frame({"en": f"Every tag added, and the longest window seen was \"{queue[a:b + 1]}\" "
-                 f"(queue[{a}..{b}]), length {best}. Answer {best}.",
-           "ko": f"모든 태그를 넣었고, 가장 긴 구간은 \"{queue[a:b + 1]}\"(queue[{a}..{b}]), "
-                 f"길이 {best}입니다. 답은 {best}입니다."},
-          path=range(a, b + 1), best_mark="good", answer=str(best))
+    if (a, b) == (left, right):
+        caption = {"en": f"Every tag added, and the longest window seen was the last one, \"{queue[a:b + 1]}\" "
+                         f"(queue[{a}..{b}]), length {best}. Answer {best}.",
+                   "ko": f"모든 태그를 넣었고, 가장 긴 구간은 마지막 구간 \"{queue[a:b + 1]}\"(queue[{a}..{b}]), "
+                         f"길이 {best}입니다. 답은 {best}입니다."}
+    else:
+        caption = {"en": f"Every tag added: the run ended on \"{queue[left:right + 1]}\" (queue[{left}..{right}]), "
+                         f"but best = {best} came from \"{queue[a:b + 1]}\" (queue[{a}..{b}]), so that window is drawn. "
+                         f"Answer {best}.",
+                   "ko": f"모든 태그를 넣었습니다. 실행은 \"{queue[left:right + 1]}\"(queue[{left}..{right}]) 구간에서 "
+                         f"끝났지만 best = {josa(best, "은는")} \"{queue[a:b + 1]}\"(queue[{a}..{b}]) 구간의 길이라서 그 구간을 "
+                         f"그렸고, 답은 {best}입니다."}
+    frame(caption, path=range(a, b + 1), best_mark="path", answer=str(best))
 
 
 for number, sample in enumerate(sample_cases(SLUG), start=1):
