@@ -23,6 +23,7 @@ import java.util.regex.Pattern;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -202,6 +203,35 @@ class WalkthroughsMatchSamplesTest {
             default -> throw new IllegalArgumentException(breakage);
         }
         List<String> found = mismatches("rotting-donuts", walkthrough, SAMPLES.get("rotting-donuts"));
+        assertFalse(found.isEmpty(), breakage + " was not caught");
+    }
+
+    // --- graph moves, on a copy of cheapest-courier-route ------------------------------------------
+
+    @ParameterizedTest(name = "{0}")
+    @ValueSource(strings = {
+            "move from a directed edge turned around", "move from an edge that isn't there",
+            "move from an edge address that isn't [from, to]", "move to a missing node",
+    })
+    void aBrokenGraphMoveIsCaught(String breakage) throws Exception {
+        ObjectNode walkthrough = (ObjectNode) JSON.readTree(WALKTHROUGHS.of("cheapest-courier-route").orElseThrow());
+        ObjectNode relaxes = null; // the first move from an edge: a relaxed cost comes down into this round's row
+        for (JsonNode frame : walkthrough.get("runs").get(0).get("frames")) {
+            for (JsonNode move : frame.path("moves")) {
+                if (relaxes == null && "cafes".equals(move.path("from").path("view").asText())) relaxes = (ObjectNode) move;
+            }
+        }
+        assertNotNull(relaxes, "no move from an edge of cheapest-courier-route's graph");
+        ObjectNode from = (ObjectNode) relaxes.get("from");
+        JsonNode edge = from.get("at");
+        switch (breakage) {
+            case "move from a directed edge turned around" -> from.set("at", JSON.createArrayNode().add(edge.get(1)).add(edge.get(0)));
+            case "move from an edge that isn't there" -> from.set("at", JSON.createArrayNode().add(edge.get(0)).add(99));
+            case "move from an edge address that isn't [from, to]" -> from.set("at", JSON.createArrayNode().add(edge.get(0)).add(edge.get(1)).add(0));
+            case "move to a missing node" -> relaxes.set("to", JSON.createObjectNode().put("view", "cafes").put("at", 99));
+            default -> throw new IllegalArgumentException(breakage);
+        }
+        List<String> found = mismatches("cheapest-courier-route", walkthrough, SAMPLES.get("cheapest-courier-route"));
         assertFalse(found.isEmpty(), breakage + " was not caught");
     }
 
@@ -415,7 +445,8 @@ class WalkthroughsMatchSamplesTest {
     /**
      * What is wrong with one move: each end it has must name a place that exists in that frame's state of its view
      * (the skill's {@code ADDRESSES}: an array or output index, a map key, a queue position from the front, a grid
-     * {@code [row, col]}, an intervals {@code [group, index]}).
+     * {@code [row, col]}, an intervals {@code [group, index]}, a graph node id or {@code [from, to]} edge, either
+     * order when the graph isn't {@code directed}).
      */
     private static List<String> move(JsonNode move, Map<String, JsonNode> views, JsonNode setup, JsonNode states) {
         if (!move.isObject() || (!move.hasNonNull("from") && !move.hasNonNull("to"))) return List.of("no from and no to");
@@ -435,7 +466,7 @@ class WalkthroughsMatchSamplesTest {
             }
             String type = view.path("type").asText();
             String where = end + " " + address;
-            if (!List.of("array", "map", "output", "queue", "grid", "intervals").contains(type)) {
+            if (!List.of("array", "map", "output", "queue", "grid", "intervals", "graph").contains(type)) {
                 p.add(where + ": view type \"" + type + "\" has no addresses");
                 continue;
             }
@@ -453,6 +484,9 @@ class WalkthroughsMatchSamplesTest {
                         && index(at.get(1), state.path("cells").path(at.get(0).asInt()));
                 case "intervals" -> at != null && at.isArray() && at.size() == 2 && index(at.get(0), state.path("groups"))
                         && index(at.get(1), state.path("groups").path(at.get(0).asInt()).path("intervals"));
+                case "graph" -> at != null && at.isArray()
+                        ? at.size() == 2 && edge(state.path("edges"), key(at.get(0)), key(at.get(1)), view.path("directed").asBoolean(true))
+                        : node(state.path("nodes"), key(at));
                 default -> index(at, state.path("values"));
             };
             String what = switch (type) {
@@ -460,11 +494,28 @@ class WalkthroughsMatchSamplesTest {
                 case "queue" -> "a position from the front";
                 case "grid" -> "a [row, col]";
                 case "intervals" -> "a [group, index]";
+                case "graph" -> "a node id or a [from, to] edge";
                 default -> "an index";
             };
             if (!exists) p.add(where + " is not " + what + " of " + type + " \"" + id + "\"");
         }
         return p;
+    }
+
+    /** Whether a graph's {@code nodes} hold one whose id is {@code id}. */
+    private static boolean node(JsonNode nodes, String id) {
+        for (JsonNode n : nodes) if (id != null && id.equals(key(n.get("id")))) return true;
+        return false;
+    }
+
+    /** Whether a graph's {@code edges} hold one from {@code a} to {@code b}, or either way when undirected. */
+    private static boolean edge(JsonNode edges, String a, String b, boolean directed) {
+        if (a == null || b == null) return false;
+        for (JsonNode e : edges) {
+            String from = key(e.get("from")), to = key(e.get("to"));
+            if ((a.equals(from) && b.equals(to)) || (!directed && a.equals(to) && b.equals(from))) return true;
+        }
+        return false;
     }
 
     /** Whether {@code i} is an index into the list {@code list}. */
