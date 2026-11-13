@@ -13,7 +13,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import driver_list, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough  # noqa: E402
 
 SLUG = "majority-boss-vote"
@@ -26,7 +26,7 @@ wt = Walkthrough(
      "ko": "서로 다른 표끼리 상쇄합니다. 후보와 같은 표는 카운트를 1 올리고 다른 표는 1 내리며, 카운트가 0이면 "
            "다음 표가 새 후보가 됩니다. 과반은 나머지 표를 모두 합친 것보다 많으니 끝까지 남는 후보가 답입니다."},
     views=[
-        {"id": "votes", "type": "array", "title": "votes"},
+        {"id": "votes", "type": "array", "title": {"en": "votes", "ko": "votes (투표)"}},
         {"id": "state", "type": "vars"},
     ],
 )
@@ -68,7 +68,7 @@ def solve(votes, run):
                    f"with count 1.",
                    "ko": f"카운트가 0이므로 {vote}번 표가 후보가 되고 카운트는 1입니다."
                    if i == 0 else
-                   f"카운트가 0입니다. 앞의 표는 모두 서로 상쇄되었습니다. {vote}번 표가 새 후보가 되고 카운트는 1입니다."},
+                   f"카운트가 0이므로 앞의 표는 모두 서로 상쇄되었습니다. {vote}번 표가 새 후보가 되고 카운트는 1입니다."},
                   good=[i], dim=later, cand_mark="good")
         elif vote == candidate:
             count += 1
@@ -86,10 +86,10 @@ def solve(votes, run):
     answer = str(candidate)
     held = sum(1 for v in votes if v == candidate)
     read = "The only vote" if n == 1 else f"All {n} votes"
-    frame({"en": f"{read} read. {candidate} is the candidate left standing with count {count}. It holds {held} "
+    frame({"en": f"{read} read, and {candidate} is the candidate left standing with count {count}. It holds {held} "
                  f"of the {n} votes, more than half, and such a value can't be cancelled out entirely: "
                  f"the answer is {candidate}.",
-           "ko": f"표 {n}개를 다 읽었습니다. 끝까지 남은 후보는 {candidate}번이고 카운트는 {count}입니다. "
+           "ko": f"표 {n}개를 다 읽었고, 끝까지 남은 후보는 {candidate}번(카운트 {count})입니다. "
                  f"{candidate}번은 표 {n}개 중 {held}개로 과반이고, 과반인 값은 모두 상쇄될 수 없으므로 "
                  f"답은 {candidate}번입니다."},
           path=[k for k in range(n) if votes[k] == candidate], cand_mark="path", answer=answer)
@@ -97,7 +97,7 @@ def solve(votes, run):
 
 for number, sample in enumerate(sample_cases(SLUG), start=1):
     votes = json.loads(sample["input"])
-    run = sample_run(wt, number, sample, input=f"votes = {json.dumps(votes, separators=(',', ':'))}")
+    run = sample_run(wt, number, sample, input=f"votes = {driver_list(votes)}")
     solve(votes, run)
 wt.write(walkthrough_path(SLUG))
 print(walkthrough_path(SLUG))

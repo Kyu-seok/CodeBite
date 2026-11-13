@@ -84,6 +84,7 @@ class Walkthrough:
         return {**self.data, "runs": runs}
 
     def write(self, path):
+        data = self.to_dict()  # checks every run first, so a refused run never truncates the file
         with open(path, "w", encoding="utf-8") as fh:
-            json.dump(self.to_dict(), fh, ensure_ascii=False, indent=1)
+            json.dump(data, fh, ensure_ascii=False, indent=1)
             fh.write("\n")

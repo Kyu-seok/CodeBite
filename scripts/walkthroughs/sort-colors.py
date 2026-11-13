@@ -13,7 +13,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import driver_list, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough  # noqa: E402
 
 SLUG = "sort-colors"
@@ -29,10 +29,6 @@ wt = Walkthrough(
         {"id": "state", "type": "vars"},
     ],
 )
-
-
-def compact(values):
-    return json.dumps(values, separators=(',', ':'))
 
 
 def solve(nums, run):
@@ -85,7 +81,7 @@ def solve(nums, run):
             else:
                 frame({"en": f"nums[{m}] = 2: swap it with nums[{hi}] at high, so the 2 joins the 2s. high steps "
                              f"left; mid stays, because the {nums[m]} that came back hasn't been read.",
-                       "ko": f"nums[{m}] = 2: high 자리의 nums[{hi}] 값과 맞바꿔 2를 뒤쪽 2들에 붙입니다. high는 왼쪽으로 "
+                       "ko": f"nums[{m}] = 2: high 자리의 nums[{hi}] 값과 맞바꿔 2를 뒤쪽 2들에 붙이고, high는 왼쪽으로 "
                              f"한 칸 갑니다. 맞바꿔 온 nums[{m}] = {nums[m]}: 아직 읽지 않은 값이라 mid는 그대로입니다."},
                       good=[m, hi])
         else:
@@ -95,7 +91,7 @@ def solve(nums, run):
                    "ko": f"nums[{m}] = 1: 1은 0들과 2들 사이에 있어야 하고, 지금 그 자리에 있습니다. "
                          f"mid만 오른쪽으로 한 칸 갑니다."},
                   lit=[m])
-    answer = compact(nums)
+    answer = driver_list(nums)
     frame({"en": f"mid passed high: no unread cell is left. The 0s are before low, the 2s after high and "
                  f"the 1s between, so nums is {answer}.",
            "ko": f"mid가 high를 지나 읽지 않은 칸이 없습니다. low 앞은 0, high 뒤는 2, 그 사이는 1이므로 "
@@ -105,7 +101,7 @@ def solve(nums, run):
 
 for number, sample in enumerate(sample_cases(SLUG), start=1):
     nums = json.loads(sample["input"])
-    run = sample_run(wt, number, sample, input=f"nums = {compact(nums)}")
+    run = sample_run(wt, number, sample, input=f"nums = {driver_list(nums)}")
     solve(nums, run)
 wt.write(walkthrough_path(SLUG))
 print(walkthrough_path(SLUG))

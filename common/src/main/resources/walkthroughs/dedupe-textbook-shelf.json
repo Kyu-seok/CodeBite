@@ -12,7 +12,10 @@
   {
    "id": "books",
    "type": "array",
-   "title": "books"
+   "title": {
+    "en": "books",
+    "ko": "books (책꽂이)"
+   }
   },
   {
    "id": "state",
@@ -30,8 +33,8 @@
    "frames": [
     {
      "caption": {
-      "en": "3 books. The first book is always kept, so k starts at 1: books[0..k-1] is the compacted front. Read on from index 1.",
-      "ko": "책 3권입니다. 첫 책은 항상 남으므로 k는 1에서 시작합니다. books[0..k-1]이 정리된 앞쪽입니다. 인덱스 1부터 읽습니다."
+      "en": "3 books, and the first is always kept, so k starts at 1: books[0..k-1] is the compacted front. Read on from index 1.",
+      "ko": "책 3권 중 첫 책은 항상 남으므로 k는 1에서 시작하고, 정리된 앞쪽은 books[0..k-1]입니다. 인덱스 1부터 읽습니다."
      },
      "views": {
       "books": {
@@ -155,8 +158,8 @@
     },
     {
      "caption": {
-      "en": "Every book read. The front holds the 2 distinct values in order (2, 5); slots from 2 on aren't checked. Answer k = 2.",
-      "ko": "모든 책을 읽었습니다. 앞쪽에 서로 다른 값 2개가 순서대로 있습니다(2, 5). 2번 자리부터는 검사하지 않습니다. 답은 k = 2입니다."
+      "en": "Every book read, so the front holds the 2 distinct values in order, and slots from 2 on aren't checked. The Driver prints k = 2, then the front: [2,5].",
+      "ko": "모든 책을 읽었으므로 앞쪽에 서로 다른 값 2개가 순서대로 남았습니다(2번 자리부터는 검사하지 않습니다). 답은 두 줄입니다: k = 2, 앞쪽 [2,5]."
      },
      "views": {
       "books": {
@@ -209,8 +212,8 @@
    "frames": [
     {
      "caption": {
-      "en": "10 books. The first book is always kept, so k starts at 1: books[0..k-1] is the compacted front. Read on from index 1.",
-      "ko": "책 10권입니다. 첫 책은 항상 남으므로 k는 1에서 시작합니다. books[0..k-1]이 정리된 앞쪽입니다. 인덱스 1부터 읽습니다."
+      "en": "10 books, and the first is always kept, so k starts at 1: books[0..k-1] is the compacted front. Read on from index 1.",
+      "ko": "책 10권 중 첫 책은 항상 남으므로 k는 1에서 시작하고, 정리된 앞쪽은 books[0..k-1]입니다. 인덱스 1부터 읽습니다."
      },
      "views": {
       "books": {
@@ -751,8 +754,8 @@
     },
     {
      "caption": {
-      "en": "Every book read. The front holds the 5 distinct values in order (1, 2, 3, 4, 6); slots from 5 on aren't checked. Answer k = 5.",
-      "ko": "모든 책을 읽었습니다. 앞쪽에 서로 다른 값 5개가 순서대로 있습니다(1, 2, 3, 4, 6). 5번 자리부터는 검사하지 않습니다. 답은 k = 5입니다."
+      "en": "Every book read, so the front holds the 5 distinct values in order, and slots from 5 on aren't checked. The Driver prints k = 5, then the front: [1,2,3,4,6].",
+      "ko": "모든 책을 읽었으므로 앞쪽에 서로 다른 값 5개가 순서대로 남았습니다(5번 자리부터는 검사하지 않습니다). 답은 두 줄입니다: k = 5, 앞쪽 [1,2,3,4,6]."
      },
      "views": {
       "books": {
@@ -819,8 +822,8 @@
    "frames": [
     {
      "caption": {
-      "en": "1 book. The first book is always kept, so k starts at 1: books[0..k-1] is the compacted front. There is no other book to read.",
-      "ko": "책 1권입니다. 첫 책은 항상 남으므로 k는 1에서 시작합니다. books[0..k-1]이 정리된 앞쪽입니다. 더 읽을 책이 없습니다."
+      "en": "1 book, and the first is always kept, so k starts at 1: books[0..k-1] is the compacted front. There is no other book to read.",
+      "ko": "책 1권 중 첫 책은 항상 남으므로 k는 1에서 시작하고, 정리된 앞쪽은 books[0..k-1]입니다. 더 읽을 책이 없습니다."
      },
      "views": {
       "books": {
@@ -856,8 +859,8 @@
     },
     {
      "caption": {
-      "en": "One book, nothing to compare. Answer k = 1.",
-      "ko": "책이 한 권이라 비교할 것이 없습니다. 답은 k = 1입니다."
+      "en": "One book, nothing to compare. The Driver prints k = 1, then the front: [8].",
+      "ko": "책이 한 권이라 비교할 것이 없습니다. 답은 두 줄입니다: k = 1, 앞쪽 [8]."
      },
      "views": {
       "books": {

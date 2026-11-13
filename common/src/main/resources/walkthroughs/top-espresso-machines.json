@@ -569,8 +569,8 @@
     },
     {
      "caption": {
-      "en": "Every check-in is counted. Ranked by uses: 4 (3), 7 (2), 5 (1). The top 2 are 4, 7: answer [4,7].",
-      "ko": "체크인을 모두 셌습니다. 사용 횟수 순으로 4 (3), 7 (2), 5 (1)입니다. 상위 2개는 머신 4, 7이므로 답은 [4,7]입니다."
+      "en": "Every check-in is counted, and ranked by uses they are 4 (3), 7 (2), 5 (1). The top 2 are 4, 7: answer [4,7].",
+      "ko": "체크인을 모두 세어 사용 횟수 순으로 놓으면 4 (3), 7 (2), 5 (1)입니다. 상위 2개는 머신 4, 7이므로 답은 [4,7]입니다."
      },
      "views": {
       "log": {
@@ -800,8 +800,8 @@
     },
     {
      "caption": {
-      "en": "Every check-in is counted. Ranked by uses: 9 (1). The top 1 is 9: answer [9].",
-      "ko": "체크인을 모두 셌습니다. 사용 횟수 순으로 9 (1)입니다. 상위 1개는 머신 9이므로 답은 [9]입니다."
+      "en": "Every check-in is counted, and ranked by uses they are 9 (1). The top 1 is 9: answer [9].",
+      "ko": "체크인을 모두 세어 사용 횟수 순으로 놓으면 9 (1)입니다. 상위 1개는 머신 9이므로 답은 [9]입니다."
      },
      "views": {
       "log": {

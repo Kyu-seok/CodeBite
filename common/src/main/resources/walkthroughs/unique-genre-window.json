@@ -12,7 +12,10 @@
   {
    "id": "queue",
    "type": "array",
-   "title": "queue"
+   "title": {
+    "en": "queue",
+    "ko": "queue (재생 큐)"
+   }
   },
   {
    "id": "window",
@@ -102,7 +105,10 @@
          "value": 0
         },
         {
-         "label": "best",
+         "label": {
+          "en": "best",
+          "ko": "best (최장 길이)"
+         },
          "value": 0,
          "mark": null
         }
@@ -113,7 +119,7 @@
     {
      "caption": {
       "en": "queue[0] = 'y' joins the window: 1 genre, within k = 2. Window \"y\": length 1 beats best, so best = 1.",
-      "ko": "queue[0] = 'y': 구간에 넣습니다. 장르 1종류로 k = 2 이내입니다. 구간 \"y\": 길이 1: best보다 길어 best = 1."
+      "ko": "queue[0] = 'y': 구간에 넣으면 장르 1종류로 k = 2 이내입니다. 구간 \"y\": 길이 1로 best보다 길어 best = 1."
      },
      "views": {
       "queue": {
@@ -191,7 +197,10 @@
          "value": 1
         },
         {
-         "label": "best",
+         "label": {
+          "en": "best",
+          "ko": "best (최장 길이)"
+         },
          "value": 1,
          "mark": "good"
         }
@@ -202,7 +211,7 @@
     {
      "caption": {
       "en": "queue[1] = 'y' joins the window: 1 genre, within k = 2. Window \"yy\": length 2 beats best, so best = 2.",
-      "ko": "queue[1] = 'y': 구간에 넣습니다. 장르 1종류로 k = 2 이내입니다. 구간 \"yy\": 길이 2: best보다 길어 best = 2."
+      "ko": "queue[1] = 'y': 구간에 넣으면 장르 1종류로 k = 2 이내입니다. 구간 \"yy\": 길이 2로 best보다 길어 best = 2."
      },
      "views": {
       "queue": {
@@ -279,7 +288,10 @@
          "value": 2
         },
         {
-         "label": "best",
+         "label": {
+          "en": "best",
+          "ko": "best (최장 길이)"
+         },
          "value": 2,
          "mark": "good"
         }
@@ -290,7 +302,7 @@
     {
      "caption": {
       "en": "queue[2] = 'x' joins the window: 2 genres, within k = 2. Window \"yyx\": length 3 beats best, so best = 3.",
-      "ko": "queue[2] = 'x': 구간에 넣습니다. 장르 2종류로 k = 2 이내입니다. 구간 \"yyx\": 길이 3: best보다 길어 best = 3."
+      "ko": "queue[2] = 'x': 구간에 넣으면 장르 2종류로 k = 2 이내입니다. 구간 \"yyx\": 길이 3으로 best보다 길어 best = 3."
      },
      "views": {
       "queue": {
@@ -372,7 +384,10 @@
          "value": 3
         },
         {
-         "label": "best",
+         "label": {
+          "en": "best",
+          "ko": "best (최장 길이)"
+         },
          "value": 3,
          "mark": "good"
         }
@@ -382,8 +397,8 @@
     },
     {
      "caption": {
-      "en": "queue[3] = 'z' joins the window: that makes 3 genres, more than 2. Drop from the left until the window is back to 2: \"yy\" leaves and genre y drops to 0, left = 2. Window \"xz\": length 2, best stays 3.",
-      "ko": "queue[3] = 'z': 구간에 넣습니다. 장르가 3종류로 k = 2보다 많습니다. 장르가 2종류가 될 때까지 왼쪽에서 뺍니다: \"yy\". 장르 y의 개수가 0이 되어 빠지고 left = 2. 구간 \"xz\": 길이 2, best = 3 그대로."
+      "en": "queue[3] = 'z' joins the window: that makes 3 genres, more than 2, so drop from the left until it is back to 2: \"yy\" leaves, genre y drops to 0 and left = 2. Window \"xz\": length 2, best stays 3.",
+      "ko": "queue[3] = 'z': 구간에 넣으면 장르가 3종류로 k = 2보다 많아, 2종류가 될 때까지 왼쪽에서 \"yy\" 태그를 빼고 left = 2입니다(장르 y의 개수가 0). 구간 \"xz\": 길이 2, best = 3 그대로."
      },
      "views": {
       "queue": {
@@ -467,7 +482,10 @@
          "value": 2
         },
         {
-         "label": "best",
+         "label": {
+          "en": "best",
+          "ko": "best (최장 길이)"
+         },
          "value": 3,
          "mark": null
         }
@@ -478,7 +496,7 @@
     {
      "caption": {
       "en": "queue[4] = 'x' joins the window: 2 genres, within k = 2. Window \"xzx\": length 3, best stays 3.",
-      "ko": "queue[4] = 'x': 구간에 넣습니다. 장르 2종류로 k = 2 이내입니다. 구간 \"xzx\": 길이 3, best = 3 그대로."
+      "ko": "queue[4] = 'x': 구간에 넣으면 장르 2종류로 k = 2 이내입니다. 구간 \"xzx\": 길이 3, best = 3 그대로."
      },
      "views": {
       "queue": {
@@ -560,7 +578,10 @@
          "value": 3
         },
         {
-         "label": "best",
+         "label": {
+          "en": "best",
+          "ko": "best (최장 길이)"
+         },
          "value": 3,
          "mark": null
         }
@@ -571,7 +592,7 @@
     {
      "caption": {
       "en": "queue[5] = 'x' joins the window: 2 genres, within k = 2. Window \"xzxx\": length 4 beats best, so best = 4.",
-      "ko": "queue[5] = 'x': 구간에 넣습니다. 장르 2종류로 k = 2 이내입니다. 구간 \"xzxx\": 길이 4: best보다 길어 best = 4."
+      "ko": "queue[5] = 'x': 구간에 넣으면 장르 2종류로 k = 2 이내입니다. 구간 \"xzxx\": 길이 4로 best보다 길어 best = 4."
      },
      "views": {
       "queue": {
@@ -652,7 +673,10 @@
          "value": 4
         },
         {
-         "label": "best",
+         "label": {
+          "en": "best",
+          "ko": "best (최장 길이)"
+         },
          "value": 4,
          "mark": "good"
         }
@@ -663,7 +687,7 @@
     {
      "caption": {
       "en": "queue[6] = 'z' joins the window: 2 genres, within k = 2. Window \"xzxxz\": length 5 beats best, so best = 5.",
-      "ko": "queue[6] = 'z': 구간에 넣습니다. 장르 2종류로 k = 2 이내입니다. 구간 \"xzxxz\": 길이 5: best보다 길어 best = 5."
+      "ko": "queue[6] = 'z': 구간에 넣으면 장르 2종류로 k = 2 이내입니다. 구간 \"xzxxz\": 길이 5로 best보다 길어 best = 5."
      },
      "views": {
       "queue": {
@@ -743,7 +767,10 @@
          "value": 5
         },
         {
-         "label": "best",
+         "label": {
+          "en": "best",
+          "ko": "best (최장 길이)"
+         },
          "value": 5,
          "mark": "good"
         }
@@ -753,8 +780,8 @@
     },
     {
      "caption": {
-      "en": "Every tag added. The longest window seen was \"xzxxz\" (queue[2..6]), length 5. Answer 5.",
-      "ko": "모든 태그를 넣었습니다. 가장 긴 구간은 \"xzxxz\"(queue[2..6]), 길이 5입니다. 답은 5입니다."
+      "en": "Every tag added, and the longest window seen was the last one, \"xzxxz\" (queue[2..6]), length 5. Answer 5.",
+      "ko": "모든 태그를 넣었고, 가장 긴 구간은 마지막 구간 \"xzxxz\"(queue[2..6]), 길이 5입니다. 답은 5입니다."
      },
      "views": {
       "queue": {
@@ -808,7 +835,18 @@
          ]
         }
        ],
-       "marks": {}
+       "marks": {
+        "path": [
+         [
+          0,
+          0
+         ],
+         [
+          1,
+          0
+         ]
+        ]
+       }
       },
       "state": {
        "items": [
@@ -831,9 +869,12 @@
          "value": 5
         },
         {
-         "label": "best",
+         "label": {
+          "en": "best",
+          "ko": "best (최장 길이)"
+         },
          "value": 5,
-         "mark": "good"
+         "mark": "path"
         }
        ]
       }
@@ -915,7 +956,10 @@
          "value": 0
         },
         {
-         "label": "best",
+         "label": {
+          "en": "best",
+          "ko": "best (최장 길이)"
+         },
          "value": 0,
          "mark": null
         }
@@ -926,7 +970,7 @@
     {
      "caption": {
       "en": "queue[0] = 'r' joins the window: 1 genre, within k = 1. Window \"r\": length 1 beats best, so best = 1.",
-      "ko": "queue[0] = 'r': 구간에 넣습니다. 장르 1종류로 k = 1 이내입니다. 구간 \"r\": 길이 1: best보다 길어 best = 1."
+      "ko": "queue[0] = 'r': 구간에 넣으면 장르 1종류로 k = 1 이내입니다. 구간 \"r\": 길이 1로 best보다 길어 best = 1."
      },
      "views": {
       "queue": {
@@ -1002,7 +1046,10 @@
          "value": 1
         },
         {
-         "label": "best",
+         "label": {
+          "en": "best",
+          "ko": "best (최장 길이)"
+         },
          "value": 1,
          "mark": "good"
         }
@@ -1013,7 +1060,7 @@
     {
      "caption": {
       "en": "queue[1] = 'r' joins the window: 1 genre, within k = 1. Window \"rr\": length 2 beats best, so best = 2.",
-      "ko": "queue[1] = 'r': 구간에 넣습니다. 장르 1종류로 k = 1 이내입니다. 구간 \"rr\": 길이 2: best보다 길어 best = 2."
+      "ko": "queue[1] = 'r': 구간에 넣으면 장르 1종류로 k = 1 이내입니다. 구간 \"rr\": 길이 2로 best보다 길어 best = 2."
      },
      "views": {
       "queue": {
@@ -1088,7 +1135,10 @@
          "value": 2
         },
         {
-         "label": "best",
+         "label": {
+          "en": "best",
+          "ko": "best (최장 길이)"
+         },
          "value": 2,
          "mark": "good"
         }
@@ -1099,7 +1149,7 @@
     {
      "caption": {
       "en": "queue[2] = 'r' joins the window: 1 genre, within k = 1. Window \"rrr\": length 3 beats best, so best = 3.",
-      "ko": "queue[2] = 'r': 구간에 넣습니다. 장르 1종류로 k = 1 이내입니다. 구간 \"rrr\": 길이 3: best보다 길어 best = 3."
+      "ko": "queue[2] = 'r': 구간에 넣으면 장르 1종류로 k = 1 이내입니다. 구간 \"rrr\": 길이 3으로 best보다 길어 best = 3."
      },
      "views": {
       "queue": {
@@ -1173,7 +1223,10 @@
          "value": 3
         },
         {
-         "label": "best",
+         "label": {
+          "en": "best",
+          "ko": "best (최장 길이)"
+         },
          "value": 3,
          "mark": "good"
         }
@@ -1184,7 +1237,7 @@
     {
      "caption": {
       "en": "queue[3] = 'r' joins the window: 1 genre, within k = 1. Window \"rrrr\": length 4 beats best, so best = 4.",
-      "ko": "queue[3] = 'r': 구간에 넣습니다. 장르 1종류로 k = 1 이내입니다. 구간 \"rrrr\": 길이 4: best보다 길어 best = 4."
+      "ko": "queue[3] = 'r': 구간에 넣으면 장르 1종류로 k = 1 이내입니다. 구간 \"rrrr\": 길이 4로 best보다 길어 best = 4."
      },
      "views": {
       "queue": {
@@ -1257,7 +1310,10 @@
          "value": 4
         },
         {
-         "label": "best",
+         "label": {
+          "en": "best",
+          "ko": "best (최장 길이)"
+         },
          "value": 4,
          "mark": "good"
         }
@@ -1268,7 +1324,7 @@
     {
      "caption": {
       "en": "queue[4] = 'r' joins the window: 1 genre, within k = 1. Window \"rrrrr\": length 5 beats best, so best = 5.",
-      "ko": "queue[4] = 'r': 구간에 넣습니다. 장르 1종류로 k = 1 이내입니다. 구간 \"rrrrr\": 길이 5: best보다 길어 best = 5."
+      "ko": "queue[4] = 'r': 구간에 넣으면 장르 1종류로 k = 1 이내입니다. 구간 \"rrrrr\": 길이 5로 best보다 길어 best = 5."
      },
      "views": {
       "queue": {
@@ -1340,7 +1396,10 @@
          "value": 5
         },
         {
-         "label": "best",
+         "label": {
+          "en": "best",
+          "ko": "best (최장 길이)"
+         },
          "value": 5,
          "mark": "good"
         }
@@ -1351,7 +1410,7 @@
     {
      "caption": {
       "en": "queue[5] = 'r' joins the window: 1 genre, within k = 1. Window \"rrrrrr\": length 6 beats best, so best = 6.",
-      "ko": "queue[5] = 'r': 구간에 넣습니다. 장르 1종류로 k = 1 이내입니다. 구간 \"rrrrrr\": 길이 6: best보다 길어 best = 6."
+      "ko": "queue[5] = 'r': 구간에 넣으면 장르 1종류로 k = 1 이내입니다. 구간 \"rrrrrr\": 길이 6으로 best보다 길어 best = 6."
      },
      "views": {
       "queue": {
@@ -1421,7 +1480,10 @@
          "value": 6
         },
         {
-         "label": "best",
+         "label": {
+          "en": "best",
+          "ko": "best (최장 길이)"
+         },
          "value": 6,
          "mark": "good"
         }
@@ -1431,8 +1493,8 @@
     },
     {
      "caption": {
-      "en": "Every tag added. The longest window seen was \"rrrrrr\" (queue[0..5]), length 6. Answer 6.",
-      "ko": "모든 태그를 넣었습니다. 가장 긴 구간은 \"rrrrrr\"(queue[0..5]), 길이 6입니다. 답은 6입니다."
+      "en": "Every tag added, and the longest window seen was the last one, \"rrrrrr\" (queue[0..5]), length 6. Answer 6.",
+      "ko": "모든 태그를 넣었고, 가장 긴 구간은 마지막 구간 \"rrrrrr\"(queue[0..5]), 길이 6입니다. 답은 6입니다."
      },
      "views": {
       "queue": {
@@ -1477,7 +1539,14 @@
          ]
         }
        ],
-       "marks": {}
+       "marks": {
+        "path": [
+         [
+          0,
+          0
+         ]
+        ]
+       }
       },
       "state": {
        "items": [
@@ -1500,9 +1569,12 @@
          "value": 6
         },
         {
-         "label": "best",
+         "label": {
+          "en": "best",
+          "ko": "best (최장 길이)"
+         },
          "value": 6,
-         "mark": "good"
+         "mark": "path"
         }
        ]
       }
@@ -1584,7 +1656,10 @@
          "value": 0
         },
         {
-         "label": "best",
+         "label": {
+          "en": "best",
+          "ko": "best (최장 길이)"
+         },
          "value": 0,
          "mark": null
         }
@@ -1595,7 +1670,7 @@
     {
      "caption": {
       "en": "queue[0] = 'q' joins the window: 1 genre, within k = 1. Window \"q\": length 1 beats best, so best = 1.",
-      "ko": "queue[0] = 'q': 구간에 넣습니다. 장르 1종류로 k = 1 이내입니다. 구간 \"q\": 길이 1: best보다 길어 best = 1."
+      "ko": "queue[0] = 'q': 구간에 넣으면 장르 1종류로 k = 1 이내입니다. 구간 \"q\": 길이 1로 best보다 길어 best = 1."
      },
      "views": {
       "queue": {
@@ -1671,7 +1746,10 @@
          "value": 1
         },
         {
-         "label": "best",
+         "label": {
+          "en": "best",
+          "ko": "best (최장 길이)"
+         },
          "value": 1,
          "mark": "good"
         }
@@ -1681,8 +1759,8 @@
     },
     {
      "caption": {
-      "en": "queue[1] = 'w' joins the window: that makes 2 genres, more than 1. Drop from the left until the window is back to 1: \"q\" leaves and genre q drops to 0, left = 1. Window \"w\": length 1, best stays 1.",
-      "ko": "queue[1] = 'w': 구간에 넣습니다. 장르가 2종류로 k = 1보다 많습니다. 장르가 1종류가 될 때까지 왼쪽에서 뺍니다: \"q\". 장르 q의 개수가 0이 되어 빠지고 left = 1. 구간 \"w\": 길이 1, best = 1 그대로."
+      "en": "queue[1] = 'w' joins the window: that makes 2 genres, more than 1, so drop from the left until it is back to 1: \"q\" leaves, genre q drops to 0 and left = 1. Window \"w\": length 1, best stays 1.",
+      "ko": "queue[1] = 'w': 구간에 넣으면 장르가 2종류로 k = 1보다 많아, 1종류가 될 때까지 왼쪽에서 \"q\" 태그를 빼고 left = 1입니다(장르 q의 개수가 0). 구간 \"w\": 길이 1, best = 1 그대로."
      },
      "views": {
       "queue": {
@@ -1759,7 +1837,10 @@
          "value": 1
         },
         {
-         "label": "best",
+         "label": {
+          "en": "best",
+          "ko": "best (최장 길이)"
+         },
          "value": 1,
          "mark": null
         }
@@ -1769,8 +1850,8 @@
     },
     {
      "caption": {
-      "en": "queue[2] = 'e' joins the window: that makes 2 genres, more than 1. Drop from the left until the window is back to 1: \"w\" leaves and genre w drops to 0, left = 2. Window \"e\": length 1, best stays 1.",
-      "ko": "queue[2] = 'e': 구간에 넣습니다. 장르가 2종류로 k = 1보다 많습니다. 장르가 1종류가 될 때까지 왼쪽에서 뺍니다: \"w\". 장르 w의 개수가 0이 되어 빠지고 left = 2. 구간 \"e\": 길이 1, best = 1 그대로."
+      "en": "queue[2] = 'e' joins the window: that makes 2 genres, more than 1, so drop from the left until it is back to 1: \"w\" leaves, genre w drops to 0 and left = 2. Window \"e\": length 1, best stays 1.",
+      "ko": "queue[2] = 'e': 구간에 넣으면 장르가 2종류로 k = 1보다 많아, 1종류가 될 때까지 왼쪽에서 \"w\" 태그를 빼고 left = 2입니다(장르 w의 개수가 0). 구간 \"e\": 길이 1, best = 1 그대로."
      },
      "views": {
       "queue": {
@@ -1847,7 +1928,10 @@
          "value": 1
         },
         {
-         "label": "best",
+         "label": {
+          "en": "best",
+          "ko": "best (최장 길이)"
+         },
          "value": 1,
          "mark": null
         }
@@ -1857,8 +1941,8 @@
     },
     {
      "caption": {
-      "en": "queue[3] = 'r' joins the window: that makes 2 genres, more than 1. Drop from the left until the window is back to 1: \"e\" leaves and genre e drops to 0, left = 3. Window \"r\": length 1, best stays 1.",
-      "ko": "queue[3] = 'r': 구간에 넣습니다. 장르가 2종류로 k = 1보다 많습니다. 장르가 1종류가 될 때까지 왼쪽에서 뺍니다: \"e\". 장르 e의 개수가 0이 되어 빠지고 left = 3. 구간 \"r\": 길이 1, best = 1 그대로."
+      "en": "queue[3] = 'r' joins the window: that makes 2 genres, more than 1, so drop from the left until it is back to 1: \"e\" leaves, genre e drops to 0 and left = 3. Window \"r\": length 1, best stays 1.",
+      "ko": "queue[3] = 'r': 구간에 넣으면 장르가 2종류로 k = 1보다 많아, 1종류가 될 때까지 왼쪽에서 \"e\" 태그를 빼고 left = 3입니다(장르 e의 개수가 0). 구간 \"r\": 길이 1, best = 1 그대로."
      },
      "views": {
       "queue": {
@@ -1935,7 +2019,10 @@
          "value": 1
         },
         {
-         "label": "best",
+         "label": {
+          "en": "best",
+          "ko": "best (최장 길이)"
+         },
          "value": 1,
          "mark": null
         }
@@ -1945,8 +2032,8 @@
     },
     {
      "caption": {
-      "en": "queue[4] = 't' joins the window: that makes 2 genres, more than 1. Drop from the left until the window is back to 1: \"r\" leaves and genre r drops to 0, left = 4. Window \"t\": length 1, best stays 1.",
-      "ko": "queue[4] = 't': 구간에 넣습니다. 장르가 2종류로 k = 1보다 많습니다. 장르가 1종류가 될 때까지 왼쪽에서 뺍니다: \"r\". 장르 r의 개수가 0이 되어 빠지고 left = 4. 구간 \"t\": 길이 1, best = 1 그대로."
+      "en": "queue[4] = 't' joins the window: that makes 2 genres, more than 1, so drop from the left until it is back to 1: \"r\" leaves, genre r drops to 0 and left = 4. Window \"t\": length 1, best stays 1.",
+      "ko": "queue[4] = 't': 구간에 넣으면 장르가 2종류로 k = 1보다 많아, 1종류가 될 때까지 왼쪽에서 \"r\" 태그를 빼고 left = 4입니다(장르 r의 개수가 0). 구간 \"t\": 길이 1, best = 1 그대로."
      },
      "views": {
       "queue": {
@@ -2023,7 +2110,10 @@
          "value": 1
         },
         {
-         "label": "best",
+         "label": {
+          "en": "best",
+          "ko": "best (최장 길이)"
+         },
          "value": 1,
          "mark": null
         }
@@ -2033,8 +2123,8 @@
     },
     {
      "caption": {
-      "en": "queue[5] = 'y' joins the window: that makes 2 genres, more than 1. Drop from the left until the window is back to 1: \"t\" leaves and genre t drops to 0, left = 5. Window \"y\": length 1, best stays 1.",
-      "ko": "queue[5] = 'y': 구간에 넣습니다. 장르가 2종류로 k = 1보다 많습니다. 장르가 1종류가 될 때까지 왼쪽에서 뺍니다: \"t\". 장르 t의 개수가 0이 되어 빠지고 left = 5. 구간 \"y\": 길이 1, best = 1 그대로."
+      "en": "queue[5] = 'y' joins the window: that makes 2 genres, more than 1, so drop from the left until it is back to 1: \"t\" leaves, genre t drops to 0 and left = 5. Window \"y\": length 1, best stays 1.",
+      "ko": "queue[5] = 'y': 구간에 넣으면 장르가 2종류로 k = 1보다 많아, 1종류가 될 때까지 왼쪽에서 \"t\" 태그를 빼고 left = 5입니다(장르 t의 개수가 0). 구간 \"y\": 길이 1, best = 1 그대로."
      },
      "views": {
       "queue": {
@@ -2111,7 +2201,10 @@
          "value": 1
         },
         {
-         "label": "best",
+         "label": {
+          "en": "best",
+          "ko": "best (최장 길이)"
+         },
          "value": 1,
          "mark": null
         }
@@ -2121,8 +2214,8 @@
     },
     {
      "caption": {
-      "en": "Every tag added. The longest window seen was \"q\" (queue[0..0]), length 1. Answer 1.",
-      "ko": "모든 태그를 넣었습니다. 가장 긴 구간은 \"q\"(queue[0..0]), 길이 1입니다. 답은 1입니다."
+      "en": "Every tag added: the run ended on \"y\" (queue[5..5]), but best = 1 came from \"q\" (queue[0..0]), so that window is drawn. Answer 1.",
+      "ko": "모든 태그를 넣었습니다. 실행은 \"y\"(queue[5..5]) 구간에서 끝났지만 best = 1은 \"q\"(queue[0..0]) 구간의 길이라서 그 구간을 그렸고, 답은 1입니다."
      },
      "views": {
       "queue": {
@@ -2162,13 +2255,20 @@
        ],
        "rows": [
         {
-         "label": "y",
+         "label": "q",
          "cells": [
           1
          ]
         }
        ],
-       "marks": {}
+       "marks": {
+        "path": [
+         [
+          0,
+          0
+         ]
+        ]
+       }
       },
       "state": {
        "items": [
@@ -2191,9 +2291,12 @@
          "value": 1
         },
         {
-         "label": "best",
+         "label": {
+          "en": "best",
+          "ko": "best (최장 길이)"
+         },
          "value": 1,
-         "mark": "good"
+         "mark": "path"
         }
        ]
       }

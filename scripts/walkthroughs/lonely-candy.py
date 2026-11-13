@@ -12,7 +12,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough  # noqa: E402
 
 SLUG = "lonely-candy"
@@ -51,9 +51,9 @@ def solve(frames, run):
                   **answer)
 
     loner = 0
-    frame({"en": f"{len(frames)} {'candy' if len(frames) == 1 else 'candies'}. Start loner at 0 and XOR each candy into it; "
+    frame({"en": f"{len(frames)} {plural(len(frames), 'candy', 'candies')}. Start loner at 0 and XOR each candy into it; "
                  "XOR flips the bits where the candy has a 1.",
-           "ko": f"사탕 {len(frames)}개입니다. loner를 0에서 시작해 사탕마다 XOR합니다. "
+           "ko": f"사탕 {len(frames)}개를 loner = 0에서 시작해 하나씩 XOR합니다. "
                  "XOR은 사탕의 비트가 1인 자리를 뒤집습니다."})
     first_at = {}
     for i, frame_value in enumerate(frames):

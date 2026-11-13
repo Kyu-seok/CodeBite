@@ -138,7 +138,10 @@
          "value": "–"
         },
         {
-         "label": "length",
+         "label": {
+          "en": "length",
+          "ko": "length (길이)"
+         },
          "value": "–"
         }
        ]
@@ -253,7 +256,10 @@
          "value": "–"
         },
         {
-         "label": "length",
+         "label": {
+          "en": "length",
+          "ko": "length (길이)"
+         },
          "value": "–"
         }
        ]
@@ -368,7 +374,10 @@
          "value": "–"
         },
         {
-         "label": "length",
+         "label": {
+          "en": "length",
+          "ko": "length (길이)"
+         },
          "value": "–"
         }
        ]
@@ -483,7 +492,10 @@
          "value": 0
         },
         {
-         "label": "length",
+         "label": {
+          "en": "length",
+          "ko": "length (길이)"
+         },
          "value": "–"
         }
        ]
@@ -492,8 +504,8 @@
     },
     {
      "caption": {
-      "en": "At i = 0, the digits up to the next # read 5: take the next 5 characters, \"hello\", as message 1, whatever they are. Jump to i = 7.",
-      "ko": "i = 0에서 다음 #까지의 숫자는 5입니다. 그 뒤의 문자 5개(\"hello\")를 내용과 상관없이 1번째 메시지로 가져옵니다. 건너뛰어 i = 7에서 계속합니다."
+      "en": "At i = 0, the digits up to the next # read 5: take the next 5 characters, \"hello\", as message 1, whatever they are, then jump to i = 7.",
+      "ko": "i = 0에서 다음 #까지의 숫자 5를 읽고, 그 뒤의 문자 5개(\"hello\")를 내용과 상관없이 1번째 메시지로 가져와 i = 7로 건너뜁니다."
      },
      "views": {
       "messages": {
@@ -627,7 +639,10 @@
          "value": 7
         },
         {
-         "label": "length",
+         "label": {
+          "en": "length",
+          "ko": "length (길이)"
+         },
          "value": 5
         }
        ]
@@ -636,8 +651,8 @@
     },
     {
      "caption": {
-      "en": "At i = 7, the digits up to the next # read 5: take the next 5 characters, \"world\", as message 2, whatever they are. Jump to i = 14.",
-      "ko": "i = 7에서 다음 #까지의 숫자는 5입니다. 그 뒤의 문자 5개(\"world\")를 내용과 상관없이 2번째 메시지로 가져옵니다. 건너뛰어 i = 14에서 계속합니다."
+      "en": "At i = 7, the digits up to the next # read 5: take the next 5 characters, \"world\", as message 2, whatever they are, then jump to i = 14.",
+      "ko": "i = 7에서 다음 #까지의 숫자 5를 읽고, 그 뒤의 문자 5개(\"world\")를 내용과 상관없이 2번째 메시지로 가져와 i = 14로 건너뜁니다."
      },
      "views": {
       "messages": {
@@ -781,7 +796,10 @@
          "value": 14
         },
         {
-         "label": "length",
+         "label": {
+          "en": "length",
+          "ko": "length (길이)"
+         },
          "value": 5
         }
        ]
@@ -934,7 +952,10 @@
          "value": 14
         },
         {
-         "label": "length",
+         "label": {
+          "en": "length",
+          "ko": "length (길이)"
+         },
          "value": 5
         }
        ]
@@ -1022,7 +1043,10 @@
          "value": "–"
         },
         {
-         "label": "length",
+         "label": {
+          "en": "length",
+          "ko": "length (길이)"
+         },
          "value": "–"
         }
        ]
@@ -1110,7 +1134,10 @@
          "value": "–"
         },
         {
-         "label": "length",
+         "label": {
+          "en": "length",
+          "ko": "length (길이)"
+         },
          "value": "–"
         }
        ]
@@ -1195,7 +1222,10 @@
          "value": 0
         },
         {
-         "label": "length",
+         "label": {
+          "en": "length",
+          "ko": "length (길이)"
+         },
          "value": "–"
         }
        ]
@@ -1204,8 +1234,8 @@
     },
     {
      "caption": {
-      "en": "At i = 0, the digits up to the next # read 0: take 0 characters: message 1 is the empty message \"\". Jump to i = 2.",
-      "ko": "i = 0에서 다음 #까지의 숫자는 0입니다. 문자를 0개 가져오므로 1번째 메시지는 빈 메시지 \"\"입니다. 건너뛰어 i = 2에서 계속합니다."
+      "en": "At i = 0, the digits up to the next # read 0: take 0 characters, so message 1 is the empty message \"\", then jump to i = 2.",
+      "ko": "i = 0에서 다음 #까지의 숫자 0을 읽고, 문자를 0개 가져와 1번째 메시지를 빈 메시지로 두고 i = 2로 건너뜁니다."
      },
      "views": {
       "messages": {
@@ -1303,7 +1333,10 @@
          "value": 2
         },
         {
-         "label": "length",
+         "label": {
+          "en": "length",
+          "ko": "length (길이)"
+         },
          "value": 0
         }
        ]
@@ -1408,7 +1441,10 @@
          "value": 2
         },
         {
-         "label": "length",
+         "label": {
+          "en": "length",
+          "ko": "length (길이)"
+         },
          "value": 0
         }
        ]
@@ -1520,7 +1556,10 @@
          "value": "–"
         },
         {
-         "label": "length",
+         "label": {
+          "en": "length",
+          "ko": "length (길이)"
+         },
          "value": "–"
         }
        ]
@@ -1632,7 +1671,10 @@
          "value": "–"
         },
         {
-         "label": "length",
+         "label": {
+          "en": "length",
+          "ko": "length (길이)"
+         },
          "value": "–"
         }
        ]
@@ -1744,7 +1786,10 @@
          "value": "–"
         },
         {
-         "label": "length",
+         "label": {
+          "en": "length",
+          "ko": "length (길이)"
+         },
          "value": "–"
         }
        ]
@@ -1856,7 +1901,10 @@
          "value": "–"
         },
         {
-         "label": "length",
+         "label": {
+          "en": "length",
+          "ko": "length (길이)"
+         },
          "value": "–"
         }
        ]
@@ -1981,7 +2029,10 @@
          "value": 0
         },
         {
-         "label": "length",
+         "label": {
+          "en": "length",
+          "ko": "length (길이)"
+         },
          "value": "–"
         }
        ]
@@ -1990,8 +2041,8 @@
     },
     {
      "caption": {
-      "en": "At i = 0, the digits up to the next # read 0: take 0 characters: message 1 is the empty message \"\". Jump to i = 2.",
-      "ko": "i = 0에서 다음 #까지의 숫자는 0입니다. 문자를 0개 가져오므로 1번째 메시지는 빈 메시지 \"\"입니다. 건너뛰어 i = 2에서 계속합니다."
+      "en": "At i = 0, the digits up to the next # read 0: take 0 characters, so message 1 is the empty message \"\", then jump to i = 2.",
+      "ko": "i = 0에서 다음 #까지의 숫자 0을 읽고, 문자를 0개 가져와 1번째 메시지를 빈 메시지로 두고 i = 2로 건너뜁니다."
      },
      "views": {
       "messages": {
@@ -2129,7 +2180,10 @@
          "value": 2
         },
         {
-         "label": "length",
+         "label": {
+          "en": "length",
+          "ko": "length (길이)"
+         },
          "value": 0
         }
        ]
@@ -2138,8 +2192,8 @@
     },
     {
      "caption": {
-      "en": "At i = 2, the digits up to the next # read 0: take 0 characters: message 2 is the empty message \"\". Jump to i = 4.",
-      "ko": "i = 2에서 다음 #까지의 숫자는 0입니다. 문자를 0개 가져오므로 2번째 메시지는 빈 메시지 \"\"입니다. 건너뛰어 i = 4에서 계속합니다."
+      "en": "At i = 2, the digits up to the next # read 0: take 0 characters, so message 2 is the empty message \"\", then jump to i = 4.",
+      "ko": "i = 2에서 다음 #까지의 숫자 0을 읽고, 문자를 0개 가져와 2번째 메시지를 빈 메시지로 두고 i = 4로 건너뜁니다."
      },
      "views": {
       "messages": {
@@ -2287,7 +2341,10 @@
          "value": 4
         },
         {
-         "label": "length",
+         "label": {
+          "en": "length",
+          "ko": "length (길이)"
+         },
          "value": 0
         }
        ]
@@ -2296,8 +2353,8 @@
     },
     {
      "caption": {
-      "en": "At i = 4, the digits up to the next # read 0: take 0 characters: message 3 is the empty message \"\". Jump to i = 6.",
-      "ko": "i = 4에서 다음 #까지의 숫자는 0입니다. 문자를 0개 가져오므로 3번째 메시지는 빈 메시지 \"\"입니다. 건너뛰어 i = 6에서 계속합니다."
+      "en": "At i = 4, the digits up to the next # read 0: take 0 characters, so message 3 is the empty message \"\", then jump to i = 6.",
+      "ko": "i = 4에서 다음 #까지의 숫자 0을 읽고, 문자를 0개 가져와 3번째 메시지를 빈 메시지로 두고 i = 6으로 건너뜁니다."
      },
      "views": {
       "messages": {
@@ -2455,7 +2512,10 @@
          "value": 6
         },
         {
-         "label": "length",
+         "label": {
+          "en": "length",
+          "ko": "length (길이)"
+         },
          "value": 0
         }
        ]
@@ -2636,7 +2696,10 @@
          "value": 6
         },
         {
-         "label": "length",
+         "label": {
+          "en": "length",
+          "ko": "length (길이)"
+         },
          "value": 0
         }
        ]
@@ -2740,7 +2803,10 @@
          "value": "–"
         },
         {
-         "label": "length",
+         "label": {
+          "en": "length",
+          "ko": "length (길이)"
+         },
          "value": "–"
         }
        ]
@@ -2847,7 +2913,10 @@
          "value": "–"
         },
         {
-         "label": "length",
+         "label": {
+          "en": "length",
+          "ko": "length (길이)"
+         },
          "value": "–"
         }
        ]
@@ -2952,7 +3021,10 @@
          "value": "–"
         },
         {
-         "label": "length",
+         "label": {
+          "en": "length",
+          "ko": "length (길이)"
+         },
          "value": "–"
         }
        ]
@@ -3061,7 +3133,10 @@
          "value": 0
         },
         {
-         "label": "length",
+         "label": {
+          "en": "length",
+          "ko": "length (길이)"
+         },
          "value": "–"
         }
        ]
@@ -3070,8 +3145,8 @@
     },
     {
      "caption": {
-      "en": "At i = 0, the digits up to the next # read 3: take the next 3 characters, \"7#x\", as message 1, whatever they are. Jump to i = 5. The # inside it is only a character: unpack never searches the counted characters for a marker.",
-      "ko": "i = 0에서 다음 #까지의 숫자는 3입니다. 그 뒤의 문자 3개(\"7#x\")를 내용과 상관없이 1번째 메시지로 가져옵니다. 건너뛰어 i = 5에서 계속합니다. 그 안의 # 기호는 그냥 문자일 뿐입니다. unpack은 길이만큼 가져오는 문자 안에서 구분자를 찾지 않습니다."
+      "en": "At i = 0, the digits up to the next # read 3: take the next 3 characters, \"7#x\", as message 1, whatever they are, then jump to i = 5. The # inside it is only a character: unpack never searches the counted characters for a marker.",
+      "ko": "i = 0에서 다음 #까지의 숫자 3을 읽고, 그 뒤의 문자 3개(\"7#x\")를 내용과 상관없이 1번째 메시지로 가져와 i = 5로 건너뜁니다. 그 안의 # 기호는 그냥 문자일 뿐, unpack은 길이만큼 가져오는 문자 안에서 구분자를 찾지 않습니다."
      },
      "views": {
       "messages": {
@@ -3197,7 +3272,10 @@
          "value": 5
         },
         {
-         "label": "length",
+         "label": {
+          "en": "length",
+          "ko": "length (길이)"
+         },
          "value": 3
         }
        ]
@@ -3206,8 +3284,8 @@
     },
     {
      "caption": {
-      "en": "At i = 5, the digits up to the next # read 1: take the next 1 character, \"#\", as message 2, whatever they are. Jump to i = 8. The # inside it is only a character: unpack never searches the counted characters for a marker.",
-      "ko": "i = 5에서 다음 #까지의 숫자는 1입니다. 그 뒤의 문자 1개(\"#\")를 내용과 상관없이 2번째 메시지로 가져옵니다. 건너뛰어 i = 8에서 계속합니다. 그 안의 # 기호는 그냥 문자일 뿐입니다. unpack은 길이만큼 가져오는 문자 안에서 구분자를 찾지 않습니다."
+      "en": "At i = 5, the digits up to the next # read 1: take the next 1 character, \"#\", as message 2, whatever they are, then jump to i = 8. The # inside it is only a character: unpack never searches the counted characters for a marker.",
+      "ko": "i = 5에서 다음 #까지의 숫자 1을 읽고, 그 뒤의 문자 1개(\"#\")를 내용과 상관없이 2번째 메시지로 가져와 i = 8로 건너뜁니다. 그 안의 # 기호는 그냥 문자일 뿐, unpack은 길이만큼 가져오는 문자 안에서 구분자를 찾지 않습니다."
      },
      "views": {
       "messages": {
@@ -3341,7 +3419,10 @@
          "value": 8
         },
         {
-         "label": "length",
+         "label": {
+          "en": "length",
+          "ko": "length (길이)"
+         },
          "value": 1
         }
        ]
@@ -3488,7 +3569,10 @@
          "value": 8
         },
         {
-         "label": "length",
+         "label": {
+          "en": "length",
+          "ko": "length (길이)"
+         },
          "value": 1
         }
        ]

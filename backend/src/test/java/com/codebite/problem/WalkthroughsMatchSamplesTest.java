@@ -14,11 +14,14 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -29,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * name, the answer on the last frame only); its sample runs are, in order, exactly the problem's
  * sample Test Cases by {@code sampleInput} and {@code expected}, compared trimmed as the Grader
  * compares; each run ends on its {@code expected}; and any run marked {@code extra} comes after
- * the sample runs. Correcting, adding or reordering a sample without regenerating the Walkthrough
+ * the sample runs; and every caption is one or two sentences in each language (#258). Correcting, adding or reordering a sample without regenerating the Walkthrough
  * (its tracer is {@code scripts/walkthroughs/<slug>.py}) fails here.
  */
 class WalkthroughsMatchSamplesTest {
@@ -40,6 +43,13 @@ class WalkthroughsMatchSamplesTest {
 
     private static final List<String> VIEW_TYPES = List.of("grid", "array", "graph", "table", "vars");
     private static final List<String> MARKS = List.of("lit", "good", "bad", "path", "dim");
+
+    /**
+     * Where a sentence ends, in English or Korean: a full stop, question mark or exclamation mark with more text after
+     * the space that follows it. A decimal point has no space after it, and "e.g." and "i.e." end none.
+     */
+    private static final Pattern SENTENCE_END = Pattern.compile("(?<!\\be\\.g)(?<!\\bi\\.e)[.?!](?=\\s+\\S)");
+    private static final int MAX_CAPTION_SENTENCES = 2;
 
     /** A sample Test Case's input and expected output, as PostgreSQL stores them. */
     record Sample(String input, String expected) {
@@ -79,7 +89,7 @@ class WalkthroughsMatchSamplesTest {
             "unknown view type", "mark outside the grid", "answer on a middle frame", "no answer on the last frame",
             "answer not the expected", "expected not the sample's", "sampleInput not the sample's", "missing run",
             "swapped runs", "extra run before a sample run", "extra run with a sampleInput", "run past the samples",
-            "empty caption",
+            "empty caption", "three-sentence caption", "three-sentence Korean caption",
     })
     void aBrokenWalkthroughIsCaught(String breakage) throws Exception {
         ObjectNode walkthrough = rottingDonuts();
@@ -104,6 +114,10 @@ class WalkthroughsMatchSamplesTest {
             case "extra run with a sampleInput" -> runs.add(((ObjectNode) runs.get(0).deepCopy()).put("extra", true));
             case "run past the samples" -> runs.add(runs.get(0).deepCopy());
             case "empty caption" -> ((ObjectNode) frames.get(0).get("caption")).put("ko", " ");
+            case "three-sentence caption" -> ((ObjectNode) frames.get(0).get("caption"))
+                    .put("en", "Minute 0. Two donuts are stale. Spread from both.");
+            case "three-sentence Korean caption" -> ((ObjectNode) frames.get(0).get("caption"))
+                    .put("ko", "0분입니다. 상한 도넛이 둘입니다. 둘 다에서 퍼집니다.");
             default -> throw new IllegalArgumentException(breakage);
         }
         List<String> found = mismatches("rotting-donuts", walkthrough, SAMPLES.get("rotting-donuts"));
@@ -118,6 +132,13 @@ class WalkthroughsMatchSamplesTest {
                 samples.get(1), new Sample(samples.get(2).input(), " " + samples.get(2).expected() + "\n"));
         List<String> found = mismatches("rotting-donuts", rottingDonuts(), padded);
         assertTrue(found.isEmpty(), String.join("\n", found));
+    }
+
+    @Test
+    void sentencesEndAtAStopBeforeMoreTextNotAtADecimalOrAnAbbreviation() {
+        assertEquals(1, sentences("Take 1.5 of them, e.g. the first, i.e. the stale one."));
+        assertEquals(2, sentences("Seat 7: a run starts here. Is 3 > 0? "));
+        assertEquals(3, sentences("k = 4. Read left to right! Answer 2."));
     }
 
     @Test
@@ -226,7 +247,16 @@ class WalkthroughsMatchSamplesTest {
             for (int f = 0; f < frames.size(); f++) {
                 JsonNode frame = frames.get(f);
                 String at = name + " frame " + (f + 1) + " of " + frames.size();
-                if (!isText(frame.get("caption")) || !hasText(frame.get("caption"))) p.add(at + ": caption missing");
+                if (!isText(frame.get("caption")) || !hasText(frame.get("caption"))) {
+                    p.add(at + ": caption missing");
+                } else {
+                    texts(frame.get("caption")).forEach((language, caption) -> {
+                        if (sentences(caption) > MAX_CAPTION_SENTENCES) {
+                            p.add(at + ": " + language + " caption has " + sentences(caption) + " sentences, at most "
+                                    + MAX_CAPTION_SENTENCES + ": " + quote(caption));
+                        }
+                    });
+                }
                 if (frame.has("answer") && f != frames.size() - 1) {
                     p.add(at + ": answer " + frame.get("answer") + " on a frame before the last; only the last "
                             + "frame carries the answer");
@@ -370,6 +400,22 @@ class WalkthroughsMatchSamplesTest {
         if (!text.isObject() || text.isEmpty()) return false;
         for (JsonNode value : text) if (!value.isTextual()) return false;
         return true;
+    }
+
+    /** Text by language: a plain string is "en"; Korean ends its sentences with the same marks. */
+    private static Map<String, String> texts(JsonNode text) {
+        Map<String, String> byLanguage = new LinkedHashMap<>();
+        if (text.isTextual()) {
+            byLanguage.put("en", text.asText());
+        } else {
+            text.fields().forEachRemaining(language -> byLanguage.put(language.getKey(), language.getValue().asText()));
+        }
+        return byLanguage;
+    }
+
+    /** How many sentences {@code text} has, by {@link #SENTENCE_END}. */
+    static int sentences(String text) {
+        return 1 + (int) SENTENCE_END.matcher(text.strip()).results().count();
     }
 
     /** Not blank, in any language. */

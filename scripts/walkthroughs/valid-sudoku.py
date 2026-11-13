@@ -95,7 +95,7 @@ def solve(board, run):
                 frame({"en": f"Cell {r},{c} holds {digit}, but {names_en[kind]} already has a {digit} "
                              f"(cell {first[0]},{first[1]}): a repeat, so the board is invalid. Answer false.",
                        "ko": f"{r},{c} 칸의 숫자 {digit}: {names_ko[kind]}에 같은 숫자가 이미 있습니다 "
-                             f"({first[0]},{first[1]} 칸). 중복이므로 보드는 유효하지 않습니다. 답은 false입니다."},
+                             f"({first[0]},{first[1]} 칸). 중복이므로 보드는 유효하지 않고, 답은 false입니다."},
                       cell=(r, c), bad=[(r, c), first], lit_keys=[k for k in keys if k not in hits],
                       bad_keys=hits, answer="false")
                 return

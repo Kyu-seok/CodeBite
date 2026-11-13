@@ -12,7 +12,10 @@
   {
    "id": "socks",
    "type": "array",
-   "title": "socks"
+   "title": {
+    "en": "socks",
+    "ko": "socks (양말 번호)"
+   }
   },
   {
    "id": "state",

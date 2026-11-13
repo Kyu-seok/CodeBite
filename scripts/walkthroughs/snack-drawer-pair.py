@@ -12,7 +12,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import driver_list, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough  # noqa: E402
 
 SLUG = "snack-drawer-pair"
@@ -45,7 +45,7 @@ def solve(snacks, target, run):
                         "rows": [{"label": str(c), "cells": [j]} for c, j in seen.items()],
                         "marks": seen_marks or {}},
                   state={"items": [
-                      {"label": "target", "value": target},
+                      {"label": {"en": "target", "ko": "target (목표 칼로리)"}, "value": target},
                       {"label": {"en": "partner needed", "ko": "필요한 짝"},
                        "value": "–" if partner is None else partner}]},
                   **answer)
@@ -59,13 +59,13 @@ def solve(snacks, target, run):
             j = seen[partner]
             row = list(seen).index(partner)
             result = [j, i]
-            answer = json.dumps(result, separators=(",", ":"))
+            answer = driver_list(result)
             frame({"en": f"Snack {i} has {calories}, so it needs {target} − {calories} = {partner}. "
-                         f"{partner} is in the map at index {j}: snacks {j} and {i} sum to {target}. "
-                         f"Answer {answer}.",
+                         f"{partner} is in the map at index {j}, so snacks {j} and {i} sum to {target}: "
+                         f"answer {answer}.",
                    "ko": f"인덱스 {i}의 간식은 {calories}칼로리라서 {target} − {calories} = {partner}칼로리가 필요합니다. "
-                         f"맵의 인덱스 {j}에 {partner}칼로리가 있으니 간식 {j}, {i}의 합이 {target}칼로리입니다. "
-                         f"답: {answer}."},
+                         f"맵의 인덱스 {j}에 {partner}칼로리가 있으니 간식 {j}, {i}의 합이 {target}칼로리이고, "
+                         f"답은 {answer}입니다."},
                   path=[j, i], dim=range(i + 1, len(snacks)),
                   seen_marks={"path": [[row, 0]]}, answer=answer)
             return

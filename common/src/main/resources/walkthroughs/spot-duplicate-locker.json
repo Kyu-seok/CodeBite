@@ -12,7 +12,10 @@
   {
    "id": "lockers",
    "type": "array",
-   "title": "lockers"
+   "title": {
+    "en": "lockers",
+    "ko": "lockers (사물함 번호)"
+   }
   },
   {
    "id": "seen",
@@ -34,8 +37,8 @@
    "frames": [
     {
      "caption": {
-      "en": "Read the numbers left to right, keeping a set of every number seen so far.",
-      "ko": "번호를 왼쪽부터 읽으며, 지금까지 본 번호를 모두 집합에 담습니다."
+      "en": "Read the 4 numbers (7, 2, 9, 7) left to right, keeping a set of every number seen so far, which starts empty.",
+      "ko": "번호 4개(7, 2, 9, 7)를 왼쪽부터 읽으며, 지금까지 본 번호를 모두 집합에 담습니다. 집합은 처음에 비어 있습니다."
      },
      "views": {
       "lockers": {
@@ -228,7 +231,7 @@
     {
      "caption": {
       "en": "Locker 3 is 7, and 7 is already in the set: index 0 has it too. A repeat, so the answer is true without reading further.",
-      "ko": "인덱스 3의 7번은 이미 집합에 있습니다. 인덱스 0에도 같은 번호가 있으니 중복입니다. 더 읽지 않고 답은 true입니다."
+      "ko": "인덱스 3의 7번은 이미 집합에 있고, 인덱스 0에도 같은 번호가 있으니 중복입니다. 더 읽지 않고 답은 true입니다."
      },
      "views": {
       "lockers": {
@@ -290,8 +293,8 @@
    "frames": [
     {
      "caption": {
-      "en": "Read the numbers left to right, keeping a set of every number seen so far.",
-      "ko": "번호를 왼쪽부터 읽으며, 지금까지 본 번호를 모두 집합에 담습니다."
+      "en": "Read the 4 numbers (11, 22, 33, 44) left to right, keeping a set of every number seen so far, which starts empty.",
+      "ko": "번호 4개(11, 22, 33, 44)를 왼쪽부터 읽으며, 지금까지 본 번호를 모두 집합에 담습니다. 집합은 처음에 비어 있습니다."
      },
      "views": {
       "lockers": {
@@ -612,8 +615,8 @@
    "frames": [
     {
      "caption": {
-      "en": "Read the numbers left to right, keeping a set of every number seen so far.",
-      "ko": "번호를 왼쪽부터 읽으며, 지금까지 본 번호를 모두 집합에 담습니다."
+      "en": "Read the 7 numbers (5, 8, 5, 3, 8, 1, 3) left to right, keeping a set of every number seen so far, which starts empty.",
+      "ko": "번호 7개(5, 8, 5, 3, 8, 1, 3)를 왼쪽부터 읽으며, 지금까지 본 번호를 모두 집합에 담습니다. 집합은 처음에 비어 있습니다."
      },
      "views": {
       "lockers": {
@@ -769,7 +772,7 @@
     {
      "caption": {
       "en": "Locker 2 is 5, and 5 is already in the set: index 0 has it too. A repeat, so the answer is true without reading further.",
-      "ko": "인덱스 2의 5번은 이미 집합에 있습니다. 인덱스 0에도 같은 번호가 있으니 중복입니다. 더 읽지 않고 답은 true입니다."
+      "ko": "인덱스 2의 5번은 이미 집합에 있고, 인덱스 0에도 같은 번호가 있으니 중복입니다. 더 읽지 않고 답은 true입니다."
      },
      "views": {
       "lockers": {

@@ -13,7 +13,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import driver_list, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough  # noqa: E402
 
 SLUG = "rotate-pixel-art"
@@ -72,7 +72,7 @@ def solve(image, run):
                "ko": f"{r}행을 뒤집습니다: {before} → {row}." + (
                    " 2단계는 전치한 이미지를 좌우로 뒤집습니다." if first else "")},
               reverse, r, good=[(r, c) for c in range(n)])
-    answer = json.dumps(image, separators=(",", ":"))
+    answer = driver_list(image)
     frame({"en": f"Done in place: the pixel from r,c is now at c,{n - 1}−r, which is a clockwise turn. "
                  f"Answer {answer}.",
            "ko": f"제자리에서 끝났습니다: r,c 칸의 픽셀이 이제 c,{n - 1}−r 칸에 있으므로 시계 방향 회전입니다. "

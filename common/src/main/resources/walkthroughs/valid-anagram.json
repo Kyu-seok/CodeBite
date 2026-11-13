@@ -2415,8 +2415,8 @@
     },
     {
      "caption": {
-      "en": "The counts differ: 'e' 1 vs 0, 'o' 0 vs 1, 't' 1 vs 2, 'y' 1 vs 0. So t is not an anagram of s. Answer false.",
-      "ko": "개수가 다른 글자가 있습니다: 'e' 1개 대 0개, 'o' 0개 대 1개, 't' 1개 대 2개, 'y' 1개 대 0개. 그러므로 t는 s의 애너그램이 아닙니다. 답은 false입니다."
+      "en": "The counts differ ('e' 1 vs 0, 'o' 0 vs 1, 't' 1 vs 2, 'y' 1 vs 0), so t is not an anagram of s. A false answer is made of no letters, so nothing is marked as its path, only the counts that rule t out: answer false.",
+      "ko": "개수가 다른 글자가 있으므로('e' 1개 대 0개, 'o' 0개 대 1개, 't' 1개 대 2개, 'y' 1개 대 0개) t는 s의 애너그램이 아닙니다. false라는 답은 어떤 글자로 이루어진 것이 아니라서 답의 경로는 표시하지 않고, 애너그램이 아닌 이유인 개수만 표시합니다(답은 false)."
      },
      "views": {
       "s": {

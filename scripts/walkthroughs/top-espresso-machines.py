@@ -13,7 +13,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import driver_list, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough  # noqa: E402
 
 SLUG = "top-espresso-machines"
@@ -70,12 +70,12 @@ def solve(check_ins, k, run):
         frame(caption, at=i, row_marks={"good": [machine]})
     ranked = sorted(counts.items(), key=lambda mc: mc[1], reverse=True)
     top = [m for m, _ in ranked[:k]]
-    answer = json.dumps(sorted(top), separators=(",", ":"))
+    answer = driver_list(sorted(top))
     order = ", ".join(f"{m} ({c})" for m, c in ranked)
     picked = ", ".join(str(m) for m in top)
-    frame({"en": f"Every check-in is counted. Ranked by uses: {order}. The top {k} "
-                 f"{'is' if k == 1 else 'are'} {picked}: answer {answer}.",
-           "ko": f"체크인을 모두 셌습니다. 사용 횟수 순으로 {order}입니다. 상위 {k}개는 머신 {picked}이므로 "
+    frame({"en": f"Every check-in is counted, and ranked by uses they are {order}. The top {k} "
+                 f"{plural(k, 'is', 'are')} {picked}: answer {answer}.",
+           "ko": f"체크인을 모두 세어 사용 횟수 순으로 놓으면 {order}입니다. 상위 {k}개는 머신 {picked}이므로 "
                  f"답은 {answer}입니다."},
           row_marks={"path": top, "dim": [m for m, _ in ranked[k:]]}, answer=answer)
 

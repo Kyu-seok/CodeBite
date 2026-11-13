@@ -3888,7 +3888,7 @@
     {
      "caption": {
       "en": "Cell 1,7 holds 1, but row 1 already has a 1 (cell 1,1): a repeat, so the board is invalid. Answer false.",
-      "ko": "1,7 칸의 숫자 1: 1행에 같은 숫자가 이미 있습니다 (1,1 칸). 중복이므로 보드는 유효하지 않습니다. 답은 false입니다."
+      "ko": "1,7 칸의 숫자 1: 1행에 같은 숫자가 이미 있습니다 (1,1 칸). 중복이므로 보드는 유효하지 않고, 답은 false입니다."
      },
      "views": {
       "board": {
