@@ -1,0 +1,1533 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Battery Window Tally",
+  "ko": "배터리 변동 구간 세기"
+ },
+ "approach": {
+  "en": "A window ending here sums to k exactly when the running total before it was total - k, so count how often each running total has appeared and look total - k up at every reading.",
+  "ko": "여기서 끝나는 구간의 합이 k인 것은 구간 앞까지의 누적합이 total - k일 때뿐입니다. 그래서 누적합마다 나온 횟수를 세어 두고, 읽을 때마다 total - k를 찾아봅니다."
+ },
+ "views": [
+  {
+   "id": "readings",
+   "type": "array",
+   "title": {
+    "en": "readings (tag: running total)",
+    "ko": "readings (태그: 누적합)"
+   }
+  },
+  {
+   "id": "seen",
+   "type": "table",
+   "title": {
+    "en": "seen (running total → times)",
+    "ko": "seen (누적합 → 횟수)"
+   }
+  },
+  {
+   "id": "state",
+   "type": "vars"
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "readings = [2,2,2], k = 4",
+   "expected": "2",
+   "frames": [
+    {
+     "caption": {
+      "en": "k = 4. Before any reading the running total is 0, so seen starts as {0: 1}. Read left to right.",
+      "ko": "k = 4. 아무것도 읽기 전의 누적합은 0이므로 seen은 {0: 1}에서 시작합니다. 왼쪽부터 읽습니다."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        2,
+        2,
+        2
+       ],
+       "pointers": {
+        "i": null
+       },
+       "tags": [],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2
+        ],
+        "path": [],
+        "lit": []
+       }
+      },
+      "seen": {
+       "columns": [
+        {
+         "en": "times",
+         "ko": "횟수"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          1
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 4
+        },
+        {
+         "label": "total",
+         "value": 0
+        },
+        {
+         "label": "total - k",
+         "value": "–"
+        },
+        {
+         "label": "count",
+         "value": 0,
+         "mark": null
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "total = 0 + 2 = 2; total - k = 2 - 4 = -2, not in seen: no window ending here sums to 4. Record 2.",
+      "ko": "total = 0 + 2 = 2; total - k = 2 - 4 = -2이고 seen에 없습니다. 여기서 끝나며 합이 4인 구간은 없습니다. 누적합 2의 횟수를 1 늘립니다."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        2,
+        2,
+        2
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "tags": [
+        [
+         0,
+         "Σ2"
+        ]
+       ],
+       "marks": {
+        "dim": [
+         1,
+         2
+        ],
+        "path": [],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "seen": {
+       "columns": [
+        {
+         "en": "times",
+         "ko": "횟수"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          1
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          1
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         [
+          1,
+          0
+         ]
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 4
+        },
+        {
+         "label": "total",
+         "value": 2
+        },
+        {
+         "label": "total - k",
+         "value": -2
+        },
+        {
+         "label": "count",
+         "value": 0,
+         "mark": null
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "total = 2 + 2 = 4; total - k = 4 - 4 = 0, seen 1 time: that window sums to 4 (readings[0..1]). count = 1. Then record 4.",
+      "ko": "total = 2 + 2 = 4; total - k = 4 - 4 = 0이고 seen에 1번 있습니다. 합이 4인 구간: readings[0..1]. count = 1. 이어서 누적합 4의 횟수를 1 늘립니다."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        2,
+        2,
+        2
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "tags": [
+        [
+         0,
+         "Σ2"
+        ],
+        [
+         1,
+         "Σ4"
+        ]
+       ],
+       "marks": {
+        "dim": [],
+        "path": [
+         0,
+         1
+        ],
+        "lit": []
+       }
+      },
+      "seen": {
+       "columns": [
+        {
+         "en": "times",
+         "ko": "횟수"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          1
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          1
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          1
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         [
+          0,
+          0
+         ]
+        ],
+        "good": [
+         [
+          2,
+          0
+         ]
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 4
+        },
+        {
+         "label": "total",
+         "value": 4
+        },
+        {
+         "label": "total - k",
+         "value": 0
+        },
+        {
+         "label": "count",
+         "value": 1,
+         "mark": "good"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "total = 4 + 2 = 6; total - k = 6 - 4 = 2, seen 1 time: that window sums to 4 (readings[1..2]). count = 2. Then record 6.",
+      "ko": "total = 4 + 2 = 6; total - k = 6 - 4 = 2이고 seen에 1번 있습니다. 합이 4인 구간: readings[1..2]. count = 2. 이어서 누적합 6의 횟수를 1 늘립니다."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        2,
+        2,
+        2
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "tags": [
+        [
+         0,
+         "Σ2"
+        ],
+        [
+         1,
+         "Σ4"
+        ],
+        [
+         2,
+         "Σ6"
+        ]
+       ],
+       "marks": {
+        "dim": [],
+        "path": [
+         1,
+         2
+        ],
+        "lit": []
+       }
+      },
+      "seen": {
+       "columns": [
+        {
+         "en": "times",
+         "ko": "횟수"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          1
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          1
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          1
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          1
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         [
+          1,
+          0
+         ]
+        ],
+        "good": [
+         [
+          3,
+          0
+         ]
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 4
+        },
+        {
+         "label": "total",
+         "value": 6
+        },
+        {
+         "label": "total - k",
+         "value": 2
+        },
+        {
+         "label": "count",
+         "value": 2,
+         "mark": "good"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Every reading read. The windows that sum to 4 are readings[0..1], [1..2]: answer 2.",
+      "ko": "모든 기록을 읽었습니다. 합이 4인 구간은 readings[0..1], [1..2]로 2개입니다. 답은 2입니다."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        2,
+        2,
+        2
+       ],
+       "pointers": {
+        "i": null
+       },
+       "tags": [
+        [
+         0,
+         "Σ2"
+        ],
+        [
+         1,
+         "Σ4"
+        ],
+        [
+         2,
+         "Σ6"
+        ]
+       ],
+       "marks": {
+        "dim": [],
+        "path": [
+         0,
+         1,
+         2
+        ],
+        "lit": []
+       }
+      },
+      "seen": {
+       "columns": [
+        {
+         "en": "times",
+         "ko": "횟수"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          1
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          1
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          1
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          1
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 4
+        },
+        {
+         "label": "total",
+         "value": 6
+        },
+        {
+         "label": "total - k",
+         "value": "–"
+        },
+        {
+         "label": "count",
+         "value": 2,
+         "mark": "good"
+        }
+       ]
+      }
+     },
+     "answer": "2"
+    }
+   ],
+   "sampleInput": "[2,2,2]\n4"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "readings = [3,1,2,4], k = 6",
+   "expected": "2",
+   "frames": [
+    {
+     "caption": {
+      "en": "k = 6. Before any reading the running total is 0, so seen starts as {0: 1}. Read left to right.",
+      "ko": "k = 6. 아무것도 읽기 전의 누적합은 0이므로 seen은 {0: 1}에서 시작합니다. 왼쪽부터 읽습니다."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        3,
+        1,
+        2,
+        4
+       ],
+       "pointers": {
+        "i": null
+       },
+       "tags": [],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3
+        ],
+        "path": [],
+        "lit": []
+       }
+      },
+      "seen": {
+       "columns": [
+        {
+         "en": "times",
+         "ko": "횟수"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          1
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 6
+        },
+        {
+         "label": "total",
+         "value": 0
+        },
+        {
+         "label": "total - k",
+         "value": "–"
+        },
+        {
+         "label": "count",
+         "value": 0,
+         "mark": null
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "total = 0 + 3 = 3; total - k = 3 - 6 = -3, not in seen: no window ending here sums to 6. Record 3.",
+      "ko": "total = 0 + 3 = 3; total - k = 3 - 6 = -3이고 seen에 없습니다. 여기서 끝나며 합이 6인 구간은 없습니다. 누적합 3의 횟수를 1 늘립니다."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        3,
+        1,
+        2,
+        4
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "tags": [
+        [
+         0,
+         "Σ3"
+        ]
+       ],
+       "marks": {
+        "dim": [
+         1,
+         2,
+         3
+        ],
+        "path": [],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "seen": {
+       "columns": [
+        {
+         "en": "times",
+         "ko": "횟수"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          1
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          1
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         [
+          1,
+          0
+         ]
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 6
+        },
+        {
+         "label": "total",
+         "value": 3
+        },
+        {
+         "label": "total - k",
+         "value": -3
+        },
+        {
+         "label": "count",
+         "value": 0,
+         "mark": null
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "total = 3 + 1 = 4; total - k = 4 - 6 = -2, not in seen: no window ending here sums to 6. Record 4.",
+      "ko": "total = 3 + 1 = 4; total - k = 4 - 6 = -2이고 seen에 없습니다. 여기서 끝나며 합이 6인 구간은 없습니다. 누적합 4의 횟수를 1 늘립니다."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        3,
+        1,
+        2,
+        4
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "tags": [
+        [
+         0,
+         "Σ3"
+        ],
+        [
+         1,
+         "Σ4"
+        ]
+       ],
+       "marks": {
+        "dim": [
+         2,
+         3
+        ],
+        "path": [],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "seen": {
+       "columns": [
+        {
+         "en": "times",
+         "ko": "횟수"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          1
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          1
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          1
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         [
+          2,
+          0
+         ]
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 6
+        },
+        {
+         "label": "total",
+         "value": 4
+        },
+        {
+         "label": "total - k",
+         "value": -2
+        },
+        {
+         "label": "count",
+         "value": 0,
+         "mark": null
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "total = 4 + 2 = 6; total - k = 6 - 6 = 0, seen 1 time: that window sums to 6 (readings[0..2]). count = 1. Then record 6.",
+      "ko": "total = 4 + 2 = 6; total - k = 6 - 6 = 0이고 seen에 1번 있습니다. 합이 6인 구간: readings[0..2]. count = 1. 이어서 누적합 6의 횟수를 1 늘립니다."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        3,
+        1,
+        2,
+        4
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "tags": [
+        [
+         0,
+         "Σ3"
+        ],
+        [
+         1,
+         "Σ4"
+        ],
+        [
+         2,
+         "Σ6"
+        ]
+       ],
+       "marks": {
+        "dim": [],
+        "path": [
+         0,
+         1,
+         2
+        ],
+        "lit": []
+       }
+      },
+      "seen": {
+       "columns": [
+        {
+         "en": "times",
+         "ko": "횟수"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          1
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          1
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          1
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          1
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         [
+          0,
+          0
+         ]
+        ],
+        "good": [
+         [
+          3,
+          0
+         ]
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 6
+        },
+        {
+         "label": "total",
+         "value": 6
+        },
+        {
+         "label": "total - k",
+         "value": 0
+        },
+        {
+         "label": "count",
+         "value": 1,
+         "mark": "good"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "total = 6 + 4 = 10; total - k = 10 - 6 = 4, seen 1 time: that window sums to 6 (readings[2..3]). count = 2. Then record 10.",
+      "ko": "total = 6 + 4 = 10; total - k = 10 - 6 = 4이고 seen에 1번 있습니다. 합이 6인 구간: readings[2..3]. count = 2. 이어서 누적합 10의 횟수를 1 늘립니다."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        3,
+        1,
+        2,
+        4
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "tags": [
+        [
+         0,
+         "Σ3"
+        ],
+        [
+         1,
+         "Σ4"
+        ],
+        [
+         2,
+         "Σ6"
+        ],
+        [
+         3,
+         "Σ10"
+        ]
+       ],
+       "marks": {
+        "dim": [],
+        "path": [
+         2,
+         3
+        ],
+        "lit": []
+       }
+      },
+      "seen": {
+       "columns": [
+        {
+         "en": "times",
+         "ko": "횟수"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          1
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          1
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          1
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          1
+         ]
+        },
+        {
+         "label": "10",
+         "cells": [
+          1
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         [
+          2,
+          0
+         ]
+        ],
+        "good": [
+         [
+          4,
+          0
+         ]
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 6
+        },
+        {
+         "label": "total",
+         "value": 10
+        },
+        {
+         "label": "total - k",
+         "value": 4
+        },
+        {
+         "label": "count",
+         "value": 2,
+         "mark": "good"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Every reading read. The windows that sum to 6 are readings[0..2], [2..3]: answer 2.",
+      "ko": "모든 기록을 읽었습니다. 합이 6인 구간은 readings[0..2], [2..3]로 2개입니다. 답은 2입니다."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        3,
+        1,
+        2,
+        4
+       ],
+       "pointers": {
+        "i": null
+       },
+       "tags": [
+        [
+         0,
+         "Σ3"
+        ],
+        [
+         1,
+         "Σ4"
+        ],
+        [
+         2,
+         "Σ6"
+        ],
+        [
+         3,
+         "Σ10"
+        ]
+       ],
+       "marks": {
+        "dim": [],
+        "path": [
+         0,
+         1,
+         2,
+         3
+        ],
+        "lit": []
+       }
+      },
+      "seen": {
+       "columns": [
+        {
+         "en": "times",
+         "ko": "횟수"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          1
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          1
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          1
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          1
+         ]
+        },
+        {
+         "label": "10",
+         "cells": [
+          1
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 6
+        },
+        {
+         "label": "total",
+         "value": 10
+        },
+        {
+         "label": "total - k",
+         "value": "–"
+        },
+        {
+         "label": "count",
+         "value": 2,
+         "mark": "good"
+        }
+       ]
+      }
+     },
+     "answer": "2"
+    }
+   ],
+   "sampleInput": "[3,1,2,4]\n6"
+  },
+  {
+   "label": {
+    "en": "Example 3",
+    "ko": "예시 3"
+   },
+   "input": "readings = [4,-4,0], k = 0",
+   "expected": "3",
+   "frames": [
+    {
+     "caption": {
+      "en": "k = 0. Before any reading the running total is 0, so seen starts as {0: 1}. Read left to right.",
+      "ko": "k = 0. 아무것도 읽기 전의 누적합은 0이므로 seen은 {0: 1}에서 시작합니다. 왼쪽부터 읽습니다."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        4,
+        -4,
+        0
+       ],
+       "pointers": {
+        "i": null
+       },
+       "tags": [],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2
+        ],
+        "path": [],
+        "lit": []
+       }
+      },
+      "seen": {
+       "columns": [
+        {
+         "en": "times",
+         "ko": "횟수"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          1
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 0
+        },
+        {
+         "label": "total",
+         "value": 0
+        },
+        {
+         "label": "total - k",
+         "value": "–"
+        },
+        {
+         "label": "count",
+         "value": 0,
+         "mark": null
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "total = 0 + 4 = 4; total - k = 4 - 0 = 4, not in seen: no window ending here sums to 0. Record 4.",
+      "ko": "total = 0 + 4 = 4; total - k = 4 - 0 = 4이고 seen에 없습니다. 여기서 끝나며 합이 0인 구간은 없습니다. 누적합 4의 횟수를 1 늘립니다."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        4,
+        -4,
+        0
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "tags": [
+        [
+         0,
+         "Σ4"
+        ]
+       ],
+       "marks": {
+        "dim": [
+         1,
+         2
+        ],
+        "path": [],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "seen": {
+       "columns": [
+        {
+         "en": "times",
+         "ko": "횟수"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          1
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          1
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         [
+          1,
+          0
+         ]
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 0
+        },
+        {
+         "label": "total",
+         "value": 4
+        },
+        {
+         "label": "total - k",
+         "value": 4
+        },
+        {
+         "label": "count",
+         "value": 0,
+         "mark": null
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "total = 4 + -4 = 0; total - k = 0 - 0 = 0, seen 1 time: that window sums to 0 (readings[0..1]). count = 1. Then record 0 again: now 2.",
+      "ko": "total = 4 + -4 = 0; total - k = 0 - 0 = 0이고 seen에 1번 있습니다. 합이 0인 구간: readings[0..1]. count = 1. 이어서 누적합 0의 횟수를 1 늘립니다."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        4,
+        -4,
+        0
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "tags": [
+        [
+         1,
+         "Σ0"
+        ],
+        [
+         0,
+         "Σ4"
+        ]
+       ],
+       "marks": {
+        "dim": [],
+        "path": [
+         0,
+         1
+        ],
+        "lit": []
+       }
+      },
+      "seen": {
+       "columns": [
+        {
+         "en": "times",
+         "ko": "횟수"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          2
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          1
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         [
+          0,
+          0
+         ]
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 0
+        },
+        {
+         "label": "total",
+         "value": 0
+        },
+        {
+         "label": "total - k",
+         "value": 0
+        },
+        {
+         "label": "count",
+         "value": 1,
+         "mark": "good"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "total = 0 + 0 = 0; total - k = 0 - 0 = 0, seen 2 times: those windows sum to 0 (readings[0..2], [2..2]). count = 3. Then record 0 again: now 3.",
+      "ko": "total = 0 + 0 = 0; total - k = 0 - 0 = 0이고 seen에 2번 있습니다. 합이 0인 구간: readings[0..2], [2..2]. count = 3. 이어서 누적합 0의 횟수를 1 늘립니다."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        4,
+        -4,
+        0
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "tags": [
+        [
+         1,
+         "Σ0"
+        ],
+        [
+         2,
+         "Σ0"
+        ],
+        [
+         0,
+         "Σ4"
+        ]
+       ],
+       "marks": {
+        "dim": [],
+        "path": [
+         0,
+         1,
+         2
+        ],
+        "lit": []
+       }
+      },
+      "seen": {
+       "columns": [
+        {
+         "en": "times",
+         "ko": "횟수"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          3
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          1
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         [
+          0,
+          0
+         ]
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 0
+        },
+        {
+         "label": "total",
+         "value": 0
+        },
+        {
+         "label": "total - k",
+         "value": 0
+        },
+        {
+         "label": "count",
+         "value": 3,
+         "mark": "good"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Every reading read. The windows that sum to 0 are readings[0..1], [0..2], [2..2]: answer 3.",
+      "ko": "모든 기록을 읽었습니다. 합이 0인 구간은 readings[0..1], [0..2], [2..2]로 3개입니다. 답은 3입니다."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        4,
+        -4,
+        0
+       ],
+       "pointers": {
+        "i": null
+       },
+       "tags": [
+        [
+         1,
+         "Σ0"
+        ],
+        [
+         2,
+         "Σ0"
+        ],
+        [
+         0,
+         "Σ4"
+        ]
+       ],
+       "marks": {
+        "dim": [],
+        "path": [
+         0,
+         1,
+         2
+        ],
+        "lit": []
+       }
+      },
+      "seen": {
+       "columns": [
+        {
+         "en": "times",
+         "ko": "횟수"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          3
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          1
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 0
+        },
+        {
+         "label": "total",
+         "value": 0
+        },
+        {
+         "label": "total - k",
+         "value": "–"
+        },
+        {
+         "label": "count",
+         "value": 3,
+         "mark": "good"
+        }
+       ]
+      }
+     },
+     "answer": "3"
+    }
+   ],
+   "sampleInput": "[4,-4,0]\n0"
+  }
+ ]
+}
