@@ -135,6 +135,7 @@
 .wt-e.wt-path .wt-edge { stroke: var(--wt-accent); stroke-width: 3.4; }
 .wt-e.wt-dim { opacity: .3; }
 .wt-chipbg { fill: var(--wt-card); stroke: var(--wt-faint); }
+.wt-espot { fill: none; }
 .wt-elabel { font: 600 11px var(--wt-mono); fill: var(--wt-mid) !important; }
 .wt-e.wt-lit .wt-elabel, .wt-e.wt-path .wt-elabel { fill: var(--wt-accent) !important; }
 .wt-e.wt-good .wt-elabel { fill: var(--wt-good) !important; }
