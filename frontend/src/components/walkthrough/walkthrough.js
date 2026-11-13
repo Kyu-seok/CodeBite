@@ -227,14 +227,21 @@ VIEWS.array = (host, config, ctx) => {
 
 // A hash map: one card per key in insertion order. A count is drawn as dots and the number, a list as chips.
 // `slots` (at most k keys) draws the free slots dashed and a key beyond them red; a `struck` key is leaving.
+// A `probe` is a lookup: a chip above the cards, ✓ with its key's card ringed on a hit, red and ✗ on a miss. Its
+// `hit` (default: the key is held) says what the lookup found when the step stores the key after looking it up.
 const MAX_DOTS = 10;
 VIEWS.map = (host, config, ctx) => {
   host.innerHTML = '';
   const box = html('div', 'wt-map', host);
   const cards = new Map(); // String(key) -> card element, kept so marks transition
-  let empty = null, free = [];
+  let empty = null, free = [], probe = null;
   return {
     locate: at => cards.get(String(at)) || null,
+    // a run that looks keys up keeps the lookup row in every frame, so the cards never jump
+    prepare(states) {
+      if (probe) probe.remove();
+      probe = states.some(st => st.probe) ? html('div', 'wt-probe', null) : null;
+    },
     update(s) {
       const m = markMap(s.marks), entries = s.entries || [];
       const rank = new Map((s.ranks || []).map((k, i) => [String(k), i + 1]));
@@ -245,6 +252,13 @@ VIEWS.map = (host, config, ctx) => {
       for (const el of free) el.remove();
       free = [];
       if (empty) { empty.remove(); empty = null; }
+      if (probe) {
+        box.prepend(probe);
+        const hit = !!s.probe && (s.probe.hit ?? live.has(String(s.probe.key)));
+        probe.className = 'wt-probe' + (!s.probe ? ' wt-idle' : hit ? ' wt-hit' : ' wt-miss');
+        probe.replaceChildren(html('span', 'wt-probechip', null,
+          s.probe ? `${s.probe.label != null ? textOf(s.probe.label, ctx.lang) : fmt(s.probe.key)} ${hit ? '✓' : '✗'}` : '\u00a0'));
+      }
       if (!entries.length && !slots) empty = html('span', 'wt-empty', box, config.empty != null ? textOf(config.empty, ctx.lang) : 'empty');
       let held = 0; // keys holding a slot: a struck key is leaving and holds none
       for (const e of entries) {
@@ -253,7 +267,8 @@ VIEWS.map = (host, config, ctx) => {
         if (!card) { card = html('div', null, null); cards.set(k, card); }
         box.appendChild(card); // insertion order
         card.className = 'wt-mapcard' + markClass(m, e.key) + (rank.size && !rank.has(k) ? ' wt-unranked' : '') +
-          (over ? ' wt-over' : '') + (gone ? ' wt-struck' : '');
+          (over ? ' wt-over' : '') + (gone ? ' wt-struck' : '') +
+          (s.probe && s.probe.hit !== false && String(s.probe.key) === k ? ' wt-probed' : '');
         card.dataset.token = fmt(e.key);
         card.innerHTML = '';
         if (rank.has(k)) html('span', 'wt-rank', card, '#' + rank.get(k));

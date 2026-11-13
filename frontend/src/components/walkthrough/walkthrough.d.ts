@@ -24,11 +24,12 @@ export interface ArrayState {
   /** a running value under a cell */ under?: [number, Text][];
 }
 export type Key = string | number;
-/** A hash map: entries in insertion order with unique keys; a count is drawn as dots, a list as chips. `ranks` badges keys #1, #2… */
+/** A hash map: entries in insertion order with unique keys; a count is drawn as dots, a list as chips. `ranks` badges keys #1, #2…; `probe` is a lookup that hits or misses */
 export interface MapState {
   entries: { key: Key; value: unknown }[]; marks?: Marks<Key>; ranks?: Key[];
   /** holds at most this many keys: the free slots are drawn, and a key beyond them is red */ slots?: number;
   /** keys leaving this step (a count that reached 0), struck through; they hold no slot */ struck?: Key[];
+  /** a lookup of `key`: a hit rings its card, a miss is a red dashed chip; `label` replaces the key on the chip; `hit` (default: the key is held) is what the lookup found, for a step that stores the key after it */ probe?: { key: Key; label?: Text; hit?: boolean };
 }
 /** The answer as it forms: one chip per value. */
 export interface OutputState { values: unknown[]; marks?: Marks<number> }

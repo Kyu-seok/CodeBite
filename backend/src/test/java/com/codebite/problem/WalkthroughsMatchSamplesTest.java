@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * under the Slug it is filed under; it is a well-formed {@code walkthrough/1} document (the public
  * walkthrough skill's {@code references/format.md}: known view types, marks inside the data they
  * name, moves whose addresses exist in that frame, unique map keys, spans inside their array, map slots a
- * non-negative integer, intervals that start no later than they end, the answer on the last frame only); its sample runs are, in order, exactly the problem's
+ * non-negative integer, a map probe with a key that it hits only when held, intervals that start no later than they end, the answer on the last frame only); its sample runs are, in order, exactly the problem's
  * sample Test Cases by {@code sampleInput} and {@code expected}, compared trimmed as the Grader
  * compares; each run ends on its {@code expected}; and any run marked {@code extra} comes after
  * the sample runs; and every caption is one or two sentences in each language (#258). Correcting, adding or reordering a sample without regenerating the Walkthrough
@@ -132,6 +132,7 @@ class WalkthroughsMatchSamplesTest {
     @ValueSource(strings = {
             "move to a missing key", "move from outside the array", "move to an unknown view", "move with no ends",
             "move to a view type without addresses", "repeated map key", "rank of a missing key",
+            "probe with no key", "probe hit that isn't true or false", "probe hitting a key not held",
     })
     void aBrokenMoveOrMapIsCaught(String breakage) throws Exception {
         ObjectNode walkthrough = (ObjectNode) JSON.readTree(WALKTHROUGHS.of("top-espresso-machines").orElseThrow());
@@ -146,6 +147,9 @@ class WalkthroughsMatchSamplesTest {
             case "move to a view type without addresses" -> ((ObjectNode) move.get("to")).put("view", "state");
             case "repeated map key" -> ((ArrayNode) uses.get("entries")).add(uses.get("entries").get(0).deepCopy());
             case "rank of a missing key" -> uses.putArray("ranks").add(99);
+            case "probe with no key" -> uses.putObject("probe").put("label", "lookup");
+            case "probe hit that isn't true or false" -> uses.putObject("probe").put("key", 99).put("hit", "yes");
+            case "probe hitting a key not held" -> uses.putObject("probe").put("key", 99).put("hit", true);
             default -> throw new IllegalArgumentException(breakage);
         }
         List<String> found = mismatches("top-espresso-machines", walkthrough, SAMPLES.get("top-espresso-machines"));
@@ -513,6 +517,14 @@ class WalkthroughsMatchSamplesTest {
                 JsonNode slots = s.get("slots");
                 if (slots != null && !(slots.isIntegralNumber() && slots.asLong() >= 0)) p.add("slots " + slots + " is not a non-negative integer");
                 for (JsonNode k : s.path("struck")) if (!seen.contains(key(k))) p.add("struck names " + k + ", not a key");
+                JsonNode probe = s.get("probe");
+                if (probe != null) {
+                    String k = key(probe.get("key"));
+                    JsonNode hit = probe.get("hit");
+                    if (k == null) p.add("probe has no key (a string or a number)");
+                    else if (hit != null && !hit.isBoolean()) p.add("probe hit must be true or false");
+                    else if (hit != null && hit.asBoolean() && !seen.contains(k)) p.add("probe hits " + k + ", not a key");
+                }
                 JsonNode ranks = s.get("ranks");
                 if (ranks != null && !ranks.isArray()) {
                     p.add("ranks must be a list of keys, first is #1");
