@@ -48,6 +48,13 @@ class CheckDocReferences(unittest.TestCase):
                    "(GLOSSARY.md), the Problems (GLOSSARY.md) section.\n")
         self.assertEqual(self.check(), (0, ""))
 
+    def test_an_ignored_folder_passes_on_a_clean_checkout(self):
+        # CI's checkout has no build output, and git matches a folder-only rule (`build/`) to a
+        # missing path only when it ends in a slash: #263 passed locally and failed on CI.
+        self.write(".gitignore", "infra/.env\nbuild/\n")
+        self.write("CLAUDE.md", "Two builds corrupt `backend/build` and `frontend/build/`.\n")
+        self.assertEqual(self.check(), (0, ""))
+
     def test_a_missing_path_fails_with_its_line(self):
         self.write("docs/agents/triage.md", "ok\nRoute to `.claude/skills/correct-test-cases/SKILL.md`.\n")
         code, out = self.check()

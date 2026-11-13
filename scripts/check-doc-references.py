@@ -92,8 +92,10 @@ def path_problems(root, path, text):
 def exists(root, target):
     if (root / target).exists() or any((root / base / target).exists() for base in PACKAGE_ROOTS):
         return True
-    ignored = subprocess.run(["git", "-C", str(root), "check-ignore", "-q", target], check=False)
-    return ignored.returncode == 0
+    # A folder-only rule (`build/`) matches a path that isn't on disk only when it ends in a slash,
+    # so a clean checkout (CI) would miss what this machine's build output lets through.
+    return any(subprocess.run(["git", "-C", str(root), "check-ignore", "-q", path], check=False).returncode == 0
+               for path in (target, target + "/"))
 
 
 def glossary_problems(root, path, text, terms):
