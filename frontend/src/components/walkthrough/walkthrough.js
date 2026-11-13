@@ -77,7 +77,7 @@ export function layoutGraph(nodes, edges, directed) {
 // ---------- views ----------
 // Each view type: mount(host, config, ctx) -> { update(state), locate?(at), prepare?(states) }. `state` is the run's
 // setup merged with the frame's; `prepare` gets every frame's state once per run, before the first update. `locate(at)`
-// returns the element a move's address names (an array index, a map key), or null: a view type that holds values
+// returns the element a move's address names (an array index, a map key, a set member), or null: a view type that holds values
 // defines it, and scripts/validate.mjs's ADDRESSES says which `at` it takes.
 export const VIEWS = {};
 
@@ -273,6 +273,63 @@ VIEWS.map = (host, config, ctx) => {
         } else html('div', 'wt-mapval', card, fmt(v));
       }
       for (let i = held; i < (slots || 0); i++) free.push(html('div', 'wt-mapslot', box)); // the slots still free
+    },
+  };
+};
+
+// A set: a bag of member chips in insertion order. Each probe is a lookup drawn above the bag: a hit lights the member
+// it finds, a miss is drawn dashed. `hit` defaults to whether the value is a member; a value looked up and then added in the
+// same step is a miss (`hit: false`) with its member marked `good`. Address: a member.
+const SET_TEXT = { en: { hit: 'in the set', miss: 'not in the set' }, ko: { hit: '집합에 있음', miss: '집합에 없음' } };
+VIEWS.set = (host, config, ctx) => {
+  host.innerHTML = '';
+  const words = { ...SET_TEXT.en, ...(SET_TEXT[ctx.lang] || {}) };
+  const word = k => (config[k] != null ? textOf(config[k], ctx.lang) : words[k]);
+  const probes = html('div', 'wt-probes', host);
+  const bag = html('div', 'wt-set', host);
+  const chips = new Map(); // String(member) -> chip, kept so marks transition
+  let empty = null, probing = false; // probing: some frame of the run looks a value up, so the probe row keeps its room
+  return {
+    locate: at => chips.get(String(at)) || null,
+    // the run's every state, before its first frame: the bag is sized for the most members it will hold, so it never
+    // grows during the run and the views beside it don't jump onto another line
+    prepare(states) {
+      let most = 0, widest = 0;
+      probing = states.some(st => (st.probes || []).length);
+      for (const st of states) {
+        most = Math.max(most, (st.members || []).length);
+        for (const v of st.members || []) widest = Math.max(widest, labelWidth(fmt(v)) * 14 / 11);
+      }
+      const chip = widest + 30, perLine = Math.max(1, Math.floor((420 - 24 + 6) / (chip + 6)));
+      bag.style.width = most ? Math.min(420, 24 + Math.min(most, perLine) * (chip + 6)) + 'px' : '';
+      bag.style.minHeight = most ? 24 + Math.ceil(most / perLine) * 36 - 6 + 'px' : '';
+    },
+    update(s) {
+      const m = markMap(s.marks), members = s.members || [];
+      const has = new Set(members.map(String));
+      const list = (s.probes || []).map(pr => ({ ...pr, hit: pr.hit ?? has.has(String(pr.value)) }));
+      const found = new Set(list.filter(pr => pr.hit).map(pr => String(pr.value)));
+      probes.innerHTML = '';
+      probes.hidden = !list.length && !probing;
+      probes.style.visibility = list.length ? '' : 'hidden';
+      for (const pr of list) {
+        const el = html('div', 'wt-probe ' + (pr.hit ? 'wt-hit' : 'wt-miss'), probes);
+        if (pr.label != null) html('span', 'wt-probelabel', el, textOf(pr.label, ctx.lang));
+        html('span', 'wt-probevalue', el, fmt(pr.value));
+        html('span', 'wt-probeword', el, (pr.hit ? '✓ ' : '✗ ') + word(pr.hit ? 'hit' : 'miss'));
+      }
+      for (const [k, el] of chips) if (!has.has(k)) { el.remove(); chips.delete(k); }
+      if (empty) { empty.remove(); empty = null; }
+      if (!members.length) empty = html('span', 'wt-empty', bag, config.empty != null ? textOf(config.empty, ctx.lang) : 'empty');
+      for (const v of members) {
+        const k = String(v);
+        let chip = chips.get(k);
+        if (!chip) { chip = html('span', null, null); chips.set(k, chip); }
+        bag.appendChild(chip); // insertion order
+        chip.className = 'wt-member' + markClass(m, v) + (found.has(k) && !m.has(k) ? ' wt-lit' : '') + (found.has(k) ? ' wt-found' : '');
+        chip.textContent = fmt(v);
+        chip.dataset.token = fmt(v);
+      }
     },
   };
 };

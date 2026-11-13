@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Every Walkthrough (GLOSSARY.md, ADR 0011) shows the samples it claims to: its problem exists
  * under the Slug it is filed under; it is a well-formed {@code walkthrough/1} document (the public
  * walkthrough skill's {@code references/format.md}: known view types, marks inside the data they
- * name, moves whose addresses exist in that frame, unique map keys, spans inside their array, map slots a
+ * name, moves whose addresses exist in that frame, unique map keys and set members, set probes that hit only members, spans inside their array, map slots a
  * non-negative integer, intervals that start no later than they end, queue marks and tags on its positions, the answer on the last frame only); its sample runs are, in order, exactly the problem's
  * sample Test Cases by {@code sampleInput} and {@code expected}, compared trimmed as the Grader
  * compares; each run ends on its {@code expected}; and any run marked {@code extra} comes after
@@ -42,7 +42,7 @@ class WalkthroughsMatchSamplesTest {
     private static final MigratedDatabase DATABASE = new MigratedDatabase("walkthroughs-match-samples");
     private static final Walkthroughs WALKTHROUGHS = new Walkthroughs();
 
-    private static final List<String> VIEW_TYPES = List.of("grid", "array", "map", "output", "queue", "intervals", "graph", "table", "vars");
+    private static final List<String> VIEW_TYPES = List.of("grid", "array", "map", "set", "output", "queue", "intervals", "graph", "table", "vars");
     private static final List<String> MARKS = List.of("lit", "good", "bad", "path", "dim");
 
     /**
@@ -175,6 +175,31 @@ class WalkthroughsMatchSamplesTest {
         }
         List<String> found = mismatches("merge-reservation-slots", walkthrough, SAMPLES.get("merge-reservation-slots"));
         assertFalse(found.isEmpty(), breakage + " was not caught");
+    }
+
+    // --- the set, on a copy of spot-duplicate-locker ----------------------------------------------------
+
+    @ParameterizedTest(name = "{0}")
+    @ValueSource(strings = {
+            "repeated set member", "move to a missing member", "probe hitting a non-member", "probe with no value",
+            "mark on a missing member",
+    })
+    void aBrokenSetIsCaught(String breakage) throws Exception {
+        ObjectNode walkthrough = (ObjectNode) JSON.readTree(WALKTHROUGHS.of("spot-duplicate-locker").orElseThrow());
+        ObjectNode frame = (ObjectNode) walkthrough.get("runs").get(0).get("frames").get(1);
+        ObjectNode move = (ObjectNode) frame.get("moves").get(0);
+        ObjectNode seen = (ObjectNode) frame.get("views").get("seen");
+        switch (breakage) {
+            case "repeated set member" -> ((ArrayNode) seen.get("members")).add(seen.get("members").get(0).asText());
+            case "move to a missing member" -> ((ObjectNode) move.get("to")).put("at", 999);
+            case "probe hitting a non-member" -> ((ArrayNode) seen.get("probes")).addObject().put("value", 999).put("hit", true);
+            case "probe with no value" -> ((ArrayNode) seen.get("probes")).addObject().put("hit", false);
+            case "mark on a missing member" -> seen.putObject("marks").putArray("lit").add(999);
+            default -> throw new IllegalArgumentException(breakage);
+        }
+        List<String> found = mismatches("spot-duplicate-locker", walkthrough, SAMPLES.get("spot-duplicate-locker"));
+        assertFalse(found.isEmpty(), breakage + " was not caught");
+        assertTrue(found.stream().anyMatch(m -> m.contains("\"seen\"")), breakage + " was caught as something else: " + found);
     }
 
     // --- the queue and grid moves, on a copy of rotting-donuts ------------------------------------------
@@ -414,8 +439,8 @@ class WalkthroughsMatchSamplesTest {
 
     /**
      * What is wrong with one move: each end it has must name a place that exists in that frame's state of its view
-     * (the skill's {@code ADDRESSES}: an array or output index, a map key, a queue position from the front, a grid
-     * {@code [row, col]}, an intervals {@code [group, index]}).
+     * (the skill's {@code ADDRESSES}: an array or output index, a map key, a set member, a queue position from the
+     * front, a grid {@code [row, col]}, an intervals {@code [group, index]}).
      */
     private static List<String> move(JsonNode move, Map<String, JsonNode> views, JsonNode setup, JsonNode states) {
         if (!move.isObject() || (!move.hasNonNull("from") && !move.hasNonNull("to"))) return List.of("no from and no to");
@@ -435,7 +460,7 @@ class WalkthroughsMatchSamplesTest {
             }
             String type = view.path("type").asText();
             String where = end + " " + address;
-            if (!List.of("array", "map", "output", "queue", "grid", "intervals").contains(type)) {
+            if (!List.of("array", "map", "set", "output", "queue", "grid", "intervals").contains(type)) {
                 p.add(where + ": view type \"" + type + "\" has no addresses");
                 continue;
             }
@@ -449,6 +474,7 @@ class WalkthroughsMatchSamplesTest {
             JsonNode at = address.get("at");
             boolean exists = switch (type) {
                 case "map" -> keys(state).contains(key(at));
+                case "set" -> members(state).contains(key(at));
                 case "grid" -> at != null && at.isArray() && at.size() == 2 && index(at.get(0), state.path("cells"))
                         && index(at.get(1), state.path("cells").path(at.get(0).asInt()));
                 case "intervals" -> at != null && at.isArray() && at.size() == 2 && index(at.get(0), state.path("groups"))
@@ -457,6 +483,7 @@ class WalkthroughsMatchSamplesTest {
             };
             String what = switch (type) {
                 case "map" -> "a key";
+                case "set" -> "a member";
                 case "queue" -> "a position from the front";
                 case "grid" -> "a [row, col]";
                 case "intervals" -> "a [group, index]";
@@ -481,6 +508,12 @@ class WalkthroughsMatchSamplesTest {
         List<String> keys = new ArrayList<>();
         for (JsonNode entry : map.path("entries")) keys.add(key(entry.get("key")));
         return keys;
+    }
+
+    private static List<String> members(JsonNode set) {
+        List<String> members = new ArrayList<>();
+        for (JsonNode member : set.path("members")) members.add(key(member));
+        return members;
     }
 
     /** Text compared trimmed, as the Grader compares output; anything else as JSON. */
@@ -562,6 +595,7 @@ class WalkthroughsMatchSamplesTest {
                 }
                 yield p;
             }
+            case "set" -> set(s);
             case "output" -> {
                 JsonNode values = s.get("values");
                 if (values == null || !values.isArray()) yield List.of("values must be a list");
@@ -663,6 +697,38 @@ class WalkthroughsMatchSamplesTest {
             else if (!onAxis.test(at.asDouble())) p.add("point " + i + " at " + at + " is outside the axis " + d);
             if (mark != null && !mark.isNull() && !MARKS.contains(mark.asText())) {
                 p.add("point " + i + " has unknown mark " + mark);
+            }
+        }
+        return p;
+    }
+
+    /**
+     * What is wrong with a set state: members strings or numbers, none twice (4 and "4" are one member), marks on
+     * members, and each probe a value; a probe that says it hits must name a member.
+     */
+    private static List<String> set(JsonNode s) {
+        JsonNode members = s.get("members");
+        if (members == null || !members.isArray()) return List.of("members must be a list of strings or numbers");
+        List<String> p = new ArrayList<>();
+        Set<String> seen = new HashSet<>();
+        for (JsonNode member : members) {
+            String k = key(member);
+            if (k == null) p.add("member " + member + " is not a string or a number");
+            else if (!seen.add(k)) p.add("member " + k + " repeats");
+        }
+        p.addAll(marks(s.get("marks"), k -> seen.contains(key(k)), "member"));
+        JsonNode probes = s.get("probes");
+        if (probes != null && !probes.isArray()) {
+            p.add("probes must be a list of { value, hit? }");
+        } else if (probes != null) {
+            for (int i = 0; i < probes.size(); i++) {
+                JsonNode probe = probes.get(i), hit = probe.get("hit");
+                String value = key(probe.get("value"));
+                if (value == null) p.add("probe " + i + " has no value (a string or a number)");
+                else if (hit != null && hit.isBoolean() && hit.asBoolean() && !seen.contains(value)) {
+                    p.add("probe " + i + " hits " + probe.get("value") + ", not a member");
+                }
+                if (hit != null && !hit.isBoolean()) p.add("probe " + i + ": hit is not true or false");
             }
         }
         return p;
