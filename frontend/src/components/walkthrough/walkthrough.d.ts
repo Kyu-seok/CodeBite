@@ -7,6 +7,7 @@ export type View =
   | { id: string; type: 'grid'; title?: Text; values?: Record<string, { label?: Text; tone?: 'a' | 'b' | 'c' | 'd' | 'empty' | 'wall' | 'plain'; glyph?: string }>; showValues?: boolean }
   | { id: string; type: 'array'; title?: Text; display?: 'cells' | 'bars'; max?: number }
   | { id: string; type: 'map'; title?: Text; empty?: Text }
+  | { id: string; type: 'set'; title?: Text; empty?: Text; hit?: Text; miss?: Text }
   | { id: string; type: 'output'; title?: Text; empty?: Text }
   | { id: string; type: 'queue'; title?: Text; empty?: Text; deque?: boolean }
   | { id: string; type: 'intervals'; title?: Text; empty?: Text }
@@ -31,6 +32,9 @@ export interface MapState {
   /** holds at most this many keys: the free slots are drawn, and a key beyond them is red */ slots?: number;
   /** keys leaving this step (a count that reached 0), struck through; they hold no slot */ struck?: Key[];
 }
+/** A set: members in insertion order, unique. A probe is a lookup drawn above the bag: `hit` (default: whether `value`
+ *  is a member) lights the member it finds; a miss is drawn dashed. Address: a member. */
+export interface SetState { members: Key[]; marks?: Marks<Key>; probes?: { value: Key; hit?: boolean; label?: Text }[] }
 /** The answer as it forms: one chip per value. */
 export interface OutputState { values: unknown[]; marks?: Marks<number> }
 /** A queue as a horizontal pipe, front first: values join at the back (right) and leave from the front (left); a
@@ -53,7 +57,7 @@ export interface GraphState {
 export interface TableState { columns?: Text[]; rows: { label: Text; cells: unknown[] }[]; marks?: Marks<[number, number]> }
 export interface VarsState { items: { label: Text; value: unknown; mark?: Mark | null; empty?: Text }[] }
 
-/** A place in a view: an array or output index, a map key, a queue position from the front, a grid [row, col], an intervals [group, index], a graph node id or [from, to] edge. Each view type that holds values defines its `at`. */
+/** A place in a view: an array or output index, a map key, a set member, a queue position from the front, a grid [row, col], an intervals [group, index], a graph node id or [from, to] edge. Each view type that holds values defines its `at`. */
 export interface Address { view: string; at: number | string | [number, number] | [string | number, string | number] }
 /** A value going from one place to another. No `from`: created at `to`; no `to`: dropped from `from`.
  *  `value` is the chip's text (default: the source's); `mark` overrides the colour (default: path into an output, bad when dropped, else good). */

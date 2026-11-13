@@ -14,7 +14,7 @@ import sys
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
 from codebite import josa, sample_cases, sample_run, walkthrough_path  # noqa: E402
-from walkthrough_trace import Walkthrough  # noqa: E402
+from walkthrough_trace import Walkthrough, probe, span  # noqa: E402
 
 SLUG = "longest-seat-run"
 
@@ -25,8 +25,8 @@ wt = Walkthrough(
      "ko": "좌석을 해시 집합에 넣고, seat - 1이 없는 좌석에서만 위로 세어 나갑니다. 구간마다 첫 좌석에서 "
            "한 번만 걸으므로 전체가 O(n)입니다."},
     views=[
-        {"id": "seats", "type": "array", "title": {"en": "seat set, in loop order", "ko": "좌석 집합 (순회 순서)"}},
-        {"id": "state", "type": "vars"},
+        {"id": "seats", "type": "set", "title": {"en": "seat set, in loop order", "ko": "좌석 집합 (순회 순서)"}},
+        {"id": "line", "type": "array", "title": {"en": "the same seats, by number", "ko": "같은 좌석, 번호 순"}},
     ],
 )
 
@@ -35,66 +35,80 @@ def solve(seat_ids, run):
     """Solution.longestSeatBlock with a frame per seat the loop visits. Returns the answer as the Driver prints it."""
     seats = set(seat_ids)
     order = list(seats)  # the order `for seat in seats` visits them
-    at = {s: i for i, s in enumerate(order)}
+    line = sorted(seats)  # where each run is a range: drawn only, the solution never sorts
+    pos = {s: i for i, s in enumerate(line)}
     tags = {}
-    runs = []  # "first–last" of every run walked so far
+    runs = {}  # first seat -> the span of the run walked from it
     longest = 0
-    best = []
+    best = None  # (first, last) of the longest run so far
+    visited = []  # seats the loop has passed, faded in the set
 
-    def frame(caption, seat=None, lit=(), good=(), path=(), grew=False, **answer):
+    def frame(caption, seat=None, lit=(), good=(), path=(), probes=(), grew=False, last=False, **answer):
+        spans = {} if last else {f"run {a}": sp for a, sp in runs.items()}
+        if best:
+            spans["best"] = span(pos[best[0]], pos[best[1]], {"en": f"longest = {longest}", "ko": f"최장 = {longest}"},
+                                 mark="path" if last else "good" if grew else None, below=True)
+        found = {p["value"] for p in probes if p["value"] in seats}
         run.frame(caption,
-                  seats={"values": order, "pointers": {"seat": at[seat] if seat is not None else None},
-                         "tags": [[at[s], t] for s, t in tags.items()],
-                         "marks": {"lit": [at[s] for s in lit], "good": [at[s] for s in good],
-                                   "path": [at[s] for s in path]}},
-                  state={"items": [
-                      {"label": {"en": "runs walked", "ko": "걸어 본 구간"}, "value": list(runs),
-                       "empty": {"en": "none yet", "ko": "아직 없음"}},
-                      {"label": {"en": "longest", "ko": "longest (최장 길이)"}, "value": longest, "mark": "good" if grew else None}]},
+                  seats={"members": order, "probes": list(probes),
+                         "marks": {"dim": [s for s in visited if s not in found and not last],
+                                   "lit": [s for s in lit if s in seats], "good": list(good), "path": list(path)}},
+                  line={"values": line, "pointers": {"seat": pos[seat] if seat is not None else None},
+                        "tags": [[pos[s], t] for s, t in tags.items()], "spans": spans,
+                        "marks": {"lit": [pos[s] for s in lit if s in seats], "good": [pos[s] for s in good],
+                                  "path": [pos[s] for s in path]}},
                   **answer)
 
     frame({"en": f"Put the {len(seat_ids)} seat ids in a hash set ({len(seats)} distinct), so asking "
-                 f"\"is seat x free?\" takes O(1). Then visit each seat once.",
+                 f"\"is seat x free?\" takes O(1). Then visit each seat once, in the set's own order.",
            "ko": f"좌석 번호 {len(seat_ids)}개를 해시 집합에 넣어(서로 다른 번호 {len(seats)}개) "
-                 f"\"좌석 x가 비어 있나?\"를 O(1)에 확인합니다. 그다음 좌석을 하나씩 봅니다."})
+                 f"\"좌석 x가 비어 있나?\"를 O(1)에 확인합니다. 그다음 집합의 순서대로 좌석을 하나씩 봅니다."})
     for seat in seats:
+        below = probe(seat - 1, label={"en": "seat - 1", "ko": "seat - 1"})
         if seat - 1 in seats:
             tags[seat] = {"en": "skip", "ko": "건너뜀"}
-            frame({"en": f"Seat {seat}: seat {seat - 1} is in the set too, so {seat} is not the first seat of "
+            frame({"en": f"Seat {seat}: looking up seat {seat - 1} finds it, so {seat} is not the first seat of "
                          f"its run. Skip it; the walk from that run's first seat counts it.",
-                   "ko": f"좌석 {seat}: 좌석 {seat - 1}도 집합에 있으니 좌석 {josa(seat, "은는")} 구간의 첫 좌석이 아니므로 "
-                         f"건너뜁니다. 이 구간의 첫 좌석에서 걸을 때 함께 셉니다."},
-                  seat=seat, lit=[seat, seat - 1])
+                   "ko": f"좌석 {seat}: 좌석 {josa(seat - 1, "을를")} 찾으니 집합에 있으므로 좌석 {josa(seat, "은는")} "
+                         f"구간의 첫 좌석이 아니라 건너뜁니다. 이 구간의 첫 좌석에서 걸을 때 함께 셉니다."},
+                  seat=seat, lit=[seat], probes=[below])
+            visited.append(seat)
             continue
         end = seat
         while end + 1 in seats:
             end += 1
         length = end - seat + 1
         walked = list(range(seat, end + 1))
-        runs.append(f"{seat}–{end}" if end > seat else f"{seat}")
-        tags[seat] = {"en": f"len {length}", "ko": f"길이 {length}"}
+        runs[seat] = span(pos[seat], pos[end], {"en": f"len {length}", "ko": f"길이 {length}"}, mark="lit")
+        tags[seat] = {"en": "start", "ko": "시작"}
         grew = length > longest
         old = longest
         longest = max(longest, length)
         if grew:
-            best = walked
-        span = (f"{seat}, {seat + 1}, …, {end}" if length > 5 else ", ".join(map(str, walked)))
+            best = (seat, end)
+        steps = [probe(s) for s in walked[1:]] + [probe(end + 1)]
         if grew:
-            en_end, ko_end = (f", which beats {old}, so longest is now {longest}.",
-                              f"이전 최댓값 {old}보다 길어 이제 longest = {longest}입니다.")
+            en_end, ko_end = (f", which beats {old}: the longest is now {longest}.",
+                              f"이전 최댓값 {old}보다 길어 이제 최장은 {longest}입니다.")
         else:
             en_end, ko_end = (f", which does not beat {longest}.",
-                              f"longest {longest}보다 길지 않습니다.")
-        frame({"en": f"Seat {seat}: seat {seat - 1} is missing, so a run starts here. Counting up while the next "
-                     f"seat is in the set gives {span}, length {length}" + en_end,
-               "ko": f"좌석 {seat}: 좌석 {josa(seat - 1, "이가")} 없으므로 여기서 구간이 시작됩니다. 다음 좌석이 집합에 "
-                     f"있는 동안 위로 세면 {span}, 길이 {josa(length, "(으)로")} " + ko_end},
-              seat=seat, lit=walked[1:], good=[seat], grew=grew)
+                              f"최장 {longest}보다 길지 않습니다.")
+        frame({"en": f"Seat {seat}: seat {seat - 1} is missing, so a run starts here; looking up each next seat "
+                     f"until {end + 1} misses walks {seat}–{end}, length {length}" + en_end
+                     if length > 1 else
+                     f"Seat {seat}: seat {seat - 1} is missing, so a run starts here, and {seat + 1} is missing "
+                     f"too: length 1" + en_end,
+               "ko": f"좌석 {seat}: 좌석 {josa(seat - 1, "이가")} 없으므로 여기서 구간이 시작되고, {josa(end + 1, "이가")} "
+                     f"없을 때까지 위로 찾아 {seat}–{end}, 길이 {josa(length, "(으)로")} " + ko_end},
+              seat=seat, lit=walked[1:], good=[seat], probes=[below, *steps], grew=grew)
+        runs[seat] = span(pos[seat], pos[end], {"en": f"len {length}", "ko": f"길이 {length}"})
+        visited.append(seat)
+    first, last_seat = best
     frame({"en": f"Every seat is visited, and each run was walked once, from its first seat. "
-                 f"The longest run is {best[0]}–{best[-1]}: answer {longest}.",
+                 f"The longest run is {first}–{last_seat}: answer {longest}.",
            "ko": f"모든 좌석을 봤고, 구간마다 첫 좌석에서 한 번씩만 걸었습니다. 가장 긴 구간은 "
-                 f"{best[0]}–{best[-1]}이므로 답은 {longest}입니다."},
-          path=best, answer=str(longest))
+                 f"{first}–{last_seat}이므로 답은 {longest}입니다."},
+          path=list(range(first, last_seat + 1)), last=True, answer=str(longest))
 
 
 for number, sample in enumerate(sample_cases(SLUG), start=1):
