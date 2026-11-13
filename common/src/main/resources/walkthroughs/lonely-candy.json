@@ -18,8 +18,12 @@
    }
   },
   {
-   "id": "state",
-   "type": "vars"
+   "id": "loner",
+   "type": "output",
+   "title": {
+    "en": "loner (running XOR)",
+    "ko": "loner (누적 XOR)"
+   }
   }
  ],
  "runs": [
@@ -67,24 +71,11 @@
         "path": []
        }
       },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "loner (running XOR)",
-          "ko": "loner (누적 XOR)"
-         },
-         "value": 0,
-         "mark": null
-        },
-        {
-         "label": {
-          "en": "loner in bits",
-          "ko": "loner의 비트"
-         },
-         "value": "000"
-        }
-       ]
+      "loner": {
+       "values": [
+        "0 (000)"
+       ],
+       "marks": {}
       }
      }
     },
@@ -128,26 +119,31 @@
         "path": []
        }
       },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "loner (running XOR)",
-          "ko": "loner (누적 XOR)"
-         },
-         "value": 5,
-         "mark": "good"
-        },
-        {
-         "label": {
-          "en": "loner in bits",
-          "ko": "loner의 비트"
-         },
-         "value": "101"
-        }
-       ]
+      "loner": {
+       "values": [
+        "5 (101)"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "candies",
+        "at": 0
+       },
+       "to": {
+        "view": "loner",
+        "at": 0
+       },
+       "value": "^ 5",
+       "mark": "good"
+      }
+     ]
     },
     {
      "caption": {
@@ -191,26 +187,31 @@
         "path": []
        }
       },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "loner (running XOR)",
-          "ko": "loner (누적 XOR)"
-         },
-         "value": 0,
-         "mark": null
-        },
-        {
-         "label": {
-          "en": "loner in bits",
-          "ko": "loner의 비트"
-         },
-         "value": "000"
-        }
-       ]
+      "loner": {
+       "values": [
+        "0 (000)"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "candies",
+        "at": 1
+       },
+       "to": {
+        "view": "loner",
+        "at": 0
+       },
+       "value": "^ 5",
+       "mark": "good"
+      }
+     ]
     },
     {
      "caption": {
@@ -255,26 +256,31 @@
         "path": []
        }
       },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "loner (running XOR)",
-          "ko": "loner (누적 XOR)"
-         },
-         "value": 3,
-         "mark": "good"
-        },
-        {
-         "label": {
-          "en": "loner in bits",
-          "ko": "loner의 비트"
-         },
-         "value": "011"
-        }
-       ]
+      "loner": {
+       "values": [
+        "3 (011)"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "candies",
+        "at": 2
+       },
+       "to": {
+        "view": "loner",
+        "at": 0
+       },
+       "value": "^ 3",
+       "mark": "good"
+      }
+     ]
     },
     {
      "caption": {
@@ -317,24 +323,15 @@
         ]
        }
       },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "loner (running XOR)",
-          "ko": "loner (누적 XOR)"
-         },
-         "value": 3,
-         "mark": "good"
-        },
-        {
-         "label": {
-          "en": "loner in bits",
-          "ko": "loner의 비트"
-         },
-         "value": "011"
-        }
-       ]
+      "loner": {
+       "values": [
+        "3 (011)"
+       ],
+       "marks": {
+        "path": [
+         0
+        ]
+       }
       }
      },
      "answer": "3"
@@ -396,24 +393,11 @@
         "path": []
        }
       },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "loner (running XOR)",
-          "ko": "loner (누적 XOR)"
-         },
-         "value": 0,
-         "mark": null
-        },
-        {
-         "label": {
-          "en": "loner in bits",
-          "ko": "loner의 비트"
-         },
-         "value": "0000"
-        }
-       ]
+      "loner": {
+       "values": [
+        "0 (0000)"
+       ],
+       "marks": {}
       }
      }
     },
@@ -467,26 +451,31 @@
         "path": []
        }
       },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "loner (running XOR)",
-          "ko": "loner (누적 XOR)"
-         },
-         "value": 8,
-         "mark": "good"
-        },
-        {
-         "label": {
-          "en": "loner in bits",
-          "ko": "loner의 비트"
-         },
-         "value": "1000"
-        }
-       ]
+      "loner": {
+       "values": [
+        "8 (1000)"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "candies",
+        "at": 0
+       },
+       "to": {
+        "view": "loner",
+        "at": 0
+       },
+       "value": "^ 8",
+       "mark": "good"
+      }
+     ]
     },
     {
      "caption": {
@@ -538,26 +527,31 @@
         "path": []
        }
       },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "loner (running XOR)",
-          "ko": "loner (누적 XOR)"
-         },
-         "value": 10,
-         "mark": "good"
-        },
-        {
-         "label": {
-          "en": "loner in bits",
-          "ko": "loner의 비트"
-         },
-         "value": "1010"
-        }
-       ]
+      "loner": {
+       "values": [
+        "10 (1010)"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "candies",
+        "at": 1
+       },
+       "to": {
+        "view": "loner",
+        "at": 0
+       },
+       "value": "^ 2",
+       "mark": "good"
+      }
+     ]
     },
     {
      "caption": {
@@ -609,26 +603,31 @@
         "path": []
        }
       },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "loner (running XOR)",
-          "ko": "loner (누적 XOR)"
-         },
-         "value": 12,
-         "mark": "good"
-        },
-        {
-         "label": {
-          "en": "loner in bits",
-          "ko": "loner의 비트"
-         },
-         "value": "1100"
-        }
-       ]
+      "loner": {
+       "values": [
+        "12 (1100)"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "candies",
+        "at": 2
+       },
+       "to": {
+        "view": "loner",
+        "at": 0
+       },
+       "value": "^ 6",
+       "mark": "good"
+      }
+     ]
     },
     {
      "caption": {
@@ -682,26 +681,31 @@
         "path": []
        }
       },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "loner (running XOR)",
-          "ko": "loner (누적 XOR)"
-         },
-         "value": 14,
-         "mark": null
-        },
-        {
-         "label": {
-          "en": "loner in bits",
-          "ko": "loner의 비트"
-         },
-         "value": "1110"
-        }
-       ]
+      "loner": {
+       "values": [
+        "14 (1110)"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "candies",
+        "at": 3
+       },
+       "to": {
+        "view": "loner",
+        "at": 0
+       },
+       "value": "^ 2",
+       "mark": "good"
+      }
+     ]
     },
     {
      "caption": {
@@ -757,26 +761,31 @@
         "path": []
        }
       },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "loner (running XOR)",
-          "ko": "loner (누적 XOR)"
-         },
-         "value": 8,
-         "mark": null
-        },
-        {
-         "label": {
-          "en": "loner in bits",
-          "ko": "loner의 비트"
-         },
-         "value": "1000"
-        }
-       ]
+      "loner": {
+       "values": [
+        "8 (1000)"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "candies",
+        "at": 4
+       },
+       "to": {
+        "view": "loner",
+        "at": 0
+       },
+       "value": "^ 6",
+       "mark": "good"
+      }
+     ]
     },
     {
      "caption": {
@@ -831,24 +840,15 @@
         ]
        }
       },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "loner (running XOR)",
-          "ko": "loner (누적 XOR)"
-         },
-         "value": 8,
-         "mark": "good"
-        },
-        {
-         "label": {
-          "en": "loner in bits",
-          "ko": "loner의 비트"
-         },
-         "value": "1000"
-        }
-       ]
+      "loner": {
+       "values": [
+        "8 (1000)"
+       ],
+       "marks": {
+        "path": [
+         0
+        ]
+       }
       }
      },
      "answer": "8"
@@ -890,24 +890,11 @@
         "path": []
        }
       },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "loner (running XOR)",
-          "ko": "loner (누적 XOR)"
-         },
-         "value": 0,
-         "mark": null
-        },
-        {
-         "label": {
-          "en": "loner in bits",
-          "ko": "loner의 비트"
-         },
-         "value": "000"
-        }
-       ]
+      "loner": {
+       "values": [
+        "0 (000)"
+       ],
+       "marks": {}
       }
      }
     },
@@ -941,26 +928,31 @@
         "path": []
        }
       },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "loner (running XOR)",
-          "ko": "loner (누적 XOR)"
-         },
-         "value": 7,
-         "mark": "good"
-        },
-        {
-         "label": {
-          "en": "loner in bits",
-          "ko": "loner의 비트"
-         },
-         "value": "111"
-        }
-       ]
+      "loner": {
+       "values": [
+        "7 (111)"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "candies",
+        "at": 0
+       },
+       "to": {
+        "view": "loner",
+        "at": 0
+       },
+       "value": "^ 7",
+       "mark": "good"
+      }
+     ]
     },
     {
      "caption": {
@@ -990,24 +982,15 @@
         ]
        }
       },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "loner (running XOR)",
-          "ko": "loner (누적 XOR)"
-         },
-         "value": 7,
-         "mark": "good"
-        },
-        {
-         "label": {
-          "en": "loner in bits",
-          "ko": "loner의 비트"
-         },
-         "value": "111"
-        }
-       ]
+      "loner": {
+       "values": [
+        "7 (111)"
+       ],
+       "marks": {
+        "path": [
+         0
+        ]
+       }
       }
      },
      "answer": "7"

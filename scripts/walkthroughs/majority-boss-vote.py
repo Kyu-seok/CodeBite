@@ -1,7 +1,8 @@
 #!/usr/bin/env python3.12
 """majority-boss-vote's Walkthrough: the reference solution
 (scripts/replay-solutions/majority-boss-vote.py), Boyer-Moore voting with one candidate and a count,
-recording one frame per vote on each sample Test Case.
+recording one frame per vote on each sample Test Case. The candidate and its count are a one-slot map that each
+vote moves into, +1 or −1; a count that reaches 0 leaves the slot, and the next vote takes it.
 
     CODEBITE_DB=<database> scripts/walkthroughs/majority-boss-vote.py
 
@@ -14,7 +15,7 @@ import sys
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
 from codebite import driver_list, sample_cases, sample_run, walkthrough_path  # noqa: E402
-from walkthrough_trace import Walkthrough  # noqa: E402
+from walkthrough_trace import Walkthrough, at, move  # noqa: E402
 
 SLUG = "majority-boss-vote"
 
@@ -27,7 +28,8 @@ wt = Walkthrough(
            "다음 표가 새 후보가 됩니다. 과반은 나머지 표를 모두 합친 것보다 많으니 끝까지 남는 후보가 답입니다."},
     views=[
         {"id": "votes", "type": "array", "title": {"en": "votes", "ko": "votes (투표)"}},
-        {"id": "state", "type": "vars"},
+        {"id": "box", "type": "map", "title": {"en": "candidate → count", "ko": "후보 → 카운트"},
+         "empty": {"en": "no candidate", "ko": "후보 없음"}},
     ],
 )
 
@@ -40,16 +42,13 @@ def solve(votes, run):
     picked_at = None  # where the current candidate was picked, for the last frame
     tags = []  # [index, "+1" or "−1"]: what each vote read did to the count
 
-    def frame(caption, lit=(), good=(), path=(), dim=(), cand_mark=None, **answer):
+    def frame(caption, lit=(), good=(), path=(), dim=(), box_marks=None, struck=(), moves=None, **answer):
+        entries = [{"key": candidate, "value": count}] if picked_at is not None else []
         run.frame(caption,
                   votes={"values": votes, "pointers": {"i": i}, "tags": list(tags),
                          "marks": {"lit": list(lit), "good": list(good), "path": list(path), "dim": list(dim)}},
-                  state={"items": [
-                      {"label": {"en": "candidate", "ko": "후보"}, "value": candidate if picked_at is not None else "–",
-                       **({"mark": cand_mark} if cand_mark else {})},
-                      {"label": {"en": "count", "ko": "카운트"}, "value": count},
-                  ]},
-                  **answer)
+                  box={"entries": entries, "slots": 1, "struck": list(struck), "marks": box_marks or {}},
+                  moves=moves, **answer)
 
     n = len(votes)
     frame({"en": "No candidate yet and the count is 0. Read the votes left to right.",
@@ -69,19 +68,25 @@ def solve(votes, run):
                    "ko": f"카운트가 0이므로 {vote}번 표가 후보가 되고 카운트는 1입니다."
                    if i == 0 else
                    f"카운트가 0이므로 앞의 표는 모두 서로 상쇄되었습니다. {vote}번 표가 새 후보가 되고 카운트는 1입니다."},
-                  good=[i], dim=later, cand_mark="good")
+                  good=[i], dim=later, box_marks={"good": [vote]}, moves=[move(at("votes", i), at("box", vote))])
         elif vote == candidate:
             count += 1
             tags.append([i, "+1"])
             frame({"en": f"Vote {vote} matches the candidate: count up to {count}.",
                    "ko": f"{vote}번 표가 후보와 같습니다. 카운트를 올려 {count}입니다."},
-                  lit=[i], dim=later)
+                  lit=[i], dim=later, box_marks={"good": [candidate]},
+                  moves=[move(at("votes", i), at("box", candidate), value="+1")])
         else:
             count -= 1
             tags.append([i, "−1"])
-            frame({"en": f"Vote {vote} differs from candidate {candidate}: the two cancel, count down to {count}.",
-                   "ko": f"{vote}번 표는 후보 {candidate}번과 다릅니다. 둘이 상쇄되어 카운트를 내려 {count}입니다."},
-                  lit=[i], dim=later)
+            gone = count == 0
+            frame({"en": f"Vote {vote} differs from candidate {candidate}: the two cancel, count down to {count}"
+                         + (", so the candidate is out." if gone else "."),
+                   "ko": f"{vote}번 표는 후보 {candidate}번과 다릅니다. 둘이 상쇄되어 카운트를 내려 {count}"
+                         + ("이 되고, 후보가 빠집니다." if gone else "입니다.")},
+                  lit=[i], dim=later, box_marks={} if gone else {"bad": [candidate]},
+                  struck=[candidate] if gone else [],
+                  moves=[move(at("votes", i), at("box", candidate), value="−1", mark="bad")])
     i = None
     answer = str(candidate)
     held = sum(1 for v in votes if v == candidate)
@@ -92,7 +97,7 @@ def solve(votes, run):
            "ko": f"표 {n}개를 다 읽었고, 끝까지 남은 후보는 {candidate}번(카운트 {count})입니다. "
                  f"{candidate}번은 표 {n}개 중 {held}개로 과반이고, 과반인 값은 모두 상쇄될 수 없으므로 "
                  f"답은 {candidate}번입니다."},
-          path=[k for k in range(n) if votes[k] == candidate], cand_mark="path", answer=answer)
+          path=[k for k in range(n) if votes[k] == candidate], box_marks={"path": [candidate]}, answer=answer)
 
 
 for number, sample in enumerate(sample_cases(SLUG), start=1):

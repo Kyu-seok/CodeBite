@@ -27,15 +27,15 @@
   },
   {
    "id": "unpacked",
-   "type": "table",
+   "type": "output",
    "title": {
     "en": "unpack(blob) (receiver)",
     "ko": "unpack(blob) (받는 쪽)"
+   },
+   "empty": {
+    "en": "nothing yet",
+    "ko": "아직 없음"
    }
-  },
-  {
-   "id": "state",
-   "type": "vars"
   }
  ],
  "runs": [
@@ -110,41 +110,33 @@
        "pointers": {
         "i": null
        },
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13
+       ],
+       "spans": {},
        "marks": {
         "lit": [],
         "good": []
        }
       },
       "unpacked": {
-       "columns": [
-        {
-         "en": "text",
-         "ko": "내용"
-        },
-        {
-         "en": "length",
-         "ko": "길이"
-        }
-       ],
-       "rows": [],
+       "values": [],
        "marks": {
         "good": []
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": "i",
-         "value": "–"
-        },
-        {
-         "label": {
-          "en": "length",
-          "ko": "length (길이)"
-         },
-         "value": "–"
-        }
-       ]
       }
      }
     },
@@ -220,6 +212,26 @@
        "pointers": {
         "i": null
        },
+       "unread": [
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13
+       ],
+       "spans": {
+        "body": {
+         "from": 2,
+         "to": 6,
+         "label": {
+          "en": "message 1",
+          "ko": "메시지 1"
+         },
+         "mark": "good"
+        }
+       },
        "marks": {
         "lit": [],
         "good": [
@@ -234,37 +246,105 @@
        }
       },
       "unpacked": {
-       "columns": [
-        {
-         "en": "text",
-         "ko": "내용"
-        },
-        {
-         "en": "length",
-         "ko": "길이"
-        }
-       ],
-       "rows": [],
+       "values": [],
        "marks": {
         "good": []
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": "i",
-         "value": "–"
-        },
-        {
-         "label": {
-          "en": "length",
-          "ko": "length (길이)"
-         },
-         "value": "–"
-        }
-       ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "messages",
+        "at": [
+         0,
+         1
+        ]
+       },
+       "to": {
+        "view": "blob",
+        "at": 0
+       },
+       "value": "5"
+      },
+      {
+       "to": {
+        "view": "blob",
+        "at": 1
+       },
+       "value": "#"
+      },
+      {
+       "from": {
+        "view": "messages",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "to": {
+        "view": "blob",
+        "at": 2
+       },
+       "value": "h"
+      },
+      {
+       "from": {
+        "view": "messages",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "to": {
+        "view": "blob",
+        "at": 3
+       },
+       "value": "e"
+      },
+      {
+       "from": {
+        "view": "messages",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "to": {
+        "view": "blob",
+        "at": 4
+       },
+       "value": "l"
+      },
+      {
+       "from": {
+        "view": "messages",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "to": {
+        "view": "blob",
+        "at": 5
+       },
+       "value": "l"
+      },
+      {
+       "from": {
+        "view": "messages",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "to": {
+        "view": "blob",
+        "at": 6
+       },
+       "value": "o"
+      }
+     ]
     },
     {
      "caption": {
@@ -338,6 +418,18 @@
        "pointers": {
         "i": null
        },
+       "unread": [],
+       "spans": {
+        "body": {
+         "from": 9,
+         "to": 13,
+         "label": {
+          "en": "message 2",
+          "ko": "메시지 2"
+         },
+         "mark": "good"
+        }
+       },
        "marks": {
         "lit": [],
         "good": [
@@ -352,37 +444,105 @@
        }
       },
       "unpacked": {
-       "columns": [
-        {
-         "en": "text",
-         "ko": "내용"
-        },
-        {
-         "en": "length",
-         "ko": "길이"
-        }
-       ],
-       "rows": [],
+       "values": [],
        "marks": {
         "good": []
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": "i",
-         "value": "–"
-        },
-        {
-         "label": {
-          "en": "length",
-          "ko": "length (길이)"
-         },
-         "value": "–"
-        }
-       ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "messages",
+        "at": [
+         1,
+         1
+        ]
+       },
+       "to": {
+        "view": "blob",
+        "at": 7
+       },
+       "value": "5"
+      },
+      {
+       "to": {
+        "view": "blob",
+        "at": 8
+       },
+       "value": "#"
+      },
+      {
+       "from": {
+        "view": "messages",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "to": {
+        "view": "blob",
+        "at": 9
+       },
+       "value": "w"
+      },
+      {
+       "from": {
+        "view": "messages",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "to": {
+        "view": "blob",
+        "at": 10
+       },
+       "value": "o"
+      },
+      {
+       "from": {
+        "view": "messages",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "to": {
+        "view": "blob",
+        "at": 11
+       },
+       "value": "r"
+      },
+      {
+       "from": {
+        "view": "messages",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "to": {
+        "view": "blob",
+        "at": 12
+       },
+       "value": "l"
+      },
+      {
+       "from": {
+        "view": "messages",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "to": {
+        "view": "blob",
+        "at": 13
+       },
+       "value": "d"
+      }
+     ]
     },
     {
      "caption": {
@@ -464,41 +624,18 @@
        "pointers": {
         "i": 0
        },
+       "unread": [],
+       "spans": {},
        "marks": {
         "lit": [],
         "good": []
        }
       },
       "unpacked": {
-       "columns": [
-        {
-         "en": "text",
-         "ko": "내용"
-        },
-        {
-         "en": "length",
-         "ko": "길이"
-        }
-       ],
-       "rows": [],
+       "values": [],
        "marks": {
         "good": []
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": "i",
-         "value": 0
-        },
-        {
-         "label": {
-          "en": "length",
-          "ko": "length (길이)"
-         },
-         "value": "–"
-        }
-       ]
       }
      }
     },
@@ -582,6 +719,18 @@
        "pointers": {
         "i": 7
        },
+       "unread": [],
+       "spans": {
+        "body": {
+         "from": 2,
+         "to": 6,
+         "label": {
+          "en": "message 1",
+          "ko": "메시지 1"
+         },
+         "mark": "good"
+        }
+       },
        "marks": {
         "lit": [
          0,
@@ -597,57 +746,30 @@
        }
       },
       "unpacked": {
-       "columns": [
-        {
-         "en": "text",
-         "ko": "내용"
-        },
-        {
-         "en": "length",
-         "ko": "길이"
-        }
-       ],
-       "rows": [
-        {
-         "label": {
-          "en": "message 1",
-          "ko": "메시지 1"
-         },
-         "cells": [
-          "\"hello\"",
-          5
-         ]
-        }
+       "values": [
+        "\"hello\""
        ],
        "marks": {
         "good": [
-         [
-          0,
-          0
-         ],
-         [
-          0,
-          1
-         ]
+         0
         ]
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": "i",
-         "value": 7
-        },
-        {
-         "label": {
-          "en": "length",
-          "ko": "length (길이)"
-         },
-         "value": 5
-        }
-       ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "blob",
+        "at": 2
+       },
+       "to": {
+        "view": "unpacked",
+        "at": 0
+       },
+       "value": "\"hello\"",
+       "mark": "good"
+      }
+     ]
     },
     {
      "caption": {
@@ -729,6 +851,18 @@
        "pointers": {
         "i": null
        },
+       "unread": [],
+       "spans": {
+        "body": {
+         "from": 9,
+         "to": 13,
+         "label": {
+          "en": "message 2",
+          "ko": "메시지 2"
+         },
+         "mark": "good"
+        }
+       },
        "marks": {
         "lit": [
          7,
@@ -744,67 +878,31 @@
        }
       },
       "unpacked": {
-       "columns": [
-        {
-         "en": "text",
-         "ko": "내용"
-        },
-        {
-         "en": "length",
-         "ko": "길이"
-        }
-       ],
-       "rows": [
-        {
-         "label": {
-          "en": "message 1",
-          "ko": "메시지 1"
-         },
-         "cells": [
-          "\"hello\"",
-          5
-         ]
-        },
-        {
-         "label": {
-          "en": "message 2",
-          "ko": "메시지 2"
-         },
-         "cells": [
-          "\"world\"",
-          5
-         ]
-        }
+       "values": [
+        "\"hello\"",
+        "\"world\""
        ],
        "marks": {
         "good": [
-         [
-          1,
-          0
-         ],
-         [
-          1,
-          1
-         ]
+         1
         ]
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": "i",
-         "value": 14
-        },
-        {
-         "label": {
-          "en": "length",
-          "ko": "length (길이)"
-         },
-         "value": 5
-        }
-       ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "blob",
+        "at": 9
+       },
+       "to": {
+        "view": "unpacked",
+        "at": 1
+       },
+       "value": "\"world\"",
+       "mark": "good"
+      }
+     ]
     },
     {
      "caption": {
@@ -886,79 +984,24 @@
        "pointers": {
         "i": null
        },
+       "unread": [],
+       "spans": {},
        "marks": {
         "lit": [],
         "good": []
        }
       },
       "unpacked": {
-       "columns": [
-        {
-         "en": "text",
-         "ko": "내용"
-        },
-        {
-         "en": "length",
-         "ko": "길이"
-        }
-       ],
-       "rows": [
-        {
-         "label": {
-          "en": "message 1",
-          "ko": "메시지 1"
-         },
-         "cells": [
-          "\"hello\"",
-          5
-         ]
-        },
-        {
-         "label": {
-          "en": "message 2",
-          "ko": "메시지 2"
-         },
-         "cells": [
-          "\"world\"",
-          5
-         ]
-        }
+       "values": [
+        "\"hello\"",
+        "\"world\""
        ],
        "marks": {
         "path": [
-         [
-          0,
-          0
-         ],
-         [
-          0,
-          1
-         ],
-         [
-          1,
-          0
-         ],
-         [
-          1,
-          1
-         ]
+         0,
+         1
         ]
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": "i",
-         "value": 14
-        },
-        {
-         "label": {
-          "en": "length",
-          "ko": "length (길이)"
-         },
-         "value": 5
-        }
-       ]
       }
      },
      "answer": "[\"hello\",\"world\"]"
@@ -1015,41 +1058,21 @@
        "pointers": {
         "i": null
        },
+       "unread": [
+        0,
+        1
+       ],
+       "spans": {},
        "marks": {
         "lit": [],
         "good": []
        }
       },
       "unpacked": {
-       "columns": [
-        {
-         "en": "text",
-         "ko": "내용"
-        },
-        {
-         "en": "length",
-         "ko": "길이"
-        }
-       ],
-       "rows": [],
+       "values": [],
        "marks": {
         "good": []
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": "i",
-         "value": "–"
-        },
-        {
-         "label": {
-          "en": "length",
-          "ko": "length (길이)"
-         },
-         "value": "–"
-        }
-       ]
       }
      }
     },
@@ -1103,6 +1126,8 @@
        "pointers": {
         "i": null
        },
+       "unread": [],
+       "spans": {},
        "marks": {
         "lit": [],
         "good": [
@@ -1112,37 +1137,35 @@
        }
       },
       "unpacked": {
-       "columns": [
-        {
-         "en": "text",
-         "ko": "내용"
-        },
-        {
-         "en": "length",
-         "ko": "길이"
-        }
-       ],
-       "rows": [],
+       "values": [],
        "marks": {
         "good": []
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": "i",
-         "value": "–"
-        },
-        {
-         "label": {
-          "en": "length",
-          "ko": "length (길이)"
-         },
-         "value": "–"
-        }
-       ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "messages",
+        "at": [
+         0,
+         1
+        ]
+       },
+       "to": {
+        "view": "blob",
+        "at": 0
+       },
+       "value": "0"
+      },
+      {
+       "to": {
+        "view": "blob",
+        "at": 1
+       },
+       "value": "#"
+      }
+     ]
     },
     {
      "caption": {
@@ -1194,41 +1217,18 @@
        "pointers": {
         "i": 0
        },
+       "unread": [],
+       "spans": {},
        "marks": {
         "lit": [],
         "good": []
        }
       },
       "unpacked": {
-       "columns": [
-        {
-         "en": "text",
-         "ko": "내용"
-        },
-        {
-         "en": "length",
-         "ko": "길이"
-        }
-       ],
-       "rows": [],
+       "values": [],
        "marks": {
         "good": []
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": "i",
-         "value": 0
-        },
-        {
-         "label": {
-          "en": "length",
-          "ko": "length (길이)"
-         },
-         "value": "–"
-        }
-       ]
       }
      }
     },
@@ -1282,6 +1282,8 @@
        "pointers": {
         "i": null
        },
+       "unread": [],
+       "spans": {},
        "marks": {
         "lit": [
          0,
@@ -1291,57 +1293,30 @@
        }
       },
       "unpacked": {
-       "columns": [
-        {
-         "en": "text",
-         "ko": "내용"
-        },
-        {
-         "en": "length",
-         "ko": "길이"
-        }
-       ],
-       "rows": [
-        {
-         "label": {
-          "en": "message 1",
-          "ko": "메시지 1"
-         },
-         "cells": [
-          "\"\"",
-          0
-         ]
-        }
+       "values": [
+        "\"\""
        ],
        "marks": {
         "good": [
-         [
-          0,
-          0
-         ],
-         [
-          0,
-          1
-         ]
+         0
         ]
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": "i",
-         "value": 2
-        },
-        {
-         "label": {
-          "en": "length",
-          "ko": "length (길이)"
-         },
-         "value": 0
-        }
-       ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "blob",
+        "at": 1
+       },
+       "to": {
+        "view": "unpacked",
+        "at": 0
+       },
+       "value": "\"\"",
+       "mark": "good"
+      }
+     ]
     },
     {
      "caption": {
@@ -1393,61 +1368,22 @@
        "pointers": {
         "i": null
        },
+       "unread": [],
+       "spans": {},
        "marks": {
         "lit": [],
         "good": []
        }
       },
       "unpacked": {
-       "columns": [
-        {
-         "en": "text",
-         "ko": "내용"
-        },
-        {
-         "en": "length",
-         "ko": "길이"
-        }
-       ],
-       "rows": [
-        {
-         "label": {
-          "en": "message 1",
-          "ko": "메시지 1"
-         },
-         "cells": [
-          "\"\"",
-          0
-         ]
-        }
+       "values": [
+        "\"\""
        ],
        "marks": {
         "path": [
-         [
-          0,
-          0
-         ],
-         [
-          0,
-          1
-         ]
+         0
         ]
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": "i",
-         "value": 2
-        },
-        {
-         "label": {
-          "en": "length",
-          "ko": "length (길이)"
-         },
-         "value": 0
-        }
-       ]
       }
      },
      "answer": "[\"\"]"
@@ -1528,41 +1464,25 @@
        "pointers": {
         "i": null
        },
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+       ],
+       "spans": {},
        "marks": {
         "lit": [],
         "good": []
        }
       },
       "unpacked": {
-       "columns": [
-        {
-         "en": "text",
-         "ko": "내용"
-        },
-        {
-         "en": "length",
-         "ko": "길이"
-        }
-       ],
-       "rows": [],
+       "values": [],
        "marks": {
         "good": []
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": "i",
-         "value": "–"
-        },
-        {
-         "label": {
-          "en": "length",
-          "ko": "length (길이)"
-         },
-         "value": "–"
-        }
-       ]
       }
      }
     },
@@ -1640,6 +1560,13 @@
        "pointers": {
         "i": null
        },
+       "unread": [
+        2,
+        3,
+        4,
+        5
+       ],
+       "spans": {},
        "marks": {
         "lit": [],
         "good": [
@@ -1649,37 +1576,35 @@
        }
       },
       "unpacked": {
-       "columns": [
-        {
-         "en": "text",
-         "ko": "내용"
-        },
-        {
-         "en": "length",
-         "ko": "길이"
-        }
-       ],
-       "rows": [],
+       "values": [],
        "marks": {
         "good": []
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": "i",
-         "value": "–"
-        },
-        {
-         "label": {
-          "en": "length",
-          "ko": "length (길이)"
-         },
-         "value": "–"
-        }
-       ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "messages",
+        "at": [
+         0,
+         1
+        ]
+       },
+       "to": {
+        "view": "blob",
+        "at": 0
+       },
+       "value": "0"
+      },
+      {
+       "to": {
+        "view": "blob",
+        "at": 1
+       },
+       "value": "#"
+      }
+     ]
     },
     {
      "caption": {
@@ -1755,6 +1680,11 @@
        "pointers": {
         "i": null
        },
+       "unread": [
+        4,
+        5
+       ],
+       "spans": {},
        "marks": {
         "lit": [],
         "good": [
@@ -1764,37 +1694,35 @@
        }
       },
       "unpacked": {
-       "columns": [
-        {
-         "en": "text",
-         "ko": "내용"
-        },
-        {
-         "en": "length",
-         "ko": "길이"
-        }
-       ],
-       "rows": [],
+       "values": [],
        "marks": {
         "good": []
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": "i",
-         "value": "–"
-        },
-        {
-         "label": {
-          "en": "length",
-          "ko": "length (길이)"
-         },
-         "value": "–"
-        }
-       ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "messages",
+        "at": [
+         1,
+         1
+        ]
+       },
+       "to": {
+        "view": "blob",
+        "at": 2
+       },
+       "value": "0"
+      },
+      {
+       "to": {
+        "view": "blob",
+        "at": 3
+       },
+       "value": "#"
+      }
+     ]
     },
     {
      "caption": {
@@ -1870,6 +1798,8 @@
        "pointers": {
         "i": null
        },
+       "unread": [],
+       "spans": {},
        "marks": {
         "lit": [],
         "good": [
@@ -1879,37 +1809,35 @@
        }
       },
       "unpacked": {
-       "columns": [
-        {
-         "en": "text",
-         "ko": "내용"
-        },
-        {
-         "en": "length",
-         "ko": "길이"
-        }
-       ],
-       "rows": [],
+       "values": [],
        "marks": {
         "good": []
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": "i",
-         "value": "–"
-        },
-        {
-         "label": {
-          "en": "length",
-          "ko": "length (길이)"
-         },
-         "value": "–"
-        }
-       ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "messages",
+        "at": [
+         2,
+         1
+        ]
+       },
+       "to": {
+        "view": "blob",
+        "at": 4
+       },
+       "value": "0"
+      },
+      {
+       "to": {
+        "view": "blob",
+        "at": 5
+       },
+       "value": "#"
+      }
+     ]
     },
     {
      "caption": {
@@ -2001,41 +1929,18 @@
        "pointers": {
         "i": 0
        },
+       "unread": [],
+       "spans": {},
        "marks": {
         "lit": [],
         "good": []
        }
       },
       "unpacked": {
-       "columns": [
-        {
-         "en": "text",
-         "ko": "내용"
-        },
-        {
-         "en": "length",
-         "ko": "길이"
-        }
-       ],
-       "rows": [],
+       "values": [],
        "marks": {
         "good": []
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": "i",
-         "value": 0
-        },
-        {
-         "label": {
-          "en": "length",
-          "ko": "length (길이)"
-         },
-         "value": "–"
-        }
-       ]
       }
      }
     },
@@ -2129,6 +2034,8 @@
        "pointers": {
         "i": 2
        },
+       "unread": [],
+       "spans": {},
        "marks": {
         "lit": [
          0,
@@ -2138,57 +2045,30 @@
        }
       },
       "unpacked": {
-       "columns": [
-        {
-         "en": "text",
-         "ko": "내용"
-        },
-        {
-         "en": "length",
-         "ko": "길이"
-        }
-       ],
-       "rows": [
-        {
-         "label": {
-          "en": "message 1",
-          "ko": "메시지 1"
-         },
-         "cells": [
-          "\"\"",
-          0
-         ]
-        }
+       "values": [
+        "\"\""
        ],
        "marks": {
         "good": [
-         [
-          0,
-          0
-         ],
-         [
-          0,
-          1
-         ]
+         0
         ]
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": "i",
-         "value": 2
-        },
-        {
-         "label": {
-          "en": "length",
-          "ko": "length (길이)"
-         },
-         "value": 0
-        }
-       ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "blob",
+        "at": 1
+       },
+       "to": {
+        "view": "unpacked",
+        "at": 0
+       },
+       "value": "\"\"",
+       "mark": "good"
+      }
+     ]
     },
     {
      "caption": {
@@ -2280,6 +2160,8 @@
        "pointers": {
         "i": 4
        },
+       "unread": [],
+       "spans": {},
        "marks": {
         "lit": [
          2,
@@ -2289,67 +2171,31 @@
        }
       },
       "unpacked": {
-       "columns": [
-        {
-         "en": "text",
-         "ko": "내용"
-        },
-        {
-         "en": "length",
-         "ko": "길이"
-        }
-       ],
-       "rows": [
-        {
-         "label": {
-          "en": "message 1",
-          "ko": "메시지 1"
-         },
-         "cells": [
-          "\"\"",
-          0
-         ]
-        },
-        {
-         "label": {
-          "en": "message 2",
-          "ko": "메시지 2"
-         },
-         "cells": [
-          "\"\"",
-          0
-         ]
-        }
+       "values": [
+        "\"\"",
+        "\"\""
        ],
        "marks": {
         "good": [
-         [
-          1,
-          0
-         ],
-         [
-          1,
-          1
-         ]
+         1
         ]
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": "i",
-         "value": 4
-        },
-        {
-         "label": {
-          "en": "length",
-          "ko": "length (길이)"
-         },
-         "value": 0
-        }
-       ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "blob",
+        "at": 3
+       },
+       "to": {
+        "view": "unpacked",
+        "at": 1
+       },
+       "value": "\"\"",
+       "mark": "good"
+      }
+     ]
     },
     {
      "caption": {
@@ -2441,6 +2287,8 @@
        "pointers": {
         "i": null
        },
+       "unread": [],
+       "spans": {},
        "marks": {
         "lit": [
          4,
@@ -2450,77 +2298,32 @@
        }
       },
       "unpacked": {
-       "columns": [
-        {
-         "en": "text",
-         "ko": "내용"
-        },
-        {
-         "en": "length",
-         "ko": "길이"
-        }
-       ],
-       "rows": [
-        {
-         "label": {
-          "en": "message 1",
-          "ko": "메시지 1"
-         },
-         "cells": [
-          "\"\"",
-          0
-         ]
-        },
-        {
-         "label": {
-          "en": "message 2",
-          "ko": "메시지 2"
-         },
-         "cells": [
-          "\"\"",
-          0
-         ]
-        },
-        {
-         "label": {
-          "en": "message 3",
-          "ko": "메시지 3"
-         },
-         "cells": [
-          "\"\"",
-          0
-         ]
-        }
+       "values": [
+        "\"\"",
+        "\"\"",
+        "\"\""
        ],
        "marks": {
         "good": [
-         [
-          2,
-          0
-         ],
-         [
-          2,
-          1
-         ]
+         2
         ]
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": "i",
-         "value": 6
-        },
-        {
-         "label": {
-          "en": "length",
-          "ko": "length (길이)"
-         },
-         "value": 0
-        }
-       ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "blob",
+        "at": 5
+       },
+       "to": {
+        "view": "unpacked",
+        "at": 2
+       },
+       "value": "\"\"",
+       "mark": "good"
+      }
+     ]
     },
     {
      "caption": {
@@ -2612,97 +2415,26 @@
        "pointers": {
         "i": null
        },
+       "unread": [],
+       "spans": {},
        "marks": {
         "lit": [],
         "good": []
        }
       },
       "unpacked": {
-       "columns": [
-        {
-         "en": "text",
-         "ko": "내용"
-        },
-        {
-         "en": "length",
-         "ko": "길이"
-        }
-       ],
-       "rows": [
-        {
-         "label": {
-          "en": "message 1",
-          "ko": "메시지 1"
-         },
-         "cells": [
-          "\"\"",
-          0
-         ]
-        },
-        {
-         "label": {
-          "en": "message 2",
-          "ko": "메시지 2"
-         },
-         "cells": [
-          "\"\"",
-          0
-         ]
-        },
-        {
-         "label": {
-          "en": "message 3",
-          "ko": "메시지 3"
-         },
-         "cells": [
-          "\"\"",
-          0
-         ]
-        }
+       "values": [
+        "\"\"",
+        "\"\"",
+        "\"\""
        ],
        "marks": {
         "path": [
-         [
-          0,
-          0
-         ],
-         [
-          0,
-          1
-         ],
-         [
-          1,
-          0
-         ],
-         [
-          1,
-          1
-         ],
-         [
-          2,
-          0
-         ],
-         [
-          2,
-          1
-         ]
+         0,
+         1,
+         2
         ]
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": "i",
-         "value": 6
-        },
-        {
-         "label": {
-          "en": "length",
-          "ko": "length (길이)"
-         },
-         "value": 0
-        }
-       ]
       }
      },
      "answer": "[\"\",\"\",\"\"]"
@@ -2775,41 +2507,27 @@
        "pointers": {
         "i": null
        },
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+       ],
+       "spans": {},
        "marks": {
         "lit": [],
         "good": []
        }
       },
       "unpacked": {
-       "columns": [
-        {
-         "en": "text",
-         "ko": "내용"
-        },
-        {
-         "en": "length",
-         "ko": "길이"
-        }
-       ],
-       "rows": [],
+       "values": [],
        "marks": {
         "good": []
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": "i",
-         "value": "–"
-        },
-        {
-         "label": {
-          "en": "length",
-          "ko": "length (길이)"
-         },
-         "value": "–"
-        }
-       ]
       }
      }
     },
@@ -2879,6 +2597,22 @@
        "pointers": {
         "i": null
        },
+       "unread": [
+        5,
+        6,
+        7
+       ],
+       "spans": {
+        "body": {
+         "from": 2,
+         "to": 4,
+         "label": {
+          "en": "message 1",
+          "ko": "메시지 1"
+         },
+         "mark": "good"
+        }
+       },
        "marks": {
         "lit": [],
         "good": [
@@ -2891,37 +2625,77 @@
        }
       },
       "unpacked": {
-       "columns": [
-        {
-         "en": "text",
-         "ko": "내용"
-        },
-        {
-         "en": "length",
-         "ko": "길이"
-        }
-       ],
-       "rows": [],
+       "values": [],
        "marks": {
         "good": []
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": "i",
-         "value": "–"
-        },
-        {
-         "label": {
-          "en": "length",
-          "ko": "length (길이)"
-         },
-         "value": "–"
-        }
-       ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "messages",
+        "at": [
+         0,
+         1
+        ]
+       },
+       "to": {
+        "view": "blob",
+        "at": 0
+       },
+       "value": "3"
+      },
+      {
+       "to": {
+        "view": "blob",
+        "at": 1
+       },
+       "value": "#"
+      },
+      {
+       "from": {
+        "view": "messages",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "to": {
+        "view": "blob",
+        "at": 2
+       },
+       "value": "7"
+      },
+      {
+       "from": {
+        "view": "messages",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "to": {
+        "view": "blob",
+        "at": 3
+       },
+       "value": "#"
+      },
+      {
+       "from": {
+        "view": "messages",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "to": {
+        "view": "blob",
+        "at": 4
+       },
+       "value": "x"
+      }
+     ]
     },
     {
      "caption": {
@@ -2989,6 +2763,18 @@
        "pointers": {
         "i": null
        },
+       "unread": [],
+       "spans": {
+        "body": {
+         "from": 7,
+         "to": 7,
+         "label": {
+          "en": "message 2",
+          "ko": "메시지 2"
+         },
+         "mark": "good"
+        }
+       },
        "marks": {
         "lit": [],
         "good": [
@@ -2999,37 +2785,49 @@
        }
       },
       "unpacked": {
-       "columns": [
-        {
-         "en": "text",
-         "ko": "내용"
-        },
-        {
-         "en": "length",
-         "ko": "길이"
-        }
-       ],
-       "rows": [],
+       "values": [],
        "marks": {
         "good": []
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": "i",
-         "value": "–"
-        },
-        {
-         "label": {
-          "en": "length",
-          "ko": "length (길이)"
-         },
-         "value": "–"
-        }
-       ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "messages",
+        "at": [
+         1,
+         1
+        ]
+       },
+       "to": {
+        "view": "blob",
+        "at": 5
+       },
+       "value": "1"
+      },
+      {
+       "to": {
+        "view": "blob",
+        "at": 6
+       },
+       "value": "#"
+      },
+      {
+       "from": {
+        "view": "messages",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "to": {
+        "view": "blob",
+        "at": 7
+       },
+       "value": "#"
+      }
+     ]
     },
     {
      "caption": {
@@ -3105,41 +2903,18 @@
        "pointers": {
         "i": 0
        },
+       "unread": [],
+       "spans": {},
        "marks": {
         "lit": [],
         "good": []
        }
       },
       "unpacked": {
-       "columns": [
-        {
-         "en": "text",
-         "ko": "내용"
-        },
-        {
-         "en": "length",
-         "ko": "길이"
-        }
-       ],
-       "rows": [],
+       "values": [],
        "marks": {
         "good": []
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": "i",
-         "value": 0
-        },
-        {
-         "label": {
-          "en": "length",
-          "ko": "length (길이)"
-         },
-         "value": "–"
-        }
-       ]
       }
      }
     },
@@ -3217,6 +2992,18 @@
        "pointers": {
         "i": 5
        },
+       "unread": [],
+       "spans": {
+        "body": {
+         "from": 2,
+         "to": 4,
+         "label": {
+          "en": "message 1",
+          "ko": "메시지 1"
+         },
+         "mark": "good"
+        }
+       },
        "marks": {
         "lit": [
          0,
@@ -3230,57 +3017,30 @@
        }
       },
       "unpacked": {
-       "columns": [
-        {
-         "en": "text",
-         "ko": "내용"
-        },
-        {
-         "en": "length",
-         "ko": "길이"
-        }
-       ],
-       "rows": [
-        {
-         "label": {
-          "en": "message 1",
-          "ko": "메시지 1"
-         },
-         "cells": [
-          "\"7#x\"",
-          3
-         ]
-        }
+       "values": [
+        "\"7#x\""
        ],
        "marks": {
         "good": [
-         [
-          0,
-          0
-         ],
-         [
-          0,
-          1
-         ]
+         0
         ]
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": "i",
-         "value": 5
-        },
-        {
-         "label": {
-          "en": "length",
-          "ko": "length (길이)"
-         },
-         "value": 3
-        }
-       ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "blob",
+        "at": 2
+       },
+       "to": {
+        "view": "unpacked",
+        "at": 0
+       },
+       "value": "\"7#x\"",
+       "mark": "good"
+      }
+     ]
     },
     {
      "caption": {
@@ -3356,6 +3116,18 @@
        "pointers": {
         "i": null
        },
+       "unread": [],
+       "spans": {
+        "body": {
+         "from": 7,
+         "to": 7,
+         "label": {
+          "en": "message 2",
+          "ko": "메시지 2"
+         },
+         "mark": "good"
+        }
+       },
        "marks": {
         "lit": [
          5,
@@ -3367,67 +3139,31 @@
        }
       },
       "unpacked": {
-       "columns": [
-        {
-         "en": "text",
-         "ko": "내용"
-        },
-        {
-         "en": "length",
-         "ko": "길이"
-        }
-       ],
-       "rows": [
-        {
-         "label": {
-          "en": "message 1",
-          "ko": "메시지 1"
-         },
-         "cells": [
-          "\"7#x\"",
-          3
-         ]
-        },
-        {
-         "label": {
-          "en": "message 2",
-          "ko": "메시지 2"
-         },
-         "cells": [
-          "\"#\"",
-          1
-         ]
-        }
+       "values": [
+        "\"7#x\"",
+        "\"#\""
        ],
        "marks": {
         "good": [
-         [
-          1,
-          0
-         ],
-         [
-          1,
-          1
-         ]
+         1
         ]
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": "i",
-         "value": 8
-        },
-        {
-         "label": {
-          "en": "length",
-          "ko": "length (길이)"
-         },
-         "value": 1
-        }
-       ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "blob",
+        "at": 7
+       },
+       "to": {
+        "view": "unpacked",
+        "at": 1
+       },
+       "value": "\"#\"",
+       "mark": "good"
+      }
+     ]
     },
     {
      "caption": {
@@ -3503,79 +3239,24 @@
        "pointers": {
         "i": null
        },
+       "unread": [],
+       "spans": {},
        "marks": {
         "lit": [],
         "good": []
        }
       },
       "unpacked": {
-       "columns": [
-        {
-         "en": "text",
-         "ko": "내용"
-        },
-        {
-         "en": "length",
-         "ko": "길이"
-        }
-       ],
-       "rows": [
-        {
-         "label": {
-          "en": "message 1",
-          "ko": "메시지 1"
-         },
-         "cells": [
-          "\"7#x\"",
-          3
-         ]
-        },
-        {
-         "label": {
-          "en": "message 2",
-          "ko": "메시지 2"
-         },
-         "cells": [
-          "\"#\"",
-          1
-         ]
-        }
+       "values": [
+        "\"7#x\"",
+        "\"#\""
        ],
        "marks": {
         "path": [
-         [
-          0,
-          0
-         ],
-         [
-          0,
-          1
-         ],
-         [
-          1,
-          0
-         ],
-         [
-          1,
-          1
-         ]
+         0,
+         1
         ]
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": "i",
-         "value": 8
-        },
-        {
-         "label": {
-          "en": "length",
-          "ko": "length (길이)"
-         },
-         "value": 1
-        }
-       ]
       }
      },
      "answer": "[\"7#x\",\"#\"]"
