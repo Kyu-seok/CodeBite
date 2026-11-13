@@ -26,6 +26,18 @@
    }
   },
   {
+   "id": "counted",
+   "type": "output",
+   "title": {
+    "en": "count (the windows summing to k)",
+    "ko": "count (합이 k인 구간)"
+   },
+   "empty": {
+    "en": "none yet",
+    "ko": "아직 없음"
+   }
+  },
+  {
    "id": "state",
    "type": "vars"
   }
@@ -76,19 +88,15 @@
         ]
        }
       },
+      "counted": {
+       "values": [],
+       "marks": {}
+      },
       "state": {
        "items": [
         {
          "label": "k",
          "value": 4
-        },
-        {
-         "label": {
-          "en": "count",
-          "ko": "count (구간 수)"
-         },
-         "value": 0,
-         "mark": null
         }
        ]
       }
@@ -148,19 +156,15 @@
         "hit": false
        }
       },
+      "counted": {
+       "values": [],
+       "marks": {}
+      },
       "state": {
        "items": [
         {
          "label": "k",
          "value": 4
-        },
-        {
-         "label": {
-          "en": "count",
-          "ko": "count (구간 수)"
-         },
-         "value": 0,
-         "mark": null
         }
        ]
       }
@@ -250,24 +254,38 @@
         "hit": true
        }
       },
+      "counted": {
+       "values": [
+        "[0..1]"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
       "state": {
        "items": [
         {
          "label": "k",
          "value": 4
-        },
-        {
-         "label": {
-          "en": "count",
-          "ko": "count (구간 수)"
-         },
-         "value": 1,
-         "mark": "good"
         }
        ]
       }
      },
      "moves": [
+      {
+       "from": {
+        "view": "seen",
+        "at": 0
+       },
+       "to": {
+        "view": "counted",
+        "at": 0
+       },
+       "value": "[0..1]",
+       "mark": "good"
+      },
       {
        "from": {
         "view": "readings",
@@ -358,24 +376,39 @@
         "hit": true
        }
       },
+      "counted": {
+       "values": [
+        "[0..1]",
+        "[1..2]"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
       "state": {
        "items": [
         {
          "label": "k",
          "value": 4
-        },
-        {
-         "label": {
-          "en": "count",
-          "ko": "count (구간 수)"
-         },
-         "value": 2,
-         "mark": "good"
         }
        ]
       }
      },
      "moves": [
+      {
+       "from": {
+        "view": "seen",
+        "at": 2
+       },
+       "to": {
+        "view": "counted",
+        "at": 1
+       },
+       "value": "[1..2]",
+       "mark": "good"
+      },
       {
        "from": {
         "view": "readings",
@@ -418,7 +451,27 @@
          "Σ6"
         ]
        ],
-       "spans": {},
+       "spans": {
+        "w0": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "sum 4",
+          "ko": "합 4"
+         },
+         "mark": "path"
+        },
+        "w1": {
+         "from": 1,
+         "to": 2,
+         "label": {
+          "en": "sum 4",
+          "ko": "합 4"
+         },
+         "mark": "path",
+         "below": true
+        }
+       },
        "unread": [],
        "marks": {
         "path": [
@@ -449,19 +502,23 @@
        ],
        "marks": {}
       },
+      "counted": {
+       "values": [
+        "[0..1]",
+        "[1..2]"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1
+        ]
+       }
+      },
       "state": {
        "items": [
         {
          "label": "k",
          "value": 4
-        },
-        {
-         "label": {
-          "en": "count",
-          "ko": "count (구간 수)"
-         },
-         "value": 2,
-         "mark": "path"
         }
        ]
       }
@@ -518,19 +575,15 @@
         ]
        }
       },
+      "counted": {
+       "values": [],
+       "marks": {}
+      },
       "state": {
        "items": [
         {
          "label": "k",
          "value": 6
-        },
-        {
-         "label": {
-          "en": "count",
-          "ko": "count (구간 수)"
-         },
-         "value": 0,
-         "mark": null
         }
        ]
       }
@@ -592,19 +645,15 @@
         "hit": false
        }
       },
+      "counted": {
+       "values": [],
+       "marks": {}
+      },
       "state": {
        "items": [
         {
          "label": "k",
          "value": 6
-        },
-        {
-         "label": {
-          "en": "count",
-          "ko": "count (구간 수)"
-         },
-         "value": 0,
-         "mark": null
         }
        ]
       }
@@ -686,19 +735,15 @@
         "hit": false
        }
       },
+      "counted": {
+       "values": [],
+       "marks": {}
+      },
       "state": {
        "items": [
         {
          "label": "k",
          "value": 6
-        },
-        {
-         "label": {
-          "en": "count",
-          "ko": "count (구간 수)"
-         },
-         "value": 0,
-         "mark": null
         }
        ]
       }
@@ -797,24 +842,38 @@
         "hit": true
        }
       },
+      "counted": {
+       "values": [
+        "[0..2]"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
       "state": {
        "items": [
         {
          "label": "k",
          "value": 6
-        },
-        {
-         "label": {
-          "en": "count",
-          "ko": "count (구간 수)"
-         },
-         "value": 1,
-         "mark": "good"
         }
        ]
       }
      },
      "moves": [
+      {
+       "from": {
+        "view": "seen",
+        "at": 0
+       },
+       "to": {
+        "view": "counted",
+        "at": 0
+       },
+       "value": "[0..2]",
+       "mark": "good"
+      },
       {
        "from": {
         "view": "readings",
@@ -914,24 +973,39 @@
         "hit": true
        }
       },
+      "counted": {
+       "values": [
+        "[0..2]",
+        "[2..3]"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
       "state": {
        "items": [
         {
          "label": "k",
          "value": 6
-        },
-        {
-         "label": {
-          "en": "count",
-          "ko": "count (구간 수)"
-         },
-         "value": 2,
-         "mark": "good"
         }
        ]
       }
      },
      "moves": [
+      {
+       "from": {
+        "view": "seen",
+        "at": 4
+       },
+       "to": {
+        "view": "counted",
+        "at": 1
+       },
+       "value": "[2..3]",
+       "mark": "good"
+      },
       {
        "from": {
         "view": "readings",
@@ -979,7 +1053,27 @@
          "Σ10"
         ]
        ],
-       "spans": {},
+       "spans": {
+        "w0": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "sum 6",
+          "ko": "합 6"
+         },
+         "mark": "path"
+        },
+        "w1": {
+         "from": 2,
+         "to": 3,
+         "label": {
+          "en": "sum 6",
+          "ko": "합 6"
+         },
+         "mark": "path",
+         "below": true
+        }
+       },
        "unread": [],
        "marks": {
         "path": [
@@ -1015,19 +1109,23 @@
        ],
        "marks": {}
       },
+      "counted": {
+       "values": [
+        "[0..2]",
+        "[2..3]"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1
+        ]
+       }
+      },
       "state": {
        "items": [
         {
          "label": "k",
          "value": 6
-        },
-        {
-         "label": {
-          "en": "count",
-          "ko": "count (구간 수)"
-         },
-         "value": 2,
-         "mark": "path"
         }
        ]
       }
@@ -1082,19 +1180,15 @@
         ]
        }
       },
+      "counted": {
+       "values": [],
+       "marks": {}
+      },
       "state": {
        "items": [
         {
          "label": "k",
          "value": 0
-        },
-        {
-         "label": {
-          "en": "count",
-          "ko": "count (구간 수)"
-         },
-         "value": 0,
-         "mark": null
         }
        ]
       }
@@ -1154,19 +1248,15 @@
         "hit": false
        }
       },
+      "counted": {
+       "values": [],
+       "marks": {}
+      },
       "state": {
        "items": [
         {
          "label": "k",
          "value": 0
-        },
-        {
-         "label": {
-          "en": "count",
-          "ko": "count (구간 수)"
-         },
-         "value": 0,
-         "mark": null
         }
        ]
       }
@@ -1252,24 +1342,38 @@
         "hit": true
        }
       },
+      "counted": {
+       "values": [
+        "[0..1]"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
       "state": {
        "items": [
         {
          "label": "k",
          "value": 0
-        },
-        {
-         "label": {
-          "en": "count",
-          "ko": "count (구간 수)"
-         },
-         "value": 1,
-         "mark": "good"
         }
        ]
       }
      },
      "moves": [
+      {
+       "from": {
+        "view": "seen",
+        "at": 0
+       },
+       "to": {
+        "view": "counted",
+        "at": 0
+       },
+       "value": "[0..1]",
+       "mark": "good"
+      },
       {
        "from": {
         "view": "readings",
@@ -1362,24 +1466,53 @@
         "hit": true
        }
       },
+      "counted": {
+       "values": [
+        "[0..1]",
+        "[0..2]",
+        "[2..2]"
+       ],
+       "marks": {
+        "good": [
+         1,
+         2
+        ]
+       }
+      },
       "state": {
        "items": [
         {
          "label": "k",
          "value": 0
-        },
-        {
-         "label": {
-          "en": "count",
-          "ko": "count (구간 수)"
-         },
-         "value": 3,
-         "mark": "good"
         }
        ]
       }
      },
      "moves": [
+      {
+       "from": {
+        "view": "seen",
+        "at": 0
+       },
+       "to": {
+        "view": "counted",
+        "at": 1
+       },
+       "value": "[0..2]",
+       "mark": "good"
+      },
+      {
+       "from": {
+        "view": "seen",
+        "at": 0
+       },
+       "to": {
+        "view": "counted",
+        "at": 2
+       },
+       "value": "[2..2]",
+       "mark": "good"
+      },
       {
        "from": {
         "view": "readings",
@@ -1422,7 +1555,36 @@
          "Σ0"
         ]
        ],
-       "spans": {},
+       "spans": {
+        "w0": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "sum 0",
+          "ko": "합 0"
+         },
+         "mark": "path"
+        },
+        "w1": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "sum 0",
+          "ko": "합 0"
+         },
+         "mark": "path",
+         "below": true
+        },
+        "w2": {
+         "from": 2,
+         "to": 2,
+         "label": {
+          "en": "sum 0",
+          "ko": "합 0"
+         },
+         "mark": "path"
+        }
+       },
        "unread": [],
        "marks": {
         "path": [
@@ -1445,19 +1607,25 @@
        ],
        "marks": {}
       },
+      "counted": {
+       "values": [
+        "[0..1]",
+        "[0..2]",
+        "[2..2]"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2
+        ]
+       }
+      },
       "state": {
        "items": [
         {
          "label": "k",
          "value": 0
-        },
-        {
-         "label": {
-          "en": "count",
-          "ko": "count (구간 수)"
-         },
-         "value": 3,
-         "mark": "path"
         }
        ]
       }
