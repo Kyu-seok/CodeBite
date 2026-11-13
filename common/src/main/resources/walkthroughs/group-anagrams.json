@@ -16,10 +16,26 @@
   },
   {
    "id": "groups",
-   "type": "table",
+   "type": "map",
    "title": {
     "en": "groups: key → words",
     "ko": "groups: 키 → 단어"
+   },
+   "empty": {
+    "en": "empty",
+    "ko": "비어 있음"
+   }
+  },
+  {
+   "id": "result",
+   "type": "output",
+   "title": {
+    "en": "answer",
+    "ko": "답"
+   },
+   "empty": {
+    "en": "empty",
+    "ko": "비어 있음"
    }
   }
  ],
@@ -100,17 +116,79 @@
          ]
         }
        ],
-       "marks": {}
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ],
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ],
+         [
+          6,
+          0
+         ],
+         [
+          6,
+          1
+         ]
+        ]
+       }
       },
       "groups": {
-       "rows": [],
+       "entries": [],
        "marks": {}
+      },
+      "result": {
+       "values": []
       }
      }
     },
     {
      "caption": {
-      "en": "\"oakvanilla\" sorted is \"aaaikllnov\". No group has that key yet, so start one.",
+      "en": "\"oakvanilla\" sorted is \"aaaikllnov\". No group has that key yet, so it starts one.",
       "ko": "\"oakvanilla\"의 글자를 정렬하면 \"aaaikllnov\"입니다. 이 키의 그룹이 아직 없으니 새로 만듭니다."
      },
      "views": {
@@ -188,28 +266,94 @@
           0,
           1
          ]
+        ],
+        "dim": [
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ],
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ],
+         [
+          6,
+          0
+         ],
+         [
+          6,
+          1
+         ]
         ]
        }
       },
       "groups": {
-       "rows": [
+       "entries": [
         {
-         "label": "aaaikllnov",
-         "cells": [
+         "key": "aaaikllnov",
+         "value": [
           "oakvanilla"
          ]
         }
        ],
        "marks": {
         "good": [
-         [
-          0,
-          0
-         ]
+         "aaaikllnov"
         ]
        }
+      },
+      "result": {
+       "values": []
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "words",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "to": {
+        "view": "groups",
+        "at": "aaaikllnov"
+       },
+       "value": "oakvanilla"
+      }
+     ]
     },
     {
      "caption": {
@@ -291,14 +435,56 @@
           1,
           1
          ]
+        ],
+        "dim": [
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ],
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ],
+         [
+          6,
+          0
+         ],
+         [
+          6,
+          1
+         ]
         ]
        }
       },
       "groups": {
-       "rows": [
+       "entries": [
         {
-         "label": "aaaikllnov",
-         "cells": [
+         "key": "aaaikllnov",
+         "value": [
           "oakvanilla",
           "vanillaoak"
          ]
@@ -306,18 +492,34 @@
        ],
        "marks": {
         "good": [
-         [
-          0,
-          1
-         ]
+         "aaaikllnov"
         ]
        }
+      },
+      "result": {
+       "values": []
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "words",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "to": {
+        "view": "groups",
+        "at": "aaaikllnov"
+       },
+       "value": "vanillaoak"
+      }
+     ]
     },
     {
      "caption": {
-      "en": "\"plum\" sorted is \"lmpu\". No group has that key yet, so start one.",
+      "en": "\"plum\" sorted is \"lmpu\". No group has that key yet, so it starts one.",
       "ko": "\"plum\"의 글자를 정렬하면 \"lmpu\"입니다. 이 키의 그룹이 아직 없으니 새로 만듭니다."
      },
      "views": {
@@ -395,35 +597,85 @@
           2,
           1
          ]
+        ],
+        "dim": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ],
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ],
+         [
+          6,
+          0
+         ],
+         [
+          6,
+          1
+         ]
         ]
        }
       },
       "groups": {
-       "rows": [
+       "entries": [
         {
-         "label": "aaaikllnov",
-         "cells": [
+         "key": "aaaikllnov",
+         "value": [
           "oakvanilla",
           "vanillaoak"
          ]
         },
         {
-         "label": "lmpu",
-         "cells": [
+         "key": "lmpu",
+         "value": [
           "plum"
          ]
         }
        ],
        "marks": {
         "good": [
-         [
-          1,
-          0
-         ]
+         "lmpu"
         ]
        }
+      },
+      "result": {
+       "values": []
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "words",
+        "at": [
+         2,
+         0
+        ]
+       },
+       "to": {
+        "view": "groups",
+        "at": "lmpu"
+       },
+       "value": "plum"
+      }
+     ]
     },
     {
      "caption": {
@@ -505,21 +757,47 @@
           3,
           1
          ]
+        ],
+        "dim": [
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ],
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ],
+         [
+          6,
+          0
+         ],
+         [
+          6,
+          1
+         ]
         ]
        }
       },
       "groups": {
-       "rows": [
+       "entries": [
         {
-         "label": "aaaikllnov",
-         "cells": [
+         "key": "aaaikllnov",
+         "value": [
           "oakvanilla",
           "vanillaoak"
          ]
         },
         {
-         "label": "lmpu",
-         "cells": [
+         "key": "lmpu",
+         "value": [
           "plum",
           "lump"
          ]
@@ -527,18 +805,34 @@
        ],
        "marks": {
         "good": [
-         [
-          1,
-          1
-         ]
+         "lmpu"
         ]
        }
+      },
+      "result": {
+       "values": []
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "words",
+        "at": [
+         3,
+         0
+        ]
+       },
+       "to": {
+        "view": "groups",
+        "at": "lmpu"
+       },
+       "value": "lump"
+      }
+     ]
     },
     {
      "caption": {
-      "en": "\"berrytannin\" sorted is \"abeinnnrrty\". No group has that key yet, so start one.",
+      "en": "\"berrytannin\" sorted is \"abeinnnrrty\". No group has that key yet, so it starts one.",
       "ko": "\"berrytannin\"의 글자를 정렬하면 \"abeinnnrrty\"입니다. 이 키의 그룹이 아직 없으니 새로 만듭니다."
      },
      "views": {
@@ -616,42 +910,76 @@
           4,
           1
          ]
+        ],
+        "dim": [
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ],
+         [
+          6,
+          0
+         ],
+         [
+          6,
+          1
+         ]
         ]
        }
       },
       "groups": {
-       "rows": [
+       "entries": [
         {
-         "label": "aaaikllnov",
-         "cells": [
+         "key": "aaaikllnov",
+         "value": [
           "oakvanilla",
           "vanillaoak"
          ]
         },
         {
-         "label": "lmpu",
-         "cells": [
+         "key": "lmpu",
+         "value": [
           "plum",
           "lump"
          ]
         },
         {
-         "label": "abeinnnrrty",
-         "cells": [
+         "key": "abeinnnrrty",
+         "value": [
           "berrytannin"
          ]
         }
        ],
        "marks": {
         "good": [
-         [
-          2,
-          0
-         ]
+         "abeinnnrrty"
         ]
        }
+      },
+      "result": {
+       "values": []
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "words",
+        "at": [
+         4,
+         0
+        ]
+       },
+       "to": {
+        "view": "groups",
+        "at": "abeinnnrrty"
+       },
+       "value": "berrytannin"
+      }
+     ]
     },
     {
      "caption": {
@@ -733,28 +1061,38 @@
           5,
           1
          ]
+        ],
+        "dim": [
+         [
+          6,
+          0
+         ],
+         [
+          6,
+          1
+         ]
         ]
        }
       },
       "groups": {
-       "rows": [
+       "entries": [
         {
-         "label": "aaaikllnov",
-         "cells": [
+         "key": "aaaikllnov",
+         "value": [
           "oakvanilla",
           "vanillaoak"
          ]
         },
         {
-         "label": "lmpu",
-         "cells": [
+         "key": "lmpu",
+         "value": [
           "plum",
           "lump"
          ]
         },
         {
-         "label": "abeinnnrrty",
-         "cells": [
+         "key": "abeinnnrrty",
+         "value": [
           "berrytannin",
           "tanninberry"
          ]
@@ -762,18 +1100,34 @@
        ],
        "marks": {
         "good": [
-         [
-          2,
-          1
-         ]
+         "abeinnnrrty"
         ]
        }
+      },
+      "result": {
+       "values": []
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "words",
+        "at": [
+         5,
+         0
+        ]
+       },
+       "to": {
+        "view": "groups",
+        "at": "abeinnnrrty"
+       },
+       "value": "tanninberry"
+      }
+     ]
     },
     {
      "caption": {
-      "en": "\"oak\" sorted is \"ako\". No group has that key yet, so start one.",
+      "en": "\"oak\" sorted is \"ako\". No group has that key yet, so it starts one.",
       "ko": "\"oak\"의 글자를 정렬하면 \"ako\"입니다. 이 키의 그룹이 아직 없으니 새로 만듭니다."
      },
      "views": {
@@ -851,54 +1205,71 @@
           6,
           1
          ]
-        ]
+        ],
+        "dim": []
        }
       },
       "groups": {
-       "rows": [
+       "entries": [
         {
-         "label": "aaaikllnov",
-         "cells": [
+         "key": "aaaikllnov",
+         "value": [
           "oakvanilla",
           "vanillaoak"
          ]
         },
         {
-         "label": "lmpu",
-         "cells": [
+         "key": "lmpu",
+         "value": [
           "plum",
           "lump"
          ]
         },
         {
-         "label": "abeinnnrrty",
-         "cells": [
+         "key": "abeinnnrrty",
+         "value": [
           "berrytannin",
           "tanninberry"
          ]
         },
         {
-         "label": "ako",
-         "cells": [
+         "key": "ako",
+         "value": [
           "oak"
          ]
         }
        ],
        "marks": {
         "good": [
-         [
-          3,
-          0
-         ]
+         "ako"
         ]
        }
+      },
+      "result": {
+       "values": []
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "words",
+        "at": [
+         6,
+         0
+        ]
+       },
+       "to": {
+        "view": "groups",
+        "at": "ako"
+       },
+       "value": "oak"
+      }
+     ]
     },
     {
      "caption": {
-      "en": "Every word is in the group of its key: 4 groups. Printed with each group sorted and the groups in order: [[\"berrytannin\",\"tanninberry\"],[\"lump\",\"plum\"],[\"oak\"],[\"oakvanilla\",\"vanillaoak\"]].",
-      "ko": "모든 단어가 자기 키의 그룹에 들어갔습니다: 그룹 4개. 그룹 안과 그룹끼리 정렬해 출력하면 [[\"berrytannin\",\"tanninberry\"],[\"lump\",\"plum\"],[\"oak\"],[\"oakvanilla\",\"vanillaoak\"]]입니다."
+      "en": "Every word is in its key's group. Printed with each group sorted and the groups in order, group 1 of 4 is [\"berrytannin\",\"tanninberry\"].",
+      "ko": "모든 단어가 자기 키의 그룹에 들어갔습니다. 그룹 안과 그룹끼리 정렬해 출력하면 4개 중 1번째 그룹은 [\"berrytannin\",\"tanninberry\"]입니다."
      },
      "views": {
       "words": {
@@ -966,69 +1337,463 @@
        "marks": {}
       },
       "groups": {
-       "rows": [
+       "entries": [
         {
-         "label": "aaaikllnov",
-         "cells": [
+         "key": "aaaikllnov",
+         "value": [
           "oakvanilla",
           "vanillaoak"
          ]
         },
         {
-         "label": "lmpu",
-         "cells": [
+         "key": "lmpu",
+         "value": [
           "plum",
           "lump"
          ]
         },
         {
-         "label": "abeinnnrrty",
-         "cells": [
+         "key": "abeinnnrrty",
+         "value": [
           "berrytannin",
           "tanninberry"
          ]
         },
         {
-         "label": "ako",
-         "cells": [
+         "key": "ako",
+         "value": [
           "oak"
          ]
         }
        ],
        "marks": {
         "path": [
-         [
-          0,
-          0
-         ],
-         [
-          0,
-          1
-         ],
-         [
-          1,
-          0
-         ],
-         [
-          1,
-          1
-         ],
-         [
-          2,
-          0
-         ],
-         [
-          2,
-          1
-         ],
-         [
-          3,
-          0
-         ]
+         "abeinnnrrty"
+        ],
+        "dim": [
+         "lmpu",
+         "ako",
+         "aaaikllnov"
         ]
        }
+      },
+      "result": {
+       "values": [
+        "[\"berrytannin\",\"tanninberry\"]"
+       ]
       }
      },
+     "moves": [
+      {
+       "from": {
+        "view": "groups",
+        "at": "abeinnnrrty"
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       },
+       "value": "[\"berrytannin\",\"tanninberry\"]"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Group 2 of 4 is [\"lump\",\"plum\"].",
+      "ko": "4개 중 2번째 그룹은 [\"lump\",\"plum\"]입니다."
+     },
+     "views": {
+      "words": {
+       "columns": [
+        {
+         "en": "word",
+         "ko": "단어"
+        },
+        {
+         "en": "sorted letters",
+         "ko": "정렬한 글자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "oakvanilla",
+          "aaaikllnov"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "vanillaoak",
+          "aaaikllnov"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "plum",
+          "lmpu"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "lump",
+          "lmpu"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "berrytannin",
+          "abeinnnrrty"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "tanninberry",
+          "abeinnnrrty"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "oak",
+          "ako"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "groups": {
+       "entries": [
+        {
+         "key": "aaaikllnov",
+         "value": [
+          "oakvanilla",
+          "vanillaoak"
+         ]
+        },
+        {
+         "key": "lmpu",
+         "value": [
+          "plum",
+          "lump"
+         ]
+        },
+        {
+         "key": "abeinnnrrty",
+         "value": [
+          "berrytannin",
+          "tanninberry"
+         ]
+        },
+        {
+         "key": "ako",
+         "value": [
+          "oak"
+         ]
+        }
+       ],
+       "marks": {
+        "path": [
+         "abeinnnrrty",
+         "lmpu"
+        ],
+        "dim": [
+         "ako",
+         "aaaikllnov"
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "[\"berrytannin\",\"tanninberry\"]",
+        "[\"lump\",\"plum\"]"
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "groups",
+        "at": "lmpu"
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       },
+       "value": "[\"lump\",\"plum\"]"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Group 3 of 4 is [\"oak\"].",
+      "ko": "4개 중 3번째 그룹은 [\"oak\"]입니다."
+     },
+     "views": {
+      "words": {
+       "columns": [
+        {
+         "en": "word",
+         "ko": "단어"
+        },
+        {
+         "en": "sorted letters",
+         "ko": "정렬한 글자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "oakvanilla",
+          "aaaikllnov"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "vanillaoak",
+          "aaaikllnov"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "plum",
+          "lmpu"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "lump",
+          "lmpu"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "berrytannin",
+          "abeinnnrrty"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "tanninberry",
+          "abeinnnrrty"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "oak",
+          "ako"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "groups": {
+       "entries": [
+        {
+         "key": "aaaikllnov",
+         "value": [
+          "oakvanilla",
+          "vanillaoak"
+         ]
+        },
+        {
+         "key": "lmpu",
+         "value": [
+          "plum",
+          "lump"
+         ]
+        },
+        {
+         "key": "abeinnnrrty",
+         "value": [
+          "berrytannin",
+          "tanninberry"
+         ]
+        },
+        {
+         "key": "ako",
+         "value": [
+          "oak"
+         ]
+        }
+       ],
+       "marks": {
+        "path": [
+         "abeinnnrrty",
+         "lmpu",
+         "ako"
+        ],
+        "dim": [
+         "aaaikllnov"
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "[\"berrytannin\",\"tanninberry\"]",
+        "[\"lump\",\"plum\"]",
+        "[\"oak\"]"
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "groups",
+        "at": "ako"
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       },
+       "value": "[\"oak\"]"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Group 4 of 4 is [\"oakvanilla\",\"vanillaoak\"], the last: the answer is [[\"berrytannin\",\"tanninberry\"],[\"lump\",\"plum\"],[\"oak\"],[\"oakvanilla\",\"vanillaoak\"]].",
+      "ko": "마지막 그룹 [\"oakvanilla\",\"vanillaoak\"]까지 넣으면 답은 [[\"berrytannin\",\"tanninberry\"],[\"lump\",\"plum\"],[\"oak\"],[\"oakvanilla\",\"vanillaoak\"]]입니다."
+     },
+     "views": {
+      "words": {
+       "columns": [
+        {
+         "en": "word",
+         "ko": "단어"
+        },
+        {
+         "en": "sorted letters",
+         "ko": "정렬한 글자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "oakvanilla",
+          "aaaikllnov"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "vanillaoak",
+          "aaaikllnov"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "plum",
+          "lmpu"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "lump",
+          "lmpu"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "berrytannin",
+          "abeinnnrrty"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "tanninberry",
+          "abeinnnrrty"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "oak",
+          "ako"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "groups": {
+       "entries": [
+        {
+         "key": "aaaikllnov",
+         "value": [
+          "oakvanilla",
+          "vanillaoak"
+         ]
+        },
+        {
+         "key": "lmpu",
+         "value": [
+          "plum",
+          "lump"
+         ]
+        },
+        {
+         "key": "abeinnnrrty",
+         "value": [
+          "berrytannin",
+          "tanninberry"
+         ]
+        },
+        {
+         "key": "ako",
+         "value": [
+          "oak"
+         ]
+        }
+       ],
+       "marks": {
+        "path": [
+         "abeinnnrrty",
+         "lmpu",
+         "ako",
+         "aaaikllnov"
+        ],
+        "dim": []
+       }
+      },
+      "result": {
+       "values": [
+        "[\"berrytannin\",\"tanninberry\"]",
+        "[\"lump\",\"plum\"]",
+        "[\"oak\"]",
+        "[\"oakvanilla\",\"vanillaoak\"]"
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "groups",
+        "at": "aaaikllnov"
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       },
+       "value": "[\"oakvanilla\",\"vanillaoak\"]"
+      }
+     ],
      "answer": "[[\"berrytannin\",\"tanninberry\"],[\"lump\",\"plum\"],[\"oak\"],[\"oakvanilla\",\"vanillaoak\"]]"
     }
    ],
@@ -1068,17 +1833,31 @@
          ]
         }
        ],
-       "marks": {}
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ]
+       }
       },
       "groups": {
-       "rows": [],
+       "entries": [],
        "marks": {}
+      },
+      "result": {
+       "values": []
       }
      }
     },
     {
      "caption": {
-      "en": "\"merlot\" sorted is \"elmort\". No group has that key yet, so start one.",
+      "en": "\"merlot\" sorted is \"elmort\". No group has that key yet, so it starts one.",
       "ko": "\"merlot\"의 글자를 정렬하면 \"elmort\"입니다. 이 키의 그룹이 아직 없으니 새로 만듭니다."
      },
      "views": {
@@ -1114,33 +1893,50 @@
           0,
           1
          ]
-        ]
+        ],
+        "dim": []
        }
       },
       "groups": {
-       "rows": [
+       "entries": [
         {
-         "label": "elmort",
-         "cells": [
+         "key": "elmort",
+         "value": [
           "merlot"
          ]
         }
        ],
        "marks": {
         "good": [
-         [
-          0,
-          0
-         ]
+         "elmort"
         ]
        }
+      },
+      "result": {
+       "values": []
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "words",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "to": {
+        "view": "groups",
+        "at": "elmort"
+       },
+       "value": "merlot"
+      }
+     ]
     },
     {
      "caption": {
-      "en": "Every word is in the group of its key: 1 group. Printed with each group sorted and the groups in order: [[\"merlot\"]].",
-      "ko": "모든 단어가 자기 키의 그룹에 들어갔습니다: 그룹 1개. 그룹 안과 그룹끼리 정렬해 출력하면 [[\"merlot\"]]입니다."
+      "en": "Every word is in the group of its key: 1 group, [\"merlot\"]. The answer is [[\"merlot\"]].",
+      "ko": "모든 단어가 자기 키의 그룹에 들어갔습니다: 그룹 1개, [\"merlot\"]. 답은 [[\"merlot\"]]입니다."
      },
      "views": {
       "words": {
@@ -1166,24 +1962,40 @@
        "marks": {}
       },
       "groups": {
-       "rows": [
+       "entries": [
         {
-         "label": "elmort",
-         "cells": [
+         "key": "elmort",
+         "value": [
           "merlot"
          ]
         }
        ],
        "marks": {
         "path": [
-         [
-          0,
-          0
-         ]
-        ]
+         "elmort"
+        ],
+        "dim": []
        }
+      },
+      "result": {
+       "values": [
+        "[\"merlot\"]"
+       ]
       }
      },
+     "moves": [
+      {
+       "from": {
+        "view": "groups",
+        "at": "elmort"
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       },
+       "value": "[\"merlot\"]"
+      }
+     ],
      "answer": "[[\"merlot\"]]"
     }
    ],
