@@ -18,8 +18,16 @@
    }
   },
   {
-   "id": "state",
-   "type": "vars"
+   "id": "result",
+   "type": "output",
+   "title": {
+    "en": "repeated",
+    "ko": "repeated (두 번 찍힌 코드)"
+   },
+   "empty": {
+    "en": "none yet",
+    "ko": "아직 없음"
+   }
   }
  ],
  "runs": [
@@ -92,21 +100,9 @@
         "lit": []
        }
       },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "repeated",
-          "ko": "repeated (두 번 찍힌 코드)"
-         },
-         "value": [],
-         "empty": {
-          "en": "none yet",
-          "ko": "아직 없음"
-         },
-         "mark": null
-        }
-       ]
+      "result": {
+       "values": [],
+       "marks": {}
       }
      }
     },
@@ -175,23 +171,24 @@
         ]
        }
       },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "repeated",
-          "ko": "repeated (두 번 찍힌 코드)"
-         },
-         "value": [],
-         "empty": {
-          "en": "none yet",
-          "ko": "아직 없음"
-         },
-         "mark": null
-        }
-       ]
+      "result": {
+       "values": [],
+       "marks": {}
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "codes",
+        "at": 0
+       },
+       "to": {
+        "view": "codes",
+        "at": 4
+       },
+       "value": 5
+      }
+     ]
     },
     {
      "caption": {
@@ -256,23 +253,20 @@
         "lit": []
        }
       },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "repeated",
-          "ko": "repeated (두 번 찍힌 코드)"
-         },
-         "value": [],
-         "empty": {
-          "en": "none yet",
-          "ko": "아직 없음"
-         },
-         "mark": null
-        }
-       ]
+      "result": {
+       "values": [],
+       "marks": {}
       }
-     }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "codes",
+        "at": 1
+       },
+       "value": -2
+      }
+     ]
     },
     {
      "caption": {
@@ -339,23 +333,24 @@
         ]
        }
       },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "repeated",
-          "ko": "repeated (두 번 찍힌 코드)"
-         },
-         "value": [],
-         "empty": {
-          "en": "none yet",
-          "ko": "아직 없음"
-         },
-         "mark": null
-        }
-       ]
+      "result": {
+       "values": [],
+       "marks": {}
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "codes",
+        "at": 2
+       },
+       "to": {
+        "view": "codes",
+        "at": 5
+       },
+       "value": 6
+      }
+     ]
     },
     {
      "caption": {
@@ -422,23 +417,24 @@
         ]
        }
       },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "repeated",
-          "ko": "repeated (두 번 찍힌 코드)"
-         },
-         "value": [],
-         "empty": {
-          "en": "none yet",
-          "ko": "아직 없음"
-         },
-         "mark": null
-        }
-       ]
+      "result": {
+       "values": [],
+       "marks": {}
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "codes",
+        "at": 3
+       },
+       "to": {
+        "view": "codes",
+        "at": 2
+       },
+       "value": 3
+      }
+     ]
     },
     {
      "caption": {
@@ -505,25 +501,42 @@
         ]
        }
       },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "repeated",
-          "ko": "repeated (두 번 찍힌 코드)"
-         },
-         "value": [
-          2
-         ],
-         "empty": {
-          "en": "none yet",
-          "ko": "아직 없음"
-         },
-         "mark": "good"
-        }
-       ]
+      "result": {
+       "values": [
+        2
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "codes",
+        "at": 4
+       },
+       "to": {
+        "view": "codes",
+        "at": 1
+       },
+       "value": 2,
+       "mark": "path"
+      },
+      {
+       "from": {
+        "view": "codes",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       },
+       "value": 2
+      }
+     ]
     },
     {
      "caption": {
@@ -590,25 +603,26 @@
         ]
        }
       },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "repeated",
-          "ko": "repeated (두 번 찍힌 코드)"
-         },
-         "value": [
-          2
-         ],
-         "empty": {
-          "en": "none yet",
-          "ko": "아직 없음"
-         },
-         "mark": null
-        }
-       ]
+      "result": {
+       "values": [
+        2
+       ],
+       "marks": {}
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "codes",
+        "at": 5
+       },
+       "to": {
+        "view": "codes",
+        "at": 0
+       },
+       "value": 1
+      }
+     ]
     },
     {
      "caption": {
@@ -675,25 +689,26 @@
         ]
        }
       },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "repeated",
-          "ko": "repeated (두 번 찍힌 코드)"
-         },
-         "value": [
-          2
-         ],
-         "empty": {
-          "en": "none yet",
-          "ko": "아직 없음"
-         },
-         "mark": null
-        }
-       ]
+      "result": {
+       "values": [
+        2
+       ],
+       "marks": {}
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "codes",
+        "at": 6
+       },
+       "to": {
+        "view": "codes",
+        "at": 3
+       },
+       "value": 4
+      }
+     ]
     },
     {
      "caption": {
@@ -760,26 +775,43 @@
         ]
        }
       },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "repeated",
-          "ko": "repeated (두 번 찍힌 코드)"
-         },
-         "value": [
-          2,
-          6
-         ],
-         "empty": {
-          "en": "none yet",
-          "ko": "아직 없음"
-         },
-         "mark": "good"
-        }
-       ]
+      "result": {
+       "values": [
+        2,
+        6
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "codes",
+        "at": 7
+       },
+       "to": {
+        "view": "codes",
+        "at": 5
+       },
+       "value": 6,
+       "mark": "path"
+      },
+      {
+       "from": {
+        "view": "codes",
+        "at": 5
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       },
+       "value": 6
+      }
+     ]
     },
     {
      "caption": {
@@ -845,24 +877,17 @@
         "lit": []
        }
       },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "repeated",
-          "ko": "repeated (두 번 찍힌 코드)"
-         },
-         "value": [
-          2,
-          6
-         ],
-         "empty": {
-          "en": "none yet",
-          "ko": "아직 없음"
-         },
-         "mark": "good"
-        }
-       ]
+      "result": {
+       "values": [
+        2,
+        6
+       ],
+       "marks": {
+        "path": [
+         0,
+         1
+        ]
+       }
       }
      },
      "answer": "[2,6]"
@@ -919,21 +944,9 @@
         "lit": []
        }
       },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "repeated",
-          "ko": "repeated (두 번 찍힌 코드)"
-         },
-         "value": [],
-         "empty": {
-          "en": "none yet",
-          "ko": "아직 없음"
-         },
-         "mark": null
-        }
-       ]
+      "result": {
+       "values": [],
+       "marks": {}
       }
      }
     },
@@ -982,23 +995,24 @@
         ]
        }
       },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "repeated",
-          "ko": "repeated (두 번 찍힌 코드)"
-         },
-         "value": [],
-         "empty": {
-          "en": "none yet",
-          "ko": "아직 없음"
-         },
-         "mark": null
-        }
-       ]
+      "result": {
+       "values": [],
+       "marks": {}
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "codes",
+        "at": 0
+       },
+       "to": {
+        "view": "codes",
+        "at": 2
+       },
+       "value": 3
+      }
+     ]
     },
     {
      "caption": {
@@ -1045,25 +1059,42 @@
         ]
        }
       },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "repeated",
-          "ko": "repeated (두 번 찍힌 코드)"
-         },
-         "value": [
-          3
-         ],
-         "empty": {
-          "en": "none yet",
-          "ko": "아직 없음"
-         },
-         "mark": "good"
-        }
-       ]
+      "result": {
+       "values": [
+        3
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "codes",
+        "at": 1
+       },
+       "to": {
+        "view": "codes",
+        "at": 2
+       },
+       "value": 3,
+       "mark": "path"
+      },
+      {
+       "from": {
+        "view": "codes",
+        "at": 2
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       },
+       "value": 3
+      }
+     ]
     },
     {
      "caption": {
@@ -1110,25 +1141,26 @@
         ]
        }
       },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "repeated",
-          "ko": "repeated (두 번 찍힌 코드)"
-         },
-         "value": [
-          3
-         ],
-         "empty": {
-          "en": "none yet",
-          "ko": "아직 없음"
-         },
-         "mark": null
-        }
-       ]
+      "result": {
+       "values": [
+        3
+       ],
+       "marks": {}
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "codes",
+        "at": 2
+       },
+       "to": {
+        "view": "codes",
+        "at": 0
+       },
+       "value": 1
+      }
+     ]
     },
     {
      "caption": {
@@ -1175,25 +1207,26 @@
         ]
        }
       },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "repeated",
-          "ko": "repeated (두 번 찍힌 코드)"
-         },
-         "value": [
-          3
-         ],
-         "empty": {
-          "en": "none yet",
-          "ko": "아직 없음"
-         },
-         "mark": null
-        }
-       ]
+      "result": {
+       "values": [
+        3
+       ],
+       "marks": {}
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "codes",
+        "at": 3
+       },
+       "to": {
+        "view": "codes",
+        "at": 1
+       },
+       "value": 2
+      }
+     ]
     },
     {
      "caption": {
@@ -1238,23 +1271,15 @@
         "lit": []
        }
       },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "repeated",
-          "ko": "repeated (두 번 찍힌 코드)"
-         },
-         "value": [
-          3
-         ],
-         "empty": {
-          "en": "none yet",
-          "ko": "아직 없음"
-         },
-         "mark": "good"
-        }
-       ]
+      "result": {
+       "values": [
+        3
+       ],
+       "marks": {
+        "path": [
+         0
+        ]
+       }
       }
      },
      "answer": "[3]"
@@ -1316,21 +1341,9 @@
         "lit": []
        }
       },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "repeated",
-          "ko": "repeated (두 번 찍힌 코드)"
-         },
-         "value": [],
-         "empty": {
-          "en": "none yet",
-          "ko": "아직 없음"
-         },
-         "mark": null
-        }
-       ]
+      "result": {
+       "values": [],
+       "marks": {}
       }
      }
     },
@@ -1382,23 +1395,20 @@
         "lit": []
        }
       },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "repeated",
-          "ko": "repeated (두 번 찍힌 코드)"
-         },
-         "value": [],
-         "empty": {
-          "en": "none yet",
-          "ko": "아직 없음"
-         },
-         "mark": null
-        }
-       ]
+      "result": {
+       "values": [],
+       "marks": {}
       }
-     }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "codes",
+        "at": 0
+       },
+       "value": -1
+      }
+     ]
     },
     {
      "caption": {
@@ -1448,23 +1458,20 @@
         "lit": []
        }
       },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "repeated",
-          "ko": "repeated (두 번 찍힌 코드)"
-         },
-         "value": [],
-         "empty": {
-          "en": "none yet",
-          "ko": "아직 없음"
-         },
-         "mark": null
-        }
-       ]
+      "result": {
+       "values": [],
+       "marks": {}
       }
-     }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "codes",
+        "at": 1
+       },
+       "value": -2
+      }
+     ]
     },
     {
      "caption": {
@@ -1514,23 +1521,20 @@
         "lit": []
        }
       },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "repeated",
-          "ko": "repeated (두 번 찍힌 코드)"
-         },
-         "value": [],
-         "empty": {
-          "en": "none yet",
-          "ko": "아직 없음"
-         },
-         "mark": null
-        }
-       ]
+      "result": {
+       "values": [],
+       "marks": {}
       }
-     }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "codes",
+        "at": 2
+       },
+       "value": -3
+      }
+     ]
     },
     {
      "caption": {
@@ -1580,23 +1584,20 @@
         "lit": []
        }
       },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "repeated",
-          "ko": "repeated (두 번 찍힌 코드)"
-         },
-         "value": [],
-         "empty": {
-          "en": "none yet",
-          "ko": "아직 없음"
-         },
-         "mark": null
-        }
-       ]
+      "result": {
+       "values": [],
+       "marks": {}
       }
-     }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "codes",
+        "at": 3
+       },
+       "value": -4
+      }
+     ]
     },
     {
      "caption": {
@@ -1646,23 +1647,20 @@
         "lit": []
        }
       },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "repeated",
-          "ko": "repeated (두 번 찍힌 코드)"
-         },
-         "value": [],
-         "empty": {
-          "en": "none yet",
-          "ko": "아직 없음"
-         },
-         "mark": null
-        }
-       ]
+      "result": {
+       "values": [],
+       "marks": {}
       }
-     }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "codes",
+        "at": 4
+       },
+       "value": -5
+      }
+     ]
     },
     {
      "caption": {
@@ -1710,21 +1708,9 @@
         "lit": []
        }
       },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "repeated",
-          "ko": "repeated (두 번 찍힌 코드)"
-         },
-         "value": [],
-         "empty": {
-          "en": "none yet",
-          "ko": "아직 없음"
-         },
-         "mark": null
-        }
-       ]
+      "result": {
+       "values": [],
+       "marks": {}
       }
      },
      "answer": "[]"
