@@ -1,10 +1,11 @@
 # Views for common shapes
 
-What the Arrays & Hashing Walkthroughs settled, on top of the public skill's `references/format.md`. Each line names a tracer in `scripts/walkthroughs/` that does it.
+What the Arrays & Hashing Walkthroughs settled, on top of the public skill's `references/format.md`. Each line names a tracer in `scripts/walkthroughs/` that does it. Every Walkthrough meets the two rules in the checklist (`add-walkthrough` step 3): each frame shows where its value came from and went, and a value with a place in the data is drawn there, with only the rest in `vars`. Lines below that still describe a `table` or `vars` for such a value are the old look, redone ticket by ticket under #273.
 
 ## Shapes
 
-- **A hash map** is a `table`: one row per entry in insertion order, the key as the row label and the value in a cell (`columns: [{"en": "count", "ko": "개수"}]`), so one entry can be marked. A map of lists gets one cell per item (`group-anagrams`). On the last frame the entries the answer used are `path` and the rest `dim` (`top-espresso-machines`).
+- **A hash map** is a `map`, never a `table` or a list in `vars`: `{"entries": map_entries(counts)}` draws one key card per entry in insertion order, a count as dots and the number, a list as chips. Mark the key a step changed `good`. Each value read moves into its key's card: `moves=[move(at("log", i), at("uses", machine))]`. A ranking is its own frame, `ranks` badging the keys #1, #2… with the ones the answer takes `path` and the rest `dim`; then each one moves into an `output` view, which shows the answer forming (`top-espresso-machines`).
+- **The answer** that is built up (a list of picks, a whiteboard) is an `output` view its values move into, not a `vars` list.
 - **A set** is a one-row `table` with one cell per member (`spot-duplicate-locker`), or an `array` in the real loop order with each element tagged by its decision when the loop walks the set (`longest-seat-run`).
 - **A set of composite keys** gets one table per key family (`valid-sudoku`: lines, boxes).
 - **Strings** longer than about 4 characters go in table cells: `array` cells are a fixed 46px. A string walked letter by letter is an `array` of its characters; a string that grows is an `array` padded with `""` to its final length, so cells keep their place (`chat-log-codec`).
@@ -18,5 +19,5 @@ What the Arrays & Hashing Walkthroughs settled, on top of the public skill's `re
 - `lit` wins over `good` on the same item: mark a changed cell `good` only.
 - A `vars` item's `mark` colours a number; the chips of a list value ignore it.
 - For an index-slot or cyclic-placement problem, tag each cell with what it stands for (`for 3` / `3번 칸`); for a running count, tag each read cell with its effect (`+1`, `−1`). Tags take Text (`missing-sock-number`, `majority-boss-vote`).
-- A view id `answer` collides with `run.frame(answer=...)` (a TypeError): name it `result`, titled "answer".
+- A view id `answer` or `moves` collides with `run.frame(answer=..., moves=...)` (a TypeError): name it `result`, titled "answer".
 - View titles are uppercased by the kit's CSS; a table with no `columns` draws no header row.
