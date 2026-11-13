@@ -26,7 +26,7 @@ wt = Walkthrough(
      "ko": "서로 다른 표끼리 상쇄합니다. 후보와 같은 표는 카운트를 1 올리고 다른 표는 1 내리며, 카운트가 0이면 "
            "다음 표가 새 후보가 됩니다. 과반은 나머지 표를 모두 합친 것보다 많으니 끝까지 남는 후보가 답입니다."},
     views=[
-        {"id": "votes", "type": "array", "title": "votes"},
+        {"id": "votes", "type": "array", "title": {"en": "votes", "ko": "votes (투표)"}},
         {"id": "state", "type": "vars"},
     ],
 )

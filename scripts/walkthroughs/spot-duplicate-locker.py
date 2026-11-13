@@ -23,7 +23,7 @@ wt = Walkthrough(
     {"en": "One pass with a set: a number already in the set is a repeat; otherwise add it and move on.",
      "ko": "집합으로 한 번 훑기: 이미 집합에 있는 번호면 중복이고, 없으면 넣고 다음으로 넘어갑니다."},
     views=[
-        {"id": "lockers", "type": "array", "title": "lockers"},
+        {"id": "lockers", "type": "array", "title": {"en": "lockers", "ko": "lockers (사물함 번호)"}},
         {"id": "seen", "type": "table", "title": {"en": "seen (set)", "ko": "본 번호 (집합)"}},
     ],
 )

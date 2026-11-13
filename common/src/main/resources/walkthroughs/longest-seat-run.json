@@ -71,7 +71,10 @@
          }
         },
         {
-         "label": "longest",
+         "label": {
+          "en": "longest",
+          "ko": "longest (최장 길이)"
+         },
          "value": 0,
          "mark": null
         }
@@ -134,7 +137,10 @@
          }
         },
         {
-         "label": "longest",
+         "label": {
+          "en": "longest",
+          "ko": "longest (최장 길이)"
+         },
          "value": 3,
          "mark": "good"
         }
@@ -206,7 +212,10 @@
          }
         },
         {
-         "label": "longest",
+         "label": {
+          "en": "longest",
+          "ko": "longest (최장 길이)"
+         },
          "value": 4,
          "mark": "good"
         }
@@ -282,7 +291,10 @@
          }
         },
         {
-         "label": "longest",
+         "label": {
+          "en": "longest",
+          "ko": "longest (최장 길이)"
+         },
          "value": 4,
          "mark": null
         }
@@ -365,7 +377,10 @@
          }
         },
         {
-         "label": "longest",
+         "label": {
+          "en": "longest",
+          "ko": "longest (최장 길이)"
+         },
          "value": 4,
          "mark": null
         }
@@ -455,7 +470,10 @@
          }
         },
         {
-         "label": "longest",
+         "label": {
+          "en": "longest",
+          "ko": "longest (최장 길이)"
+         },
          "value": 4,
          "mark": null
         }
@@ -552,7 +570,10 @@
          }
         },
         {
-         "label": "longest",
+         "label": {
+          "en": "longest",
+          "ko": "longest (최장 길이)"
+         },
          "value": 4,
          "mark": null
         }
@@ -656,7 +677,10 @@
          }
         },
         {
-         "label": "longest",
+         "label": {
+          "en": "longest",
+          "ko": "longest (최장 길이)"
+         },
          "value": 4,
          "mark": null
         }
@@ -762,7 +786,10 @@
          }
         },
         {
-         "label": "longest",
+         "label": {
+          "en": "longest",
+          "ko": "longest (최장 길이)"
+         },
          "value": 4,
          "mark": null
         }
@@ -824,7 +851,10 @@
          }
         },
         {
-         "label": "longest",
+         "label": {
+          "en": "longest",
+          "ko": "longest (최장 길이)"
+         },
          "value": 0,
          "mark": null
         }
@@ -892,7 +922,10 @@
          }
         },
         {
-         "label": "longest",
+         "label": {
+          "en": "longest",
+          "ko": "longest (최장 길이)"
+         },
          "value": 6,
          "mark": "good"
         }
@@ -962,7 +995,10 @@
          }
         },
         {
-         "label": "longest",
+         "label": {
+          "en": "longest",
+          "ko": "longest (최장 길이)"
+         },
          "value": 6,
          "mark": null
         }
@@ -1039,7 +1075,10 @@
          }
         },
         {
-         "label": "longest",
+         "label": {
+          "en": "longest",
+          "ko": "longest (최장 길이)"
+         },
          "value": 6,
          "mark": null
         }
@@ -1123,7 +1162,10 @@
          }
         },
         {
-         "label": "longest",
+         "label": {
+          "en": "longest",
+          "ko": "longest (최장 길이)"
+         },
          "value": 6,
          "mark": null
         }
@@ -1214,7 +1256,10 @@
          }
         },
         {
-         "label": "longest",
+         "label": {
+          "en": "longest",
+          "ko": "longest (최장 길이)"
+         },
          "value": 6,
          "mark": null
         }
@@ -1312,7 +1357,10 @@
          }
         },
         {
-         "label": "longest",
+         "label": {
+          "en": "longest",
+          "ko": "longest (최장 길이)"
+         },
          "value": 6,
          "mark": null
         }
@@ -1420,7 +1468,10 @@
          }
         },
         {
-         "label": "longest",
+         "label": {
+          "en": "longest",
+          "ko": "longest (최장 길이)"
+         },
          "value": 6,
          "mark": null
         }
@@ -1533,7 +1584,10 @@
          }
         },
         {
-         "label": "longest",
+         "label": {
+          "en": "longest",
+          "ko": "longest (최장 길이)"
+         },
          "value": 6,
          "mark": null
         }
@@ -1653,7 +1707,10 @@
          }
         },
         {
-         "label": "longest",
+         "label": {
+          "en": "longest",
+          "ko": "longest (최장 길이)"
+         },
          "value": 6,
          "mark": null
         }
@@ -1777,7 +1834,10 @@
          }
         },
         {
-         "label": "longest",
+         "label": {
+          "en": "longest",
+          "ko": "longest (최장 길이)"
+         },
          "value": 6,
          "mark": null
         }

@@ -77,11 +77,17 @@
       "state": {
        "items": [
         {
-         "label": "prefix",
+         "label": {
+          "en": "prefix",
+          "ko": "prefix (왼쪽 곱)"
+         },
          "value": 1
         },
         {
-         "label": "suffix",
+         "label": {
+          "en": "suffix",
+          "ko": "suffix (오른쪽 곱)"
+         },
          "value": 1
         }
        ]
@@ -128,11 +134,17 @@
       "state": {
        "items": [
         {
-         "label": "prefix",
+         "label": {
+          "en": "prefix",
+          "ko": "prefix (왼쪽 곱)"
+         },
          "value": 2
         },
         {
-         "label": "suffix",
+         "label": {
+          "en": "suffix",
+          "ko": "suffix (오른쪽 곱)"
+         },
          "value": 1
         }
        ]
@@ -181,11 +193,17 @@
       "state": {
        "items": [
         {
-         "label": "prefix",
+         "label": {
+          "en": "prefix",
+          "ko": "prefix (왼쪽 곱)"
+         },
          "value": 6
         },
         {
-         "label": "suffix",
+         "label": {
+          "en": "suffix",
+          "ko": "suffix (오른쪽 곱)"
+         },
          "value": 1
         }
        ]
@@ -235,11 +253,17 @@
       "state": {
        "items": [
         {
-         "label": "prefix",
+         "label": {
+          "en": "prefix",
+          "ko": "prefix (왼쪽 곱)"
+         },
          "value": 30
         },
         {
-         "label": "suffix",
+         "label": {
+          "en": "suffix",
+          "ko": "suffix (오른쪽 곱)"
+         },
          "value": 1
         }
        ]
@@ -290,11 +314,17 @@
       "state": {
        "items": [
         {
-         "label": "prefix",
+         "label": {
+          "en": "prefix",
+          "ko": "prefix (왼쪽 곱)"
+         },
          "value": 120
         },
         {
-         "label": "suffix",
+         "label": {
+          "en": "suffix",
+          "ko": "suffix (오른쪽 곱)"
+         },
          "value": 1
         }
        ]
@@ -339,11 +369,17 @@
       "state": {
        "items": [
         {
-         "label": "prefix",
+         "label": {
+          "en": "prefix",
+          "ko": "prefix (왼쪽 곱)"
+         },
          "value": 120
         },
         {
-         "label": "suffix",
+         "label": {
+          "en": "suffix",
+          "ko": "suffix (오른쪽 곱)"
+         },
          "value": 1
         }
        ]
@@ -390,11 +426,17 @@
       "state": {
        "items": [
         {
-         "label": "prefix",
+         "label": {
+          "en": "prefix",
+          "ko": "prefix (왼쪽 곱)"
+         },
          "value": 120
         },
         {
-         "label": "suffix",
+         "label": {
+          "en": "suffix",
+          "ko": "suffix (오른쪽 곱)"
+         },
          "value": 4
         }
        ]
@@ -443,11 +485,17 @@
       "state": {
        "items": [
         {
-         "label": "prefix",
+         "label": {
+          "en": "prefix",
+          "ko": "prefix (왼쪽 곱)"
+         },
          "value": 120
         },
         {
-         "label": "suffix",
+         "label": {
+          "en": "suffix",
+          "ko": "suffix (오른쪽 곱)"
+         },
          "value": 20
         }
        ]
@@ -497,11 +545,17 @@
       "state": {
        "items": [
         {
-         "label": "prefix",
+         "label": {
+          "en": "prefix",
+          "ko": "prefix (왼쪽 곱)"
+         },
          "value": 120
         },
         {
-         "label": "suffix",
+         "label": {
+          "en": "suffix",
+          "ko": "suffix (오른쪽 곱)"
+         },
          "value": 60
         }
        ]
@@ -552,11 +606,17 @@
       "state": {
        "items": [
         {
-         "label": "prefix",
+         "label": {
+          "en": "prefix",
+          "ko": "prefix (왼쪽 곱)"
+         },
          "value": 120
         },
         {
-         "label": "suffix",
+         "label": {
+          "en": "suffix",
+          "ko": "suffix (오른쪽 곱)"
+         },
          "value": 120
         }
        ]
@@ -606,11 +666,17 @@
       "state": {
        "items": [
         {
-         "label": "prefix",
+         "label": {
+          "en": "prefix",
+          "ko": "prefix (왼쪽 곱)"
+         },
          "value": 120
         },
         {
-         "label": "suffix",
+         "label": {
+          "en": "suffix",
+          "ko": "suffix (오른쪽 곱)"
+         },
          "value": 120
         }
        ]
@@ -669,11 +735,17 @@
       "state": {
        "items": [
         {
-         "label": "prefix",
+         "label": {
+          "en": "prefix",
+          "ko": "prefix (왼쪽 곱)"
+         },
          "value": 1
         },
         {
-         "label": "suffix",
+         "label": {
+          "en": "suffix",
+          "ko": "suffix (오른쪽 곱)"
+         },
          "value": 1
         }
        ]
@@ -722,11 +794,17 @@
       "state": {
        "items": [
         {
-         "label": "prefix",
+         "label": {
+          "en": "prefix",
+          "ko": "prefix (왼쪽 곱)"
+         },
          "value": -2
         },
         {
-         "label": "suffix",
+         "label": {
+          "en": "suffix",
+          "ko": "suffix (오른쪽 곱)"
+         },
          "value": 1
         }
        ]
@@ -777,11 +855,17 @@
       "state": {
        "items": [
         {
-         "label": "prefix",
+         "label": {
+          "en": "prefix",
+          "ko": "prefix (왼쪽 곱)"
+         },
          "value": -2
         },
         {
-         "label": "suffix",
+         "label": {
+          "en": "suffix",
+          "ko": "suffix (오른쪽 곱)"
+         },
          "value": 1
         }
        ]
@@ -833,11 +917,17 @@
       "state": {
        "items": [
         {
-         "label": "prefix",
+         "label": {
+          "en": "prefix",
+          "ko": "prefix (왼쪽 곱)"
+         },
          "value": 0
         },
         {
-         "label": "suffix",
+         "label": {
+          "en": "suffix",
+          "ko": "suffix (오른쪽 곱)"
+         },
          "value": 1
         }
        ]
@@ -890,11 +980,17 @@
       "state": {
        "items": [
         {
-         "label": "prefix",
+         "label": {
+          "en": "prefix",
+          "ko": "prefix (왼쪽 곱)"
+         },
          "value": 0
         },
         {
-         "label": "suffix",
+         "label": {
+          "en": "suffix",
+          "ko": "suffix (오른쪽 곱)"
+         },
          "value": 1
         }
        ]
@@ -948,11 +1044,17 @@
       "state": {
        "items": [
         {
-         "label": "prefix",
+         "label": {
+          "en": "prefix",
+          "ko": "prefix (왼쪽 곱)"
+         },
          "value": 0
         },
         {
-         "label": "suffix",
+         "label": {
+          "en": "suffix",
+          "ko": "suffix (오른쪽 곱)"
+         },
          "value": 1
         }
        ]
@@ -999,11 +1101,17 @@
       "state": {
        "items": [
         {
-         "label": "prefix",
+         "label": {
+          "en": "prefix",
+          "ko": "prefix (왼쪽 곱)"
+         },
          "value": 0
         },
         {
-         "label": "suffix",
+         "label": {
+          "en": "suffix",
+          "ko": "suffix (오른쪽 곱)"
+         },
          "value": 1
         }
        ]
@@ -1052,11 +1160,17 @@
       "state": {
        "items": [
         {
-         "label": "prefix",
+         "label": {
+          "en": "prefix",
+          "ko": "prefix (왼쪽 곱)"
+         },
          "value": 0
         },
         {
-         "label": "suffix",
+         "label": {
+          "en": "suffix",
+          "ko": "suffix (오른쪽 곱)"
+         },
          "value": -1
         }
        ]
@@ -1107,11 +1221,17 @@
       "state": {
        "items": [
         {
-         "label": "prefix",
+         "label": {
+          "en": "prefix",
+          "ko": "prefix (왼쪽 곱)"
+         },
          "value": 0
         },
         {
-         "label": "suffix",
+         "label": {
+          "en": "suffix",
+          "ko": "suffix (오른쪽 곱)"
+         },
          "value": -4
         }
        ]
@@ -1163,11 +1283,17 @@
       "state": {
        "items": [
         {
-         "label": "prefix",
+         "label": {
+          "en": "prefix",
+          "ko": "prefix (왼쪽 곱)"
+         },
          "value": 0
         },
         {
-         "label": "suffix",
+         "label": {
+          "en": "suffix",
+          "ko": "suffix (오른쪽 곱)"
+         },
          "value": 0
         }
        ]
@@ -1220,11 +1346,17 @@
       "state": {
        "items": [
         {
-         "label": "prefix",
+         "label": {
+          "en": "prefix",
+          "ko": "prefix (왼쪽 곱)"
+         },
          "value": 0
         },
         {
-         "label": "suffix",
+         "label": {
+          "en": "suffix",
+          "ko": "suffix (오른쪽 곱)"
+         },
          "value": 0
         }
        ]
@@ -1278,11 +1410,17 @@
       "state": {
        "items": [
         {
-         "label": "prefix",
+         "label": {
+          "en": "prefix",
+          "ko": "prefix (왼쪽 곱)"
+         },
          "value": 0
         },
         {
-         "label": "suffix",
+         "label": {
+          "en": "suffix",
+          "ko": "suffix (오른쪽 곱)"
+         },
          "value": 0
         }
        ]
@@ -1335,11 +1473,17 @@
       "state": {
        "items": [
         {
-         "label": "prefix",
+         "label": {
+          "en": "prefix",
+          "ko": "prefix (왼쪽 곱)"
+         },
          "value": 0
         },
         {
-         "label": "suffix",
+         "label": {
+          "en": "suffix",
+          "ko": "suffix (오른쪽 곱)"
+         },
          "value": 0
         }
        ]

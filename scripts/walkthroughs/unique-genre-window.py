@@ -25,7 +25,7 @@ wt = Walkthrough(
      "ko": "오른쪽으로 태그를 하나씩 넣어 구간을 늘리고, 장르가 k개를 넘으면 다시 k개가 될 때까지 왼쪽에서 "
            "태그를 뺍니다. 그렇게 지나가는 구간이 모두 후보입니다."},
     views=[
-        {"id": "queue", "type": "array", "title": "queue"},
+        {"id": "queue", "type": "array", "title": {"en": "queue", "ko": "queue (재생 큐)"}},
         {"id": "window", "type": "table", "title": {"en": "window (genre → count)", "ko": "window (장르 → 개수)"}},
         {"id": "state", "type": "vars"},
     ],
@@ -58,7 +58,7 @@ def solve(queue, k, run):
                                    {"label": {"en": "genres in window", "ko": "구간의 장르 수"}, "value": len(window)},
                                    {"label": {"en": "window length", "ko": "구간 길이"},
                                     "value": 0 if right is None else right - left + 1},
-                                   {"label": "best", "value": best, "mark": best_mark}]},
+                                   {"label": {"en": "best", "ko": "best (최장 길이)"}, "value": best, "mark": best_mark}]},
                   **answer)
 
     if k == 0:

@@ -50,7 +50,7 @@ def solve(seat_ids, run):
                   state={"items": [
                       {"label": {"en": "runs walked", "ko": "걸어 본 구간"}, "value": list(runs),
                        "empty": {"en": "none yet", "ko": "아직 없음"}},
-                      {"label": "longest", "value": longest, "mark": "good" if grew else None}]},
+                      {"label": {"en": "longest", "ko": "longest (최장 길이)"}, "value": longest, "mark": "good" if grew else None}]},
                   **answer)
 
     frame({"en": f"Put the {len(seat_ids)} seat ids in a hash set ({len(seats)} distinct), so asking "

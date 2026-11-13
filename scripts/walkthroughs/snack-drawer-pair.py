@@ -45,7 +45,7 @@ def solve(snacks, target, run):
                         "rows": [{"label": str(c), "cells": [j]} for c, j in seen.items()],
                         "marks": seen_marks or {}},
                   state={"items": [
-                      {"label": "target", "value": target},
+                      {"label": {"en": "target", "ko": "target (목표 칼로리)"}, "value": target},
                       {"label": {"en": "partner needed", "ko": "필요한 짝"},
                        "value": "–" if partner is None else partner}]},
                   **answer)

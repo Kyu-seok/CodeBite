@@ -62,9 +62,9 @@ def solve(readings, k, run):
                         "rows": [{"label": str(t), "cells": [c]} for t, c in seen.items()],
                         "marks": row_marks},
                   state={"items": [{"label": "k", "value": k},
-                                   {"label": "total", "value": total},
+                                   {"label": {"en": "total", "ko": "total (누적합)"}, "value": total},
                                    {"label": "total - k", "value": "–" if need is None else need},
-                                   {"label": "count", "value": count, "mark": count_mark}]},
+                                   {"label": {"en": "count", "ko": "count (구간 수)"}, "value": count, "mark": count_mark}]},
                   **answer)
 
     frame({"en": f"k = {k}, and before any reading the running total is 0, so seen starts as {{0: 1}}. "

@@ -12,7 +12,10 @@
   {
    "id": "votes",
    "type": "array",
-   "title": "votes"
+   "title": {
+    "en": "votes",
+    "ko": "votes (투표)"
+   }
   },
   {
    "id": "state",

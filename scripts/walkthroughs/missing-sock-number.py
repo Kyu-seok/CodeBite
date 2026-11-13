@@ -26,7 +26,7 @@ wt = Walkthrough(
      "ko": "답이 될 수 있는 수는 1부터 n까지뿐이고, 배열에는 칸이 n개 있습니다. 그런 수 k를 모두 k − 1번 "
            "인덱스로 옮기면, 제 번호를 갖지 못한 첫 칸이 빠진 번호를 알려 줍니다."},
     views=[
-        {"id": "socks", "type": "array", "title": "socks"},
+        {"id": "socks", "type": "array", "title": {"en": "socks", "ko": "socks (양말 번호)"}},
         {"id": "state", "type": "vars"},
     ],
 )

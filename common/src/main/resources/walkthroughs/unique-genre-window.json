@@ -12,7 +12,10 @@
   {
    "id": "queue",
    "type": "array",
-   "title": "queue"
+   "title": {
+    "en": "queue",
+    "ko": "queue (재생 큐)"
+   }
   },
   {
    "id": "window",
@@ -102,7 +105,10 @@
          "value": 0
         },
         {
-         "label": "best",
+         "label": {
+          "en": "best",
+          "ko": "best (최장 길이)"
+         },
          "value": 0,
          "mark": null
         }
@@ -191,7 +197,10 @@
          "value": 1
         },
         {
-         "label": "best",
+         "label": {
+          "en": "best",
+          "ko": "best (최장 길이)"
+         },
          "value": 1,
          "mark": "good"
         }
@@ -279,7 +288,10 @@
          "value": 2
         },
         {
-         "label": "best",
+         "label": {
+          "en": "best",
+          "ko": "best (최장 길이)"
+         },
          "value": 2,
          "mark": "good"
         }
@@ -372,7 +384,10 @@
          "value": 3
         },
         {
-         "label": "best",
+         "label": {
+          "en": "best",
+          "ko": "best (최장 길이)"
+         },
          "value": 3,
          "mark": "good"
         }
@@ -467,7 +482,10 @@
          "value": 2
         },
         {
-         "label": "best",
+         "label": {
+          "en": "best",
+          "ko": "best (최장 길이)"
+         },
          "value": 3,
          "mark": null
         }
@@ -560,7 +578,10 @@
          "value": 3
         },
         {
-         "label": "best",
+         "label": {
+          "en": "best",
+          "ko": "best (최장 길이)"
+         },
          "value": 3,
          "mark": null
         }
@@ -652,7 +673,10 @@
          "value": 4
         },
         {
-         "label": "best",
+         "label": {
+          "en": "best",
+          "ko": "best (최장 길이)"
+         },
          "value": 4,
          "mark": "good"
         }
@@ -743,7 +767,10 @@
          "value": 5
         },
         {
-         "label": "best",
+         "label": {
+          "en": "best",
+          "ko": "best (최장 길이)"
+         },
          "value": 5,
          "mark": "good"
         }
@@ -831,7 +858,10 @@
          "value": 5
         },
         {
-         "label": "best",
+         "label": {
+          "en": "best",
+          "ko": "best (최장 길이)"
+         },
          "value": 5,
          "mark": "good"
         }
@@ -915,7 +945,10 @@
          "value": 0
         },
         {
-         "label": "best",
+         "label": {
+          "en": "best",
+          "ko": "best (최장 길이)"
+         },
          "value": 0,
          "mark": null
         }
@@ -1002,7 +1035,10 @@
          "value": 1
         },
         {
-         "label": "best",
+         "label": {
+          "en": "best",
+          "ko": "best (최장 길이)"
+         },
          "value": 1,
          "mark": "good"
         }
@@ -1088,7 +1124,10 @@
          "value": 2
         },
         {
-         "label": "best",
+         "label": {
+          "en": "best",
+          "ko": "best (최장 길이)"
+         },
          "value": 2,
          "mark": "good"
         }
@@ -1173,7 +1212,10 @@
          "value": 3
         },
         {
-         "label": "best",
+         "label": {
+          "en": "best",
+          "ko": "best (최장 길이)"
+         },
          "value": 3,
          "mark": "good"
         }
@@ -1257,7 +1299,10 @@
          "value": 4
         },
         {
-         "label": "best",
+         "label": {
+          "en": "best",
+          "ko": "best (최장 길이)"
+         },
          "value": 4,
          "mark": "good"
         }
@@ -1340,7 +1385,10 @@
          "value": 5
         },
         {
-         "label": "best",
+         "label": {
+          "en": "best",
+          "ko": "best (최장 길이)"
+         },
          "value": 5,
          "mark": "good"
         }
@@ -1421,7 +1469,10 @@
          "value": 6
         },
         {
-         "label": "best",
+         "label": {
+          "en": "best",
+          "ko": "best (최장 길이)"
+         },
          "value": 6,
          "mark": "good"
         }
@@ -1500,7 +1551,10 @@
          "value": 6
         },
         {
-         "label": "best",
+         "label": {
+          "en": "best",
+          "ko": "best (최장 길이)"
+         },
          "value": 6,
          "mark": "good"
         }
@@ -1584,7 +1638,10 @@
          "value": 0
         },
         {
-         "label": "best",
+         "label": {
+          "en": "best",
+          "ko": "best (최장 길이)"
+         },
          "value": 0,
          "mark": null
         }
@@ -1671,7 +1728,10 @@
          "value": 1
         },
         {
-         "label": "best",
+         "label": {
+          "en": "best",
+          "ko": "best (최장 길이)"
+         },
          "value": 1,
          "mark": "good"
         }
@@ -1759,7 +1819,10 @@
          "value": 1
         },
         {
-         "label": "best",
+         "label": {
+          "en": "best",
+          "ko": "best (최장 길이)"
+         },
          "value": 1,
          "mark": null
         }
@@ -1847,7 +1910,10 @@
          "value": 1
         },
         {
-         "label": "best",
+         "label": {
+          "en": "best",
+          "ko": "best (최장 길이)"
+         },
          "value": 1,
          "mark": null
         }
@@ -1935,7 +2001,10 @@
          "value": 1
         },
         {
-         "label": "best",
+         "label": {
+          "en": "best",
+          "ko": "best (최장 길이)"
+         },
          "value": 1,
          "mark": null
         }
@@ -2023,7 +2092,10 @@
          "value": 1
         },
         {
-         "label": "best",
+         "label": {
+          "en": "best",
+          "ko": "best (최장 길이)"
+         },
          "value": 1,
          "mark": null
         }
@@ -2111,7 +2183,10 @@
          "value": 1
         },
         {
-         "label": "best",
+         "label": {
+          "en": "best",
+          "ko": "best (최장 길이)"
+         },
          "value": 1,
          "mark": null
         }
@@ -2191,7 +2266,10 @@
          "value": 1
         },
         {
-         "label": "best",
+         "label": {
+          "en": "best",
+          "ko": "best (최장 길이)"
+         },
          "value": 1,
          "mark": "good"
         }

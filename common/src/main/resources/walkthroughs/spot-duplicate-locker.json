@@ -12,7 +12,10 @@
   {
    "id": "lockers",
    "type": "array",
-   "title": "lockers"
+   "title": {
+    "en": "lockers",
+    "ko": "lockers (사물함 번호)"
+   }
   },
   {
    "id": "seen",

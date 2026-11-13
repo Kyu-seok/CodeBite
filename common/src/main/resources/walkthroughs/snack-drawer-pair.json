@@ -75,7 +75,10 @@
       "state": {
        "items": [
         {
-         "label": "target",
+         "label": {
+          "en": "target",
+          "ko": "target (목표 칼로리)"
+         },
          "value": 30
         },
         {
@@ -145,7 +148,10 @@
       "state": {
        "items": [
         {
-         "label": "target",
+         "label": {
+          "en": "target",
+          "ko": "target (목표 칼로리)"
+         },
          "value": 30
         },
         {
@@ -220,7 +226,10 @@
       "state": {
        "items": [
         {
-         "label": "target",
+         "label": {
+          "en": "target",
+          "ko": "target (목표 칼로리)"
+         },
          "value": 30
         },
         {
@@ -295,7 +304,10 @@
       "state": {
        "items": [
         {
-         "label": "target",
+         "label": {
+          "en": "target",
+          "ko": "target (목표 칼로리)"
+         },
          "value": 30
         },
         {
@@ -356,7 +368,10 @@
       "state": {
        "items": [
         {
-         "label": "target",
+         "label": {
+          "en": "target",
+          "ko": "target (목표 칼로리)"
+         },
          "value": 14
         },
         {
@@ -424,7 +439,10 @@
       "state": {
        "items": [
         {
-         "label": "target",
+         "label": {
+          "en": "target",
+          "ko": "target (목표 칼로리)"
+         },
          "value": 14
         },
         {
@@ -497,7 +515,10 @@
       "state": {
        "items": [
         {
-         "label": "target",
+         "label": {
+          "en": "target",
+          "ko": "target (목표 칼로리)"
+         },
          "value": 14
         },
         {
@@ -569,7 +590,10 @@
       "state": {
        "items": [
         {
-         "label": "target",
+         "label": {
+          "en": "target",
+          "ko": "target (목표 칼로리)"
+         },
          "value": 14
         },
         {

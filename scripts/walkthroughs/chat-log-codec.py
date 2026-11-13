@@ -65,7 +65,7 @@ def solve(messages, run):
                   unpacked={"columns": COLUMNS, "rows": rows(out),
                             "marks": {"path" if path else "good": [[r, c] for r in got for c in (0, 1)]}},
                   state={"items": [{"label": "i", "value": "–" if i is None else i},
-                                   {"label": "length", "value": "–" if length is None else length}]},
+                                   {"label": {"en": "length", "ko": "length (길이)"}, "value": "–" if length is None else length}]},
                   **answer)
 
     count = len(messages)

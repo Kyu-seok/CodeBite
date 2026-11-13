@@ -12,7 +12,10 @@
   {
    "id": "books",
    "type": "array",
-   "title": "books"
+   "title": {
+    "en": "books",
+    "ko": "books (책꽂이)"
+   }
   },
   {
    "id": "state",

@@ -25,7 +25,7 @@ wt = Walkthrough(
      "ko": "책꽂이가 정렬되어 있어 같은 책은 바로 붙어 있습니다. 각 책을 마지막으로 남긴 책(books[k-1])과 비교해, "
            "다를 때만 k 자리에 옮겨 씁니다."},
     views=[
-        {"id": "books", "type": "array", "title": "books"},
+        {"id": "books", "type": "array", "title": {"en": "books", "ko": "books (책꽂이)"}},
         {"id": "state", "type": "vars"},
     ],
 )

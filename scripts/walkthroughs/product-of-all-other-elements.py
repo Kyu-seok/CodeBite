@@ -53,8 +53,8 @@ def solve(nums, run):
                   result={"values": [v if w else "" for v, w in zip(result, written)], "pointers": {"i": at},
                           "marks": {"good": list(good), "path": list(path)}},
                   state={"items": [
-                      {"label": "prefix", "value": prefix},
-                      {"label": "suffix", "value": suffix}]},
+                      {"label": {"en": "prefix", "ko": "prefix (왼쪽 곱)"}, "value": prefix},
+                      {"label": {"en": "suffix", "ko": "suffix (오른쪽 곱)"}, "value": suffix}]},
                   **answer)
 
     frame({"en": "Without division, answer[i] is (product of everything left of i) × (product of everything "
