@@ -81,7 +81,7 @@ def solve(nums, run):
             else:
                 frame({"en": f"nums[{m}] = 2: swap it with nums[{hi}] at high, so the 2 joins the 2s. high steps "
                              f"left; mid stays, because the {nums[m]} that came back hasn't been read.",
-                       "ko": f"nums[{m}] = 2: high 자리의 nums[{hi}] 값과 맞바꿔 2를 뒤쪽 2들에 붙입니다. high는 왼쪽으로 "
+                       "ko": f"nums[{m}] = 2: high 자리의 nums[{hi}] 값과 맞바꿔 2를 뒤쪽 2들에 붙이고, high는 왼쪽으로 "
                              f"한 칸 갑니다. 맞바꿔 온 nums[{m}] = {nums[m]}: 아직 읽지 않은 값이라 mid는 그대로입니다."},
                       good=[m, hi])
         else:

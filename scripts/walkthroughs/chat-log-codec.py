@@ -14,7 +14,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import driver_list, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import driver_list, josa, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough  # noqa: E402
 
 SLUG = "chat-log-codec"
@@ -105,16 +105,17 @@ def solve(messages, run):
         if length:
             take = (f"take the next {length} {plural(length, 'character', 'characters')}, {quoted(message)}, "
                     f"as message {n}, whatever they are")
-            take_ko = f"그 뒤의 문자 {length}개({quoted(message)})를 내용과 상관없이 {n}번째 메시지로 가져옵니다"
+            take_ko = f"그 뒤의 문자 {length}개({quoted(message)})를 내용과 상관없이 {n}번째 메시지로 가져와"
         else:
-            take = f"take 0 characters: message {n} is the empty message \"\""
-            take_ko = f"문자를 0개 가져오므로 {n}번째 메시지는 빈 메시지 \"\"입니다"
+            take = f"take 0 characters, so message {n} is the empty message \"\""
+            take_ko = f"문자를 0개 가져와 {n}번째 메시지를 빈 메시지로 두고"
         note = note_ko = ""
         if "#" in message:
             note = " The # inside it is only a character: unpack never searches the counted characters for a marker."
-            note_ko = " 그 안의 # 기호는 그냥 문자일 뿐입니다. unpack은 길이만큼 가져오는 문자 안에서 구분자를 찾지 않습니다."
-        frame({"en": f"At i = {at}, the digits up to the next # read {length}: {take}. Jump to i = {i}.{note}",
-               "ko": f"i = {at}에서 다음 #까지의 숫자는 {length}입니다. {take_ko}. 건너뛰어 i = {i}에서 계속합니다.{note_ko}"},
+            note_ko = " 그 안의 # 기호는 그냥 문자일 뿐, unpack은 길이만큼 가져오는 문자 안에서 구분자를 찾지 않습니다."
+        frame({"en": f"At i = {at}, the digits up to the next # read {length}: {take}, then jump to i = {i}.{note}",
+               "ko": f"i = {at}에서 다음 #까지의 숫자 {josa(length, '을를')} 읽고, {take_ko} "
+                     f"i = {josa(i, '(으)로')} 건너뜁니다.{note_ko}"},
               sender_done=True, lit=head, good=took, got=[n - 1])
     answer = driver_list(out)
     frame({"en": f"i = {i} is the end of the blob, so unpack stops with {len(out)} "

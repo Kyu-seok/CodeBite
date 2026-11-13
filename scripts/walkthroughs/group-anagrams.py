@@ -46,9 +46,11 @@ def solve(strs, run):
                           "marks": group_marks or {}},
                   **answer)
 
-    frame({"en": f"Read the {len(strs)} {plural(len(strs), 'word', 'words')} in order, starting with an "
+    span = (f"\"{strs[0]}\"" if len(strs) == 1 else f"from \"{strs[0]}\" to \"{strs[-1]}\"",
+            f"\"{strs[0]}\"" if len(strs) == 1 else f"\"{strs[0]}\"부터 \"{strs[-1]}\"까지")
+    frame({"en": f"Read the {len(strs)} {plural(len(strs), 'word', 'words')}{'' if len(strs) == 1 else ' in order'}, {span[0]}, starting with an "
                  f"empty map of groups.",
-           "ko": f"단어 {len(strs)}개를 차례로 읽습니다. 그룹 맵은 비어 있습니다."})
+           "ko": f"단어 {len(strs)}개({span[1]})를 {'' if len(strs) == 1 else '차례로 '}읽습니다. 그룹 맵은 처음에 비어 있습니다."})
     for i, word in enumerate(strs):
         key = "".join(sorted(word))
         keys[i] = key

@@ -236,8 +236,8 @@
     },
     {
      "caption": {
-      "en": "Snack 2 has 19, so it needs 30 − 19 = 11. 11 is in the map at index 1: snacks 1 and 2 sum to 30. Answer [1,2].",
-      "ko": "인덱스 2의 간식은 19칼로리라서 30 − 19 = 11칼로리가 필요합니다. 맵의 인덱스 1에 11칼로리가 있으니 간식 1, 2의 합이 30칼로리입니다. 답: [1,2]."
+      "en": "Snack 2 has 19, so it needs 30 − 19 = 11. 11 is in the map at index 1, so snacks 1 and 2 sum to 30: answer [1,2].",
+      "ko": "인덱스 2의 간식은 19칼로리라서 30 − 19 = 11칼로리가 필요합니다. 맵의 인덱스 1에 11칼로리가 있으니 간식 1, 2의 합이 30칼로리이고, 답은 [1,2]입니다."
      },
      "views": {
       "snacks": {
@@ -513,8 +513,8 @@
     },
     {
      "caption": {
-      "en": "Snack 2 has 6, so it needs 14 − 6 = 8. 8 is in the map at index 0: snacks 0 and 2 sum to 14. Answer [0,2].",
-      "ko": "인덱스 2의 간식은 6칼로리라서 14 − 6 = 8칼로리가 필요합니다. 맵의 인덱스 0에 8칼로리가 있으니 간식 0, 2의 합이 14칼로리입니다. 답: [0,2]."
+      "en": "Snack 2 has 6, so it needs 14 − 6 = 8. 8 is in the map at index 0, so snacks 0 and 2 sum to 14: answer [0,2].",
+      "ko": "인덱스 2의 간식은 6칼로리라서 14 − 6 = 8칼로리가 필요합니다. 맵의 인덱스 0에 8칼로리가 있으니 간식 0, 2의 합이 14칼로리이고, 답은 [0,2]입니다."
      },
      "views": {
       "snacks": {

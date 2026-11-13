@@ -52,9 +52,10 @@ def solve(nums, run):
                   ]},
                   **answer)
 
-    frame({"en": "Look from the right for the first id smaller than its right neighbour. The last id alone "
-                 "is a falling tail.",
-           "ko": "오른쪽부터 오른쪽 이웃보다 작은 첫 ID를 찾습니다. 마지막 ID 하나는 그 자체로 내려가는 꼬리입니다."})
+    frame({"en": f"Look from the right of {driver_list(nums)} for the first id smaller than its right neighbour. "
+                 f"The last id, {nums[-1]}, alone is a falling tail.",
+           "ko": f"{driver_list(nums)}에서 오른쪽부터 오른쪽 이웃보다 작은 첫 ID를 찾습니다. 마지막 ID인 {nums[-1]}번 "
+                 f"하나는 그 자체로 내려가는 꼬리입니다."})
     while i >= 0 and nums[i] >= nums[i + 1]:
         tail_from = i
         frame({"en": f"shotOrder[{i}] = {nums[i]} ≥ shotOrder[{i + 1}] = {nums[i + 1]}: the tail still only "
@@ -83,7 +84,7 @@ def solve(nums, run):
         a, b = nums[i], nums[j]
         nums[i], nums[j] = nums[j], nums[i]
         frame({"en": f"Swap them: index {i} grows from {a} to {b}, the smallest step up. The tail still falls.",
-               "ko": f"둘을 맞바꿉니다. 인덱스 {i}의 ID가 {a}번에서 {b}번으로, 가장 작은 폭으로 커졌습니다. "
+               "ko": f"둘을 맞바꾸면 인덱스 {i}의 ID가 {a}번에서 {b}번으로, 가장 작은 폭으로 커집니다. "
                f"꼬리는 여전히 내려갑니다."},
               good=[i, j])
         j = None

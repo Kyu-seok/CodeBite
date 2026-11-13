@@ -62,7 +62,7 @@ def solve(seat_ids, run):
             tags[seat] = {"en": "skip", "ko": "건너뜀"}
             frame({"en": f"Seat {seat}: seat {seat - 1} is in the set too, so {seat} is not the first seat of "
                          f"its run. Skip it; the walk from that run's first seat counts it.",
-                   "ko": f"좌석 {seat}: 좌석 {seat - 1}도 집합에 있으므로 좌석 {josa(seat, "은는")} 구간의 첫 좌석이 아닙니다. "
+                   "ko": f"좌석 {seat}: 좌석 {seat - 1}도 집합에 있으니 좌석 {josa(seat, "은는")} 구간의 첫 좌석이 아니므로 "
                          f"건너뜁니다. 이 구간의 첫 좌석에서 걸을 때 함께 셉니다."},
                   seat=seat, lit=[seat, seat - 1])
             continue
@@ -80,15 +80,15 @@ def solve(seat_ids, run):
             best = walked
         span = (f"{seat}, {seat + 1}, …, {end}" if length > 5 else ", ".join(map(str, walked)))
         if grew:
-            en_end, ko_end = (f" {length} beats {old}, so longest is now {longest}.",
-                              f" 길이 {length}의 구간이 이전 최댓값 {old}보다 길므로 이제 longest = {longest}입니다.")
+            en_end, ko_end = (f", which beats {old}, so longest is now {longest}.",
+                              f"이전 최댓값 {old}보다 길어 이제 longest = {longest}입니다.")
         else:
-            en_end, ko_end = (f" {length} does not beat {longest}.",
-                              f" 길이 {length}의 구간은 longest {longest}보다 길지 않습니다.")
-        frame({"en": f"Seat {seat}: seat {seat - 1} is missing, so a run starts here. Count up while the next "
-                     f"seat is in the set: {span}, length {length}." + en_end,
+            en_end, ko_end = (f", which does not beat {longest}.",
+                              f"longest {longest}보다 길지 않습니다.")
+        frame({"en": f"Seat {seat}: seat {seat - 1} is missing, so a run starts here. Counting up while the next "
+                     f"seat is in the set gives {span}, length {length}" + en_end,
                "ko": f"좌석 {seat}: 좌석 {josa(seat - 1, "이가")} 없으므로 여기서 구간이 시작됩니다. 다음 좌석이 집합에 "
-                     f"있는 동안 위로 셉니다: {span}, 길이 {length}." + ko_end},
+                     f"있는 동안 위로 세면 {span}, 길이 {josa(length, "(으)로")} " + ko_end},
               seat=seat, lit=walked[1:], good=[seat], grew=grew)
     frame({"en": f"Every seat is visited, and each run was walked once, from its first seat. "
                  f"The longest run is {best[0]}–{best[-1]}: answer {longest}.",

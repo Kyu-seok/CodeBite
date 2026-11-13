@@ -81,8 +81,8 @@
     },
     {
      "caption": {
-      "en": "Seat 7: seat 6 is missing, so a run starts here. Count up while the next seat is in the set: 7, 8, 9, length 3. 3 beats 0, so longest is now 3.",
-      "ko": "좌석 7: 좌석 6이 없으므로 여기서 구간이 시작됩니다. 다음 좌석이 집합에 있는 동안 위로 셉니다: 7, 8, 9, 길이 3. 길이 3의 구간이 이전 최댓값 0보다 길므로 이제 longest = 3입니다."
+      "en": "Seat 7: seat 6 is missing, so a run starts here. Counting up while the next seat is in the set gives 7, 8, 9, length 3, which beats 0, so longest is now 3.",
+      "ko": "좌석 7: 좌석 6이 없으므로 여기서 구간이 시작됩니다. 다음 좌석이 집합에 있는 동안 위로 세면 7, 8, 9, 길이 3으로 이전 최댓값 0보다 길어 이제 longest = 3입니다."
      },
      "views": {
       "seats": {
@@ -144,8 +144,8 @@
     },
     {
      "caption": {
-      "en": "Seat 40: seat 39 is missing, so a run starts here. Count up while the next seat is in the set: 40, 41, 42, 43, length 4. 4 beats 3, so longest is now 4.",
-      "ko": "좌석 40: 좌석 39가 없으므로 여기서 구간이 시작됩니다. 다음 좌석이 집합에 있는 동안 위로 셉니다: 40, 41, 42, 43, 길이 4. 길이 4의 구간이 이전 최댓값 3보다 길므로 이제 longest = 4입니다."
+      "en": "Seat 40: seat 39 is missing, so a run starts here. Counting up while the next seat is in the set gives 40, 41, 42, 43, length 4, which beats 3, so longest is now 4.",
+      "ko": "좌석 40: 좌석 39가 없으므로 여기서 구간이 시작됩니다. 다음 좌석이 집합에 있는 동안 위로 세면 40, 41, 42, 43, 길이 4로 이전 최댓값 3보다 길어 이제 longest = 4입니다."
      },
      "views": {
       "seats": {
@@ -217,7 +217,7 @@
     {
      "caption": {
       "en": "Seat 41: seat 40 is in the set too, so 41 is not the first seat of its run. Skip it; the walk from that run's first seat counts it.",
-      "ko": "좌석 41: 좌석 40도 집합에 있으므로 좌석 41은 구간의 첫 좌석이 아닙니다. 건너뜁니다. 이 구간의 첫 좌석에서 걸을 때 함께 셉니다."
+      "ko": "좌석 41: 좌석 40도 집합에 있으니 좌석 41은 구간의 첫 좌석이 아니므로 건너뜁니다. 이 구간의 첫 좌석에서 걸을 때 함께 셉니다."
      },
      "views": {
       "seats": {
@@ -293,7 +293,7 @@
     {
      "caption": {
       "en": "Seat 42: seat 41 is in the set too, so 42 is not the first seat of its run. Skip it; the walk from that run's first seat counts it.",
-      "ko": "좌석 42: 좌석 41도 집합에 있으므로 좌석 42는 구간의 첫 좌석이 아닙니다. 건너뜁니다. 이 구간의 첫 좌석에서 걸을 때 함께 셉니다."
+      "ko": "좌석 42: 좌석 41도 집합에 있으니 좌석 42는 구간의 첫 좌석이 아니므로 건너뜁니다. 이 구간의 첫 좌석에서 걸을 때 함께 셉니다."
      },
      "views": {
       "seats": {
@@ -376,7 +376,7 @@
     {
      "caption": {
       "en": "Seat 9: seat 8 is in the set too, so 9 is not the first seat of its run. Skip it; the walk from that run's first seat counts it.",
-      "ko": "좌석 9: 좌석 8도 집합에 있으므로 좌석 9는 구간의 첫 좌석이 아닙니다. 건너뜁니다. 이 구간의 첫 좌석에서 걸을 때 함께 셉니다."
+      "ko": "좌석 9: 좌석 8도 집합에 있으니 좌석 9는 구간의 첫 좌석이 아니므로 건너뜁니다. 이 구간의 첫 좌석에서 걸을 때 함께 셉니다."
      },
      "views": {
       "seats": {
@@ -466,7 +466,7 @@
     {
      "caption": {
       "en": "Seat 8: seat 7 is in the set too, so 8 is not the first seat of its run. Skip it; the walk from that run's first seat counts it.",
-      "ko": "좌석 8: 좌석 7도 집합에 있으므로 좌석 8은 구간의 첫 좌석이 아닙니다. 건너뜁니다. 이 구간의 첫 좌석에서 걸을 때 함께 셉니다."
+      "ko": "좌석 8: 좌석 7도 집합에 있으니 좌석 8은 구간의 첫 좌석이 아니므로 건너뜁니다. 이 구간의 첫 좌석에서 걸을 때 함께 셉니다."
      },
      "views": {
       "seats": {
@@ -563,7 +563,7 @@
     {
      "caption": {
       "en": "Seat 43: seat 42 is in the set too, so 43 is not the first seat of its run. Skip it; the walk from that run's first seat counts it.",
-      "ko": "좌석 43: 좌석 42도 집합에 있으므로 좌석 43은 구간의 첫 좌석이 아닙니다. 건너뜁니다. 이 구간의 첫 좌석에서 걸을 때 함께 셉니다."
+      "ko": "좌석 43: 좌석 42도 집합에 있으니 좌석 43은 구간의 첫 좌석이 아니므로 건너뜁니다. 이 구간의 첫 좌석에서 걸을 때 함께 셉니다."
      },
      "views": {
       "seats": {
@@ -834,8 +834,8 @@
     },
     {
      "caption": {
-      "en": "Seat 11: seat 10 is missing, so a run starts here. Count up while the next seat is in the set: 11, 12, …, 16, length 6. 6 beats 0, so longest is now 6.",
-      "ko": "좌석 11: 좌석 10이 없으므로 여기서 구간이 시작됩니다. 다음 좌석이 집합에 있는 동안 위로 셉니다: 11, 12, …, 16, 길이 6. 길이 6의 구간이 이전 최댓값 0보다 길므로 이제 longest = 6입니다."
+      "en": "Seat 11: seat 10 is missing, so a run starts here. Counting up while the next seat is in the set gives 11, 12, …, 16, length 6, which beats 0, so longest is now 6.",
+      "ko": "좌석 11: 좌석 10이 없으므로 여기서 구간이 시작됩니다. 다음 좌석이 집합에 있는 동안 위로 세면 11, 12, …, 16, 길이 6으로 이전 최댓값 0보다 길어 이제 longest = 6입니다."
      },
      "views": {
       "seats": {
@@ -903,7 +903,7 @@
     {
      "caption": {
       "en": "Seat 12: seat 11 is in the set too, so 12 is not the first seat of its run. Skip it; the walk from that run's first seat counts it.",
-      "ko": "좌석 12: 좌석 11도 집합에 있으므로 좌석 12는 구간의 첫 좌석이 아닙니다. 건너뜁니다. 이 구간의 첫 좌석에서 걸을 때 함께 셉니다."
+      "ko": "좌석 12: 좌석 11도 집합에 있으니 좌석 12는 구간의 첫 좌석이 아니므로 건너뜁니다. 이 구간의 첫 좌석에서 걸을 때 함께 셉니다."
      },
      "views": {
       "seats": {
@@ -973,7 +973,7 @@
     {
      "caption": {
       "en": "Seat 13: seat 12 is in the set too, so 13 is not the first seat of its run. Skip it; the walk from that run's first seat counts it.",
-      "ko": "좌석 13: 좌석 12도 집합에 있으므로 좌석 13은 구간의 첫 좌석이 아닙니다. 건너뜁니다. 이 구간의 첫 좌석에서 걸을 때 함께 셉니다."
+      "ko": "좌석 13: 좌석 12도 집합에 있으니 좌석 13은 구간의 첫 좌석이 아니므로 건너뜁니다. 이 구간의 첫 좌석에서 걸을 때 함께 셉니다."
      },
      "views": {
       "seats": {
@@ -1050,7 +1050,7 @@
     {
      "caption": {
       "en": "Seat 14: seat 13 is in the set too, so 14 is not the first seat of its run. Skip it; the walk from that run's first seat counts it.",
-      "ko": "좌석 14: 좌석 13도 집합에 있으므로 좌석 14는 구간의 첫 좌석이 아닙니다. 건너뜁니다. 이 구간의 첫 좌석에서 걸을 때 함께 셉니다."
+      "ko": "좌석 14: 좌석 13도 집합에 있으니 좌석 14는 구간의 첫 좌석이 아니므로 건너뜁니다. 이 구간의 첫 좌석에서 걸을 때 함께 셉니다."
      },
      "views": {
       "seats": {
@@ -1134,7 +1134,7 @@
     {
      "caption": {
       "en": "Seat 15: seat 14 is in the set too, so 15 is not the first seat of its run. Skip it; the walk from that run's first seat counts it.",
-      "ko": "좌석 15: 좌석 14도 집합에 있으므로 좌석 15는 구간의 첫 좌석이 아닙니다. 건너뜁니다. 이 구간의 첫 좌석에서 걸을 때 함께 셉니다."
+      "ko": "좌석 15: 좌석 14도 집합에 있으니 좌석 15는 구간의 첫 좌석이 아니므로 건너뜁니다. 이 구간의 첫 좌석에서 걸을 때 함께 셉니다."
      },
      "views": {
       "seats": {
@@ -1225,7 +1225,7 @@
     {
      "caption": {
       "en": "Seat 16: seat 15 is in the set too, so 16 is not the first seat of its run. Skip it; the walk from that run's first seat counts it.",
-      "ko": "좌석 16: 좌석 15도 집합에 있으므로 좌석 16은 구간의 첫 좌석이 아닙니다. 건너뜁니다. 이 구간의 첫 좌석에서 걸을 때 함께 셉니다."
+      "ko": "좌석 16: 좌석 15도 집합에 있으니 좌석 16은 구간의 첫 좌석이 아니므로 건너뜁니다. 이 구간의 첫 좌석에서 걸을 때 함께 셉니다."
      },
      "views": {
       "seats": {
@@ -1322,8 +1322,8 @@
     },
     {
      "caption": {
-      "en": "Seat 18: seat 17 is missing, so a run starts here. Count up while the next seat is in the set: 18, 19, 20, length 3. 3 does not beat 6.",
-      "ko": "좌석 18: 좌석 17이 없으므로 여기서 구간이 시작됩니다. 다음 좌석이 집합에 있는 동안 위로 셉니다: 18, 19, 20, 길이 3. 길이 3의 구간은 longest 6보다 길지 않습니다."
+      "en": "Seat 18: seat 17 is missing, so a run starts here. Counting up while the next seat is in the set gives 18, 19, 20, length 3, which does not beat 6.",
+      "ko": "좌석 18: 좌석 17이 없으므로 여기서 구간이 시작됩니다. 다음 좌석이 집합에 있는 동안 위로 세면 18, 19, 20, 길이 3으로 longest 6보다 길지 않습니다."
      },
      "views": {
       "seats": {
@@ -1431,7 +1431,7 @@
     {
      "caption": {
       "en": "Seat 19: seat 18 is in the set too, so 19 is not the first seat of its run. Skip it; the walk from that run's first seat counts it.",
-      "ko": "좌석 19: 좌석 18도 집합에 있으므로 좌석 19는 구간의 첫 좌석이 아닙니다. 건너뜁니다. 이 구간의 첫 좌석에서 걸을 때 함께 셉니다."
+      "ko": "좌석 19: 좌석 18도 집합에 있으니 좌석 19는 구간의 첫 좌석이 아니므로 건너뜁니다. 이 구간의 첫 좌석에서 걸을 때 함께 셉니다."
      },
      "views": {
       "seats": {
@@ -1544,7 +1544,7 @@
     {
      "caption": {
       "en": "Seat 20: seat 19 is in the set too, so 20 is not the first seat of its run. Skip it; the walk from that run's first seat counts it.",
-      "ko": "좌석 20: 좌석 19도 집합에 있으므로 좌석 20은 구간의 첫 좌석이 아닙니다. 건너뜁니다. 이 구간의 첫 좌석에서 걸을 때 함께 셉니다."
+      "ko": "좌석 20: 좌석 19도 집합에 있으니 좌석 20은 구간의 첫 좌석이 아니므로 건너뜁니다. 이 구간의 첫 좌석에서 걸을 때 함께 셉니다."
      },
      "views": {
       "seats": {

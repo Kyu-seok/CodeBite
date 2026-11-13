@@ -74,8 +74,8 @@ def solve(s, t, run):
         differ = [c for c in letters if count_s[c] != count_t[c]]
         en = ", ".join(f"'{c}' {count_s[c]} vs {count_t[c]}" for c in differ)
         ko = ", ".join(f"'{c}' {count_s[c]}개 대 {count_t[c]}개" for c in differ)
-        frame({"en": f"The counts differ: {en}. So t is not an anagram of s. Answer false.",
-               "ko": f"개수가 다른 글자가 있습니다: {ko}. 그러므로 t는 s의 애너그램이 아닙니다. 답은 false입니다."},
+        frame({"en": f"The counts differ: {en}. So t is not an anagram of s, and the answer is false.",
+               "ko": f"개수가 다른 글자가 있습니다: {ko}. 그러므로 t는 s의 애너그램이 아니고, 답은 false입니다."},
               s_marks={"bad": [k for k, c in enumerate(s) if c in differ]},
               t_marks={"bad": [k for k, c in enumerate(t) if c in differ]},
               count_marks={"bad": [[r, letters.index(c)] for r in (0, 1) for c in differ]}, answer=answer)

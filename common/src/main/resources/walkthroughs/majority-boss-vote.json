@@ -188,7 +188,7 @@
     {
      "caption": {
       "en": "The count is 0: every earlier vote is cancelled out. Vote 4 becomes the new candidate with count 1.",
-      "ko": "카운트가 0입니다. 앞의 표는 모두 서로 상쇄되었습니다. 4번 표가 새 후보가 되고 카운트는 1입니다."
+      "ko": "카운트가 0이므로 앞의 표는 모두 서로 상쇄되었습니다. 4번 표가 새 후보가 되고 카운트는 1입니다."
      },
      "views": {
       "votes": {
@@ -246,8 +246,8 @@
     },
     {
      "caption": {
-      "en": "All 3 votes read. 4 is the candidate left standing with count 1. It holds 2 of the 3 votes, more than half, and such a value can't be cancelled out entirely: the answer is 4.",
-      "ko": "표 3개를 다 읽었습니다. 끝까지 남은 후보는 4번이고 카운트는 1입니다. 4번은 표 3개 중 2개로 과반이고, 과반인 값은 모두 상쇄될 수 없으므로 답은 4번입니다."
+      "en": "All 3 votes read, and 4 is the candidate left standing with count 1. It holds 2 of the 3 votes, more than half, and such a value can't be cancelled out entirely: the answer is 4.",
+      "ko": "표 3개를 다 읽었고, 끝까지 남은 후보는 4번(카운트 1)입니다. 4번은 표 3개 중 2개로 과반이고, 과반인 값은 모두 상쇄될 수 없으므로 답은 4번입니다."
      },
      "views": {
       "votes": {
@@ -637,7 +637,7 @@
     {
      "caption": {
       "en": "The count is 0: every earlier vote is cancelled out. Vote 6 becomes the new candidate with count 1.",
-      "ko": "카운트가 0입니다. 앞의 표는 모두 서로 상쇄되었습니다. 6번 표가 새 후보가 되고 카운트는 1입니다."
+      "ko": "카운트가 0이므로 앞의 표는 모두 서로 상쇄되었습니다. 6번 표가 새 후보가 되고 카운트는 1입니다."
      },
      "views": {
       "votes": {
@@ -787,7 +787,7 @@
     {
      "caption": {
       "en": "The count is 0: every earlier vote is cancelled out. Vote 6 becomes the new candidate with count 1.",
-      "ko": "카운트가 0입니다. 앞의 표는 모두 서로 상쇄되었습니다. 6번 표가 새 후보가 되고 카운트는 1입니다."
+      "ko": "카운트가 0이므로 앞의 표는 모두 서로 상쇄되었습니다. 6번 표가 새 후보가 되고 카운트는 1입니다."
      },
      "views": {
       "votes": {
@@ -865,8 +865,8 @@
     },
     {
      "caption": {
-      "en": "All 7 votes read. 6 is the candidate left standing with count 1. It holds 4 of the 7 votes, more than half, and such a value can't be cancelled out entirely: the answer is 6.",
-      "ko": "표 7개를 다 읽었습니다. 끝까지 남은 후보는 6번이고 카운트는 1입니다. 6번은 표 7개 중 4개로 과반이고, 과반인 값은 모두 상쇄될 수 없으므로 답은 6번입니다."
+      "en": "All 7 votes read, and 6 is the candidate left standing with count 1. It holds 4 of the 7 votes, more than half, and such a value can't be cancelled out entirely: the answer is 6.",
+      "ko": "표 7개를 다 읽었고, 끝까지 남은 후보는 6번(카운트 1)입니다. 6번은 표 7개 중 4개로 과반이고, 과반인 값은 모두 상쇄될 수 없으므로 답은 6번입니다."
      },
      "views": {
       "votes": {
@@ -1051,8 +1051,8 @@
     },
     {
      "caption": {
-      "en": "The only vote read. 9 is the candidate left standing with count 1. It holds 1 of the 1 votes, more than half, and such a value can't be cancelled out entirely: the answer is 9.",
-      "ko": "표 1개를 다 읽었습니다. 끝까지 남은 후보는 9번이고 카운트는 1입니다. 9번은 표 1개 중 1개로 과반이고, 과반인 값은 모두 상쇄될 수 없으므로 답은 9번입니다."
+      "en": "The only vote read, and 9 is the candidate left standing with count 1. It holds 1 of the 1 votes, more than half, and such a value can't be cancelled out entirely: the answer is 9.",
+      "ko": "표 1개를 다 읽었고, 끝까지 남은 후보는 9번(카운트 1)입니다. 9번은 표 1개 중 1개로 과반이고, 과반인 값은 모두 상쇄될 수 없으므로 답은 9번입니다."
      },
      "views": {
       "votes": {

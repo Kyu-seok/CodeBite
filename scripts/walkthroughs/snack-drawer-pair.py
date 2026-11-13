@@ -61,11 +61,11 @@ def solve(snacks, target, run):
             result = [j, i]
             answer = driver_list(result)
             frame({"en": f"Snack {i} has {calories}, so it needs {target} − {calories} = {partner}. "
-                         f"{partner} is in the map at index {j}: snacks {j} and {i} sum to {target}. "
-                         f"Answer {answer}.",
+                         f"{partner} is in the map at index {j}, so snacks {j} and {i} sum to {target}: "
+                         f"answer {answer}.",
                    "ko": f"인덱스 {i}의 간식은 {calories}칼로리라서 {target} − {calories} = {partner}칼로리가 필요합니다. "
-                         f"맵의 인덱스 {j}에 {partner}칼로리가 있으니 간식 {j}, {i}의 합이 {target}칼로리입니다. "
-                         f"답: {answer}."},
+                         f"맵의 인덱스 {j}에 {partner}칼로리가 있으니 간식 {j}, {i}의 합이 {target}칼로리이고, "
+                         f"답은 {answer}입니다."},
                   path=[j, i], dim=range(i + 1, len(snacks)),
                   seen_marks={"path": [[row, 0]]}, answer=answer)
             return

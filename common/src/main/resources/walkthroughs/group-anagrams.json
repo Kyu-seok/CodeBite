@@ -34,8 +34,8 @@
    "frames": [
     {
      "caption": {
-      "en": "Read the 7 words in order, starting with an empty map of groups.",
-      "ko": "단어 7개를 차례로 읽습니다. 그룹 맵은 비어 있습니다."
+      "en": "Read the 7 words in order, from \"oakvanilla\" to \"oak\", starting with an empty map of groups.",
+      "ko": "단어 7개(\"oakvanilla\"부터 \"oak\"까지)를 차례로 읽습니다. 그룹 맵은 처음에 비어 있습니다."
      },
      "views": {
       "words": {
@@ -1044,8 +1044,8 @@
    "frames": [
     {
      "caption": {
-      "en": "Read the 1 word in order, starting with an empty map of groups.",
-      "ko": "단어 1개를 차례로 읽습니다. 그룹 맵은 비어 있습니다."
+      "en": "Read the 1 word, \"merlot\", starting with an empty map of groups.",
+      "ko": "단어 1개(\"merlot\")를 읽습니다. 그룹 맵은 처음에 비어 있습니다."
      },
      "views": {
       "words": {

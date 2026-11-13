@@ -13,7 +13,7 @@ from collections import Counter
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import josa, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough  # noqa: E402
 
 SLUG = "unique-genre-window"
@@ -72,7 +72,7 @@ def solve(queue, k, run):
     for right, tag in enumerate(queue):
         window[tag] += 1
         added = (f"queue[{right}] = '{tag}' joins the window",
-                 f"queue[{right}] = '{tag}': 구간에 넣습니다")
+                 f"queue[{right}] = '{tag}': 구간에 넣으면")
         dropped = []
         if len(window) > k:
             too_many = len(window)
@@ -88,25 +88,27 @@ def solve(queue, k, run):
             best = length
             best_span = (left, right)
         verdict_en = f"length {length} beats best, so best = {best}." if improved else f"length {length}, best stays {best}."
-        verdict_ko = f"길이 {length}: best보다 길어 best = {best}." if improved else f"길이 {length}, best = {best} 그대로."
+        verdict_ko = f"길이 {josa(length, '(으)로')} best보다 길어 best = {best}." if improved else f"길이 {length}, best = {best} 그대로."
         if dropped:
             gone = "".join(queue[j] for j in dropped)
             emptied = ", ".join(sorted({queue[j] for j in dropped} - set(window)))  # genres whose count hit 0
-            frame({"en": f"{added[0]}: that makes {too_many} genres, more than {k}. Drop from the left until "
-                         f"the window is back to {k}: \"{gone}\" leaves and genre {emptied} drops to 0, left = {left}. Window \"{queue[left:right + 1]}\": {verdict_en}",
-                   "ko": f"{added[1]}. 장르가 {too_many}종류로 k = {k}보다 많습니다. 장르가 {k}종류가 될 때까지 "
-                         f"왼쪽에서 뺍니다: \"{gone}\". 장르 {emptied}의 개수가 0이 되어 빠지고 left = {left}. 구간 \"{queue[left:right + 1]}\": {verdict_ko}"},
+            frame({"en": f"{added[0]}: that makes {too_many} genres, more than {k}, so drop from the left until "
+                         f"it is back to {k}: \"{gone}\" leaves, genre {emptied} drops to 0 and left = {left}. "
+                         f"Window \"{queue[left:right + 1]}\": {verdict_en}",
+                   "ko": f"{added[1]} 장르가 {too_many}종류로 k = {k}보다 많아, {k}종류가 될 때까지 왼쪽에서 "
+                         f"\"{gone}\" 태그를 빼고 left = {left}입니다(장르 {emptied}의 개수가 0). "
+                         f"구간 \"{queue[left:right + 1]}\": {verdict_ko}"},
                   good=[right], bad=dropped, row_good=tag, best_mark="good" if improved else None)
         else:
             frame({"en": f"{added[0]}: {len(window)} {plural(len(window), 'genre', 'genres')}, within k = {k}. "
                          f"Window \"{queue[left:right + 1]}\": {verdict_en}",
-                   "ko": f"{added[1]}. 장르 {len(window)}종류로 k = {k} 이내입니다. "
+                   "ko": f"{added[1]} 장르 {len(window)}종류로 k = {k} 이내입니다. "
                          f"구간 \"{queue[left:right + 1]}\": {verdict_ko}"},
                   good=[right], row_good=tag, best_mark="good" if improved else None)
     a, b = best_span
-    frame({"en": f"Every tag added. The longest window seen was \"{queue[a:b + 1]}\" "
+    frame({"en": f"Every tag added, and the longest window seen was \"{queue[a:b + 1]}\" "
                  f"(queue[{a}..{b}]), length {best}. Answer {best}.",
-           "ko": f"모든 태그를 넣었습니다. 가장 긴 구간은 \"{queue[a:b + 1]}\"(queue[{a}..{b}]), "
+           "ko": f"모든 태그를 넣었고, 가장 긴 구간은 \"{queue[a:b + 1]}\"(queue[{a}..{b}]), "
                  f"길이 {best}입니다. 답은 {best}입니다."},
           path=range(a, b + 1), best_mark="good", answer=str(best))
 

@@ -48,9 +48,9 @@ def solve(codes, run):
                                     "mark": repeated_mark}]},
                   **answer)
 
-    frame({"en": f"{n} scans of codes 1..{n}. Slot c-1 stands for code c (its tag). Read the scans left to right; "
+    frame({"en": f"{n} scans of codes 1..{n}, so slot c-1 stands for code c (its tag). Read the scans left to right; "
                  f"a negative slot will mean its code was already scanned.",
-           "ko": f"코드 1..{n}의 스캔 {n}개입니다. c-1번 칸이 코드 c를 맡습니다(태그). 스캔을 왼쪽부터 읽고, "
+           "ko": f"코드 1..{n}의 스캔 {n}개이므로 c-1번 칸이 코드 c를 맡습니다(태그). 스캔을 왼쪽부터 읽고, "
                  f"음수인 칸은 그 코드가 이미 찍혔다는 뜻입니다."})
     for i, code in enumerate(codes):
         c = abs(code)  # an earlier flip may have made this scan negative; its code is still |codes[i]|
@@ -76,9 +76,9 @@ def solve(codes, run):
     answer = driver_list(result)
     if result:
         listed = ", ".join(map(str, result))
-        frame({"en": f"Every scan read. The codes that met a negative slot were scanned twice: {listed}. "
+        frame({"en": f"Every scan read, and the codes that met a negative slot were scanned twice: {listed}. "
                      f"Answer {answer}.",
-               "ko": f"모든 스캔을 읽었습니다. 음수 칸을 만난 코드가 두 번 찍힌 코드입니다: {listed}. "
+               "ko": f"모든 스캔을 읽었고, 음수 칸을 만난 코드 {listed}번이 두 번 찍힌 코드입니다. "
                      f"답은 {answer}입니다."},
               path=[c - 1 for c in result], repeated_mark="good", answer=answer)
     else:

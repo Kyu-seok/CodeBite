@@ -59,8 +59,8 @@ def solve(nums, run):
 
     frame({"en": "Without division, answer[i] is (product of everything left of i) × (product of everything "
                  "right of i). First pass: walk left to right, carrying the left product in prefix, which starts at 1.",
-           "ko": "나눗셈 없이, answer[i]는 (i 왼쪽 원소들의 곱) × (i 오른쪽 원소들의 곱)입니다. 첫 번째 단계: "
-                 "왼쪽에서 오른쪽으로 훑으며 왼쪽 곱을 prefix에 들고 갑니다. prefix는 1에서 시작합니다."})
+           "ko": "나눗셈 없이, answer[i]는 (i 왼쪽 원소들의 곱) × (i 오른쪽 원소들의 곱)입니다. 첫 번째 단계는 "
+                 "왼쪽에서 오른쪽으로 훑으며 왼쪽 곱을 prefix에 들고 가는데, prefix는 1에서 시작합니다."})
     for i in range(n):
         result[i] = prefix
         written[i] = True
@@ -78,8 +78,8 @@ def solve(nums, run):
         frame({"en": en, "ko": ko}, at=i, covers=range(i), good=[i])
     frame({"en": "Every answer[i] now holds its left product. Second pass: walk right to left, carrying the "
                  "right product in suffix, which starts at 1, and multiply it in.",
-           "ko": "이제 모든 answer[i]에 왼쪽 곱이 들어 있습니다. 두 번째 단계: 오른쪽에서 왼쪽으로 훑으며 "
-                 "오른쪽 곱을 suffix에 들고 가서 곱해 넣습니다. suffix는 1에서 시작합니다."})
+           "ko": "이제 모든 answer[i]에 왼쪽 곱이 들어 있습니다. 두 번째 단계는 오른쪽에서 왼쪽으로 훑으며 "
+                 "1에서 시작하는 suffix에 오른쪽 곱을 들고 가서 곱해 넣습니다."})
     for i in range(n - 1, -1, -1):
         old_answer = result[i]
         result[i] *= suffix
@@ -102,7 +102,7 @@ def solve(nums, run):
     answer = driver_list(result)
     frame({"en": f"Both passes are done: each answer[i] is its left product times its right product, "
                  f"with nums[i] itself never multiplied in. Answer {answer}.",
-           "ko": f"두 단계가 끝났습니다. 각 answer[i]는 왼쪽 곱 × 오른쪽 곱이고, nums[i] 자신은 한 번도 곱해지지 "
+           "ko": f"두 단계가 끝나 각 answer[i]는 왼쪽 곱 × 오른쪽 곱이고, nums[i] 자신은 한 번도 곱해지지 "
                  f"않았습니다. 답은 {answer}입니다."},
           path=range(n), answer=answer)
     return answer

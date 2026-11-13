@@ -30,8 +30,8 @@
    "frames": [
     {
      "caption": {
-      "en": "Look from the right for the first id smaller than its right neighbour. The last id alone is a falling tail.",
-      "ko": "오른쪽부터 오른쪽 이웃보다 작은 첫 ID를 찾습니다. 마지막 ID 하나는 그 자체로 내려가는 꼬리입니다."
+      "en": "Look from the right of [2,3,4] for the first id smaller than its right neighbour. The last id, 4, alone is a falling tail.",
+      "ko": "[2,3,4]에서 오른쪽부터 오른쪽 이웃보다 작은 첫 ID를 찾습니다. 마지막 ID인 4번 하나는 그 자체로 내려가는 꼬리입니다."
      },
      "views": {
       "order": {
@@ -187,7 +187,7 @@
     {
      "caption": {
       "en": "Swap them: index 1 grows from 3 to 4, the smallest step up. The tail still falls.",
-      "ko": "둘을 맞바꿉니다. 인덱스 1의 ID가 3번에서 4번으로, 가장 작은 폭으로 커졌습니다. 꼬리는 여전히 내려갑니다."
+      "ko": "둘을 맞바꾸면 인덱스 1의 ID가 3번에서 4번으로, 가장 작은 폭으로 커집니다. 꼬리는 여전히 내려갑니다."
      },
      "views": {
       "order": {
@@ -295,8 +295,8 @@
    "frames": [
     {
      "caption": {
-      "en": "Look from the right for the first id smaller than its right neighbour. The last id alone is a falling tail.",
-      "ko": "오른쪽부터 오른쪽 이웃보다 작은 첫 ID를 찾습니다. 마지막 ID 하나는 그 자체로 내려가는 꼬리입니다."
+      "en": "Look from the right of [5,4,3,2] for the first id smaller than its right neighbour. The last id, 2, alone is a falling tail.",
+      "ko": "[5,4,3,2]에서 오른쪽부터 오른쪽 이웃보다 작은 첫 ID를 찾습니다. 마지막 ID인 2번 하나는 그 자체로 내려가는 꼬리입니다."
      },
      "views": {
       "order": {
@@ -689,8 +689,8 @@
    "frames": [
     {
      "caption": {
-      "en": "Look from the right for the first id smaller than its right neighbour. The last id alone is a falling tail.",
-      "ko": "오른쪽부터 오른쪽 이웃보다 작은 첫 ID를 찾습니다. 마지막 ID 하나는 그 자체로 내려가는 꼬리입니다."
+      "en": "Look from the right of [1,2,7,6,3] for the first id smaller than its right neighbour. The last id, 3, alone is a falling tail.",
+      "ko": "[1,2,7,6,3]에서 오른쪽부터 오른쪽 이웃보다 작은 첫 ID를 찾습니다. 마지막 ID인 3번 하나는 그 자체로 내려가는 꼬리입니다."
      },
      "views": {
       "order": {
@@ -1018,7 +1018,7 @@
     {
      "caption": {
       "en": "Swap them: index 1 grows from 2 to 3, the smallest step up. The tail still falls.",
-      "ko": "둘을 맞바꿉니다. 인덱스 1의 ID가 2번에서 3번으로, 가장 작은 폭으로 커졌습니다. 꼬리는 여전히 내려갑니다."
+      "ko": "둘을 맞바꾸면 인덱스 1의 ID가 2번에서 3번으로, 가장 작은 폭으로 커집니다. 꼬리는 여전히 내려갑니다."
      },
      "views": {
       "order": {

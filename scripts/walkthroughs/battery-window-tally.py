@@ -67,9 +67,9 @@ def solve(readings, k, run):
                                    {"label": "count", "value": count, "mark": count_mark}]},
                   **answer)
 
-    frame({"en": f"k = {k}. Before any reading the running total is 0, so seen starts as {{0: 1}}. "
+    frame({"en": f"k = {k}, and before any reading the running total is 0, so seen starts as {{0: 1}}. "
                  f"Read left to right.",
-           "ko": f"k = {k}. 아무것도 읽기 전의 누적합은 0이므로 seen은 {{0: 1}}에서 시작합니다. "
+           "ko": f"아무것도 읽기 전의 누적합은 0이므로 seen은 {{0: 1}}에서 시작합니다(k = {k}). "
                  f"왼쪽부터 읽습니다."})
     for i, reading in enumerate(readings):
         before = total
@@ -87,15 +87,15 @@ def solve(readings, k, run):
             same = need == total
             frame({"en": f"{step}, seen {hits} {plural(hits, 'time', 'times')}: "
                          f"{plural(hits, 'that window sums', 'those windows sum')} to {k} "
-                         f"(readings{listed}). count = {count}. "
+                         f"(readings{listed}), so count = {count}. "
                          + (f"Then record {total}." if not same else f"Then record {total} again: now {seen[total]}."),
-                   "ko": f"{step}이고 seen에 {hits}번 있습니다. 합이 {k}인 구간: readings{listed}. "
-                         f"count = {count}. 이어서 누적합 {total}의 횟수를 1 늘립니다."},
+                   "ko": f"{step}이고 seen에 {hits}번 있으므로 합이 {k}인 구간(readings{listed})을 세어 "
+                         f"count = {count}입니다. 이어서 누적합 {total}의 횟수를 1 늘립니다."},
                   need=need, path=range(min(a for a, _ in windows), i + 1),
                   row_lit=None if same else need, row_good=total, count_mark="good")
         else:
             frame({"en": f"{step}, not in seen: no window ending here sums to {k}. Record {total}.",
-                   "ko": f"{step}이고 seen에 없습니다. 여기서 끝나며 합이 {k}인 구간은 없습니다. "
+                   "ko": f"{step}이고 seen에 없으므로 여기서 끝나며 합이 {k}인 구간은 없습니다. "
                          f"누적합 {total}의 횟수를 1 늘립니다."},
                   need=need, lit=[i], row_good=total)
     i = None
@@ -103,7 +103,7 @@ def solve(readings, k, run):
     if count:
         listed = ", ".join(f"[{a}..{b}]" for a, b in found_windows)
         frame({"en": f"Every reading read. The windows that sum to {k} are readings{listed}: answer {count}.",
-               "ko": f"모든 기록을 읽었습니다. 합이 {k}인 구간은 readings{listed}로 {count}개입니다. 답은 {count}입니다."},
+               "ko": f"모든 기록을 읽었습니다. 합이 {k}인 구간은 모두 {count}개(readings{listed})이므로 답은 {count}입니다."},
               path=sorted({j for a, b in found_windows for j in range(a, b + 1)}), count_mark="good", answer=answer)
     else:
         frame({"en": f"Every reading read and no lookup of total - k hit: no window sums to {k}. Answer 0.",
