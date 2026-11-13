@@ -75,9 +75,10 @@ export function layoutGraph(nodes, edges, directed) {
 }
 
 // ---------- views ----------
-// Each view type: mount(host, config, ctx) -> { update(state), locate?(at) }. `state` is the run's setup merged with
-// the frame's. `locate(at)` returns the element a move's address names (an array index, a map key), or null: a view
-// type that holds values defines it, and scripts/validate.mjs's ADDRESSES says which `at` it takes.
+// Each view type: mount(host, config, ctx) -> { update(state), locate?(at), prepare?(states) }. `state` is the run's
+// setup merged with the frame's; `prepare` gets every frame's state once per run, before the first update. `locate(at)`
+// returns the element a move's address names (an array index, a map key), or null: a view type that holds values
+// defines it, and scripts/validate.mjs's ADDRESSES says which `at` it takes.
 export const VIEWS = {};
 
 VIEWS.grid = (host, config, ctx) => {
@@ -115,21 +116,31 @@ VIEWS.grid = (host, config, ctx) => {
   };
 };
 
+// What an array state draws besides its cells: a span above (a window), a span below (a record), labels under cells.
+function arrayNeeds(s) {
+  const spans = Object.values(s.spans || {}).filter(Boolean);
+  return { above: spans.some(sp => !sp.below), below: spans.some(sp => sp.below), under: !!(s.under || []).length };
+}
+// A label's width in px at 11px, for keeping it inside the drawing: wide (CJK) characters count double.
+const labelWidth = t => [...t].reduce((w, ch) => w + (ch.codePointAt(0) > 0x2e80 ? 11 : 6.7), 0);
+
 VIEWS.array = (host, config, ctx) => {
-  const S = 46, G = 4, P = 10;
-  let built = null;
+  const S = 46, G = 4, P = 10, ABOVE = 26, UNDER = 16;
+  let built = null, room = { above: false, below: false, under: false };
   const bars = config.display === 'bars';
   function build(n, max) {
     host.innerHTML = '';
     const unit = bars ? Math.max(12, Math.min(28, 160 / Math.max(max, 1))) : 0;
     const barH = bars ? unit * Math.max(max, 1) : 0;
-    const top = 18, W = P * 2 + n * (S + G) - G, H = top + (bars ? barH : S) + 58;
+    const above = room.above ? ABOVE : 0, top = above + 18, W = P * 2 + n * (S + G) - G;
+    const yIdx = top + (bars ? barH + 32 : S + 14), yUnder = yIdx + UNDER, yPtr = (room.under ? yUnder : yIdx) + 18;
+    const yBelow = yPtr + 18, H = yPtr + (room.below ? 34 : 26);
     const root = svg('svg', { viewBox: `0 0 ${W} ${H}`, width: W, class: 'wt-svg wt-array' }, host);
     const items = [];
     for (let i = 0; i < n; i++) {
       const x = P + i * (S + G);
       const g = svg('g', { transform: `translate(${x},0)` }, root);
-      const tag = svg('text', { x: S / 2, y: 11, 'text-anchor': 'middle', class: 'wt-tag' }, g);
+      const tag = svg('text', { x: S / 2, y: above + 11, 'text-anchor': 'middle', class: 'wt-tag' }, g);
       let box, fill, val;
       if (bars) {
         svg('line', { x1: -G / 2, x2: S + G / 2, y1: top + barH, y2: top + barH, class: 'wt-base' }, g);
@@ -140,26 +151,68 @@ VIEWS.array = (host, config, ctx) => {
         box = svg('rect', { x: 1, y: top, width: S - 2, height: S - 2, rx: 7, class: 'wt-tile' }, g);
         val = svg('text', { x: S / 2, y: top + S / 2 + 5, 'text-anchor': 'middle', class: 'wt-val' }, g);
       }
-      const yIdx = top + (bars ? barH + 32 : S + 14);
       svg('text', { x: S / 2, y: yIdx, 'text-anchor': 'middle', class: 'wt-index' }, g).textContent = i;
-      const ptr = svg('text', { x: S / 2, y: yIdx + 18, 'text-anchor': 'middle', class: 'wt-ptr' }, g);
-      items.push({ g, box, fill, val, tag, ptr });
+      const under = room.under ? svg('text', { x: S / 2, y: yUnder, 'text-anchor': 'middle', class: 'wt-under' }, g) : null;
+      const ptr = svg('text', { x: S / 2, y: yPtr, 'text-anchor': 'middle', class: 'wt-ptr' }, g);
+      items.push({ g, box, fill, val, tag, ptr, under });
     }
-    return { n, max, items, unit, top, barH };
+    const spans = svg('g', { class: 'wt-spans' }, root);
+    return { n, max, items, unit, top, barH, W, yAbove: 8, aboveBase: above - 2, yBelow, spans, spanEls: new Map(), room: { ...room } };
+  }
+  // One bracket per span name, kept across frames so it slides: above, open at the bottom; below, dashed, open at the top.
+  function drawSpans(spans) {
+    const live = new Set();
+    for (const [name, sp] of Object.entries(spans || {})) {
+      if (!sp) continue;
+      live.add(name);
+      let el = built.spanEls.get(name);
+      if (!el) {
+        const g = svg('g', {}, built.spans);
+        const line = svg('path', { class: 'wt-spanline' }, g), label = svg('g', { class: 'wt-spantag' }, g);
+        el = { g, line, label, bg: svg('rect', { y: -11, height: 15, rx: 3, class: 'wt-spanbg' }, label), text: svg('text', { 'text-anchor': 'middle', class: 'wt-spanlabel' }, label) };
+        built.spanEls.set(name, el);
+      }
+      const x1 = P + sp.from * (S + G) + 1, x2 = P + sp.to * (S + G) + S - 1;
+      const y = sp.below ? built.yBelow : built.yAbove, y0 = sp.below ? y - 8 : built.aboveBase;
+      const d = sp.below ? `M${x1},${y0} L${x1},${y + 4} L${x2},${y + 4} L${x2},${y0}` : `M${x1},${y0} L${x1},${y} L${x2},${y} L${x2},${y0}`;
+      el.line.setAttribute('d', d); el.line.style.d = `path("${d}")`;
+      el.g.setAttribute('class', 'wt-span' + (sp.below ? ' wt-below' : '') + (sp.mark ? ' wt-' + sp.mark : ''));
+      const label = sp.label != null ? textOf(sp.label, ctx.lang) : name;
+      const half = labelWidth(label) / 2 + 3;
+      const cx = Math.max(half, Math.min(built.W - half, (x1 + x2) / 2));
+      el.text.textContent = label;
+      el.bg.setAttribute('x', -half); el.bg.setAttribute('width', 2 * half); // the line stops at the label's edges
+      el.label.style.transform = `translate(${cx}px, ${y + (sp.below ? 8 : 4)}px)`;
+    }
+    for (const [name, el] of built.spanEls) if (!live.has(name)) { el.g.remove(); built.spanEls.delete(name); }
   }
   return {
     locate: at => (built && Number.isInteger(at) && built.items[at] ? built.items[at].g : null),
+    // the run's every state, before its first frame: room for spans and labels is kept for the whole run, so the cells never jump
+    prepare(states) {
+      for (const st of states) { const n = arrayNeeds(st); for (const k in n) room[k] = room[k] || n[k]; }
+      built = null;
+    },
     update(s) {
       const vals = s.values || [], fills = s.fill || [];
       const max = bars ? Math.max(1, ...vals.map((v, i) => (+v || 0) + (+fills[i] || 0)), config.max || 0) : 0;
-      if (!built || built.n !== vals.length || (bars && max > built.max)) built = build(vals.length, max);
+      const need = arrayNeeds(s);
+      const grow = Object.keys(need).some(k => need[k] && !room[k]);
+      for (const k in need) room[k] = room[k] || need[k];
+      if (!built || grow || built.n !== vals.length || (bars && max > built.max)) built = build(vals.length, max);
       const m = markMap(s.marks), tags = new Map((s.tags || []).map(([i, t]) => [String(i), t]));
+      const unders = new Map((s.under || []).map(([i, t]) => [String(i), t]));
+      const unread = new Set(s.unread || []);
+      const fades = Object.values(s.spans || {}).filter(sp => sp && sp.fade);
       const ptrs = new Map();
       for (const [name, i] of Object.entries(s.pointers || {})) if (i != null) ptrs.set(i, [...(ptrs.get(i) || []), name]);
-      built.items.forEach(({ g, box, fill, val, tag, ptr }, i) => {
-        g.setAttribute('class', 'wt-item' + markClass(m, i) + (ptrs.has(i) ? ' wt-pointed' : ''));
+      built.items.forEach(({ g, box, fill, val, tag, ptr, under }, i) => {
+        const faded = !m.has(keyOf(i)) && fades.some(sp => i < sp.from || i > sp.to);
+        g.setAttribute('class', 'wt-item' + markClass(m, i) + (ptrs.has(i) ? ' wt-pointed' : '') +
+          (faded ? ' wt-faded' : '') + (unread.has(i) ? ' wt-unread' : ''));
         val.textContent = fmt(vals[i]);
         tag.textContent = textOf(tags.get(String(i)), ctx.lang);
+        if (under) under.textContent = textOf(unders.get(String(i)), ctx.lang);
         ptr.textContent = (ptrs.get(i) || []).join(' ');
         if (bars) {
           const { unit, top, barH } = built, h = (+vals[i] || 0) * unit, f = (+fills[i] || 0) * unit;
@@ -167,32 +220,40 @@ VIEWS.array = (host, config, ctx) => {
           fill.style.height = f + 'px'; fill.style.y = top + barH - h - f + 'px';
         }
       });
+      drawSpans(s.spans);
     },
   };
 };
 
 // A hash map: one card per key in insertion order. A count is drawn as dots and the number, a list as chips.
+// `slots` (at most k keys) draws the free slots dashed and a key beyond them red; a `struck` key is leaving.
 const MAX_DOTS = 10;
 VIEWS.map = (host, config, ctx) => {
   host.innerHTML = '';
   const box = html('div', 'wt-map', host);
   const cards = new Map(); // String(key) -> card element, kept so marks transition
-  let empty = null;
+  let empty = null, free = [];
   return {
     locate: at => cards.get(String(at)) || null,
     update(s) {
       const m = markMap(s.marks), entries = s.entries || [];
       const rank = new Map((s.ranks || []).map((k, i) => [String(k), i + 1]));
+      const struck = new Set((s.struck || []).map(String));
+      const slots = Number.isInteger(s.slots) ? s.slots : null;
       const live = new Set(entries.map(e => String(e.key)));
       for (const [k, el] of cards) if (!live.has(k)) { el.remove(); cards.delete(k); }
+      for (const el of free) el.remove();
+      free = [];
       if (empty) { empty.remove(); empty = null; }
-      if (!entries.length) empty = html('span', 'wt-empty', box, config.empty != null ? textOf(config.empty, ctx.lang) : 'empty');
+      if (!entries.length && !slots) empty = html('span', 'wt-empty', box, config.empty != null ? textOf(config.empty, ctx.lang) : 'empty');
+      let held = 0; // keys holding a slot: a struck key is leaving and holds none
       for (const e of entries) {
-        const k = String(e.key);
+        const k = String(e.key), gone = struck.has(k), over = !gone && slots != null && held++ >= slots;
         let card = cards.get(k);
         if (!card) { card = html('div', null, null); cards.set(k, card); }
         box.appendChild(card); // insertion order
-        card.className = 'wt-mapcard' + markClass(m, e.key) + (rank.size && !rank.has(k) ? ' wt-unranked' : '');
+        card.className = 'wt-mapcard' + markClass(m, e.key) + (rank.size && !rank.has(k) ? ' wt-unranked' : '') +
+          (over ? ' wt-over' : '') + (gone ? ' wt-struck' : '');
         card.dataset.token = fmt(e.key);
         card.innerHTML = '';
         if (rank.has(k)) html('span', 'wt-rank', card, '#' + rank.get(k));
@@ -207,6 +268,7 @@ VIEWS.map = (host, config, ctx) => {
           html('div', 'wt-mapval', card, fmt(v));
         } else html('div', 'wt-mapval', card, fmt(v));
       }
+      for (let i = held; i < (slots || 0); i++) free.push(html('div', 'wt-mapslot', box)); // the slots still free
     },
   };
 };
@@ -493,7 +555,9 @@ export function mount(root, wt, options = {}) {
       const host = html('div', 'wt-viewbody', box);
       const make = VIEWS[v.type];
       if (!make) throw new Error(`walkthrough: no view type "${v.type}"`);
-      return { id: v.id, type: v.type, box, view: make(host, v, ctx), setup: (run.setup || {})[v.id] || {} };
+      const setup = (run.setup || {})[v.id] || {}, view = make(host, v, ctx);
+      if (view.prepare) view.prepare(run.frames.map(f => ({ ...setup, ...((f.views || {})[v.id] || {}) })));
+      return { id: v.id, type: v.type, box, view, setup };
     });
     inputEl.textContent = run.input == null ? '' : fmt(run.input);
     expectedEl.textContent = run.expected === undefined ? '' : `${ui.expected} ${fmt(run.expected)}`;

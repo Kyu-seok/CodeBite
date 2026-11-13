@@ -14,9 +14,11 @@
 
 A value going from one place to another is a move, by address (an array index, a map key, an output index):
 
-    from walkthrough_trace import at, move, map_entries
+    from walkthrough_trace import at, move, map_entries, span
     run.frame("4 goes into the map.", xs={"values": nums}, uses={"entries": map_entries(counts)},
               moves=[move(at("xs", i), at("uses", 4))])   # move(dst=...) creates, move(src) drops
+
+A window or a record on an array is a span: `xs={"values": nums, "spans": {"window": span(left, right, "window")}}`.
 
 Every state you pass is snapshotted (deep-copied through JSON) when `frame` is called, so keep mutating
 your own structures freely. Floats like inf are rejected: show them as a string ("∞").
@@ -61,6 +63,22 @@ def move(src=None, dst=None, value=_MISSING, mark=None):
     if mark is not None:
         m["mark"] = mark
     return m
+
+
+def span(start, end, label=None, mark=None, below=False, fade=False):
+    """An `array` view's span: the range start..end (inclusive) with a label and a mark. Above the cells by default
+    (a live window); `below=True` draws it dashed under them (a record, such as the best so far). `fade=True` fades
+    the cells outside it. Pass spans by name: `queue={"values": q, "spans": {"window": span(l, r, "window")}}`."""
+    s = {"from": start, "to": end}
+    if label is not None:
+        s["label"] = label
+    if mark is not None:
+        s["mark"] = mark
+    if below:
+        s["below"] = True
+    if fade:
+        s["fade"] = True
+    return s
 
 
 def map_entries(mapping):
