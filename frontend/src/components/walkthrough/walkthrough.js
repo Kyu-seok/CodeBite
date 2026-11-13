@@ -289,6 +289,81 @@ VIEWS.output = (host, config, ctx) => {
   };
 };
 
+// Intervals on one number line, in the style of a problem's intervals Diagram: one row per interval, its
+// `[start, end]` label left of a bar, groups (the input, the merged output) stacked over one shared axis.
+// `points` draw a value across every row, such as the boundary a step compares. Address: [group, index].
+export function axisTicks(min, max) {
+  const ticksAt = step => {
+    const first = Math.ceil(min / step) * step, count = Math.floor((max - first) / step) + 1;
+    return Array.from({ length: Math.max(0, count) }, (_, i) => first + i * step);
+  };
+  const miss = n => (n < 5 ? 5 / n : n > 10 ? n / 10 : 1); // 5 to 10 ticks, every multiple of 1, 2 or 5 × 10^k
+  let best = ticksAt(1);
+  for (let power = 1; power < 1e12; power *= 10) for (const m of [1, 2, 5]) {
+    const t = ticksAt(m * power);
+    if (miss(t.length) === 1) return t;
+    if (miss(t.length) < miss(best.length)) best = t;
+    if (t.length < 5) return best;
+  }
+  return best;
+}
+VIEWS.intervals = (host, config, ctx) => {
+  const CHAR = 7.3, PLOT = 280, PAD = 12, ROW = 24, BAR = 12, HEAD = 18, TOP = 20, AXIS = 26, MIN_BAR = 4;
+  let bars = new Map(); // "group,index" -> bar rect
+  return {
+    locate: at => (Array.isArray(at) ? bars.get(at.join(',')) || null : null),
+    update(s) {
+      host.innerHTML = '';
+      bars = new Map();
+      const groups = s.groups || [], points = s.points || [];
+      const values = [...groups.flatMap(g => (g.intervals || []).flat()), ...points.map(p => p.at)];
+      const [lo, hi] = s.domain || (values.length ? [Math.min(...values), Math.max(...values)] : [0, 1]);
+      const span = hi - lo || 1;
+      const label = ([a, b]) => `[${a}, ${b}]`;
+      // the label column fits the widest label any interval on this axis could have, so it doesn't shift as values change
+      const chars = Math.max(label([lo, hi]).length, ...groups.flatMap(g => (g.intervals || []).map(iv => label(iv).length)));
+      const labelW = PAD + chars * CHAR, plotX = labelW + PAD;
+      const xOf = v => plotX + (hi === lo ? PLOT / 2 : ((v - lo) / span) * PLOT);
+      const rows = groups.reduce((n, g) => n + (g.label != null ? HEAD : 0) + Math.max(1, (g.intervals || []).length) * ROW, 0);
+      const plotBottom = TOP + rows, W = plotX + PLOT + PAD, H = plotBottom + AXIS;
+      const root = svg('svg', { viewBox: `0 0 ${W} ${H}`, width: W, class: 'wt-svg wt-intervals' }, host);
+      const lines = svg('g', {}, root);
+      let y = TOP;
+      groups.forEach((g, gi) => {
+        if (g.label != null) { svg('text', { x: PAD, y: y + 12, class: 'wt-ivgroup' }, root).textContent = textOf(g.label, ctx.lang); y += HEAD; }
+        const m = markMap(g.marks), list = g.intervals || [];
+        if (!list.length) svg('text', { x: plotX, y: y + ROW / 2 + 4, class: 'wt-ivempty' }, root).textContent = config.empty != null ? textOf(config.empty, ctx.lang) : 'empty';
+        list.forEach(([a, b], i) => {
+          const cy = y + i * ROW + ROW / 2;
+          const row = svg('g', { class: 'wt-ivrow' + markClass(m, i) }, root);
+          svg('text', { x: labelW, y: cy + 4, 'text-anchor': 'end', class: 'wt-ivlabel' }, row).textContent = label([a, b]);
+          const len = xOf(b) - xOf(a), w = Math.max(len, MIN_BAR), x = len < MIN_BAR ? xOf(a) - MIN_BAR / 2 : xOf(a);
+          const bar = svg('rect', { x, y: cy - BAR / 2, width: w, height: BAR, rx: 3, class: 'wt-ivbar', 'data-token': `[${a},${b}]` }, row);
+          bars.set(gi + ',' + i, bar);
+        });
+        y += Math.max(1, list.length) * ROW;
+      });
+      // points: a dashed line across every row; a label near an end of the axis, or near another label, goes beside its line
+      const placed = points.map((p, i) => ({ p, i, x: xOf(p.at) })).sort((a, b) => a.x - b.x);
+      placed.forEach((q, j) => {
+        const prev = placed[j - 1], next = placed[j + 1];
+        const near = 40, edge = 36;
+        const anchor = (prev && q.x - prev.x < near) || q.x < plotX + edge ? 'start'
+          : (next && next.x - q.x < near) || q.x > plotX + PLOT - edge ? 'end' : 'middle';
+        const pg = svg('g', { class: 'wt-ivpoint' + (q.p.mark ? ' wt-' + q.p.mark : '') }, lines);
+        svg('line', { x1: q.x, x2: q.x, y1: TOP - 4, y2: plotBottom, class: 'wt-ivpline' }, pg);
+        const text = (q.p.label != null ? textOf(q.p.label, ctx.lang) + ' ' : '') + fmt(q.p.at);
+        svg('text', { x: q.x + (anchor === 'start' ? 3 : anchor === 'end' ? -3 : 0), y: TOP - 8, 'text-anchor': anchor, class: 'wt-ivptext' }, pg).textContent = text;
+      });
+      svg('line', { x1: plotX, x2: plotX + PLOT, y1: plotBottom + 4, y2: plotBottom + 4, class: 'wt-ivaxis' }, root);
+      for (const v of axisTicks(lo, hi)) {
+        svg('line', { x1: xOf(v), x2: xOf(v), y1: plotBottom + 4, y2: plotBottom + 8, class: 'wt-ivaxis' }, root);
+        svg('text', { x: xOf(v), y: plotBottom + 19, 'text-anchor': 'middle', class: 'wt-index' }, root).textContent = v;
+      }
+    },
+  };
+};
+
 VIEWS.graph = (host, config, ctx) => {
   const R = 20, DX = 120, DY = 88, ARC = 88;
   let built = null;

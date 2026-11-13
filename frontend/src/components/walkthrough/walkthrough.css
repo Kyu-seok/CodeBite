@@ -207,6 +207,30 @@
 .wt-outchip.wt-good { background: var(--wt-good); }
 .wt-outchip.wt-dim { opacity: .4; }
 
+/* intervals: bars on one number line, as a problem's intervals Diagram draws them */
+.wt-intervals .wt-ivgroup { font: 600 10px var(--wt-sans); letter-spacing: .08em; text-transform: uppercase; fill: var(--wt-mid) !important; }
+.wt-intervals .wt-ivempty { font: italic 12px var(--wt-sans); fill: var(--wt-lo) !important; }
+.wt-intervals .wt-ivlabel { font: 500 12px var(--wt-mono); fill: var(--wt-mid) !important; }
+.wt-ivbar { fill: var(--wt-ink); fill-opacity: .15; stroke: var(--wt-mid); stroke-width: 1.5; transition: fill .3s, stroke .3s; }
+.wt-ivrow.wt-lit .wt-ivbar { fill: var(--wt-accent); fill-opacity: .25; stroke: var(--wt-accent); }
+.wt-ivrow.wt-good .wt-ivbar { fill: var(--wt-good); fill-opacity: .3; stroke: var(--wt-good); }
+.wt-ivrow.wt-bad .wt-ivbar { fill: var(--wt-bad); fill-opacity: .25; stroke: var(--wt-bad); stroke-dasharray: 4 2; }
+.wt-ivrow.wt-path .wt-ivbar { fill: var(--wt-accent); fill-opacity: 1; stroke: var(--wt-accent); }
+.wt-intervals .wt-ivrow.wt-lit .wt-ivlabel, .wt-ivrow.wt-path .wt-ivlabel { font-weight: 700; fill: var(--wt-accent) !important; }
+.wt-intervals .wt-ivrow.wt-good .wt-ivlabel { font-weight: 700; fill: var(--wt-good) !important; }
+.wt-intervals .wt-ivrow.wt-bad .wt-ivlabel { font-weight: 700; fill: var(--wt-bad) !important; }
+.wt-ivrow.wt-dim { opacity: .35; }
+.wt-ivaxis { stroke: var(--wt-lo); stroke-width: 1; }
+.wt-ivpline { stroke: var(--wt-mid); stroke-width: 1.5; stroke-dasharray: 4 3; }
+.wt-intervals .wt-ivptext { font: 600 11px var(--wt-mono); }
+.wt-ivpoint.wt-lit .wt-ivpline, .wt-ivpoint.wt-path .wt-ivpline { stroke: var(--wt-accent); }
+.wt-ivpoint.wt-lit .wt-ivptext, .wt-ivpoint.wt-path .wt-ivptext { fill: var(--wt-accent) !important; }
+.wt-ivpoint.wt-good .wt-ivpline { stroke: var(--wt-good); }
+.wt-ivpoint.wt-good .wt-ivptext { fill: var(--wt-good) !important; }
+.wt-ivpoint.wt-bad .wt-ivpline { stroke: var(--wt-bad); }
+.wt-ivpoint.wt-bad .wt-ivptext { fill: var(--wt-bad) !important; }
+.wt-ivpoint.wt-dim { opacity: .35; }
+
 /* moves: drawn over the stage, never catching the pointer */
 .wt-moves { position: absolute; inset: 0; pointer-events: none; z-index: 2; }
 .wt-movesvg { position: absolute; left: 0; top: 0; overflow: visible; }

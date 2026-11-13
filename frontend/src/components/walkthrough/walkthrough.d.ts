@@ -8,6 +8,7 @@ export type View =
   | { id: string; type: 'array'; title?: Text; display?: 'cells' | 'bars'; max?: number }
   | { id: string; type: 'map'; title?: Text; empty?: Text }
   | { id: string; type: 'output'; title?: Text; empty?: Text }
+  | { id: string; type: 'intervals'; title?: Text; empty?: Text }
   | { id: string; type: 'graph'; title?: Text; directed?: boolean }
   | { id: string; type: 'table'; title?: Text }
   | { id: string; type: 'vars'; title?: Text };
@@ -31,6 +32,13 @@ export interface MapState {
 }
 /** The answer as it forms: one chip per value. */
 export interface OutputState { values: unknown[]; marks?: Marks<number> }
+/** Intervals on one number line: groups (the input, the merged output) of [start, end] rows over a shared axis, which
+ *  spans `domain` (default: every value in the frame). `points` draw a value across every row. Address: [group, index]. */
+export interface IntervalsState {
+  groups: { label?: Text; intervals: [number, number][]; marks?: Marks<number> }[];
+  points?: { at: number; label?: Text; mark?: Mark }[];
+  domain?: [number, number];
+}
 export interface GraphState {
   nodes: { id: string | number; label?: Text; tag?: Text }[];
   edges: { from: string | number; to: string | number; label?: Text }[];
@@ -39,7 +47,7 @@ export interface GraphState {
 export interface TableState { columns?: Text[]; rows: { label: Text; cells: unknown[] }[]; marks?: Marks<[number, number]> }
 export interface VarsState { items: { label: Text; value: unknown; mark?: Mark | null; empty?: Text }[] }
 
-/** A place in a view: an array or output index, a map key. Each view type that holds values defines its `at`. */
+/** A place in a view: an array or output index, a map key, an intervals [group, index]. Each view type that holds values defines its `at`. */
 export interface Address { view: string; at: number | string | [number, number] }
 /** A value going from one place to another. No `from`: created at `to`; no `to`: dropped from `from`.
  *  `value` is the chip's text (default: the source's); `mark` overrides the colour (default: path into an output, bad when dropped, else good). */
@@ -60,5 +68,6 @@ export interface MountOptions {
 export interface Player { show(run: number, frame: number | 'last'): void; destroy(): void }
 export function mount(root: HTMLElement, walkthrough: Walkthrough, options?: MountOptions): Player;
 export function layoutGraph(nodes: GraphState['nodes'], edges: GraphState['edges'], directed: boolean): { pos: Map<string, { col: number; row: number }>; cols: number; rows: number };
+export function axisTicks(min: number, max: number): number[];
 export function textOf(text: Text | null | undefined, lang: string): string;
 export const MARKS: Mark[];
