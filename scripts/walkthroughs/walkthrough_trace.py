@@ -12,12 +12,15 @@
     run.frame("Answer 4.", answer=4, board=...)   # the last frame carries the answer
     wt.write("walkthrough.json")                  # fails if a run's answer is not its expected output
 
-A value going from one place to another is a move, by address (an array index, a map key, a set member, an output
-index, a queue position from the front, a grid [row, col]):
+A value going from one place to another is a move, by address (an array or output index, a map key, a set member,
+a queue position from the front, a grid or table [row, col], an intervals [group, index], a graph node id or
+[from, to] edge):
 
     from walkthrough_trace import at, move, map_entries, probe, span
     run.frame("4 goes into the map.", xs={"values": nums}, uses={"entries": map_entries(counts)},
               moves=[move(at("xs", i), at("uses", 4))])   # move(dst=...) creates, move(src) drops
+
+Two values trading places are `swap(view, a, b, was_at_a, was_at_b)`, the two moves of one swap.
 
 A lookup in a `set` view is a probe: `seen={"members": list(seen), "probes": [probe(x, hit=x in seen)]}`.
 
@@ -47,7 +50,8 @@ def _snapshot(value, where):
 
 
 def at(view, where):
-    """An address: a place in a view (an array or output index, a map key, a set member, a queue position, a grid [row, col])."""
+    """An address: a place in a view (an array or output index, a map key, a set member, a queue position from the
+    front, a grid or table [row, col], an intervals [group, index], a graph node id or [from, to] edge)."""
     return {"view": view, "at": where}
 
 
@@ -66,6 +70,12 @@ def move(src=None, dst=None, value=_MISSING, mark=None):
     if mark is not None:
         m["mark"] = mark
     return m
+
+
+def swap(view, a, b, was_at_a, was_at_b):
+    """The two moves of a swap in one view: the value that was at `a` flies to `b`, and the one at `b` to `a`.
+    Pass the values as they were before the swap, so each chip carries what left its place."""
+    return [move(at(view, a), at(view, b), value=was_at_a), move(at(view, b), at(view, a), value=was_at_b)]
 
 
 def span(start, end, label=None, mark=None, below=False, fade=False):

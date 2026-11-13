@@ -16,7 +16,7 @@ import sys
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
 from codebite import driver_list, sample_cases, sample_run, walkthrough_path  # noqa: E402
-from walkthrough_trace import Walkthrough, at, move, span  # noqa: E402
+from walkthrough_trace import Walkthrough, at, move, span, swap  # noqa: E402
 
 SLUG = "next-speaker-order"
 
@@ -87,7 +87,7 @@ def solve(nums, run):
                "ko": f"둘을 맞바꾸면 인덱스 {i}의 ID가 {a}번에서 {b}번으로, 가장 작은 폭으로 커집니다. "
                f"꼬리는 여전히 내려갑니다."},
               good=[i, j],
-              moves=[move(at("order", i), at("order", j), value=a), move(at("order", j), at("order", i), value=b)])
+              moves=swap("order", i, j, a, b))
         j = None
     else:
         frame({"en": "i ran past the left end: the whole lineup only falls, so it is already the largest "

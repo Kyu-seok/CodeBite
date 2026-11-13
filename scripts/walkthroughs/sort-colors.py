@@ -15,7 +15,7 @@ import sys
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
 from codebite import driver_list, sample_cases, sample_run, walkthrough_path  # noqa: E402
-from walkthrough_trace import Walkthrough, at, move, span  # noqa: E402
+from walkthrough_trace import Walkthrough, span, swap  # noqa: E402
 
 SLUG = "sort-colors"
 
@@ -36,10 +36,6 @@ def solve(nums, run):
     the sorted array as the Driver prints it."""
     n = len(nums)
     low, mid, high = 0, 0, n - 1
-
-    def swap(a, b):
-        """The two moves of a swap that has just happened: each value flies to the cell it now sits in."""
-        return [move(at("nums", a), at("nums", b), value=nums[b]), move(at("nums", b), at("nums", a), value=nums[a])]
 
     def frame(caption, lit=(), good=(), path=(), moves=None, **answer):
         spans = {"zeros": span(0, low - 1, {"en": "0s", "ko": "0"}) if low > 0 else None,
@@ -72,7 +68,7 @@ def solve(nums, run):
                              f"moves up to index {m}. Both low and mid step right.",
                        "ko": f"nums[{m}] = 0: low 자리의 nums[{lo}] 값과 맞바꿔 0을 앞쪽 0들에 붙이고, 1은 인덱스 "
                              f"{m}의 칸으로 옮깁니다. low와 mid가 함께 오른쪽으로 한 칸 갑니다."},
-                      good=[lo, m], moves=swap(lo, m))
+                      good=[lo, m], moves=swap("nums", lo, m, nums[m], nums[lo]))
         elif v == 2:
             hi = high
             nums[mid], nums[high] = nums[high], nums[mid]
@@ -86,7 +82,7 @@ def solve(nums, run):
                              f"left; mid stays, because the {nums[m]} that came back hasn't been read.",
                        "ko": f"nums[{m}] = 2: high 자리의 nums[{hi}] 값과 맞바꿔 2를 뒤쪽 2들에 붙이고, high는 왼쪽으로 "
                              f"한 칸 갑니다. 맞바꿔 온 nums[{m}] = {nums[m]}: 아직 읽지 않은 값이라 mid는 그대로입니다."},
-                      good=[m, hi], moves=swap(m, hi))
+                      good=[m, hi], moves=swap("nums", m, hi, nums[hi], nums[m]))
         else:
             mid += 1
             frame({"en": f"nums[{m}] = 1: a 1 belongs between the 0s and the 2s, where it already is. "
