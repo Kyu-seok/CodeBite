@@ -38,9 +38,9 @@
 .wt-runbtn[aria-selected="true"] { border-color: var(--wt-ink); color: var(--wt-ink); font-weight: 600; }
 .wt-extra { margin-left: 6px; font-size: 11px; color: var(--wt-mid); font-weight: 400; border: 1px dashed var(--wt-lo); border-radius: 999px; padding: 0 6px; }
 .wt-card { background: var(--wt-card); border: 1px solid var(--wt-faint); border-radius: 14px; overflow: hidden; }
-.wt-head { display: flex; justify-content: space-between; gap: 12px; padding: 10px 14px; font-size: 12px; color: var(--wt-mid); border-bottom: 1px solid var(--wt-faint); }
+.wt-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 12px; padding: 10px 14px; font-size: 12px; color: var(--wt-mid); border-bottom: 1px solid var(--wt-faint); }
 .wt-input { font-family: var(--wt-mono); color: var(--wt-ink); overflow-wrap: anywhere; }
-.wt-expected { white-space: nowrap; }
+.wt-expected { overflow-wrap: anywhere; }
 .wt-stage { display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start; gap: 18px 32px; padding: 20px 14px; }
 .wt-view { margin: 0; min-width: 0; max-width: 100%; }
 .wt-viewtitle { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--wt-mid); margin-bottom: 6px; }
@@ -147,8 +147,14 @@
 .wt-var.wt-good .wt-varvalue { color: var(--wt-good); }
 .wt-var.wt-bad .wt-varvalue { color: var(--wt-bad); }
 .wt-var.wt-lit .wt-varvalue { color: var(--wt-accent); }
+.wt-var.wt-path .wt-varvalue { color: var(--wt-accent); font-weight: 800; }
+.wt-var.wt-dim { opacity: .35; }
 .wt-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; max-width: 220px; }
 .wt-chip { font: 600 12px var(--wt-mono); color: var(--wt-accent); background: var(--wt-accent-soft); border: 1px solid var(--wt-accent); border-radius: 999px; padding: 2px 10px; }
+/* a list's chips take the item's mark; an unmarked or lit list keeps the accent chips */
+.wt-var.wt-good .wt-chip { color: var(--wt-good); background: var(--wt-good-soft); border-color: var(--wt-good); }
+.wt-var.wt-bad .wt-chip { color: var(--wt-bad); background: var(--wt-bad-soft); border-color: var(--wt-bad); }
+.wt-var.wt-path .wt-chip { color: var(--wt-card); background: var(--wt-accent); border-width: 2px; padding: 1px 9px; }
 .wt-empty { font-size: 13px; color: var(--wt-lo); font-style: italic; }
 
 @media (prefers-reduced-motion: reduce) { .wt *, .wt *::before { transition: none !important; animation: none !important; } }
