@@ -14,10 +14,22 @@ export type View =
   | { id: string; type: 'vars'; title?: Text };
 
 export interface GridState { cells: unknown[][]; marks?: Marks<[number, number]>; tags?: [number, number, Text][] }
-export interface ArrayState { values: unknown[]; fill?: number[]; pointers?: Record<string, number | null>; marks?: Marks<number>; tags?: [number, Text][] }
+/** A named range of an array, `from`..`to` inclusive: above the cells (a live window), or `below` them, dashed (a record
+ *  such as the best so far). `fade` fades the cells outside it that carry no mark. The label defaults to the name. */
+export interface Span { from: number; to: number; label?: Text; mark?: Mark; below?: boolean; fade?: boolean }
+export interface ArrayState {
+  values: unknown[]; fill?: number[]; pointers?: Record<string, number | null>; marks?: Marks<number>; tags?: [number, Text][];
+  /** by name; `null` hides one */ spans?: Record<string, Span | null>;
+  /** cells not read yet, drawn dashed */ unread?: number[];
+  /** a running value under a cell */ under?: [number, Text][];
+}
 export type Key = string | number;
 /** A hash map: entries in insertion order with unique keys; a count is drawn as dots, a list as chips. `ranks` badges keys #1, #2… */
-export interface MapState { entries: { key: Key; value: unknown }[]; marks?: Marks<Key>; ranks?: Key[] }
+export interface MapState {
+  entries: { key: Key; value: unknown }[]; marks?: Marks<Key>; ranks?: Key[];
+  /** holds at most this many keys: the free slots are drawn, and a key beyond them is red */ slots?: number;
+  /** keys leaving this step (a count that reached 0), struck through; they hold no slot */ struck?: Key[];
+}
 /** The answer as it forms: one chip per value. */
 export interface OutputState { values: unknown[]; marks?: Marks<number> }
 /** Intervals on one number line: groups (the input, the merged output) of [start, end] rows over a shared axis, which

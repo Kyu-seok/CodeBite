@@ -105,6 +105,26 @@
 .wt-item.wt-path .wt-bar { fill: var(--wt-accent); }
 .wt-item.wt-good .wt-fill { opacity: 1; }
 
+/* array spans: a window above the cells, a record dashed below; cells outside a fading span fade, unread cells are dashed */
+.wt-item { transition: opacity .3s; }
+.wt-item.wt-faded { opacity: .35; }
+.wt-item.wt-unread { opacity: .5; }
+.wt-item.wt-unread .wt-tile { stroke-dasharray: 4 3; }
+.wt-under { font: 600 11px var(--wt-mono); fill: var(--wt-mid) !important; }
+.wt-spanline { fill: none; stroke: var(--wt-mid); stroke-width: 2; stroke-linejoin: round; transition: d .3s cubic-bezier(.2,.8,.2,1), stroke .3s; }
+.wt-span.wt-below .wt-spanline { stroke-dasharray: 4 3; }
+.wt-spantag { transition: transform .3s cubic-bezier(.2,.8,.2,1); }
+.wt-spanbg { fill: var(--wt-card); }
+.wt-spanlabel { font: 600 11px var(--wt-mono) !important; fill: var(--wt-mid) !important; }
+.wt-span.wt-lit .wt-spanline, .wt-span.wt-path .wt-spanline { stroke: var(--wt-accent); }
+.wt-span.wt-lit .wt-spanlabel, .wt-span.wt-path .wt-spanlabel { fill: var(--wt-accent) !important; }
+.wt-span.wt-path .wt-spanline { stroke-width: 3; }
+.wt-span.wt-good .wt-spanline { stroke: var(--wt-good); }
+.wt-span.wt-good .wt-spanlabel { fill: var(--wt-good) !important; }
+.wt-span.wt-bad .wt-spanline { stroke: var(--wt-bad); }
+.wt-span.wt-bad .wt-spanlabel { fill: var(--wt-bad) !important; }
+.wt-span.wt-dim { opacity: .4; }
+
 /* graph */
 .wt-edge { fill: none; stroke: var(--wt-lo); stroke-width: 1.6; transition: stroke .3s, stroke-width .3s; }
 .wt-ah { fill: var(--wt-lo); }
@@ -173,6 +193,12 @@
 .wt-mapcard.wt-path { border-color: var(--wt-accent); }
 .wt-mapcard.wt-path .wt-rank { background: var(--wt-accent); }
 .wt-mapcard.wt-dim, .wt-mapcard.wt-unranked:not(.wt-path) { opacity: .4; }
+
+/* map slots: a map that holds at most k keys; a key beyond them is red, and a key whose count reached 0 is struck */
+.wt-mapslot { min-width: 62px; min-height: 58px; border: 2px dashed var(--wt-faint); border-radius: 10px; }
+.wt-mapcard.wt-over { border-color: var(--wt-bad); background: var(--wt-bad-soft); }
+.wt-mapcard.wt-struck { border-style: dashed; border-color: var(--wt-bad); background: transparent; opacity: .55; }
+.wt-mapcard.wt-struck .wt-mapkey { text-decoration: line-through; text-decoration-color: var(--wt-bad); text-decoration-thickness: 2px; color: var(--wt-bad); }
 
 /* output: the box the answer's values move into */
 .wt-output { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; min-width: 96px; min-height: 46px; padding: 6px; border: 2px solid var(--wt-lo); border-radius: 10px; background: var(--wt-bg); }
