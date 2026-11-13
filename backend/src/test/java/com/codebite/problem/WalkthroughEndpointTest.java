@@ -25,6 +25,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 class WalkthroughEndpointTest {
 
+    private static final String WITHOUT_WALKTHROUGH = "a-problem-with-no-walkthrough";
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -48,8 +50,6 @@ class WalkthroughEndpointTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.format").value("walkthrough/1"));
     }
-
-    private static final String WITHOUT_WALKTHROUGH = "a-problem-with-no-walkthrough";
 
     private void renameRottingDonutsToASlugWithNoFile() {
         jdbc.update("UPDATE problems SET slug = ? WHERE slug = 'rotting-donuts'", WITHOUT_WALKTHROUGH);
