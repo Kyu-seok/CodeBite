@@ -1,0 +1,832 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Spot the Duplicate Locker",
+  "ko": "사물함 번호 중복 찾기"
+ },
+ "approach": {
+  "en": "One pass with a set: a number already in the set is a repeat; otherwise add it and move on.",
+  "ko": "집합으로 한 번 훑기: 이미 집합에 있는 번호면 중복이고, 없으면 넣고 다음으로 넘어갑니다."
+ },
+ "views": [
+  {
+   "id": "lockers",
+   "type": "array",
+   "title": "lockers"
+  },
+  {
+   "id": "seen",
+   "type": "table",
+   "title": {
+    "en": "seen (set)",
+    "ko": "본 번호 (집합)"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "lockers = [7,2,9,7]",
+   "expected": "true",
+   "frames": [
+    {
+     "caption": {
+      "en": "Read the numbers left to right, keeping a set of every number seen so far.",
+      "ko": "번호를 왼쪽부터 읽으며, 지금까지 본 번호를 모두 집합에 담습니다."
+     },
+     "views": {
+      "lockers": {
+       "values": [
+        7,
+        2,
+        9,
+        7
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "lit": [],
+        "good": [],
+        "path": [],
+        "dim": []
+       }
+      },
+      "seen": {
+       "rows": [
+        {
+         "label": {
+          "en": "set",
+          "ko": "집합"
+         },
+         "cells": []
+        }
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Locker 0 is 7, not in the set yet. Add it.",
+      "ko": "인덱스 0의 7번은 아직 집합에 없습니다. 집합에 넣습니다."
+     },
+     "views": {
+      "lockers": {
+       "values": [
+        7,
+        2,
+        9,
+        7
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": [],
+        "path": [],
+        "dim": [
+         1,
+         2,
+         3
+        ]
+       }
+      },
+      "seen": {
+       "rows": [
+        {
+         "label": {
+          "en": "set",
+          "ko": "집합"
+         },
+         "cells": [
+          7
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         [
+          0,
+          0
+         ]
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Locker 1 is 2, not in the set yet. Add it.",
+      "ko": "인덱스 1의 2번은 아직 집합에 없습니다. 집합에 넣습니다."
+     },
+     "views": {
+      "lockers": {
+       "values": [
+        7,
+        2,
+        9,
+        7
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "marks": {
+        "lit": [
+         1
+        ],
+        "good": [],
+        "path": [],
+        "dim": [
+         2,
+         3
+        ]
+       }
+      },
+      "seen": {
+       "rows": [
+        {
+         "label": {
+          "en": "set",
+          "ko": "집합"
+         },
+         "cells": [
+          7,
+          2
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         [
+          0,
+          1
+         ]
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Locker 2 is 9, not in the set yet. Add it.",
+      "ko": "인덱스 2의 9번은 아직 집합에 없습니다. 집합에 넣습니다."
+     },
+     "views": {
+      "lockers": {
+       "values": [
+        7,
+        2,
+        9,
+        7
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "marks": {
+        "lit": [
+         2
+        ],
+        "good": [],
+        "path": [],
+        "dim": [
+         3
+        ]
+       }
+      },
+      "seen": {
+       "rows": [
+        {
+         "label": {
+          "en": "set",
+          "ko": "집합"
+         },
+         "cells": [
+          7,
+          2,
+          9
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         [
+          0,
+          2
+         ]
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Locker 3 is 7, and 7 is already in the set: index 0 has it too. A repeat, so the answer is true without reading further.",
+      "ko": "인덱스 3의 7번은 이미 집합에 있습니다. 인덱스 0에도 같은 번호가 있으니 중복입니다. 더 읽지 않고 답은 true입니다."
+     },
+     "views": {
+      "lockers": {
+       "values": [
+        7,
+        2,
+        9,
+        7
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "marks": {
+        "lit": [],
+        "good": [],
+        "path": [
+         0,
+         3
+        ],
+        "dim": []
+       }
+      },
+      "seen": {
+       "rows": [
+        {
+         "label": {
+          "en": "set",
+          "ko": "집합"
+         },
+         "cells": [
+          7,
+          2,
+          9
+         ]
+        }
+       ],
+       "marks": {
+        "path": [
+         [
+          0,
+          0
+         ]
+        ]
+       }
+      }
+     },
+     "answer": "true"
+    }
+   ],
+   "sampleInput": "[7,2,9,7]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "lockers = [11,22,33,44]",
+   "expected": "false",
+   "frames": [
+    {
+     "caption": {
+      "en": "Read the numbers left to right, keeping a set of every number seen so far.",
+      "ko": "번호를 왼쪽부터 읽으며, 지금까지 본 번호를 모두 집합에 담습니다."
+     },
+     "views": {
+      "lockers": {
+       "values": [
+        11,
+        22,
+        33,
+        44
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "lit": [],
+        "good": [],
+        "path": [],
+        "dim": []
+       }
+      },
+      "seen": {
+       "rows": [
+        {
+         "label": {
+          "en": "set",
+          "ko": "집합"
+         },
+         "cells": []
+        }
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Locker 0 is 11, not in the set yet. Add it.",
+      "ko": "인덱스 0의 11번은 아직 집합에 없습니다. 집합에 넣습니다."
+     },
+     "views": {
+      "lockers": {
+       "values": [
+        11,
+        22,
+        33,
+        44
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": [],
+        "path": [],
+        "dim": [
+         1,
+         2,
+         3
+        ]
+       }
+      },
+      "seen": {
+       "rows": [
+        {
+         "label": {
+          "en": "set",
+          "ko": "집합"
+         },
+         "cells": [
+          11
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         [
+          0,
+          0
+         ]
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Locker 1 is 22, not in the set yet. Add it.",
+      "ko": "인덱스 1의 22번은 아직 집합에 없습니다. 집합에 넣습니다."
+     },
+     "views": {
+      "lockers": {
+       "values": [
+        11,
+        22,
+        33,
+        44
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "marks": {
+        "lit": [
+         1
+        ],
+        "good": [],
+        "path": [],
+        "dim": [
+         2,
+         3
+        ]
+       }
+      },
+      "seen": {
+       "rows": [
+        {
+         "label": {
+          "en": "set",
+          "ko": "집합"
+         },
+         "cells": [
+          11,
+          22
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         [
+          0,
+          1
+         ]
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Locker 2 is 33, not in the set yet. Add it.",
+      "ko": "인덱스 2의 33번은 아직 집합에 없습니다. 집합에 넣습니다."
+     },
+     "views": {
+      "lockers": {
+       "values": [
+        11,
+        22,
+        33,
+        44
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "marks": {
+        "lit": [
+         2
+        ],
+        "good": [],
+        "path": [],
+        "dim": [
+         3
+        ]
+       }
+      },
+      "seen": {
+       "rows": [
+        {
+         "label": {
+          "en": "set",
+          "ko": "집합"
+         },
+         "cells": [
+          11,
+          22,
+          33
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         [
+          0,
+          2
+         ]
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Locker 3 is 44, not in the set yet. Add it.",
+      "ko": "인덱스 3의 44번은 아직 집합에 없습니다. 집합에 넣습니다."
+     },
+     "views": {
+      "lockers": {
+       "values": [
+        11,
+        22,
+        33,
+        44
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "marks": {
+        "lit": [
+         3
+        ],
+        "good": [],
+        "path": [],
+        "dim": []
+       }
+      },
+      "seen": {
+       "rows": [
+        {
+         "label": {
+          "en": "set",
+          "ko": "집합"
+         },
+         "cells": [
+          11,
+          22,
+          33,
+          44
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         [
+          0,
+          3
+         ]
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "All 4 numbers read and none was in the set when it came up: every number is distinct. Answer false.",
+      "ko": "번호 4개를 모두 읽는 동안 집합에 이미 있던 번호가 하나도 없었으니 모두 서로 다릅니다. 답은 false입니다."
+     },
+     "views": {
+      "lockers": {
+       "values": [
+        11,
+        22,
+        33,
+        44
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "lit": [],
+        "good": [],
+        "path": [
+         0,
+         1,
+         2,
+         3
+        ],
+        "dim": []
+       }
+      },
+      "seen": {
+       "rows": [
+        {
+         "label": {
+          "en": "set",
+          "ko": "집합"
+         },
+         "cells": [
+          11,
+          22,
+          33,
+          44
+         ]
+        }
+       ],
+       "marks": {
+        "path": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          0,
+          2
+         ],
+         [
+          0,
+          3
+         ]
+        ]
+       }
+      }
+     },
+     "answer": "false"
+    }
+   ],
+   "sampleInput": "[11,22,33,44]"
+  },
+  {
+   "label": {
+    "en": "Case 3",
+    "ko": "케이스 3"
+   },
+   "input": "lockers = [5,8,5,3,8,1,3]",
+   "expected": "true",
+   "frames": [
+    {
+     "caption": {
+      "en": "Read the numbers left to right, keeping a set of every number seen so far.",
+      "ko": "번호를 왼쪽부터 읽으며, 지금까지 본 번호를 모두 집합에 담습니다."
+     },
+     "views": {
+      "lockers": {
+       "values": [
+        5,
+        8,
+        5,
+        3,
+        8,
+        1,
+        3
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "lit": [],
+        "good": [],
+        "path": [],
+        "dim": []
+       }
+      },
+      "seen": {
+       "rows": [
+        {
+         "label": {
+          "en": "set",
+          "ko": "집합"
+         },
+         "cells": []
+        }
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Locker 0 is 5, not in the set yet. Add it.",
+      "ko": "인덱스 0의 5번은 아직 집합에 없습니다. 집합에 넣습니다."
+     },
+     "views": {
+      "lockers": {
+       "values": [
+        5,
+        8,
+        5,
+        3,
+        8,
+        1,
+        3
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": [],
+        "path": [],
+        "dim": [
+         1,
+         2,
+         3,
+         4,
+         5,
+         6
+        ]
+       }
+      },
+      "seen": {
+       "rows": [
+        {
+         "label": {
+          "en": "set",
+          "ko": "집합"
+         },
+         "cells": [
+          5
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         [
+          0,
+          0
+         ]
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Locker 1 is 8, not in the set yet. Add it.",
+      "ko": "인덱스 1의 8번은 아직 집합에 없습니다. 집합에 넣습니다."
+     },
+     "views": {
+      "lockers": {
+       "values": [
+        5,
+        8,
+        5,
+        3,
+        8,
+        1,
+        3
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "marks": {
+        "lit": [
+         1
+        ],
+        "good": [],
+        "path": [],
+        "dim": [
+         2,
+         3,
+         4,
+         5,
+         6
+        ]
+       }
+      },
+      "seen": {
+       "rows": [
+        {
+         "label": {
+          "en": "set",
+          "ko": "집합"
+         },
+         "cells": [
+          5,
+          8
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         [
+          0,
+          1
+         ]
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Locker 2 is 5, and 5 is already in the set: index 0 has it too. A repeat, so the answer is true without reading further.",
+      "ko": "인덱스 2의 5번은 이미 집합에 있습니다. 인덱스 0에도 같은 번호가 있으니 중복입니다. 더 읽지 않고 답은 true입니다."
+     },
+     "views": {
+      "lockers": {
+       "values": [
+        5,
+        8,
+        5,
+        3,
+        8,
+        1,
+        3
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "marks": {
+        "lit": [],
+        "good": [],
+        "path": [
+         0,
+         2
+        ],
+        "dim": [
+         3,
+         4,
+         5,
+         6
+        ]
+       }
+      },
+      "seen": {
+       "rows": [
+        {
+         "label": {
+          "en": "set",
+          "ko": "집합"
+         },
+         "cells": [
+          5,
+          8
+         ]
+        }
+       ],
+       "marks": {
+        "path": [
+         [
+          0,
+          0
+         ]
+        ]
+       }
+      }
+     },
+     "answer": "true"
+    }
+   ],
+   "sampleInput": "[5,8,5,3,8,1,3]"
+  }
+ ]
+}
