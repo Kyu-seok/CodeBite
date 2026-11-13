@@ -15,7 +15,7 @@ import sys
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
 from codebite import driver_list, sample_cases, sample_run, walkthrough_path  # noqa: E402
-from walkthrough_trace import Walkthrough, at, move, span  # noqa: E402
+from walkthrough_trace import Walkthrough, at, move, span, swap  # noqa: E402
 
 SLUG = "missing-sock-number"
 
@@ -67,8 +67,7 @@ def solve(socks, run):
                    "ko": f"socks[{i}] = {v}: 이 번호의 자리는 인덱스 {target}이고, 거기에는 {w}번이 있었습니다. "
                          f"맞바꾸면 {v}번은 제자리에 가고, {w}번이 인덱스 {i}에 와서 다음으로 자리를 찾습니다."},
                   good=[i, target],
-                  moves=[move(at("socks", i), at("socks", target), value=v),
-                         move(at("socks", target), at("socks", i), value=w)])
+                  moves=swap("socks", i, target, v, w))
         v = socks[i]
         if not 1 <= v <= n:
             frame({"en": f"socks[{i}] = {v} is outside 1 to {n}: no slot is for it, and it can't be the answer. "

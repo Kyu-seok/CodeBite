@@ -136,7 +136,10 @@
         "prefix": {
          "from": 0,
          "to": 0,
-         "label": "prefix = 2"
+         "label": {
+          "en": "prefix = 2",
+          "ko": "prefix (왼쪽 곱) = 2"
+         }
         }
        }
       },
@@ -192,7 +195,10 @@
         "prefix": {
          "from": 0,
          "to": 1,
-         "label": "prefix = 6"
+         "label": {
+          "en": "prefix = 6",
+          "ko": "prefix (왼쪽 곱) = 6"
+         }
         }
        }
       },
@@ -248,7 +254,10 @@
         "prefix": {
          "from": 0,
          "to": 2,
-         "label": "prefix = 30"
+         "label": {
+          "en": "prefix = 30",
+          "ko": "prefix (왼쪽 곱) = 30"
+         }
         }
        }
       },
@@ -385,7 +394,10 @@
         "suffix": {
          "from": 3,
          "to": 3,
-         "label": "suffix = 4"
+         "label": {
+          "en": "suffix = 4",
+          "ko": "suffix (오른쪽 곱) = 4"
+         }
         }
        }
       },
@@ -441,7 +453,10 @@
         "suffix": {
          "from": 2,
          "to": 3,
-         "label": "suffix = 20"
+         "label": {
+          "en": "suffix = 20",
+          "ko": "suffix (오른쪽 곱) = 20"
+         }
         }
        }
       },
@@ -497,7 +512,10 @@
         "suffix": {
          "from": 1,
          "to": 3,
-         "label": "suffix = 60"
+         "label": {
+          "en": "suffix = 60",
+          "ko": "suffix (오른쪽 곱) = 60"
+         }
         }
        }
       },
@@ -691,7 +709,10 @@
         "prefix": {
          "from": 0,
          "to": 0,
-         "label": "prefix = -2"
+         "label": {
+          "en": "prefix = -2",
+          "ko": "prefix (왼쪽 곱) = -2"
+         }
         }
        }
       },
@@ -749,7 +770,10 @@
         "prefix": {
          "from": 0,
          "to": 1,
-         "label": "prefix = -2"
+         "label": {
+          "en": "prefix = -2",
+          "ko": "prefix (왼쪽 곱) = -2"
+         }
         }
        }
       },
@@ -807,7 +831,10 @@
         "prefix": {
          "from": 0,
          "to": 2,
-         "label": "prefix = 0"
+         "label": {
+          "en": "prefix = 0",
+          "ko": "prefix (왼쪽 곱) = 0"
+         }
         }
        }
       },
@@ -865,7 +892,10 @@
         "prefix": {
          "from": 0,
          "to": 3,
-         "label": "prefix = 0"
+         "label": {
+          "en": "prefix = 0",
+          "ko": "prefix (왼쪽 곱) = 0"
+         }
         }
        }
       },
@@ -1008,7 +1038,10 @@
         "suffix": {
          "from": 4,
          "to": 4,
-         "label": "suffix = -1"
+         "label": {
+          "en": "suffix = -1",
+          "ko": "suffix (오른쪽 곱) = -1"
+         }
         }
        }
       },
@@ -1066,7 +1099,10 @@
         "suffix": {
          "from": 3,
          "to": 4,
-         "label": "suffix = -4"
+         "label": {
+          "en": "suffix = -4",
+          "ko": "suffix (오른쪽 곱) = -4"
+         }
         }
        }
       },
@@ -1124,7 +1160,10 @@
         "suffix": {
          "from": 2,
          "to": 4,
-         "label": "suffix = 0"
+         "label": {
+          "en": "suffix = 0",
+          "ko": "suffix (오른쪽 곱) = 0"
+         }
         }
        }
       },
@@ -1182,7 +1221,10 @@
         "suffix": {
          "from": 1,
          "to": 4,
-         "label": "suffix = 0"
+         "label": {
+          "en": "suffix = 0",
+          "ko": "suffix (오른쪽 곱) = 0"
+         }
         }
        }
       },

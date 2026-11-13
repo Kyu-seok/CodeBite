@@ -627,7 +627,9 @@
        "unread": [],
        "spans": {},
        "marks": {
-        "lit": [],
+        "lit": [
+         0
+        ],
         "good": []
        }
       },
@@ -637,7 +639,20 @@
         "good": []
        }
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "blob",
+        "at": 13
+       },
+       "to": {
+        "view": "blob",
+        "at": 0
+       },
+       "value": "5#hello5#world"
+      }
+     ]
     },
     {
      "caption": {
@@ -1220,7 +1235,9 @@
        "unread": [],
        "spans": {},
        "marks": {
-        "lit": [],
+        "lit": [
+         0
+        ],
         "good": []
        }
       },
@@ -1230,7 +1247,20 @@
         "good": []
        }
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "blob",
+        "at": 1
+       },
+       "to": {
+        "view": "blob",
+        "at": 0
+       },
+       "value": "0#"
+      }
+     ]
     },
     {
      "caption": {
@@ -1932,7 +1962,9 @@
        "unread": [],
        "spans": {},
        "marks": {
-        "lit": [],
+        "lit": [
+         0
+        ],
         "good": []
        }
       },
@@ -1942,7 +1974,20 @@
         "good": []
        }
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "blob",
+        "at": 5
+       },
+       "to": {
+        "view": "blob",
+        "at": 0
+       },
+       "value": "0#0#0#"
+      }
+     ]
     },
     {
      "caption": {
@@ -2906,7 +2951,9 @@
        "unread": [],
        "spans": {},
        "marks": {
-        "lit": [],
+        "lit": [
+         0
+        ],
         "good": []
        }
       },
@@ -2916,7 +2963,20 @@
         "good": []
        }
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "blob",
+        "at": 7
+       },
+       "to": {
+        "view": "blob",
+        "at": 0
+       },
+       "value": "3#7#x1##"
+      }
+     ]
     },
     {
      "caption": {

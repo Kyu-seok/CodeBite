@@ -50,18 +50,16 @@ def solve(ward, run):
     went_stale = {}  # (r, c) -> the minute it went stale, so the tray and the queue show the BFS layers
     queue = []       # the donuts waiting, front first: the rest of this wave, then the next
 
-    def frame(caption, lit=(), good=(), bad=(), queue_marks=None, moves=None, **answer):
+    def frame(caption, lit=(), good=(), bad=(), path=(), queue_marks=None, moves=None, **answer):
         run.frame(caption,
                   tray={"cells": ward, "tags": [[r, c, minute_tag(m)] for (r, c), m in went_stale.items()],
                         "marks": {"lit": [list(p) for p in lit], "good": [list(p) for p in good],
-                                  "bad": [list(p) for p in bad]}},
+                                  "bad": [list(p) for p in bad], "path": [list(p) for p in path]}},
                   queue={"values": [name(p) for p in queue],
                          "tags": [[i, minute_tag(went_stale[p])] for i, p in enumerate(queue)],
                          "marks": queue_marks or {}},
-                  state={"items": [
-                      {"label": {"en": "minute", "ko": "분"}, "value": minutes},
-                      {"label": {"en": "fresh left", "ko": "남은 신선"}, "value": fresh,
-                       "mark": "bad" if bad else None}]},
+                  state={"items": [{"label": {"en": "fresh left", "ko": "남은 신선"}, "value": fresh,
+                                    "mark": "bad" if bad else None}]},
                   moves=moves, **answer)
 
     fresh = sum(row.count(1) for row in ward)
@@ -124,6 +122,7 @@ def solve(ward, run):
                      f"{plural(left, 'has', 'have')} nothing to turn: answer {minutes}.",
                "ko": f"{minutes}분 물결이 끝나자 신선한 도넛이 남지 않아, 큐에 남은 {left}개는 상하게 할 도넛이 없습니다: "
                      f"답은 {minutes}입니다."},
+              path=[p for p, m in went_stale.items() if m == minutes and minutes > 0],
               queue_marks={"dim": list(range(left))}, answer=str(answer))
 
 

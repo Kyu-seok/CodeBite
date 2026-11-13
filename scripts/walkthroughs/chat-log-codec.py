@@ -110,7 +110,9 @@ def solve(messages, run):
                  f"it from i = 0.",
            "ko": f"pack이 돌려준 문자열은 {blob}, 문자 {len(blob)}개입니다. unpack은 이 문자열만 받아 "
                  f"i = 0부터 읽습니다."},
-          sender_done=True)
+          sender_done=True, lit=[0],
+          # the handover: the whole blob flies from where pack stopped writing to where unpack starts reading
+          moves=[move(at("blob", len(blob) - 1), at("blob", 0), value=blob)])
     # unpack
     while i < len(blob):
         hash_at = blob.index("#", i)

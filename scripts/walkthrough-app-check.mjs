@@ -8,7 +8,8 @@
 // it only while it has focus (not from the Monaco editor), the place kept across a tab switch and, at
 // 1440, a theme toggle; then that a problem without a Walkthrough shows no tab. Prints a line per check
 // and each screenshot's path; exits 1 on a failed check or a console error, 2 on bad arguments.
-// Node 22+, no npm dependencies; set CHROME_PATH if Chrome isn't found.
+// Node 22+, no npm dependencies; set CHROME_PATH if Chrome isn't found. A Chrome command unanswered for
+// WALKTHROUGH_CDP_TIMEOUT_MS (default 60000) fails the check, naming it; Chrome never outlives the script.
 import { spawn, execFileSync } from 'node:child_process';
 import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -27,13 +28,19 @@ function chromePath() {
   return execFileSync('which', ['google-chrome']).toString().trim();
 }
 
+// How long one DevTools command may take.
+const CDP_TIMEOUT = +process.env.WALKTHROUGH_CDP_TIMEOUT_MS || 60000;
+
 async function openChrome() {
   const profile = mkdtempSync(join(tmpdir(), 'app-chrome-'));
   const proc = spawn(chromePath(), ['--headless=new', '--remote-debugging-port=0', `--user-data-dir=${profile}`, '--no-first-run',
     '--no-default-browser-check', '--hide-scrollbars', 'about:blank'], { stdio: ['ignore', 'ignore', 'pipe'] });
+  // However this process ends (an error, a timeout, a kill from a caller), take Chrome with it.
+  process.on('exit', () => proc.kill());
+  for (const sig of ['SIGTERM', 'SIGINT', 'SIGHUP']) process.on(sig, () => process.exit(1));
   const port = await new Promise((done, fail) => {
     let text = '';
-    const t = setTimeout(() => fail(new Error('Chrome did not start')), 20000);
+    const t = setTimeout(() => { proc.kill(); fail(new Error('Chrome did not start')); }, 20000);
     proc.stderr.on('data', d => { text += d; const m = text.match(/DevTools listening on ws:\/\/[^:]+:(\d+)\//); if (m) { clearTimeout(t); done(+m[1]); } });
   });
   const targets = await (await fetch(`http://127.0.0.1:${port}/json/list`)).json();
@@ -46,7 +53,13 @@ async function openChrome() {
     if (msg.id && waiting.has(msg.id)) { const { ok, fail } = waiting.get(msg.id); waiting.delete(msg.id); msg.error ? fail(new Error(msg.error.message)) : ok(msg.result); }
     else listeners.forEach(l => l(msg));
   };
-  const send = (method, params = {}) => new Promise((ok, fail) => { const id = ++seq; waiting.set(id, { ok, fail }); ws.send(JSON.stringify({ id, method, params })); });
+  // A Chrome under load can drop a reply; fail naming the command rather than wait forever.
+  const send = (method, params = {}) => new Promise((ok, fail) => {
+    const id = ++seq;
+    const t = setTimeout(() => { waiting.delete(id); fail(new Error(`Chrome did not answer ${method} within ${CDP_TIMEOUT} ms`)); }, CDP_TIMEOUT);
+    waiting.set(id, { ok: v => { clearTimeout(t); ok(v); }, fail: e => { clearTimeout(t); fail(e); } });
+    ws.send(JSON.stringify({ id, method, params }));
+  });
   const errors = [];
   listeners.push(m => {
     if (m.method === 'Runtime.exceptionThrown') errors.push(m.params.exceptionDetails.exception?.description || m.params.exceptionDetails.text);

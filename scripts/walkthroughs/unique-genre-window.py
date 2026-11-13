@@ -48,7 +48,7 @@ def solve(queue, k, run):
             spans["window"] = span(left, right, {"en": f"window {length}", "ko": f"구간 {length}"},
                                    mark=window_mark, fade=True)
         if best_span:
-            spans["best"] = span(*best_span, f"best = {best}", below=True,
+            spans["best"] = span(*best_span, {"en": f"best = {best}", "ko": f"best (최장 길이) = {best}"}, below=True,
                                  mark="path" if done else "good" if beaten else None)
         read = n if done else 0 if right is None else right + 1
         run.frame(caption,
@@ -61,6 +61,15 @@ def solve(queue, k, run):
                           "marks": marks or ({"dim": list(window)} if done else {})},
                   state={"items": [{"label": "k", "value": k}]},
                   moves=moves, **answer)
+
+    def measure():
+        """Hold the window left..right up to best: whether it beats it, and the caption's verdict in each language."""
+        nonlocal best, best_span
+        beaten = right - left + 1 > best
+        if beaten:
+            best, best_span = right - left + 1, (left, right)
+            return True, f"a new best, {best}", f"best = {josa(best, '(으)로')} 갱신"
+        return False, f"best stays {best}", f"best = {best} 그대로"
 
     if k == 0:
         frame({"en": "k = 0: the window holds no genre, so not even one tag fits. Answer 0.",
@@ -89,11 +98,7 @@ def solve(queue, k, run):
                 tail_en = tail_ko = ""
                 if fits:
                     length = right - left + 1
-                    beaten = length > best
-                    if beaten:
-                        best, best_span = length, (left, right)
-                    verdict_en = f"a new best, {best}" if beaten else f"best stays {best}"
-                    verdict_ko = f"best = {josa(best, '(으)로')} 갱신" if beaten else f"best = {best} 그대로"
+                    beaten, verdict_en, verdict_ko = measure()
                     tail_en = f" Back to {k} {plural(k, 'genre', 'genres')}: window length {length}, {verdict_en}."
                     tail_ko = f" 다시 장르 {k}종류: 구간 길이 {length}, {verdict_ko}."
                 count = f"{window[out] + 1} → {window[out]}"
@@ -108,14 +113,10 @@ def solve(queue, k, run):
                     del window[out]
             continue
         length = right - left + 1
-        beaten = length > best
-        if beaten:
-            best, best_span = length, (left, right)
-        verdict_en = f"a new best, {best}" if beaten else f"best stays {best}"
-        verdict_ko = f"길이 {josa(length, '(으)로')} best = {best} 갱신" if beaten else f"길이 {length}, best = {best} 그대로"
+        beaten, verdict_en, verdict_ko = measure()
         frame({"en": f"queue[{right}] = '{tag}' joins: {len(window)} {plural(len(window), 'genre', 'genres')}, "
                      f"within k = {k}. Window length {length}: {verdict_en}.",
-               "ko": f"queue[{right}] = '{tag}' 추가: 장르 {len(window)}종류로 k = {k} 이내입니다. 구간 {verdict_ko}."},
+               "ko": f"queue[{right}] = '{tag}' 추가: 장르 {len(window)}종류로 k = {k} 이내입니다. 구간 길이 {length}, {verdict_ko}."},
               marks={"good": [tag]}, moves=joins, beaten=beaten)
     a, b = best_span
     if (a, b) == (left, right):
