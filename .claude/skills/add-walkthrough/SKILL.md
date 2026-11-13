@@ -35,6 +35,8 @@ A caption is one or two sentences in each language, and the setup frame names th
 
 ## 3. Review the frames
 
+Besides the public checklist, hold every frame to the two rules (#273): (1) the drawing shows where the step's value came from and where it went, by a move or by marking both places; (2) a value with a position or range (a pointer, a window, the best range, a count per key, the answer so far) is drawn on the data, and `vars` holds only values with no place in it, such as `k`. A frame failing either goes back to the tracer.
+
 The public skill's steps 5 and 6, with the pages and shots kept out of the repo under a name of your own (`<scratch>` below: another session's review script or page in a shared scratchpad gets overwritten):
 
 ```sh
