@@ -282,12 +282,6 @@ class WalkthroughsMatchSamplesTest {
     }
 
     /**
-     * Walkthroughs not yet redrawn under #273 that still write array cells with no move: a redraw removes its slug.
-     */
-    private static final Set<String> CELL_WRITES_WITHOUT_MOVES = Set.of(
-            "chat-log-codec", "missing-sock-number", "next-speaker-order", "repeat-attendance-codes");
-
-    /**
      * #273's first rule for a copy or a swap: an {@code array} cell whose value changes from one frame to the next
      * shows where the new value came from, by a move ending on that cell in the frame that writes it.
      */
@@ -295,9 +289,7 @@ class WalkthroughsMatchSamplesTest {
     void everyArrayCellWrittenInPlaceHasAMoveIntoIt() throws Exception {
         List<String> found = new ArrayList<>();
         for (String slug : WALKTHROUGHS.slugs()) {
-            if (!CELL_WRITES_WITHOUT_MOVES.contains(slug)) {
-                found.addAll(cellWritesWithoutMoves(slug, JSON.readTree(WALKTHROUGHS.of(slug).orElseThrow())));
-            }
+            found.addAll(cellWritesWithoutMoves(slug, JSON.readTree(WALKTHROUGHS.of(slug).orElseThrow())));
         }
         assertTrue(found.isEmpty(), "Array cells written with no move into them:\n" + String.join("\n", found));
     }
