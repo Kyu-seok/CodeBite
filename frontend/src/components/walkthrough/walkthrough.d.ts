@@ -9,6 +9,7 @@ export type View =
   | { id: string; type: 'map'; title?: Text; empty?: Text }
   | { id: string; type: 'set'; title?: Text; empty?: Text; hit?: Text; miss?: Text }
   | { id: string; type: 'output'; title?: Text; empty?: Text }
+  | { id: string; type: 'queue'; title?: Text; empty?: Text; deque?: boolean }
   | { id: string; type: 'intervals'; title?: Text; empty?: Text }
   | { id: string; type: 'graph'; title?: Text; directed?: boolean }
   | { id: string; type: 'table'; title?: Text }
@@ -36,6 +37,9 @@ export interface MapState {
 export interface SetState { members: Key[]; marks?: Marks<Key>; probes?: { value: Key; hit?: boolean; label?: Text }[] }
 /** The answer as it forms: one chip per value. */
 export interface OutputState { values: unknown[]; marks?: Marks<number> }
+/** A queue as a horizontal pipe, front first: values join at the back (right) and leave from the front (left); a
+ *  `deque` view is open at both ends. `tags` label positions above their value. Address: a position from the front. */
+export interface QueueState { values: unknown[]; marks?: Marks<number>; tags?: [number, Text][] }
 /** Intervals on one number line: groups (the input, the merged output) of [start, end] rows over a shared axis, which
  *  spans `domain` (default: every value in the frame). `points` draw a value across every row. Address: [group, index]. */
 export interface IntervalsState {
@@ -51,7 +55,7 @@ export interface GraphState {
 export interface TableState { columns?: Text[]; rows: { label: Text; cells: unknown[] }[]; marks?: Marks<[number, number]> }
 export interface VarsState { items: { label: Text; value: unknown; mark?: Mark | null; empty?: Text }[] }
 
-/** A place in a view: an array or output index, a map key, a set member, an intervals [group, index]. Each view type that holds values defines its `at`. */
+/** A place in a view: an array or output index, a map key, a set member, a queue position from the front, a grid [row, col], an intervals [group, index]. Each view type that holds values defines its `at`. */
 export interface Address { view: string; at: number | string | [number, number] }
 /** A value going from one place to another. No `from`: created at `to`; no `to`: dropped from `from`.
  *  `value` is the chip's text (default: the source's); `mark` overrides the colour (default: path into an output, bad when dropped, else good). */
@@ -66,7 +70,7 @@ export interface MountOptions {
   start?: { run?: number | string | null; frame?: number | string | 'last' | null };
   interval?: number;
   hint?: boolean;
-  ui?: Partial<Record<'expected' | 'extra' | 'step' | 'first' | 'prev' | 'next' | 'play' | 'pause' | 'hint', string>>;
+  ui?: Partial<Record<'front' | 'back' | 'empty' | 'expected' | 'extra' | 'step' | 'first' | 'prev' | 'next' | 'play' | 'pause' | 'hint', string>>;
   onChange?: (run: number, frame: number) => void;
 }
 export interface Player { show(run: number, frame: number | 'last'): void; destroy(): void }
