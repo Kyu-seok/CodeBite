@@ -1,0 +1,875 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Top Espresso Machines",
+  "ko": "가장 바빴던 머신 목록"
+ },
+ "approach": {
+  "en": "Count every machine's check-ins in a hash map in one pass; the k machines with the highest counts are the answer.",
+  "ko": "한 번 훑으며 머신마다 사용 횟수를 해시 맵에 세고, 횟수가 가장 큰 머신 k개가 답입니다."
+ },
+ "views": [
+  {
+   "id": "log",
+   "type": "array",
+   "title": {
+    "en": "checkIns",
+    "ko": "checkIns"
+   }
+  },
+  {
+   "id": "counts",
+   "type": "table",
+   "title": {
+    "en": "uses per machine (hash map)",
+    "ko": "머신별 사용 횟수 (해시 맵)"
+   }
+  },
+  {
+   "id": "state",
+   "type": "vars"
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "checkIns = [4,4,4,7,7,5], k = 2",
+   "expected": "[4,7]",
+   "frames": [
+    {
+     "caption": {
+      "en": "Walk the 6 check-ins once and count each machine's uses in a hash map; then post the 2 machines with the most uses.",
+      "ko": "체크인 6개를 한 번 훑으며 머신마다 사용 횟수를 해시 맵에 셉니다. 그다음 가장 많이 쓰인 머신 2개를 적습니다."
+     },
+     "views": {
+      "log": {
+       "values": [
+        4,
+        4,
+        4,
+        7,
+        7,
+        5
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "counts": {
+       "columns": [
+        {
+         "en": "uses",
+         "ko": "사용 횟수"
+        }
+       ],
+       "rows": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 2
+        },
+        {
+         "label": {
+          "en": "whiteboard",
+          "ko": "화이트보드"
+         },
+         "value": [],
+         "empty": {
+          "en": "empty",
+          "ko": "비어 있음"
+         },
+         "mark": null
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "checkIns[0] is machine 4, not in the map yet: add it with count 1.",
+      "ko": "checkIns[0] = 4: 아직 맵에 없는 머신이므로 사용 횟수 1로 추가합니다."
+     },
+     "views": {
+      "log": {
+       "values": [
+        4,
+        4,
+        4,
+        7,
+        7,
+        5
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "counts": {
+       "columns": [
+        {
+         "en": "uses",
+         "ko": "사용 횟수"
+        }
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "machine 4",
+          "ko": "머신 4"
+         },
+         "cells": [
+          1
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         [
+          0,
+          0
+         ]
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 2
+        },
+        {
+         "label": {
+          "en": "whiteboard",
+          "ko": "화이트보드"
+         },
+         "value": [],
+         "empty": {
+          "en": "empty",
+          "ko": "비어 있음"
+         },
+         "mark": null
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "checkIns[1] is machine 4, already in the map: its count goes 1 → 2.",
+      "ko": "checkIns[1] = 4: 이미 맵에 있는 머신이므로 사용 횟수를 1 늘립니다 (1 → 2)."
+     },
+     "views": {
+      "log": {
+       "values": [
+        4,
+        4,
+        4,
+        7,
+        7,
+        5
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "counts": {
+       "columns": [
+        {
+         "en": "uses",
+         "ko": "사용 횟수"
+        }
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "machine 4",
+          "ko": "머신 4"
+         },
+         "cells": [
+          2
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         [
+          0,
+          0
+         ]
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 2
+        },
+        {
+         "label": {
+          "en": "whiteboard",
+          "ko": "화이트보드"
+         },
+         "value": [],
+         "empty": {
+          "en": "empty",
+          "ko": "비어 있음"
+         },
+         "mark": null
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "checkIns[2] is machine 4, already in the map: its count goes 2 → 3.",
+      "ko": "checkIns[2] = 4: 이미 맵에 있는 머신이므로 사용 횟수를 1 늘립니다 (2 → 3)."
+     },
+     "views": {
+      "log": {
+       "values": [
+        4,
+        4,
+        4,
+        7,
+        7,
+        5
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "counts": {
+       "columns": [
+        {
+         "en": "uses",
+         "ko": "사용 횟수"
+        }
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "machine 4",
+          "ko": "머신 4"
+         },
+         "cells": [
+          3
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         [
+          0,
+          0
+         ]
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 2
+        },
+        {
+         "label": {
+          "en": "whiteboard",
+          "ko": "화이트보드"
+         },
+         "value": [],
+         "empty": {
+          "en": "empty",
+          "ko": "비어 있음"
+         },
+         "mark": null
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "checkIns[3] is machine 7, not in the map yet: add it with count 1.",
+      "ko": "checkIns[3] = 7: 아직 맵에 없는 머신이므로 사용 횟수 1로 추가합니다."
+     },
+     "views": {
+      "log": {
+       "values": [
+        4,
+        4,
+        4,
+        7,
+        7,
+        5
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "counts": {
+       "columns": [
+        {
+         "en": "uses",
+         "ko": "사용 횟수"
+        }
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "machine 4",
+          "ko": "머신 4"
+         },
+         "cells": [
+          3
+         ]
+        },
+        {
+         "label": {
+          "en": "machine 7",
+          "ko": "머신 7"
+         },
+         "cells": [
+          1
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         [
+          1,
+          0
+         ]
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 2
+        },
+        {
+         "label": {
+          "en": "whiteboard",
+          "ko": "화이트보드"
+         },
+         "value": [],
+         "empty": {
+          "en": "empty",
+          "ko": "비어 있음"
+         },
+         "mark": null
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "checkIns[4] is machine 7, already in the map: its count goes 1 → 2.",
+      "ko": "checkIns[4] = 7: 이미 맵에 있는 머신이므로 사용 횟수를 1 늘립니다 (1 → 2)."
+     },
+     "views": {
+      "log": {
+       "values": [
+        4,
+        4,
+        4,
+        7,
+        7,
+        5
+       ],
+       "pointers": {
+        "i": 4
+       },
+       "marks": {
+        "lit": [
+         4
+        ]
+       }
+      },
+      "counts": {
+       "columns": [
+        {
+         "en": "uses",
+         "ko": "사용 횟수"
+        }
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "machine 4",
+          "ko": "머신 4"
+         },
+         "cells": [
+          3
+         ]
+        },
+        {
+         "label": {
+          "en": "machine 7",
+          "ko": "머신 7"
+         },
+         "cells": [
+          2
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         [
+          1,
+          0
+         ]
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 2
+        },
+        {
+         "label": {
+          "en": "whiteboard",
+          "ko": "화이트보드"
+         },
+         "value": [],
+         "empty": {
+          "en": "empty",
+          "ko": "비어 있음"
+         },
+         "mark": null
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "checkIns[5] is machine 5, not in the map yet: add it with count 1.",
+      "ko": "checkIns[5] = 5: 아직 맵에 없는 머신이므로 사용 횟수 1로 추가합니다."
+     },
+     "views": {
+      "log": {
+       "values": [
+        4,
+        4,
+        4,
+        7,
+        7,
+        5
+       ],
+       "pointers": {
+        "i": 5
+       },
+       "marks": {
+        "lit": [
+         5
+        ]
+       }
+      },
+      "counts": {
+       "columns": [
+        {
+         "en": "uses",
+         "ko": "사용 횟수"
+        }
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "machine 4",
+          "ko": "머신 4"
+         },
+         "cells": [
+          3
+         ]
+        },
+        {
+         "label": {
+          "en": "machine 7",
+          "ko": "머신 7"
+         },
+         "cells": [
+          2
+         ]
+        },
+        {
+         "label": {
+          "en": "machine 5",
+          "ko": "머신 5"
+         },
+         "cells": [
+          1
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         [
+          2,
+          0
+         ]
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 2
+        },
+        {
+         "label": {
+          "en": "whiteboard",
+          "ko": "화이트보드"
+         },
+         "value": [],
+         "empty": {
+          "en": "empty",
+          "ko": "비어 있음"
+         },
+         "mark": null
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Every check-in is counted. Ranked by uses: 4 (3), 7 (2), 5 (1). The top 2 are 4, 7: answer [4,7].",
+      "ko": "체크인을 모두 셌습니다. 사용 횟수 순으로 4 (3), 7 (2), 5 (1)입니다. 상위 2개는 머신 4, 7이므로 답은 [4,7]입니다."
+     },
+     "views": {
+      "log": {
+       "values": [
+        4,
+        4,
+        4,
+        7,
+        7,
+        5
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "counts": {
+       "columns": [
+        {
+         "en": "uses",
+         "ko": "사용 횟수"
+        }
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "machine 4",
+          "ko": "머신 4"
+         },
+         "cells": [
+          3
+         ]
+        },
+        {
+         "label": {
+          "en": "machine 7",
+          "ko": "머신 7"
+         },
+         "cells": [
+          2
+         ]
+        },
+        {
+         "label": {
+          "en": "machine 5",
+          "ko": "머신 5"
+         },
+         "cells": [
+          1
+         ]
+        }
+       ],
+       "marks": {
+        "path": [
+         [
+          0,
+          0
+         ],
+         [
+          1,
+          0
+         ]
+        ],
+        "dim": [
+         [
+          2,
+          0
+         ]
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 2
+        },
+        {
+         "label": {
+          "en": "whiteboard",
+          "ko": "화이트보드"
+         },
+         "value": [
+          4,
+          7
+         ],
+         "empty": {
+          "en": "empty",
+          "ko": "비어 있음"
+         },
+         "mark": "path"
+        }
+       ]
+      }
+     },
+     "answer": "[4,7]"
+    }
+   ],
+   "sampleInput": "[4,4,4,7,7,5]\n2"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "checkIns = [9], k = 1",
+   "expected": "[9]",
+   "frames": [
+    {
+     "caption": {
+      "en": "Walk the 1 check-ins once and count each machine's uses in a hash map; then post the 1 machines with the most uses.",
+      "ko": "체크인 1개를 한 번 훑으며 머신마다 사용 횟수를 해시 맵에 셉니다. 그다음 가장 많이 쓰인 머신 1개를 적습니다."
+     },
+     "views": {
+      "log": {
+       "values": [
+        9
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "counts": {
+       "columns": [
+        {
+         "en": "uses",
+         "ko": "사용 횟수"
+        }
+       ],
+       "rows": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        },
+        {
+         "label": {
+          "en": "whiteboard",
+          "ko": "화이트보드"
+         },
+         "value": [],
+         "empty": {
+          "en": "empty",
+          "ko": "비어 있음"
+         },
+         "mark": null
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "checkIns[0] is machine 9, not in the map yet: add it with count 1.",
+      "ko": "checkIns[0] = 9: 아직 맵에 없는 머신이므로 사용 횟수 1로 추가합니다."
+     },
+     "views": {
+      "log": {
+       "values": [
+        9
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "counts": {
+       "columns": [
+        {
+         "en": "uses",
+         "ko": "사용 횟수"
+        }
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "machine 9",
+          "ko": "머신 9"
+         },
+         "cells": [
+          1
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         [
+          0,
+          0
+         ]
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        },
+        {
+         "label": {
+          "en": "whiteboard",
+          "ko": "화이트보드"
+         },
+         "value": [],
+         "empty": {
+          "en": "empty",
+          "ko": "비어 있음"
+         },
+         "mark": null
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Every check-in is counted. Ranked by uses: 9 (1). The top 1 is 9: answer [9].",
+      "ko": "체크인을 모두 셌습니다. 사용 횟수 순으로 9 (1)입니다. 상위 1개는 머신 9이므로 답은 [9]입니다."
+     },
+     "views": {
+      "log": {
+       "values": [
+        9
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "counts": {
+       "columns": [
+        {
+         "en": "uses",
+         "ko": "사용 횟수"
+        }
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "machine 9",
+          "ko": "머신 9"
+         },
+         "cells": [
+          1
+         ]
+        }
+       ],
+       "marks": {
+        "path": [
+         [
+          0,
+          0
+         ]
+        ],
+        "dim": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        },
+        {
+         "label": {
+          "en": "whiteboard",
+          "ko": "화이트보드"
+         },
+         "value": [
+          9
+         ],
+         "empty": {
+          "en": "empty",
+          "ko": "비어 있음"
+         },
+         "mark": "path"
+        }
+       ]
+      }
+     },
+     "answer": "[9]"
+    }
+   ],
+   "sampleInput": "[9]\n1"
+  }
+ ]
+}
