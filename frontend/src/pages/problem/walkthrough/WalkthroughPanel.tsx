@@ -10,6 +10,8 @@ import { getWalkthrough } from "@/api/problems"
 import { Walkthrough } from "@/components/walkthrough/react/Walkthrough"
 import { textOf, type Walkthrough as WalkthroughData } from "@/components/walkthrough/walkthrough.js"
 import { walkthroughLang, type WalkthroughPlace } from "./walkthroughTab"
+import { useSearchParams } from "react-router-dom"
+import PrototypeWalkthrough, { isPrototypeSlug } from "./prototype/PrototypeWalkthrough"
 
 interface WalkthroughPanelProps {
   slug: string
@@ -20,6 +22,10 @@ interface WalkthroughPanelProps {
 
 export default function WalkthroughPanel({ slug, place, onReveal, onStep }: WalkthroughPanelProps) {
   const { t } = useTranslation("problem")
+  // PROTOTYPE (throwaway): ?variant=A|B|C draws the pilot problems the structure-view ways.
+  const [params] = useSearchParams()
+  const variant = import.meta.env.DEV ? params.get("variant") : null
+  if (variant && isPrototypeSlug(slug)) return <PrototypeWalkthrough slug={slug} variant={variant} />
   if (!place.revealed) {
     return (
       <div className="flex flex-col items-start gap-3 p-4">
