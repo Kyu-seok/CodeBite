@@ -1,0 +1,2144 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Missing Sock Number",
+  "ko": "사라진 빨래 번호"
+ },
+ "approach": {
+  "en": "Only 1 to n can be the answer, and the array has n slots: swap each such number k into slot k − 1, and the first slot not holding its own number names the missing one.",
+  "ko": "답이 될 수 있는 수는 1부터 n까지뿐이고, 배열에는 칸이 n개 있습니다. 그런 수 k를 모두 k − 1번 인덱스로 옮기면, 제 번호를 갖지 못한 첫 칸이 빠진 번호를 알려 줍니다."
+ },
+ "views": [
+  {
+   "id": "socks",
+   "type": "array",
+   "title": "socks"
+  },
+  {
+   "id": "state",
+   "type": "vars"
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "socks = [2,3,1,5]",
+   "expected": "4",
+   "frames": [
+    {
+     "caption": {
+      "en": "4 socks, so the answer is between 1 and 5. The slot at index k is for number k + 1, as the label above each cell says.",
+      "ko": "양말이 4개이니 답은 1부터 5까지 중 하나입니다. 인덱스 k의 칸은 번호 k + 1의 자리이고, 각 칸 위에 적혀 있습니다."
+     },
+     "views": {
+      "socks": {
+       "values": [
+        2,
+        3,
+        1,
+        5
+       ],
+       "pointers": {
+        "i": null
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "for 1",
+          "ko": "1번 칸"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "for 2",
+          "ko": "2번 칸"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "for 3",
+          "ko": "3번 칸"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "for 4",
+          "ko": "4번 칸"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [],
+        "bad": [],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 4
+        },
+        {
+         "label": {
+          "en": "slots holding their number",
+          "ko": "제 번호가 든 칸"
+         },
+         "value": 0
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "socks[0] = 2 belongs at index 1, which held 3. Swap them: 2 is home, and 3 lands at index 0 to be placed next.",
+      "ko": "socks[0] = 2: 이 번호의 자리는 인덱스 1이고, 거기에는 3번이 있었습니다. 맞바꾸면 2번은 제자리에 가고, 3번이 인덱스 0에 와서 다음으로 자리를 찾습니다."
+     },
+     "views": {
+      "socks": {
+       "values": [
+        3,
+        2,
+        1,
+        5
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "for 1",
+          "ko": "1번 칸"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "for 2",
+          "ko": "2번 칸"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "for 3",
+          "ko": "3번 칸"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "for 4",
+          "ko": "4번 칸"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         0,
+         1
+        ],
+        "bad": [],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 4
+        },
+        {
+         "label": {
+          "en": "slots holding their number",
+          "ko": "제 번호가 든 칸"
+         },
+         "value": 1
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "socks[0] = 3 belongs at index 2, which held 1. Swap them: 3 is home, and 1 lands at index 0 to be placed next.",
+      "ko": "socks[0] = 3: 이 번호의 자리는 인덱스 2이고, 거기에는 1번이 있었습니다. 맞바꾸면 3번은 제자리에 가고, 1번이 인덱스 0에 와서 다음으로 자리를 찾습니다."
+     },
+     "views": {
+      "socks": {
+       "values": [
+        1,
+        2,
+        3,
+        5
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "for 1",
+          "ko": "1번 칸"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "for 2",
+          "ko": "2번 칸"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "for 3",
+          "ko": "3번 칸"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "for 4",
+          "ko": "4번 칸"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         0,
+         2
+        ],
+        "bad": [],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 4
+        },
+        {
+         "label": {
+          "en": "slots holding their number",
+          "ko": "제 번호가 든 칸"
+         },
+         "value": 3
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "socks[0] = 1 is already in its own slot.",
+      "ko": "socks[0] = 1: 이미 제 칸에 있습니다."
+     },
+     "views": {
+      "socks": {
+       "values": [
+        1,
+        2,
+        3,
+        5
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "for 1",
+          "ko": "1번 칸"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "for 2",
+          "ko": "2번 칸"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "for 3",
+          "ko": "3번 칸"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "for 4",
+          "ko": "4번 칸"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": [],
+        "bad": [],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 4
+        },
+        {
+         "label": {
+          "en": "slots holding their number",
+          "ko": "제 번호가 든 칸"
+         },
+         "value": 3
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "socks[1] = 2 is already in its own slot.",
+      "ko": "socks[1] = 2: 이미 제 칸에 있습니다."
+     },
+     "views": {
+      "socks": {
+       "values": [
+        1,
+        2,
+        3,
+        5
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "for 1",
+          "ko": "1번 칸"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "for 2",
+          "ko": "2번 칸"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "for 3",
+          "ko": "3번 칸"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "for 4",
+          "ko": "4번 칸"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         1
+        ],
+        "good": [],
+        "bad": [],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 4
+        },
+        {
+         "label": {
+          "en": "slots holding their number",
+          "ko": "제 번호가 든 칸"
+         },
+         "value": 3
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "socks[2] = 3 is already in its own slot.",
+      "ko": "socks[2] = 3: 이미 제 칸에 있습니다."
+     },
+     "views": {
+      "socks": {
+       "values": [
+        1,
+        2,
+        3,
+        5
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "for 1",
+          "ko": "1번 칸"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "for 2",
+          "ko": "2번 칸"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "for 3",
+          "ko": "3번 칸"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "for 4",
+          "ko": "4번 칸"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         2
+        ],
+        "good": [],
+        "bad": [],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 4
+        },
+        {
+         "label": {
+          "en": "slots holding their number",
+          "ko": "제 번호가 든 칸"
+         },
+         "value": 3
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "socks[3] = 5 is outside 1 to 4: no slot is for it, and it can't be the answer. Leave it.",
+      "ko": "socks[3] = 5: 1부터 4까지의 범위 밖이라 맞는 칸이 없고 답도 될 수 없습니다. 그대로 둡니다."
+     },
+     "views": {
+      "socks": {
+       "values": [
+        1,
+        2,
+        3,
+        5
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "for 1",
+          "ko": "1번 칸"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "for 2",
+          "ko": "2번 칸"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "for 3",
+          "ko": "3번 칸"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "for 4",
+          "ko": "4번 칸"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         3
+        ],
+        "good": [],
+        "bad": [],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 4
+        },
+        {
+         "label": {
+          "en": "slots holding their number",
+          "ko": "제 번호가 든 칸"
+         },
+         "value": 3
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Every number from 1 to n that is in the pile now sits in its slot. Now read the slots from the left for the first one missing its number.",
+      "ko": "1부터 n까지 중 더미에 있는 번호는 모두 제 칸에 들어갔습니다. 이제 왼쪽부터 제 번호가 없는 첫 칸을 찾습니다."
+     },
+     "views": {
+      "socks": {
+       "values": [
+        1,
+        2,
+        3,
+        5
+       ],
+       "pointers": {
+        "i": null
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "for 1",
+          "ko": "1번 칸"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "for 2",
+          "ko": "2번 칸"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "for 3",
+          "ko": "3번 칸"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "for 4",
+          "ko": "4번 칸"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [],
+        "bad": [],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 4
+        },
+        {
+         "label": {
+          "en": "slots holding their number",
+          "ko": "제 번호가 든 칸"
+         },
+         "value": 3
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Index 0 holds 1: number 1 is in the pile.",
+      "ko": "인덱스 0에 1번이 있습니다. 1번 양말은 있습니다."
+     },
+     "views": {
+      "socks": {
+       "values": [
+        1,
+        2,
+        3,
+        5
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "for 1",
+          "ko": "1번 칸"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "for 2",
+          "ko": "2번 칸"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "for 3",
+          "ko": "3번 칸"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "for 4",
+          "ko": "4번 칸"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": [],
+        "bad": [],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 4
+        },
+        {
+         "label": {
+          "en": "slots holding their number",
+          "ko": "제 번호가 든 칸"
+         },
+         "value": 3
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Index 1 holds 2: number 2 is in the pile.",
+      "ko": "인덱스 1에 2번이 있습니다. 2번 양말은 있습니다."
+     },
+     "views": {
+      "socks": {
+       "values": [
+        1,
+        2,
+        3,
+        5
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "for 1",
+          "ko": "1번 칸"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "for 2",
+          "ko": "2번 칸"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "for 3",
+          "ko": "3번 칸"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "for 4",
+          "ko": "4번 칸"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         1
+        ],
+        "good": [],
+        "bad": [],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 4
+        },
+        {
+         "label": {
+          "en": "slots holding their number",
+          "ko": "제 번호가 든 칸"
+         },
+         "value": 3
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Index 2 holds 3: number 3 is in the pile.",
+      "ko": "인덱스 2에 3번이 있습니다. 3번 양말은 있습니다."
+     },
+     "views": {
+      "socks": {
+       "values": [
+        1,
+        2,
+        3,
+        5
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "for 1",
+          "ko": "1번 칸"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "for 2",
+          "ko": "2번 칸"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "for 3",
+          "ko": "3번 칸"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "for 4",
+          "ko": "4번 칸"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         2
+        ],
+        "good": [],
+        "bad": [],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 4
+        },
+        {
+         "label": {
+          "en": "slots holding their number",
+          "ko": "제 번호가 든 칸"
+         },
+         "value": 3
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Index 3 is the slot for 4 but holds 5, so no sock is numbered 4. 1 to 3 are all there, so the smallest missing number is 4.",
+      "ko": "인덱스 3의 칸은 4번 칸인데 5번이 들어 있으니 4번 양말은 없습니다. 1부터 3까지는 모두 있으므로 빠진 가장 작은 번호는 4번입니다."
+     },
+     "views": {
+      "socks": {
+       "values": [
+        1,
+        2,
+        3,
+        5
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "for 1",
+          "ko": "1번 칸"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "for 2",
+          "ko": "2번 칸"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "for 3",
+          "ko": "3번 칸"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "for 4",
+          "ko": "4번 칸"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [],
+        "bad": [
+         3
+        ],
+        "path": [
+         0,
+         1,
+         2
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 4
+        },
+        {
+         "label": {
+          "en": "slots holding their number",
+          "ko": "제 번호가 든 칸"
+         },
+         "value": 3
+        }
+       ]
+      }
+     },
+     "answer": "4"
+    }
+   ],
+   "sampleInput": "[2,3,1,5]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "socks = [6,-2,8,10]",
+   "expected": "1",
+   "frames": [
+    {
+     "caption": {
+      "en": "4 socks, so the answer is between 1 and 5. The slot at index k is for number k + 1, as the label above each cell says.",
+      "ko": "양말이 4개이니 답은 1부터 5까지 중 하나입니다. 인덱스 k의 칸은 번호 k + 1의 자리이고, 각 칸 위에 적혀 있습니다."
+     },
+     "views": {
+      "socks": {
+       "values": [
+        6,
+        -2,
+        8,
+        10
+       ],
+       "pointers": {
+        "i": null
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "for 1",
+          "ko": "1번 칸"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "for 2",
+          "ko": "2번 칸"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "for 3",
+          "ko": "3번 칸"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "for 4",
+          "ko": "4번 칸"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [],
+        "bad": [],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 4
+        },
+        {
+         "label": {
+          "en": "slots holding their number",
+          "ko": "제 번호가 든 칸"
+         },
+         "value": 0
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "socks[0] = 6 is outside 1 to 4: no slot is for it, and it can't be the answer. Leave it.",
+      "ko": "socks[0] = 6: 1부터 4까지의 범위 밖이라 맞는 칸이 없고 답도 될 수 없습니다. 그대로 둡니다."
+     },
+     "views": {
+      "socks": {
+       "values": [
+        6,
+        -2,
+        8,
+        10
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "for 1",
+          "ko": "1번 칸"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "for 2",
+          "ko": "2번 칸"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "for 3",
+          "ko": "3번 칸"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "for 4",
+          "ko": "4번 칸"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": [],
+        "bad": [],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 4
+        },
+        {
+         "label": {
+          "en": "slots holding their number",
+          "ko": "제 번호가 든 칸"
+         },
+         "value": 0
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "socks[1] = -2 is outside 1 to 4: no slot is for it, and it can't be the answer. Leave it.",
+      "ko": "socks[1] = -2: 1부터 4까지의 범위 밖이라 맞는 칸이 없고 답도 될 수 없습니다. 그대로 둡니다."
+     },
+     "views": {
+      "socks": {
+       "values": [
+        6,
+        -2,
+        8,
+        10
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "for 1",
+          "ko": "1번 칸"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "for 2",
+          "ko": "2번 칸"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "for 3",
+          "ko": "3번 칸"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "for 4",
+          "ko": "4번 칸"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         1
+        ],
+        "good": [],
+        "bad": [],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 4
+        },
+        {
+         "label": {
+          "en": "slots holding their number",
+          "ko": "제 번호가 든 칸"
+         },
+         "value": 0
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "socks[2] = 8 is outside 1 to 4: no slot is for it, and it can't be the answer. Leave it.",
+      "ko": "socks[2] = 8: 1부터 4까지의 범위 밖이라 맞는 칸이 없고 답도 될 수 없습니다. 그대로 둡니다."
+     },
+     "views": {
+      "socks": {
+       "values": [
+        6,
+        -2,
+        8,
+        10
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "for 1",
+          "ko": "1번 칸"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "for 2",
+          "ko": "2번 칸"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "for 3",
+          "ko": "3번 칸"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "for 4",
+          "ko": "4번 칸"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         2
+        ],
+        "good": [],
+        "bad": [],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 4
+        },
+        {
+         "label": {
+          "en": "slots holding their number",
+          "ko": "제 번호가 든 칸"
+         },
+         "value": 0
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "socks[3] = 10 is outside 1 to 4: no slot is for it, and it can't be the answer. Leave it.",
+      "ko": "socks[3] = 10: 1부터 4까지의 범위 밖이라 맞는 칸이 없고 답도 될 수 없습니다. 그대로 둡니다."
+     },
+     "views": {
+      "socks": {
+       "values": [
+        6,
+        -2,
+        8,
+        10
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "for 1",
+          "ko": "1번 칸"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "for 2",
+          "ko": "2번 칸"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "for 3",
+          "ko": "3번 칸"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "for 4",
+          "ko": "4번 칸"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         3
+        ],
+        "good": [],
+        "bad": [],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 4
+        },
+        {
+         "label": {
+          "en": "slots holding their number",
+          "ko": "제 번호가 든 칸"
+         },
+         "value": 0
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Every number from 1 to n that is in the pile now sits in its slot. Now read the slots from the left for the first one missing its number.",
+      "ko": "1부터 n까지 중 더미에 있는 번호는 모두 제 칸에 들어갔습니다. 이제 왼쪽부터 제 번호가 없는 첫 칸을 찾습니다."
+     },
+     "views": {
+      "socks": {
+       "values": [
+        6,
+        -2,
+        8,
+        10
+       ],
+       "pointers": {
+        "i": null
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "for 1",
+          "ko": "1번 칸"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "for 2",
+          "ko": "2번 칸"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "for 3",
+          "ko": "3번 칸"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "for 4",
+          "ko": "4번 칸"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [],
+        "bad": [],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 4
+        },
+        {
+         "label": {
+          "en": "slots holding their number",
+          "ko": "제 번호가 든 칸"
+         },
+         "value": 0
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Index 0 is the slot for 1 but holds 6, so no sock is numbered 1. No smaller positive number exists, so the smallest missing number is 1.",
+      "ko": "인덱스 0의 칸은 1번 칸인데 6번이 들어 있으니 1번 양말은 없습니다. 이보다 작은 양수는 없으므로 빠진 가장 작은 번호는 1번입니다."
+     },
+     "views": {
+      "socks": {
+       "values": [
+        6,
+        -2,
+        8,
+        10
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "for 1",
+          "ko": "1번 칸"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "for 2",
+          "ko": "2번 칸"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "for 3",
+          "ko": "3번 칸"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "for 4",
+          "ko": "4번 칸"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [],
+        "bad": [
+         0
+        ],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 4
+        },
+        {
+         "label": {
+          "en": "slots holding their number",
+          "ko": "제 번호가 든 칸"
+         },
+         "value": 0
+        }
+       ]
+      }
+     },
+     "answer": "1"
+    }
+   ],
+   "sampleInput": "[6,-2,8,10]"
+  },
+  {
+   "label": {
+    "en": "Case 3",
+    "ko": "케이스 3"
+   },
+   "input": "socks = [4,2,6,2,8]",
+   "expected": "1",
+   "frames": [
+    {
+     "caption": {
+      "en": "5 socks, so the answer is between 1 and 6. The slot at index k is for number k + 1, as the label above each cell says.",
+      "ko": "양말이 5개이니 답은 1부터 6까지 중 하나입니다. 인덱스 k의 칸은 번호 k + 1의 자리이고, 각 칸 위에 적혀 있습니다."
+     },
+     "views": {
+      "socks": {
+       "values": [
+        4,
+        2,
+        6,
+        2,
+        8
+       ],
+       "pointers": {
+        "i": null
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "for 1",
+          "ko": "1번 칸"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "for 2",
+          "ko": "2번 칸"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "for 3",
+          "ko": "3번 칸"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "for 4",
+          "ko": "4번 칸"
+         }
+        ],
+        [
+         4,
+         {
+          "en": "for 5",
+          "ko": "5번 칸"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [],
+        "bad": [],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 5
+        },
+        {
+         "label": {
+          "en": "slots holding their number",
+          "ko": "제 번호가 든 칸"
+         },
+         "value": 1
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "socks[0] = 4 belongs at index 3, which held 2. Swap them: 4 is home, and 2 lands at index 0 to be placed next.",
+      "ko": "socks[0] = 4: 이 번호의 자리는 인덱스 3이고, 거기에는 2번이 있었습니다. 맞바꾸면 4번은 제자리에 가고, 2번이 인덱스 0에 와서 다음으로 자리를 찾습니다."
+     },
+     "views": {
+      "socks": {
+       "values": [
+        2,
+        2,
+        6,
+        4,
+        8
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "for 1",
+          "ko": "1번 칸"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "for 2",
+          "ko": "2번 칸"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "for 3",
+          "ko": "3번 칸"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "for 4",
+          "ko": "4번 칸"
+         }
+        ],
+        [
+         4,
+         {
+          "en": "for 5",
+          "ko": "5번 칸"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         0,
+         3
+        ],
+        "bad": [],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 5
+        },
+        {
+         "label": {
+          "en": "slots holding their number",
+          "ko": "제 번호가 든 칸"
+         },
+         "value": 2
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "socks[0] = 2 is a repeat: index 1 already holds 2. Leave this copy.",
+      "ko": "socks[0] = 2: 중복입니다. 인덱스 1에 이미 2번이 있으니 이 짝은 그대로 둡니다."
+     },
+     "views": {
+      "socks": {
+       "values": [
+        2,
+        2,
+        6,
+        4,
+        8
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "for 1",
+          "ko": "1번 칸"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "for 2",
+          "ko": "2번 칸"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "for 3",
+          "ko": "3번 칸"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "for 4",
+          "ko": "4번 칸"
+         }
+        ],
+        [
+         4,
+         {
+          "en": "for 5",
+          "ko": "5번 칸"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1
+        ],
+        "good": [],
+        "bad": [],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 5
+        },
+        {
+         "label": {
+          "en": "slots holding their number",
+          "ko": "제 번호가 든 칸"
+         },
+         "value": 2
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "socks[1] = 2 is already in its own slot.",
+      "ko": "socks[1] = 2: 이미 제 칸에 있습니다."
+     },
+     "views": {
+      "socks": {
+       "values": [
+        2,
+        2,
+        6,
+        4,
+        8
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "for 1",
+          "ko": "1번 칸"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "for 2",
+          "ko": "2번 칸"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "for 3",
+          "ko": "3번 칸"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "for 4",
+          "ko": "4번 칸"
+         }
+        ],
+        [
+         4,
+         {
+          "en": "for 5",
+          "ko": "5번 칸"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         1
+        ],
+        "good": [],
+        "bad": [],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 5
+        },
+        {
+         "label": {
+          "en": "slots holding their number",
+          "ko": "제 번호가 든 칸"
+         },
+         "value": 2
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "socks[2] = 6 is outside 1 to 5: no slot is for it, and it can't be the answer. Leave it.",
+      "ko": "socks[2] = 6: 1부터 5까지의 범위 밖이라 맞는 칸이 없고 답도 될 수 없습니다. 그대로 둡니다."
+     },
+     "views": {
+      "socks": {
+       "values": [
+        2,
+        2,
+        6,
+        4,
+        8
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "for 1",
+          "ko": "1번 칸"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "for 2",
+          "ko": "2번 칸"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "for 3",
+          "ko": "3번 칸"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "for 4",
+          "ko": "4번 칸"
+         }
+        ],
+        [
+         4,
+         {
+          "en": "for 5",
+          "ko": "5번 칸"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         2
+        ],
+        "good": [],
+        "bad": [],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 5
+        },
+        {
+         "label": {
+          "en": "slots holding their number",
+          "ko": "제 번호가 든 칸"
+         },
+         "value": 2
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "socks[3] = 4 is already in its own slot.",
+      "ko": "socks[3] = 4: 이미 제 칸에 있습니다."
+     },
+     "views": {
+      "socks": {
+       "values": [
+        2,
+        2,
+        6,
+        4,
+        8
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "for 1",
+          "ko": "1번 칸"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "for 2",
+          "ko": "2번 칸"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "for 3",
+          "ko": "3번 칸"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "for 4",
+          "ko": "4번 칸"
+         }
+        ],
+        [
+         4,
+         {
+          "en": "for 5",
+          "ko": "5번 칸"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         3
+        ],
+        "good": [],
+        "bad": [],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 5
+        },
+        {
+         "label": {
+          "en": "slots holding their number",
+          "ko": "제 번호가 든 칸"
+         },
+         "value": 2
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "socks[4] = 8 is outside 1 to 5: no slot is for it, and it can't be the answer. Leave it.",
+      "ko": "socks[4] = 8: 1부터 5까지의 범위 밖이라 맞는 칸이 없고 답도 될 수 없습니다. 그대로 둡니다."
+     },
+     "views": {
+      "socks": {
+       "values": [
+        2,
+        2,
+        6,
+        4,
+        8
+       ],
+       "pointers": {
+        "i": 4
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "for 1",
+          "ko": "1번 칸"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "for 2",
+          "ko": "2번 칸"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "for 3",
+          "ko": "3번 칸"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "for 4",
+          "ko": "4번 칸"
+         }
+        ],
+        [
+         4,
+         {
+          "en": "for 5",
+          "ko": "5번 칸"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         4
+        ],
+        "good": [],
+        "bad": [],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 5
+        },
+        {
+         "label": {
+          "en": "slots holding their number",
+          "ko": "제 번호가 든 칸"
+         },
+         "value": 2
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Every number from 1 to n that is in the pile now sits in its slot. Now read the slots from the left for the first one missing its number.",
+      "ko": "1부터 n까지 중 더미에 있는 번호는 모두 제 칸에 들어갔습니다. 이제 왼쪽부터 제 번호가 없는 첫 칸을 찾습니다."
+     },
+     "views": {
+      "socks": {
+       "values": [
+        2,
+        2,
+        6,
+        4,
+        8
+       ],
+       "pointers": {
+        "i": null
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "for 1",
+          "ko": "1번 칸"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "for 2",
+          "ko": "2번 칸"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "for 3",
+          "ko": "3번 칸"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "for 4",
+          "ko": "4번 칸"
+         }
+        ],
+        [
+         4,
+         {
+          "en": "for 5",
+          "ko": "5번 칸"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [],
+        "bad": [],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 5
+        },
+        {
+         "label": {
+          "en": "slots holding their number",
+          "ko": "제 번호가 든 칸"
+         },
+         "value": 2
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Index 0 is the slot for 1 but holds 2, so no sock is numbered 1. No smaller positive number exists, so the smallest missing number is 1.",
+      "ko": "인덱스 0의 칸은 1번 칸인데 2번이 들어 있으니 1번 양말은 없습니다. 이보다 작은 양수는 없으므로 빠진 가장 작은 번호는 1번입니다."
+     },
+     "views": {
+      "socks": {
+       "values": [
+        2,
+        2,
+        6,
+        4,
+        8
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "for 1",
+          "ko": "1번 칸"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "for 2",
+          "ko": "2번 칸"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "for 3",
+          "ko": "3번 칸"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "for 4",
+          "ko": "4번 칸"
+         }
+        ],
+        [
+         4,
+         {
+          "en": "for 5",
+          "ko": "5번 칸"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [],
+        "bad": [
+         0
+        ],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 5
+        },
+        {
+         "label": {
+          "en": "slots holding their number",
+          "ko": "제 번호가 든 칸"
+         },
+         "value": 2
+        }
+       ]
+      }
+     },
+     "answer": "1"
+    }
+   ],
+   "sampleInput": "[4,2,6,2,8]"
+  }
+ ]
+}
