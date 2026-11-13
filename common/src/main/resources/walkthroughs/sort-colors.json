@@ -1,0 +1,864 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Sort Colors",
+  "ko": "색깔 정렬"
+ },
+ "approach": {
+  "en": "Three pointers: everything before low is 0, everything after high is 2, and mid reads the unsorted middle, swapping each 0 down to low and each 2 up to high.",
+  "ko": "포인터 세 개: low 앞은 모두 0, high 뒤는 모두 2입니다. mid가 가운데의 정렬 안 된 칸을 읽으며 0은 low 쪽으로, 2는 high 쪽으로 맞바꿉니다."
+ },
+ "views": [
+  {
+   "id": "nums",
+   "type": "array",
+   "title": "nums"
+  },
+  {
+   "id": "state",
+   "type": "vars"
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "nums = [1,2,0,2,1,0,1]",
+   "expected": "[0,0,1,1,1,2,2]",
+   "frames": [
+    {
+     "caption": {
+      "en": "low and mid start at 0, high at 6. Every cell from mid to high is still unread.",
+      "ko": "low와 mid는 0, high는 6에서 시작합니다. mid부터 high까지는 아직 읽지 않은 칸입니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        1,
+        2,
+        0,
+        2,
+        1,
+        0,
+        1
+       ],
+       "pointers": {
+        "low": 0,
+        "mid": 0,
+        "high": 6
+       },
+       "marks": {
+        "dim": [],
+        "lit": [],
+        "good": [],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "0s placed",
+          "ko": "자리 잡은 0"
+         },
+         "value": 0
+        },
+        {
+         "label": {
+          "en": "2s placed",
+          "ko": "자리 잡은 2"
+         },
+         "value": 0
+        },
+        {
+         "label": {
+          "en": "unread",
+          "ko": "안 읽은 칸"
+         },
+         "value": 7
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "nums[0] = 1: a 1 belongs between the 0s and the 2s, where it already is. Only mid steps right.",
+      "ko": "nums[0] = 1: 1은 0들과 2들 사이에 있어야 하고, 지금 그 자리에 있습니다. mid만 오른쪽으로 한 칸 갑니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        1,
+        2,
+        0,
+        2,
+        1,
+        0,
+        1
+       ],
+       "pointers": {
+        "low": 0,
+        "mid": 1,
+        "high": 6
+       },
+       "marks": {
+        "dim": [],
+        "lit": [
+         0
+        ],
+        "good": [],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "0s placed",
+          "ko": "자리 잡은 0"
+         },
+         "value": 0
+        },
+        {
+         "label": {
+          "en": "2s placed",
+          "ko": "자리 잡은 2"
+         },
+         "value": 0
+        },
+        {
+         "label": {
+          "en": "unread",
+          "ko": "안 읽은 칸"
+         },
+         "value": 6
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "nums[1] = 2: swap it with nums[6] at high, so the 2 joins the 2s. high steps left; mid stays, because the 1 that came back hasn't been read.",
+      "ko": "nums[1] = 2: high 자리의 nums[6] 값과 맞바꿔 2를 뒤쪽 2들에 붙입니다. high는 왼쪽으로 한 칸 갑니다. 맞바꿔 온 nums[1] = 1: 아직 읽지 않은 값이라 mid는 그대로입니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        1,
+        1,
+        0,
+        2,
+        1,
+        0,
+        2
+       ],
+       "pointers": {
+        "low": 0,
+        "mid": 1,
+        "high": 5
+       },
+       "marks": {
+        "dim": [
+         6
+        ],
+        "lit": [],
+        "good": [
+         1,
+         6
+        ],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "0s placed",
+          "ko": "자리 잡은 0"
+         },
+         "value": 0
+        },
+        {
+         "label": {
+          "en": "2s placed",
+          "ko": "자리 잡은 2"
+         },
+         "value": 1
+        },
+        {
+         "label": {
+          "en": "unread",
+          "ko": "안 읽은 칸"
+         },
+         "value": 5
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "nums[1] = 1: a 1 belongs between the 0s and the 2s, where it already is. Only mid steps right.",
+      "ko": "nums[1] = 1: 1은 0들과 2들 사이에 있어야 하고, 지금 그 자리에 있습니다. mid만 오른쪽으로 한 칸 갑니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        1,
+        1,
+        0,
+        2,
+        1,
+        0,
+        2
+       ],
+       "pointers": {
+        "low": 0,
+        "mid": 2,
+        "high": 5
+       },
+       "marks": {
+        "dim": [
+         6
+        ],
+        "lit": [
+         1
+        ],
+        "good": [],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "0s placed",
+          "ko": "자리 잡은 0"
+         },
+         "value": 0
+        },
+        {
+         "label": {
+          "en": "2s placed",
+          "ko": "자리 잡은 2"
+         },
+         "value": 1
+        },
+        {
+         "label": {
+          "en": "unread",
+          "ko": "안 읽은 칸"
+         },
+         "value": 4
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "nums[2] = 0: swap it with nums[0] at low, so the 0 joins the 0s and the 1 moves up to index 2. Both low and mid step right.",
+      "ko": "nums[2] = 0: low 자리의 nums[0] 값과 맞바꿔 0을 앞쪽 0들에 붙이고, 1은 인덱스 2의 칸으로 옮깁니다. low와 mid가 함께 오른쪽으로 한 칸 갑니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        0,
+        1,
+        1,
+        2,
+        1,
+        0,
+        2
+       ],
+       "pointers": {
+        "low": 1,
+        "mid": 3,
+        "high": 5
+       },
+       "marks": {
+        "dim": [
+         0,
+         6
+        ],
+        "lit": [],
+        "good": [
+         0,
+         2
+        ],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "0s placed",
+          "ko": "자리 잡은 0"
+         },
+         "value": 1
+        },
+        {
+         "label": {
+          "en": "2s placed",
+          "ko": "자리 잡은 2"
+         },
+         "value": 1
+        },
+        {
+         "label": {
+          "en": "unread",
+          "ko": "안 읽은 칸"
+         },
+         "value": 3
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "nums[3] = 2: swap it with nums[5] at high, so the 2 joins the 2s. high steps left; mid stays, because the 0 that came back hasn't been read.",
+      "ko": "nums[3] = 2: high 자리의 nums[5] 값과 맞바꿔 2를 뒤쪽 2들에 붙입니다. high는 왼쪽으로 한 칸 갑니다. 맞바꿔 온 nums[3] = 0: 아직 읽지 않은 값이라 mid는 그대로입니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        0,
+        1,
+        1,
+        0,
+        1,
+        2,
+        2
+       ],
+       "pointers": {
+        "low": 1,
+        "mid": 3,
+        "high": 4
+       },
+       "marks": {
+        "dim": [
+         0,
+         5,
+         6
+        ],
+        "lit": [],
+        "good": [
+         3,
+         5
+        ],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "0s placed",
+          "ko": "자리 잡은 0"
+         },
+         "value": 1
+        },
+        {
+         "label": {
+          "en": "2s placed",
+          "ko": "자리 잡은 2"
+         },
+         "value": 2
+        },
+        {
+         "label": {
+          "en": "unread",
+          "ko": "안 읽은 칸"
+         },
+         "value": 2
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "nums[3] = 0: swap it with nums[1] at low, so the 0 joins the 0s and the 1 moves up to index 3. Both low and mid step right.",
+      "ko": "nums[3] = 0: low 자리의 nums[1] 값과 맞바꿔 0을 앞쪽 0들에 붙이고, 1은 인덱스 3의 칸으로 옮깁니다. low와 mid가 함께 오른쪽으로 한 칸 갑니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        0,
+        0,
+        1,
+        1,
+        1,
+        2,
+        2
+       ],
+       "pointers": {
+        "low": 2,
+        "mid": 4,
+        "high": 4
+       },
+       "marks": {
+        "dim": [
+         0,
+         1,
+         5,
+         6
+        ],
+        "lit": [],
+        "good": [
+         1,
+         3
+        ],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "0s placed",
+          "ko": "자리 잡은 0"
+         },
+         "value": 2
+        },
+        {
+         "label": {
+          "en": "2s placed",
+          "ko": "자리 잡은 2"
+         },
+         "value": 2
+        },
+        {
+         "label": {
+          "en": "unread",
+          "ko": "안 읽은 칸"
+         },
+         "value": 1
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "nums[4] = 1: a 1 belongs between the 0s and the 2s, where it already is. Only mid steps right.",
+      "ko": "nums[4] = 1: 1은 0들과 2들 사이에 있어야 하고, 지금 그 자리에 있습니다. mid만 오른쪽으로 한 칸 갑니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        0,
+        0,
+        1,
+        1,
+        1,
+        2,
+        2
+       ],
+       "pointers": {
+        "low": 2,
+        "mid": 5,
+        "high": 4
+       },
+       "marks": {
+        "dim": [
+         0,
+         1,
+         5,
+         6
+        ],
+        "lit": [
+         4
+        ],
+        "good": [],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "0s placed",
+          "ko": "자리 잡은 0"
+         },
+         "value": 2
+        },
+        {
+         "label": {
+          "en": "2s placed",
+          "ko": "자리 잡은 2"
+         },
+         "value": 2
+        },
+        {
+         "label": {
+          "en": "unread",
+          "ko": "안 읽은 칸"
+         },
+         "value": 0
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "mid passed high: no unread cell is left. The 0s are before low, the 2s after high and the 1s between, so nums is [0,0,1,1,1,2,2].",
+      "ko": "mid가 high를 지나 읽지 않은 칸이 없습니다. low 앞은 0, high 뒤는 2, 그 사이는 1이므로 nums는 [0,0,1,1,1,2,2]입니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        0,
+        0,
+        1,
+        1,
+        1,
+        2,
+        2
+       ],
+       "pointers": {
+        "low": 2,
+        "mid": 5,
+        "high": 4
+       },
+       "marks": {
+        "dim": [],
+        "lit": [],
+        "good": [],
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5,
+         6
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "0s placed",
+          "ko": "자리 잡은 0"
+         },
+         "value": 2
+        },
+        {
+         "label": {
+          "en": "2s placed",
+          "ko": "자리 잡은 2"
+         },
+         "value": 2
+        },
+        {
+         "label": {
+          "en": "unread",
+          "ko": "안 읽은 칸"
+         },
+         "value": 0
+        }
+       ]
+      }
+     },
+     "answer": "[0,0,1,1,1,2,2]"
+    }
+   ],
+   "sampleInput": "[1,2,0,2,1,0,1]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "nums = [2,1,0]",
+   "expected": "[0,1,2]",
+   "frames": [
+    {
+     "caption": {
+      "en": "low and mid start at 0, high at 2. Every cell from mid to high is still unread.",
+      "ko": "low와 mid는 0, high는 2에서 시작합니다. mid부터 high까지는 아직 읽지 않은 칸입니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        2,
+        1,
+        0
+       ],
+       "pointers": {
+        "low": 0,
+        "mid": 0,
+        "high": 2
+       },
+       "marks": {
+        "dim": [],
+        "lit": [],
+        "good": [],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "0s placed",
+          "ko": "자리 잡은 0"
+         },
+         "value": 0
+        },
+        {
+         "label": {
+          "en": "2s placed",
+          "ko": "자리 잡은 2"
+         },
+         "value": 0
+        },
+        {
+         "label": {
+          "en": "unread",
+          "ko": "안 읽은 칸"
+         },
+         "value": 3
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "nums[0] = 2: swap it with nums[2] at high, so the 2 joins the 2s. high steps left; mid stays, because the 0 that came back hasn't been read.",
+      "ko": "nums[0] = 2: high 자리의 nums[2] 값과 맞바꿔 2를 뒤쪽 2들에 붙입니다. high는 왼쪽으로 한 칸 갑니다. 맞바꿔 온 nums[0] = 0: 아직 읽지 않은 값이라 mid는 그대로입니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        0,
+        1,
+        2
+       ],
+       "pointers": {
+        "low": 0,
+        "mid": 0,
+        "high": 1
+       },
+       "marks": {
+        "dim": [
+         2
+        ],
+        "lit": [],
+        "good": [
+         0,
+         2
+        ],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "0s placed",
+          "ko": "자리 잡은 0"
+         },
+         "value": 0
+        },
+        {
+         "label": {
+          "en": "2s placed",
+          "ko": "자리 잡은 2"
+         },
+         "value": 1
+        },
+        {
+         "label": {
+          "en": "unread",
+          "ko": "안 읽은 칸"
+         },
+         "value": 2
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "nums[0] = 0, and it is already at low. Both low and mid step right.",
+      "ko": "nums[0] = 0: 이미 low 자리에 있습니다. low와 mid가 함께 오른쪽으로 한 칸 갑니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        0,
+        1,
+        2
+       ],
+       "pointers": {
+        "low": 1,
+        "mid": 1,
+        "high": 1
+       },
+       "marks": {
+        "dim": [
+         0,
+         2
+        ],
+        "lit": [],
+        "good": [
+         0
+        ],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "0s placed",
+          "ko": "자리 잡은 0"
+         },
+         "value": 1
+        },
+        {
+         "label": {
+          "en": "2s placed",
+          "ko": "자리 잡은 2"
+         },
+         "value": 1
+        },
+        {
+         "label": {
+          "en": "unread",
+          "ko": "안 읽은 칸"
+         },
+         "value": 1
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "nums[1] = 1: a 1 belongs between the 0s and the 2s, where it already is. Only mid steps right.",
+      "ko": "nums[1] = 1: 1은 0들과 2들 사이에 있어야 하고, 지금 그 자리에 있습니다. mid만 오른쪽으로 한 칸 갑니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        0,
+        1,
+        2
+       ],
+       "pointers": {
+        "low": 1,
+        "mid": 2,
+        "high": 1
+       },
+       "marks": {
+        "dim": [
+         0,
+         2
+        ],
+        "lit": [
+         1
+        ],
+        "good": [],
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "0s placed",
+          "ko": "자리 잡은 0"
+         },
+         "value": 1
+        },
+        {
+         "label": {
+          "en": "2s placed",
+          "ko": "자리 잡은 2"
+         },
+         "value": 1
+        },
+        {
+         "label": {
+          "en": "unread",
+          "ko": "안 읽은 칸"
+         },
+         "value": 0
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "mid passed high: no unread cell is left. The 0s are before low, the 2s after high and the 1s between, so nums is [0,1,2].",
+      "ko": "mid가 high를 지나 읽지 않은 칸이 없습니다. low 앞은 0, high 뒤는 2, 그 사이는 1이므로 nums는 [0,1,2]입니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        0,
+        1,
+        2
+       ],
+       "pointers": {
+        "low": 1,
+        "mid": 2,
+        "high": 1
+       },
+       "marks": {
+        "dim": [],
+        "lit": [],
+        "good": [],
+        "path": [
+         0,
+         1,
+         2
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "0s placed",
+          "ko": "자리 잡은 0"
+         },
+         "value": 1
+        },
+        {
+         "label": {
+          "en": "2s placed",
+          "ko": "자리 잡은 2"
+         },
+         "value": 1
+        },
+        {
+         "label": {
+          "en": "unread",
+          "ko": "안 읽은 칸"
+         },
+         "value": 0
+        }
+       ]
+      }
+     },
+     "answer": "[0,1,2]"
+    }
+   ],
+   "sampleInput": "[2,1,0]"
+  }
+ ]
+}
