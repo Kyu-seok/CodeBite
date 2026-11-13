@@ -18,8 +18,16 @@
    }
   },
   {
-   "id": "state",
-   "type": "vars"
+   "id": "box",
+   "type": "map",
+   "title": {
+    "en": "candidate → count",
+    "ko": "후보 → 카운트"
+   },
+   "empty": {
+    "en": "no candidate",
+    "ko": "후보 없음"
+   }
   }
  ],
  "runs": [
@@ -58,23 +66,11 @@
         ]
        }
       },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "candidate",
-          "ko": "후보"
-         },
-         "value": "–"
-        },
-        {
-         "label": {
-          "en": "count",
-          "ko": "카운트"
-         },
-         "value": 0
-        }
-       ]
+      "box": {
+       "entries": [],
+       "slots": 1,
+       "struck": [],
+       "marks": {}
       }
      }
     },
@@ -111,31 +107,39 @@
         ]
        }
       },
-      "state": {
-       "items": [
+      "box": {
+       "entries": [
         {
-         "label": {
-          "en": "candidate",
-          "ko": "후보"
-         },
-         "value": 4,
-         "mark": "good"
-        },
-        {
-         "label": {
-          "en": "count",
-          "ko": "카운트"
-         },
+         "key": 4,
          "value": 1
         }
-       ]
+       ],
+       "slots": 1,
+       "struck": [],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "votes",
+        "at": 0
+       },
+       "to": {
+        "view": "box",
+        "at": 4
+       }
+      }
+     ]
     },
     {
      "caption": {
-      "en": "Vote 7 differs from candidate 4: the two cancel, count down to 0.",
-      "ko": "7번 표는 후보 4번과 다릅니다. 둘이 상쇄되어 카운트를 내려 0입니다."
+      "en": "Vote 7 differs from candidate 4: the two cancel, count down to 0, so the candidate is out.",
+      "ko": "7번 표는 후보 4번과 다릅니다. 둘이 상쇄되어 카운트를 내려 0이 되고, 후보가 빠집니다."
      },
      "views": {
       "votes": {
@@ -168,25 +172,34 @@
         ]
        }
       },
-      "state": {
-       "items": [
+      "box": {
+       "entries": [
         {
-         "label": {
-          "en": "candidate",
-          "ko": "후보"
-         },
-         "value": 4
-        },
-        {
-         "label": {
-          "en": "count",
-          "ko": "카운트"
-         },
+         "key": 4,
          "value": 0
         }
-       ]
+       ],
+       "slots": 1,
+       "struck": [
+        4
+       ],
+       "marks": {}
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "votes",
+        "at": 1
+       },
+       "to": {
+        "view": "box",
+        "at": 4
+       },
+       "value": "−1",
+       "mark": "bad"
+      }
+     ]
     },
     {
      "caption": {
@@ -226,26 +239,34 @@
         "dim": []
        }
       },
-      "state": {
-       "items": [
+      "box": {
+       "entries": [
         {
-         "label": {
-          "en": "candidate",
-          "ko": "후보"
-         },
-         "value": 4,
-         "mark": "good"
-        },
-        {
-         "label": {
-          "en": "count",
-          "ko": "카운트"
-         },
+         "key": 4,
          "value": 1
         }
-       ]
+       ],
+       "slots": 1,
+       "struck": [],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "votes",
+        "at": 2
+       },
+       "to": {
+        "view": "box",
+        "at": 4
+       }
+      }
+     ]
     },
     {
      "caption": {
@@ -286,24 +307,20 @@
         "dim": []
        }
       },
-      "state": {
-       "items": [
+      "box": {
+       "entries": [
         {
-         "label": {
-          "en": "candidate",
-          "ko": "후보"
-         },
-         "value": 4,
-         "mark": "path"
-        },
-        {
-         "label": {
-          "en": "count",
-          "ko": "카운트"
-         },
+         "key": 4,
          "value": 1
         }
-       ]
+       ],
+       "slots": 1,
+       "struck": [],
+       "marks": {
+        "path": [
+         4
+        ]
+       }
       }
      },
      "answer": "4"
@@ -354,23 +371,11 @@
         ]
        }
       },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "candidate",
-          "ko": "후보"
-         },
-         "value": "–"
-        },
-        {
-         "label": {
-          "en": "count",
-          "ko": "카운트"
-         },
-         "value": 0
-        }
-       ]
+      "box": {
+       "entries": [],
+       "slots": 1,
+       "struck": [],
+       "marks": {}
       }
      }
     },
@@ -415,26 +420,34 @@
         ]
        }
       },
-      "state": {
-       "items": [
+      "box": {
+       "entries": [
         {
-         "label": {
-          "en": "candidate",
-          "ko": "후보"
-         },
-         "value": 5,
-         "mark": "good"
-        },
-        {
-         "label": {
-          "en": "count",
-          "ko": "카운트"
-         },
+         "key": 5,
          "value": 1
         }
-       ]
+       ],
+       "slots": 1,
+       "struck": [],
+       "marks": {
+        "good": [
+         5
+        ]
+       }
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "votes",
+        "at": 0
+       },
+       "to": {
+        "view": "box",
+        "at": 5
+       }
+      }
+     ]
     },
     {
      "caption": {
@@ -480,25 +493,35 @@
         ]
        }
       },
-      "state": {
-       "items": [
+      "box": {
+       "entries": [
         {
-         "label": {
-          "en": "candidate",
-          "ko": "후보"
-         },
-         "value": 5
-        },
-        {
-         "label": {
-          "en": "count",
-          "ko": "카운트"
-         },
+         "key": 5,
          "value": 2
         }
-       ]
+       ],
+       "slots": 1,
+       "struck": [],
+       "marks": {
+        "good": [
+         5
+        ]
+       }
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "votes",
+        "at": 1
+       },
+       "to": {
+        "view": "box",
+        "at": 5
+       },
+       "value": "+1"
+      }
+     ]
     },
     {
      "caption": {
@@ -547,30 +570,41 @@
         ]
        }
       },
-      "state": {
-       "items": [
+      "box": {
+       "entries": [
         {
-         "label": {
-          "en": "candidate",
-          "ko": "후보"
-         },
-         "value": 5
-        },
-        {
-         "label": {
-          "en": "count",
-          "ko": "카운트"
-         },
+         "key": 5,
          "value": 1
         }
-       ]
+       ],
+       "slots": 1,
+       "struck": [],
+       "marks": {
+        "bad": [
+         5
+        ]
+       }
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "votes",
+        "at": 2
+       },
+       "to": {
+        "view": "box",
+        "at": 5
+       },
+       "value": "−1",
+       "mark": "bad"
+      }
+     ]
     },
     {
      "caption": {
-      "en": "Vote 6 differs from candidate 5: the two cancel, count down to 0.",
-      "ko": "6번 표는 후보 5번과 다릅니다. 둘이 상쇄되어 카운트를 내려 0입니다."
+      "en": "Vote 6 differs from candidate 5: the two cancel, count down to 0, so the candidate is out.",
+      "ko": "6번 표는 후보 5번과 다릅니다. 둘이 상쇄되어 카운트를 내려 0이 되고, 후보가 빠집니다."
      },
      "views": {
       "votes": {
@@ -617,25 +651,34 @@
         ]
        }
       },
-      "state": {
-       "items": [
+      "box": {
+       "entries": [
         {
-         "label": {
-          "en": "candidate",
-          "ko": "후보"
-         },
-         "value": 5
-        },
-        {
-         "label": {
-          "en": "count",
-          "ko": "카운트"
-         },
+         "key": 5,
          "value": 0
         }
-       ]
+       ],
+       "slots": 1,
+       "struck": [
+        5
+       ],
+       "marks": {}
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "votes",
+        "at": 3
+       },
+       "to": {
+        "view": "box",
+        "at": 5
+       },
+       "value": "−1",
+       "mark": "bad"
+      }
+     ]
     },
     {
      "caption": {
@@ -690,31 +733,39 @@
         ]
        }
       },
-      "state": {
-       "items": [
+      "box": {
+       "entries": [
         {
-         "label": {
-          "en": "candidate",
-          "ko": "후보"
-         },
-         "value": 6,
-         "mark": "good"
-        },
-        {
-         "label": {
-          "en": "count",
-          "ko": "카운트"
-         },
+         "key": 6,
          "value": 1
         }
-       ]
+       ],
+       "slots": 1,
+       "struck": [],
+       "marks": {
+        "good": [
+         6
+        ]
+       }
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "votes",
+        "at": 4
+       },
+       "to": {
+        "view": "box",
+        "at": 6
+       }
+      }
+     ]
     },
     {
      "caption": {
-      "en": "Vote 5 differs from candidate 6: the two cancel, count down to 0.",
-      "ko": "5번 표는 후보 6번과 다릅니다. 둘이 상쇄되어 카운트를 내려 0입니다."
+      "en": "Vote 5 differs from candidate 6: the two cancel, count down to 0, so the candidate is out.",
+      "ko": "5번 표는 후보 6번과 다릅니다. 둘이 상쇄되어 카운트를 내려 0이 되고, 후보가 빠집니다."
      },
      "views": {
       "votes": {
@@ -767,25 +818,34 @@
         ]
        }
       },
-      "state": {
-       "items": [
+      "box": {
+       "entries": [
         {
-         "label": {
-          "en": "candidate",
-          "ko": "후보"
-         },
-         "value": 6
-        },
-        {
-         "label": {
-          "en": "count",
-          "ko": "카운트"
-         },
+         "key": 6,
          "value": 0
         }
-       ]
+       ],
+       "slots": 1,
+       "struck": [
+        6
+       ],
+       "marks": {}
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "votes",
+        "at": 5
+       },
+       "to": {
+        "view": "box",
+        "at": 6
+       },
+       "value": "−1",
+       "mark": "bad"
+      }
+     ]
     },
     {
      "caption": {
@@ -845,26 +905,34 @@
         "dim": []
        }
       },
-      "state": {
-       "items": [
+      "box": {
+       "entries": [
         {
-         "label": {
-          "en": "candidate",
-          "ko": "후보"
-         },
-         "value": 6,
-         "mark": "good"
-        },
-        {
-         "label": {
-          "en": "count",
-          "ko": "카운트"
-         },
+         "key": 6,
          "value": 1
         }
-       ]
+       ],
+       "slots": 1,
+       "struck": [],
+       "marks": {
+        "good": [
+         6
+        ]
+       }
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "votes",
+        "at": 6
+       },
+       "to": {
+        "view": "box",
+        "at": 6
+       }
+      }
+     ]
     },
     {
      "caption": {
@@ -927,24 +995,20 @@
         "dim": []
        }
       },
-      "state": {
-       "items": [
+      "box": {
+       "entries": [
         {
-         "label": {
-          "en": "candidate",
-          "ko": "후보"
-         },
-         "value": 6,
-         "mark": "path"
-        },
-        {
-         "label": {
-          "en": "count",
-          "ko": "카운트"
-         },
+         "key": 6,
          "value": 1
         }
-       ]
+       ],
+       "slots": 1,
+       "struck": [],
+       "marks": {
+        "path": [
+         6
+        ]
+       }
       }
      },
      "answer": "6"
@@ -983,23 +1047,11 @@
         ]
        }
       },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "candidate",
-          "ko": "후보"
-         },
-         "value": "–"
-        },
-        {
-         "label": {
-          "en": "count",
-          "ko": "카운트"
-         },
-         "value": 0
-        }
-       ]
+      "box": {
+       "entries": [],
+       "slots": 1,
+       "struck": [],
+       "marks": {}
       }
      }
     },
@@ -1031,26 +1083,34 @@
         "dim": []
        }
       },
-      "state": {
-       "items": [
+      "box": {
+       "entries": [
         {
-         "label": {
-          "en": "candidate",
-          "ko": "후보"
-         },
-         "value": 9,
-         "mark": "good"
-        },
-        {
-         "label": {
-          "en": "count",
-          "ko": "카운트"
-         },
+         "key": 9,
          "value": 1
         }
-       ]
+       ],
+       "slots": 1,
+       "struck": [],
+       "marks": {
+        "good": [
+         9
+        ]
+       }
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "votes",
+        "at": 0
+       },
+       "to": {
+        "view": "box",
+        "at": 9
+       }
+      }
+     ]
     },
     {
      "caption": {
@@ -1080,24 +1140,20 @@
         "dim": []
        }
       },
-      "state": {
-       "items": [
+      "box": {
+       "entries": [
         {
-         "label": {
-          "en": "candidate",
-          "ko": "후보"
-         },
-         "value": 9,
-         "mark": "path"
-        },
-        {
-         "label": {
-          "en": "count",
-          "ko": "카운트"
-         },
+         "key": 9,
          "value": 1
         }
-       ]
+       ],
+       "slots": 1,
+       "struck": [],
+       "marks": {
+        "path": [
+         9
+        ]
+       }
       }
      },
      "answer": "9"
