@@ -202,11 +202,27 @@
 .wt-mapcard.wt-struck .wt-mapkey { text-decoration: line-through; text-decoration-color: var(--wt-bad); text-decoration-thickness: 2px; color: var(--wt-bad); }
 
 /* map probe: a lookup, on its own row above the cards; a hit rings its key's card, a miss is red and dashed */
-.wt-probe { flex-basis: 100%; min-width: 0; }
-.wt-probechip { display: inline-block; max-width: 100%; box-sizing: border-box; padding: 2px 10px; font: 700 13px var(--wt-mono); border: 2px solid var(--wt-accent); border-radius: 999px; color: var(--wt-accent); background: var(--wt-accent-soft); overflow-wrap: anywhere; }
-.wt-probe.wt-miss .wt-probechip { border-style: dashed; border-color: var(--wt-bad); color: var(--wt-bad); background: var(--wt-bad-soft); }
-.wt-probe.wt-idle .wt-probechip { visibility: hidden; }
+.wt-mapprobe { flex-basis: 100%; min-width: 0; }
+.wt-mapprobechip { display: inline-block; max-width: 100%; box-sizing: border-box; padding: 2px 10px; font: 700 13px var(--wt-mono); border: 2px solid var(--wt-accent); border-radius: 999px; color: var(--wt-accent); background: var(--wt-accent-soft); overflow-wrap: anywhere; }
+.wt-mapprobe.wt-miss .wt-mapprobechip { border-style: dashed; border-color: var(--wt-bad); color: var(--wt-bad); background: var(--wt-bad-soft); }
+.wt-mapprobe.wt-idle .wt-mapprobechip { visibility: hidden; }
 .wt-mapcard.wt-probed { box-shadow: 0 0 0 3px var(--wt-accent-soft), 0 0 0 5px var(--wt-accent); }
+
+/* set: a bag of member chips; a probe above it is a lookup that hits (the member lights) or misses */
+.wt-set { display: flex; max-width: 100%; flex-wrap: wrap; align-content: flex-start; gap: 6px; padding: 12px; min-height: 52px; min-width: 120px; border: 1.5px dashed var(--wt-lo); border-radius: 22px; }
+.wt-member { font: 600 14px var(--wt-mono); padding: 4px 11px; border-radius: 999px; background: var(--wt-bg); border: 2px solid var(--wt-faint); white-space: nowrap; transition: border-color .3s, background .3s, color .3s, opacity .3s; }
+.wt-member.wt-lit { border-color: var(--wt-accent); background: var(--wt-accent-soft); color: var(--wt-accent); }
+.wt-member.wt-good { border-color: var(--wt-good); background: var(--wt-good-soft); color: var(--wt-good); }
+.wt-member.wt-bad { border-color: var(--wt-bad); background: var(--wt-bad-soft); color: var(--wt-bad); }
+.wt-member.wt-path { border-color: var(--wt-accent); background: var(--wt-accent); color: var(--wt-card); }
+.wt-member.wt-dim { opacity: .4; }
+.wt-member.wt-found { animation: wt-pop .45s cubic-bezier(.2,.8,.2,1); }
+.wt-probes { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; min-height: 25px; }
+.wt-probe { display: inline-flex; align-items: baseline; gap: 6px; font: 12px var(--wt-mono); padding: 3px 9px; border-radius: 7px; border: 1.5px dashed var(--wt-mid); color: var(--wt-mid); }
+.wt-probelabel, .wt-probeword { font-family: var(--wt-sans); }
+.wt-probevalue { font-weight: 700; font-size: 14px; color: var(--wt-ink); }
+.wt-probe.wt-hit { border-style: solid; border-color: var(--wt-accent); color: var(--wt-accent); }
+.wt-probe.wt-hit .wt-probevalue { color: var(--wt-accent); }
 
 /* output: the box the answer's values move into */
 .wt-output { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; min-width: 96px; min-height: 46px; padding: 6px; border: 2px solid var(--wt-lo); border-radius: 10px; background: var(--wt-bg); }

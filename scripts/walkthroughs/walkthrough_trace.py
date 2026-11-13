@@ -12,12 +12,14 @@
     run.frame("Answer 4.", answer=4, board=...)   # the last frame carries the answer
     wt.write("walkthrough.json")                  # fails if a run's answer is not its expected output
 
-A value going from one place to another is a move, by address (an array index, a map key, an output index, a queue
-position from the front, a grid [row, col]):
+A value going from one place to another is a move, by address (an array index, a map key, a set member, an output
+index, a queue position from the front, a grid [row, col]):
 
-    from walkthrough_trace import at, move, map_entries, span
+    from walkthrough_trace import at, move, map_entries, probe, span
     run.frame("4 goes into the map.", xs={"values": nums}, uses={"entries": map_entries(counts)},
               moves=[move(at("xs", i), at("uses", 4))])   # move(dst=...) creates, move(src) drops
+
+A lookup in a `set` view is a probe: `seen={"members": list(seen), "probes": [probe(x, hit=x in seen)]}`.
 
 A window or a record on an array is a span: `xs={"values": nums, "spans": {"window": span(left, right, "window")}}`.
 
@@ -45,7 +47,7 @@ def _snapshot(value, where):
 
 
 def at(view, where):
-    """An address: a place in a view (an array or output index, a map key, a queue position, a grid [row, col])."""
+    """An address: a place in a view (an array or output index, a map key, a set member, a queue position, a grid [row, col])."""
     return {"view": view, "at": where}
 
 
@@ -80,6 +82,17 @@ def span(start, end, label=None, mark=None, below=False, fade=False):
     if fade:
         s["fade"] = True
     return s
+
+
+def probe(value, hit=None, label=None):
+    """A `set` view's lookup of `value`: `set={"members": list(seen), "probes": [probe(x)]}`. Whether it hits defaults to
+    whether `value` is a member; pass `hit=False` for a value looked up and then added in the same step."""
+    p = {"value": value}
+    if hit is not None:
+        p["hit"] = hit
+    if label is not None:
+        p["label"] = label
+    return p
 
 
 def map_entries(mapping):
