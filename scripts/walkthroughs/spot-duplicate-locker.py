@@ -13,7 +13,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import driver_list, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough  # noqa: E402
 
 SLUG = "spot-duplicate-locker"
@@ -70,7 +70,7 @@ def solve(lockers, run):
 
 for number, sample in enumerate(sample_cases(SLUG), start=1):
     lockers = json.loads(sample["input"])
-    run = sample_run(wt, number, sample, input=f"lockers = {json.dumps(lockers, separators=(',', ':'))}")
+    run = sample_run(wt, number, sample, input=f"lockers = {driver_list(lockers)}")
     solve(lockers, run)
 wt.write(walkthrough_path(SLUG))
 print(walkthrough_path(SLUG))

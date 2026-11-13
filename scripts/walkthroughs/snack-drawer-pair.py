@@ -12,7 +12,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import driver_list, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough  # noqa: E402
 
 SLUG = "snack-drawer-pair"
@@ -59,7 +59,7 @@ def solve(snacks, target, run):
             j = seen[partner]
             row = list(seen).index(partner)
             result = [j, i]
-            answer = json.dumps(result, separators=(",", ":"))
+            answer = driver_list(result)
             frame({"en": f"Snack {i} has {calories}, so it needs {target} − {calories} = {partner}. "
                          f"{partner} is in the map at index {j}: snacks {j} and {i} sum to {target}. "
                          f"Answer {answer}.",

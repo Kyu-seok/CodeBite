@@ -14,7 +14,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import driver_list, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough  # noqa: E402
 
 SLUG = "next-speaker-order"
@@ -30,10 +30,6 @@ wt = Walkthrough(
         {"id": "state", "type": "vars"},
     ],
 )
-
-
-def compact(values):
-    return json.dumps(values, separators=(',', ':'))
 
 
 def solve(nums, run):
@@ -99,7 +95,7 @@ def solve(nums, run):
     start = i + 1
     nums[start:] = reversed(nums[start:])
     tail_from = n
-    answer = compact(nums)
+    answer = driver_list(nums)
     if i >= 0:
         frame({"en": f"Reverse the tail from index {start}: falling becomes rising, its smallest arrangement. "
                      f"The next lineup is {answer}.",
@@ -116,7 +112,7 @@ def solve(nums, run):
 
 for number, sample in enumerate(sample_cases(SLUG), start=1):
     order = json.loads(sample["input"])
-    run = sample_run(wt, number, sample, input=f"shotOrder = {compact(order)}")
+    run = sample_run(wt, number, sample, input=f"shotOrder = {driver_list(order)}")
     solve(order, run)
 wt.write(walkthrough_path(SLUG))
 print(walkthrough_path(SLUG))

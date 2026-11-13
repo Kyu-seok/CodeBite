@@ -14,7 +14,7 @@ from collections import defaultdict
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import driver_list, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough  # noqa: E402
 
 SLUG = "group-anagrams"
@@ -46,7 +46,7 @@ def solve(strs, run):
                           "marks": group_marks or {}},
                   **answer)
 
-    frame({"en": f"Read the {len(strs)} {'word' if len(strs) == 1 else 'words'} in order, starting with an "
+    frame({"en": f"Read the {len(strs)} {plural(len(strs), 'word', 'words')} in order, starting with an "
                  f"empty map of groups.",
            "ko": f"단어 {len(strs)}개를 차례로 읽습니다. 그룹 맵은 비어 있습니다."})
     for i, word in enumerate(strs):
@@ -66,9 +66,9 @@ def solve(strs, run):
               group_marks={"good": [[row, len(groups[key]) - 1]]})
     result = [sorted(group) for group in groups.values()]
     result.sort()
-    answer = json.dumps(result, separators=(",", ":"))
+    answer = driver_list(result)
     n = len(groups)
-    frame({"en": f"Every word is in the group of its key: {n} {'group' if n == 1 else 'groups'}. "
+    frame({"en": f"Every word is in the group of its key: {n} {plural(n, 'group', 'groups')}. "
                  f"Printed with each group sorted and the groups in order: {answer}.",
            "ko": f"모든 단어가 자기 키의 그룹에 들어갔습니다: 그룹 {n}개. 그룹 안과 그룹끼리 정렬해 출력하면 {answer}입니다."},
           group_marks={"path": [[r, c] for r, g in enumerate(groups.values()) for c in range(len(g))]},
@@ -77,7 +77,7 @@ def solve(strs, run):
 
 for number, sample in enumerate(sample_cases(SLUG), start=1):
     strs = json.loads(sample["input"])
-    run = sample_run(wt, number, sample, input=f"strs = {json.dumps(strs, separators=(',', ':'))}")
+    run = sample_run(wt, number, sample, input=f"strs = {driver_list(strs)}")
     solve(strs, run)
 wt.write(walkthrough_path(SLUG))
 print(walkthrough_path(SLUG))

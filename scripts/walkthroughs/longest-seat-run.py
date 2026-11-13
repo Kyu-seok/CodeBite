@@ -13,7 +13,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import josa, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough  # noqa: E402
 
 SLUG = "longest-seat-run"
@@ -29,14 +29,6 @@ wt = Walkthrough(
         {"id": "state", "type": "vars"},
     ],
 )
-
-
-def josa(n, pair):
-    """`n` followed by the Korean particle that fits how n is read aloud: josa(41, "은는") is "41은"
-    (사십일), josa(42, "은는") is "42는" (사십이). Only 2, 4, 5 and 9 (이, 사, 오, 구) end in a vowel;
-    a number ending in 0 ends in 영, 십, 백, 천 or 만, all with a final consonant."""
-    last = abs(n) % 10
-    return f"{n}{pair[1] if last in (2, 4, 5, 9) else pair[0]}"
 
 
 def solve(seat_ids, run):

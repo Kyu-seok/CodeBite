@@ -13,7 +13,7 @@ from collections import Counter
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough  # noqa: E402
 
 SLUG = "unique-genre-window"
@@ -66,7 +66,7 @@ def solve(queue, k, run):
                "ko": "k = 0이면 어떤 장르도 넣을 수 없어 태그 하나도 들어가지 않습니다. 답은 0입니다."},
               answer="0")
         return
-    frame({"en": f"{n} tags, at most k = {k} {'genre' if k == 1 else 'genres'} per window. "
+    frame({"en": f"{n} tags, at most k = {k} {plural(k, 'genre', 'genres')} per window. "
                  f"The window starts empty; add tags from the left.",
            "ko": f"태그 {n}개, 구간마다 장르는 최대 k = {k}입니다. 빈 구간에서 시작해 왼쪽부터 태그를 넣습니다."})
     for right, tag in enumerate(queue):
@@ -98,7 +98,7 @@ def solve(queue, k, run):
                          f"왼쪽에서 뺍니다: \"{gone}\". 장르 {emptied}의 개수가 0이 되어 빠지고 left = {left}. 구간 \"{queue[left:right + 1]}\": {verdict_ko}"},
                   good=[right], bad=dropped, row_good=tag, best_mark="good" if improved else None)
         else:
-            frame({"en": f"{added[0]}: {len(window)} {'genre' if len(window) == 1 else 'genres'}, within k = {k}. "
+            frame({"en": f"{added[0]}: {len(window)} {plural(len(window), 'genre', 'genres')}, within k = {k}. "
                          f"Window \"{queue[left:right + 1]}\": {verdict_en}",
                    "ko": f"{added[1]}. 장르 {len(window)}종류로 k = {k} 이내입니다. "
                          f"구간 \"{queue[left:right + 1]}\": {verdict_ko}"},

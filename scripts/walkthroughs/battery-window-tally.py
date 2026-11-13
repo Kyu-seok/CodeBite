@@ -14,7 +14,7 @@ from collections import Counter
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough  # noqa: E402
 
 SLUG = "battery-window-tally"
@@ -85,8 +85,8 @@ def solve(readings, k, run):
         if hits:
             listed = ", ".join(f"[{a}..{b}]" for a, b in windows)
             same = need == total
-            frame({"en": f"{step}, seen {hits} {'time' if hits == 1 else 'times'}: "
-                         f"{'that window sums' if hits == 1 else 'those windows sum'} to {k} "
+            frame({"en": f"{step}, seen {hits} {plural(hits, 'time', 'times')}: "
+                         f"{plural(hits, 'that window sums', 'those windows sum')} to {k} "
                          f"(readings{listed}). count = {count}. "
                          + (f"Then record {total}." if not same else f"Then record {total} again: now {seen[total]}."),
                    "ko": f"{step}이고 seen에 {hits}번 있습니다. 합이 {k}인 구간: readings{listed}. "

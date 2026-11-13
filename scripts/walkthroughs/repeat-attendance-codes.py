@@ -13,7 +13,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import driver_list, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough  # noqa: E402
 
 SLUG = "repeat-attendance-codes"
@@ -73,7 +73,7 @@ def solve(codes, run):
                   lit=[i] if i != slot else [], good=[slot])
     i = slot = None
     result = sorted(repeated)
-    answer = json.dumps(result, separators=(',', ':'))
+    answer = driver_list(result)
     if result:
         listed = ", ".join(map(str, result))
         frame({"en": f"Every scan read. The codes that met a negative slot were scanned twice: {listed}. "

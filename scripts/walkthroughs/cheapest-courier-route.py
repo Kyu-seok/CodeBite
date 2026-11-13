@@ -13,7 +13,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import driver_list, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough  # noqa: E402
 
 SLUG = "cheapest-courier-route"
@@ -36,10 +36,6 @@ wt = Walkthrough(
 
 def show(x):
     return "∞" if x == INF else x
-
-
-def plural(n, one, many):
-    return one if n == 1 else many
 
 
 def arrow(route):
@@ -204,7 +200,7 @@ for number, sample in enumerate(sample_cases(SLUG), start=1):
                                  for v in range(n)],
                        "edges": [{"from": a, "to": b, "label": w} for a, b, w in links]}}
     run = sample_run(wt, number, sample, setup=setup,
-                     input=f"n = {n}, links = {json.dumps(links, separators=(',', ':'))}, "
+                     input=f"n = {n}, links = {driver_list(links)}, "
                            f"src = {src}, dst = {dst}, maxHops = {k}")
     solve(n, links, src, dst, k, run)
 wt.write(walkthrough_path(SLUG))

@@ -13,7 +13,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import driver_list, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough  # noqa: E402
 
 SLUG = "dedupe-textbook-shelf"
@@ -50,7 +50,7 @@ def solve(books, run):
                                     "mark": k_mark}]},
                   **answer)
 
-    frame({"en": f"{n} {'book' if n == 1 else 'books'}. The first book is always kept, so k starts at 1: "
+    frame({"en": f"{n} {plural(n, 'book', 'books')}. The first book is always kept, so k starts at 1: "
                  f"books[0..k-1] is the compacted front. "
                  + ("Read on from index 1." if n > 1 else "There is no other book to read."),
            "ko": f"책 {n}권입니다. 첫 책은 항상 남으므로 k는 1에서 시작합니다. books[0..k-1]이 정리된 앞쪽입니다. "
@@ -83,7 +83,7 @@ def solve(books, run):
     frame({"en": f"{why['en']}{tail['en']}. Answer k = {k}.",
            "ko": f"{why['ko']}{tail['ko']}. 답은 k = {k}입니다."},
           path=range(k), dim=range(k, n), k_mark="good",
-          answer=f"{k}\n{json.dumps(front, separators=(',', ':'))}")
+          answer=f"{k}\n{driver_list(front)}")
 
 
 for number, sample in enumerate(sample_cases(SLUG), start=1):

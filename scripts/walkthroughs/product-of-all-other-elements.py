@@ -14,7 +14,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import driver_list, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough  # noqa: E402
 
 SLUG = "product-of-all-other-elements"
@@ -99,7 +99,7 @@ def solve(nums, run):
         en += f" Then suffix takes in nums[{i}]: {old} × {product_text([nums[i]])} = {suffix}."
         ko += f" 그다음 suffix에 nums[{i}]의 값을 곱합니다: {old} × {product_text([nums[i]])} = {suffix}."
         frame({"en": en, "ko": ko}, at=i, covers=range(i + 1, n), good=[i])
-    answer = json.dumps(result, separators=(",", ":"))
+    answer = driver_list(result)
     frame({"en": f"Both passes are done: each answer[i] is its left product times its right product, "
                  f"with nums[i] itself never multiplied in. Answer {answer}.",
            "ko": f"두 단계가 끝났습니다. 각 answer[i]는 왼쪽 곱 × 오른쪽 곱이고, nums[i] 자신은 한 번도 곱해지지 "

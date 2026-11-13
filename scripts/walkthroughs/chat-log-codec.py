@@ -14,7 +14,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import driver_list, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough  # noqa: E402
 
 SLUG = "chat-log-codec"
@@ -69,7 +69,7 @@ def solve(messages, run):
                   **answer)
 
     count = len(messages)
-    frame({"en": f"pack gets {count} {'message' if count == 1 else 'messages'}. It writes each one as its length, "
+    frame({"en": f"pack gets {count} {plural(count, 'message', 'messages')}. It writes each one as its length, "
                  f"a #, then the message itself, so the receiver never has to guess where a message ends.",
            "ko": f"pack이 메시지 {count}개를 받습니다. 메시지마다 길이, #, 메시지 순으로 적으므로 받는 쪽은 "
                  f"메시지가 어디서 끝나는지 추측할 필요가 없습니다."})
@@ -79,7 +79,7 @@ def solve(messages, run):
         start = len(blob)
         blob += piece
         what = ("an empty message, so nothing follows the #" if not message
-                else f"{len(message)} {'character' if len(message) == 1 else 'characters'}")
+                else f"{len(message)} {plural(len(message), 'character', 'characters')}")
         what_ko = ("빈 메시지라 # 뒤에 아무것도 붙지 않습니다" if not message else f"문자 {len(message)}개입니다")
         frame({"en": f"Message {n}, {quoted(message)}, is {what}: append {piece}.",
                "ko": f"메시지 {n}({quoted(message)}): {what_ko}. blob 끝에 이어 붙입니다: {piece}"},
@@ -103,7 +103,7 @@ def solve(messages, run):
         i = start + length
         n = len(out)
         if length:
-            take = (f"take the next {length} {'character' if length == 1 else 'characters'}, {quoted(message)}, "
+            take = (f"take the next {length} {plural(length, 'character', 'characters')}, {quoted(message)}, "
                     f"as message {n}, whatever they are")
             take_ko = f"그 뒤의 문자 {length}개({quoted(message)})를 내용과 상관없이 {n}번째 메시지로 가져옵니다"
         else:
@@ -116,9 +116,9 @@ def solve(messages, run):
         frame({"en": f"At i = {at}, the digits up to the next # read {length}: {take}. Jump to i = {i}.{note}",
                "ko": f"i = {at}에서 다음 #까지의 숫자는 {length}입니다. {take_ko}. 건너뛰어 i = {i}에서 계속합니다.{note_ko}"},
               sender_done=True, lit=head, good=took, got=[n - 1])
-    answer = json.dumps(out, separators=(",", ":"), ensure_ascii=False)
+    answer = driver_list(out)
     frame({"en": f"i = {i} is the end of the blob, so unpack stops with {len(out)} "
-                 f"{'message' if len(out) == 1 else 'messages'}, the same as the sender's: answer {answer}.",
+                 f"{plural(len(out), 'message', 'messages')}, the same as the sender's: answer {answer}.",
            "ko": f"i = {i}에서 문자열이 끝나므로 unpack이 메시지 {len(out)}개로 멈춥니다. 보낸 쪽과 같으므로 "
                  f"답은 {answer}입니다."},
           sender_done=True, got=range(len(out)), path=True, answer=answer)
@@ -129,7 +129,7 @@ for number, sample in enumerate(sample_cases(SLUG), start=1):
     run = sample_run(wt, number, sample, input=f"messages = {sample['input']}")
     solve(messages, run)
 extra = ["7#x", "#"]
-extra_input = json.dumps(extra, separators=(",", ":"))
+extra_input = driver_list(extra)
 solve(extra, wt.run({"en": "Markers inside", "ko": "메시지 안의 구분자"}, input=f"messages = {extra_input}",
                     expected=extra_input, extra=True))
 wt.write(walkthrough_path(SLUG))

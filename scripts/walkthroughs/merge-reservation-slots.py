@@ -13,7 +13,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import driver_list, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough  # noqa: E402
 
 SLUG = "merge-reservation-slots"
@@ -93,10 +93,10 @@ def solve(seatings, run):
                    "ko": f"{seat}: {why_ko} 새 구간을 엽니다."},
                   at=i, s_marks={"lit": lit_seat, "dim": [[k, c] for k in range(i) for c in (0, 1)]},
                   m_marks={"good": [[len(merged) - 1, 0], [len(merged) - 1, 1]]})
-    answer = json.dumps(merged, separators=(",", ":"))
+    answer = driver_list(merged)
     n = len(merged)
     frame({"en": f"Every seating is in a window. {len(ordered)} seatings became {n} "
-                 f"non-overlapping {'window' if n == 1 else 'windows'}: {answer}.",
+                 f"non-overlapping {plural(n, 'window', 'windows')}: {answer}.",
            "ko": f"모든 예약이 구간에 들어갔습니다. 예약 {len(ordered)}개가 겹치지 않는 구간 {n}개가 되었습니다: {answer}."},
           s_marks={"dim": [[k, c] for k in range(len(ordered)) for c in (0, 1)]},
           m_marks={"path": [[k, c] for k in range(n) for c in (0, 1)]}, answer=answer)
