@@ -107,7 +107,8 @@
          ]
         ],
         "good": [],
-        "bad": []
+        "bad": [],
+        "path": []
        }
       },
       "queue": {
@@ -131,13 +132,6 @@
       },
       "state": {
        "items": [
-        {
-         "label": {
-          "en": "minute",
-          "ko": "분"
-         },
-         "value": 0
-        },
         {
          "label": {
           "en": "fresh left",
@@ -233,7 +227,8 @@
           1
          ]
         ],
-        "bad": []
+        "bad": [],
+        "path": []
        }
       },
       "queue": {
@@ -257,13 +252,6 @@
       },
       "state": {
        "items": [
-        {
-         "label": {
-          "en": "minute",
-          "ko": "분"
-         },
-         "value": 0
-        },
         {
          "label": {
           "en": "fresh left",
@@ -366,7 +354,8 @@
           1
          ]
         ],
-        "bad": []
+        "bad": [],
+        "path": []
        }
       },
       "queue": {
@@ -399,13 +388,6 @@
       },
       "state": {
        "items": [
-        {
-         "label": {
-          "en": "minute",
-          "ko": "분"
-         },
-         "value": 0
-        },
         {
          "label": {
           "en": "fresh left",
@@ -519,7 +501,8 @@
           0
          ]
         ],
-        "bad": []
+        "bad": [],
+        "path": []
        }
       },
       "queue": {
@@ -551,13 +534,6 @@
       },
       "state": {
        "items": [
-        {
-         "label": {
-          "en": "minute",
-          "ko": "분"
-         },
-         "value": 1
-        },
         {
          "label": {
           "en": "fresh left",
@@ -651,7 +627,8 @@
           0
          ]
         ],
-        "bad": []
+        "bad": [],
+        "path": []
        }
       },
       "queue": {
@@ -683,13 +660,6 @@
       },
       "state": {
        "items": [
-        {
-         "label": {
-          "en": "minute",
-          "ko": "분"
-         },
-         "value": 1
-        },
         {
          "label": {
           "en": "fresh left",
@@ -797,7 +767,8 @@
           2
          ]
         ],
-        "bad": []
+        "bad": [],
+        "path": []
        }
       },
       "queue": {
@@ -829,13 +800,6 @@
       },
       "state": {
        "items": [
-        {
-         "label": {
-          "en": "minute",
-          "ko": "분"
-         },
-         "value": 1
-        },
         {
          "label": {
           "en": "fresh left",
@@ -937,7 +901,8 @@
           2
          ]
         ],
-        "bad": []
+        "bad": [],
+        "path": []
        }
       },
       "queue": {
@@ -969,13 +934,6 @@
       },
       "state": {
        "items": [
-        {
-         "label": {
-          "en": "minute",
-          "ko": "분"
-         },
-         "value": 1
-        },
         {
          "label": {
           "en": "fresh left",
@@ -1091,7 +1049,8 @@
           1
          ]
         ],
-        "bad": []
+        "bad": [],
+        "path": []
        }
       },
       "queue": {
@@ -1123,13 +1082,6 @@
       },
       "state": {
        "items": [
-        {
-         "label": {
-          "en": "minute",
-          "ko": "분"
-         },
-         "value": 2
-        },
         {
          "label": {
           "en": "fresh left",
@@ -1239,7 +1191,8 @@
           1
          ]
         ],
-        "bad": []
+        "bad": [],
+        "path": []
        }
       },
       "queue": {
@@ -1271,13 +1224,6 @@
       },
       "state": {
        "items": [
-        {
-         "label": {
-          "en": "minute",
-          "ko": "분"
-         },
-         "value": 2
-        },
         {
          "label": {
           "en": "fresh left",
@@ -1401,7 +1347,8 @@
           2
          ]
         ],
-        "bad": []
+        "bad": [],
+        "path": []
        }
       },
       "queue": {
@@ -1433,13 +1380,6 @@
       },
       "state": {
        "items": [
-        {
-         "label": {
-          "en": "minute",
-          "ko": "분"
-         },
-         "value": 2
-        },
         {
          "label": {
           "en": "fresh left",
@@ -1557,7 +1497,8 @@
           2
          ]
         ],
-        "bad": []
+        "bad": [],
+        "path": []
        }
       },
       "queue": {
@@ -1589,13 +1530,6 @@
       },
       "state": {
        "items": [
-        {
-         "label": {
-          "en": "minute",
-          "ko": "분"
-         },
-         "value": 2
-        },
         {
          "label": {
           "en": "fresh left",
@@ -1727,7 +1661,8 @@
           2
          ]
         ],
-        "bad": []
+        "bad": [],
+        "path": []
        }
       },
       "queue": {
@@ -1759,13 +1694,6 @@
       },
       "state": {
        "items": [
-        {
-         "label": {
-          "en": "minute",
-          "ko": "분"
-         },
-         "value": 3
-        },
         {
          "label": {
           "en": "fresh left",
@@ -1891,7 +1819,8 @@
           2
          ]
         ],
-        "bad": []
+        "bad": [],
+        "path": []
        }
       },
       "queue": {
@@ -1923,13 +1852,6 @@
       },
       "state": {
        "items": [
-        {
-         "label": {
-          "en": "minute",
-          "ko": "분"
-         },
-         "value": 3
-        },
         {
          "label": {
           "en": "fresh left",
@@ -2056,7 +1978,8 @@
          ]
         ],
         "good": [],
-        "bad": []
+        "bad": [],
+        "path": []
        }
       },
       "queue": {
@@ -2088,13 +2011,6 @@
       },
       "state": {
        "items": [
-        {
-         "label": {
-          "en": "minute",
-          "ko": "분"
-         },
-         "value": 3
-        },
         {
          "label": {
           "en": "fresh left",
@@ -2208,7 +2124,13 @@
        "marks": {
         "lit": [],
         "good": [],
-        "bad": []
+        "bad": [],
+        "path": [
+         [
+          2,
+          2
+         ]
+        ]
        }
       },
       "queue": {
@@ -2232,13 +2154,6 @@
       },
       "state": {
        "items": [
-        {
-         "label": {
-          "en": "minute",
-          "ko": "분"
-         },
-         "value": 4
-        },
         {
          "label": {
           "en": "fresh left",
@@ -2305,7 +2220,8 @@
          ]
         ],
         "good": [],
-        "bad": []
+        "bad": [],
+        "path": []
        }
       },
       "queue": {
@@ -2329,13 +2245,6 @@
       },
       "state": {
        "items": [
-        {
-         "label": {
-          "en": "minute",
-          "ko": "분"
-         },
-         "value": 0
-        },
         {
          "label": {
           "en": "fresh left",
@@ -2406,7 +2315,8 @@
          ]
         ],
         "good": [],
-        "bad": []
+        "bad": [],
+        "path": []
        }
       },
       "queue": {
@@ -2430,13 +2340,6 @@
       },
       "state": {
        "items": [
-        {
-         "label": {
-          "en": "minute",
-          "ko": "분"
-         },
-         "value": 0
-        },
         {
          "label": {
           "en": "fresh left",
@@ -2515,7 +2418,8 @@
           2,
           2
          ]
-        ]
+        ],
+        "path": []
        }
       },
       "queue": {
@@ -2525,13 +2429,6 @@
       },
       "state": {
        "items": [
-        {
-         "label": {
-          "en": "minute",
-          "ko": "분"
-         },
-         "value": 1
-        },
         {
          "label": {
           "en": "fresh left",
@@ -2591,7 +2488,8 @@
          ]
         ],
         "good": [],
-        "bad": []
+        "bad": [],
+        "path": []
        }
       },
       "queue": {
@@ -2615,13 +2513,6 @@
       },
       "state": {
        "items": [
-        {
-         "label": {
-          "en": "minute",
-          "ko": "분"
-         },
-         "value": 0
-        },
         {
          "label": {
           "en": "fresh left",
@@ -2685,7 +2576,8 @@
          ]
         ],
         "good": [],
-        "bad": []
+        "bad": [],
+        "path": []
        }
       },
       "queue": {
@@ -2709,13 +2601,6 @@
       },
       "state": {
        "items": [
-        {
-         "label": {
-          "en": "minute",
-          "ko": "분"
-         },
-         "value": 0
-        },
         {
          "label": {
           "en": "fresh left",
@@ -2771,7 +2656,8 @@
           1,
           1
          ]
-        ]
+        ],
+        "path": []
        }
       },
       "queue": {
@@ -2781,13 +2667,6 @@
       },
       "state": {
        "items": [
-        {
-         "label": {
-          "en": "minute",
-          "ko": "분"
-         },
-         "value": 1
-        },
         {
          "label": {
           "en": "fresh left",
