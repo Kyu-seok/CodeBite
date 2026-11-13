@@ -1,7 +1,8 @@
 #!/usr/bin/env python3.12
 """valid-anagram's Walkthrough: the reference solution (scripts/replay-solutions/valid-anagram.py),
-Counter(s) == Counter(t), with the two counts built a letter at a time as Counter builds them, one frame
-per letter, then one frame comparing them, on each sample Test Case.
+Counter(s) == Counter(t), with the two counts built a letter at a time as Counter builds them: each letter
+moves into its card in its string's map, one frame per letter, then one frame comparing the two maps, on each
+sample Test Case.
 
     CODEBITE_DB=<database> scripts/walkthroughs/valid-anagram.py
 
@@ -14,7 +15,7 @@ from collections import Counter
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
 from codebite import sample_cases, sample_run, walkthrough_path  # noqa: E402
-from walkthrough_trace import Walkthrough  # noqa: E402
+from walkthrough_trace import Walkthrough, at, map_entries, move  # noqa: E402
 
 SLUG = "valid-anagram"
 
@@ -25,64 +26,64 @@ wt = Walkthrough(
     views=[
         {"id": "s", "type": "array", "title": "s"},
         {"id": "t", "type": "array", "title": "t"},
-        {"id": "counts", "type": "table", "title": {"en": "letter counts", "ko": "글자별 개수"}},
+        {"id": "count_s", "type": "map", "title": {"en": "letters in s", "ko": "s의 글자별 개수"},
+         "empty": {"en": "empty", "ko": "비어 있음"}},
+        {"id": "count_t", "type": "map", "title": {"en": "letters in t", "ko": "t의 글자별 개수"},
+         "empty": {"en": "empty", "ko": "비어 있음"}},
     ],
 )
 
 
 def solve(s, t, run):
     """Solution.isAnagram, counting letter by letter. Returns the answer as the Driver prints it."""
-    letters = sorted(set(s) | set(t))  # one column per letter either string has
     count_s, count_t = Counter(), Counter()
     i = j = None
 
-    def frame(caption, s_marks=None, t_marks=None, count_marks=None, **answer):
+    def frame(caption, s_marks=None, t_marks=None, s_count_marks=None, t_count_marks=None, moves=None, **answer):
         run.frame(caption,
-                  s={"values": list(s), "pointers": {"i": i}, "marks": s_marks or {}},
-                  t={"values": list(t), "pointers": {"j": j}, "marks": t_marks or {}},
-                  counts={"columns": letters,
-                          "rows": [{"label": {"en": "in s", "ko": "s 안"}, "cells": [count_s[c] for c in letters]},
-                                   {"label": {"en": "in t", "ko": "t 안"}, "cells": [count_t[c] for c in letters]}],
-                          "marks": count_marks or {}},
-                  **answer)
+                  s={"values": list(s), "pointers": {"i": i}, "marks": s_marks or {},
+                     "unread": list(range(sum(count_s.values()), len(s)))},
+                  count_s={"entries": map_entries(count_s), "marks": s_count_marks or {}},
+                  t={"values": list(t), "pointers": {"j": j}, "marks": t_marks or {},
+                     "unread": list(range(sum(count_t.values()), len(t)))},
+                  count_t={"entries": map_entries(count_t), "marks": t_count_marks or {}},
+                  moves=moves, **answer)
 
-    frame({"en": "Count how many times each letter appears in s, then in t. Every count starts at 0.",
-           "ko": "s에서 각 글자가 몇 번 나오는지 세고, 이어서 t에서도 셉니다. 모든 개수는 0에서 시작합니다."},
-          s_marks={"dim": list(range(len(s)))}, t_marks={"dim": list(range(len(t)))})
+    frame({"en": "Count how many times each letter appears in s, then in t, each in its own map. Both maps start empty.",
+           "ko": "s에서 각 글자가 몇 번 나오는지 세고, 이어서 t에서도 셉니다. 두 맵 모두 비어 있는 채로 시작합니다."})
     for i, c in enumerate(s):
         count_s[c] += 1
-        frame({"en": f"s[{i}] is '{c}': s now has {count_s[c]} × '{c}'.",
-               "ko": f"s[{i}] = '{c}': s의 '{c}' 개수는 이제 {count_s[c]}개입니다."},
-              s_marks={"lit": [i], "dim": list(range(i + 1, len(s)))}, t_marks={"dim": list(range(len(t)))},
-              count_marks={"good": [[0, letters.index(c)]]})
+        frame({"en": f"s[{i}] is '{c}': it goes into the s map, which now has {count_s[c]} × '{c}'.",
+               "ko": f"s[{i}] = '{c}': s의 맵에 넣으면 '{c}' 개수는 이제 {count_s[c]}개입니다."},
+              s_marks={"lit": [i]}, s_count_marks={"good": [c]}, moves=[move(at("s", i), at("count_s", c))])
     i = None
     for j, c in enumerate(t):
         count_t[c] += 1
-        frame({"en": f"t[{j}] is '{c}': t now has {count_t[c]} × '{c}'.",
-               "ko": f"t[{j}] = '{c}': t의 '{c}' 개수는 이제 {count_t[c]}개입니다."},
-              t_marks={"lit": [j], "dim": list(range(j + 1, len(t)))},
-              count_marks={"good": [[1, letters.index(c)]]})
+        frame({"en": f"t[{j}] is '{c}': it goes into the t map, which now has {count_t[c]} × '{c}'.",
+               "ko": f"t[{j}] = '{c}': t의 맵에 넣으면 '{c}' 개수는 이제 {count_t[c]}개입니다."},
+              t_marks={"lit": [j]}, t_count_marks={"good": [c]}, moves=[move(at("t", j), at("count_t", c))])
     j = None
     result = count_s == count_t
     answer = str(result).lower()
+    letters = set(count_s) | set(count_t)
     if result:
-        frame({"en": f"Every letter's count is the same in s and t ({len(letters)} letters checked), "
+        frame({"en": f"Both maps hold the same {len(letters)} letters with the same counts, "
                      f"so t is an anagram of s. Answer true.",
-               "ko": f"모든 글자({len(letters)}종류)의 개수가 s와 t에서 같으므로 t는 s의 애너그램입니다. 답은 true입니다."},
-              count_marks={"path": [[r, k] for r in (0, 1) for k in range(len(letters))]}, answer=answer)
+               "ko": f"두 맵에 같은 글자 {len(letters)}종류가 같은 개수로 들어 있으므로 t는 s의 애너그램입니다. 답은 true입니다."},
+              s_count_marks={"path": list(count_s)}, t_count_marks={"path": list(count_t)}, answer=answer)
     else:
-        differ = [c for c in letters if count_s[c] != count_t[c]]
+        differ = sorted(c for c in letters if count_s[c] != count_t[c])
         en = ", ".join(f"'{c}' {count_s[c]} vs {count_t[c]}" for c in differ)
         ko = ", ".join(f"'{c}' {count_s[c]}개 대 {count_t[c]}개" for c in differ)
         # no path: a false answer is made of no letters, so only what rules t out is marked
-        frame({"en": f"The counts differ ({en}), so t is not an anagram of s. A false answer is made of no letters, "
-                     f"so nothing is marked as its path, only the counts that rule t out: answer false.",
-               "ko": f"개수가 다른 글자가 있으므로({ko}) t는 s의 애너그램이 아닙니다. false라는 답은 어떤 글자로 "
-                     f"이루어진 것이 아니라서 답의 경로는 표시하지 않고, 애너그램이 아닌 이유인 개수만 표시합니다(답은 false)."},
+        frame({"en": f"The maps differ ({en}), so t is not an anagram of s: answer false. "
+                     f"The letters whose counts differ are marked red.",
+               "ko": f"두 맵이 다릅니다({ko}). 그래서 t는 s의 애너그램이 아니고 답은 false이며, 개수가 다른 글자를 빨간색으로 표시했습니다."},
               s_marks={"bad": [k for k, c in enumerate(s) if c in differ]},
               t_marks={"bad": [k for k, c in enumerate(t) if c in differ]},
-              count_marks={"bad": [[r, letters.index(c)] for r in (0, 1) for c in differ]}, answer=answer)
-
+              s_count_marks={"bad": [c for c in differ if c in count_s], "dim": [c for c in count_s if c not in differ]},
+              t_count_marks={"bad": [c for c in differ if c in count_t], "dim": [c for c in count_t if c not in differ]},
+              answer=answer)
 
 for number, sample in enumerate(sample_cases(SLUG), start=1):
     s, t = (line.strip() for line in sample["input"].split("\n")[:2])
