@@ -15,6 +15,16 @@ source "$script"
 fail=0
 check() { [[ "$2" == "$3" ]] || { echo "FAIL: $1: expected '$3', got '$2'"; fail=1; }; }
 
+# --- a red integration tip: CI's runs on HEAD, one "<conclusion> <url>" line each ------------------
+
+check "no runs" "$(red_tip_refusal '')" ""
+check "pending and green" "$(red_tip_refusal ' https://ci/1
+success https://ci/2')" ""
+check "red" "$(red_tip_refusal 'success https://ci/1
+failure https://ci/2')" "refusing to merge onto a red integration tip: CI failure https://ci/2; fix it first (scripts/test-failures.sh)"
+check "cancelled counts as red" "$(red_tip_refusal 'cancelled https://ci/3')" \
+  "refusing to merge onto a red integration tip: CI cancelled https://ci/3; fix it first (scripts/test-failures.sh)"
+
 # --- which integration branches CI checks on push (ci.yml) -------------------------------------
 
 check "integration/ pushes run CI" "$(ci_checks_pushes integration/x && echo yes || echo no)" yes
@@ -88,6 +98,15 @@ run_merge() {
 }
 backend_checks() { echo backend-ran; }
 frontend_checks() { echo frontend-ran; }
+ci_runs() { :; }  # no CI runs on HEAD unless a test says so
+
+ci_runs() { echo "failure https://ci/red"; }
+before=$(remote_head)
+if out=$(run_merge ticket/ok 'Ok ticket'); then echo "FAIL: merging onto a red tip must fail"; fail=1; fi
+grep -q 'red integration tip: CI failure https://ci/red' <<<"$out" || { echo "FAIL: must name the red run: $out"; fail=1; }
+check "red tip: HEAD unchanged" "$(git -C "$scratch/work" rev-parse HEAD)" "$before"
+ci_runs() { :; }
+
 
 before=$(remote_head)
 if out=$(run_merge ticket/clash 'Clash'); then echo "FAIL: a conflict must fail"; fail=1; fi
