@@ -19,10 +19,26 @@
   },
   {
    "id": "seen",
-   "type": "table",
+   "type": "map",
    "title": {
     "en": "seen: calories → index",
     "ko": "seen: 칼로리 → 인덱스"
+   },
+   "empty": {
+    "en": "empty",
+    "ko": "비어 있음"
+   }
+  },
+  {
+   "id": "result",
+   "type": "output",
+   "title": {
+    "en": "answer",
+    "ko": "답"
+   },
+   "empty": {
+    "en": "empty",
+    "ko": "비어 있음"
    }
   },
   {
@@ -55,22 +71,20 @@
        "pointers": {
         "i": null
        },
-       "marks": {
-        "lit": [],
-        "good": [],
-        "path": [],
-        "dim": []
-       }
+       "unread": [
+        0,
+        1,
+        2,
+        3
+       ],
+       "marks": {}
       },
       "seen": {
-       "columns": [
-        {
-         "en": "index",
-         "ko": "인덱스"
-        }
-       ],
-       "rows": [],
+       "entries": [],
        "marks": {}
+      },
+      "result": {
+       "values": []
       },
       "state": {
        "items": [
@@ -80,13 +94,6 @@
           "ko": "target (목표 칼로리)"
          },
          "value": 30
-        },
-        {
-         "label": {
-          "en": "partner needed",
-          "ko": "필요한 짝"
-         },
-         "value": "–"
         }
        ]
       }
@@ -108,42 +115,37 @@
        "pointers": {
         "i": 0
        },
+       "unread": [
+        1,
+        2,
+        3
+       ],
        "marks": {
         "lit": [
          0
-        ],
-        "good": [],
-        "path": [],
-        "dim": [
-         1,
-         2,
-         3
         ]
        }
       },
       "seen": {
-       "columns": [
+       "entries": [
         {
-         "en": "index",
-         "ko": "인덱스"
-        }
-       ],
-       "rows": [
-        {
-         "label": "4",
-         "cells": [
-          0
-         ]
+         "key": 4,
+         "value": "i=0"
         }
        ],
        "marks": {
         "good": [
-         [
-          0,
-          0
-         ]
+         4
         ]
+       },
+       "probe": {
+        "key": 26,
+        "label": "30 − 4 = 26",
+        "hit": false
        }
+      },
+      "result": {
+       "values": []
       },
       "state": {
        "items": [
@@ -153,17 +155,22 @@
           "ko": "target (목표 칼로리)"
          },
          "value": 30
-        },
-        {
-         "label": {
-          "en": "partner needed",
-          "ko": "필요한 짝"
-         },
-         "value": 26
         }
        ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "snacks",
+        "at": 0
+       },
+       "to": {
+        "view": "seen",
+        "at": 4
+       }
+      }
+     ]
     },
     {
      "caption": {
@@ -181,47 +188,40 @@
        "pointers": {
         "i": 1
        },
+       "unread": [
+        2,
+        3
+       ],
        "marks": {
         "lit": [
          1
-        ],
-        "good": [],
-        "path": [],
-        "dim": [
-         2,
-         3
         ]
        }
       },
       "seen": {
-       "columns": [
+       "entries": [
         {
-         "en": "index",
-         "ko": "인덱스"
-        }
-       ],
-       "rows": [
-        {
-         "label": "4",
-         "cells": [
-          0
-         ]
+         "key": 4,
+         "value": "i=0"
         },
         {
-         "label": "11",
-         "cells": [
-          1
-         ]
+         "key": 11,
+         "value": "i=1"
         }
        ],
        "marks": {
         "good": [
-         [
-          1,
-          0
-         ]
+         11
         ]
+       },
+       "probe": {
+        "key": 19,
+        "label": "30 − 11 = 19",
+        "hit": false
        }
+      },
+      "result": {
+       "values": []
       },
       "state": {
        "items": [
@@ -231,17 +231,22 @@
           "ko": "target (목표 칼로리)"
          },
          "value": 30
-        },
-        {
-         "label": {
-          "en": "partner needed",
-          "ko": "필요한 짝"
-         },
-         "value": 19
         }
        ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "snacks",
+        "at": 1
+       },
+       "to": {
+        "view": "seen",
+        "at": 11
+       }
+      }
+     ]
     },
     {
      "caption": {
@@ -259,47 +264,43 @@
        "pointers": {
         "i": 2
        },
+       "unread": [
+        3
+       ],
        "marks": {
-        "lit": [],
-        "good": [],
         "path": [
          1,
          2
-        ],
-        "dim": [
-         3
         ]
        }
       },
       "seen": {
-       "columns": [
+       "entries": [
         {
-         "en": "index",
-         "ko": "인덱스"
-        }
-       ],
-       "rows": [
-        {
-         "label": "4",
-         "cells": [
-          0
-         ]
+         "key": 4,
+         "value": "i=0"
         },
         {
-         "label": "11",
-         "cells": [
-          1
-         ]
+         "key": 11,
+         "value": "i=1"
         }
        ],
        "marks": {
         "path": [
-         [
-          1,
-          0
-         ]
+         11
         ]
+       },
+       "probe": {
+        "key": 11,
+        "label": "30 − 19 = 11",
+        "hit": true
        }
+      },
+      "result": {
+       "values": [
+        1,
+        2
+       ]
       },
       "state": {
        "items": [
@@ -309,17 +310,34 @@
           "ko": "target (목표 칼로리)"
          },
          "value": 30
-        },
-        {
-         "label": {
-          "en": "partner needed",
-          "ko": "필요한 짝"
-         },
-         "value": 11
         }
        ]
       }
      },
+     "moves": [
+      {
+       "from": {
+        "view": "seen",
+        "at": 11
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       },
+       "value": 1
+      },
+      {
+       "from": {
+        "view": "snacks",
+        "at": 2
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       },
+       "value": 2
+      }
+     ],
      "answer": "[1,2]"
     }
    ],
@@ -348,22 +366,19 @@
        "pointers": {
         "i": null
        },
-       "marks": {
-        "lit": [],
-        "good": [],
-        "path": [],
-        "dim": []
-       }
+       "unread": [
+        0,
+        1,
+        2
+       ],
+       "marks": {}
       },
       "seen": {
-       "columns": [
-        {
-         "en": "index",
-         "ko": "인덱스"
-        }
-       ],
-       "rows": [],
+       "entries": [],
        "marks": {}
+      },
+      "result": {
+       "values": []
       },
       "state": {
        "items": [
@@ -373,13 +388,6 @@
           "ko": "target (목표 칼로리)"
          },
          "value": 14
-        },
-        {
-         "label": {
-          "en": "partner needed",
-          "ko": "필요한 짝"
-         },
-         "value": "–"
         }
        ]
       }
@@ -400,41 +408,36 @@
        "pointers": {
         "i": 0
        },
+       "unread": [
+        1,
+        2
+       ],
        "marks": {
         "lit": [
          0
-        ],
-        "good": [],
-        "path": [],
-        "dim": [
-         1,
-         2
         ]
        }
       },
       "seen": {
-       "columns": [
+       "entries": [
         {
-         "en": "index",
-         "ko": "인덱스"
-        }
-       ],
-       "rows": [
-        {
-         "label": "8",
-         "cells": [
-          0
-         ]
+         "key": 8,
+         "value": "i=0"
         }
        ],
        "marks": {
         "good": [
-         [
-          0,
-          0
-         ]
+         8
         ]
+       },
+       "probe": {
+        "key": 6,
+        "label": "14 − 8 = 6",
+        "hit": false
        }
+      },
+      "result": {
+       "values": []
       },
       "state": {
        "items": [
@@ -444,17 +447,22 @@
           "ko": "target (목표 칼로리)"
          },
          "value": 14
-        },
-        {
-         "label": {
-          "en": "partner needed",
-          "ko": "필요한 짝"
-         },
-         "value": 6
         }
        ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "snacks",
+        "at": 0
+       },
+       "to": {
+        "view": "seen",
+        "at": 8
+       }
+      }
+     ]
     },
     {
      "caption": {
@@ -471,46 +479,39 @@
        "pointers": {
         "i": 1
        },
+       "unread": [
+        2
+       ],
        "marks": {
         "lit": [
          1
-        ],
-        "good": [],
-        "path": [],
-        "dim": [
-         2
         ]
        }
       },
       "seen": {
-       "columns": [
+       "entries": [
         {
-         "en": "index",
-         "ko": "인덱스"
-        }
-       ],
-       "rows": [
-        {
-         "label": "8",
-         "cells": [
-          0
-         ]
+         "key": 8,
+         "value": "i=0"
         },
         {
-         "label": "14",
-         "cells": [
-          1
-         ]
+         "key": 14,
+         "value": "i=1"
         }
        ],
        "marks": {
         "good": [
-         [
-          1,
-          0
-         ]
+         14
         ]
+       },
+       "probe": {
+        "key": 0,
+        "label": "14 − 14 = 0",
+        "hit": false
        }
+      },
+      "result": {
+       "values": []
       },
       "state": {
        "items": [
@@ -520,17 +521,22 @@
           "ko": "target (목표 칼로리)"
          },
          "value": 14
-        },
-        {
-         "label": {
-          "en": "partner needed",
-          "ko": "필요한 짝"
-         },
-         "value": 0
         }
        ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "snacks",
+        "at": 1
+       },
+       "to": {
+        "view": "seen",
+        "at": 14
+       }
+      }
+     ]
     },
     {
      "caption": {
@@ -547,45 +553,41 @@
        "pointers": {
         "i": 2
        },
+       "unread": [],
        "marks": {
-        "lit": [],
-        "good": [],
         "path": [
          0,
          2
-        ],
-        "dim": []
+        ]
        }
       },
       "seen": {
-       "columns": [
+       "entries": [
         {
-         "en": "index",
-         "ko": "인덱스"
-        }
-       ],
-       "rows": [
-        {
-         "label": "8",
-         "cells": [
-          0
-         ]
+         "key": 8,
+         "value": "i=0"
         },
         {
-         "label": "14",
-         "cells": [
-          1
-         ]
+         "key": 14,
+         "value": "i=1"
         }
        ],
        "marks": {
         "path": [
-         [
-          0,
-          0
-         ]
+         8
         ]
+       },
+       "probe": {
+        "key": 8,
+        "label": "14 − 6 = 8",
+        "hit": true
        }
+      },
+      "result": {
+       "values": [
+        0,
+        2
+       ]
       },
       "state": {
        "items": [
@@ -595,17 +597,34 @@
           "ko": "target (목표 칼로리)"
          },
          "value": 14
-        },
-        {
-         "label": {
-          "en": "partner needed",
-          "ko": "필요한 짝"
-         },
-         "value": 8
         }
        ]
       }
      },
+     "moves": [
+      {
+       "from": {
+        "view": "seen",
+        "at": 8
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       },
+       "value": 0
+      },
+      {
+       "from": {
+        "view": "snacks",
+        "at": 2
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       },
+       "value": 2
+      }
+     ],
      "answer": "[0,2]"
     }
    ],

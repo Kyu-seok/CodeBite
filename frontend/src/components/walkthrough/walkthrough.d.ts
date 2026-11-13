@@ -26,11 +26,12 @@ export interface ArrayState {
   /** a running value under a cell */ under?: [number, Text][];
 }
 export type Key = string | number;
-/** A hash map: entries in insertion order with unique keys; a count is drawn as dots, a list as chips. `ranks` badges keys #1, #2… */
+/** A hash map: entries in insertion order with unique keys; a count is drawn as dots, a list as chips. `ranks` badges keys #1, #2…; `probe` is a lookup that hits or misses */
 export interface MapState {
   entries: { key: Key; value: unknown }[]; marks?: Marks<Key>; ranks?: Key[];
   /** holds at most this many keys: the free slots are drawn, and a key beyond them is red */ slots?: number;
   /** keys leaving this step (a count that reached 0), struck through; they hold no slot */ struck?: Key[];
+  /** a lookup of `key`: a hit rings its card, a miss is a red dashed chip; `label` replaces the key on the chip; `hit` (default: the key is held) is what the lookup found, for a step that stores the key after it */ probe?: { key: Key; label?: Text; hit?: boolean };
 }
 /** A set: members in insertion order, unique. A probe is a lookup drawn above the bag: `hit` (default: whether `value`
  *  is a member) lights the member it finds; a miss is drawn dashed. Address: a member. */
@@ -57,7 +58,7 @@ export interface GraphState {
 export interface TableState { columns?: Text[]; rows: { label: Text; cells: unknown[] }[]; marks?: Marks<[number, number]> }
 export interface VarsState { items: { label: Text; value: unknown; mark?: Mark | null; empty?: Text }[] }
 
-/** A place in a view: an array or output index, a map key, a set member, a queue position from the front, a grid [row, col], an intervals [group, index], a graph node id or [from, to] edge. Each view type that holds values defines its `at`. */
+/** A place in a view: an array or output index, a map key, a set member, a queue position from the front, a grid [row, col], a table [row, col], an intervals [group, index], a graph node id or [from, to] edge. Each view type that holds values defines its `at`. */
 export interface Address { view: string; at: number | string | [number, number] | [string | number, string | number] }
 /** A value going from one place to another. No `from`: created at `to`; no `to`: dropped from `from`.
  *  `value` is the chip's text (default: the source's); `mark` overrides the colour (default: path into an output, bad when dropped, else good). */

@@ -238,14 +238,24 @@ VIEWS.array = (host, config, ctx) => {
 
 // A hash map: one card per key in insertion order. A count is drawn as dots and the number, a list as chips.
 // `slots` (at most k keys) draws the free slots dashed and a key beyond them red; a `struck` key is leaving.
+// A `probe` is a lookup: a chip above the cards, ✓ with its key's card ringed on a hit, red and ✗ on a miss. Its
+// `hit` (default: the key is held) says what the lookup found when the step stores the key after looking it up.
 const MAX_DOTS = 10;
 VIEWS.map = (host, config, ctx) => {
   host.innerHTML = '';
   const box = html('div', 'wt-map', host);
   const cards = new Map(); // String(key) -> card element, kept so marks transition
-  let empty = null, free = [];
+  let empty = null, free = [], probe = null, most = 0;
   return {
     locate: at => cards.get(String(at)) || null,
+    // the run's every state, before its first frame: the box keeps room for its fullest frame's cards (as invisible
+    // spacers, so it still wraps on a narrow screen) and a run that looks keys up keeps the lookup row in every frame,
+    // so the views around the map never jump
+    prepare(states) {
+      most = Math.max(0, ...states.map(st => Math.max((st.entries || []).length, Number.isInteger(st.slots) ? st.slots : 0)));
+      if (probe) probe.remove();
+      probe = states.some(st => st.probe) ? html('div', 'wt-mapprobe', null) : null;
+    },
     update(s) {
       const m = markMap(s.marks), entries = s.entries || [];
       const rank = new Map((s.ranks || []).map((k, i) => [String(k), i + 1]));
@@ -256,6 +266,13 @@ VIEWS.map = (host, config, ctx) => {
       for (const el of free) el.remove();
       free = [];
       if (empty) { empty.remove(); empty = null; }
+      if (probe) {
+        box.prepend(probe);
+        const hit = !!s.probe && (s.probe.hit ?? live.has(String(s.probe.key)));
+        probe.className = 'wt-mapprobe' + (!s.probe ? ' wt-idle' : hit ? ' wt-hit' : ' wt-miss');
+        probe.replaceChildren(html('span', 'wt-mapprobechip', null,
+          s.probe ? `${s.probe.label != null ? textOf(s.probe.label, ctx.lang) : fmt(s.probe.key)} ${hit ? '✓' : '✗'}` : '\u00a0'));
+      }
       if (!entries.length && !slots) empty = html('span', 'wt-empty', box, config.empty != null ? textOf(config.empty, ctx.lang) : 'empty');
       let held = 0; // keys holding a slot: a struck key is leaving and holds none
       for (const e of entries) {
@@ -264,7 +281,8 @@ VIEWS.map = (host, config, ctx) => {
         if (!card) { card = html('div', null, null); cards.set(k, card); }
         box.appendChild(card); // insertion order
         card.className = 'wt-mapcard' + markClass(m, e.key) + (rank.size && !rank.has(k) ? ' wt-unranked' : '') +
-          (over ? ' wt-over' : '') + (gone ? ' wt-struck' : '');
+          (over ? ' wt-over' : '') + (gone ? ' wt-struck' : '') +
+          (s.probe && s.probe.hit !== false && String(s.probe.key) === k ? ' wt-probed' : '');
         card.dataset.token = fmt(e.key);
         card.innerHTML = '';
         if (rank.has(k)) html('span', 'wt-rank', card, '#' + rank.get(k));
@@ -280,6 +298,7 @@ VIEWS.map = (host, config, ctx) => {
         } else html('div', 'wt-mapval', card, fmt(v));
       }
       for (let i = held; i < (slots || 0); i++) free.push(html('div', 'wt-mapslot', box)); // the slots still free
+      for (let i = entries.length + free.length; i < most; i++) free.push(html('div', 'wt-mapspace', box));
     },
   };
 };
@@ -341,18 +360,23 @@ VIEWS.set = (host, config, ctx) => {
   };
 };
 
-// The answer as it forms: a box its values move into, one chip per value.
+// The answer as it forms: a box its values move into, one chip per value. The box keeps room for the run's fullest
+// frame (its chips still to come are drawn invisible), so the views around it never jump as the answer grows.
 VIEWS.output = (host, config, ctx) => {
   host.innerHTML = '';
   const box = html('div', 'wt-output', host);
-  let chips = [];
+  let chips = [], fullest = [];
   return {
     locate: at => (Number.isInteger(at) && chips[at]) || null,
+    prepare(states) {
+      fullest = states.reduce((most, st) => ((st.values || []).length > most.length ? st.values : most), []);
+    },
     update(s) {
       const m = markMap(s.marks), values = s.values || [];
       box.innerHTML = '';
       if (!values.length) html('span', 'wt-empty', box, config.empty != null ? textOf(config.empty, ctx.lang) : 'empty');
       chips = values.map((v, i) => html('span', 'wt-outchip' + markClass(m, i), box, fmt(v)));
+      for (const v of fullest.slice(values.length)) html('span', 'wt-outchip wt-outspace', box, fmt(v));
     },
   };
 };
@@ -562,10 +586,13 @@ VIEWS.graph = (host, config, ctx) => {
 VIEWS.table = (host, config, ctx) => {
   host.innerHTML = '';
   const table = html('table', 'wt-table', host);
+  let cells = new Map(); // "row,col" -> td
   return {
+    locate: at => (Array.isArray(at) && cells.get(keyOf(at))) || null,
     update(s) {
       const m = markMap(s.marks);
       table.innerHTML = '';
+      cells = new Map();
       if (s.columns) {
         const tr = html('tr', null, html('thead', null, table));
         html('th', null, tr);
@@ -575,7 +602,7 @@ VIEWS.table = (host, config, ctx) => {
       (s.rows || []).forEach((row, r) => {
         const tr = html('tr', null, body);
         html('th', 'wt-rowlabel', tr, textOf(row.label, ctx.lang));
-        row.cells.forEach((v, c) => html('td', 'wt-td' + markClass(m, [r, c]), tr, fmt(v)));
+        row.cells.forEach((v, c) => cells.set(keyOf([r, c]), html('td', 'wt-td' + markClass(m, [r, c]), tr, fmt(v))));
       });
     },
   };
