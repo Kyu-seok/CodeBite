@@ -44,9 +44,9 @@ node ~/.agents/skills/walkthrough/scripts/build.mjs common/src/main/resources/wa
 node ~/.agents/skills/walkthrough/scripts/capture.mjs <scratch>/<slug>.html --review --dir <scratch>/<slug>-review
 ```
 
-and again with `--lang ko` on the build, into a `-ko` page and review directory. Build prints the page's path; when it prints nothing, no page was written (an older `build.mjs` run through the `~/.agents` symlink exits 0 silently: run `~/Work/walkthrough-skill/scripts/build.mjs` instead, or update the skill). Read every PNG against the public skill's `references/verify.md`, the Korean sheets too (a caption cut short, a label that wraps over a value). Read the 390 shots view by view: capture.mjs only catches the page scrolling sideways, so a table wider than about 7 data columns loses its right-hand columns inside the card while the capture still passes (lay it out as rows instead, [views.md](views.md)). Fix the tracer, run it, rebuild, shoot again.
+and again with `--lang ko` on the build, into a `-ko` page and review directory. Build prints the page's path; when it prints nothing, no page was written (an older `build.mjs` run through the `~/.agents` symlink exits 0 silently: run `~/Work/walkthrough-skill/scripts/build.mjs` instead, or update the skill). Read every PNG against the public skill's `references/verify.md`, the Korean sheets too (a caption cut short, a label that wraps over a value). The capture fails on a view clipped in its card at 1440 or 390, naming the view's `id`, the width and the frames (a table wider than about 7 data columns is the usual one): lay that view out narrower, as rows instead of columns ([views.md](views.md)). Fix the tracer, run it, rebuild, shoot again.
 
-Done when both captures end `✓ no console errors, no sideways scroll` and every checklist item holds in every shot, in both languages.
+Done when both captures end `✓ no console errors, no sideways scroll, no view clipped in its card` and every checklist item holds in every shot, in both languages.
 
 ## 4. Run the answer test
 
