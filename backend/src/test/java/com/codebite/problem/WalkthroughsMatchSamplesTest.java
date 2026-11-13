@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * under the Slug it is filed under; it is a well-formed {@code walkthrough/1} document (the public
  * walkthrough skill's {@code references/format.md}: known view types, marks inside the data they
  * name, moves whose addresses exist in that frame, unique map keys, spans inside their array, map slots a
- * non-negative integer, intervals that start no later than they end, the answer on the last frame only); its sample runs are, in order, exactly the problem's
+ * non-negative integer, intervals that start no later than they end, queue marks and tags on its positions, the answer on the last frame only); its sample runs are, in order, exactly the problem's
  * sample Test Cases by {@code sampleInput} and {@code expected}, compared trimmed as the Grader
  * compares; each run ends on its {@code expected}; and any run marked {@code extra} comes after
  * the sample runs; and every caption is one or two sentences in each language (#258). Correcting, adding or reordering a sample without regenerating the Walkthrough
@@ -42,7 +42,7 @@ class WalkthroughsMatchSamplesTest {
     private static final MigratedDatabase DATABASE = new MigratedDatabase("walkthroughs-match-samples");
     private static final Walkthroughs WALKTHROUGHS = new Walkthroughs();
 
-    private static final List<String> VIEW_TYPES = List.of("grid", "array", "map", "output", "intervals", "graph", "table", "vars");
+    private static final List<String> VIEW_TYPES = List.of("grid", "array", "map", "output", "queue", "intervals", "graph", "table", "vars");
     private static final List<String> MARKS = List.of("lit", "good", "bad", "path", "dim");
 
     /**
@@ -177,6 +177,34 @@ class WalkthroughsMatchSamplesTest {
         assertFalse(found.isEmpty(), breakage + " was not caught");
     }
 
+    // --- the queue and grid moves, on a copy of rotting-donuts ------------------------------------------
+
+    @ParameterizedTest(name = "{0}")
+    @ValueSource(strings = {
+            "move from a missing grid cell", "move from a grid address that isn't [row, col]",
+            "move to a missing queue position", "queue mark past the queue", "queue tag past the queue",
+            "queue without values", "deque flag not true or false",
+    })
+    void aBrokenQueueOrGridMoveIsCaught(String breakage) throws Exception {
+        ObjectNode walkthrough = rottingDonuts();
+        ArrayNode frames = (ArrayNode) walkthrough.get("runs").get(0).get("frames");
+        ObjectNode joins = (ObjectNode) frames.get(0).get("moves").get(0); // a stale donut joins from its cell
+        ObjectNode queue = (ObjectNode) frames.get(0).get("views").get("queue");
+        int n = queue.get("values").size();
+        switch (breakage) {
+            case "move from a missing grid cell" -> ((ObjectNode) joins.get("from")).set("at", JSON.readTree("[9, 0]"));
+            case "move from a grid address that isn't [row, col]" -> ((ObjectNode) joins.get("from")).put("at", 0);
+            case "move to a missing queue position" -> ((ObjectNode) joins.get("to")).put("at", n);
+            case "queue mark past the queue" -> queue.putObject("marks").putArray("good").add(n);
+            case "queue tag past the queue" -> queue.putArray("tags").addArray().add(n).add("x");
+            case "queue without values" -> queue.remove("values");
+            case "deque flag not true or false" -> ((ObjectNode) walkthrough.get("views").get(1)).put("deque", "yes");
+            default -> throw new IllegalArgumentException(breakage);
+        }
+        List<String> found = mismatches("rotting-donuts", walkthrough, SAMPLES.get("rotting-donuts"));
+        assertFalse(found.isEmpty(), breakage + " was not caught");
+    }
+
     // --- spans and slots, on a copy of unique-genre-window ------------------------------------------
 
     @ParameterizedTest(name = "{0}")
@@ -308,6 +336,9 @@ class WalkthroughsMatchSamplesTest {
             if (!VIEW_TYPES.contains(view.path("type").asText())) {
                 p.add("view \"" + id + "\": unknown type " + view.get("type") + " (one of " + VIEW_TYPES + ")");
             }
+            if ("queue".equals(view.path("type").asText()) && view.has("deque") && !view.get("deque").isBoolean()) {
+                p.add("view \"" + id + "\": deque must be true or false");
+            }
         }
         if (views.isEmpty()) p.add("no views");
         JsonNode runs = wt.path("runs");
@@ -383,7 +414,8 @@ class WalkthroughsMatchSamplesTest {
 
     /**
      * What is wrong with one move: each end it has must name a place that exists in that frame's state of its view
-     * (the skill's {@code ADDRESSES}: an array or output index, a map key).
+     * (the skill's {@code ADDRESSES}: an array or output index, a map key, a queue position from the front, a grid
+     * {@code [row, col]}, an intervals {@code [group, index]}).
      */
     private static List<String> move(JsonNode move, Map<String, JsonNode> views, JsonNode setup, JsonNode states) {
         if (!move.isObject() || (!move.hasNonNull("from") && !move.hasNonNull("to"))) return List.of("no from and no to");
@@ -403,7 +435,7 @@ class WalkthroughsMatchSamplesTest {
             }
             String type = view.path("type").asText();
             String where = end + " " + address;
-            if (!List.of("array", "map", "output", "intervals").contains(type)) {
+            if (!List.of("array", "map", "output", "queue", "grid", "intervals").contains(type)) {
                 p.add(where + ": view type \"" + type + "\" has no addresses");
                 continue;
             }
@@ -417,12 +449,16 @@ class WalkthroughsMatchSamplesTest {
             JsonNode at = address.get("at");
             boolean exists = switch (type) {
                 case "map" -> keys(state).contains(key(at));
+                case "grid" -> at != null && at.isArray() && at.size() == 2 && index(at.get(0), state.path("cells"))
+                        && index(at.get(1), state.path("cells").path(at.get(0).asInt()));
                 case "intervals" -> at != null && at.isArray() && at.size() == 2 && index(at.get(0), state.path("groups"))
                         && index(at.get(1), state.path("groups").path(at.get(0).asInt()).path("intervals"));
                 default -> index(at, state.path("values"));
             };
             String what = switch (type) {
                 case "map" -> "a key";
+                case "queue" -> "a position from the front";
+                case "grid" -> "a [row, col]";
                 case "intervals" -> "a [group, index]";
                 default -> "an index";
             };
@@ -530,6 +566,15 @@ class WalkthroughsMatchSamplesTest {
                 JsonNode values = s.get("values");
                 if (values == null || !values.isArray()) yield List.of("values must be a list");
                 yield marks(s.get("marks"), i -> i.isInt() && i.asInt() >= 0 && i.asInt() < values.size(), "index");
+            }
+            case "queue" -> {
+                JsonNode values = s.get("values");
+                if (values == null || !values.isArray()) yield List.of("values must be a list, front first");
+                List<String> p = marks(s.get("marks"), i -> index(i, values), "position");
+                for (JsonNode tag : s.path("tags")) {
+                    if (!tag.isArray() || !index(tag.get(0), values)) p.add("tag " + tag + " is outside the queue");
+                }
+                yield p;
             }
             case "intervals" -> intervals(s);
             case "graph" -> {
