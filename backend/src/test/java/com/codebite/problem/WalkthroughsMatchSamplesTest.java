@@ -281,6 +281,73 @@ class WalkthroughsMatchSamplesTest {
         assertFalse(found.isEmpty(), breakage + " was not caught");
     }
 
+    /**
+     * Walkthroughs not yet redrawn under #273 that still write array cells with no move: a redraw removes its slug.
+     */
+    private static final Set<String> CELL_WRITES_WITHOUT_MOVES = Set.of(
+            "chat-log-codec", "missing-sock-number", "next-speaker-order", "repeat-attendance-codes");
+
+    /**
+     * #273's first rule for a copy or a swap: an {@code array} cell whose value changes from one frame to the next
+     * shows where the new value came from, by a move ending on that cell in the frame that writes it.
+     */
+    @Test
+    void everyArrayCellWrittenInPlaceHasAMoveIntoIt() throws Exception {
+        List<String> found = new ArrayList<>();
+        for (String slug : WALKTHROUGHS.slugs()) {
+            if (!CELL_WRITES_WITHOUT_MOVES.contains(slug)) {
+                found.addAll(cellWritesWithoutMoves(slug, JSON.readTree(WALKTHROUGHS.of(slug).orElseThrow())));
+            }
+        }
+        assertTrue(found.isEmpty(), "Array cells written with no move into them:\n" + String.join("\n", found));
+    }
+
+    @Test
+    void aCellWrittenWithNoMoveIsCaught() throws Exception {
+        ObjectNode walkthrough = (ObjectNode) JSON.readTree(WALKTHROUGHS.of("unique-genre-window").orElseThrow());
+        JsonNode frame = walkthrough.get("runs").get(0).get("frames").get(1);
+        ArrayNode values = (ArrayNode) frame.get("views").get("queue").get("values");
+        values.set(0, values.get(0).asText() + "x");
+        assertFalse(cellWritesWithoutMoves("unique-genre-window", walkthrough).isEmpty());
+    }
+
+    private static List<String> cellWritesWithoutMoves(String slug, JsonNode walkthrough) {
+        Set<String> arrays = new HashSet<>();
+        for (JsonNode view : walkthrough.path("views")) {
+            if ("array".equals(view.path("type").asText())) arrays.add(view.path("id").asText());
+        }
+        List<String> found = new ArrayList<>();
+        JsonNode runs = walkthrough.path("runs");
+        for (int r = 0; r < runs.size(); r++) {
+            Map<String, JsonNode> previous = new HashMap<>();
+            JsonNode frames = runs.get(r).path("frames");
+            for (int f = 0; f < frames.size(); f++) {
+                JsonNode frame = frames.get(f);
+                for (String id : arrays) {
+                    JsonNode values = frame.path("views").path(id).get("values");
+                    if (values == null) continue;
+                    JsonNode before = previous.put(id, values);
+                    if (before == null || before.size() != values.size()) continue;
+                    for (int i = 0; i < values.size(); i++) {
+                        if (before.get(i).equals(values.get(i)) || movedInto(frame, id, i)) continue;
+                        found.add(slug + ": " + runName(runs.get(r), r) + ", frame " + (f + 1) + ": " + id + "[" + i
+                                + "] goes " + before.get(i) + " → " + values.get(i) + " with no move into it");
+                    }
+                }
+            }
+        }
+        return found;
+    }
+
+    private static boolean movedInto(JsonNode frame, String view, int index) {
+        for (JsonNode move : frame.path("moves")) {
+            JsonNode to = move.get("to");
+            if (to != null && view.equals(to.path("view").asText()) && to.path("at").isInt()
+                    && to.path("at").asInt() == index) return true;
+        }
+        return false;
+    }
+
     @Test
     void textDifferingOnlyInSurroundingWhitespaceMatchesAsTheGraderComparesIt() throws Exception {
         List<Sample> samples = SAMPLES.get("rotting-donuts");
