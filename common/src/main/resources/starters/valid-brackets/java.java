@@ -1,5 +1,5 @@
 class Solution {
-    public boolean verifyJobNesting(String tape) {
+    public boolean isValidBrackets(String brackets) {
         // Write your solution here
     }
 }

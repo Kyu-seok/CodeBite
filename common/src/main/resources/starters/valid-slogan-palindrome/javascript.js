@@ -3,7 +3,7 @@ class Solution {
      * @param {string} phrase
      * @return {boolean}
      */
-    verifyMirrorCode(phrase) {
+    isPalindrome(phrase) {
         // Write your solution here
     }
 }

@@ -10,7 +10,7 @@
  * }
  */
 class Solution {
-    public TreeNode reflectBlend(TreeNode root) {
+    public TreeNode mirrorTree(TreeNode root) {
         // Write your solution here
     }
 }
