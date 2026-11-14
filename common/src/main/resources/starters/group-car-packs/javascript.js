@@ -5,7 +5,7 @@ class Solution {
      * @param {number[]} speed
      * @return {number}
      */
-    groupTrainPacks(target, position, speed) {
+    countCarPacks(target, position, speed) {
         // Write your solution here
     }
 }

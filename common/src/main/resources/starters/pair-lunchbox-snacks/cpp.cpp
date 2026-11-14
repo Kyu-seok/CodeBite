@@ -1,6 +1,6 @@
 class Solution {
 public:
-    int pairCrates(vector<int>& crates, int capacity) {
+    int minLunchboxes(vector<int>& weights, int capacity) {
         // Write your solution here
     }
 };

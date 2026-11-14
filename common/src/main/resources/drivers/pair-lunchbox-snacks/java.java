@@ -11,7 +11,7 @@ public class Main {
         String[] parts = inner.split(",");
         int[] weights = new int[parts.length];
         for (int i = 0; i < parts.length; i++) weights[i] = Integer.parseInt(parts[i].trim());
-        int result = new Solution().pairCrates(weights, capacity);
+        int result = new Solution().minLunchboxes(weights, capacity);
         System.out.println(result);
     }
 }
