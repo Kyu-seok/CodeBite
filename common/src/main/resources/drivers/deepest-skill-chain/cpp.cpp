@@ -13,7 +13,7 @@ int main() {
     string line;
     getline(cin, line);
     TreeNode* root = treeFromArray(line);
-    int result = Solution().deepestZoneChain(root);
+    int result = Solution().maxSkillDepth(root);
     cout << result << endl;
     return 0;
 }

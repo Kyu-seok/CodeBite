@@ -9,7 +9,7 @@ public class Main {
         Scanner sc = new Scanner(System.in);
         String line = sc.nextLine().trim();
         TreeNode root = TreeNode.fromArray(line);
-        int result = new Solution().deepestZoneChain(root);
+        int result = new Solution().maxSkillDepth(root);
         System.out.println(result);
     }
 }

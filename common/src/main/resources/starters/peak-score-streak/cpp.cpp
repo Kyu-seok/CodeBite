@@ -1,6 +1,6 @@
 class Solution {
 public:
-    int peakReadingSum(vector<int>& nums) {
+    int maxScoreStreak(vector<int>& nums) {
         // Write your solution here
     }
 };

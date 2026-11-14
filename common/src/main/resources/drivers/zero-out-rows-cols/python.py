@@ -1,6 +1,6 @@
 {USER_CODE}
 
 import json
-matrix = json.loads(input())
-Solution().clearDefectRows(matrix)
-print(json.dumps(matrix, separators=(',', ':')))
+board = json.loads(input())
+Solution().zeroOutRowsAndCols(board)
+print(json.dumps(board, separators=(',', ':')))

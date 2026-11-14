@@ -1,6 +1,6 @@
 {USER_CODE}
 
 import json
-coins = json.loads(input())
-amount = int(input())
-print(Solution().fewestBagSizes(coins, amount))
+bagSizes = json.loads(input())
+quota = int(input())
+print(Solution().fewestBags(bagSizes, quota))

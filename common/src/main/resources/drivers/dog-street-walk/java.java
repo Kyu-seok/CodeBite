@@ -8,8 +8,8 @@ public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         String line = sc.nextLine().trim();
-        // Parse [["MUC","LHR"],["JFK","MUC"]]
-        List<List<String>> tickets = new ArrayList<>();
+        // Parse [["HUB","BIR"],["BIR","ELM"]]
+        List<List<String>> routes = new ArrayList<>();
         if (!line.equals("[]")) {
             String inner = line.substring(1, line.length() - 1);
             int depth = 0;
@@ -23,12 +23,12 @@ public class Main {
                         List<String> pair = new ArrayList<>();
                         String[] parts = sub.split(",");
                         for (String p : parts) pair.add(p.trim().replaceAll("\"", ""));
-                        tickets.add(pair);
+                        routes.add(pair);
                     }
                 }
             }
         }
-        List<String> result = new Solution().traceStreetSweep(tickets);
+        List<String> result = new Solution().planWalk(routes);
         System.out.println(JsonOutput.stringList(result));
     }
 }
