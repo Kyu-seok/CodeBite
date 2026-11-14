@@ -6,10 +6,10 @@ using namespace std;
 {USER_CODE}
 
 int main() {
-    string text1, text2;
-    getline(cin, text1);
-    getline(cin, text2);
-    int result = Solution().shelfOverlapLength(text1, text2);
+    string left, right;
+    getline(cin, left);
+    getline(cin, right);
+    int result = Solution().longestCommonSubsequence(left, right);
     cout << result << endl;
     return 0;
 }

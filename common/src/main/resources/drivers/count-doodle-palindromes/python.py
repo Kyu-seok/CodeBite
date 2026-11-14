@@ -1,5 +1,5 @@
 {USER_CODE}
 
-s = input().strip()
-result = Solution().count_substrings(s)
+doodle = input().strip()
+result = Solution().count_palindromic_substrings(doodle)
 print(result)
