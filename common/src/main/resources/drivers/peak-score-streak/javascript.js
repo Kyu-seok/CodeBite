@@ -2,4 +2,4 @@
 
 const input = require('fs').readFileSync('/dev/stdin', 'utf8').trim();
 const nums = JSON.parse(input);
-console.log(new Solution().peakReadingSum(nums));
+console.log(new Solution().maxScoreStreak(nums));

@@ -10,6 +10,6 @@ public class Main {
         String[] parts = inner.split(",");
         int[] nums = new int[parts.length];
         for (int i = 0; i < parts.length; i++) nums[i] = Integer.parseInt(parts[i].trim());
-        System.out.println(new Solution().peakReadingSum(nums));
+        System.out.println(new Solution().maxScoreStreak(nums));
     }
 }
