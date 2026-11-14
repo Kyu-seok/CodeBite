@@ -3,7 +3,7 @@ class Solution {
      * @param {string} digits
      * @return {string[]}
      */
-    mapKeypadCodes(digits) {
+    letterCombinations(digits) {
         // Write your solution here
     }
 }

@@ -4,7 +4,7 @@ using namespace std;
 
 class Solution {
 public:
-    vector<string> mapKeypadCodes(string digits) {
+    vector<string> letterCombinations(string digits) {
         // Write your solution here
     }
 };

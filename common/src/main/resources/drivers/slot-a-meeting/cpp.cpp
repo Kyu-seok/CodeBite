@@ -11,7 +11,7 @@ int main() {
     getline(cin, intLine);
     getline(cin, newLine);
 
-    vector<vector<int>> intervals;
+    vector<vector<int>> meetings;
     if (intLine != "[]") {
         string inner = intLine.substr(1, intLine.size() - 2);
         int depth = 0, start = 0;
@@ -25,7 +25,7 @@ int main() {
                     string a, b;
                     getline(ss, a, ',');
                     getline(ss, b, ',');
-                    intervals.push_back({stoi(a), stoi(b)});
+                    meetings.push_back({stoi(a), stoi(b)});
                 }
             }
         }
@@ -36,9 +36,9 @@ int main() {
     string a, b;
     getline(ss, a, ',');
     getline(ss, b, ',');
-    vector<int> newInterval = {stoi(a), stoi(b)};
+    vector<int> newMeeting = {stoi(a), stoi(b)};
 
-    vector<vector<int>> result = Solution().scheduleObservingWindow(intervals, newInterval);
+    vector<vector<int>> result = Solution().insertMeeting(meetings, newMeeting);
     cout << "[";
     for (int i = 0; i < (int)result.size(); i++) {
         if (i > 0) cout << ",";

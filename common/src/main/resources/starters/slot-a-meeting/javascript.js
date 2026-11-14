@@ -1,10 +1,10 @@
 class Solution {
     /**
-     * @param {number[][]} slots
-     * @param {number[]} newSlot
+     * @param {number[][]} meetings
+     * @param {number[]} newMeeting
      * @return {number[][]}
      */
-    scheduleObservingWindow(slots, newSlot) {
+    insertMeeting(meetings, newMeeting) {
         // Write your solution here
     }
 }

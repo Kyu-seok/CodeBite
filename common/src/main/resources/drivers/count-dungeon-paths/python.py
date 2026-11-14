@@ -1,6 +1,6 @@
 {USER_CODE}
 
-m = int(input())
-n = int(input())
-result = Solution().unique_paths(m, n)
+rows = int(input())
+cols = int(input())
+result = Solution().countPaths(rows, cols)
 print(result)
