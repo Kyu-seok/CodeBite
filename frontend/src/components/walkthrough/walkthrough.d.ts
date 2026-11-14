@@ -4,7 +4,7 @@ export type Mark = 'lit' | 'good' | 'bad' | 'path' | 'dim';
 export type Marks<K> = Partial<Record<Mark, K[]>>;
 
 export type View =
-  | { id: string; type: 'grid'; title?: Text; values?: Record<string, { label?: Text; tone?: 'a' | 'b' | 'c' | 'd' | 'empty' | 'wall' | 'plain'; glyph?: string }>; showValues?: boolean }
+  | { id: string; type: 'grid'; title?: Text; values?: Record<string, { label?: Text; tone?: 'a' | 'b' | 'c' | 'd' | 'empty' | 'wall' | 'plain'; glyph?: string }>; showValues?: boolean; /** a heavier line every this many rows and columns (a sudoku's 3) */ boxes?: number }
   | { id: string; type: 'array'; title?: Text; display?: 'cells' | 'bars'; max?: number }
   | { id: string; type: 'map'; title?: Text; empty?: Text }
   | { id: string; type: 'set'; title?: Text; empty?: Text; hit?: Text; miss?: Text }
@@ -15,7 +15,10 @@ export type View =
   | { id: string; type: 'table'; title?: Text }
   | { id: string; type: 'vars'; title?: Text };
 
-export interface GridState { cells: unknown[][]; marks?: Marks<[number, number]>; tags?: [number, number, Text][] }
+export interface GridState {
+  cells: unknown[][]; marks?: Marks<[number, number]>; tags?: [number, number, Text][];
+  /** cells drawn on a soft band under any mark: a region in play, such as a cell's row, column and box */ shade?: [number, number][];
+}
 /** A named range of an array, `from`..`to` inclusive: above the cells (a live window), or `below` them, dashed (a record
  *  such as the best so far). `fade` fades the cells outside it that carry no mark. The label defaults to the name. */
 export interface Span { from: number; to: number; label?: Text; mark?: Mark; below?: boolean; fade?: boolean }
@@ -28,7 +31,8 @@ export interface ArrayState {
 export type Key = string | number;
 /** A hash map: entries in insertion order with unique keys; a count is drawn as dots, a list as chips. `ranks` badges keys #1, #2…; `probe` is a lookup that hits or misses */
 export interface MapState {
-  entries: { key: Key; value: unknown }[]; marks?: Marks<Key>; ranks?: Key[];
+  /** `label` is written on the card in place of the key; `marks` mark chips of a list value by index */
+  entries: { key: Key; value: unknown; label?: Text; marks?: Marks<number> }[]; marks?: Marks<Key>; ranks?: Key[];
   /** holds at most this many keys: the free slots are drawn, and a key beyond them is red */ slots?: number;
   /** keys leaving this step (a count that reached 0), struck through; they hold no slot */ struck?: Key[];
   /** a lookup of `key`: a hit rings its card, a miss is a red dashed chip; `label` replaces the key on the chip; `hit` (default: the key is held) is what the lookup found, for a step that stores the key after it */ probe?: { key: Key; label?: Text; hit?: boolean };
@@ -80,7 +84,10 @@ export interface Player { show(run: number, frame: number | 'last'): void; destr
 export function mount(root: HTMLElement, walkthrough: Walkthrough, options?: MountOptions): Player;
 /** The index of the edge a graph address `[from, to]` names, or -1; an undirected edge answers to either order. */
 export function edgeAt(edges: GraphState['edges'], at: [string | number, string | number], directed: boolean): number;
-export function layoutGraph(nodes: GraphState['nodes'], edges: GraphState['edges'], directed: boolean): { pos: Map<string, { col: number; row: number }>; cols: number; rows: number };
+/** Nodes evenly on a circle centred on 0,0 (y down), the first at the top, going clockwise. */
+export function layoutGraph(nodes: GraphState['nodes']): { pos: Map<string, { x: number; y: number }>; radius: number };
+/** The centre of a w × h label chip beside the middle of an edge, clear of it, on the side away from 0,0 (or `side`). */
+export function edgeLabelAt(x1: number, y1: number, x2: number, y2: number, w: number, h: number, side?: number): { x: number; y: number };
 export function axisTicks(min: number, max: number): number[];
 export function textOf(text: Text | null | undefined, lang: string): string;
 export const MARKS: Mark[];

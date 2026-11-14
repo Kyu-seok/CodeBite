@@ -36,42 +36,31 @@ function markMap(marks) {
 const markClass = (m, k) => (m.has(keyOf(k)) ? ' wt-' + m.get(keyOf(k)) : '');
 
 // ---------- graph layout (pure, exported for tests) ----------
-// Longest-path layers when the graph is directed and acyclic, so a chain reads as "steps from the start";
-// BFS layers from the first node otherwise. Returns { pos: Map(id -> {col, row}), cols, rows }.
-export function layoutGraph(nodes, edges, directed) {
-  const ids = nodes.map(n => keyOf(n.id));
-  const out = new Map(ids.map(i => [i, []]));
-  const indeg = new Map(ids.map(i => [i, 0]));
-  for (const e of edges) {
-    out.get(keyOf(e.from)).push(keyOf(e.to));
-    indeg.set(keyOf(e.to), indeg.get(keyOf(e.to)) + 1);
-    if (!directed) out.get(keyOf(e.to)).push(keyOf(e.from));
-  }
-  const layer = new Map(ids.map(i => [i, 0]));
-  let acyclic = false;
-  if (directed) {
-    const deg = new Map(indeg), q = ids.filter(i => !deg.get(i)), seen = [];
-    while (q.length) {
-      const v = q.shift(); seen.push(v);
-      for (const w of out.get(v)) { layer.set(w, Math.max(layer.get(w), layer.get(v) + 1)); deg.set(w, deg.get(w) - 1); if (!deg.get(w)) q.push(w); }
-    }
-    acyclic = seen.length === ids.length;
-  }
-  if (!acyclic) {
-    for (const i of ids) layer.set(i, -1);
-    let next = 0;
-    for (const start of ids) {
-      if (layer.get(start) >= 0) continue;
-      layer.set(start, next); const q = [start];
-      while (q.length) { const v = q.shift(); for (const w of out.get(v)) if (layer.get(w) < 0) { layer.set(w, layer.get(v) + 1); q.push(w); } }
-      next = Math.max(...[...layer.values()]) + 1;
-    }
-  }
-  const byLayer = new Map();
-  for (const i of ids) { const l = layer.get(i); if (!byLayer.has(l)) byLayer.set(l, []); byLayer.get(l).push(i); }
-  const pos = new Map();
-  for (const [l, vs] of byLayer) vs.forEach((v, j) => pos.set(v, { col: l, row: j - (vs.length - 1) / 2 }));
-  return { pos, cols: Math.max(...layer.values()) + 1, rows: Math.max(...[...byLayer.values()].map(v => v.length)) };
+// Nodes evenly on a circle, the first at the top, going clockwise, as a problem's graph Diagram draws them. The circle
+// grows past its smallest radius only when neighbouring nodes would sit closer than GRAPH_GAP centre to centre.
+// Returns { pos: Map(id -> {x, y}) centred on 0,0 with y down, radius }.
+const GRAPH_MIN_RADIUS = 90, GRAPH_GAP = 96;
+export function layoutGraph(nodes) {
+  const n = nodes.length;
+  const radius = n < 2 ? 0 : Math.max(GRAPH_MIN_RADIUS, GRAPH_GAP / (2 * Math.sin(Math.PI / n)));
+  const pos = new Map(nodes.map((node, i) => {
+    const t = -Math.PI / 2 + (i * 2 * Math.PI) / n;
+    return [keyOf(node.id), { x: radius * Math.cos(t), y: radius * Math.sin(t) }];
+  }));
+  return { pos, radius };
+}
+
+// Where an edge's w × h label chip goes: beside the middle of the line (x1,y1)-(x2,y2), just clear of it, on the side
+// away from the circle's centre (0,0). `side` overrides that: +1 is along (-dy, dx), -1 along (dy, -dx), the side a
+// line of a pair drawn both ways is nudged to.
+export function edgeLabelAt(x1, y1, x2, y2, w, h, side) {
+  const dx = x2 - x1, dy = y2 - y1, len = Math.hypot(dx, dy) || 1;
+  let nx = -dy / len, ny = dx / len;
+  const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
+  const s = side || (mx * nx + my * ny < -1e-9 ? -1 : 1);
+  nx *= s; ny *= s;
+  const off = Math.abs(nx) * w / 2 + Math.abs(ny) * h / 2 + 4;
+  return { x: mx + nx * off, y: my + ny * off };
 }
 
 // The index of the edge a graph address `[from, to]` names (the first, if several do), or -1; an undirected edge
@@ -105,20 +94,31 @@ VIEWS.grid = (host, config, ctx) => {
       const tag = svg('text', { x: S / 2, y: 13, 'text-anchor': 'middle', class: 'wt-tag' }, g);
       cells.push({ r, c, g, tile, val, tag });
     }
+    // `boxes`: a heavier line in the gap after every `boxes` rows and columns, as a sudoku board's 3×3 boxes
+    const k = config.boxes;
+    if (Number.isInteger(k) && k > 0) {
+      const lines = svg('g', { class: 'wt-boxlines' }, root);
+      const at = i => P + i * (S + G) - G / 2, x0 = P - 2, y0 = P - 2;
+      const x1 = P + cols * (S + G) - G + 2, y1 = P + rows * (S + G) - G + 2;
+      for (let c = k; c < cols; c += k) svg('line', { x1: at(c), x2: at(c), y1: y0, y2: y1, class: 'wt-boxline' }, lines);
+      for (let r = k; r < rows; r += k) svg('line', { x1: x0, x2: x1, y1: at(r), y2: at(r), class: 'wt-boxline' }, lines);
+    }
     return { rows, cols, cells };
   }
   const values = config.values || {};
   return {
     // A cell's address is [row, col]; a move starts from or lands on its tile, carrying the value drawn there.
+    // `shade` lists cells drawn on a soft band, a region in play (a sudoku cell's row, column and box), under any mark.
     locate: at => (built && Array.isArray(at) && at.length === 2 && Number.isInteger(at[0]) && Number.isInteger(at[1]) &&
       at[0] >= 0 && at[0] < built.rows && at[1] >= 0 && at[1] < built.cols ? built.cells[at[0] * built.cols + at[1]].tile : null),
     update(s) {
       const rows = s.cells.length, cols = rows ? s.cells[0].length : 0;
       if (!built || built.rows !== rows || built.cols !== cols) built = build(rows, cols);
       const m = markMap(s.marks), tags = new Map((s.tags || []).map(([r, c, t]) => [r + ',' + c, t]));
+      const shade = new Set((s.shade || []).map(keyOf));
       for (const { r, c, g, tile, val, tag } of built.cells) {
         const v = s.cells[r][c], spec = values[keyOf(v)] || {};
-        g.setAttribute('class', 'wt-cell wt-tone-' + (spec.tone || 'plain') + markClass(m, [r, c]));
+        g.setAttribute('class', 'wt-cell wt-tone-' + (spec.tone || 'plain') + markClass(m, [r, c]) + (shade.has(r + ',' + c) ? ' wt-shaded' : ''));
         val.textContent = spec.glyph != null ? spec.glyph : config.showValues === false ? '' : fmt(v);
         tile.dataset.token = val.textContent || `${r},${c}`;
         tag.textContent = textOf(tags.get(r + ',' + c), ctx.lang);
@@ -236,7 +236,8 @@ VIEWS.array = (host, config, ctx) => {
   };
 };
 
-// A hash map: one card per key in insertion order. A count is drawn as dots and the number, a list as chips.
+// A hash map: one card per key in insertion order. A count is drawn as dots and the number, a list as chips. An entry's
+// `label` is written on its card in place of the key; its `marks` mark chips of a list value by index.
 // `slots` (at most k keys) draws the free slots dashed and a key beyond them red; a `struck` key is leaving.
 // A `probe` is a lookup: a chip above the cards, ✓ with its key's card ringed on a hit, red and ✗ on a miss. Its
 // `hit` (default: the key is held) says what the lookup found when the step stores the key after looking it up.
@@ -286,11 +287,11 @@ VIEWS.map = (host, config, ctx) => {
         card.dataset.token = fmt(e.key);
         card.innerHTML = '';
         if (rank.has(k)) html('span', 'wt-rank', card, '#' + rank.get(k));
-        html('div', 'wt-mapkey', card, fmt(e.key));
+        html('div', 'wt-mapkey', card, e.label != null ? textOf(e.label, ctx.lang) : fmt(e.key));
         const v = e.value;
         if (Array.isArray(v)) {
-          const chips = html('div', 'wt-chips', card);
-          v.forEach(x => html('span', 'wt-chip', chips, fmt(x)));
+          const chips = html('div', 'wt-chips', card), cm = markMap(e.marks);
+          v.forEach((x, i) => html('span', 'wt-chip' + markClass(cm, i), chips, fmt(x)));
         } else if (Number.isInteger(v) && v >= 0 && v <= MAX_DOTS) {
           const dots = html('div', 'wt-dots', card);
           for (let i = 0; i < v; i++) html('span', 'wt-dot', dots);
@@ -491,70 +492,64 @@ VIEWS.intervals = (host, config, ctx) => {
 };
 
 VIEWS.graph = (host, config, ctx) => {
-  const R = 20, DX = 120, DY = 88, ARC = 88;
+  const R = 20, MX = 56, MY = 42; // node radius; the room beside and above or below the circle for a node's tag and value
   let built = null;
   function build(nodes, edges) {
     host.innerHTML = '';
     const directed = config.directed !== false;
-    const { pos, cols, rows } = layoutGraph(nodes, edges, directed);
-    const half = (rows - 1) / 2 * DY;
-    const W = Math.max((cols - 1) * DX + 2 * (R + 30), 120), H = 2 * half + 2 * ARC + 2 * R + 40;
-    const P = id => { const p = pos.get(keyOf(id)); return [R + 30 + p.col * DX, ARC + R + 14 + half + p.row * DY]; };
+    const { pos, radius } = layoutGraph(nodes);
+    // the drawing is sized once for the run (no crop to what is drawn: the values under the nodes come later)
+    const CX = radius + R + MX, CY = radius + R + MY, W = 2 * CX, H = 2 * CY;
+    const P = id => { const p = pos.get(keyOf(id)); return [CX + p.x, CY + p.y]; };
     const root = svg('svg', { viewBox: `0 0 ${W} ${H}`, width: W, class: 'wt-svg wt-graph' }, host);
     const defs = svg('defs', {}, root);
     for (const m of ['plain', ...MARKS]) {
-      const mk = svg('marker', { id: `${ctx.uid}-ah-${m}`, viewBox: '0 0 10 10', refX: 9, refY: 5, markerWidth: 7, markerHeight: 7, orient: 'auto-start-reverse' }, defs);
+      const mk = svg('marker', { id: `${ctx.uid}-ah-${m}`, viewBox: '0 0 10 10', refX: 9, refY: 5, markerWidth: 11, markerHeight: 11, markerUnits: 'userSpaceOnUse', orient: 'auto-start-reverse' }, defs);
       svg('path', { d: 'M0,0 L10,5 L0,10 z', class: 'wt-ah wt-ah-' + m }, mk);
     }
-    // straight between neighbouring layers; arcs, alternating sides, for skips and same-layer pairs further apart
-    let flip = 1;
-    const eg = svg('g', {}, root);
+    // straight lines trimmed to the node circles; a directed pair both ways is two lines, each nudged to its left
+    const pairs = new Set(edges.map(e => keyOf(e.from) + '>' + keyOf(e.to)));
+    const eg = svg('g', {}, root), lg = svg('g', {}, root);
     const edgeEls = edges.map(e => {
-      const [x1, y1] = P(e.from), [x2, y2] = P(e.to);
-      const a = pos.get(keyOf(e.from)), b = pos.get(keyOf(e.to));
-      const near = Math.abs(a.col - b.col) + Math.abs(a.row - b.row) <= 1.01 || (Math.abs(a.col - b.col) === 1);
-      const dx = x2 - x1, dy = y2 - y1, len = Math.hypot(dx, dy) || 1, ux = dx / len, uy = dy / len;
+      const [ax, ay] = P(e.from), [bx, by] = P(e.to);
+      const len = Math.hypot(bx - ax, by - ay) || 1, ux = (bx - ax) / len, uy = (by - ay) / len;
+      const both = directed && pairs.has(keyOf(e.to) + '>' + keyOf(e.from));
+      const nudge = both ? 5 : 0, sx = uy * nudge, sy = -ux * nudge; // along (dy, -dx): side -1 of edgeLabelAt
       const end = directed ? R + 3 : R;
-      let d, mx, my;
-      if (near) {
-        d = `M${x1 + ux * R},${y1 + uy * R} L${x2 - ux * end},${y2 - uy * end}`;
-        mx = (x1 + x2) / 2 - uy * 11; my = (y1 + y2) / 2 + ux * 11;
-      } else {
-        const bend = flip * Math.min(ARC * 1.9, 70 + 22 * Math.abs(a.col - b.col)); flip = -flip;
-        const cx = (x1 + x2) / 2 - uy * bend, cy = (y1 + y2) / 2 + ux * bend;
-        const toward = (x, y, r) => { const l = Math.hypot(cx - x, cy - y); return [x + (cx - x) / l * r, y + (cy - y) / l * r]; };
-        const [sx, sy] = toward(x1, y1, R), [ex, ey] = toward(x2, y2, end);
-        d = `M${sx},${sy} Q${cx},${cy} ${ex},${ey}`;
-        mx = (x1 + 2 * cx + x2) / 4; my = (y1 + 2 * cy + y2) / 4;
-      }
+      const x1 = ax + ux * R + sx, y1 = ay + uy * R + sy, x2 = bx - ux * end + sx, y2 = by - uy * end + sy;
       const g = svg('g', {}, eg);
-      const path = svg('path', { d, class: 'wt-edge' }, g);
-      // a move to or from the edge lands on its label chip, or on a dot at its middle when it has no label
-      let spot;
+      const path = svg('path', { d: `M${x1},${y1} L${x2},${y2}`, class: 'wt-edge' }, g);
+      // a move to or from the edge lands on its label chip, or on a dot at its middle when it has no label; the
+      // labels are drawn above every line, so no other edge crosses a weight
+      let spot, label = null;
       if (e.label != null) {
         const t = textOf(e.label, ctx.lang), w = 10 + 7.5 * t.length;
-        spot = svg('rect', { x: mx - w / 2, y: my - 9, width: w, height: 18, rx: 9, class: 'wt-chipbg' }, g);
-        svg('text', { x: mx, y: my + 4, 'text-anchor': 'middle', class: 'wt-elabel' }, g).textContent = t;
+        const c = edgeLabelAt(ax - CX, ay - CY, bx - CX, by - CY, w, 18, both ? -1 : 0);
+        label = svg('g', {}, lg);
+        spot = svg('rect', { x: CX + c.x - w / 2, y: CY + c.y - 9, width: w, height: 18, rx: 9, class: 'wt-chipbg' }, label);
+        svg('text', { x: CX + c.x, y: CY + c.y + 4, 'text-anchor': 'middle', class: 'wt-elabel' }, label).textContent = t;
         spot.dataset.token = t;
-      } else spot = svg('circle', { cx: mx, cy: my, r: 1, class: 'wt-espot' }, g);
-      return { g, path, directed, spot };
+      } else spot = svg('circle', { cx: (x1 + x2) / 2, cy: (y1 + y2) / 2, r: 1, class: 'wt-espot' }, g);
+      return { g, path, directed, spot, label };
     });
+    // a node's tag and value sit outside the circle, beside the node on the side facing away from the centre, the
+    // value nearer the node, so no edge runs through them
     const nodeEls = new Map();
     for (const n of nodes) {
-      const [x, y] = P(n.id);
+      const [x, y] = P(n.id), p = pos.get(keyOf(n.id)), r = Math.hypot(p.x, p.y);
+      const ux = r ? p.x / r : 0, uy = r ? p.y / r : -1;
       const g = svg('g', { transform: `translate(${x},${y})` }, root);
       const circle = svg('circle', { r: R, class: 'wt-node' }, g);
       const name = n.label != null ? textOf(n.label, ctx.lang) : fmt(n.id);
       svg('text', { y: 5, 'text-anchor': 'middle', class: 'wt-nid' }, g).textContent = name;
-      if (n.tag != null) svg('text', { y: -R - 8, 'text-anchor': 'middle', class: 'wt-tag wt-ntag' }, g).textContent = textOf(n.tag, ctx.lang);
-      const val = svg('text', { y: R + 19, 'text-anchor': 'middle', class: 'wt-val wt-val-sm' }, g);
+      const lines = n.tag != null ? (uy < 0 ? ['tag', 'val'] : ['val', 'tag']) : ['val'];
+      const LINE = 16, h = lines.length * LINE, ax = ux * (R + 6), ay = uy * (R + 6);
+      const top = ay - h * (1 - (uy + 1) / 2), anchor = ux > 0.4 ? 'start' : ux < -0.4 ? 'end' : 'middle';
+      const line = i => ({ x: ax, y: top + i * LINE + 12, 'text-anchor': anchor });
+      if (n.tag != null) svg('text', { ...line(lines.indexOf('tag')), class: 'wt-tag wt-ntag' }, g).textContent = textOf(n.tag, ctx.lang);
+      const val = svg('text', { ...line(lines.indexOf('val')), class: 'wt-val wt-val-sm wt-nval' }, g);
       nodeEls.set(keyOf(n.id), { g, val, circle, name });
     }
-    // crop to what was drawn: arcs only take the side they bend to
-    try {
-      const b = root.getBBox();
-      if (b.width && b.height) { root.setAttribute('viewBox', `${b.x - 6} ${b.y - 6} ${b.width + 12} ${b.height + 12}`); root.setAttribute('width', b.width + 12); }
-    } catch {}
     return { nodes, edges, edgeEls, nodeEls, directed };
   }
   return {
@@ -569,9 +564,10 @@ VIEWS.graph = (host, config, ctx) => {
     update(s) {
       if (!built || built.nodes !== s.nodes || built.edges !== s.edges) built = build(s.nodes || [], s.edges || []);
       const nm = markMap(s.nodeMarks), em = markMap(s.edgeMarks), values = s.values || {};
-      built.edgeEls.forEach(({ g, path, directed }, i) => {
+      built.edgeEls.forEach(({ g, path, directed, label }, i) => {
         const m = em.get(String(i)) || 'plain';
         g.setAttribute('class', 'wt-e wt-' + m);
+        if (label) label.setAttribute('class', 'wt-e wt-elab wt-' + m);
         if (directed) path.setAttribute('marker-end', `url(#${ctx.uid}-ah-${m})`);
       });
       for (const [id, { g, val, circle, name }] of built.nodeEls) {
