@@ -1,5 +1,5 @@
 class Solution {
-    public int longestBrightRun(int[] scores) {
+    public int longestRisingScores(int[] scores) {
         // Write your solution here
     }
 }

@@ -10,12 +10,12 @@ int main() {
     string line;
     getline(cin, line);
     string inner = line.substr(1, line.size() - 2);
-    vector<int> nums;
+    vector<int> scores;
     stringstream ss(inner);
     string token;
     while (getline(ss, token, ',')) {
-        nums.push_back(stoi(token));
+        scores.push_back(stoi(token));
     }
-    cout << Solution().longestBrightRun(nums) << endl;
+    cout << Solution().longestRisingScores(scores) << endl;
     return 0;
 }

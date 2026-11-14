@@ -3,7 +3,7 @@ class Solution {
      * @param {number[]} scores
      * @return {number}
      */
-    longestBrightRun(scores) {
+    longestRisingScores(scores) {
         // Write your solution here
     }
 }
