@@ -2,5 +2,5 @@
 
 weights = eval(input())
 capacity = int(input())
-result = Solution().pairCrates(weights, capacity)
+result = Solution().minLunchboxes(weights, capacity)
 print(result)

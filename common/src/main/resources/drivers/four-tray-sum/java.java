@@ -9,16 +9,16 @@ public class Main {
         Scanner sc = new Scanner(System.in);
         String line = sc.nextLine().trim();
         String inner = line.substring(1, line.length() - 1);
-        int[] nums;
+        int[] trays;
         if (inner.isEmpty()) {
-            nums = new int[0];
+            trays = new int[0];
         } else {
             String[] parts = inner.split(",");
-            nums = new int[parts.length];
-            for (int i = 0; i < parts.length; i++) nums[i] = Integer.parseInt(parts[i].trim());
+            trays = new int[parts.length];
+            for (int i = 0; i < parts.length; i++) trays[i] = Integer.parseInt(parts[i].trim());
         }
-        int target = Integer.parseInt(sc.nextLine().trim());
-        List<List<Integer>> result = new Solution().quadTrayDemand(nums, target);
+        int demand = Integer.parseInt(sc.nextLine().trim());
+        List<List<Integer>> result = new Solution().fourTraySum(trays, demand);
         for (List<Integer> quad : result) Collections.sort(quad);
         result.sort((a, b) -> {
             for (int i = 0; i < Math.min(a.size(), b.size()); i++) {
