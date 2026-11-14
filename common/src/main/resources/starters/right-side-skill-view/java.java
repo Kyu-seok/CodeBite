@@ -10,7 +10,7 @@
  * }
  */
 class Solution {
-    public List<Integer> captureDockSilhouette(TreeNode root) {
+    public List<Integer> rightSideView(TreeNode root) {
         // Write your solution here
     }
 }
