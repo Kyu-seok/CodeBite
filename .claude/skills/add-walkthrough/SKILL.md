@@ -37,6 +37,11 @@ A caption is one or two sentences in each language, and the setup frame names th
 
 Besides the public checklist, hold every frame to the two rules (#273): (1) the drawing shows where the step's value came from and where it went, by a move or by marking both places; (2) a value with a position or range (a pointer, a window, the best range, a count per key, the answer so far) is drawn on the data, and `vars` holds only values with no place in it, such as `k`. A frame failing either goes back to the tracer.
 
+The rules can hold while the picture still doesn't teach; the owner sent back three that passed them (#286). Check each Walkthrough for these too:
+- **Each structure drawn in the shape the solver pictures.** A key packed into a string (`"1:5"`, `"0,1:2"`) is a structure flattened: draw what it encodes, such as one card per region holding its digits ([views.md](views.md), sets of composite keys).
+- **One assignment per frame.** Where the code moves a value through a temp, or one cell at a time, the frames do too, with the temp a view of its own; two cells changing at once hides the order.
+- **The description's Diagram look.** A view drawing a structure the description draws with a Diagram (a graph, a grid, intervals) matches its layout, so the learner recognises the picture: open the problem's description beside the shots.
+
 The public skill's steps 5 and 6, with the pages and shots kept out of the repo under a name of your own (`<scratch>` below: another session's review script or page in a shared scratchpad gets overwritten):
 
 ```sh
