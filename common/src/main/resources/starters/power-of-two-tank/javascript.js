@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {number} specimenCount
+     * @param {number} n
      * @return {boolean}
      */
-    isSoloSpecies(specimenCount) {
+    isPowerOfTwo(n) {
         // Write your solution here
     }
 }

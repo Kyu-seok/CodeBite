@@ -3,7 +3,7 @@ class Solution {
      * @param {number[][]} scores
      * @return {number}
      */
-    longestVineAscent(scores) {
+    longestIncreasingPath(scores) {
         // Write your solution here
     }
 }

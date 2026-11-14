@@ -1,9 +1,9 @@
 class Solution:
-    def canBalanceJobs(self, s: str) -> bool:
+    def canBalance(self, brackets: str) -> bool:
         # The number of unmatched openers can be anything in [low, high].
         low = high = 0
-        for tag in s:
-            match tag:
+        for char in brackets:
+            match char:
                 case "(":
                     low += 1
                     high += 1

@@ -5,9 +5,9 @@ import java.util.*;
 public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        double x = Double.parseDouble(sc.nextLine().trim());
-        int n = Integer.parseInt(sc.nextLine().trim());
-        double result = new Solution().raiseForecastFactor(x, n);
+        double base = Double.parseDouble(sc.nextLine().trim());
+        int exponent = Integer.parseInt(sc.nextLine().trim());
+        double result = new Solution().power(base, exponent);
         System.out.printf("%.5f%n", result);
     }
 }

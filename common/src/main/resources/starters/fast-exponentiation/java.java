@@ -1,6 +1,5 @@
 class Solution {
-public:
-    bool canBalanceJobs(string tags) {
+    public double power(double base, int exponent) {
         // Write your solution here
     }
-};
+}

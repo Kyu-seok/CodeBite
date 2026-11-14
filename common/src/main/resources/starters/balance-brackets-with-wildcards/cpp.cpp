@@ -1,5 +1,6 @@
 class Solution {
-    public boolean canBalanceJobs(String tags) {
+public:
+    bool canBalance(string brackets) {
         // Write your solution here
     }
-}
+};
