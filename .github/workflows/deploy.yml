@@ -77,8 +77,8 @@ jobs:
             $COMPOSE up -d --no-deps --scale backend=6 --no-recreate backend
 
             # 4. Compute NEW container IDs = all backends - OLD_IDS, then wait
-            # for each NEW container's own healthcheck to report healthy.
-            # Going direct to docker inspect (not through nginx) insulates this
+            # for each NEW container to answer its own /api/health.
+            # Going direct to the container (not through nginx) insulates this
             # step from nginx being down or pointing at stale DNS.
             ALL_IDS=$($COMPOSE ps -q backend | tr '\n' ' ')
             NEW_IDS=""
@@ -92,24 +92,24 @@ jobs:
 
             # Budget ~5 min: Spring Boot cold start on the mini PC is ~30-100s
             # depending on JVM warm-up / disk cache, so give generous headroom.
+            # Asks each new container's /api/health itself every 2s instead of
+            # waiting on Docker's healthcheck, which only looks every 15s.
             echo "--- Waiting for new replicas to be healthy ---"
-            sleep 30
             NEW_HEALTHY=false
-            for i in $(seq 1 30); do
+            for i in $(seq 1 150); do
               ALL_HEALTHY=true
               for id in $NEW_IDS; do
-                status=$(docker inspect -f '{{.State.Health.Status}}' "$id" 2>/dev/null || echo "missing")
-                if [ "$status" != "healthy" ]; then
+                if ! docker exec "$id" wget --quiet --tries=1 -O /dev/null http://localhost:8080/api/health 2>/dev/null; then
                   ALL_HEALTHY=false
-                  echo "--- attempt $i: $id -> $status ---"
+                  break
                 fi
               done
               if [ "$ALL_HEALTHY" = true ]; then
-                echo "--- New replicas healthy (attempt $i) ---"
+                echo "--- New replicas healthy after ~$((i * 2))s ---"
                 NEW_HEALTHY=true
                 break
               fi
-              sleep 10
+              sleep 2
             done
 
             # Bail out before touching old containers if new ones never came up.
