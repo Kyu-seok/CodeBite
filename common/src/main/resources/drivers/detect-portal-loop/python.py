@@ -17,5 +17,5 @@ head = dummy.next
 if pos >= 0 and nodes:
     nodes[-1].next = nodes[pos]
 
-result = Solution().detectTransferLoop(head)
+result = Solution().hasPortalLoop(head)
 print(json.dumps(result))
