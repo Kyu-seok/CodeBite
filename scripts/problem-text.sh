@@ -4,6 +4,8 @@
 #
 #   scripts/problem-text.sh <slug>         # a Former Slug works too
 #   scripts/problem-text.sh <slug> --all   # every Test Case, hidden ones too, by order_index
+#   scripts/problem-text.sh <slug> --json  # every Test Case as [{input, expected_output}], by order_index:
+#                                          # judge-local.sh --cases reads it, and so can a check of your own
 #   CODEBITE_DB=<database> scripts/problem-text.sh <slug>   # a database other than codebite,
 #                                          # such as the one dev-branch-servers.sh prints
 #
@@ -13,14 +15,17 @@
 # checkout has (CODEBITE_ALLOW_STALE=1 reads it anyway, with a warning). For a query across problems, scripts/db-sql.sh.
 set -euo pipefail
 
-usage() { echo "usage: scripts/problem-text.sh <slug> [--all]" >&2; exit 2; }
+usage() { echo "usage: scripts/problem-text.sh <slug> [--all | --json]" >&2; exit 2; }
 [[ $# -ge 1 && $# -le 2 && "$1" != -* ]] || usage
 slug=$1
 all=false
-if [[ $# -eq 2 ]]; then
-  [[ "$2" == --all ]] || usage
-  all=true
-fi
+json=false
+case "${2:-}" in
+  '') ;;
+  --all) all=true ;;
+  --json) json=true ;;
+  *) usage ;;
+esac
 here=$(cd "$(dirname "$0")/.." && pwd)
 
 # shellcheck source=SCRIPTDIR/dev-servers-common.sh
@@ -29,7 +34,18 @@ database=${CODEBITE_DB:-codebite}
 require_current_db "$database" "$here" problem-text.sh || exit 1
 psql() { db_psql "$database" "$@"; }
 
-out=$(psql -tA -v slug="$slug" -v all="$all" <<'SQL'
+if $json; then
+  out=$(psql -tA -v slug="$slug" <<'SQL'
+SELECT json_agg(json_build_object('input', tc.input, 'expected_output', tc.expected_output)
+                ORDER BY tc.order_index, tc.id)
+FROM test_cases tc
+WHERE tc.problem_id IN (SELECT id FROM problems WHERE slug = :'slug'
+                        UNION SELECT problem_id FROM problem_former_slugs WHERE slug = :'slug')
+HAVING count(*) > 0;
+SQL
+)
+else
+  out=$(psql -tA -v slug="$slug" -v all="$all" <<'SQL'
 WITH p AS (
   SELECT * FROM problems
   WHERE slug = :'slug'
@@ -48,6 +64,7 @@ UNION ALL
  WHERE tc.is_sample OR :'all' ORDER BY tc.order_index, tc.is_sample DESC, tc.id);
 SQL
 )
+fi
 if [[ -z "$out" ]]; then
   echo "problem-text.sh: no problem with slug or Former Slug '$slug'" >&2
   exit 1

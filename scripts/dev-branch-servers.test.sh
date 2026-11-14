@@ -121,8 +121,9 @@ for tool in docker pgrep kill; do
   printf '#!/bin/sh\necho "%s $*" >> "%s/escaped"; exit 1\n' "$tool" "$fake" > "$fake/bin/$tool"
   chmod +x "$fake/bin/$tool"
 done
-for cmd in start stop drop; do
-  out=$(cd "$repo" && PATH="$fake/bin:$PATH" "$script" "$cmd" 2>&1) && code=0 || code=$?
+for cmd in start 'start --detach' restart stop drop; do
+  # shellcheck disable=SC2086  # 'start --detach' is two words
+  out=$(cd "$repo" && PATH="$fake/bin:$PATH" "$script" $cmd 2>&1) && code=0 || code=$?
   check "$cmd refused in the main checkout" "$code" 1
   [[ "$out" == *"is the main checkout"* ]] || { echo "FAIL: $cmd: no refusal message: $out"; fail=1; }
 done
@@ -135,9 +136,29 @@ check "worktree name" "$(cd "$fake/wt" && "$script" name)" \
 
 out=$("$script" bogus 2>&1) && code=0 || code=$?
 check "unknown subcommand" "$code" 2
-for cmd in '[start]' stop status drop name; do
+for cmd in '[start [--detach]]' restart stop status drop name; do
   [[ "$out" == *"dev-branch-servers.sh $cmd"* ]] || { echo "FAIL: usage lacks $cmd: $out"; fail=1; }
 done
+
+# In the stubbed main checkout, so a broken check can't start real servers.
+out=$(cd "$repo" && PATH="$fake/bin:$PATH" "$script" start --bogus 2>&1) && code=0 || code=$?
+check "unknown start option" "$code" 2
+
+# --- a detached start ---------------------------------------------------------------------------
+
+# await_detached returns once the start it watches prints its summary, and fails, showing the log,
+# once that start dies first.
+log="$fake/start.log"
+sh -c 'echo "backend: up"; sleep 0.3; echo "Branch servers for feat/x:"; sleep 30' > "$log" 2>&1 &
+up=$!
+out=$(await_detached "$up" "$log" 2>&1) && code=0 || code=$?
+{ kill "$up"; wait "$up"; } 2>/dev/null || true
+check "detached start up" "$code" 0
+[[ "$out" == *"Branch servers for feat/x:"* ]] || { echo "FAIL: a detached start should print the summary: $out"; fail=1; }
+sh -c 'echo "backend: exited before it came up"; exit 1' > "$log" 2>&1 &
+out=$(await_detached $! "$log" 2>&1) && code=0 || code=$?
+check "detached start died" "$code" 1
+[[ "$out" == *"exited before it came up"* ]] || { echo "FAIL: a failed detached start should show its log: $out"; fail=1; }
 
 # --- Judge0 -----------------------------------------------------------------------------------
 
@@ -149,4 +170,4 @@ check "production URL dropped" "$(dev_judge0_url http://judge0:2358)" ""
 check "unset stays unset" "$(dev_judge0_url '')" ""
 
 (( fail )) && exit 1
-echo "PASS: dev-branch-servers.sh names, ownership, Redis claim, process matching, ports, main-checkout refusal, Judge0 URL"
+echo "PASS: dev-branch-servers.sh names, ownership, Redis claim, process matching, ports, main-checkout refusal, detached start, Judge0 URL"
