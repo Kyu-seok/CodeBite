@@ -1,0 +1,2788 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Longest Window With At Most K Genres",
+  "ko": "장르가 최대 K개인 가장 긴 구간"
+ },
+ "approach": {
+  "en": "Grow the window one tag at a time on the right; when it holds more than k genres, drop tags from the left until it holds k again. Every window it passes through is a candidate.",
+  "ko": "오른쪽으로 태그를 하나씩 넣어 구간을 늘리고, 장르가 k개를 넘으면 다시 k개가 될 때까지 왼쪽에서 태그를 뺍니다. 그렇게 지나가는 구간이 모두 후보입니다."
+ },
+ "views": [
+  {
+   "id": "queue",
+   "type": "array",
+   "title": {
+    "en": "queue",
+    "ko": "queue (재생 큐)"
+   }
+  },
+  {
+   "id": "window",
+   "type": "map",
+   "title": {
+    "en": "window (genre → count)",
+    "ko": "window (장르 → 개수)"
+   },
+   "empty": {
+    "en": "empty",
+    "ko": "비어 있음"
+   }
+  },
+  {
+   "id": "state",
+   "type": "vars"
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "queue = \"yyxzxxz\", k = 2",
+   "expected": "5",
+   "frames": [
+    {
+     "caption": {
+      "en": "7 tags, and the window holds at most k = 2 genres. It starts empty; tags join from the left.",
+      "ko": "태그 7개, 구간에는 장르가 최대 k = 2종류까지 들어갑니다. 빈 구간에서 시작해 왼쪽부터 태그를 넣습니다."
+     },
+     "views": {
+      "queue": {
+       "values": [
+        "y",
+        "y",
+        "x",
+        "z",
+        "x",
+        "x",
+        "z"
+       ],
+       "spans": {},
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+       ],
+       "pointers": {
+        "left": null,
+        "right": null
+       },
+       "marks": {}
+      },
+      "window": {
+       "entries": [],
+       "slots": 2,
+       "struck": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 2
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "queue[0] = 'y' joins: 1 genre, within k = 2. Window length 1: a new best, 1.",
+      "ko": "queue[0] = 'y' 추가: 장르 1종류로 k = 2 이내입니다. 구간 길이 1, best = 1로 갱신."
+     },
+     "views": {
+      "queue": {
+       "values": [
+        "y",
+        "y",
+        "x",
+        "z",
+        "x",
+        "x",
+        "z"
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "window 1",
+          "ko": "구간 1"
+         },
+         "mark": "lit",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "best = 1",
+          "ko": "best (최장 길이) = 1"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "unread": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+       ],
+       "pointers": {
+        "left": 0,
+        "right": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": "y",
+         "value": 1
+        }
+       ],
+       "slots": 2,
+       "struck": [],
+       "marks": {
+        "good": [
+         "y"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 2
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "queue",
+        "at": 0
+       },
+       "to": {
+        "view": "window",
+        "at": "y"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "queue[1] = 'y' joins: 1 genre, within k = 2. Window length 2: a new best, 2.",
+      "ko": "queue[1] = 'y' 추가: 장르 1종류로 k = 2 이내입니다. 구간 길이 2, best = 2로 갱신."
+     },
+     "views": {
+      "queue": {
+       "values": [
+        "y",
+        "y",
+        "x",
+        "z",
+        "x",
+        "x",
+        "z"
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "window 2",
+          "ko": "구간 2"
+         },
+         "mark": "lit",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "best = 2",
+          "ko": "best (최장 길이) = 2"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "unread": [
+        2,
+        3,
+        4,
+        5,
+        6
+       ],
+       "pointers": {
+        "left": 0,
+        "right": 1
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": "y",
+         "value": 2
+        }
+       ],
+       "slots": 2,
+       "struck": [],
+       "marks": {
+        "good": [
+         "y"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 2
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "queue",
+        "at": 1
+       },
+       "to": {
+        "view": "window",
+        "at": "y"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "queue[2] = 'x' joins: 2 genres, within k = 2. Window length 3: a new best, 3.",
+      "ko": "queue[2] = 'x' 추가: 장르 2종류로 k = 2 이내입니다. 구간 길이 3, best = 3으로 갱신."
+     },
+     "views": {
+      "queue": {
+       "values": [
+        "y",
+        "y",
+        "x",
+        "z",
+        "x",
+        "x",
+        "z"
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "window 3",
+          "ko": "구간 3"
+         },
+         "mark": "lit",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "best = 3",
+          "ko": "best (최장 길이) = 3"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "unread": [
+        3,
+        4,
+        5,
+        6
+       ],
+       "pointers": {
+        "left": 0,
+        "right": 2
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": "y",
+         "value": 2
+        },
+        {
+         "key": "x",
+         "value": 1
+        }
+       ],
+       "slots": 2,
+       "struck": [],
+       "marks": {
+        "good": [
+         "x"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 2
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "queue",
+        "at": 2
+       },
+       "to": {
+        "view": "window",
+        "at": "x"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "queue[3] = 'z' joins: 3 genres, more than k = 2, so tags leave from the left until it is back to 2.",
+      "ko": "queue[3] = 'z' 추가: 장르가 3종류로 k = 2보다 많아, 다시 2종류가 될 때까지 왼쪽에서 태그를 뺍니다."
+     },
+     "views": {
+      "queue": {
+       "values": [
+        "y",
+        "y",
+        "x",
+        "z",
+        "x",
+        "x",
+        "z"
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 3,
+         "label": {
+          "en": "window 4",
+          "ko": "구간 4"
+         },
+         "mark": "bad",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "best = 3",
+          "ko": "best (최장 길이) = 3"
+         },
+         "below": true
+        }
+       },
+       "unread": [
+        4,
+        5,
+        6
+       ],
+       "pointers": {
+        "left": 0,
+        "right": 3
+       },
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": "y",
+         "value": 2
+        },
+        {
+         "key": "x",
+         "value": 1
+        },
+        {
+         "key": "z",
+         "value": 1
+        }
+       ],
+       "slots": 2,
+       "struck": [],
+       "marks": {
+        "bad": [
+         "z"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 2
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "queue",
+        "at": 3
+       },
+       "to": {
+        "view": "window",
+        "at": "z"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "queue[0] = 'y' leaves: its genre's count goes 2 → 1.",
+      "ko": "queue[0] = 'y' 제거: 장르 'y' 개수 2 → 1."
+     },
+     "views": {
+      "queue": {
+       "values": [
+        "y",
+        "y",
+        "x",
+        "z",
+        "x",
+        "x",
+        "z"
+       ],
+       "spans": {
+        "window": {
+         "from": 1,
+         "to": 3,
+         "label": {
+          "en": "window 3",
+          "ko": "구간 3"
+         },
+         "mark": "bad",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "best = 3",
+          "ko": "best (최장 길이) = 3"
+         },
+         "below": true
+        }
+       },
+       "unread": [
+        4,
+        5,
+        6
+       ],
+       "pointers": {
+        "left": 1,
+        "right": 3
+       },
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": "y",
+         "value": 1
+        },
+        {
+         "key": "x",
+         "value": 1
+        },
+        {
+         "key": "z",
+         "value": 1
+        }
+       ],
+       "slots": 2,
+       "struck": [],
+       "marks": {
+        "bad": [
+         "y"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 2
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "window",
+        "at": "y"
+       },
+       "to": {
+        "view": "queue",
+        "at": 0
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "queue[1] = 'y' leaves: its genre's count goes 1 → 0, so the genre leaves the window. Back to 2 genres: window length 2, best stays 3.",
+      "ko": "queue[1] = 'y' 제거: 장르 'y' 개수 1 → 0, 구간에서 이 장르가 빠집니다. 다시 장르 2종류: 구간 길이 2, best = 3 그대로."
+     },
+     "views": {
+      "queue": {
+       "values": [
+        "y",
+        "y",
+        "x",
+        "z",
+        "x",
+        "x",
+        "z"
+       ],
+       "spans": {
+        "window": {
+         "from": 2,
+         "to": 3,
+         "label": {
+          "en": "window 2",
+          "ko": "구간 2"
+         },
+         "mark": "lit",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "best = 3",
+          "ko": "best (최장 길이) = 3"
+         },
+         "below": true
+        }
+       },
+       "unread": [
+        4,
+        5,
+        6
+       ],
+       "pointers": {
+        "left": 2,
+        "right": 3
+       },
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": "y",
+         "value": 0
+        },
+        {
+         "key": "x",
+         "value": 1
+        },
+        {
+         "key": "z",
+         "value": 1
+        }
+       ],
+       "slots": 2,
+       "struck": [
+        "y"
+       ],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 2
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "window",
+        "at": "y"
+       },
+       "to": {
+        "view": "queue",
+        "at": 1
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "queue[4] = 'x' joins: 2 genres, within k = 2. Window length 3: best stays 3.",
+      "ko": "queue[4] = 'x' 추가: 장르 2종류로 k = 2 이내입니다. 구간 길이 3, best = 3 그대로."
+     },
+     "views": {
+      "queue": {
+       "values": [
+        "y",
+        "y",
+        "x",
+        "z",
+        "x",
+        "x",
+        "z"
+       ],
+       "spans": {
+        "window": {
+         "from": 2,
+         "to": 4,
+         "label": {
+          "en": "window 3",
+          "ko": "구간 3"
+         },
+         "mark": "lit",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "best = 3",
+          "ko": "best (최장 길이) = 3"
+         },
+         "below": true
+        }
+       },
+       "unread": [
+        5,
+        6
+       ],
+       "pointers": {
+        "left": 2,
+        "right": 4
+       },
+       "marks": {
+        "lit": [
+         4
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": "x",
+         "value": 2
+        },
+        {
+         "key": "z",
+         "value": 1
+        }
+       ],
+       "slots": 2,
+       "struck": [],
+       "marks": {
+        "good": [
+         "x"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 2
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "queue",
+        "at": 4
+       },
+       "to": {
+        "view": "window",
+        "at": "x"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "queue[5] = 'x' joins: 2 genres, within k = 2. Window length 4: a new best, 4.",
+      "ko": "queue[5] = 'x' 추가: 장르 2종류로 k = 2 이내입니다. 구간 길이 4, best = 4로 갱신."
+     },
+     "views": {
+      "queue": {
+       "values": [
+        "y",
+        "y",
+        "x",
+        "z",
+        "x",
+        "x",
+        "z"
+       ],
+       "spans": {
+        "window": {
+         "from": 2,
+         "to": 5,
+         "label": {
+          "en": "window 4",
+          "ko": "구간 4"
+         },
+         "mark": "lit",
+         "fade": true
+        },
+        "best": {
+         "from": 2,
+         "to": 5,
+         "label": {
+          "en": "best = 4",
+          "ko": "best (최장 길이) = 4"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "unread": [
+        6
+       ],
+       "pointers": {
+        "left": 2,
+        "right": 5
+       },
+       "marks": {
+        "lit": [
+         5
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": "x",
+         "value": 3
+        },
+        {
+         "key": "z",
+         "value": 1
+        }
+       ],
+       "slots": 2,
+       "struck": [],
+       "marks": {
+        "good": [
+         "x"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 2
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "queue",
+        "at": 5
+       },
+       "to": {
+        "view": "window",
+        "at": "x"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "queue[6] = 'z' joins: 2 genres, within k = 2. Window length 5: a new best, 5.",
+      "ko": "queue[6] = 'z' 추가: 장르 2종류로 k = 2 이내입니다. 구간 길이 5, best = 5로 갱신."
+     },
+     "views": {
+      "queue": {
+       "values": [
+        "y",
+        "y",
+        "x",
+        "z",
+        "x",
+        "x",
+        "z"
+       ],
+       "spans": {
+        "window": {
+         "from": 2,
+         "to": 6,
+         "label": {
+          "en": "window 5",
+          "ko": "구간 5"
+         },
+         "mark": "lit",
+         "fade": true
+        },
+        "best": {
+         "from": 2,
+         "to": 6,
+         "label": {
+          "en": "best = 5",
+          "ko": "best (최장 길이) = 5"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "unread": [],
+       "pointers": {
+        "left": 2,
+        "right": 6
+       },
+       "marks": {
+        "lit": [
+         6
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": "x",
+         "value": 3
+        },
+        {
+         "key": "z",
+         "value": 2
+        }
+       ],
+       "slots": 2,
+       "struck": [],
+       "marks": {
+        "good": [
+         "z"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 2
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "queue",
+        "at": 6
+       },
+       "to": {
+        "view": "window",
+        "at": "z"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every tag is in, and the longest window was the last one, \"xzxxz\" (queue[2..6]), length 5. Answer 5.",
+      "ko": "모든 태그를 넣었고, 가장 긴 구간은 마지막 구간 \"xzxxz\"(queue[2..6]), 길이 5입니다. 답은 5입니다."
+     },
+     "views": {
+      "queue": {
+       "values": [
+        "y",
+        "y",
+        "x",
+        "z",
+        "x",
+        "x",
+        "z"
+       ],
+       "spans": {
+        "best": {
+         "from": 2,
+         "to": 6,
+         "label": {
+          "en": "best = 5",
+          "ko": "best (최장 길이) = 5"
+         },
+         "mark": "path",
+         "below": true
+        }
+       },
+       "unread": [],
+       "pointers": {
+        "left": null,
+        "right": null
+       },
+       "marks": {
+        "path": [
+         2,
+         3,
+         4,
+         5,
+         6
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": "x",
+         "value": 3
+        },
+        {
+         "key": "z",
+         "value": 2
+        }
+       ],
+       "slots": 2,
+       "struck": [],
+       "marks": {
+        "dim": [
+         "x",
+         "z"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 2
+        }
+       ]
+      }
+     },
+     "answer": "5"
+    }
+   ],
+   "sampleInput": "yyxzxxz\n2"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "queue = \"rrrrrr\", k = 1",
+   "expected": "6",
+   "frames": [
+    {
+     "caption": {
+      "en": "6 tags, and the window holds at most k = 1 genre. It starts empty; tags join from the left.",
+      "ko": "태그 6개, 구간에는 장르가 최대 k = 1종류까지 들어갑니다. 빈 구간에서 시작해 왼쪽부터 태그를 넣습니다."
+     },
+     "views": {
+      "queue": {
+       "values": [
+        "r",
+        "r",
+        "r",
+        "r",
+        "r",
+        "r"
+       ],
+       "spans": {},
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+       ],
+       "pointers": {
+        "left": null,
+        "right": null
+       },
+       "marks": {}
+      },
+      "window": {
+       "entries": [],
+       "slots": 1,
+       "struck": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "queue[0] = 'r' joins: 1 genre, within k = 1. Window length 1: a new best, 1.",
+      "ko": "queue[0] = 'r' 추가: 장르 1종류로 k = 1 이내입니다. 구간 길이 1, best = 1로 갱신."
+     },
+     "views": {
+      "queue": {
+       "values": [
+        "r",
+        "r",
+        "r",
+        "r",
+        "r",
+        "r"
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "window 1",
+          "ko": "구간 1"
+         },
+         "mark": "lit",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "best = 1",
+          "ko": "best (최장 길이) = 1"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "unread": [
+        1,
+        2,
+        3,
+        4,
+        5
+       ],
+       "pointers": {
+        "left": 0,
+        "right": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": "r",
+         "value": 1
+        }
+       ],
+       "slots": 1,
+       "struck": [],
+       "marks": {
+        "good": [
+         "r"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "queue",
+        "at": 0
+       },
+       "to": {
+        "view": "window",
+        "at": "r"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "queue[1] = 'r' joins: 1 genre, within k = 1. Window length 2: a new best, 2.",
+      "ko": "queue[1] = 'r' 추가: 장르 1종류로 k = 1 이내입니다. 구간 길이 2, best = 2로 갱신."
+     },
+     "views": {
+      "queue": {
+       "values": [
+        "r",
+        "r",
+        "r",
+        "r",
+        "r",
+        "r"
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "window 2",
+          "ko": "구간 2"
+         },
+         "mark": "lit",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "best = 2",
+          "ko": "best (최장 길이) = 2"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "unread": [
+        2,
+        3,
+        4,
+        5
+       ],
+       "pointers": {
+        "left": 0,
+        "right": 1
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": "r",
+         "value": 2
+        }
+       ],
+       "slots": 1,
+       "struck": [],
+       "marks": {
+        "good": [
+         "r"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "queue",
+        "at": 1
+       },
+       "to": {
+        "view": "window",
+        "at": "r"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "queue[2] = 'r' joins: 1 genre, within k = 1. Window length 3: a new best, 3.",
+      "ko": "queue[2] = 'r' 추가: 장르 1종류로 k = 1 이내입니다. 구간 길이 3, best = 3으로 갱신."
+     },
+     "views": {
+      "queue": {
+       "values": [
+        "r",
+        "r",
+        "r",
+        "r",
+        "r",
+        "r"
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "window 3",
+          "ko": "구간 3"
+         },
+         "mark": "lit",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "best = 3",
+          "ko": "best (최장 길이) = 3"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "unread": [
+        3,
+        4,
+        5
+       ],
+       "pointers": {
+        "left": 0,
+        "right": 2
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": "r",
+         "value": 3
+        }
+       ],
+       "slots": 1,
+       "struck": [],
+       "marks": {
+        "good": [
+         "r"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "queue",
+        "at": 2
+       },
+       "to": {
+        "view": "window",
+        "at": "r"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "queue[3] = 'r' joins: 1 genre, within k = 1. Window length 4: a new best, 4.",
+      "ko": "queue[3] = 'r' 추가: 장르 1종류로 k = 1 이내입니다. 구간 길이 4, best = 4로 갱신."
+     },
+     "views": {
+      "queue": {
+       "values": [
+        "r",
+        "r",
+        "r",
+        "r",
+        "r",
+        "r"
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 3,
+         "label": {
+          "en": "window 4",
+          "ko": "구간 4"
+         },
+         "mark": "lit",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 3,
+         "label": {
+          "en": "best = 4",
+          "ko": "best (최장 길이) = 4"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "unread": [
+        4,
+        5
+       ],
+       "pointers": {
+        "left": 0,
+        "right": 3
+       },
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": "r",
+         "value": 4
+        }
+       ],
+       "slots": 1,
+       "struck": [],
+       "marks": {
+        "good": [
+         "r"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "queue",
+        "at": 3
+       },
+       "to": {
+        "view": "window",
+        "at": "r"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "queue[4] = 'r' joins: 1 genre, within k = 1. Window length 5: a new best, 5.",
+      "ko": "queue[4] = 'r' 추가: 장르 1종류로 k = 1 이내입니다. 구간 길이 5, best = 5로 갱신."
+     },
+     "views": {
+      "queue": {
+       "values": [
+        "r",
+        "r",
+        "r",
+        "r",
+        "r",
+        "r"
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 4,
+         "label": {
+          "en": "window 5",
+          "ko": "구간 5"
+         },
+         "mark": "lit",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 4,
+         "label": {
+          "en": "best = 5",
+          "ko": "best (최장 길이) = 5"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "unread": [
+        5
+       ],
+       "pointers": {
+        "left": 0,
+        "right": 4
+       },
+       "marks": {
+        "lit": [
+         4
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": "r",
+         "value": 5
+        }
+       ],
+       "slots": 1,
+       "struck": [],
+       "marks": {
+        "good": [
+         "r"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "queue",
+        "at": 4
+       },
+       "to": {
+        "view": "window",
+        "at": "r"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "queue[5] = 'r' joins: 1 genre, within k = 1. Window length 6: a new best, 6.",
+      "ko": "queue[5] = 'r' 추가: 장르 1종류로 k = 1 이내입니다. 구간 길이 6, best = 6으로 갱신."
+     },
+     "views": {
+      "queue": {
+       "values": [
+        "r",
+        "r",
+        "r",
+        "r",
+        "r",
+        "r"
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 5,
+         "label": {
+          "en": "window 6",
+          "ko": "구간 6"
+         },
+         "mark": "lit",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 5,
+         "label": {
+          "en": "best = 6",
+          "ko": "best (최장 길이) = 6"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "unread": [],
+       "pointers": {
+        "left": 0,
+        "right": 5
+       },
+       "marks": {
+        "lit": [
+         5
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": "r",
+         "value": 6
+        }
+       ],
+       "slots": 1,
+       "struck": [],
+       "marks": {
+        "good": [
+         "r"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "queue",
+        "at": 5
+       },
+       "to": {
+        "view": "window",
+        "at": "r"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every tag is in, and the longest window was the last one, \"rrrrrr\" (queue[0..5]), length 6. Answer 6.",
+      "ko": "모든 태그를 넣었고, 가장 긴 구간은 마지막 구간 \"rrrrrr\"(queue[0..5]), 길이 6입니다. 답은 6입니다."
+     },
+     "views": {
+      "queue": {
+       "values": [
+        "r",
+        "r",
+        "r",
+        "r",
+        "r",
+        "r"
+       ],
+       "spans": {
+        "best": {
+         "from": 0,
+         "to": 5,
+         "label": {
+          "en": "best = 6",
+          "ko": "best (최장 길이) = 6"
+         },
+         "mark": "path",
+         "below": true
+        }
+       },
+       "unread": [],
+       "pointers": {
+        "left": null,
+        "right": null
+       },
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": "r",
+         "value": 6
+        }
+       ],
+       "slots": 1,
+       "struck": [],
+       "marks": {
+        "dim": [
+         "r"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        }
+       ]
+      }
+     },
+     "answer": "6"
+    }
+   ],
+   "sampleInput": "rrrrrr\n1"
+  },
+  {
+   "label": {
+    "en": "Example 3",
+    "ko": "예시 3"
+   },
+   "input": "queue = \"qwerty\", k = 1",
+   "expected": "1",
+   "frames": [
+    {
+     "caption": {
+      "en": "6 tags, and the window holds at most k = 1 genre. It starts empty; tags join from the left.",
+      "ko": "태그 6개, 구간에는 장르가 최대 k = 1종류까지 들어갑니다. 빈 구간에서 시작해 왼쪽부터 태그를 넣습니다."
+     },
+     "views": {
+      "queue": {
+       "values": [
+        "q",
+        "w",
+        "e",
+        "r",
+        "t",
+        "y"
+       ],
+       "spans": {},
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+       ],
+       "pointers": {
+        "left": null,
+        "right": null
+       },
+       "marks": {}
+      },
+      "window": {
+       "entries": [],
+       "slots": 1,
+       "struck": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "queue[0] = 'q' joins: 1 genre, within k = 1. Window length 1: a new best, 1.",
+      "ko": "queue[0] = 'q' 추가: 장르 1종류로 k = 1 이내입니다. 구간 길이 1, best = 1로 갱신."
+     },
+     "views": {
+      "queue": {
+       "values": [
+        "q",
+        "w",
+        "e",
+        "r",
+        "t",
+        "y"
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "window 1",
+          "ko": "구간 1"
+         },
+         "mark": "lit",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "best = 1",
+          "ko": "best (최장 길이) = 1"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "unread": [
+        1,
+        2,
+        3,
+        4,
+        5
+       ],
+       "pointers": {
+        "left": 0,
+        "right": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": "q",
+         "value": 1
+        }
+       ],
+       "slots": 1,
+       "struck": [],
+       "marks": {
+        "good": [
+         "q"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "queue",
+        "at": 0
+       },
+       "to": {
+        "view": "window",
+        "at": "q"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "queue[1] = 'w' joins: 2 genres, more than k = 1, so tags leave from the left until it is back to 1.",
+      "ko": "queue[1] = 'w' 추가: 장르가 2종류로 k = 1보다 많아, 다시 1종류가 될 때까지 왼쪽에서 태그를 뺍니다."
+     },
+     "views": {
+      "queue": {
+       "values": [
+        "q",
+        "w",
+        "e",
+        "r",
+        "t",
+        "y"
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "window 2",
+          "ko": "구간 2"
+         },
+         "mark": "bad",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "best = 1",
+          "ko": "best (최장 길이) = 1"
+         },
+         "below": true
+        }
+       },
+       "unread": [
+        2,
+        3,
+        4,
+        5
+       ],
+       "pointers": {
+        "left": 0,
+        "right": 1
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": "q",
+         "value": 1
+        },
+        {
+         "key": "w",
+         "value": 1
+        }
+       ],
+       "slots": 1,
+       "struck": [],
+       "marks": {
+        "bad": [
+         "w"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "queue",
+        "at": 1
+       },
+       "to": {
+        "view": "window",
+        "at": "w"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "queue[0] = 'q' leaves: its genre's count goes 1 → 0, so the genre leaves the window. Back to 1 genre: window length 1, best stays 1.",
+      "ko": "queue[0] = 'q' 제거: 장르 'q' 개수 1 → 0, 구간에서 이 장르가 빠집니다. 다시 장르 1종류: 구간 길이 1, best = 1 그대로."
+     },
+     "views": {
+      "queue": {
+       "values": [
+        "q",
+        "w",
+        "e",
+        "r",
+        "t",
+        "y"
+       ],
+       "spans": {
+        "window": {
+         "from": 1,
+         "to": 1,
+         "label": {
+          "en": "window 1",
+          "ko": "구간 1"
+         },
+         "mark": "lit",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "best = 1",
+          "ko": "best (최장 길이) = 1"
+         },
+         "below": true
+        }
+       },
+       "unread": [
+        2,
+        3,
+        4,
+        5
+       ],
+       "pointers": {
+        "left": 1,
+        "right": 1
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": "q",
+         "value": 0
+        },
+        {
+         "key": "w",
+         "value": 1
+        }
+       ],
+       "slots": 1,
+       "struck": [
+        "q"
+       ],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "window",
+        "at": "q"
+       },
+       "to": {
+        "view": "queue",
+        "at": 0
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "queue[2] = 'e' joins: 2 genres, more than k = 1, so tags leave from the left until it is back to 1.",
+      "ko": "queue[2] = 'e' 추가: 장르가 2종류로 k = 1보다 많아, 다시 1종류가 될 때까지 왼쪽에서 태그를 뺍니다."
+     },
+     "views": {
+      "queue": {
+       "values": [
+        "q",
+        "w",
+        "e",
+        "r",
+        "t",
+        "y"
+       ],
+       "spans": {
+        "window": {
+         "from": 1,
+         "to": 2,
+         "label": {
+          "en": "window 2",
+          "ko": "구간 2"
+         },
+         "mark": "bad",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "best = 1",
+          "ko": "best (최장 길이) = 1"
+         },
+         "below": true
+        }
+       },
+       "unread": [
+        3,
+        4,
+        5
+       ],
+       "pointers": {
+        "left": 1,
+        "right": 2
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": "w",
+         "value": 1
+        },
+        {
+         "key": "e",
+         "value": 1
+        }
+       ],
+       "slots": 1,
+       "struck": [],
+       "marks": {
+        "bad": [
+         "e"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "queue",
+        "at": 2
+       },
+       "to": {
+        "view": "window",
+        "at": "e"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "queue[1] = 'w' leaves: its genre's count goes 1 → 0, so the genre leaves the window. Back to 1 genre: window length 1, best stays 1.",
+      "ko": "queue[1] = 'w' 제거: 장르 'w' 개수 1 → 0, 구간에서 이 장르가 빠집니다. 다시 장르 1종류: 구간 길이 1, best = 1 그대로."
+     },
+     "views": {
+      "queue": {
+       "values": [
+        "q",
+        "w",
+        "e",
+        "r",
+        "t",
+        "y"
+       ],
+       "spans": {
+        "window": {
+         "from": 2,
+         "to": 2,
+         "label": {
+          "en": "window 1",
+          "ko": "구간 1"
+         },
+         "mark": "lit",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "best = 1",
+          "ko": "best (최장 길이) = 1"
+         },
+         "below": true
+        }
+       },
+       "unread": [
+        3,
+        4,
+        5
+       ],
+       "pointers": {
+        "left": 2,
+        "right": 2
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": "w",
+         "value": 0
+        },
+        {
+         "key": "e",
+         "value": 1
+        }
+       ],
+       "slots": 1,
+       "struck": [
+        "w"
+       ],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "window",
+        "at": "w"
+       },
+       "to": {
+        "view": "queue",
+        "at": 1
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "queue[3] = 'r' joins: 2 genres, more than k = 1, so tags leave from the left until it is back to 1.",
+      "ko": "queue[3] = 'r' 추가: 장르가 2종류로 k = 1보다 많아, 다시 1종류가 될 때까지 왼쪽에서 태그를 뺍니다."
+     },
+     "views": {
+      "queue": {
+       "values": [
+        "q",
+        "w",
+        "e",
+        "r",
+        "t",
+        "y"
+       ],
+       "spans": {
+        "window": {
+         "from": 2,
+         "to": 3,
+         "label": {
+          "en": "window 2",
+          "ko": "구간 2"
+         },
+         "mark": "bad",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "best = 1",
+          "ko": "best (최장 길이) = 1"
+         },
+         "below": true
+        }
+       },
+       "unread": [
+        4,
+        5
+       ],
+       "pointers": {
+        "left": 2,
+        "right": 3
+       },
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": "e",
+         "value": 1
+        },
+        {
+         "key": "r",
+         "value": 1
+        }
+       ],
+       "slots": 1,
+       "struck": [],
+       "marks": {
+        "bad": [
+         "r"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "queue",
+        "at": 3
+       },
+       "to": {
+        "view": "window",
+        "at": "r"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "queue[2] = 'e' leaves: its genre's count goes 1 → 0, so the genre leaves the window. Back to 1 genre: window length 1, best stays 1.",
+      "ko": "queue[2] = 'e' 제거: 장르 'e' 개수 1 → 0, 구간에서 이 장르가 빠집니다. 다시 장르 1종류: 구간 길이 1, best = 1 그대로."
+     },
+     "views": {
+      "queue": {
+       "values": [
+        "q",
+        "w",
+        "e",
+        "r",
+        "t",
+        "y"
+       ],
+       "spans": {
+        "window": {
+         "from": 3,
+         "to": 3,
+         "label": {
+          "en": "window 1",
+          "ko": "구간 1"
+         },
+         "mark": "lit",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "best = 1",
+          "ko": "best (최장 길이) = 1"
+         },
+         "below": true
+        }
+       },
+       "unread": [
+        4,
+        5
+       ],
+       "pointers": {
+        "left": 3,
+        "right": 3
+       },
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": "e",
+         "value": 0
+        },
+        {
+         "key": "r",
+         "value": 1
+        }
+       ],
+       "slots": 1,
+       "struck": [
+        "e"
+       ],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "window",
+        "at": "e"
+       },
+       "to": {
+        "view": "queue",
+        "at": 2
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "queue[4] = 't' joins: 2 genres, more than k = 1, so tags leave from the left until it is back to 1.",
+      "ko": "queue[4] = 't' 추가: 장르가 2종류로 k = 1보다 많아, 다시 1종류가 될 때까지 왼쪽에서 태그를 뺍니다."
+     },
+     "views": {
+      "queue": {
+       "values": [
+        "q",
+        "w",
+        "e",
+        "r",
+        "t",
+        "y"
+       ],
+       "spans": {
+        "window": {
+         "from": 3,
+         "to": 4,
+         "label": {
+          "en": "window 2",
+          "ko": "구간 2"
+         },
+         "mark": "bad",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "best = 1",
+          "ko": "best (최장 길이) = 1"
+         },
+         "below": true
+        }
+       },
+       "unread": [
+        5
+       ],
+       "pointers": {
+        "left": 3,
+        "right": 4
+       },
+       "marks": {
+        "lit": [
+         4
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": "r",
+         "value": 1
+        },
+        {
+         "key": "t",
+         "value": 1
+        }
+       ],
+       "slots": 1,
+       "struck": [],
+       "marks": {
+        "bad": [
+         "t"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "queue",
+        "at": 4
+       },
+       "to": {
+        "view": "window",
+        "at": "t"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "queue[3] = 'r' leaves: its genre's count goes 1 → 0, so the genre leaves the window. Back to 1 genre: window length 1, best stays 1.",
+      "ko": "queue[3] = 'r' 제거: 장르 'r' 개수 1 → 0, 구간에서 이 장르가 빠집니다. 다시 장르 1종류: 구간 길이 1, best = 1 그대로."
+     },
+     "views": {
+      "queue": {
+       "values": [
+        "q",
+        "w",
+        "e",
+        "r",
+        "t",
+        "y"
+       ],
+       "spans": {
+        "window": {
+         "from": 4,
+         "to": 4,
+         "label": {
+          "en": "window 1",
+          "ko": "구간 1"
+         },
+         "mark": "lit",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "best = 1",
+          "ko": "best (최장 길이) = 1"
+         },
+         "below": true
+        }
+       },
+       "unread": [
+        5
+       ],
+       "pointers": {
+        "left": 4,
+        "right": 4
+       },
+       "marks": {
+        "lit": [
+         4
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": "r",
+         "value": 0
+        },
+        {
+         "key": "t",
+         "value": 1
+        }
+       ],
+       "slots": 1,
+       "struck": [
+        "r"
+       ],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "window",
+        "at": "r"
+       },
+       "to": {
+        "view": "queue",
+        "at": 3
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "queue[5] = 'y' joins: 2 genres, more than k = 1, so tags leave from the left until it is back to 1.",
+      "ko": "queue[5] = 'y' 추가: 장르가 2종류로 k = 1보다 많아, 다시 1종류가 될 때까지 왼쪽에서 태그를 뺍니다."
+     },
+     "views": {
+      "queue": {
+       "values": [
+        "q",
+        "w",
+        "e",
+        "r",
+        "t",
+        "y"
+       ],
+       "spans": {
+        "window": {
+         "from": 4,
+         "to": 5,
+         "label": {
+          "en": "window 2",
+          "ko": "구간 2"
+         },
+         "mark": "bad",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "best = 1",
+          "ko": "best (최장 길이) = 1"
+         },
+         "below": true
+        }
+       },
+       "unread": [],
+       "pointers": {
+        "left": 4,
+        "right": 5
+       },
+       "marks": {
+        "lit": [
+         5
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": "t",
+         "value": 1
+        },
+        {
+         "key": "y",
+         "value": 1
+        }
+       ],
+       "slots": 1,
+       "struck": [],
+       "marks": {
+        "bad": [
+         "y"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "queue",
+        "at": 5
+       },
+       "to": {
+        "view": "window",
+        "at": "y"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "queue[4] = 't' leaves: its genre's count goes 1 → 0, so the genre leaves the window. Back to 1 genre: window length 1, best stays 1.",
+      "ko": "queue[4] = 't' 제거: 장르 't' 개수 1 → 0, 구간에서 이 장르가 빠집니다. 다시 장르 1종류: 구간 길이 1, best = 1 그대로."
+     },
+     "views": {
+      "queue": {
+       "values": [
+        "q",
+        "w",
+        "e",
+        "r",
+        "t",
+        "y"
+       ],
+       "spans": {
+        "window": {
+         "from": 5,
+         "to": 5,
+         "label": {
+          "en": "window 1",
+          "ko": "구간 1"
+         },
+         "mark": "lit",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "best = 1",
+          "ko": "best (최장 길이) = 1"
+         },
+         "below": true
+        }
+       },
+       "unread": [],
+       "pointers": {
+        "left": 5,
+        "right": 5
+       },
+       "marks": {
+        "lit": [
+         5
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": "t",
+         "value": 0
+        },
+        {
+         "key": "y",
+         "value": 1
+        }
+       ],
+       "slots": 1,
+       "struck": [
+        "t"
+       ],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "window",
+        "at": "t"
+       },
+       "to": {
+        "view": "queue",
+        "at": 4
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every tag is in: the run ended on queue[5..5], but the best window was \"q\" (queue[0..0]), length 1. Answer 1.",
+      "ko": "모든 태그를 넣었습니다. 실행은 queue[5..5]에서 끝났지만 가장 긴 구간은 \"q\"(queue[0..0]), 길이 1이고, 답은 1입니다."
+     },
+     "views": {
+      "queue": {
+       "values": [
+        "q",
+        "w",
+        "e",
+        "r",
+        "t",
+        "y"
+       ],
+       "spans": {
+        "best": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "best = 1",
+          "ko": "best (최장 길이) = 1"
+         },
+         "mark": "path",
+         "below": true
+        }
+       },
+       "unread": [],
+       "pointers": {
+        "left": null,
+        "right": null
+       },
+       "marks": {
+        "path": [
+         0
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": "y",
+         "value": 1
+        }
+       ],
+       "slots": 1,
+       "struck": [],
+       "marks": {
+        "dim": [
+         "y"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        }
+       ]
+      }
+     },
+     "answer": "1"
+    }
+   ],
+   "sampleInput": "qwerty\n1"
+  }
+ ]
+}
