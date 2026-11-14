@@ -2,6 +2,6 @@
 
 import json
 
-targets = json.loads(input())
-result = Solution().find_min_arrows(targets)
+zones = json.loads(input())
+result = Solution().minPellets(zones)
 print(result)
