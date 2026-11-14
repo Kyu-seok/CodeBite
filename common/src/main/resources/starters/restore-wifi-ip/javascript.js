@@ -3,7 +3,7 @@ class Solution {
      * @param {string} digits
      * @return {string[]}
      */
-    splitZoneCodes(digits) {
+    restoreIpAddresses(digits) {
         // Write your solution here
     }
 }

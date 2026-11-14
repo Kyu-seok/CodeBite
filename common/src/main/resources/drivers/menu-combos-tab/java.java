@@ -8,17 +8,17 @@ public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         String line = sc.nextLine().trim();
-        int target = Integer.parseInt(sc.nextLine().trim());
+        int tab = Integer.parseInt(sc.nextLine().trim());
         String inner = line.substring(1, line.length() - 1);
-        int[] candidates;
+        int[] pastries;
         if (inner.isEmpty()) {
-            candidates = new int[0];
+            pastries = new int[0];
         } else {
             String[] parts = inner.split(",");
-            candidates = new int[parts.length];
-            for (int i = 0; i < parts.length; i++) candidates[i] = Integer.parseInt(parts[i].trim());
+            pastries = new int[parts.length];
+            for (int i = 0; i < parts.length; i++) pastries[i] = Integer.parseInt(parts[i].trim());
         }
-        List<List<Integer>> result = new Solution().listQuotaBatches(candidates, target);
+        List<List<Integer>> result = new Solution().listTabCombos(pastries, tab);
         for (List<Integer> combo : result) Collections.sort(combo);
         result.sort((a, b) -> {
             for (int i = 0; i < Math.min(a.size(), b.size()); i++) {

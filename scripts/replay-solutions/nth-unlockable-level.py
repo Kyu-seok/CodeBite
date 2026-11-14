@@ -1,5 +1,5 @@
 class Solution:
-    def nthSmoothBatch(self, n: int) -> int:
+    def nthUnlockableLevel(self, n: int) -> int:
         levels = [1]
         i2 = i3 = i5 = 0  # next level to multiply by 2, 3 and 5
         while len(levels) < n:

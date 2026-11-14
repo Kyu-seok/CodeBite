@@ -1,5 +1,5 @@
 class Solution {
-    public int layPipeNetwork(int[][] bowls) {
+    public int minHoseLength(int[][] bowls) {
         // Write your solution here
     }
 }

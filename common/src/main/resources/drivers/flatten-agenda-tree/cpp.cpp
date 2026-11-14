@@ -13,7 +13,7 @@ int main() {
     string line;
     getline(cin, line);
     TreeNode* root = treeFromArray(line);
-    Solution().unrollSchedule(root);
+    Solution().flattenAgenda(root);
     cout << "[";
     TreeNode* curr = root;
     bool first = true;

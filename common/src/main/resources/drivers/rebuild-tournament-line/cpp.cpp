@@ -13,7 +13,7 @@ int main() {
     string line;
     getline(cin, line);
     // Parse [[7,0],[4,4],[7,1],[5,0],[6,1],[5,2]]
-    vector<vector<int>> people;
+    vector<vector<int>> players;
     int i = 0;
     while (i < (int)line.size()) {
         if (line[i] == '[' && i > 0) {
@@ -25,13 +25,13 @@ int main() {
             while (getline(ss, token, ',')) {
                 row.push_back(stoi(token));
             }
-            people.push_back(row);
+            players.push_back(row);
             i = j + 1;
         } else {
             i++;
         }
     }
-    vector<vector<int>> result = Solution().orderTicketHolders(people);
+    vector<vector<int>> result = Solution().rebuildLine(players);
     cout << JsonOutput::intVector2D(result) << endl;
     return 0;
 }

@@ -4,7 +4,7 @@ class Solution {
      * @param {string} target
      * @return {number}
      */
-    countFilterMatches(notes, target) {
+    countHintMatches(notes, target) {
         // Write your solution here
     }
 }
