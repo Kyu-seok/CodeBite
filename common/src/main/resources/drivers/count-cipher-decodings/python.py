@@ -1,5 +1,5 @@
 {USER_CODE}
 
 digits = input().strip()
-result = Solution().count_decodings(digits)
+result = Solution().countDecodings(digits)
 print(result)

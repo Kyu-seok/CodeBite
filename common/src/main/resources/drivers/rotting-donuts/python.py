@@ -3,5 +3,5 @@
 import json
 
 tray = json.loads(input())
-result = Solution().minutes_until_stale(tray)
+result = Solution().minutesUntilStale(tray)
 print(result)

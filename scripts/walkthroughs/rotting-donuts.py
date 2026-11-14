@@ -42,7 +42,7 @@ def minute_tag(m):
 
 
 def solve(tray, run):
-    """Solution.minutes_until_stale with the BFS queue drawn: each stale donut joins it from its cell, and the front
+    """Solution.minutesUntilStale with the BFS queue drawn: each stale donut joins it from its cell, and the front
     leaves to turn its fresh neighbours stale. Returns nothing; the last frame carries the answer as the Driver
     prints it."""
     rows = len(tray)

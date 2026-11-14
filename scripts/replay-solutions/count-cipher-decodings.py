@@ -1,5 +1,5 @@
 class Solution:
-    def count_decodings(self, digits: str) -> int:
+    def countDecodings(self, digits: str) -> int:
         if not digits or digits[0] == "0":
             return 0
         # Decodings of the prefix one shorter and of the prefix so far.

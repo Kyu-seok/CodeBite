@@ -1,5 +1,5 @@
 {USER_CODE}
 
 doodle = input().strip()
-result = Solution().count_palindromic_substrings(doodle)
+result = Solution().countPalindromicSubstrings(doodle)
 print(result)
