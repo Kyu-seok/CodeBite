@@ -191,7 +191,10 @@ def solve(n, links, src, dst, k, run):
                f"{plural(rounds, 'leg', 'legs')} maxHops = {k} allows.")
         ko += (f" 더 싼 {arrow(route)}({cheaper}분)은 구간 {more}개가 필요해 maxHops = {k}일 때 허용되는 "
                f"{rounds}개를 넘습니다.")
-    frame({"en": en, "ko": ko}, rounds, path=path, used=used, answer=str(cost[dst]))
+    # a cafe the route left earlier shows the cost it left with: from the last-round row when that holds it
+    shows = [move(at("last", v), at("cafes", v)) if used[v] == last_row[v] else move(dst=at("cafes", v), value=show(used[v]))
+             for v in path if used[v] != updated[v]]
+    frame({"en": en, "ko": ko}, rounds, path=path, used=used, moves=shows, answer=str(cost[dst]))
 
 
 for number, sample in enumerate(sample_cases(SLUG), start=1):

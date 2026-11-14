@@ -56,6 +56,23 @@ class WalkthroughAddressesTest {
     }
 
     @Test
+    void eachFormListsThePlacesAStateHoldsWithTheValueDrawnThere() throws Exception {
+        WalkthroughAddresses kit = WalkthroughAddresses.kit();
+        assertEquals(Map.of("0", json("7"), "1", json("8")), kit.places("queue", json("{'values': [7, 8]}")));
+        assertEquals(Map.of("4", json("2"), "x", json("[1]")),
+                kit.places("map", json("{'entries': [{'key': 4, 'value': 2}, {'key': 'x', 'value': [1]}]}")));
+        assertEquals(Map.of("x", json("'x'")), kit.places("set", json("{'members': ['x']}")));
+        assertEquals(Map.of("[0,0]", json("1"), "[0,1]", json("2")), kit.places("table", json("{'rows': [{'cells': [1, 2]}]}")));
+        assertEquals(Map.of("a", json("0"), "b", json("null"), "[a,b]", json("5")), kit.places("graph",
+                json("{'nodes': [{'id': 'a'}, {'id': 'b'}], 'edges': [{'from': 'a', 'to': 'b', 'label': 5}], 'values': {'a': 0}}")));
+        assertEquals(Map.of(), kit.places("vars", json("{'items': [{'label': 'k', 'value': 2}]}")));
+        assertTrue(kit.indexed("queue"));
+        assertFalse(kit.indexed("graph"));
+        assertEquals("4", WalkthroughAddresses.address(json("'4'")));
+        assertEquals("[a,4]", WalkthroughAddresses.address(json("['a', 4]")));
+    }
+
+    @Test
     void aFormTheReaderDoesNotKnowIsRefusedByName() throws Exception {
         JsonNode table = json("{'views': {'a': {'what': 'x', 'forms': [{'form': 'slot', 'list': 'values'}]}}}");
         IllegalStateException e = assertThrows(IllegalStateException.class, () -> WalkthroughAddresses.of(table));

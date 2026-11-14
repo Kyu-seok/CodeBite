@@ -2218,6 +2218,18 @@
        ]
       }
      },
+     "moves": [
+      {
+       "from": {
+        "view": "last",
+        "at": 3
+       },
+       "to": {
+        "view": "cafes",
+        "at": 3
+       }
+      }
+     ],
      "answer": "220"
     }
    ],

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3.12
 """group-anagrams' Walkthrough: the reference solution (scripts/replay-solutions/group-anagrams.py),
-a hash map from each word's sorted letters to its group. Each word moves from its row into its key's card, as a
-chip in the group, one frame per word; then each group, sorted as the Driver prints it, moves into the answer, on
+a hash map from each word's sorted letters to its group. Each word's sorted letters move into its row's second
+cell and the word moves from its row into that key's card, as a chip in the group, one frame per word; then each group, sorted as the Driver prints it, moves into the answer, on
 each sample Test Case.
 
     CODEBITE_DB=<database> scripts/walkthroughs/group-anagrams.py
@@ -71,7 +71,9 @@ def solve(strs, run):
                        "ko": f'"{word}"의 글자를 정렬하면 "{key}"입니다. {others}의 키와 같으므로 그 그룹에 들어갑니다.'}
         frame(caption, word_marks={"lit": [[i, 0]], "good": [[i, 1]],
                                    "dim": [[r, c] for r in range(i + 1, len(strs)) for c in (0, 1)]},
-              group_marks={"good": [key]}, moves=[move(at("words", [i, 0]), at("groups", key), value=word)])
+              group_marks={"good": [key]},
+              moves=[move(at("words", [i, 0]), at("words", [i, 1]), value=key),
+                     move(at("words", [i, 0]), at("groups", key), value=word)])
     printed = sorted((sorted(g), k) for k, g in groups.items())  # each group sorted, then the groups in order
     answer = driver_list([g for g, _ in printed])
     n = len(groups)
