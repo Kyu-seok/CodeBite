@@ -1289,8 +1289,8 @@
   },
   {
    "label": {
-    "en": "Case 3",
-    "ko": "케이스 3"
+    "en": "Example 3",
+    "ko": "예시 3"
    },
    "input": "codes = [1,2,3,4,5]",
    "expected": "[]",
