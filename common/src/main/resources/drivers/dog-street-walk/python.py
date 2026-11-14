@@ -1,6 +1,6 @@
 {USER_CODE}
 
 import json
-tickets = json.loads(input())
-result = Solution().find_itinerary(tickets)
+routes = json.loads(input())
+result = Solution().planWalk(routes)
 print(json.dumps(result, separators=(',', ':')))
