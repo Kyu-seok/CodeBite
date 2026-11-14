@@ -1,10 +1,10 @@
 class Solution {
     /**
-     * @param {number} numSteps
+     * @param {number} numTasks
      * @param {number[][]} prereqs
      * @return {number[]}
      */
-    sequenceAssemblySteps(numSteps, prereqs) {
+    findTaskOrder(numTasks, prereqs) {
         // Write your solution here
     }
 }

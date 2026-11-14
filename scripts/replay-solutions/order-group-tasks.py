@@ -2,20 +2,20 @@ from collections import deque
 
 
 class Solution:
-    def find_order(self, num_courses: int, prereqs: list[list[int]]) -> list[int]:
-        unlocks: list[list[int]] = [[] for _ in range(num_courses)]
-        waiting = [0] * num_courses
-        for course, needed in prereqs:
-            unlocks[needed].append(course)
-            waiting[course] += 1
+    def find_task_order(self, num_tasks: int, prereqs: list[list[int]]) -> list[int]:
+        unlocks: list[list[int]] = [[] for _ in range(num_tasks)]
+        waiting = [0] * num_tasks
+        for task, needed in prereqs:
+            unlocks[needed].append(task)
+            waiting[task] += 1
 
-        ready = deque(c for c in range(num_courses) if waiting[c] == 0)
+        ready = deque(t for t in range(num_tasks) if waiting[t] == 0)
         order: list[int] = []
         while ready:
-            course = ready.popleft()
-            order.append(course)
-            for nxt in unlocks[course]:
+            task = ready.popleft()
+            order.append(task)
+            for nxt in unlocks[task]:
                 waiting[nxt] -= 1
                 if waiting[nxt] == 0:
                     ready.append(nxt)
-        return order if len(order) == num_courses else []
+        return order if len(order) == num_tasks else []
