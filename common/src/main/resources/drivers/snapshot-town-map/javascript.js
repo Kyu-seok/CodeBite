@@ -34,5 +34,5 @@ function _graphToAdjList(node) {
 const input = require('fs').readFileSync('/dev/stdin', 'utf8').trim();
 const adjList = JSON.parse(input);
 const node = _buildGraph(adjList);
-const cloned = new Solution().snapshotMeshLayout(node);
+const cloned = new Solution().cloneMap(node);
 console.log(JSON.stringify(_graphToAdjList(cloned)));

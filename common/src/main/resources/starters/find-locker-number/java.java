@@ -1,5 +1,5 @@
 class Solution {
-    public int locateCallNumber(int[] shelf, int target) {
+    public int findLocker(int[] lockers, int target) {
         // Write your solution here
     }
 }

@@ -22,7 +22,7 @@ int main() {
             pos++;
         }
     }
-    int result = Solution().foldBaleOps(tokens);
+    int result = Solution().evalPostfix(tokens);
     cout << result << endl;
     return 0;
 }

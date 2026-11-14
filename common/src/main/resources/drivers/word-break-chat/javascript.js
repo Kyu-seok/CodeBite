@@ -2,6 +2,6 @@
 
 const input = require('fs').readFileSync('/dev/stdin', 'utf8').trim();
 const lines = input.split('\n');
-const s = lines[0];
-const wordDict = JSON.parse(lines[1]);
-console.log(new Solution().splitHeadlineTokens(s, wordDict));
+const message = lines[0];
+const words = JSON.parse(lines[1]);
+console.log(new Solution().canSplitMessage(message, words));
