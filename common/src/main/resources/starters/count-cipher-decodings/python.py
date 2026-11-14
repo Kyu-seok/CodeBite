@@ -1,4 +1,4 @@
 class Solution:
-    def count_decodings(self, digits: str) -> int:
+    def countDecodings(self, digits: str) -> int:
         # Write your solution here
         pass

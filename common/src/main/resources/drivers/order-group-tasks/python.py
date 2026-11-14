@@ -42,7 +42,7 @@ def _is_valid(n, prereqs, result):
     return True
 
 
-num_tasks = int(input())
+numTasks = int(input())
 prereqs = json.loads(input())
-result = Solution().find_task_order(num_tasks, prereqs)
-print("VALID" if _is_valid(num_tasks, prereqs, result) else "INVALID")
+result = Solution().findTaskOrder(numTasks, prereqs)
+print("VALID" if _is_valid(numTasks, prereqs, result) else "INVALID")

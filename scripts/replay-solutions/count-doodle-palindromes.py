@@ -1,5 +1,5 @@
 class Solution:
-    def count_palindromic_substrings(self, doodle: str) -> int:
+    def countPalindromicSubstrings(self, doodle: str) -> int:
         count = 0
         n = len(doodle)
         # Grow around each of the 2n - 1 centres: letters and gaps between them.

@@ -1,5 +1,5 @@
 class Solution:
-    def minutes_until_stale(self, tray: list[list[int]]) -> int:
+    def minutesUntilStale(self, tray: list[list[int]]) -> int:
         rows = len(tray)
         cols = len(tray[0]) if tray else 0
         fresh = sum(row.count(1) for row in tray)

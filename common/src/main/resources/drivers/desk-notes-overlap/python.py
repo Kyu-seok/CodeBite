@@ -2,5 +2,5 @@
 
 left = input().strip()
 right = input().strip()
-result = Solution().longest_common_subsequence(left, right)
+result = Solution().longestCommonSubsequence(left, right)
 print(result)
