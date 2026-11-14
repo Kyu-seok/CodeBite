@@ -12,7 +12,7 @@ public class Main {
         for (int i = 0; i < tokens.length; i++) {
             tokens[i] = tokens[i].trim().replaceAll("\"", "");
         }
-        int result = new Solution().foldBaleOps(tokens);
+        int result = new Solution().evalPostfix(tokens);
         System.out.println(result);
     }
 }

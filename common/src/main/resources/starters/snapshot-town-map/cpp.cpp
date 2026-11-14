@@ -10,7 +10,7 @@
  */
 class Solution {
 public:
-    Node* snapshotMeshLayout(Node* node) {
+    Node* cloneMap(Node* node) {
         // Write your solution here
     }
 };

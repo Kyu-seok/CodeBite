@@ -19,7 +19,7 @@ def _list_to_array(head):
 
 arr1 = json.loads(input())
 arr2 = json.loads(input())
-list1 = _build_list(arr1)
-list2 = _build_list(arr2)
-result = Solution().combineOvenRotations(list1, list2)
+runA = _build_list(arr1)
+runB = _build_list(arr2)
+result = Solution().mergeRuns(runA, runB)
 print(json.dumps(_list_to_array(result), separators=(',', ':')))

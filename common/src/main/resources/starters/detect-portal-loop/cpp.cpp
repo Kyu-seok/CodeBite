@@ -10,7 +10,7 @@
  */
 class Solution {
 public:
-    bool detectTransferLoop(ListNode* head) {
+    bool hasPortalLoop(ListNode* head) {
         // Write your solution here
     }
 };

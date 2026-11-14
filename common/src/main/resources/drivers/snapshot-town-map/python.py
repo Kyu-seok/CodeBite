@@ -32,5 +32,5 @@ def _graph_to_adj_list(node):
 
 adj_list = json.loads(input())
 node = _build_graph(adj_list)
-cloned = Solution().snapshotMeshLayout(node)
+cloned = Solution().cloneMap(node)
 print(json.dumps(_graph_to_adj_list(cloned), separators=(',', ':')))

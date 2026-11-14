@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {number[]} slack
+     * @param {number[]} jumps
      * @return {boolean}
      */
-    canFinishLine(slack) {
+    canFinishLevel(jumps) {
         // Write your solution here
     }
 }

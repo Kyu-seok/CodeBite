@@ -9,7 +9,7 @@
  * }
  */
 class Solution {
-    public Node snapshotMeshLayout(Node node) {
+    public Node cloneMap(Node node) {
         // Write your solution here
     }
 }
