@@ -7,6 +7,6 @@ class TreeNode:
         self.right = right
 
 class Solution:
-    def verifyWardOrder(self, root: Optional[TreeNode]) -> bool:
+    def isValidBST(self, root: Optional[TreeNode]) -> bool:
         # Write your solution here
         pass

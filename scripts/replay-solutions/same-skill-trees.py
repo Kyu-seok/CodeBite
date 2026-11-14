@@ -9,7 +9,7 @@ class TreeNode:
 
 
 class Solution:
-    def matchCatalogLayout(self, p: Optional[TreeNode], q: Optional[TreeNode]) -> bool:
+    def isSameTree(self, p: Optional[TreeNode], q: Optional[TreeNode]) -> bool:
         stack = [(p, q)]
         while stack:
             a, b = stack.pop()

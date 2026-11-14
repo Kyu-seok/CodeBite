@@ -7,6 +7,6 @@ class TreeNode:
         self.right = right
 
 class Solution:
-    def matchCatalogLayout(self, p: Optional[TreeNode], q: Optional[TreeNode]) -> bool:
+    def isSameTree(self, p: Optional[TreeNode], q: Optional[TreeNode]) -> bool:
         # Write your solution here
         pass

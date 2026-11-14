@@ -7,17 +7,17 @@ using namespace std;
 {USER_CODE}
 
 int main() {
-    string numsLine;
-    getline(cin, numsLine);
+    string scoresLine;
+    getline(cin, scoresLine);
     // Parse [3,4,5,1,2] -> vector<int>
-    string inner = numsLine.substr(1, numsLine.size() - 2);
-    vector<int> nums;
+    string inner = scoresLine.substr(1, scoresLine.size() - 2);
+    vector<int> scores;
     stringstream ss(inner);
     string token;
     while (getline(ss, token, ',')) {
-        nums.push_back(stoi(token));
+        scores.push_back(stoi(token));
     }
-    int result = Solution().locateTerminus(nums);
+    int result = Solution().findLowestScore(scores);
     cout << result << endl;
     return 0;
 }

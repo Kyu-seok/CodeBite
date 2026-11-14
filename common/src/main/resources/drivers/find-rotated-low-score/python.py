@@ -1,5 +1,5 @@
 {USER_CODE}
 
-nums = eval(input())
-result = Solution().locateTerminus(nums)
+scores = eval(input())
+result = Solution().findLowestScore(scores)
 print(result)

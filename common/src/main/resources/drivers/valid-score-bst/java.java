@@ -9,7 +9,7 @@ public class Main {
         Scanner sc = new Scanner(System.in);
         String line = sc.nextLine().trim();
         TreeNode root = TreeNode.fromArray(line);
-        boolean result = new Solution().verifyWardOrder(root);
+        boolean result = new Solution().isValidBST(root);
         System.out.println(result);
     }
 }
