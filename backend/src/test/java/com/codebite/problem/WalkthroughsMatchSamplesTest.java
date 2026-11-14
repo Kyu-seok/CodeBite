@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Every Walkthrough (GLOSSARY.md, ADR 0011) shows the samples it claims to: its problem exists
  * under the Slug it is filed under; it is a well-formed {@code walkthrough/1} document (the public
  * walkthrough skill's {@code references/format.md}: known view types, marks inside the data they
- * name, moves whose addresses exist in that frame, unique map keys and set members, set probes that hit only members, spans inside their array, map slots a
+ * name, moves whose addresses exist in that frame by the kit's address table, unique map keys and set members, set probes that hit only members, spans inside their array, map slots a
  * non-negative integer, a map probe with a key that it hits only when held, intervals that start no later than they end, queue marks and tags on its positions, a grid's boxes a whole number and its shade on its cells, map entry labels as Text and chip marks on their list, the answer on the last frame only); its sample runs are, in order, exactly the problem's
  * sample Test Cases by {@code sampleInput} and {@code expected}, compared trimmed as the Grader
  * compares; each run ends on its {@code expected}; and any run marked {@code extra} comes after
@@ -45,6 +45,7 @@ class WalkthroughsMatchSamplesTest {
     private static final ObjectMapper JSON = new ObjectMapper();
     private static final MigratedDatabase DATABASE = new MigratedDatabase("walkthroughs-match-samples");
     private static final Walkthroughs WALKTHROUGHS = new Walkthroughs();
+    private static final WalkthroughAddresses ADDRESSES = WalkthroughAddresses.kit();
 
     private static final List<String> VIEW_TYPES = List.of("grid", "array", "map", "set", "output", "queue", "intervals", "graph", "table", "vars");
     private static final List<String> MARKS = List.of("lit", "good", "bad", "path", "dim");
@@ -634,10 +635,8 @@ class WalkthroughsMatchSamplesTest {
     private static final List<String> MOVE_MARKS = List.of("good", "bad", "path");
 
     /**
-     * What is wrong with one move: each end it has must name a place that exists in that frame's state of its view
-     * (the skill's {@code ADDRESSES}: an array or output index, a map key, a set member, a queue position from the
-     * front, a grid or table {@code [row, col]}, an intervals {@code [group, index]}, a graph node id or
-     * {@code [from, to]} edge, either order when the graph isn't {@code directed}).
+     * What is wrong with one move: its mark, and each end it has naming a place that exists in that frame's state of its
+     * view, by the kit's address table ({@link WalkthroughAddresses}).
      */
     private static List<String> move(JsonNode move, Map<String, JsonNode> views, JsonNode setup, JsonNode states) {
         if (!move.isObject() || (!move.hasNonNull("from") && !move.hasNonNull("to"))) return List.of("no from and no to");
@@ -645,62 +644,9 @@ class WalkthroughsMatchSamplesTest {
         unknownMark(move.get("mark"), MOVE_MARKS).ifPresent(p::add);
         for (String end : List.of("from", "to")) {
             JsonNode address = move.get(end);
-            if (address == null || address.isNull()) continue;
-            String id = address.path("view").asText();
-            JsonNode view = views.get(id);
-            if (view == null) {
-                p.add(end + " names unknown view \"" + id + "\"");
-                continue;
-            }
-            String type = view.path("type").asText();
-            String where = end + " " + address;
-            Address kind = ADDRESSES.get(type);
-            if (kind == null) {
-                p.add(where + ": view type \"" + type + "\" has no addresses");
-                continue;
-            }
-            if (!states.has(id) && !setup.has(id)) {
-                p.add(where + ": view \"" + id + "\" is not drawn in this frame");
-                continue;
-            }
-            ObjectNode state = JSON.createObjectNode();
-            if (setup.get(id) instanceof ObjectNode own) state.setAll(own);
-            if (states.get(id) instanceof ObjectNode own) state.setAll(own);
-            if (!kind.exists().test(address.get("at"), state, view)) {
-                p.add(where + " is not " + kind.what() + " of " + type + " \"" + id + "\"");
-            }
+            if (address != null && !address.isNull()) p.addAll(ADDRESSES.problems(end, address, views, setup, states));
         }
         return p;
-    }
-
-    /** Whether {@code at} names a place in {@code state}, the frame's state of {@code view}. */
-    private interface Place {
-        boolean test(JsonNode at, JsonNode state, JsonNode view);
-    }
-
-    /** What a view type's move address is, as a move's error says it, and whether one exists in a state. */
-    private record Address(String what, Place exists) {
-    }
-
-    /** The view types that have addresses: the skill's {@code ADDRESSES} in {@code scripts/validate.mjs}. */
-    private static final Map<String, Address> ADDRESSES = Map.of(
-            "array", new Address("an index", (at, s, v) -> index(at, s.path("values"))),
-            "output", new Address("an index", (at, s, v) -> index(at, s.path("values"))),
-            "queue", new Address("a position from the front", (at, s, v) -> index(at, s.path("values"))),
-            "map", new Address("a key", (at, s, v) -> keys(s).contains(key(at))),
-            "set", new Address("a member", (at, s, v) -> members(s).contains(key(at))),
-            "grid", new Address("a [row, col]", (at, s, v) -> pair(at, s.path("cells"), row -> row)),
-            "table", new Address("a [row, col]", (at, s, v) -> pair(at, s.path("rows"), row -> row.path("cells"))),
-            "intervals", new Address("a [group, index]",
-                    (at, s, v) -> pair(at, s.path("groups"), group -> group.path("intervals"))),
-            "graph", new Address("a node id or a [from, to] edge", (at, s, v) -> at != null && at.isArray()
-                    ? at.size() == 2 && edge(s.path("edges"), key(at.get(0)), key(at.get(1)), v.path("directed").asBoolean(true))
-                    : node(s.path("nodes"), key(at))));
-
-    /** Whether {@code at} is {@code [i, j]} with i an index into {@code outer} and j one into that item's list. */
-    private static boolean pair(JsonNode at, JsonNode outer, UnaryOperator<JsonNode> inner) {
-        return at != null && at.isArray() && at.size() == 2 && index(at.get(0), outer)
-                && index(at.get(1), inner.apply(outer.path(at.get(0).asInt())));
     }
 
     /** "unknown mark …" when {@code mark} is given and isn't one of {@code known}. */
@@ -725,22 +671,6 @@ class WalkthroughsMatchSamplesTest {
         return seen;
     }
 
-    /** Whether a graph's {@code nodes} hold one whose id is {@code id}. */
-    private static boolean node(JsonNode nodes, String id) {
-        for (JsonNode n : nodes) if (id != null && id.equals(key(n.get("id")))) return true;
-        return false;
-    }
-
-    /** Whether a graph's {@code edges} hold one from {@code a} to {@code b}, or either way when undirected. */
-    private static boolean edge(JsonNode edges, String a, String b, boolean directed) {
-        if (a == null || b == null) return false;
-        for (JsonNode e : edges) {
-            String from = key(e.get("from")), to = key(e.get("to"));
-            if ((a.equals(from) && b.equals(to)) || (!directed && a.equals(to) && b.equals(from))) return true;
-        }
-        return false;
-    }
-
     /** Whether {@code i} is an index into the list {@code list}. */
     private static boolean index(JsonNode i, JsonNode list) {
         return i != null && i.isInt() && i.asInt() >= 0 && list.isArray() && i.asInt() < list.size();
@@ -749,18 +679,6 @@ class WalkthroughsMatchSamplesTest {
     /** A map key as the player compares it: a string or a number, by its text. Null for anything else. */
     private static String key(JsonNode k) {
         return k != null && (k.isTextual() || k.isNumber()) ? k.asText() : null;
-    }
-
-    private static List<String> keys(JsonNode map) {
-        List<String> keys = new ArrayList<>();
-        for (JsonNode entry : map.path("entries")) keys.add(key(entry.get("key")));
-        return keys;
-    }
-
-    private static List<String> members(JsonNode set) {
-        List<String> members = new ArrayList<>();
-        for (JsonNode member : set.path("members")) members.add(key(member));
-        return members;
     }
 
     /** Text compared trimmed, as the Grader compares output; anything else as JSON. */

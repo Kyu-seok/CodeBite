@@ -74,7 +74,7 @@ export function edgeAt(edges, [a, b], directed) {
 // Each view type: mount(host, config, ctx) -> { update(state), locate?(at), prepare?(states) }. `state` is the run's
 // setup merged with the frame's; `prepare` gets every frame's state once per run, before the first update. `locate(at)`
 // returns the element a move's address names (an array index, a map key, a set member), or null: a view type that holds values
-// defines it, and scripts/validate.mjs's ADDRESSES says which `at` it takes.
+// defines it, and kit/addresses.json says which `at` it takes.
 export const VIEWS = {};
 
 VIEWS.grid = (host, config, ctx) => {
@@ -636,10 +636,17 @@ function createMoves(layer, stage, ctx, viewById) {
   }
   const arrows = svg('g', {}, overlay);
   let current = [], flights = [];
-  const locate = a => {
+  // A move end in a shown view that its locate(at) can't find is one kit/addresses.json accepts and the player can't
+  // draw (validate has already refused any other): a console error, once, so capture fails on it.
+  const reported = new Set();
+  const locate = (a, end) => {
     if (!a) return null;
     const v = viewById(a.view);
-    return v && !v.box.hidden && v.view.locate ? v.view.locate(a.at) : null;
+    if (!v || v.box.hidden) return null;
+    const el = v.view.locate ? v.view.locate(a.at) : null;
+    const why = `walkthrough: move ${end} ${JSON.stringify(a)} names nothing the player draws in ${v.type} "${v.id}"`;
+    if (!el && !reported.has(why)) { reported.add(why); console.error(why); }
+    return el;
   };
   const tone = mv => mv.mark || (!mv.to ? 'bad' : viewById(mv.to.view)?.type === 'output' ? 'path' : 'good');
   function rect(el) {
@@ -648,7 +655,7 @@ function createMoves(layer, stage, ctx, viewById) {
   }
   const STUB = 30;
   function geometry(mv) {
-    const s = locate(mv.from), t = locate(mv.to);
+    const s = locate(mv.from, 'from'), t = locate(mv.to, 'to');
     if ((mv.from && !s) || (mv.to && !t) || (!s && !t)) return null;
     const rs = s && rect(s), rt = t && rect(t);
     let d, x1, y1, x2, y2;
