@@ -138,7 +138,8 @@
           "ko": "남은 신선"
          },
          "value": 7,
-         "mark": null
+         "mark": null,
+         "why": "how many fresh donuts are left, which the answer waits on; the tray draws each donut, not their number (a cell holding 1 is chance)"
         }
        ]
       }
@@ -258,7 +259,8 @@
           "ko": "남은 신선"
          },
          "value": 5,
-         "mark": null
+         "mark": null,
+         "why": "how many fresh donuts are left, which the answer waits on; the tray draws each donut, not their number (a cell holding 1 is chance)"
         }
        ]
       }
@@ -394,7 +396,8 @@
           "ko": "남은 신선"
          },
          "value": 5,
-         "mark": null
+         "mark": null,
+         "why": "how many fresh donuts are left, which the answer waits on; the tray draws each donut, not their number (a cell holding 1 is chance)"
         }
        ]
       }
@@ -540,7 +543,8 @@
           "ko": "남은 신선"
          },
          "value": 4,
-         "mark": null
+         "mark": null,
+         "why": "how many fresh donuts are left, which the answer waits on; the tray draws each donut, not their number (a cell holding 1 is chance)"
         }
        ]
       }
@@ -666,7 +670,8 @@
           "ko": "남은 신선"
          },
          "value": 4,
-         "mark": null
+         "mark": null,
+         "why": "how many fresh donuts are left, which the answer waits on; the tray draws each donut, not their number (a cell holding 1 is chance)"
         }
        ]
       }
@@ -806,7 +811,8 @@
           "ko": "남은 신선"
          },
          "value": 3,
-         "mark": null
+         "mark": null,
+         "why": "how many fresh donuts are left, which the answer waits on; the tray draws each donut, not their number (a cell holding 1 is chance)"
         }
        ]
       }
@@ -940,7 +946,8 @@
           "ko": "남은 신선"
          },
          "value": 3,
-         "mark": null
+         "mark": null,
+         "why": "how many fresh donuts are left, which the answer waits on; the tray draws each donut, not their number (a cell holding 1 is chance)"
         }
        ]
       }
@@ -1088,7 +1095,8 @@
           "ko": "남은 신선"
          },
          "value": 2,
-         "mark": null
+         "mark": null,
+         "why": "how many fresh donuts are left, which the answer waits on; the tray draws each donut, not their number (a cell holding 1 is chance)"
         }
        ]
       }
@@ -1230,7 +1238,8 @@
           "ko": "남은 신선"
          },
          "value": 2,
-         "mark": null
+         "mark": null,
+         "why": "how many fresh donuts are left, which the answer waits on; the tray draws each donut, not their number (a cell holding 1 is chance)"
         }
        ]
       }
@@ -1386,7 +1395,8 @@
           "ko": "남은 신선"
          },
          "value": 1,
-         "mark": null
+         "mark": null,
+         "why": "how many fresh donuts are left, which the answer waits on; the tray draws each donut, not their number (a cell holding 1 is chance)"
         }
        ]
       }
@@ -1536,7 +1546,8 @@
           "ko": "남은 신선"
          },
          "value": 1,
-         "mark": null
+         "mark": null,
+         "why": "how many fresh donuts are left, which the answer waits on; the tray draws each donut, not their number (a cell holding 1 is chance)"
         }
        ]
       }
@@ -1700,7 +1711,8 @@
           "ko": "남은 신선"
          },
          "value": 0,
-         "mark": null
+         "mark": null,
+         "why": "how many fresh donuts are left, which the answer waits on; the tray draws each donut, not their number (a cell holding 1 is chance)"
         }
        ]
       }
@@ -1858,7 +1870,8 @@
           "ko": "남은 신선"
          },
          "value": 0,
-         "mark": null
+         "mark": null,
+         "why": "how many fresh donuts are left, which the answer waits on; the tray draws each donut, not their number (a cell holding 1 is chance)"
         }
        ]
       }
@@ -2017,7 +2030,8 @@
           "ko": "남은 신선"
          },
          "value": 0,
-         "mark": null
+         "mark": null,
+         "why": "how many fresh donuts are left, which the answer waits on; the tray draws each donut, not their number (a cell holding 1 is chance)"
         }
        ]
       }
@@ -2160,7 +2174,8 @@
           "ko": "남은 신선"
          },
          "value": 0,
-         "mark": null
+         "mark": null,
+         "why": "how many fresh donuts are left, which the answer waits on; the tray draws each donut, not their number (a cell holding 1 is chance)"
         }
        ]
       }
@@ -2251,7 +2266,8 @@
           "ko": "남은 신선"
          },
          "value": 5,
-         "mark": null
+         "mark": null,
+         "why": "how many fresh donuts are left, which the answer waits on; the tray draws each donut, not their number (a cell holding 1 is chance)"
         }
        ]
       }
@@ -2346,7 +2362,8 @@
           "ko": "남은 신선"
          },
          "value": 5,
-         "mark": null
+         "mark": null,
+         "why": "how many fresh donuts are left, which the answer waits on; the tray draws each donut, not their number (a cell holding 1 is chance)"
         }
        ]
       }
@@ -2435,7 +2452,8 @@
           "ko": "남은 신선"
          },
          "value": 5,
-         "mark": "bad"
+         "mark": "bad",
+         "why": "how many fresh donuts are left, which the answer waits on; the tray draws each donut, not their number (a cell holding 1 is chance)"
         }
        ]
       }
@@ -2519,7 +2537,8 @@
           "ko": "남은 신선"
          },
          "value": 1,
-         "mark": null
+         "mark": null,
+         "why": "how many fresh donuts are left, which the answer waits on; the tray draws each donut, not their number (a cell holding 1 is chance)"
         }
        ]
       }
@@ -2607,7 +2626,8 @@
           "ko": "남은 신선"
          },
          "value": 1,
-         "mark": null
+         "mark": null,
+         "why": "how many fresh donuts are left, which the answer waits on; the tray draws each donut, not their number (a cell holding 1 is chance)"
         }
        ]
       }
@@ -2673,7 +2693,8 @@
           "ko": "남은 신선"
          },
          "value": 1,
-         "mark": "bad"
+         "mark": "bad",
+         "why": "how many fresh donuts are left, which the answer waits on; the tray draws each donut, not their number (a cell holding 1 is chance)"
         }
        ]
       }

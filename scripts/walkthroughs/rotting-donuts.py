@@ -59,7 +59,9 @@ def solve(ward, run):
                          "tags": [[i, minute_tag(went_stale[p])] for i, p in enumerate(queue)],
                          "marks": queue_marks or {}},
                   state={"items": [{"label": {"en": "fresh left", "ko": "남은 신선"}, "value": fresh,
-                                    "mark": "bad" if bad else None}]},
+                                    "mark": "bad" if bad else None,
+                                    "why": "how many fresh donuts are left, which the answer waits on; the tray "
+                                           "draws each donut, not their number (a cell holding 1 is chance)"}]},
                   moves=moves, **answer)
 
     fresh = sum(row.count(1) for row in ward)
