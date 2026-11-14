@@ -1,5 +1,5 @@
 class Solution {
-    public int spreadContaminationWave(int[][] ward) {
+    public int minutesUntilStale(int[][] tray) {
         // Write your solution here
     }
 }
