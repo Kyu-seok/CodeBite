@@ -1,7 +1,7 @@
 {USER_CODE}
 
 import json
-nums = eval(input())
+combo = eval(input())
 k = int(input())
-result = Solution().peakFlowPerStretch(nums, k)
+result = Solution().peakComboPerWindow(combo, k)
 print(json.dumps(result, separators=(',', ':')))

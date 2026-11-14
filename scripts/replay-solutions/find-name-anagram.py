@@ -2,7 +2,7 @@ from collections import Counter
 
 
 class Solution:
-    def matchesZoneAnagram(self, pattern: str, log: str) -> bool:
+    def containsNameAnagram(self, pattern: str, log: str) -> bool:
         size = len(pattern)
         if size > len(log):
             return False

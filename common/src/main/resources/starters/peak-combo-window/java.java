@@ -1,5 +1,5 @@
 class Solution {
-    public int[] peakFlowPerStretch(int[] combo, int k) {
+    public int[] peakComboPerWindow(int[] combo, int k) {
 
     }
 }

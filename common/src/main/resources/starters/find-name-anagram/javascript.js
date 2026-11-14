@@ -1,5 +1,5 @@
 class Solution {
-    matchesZoneAnagram(pattern, log) {
+    containsNameAnagram(pattern, log) {
 
     }
 }

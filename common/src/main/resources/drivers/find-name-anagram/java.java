@@ -7,7 +7,7 @@ public class Main {
         Scanner sc = new Scanner(System.in);
         String s1 = sc.nextLine().trim();
         String s2 = sc.nextLine().trim();
-        boolean result = new Solution().matchesZoneAnagram(s1, s2);
+        boolean result = new Solution().containsNameAnagram(s1, s2);
         System.out.println(result);
     }
 }

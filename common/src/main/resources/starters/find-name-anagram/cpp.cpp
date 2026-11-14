@@ -1,6 +1,6 @@
 class Solution {
 public:
-    bool matchesZoneAnagram(string pattern, string log) {
+    bool containsNameAnagram(string pattern, string log) {
 
     }
 };
