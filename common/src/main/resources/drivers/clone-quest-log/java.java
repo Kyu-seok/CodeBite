@@ -3,8 +3,8 @@ import java.util.*;
 class Node {
     int val;
     Node next;
-    Node random;
-    Node(int val) { this.val = val; this.next = null; this.random = null; }
+    Node related;
+    Node(int val) { this.val = val; this.next = null; this.related = null; }
 }
 
 {USER_CODE}
@@ -14,9 +14,9 @@ public class Main {
         Scanner sc = new Scanner(System.in);
         String line = sc.nextLine().trim();
 
-        // Parse [[val,random_index], ...] format
+        // Parse [[val,related_index], ...] format
         List<Node> nodes = new ArrayList<>();
-        List<Integer> randoms = new ArrayList<>();
+        List<Integer> relatedIndexes = new ArrayList<>();
 
         if (line.equals("[]")) {
             System.out.println("[]");
@@ -42,19 +42,19 @@ public class Main {
 
         for (int[] p : pairs) {
             nodes.add(new Node(p[0]));
-            randoms.add(p[1]);
+            relatedIndexes.add(p[1]);
         }
 
         for (int i = 0; i < nodes.size() - 1; i++) {
             nodes.get(i).next = nodes.get(i + 1);
         }
         for (int i = 0; i < nodes.size(); i++) {
-            if (randoms.get(i) >= 0) {
-                nodes.get(i).random = nodes.get(randoms.get(i));
+            if (relatedIndexes.get(i) >= 0) {
+                nodes.get(i).related = nodes.get(relatedIndexes.get(i));
             }
         }
 
-        Node result = new Solution().duplicateTopicWeb(nodes.get(0));
+        Node result = new Solution().cloneQuestLog(nodes.get(0));
 
         // Build index map for output
         Map<Node, Integer> indexMap = new HashMap<>();
@@ -71,8 +71,8 @@ public class Main {
         while (curr != null) {
             if (!first) sb.append(",");
             sb.append("[").append(curr.val).append(",");
-            if (curr.random != null) {
-                sb.append(indexMap.get(curr.random));
+            if (curr.related != null) {
+                sb.append(indexMap.get(curr.related));
             } else {
                 sb.append("null");
             }
@@ -91,7 +91,7 @@ public class Main {
         if (s.endsWith("]")) s = s.substring(0, s.length() - 1);
         String[] parts = s.split(",");
         int val = Integer.parseInt(parts[0].trim());
-        int rand = parts[1].trim().equals("null") ? -1 : Integer.parseInt(parts[1].trim());
-        return new int[]{val, rand};
+        int related = parts[1].trim().equals("null") ? -1 : Integer.parseInt(parts[1].trim());
+        return new int[]{val, related};
     }
 }
