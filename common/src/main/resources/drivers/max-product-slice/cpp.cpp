@@ -16,7 +16,7 @@ int main() {
     while (getline(ss, token, ',')) {
         nums.push_back(stoi(token));
     }
-    int result = Solution().bestFlowStreak(nums);
+    int result = Solution().maxProduct(nums);
     cout << result << endl;
     return 0;
 }

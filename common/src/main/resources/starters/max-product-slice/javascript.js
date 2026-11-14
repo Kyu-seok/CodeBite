@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {number[]} traffic
+     * @param {number[]} nums
      * @return {number}
      */
-    bestFlowStreak(traffic) {
+    maxProduct(nums) {
         // Write your solution here
     }
 }

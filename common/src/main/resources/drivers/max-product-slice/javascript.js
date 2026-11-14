@@ -2,5 +2,5 @@
 
 const input = require('fs').readFileSync('/dev/stdin', 'utf8').trim();
 const nums = JSON.parse(input);
-const result = new Solution().bestFlowStreak(nums);
+const result = new Solution().maxProduct(nums);
 console.log(result);

@@ -1,5 +1,5 @@
 {USER_CODE}
 
 nums = eval(input())
-result = Solution().max_product(nums)
+result = Solution().maxProduct(nums)
 print(result)

@@ -3,7 +3,7 @@ using namespace std;
 
 class Solution {
 public:
-    int bestFlowStreak(vector<int>& traffic) {
+    int maxProduct(vector<int>& nums) {
         // Write your solution here
     }
 };

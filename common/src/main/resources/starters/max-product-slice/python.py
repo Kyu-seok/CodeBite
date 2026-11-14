@@ -1,4 +1,4 @@
 class Solution:
-    def max_product(self, traffic: list[int]) -> int:
+    def maxProduct(self, nums: list[int]) -> int:
         # Write your solution here
         pass
