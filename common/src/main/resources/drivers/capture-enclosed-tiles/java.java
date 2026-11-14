@@ -25,7 +25,7 @@ public class Main {
             }
         }
         char[][] board = rows.toArray(new char[0][]);
-        new Solution().seizeEnclosedZones(board);
+        new Solution().captureEnclosedTiles(board);
         // Output as 2D string array
         StringBuilder sb = new StringBuilder("[");
         for (int r = 0; r < board.length; r++) {
