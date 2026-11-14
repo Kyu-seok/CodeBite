@@ -1,8 +1,8 @@
 {
  "format": "walkthrough/1",
  "title": {
-  "en": "Majority Boss Vote",
-  "ko": "대세 픽 고르기"
+  "en": "Majority Vote",
+  "ko": "과반 득표 찾기"
  },
  "approach": {
   "en": "Cancel each vote against a different one: a vote for the candidate adds 1, any other vote takes 1 away, and at 0 the next vote becomes the candidate. The majority has more votes than everyone else together, so it is the candidate left standing.",

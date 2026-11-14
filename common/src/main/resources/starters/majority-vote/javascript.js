@@ -3,7 +3,7 @@ class Solution {
      * @param {number[]} votes
      * @return {number}
      */
-    majorityHeadline(votes) {
+    majorityVote(votes) {
         // Write your solution here
     }
 }

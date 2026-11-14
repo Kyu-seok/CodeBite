@@ -20,5 +20,5 @@ def _list_to_array(head):
 arr = json.loads(input())
 k = int(input())
 head = _build_list(arr)
-head = Solution().reverse_k_group(head, k)
+head = Solution().flipChunks(head, k)
 print(json.dumps(_list_to_array(head), separators=(',', ':')))

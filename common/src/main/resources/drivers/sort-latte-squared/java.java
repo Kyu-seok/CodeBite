@@ -7,12 +7,12 @@ import java.util.*;
 public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        String numsLine = sc.nextLine().trim();
-        String inner = numsLine.substring(1, numsLine.length() - 1);
+        String driftsLine = sc.nextLine().trim();
+        String inner = driftsLine.substring(1, driftsLine.length() - 1);
         String[] parts = inner.split(",");
-        int[] nums = new int[parts.length];
-        for (int i = 0; i < parts.length; i++) nums[i] = Integer.parseInt(parts[i].trim());
-        int[] result = new Solution().orderTankDeviations(nums);
+        int[] drifts = new int[parts.length];
+        for (int i = 0; i < parts.length; i++) drifts[i] = Integer.parseInt(parts[i].trim());
+        int[] result = new Solution().sortedSquaredDrifts(drifts);
         System.out.println(JsonOutput.intArray(result));
     }
 }

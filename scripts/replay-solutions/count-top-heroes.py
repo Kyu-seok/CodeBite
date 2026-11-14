@@ -9,7 +9,7 @@ class TreeNode:
 
 
 class Solution:
-    def tallyDominantBlocks(self, root: Optional[TreeNode]) -> int:
+    def countDominantHeroes(self, root: Optional[TreeNode]) -> int:
         count = 0
         stack = [(root, float("-inf"))] if root else []
         while stack:

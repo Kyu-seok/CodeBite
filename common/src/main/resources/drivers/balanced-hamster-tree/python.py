@@ -23,5 +23,5 @@ def _build_tree(arr):
 
 arr = json.loads(input())
 root = _build_tree(arr)
-result = Solution().checkHubEvenness(root)
+result = Solution().isBalanced(root)
 print(json.dumps(result))
