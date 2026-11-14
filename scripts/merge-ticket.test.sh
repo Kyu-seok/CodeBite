@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 # Checks scripts/merge-ticket.sh without Gradle or npm: when it refuses to merge, the merge commit's
-# message, that the frontend checks lint with no warnings before the tests and build (npm faked), and
+# message, the warning on an integration branch CI doesn't run on, that the frontend checks lint with no warnings before the tests and build (npm faked), and
 # (in scratch repositories with the checks faked) that a conflict aborts and lists the
 # files, a failing check leaves the merge commit unpushed, green checks push it, a ticket that already
-# contains the integration branch's HEAD is pushed with no checks, a merge that changes
+# contains the integration branch's HEAD is pushed with no checks, a ticket with a commit subject over
+# 72 characters is refused, an unprefixed integration branch warns and still merges, a merge that changes
 # merge-ticket.sh hands the checks and the push to the merged copy, and two tickets in one call get
 # one run of the checks and one push, or stop at a conflict on the second with the first unpushed.
 set -euo pipefail
@@ -193,6 +194,19 @@ check "two-conflict: clean tree" "$(git -C "$scratch/work" status --porcelain)" 
 check "two-conflict: first merge kept" "$(git -C "$scratch/work" log -1 --format=%s)" "Merge ticket/two-c: Two C"
 check "two-conflict: not pushed" "$(remote_head)" "$before"
 g -C "$scratch/work" reset -q --hard "$before"
+
+# A ticket with a commit subject over 72 characters (committed with --no-verify, which skips the
+# commit-msg hook) is refused before its merge: it names the commit and nothing runs or is pushed.
+before=$(remote_head)
+(cd "$scratch/seed" && g fetch -q origin && g switch -q --detach origin/integration/x \
+  && g switch -qc ticket/long && echo long > long.txt && g add . \
+  && g commit -qm "fix: $(printf 'z%.0s' $(seq 70))" && g push -q origin ticket/long)
+if out=$(run_merge ticket/long 'Long'); then echo "FAIL: a long subject must refuse the merge"; fail=1; fi
+grep -q "$(git -C "$scratch/seed" rev-parse --short ticket/long) has a 75-character subject" <<<"$out" \
+  || { echo "FAIL: must name the long commit: $out"; fail=1; }
+check "long subject: HEAD unchanged" "$(git -C "$scratch/work" rev-parse HEAD)" "$before"
+check "long subject: not pushed" "$(remote_head)" "$before"
+[[ "$out" == *-ran* ]] && { echo "FAIL: checks ran on a refused ticket: $out"; fail=1; }
 
 # An integration branch outside spec/ and integration/: the warning comes first, then the merge,
 # checks and push go ahead as usual.

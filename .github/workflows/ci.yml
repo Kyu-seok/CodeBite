@@ -61,7 +61,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # the commit-subject step reads every commit since master
       - run: shellcheck -S warning scripts/*.sh .claude/hooks/*.sh
+      # The commit-msg hook's 72-character subject limit over the commits a PR or an integration push
+      # adds, since --no-verify skips the hook. Not on master: its commits are squash-merged PR titles.
+      - name: Commit subjects
+        if: ${{ github.event_name == 'pull_request' || github.ref != 'refs/heads/master' }}
+        env:
+          RANGE: ${{ github.event_name == 'pull_request' && format('{0}..{1}', github.event.pull_request.base.sha, github.event.pull_request.head.sha) || format('origin/master..{0}', github.sha) }}
+        run: scripts/check-commit-subjects.sh "$RANGE"
       - run: scripts/run-script-tests.sh
       - run: python3 -I scripts/check-doc-references.py
       - run: python3 -I scripts/copy-walkthrough-kit.py --check

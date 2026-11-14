@@ -5,7 +5,9 @@
 #
 # For each branch in order, it takes origin/<branch> when that exists, else the local branch, and
 # merges it with --no-ff and the attribution trailer (MERGE_TICKET_TRAILER overrides it). It refuses
-# on master, a detached HEAD, a dirty tree, or a branch already merged. On a conflict it aborts that
+# on master, a detached HEAD, a dirty tree, a branch already merged, or a branch with a non-merge
+# commit whose subject passes 72 characters (scripts/check-commit-subjects.sh, the commit-msg hook
+# that --no-verify skipped; its own "Merge …" subjects are exempt). On a conflict it aborts that
 # merge, lists the files and stops: earlier merges stay committed and unpushed. After the last merge
 # it runs, once, the checks git skips on a clean merge (no pre-commit hook runs): the backend and
 # worker tests, forced past UP-TO-DATE, then the frontend lint (no warnings), tests and build. It
@@ -28,6 +30,7 @@
 # `scripts/merge-ticket.sh --checks-and-push`: bash read this copy before the merge, so its checks are
 # the old ones. Keep that mode in every later version.
 set -euo pipefail
+merge_ticket_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 # Why not to merge, or nothing: on branch $1 (empty when detached), with `git status --porcelain`
 # output $2, and $3 = yes when the ticket branch is already in HEAD.
@@ -152,6 +155,11 @@ merge_one() {
   refusal=$(merge_refusal "$current" "$(git status --porcelain)" "$merged")
   if [[ -n "$refusal" ]]; then
     echo "merge-ticket: $refusal" >&2
+    return 1
+  fi
+
+  if ! "$merge_ticket_dir/check-commit-subjects.sh" "HEAD..$ref"; then
+    echo "merge-ticket: $ref has a commit subject over 72 characters; not merged" >&2
     return 1
   fi
 
