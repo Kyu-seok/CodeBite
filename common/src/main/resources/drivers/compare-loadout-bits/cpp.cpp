@@ -4,9 +4,9 @@ using namespace std;
 {USER_CODE}
 
 int main() {
-    int x, y;
-    cin >> x >> y;
-    int result = Solution().countFlagMismatches(x, y);
+    int leftFlags, rightFlags;
+    cin >> leftFlags >> rightFlags;
+    int result = Solution().countFlagMismatches(leftFlags, rightFlags);
     cout << result << endl;
     return 0;
 }

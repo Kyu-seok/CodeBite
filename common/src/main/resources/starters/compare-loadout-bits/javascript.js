@@ -1,10 +1,10 @@
 class Solution {
     /**
-     * @param {number} x
-     * @param {number} y
+     * @param {number} leftFlags
+     * @param {number} rightFlags
      * @return {number}
      */
-    countFlagMismatches(x, y) {
+    countFlagMismatches(leftFlags, rightFlags) {
         // Write your solution here
     }
 }
