@@ -3,7 +3,7 @@ class Solution {
      * @param {number[][]} visits
      * @return {number}
      */
-    findPeakGates(visits) {
+    minTables(visits) {
         // Write your solution here
     }
 }

@@ -1,7 +1,7 @@
 {USER_CODE}
 
 import json
-matrix = json.loads(input())
+menu = json.loads(input())
 target = int(input())
-result = Solution().probeSugarReading(matrix, target)
+result = Solution().findCalorie(menu, target)
 print(str(result).lower())
