@@ -23,6 +23,10 @@ while IFS= read -r var; do unset "$var"; done < <(compgen -e | grep '^GIT_')
 echo "pre-commit: doc references"
 python3 -I scripts/check-doc-references.py
 
+# Every commit: a file of the walkthrough kit's copy edited here instead of in the kit (docs/adr/0012).
+echo "pre-commit: walkthrough kit copy"
+python3 -I scripts/copy-walkthrough-kit.py --check
+
 if touches '^(common|backend|worker)/|^(build|settings)\.gradle'; then
   modules=()
   touches '^common/|^(build|settings)\.gradle' && modules+=(:common:test :backend:test :worker:test)

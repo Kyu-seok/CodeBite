@@ -1,13 +1,29 @@
 #!/usr/bin/env bash
 # Checks scripts/walkthrough-app-check.mjs without a real Chrome or servers: it parses, it refuses
 # missing arguments with its usage and exit 2 before starting anything, and against a fake Chrome that
-# accepts the DevTools socket but never answers, it fails naming the command and leaves no Chrome behind.
+# accepts the DevTools socket but never answers, it fails naming the command and leaves no Chrome behind;
+# and diagramBeside, which decides whether a problem gets the description's Diagrams beside the first frame.
 set -uo pipefail
 script="$(cd "$(dirname "$0")" && pwd)/walkthrough-app-check.mjs"
 fail=0
 node --check "$script" || { echo "FAIL: does not parse"; fail=1; }
 out=$(node "$script" http://127.0.0.1:1 http://127.0.0.1:1/api /tmp/x 2>&1); code=$?
 [[ $code == 2 && "$out" == *usage:* ]] || { echo "FAIL: a missing slug must print usage and exit 2 (got $code: $out)"; fail=1; }
+
+# diagramBeside: a shot named after the slug for a description with Diagrams, none without, and only for
+# fenced diagram-* blocks (not the word in prose or an inline span).
+BESIDE="$(dirname "$script")/walkthrough-diagram-beside.mjs" node --input-type=module <<'JS' \
+  || { echo "FAIL: diagramBeside decides the side-by-side shot"; fail=1; }
+import assert from 'node:assert/strict';
+const { diagramBeside } = await import(process.env.BESIDE);
+const fence = '```';
+const graph = `Intro.\n\n${fence}diagram-graph\nedges: [[0,1]]\n${fence}\n\nMore \`diagram-grid\` text.\n\n~~~diagram-intervals\nintervals: []\n~~~\n`;
+assert.deepEqual(diagramBeside('cheapest-courier-route', graph),
+  { name: 'cheapest-courier-route-diagram-beside-frame-1440', kinds: ['diagram-graph', 'diagram-intervals'] });
+assert.equal(diagramBeside('two-sum', `No pictures.\n\n${fence}python\nprint(1)\n${fence}\n`), null);
+assert.equal(diagramBeside('two-sum', 'Mentions diagram-graph in prose only.'), null);
+assert.equal(diagramBeside('two-sum', null), null);
+JS
 
 dir=$(mktemp -d)
 trap 'rm -rf "$dir"' EXIT
@@ -42,4 +58,4 @@ if [[ -n "$pid" ]] && kill -0 "$pid" 2>/dev/null; then
   echo "FAIL: the fake Chrome ($pid) is still running after the check exited"; kill "$pid"; fail=1
 fi
 (( fail )) && exit 1
-echo "PASS: walkthrough-app-check.mjs parses, refuses missing arguments, and times out a silent Chrome"
+echo "PASS: walkthrough-app-check.mjs parses, refuses missing arguments, times out a silent Chrome, and picks its Diagram shot"

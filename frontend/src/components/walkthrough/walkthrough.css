@@ -1,4 +1,5 @@
-/* Walkthrough player. Tokens on .wt; override them to fit a host page. */
+/* Walkthrough player. Tokens on .wt; override them to fit a host page. A section named after a view type styles only
+   classes that view alone draws (references/format.md, "Adding a view type"). */
 .wt {
   --wt-bg: #f6f5f1; --wt-card: #ffffff; --wt-ink: #1d1d1b; --wt-mid: #6b6a65; --wt-lo: #a9a7a0; --wt-faint: #e4e2dc;
   --wt-accent: #d9480f; --wt-accent-soft: #fde4d6;
@@ -59,8 +60,6 @@
   .wt-controls { gap: 6px; padding: 10px; }
   .wt-btn:first-child { display: none; }
   .wt-hint { display: none; }
-  .wt-vars { flex-direction: row; flex-wrap: wrap; gap: 10px 22px; }
-  .wt-varvalue { font-size: 22px; }
 }
 
 /* svg basics */
@@ -70,7 +69,6 @@
 .wt-val { font: 600 16px var(--wt-mono); }
 .wt-val-sm { font-size: 13px; }
 .wt-tag { font: 600 10px var(--wt-mono); fill: var(--wt-mid) !important; }
-.wt-ptr { font: 700 12px var(--wt-mono); fill: var(--wt-accent) !important; }
 .wt-tile { fill: var(--wt-bg); stroke: var(--wt-faint); stroke-width: 1.5; transition: fill .35s, stroke .35s, opacity .35s; }
 
 /* grid boxes and a shaded region */
@@ -89,16 +87,27 @@
 .wt-tone-d :is(.wt-val, .wt-tag) { fill: var(--wt-tone-d-ink) !important; }
 .wt-tone-wall :is(.wt-val, .wt-tag) { fill: var(--wt-card) !important; }
 
-/* marks, shared by every view: lit = looked at, good = changed, bad = blocked, path = the answer, dim = out of play */
-.wt-cell.wt-lit .wt-tile, .wt-item.wt-lit .wt-tile { stroke: var(--wt-accent); stroke-width: 3.5; }
-.wt-cell.wt-good .wt-tile, .wt-item.wt-good .wt-tile { stroke: var(--wt-good); stroke-width: 3.5; }
-.wt-cell.wt-bad .wt-tile, .wt-item.wt-bad .wt-tile { stroke: var(--wt-bad); stroke-width: 3.5; stroke-dasharray: none; }
-.wt-cell.wt-path .wt-tile, .wt-item.wt-path .wt-tile { stroke: var(--wt-accent); stroke-width: 3.5; }
-.wt-cell.wt-dim, .wt-item.wt-dim { opacity: .35; }
-.wt-cell.wt-lit .wt-tile, .wt-cell.wt-good .wt-tile { animation: wt-pop .45s cubic-bezier(.2,.8,.2,1); transform-box: fill-box; transform-origin: center; }
+/* marks, shared by every view: lit = looked at, good = changed, bad = blocked, path = the answer, dim = out of play.
+   Each view applies them to its own drawing in its own section; this holds what they share. */
 @keyframes wt-pop { 0% { transform: scale(.82); } 60% { transform: scale(1.06); } 100% { transform: scale(1); } }
 
+/* grid marks: a marked cell's outline, and a pop when it is looked at or changed */
+.wt-cell.wt-lit .wt-tile { stroke: var(--wt-accent); stroke-width: 3.5; }
+.wt-cell.wt-good .wt-tile { stroke: var(--wt-good); stroke-width: 3.5; }
+.wt-cell.wt-bad .wt-tile { stroke: var(--wt-bad); stroke-width: 3.5; stroke-dasharray: none; }
+.wt-cell.wt-path .wt-tile { stroke: var(--wt-accent); stroke-width: 3.5; }
+.wt-cell.wt-dim { opacity: .35; }
+.wt-cell.wt-lit .wt-tile, .wt-cell.wt-good .wt-tile { animation: wt-pop .45s cubic-bezier(.2,.8,.2,1); transform-box: fill-box; transform-origin: center; }
+
+/* array marks: a marked cell's outline */
+.wt-item.wt-lit .wt-tile { stroke: var(--wt-accent); stroke-width: 3.5; }
+.wt-item.wt-good .wt-tile { stroke: var(--wt-good); stroke-width: 3.5; }
+.wt-item.wt-bad .wt-tile { stroke: var(--wt-bad); stroke-width: 3.5; stroke-dasharray: none; }
+.wt-item.wt-path .wt-tile { stroke: var(--wt-accent); stroke-width: 3.5; }
+.wt-item.wt-dim { opacity: .35; }
+
 /* array */
+.wt-ptr { font: 700 12px var(--wt-mono); fill: var(--wt-accent) !important; }
 .wt-bar { fill: var(--wt-lo); transition: height .4s cubic-bezier(.2,.8,.2,1), y .4s cubic-bezier(.2,.8,.2,1), fill .3s; }
 .wt-fill { fill: var(--wt-tone-c); opacity: .75; transition: height .4s cubic-bezier(.2,.8,.2,1), y .4s cubic-bezier(.2,.8,.2,1); }
 .wt-base { stroke: var(--wt-lo); stroke-width: 1.5; }
@@ -128,10 +137,12 @@
 .wt-span.wt-bad .wt-spanlabel { fill: var(--wt-bad) !important; }
 .wt-span.wt-dim { opacity: .4; }
 
-/* graph */
-.wt-edge { fill: none; stroke: var(--wt-lo); stroke-width: 1.6; transition: stroke .3s, stroke-width .3s; }
+/* arrowheads: the graph's edges and the moves both draw them */
 .wt-ah { fill: var(--wt-lo); }
 .wt-ah-lit, .wt-ah-path { fill: var(--wt-accent); } .wt-ah-good { fill: var(--wt-good); } .wt-ah-bad { fill: var(--wt-bad); }
+
+/* graph */
+.wt-edge { fill: none; stroke: var(--wt-lo); stroke-width: 1.6; transition: stroke .3s, stroke-width .3s; }
 .wt-e.wt-lit .wt-edge { stroke: var(--wt-accent); stroke-width: 2.6; stroke-dasharray: 5 4; }
 .wt-e.wt-good .wt-edge { stroke: var(--wt-good); stroke-width: 3; }
 .wt-e.wt-bad .wt-edge { stroke: var(--wt-bad); stroke-width: 2.6; stroke-dasharray: 2 4; }
@@ -164,6 +175,17 @@
 .wt-td.wt-path { border-color: var(--wt-accent); }
 .wt-td.wt-dim { color: var(--wt-lo); }
 
+/* chips and the empty note, which several views draw: a vars list and a map entry's list are chips; a marked chip is
+   a map entry's */
+.wt-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; max-width: 220px; }
+.wt-chip { font: 600 12px var(--wt-mono); color: var(--wt-accent); background: var(--wt-accent-soft); border: 1px solid var(--wt-accent); border-radius: 999px; padding: 2px 10px; }
+.wt-chip.wt-good { color: var(--wt-good); background: var(--wt-good-soft); border-color: var(--wt-good); }
+.wt-chip.wt-bad { color: var(--wt-card); background: var(--wt-bad); border-color: var(--wt-bad); }
+.wt-chip.wt-lit { border-width: 2px; padding: 1px 9px; }
+.wt-chip.wt-path { color: var(--wt-card); background: var(--wt-accent); }
+.wt-chip.wt-dim { opacity: .35; }
+.wt-empty { font-size: 13px; color: var(--wt-lo); font-style: italic; }
+
 /* vars */
 .wt-vars { display: flex; flex-direction: column; gap: 12px; min-width: 120px; }
 .wt-varlabel { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--wt-mid); }
@@ -173,19 +195,10 @@
 .wt-var.wt-lit .wt-varvalue { color: var(--wt-accent); }
 .wt-var.wt-path .wt-varvalue { color: var(--wt-accent); font-weight: 800; }
 .wt-var.wt-dim { opacity: .35; }
-.wt-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; max-width: 220px; }
-.wt-chip { font: 600 12px var(--wt-mono); color: var(--wt-accent); background: var(--wt-accent-soft); border: 1px solid var(--wt-accent); border-radius: 999px; padding: 2px 10px; }
 /* a list's chips take the item's mark; an unmarked or lit list keeps the accent chips */
 .wt-var.wt-good .wt-chip { color: var(--wt-good); background: var(--wt-good-soft); border-color: var(--wt-good); }
 .wt-var.wt-bad .wt-chip { color: var(--wt-bad); background: var(--wt-bad-soft); border-color: var(--wt-bad); }
 .wt-var.wt-path .wt-chip { color: var(--wt-card); background: var(--wt-accent); border-width: 2px; padding: 1px 9px; }
-/* a map entry's marked chips */
-.wt-chip.wt-good { color: var(--wt-good); background: var(--wt-good-soft); border-color: var(--wt-good); }
-.wt-chip.wt-bad { color: var(--wt-card); background: var(--wt-bad); border-color: var(--wt-bad); }
-.wt-chip.wt-lit { border-width: 2px; padding: 1px 9px; }
-.wt-chip.wt-path { color: var(--wt-card); background: var(--wt-accent); }
-.wt-chip.wt-dim { opacity: .35; }
-.wt-empty { font-size: 13px; color: var(--wt-lo); font-style: italic; }
 
 /* map: a box of key cards, in insertion order, wrapping on narrow screens */
 .wt-map { display: flex; flex-wrap: wrap; gap: 14px 8px; padding: 14px 8px 8px; min-height: 64px; min-width: 120px; max-width: 420px; border: 1.5px dashed var(--wt-faint); border-radius: 12px; }

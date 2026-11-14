@@ -1,0 +1,20 @@
+{
+  "about": "Where a move may start or end: for each view type that takes addresses, what an address is (as a problem names it: 'is not <what> of <type> \"<id>\"') and the forms it accepts in a frame's state of the view (the run's setup merged with the frame's). An address is valid when any form accepts it. scripts/validate.mjs reads this file and CodeBite's WalkthroughsMatchSamplesTest reads its copy; the player's locate(at) draws what it accepts. A new address for a view is an entry here plus its locate. Each form also says what value is drawn at a place (the chip a move from it carries, and what CodeBite's tests compare between frames): the item itself, or with `value` the item's field of that name, or with `valueIn` the state's object of that name, by the place's key.",
+  "forms": {
+    "index": "a whole number, an index into the state's list `list`",
+    "key": "a string or a number naming an item of the state's list `list` by text (4 and \"4\" are one key): the item's `field`, or the item itself when there is no `field`",
+    "pair": "[i, j]: i an index into the state's list `list`, j an index into that item's list `inner` (the item itself when there is no `inner`)",
+    "edge": "[from, to]: an edge of the state's list `list` by its from and to ids (by text), either order when the view's config sets `directed` to false. A value moved out of an edge travels it, so the move also reaches the place its second id names"
+  },
+  "views": {
+    "grid": { "what": "a [row, col]", "forms": [{ "form": "pair", "list": "cells" }] },
+    "array": { "what": "an index", "forms": [{ "form": "index", "list": "values" }] },
+    "map": { "what": "a key", "forms": [{ "form": "key", "list": "entries", "field": "key", "value": "value" }] },
+    "set": { "what": "a member", "forms": [{ "form": "key", "list": "members" }] },
+    "output": { "what": "an index", "forms": [{ "form": "index", "list": "values" }] },
+    "queue": { "what": "a position from the front", "forms": [{ "form": "index", "list": "values" }] },
+    "table": { "what": "a [row, col]", "forms": [{ "form": "pair", "list": "rows", "inner": "cells" }] },
+    "graph": { "what": "a node id or a [from, to] edge", "forms": [{ "form": "key", "list": "nodes", "field": "id", "valueIn": "values" }, { "form": "edge", "list": "edges", "value": "label" }] },
+    "intervals": { "what": "a [group, index]", "forms": [{ "form": "pair", "list": "groups", "inner": "intervals" }] }
+  }
+}

@@ -60,7 +60,8 @@ export interface GraphState {
   values?: Record<string, unknown>; nodeMarks?: Marks<string | number>; edgeMarks?: Marks<number>;
 }
 export interface TableState { columns?: Text[]; rows: { label: Text; cells: unknown[] }[]; marks?: Marks<[number, number]> }
-export interface VarsState { items: { label: Text; value: unknown; mark?: Mark | null; empty?: Text }[] }
+/** `why` is never drawn: the reason an item stays in vars though the drawing shows the same value (references/format.md). */
+export interface VarsState { items: { label: Text; value: unknown; mark?: Mark | null; empty?: Text; why?: string }[] }
 
 /** A place in a view: an array or output index, a map key, a set member, a queue position from the front, a grid [row, col], a table [row, col], an intervals [group, index], a graph node id or [from, to] edge. Each view type that holds values defines its `at`. */
 export interface Address { view: string; at: number | string | [number, number] | [string | number, string | number] }
