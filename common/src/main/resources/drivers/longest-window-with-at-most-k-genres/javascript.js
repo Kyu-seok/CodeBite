@@ -2,7 +2,7 @@
 
 const input = require('fs').readFileSync('/dev/stdin', 'utf8').trim();
 const lines = input.split('\n');
-const s = lines[0].trim();
+const queue = lines[0].trim();
 const k = parseInt(lines[1]);
-const result = new Solution().countUniqueTopics(s, k);
+const result = new Solution().longestKGenreWindow(queue, k);
 console.log(result);

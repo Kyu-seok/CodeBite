@@ -5,9 +5,9 @@ import java.util.*;
 public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        String s = sc.nextLine().trim();
+        String queue = sc.nextLine().trim();
         int k = Integer.parseInt(sc.nextLine().trim());
-        int result = new Solution().countUniqueTopics(s, k);
+        int result = new Solution().longestKGenreWindow(queue, k);
         System.out.println(result);
     }
 }

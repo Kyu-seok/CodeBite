@@ -4,7 +4,7 @@ class Solution {
      * @param {number} k
      * @return {number}
      */
-    countUniqueTopics(queue, k) {
+    longestKGenreWindow(queue, k) {
         // Write your solution here
     }
 }

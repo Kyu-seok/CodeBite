@@ -1,8 +1,8 @@
 {
  "format": "walkthrough/1",
  "title": {
-  "en": "Unique Genre Window",
-  "ko": "장르 제한 몰아보기 구간"
+  "en": "Longest Window With At Most K Genres",
+  "ko": "장르가 최대 K개인 가장 긴 구간"
  },
  "approach": {
   "en": "Grow the window one tag at a time on the right; when it holds more than k genres, drop tags from the left until it holds k again. Every window it passes through is a candidate.",
@@ -1671,8 +1671,8 @@
   },
   {
    "label": {
-    "en": "Case 3",
-    "ko": "케이스 3"
+    "en": "Example 3",
+    "ko": "예시 3"
    },
    "input": "queue = \"qwerty\", k = 1",
    "expected": "1",

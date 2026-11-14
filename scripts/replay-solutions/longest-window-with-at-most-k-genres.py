@@ -2,7 +2,7 @@ from collections import Counter
 
 
 class Solution:
-    def k_distinct_window(self, queue: str, k: int) -> int:
+    def longestKGenreWindow(self, queue: str, k: int) -> int:
         if k == 0:
             return 0
         window: Counter[str] = Counter()

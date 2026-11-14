@@ -1,13 +1,13 @@
 #!/usr/bin/env python3.12
-"""unique-genre-window's Walkthrough: the reference solution
-(scripts/replay-solutions/unique-genre-window.py), a sliding window with a count per genre. The window is a span
-above the queue and the best so far a dashed span below it; the counts are a map with k slots. Each tag added moves
+"""longest-window-with-at-most-k-genres's Walkthrough: the reference solution
+(scripts/replay-solutions/longest-window-with-at-most-k-genres.py), a sliding window with a count per genre. The
+window is a span above the queue and the best so far a dashed span below it; the counts are a map with k slots. Each tag added moves
 into its genre's card, and each tag dropped from the left is its own frame, moving back out in red, on each sample
 Test Case.
 
-    CODEBITE_DB=<database> scripts/walkthroughs/unique-genre-window.py
+    CODEBITE_DB=<database> scripts/walkthroughs/longest-window-with-at-most-k-genres.py
 
-writes common/src/main/resources/walkthroughs/unique-genre-window.json.
+writes common/src/main/resources/walkthroughs/longest-window-with-at-most-k-genres.json.
 """
 import os
 import sys
@@ -17,11 +17,11 @@ sys.path.insert(0, os.path.dirname(__file__))
 from codebite import josa, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough, at, map_entries, move, span  # noqa: E402
 
-SLUG = "unique-genre-window"
+SLUG = "longest-window-with-at-most-k-genres"
 EMPTY = {"en": "empty", "ko": "비어 있음"}
 
 wt = Walkthrough(
-    {"en": "Unique Genre Window", "ko": "장르 제한 몰아보기 구간"},
+    {"en": "Longest Window With At Most K Genres", "ko": "장르가 최대 K개인 가장 긴 구간"},
     {"en": "Grow the window one tag at a time on the right; when it holds more than k genres, drop tags from the "
            "left until it holds k again. Every window it passes through is a candidate.",
      "ko": "오른쪽으로 태그를 하나씩 넣어 구간을 늘리고, 장르가 k개를 넘으면 다시 k개가 될 때까지 왼쪽에서 "
@@ -36,7 +36,7 @@ wt = Walkthrough(
 
 
 def solve(queue, k, run):
-    """Solution.k_distinct_window with a frame per tag added and per tag dropped."""
+    """Solution.longestKGenreWindow with a frame per tag added and per tag dropped."""
     n = len(queue)
     window = {}  # genre -> count, in insertion order as Counter keeps it
     best, best_span, left, right = 0, None, 0, None
