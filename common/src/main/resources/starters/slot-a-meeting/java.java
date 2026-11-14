@@ -1,5 +1,5 @@
 class Solution {
-    public int[][] scheduleObservingWindow(int[][] slots, int[] newSlot) {
+    public int[][] insertMeeting(int[][] meetings, int[] newMeeting) {
         // Write your solution here
     }
 }
