@@ -1,6 +1,6 @@
 class Solution {
 public:
-    vector<vector<int>> orderTicketHolders(vector<vector<int>>& players) {
+    vector<vector<int>> rebuildLine(vector<vector<int>>& players) {
         // Write your solution here
     }
 };

@@ -1,6 +1,6 @@
 {USER_CODE}
 
 import json
-people = json.loads(input())
-result = Solution().orderTicketHolders(people)
+players = json.loads(input())
+result = Solution().rebuildLine(players)
 print(json.dumps(result, separators=(',', ':')))

@@ -3,7 +3,7 @@ class Solution {
      * @param {number[][]} board
      * @return {number}
      */
-    chartBlockRoute(board) {
+    shortestPathLength(board) {
         // Write your solution here
     }
 }

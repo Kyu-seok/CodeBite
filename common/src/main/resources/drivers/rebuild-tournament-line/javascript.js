@@ -1,6 +1,6 @@
 {USER_CODE}
 
 const input = require('fs').readFileSync('/dev/stdin', 'utf8').trim();
-const people = JSON.parse(input);
-const result = new Solution().orderTicketHolders(people);
+const players = JSON.parse(input);
+const result = new Solution().rebuildLine(players);
 console.log(JSON.stringify(result));

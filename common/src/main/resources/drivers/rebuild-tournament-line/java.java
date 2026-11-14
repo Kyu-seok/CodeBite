@@ -24,8 +24,8 @@ public class Main {
                 i++;
             }
         }
-        int[][] people = rows.toArray(new int[0][]);
-        int[][] result = new Solution().orderTicketHolders(people);
+        int[][] players = rows.toArray(new int[0][]);
+        int[][] result = new Solution().rebuildLine(players);
         System.out.println(JsonOutput.intArray2D(result));
     }
 }
