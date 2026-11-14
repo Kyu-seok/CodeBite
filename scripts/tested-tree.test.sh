@@ -9,7 +9,9 @@ dir=$(mktemp -d)
 trap 'rm -rf "$dir"' EXIT
 mkdir "$dir/bin"
 # Trees: commit "merge" and "head" share tree T1; "behind" has T2. TREE_FAIL makes the commit
-# lookup fail. RUNS_<sha> is the run ids listed for that sha; JOBS_<run> is the jq answer.
+# lookup fail. RUNS_<sha> is the run ids listed for that sha; JOBS_<run> is that run's jobs as
+# "name=conclusion" words, which the stub turns into the API's JSON and runs the script's own --jq
+# filter over.
 cat > "$dir/bin/gh" <<'STUB'
 #!/usr/bin/env bash
 path=$2
@@ -21,7 +23,9 @@ case $path in
   *workflows/ci.yml/runs*)
     c=${path#*head_sha=}; c=${c%%&*}; v="RUNS_$c"; echo "${!v:-}" ;;
   */runs/*/jobs)
-    r=${path%/jobs}; r=${r##*/}; v="JOBS_$r"; echo "${!v:-false}" ;;
+    r=${path%/jobs}; r=${r##*/}; v="JOBS_$r"
+    for j in ${!v:-}; do printf '{"name":"%s","conclusion":"%s"}\n' "${j%%=*}" "${j#*=}"; done \
+      | jq -s '{jobs: .}' | jq -r "$4" ;;
   *) exit 1 ;;
 esac
 STUB
@@ -40,17 +44,19 @@ expect_untested() {
 }
 
 expect_tested "PR head with the same tree, all jobs green" head \
-  PR_HEADS=head RUNS_head=7 JOBS_7=true
+  PR_HEADS=head RUNS_head=7 JOBS_7="backend-test=success worker-test=success notify-failure=skipped"
 expect_tested "the commit's own green run (a manual deploy)" merge \
-  RUNS_merge=8 JOBS_8=true
+  RUNS_merge=8 JOBS_8="backend-test=success worker-test=success notify-failure=skipped"
 expect_tested "a skipped-jobs run beside a real one" head \
-  PR_HEADS=head RUNS_head=$'5\n6' JOBS_5=false JOBS_6=true
+  PR_HEADS=head RUNS_head=$'5\n6' JOBS_5="backend-test=skipped worker-test=skipped notify-failure=skipped" JOBS_6="backend-test=success worker-test=success notify-failure=skipped"
 expect_untested "PR head behind master (another tree)" \
-  PR_HEADS=behind RUNS_behind=7 JOBS_7=true
+  PR_HEADS=behind RUNS_behind=7 JOBS_7="backend-test=success worker-test=success notify-failure=skipped"
 expect_untested "only a run whose jobs were skipped" \
-  PR_HEADS=head RUNS_head=5 JOBS_5=false
+  PR_HEADS=head RUNS_head=5 JOBS_5="backend-test=skipped worker-test=skipped notify-failure=skipped"
+expect_untested "a run with a failed job" \
+  PR_HEADS=head RUNS_head=9 JOBS_9="backend-test=failure worker-test=success notify-failure=skipped"
 expect_untested "no successful run" PR_HEADS=head
-expect_untested "gh error" TREE_FAIL=1 PR_HEADS=head RUNS_head=7 JOBS_7=true
+expect_untested "gh error" TREE_FAIL=1 PR_HEADS=head RUNS_head=7 JOBS_7="backend-test=success worker-test=success notify-failure=skipped"
 
 (( fail )) && exit 1
 echo "PASS: tested-tree.sh trusts only a green CI run on the same tree"

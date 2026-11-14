@@ -8,7 +8,8 @@
 # none. The candidates are <sha> itself and the head of every PR GitHub associates with it, which
 # for a squash merge is the PR it came from: when that PR's branch already contained master, the
 # squash commit has the very tree the PR's CI tested. A CI run counts only when it succeeded with
-# every job succeeding, not skipped (a PR from an integration branch skips its jobs; ci.yml).
+# every job succeeding, not skipped (a PR from an integration branch skips its jobs; ci.yml), apart
+# from notify-failure, which a green run always skips.
 # Any error from gh also exits 1, so a doubt always means testing.
 set -uo pipefail
 
@@ -27,7 +28,8 @@ for c in "$sha" $heads; do
     --jq '.workflow_runs[].id') || continue
   for run in $runs; do
     ok=$(gh api "repos/$repo/actions/runs/$run/jobs" \
-      --jq '(.jobs | length > 0) and all(.jobs[]; .conclusion == "success")') || continue
+      --jq '[.jobs[] | select(.name != "notify-failure")] | length > 0 and all(.[]; .conclusion == "success")') \
+      || continue
     if [[ $ok == true ]]; then
       echo "tested-tree: CI run $run tested $c, whose tree is $sha's" >&2
       echo "$c"
