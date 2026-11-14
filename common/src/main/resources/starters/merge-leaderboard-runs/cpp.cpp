@@ -10,7 +10,7 @@
  */
 class Solution {
 public:
-    ListNode* combineOvenRotations(ListNode* runA, ListNode* runB) {
+    ListNode* mergeRuns(ListNode* runA, ListNode* runB) {
         // Write your solution here
     }
 };
