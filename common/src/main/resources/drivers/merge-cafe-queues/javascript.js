@@ -22,5 +22,5 @@ function _listToArray(head) {
 const input = require('fs').readFileSync('/dev/stdin', 'utf8').trim();
 const data = JSON.parse(input);
 const lists = data.map(arr => _buildList(arr));
-const result = new Solution().mergeFlightRosters(lists);
+const result = new Solution().mergeCafeQueues(lists);
 console.log(JSON.stringify(_listToArray(result)));

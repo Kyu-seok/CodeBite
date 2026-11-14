@@ -9,7 +9,7 @@ class ListNode:
 
 
 class Solution:
-    def merge_k_lists(self, queues: list[Optional[ListNode]]) -> Optional[ListNode]:
+    def mergeCafeQueues(self, queues: list[Optional[ListNode]]) -> Optional[ListNode]:
         # Heap of (value, queue index, node); the index breaks ties so nodes are never compared.
         heap = [(node.val, i, node) for i, node in enumerate(queues) if node]
         heapq.heapify(heap)

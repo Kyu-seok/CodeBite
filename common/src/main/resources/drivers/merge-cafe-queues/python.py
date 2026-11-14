@@ -19,5 +19,5 @@ def _list_to_array(head):
 
 data = json.loads(input())
 lists = [_build_list(arr) for arr in data]
-result = Solution().merge_k_lists(lists)
+result = Solution().mergeCafeQueues(lists)
 print(json.dumps(_list_to_array(result), separators=(',', ':')))
