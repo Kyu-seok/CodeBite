@@ -1,5 +1,5 @@
 {USER_CODE}
 
 nums = eval(input())
-result = Solution().find_peak_element(nums)
+result = Solution().pinpointPeak(nums)
 print(result)
