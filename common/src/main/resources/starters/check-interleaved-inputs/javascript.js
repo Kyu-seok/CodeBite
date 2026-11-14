@@ -5,7 +5,7 @@ class Solution {
      * @param {string} merged
      * @return {boolean}
      */
-    checkMergedQueue(controllerA, controllerB, merged) {
+    isInterleaving(controllerA, controllerB, merged) {
         // Write your solution here
     }
 }

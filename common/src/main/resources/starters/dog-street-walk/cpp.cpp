@@ -4,7 +4,7 @@ using namespace std;
 
 class Solution {
 public:
-    vector<string> traceStreetSweep(vector<vector<string>>& routes) {
+    vector<string> planWalk(vector<vector<string>>& routes) {
         // Write your solution here
     }
 };

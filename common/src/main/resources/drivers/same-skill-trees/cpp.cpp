@@ -15,7 +15,7 @@ int main() {
     getline(cin, line2);
     TreeNode* p = treeFromArray(line1);
     TreeNode* q = treeFromArray(line2);
-    bool result = Solution().matchCatalogLayout(p, q);
+    bool result = Solution().isSameTree(p, q);
     cout << (result ? "true" : "false") << endl;
     return 0;
 }

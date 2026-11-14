@@ -1,5 +1,5 @@
 class Solution {
-    public int locateTerminus(int[] scores) {
+    public int findLowestScore(int[] scores) {
         // Write your solution here
     }
 }

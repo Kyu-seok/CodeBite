@@ -1,5 +1,5 @@
 class Solution {
-    public boolean detectFlowValue(int[][] menu, int target) {
+    public boolean hasPrice(int[][] menu, int target) {
         // Write your solution here
     }
 }

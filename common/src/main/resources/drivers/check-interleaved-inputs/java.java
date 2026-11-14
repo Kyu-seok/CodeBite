@@ -5,10 +5,10 @@ import java.util.*;
 public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        String s1 = sc.hasNextLine() ? sc.nextLine() : "";
-        String s2 = sc.hasNextLine() ? sc.nextLine() : "";
-        String s3 = sc.hasNextLine() ? sc.nextLine() : "";
-        boolean result = new Solution().checkMergedQueue(s1, s2, s3);
+        String controllerA = sc.hasNextLine() ? sc.nextLine() : "";
+        String controllerB = sc.hasNextLine() ? sc.nextLine() : "";
+        String merged = sc.hasNextLine() ? sc.nextLine() : "";
+        boolean result = new Solution().isInterleaving(controllerA, controllerB, merged);
         System.out.println(result);
     }
 }

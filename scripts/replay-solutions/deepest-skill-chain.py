@@ -9,7 +9,7 @@ class TreeNode:
 
 
 class Solution:
-    def deepestZoneChain(self, root: Optional[TreeNode]) -> int:
+    def maxSkillDepth(self, root: Optional[TreeNode]) -> int:
         depth = 0
         level = [root] if root else []
         while level:

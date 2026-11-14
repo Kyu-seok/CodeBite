@@ -13,13 +13,13 @@ int main() {
     string line;
     getline(cin, line);
     string inner = line.substr(1, line.size() - 2);
-    vector<int> nums;
+    vector<int> deltas;
     if (!inner.empty()) {
         stringstream ss(inner);
         string token;
-        while (getline(ss, token, ',')) nums.push_back(stoi(token));
+        while (getline(ss, token, ',')) deltas.push_back(stoi(token));
     }
-    vector<vector<int>> result = Solution().triageZeroPriority(nums);
+    vector<vector<int>> result = Solution().zeroSumTrios(deltas);
     for (auto& t : result) sort(t.begin(), t.end());
     sort(result.begin(), result.end());
     cout << JsonOutput::intVector2D(result) << endl;

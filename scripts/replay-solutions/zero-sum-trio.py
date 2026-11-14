@@ -1,5 +1,5 @@
 class Solution:
-    def triageZeroPriority(self, deltas: list[int]) -> list[list[int]]:
+    def zeroSumTrios(self, deltas: list[int]) -> list[list[int]]:
         nums = sorted(deltas)
         trios: list[list[int]] = []
         for i in range(len(nums) - 2):

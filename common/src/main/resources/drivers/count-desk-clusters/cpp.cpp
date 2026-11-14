@@ -9,7 +9,7 @@ int main() {
     string line;
     getline(cin, line);
     // Parse [["1","0"],["0","1"]]
-    vector<vector<char>> grid;
+    vector<vector<char>> board;
     int i = 1; // skip outer [
     while (i < (int)line.size() - 1) {
         if (line[i] == '[') {
@@ -22,12 +22,12 @@ int main() {
                     k += 2; // skip char and closing quote
                 }
             }
-            grid.push_back(row);
+            board.push_back(row);
             i = j + 1;
         } else {
             i++;
         }
     }
-    cout << Solution().tallyPlantedRegions(grid) << endl;
+    cout << Solution().countClusters(board) << endl;
     return 0;
 }

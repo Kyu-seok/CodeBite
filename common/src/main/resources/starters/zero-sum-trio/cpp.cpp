@@ -1,6 +1,6 @@
 class Solution {
 public:
-    vector<vector<int>> triageZeroPriority(vector<int>& deltas) {
+    vector<vector<int>> zeroSumTrios(vector<int>& deltas) {
         // Write your solution here
     }
 };

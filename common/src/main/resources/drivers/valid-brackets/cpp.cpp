@@ -8,9 +8,9 @@ using namespace std;
 {USER_CODE}
 
 int main() {
-    string s;
-    getline(cin, s);
-    bool result = Solution().verifyJobNesting(s);
+    string brackets;
+    getline(cin, brackets);
+    bool result = Solution().isValidBrackets(brackets);
     cout << (result ? "true" : "false") << endl;
     return 0;
 }
