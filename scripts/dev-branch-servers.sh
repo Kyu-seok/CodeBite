@@ -2,7 +2,11 @@
 # Runs this checkout's backend, worker and Vite beside the shared dev servers (8080, 8081, 5173),
 # so a branch's migrations, endpoints and problems can be seen working end to end:
 #
-#   scripts/dev-branch-servers.sh [start]   start all three and stay in the foreground; Ctrl-C stops them
+#   scripts/dev-branch-servers.sh [start [--detach]]  start all three and stay in the foreground, Ctrl-C
+#                                           stopping them; --detach returns once they are up, with the
+#                                           summary, and leaves them running (log: <state>/start.log)
+#   scripts/dev-branch-servers.sh restart   stop, then start detached: the backend migrates the branch
+#                                           database to the migrations written since the last start
 #   scripts/dev-branch-servers.sh stop      stop them from another shell
 #   scripts/dev-branch-servers.sh status    print where they run (ports, database, logs)
 #   scripts/dev-branch-servers.sh drop      drop the branch database, Kafka topics and groups, Redis index
@@ -206,7 +210,7 @@ Sign in (dev test token; role ADMIN, or USER):
   curl -s -X POST 'http://127.0.0.1:$backend_port/api/auth/test-token?username=<name>&role=ADMIN'
   then in the branch frontend's console: localStorage.setItem('token', '<token>') and reload
 
-Stop: Ctrl-C here, or scripts/dev-branch-servers.sh stop.  Drop the data: scripts/dev-branch-servers.sh drop
+Stop: Ctrl-C (unless detached), or scripts/dev-branch-servers.sh stop.  After a new migration: restart.  Drop the data: scripts/dev-branch-servers.sh drop
 EOS
 }
 
@@ -288,6 +292,7 @@ cmd_start() {
 
   mkdir -p "$state"
   rm -f "$state/stopping"
+  echo $$ > "$state/start.pid"
   : > "$state/pids"
   local backend_port worker_port vite_port
   backend_port=$(first_free_port 18080 18179)
@@ -372,6 +377,44 @@ JSON
   done
 }
 
+# Starts the servers in the background, detached from this shell, and returns once they are up.
+cmd_start_detached() {
+  mkdir -p "$state"
+  local log="$state/start.log"
+  nohup "${BASH_SOURCE[0]}" start > "$log" 2>&1 < /dev/null &
+  await_detached $! "$log"
+}
+
+# Waits for the start $1 writing log $2: prints the log and returns 0 once it has printed the
+# summary, or prints it to stderr and returns 1 once that start has died first.
+await_detached() {
+  local pid=$1 log=$2
+  while kill -0 "$pid" 2>/dev/null; do
+    if grep -q '^Branch servers for' "$log" 2>/dev/null; then
+      cat "$log"
+      return 0
+    fi
+    sleep 1
+  done
+  cat "$log" >&2
+  return 1
+}
+
+# A start left running would see its apps gone and, if that comes before it sees the stop, stop
+# everything on its way out, the new servers included: wait for it to exit before starting again.
+cmd_restart() {
+  local pid i
+  stop_all
+  if [[ -f "$state/start.pid" ]]; then
+    pid=$(cat "$state/start.pid")
+    for (( i = 0; i < 15; i++ )); do
+      kill -0 "$pid" 2>/dev/null || break
+      sleep 1
+    done
+  fi
+  cmd_start_detached
+}
+
 cmd_drop() {
   if [[ -n "$(branch_pids)" ]]; then
     echo "the branch servers are running; stop them first: scripts/dev-branch-servers.sh stop" >&2
@@ -408,11 +451,18 @@ usage() {
 }
 
 main() {
-  local cmd=${1:-start}
+  local cmd=${1:-start} detach=false
   case "$cmd" in
-    start | stop | status | drop | name) ;;
+    start)
+      case "${2:-}" in
+        '') ;;
+        --detach) detach=true ;;
+        *) usage; exit 2 ;;
+      esac ;;
+    restart | stop | status | drop | name) [[ $# -le 1 ]] || { usage; exit 2; } ;;
     *) usage; exit 2 ;;
   esac
+  (( $# <= 2 )) || { usage; exit 2; }
   setup
   if [[ "$cmd" != name && "$cmd" != status && "$root" == "$main" ]]; then
     echo "dev-branch-servers.sh: $root is the main checkout, whose servers are the shared ones;" \
@@ -420,7 +470,8 @@ main() {
     exit 1
   fi
   case "$cmd" in
-    start) cmd_start ;;
+    start) if $detach; then cmd_start_detached; else cmd_start; fi ;;
+    restart) cmd_restart ;;
     stop) stop_all ;;
     status)
       if [[ -n "$(branch_pids)" && -f "$state/ports" ]]; then summary; else echo "not running ($db)"; fi ;;
