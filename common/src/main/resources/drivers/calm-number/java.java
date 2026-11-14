@@ -5,8 +5,8 @@ import java.util.*;
 public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        int n = Integer.parseInt(sc.nextLine().trim());
-        boolean result = new Solution().isCalmReading(n);
+        int reading = Integer.parseInt(sc.nextLine().trim());
+        boolean result = new Solution().isCalm(reading);
         System.out.println(result ? "true" : "false");
     }
 }

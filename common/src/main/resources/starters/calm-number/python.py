@@ -1,4 +1,4 @@
 class Solution:
-    def is_joyful(self, n: int) -> bool:
+    def isCalm(self, reading: int) -> bool:
         # Write your solution here
         pass

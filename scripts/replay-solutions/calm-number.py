@@ -1,5 +1,5 @@
 class Solution:
-    def is_joyful(self, reading: int) -> bool:
+    def isCalm(self, reading: int) -> bool:
         seen: set[int] = set()
         while reading != 1 and reading not in seen:
             seen.add(reading)

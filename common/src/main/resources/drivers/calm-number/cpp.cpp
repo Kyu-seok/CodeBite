@@ -8,8 +8,8 @@ using namespace std;
 int main() {
     string line;
     getline(cin, line);
-    int n = stoi(line);
-    bool result = Solution().isCalmReading(n);
+    int reading = stoi(line);
+    bool result = Solution().isCalm(reading);
     cout << (result ? "true" : "false") << endl;
     return 0;
 }

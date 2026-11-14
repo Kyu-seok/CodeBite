@@ -1,6 +1,5 @@
 class Solution {
-public:
-    bool isCalmReading(int n) {
+    public boolean isCalm(int reading) {
         // Write your solution here
     }
-};
+}

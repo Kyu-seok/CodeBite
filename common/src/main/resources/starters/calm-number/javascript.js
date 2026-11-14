@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {number} n
+     * @param {number} reading
      * @return {boolean}
      */
-    isCalmReading(n) {
+    isCalm(reading) {
         // Write your solution here
     }
 }
