@@ -1,6 +1,6 @@
 class Solution {
 public:
-    unsigned long reversePrinterFlags(unsigned long statusWord) {
+    unsigned long reverseFlags(unsigned long statusWord) {
         // Write your solution here
     }
 };
