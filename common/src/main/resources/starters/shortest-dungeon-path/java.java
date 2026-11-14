@@ -1,5 +1,5 @@
 class Solution {
-    public int chartBlockRoute(int[][] board) {
+    public int shortestPathLength(int[][] board) {
         // Write your solution here
     }
 }
