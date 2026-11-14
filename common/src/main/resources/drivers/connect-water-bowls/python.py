@@ -2,6 +2,6 @@
 
 import json
 
-points = json.loads(input())
-result = Solution().min_cost(points)
+bowls = json.loads(input())
+result = Solution().minHoseLength(bowls)
 print(result)

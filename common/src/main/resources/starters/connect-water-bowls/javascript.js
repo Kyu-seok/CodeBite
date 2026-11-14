@@ -3,7 +3,7 @@ class Solution {
      * @param {number[][]} bowls
      * @return {number}
      */
-    layPipeNetwork(bowls) {
+    minHoseLength(bowls) {
         // Write your solution here
     }
 }
