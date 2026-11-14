@@ -1,5 +1,5 @@
 class Solution {
-    advanceShotOrder(shotOrder) {
+    nextLineup(lineup) {
 
     }
 }
