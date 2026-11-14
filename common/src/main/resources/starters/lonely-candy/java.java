@@ -1,5 +1,5 @@
 class Solution {
-    public int findUnpairedFrame(int[] frames) {
+    public int findLonelyCandy(int[] candies) {
         // Write your solution here
     }
 }
