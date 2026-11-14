@@ -1,6 +1,6 @@
 class Solution {
 public:
-    int longestCleanRun(vector<int>& treats) {
+    int longestTwoFlavorStretch(vector<int>& treats) {
         // Write your solution here
     }
 };

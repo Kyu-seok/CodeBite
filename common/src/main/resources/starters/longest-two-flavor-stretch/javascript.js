@@ -3,7 +3,7 @@ class Solution {
      * @param {number[]} treats
      * @return {number}
      */
-    longestCleanRun(treats) {
+    longestTwoFlavorStretch(treats) {
         // Write your solution here
     }
 }

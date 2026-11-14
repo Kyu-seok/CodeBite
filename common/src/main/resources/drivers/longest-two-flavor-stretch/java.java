@@ -8,9 +8,9 @@ public class Main {
         String line = sc.nextLine().trim();
         String inner = line.substring(1, line.length() - 1);
         String[] parts = inner.split(",");
-        int[] items = new int[parts.length];
-        for (int i = 0; i < parts.length; i++) items[i] = Integer.parseInt(parts[i].trim());
-        int result = new Solution().longestCleanRun(items);
+        int[] treats = new int[parts.length];
+        for (int i = 0; i < parts.length; i++) treats[i] = Integer.parseInt(parts[i].trim());
+        int result = new Solution().longestTwoFlavorStretch(treats);
         System.out.println(result);
     }
 }

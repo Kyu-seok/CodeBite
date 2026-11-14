@@ -1,6 +1,6 @@
 from typing import List
 
 class Solution:
-    def fruit_picker(self, treats: List[int]) -> int:
+    def longestTwoFlavorStretch(self, treats: List[int]) -> int:
         # Write your solution here
         pass

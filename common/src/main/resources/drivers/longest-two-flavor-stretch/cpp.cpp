@@ -10,13 +10,13 @@ int main() {
     string line;
     getline(cin, line);
     string inner = line.substr(1, line.size() - 2);
-    vector<int> items;
+    vector<int> treats;
     stringstream ss(inner);
     string token;
     while (getline(ss, token, ',')) {
-        items.push_back(stoi(token));
+        treats.push_back(stoi(token));
     }
-    int result = Solution().longestCleanRun(items);
+    int result = Solution().longestTwoFlavorStretch(treats);
     cout << result << endl;
     return 0;
 }

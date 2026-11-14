@@ -2,7 +2,7 @@ from collections import Counter
 
 
 class Solution:
-    def fruit_picker(self, treats: list[int]) -> int:
+    def longestTwoFlavorStretch(self, treats: list[int]) -> int:
         window: Counter[int] = Counter()
         best = 0
         left = 0

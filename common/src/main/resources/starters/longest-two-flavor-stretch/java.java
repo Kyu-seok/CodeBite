@@ -1,5 +1,5 @@
 class Solution {
-    public int longestCleanRun(int[] treats) {
+    public int longestTwoFlavorStretch(int[] treats) {
         // Write your solution here
     }
 }
