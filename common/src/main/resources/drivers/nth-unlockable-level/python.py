@@ -1,5 +1,5 @@
 {USER_CODE}
 
 n = int(input())
-result = Solution().nthSmoothBatch(n)
+result = Solution().nthUnlockableLevel(n)
 print(result)

@@ -26,7 +26,7 @@ const lines = input.split('\n');
 const arr = JSON.parse(lines[0]);
 const target = parseInt(lines[1]);
 const root = _buildTree(arr);
-const result = new Solution().listRuntimeBranches(root, target);
+const result = new Solution().listBuildPaths(root, target);
 result.sort((a, b) => {
     for (let i = 0; i < Math.min(a.length, b.length); i++) {
         if (a[i] !== b[i]) return a[i] - b[i];

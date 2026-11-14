@@ -1,6 +1,6 @@
 {USER_CODE}
 
-x = int(input())
-y = int(input())
-result = Solution().countFlagMismatches(x, y)
+leftFlags = int(input())
+rightFlags = int(input())
+result = Solution().countFlagMismatches(leftFlags, rightFlags)
 print(result)

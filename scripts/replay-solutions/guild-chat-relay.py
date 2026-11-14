@@ -3,9 +3,9 @@ from collections import defaultdict
 
 
 class Solution:
-    def propagateAlertWave(self, edges: list[list[int]], n: int, src: int) -> int:
+    def minutesToReachAll(self, links: list[list[int]], n: int, src: int) -> int:
         graph: dict[int, list[tuple[int, int]]] = defaultdict(list)
-        for source, target, minutes in edges:
+        for source, target, minutes in links:
             graph[source].append((target, minutes))
         arrival: dict[int, int] = {}
         heap = [(0, src)]

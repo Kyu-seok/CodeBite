@@ -3,7 +3,7 @@ class Solution {
      * @param {number[][]} players
      * @return {number[][]}
      */
-    orderTicketHolders(players) {
+    rebuildLine(players) {
         // Write your solution here
     }
 }

@@ -36,8 +36,8 @@ public class Main {
         StringBuilder sb = new StringBuilder("[");
         for (int i = 0; i < ops.size(); i++) {
             if (i > 0) sb.append(",");
-            String op = ops.readAt(i);
-            String raw = rawArgs.readAt(i);
+            String op = ops.get(i);
+            String raw = rawArgs.get(i);
 
             if (op.equals("TimestampedStore")) {
                 obj = new TimestampedStore();

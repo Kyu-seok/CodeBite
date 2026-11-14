@@ -1,0 +1,1165 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Majority Vote",
+  "ko": "과반 득표 찾기"
+ },
+ "approach": {
+  "en": "Cancel each vote against a different one: a vote for the candidate adds 1, any other vote takes 1 away, and at 0 the next vote becomes the candidate. The majority has more votes than everyone else together, so it is the candidate left standing.",
+  "ko": "서로 다른 표끼리 상쇄합니다. 후보와 같은 표는 카운트를 1 올리고 다른 표는 1 내리며, 카운트가 0이면 다음 표가 새 후보가 됩니다. 과반은 나머지 표를 모두 합친 것보다 많으니 끝까지 남는 후보가 답입니다."
+ },
+ "views": [
+  {
+   "id": "votes",
+   "type": "array",
+   "title": {
+    "en": "votes",
+    "ko": "votes (투표)"
+   }
+  },
+  {
+   "id": "box",
+   "type": "map",
+   "title": {
+    "en": "candidate → count",
+    "ko": "후보 → 카운트"
+   },
+   "empty": {
+    "en": "no candidate",
+    "ko": "후보 없음"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "votes = [4,7,4]",
+   "expected": "4",
+   "frames": [
+    {
+     "caption": {
+      "en": "No candidate yet and the count is 0. Read the votes left to right.",
+      "ko": "아직 후보가 없고 카운트는 0입니다. 표를 왼쪽부터 읽습니다."
+     },
+     "views": {
+      "votes": {
+       "values": [
+        4,
+        7,
+        4
+       ],
+       "pointers": {
+        "i": null
+       },
+       "tags": [],
+       "marks": {
+        "lit": [],
+        "good": [],
+        "path": [],
+        "dim": [
+         0,
+         1,
+         2
+        ]
+       }
+      },
+      "box": {
+       "entries": [],
+       "slots": 1,
+       "struck": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "The count is 0, so vote 4 becomes the candidate with count 1.",
+      "ko": "카운트가 0이므로 4번 표가 후보가 되고 카운트는 1입니다."
+     },
+     "views": {
+      "votes": {
+       "values": [
+        4,
+        7,
+        4
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "tags": [
+        [
+         0,
+         "+1"
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         0
+        ],
+        "path": [],
+        "dim": [
+         1,
+         2
+        ]
+       }
+      },
+      "box": {
+       "entries": [
+        {
+         "key": 4,
+         "value": 1
+        }
+       ],
+       "slots": 1,
+       "struck": [],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "votes",
+        "at": 0
+       },
+       "to": {
+        "view": "box",
+        "at": 4
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Vote 7 differs from candidate 4: the two cancel, count down to 0, so the candidate is out.",
+      "ko": "7번 표는 후보 4번과 다릅니다. 둘이 상쇄되어 카운트를 내려 0이 되고, 후보가 빠집니다."
+     },
+     "views": {
+      "votes": {
+       "values": [
+        4,
+        7,
+        4
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "tags": [
+        [
+         0,
+         "+1"
+        ],
+        [
+         1,
+         "−1"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         1
+        ],
+        "good": [],
+        "path": [],
+        "dim": [
+         2
+        ]
+       }
+      },
+      "box": {
+       "entries": [
+        {
+         "key": 4,
+         "value": 0
+        }
+       ],
+       "slots": 1,
+       "struck": [
+        4
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "votes",
+        "at": 1
+       },
+       "to": {
+        "view": "box",
+        "at": 4
+       },
+       "value": "−1",
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The count is 0: every earlier vote is cancelled out. Vote 4 becomes the new candidate with count 1.",
+      "ko": "카운트가 0이므로 앞의 표는 모두 서로 상쇄되었습니다. 4번 표가 새 후보가 되고 카운트는 1입니다."
+     },
+     "views": {
+      "votes": {
+       "values": [
+        4,
+        7,
+        4
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "tags": [
+        [
+         0,
+         "+1"
+        ],
+        [
+         1,
+         "−1"
+        ],
+        [
+         2,
+         "+1"
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         2
+        ],
+        "path": [],
+        "dim": []
+       }
+      },
+      "box": {
+       "entries": [
+        {
+         "key": 4,
+         "value": 1
+        }
+       ],
+       "slots": 1,
+       "struck": [],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "votes",
+        "at": 2
+       },
+       "to": {
+        "view": "box",
+        "at": 4
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "All 3 votes read, and 4 is the candidate left standing with count 1. It holds 2 of the 3 votes, more than half, and such a value can't be cancelled out entirely: the answer is 4.",
+      "ko": "표 3개를 다 읽었고, 끝까지 남은 후보는 4번(카운트 1)입니다. 4번은 표 3개 중 2개로 과반이고, 과반인 값은 모두 상쇄될 수 없으므로 답은 4번입니다."
+     },
+     "views": {
+      "votes": {
+       "values": [
+        4,
+        7,
+        4
+       ],
+       "pointers": {
+        "i": null
+       },
+       "tags": [
+        [
+         0,
+         "+1"
+        ],
+        [
+         1,
+         "−1"
+        ],
+        [
+         2,
+         "+1"
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [],
+        "path": [
+         0,
+         2
+        ],
+        "dim": []
+       }
+      },
+      "box": {
+       "entries": [
+        {
+         "key": 4,
+         "value": 1
+        }
+       ],
+       "slots": 1,
+       "struck": [],
+       "marks": {
+        "path": [
+         4
+        ]
+       }
+      }
+     },
+     "answer": "4"
+    }
+   ],
+   "sampleInput": "[4,7,4]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "votes = [5,5,6,6,6,5,6]",
+   "expected": "6",
+   "frames": [
+    {
+     "caption": {
+      "en": "No candidate yet and the count is 0. Read the votes left to right.",
+      "ko": "아직 후보가 없고 카운트는 0입니다. 표를 왼쪽부터 읽습니다."
+     },
+     "views": {
+      "votes": {
+       "values": [
+        5,
+        5,
+        6,
+        6,
+        6,
+        5,
+        6
+       ],
+       "pointers": {
+        "i": null
+       },
+       "tags": [],
+       "marks": {
+        "lit": [],
+        "good": [],
+        "path": [],
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5,
+         6
+        ]
+       }
+      },
+      "box": {
+       "entries": [],
+       "slots": 1,
+       "struck": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "The count is 0, so vote 5 becomes the candidate with count 1.",
+      "ko": "카운트가 0이므로 5번 표가 후보가 되고 카운트는 1입니다."
+     },
+     "views": {
+      "votes": {
+       "values": [
+        5,
+        5,
+        6,
+        6,
+        6,
+        5,
+        6
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "tags": [
+        [
+         0,
+         "+1"
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         0
+        ],
+        "path": [],
+        "dim": [
+         1,
+         2,
+         3,
+         4,
+         5,
+         6
+        ]
+       }
+      },
+      "box": {
+       "entries": [
+        {
+         "key": 5,
+         "value": 1
+        }
+       ],
+       "slots": 1,
+       "struck": [],
+       "marks": {
+        "good": [
+         5
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "votes",
+        "at": 0
+       },
+       "to": {
+        "view": "box",
+        "at": 5
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Vote 5 matches the candidate: count up to 2.",
+      "ko": "5번 표가 후보와 같습니다. 카운트를 올려 2입니다."
+     },
+     "views": {
+      "votes": {
+       "values": [
+        5,
+        5,
+        6,
+        6,
+        6,
+        5,
+        6
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "tags": [
+        [
+         0,
+         "+1"
+        ],
+        [
+         1,
+         "+1"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         1
+        ],
+        "good": [],
+        "path": [],
+        "dim": [
+         2,
+         3,
+         4,
+         5,
+         6
+        ]
+       }
+      },
+      "box": {
+       "entries": [
+        {
+         "key": 5,
+         "value": 2
+        }
+       ],
+       "slots": 1,
+       "struck": [],
+       "marks": {
+        "good": [
+         5
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "votes",
+        "at": 1
+       },
+       "to": {
+        "view": "box",
+        "at": 5
+       },
+       "value": "+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Vote 6 differs from candidate 5: the two cancel, count down to 1.",
+      "ko": "6번 표는 후보 5번과 다릅니다. 둘이 상쇄되어 카운트를 내려 1입니다."
+     },
+     "views": {
+      "votes": {
+       "values": [
+        5,
+        5,
+        6,
+        6,
+        6,
+        5,
+        6
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "tags": [
+        [
+         0,
+         "+1"
+        ],
+        [
+         1,
+         "+1"
+        ],
+        [
+         2,
+         "−1"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         2
+        ],
+        "good": [],
+        "path": [],
+        "dim": [
+         3,
+         4,
+         5,
+         6
+        ]
+       }
+      },
+      "box": {
+       "entries": [
+        {
+         "key": 5,
+         "value": 1
+        }
+       ],
+       "slots": 1,
+       "struck": [],
+       "marks": {
+        "bad": [
+         5
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "votes",
+        "at": 2
+       },
+       "to": {
+        "view": "box",
+        "at": 5
+       },
+       "value": "−1",
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Vote 6 differs from candidate 5: the two cancel, count down to 0, so the candidate is out.",
+      "ko": "6번 표는 후보 5번과 다릅니다. 둘이 상쇄되어 카운트를 내려 0이 되고, 후보가 빠집니다."
+     },
+     "views": {
+      "votes": {
+       "values": [
+        5,
+        5,
+        6,
+        6,
+        6,
+        5,
+        6
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "tags": [
+        [
+         0,
+         "+1"
+        ],
+        [
+         1,
+         "+1"
+        ],
+        [
+         2,
+         "−1"
+        ],
+        [
+         3,
+         "−1"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         3
+        ],
+        "good": [],
+        "path": [],
+        "dim": [
+         4,
+         5,
+         6
+        ]
+       }
+      },
+      "box": {
+       "entries": [
+        {
+         "key": 5,
+         "value": 0
+        }
+       ],
+       "slots": 1,
+       "struck": [
+        5
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "votes",
+        "at": 3
+       },
+       "to": {
+        "view": "box",
+        "at": 5
+       },
+       "value": "−1",
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The count is 0: every earlier vote is cancelled out. Vote 6 becomes the new candidate with count 1.",
+      "ko": "카운트가 0이므로 앞의 표는 모두 서로 상쇄되었습니다. 6번 표가 새 후보가 되고 카운트는 1입니다."
+     },
+     "views": {
+      "votes": {
+       "values": [
+        5,
+        5,
+        6,
+        6,
+        6,
+        5,
+        6
+       ],
+       "pointers": {
+        "i": 4
+       },
+       "tags": [
+        [
+         0,
+         "+1"
+        ],
+        [
+         1,
+         "+1"
+        ],
+        [
+         2,
+         "−1"
+        ],
+        [
+         3,
+         "−1"
+        ],
+        [
+         4,
+         "+1"
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         4
+        ],
+        "path": [],
+        "dim": [
+         5,
+         6
+        ]
+       }
+      },
+      "box": {
+       "entries": [
+        {
+         "key": 6,
+         "value": 1
+        }
+       ],
+       "slots": 1,
+       "struck": [],
+       "marks": {
+        "good": [
+         6
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "votes",
+        "at": 4
+       },
+       "to": {
+        "view": "box",
+        "at": 6
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Vote 5 differs from candidate 6: the two cancel, count down to 0, so the candidate is out.",
+      "ko": "5번 표는 후보 6번과 다릅니다. 둘이 상쇄되어 카운트를 내려 0이 되고, 후보가 빠집니다."
+     },
+     "views": {
+      "votes": {
+       "values": [
+        5,
+        5,
+        6,
+        6,
+        6,
+        5,
+        6
+       ],
+       "pointers": {
+        "i": 5
+       },
+       "tags": [
+        [
+         0,
+         "+1"
+        ],
+        [
+         1,
+         "+1"
+        ],
+        [
+         2,
+         "−1"
+        ],
+        [
+         3,
+         "−1"
+        ],
+        [
+         4,
+         "+1"
+        ],
+        [
+         5,
+         "−1"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         5
+        ],
+        "good": [],
+        "path": [],
+        "dim": [
+         6
+        ]
+       }
+      },
+      "box": {
+       "entries": [
+        {
+         "key": 6,
+         "value": 0
+        }
+       ],
+       "slots": 1,
+       "struck": [
+        6
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "votes",
+        "at": 5
+       },
+       "to": {
+        "view": "box",
+        "at": 6
+       },
+       "value": "−1",
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The count is 0: every earlier vote is cancelled out. Vote 6 becomes the new candidate with count 1.",
+      "ko": "카운트가 0이므로 앞의 표는 모두 서로 상쇄되었습니다. 6번 표가 새 후보가 되고 카운트는 1입니다."
+     },
+     "views": {
+      "votes": {
+       "values": [
+        5,
+        5,
+        6,
+        6,
+        6,
+        5,
+        6
+       ],
+       "pointers": {
+        "i": 6
+       },
+       "tags": [
+        [
+         0,
+         "+1"
+        ],
+        [
+         1,
+         "+1"
+        ],
+        [
+         2,
+         "−1"
+        ],
+        [
+         3,
+         "−1"
+        ],
+        [
+         4,
+         "+1"
+        ],
+        [
+         5,
+         "−1"
+        ],
+        [
+         6,
+         "+1"
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         6
+        ],
+        "path": [],
+        "dim": []
+       }
+      },
+      "box": {
+       "entries": [
+        {
+         "key": 6,
+         "value": 1
+        }
+       ],
+       "slots": 1,
+       "struck": [],
+       "marks": {
+        "good": [
+         6
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "votes",
+        "at": 6
+       },
+       "to": {
+        "view": "box",
+        "at": 6
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "All 7 votes read, and 6 is the candidate left standing with count 1. It holds 4 of the 7 votes, more than half, and such a value can't be cancelled out entirely: the answer is 6.",
+      "ko": "표 7개를 다 읽었고, 끝까지 남은 후보는 6번(카운트 1)입니다. 6번은 표 7개 중 4개로 과반이고, 과반인 값은 모두 상쇄될 수 없으므로 답은 6번입니다."
+     },
+     "views": {
+      "votes": {
+       "values": [
+        5,
+        5,
+        6,
+        6,
+        6,
+        5,
+        6
+       ],
+       "pointers": {
+        "i": null
+       },
+       "tags": [
+        [
+         0,
+         "+1"
+        ],
+        [
+         1,
+         "+1"
+        ],
+        [
+         2,
+         "−1"
+        ],
+        [
+         3,
+         "−1"
+        ],
+        [
+         4,
+         "+1"
+        ],
+        [
+         5,
+         "−1"
+        ],
+        [
+         6,
+         "+1"
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [],
+        "path": [
+         2,
+         3,
+         4,
+         6
+        ],
+        "dim": []
+       }
+      },
+      "box": {
+       "entries": [
+        {
+         "key": 6,
+         "value": 1
+        }
+       ],
+       "slots": 1,
+       "struck": [],
+       "marks": {
+        "path": [
+         6
+        ]
+       }
+      }
+     },
+     "answer": "6"
+    }
+   ],
+   "sampleInput": "[5,5,6,6,6,5,6]"
+  },
+  {
+   "label": {
+    "en": "Example 3",
+    "ko": "예시 3"
+   },
+   "input": "votes = [9]",
+   "expected": "9",
+   "frames": [
+    {
+     "caption": {
+      "en": "No candidate yet and the count is 0. Read the votes left to right.",
+      "ko": "아직 후보가 없고 카운트는 0입니다. 표를 왼쪽부터 읽습니다."
+     },
+     "views": {
+      "votes": {
+       "values": [
+        9
+       ],
+       "pointers": {
+        "i": null
+       },
+       "tags": [],
+       "marks": {
+        "lit": [],
+        "good": [],
+        "path": [],
+        "dim": [
+         0
+        ]
+       }
+      },
+      "box": {
+       "entries": [],
+       "slots": 1,
+       "struck": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "The count is 0, so vote 9 becomes the candidate with count 1.",
+      "ko": "카운트가 0이므로 9번 표가 후보가 되고 카운트는 1입니다."
+     },
+     "views": {
+      "votes": {
+       "values": [
+        9
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "tags": [
+        [
+         0,
+         "+1"
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         0
+        ],
+        "path": [],
+        "dim": []
+       }
+      },
+      "box": {
+       "entries": [
+        {
+         "key": 9,
+         "value": 1
+        }
+       ],
+       "slots": 1,
+       "struck": [],
+       "marks": {
+        "good": [
+         9
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "votes",
+        "at": 0
+       },
+       "to": {
+        "view": "box",
+        "at": 9
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The only vote read, and 9 is the candidate left standing with count 1. It holds 1 of the 1 votes, more than half, and such a value can't be cancelled out entirely: the answer is 9.",
+      "ko": "표 1개를 다 읽었고, 끝까지 남은 후보는 9번(카운트 1)입니다. 9번은 표 1개 중 1개로 과반이고, 과반인 값은 모두 상쇄될 수 없으므로 답은 9번입니다."
+     },
+     "views": {
+      "votes": {
+       "values": [
+        9
+       ],
+       "pointers": {
+        "i": null
+       },
+       "tags": [
+        [
+         0,
+         "+1"
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [],
+        "path": [
+         0
+        ],
+        "dim": []
+       }
+      },
+      "box": {
+       "entries": [
+        {
+         "key": 9,
+         "value": 1
+        }
+       ],
+       "slots": 1,
+       "struck": [],
+       "marks": {
+        "path": [
+         9
+        ]
+       }
+      }
+     },
+     "answer": "9"
+    }
+   ],
+   "sampleInput": "[9]"
+  }
+ ]
+}

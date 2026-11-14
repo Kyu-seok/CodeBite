@@ -1,6 +1,6 @@
 {USER_CODE}
 
-hand = eval(input())
+cards = eval(input())
 groupSize = int(input())
-result = Solution().canGroupBakes(hand, groupSize)
+result = Solution().canGroupCards(cards, groupSize)
 print(str(result).lower())

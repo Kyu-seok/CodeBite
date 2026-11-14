@@ -5,5 +5,5 @@ const lines = input.split('\n');
 const target = parseInt(lines[0]);
 const position = JSON.parse(lines[1]);
 const speed = JSON.parse(lines[2]);
-const result = new Solution().groupTrainPacks(target, position, speed);
+const result = new Solution().countCarPacks(target, position, speed);
 console.log(result);

@@ -1,6 +1,6 @@
 class Solution {
 public:
-    int relayDispatchCost(int n, vector<vector<int>>& links, int src, int dst, int maxHops) {
+    int cheapestRoute(int n, vector<vector<int>>& links, int src, int dst, int maxStops) {
         // Write your solution here
     }
 };

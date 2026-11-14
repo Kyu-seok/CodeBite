@@ -1,6 +1,6 @@
 class Solution {
 public:
-    vector<int> daysToUpgrade(vector<int>& readings) {
+    vector<int> daysUntilWarmer(vector<int>& readings) {
 
     }
 };

@@ -1,3 +1,3 @@
 class Solution:
-    def hamming_weight(self, sensorMask: int) -> int:
-        return (sensorMask & 0xFFFFFFFF).bit_count()
+    def countOnlineFriends(self, friendMask: int) -> int:
+        return (friendMask & 0xFFFFFFFF).bit_count()

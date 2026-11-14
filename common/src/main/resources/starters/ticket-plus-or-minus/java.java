@@ -1,5 +1,5 @@
 class Solution {
-    public int partitionTankDoses(int[] tickets, int target) {
+    public int countSignAssignments(int[] tickets, int target) {
         // Write your solution here
     }
 }

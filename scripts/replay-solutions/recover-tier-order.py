@@ -2,10 +2,10 @@ import heapq
 
 
 class Solution:
-    def orderSceneShoot(self, words: list[str]) -> str:
-        letters = {letter for word in words for letter in word}
+    def recoverTierOrder(self, tags: list[str]) -> str:
+        letters = {letter for tag in tags for letter in tag}
         after: dict[str, set[str]] = {letter: set() for letter in letters}
-        for first, second in zip(words, words[1:]):
+        for first, second in zip(tags, tags[1:]):
             for a, b in zip(first, second):
                 if a != b:
                     after[a].add(b)

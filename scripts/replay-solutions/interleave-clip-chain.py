@@ -8,7 +8,7 @@ class ListNode:
 
 
 class Solution:
-    def reorder_list(self, head: Optional[ListNode]) -> None:
+    def interleaveClips(self, head: Optional[ListNode]) -> None:
         # Split at the middle, reverse the second half, then weave the halves together.
         if head is None or head.next is None:
             return

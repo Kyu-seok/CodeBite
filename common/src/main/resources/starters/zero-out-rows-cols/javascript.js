@@ -3,7 +3,7 @@ class Solution {
      * @param {number[][]} board
      * @return {void}
      */
-    clearDefectRows(board) {
+    zeroOutRowsAndCols(board) {
         // Write your solution here
     }
 }

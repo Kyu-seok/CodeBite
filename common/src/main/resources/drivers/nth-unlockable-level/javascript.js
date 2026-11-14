@@ -2,5 +2,5 @@
 
 const input = require('fs').readFileSync('/dev/stdin', 'utf8').trim();
 const n = parseInt(input);
-const result = new Solution().nthSmoothBatch(n);
+const result = new Solution().nthUnlockableLevel(n);
 console.log(result);

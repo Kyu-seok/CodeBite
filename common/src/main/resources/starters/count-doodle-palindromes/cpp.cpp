@@ -3,7 +3,7 @@ using namespace std;
 
 class Solution {
 public:
-    int countMirrorSpans(string code) {
+    int countPalindromicSubstrings(string doodle) {
         // Write your solution here
     }
 };

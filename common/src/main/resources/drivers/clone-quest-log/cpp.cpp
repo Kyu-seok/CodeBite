@@ -9,8 +9,8 @@ class Node {
 public:
     int val;
     Node* next;
-    Node* random;
-    Node(int _val) : val(_val), next(nullptr), random(nullptr) {}
+    Node* related;
+    Node(int _val) : val(_val), next(nullptr), related(nullptr) {}
 };
 
 {USER_CODE}
@@ -24,7 +24,7 @@ int main() {
         return 0;
     }
 
-    // Parse [[val,rand], ...] format
+    // Parse [[val,related_index], ...] format
     vector<pair<int,int>> pairs;
     int depth = 0;
     string curr;
@@ -61,11 +61,11 @@ int main() {
     }
     for (int i = 0; i < (int)nodes.size(); i++) {
         if (pairs[i].second >= 0) {
-            nodes[i]->random = nodes[pairs[i].second];
+            nodes[i]->related = nodes[pairs[i].second];
         }
     }
 
-    Node* result = Solution().duplicateTopicWeb(nodes[0]);
+    Node* result = Solution().cloneQuestLog(nodes[0]);
 
     unordered_map<Node*, int> indexMap;
     Node* c = result;
@@ -81,7 +81,7 @@ int main() {
     while (c) {
         if (!first) cout << ",";
         cout << "[" << c->val << ",";
-        if (c->random) cout << indexMap[c->random];
+        if (c->related) cout << indexMap[c->related];
         else cout << "null";
         cout << "]";
         first = false;

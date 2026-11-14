@@ -16,6 +16,6 @@ int main() {
     while (getline(ss, token, ',')) {
         nums.push_back(stoi(token));
     }
-    cout << Solution().peakReadingSum(nums) << endl;
+    cout << Solution().maxScoreStreak(nums) << endl;
     return 0;
 }

@@ -15,7 +15,7 @@ public class Main {
             String s = parts[i].trim();
             jobs[i] = s.charAt(1); // strip quotes
         }
-        int result = new Solution().planStationRuns(jobs, n);
+        int result = new Solution().minPrintSlots(jobs, n);
         System.out.println(result);
     }
 }

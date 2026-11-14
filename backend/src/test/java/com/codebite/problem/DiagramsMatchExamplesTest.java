@@ -134,7 +134,7 @@ class DiagramsMatchExamplesTest {
             // The input is only n, and the output's boards are rows of text.
             Map.entry("n-queens", DiagramsMatchExamplesTest::isABoardOfTheOutput),
             // The input is two traversals of the tree the output writes out.
-            Map.entry("rebuild-boss-tree", (example, body) -> example.output().equals(body.main()) ? null
+            Map.entry("rebuild-tree-from-traversals", (example, body) -> example.output().equals(body.main()) ? null
                     : "drew " + body.main() + ", the output is " + example.output()),
             // Two inputs drawn as a pair: `after` is the example's second array.
             Map.entry("same-skill-trees", DiagramsMatchExamplesTest::afterIsTheSecondArray),
@@ -188,7 +188,7 @@ class DiagramsMatchExamplesTest {
             // Numbers for strings.
             "count-desk-clusters | 1 | Input: board = [[\"1\",\"0\"]] | cells: [[1,0]]",
             // Part of the output's tree.
-            "rebuild-boss-tree | 1 | Input: preorder = [1,2,3], inorder = [2,1,3]\\nOutput: [1,2,3] | nodes: [1,2]",
+            "rebuild-tree-from-traversals | 1 | Input: preorder = [1,2,3], inorder = [2,1,3]\\nOutput: [1,2,3] | nodes: [1,2]",
             // A board spliced from two solutions.
             "n-queens | 1 | Input: n = 2\\nOutput: [[\"Q.\",\".Q\"],[\".Q\",\"Q.\"]] | cells: [[\"Q\",\".\"],[\"Q\",\".\"]]",
             // A derived graph drawn directed.

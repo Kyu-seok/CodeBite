@@ -1,5 +1,5 @@
 class Solution {
-    public int[] daysToUpgrade(int[] readings) {
+    public int[] daysUntilWarmer(int[] readings) {
 
     }
 }

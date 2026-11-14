@@ -10,7 +10,7 @@ int main() {
     string line;
     getline(cin, line);
 
-    vector<vector<int>> points;
+    vector<vector<int>> bowls;
     string inner = line.substr(1, line.size() - 2);
     int depth = 0, start = 0;
     for (int i = 0; i < (int)inner.size(); i++) {
@@ -23,12 +23,12 @@ int main() {
                 string a, b;
                 getline(ss, a, ',');
                 getline(ss, b, ',');
-                points.push_back({stoi(a), stoi(b)});
+                bowls.push_back({stoi(a), stoi(b)});
             }
         }
     }
 
-    int result = Solution().layPipeNetwork(points);
+    int result = Solution().minHoseLength(bowls);
     cout << result << endl;
     return 0;
 }

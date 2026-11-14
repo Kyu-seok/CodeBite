@@ -10,7 +10,7 @@ int main() {
     string line;
     getline(cin, line);
     // Parse [[0,1],[1,0]]
-    vector<vector<int>> grid;
+    vector<vector<int>> board;
     int i = 0;
     while (i < (int)line.size()) {
         if (line[i] == '[' && i > 0) {
@@ -24,12 +24,12 @@ int main() {
                     row.push_back(stoi(token));
                 }
             }
-            grid.push_back(row);
+            board.push_back(row);
             i = j + 1;
         } else {
             i++;
         }
     }
-    cout << Solution().chartBlockRoute(grid) << endl;
+    cout << Solution().shortestPathLength(board) << endl;
     return 0;
 }

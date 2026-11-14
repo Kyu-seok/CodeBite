@@ -1,6 +1,6 @@
 {USER_CODE}
 
 import json
-grid = json.loads(input())
-result = Solution().chartBlockRoute(grid)
+board = json.loads(input())
+result = Solution().shortestPathLength(board)
 print(result)

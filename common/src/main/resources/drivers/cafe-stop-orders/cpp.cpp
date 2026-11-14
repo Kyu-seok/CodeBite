@@ -13,11 +13,11 @@ int main() {
     string line;
     getline(cin, line);
     string inner = line.substr(1, line.size() - 2);
-    vector<int> nums;
+    vector<int> stops;
     stringstream ss(inner);
     string token;
-    while (getline(ss, token, ',')) nums.push_back(stoi(token));
-    vector<vector<int>> result = Solution().listStationOrders(nums);
+    while (getline(ss, token, ',')) stops.push_back(stoi(token));
+    vector<vector<int>> result = Solution().listVisitOrders(stops);
     sort(result.begin(), result.end());
     cout << JsonOutput::intVector2D(result) << endl;
     return 0;

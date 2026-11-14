@@ -3,7 +3,7 @@ class Solution {
      * @param {number[]} nums
      * @return {number}
      */
-    peakReadingSum(nums) {
+    maxScoreStreak(nums) {
         // Write your solution here
     }
 }

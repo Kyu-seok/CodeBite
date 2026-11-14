@@ -24,7 +24,7 @@ public class Main {
                 i++;
             }
         }
-        char[][] grid = rows.toArray(new char[0][]);
-        System.out.println(new Solution().tallyPlantedRegions(grid));
+        char[][] board = rows.toArray(new char[0][]);
+        System.out.println(new Solution().countClusters(board));
     }
 }

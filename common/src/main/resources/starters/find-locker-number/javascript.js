@@ -1,10 +1,10 @@
 class Solution {
     /**
-     * @param {number[]} shelf
+     * @param {number[]} lockers
      * @param {number} target
      * @return {number}
      */
-    locateCallNumber(shelf, target) {
+    findLocker(lockers, target) {
         // Write your solution here
     }
 }

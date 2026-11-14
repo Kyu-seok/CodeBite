@@ -10,12 +10,12 @@ int main() {
     string line;
     getline(cin, line);
     string inner = line.substr(1, line.size() - 2);
-    vector<int> nums;
+    vector<int> candies;
     stringstream ss(inner);
     string token;
     while (getline(ss, token, ',')) {
-        nums.push_back(stoi(token));
+        candies.push_back(stoi(token));
     }
-    cout << Solution().findUnpairedFrame(nums) << endl;
+    cout << Solution().findLonelyCandy(candies) << endl;
     return 0;
 }

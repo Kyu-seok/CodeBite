@@ -1,5 +1,5 @@
 class Solution {
-    public boolean isSoloSpecies(int specimenCount) {
+    public boolean isPowerOfTwo(int n) {
         // Write your solution here
     }
 }

@@ -15,7 +15,7 @@ class Solution {
      * @param {number} target
      * @return {number[][]}
      */
-    listRuntimeBranches(root, target) {
+    listBuildPaths(root, target) {
         // Write your solution here
     }
 }

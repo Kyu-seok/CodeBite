@@ -1,5 +1,5 @@
 class Solution {
-    peakFlowPerStretch(combo, k) {
+    peakComboPerWindow(combo, k) {
 
     }
 }

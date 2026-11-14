@@ -24,6 +24,6 @@ def _build_tree(arr):
 arr = json.loads(input())
 target = int(input())
 root = _build_tree(arr)
-result = Solution().listRuntimeBranches(root, target)
+result = Solution().listBuildPaths(root, target)
 result.sort()
 print(json.dumps(result, separators=(',', ':')))

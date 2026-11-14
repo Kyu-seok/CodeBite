@@ -9,7 +9,7 @@ public class Main {
         Scanner sc = new Scanner(System.in);
         String line = sc.nextLine().trim();
         TreeNode root = TreeNode.fromArray(line);
-        new Solution().unrollSchedule(root);
+        new Solution().flattenAgenda(root);
         StringBuilder sb = new StringBuilder("[");
         TreeNode curr = root;
         boolean first = true;

@@ -10,11 +10,11 @@ int main() {
     string line;
     getline(cin, line);
     string inner = line.substr(1, line.size() - 2);
-    vector<int> nums;
+    vector<int> maxJump;
     stringstream ss(inner);
     string token;
-    while (getline(ss, token, ',')) nums.push_back(stoi(token));
-    int result = Solution().minVanHops(nums);
+    while (getline(ss, token, ',')) maxJump.push_back(stoi(token));
+    int result = Solution().minJumps(maxJump);
     cout << result << endl;
     return 0;
 }

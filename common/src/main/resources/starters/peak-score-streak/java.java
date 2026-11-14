@@ -1,5 +1,5 @@
 class Solution {
-    public int peakReadingSum(int[] nums) {
+    public int maxScoreStreak(int[] nums) {
         // Write your solution here
     }
 }

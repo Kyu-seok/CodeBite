@@ -1,9 +1,9 @@
 {USER_CODE}
 
 const lines = require('fs').readFileSync('/dev/stdin', 'utf8').trim().split('\n');
-const numCourses = parseInt(lines[0]);
-const prerequisites = JSON.parse(lines[1]);
-const result = new Solution().sequenceAssemblySteps(numCourses, prerequisites);
+const numTasks = parseInt(lines[0]);
+const prereqs = JSON.parse(lines[1]);
+const result = new Solution().findTaskOrder(numTasks, prereqs);
 
 function hasCycle(n, prereqs) {
     const adj = Array.from({ length: n }, () => []);
@@ -44,4 +44,4 @@ function isValid(n, prereqs, result) {
     return true;
 }
 
-console.log(isValid(numCourses, prerequisites, result) ? "VALID" : "INVALID");
+console.log(isValid(numTasks, prereqs, result) ? "VALID" : "INVALID");

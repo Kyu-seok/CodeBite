@@ -41,18 +41,18 @@ def minute_tag(m):
     return {"en": "start", "ko": "시작"} if m == 0 else {"en": f"min {m}", "ko": f"{m}분"}
 
 
-def solve(ward, run):
-    """Solution.oranges_rotting with the BFS queue drawn: each stale donut joins it from its cell, and the front
+def solve(tray, run):
+    """Solution.minutes_until_stale with the BFS queue drawn: each stale donut joins it from its cell, and the front
     leaves to turn its fresh neighbours stale. Returns nothing; the last frame carries the answer as the Driver
     prints it."""
-    rows = len(ward)
-    cols = len(ward[0]) if ward else 0
+    rows = len(tray)
+    cols = len(tray[0]) if tray else 0
     went_stale = {}  # (r, c) -> the minute it went stale, so the tray and the queue show the BFS layers
     queue = []       # the donuts waiting, front first: the rest of this wave, then the next
 
     def frame(caption, lit=(), good=(), bad=(), path=(), queue_marks=None, moves=None, **answer):
         run.frame(caption,
-                  tray={"cells": ward, "tags": [[r, c, minute_tag(m)] for (r, c), m in went_stale.items()],
+                  tray={"cells": tray, "tags": [[r, c, minute_tag(m)] for (r, c), m in went_stale.items()],
                         "marks": {"lit": [list(p) for p in lit], "good": [list(p) for p in good],
                                   "bad": [list(p) for p in bad], "path": [list(p) for p in path]}},
                   queue={"values": [name(p) for p in queue],
@@ -64,8 +64,8 @@ def solve(ward, run):
                                            "draws each donut, not their number (a cell holding 1 is chance)"}]},
                   moves=moves, **answer)
 
-    fresh = sum(row.count(1) for row in ward)
-    rotten = [(r, c) for r in range(rows) for c in range(cols) if ward[r][c] == 2]
+    fresh = sum(row.count(1) for row in tray)
+    rotten = [(r, c) for r in range(rows) for c in range(cols) if tray[r][c] == 2]
     for p in rotten:
         went_stale[p] = 0
     minutes = 0
@@ -81,8 +81,8 @@ def solve(ward, run):
         for r, c in rotten:
             turned = []
             for nr, nc in ((r + 1, c), (r - 1, c), (r, c + 1), (r, c - 1)):
-                if 0 <= nr < rows and 0 <= nc < cols and ward[nr][nc] == 1:
-                    ward[nr][nc] = 2
+                if 0 <= nr < rows and 0 <= nc < cols and tray[nr][nc] == 1:
+                    tray[nr][nc] = 2
                     fresh -= 1
                     next_wave.append((nr, nc))
                     turned.append((nr, nc))
@@ -113,7 +113,7 @@ def solve(ward, run):
         minutes += 1
     answer = -1 if fresh else minutes
     if fresh:
-        stuck = [(r, c) for r in range(rows) for c in range(cols) if ward[r][c] == 1]
+        stuck = [(r, c) for r in range(rows) for c in range(cols) if tray[r][c] == 1]
         frame({"en": f"The queue is empty but {fresh} fresh {plural(fresh, 'donut is', 'donuts are')} walled off "
                      f"by empty slots and never {plural(fresh, 'goes', 'go')} stale: answer -1.",
                "ko": f"큐가 비었지만 신선한 도넛 {fresh}개가 빈 자리에 막혀 끝내 상하지 않습니다: 답 -1."},
@@ -129,8 +129,8 @@ def solve(ward, run):
 
 
 for number, sample in enumerate(sample_cases(SLUG), start=1):
-    ward = json.loads(sample["input"])
-    run = sample_run(wt, number, sample, input=f"ward = {sample['input']}")
-    solve(copy.deepcopy(ward), run)
+    tray = json.loads(sample["input"])
+    run = sample_run(wt, number, sample, input=f"tray = {sample['input']}")
+    solve(copy.deepcopy(tray), run)
 wt.write(walkthrough_path(SLUG))
 print(walkthrough_path(SLUG))

@@ -16,7 +16,7 @@ int main() {
     while (getline(ss, token, ',')) {
         cost.push_back(stoi(token));
     }
-    int result = Solution().pickLeastEffort(cost);
+    int result = Solution().minStaminaToFinish(cost);
     cout << result << endl;
     return 0;
 }

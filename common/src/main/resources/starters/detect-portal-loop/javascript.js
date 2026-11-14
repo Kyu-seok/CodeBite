@@ -13,7 +13,7 @@ class Solution {
      * @param {ListNode} head
      * @return {boolean}
      */
-    detectTransferLoop(head) {
+    hasPortalLoop(head) {
         // Write your solution here
     }
 }

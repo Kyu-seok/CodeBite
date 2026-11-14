@@ -1,5 +1,5 @@
 class Solution {
-    public int minVanHops(int[] fuel) {
+    public int minJumps(int[] maxJump) {
         // Write your solution here
     }
 }

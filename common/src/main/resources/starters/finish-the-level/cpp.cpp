@@ -1,6 +1,6 @@
 class Solution {
 public:
-    bool canFinishLine(vector<int>& slack) {
+    bool canFinishLevel(vector<int>& jumps) {
         // Write your solution here
     }
 };

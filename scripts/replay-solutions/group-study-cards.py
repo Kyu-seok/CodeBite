@@ -2,10 +2,10 @@ from collections import Counter
 
 
 class Solution:
-    def canGroupBakes(self, hand: list[int], groupSize: int) -> bool:
-        if len(hand) % groupSize:
+    def canGroupCards(self, cards: list[int], groupSize: int) -> bool:
+        if len(cards) % groupSize:
             return False
-        left = Counter(hand)
+        left = Counter(cards)
         # The smallest card left must start a group, so start as many groups there as it has copies.
         for start in sorted(left):
             groups = left[start]

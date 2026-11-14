@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {number[][]} ward
+     * @param {number[][]} tray
      * @return {number}
      */
-    spreadContaminationWave(ward) {
+    minutesUntilStale(tray) {
         // Write your solution here
     }
 }

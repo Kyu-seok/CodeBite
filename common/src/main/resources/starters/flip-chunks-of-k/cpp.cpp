@@ -10,7 +10,7 @@
  */
 class Solution {
 public:
-    ListNode* flipSorterSegments(ListNode* head, int k) {
+    ListNode* flipChunks(ListNode* head, int k) {
         // Write your solution here
     }
 };

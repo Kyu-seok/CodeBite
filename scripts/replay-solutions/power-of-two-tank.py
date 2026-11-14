@@ -1,3 +1,3 @@
 class Solution:
-    def isSoloSpecies(self, specimenCount: int) -> bool:
-        return specimenCount > 0 and specimenCount & (specimenCount - 1) == 0
+    def isPowerOfTwo(self, n: int) -> bool:
+        return n > 0 and n & (n - 1) == 0

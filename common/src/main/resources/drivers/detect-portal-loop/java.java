@@ -29,7 +29,7 @@ public class Main {
             nodes.get(nodes.size() - 1).next = nodes.get(pos);
         }
 
-        boolean result = new Solution().detectTransferLoop(head);
+        boolean result = new Solution().hasPortalLoop(head);
         System.out.println(result ? "true" : "false");
     }
 }

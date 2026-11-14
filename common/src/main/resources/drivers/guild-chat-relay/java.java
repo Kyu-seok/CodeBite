@@ -9,10 +9,10 @@ public class Main {
         int n = Integer.parseInt(sc.nextLine().trim());
         int src = Integer.parseInt(sc.nextLine().trim());
         // Parse 2D int array [[2,1,1],[2,3,1],[3,4,1]]
-        int[][] edges;
+        int[][] links;
         String inner = line.substring(1, line.length() - 1);
         if (inner.isEmpty() || !inner.contains("[")) {
-            edges = new int[0][];
+            links = new int[0][];
         } else {
             List<int[]> list = new ArrayList<>();
             int i = 0;
@@ -29,9 +29,9 @@ public class Main {
                     i++;
                 }
             }
-            edges = list.toArray(new int[0][]);
+            links = list.toArray(new int[0][]);
         }
-        int result = new Solution().propagateAlertWave(edges, n, src);
+        int result = new Solution().minutesToReachAll(links, n, src);
         System.out.println(result);
     }
 }

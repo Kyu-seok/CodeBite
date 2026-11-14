@@ -19,7 +19,7 @@ int main() {
     }
     int capacity;
     cin >> capacity;
-    int result = Solution().pairCrates(weights, capacity);
+    int result = Solution().minLunchboxes(weights, capacity);
     cout << result << endl;
     return 0;
 }

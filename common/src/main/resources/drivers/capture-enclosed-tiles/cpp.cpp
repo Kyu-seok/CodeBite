@@ -28,7 +28,7 @@ int main() {
             i++;
         }
     }
-    Solution().seizeEnclosedZones(board);
+    Solution().captureEnclosedTiles(board);
     // Output as 2D string array
     cout << "[";
     for (int r = 0; r < (int)board.size(); r++) {

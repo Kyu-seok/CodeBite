@@ -14,7 +14,7 @@ class Solution {
      * @param {TreeNode} root
      * @return {number}
      */
-    deepestZoneChain(root) {
+    maxSkillDepth(root) {
         // Write your solution here
     }
 }

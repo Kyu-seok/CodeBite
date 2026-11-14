@@ -1,5 +1,5 @@
 class Solution {
-    public String orderSceneShoot(String[] tags) {
+    public String recoverTierOrder(String[] tags) {
         // Write your solution here
     }
 }

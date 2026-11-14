@@ -8,7 +8,7 @@ using namespace std;
 int main() {
     int n;
     cin >> n;
-    int result = Solution().nthSmoothBatch(n);
+    int result = Solution().nthUnlockableLevel(n);
     cout << result << endl;
     return 0;
 }

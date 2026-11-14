@@ -1,5 +1,5 @@
 class Solution {
-    public int tallyPlantedRegions(char[][] board) {
+    public int countClusters(char[][] board) {
         // Write your solution here
     }
 }

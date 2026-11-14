@@ -1,5 +1,5 @@
 {USER_CODE}
 
-n = int(input())
-result = Solution().hamming_weight(n)
+friendMask = int(input())
+result = Solution().countOnlineFriends(friendMask)
 print(result)

@@ -10,13 +10,13 @@ int main() {
     string line;
     getline(cin, line);
     string inner = line.substr(1, line.size() - 2);
-    vector<int> height;
+    vector<int> lockers;
     stringstream ss(inner);
     string token;
     while (getline(ss, token, ',')) {
-        height.push_back(stoi(token));
+        lockers.push_back(stoi(token));
     }
-    int result = Solution().frameLargestBale(height);
+    int result = Solution().largestPosterArea(lockers);
     cout << result << endl;
     return 0;
 }

@@ -4,7 +4,7 @@ class Solution {
      * @param {number} budget
      * @return {number[]}
      */
-    pairTiersBudget(menuPrice, budget) {
+    findMenuPair(menuPrice, budget) {
         // Write your solution here
     }
 }

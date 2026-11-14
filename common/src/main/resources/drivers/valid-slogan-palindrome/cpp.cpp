@@ -8,9 +8,9 @@ using namespace std;
 {USER_CODE}
 
 int main() {
-    string s;
-    getline(cin, s);
-    bool result = Solution().verifyMirrorCode(s);
+    string phrase;
+    getline(cin, phrase);
+    bool result = Solution().isPalindrome(phrase);
     cout << (result ? "true" : "false") << endl;
     return 0;
 }
