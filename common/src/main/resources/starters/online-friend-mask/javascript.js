@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {number} sensorMask
+     * @param {number} friendMask
      * @return {number}
      */
-    countActiveSensors(sensorMask) {
+    countOnlineFriends(friendMask) {
         // Write your solution here
     }
 }
