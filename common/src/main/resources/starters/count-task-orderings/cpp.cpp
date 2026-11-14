@@ -3,7 +3,7 @@ using namespace std;
 
 class Solution {
 public:
-    int countAssemblyOrders(vector<int>& parent) {
+    int countTaskOrders(vector<int>& parent) {
         // Write your solution here
     }
 };

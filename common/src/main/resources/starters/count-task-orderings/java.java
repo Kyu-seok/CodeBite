@@ -1,5 +1,5 @@
 class Solution {
-    public int countAssemblyOrders(int[] parent) {
+    public int countTaskOrders(int[] parent) {
         // Write your solution here
     }
 }
