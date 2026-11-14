@@ -9,4 +9,4 @@ A Walkthrough draws each data structure in its own shape (a map as key cards, a 
 
 ## Consequences
 
-Trees, linked lists, graphs, grids and intervals are drawn by two pieces of code, so a change to a Diagram's look must be matched in the kit by hand. A Walkthrough's views are reached only by copying the kit in again, as before.
+Trees, linked lists, graphs, grids and intervals are drawn by two pieces of code, so a change to a Diagram's look must be matched in the kit by hand. A Walkthrough's views are reached only by copying the kit in again, as before: `scripts/copy-walkthrough-kit.py` does it and records the kit commit, and its `--check` (pre-commit and CI) fails on a copied file edited in CodeBite.
