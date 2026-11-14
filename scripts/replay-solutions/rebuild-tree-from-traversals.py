@@ -6,7 +6,7 @@ class TreeNode:
 
 
 class Solution:
-    def assembleBreakdown(self, preorder: list[int], inorder: list[int]) -> TreeNode | None:
+    def rebuildTree(self, preorder: list[int], inorder: list[int]) -> TreeNode | None:
         position = {value: index for index, value in enumerate(inorder)}
         next_root = iter(preorder)
 

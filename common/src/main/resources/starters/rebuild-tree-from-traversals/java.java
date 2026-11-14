@@ -10,7 +10,7 @@
  * }
  */
 class Solution {
-    public TreeNode assembleBreakdown(int[] preorder, int[] inorder) {
+    public TreeNode rebuildTree(int[] preorder, int[] inorder) {
         // Write your solution here
     }
 }

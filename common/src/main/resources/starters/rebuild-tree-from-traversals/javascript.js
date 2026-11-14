@@ -15,7 +15,7 @@ class Solution {
      * @param {number[]} inorder
      * @return {TreeNode}
      */
-    assembleBreakdown(preorder, inorder) {
+    rebuildTree(preorder, inorder) {
         // Write your solution here
     }
 }

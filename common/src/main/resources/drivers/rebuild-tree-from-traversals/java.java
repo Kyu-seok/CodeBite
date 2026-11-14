@@ -13,7 +13,7 @@ public class Main {
         String inInner = inLine.substring(1, inLine.length() - 1);
         int[] preorder = preInner.isEmpty() ? new int[0] : Arrays.stream(preInner.split(",")).mapToInt(s -> Integer.parseInt(s.trim())).toArray();
         int[] inorder = inInner.isEmpty() ? new int[0] : Arrays.stream(inInner.split(",")).mapToInt(s -> Integer.parseInt(s.trim())).toArray();
-        TreeNode result = new Solution().assembleBreakdown(preorder, inorder);
+        TreeNode result = new Solution().rebuildTree(preorder, inorder);
         System.out.println(TreeNode.toJsonArray(result));
     }
 }
