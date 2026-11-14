@@ -1,6 +1,6 @@
 {USER_CODE}
 
-s = input().strip()
-t = input().strip()
-result = Solution().countFilterMatches(s, t)
+notes = input().strip()
+target = input().strip()
+result = Solution().countHintMatches(notes, target)
 print(result)
