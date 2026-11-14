@@ -13,7 +13,7 @@ int main() {
     string line;
     getline(cin, line);
     TreeNode* root = treeFromArray(line);
-    int result = Solution().maxBranchTotal(root);
+    int result = Solution().maxPathSum(root);
     cout << result << endl;
     return 0;
 }

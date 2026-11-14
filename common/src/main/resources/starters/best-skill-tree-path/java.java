@@ -10,7 +10,7 @@
  * }
  */
 class Solution {
-    public int maxBranchTotal(TreeNode root) {
+    public int maxPathSum(TreeNode root) {
         // Write your solution here
     }
 }
