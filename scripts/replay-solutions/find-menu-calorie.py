@@ -1,5 +1,5 @@
 class Solution:
-    def probeSugarReading(self, menu: list[list[int]], target: int) -> bool:
+    def findCalorie(self, menu: list[list[int]], target: int) -> bool:
         if not menu or not menu[0]:
             return False
         row, col = 0, len(menu[0]) - 1
