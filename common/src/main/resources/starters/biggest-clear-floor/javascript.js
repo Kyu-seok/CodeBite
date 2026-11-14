@@ -3,7 +3,7 @@ class Solution {
      * @param {character[][]} floor
      * @return {number}
      */
-    biggestClearBay(floor) {
+    biggestClearFloor(floor) {
         // Write your solution here
     }
 }

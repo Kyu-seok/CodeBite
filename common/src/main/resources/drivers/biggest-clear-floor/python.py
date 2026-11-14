@@ -2,5 +2,5 @@
 
 import json
 matrix = json.loads(input())
-result = Solution().largest_square(matrix)
+result = Solution().biggestClearFloor(matrix)
 print(result)
