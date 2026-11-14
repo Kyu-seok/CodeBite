@@ -1,5 +1,5 @@
 class Solution:
-    def find_peak_element(self, readings: list[int]) -> int:
+    def pinpointPeak(self, readings: list[int]) -> int:
         # Climb toward the higher neighbor: a peak always lies on the rising side.
         low, high = 0, len(readings) - 1
         while low < high:

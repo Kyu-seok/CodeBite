@@ -8,7 +8,7 @@ int main() {
     string word1, word2;
     getline(cin, word1);
     getline(cin, word2);
-    int result = Solution().minZoneEdits(word1, word2);
+    int result = Solution().minCheatCodeEdits(word1, word2);
     cout << result << endl;
     return 0;
 }

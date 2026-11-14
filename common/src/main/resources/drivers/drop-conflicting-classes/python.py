@@ -3,5 +3,5 @@
 import json
 
 intervals = json.loads(input())
-result = Solution().erase_overlap_intervals(intervals)
+result = Solution().dropClassConflicts(intervals)
 print(result)

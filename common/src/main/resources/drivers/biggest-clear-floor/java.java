@@ -25,6 +25,6 @@ public class Main {
             }
         }
         char[][] matrix = rows.toArray(new char[0][]);
-        System.out.println(new Solution().biggestClearBay(matrix));
+        System.out.println(new Solution().biggestClearFloor(matrix));
     }
 }

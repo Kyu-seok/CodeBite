@@ -6,6 +6,6 @@ class ListNode:
         self.next = next
 
 class Solution:
-    def merge_k_lists(self, queues: list[Optional[ListNode]]) -> Optional[ListNode]:
+    def mergeCafeQueues(self, queues: list[Optional[ListNode]]) -> Optional[ListNode]:
         # Write your solution here
         pass

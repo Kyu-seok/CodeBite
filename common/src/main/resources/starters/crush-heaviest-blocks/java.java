@@ -1,5 +1,5 @@
 class Solution {
-    public int crushHeaviestBales(int[] blocks) {
+    public int crushHeaviestBlocks(int[] blocks) {
         // Write your solution here
     }
 }

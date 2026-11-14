@@ -8,7 +8,7 @@ class ListNode:
 
 
 class Solution:
-    def add_two_numbers(self, score1: Optional[ListNode], score2: Optional[ListNode]) -> Optional[ListNode]:
+    def addScoreLists(self, score1: Optional[ListNode], score2: Optional[ListNode]) -> Optional[ListNode]:
         dummy = tail = ListNode()
         carry = 0
         while score1 or score2 or carry:

@@ -4,6 +4,6 @@ import json
 
 points = json.loads(input())
 k = int(input())
-result = Solution().k_closest(points, k)
+result = Solution().selectNearestStops(points, k)
 result.sort()
 print(json.dumps(result, separators=(',', ':')))

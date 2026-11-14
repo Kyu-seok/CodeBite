@@ -14,7 +14,7 @@ class Solution {
      * @param {ListNode} score2
      * @return {ListNode}
      */
-    tallyPickRoutes(score1, score2) {
+    addScoreLists(score1, score2) {
         // Write your solution here
     }
 }
