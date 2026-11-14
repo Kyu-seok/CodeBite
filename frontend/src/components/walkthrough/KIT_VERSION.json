@@ -1,0 +1,26 @@
+{
+  "note": "Written by scripts/copy-walkthrough-kit.py; never edit by hand. Blobs are git blob ids.",
+  "kit_commit": "f6b9aa7ce9f19b417e9320cc7cb173fed3375772",
+  "files": {
+    "frontend/src/components/walkthrough/react/Walkthrough.tsx": {
+      "from": "kit/react/Walkthrough.tsx",
+      "blob": "6d961085bccb561a871c8b964b3cf863618d9615"
+    },
+    "frontend/src/components/walkthrough/walkthrough.css": {
+      "from": "kit/walkthrough.css",
+      "blob": "36581d5fca83084562b5eb5a05f75f34a74038f4"
+    },
+    "frontend/src/components/walkthrough/walkthrough.d.ts": {
+      "from": "kit/walkthrough.d.ts",
+      "blob": "7f1caee1af85f23f9928c09a3599719567078f44"
+    },
+    "frontend/src/components/walkthrough/walkthrough.js": {
+      "from": "kit/walkthrough.js",
+      "blob": "256ec01b9bc904cd7a1a973be08d83c48f711991"
+    },
+    "scripts/walkthroughs/walkthrough_trace.py": {
+      "from": "kit/walkthrough_trace.py",
+      "blob": "427626d4edcf81fad50a0c7ffd6943035ede02a6"
+    }
+  }
+}
