@@ -32,7 +32,7 @@ wt = Walkthrough(
 
 
 def solve(seat_ids, run):
-    """Solution.longestSeatBlock with a frame per seat the loop visits. Returns the answer as the Driver prints it."""
+    """Solution.longestSeatRun with a frame per seat the loop visits. Returns the answer as the Driver prints it."""
     seats = set(seat_ids)
     order = list(seats)  # the order `for seat in seats` visits them
     line = sorted(seats)  # where each run is a range: drawn only, the solution never sorts
