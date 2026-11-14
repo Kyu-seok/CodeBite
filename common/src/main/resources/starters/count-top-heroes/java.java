@@ -10,7 +10,7 @@
  * }
  */
 class Solution {
-    public int tallyDominantBlocks(TreeNode root) {
+    public int countDominantHeroes(TreeNode root) {
         // Write your solution here
     }
 }

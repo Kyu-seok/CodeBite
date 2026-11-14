@@ -7,6 +7,6 @@ class TreeNode:
         self.right = right
 
 class Solution:
-    def tallyDominantBlocks(self, root: Optional[TreeNode]) -> int:
+    def countDominantHeroes(self, root: Optional[TreeNode]) -> int:
         # Write your solution here
         pass
