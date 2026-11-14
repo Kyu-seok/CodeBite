@@ -11,15 +11,15 @@ int main() {
     string numsLine;
     getline(cin, numsLine);
     string inner = numsLine.substr(1, numsLine.size() - 2);
-    vector<int> nums;
+    vector<int> seatIds;
     if (!inner.empty()) {
         stringstream ss(inner);
         string token;
         while (getline(ss, token, ',')) {
-            nums.push_back(stoi(token));
+            seatIds.push_back(stoi(token));
         }
     }
-    int result = Solution().longestSeatBlock(nums);
+    int result = Solution().longestSeatRun(seatIds);
     cout << result << endl;
     return 0;
 }
