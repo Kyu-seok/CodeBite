@@ -19,5 +19,5 @@ def _list_to_array(head):
 
 arr = json.loads(input())
 head = _build_list(arr)
-Solution().reorder_list(head)
+Solution().interleaveClips(head)
 print(json.dumps(_list_to_array(head), separators=(',', ':')))

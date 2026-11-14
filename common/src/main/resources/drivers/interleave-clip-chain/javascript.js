@@ -22,5 +22,5 @@ function _listToArray(head) {
 const input = require('fs').readFileSync('/dev/stdin', 'utf8').trim();
 const arr = JSON.parse(input);
 const head = _buildList(arr);
-new Solution().interleaveTrailerCuts(head);
+new Solution().interleaveClips(head);
 console.log(JSON.stringify(_listToArray(head)));

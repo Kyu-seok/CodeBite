@@ -9,7 +9,7 @@ public class Main {
         Scanner sc = new Scanner(System.in);
         String line = sc.nextLine().trim();
         ListNode head = ListNode.fromArray(line);
-        new Solution().interleaveTrailerCuts(head);
+        new Solution().interleaveClips(head);
         System.out.println(ListNode.toJsonArray(head));
     }
 }
