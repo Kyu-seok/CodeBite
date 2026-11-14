@@ -14,7 +14,7 @@ class Solution {
      * @param {ListNode} runB
      * @return {ListNode}
      */
-    combineOvenRotations(runA, runB) {
+    mergeRuns(runA, runB) {
         // Write your solution here
     }
 }

@@ -7,13 +7,13 @@ using namespace std;
 {USER_CODE}
 
 int main() {
-    int numCourses;
+    int numTasks;
     string line;
     getline(cin, line);
-    numCourses = stoi(line);
+    numTasks = stoi(line);
     getline(cin, line);
     // Parse 2D int array [[1,0],[2,1]]
-    vector<vector<int>> prerequisites;
+    vector<vector<int>> prereqs;
     string inner = line.substr(1, line.size() - 2);
     if (!inner.empty() && inner.find('[') != string::npos) {
         int i = 0;
@@ -27,14 +27,14 @@ int main() {
                 while (getline(ss, token, ',')) {
                     pair.push_back(stoi(token));
                 }
-                prerequisites.push_back(pair);
+                prereqs.push_back(pair);
                 i = j + 1;
             } else {
                 i++;
             }
         }
     }
-    bool result = Solution().verifyShootPlan(numCourses, prerequisites);
+    bool result = Solution().canFinishAllTasks(numTasks, prereqs);
     cout << (result ? "true" : "false") << endl;
     return 0;
 }

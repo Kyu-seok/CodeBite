@@ -8,7 +8,7 @@ class ListNode:
 
 
 class Solution:
-    def detectTransferLoop(self, head: Optional[ListNode]) -> bool:
+    def hasPortalLoop(self, head: Optional[ListNode]) -> bool:
         slow = fast = head
         while fast and fast.next:
             slow = slow.next
