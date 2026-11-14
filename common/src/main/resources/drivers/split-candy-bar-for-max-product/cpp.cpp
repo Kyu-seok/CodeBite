@@ -6,9 +6,9 @@ using namespace std;
 {USER_CODE}
 
 int main() {
-    int n;
-    cin >> n;
-    int result = Solution().splitProductMax(n);
+    int length;
+    cin >> length;
+    int result = Solution().maxSplitProduct(length);
     cout << result << endl;
     return 0;
 }

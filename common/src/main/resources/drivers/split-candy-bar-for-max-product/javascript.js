@@ -1,6 +1,6 @@
 {USER_CODE}
 
 const input = require('fs').readFileSync('/dev/stdin', 'utf8').trim();
-const n = parseInt(input);
-const result = new Solution().splitProductMax(n);
+const length = parseInt(input);
+const result = new Solution().maxSplitProduct(length);
 console.log(result);

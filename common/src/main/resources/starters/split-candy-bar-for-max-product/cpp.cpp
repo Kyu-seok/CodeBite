@@ -1,6 +1,6 @@
 class Solution {
 public:
-    int splitProductMax(int span) {
+    int maxSplitProduct(int length) {
         // Write your solution here
     }
 };

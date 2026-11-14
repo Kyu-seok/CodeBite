@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {number} span
+     * @param {number} length
      * @return {number}
      */
-    splitProductMax(span) {
+    maxSplitProduct(length) {
         // Write your solution here
     }
 }
