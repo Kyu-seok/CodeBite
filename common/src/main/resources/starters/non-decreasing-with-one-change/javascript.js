@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {number[]} trays
+     * @param {number[]} nums
      * @return {boolean}
      */
-    verifyBakeOrder(trays) {
+    canBeNonDecreasing(nums) {
         // Write your solution here
     }
 }

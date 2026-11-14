@@ -1,5 +1,5 @@
 {USER_CODE}
 
 nums = eval(input())
-result = Solution().verifyBakeOrder(nums)
+result = Solution().canBeNonDecreasing(nums)
 print(str(result).lower())

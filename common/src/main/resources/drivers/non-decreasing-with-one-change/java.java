@@ -10,7 +10,7 @@ public class Main {
         String[] parts = inner.split(",");
         int[] nums = new int[parts.length];
         for (int i = 0; i < parts.length; i++) nums[i] = Integer.parseInt(parts[i].trim());
-        boolean result = new Solution().verifyBakeOrder(nums);
+        boolean result = new Solution().canBeNonDecreasing(nums);
         System.out.println(result);
     }
 }

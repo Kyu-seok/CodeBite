@@ -16,7 +16,7 @@ int main() {
     while (getline(ss, token, ',')) {
         nums.push_back(stoi(token));
     }
-    bool result = Solution().verifyBakeOrder(nums);
+    bool result = Solution().canBeNonDecreasing(nums);
     cout << (result ? "true" : "false") << endl;
     return 0;
 }

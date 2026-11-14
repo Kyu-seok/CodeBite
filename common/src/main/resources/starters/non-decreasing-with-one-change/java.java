@@ -1,5 +1,5 @@
 class Solution {
-    public boolean verifyBakeOrder(int[] trays) {
+    public boolean canBeNonDecreasing(int[] nums) {
         // Write your solution here
     }
 }
