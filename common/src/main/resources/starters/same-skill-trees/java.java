@@ -10,7 +10,7 @@
  * }
  */
 class Solution {
-    public boolean matchCatalogLayout(TreeNode p, TreeNode q) {
+    public boolean isSameTree(TreeNode p, TreeNode q) {
         // Write your solution here
     }
 }

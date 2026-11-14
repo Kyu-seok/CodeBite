@@ -24,5 +24,5 @@ function _buildTree(arr) {
 const lines = require('fs').readFileSync('/dev/stdin', 'utf8').trim().split('\n');
 const p = _buildTree(JSON.parse(lines[0]));
 const q = _buildTree(JSON.parse(lines[1]));
-const result = new Solution().matchCatalogLayout(p, q);
+const result = new Solution().isSameTree(p, q);
 console.log(result);
