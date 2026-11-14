@@ -4,7 +4,7 @@ class Solution {
      * @param {number} cols
      * @return {number}
      */
-    countGateRoutes(rows, cols) {
+    countPaths(rows, cols) {
         // Write your solution here
     }
 }

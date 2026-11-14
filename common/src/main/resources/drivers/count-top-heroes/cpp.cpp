@@ -13,7 +13,7 @@ int main() {
     string line;
     getline(cin, line);
     TreeNode* root = treeFromArray(line);
-    int result = Solution().tallyDominantBlocks(root);
+    int result = Solution().countDominantHeroes(root);
     cout << result << endl;
     return 0;
 }

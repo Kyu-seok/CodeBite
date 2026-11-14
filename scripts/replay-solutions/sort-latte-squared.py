@@ -1,5 +1,5 @@
 class Solution:
-    def orderTankDeviations(self, drifts: list[int]) -> list[int]:
+    def sortedSquaredDrifts(self, drifts: list[int]) -> list[int]:
         result = [0] * len(drifts)
         left, right = 0, len(drifts) - 1
         for slot in range(len(drifts) - 1, -1, -1):

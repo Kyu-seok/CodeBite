@@ -1,6 +1,6 @@
 {USER_CODE}
 
 const input = require('fs').readFileSync('/dev/stdin', 'utf8').trim();
-const nums = JSON.parse(input);
-const result = new Solution().pickCircuitTargets(nums);
+const tastiness = JSON.parse(input);
+const result = new Solution().maxTastiness(tastiness);
 console.log(result);

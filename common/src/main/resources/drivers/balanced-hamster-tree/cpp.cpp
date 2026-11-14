@@ -13,7 +13,7 @@ int main() {
     string line;
     getline(cin, line);
     TreeNode* root = treeFromArray(line);
-    bool result = Solution().checkHubEvenness(root);
+    bool result = Solution().isBalanced(root);
     cout << (result ? "true" : "false") << endl;
     return 0;
 }

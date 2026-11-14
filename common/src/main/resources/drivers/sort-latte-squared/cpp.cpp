@@ -9,16 +9,16 @@ using namespace std;
 {USER_CODE}
 
 int main() {
-    string numsLine;
-    getline(cin, numsLine);
-    string inner = numsLine.substr(1, numsLine.size() - 2);
-    vector<int> nums;
+    string driftsLine;
+    getline(cin, driftsLine);
+    string inner = driftsLine.substr(1, driftsLine.size() - 2);
+    vector<int> drifts;
     stringstream ss(inner);
     string token;
     while (getline(ss, token, ',')) {
-        nums.push_back(stoi(token));
+        drifts.push_back(stoi(token));
     }
-    vector<int> result = Solution().orderTankDeviations(nums);
+    vector<int> result = Solution().sortedSquaredDrifts(drifts);
     cout << JsonOutput::intVector(result) << endl;
     return 0;
 }

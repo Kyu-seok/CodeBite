@@ -1,12 +1,12 @@
 #!/usr/bin/env python3.12
-"""majority-boss-vote's Walkthrough: the reference solution
-(scripts/replay-solutions/majority-boss-vote.py), Boyer-Moore voting with one candidate and a count,
+"""majority-vote's Walkthrough: the reference solution
+(scripts/replay-solutions/majority-vote.py), Boyer-Moore voting with one candidate and a count,
 recording one frame per vote on each sample Test Case. The candidate and its count are a one-slot map that each
 vote moves into, +1 or −1; a count that reaches 0 leaves the slot, and the next vote takes it.
 
-    CODEBITE_DB=<database> scripts/walkthroughs/majority-boss-vote.py
+    CODEBITE_DB=<database> scripts/walkthroughs/majority-vote.py
 
-writes common/src/main/resources/walkthroughs/majority-boss-vote.json.
+writes common/src/main/resources/walkthroughs/majority-vote.json.
 """
 import json
 import os
@@ -17,10 +17,10 @@ sys.path.insert(0, os.path.dirname(__file__))
 from codebite import driver_list, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough, at, move  # noqa: E402
 
-SLUG = "majority-boss-vote"
+SLUG = "majority-vote"
 
 wt = Walkthrough(
-    {"en": "Majority Boss Vote", "ko": "대세 픽 고르기"},
+    {"en": "Majority Vote", "ko": "과반 득표 찾기"},
     {"en": "Cancel each vote against a different one: a vote for the candidate adds 1, any other vote takes "
            "1 away, and at 0 the next vote becomes the candidate. The majority has more votes than everyone "
            "else together, so it is the candidate left standing.",
@@ -35,7 +35,7 @@ wt = Walkthrough(
 
 
 def solve(votes, run):
-    """Solution.majorityHeadline with a frame per vote."""
+    """Solution.majorityVote with a frame per vote."""
     candidate = votes[0]
     count = 0
     i = None

@@ -1,5 +1,5 @@
 {USER_CODE}
 
-nums = eval(input())
-result = Solution().pickCircuitTargets(nums)
+tastiness = eval(input())
+result = Solution().maxTastiness(tastiness)
 print(result)
