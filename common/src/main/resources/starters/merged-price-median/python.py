@@ -1,6 +1,6 @@
 from typing import List
 
 class Solution:
-    def mergedZoneMedian(self, zonesA: List[int], zonesB: List[int]) -> float:
+    def mergedPriceMedian(self, pricesA: List[int], pricesB: List[int]) -> float:
         # Write your solution here
         pass
