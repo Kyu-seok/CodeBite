@@ -644,8 +644,8 @@ function createMoves(layer, stage, ctx, viewById) {
     const v = viewById(a.view);
     if (!v || v.box.hidden) return null;
     const el = v.view.locate ? v.view.locate(a.at) : null;
-    const why = `walkthrough: move ${end} ${JSON.stringify(a)} names nothing the player draws in ${v.type} "${v.id}"`;
-    if (!el && !reported.has(why)) { reported.add(why); console.error(why); }
+    const message = `walkthrough: move ${end} ${JSON.stringify(a)} names nothing the player draws in ${v.type} "${v.id}"`;
+    if (!el && !reported.has(message)) { reported.add(message); console.error(message); }
     return el;
   };
   const tone = mv => mv.mark || (!mv.to ? 'bad' : viewById(mv.to.view)?.type === 'output' ? 'path' : 'good');

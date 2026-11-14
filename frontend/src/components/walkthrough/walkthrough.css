@@ -60,8 +60,6 @@
   .wt-controls { gap: 6px; padding: 10px; }
   .wt-btn:first-child { display: none; }
   .wt-hint { display: none; }
-  .wt-vars { flex-direction: row; flex-wrap: wrap; gap: 10px 22px; }
-  .wt-varvalue { font-size: 22px; }
 }
 
 /* svg basics */
@@ -71,7 +69,6 @@
 .wt-val { font: 600 16px var(--wt-mono); }
 .wt-val-sm { font-size: 13px; }
 .wt-tag { font: 600 10px var(--wt-mono); fill: var(--wt-mid) !important; }
-.wt-ptr { font: 700 12px var(--wt-mono); fill: var(--wt-accent) !important; }
 .wt-tile { fill: var(--wt-bg); stroke: var(--wt-faint); stroke-width: 1.5; transition: fill .35s, stroke .35s, opacity .35s; }
 
 /* grid boxes and a shaded region */
@@ -90,16 +87,27 @@
 .wt-tone-d :is(.wt-val, .wt-tag) { fill: var(--wt-tone-d-ink) !important; }
 .wt-tone-wall :is(.wt-val, .wt-tag) { fill: var(--wt-card) !important; }
 
-/* marks, shared by every view: lit = looked at, good = changed, bad = blocked, path = the answer, dim = out of play */
-.wt-cell.wt-lit .wt-tile, .wt-item.wt-lit .wt-tile { stroke: var(--wt-accent); stroke-width: 3.5; }
-.wt-cell.wt-good .wt-tile, .wt-item.wt-good .wt-tile { stroke: var(--wt-good); stroke-width: 3.5; }
-.wt-cell.wt-bad .wt-tile, .wt-item.wt-bad .wt-tile { stroke: var(--wt-bad); stroke-width: 3.5; stroke-dasharray: none; }
-.wt-cell.wt-path .wt-tile, .wt-item.wt-path .wt-tile { stroke: var(--wt-accent); stroke-width: 3.5; }
-.wt-cell.wt-dim, .wt-item.wt-dim { opacity: .35; }
-.wt-cell.wt-lit .wt-tile, .wt-cell.wt-good .wt-tile { animation: wt-pop .45s cubic-bezier(.2,.8,.2,1); transform-box: fill-box; transform-origin: center; }
+/* marks, shared by every view: lit = looked at, good = changed, bad = blocked, path = the answer, dim = out of play.
+   Each view applies them to its own drawing in its own section; this holds what they share. */
 @keyframes wt-pop { 0% { transform: scale(.82); } 60% { transform: scale(1.06); } 100% { transform: scale(1); } }
 
+/* grid marks: a marked cell's outline, and a pop when it is looked at or changed */
+.wt-cell.wt-lit .wt-tile { stroke: var(--wt-accent); stroke-width: 3.5; }
+.wt-cell.wt-good .wt-tile { stroke: var(--wt-good); stroke-width: 3.5; }
+.wt-cell.wt-bad .wt-tile { stroke: var(--wt-bad); stroke-width: 3.5; stroke-dasharray: none; }
+.wt-cell.wt-path .wt-tile { stroke: var(--wt-accent); stroke-width: 3.5; }
+.wt-cell.wt-dim { opacity: .35; }
+.wt-cell.wt-lit .wt-tile, .wt-cell.wt-good .wt-tile { animation: wt-pop .45s cubic-bezier(.2,.8,.2,1); transform-box: fill-box; transform-origin: center; }
+
+/* array marks: a marked cell's outline */
+.wt-item.wt-lit .wt-tile { stroke: var(--wt-accent); stroke-width: 3.5; }
+.wt-item.wt-good .wt-tile { stroke: var(--wt-good); stroke-width: 3.5; }
+.wt-item.wt-bad .wt-tile { stroke: var(--wt-bad); stroke-width: 3.5; stroke-dasharray: none; }
+.wt-item.wt-path .wt-tile { stroke: var(--wt-accent); stroke-width: 3.5; }
+.wt-item.wt-dim { opacity: .35; }
+
 /* array */
+.wt-ptr { font: 700 12px var(--wt-mono); fill: var(--wt-accent) !important; }
 .wt-bar { fill: var(--wt-lo); transition: height .4s cubic-bezier(.2,.8,.2,1), y .4s cubic-bezier(.2,.8,.2,1), fill .3s; }
 .wt-fill { fill: var(--wt-tone-c); opacity: .75; transition: height .4s cubic-bezier(.2,.8,.2,1), y .4s cubic-bezier(.2,.8,.2,1); }
 .wt-base { stroke: var(--wt-lo); stroke-width: 1.5; }
