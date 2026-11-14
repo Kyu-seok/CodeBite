@@ -40,7 +40,7 @@ Besides the public checklist, hold every frame to the two rules (#273): (1) the 
 The rules can hold while the picture still doesn't teach; the owner sent back three that passed them (#286). Check each Walkthrough for these too:
 - **Each structure drawn in the shape the solver pictures.** A key packed into a string (`"1:5"`, `"0,1:2"`) is a structure flattened: draw what it encodes, such as one card per region holding its digits ([views.md](views.md), sets of composite keys).
 - **One assignment per frame.** Where the code moves a value through a temp, or one cell at a time, the frames do too, with the temp a view of its own; two cells changing at once hides the order.
-- **The description's Diagram look.** A view drawing a structure the description draws with a Diagram (a graph, a grid, intervals) matches its layout, so the learner recognises the picture: open the problem's description beside the shots.
+- **The description's Diagram look.** A view drawing a structure the description draws with a Diagram (a graph, a grid, intervals) matches its layout, so the learner recognises the picture. Step 5's app check shoots the two together and prints the path: `<slug>-diagram-beside-frame-1440.png`, the description's Diagrams beside the first frame (no shot when the description has no Diagram). Hold the frames to it there; before step 5, open the description beside the capture shots.
 
 The public skill's steps 5 and 6, with the pages and shots kept out of the repo under a name of your own (`<scratch>` below: another session's review script or page in a shared scratchpad gets overwritten):
 
@@ -69,7 +69,7 @@ The backend reads `walkthroughs/` once at startup, so restart the branch servers
 node scripts/walkthrough-app-check.mjs <vite url> <backend api url> <scratchpad>/shots/<slug>-app <slug>
 ```
 
-It drives `/problems/<slug>` signed out and signed in, at 1440 and 390, dark and light, English and Korean: the tab, the reveal, the player's theme, language and labels, sideways scroll, ←/→ stepping only while the player has focus and never from the editor, the run kept across a tab switch, and no tab on a problem without a Walkthrough. Read its shots, the `-3b-last` ones above all: the last frame is where a wrong answer path or an unexplained value shows.
+It drives `/problems/<slug>` signed out and signed in, at 1440 and 390, dark and light, English and Korean: the tab, the reveal, the player's theme, language and labels, sideways scroll, ←/→ stepping only while the player has focus and never from the editor, the run kept across a tab switch, and no tab on a problem without a Walkthrough. Read its shots, the `-3b-last` ones above all: the last frame is where a wrong answer path or an unexplained value shows. When the description has a Diagram, hold `<slug>-diagram-beside-frame-1440` to step 3's Diagram look.
 
 Done when the check exits 0 and the shots show the drawing as the capture.mjs sheets did. Stop the servers with `scripts/dev-branch-servers.sh stop`.
 

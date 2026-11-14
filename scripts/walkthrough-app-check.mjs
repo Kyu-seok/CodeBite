@@ -6,7 +6,9 @@
 // signed out 1440 dark en, signed in 1440 light ko, signed out 390 light en, signed in 390 dark ko. Each
 // checks the tab, the reveal, the player's theme, language and labels, no sideways scroll, keys stepping
 // it only while it has focus (not from the Monaco editor), the place kept across a tab switch and, at
-// 1440, a theme toggle; then that a problem without a Walkthrough shows no tab. Prints a line per check
+// 1440, a theme toggle. A problem whose description draws Diagrams then gets one shot of them beside the
+// Walkthrough's first frame at 1440 (walkthrough-diagram-beside.mjs decides and names it). Last, that a
+// problem without a Walkthrough shows no tab. Prints a line per check
 // and each screenshot's path; exits 1 on a failed check or a console error, 2 on bad arguments.
 // Node 22+, no npm dependencies; set CHROME_PATH if Chrome isn't found. A Chrome command unanswered for
 // WALKTHROUGH_CDP_TIMEOUT_MS (default 60000) fails the check, naming it; Chrome never outlives the script.
@@ -14,6 +16,7 @@ import { spawn, execFileSync } from 'node:child_process';
 import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { diagramBeside } from './walkthrough-diagram-beside.mjs';
 
 const [VITE, API, OUT, SLUG] = process.argv.slice(2);
 if (!VITE || !API || !OUT || !SLUG) {
@@ -194,6 +197,51 @@ for (const r of runs) {
     await js(`document.querySelector('.wt').scrollIntoView({ block: 'start' })`);
     await shot(`${r.name}-5-toggled-${want}`);
   }
+}
+
+// The description's Diagrams beside the first frame, so a view drawing the same structure can be held to
+// its layout (docs/adr/0012). Each Diagram and the player are shot from the page, then laid side by side
+// on a blank page and shot again as one picture.
+const beside = diagramBeside(SLUG, (await (await fetch(`${API}/problems/${SLUG}`)).json()).description);
+if (!beside) console.log(`info no Diagram in the description: no side-by-side shot`);
+else {
+  const clip = async sel => {
+    await js(`${sel}.scrollIntoView({ block: 'start' })`);
+    await sleep(300);
+    const r = await js(`(() => { const b = ${sel}.getBoundingClientRect(); return { x: b.x, y: b.y, width: b.width, height: Math.min(b.height, innerHeight - b.y) }; })()`);
+    // Within the viewport: capturing beyond it re-lays the page out and resets the panel's scroll.
+    const { data } = await c.send('Page.captureScreenshot', { format: 'png', clip: { ...r, scale: 1 } });
+    return { data, width: Math.round(r.width) };
+  };
+  await open({ width: 1440, theme: 'dark', lang: 'en', jwt: null });
+  // Tall, so a whole Diagram or the whole player fits the viewport once scrolled to.
+  await c.send('Emulation.setDeviceMetricsOverride', { width: 1440, height: 1800, deviceScaleFactor: 1, mobile: false });
+  // A drawn Diagram replaces its code block inside the <pre>; one left as code didn't parse.
+  const drawn = `[...document.querySelectorAll('[data-tour=description] pre')].filter(p => !p.querySelector(':scope > code'))`;
+  await waitFor(`${drawn}.length >= ${beside.kinds.length}`);
+  const n = await js(`${drawn}.length`);
+  check(n === beside.kinds.length, `description draws its ${beside.kinds.length} Diagram(s) (${beside.kinds.join(', ')}): ${n} drawn`);
+  const diagrams = [];
+  for (let i = 0; i < n; i++) diagrams.push(await clip(`${drawn}[${i}]`));
+  await waitFor(`[...document.querySelectorAll('[role=tab]')].some(e => e.textContent.includes(${JSON.stringify(L.en.tab)}))`);
+  await clickText('[role=tab]', L.en.tab);
+  await waitFor(`[...document.querySelectorAll('button')].some(b => b.textContent.includes(${JSON.stringify(L.en.reveal)}))`);
+  await clickText('button', L.en.reveal);
+  const opened = await waitFor(`document.querySelector('.wt-count')?.textContent.startsWith('1 /')`);
+  check(opened, `the Walkthrough opens on its first frame (${await count()})`);
+  const frame = await clip(`document.querySelector('.wt')`);
+  const img = (s, w) => `<img src="data:image/png;base64,${s.data}" width="${w}">`;
+  const html = `<!doctype html><body style="margin:0;padding:24px;background:#0b0b0f;color:#ddd;font:14px system-ui;display:flex;gap:32px;align-items:flex-start;width:max-content">
+    <div style="display:flex;flex-direction:column;gap:12px"><b>Description: ${beside.kinds.join(', ')}</b>${diagrams.map(d => img(d, d.width)).join('')}</div>
+    <div style="display:flex;flex-direction:column;gap:12px"><b>Walkthrough: first frame</b>${img(frame, frame.width)}</div></body>`;
+  await c.send('Page.navigate', { url: 'about:blank' });
+  await waitFor(`document.readyState === 'complete'`);
+  await js(`(() => { document.open(); document.write(${JSON.stringify(html)}); document.close(); return true; })()`);
+  await waitFor(`[...document.images].every(i => i.complete)`);
+  const size = await js(`(() => { const b = document.body.getBoundingClientRect(); return { width: Math.ceil(b.width), height: Math.ceil(b.height) }; })()`);
+  const { data } = await c.send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: true, clip: { x: 0, y: 0, ...size, scale: 1 } });
+  writeFileSync(join(OUT, beside.name + '.png'), Buffer.from(data, 'base64'));
+  console.log(`     ${join(OUT, beside.name + '.png')} (the description's Diagrams beside the first frame: same layout?)`);
 }
 
 // The folded left panel's strip lists the Walkthrough too, and opens it.
