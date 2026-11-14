@@ -1,5 +1,5 @@
 class Solution:
-    def majorityHeadline(self, votes: list[int]) -> int:
+    def majorityVote(self, votes: list[int]) -> int:
         candidate = votes[0]
         count = 0
         for vote in votes:

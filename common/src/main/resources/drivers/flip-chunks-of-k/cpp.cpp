@@ -14,7 +14,7 @@ int main() {
     getline(cin, kStr);
     int k = stoi(kStr);
     ListNode* head = listFromArray(line);
-    head = Solution().flipSorterSegments(head, k);
+    head = Solution().flipChunks(head, k);
     cout << listToJsonArray(head) << endl;
     return 0;
 }

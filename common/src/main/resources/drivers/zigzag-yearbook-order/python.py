@@ -23,5 +23,5 @@ def _build_tree(arr):
 
 arr = json.loads(input())
 root = _build_tree(arr)
-result = Solution().alternateWardSweep(root)
+result = Solution().zigzagRows(root)
 print(json.dumps(result, separators=(',', ':')))

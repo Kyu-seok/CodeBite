@@ -7,6 +7,6 @@ class TreeNode:
         self.right = right
 
 class Solution:
-    def alternateWardSweep(self, root: Optional[TreeNode]) -> List[List[int]]:
+    def zigzagRows(self, root: Optional[TreeNode]) -> List[List[int]]:
         # Write your solution here
         pass

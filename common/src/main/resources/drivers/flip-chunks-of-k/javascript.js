@@ -23,5 +23,5 @@ const lines = require('fs').readFileSync('/dev/stdin', 'utf8').trim().split('\n'
 const arr = JSON.parse(lines[0]);
 const k = parseInt(lines[1]);
 const head = _buildList(arr);
-const result = new Solution().flipSorterSegments(head, k);
+const result = new Solution().flipChunks(head, k);
 console.log(JSON.stringify(_listToArray(result)));

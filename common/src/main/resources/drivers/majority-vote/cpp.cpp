@@ -7,16 +7,16 @@ using namespace std;
 {USER_CODE}
 
 int main() {
-    string numsLine;
-    getline(cin, numsLine);
-    string inner = numsLine.substr(1, numsLine.size() - 2);
-    vector<int> nums;
+    string votesLine;
+    getline(cin, votesLine);
+    string inner = votesLine.substr(1, votesLine.size() - 2);
+    vector<int> votes;
     stringstream ss(inner);
     string token;
     while (getline(ss, token, ',')) {
-        nums.push_back(stoi(token));
+        votes.push_back(stoi(token));
     }
-    int result = Solution().majorityHeadline(nums);
+    int result = Solution().majorityVote(votes);
     cout << result << endl;
     return 0;
 }

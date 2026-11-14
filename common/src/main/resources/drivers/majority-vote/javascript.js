@@ -2,6 +2,6 @@
 
 const input = require('fs').readFileSync('/dev/stdin', 'utf8').trim();
 const lines = input.split('\n');
-const nums = JSON.parse(lines[0]);
-const result = new Solution().majorityHeadline(nums);
+const votes = JSON.parse(lines[0]);
+const result = new Solution().majorityVote(votes);
 console.log(result);

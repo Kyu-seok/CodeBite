@@ -24,5 +24,5 @@ function _buildTree(arr) {
 const input = require('fs').readFileSync('/dev/stdin', 'utf8').trim();
 const arr = JSON.parse(input);
 const root = _buildTree(arr);
-const result = new Solution().checkHubEvenness(root);
+const result = new Solution().isBalanced(root);
 console.log(JSON.stringify(result));
