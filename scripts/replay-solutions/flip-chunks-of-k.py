@@ -8,7 +8,7 @@ class ListNode:
 
 
 class Solution:
-    def reverse_k_group(self, head: Optional[ListNode], k: int) -> Optional[ListNode]:
+    def flipChunks(self, head: Optional[ListNode], k: int) -> Optional[ListNode]:
         dummy = ListNode(0, head)
         before = dummy
         while True:

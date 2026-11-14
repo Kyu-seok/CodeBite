@@ -6,6 +6,6 @@ class ListNode:
         self.next = next
 
 class Solution:
-    def reverse_k_group(self, head: Optional[ListNode], k: int) -> Optional[ListNode]:
+    def flipChunks(self, head: Optional[ListNode], k: int) -> Optional[ListNode]:
         # Write your solution here
         pass
