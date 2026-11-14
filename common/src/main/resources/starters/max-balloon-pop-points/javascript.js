@@ -3,7 +3,7 @@ class Solution {
      * @param {number[]} balloons
      * @return {number}
      */
-    bestBakeOrder(balloons) {
+    maxPopPoints(balloons) {
         // Write your solution here
     }
 }

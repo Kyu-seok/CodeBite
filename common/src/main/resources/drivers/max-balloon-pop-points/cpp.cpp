@@ -7,16 +7,16 @@ using namespace std;
 {USER_CODE}
 
 int main() {
-    string numsLine;
-    getline(cin, numsLine);
-    string inner = numsLine.substr(1, numsLine.size() - 2);
-    vector<int> nums;
+    string balloonsLine;
+    getline(cin, balloonsLine);
+    string inner = balloonsLine.substr(1, balloonsLine.size() - 2);
+    vector<int> balloons;
     stringstream ss(inner);
     string token;
     while (getline(ss, token, ',')) {
-        nums.push_back(stoi(token));
+        balloons.push_back(stoi(token));
     }
-    int result = Solution().bestBakeOrder(nums);
+    int result = Solution().maxPopPoints(balloons);
     cout << result << endl;
     return 0;
 }

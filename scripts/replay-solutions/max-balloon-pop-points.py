@@ -1,6 +1,6 @@
 class Solution:
-    def bestBakeOrder(self, nums: list[int]) -> int:
-        values = [1, *nums, 1]
+    def maxPopPoints(self, balloons: list[int]) -> int:
+        values = [1, *balloons, 1]
         n = len(values)
         # best[left][right] = most points from popping every balloon strictly between left and right,
         # choosing which one is popped last
