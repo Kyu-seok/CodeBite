@@ -3,7 +3,7 @@ class Solution {
      * @param {number[]} parent
      * @return {number}
      */
-    countAssemblyOrders(parent) {
+    countTaskOrders(parent) {
         // Write your solution here
     }
 }

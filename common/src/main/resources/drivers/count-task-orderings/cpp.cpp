@@ -11,13 +11,13 @@ int main() {
     getline(cin, line);
     // Parse JSON array [-1,0,0,1,1]
     string inner = line.substr(1, line.size() - 2);
-    vector<int> prevRoom;
+    vector<int> parent;
     stringstream ss(inner);
     string token;
     while (getline(ss, token, ',')) {
-        prevRoom.push_back(stoi(token));
+        parent.push_back(stoi(token));
     }
-    int result = Solution().countAssemblyOrders(prevRoom);
+    int result = Solution().countTaskOrders(parent);
     cout << result << endl;
     return 0;
 }

@@ -3,7 +3,7 @@ class Solution {
      * @param {string} stickers
      * @return {number[]}
      */
-    splitZoneRuns(stickers) {
+    splitStickerRuns(stickers) {
         // Write your solution here
     }
 }

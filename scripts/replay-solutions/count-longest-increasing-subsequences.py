@@ -1,8 +1,8 @@
 class Solution:
-    def countLongestTrail(self, nums: list[int]) -> int:
+    def countLongestIncreasing(self, nums: list[int]) -> int:
         n = len(nums)
-        length = [1] * n  # longest increasing trail ending at i
-        count = [1] * n   # how many trails reach that length
+        length = [1] * n  # longest increasing subsequence ending at i
+        count = [1] * n   # how many subsequences reach that length
         for i in range(n):
             for j in range(i):
                 if nums[j] < nums[i]:

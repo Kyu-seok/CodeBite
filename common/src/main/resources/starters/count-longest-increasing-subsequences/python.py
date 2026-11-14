@@ -1,6 +1,6 @@
 from typing import List
 
 class Solution:
-    def countLongestTrail(self, scores: List[int]) -> int:
+    def countLongestIncreasing(self, nums: List[int]) -> int:
         # Write your solution here
         pass

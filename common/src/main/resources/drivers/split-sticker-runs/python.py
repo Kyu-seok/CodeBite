@@ -1,6 +1,6 @@
 {USER_CODE}
 
 import json
-s = input().strip()
-result = Solution().splitZoneRuns(s)
+stickers = input().strip()
+result = Solution().splitStickerRuns(stickers)
 print(json.dumps(result, separators=(',', ':')))

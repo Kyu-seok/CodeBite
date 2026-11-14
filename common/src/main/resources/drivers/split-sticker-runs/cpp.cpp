@@ -8,9 +8,9 @@ using namespace std;
 {USER_CODE}
 
 int main() {
-    string s;
-    getline(cin, s);
-    vector<int> result = Solution().splitZoneRuns(s);
+    string stickers;
+    getline(cin, stickers);
+    vector<int> result = Solution().splitStickerRuns(stickers);
     cout << JsonOutput::intVector(result) << endl;
     return 0;
 }

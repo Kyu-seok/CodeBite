@@ -1,5 +1,5 @@
 class Solution {
-    public int countLongestTrail(int[] scores) {
+    public int countLongestIncreasing(int[] nums) {
         // Write your solution here
     }
 }
