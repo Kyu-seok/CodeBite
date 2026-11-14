@@ -4,7 +4,7 @@ class Solution {
      * @param {number} days
      * @return {number}
      */
-    smallestFlowRate(volumes, days) {
+    minDailyCapacity(volumes, days) {
         // Write your solution here
     }
 }

@@ -7,18 +7,18 @@ using namespace std;
 {USER_CODE}
 
 int main() {
-    string weightsLine;
-    getline(cin, weightsLine);
-    string inner = weightsLine.substr(1, weightsLine.size() - 2);
-    vector<int> weights;
+    string volumesLine;
+    getline(cin, volumesLine);
+    string inner = volumesLine.substr(1, volumesLine.size() - 2);
+    vector<int> volumes;
     stringstream ss(inner);
     string token;
     while (getline(ss, token, ',')) {
-        weights.push_back(stoi(token));
+        volumes.push_back(stoi(token));
     }
     int days;
     cin >> days;
-    int result = Solution().smallestFlowRate(weights, days);
+    int result = Solution().minDailyCapacity(volumes, days);
     cout << result << endl;
     return 0;
 }
