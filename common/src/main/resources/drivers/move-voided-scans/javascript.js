@@ -1,6 +1,6 @@
 {USER_CODE}
 
 const input = require('fs').readFileSync('/dev/stdin', 'utf8').trim();
-const nums = JSON.parse(input);
-new Solution().voidEmptyScans(nums);
-console.log(JSON.stringify(nums));
+const scans = JSON.parse(input);
+new Solution().moveVoidsToEnd(scans);
+console.log(JSON.stringify(scans));

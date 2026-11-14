@@ -1,5 +1,5 @@
 class Solution:
-    def voidEmptyScans(self, scans: list[int]) -> None:
+    def moveVoidsToEnd(self, scans: list[int]) -> None:
         # Keep the non-zero scans in order at the front, then fill the rest with zeros.
         write = 0
         for scan in scans:
