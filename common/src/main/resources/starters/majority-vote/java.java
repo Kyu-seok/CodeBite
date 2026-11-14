@@ -1,5 +1,5 @@
 class Solution {
-    public int majorityHeadline(int[] votes) {
+    public int majorityVote(int[] votes) {
         // Write your solution here
     }
 }
