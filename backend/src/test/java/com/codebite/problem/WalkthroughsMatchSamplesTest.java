@@ -16,10 +16,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
@@ -37,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * non-negative integer, a map probe with a key that it hits only when held, intervals that start no later than they end, queue marks and tags on its positions, a grid's boxes a whole number and its shade on its cells, map entry labels as Text and chip marks on their list, the answer on the last frame only); its sample runs are, in order, exactly the problem's
  * sample Test Cases by {@code sampleInput} and {@code expected}, compared trimmed as the Grader
  * compares; each run ends on its {@code expected}; and any run marked {@code extra} comes after
- * the sample runs; and every caption is one or two sentences in each language (#258). Correcting, adding or reordering a sample without regenerating the Walkthrough
+ * the sample runs; every caption is one or two sentences in each language (#258); and every frame keeps #273's two rules (a change has a move into it, and {@code vars} repeats nothing drawn on the data; see the tests below). Correcting, adding or reordering a sample without regenerating the Walkthrough
  * (its tracer is {@code scripts/walkthroughs/<slug>.py}) fails here.
  */
 class WalkthroughsMatchSamplesTest {
@@ -393,49 +395,133 @@ class WalkthroughsMatchSamplesTest {
                 breakage + " was not caught as \"" + expected + "\": " + found);
     }
 
+    // --- #273's two rules ------------------------------------------------------------------------------
+
     /**
-     * #273's first rule for a copy or a swap: an {@code array} cell whose value changes from one frame to the next
-     * shows where the new value came from, by a move ending on that cell in the frame that writes it.
+     * #273's first rule: a frame shows where its step's value came from and where it went. Every place of every view
+     * that takes addresses (the kit's address table) is compared with the frame before; a place that is new or holds
+     * a new value has a move into it in that frame. What needs no move, as the rule allows:
+     * <ul>
+     *   <li>a step that only reads changes no place, so it needs none: its marks show what it read;</li>
+     *   <li>a run's first frame is its setup, the data as read in;</li>
+     *   <li>a value leaving a place (a count going down, a key struck) is shown by its move out of the place, marked
+     *       {@code bad} (a move with no {@code to} is {@code bad} by default), and a place that disappears needs none,
+     *       since it stayed drawn for the step it left;</li>
+     *   <li>a graph node's value is reached by a move out of the edge into the node, as a relaxation draws it.</li>
+     * </ul>
+     * A list by index (an array, an output, a queue) is compared both in place and as a sequence whose values shift
+     * (a queue's front leaving, a value joining an end), whichever changes fewer places; a view hidden in a frame is
+     * empty there, so everything it shows when it comes back is new.
      */
     @Test
-    void everyArrayCellWrittenInPlaceHasAMoveIntoIt() throws Exception {
+    void everyPlaceThatChangesHasAMoveIntoIt() throws Exception {
         List<String> found = new ArrayList<>();
         for (String slug : WALKTHROUGHS.slugs()) {
-            found.addAll(cellWritesWithoutMoves(slug, JSON.readTree(WALKTHROUGHS.of(slug).orElseThrow())));
+            found.addAll(changesWithoutMoves(slug, JSON.readTree(WALKTHROUGHS.of(slug).orElseThrow())));
         }
-        assertTrue(found.isEmpty(), "Array cells written with no move into them:\n" + String.join("\n", found));
+        assertTrue(found.isEmpty(), "Places that change with no move into them (#273's first rule; the tracer adds "
+                + "the move):\n" + String.join("\n", found));
     }
 
-    @Test
-    void aCellWrittenWithNoMoveIsCaught() throws Exception {
-        ObjectNode walkthrough = (ObjectNode) JSON.readTree(WALKTHROUGHS.of("unique-genre-window").orElseThrow());
-        JsonNode frame = walkthrough.get("runs").get(0).get("frames").get(1);
-        ArrayNode values = (ArrayNode) frame.get("views").get("queue").get("values");
-        values.set(0, values.get(0).asText() + "x");
-        assertFalse(cellWritesWithoutMoves("unique-genre-window", walkthrough).isEmpty());
+    @ParameterizedTest(name = "{0}")
+    @CsvSource(delimiter = '|', quoteCharacter = '`', value = {
+            "array cell written in place             | unique-genre-window    | array \"queue\" at 0 now holds",
+            "array grown at its end                  | unique-genre-window    | array \"queue\" at 7 now holds",
+            "map key added                           | top-espresso-machines  | map \"uses\" at 99 now holds 1",
+            "count going down with a good move out   | unique-genre-window    | map \"window\" at y now holds 1",
+            "set member added                        | spot-duplicate-locker  | set \"seen\" at 999 now holds",
+            "queue value joining                     | rotting-donuts         | queue \"queue\" at",
+            "grid cell changed                       | rotting-donuts         | grid \"tray\" at [0,0] now holds 9",
+            "output value appended                   | top-espresso-machines  | output \"board\" at",
+            "table cell written                      | group-anagrams         | table \"words\" at [6,1] now holds \"x\"",
+            "interval added                          | merge-reservation-slots| intervals \"line\" at [0,",
+            "graph node value changed                | cheapest-courier-route | graph \"cafes\" at 4 now holds 7",
+    })
+    void aChangeWithNoMoveIsCaught(String breakage, String slug, String expected) throws Exception {
+        ObjectNode walkthrough = (ObjectNode) JSON.readTree(WALKTHROUGHS.of(slug.strip()).orElseThrow());
+        JsonNode run = walkthrough.get("runs").get(0);
+        switch (breakage.strip()) {
+            case "array cell written in place" -> ((ArrayNode) drawn(run, "queue", 1).get("values")).set(0, "zz");
+            case "array grown at its end" -> ((ArrayNode) drawn(run, "queue", 1).get("values")).add("zz");
+            case "map key added" -> ((ArrayNode) drawn(run, "uses", 1).get("entries")).addObject().put("key", 99).put("value", 1);
+            case "count going down with a good move out" -> {
+                ObjectNode frame = frameDrawing(run, "window", f -> f.path("moves").path(0).path("mark").asText().equals("bad")
+                        && "y".equals(f.path("moves").path(0).path("from").path("at").asText())
+                        && f.path("views").path("window").path("struck").isEmpty());
+                ((ObjectNode) frame.get("moves").get(0)).put("mark", "good");
+            }
+            case "set member added" -> ((ArrayNode) drawn(run, "seen", 1).get("members")).add(999);
+            case "queue value joining" -> ((ArrayNode) drawn(run, "queue", 1).get("values")).add("x");
+            case "grid cell changed" -> ((ArrayNode) drawn(run, "tray", 1).get("cells").get(0)).set(0, 9);
+            case "output value appended" -> ((ArrayNode) drawn(run, "board", lastFrameDrawing(run, "board")).get("values")).add(99);
+            case "table cell written" -> ((ArrayNode) drawn(run, "words", 1).get("rows").get(6).get("cells")).set(1, "x");
+            case "interval added" -> ((ArrayNode) drawn(run, "line", 1).get("groups").get(0).get("intervals")).addArray().add(0).add(1);
+            case "graph node value changed" -> ((ObjectNode) drawn(run, "cafes", 1).get("values")).put("4", 7);
+            default -> throw new IllegalArgumentException(breakage);
+        }
+        List<String> found = changesWithoutMoves(slug.strip(), walkthrough);
+        assertTrue(found.stream().anyMatch(m -> m.startsWith(slug.strip() + ": ") && m.contains(expected.strip())),
+                breakage + " was not caught as \"" + expected.strip() + "\": " + found);
     }
 
-    private static List<String> cellWritesWithoutMoves(String slug, JsonNode walkthrough) {
-        Set<String> arrays = new HashSet<>();
+    /**
+     * View {@code id}'s state in frame {@code f} of {@code run}, made the frame's own (the setup's merged in) so a test can
+     * change it in that frame alone, and with every move into the view taken out of the frame.
+     */
+    private static ObjectNode drawn(JsonNode run, String id, int f) {
+        ObjectNode frame = (ObjectNode) run.get("frames").get(f);
+        ObjectNode state = WalkthroughAddresses.stateIn(id, run.path("setup"), frame.path("views")).orElseThrow(
+                () -> new AssertionError("view " + id + " is not drawn in frame " + (f + 1))).deepCopy();
+        ObjectNode views = frame.has("views") ? (ObjectNode) frame.get("views") : frame.putObject("views");
+        views.set(id, state);
+        if (frame.get("moves") instanceof ArrayNode moves) {
+            for (int m = moves.size() - 1; m >= 0; m--) {
+                if (id.equals(moves.get(m).path("to").path("view").asText())) moves.remove(m);
+            }
+        }
+        return state;
+    }
+
+    /** The first frame of {@code run} that draws view {@code id} and passes {@code test}. */
+    private static ObjectNode frameDrawing(JsonNode run, String id, Predicate<JsonNode> test) {
+        for (JsonNode frame : run.get("frames")) {
+            if (frame.path("views").has(id) && test.test(frame)) return (ObjectNode) frame;
+        }
+        throw new AssertionError("no frame drawing " + id + " passes the test");
+    }
+
+    private static int lastFrameDrawing(JsonNode run, String id) {
+        JsonNode frames = run.get("frames");
+        for (int f = frames.size() - 1; f > 0; f--) {
+            if (WalkthroughAddresses.stateIn(id, run.path("setup"), frames.get(f).path("views")).isPresent()) return f;
+        }
+        throw new AssertionError("no frame after the first draws " + id);
+    }
+
+    /** Each place of {@code walkthrough} that changes with no move into it, by #273's first rule. */
+    static List<String> changesWithoutMoves(String slug, JsonNode walkthrough) {
+        Map<String, String> types = new LinkedHashMap<>();
         for (JsonNode view : walkthrough.path("views")) {
-            if ("array".equals(view.path("type").asText())) arrays.add(view.path("id").asText());
+            String type = view.path("type").asText();
+            if (ADDRESSES.viewTypes().contains(type)) types.put(view.path("id").asText(), type);
         }
         List<String> found = new ArrayList<>();
         JsonNode runs = walkthrough.path("runs");
         for (int r = 0; r < runs.size(); r++) {
-            Map<String, JsonNode> previous = new HashMap<>();
-            JsonNode frames = runs.get(r).path("frames");
+            JsonNode run = runs.get(r), frames = run.path("frames");
+            Map<String, Map<String, JsonNode>> previous = new HashMap<>();
             for (int f = 0; f < frames.size(); f++) {
                 JsonNode frame = frames.get(f);
-                for (String id : arrays) {
-                    JsonNode values = frame.path("views").path(id).get("values");
-                    if (values == null) continue;
-                    JsonNode before = previous.put(id, values);
-                    if (before == null || before.size() != values.size()) continue;
-                    for (int i = 0; i < values.size(); i++) {
-                        if (before.get(i).equals(values.get(i)) || movedInto(frame, id, i)) continue;
-                        found.add(slug + ": " + runName(runs.get(r), r) + ", frame " + (f + 1) + ": " + id + "[" + i
-                                + "] goes " + before.get(i) + " → " + values.get(i) + " with no move into it");
+                for (var view : types.entrySet()) {
+                    String id = view.getKey(), type = view.getValue();
+                    Optional<ObjectNode> state = WalkthroughAddresses.stateIn(id, run.path("setup"), frame.path("views"));
+                    Map<String, JsonNode> now = state.map(s -> ADDRESSES.places(type, s)).orElse(Map.of());
+                    Map<String, JsonNode> before = previous.put(id, now);
+                    if (f == 0) continue;
+                    for (String at : changed(type, before, now)) {
+                        if (movedInto(frame, id, type, at)) continue;
+                        found.add(slug + ": " + runName(run, r) + ", frame " + (f + 1) + ": " + type + " \"" + id
+                                + "\" at " + at + " now holds " + now.get(at) + " with no move into it");
                     }
                 }
             }
@@ -443,13 +529,243 @@ class WalkthroughsMatchSamplesTest {
         return found;
     }
 
-    private static boolean movedInto(JsonNode frame, String view, int index) {
+    /**
+     * The addresses of {@code now} that are new or hold a new value since {@code before}. A list by index is compared
+     * in place and as a shifted sequence (its longest run of values in common with before kept, the rest new),
+     * whichever finds fewer.
+     */
+    private static List<String> changed(String type, Map<String, JsonNode> before, Map<String, JsonNode> now) {
+        List<String> inPlace = new ArrayList<>();
+        now.forEach((at, value) -> {
+            if (!value.equals(before.get(at))) inPlace.add(at);
+        });
+        if (!ADDRESSES.indexed(type)) return inPlace;
+        List<JsonNode> b = new ArrayList<>(before.values()), a = new ArrayList<>(now.values());
+        int length = 0, start = 0;
+        for (int i = 0; i < b.size(); i++) {
+            for (int j = 0; j < a.size(); j++) {
+                int k = 0;
+                while (i + k < b.size() && j + k < a.size() && b.get(i + k).equals(a.get(j + k))) k++;
+                if (k > length) {
+                    length = k;
+                    start = j;
+                }
+            }
+        }
+        List<String> shifted = new ArrayList<>();
+        for (int j = 0; j < a.size(); j++) if (j < start || j >= start + length) shifted.add(String.valueOf(j));
+        return shifted.size() < inPlace.size() ? shifted : inPlace;
+    }
+
+    /**
+     * Whether a move of {@code frame} reaches place {@code at} of view {@code id}: one into it; one out of it marked
+     * {@code bad}, a value leaving; or, on a graph, one out of an edge into that node.
+     */
+    private static boolean movedInto(JsonNode frame, String id, String type, String at) {
         for (JsonNode move : frame.path("moves")) {
-            JsonNode to = move.get("to");
-            if (to != null && view.equals(to.path("view").asText()) && to.path("at").isInt()
-                    && to.path("at").asInt() == index) return true;
+            JsonNode to = move.get("to"), from = move.get("from");
+            if (to != null && id.equals(to.path("view").asText()) && at.equals(WalkthroughAddresses.address(to.get("at")))) {
+                return true;
+            }
+            if (from == null || !id.equals(from.path("view").asText())) continue;
+            boolean leaving = move.hasNonNull("mark") ? "bad".equals(move.get("mark").asText()) : to == null || to.isNull();
+            if (leaving && at.equals(WalkthroughAddresses.address(from.get("at")))) return true;
+            JsonNode edge = from.get("at");
+            if ("graph".equals(type) && edge != null && edge.isArray() && edge.size() == 2
+                    && at.equals(WalkthroughAddresses.address(edge.get(1)))) return true;
         }
         return false;
+    }
+
+    /**
+     * #273's second rule: a value with a place in the data is drawn there, and {@code vars} holds only values with none.
+     * A {@code vars} item repeats a value drawn on the data when, in every frame that draws both (two or more), the
+     * item's value is that value, and the item changes over those frames. The value drawn on the data is any place's
+     * value in a view (a cell, a count per key, a member, a node's value), a pointer, a span's start, end or length, a
+     * label under an array, or a whole list. An item that keeps one value is a parameter such as {@code k}, which
+     * equals some number in the data by chance. An item that should stay anyway carries a {@code why}, its reason
+     * (references/format.md); a {@code why} on an item that repeats nothing fails, so a stale one goes.
+     */
+    @Test
+    void noVarsItemRepeatsAValueDrawnOnTheData() throws Exception {
+        List<String> found = new ArrayList<>();
+        for (String slug : WALKTHROUGHS.slugs()) {
+            found.addAll(varsRepeatingTheData(slug, JSON.readTree(WALKTHROUGHS.of(slug).orElseThrow())));
+        }
+        assertTrue(found.isEmpty(), "vars items that repeat a value drawn on the data (#273's second rule; draw it "
+                + "there and drop the item, or give the item a why):\n" + String.join("\n", found));
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @CsvSource(delimiter = '|', quoteCharacter = '`', value = {
+            "item following a pointer          | item \"right\" repeats | pointer \"right\" of array \"queue\"",
+            "item following the best's length  | item \"best\" repeats  | span \"best\"'s length on array \"queue\"",
+            "item following a count per key    | item \"count\" repeats | a value in map \"window\"",
+            "item with a why repeating nothing | item \"limit\" has a why | repeats no value drawn on the data",
+    })
+    void aVarsItemRepeatingTheDataIsCaught(String breakage, String item, String expected) throws Exception {
+        ObjectNode walkthrough = (ObjectNode) JSON.readTree(WALKTHROUGHS.of("unique-genre-window").orElseThrow());
+        JsonNode run = walkthrough.get("runs").get(0);
+        switch (breakage) {
+            case "item following a pointer" -> addItem(run, "right", s -> s.path("queue").path("pointers").get("right"), null);
+            case "item following the best's length" -> addItem(run, "best", s -> {
+                JsonNode best = s.path("queue").path("spans").get("best");
+                return best == null || best.isNull() ? null : JSON.getNodeFactory().numberNode(best.get("to").asInt() - best.get("from").asInt() + 1);
+            }, null);
+            case "item following a count per key" -> addItem(run, "count", s -> {
+                for (JsonNode e : s.path("window").path("entries")) if ("y".equals(e.path("key").asText())) return e.get("value");
+                return null;
+            }, null);
+            case "item with a why repeating nothing" -> addItem(run, "limit", s -> JSON.getNodeFactory().numberNode(-7),
+                    "a number from nowhere");
+            default -> throw new IllegalArgumentException(breakage);
+        }
+        List<String> found = varsRepeatingTheData("unique-genre-window", walkthrough);
+        assertTrue(found.stream().anyMatch(m -> m.startsWith("unique-genre-window: ") && m.contains(item) && m.contains(expected)),
+                breakage + " was not caught as " + item + " … " + expected + ": " + found);
+    }
+
+    @Test
+    void aVarsItemWithAWhyOrKeepingOneValueIsLetThrough() throws Exception {
+        ObjectNode walkthrough = (ObjectNode) JSON.readTree(WALKTHROUGHS.of("unique-genre-window").orElseThrow());
+        JsonNode run = walkthrough.get("runs").get(0);
+        addItem(run, "right", s -> s.path("queue").path("pointers").get("right"), "the index the captions name");
+        addItem(run, "one", s -> s.path("window").has("entries") ? JSON.getNodeFactory().numberNode(1) : null, null);
+        assertEquals(List.of(), varsRepeatingTheData("unique-genre-window", walkthrough));
+    }
+
+    @Test
+    void aWhyThatIsNotAReasonIsCaught() throws Exception {
+        ObjectNode walkthrough = (ObjectNode) JSON.readTree(WALKTHROUGHS.of("unique-genre-window").orElseThrow());
+        addItem(walkthrough.get("runs").get(0), "limit", s -> JSON.getNodeFactory().numberNode(2), " ");
+        List<String> found = mismatches("unique-genre-window", walkthrough, SAMPLES.get("unique-genre-window"));
+        assertTrue(found.stream().anyMatch(m -> m.contains("item \"limit\": why must be a non-empty string")), found.toString());
+    }
+
+    /**
+     * Adds an item labelled {@code label} to the {@code state} vars view of every frame of {@code run} where
+     * {@code value} gives one from the frame's states (by view id), with {@code why} when not null.
+     */
+    private static void addItem(JsonNode run, String label, Function<JsonNode, JsonNode> value, String why) {
+        for (JsonNode frame : run.get("frames")) {
+            ObjectNode states = JSON.createObjectNode();
+            for (String id : List.of("queue", "window", "state")) {
+                WalkthroughAddresses.stateIn(id, run.path("setup"), frame.path("views")).ifPresent(st -> states.set(id, st.deepCopy()));
+            }
+            JsonNode v = value.apply(states);
+            if (v == null || v.isNull()) continue;
+            ObjectNode state = states.has("state") ? (ObjectNode) states.get("state") : JSON.createObjectNode();
+            ArrayNode items = state.has("items") ? (ArrayNode) state.get("items") : state.putArray("items");
+            ObjectNode item = items.addObject().put("label", label).set("value", v);
+            if (why != null) item.put("why", why);
+            (frame.has("views") ? (ObjectNode) frame.get("views") : ((ObjectNode) frame).putObject("views")).set("state", state);
+        }
+    }
+
+    /** Each {@code vars} item of {@code walkthrough} that repeats a value drawn on the data, by #273's second rule. */
+    static List<String> varsRepeatingTheData(String slug, JsonNode walkthrough) {
+        Map<String, String> types = new LinkedHashMap<>();
+        for (JsonNode view : walkthrough.path("views")) types.put(view.path("id").asText(), view.path("type").asText());
+        List<String> found = new ArrayList<>();
+        JsonNode runs = walkthrough.path("runs");
+        for (int r = 0; r < runs.size(); r++) {
+            JsonNode run = runs.get(r);
+            /* by item (vars view and label): each frame drawing it, as its value and the values drawn on the data */
+            Map<String, List<Map.Entry<String, Map<String, Set<String>>>>> items = new LinkedHashMap<>();
+            Map<String, Boolean> why = new HashMap<>();
+            for (JsonNode frame : run.path("frames")) {
+                Map<String, Set<String>> drawn = new LinkedHashMap<>();
+                List<Map.Entry<String, JsonNode>> vars = new ArrayList<>();
+                for (var view : types.entrySet()) {
+                    Optional<ObjectNode> state = WalkthroughAddresses.stateIn(view.getKey(), run.path("setup"), frame.path("views"));
+                    if (state.isEmpty()) continue;
+                    if ("vars".equals(view.getValue())) {
+                        for (JsonNode item : state.get().path("items")) vars.add(Map.entry(view.getKey(), item));
+                    } else {
+                        onTheData(view.getKey(), view.getValue(), state.get(), drawn);
+                    }
+                }
+                for (var item : vars) {
+                    String name = "vars \"" + item.getKey() + "\" item \"" + plain(item.getValue().get("label")) + "\"";
+                    items.computeIfAbsent(name, k -> new ArrayList<>()).add(Map.entry(value(item.getValue().get("value")), drawn));
+                    if (item.getValue().hasNonNull("why")) why.put(name, true);
+                }
+            }
+            String runName = runName(run, r);
+            items.forEach((name, frames) -> {
+                List<String> repeats = repeats(frames);
+                String at = slug + ": " + runName + ": " + name;
+                if (why.containsKey(name) && repeats.isEmpty()) {
+                    found.add(at + " has a why but repeats no value drawn on the data: drop the why");
+                } else if (!why.containsKey(name) && !repeats.isEmpty()) {
+                    found.add(at + " repeats " + String.join(" and ", repeats) + " in every frame that draws both");
+                }
+            });
+        }
+        return found;
+    }
+
+    /**
+     * The values drawn on the data an item follows: those that hold the item's value in every frame that draws both,
+     * two or more, over which the item takes two values or more.
+     */
+    private static List<String> repeats(List<Map.Entry<String, Map<String, Set<String>>>> frames) {
+        Set<String> sources = new LinkedHashSet<>();
+        for (var frame : frames) sources.addAll(frame.getValue().keySet());
+        List<String> repeats = new ArrayList<>();
+        for (String source : sources) {
+            Set<String> values = new HashSet<>();
+            boolean follows = true;
+            for (var frame : frames) {
+                Set<String> drawn = frame.getValue().get(source);
+                if (drawn == null) continue;
+                values.add(frame.getKey());
+                follows &= drawn.contains(frame.getKey());
+            }
+            long both = frames.stream().filter(frame -> frame.getValue().containsKey(source)).count();
+            if (follows && both >= 2 && values.size() >= 2) repeats.add(source);
+        }
+        return repeats;
+    }
+
+    /** Adds to {@code drawn} each value view {@code id}'s state draws on the data, by what it is. */
+    private static void onTheData(String id, String type, JsonNode state, Map<String, Set<String>> drawn) {
+        String of = type + " \"" + id + "\"";
+        Map<String, JsonNode> places = ADDRESSES.places(type, state);
+        if (!places.isEmpty()) {
+            Set<String> values = new HashSet<>();
+            places.values().forEach(v -> values.add(value(v)));
+            drawn.put("a value in " + of, values);
+        }
+        if (ADDRESSES.indexed(type)) drawn.put("the values of " + of, Set.of(value(state.path("values"))));
+        state.path("pointers").fields().forEachRemaining(p -> {
+            if (!p.getValue().isNull()) drawn.put("pointer \"" + p.getKey() + "\" of " + of, Set.of(value(p.getValue())));
+        });
+        state.path("spans").fields().forEachRemaining(named -> {
+            JsonNode span = named.getValue();
+            if (span.isNull()) return;
+            String name = "span \"" + named.getKey() + "\"'s ";
+            int from = span.path("from").asInt(), to = span.path("to").asInt();
+            drawn.put(name + "start on " + of, Set.of(String.valueOf(from)));
+            drawn.put(name + "end on " + of, Set.of(String.valueOf(to)));
+            drawn.put(name + "length on " + of, Set.of(String.valueOf(to - from + 1)));
+        });
+        if (state.path("under").isArray() && !state.path("under").isEmpty()) {
+            Set<String> labels = new HashSet<>();
+            for (JsonNode under : state.path("under")) labels.add(value(under.path(1)));
+            drawn.put("a label under " + of, labels);
+        }
+    }
+
+    /** A value as the drawing shows it: a string or a number by its text, anything else as JSON. */
+    private static String value(JsonNode v) {
+        if (v == null) return "null";
+        return v.isTextual() || v.isNumber() ? v.asText() : v.toString();
+    }
+
+    /** A label's English text, or the label itself. */
+    private static String plain(JsonNode label) {
+        return label == null ? "?" : label.isTextual() ? label.asText() : label.path("en").asText(label.toString());
     }
 
     @Test
@@ -821,6 +1137,10 @@ class WalkthroughsMatchSamplesTest {
                 List<String> p = new ArrayList<>();
                 for (JsonNode item : items) {
                     unknownMark(item.get("mark"), MARKS).ifPresent(m -> p.add("item " + item.get("label") + " has " + m));
+                    JsonNode why = item.get("why");
+                    if (why != null && !(why.isTextual() && !why.asText().isBlank())) {
+                        p.add("item " + item.get("label") + ": why must be a non-empty string (the reason it stays in vars)");
+                    }
                 }
                 yield p;
             }

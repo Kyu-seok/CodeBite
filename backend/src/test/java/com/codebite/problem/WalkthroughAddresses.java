@@ -2,6 +2,7 @@ package com.codebite.problem;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.io.IOException;
@@ -33,12 +34,21 @@ final class WalkthroughAddresses {
 
     private static final ObjectMapper JSON = new ObjectMapper();
 
-    /** Whether {@code at} names a place in {@code state}, the frame's state of {@code view}. */
-    private interface Form {
-        boolean names(JsonNode at, JsonNode state, JsonNode view);
+    /** One address form: whether {@code at} names a place in a state, and every place a state holds. */
+    private record Form(Names names, Places places) {
     }
 
-    private record Entry(String what, List<Form> forms) {
+    /** Whether {@code at} names a place in {@code state}, the frame's state of {@code view}. */
+    private interface Names {
+        boolean test(JsonNode at, JsonNode state, JsonNode view);
+    }
+
+    /** Each place in {@code state} by its {@link #address}, with the value drawn there, in the state's order. */
+    private interface Places {
+        void list(JsonNode state, Map<String, JsonNode> into);
+    }
+
+    private record Entry(String what, List<String> formNames, List<Form> forms) {
     }
 
     private final Map<String, Entry> byType;
@@ -62,9 +72,13 @@ final class WalkthroughAddresses {
     static WalkthroughAddresses of(JsonNode table) {
         Map<String, Entry> byType = new LinkedHashMap<>();
         table.path("views").fields().forEachRemaining(view -> {
+            List<String> names = new ArrayList<>();
             List<Form> forms = new ArrayList<>();
-            for (JsonNode f : view.getValue().path("forms")) forms.add(form(view.getKey(), f));
-            byType.put(view.getKey(), new Entry(view.getValue().path("what").asText(), forms));
+            for (JsonNode f : view.getValue().path("forms")) {
+                names.add(f.path("form").asText());
+                forms.add(form(view.getKey(), f));
+            }
+            byType.put(view.getKey(), new Entry(view.getValue().path("what").asText(), names, forms));
         });
         return new WalkthroughAddresses(byType);
     }
@@ -73,18 +87,37 @@ final class WalkthroughAddresses {
         String list = f.path("list").asText();
         String field = f.path("field").asText(null), inner = f.path("inner").asText(null);
         return switch (f.path("form").asText()) {
-            case "index" -> (at, s, v) -> index(at, s.path(list));
-            case "key" -> (at, s, v) -> {
+            case "index" -> new Form((at, s, v) -> index(at, s.path(list)), (s, into) -> {
+                for (int i = 0; i < s.path(list).size(); i++) into.put(String.valueOf(i), s.path(list).get(i));
+            });
+            case "key" -> new Form((at, s, v) -> {
                 String k = key(at);
                 if (k == null) return false;
                 for (JsonNode item : s.path(list)) if (k.equals(key(field == null ? item : item.get(field)))) return true;
                 return false;
-            };
-            case "pair" -> (at, s, v) -> at != null && at.isArray() && at.size() == 2 && index(at.get(0), s.path(list))
+            }, (s, into) -> {
+                for (JsonNode item : s.path(list)) {
+                    String k = key(field == null ? item : item.get(field));
+                    if (k == null) continue;
+                    JsonNode value = s.path("values").isObject() ? s.path("values").get(k)
+                            : item.isObject() && item.has("value") ? item.get("value") : item;
+                    into.put(k, value == null ? NullNode.getInstance() : value);
+                }
+            });
+            case "pair" -> new Form((at, s, v) -> at != null && at.isArray() && at.size() == 2 && index(at.get(0), s.path(list))
                     && index(at.get(1), inner == null ? s.path(list).path(at.get(0).asInt())
-                    : s.path(list).path(at.get(0).asInt()).path(inner));
-            case "edge" -> (at, s, v) -> at != null && at.isArray() && at.size() == 2
-                    && edge(s.path(list), key(at.get(0)), key(at.get(1)), v.path("directed").asBoolean(true));
+                    : s.path(list).path(at.get(0).asInt()).path(inner)), (s, into) -> {
+                for (int i = 0; i < s.path(list).size(); i++) {
+                    JsonNode row = inner == null ? s.path(list).get(i) : s.path(list).get(i).path(inner);
+                    for (int j = 0; j < row.size(); j++) into.put("[" + i + "," + j + "]", row.get(j));
+                }
+            });
+            case "edge" -> new Form((at, s, v) -> at != null && at.isArray() && at.size() == 2
+                    && edge(s.path(list), key(at.get(0)), key(at.get(1)), v.path("directed").asBoolean(true)), (s, into) -> {
+                for (JsonNode e : s.path(list)) {
+                    into.put("[" + key(e.get("from")) + "," + key(e.get("to")) + "]", e.path("label"));
+                }
+            });
             default -> throw new IllegalStateException(COPY + ": view type \"" + type + "\": unknown address form "
                     + f.get("form"));
         };
@@ -104,8 +137,41 @@ final class WalkthroughAddresses {
     boolean names(String type, JsonNode at, JsonNode state, JsonNode view) {
         Entry entry = byType.get(type);
         if (entry == null) return false;
-        for (Form f : entry.forms()) if (f.names(at, state, view)) return true;
+        for (Form f : entry.forms()) if (f.names().test(at, state, view)) return true;
         return false;
+    }
+
+    /**
+     * Every place of {@code type} in {@code state}, by its {@link #address}, with the value drawn there, in the state's
+     * order: a list's item at an index or a [row, col]; for a key, the state's {@code values} entry for it when the
+     * state has a {@code values} object (a graph's values by node id), else the item's {@code value} (a map entry's),
+     * else the item itself (a set's member); an edge's label. Empty for a type that takes no addresses.
+     */
+    Map<String, JsonNode> places(String type, JsonNode state) {
+        Map<String, JsonNode> places = new LinkedHashMap<>();
+        Entry entry = byType.get(type);
+        if (entry != null) for (Form f : entry.forms()) f.places().list(state, places);
+        return places;
+    }
+
+    /**
+     * Whether {@code type}'s places are one list by index (an array, an output, a queue): a list whose values can
+     * shift, as a queue's do when its front leaves, so its places are compared as a sequence.
+     */
+    boolean indexed(String type) {
+        Entry entry = byType.get(type);
+        return entry != null && entry.formNames().equals(List.of("index"));
+    }
+
+    /**
+     * An address as {@link #places} keys it: a key or an index by its text (4 and "4" are one), a pair or an edge as
+     * {@code [a,b]}; null for anything else.
+     */
+    static String address(JsonNode at) {
+        if (at != null && at.isArray() && at.size() == 2 && key(at.get(0)) != null && key(at.get(1)) != null) {
+            return "[" + key(at.get(0)) + "," + key(at.get(1)) + "]";
+        }
+        return key(at);
     }
 
     /** View {@code id}'s state in a frame: the run's setup merged with the frame's own; empty when neither draws it. */
