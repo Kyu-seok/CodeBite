@@ -2,5 +2,5 @@
 
 import json
 grid = json.loads(input())
-result = Solution().cheapest_path(grid)
+result = Solution().minWaitRoute(grid)
 print(result)
