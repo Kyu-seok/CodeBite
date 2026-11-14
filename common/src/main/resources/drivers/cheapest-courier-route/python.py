@@ -2,9 +2,9 @@
 
 import json
 n = int(input())
-flights = json.loads(input())
+links = json.loads(input())
 src = int(input())
 dst = int(input())
-k = int(input())
-result = Solution().relayDispatchCost(n, flights, src, dst, k)
+maxStops = int(input())
+result = Solution().cheapestRoute(n, links, src, dst, maxStops)
 print(result)
