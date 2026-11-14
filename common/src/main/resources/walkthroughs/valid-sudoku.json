@@ -5,8 +5,8 @@
   "ko": "유효한 스도쿠"
  },
  "approach": {
-  "en": "One pass, one set: each digit leaves three keys (its row, its column, its 3×3 box); a digit whose key is already in the set is a repeat.",
-  "ko": "한 번 훑고 집합 하나로 확인합니다: 숫자마다 행, 열, 3×3 박스 키 세 개를 남기고, 이미 집합에 있는 키를 만든 숫자가 중복입니다."
+  "en": "One pass over the board: each row, column and 3×3 box remembers the digits seen in it, and a digit already in its row's, column's or box's list is a repeat.",
+  "ko": "보드를 한 번 훑습니다: 행, 열, 3×3 박스마다 그 안에서 본 숫자를 기억하고, 숫자가 자기 행, 열, 박스의 목록에 이미 있으면 중복입니다."
  },
  "views": [
   {
@@ -16,51 +16,51 @@
     "en": "board",
     "ko": "보드"
    },
+   "boxes": 3,
    "values": {
     ".": {
      "label": {
       "en": "empty",
       "ko": "빈 칸"
      },
-     "tone": "empty",
      "glyph": ""
     }
    }
   },
   {
    "id": "rows",
-   "type": "set",
+   "type": "map",
    "title": {
-    "en": "row keys (row:digit)",
-    "ko": "행 키 (행:숫자)"
+    "en": "rows: digits seen",
+    "ko": "행: 본 숫자"
    },
    "empty": {
-    "en": "empty",
-    "ko": "비어 있음"
+    "en": "no row yet",
+    "ko": "아직 없음"
    }
   },
   {
    "id": "cols",
-   "type": "set",
+   "type": "map",
    "title": {
-    "en": "column keys (col:digit)",
-    "ko": "열 키 (열:숫자)"
+    "en": "columns: digits seen",
+    "ko": "열: 본 숫자"
    },
    "empty": {
-    "en": "empty",
-    "ko": "비어 있음"
+    "en": "no column yet",
+    "ko": "아직 없음"
    }
   },
   {
    "id": "boxes",
-   "type": "set",
+   "type": "map",
    "title": {
-    "en": "box keys (row÷3,col÷3:digit)",
-    "ko": "박스 키 (행÷3,열÷3:숫자)"
+    "en": "boxes: digits seen",
+    "ko": "박스: 본 숫자"
    },
    "empty": {
-    "en": "empty",
-    "ko": "비어 있음"
+    "en": "no box yet",
+    "ko": "아직 없음"
    }
   }
  ],
@@ -75,8 +75,8 @@
    "frames": [
     {
      "caption": {
-      "en": "The board has 9 filled cells. Read it row by row; an empty cell is skipped, a digit's three keys are looked up in the set of keys seen so far.",
-      "ko": "채워진 칸은 9개입니다. 보드를 행 순서로 읽으며 빈 칸은 건너뛰고, 숫자의 키 세 개를 지금까지 본 키의 집합에서 찾아봅니다."
+      "en": "The board has 9 filled cells. Read it row by row, skipping empty cells; each digit is looked up in the digits its row, column and box have seen so far.",
+      "ko": "채워진 칸은 9개입니다. 보드를 행 순서로 읽으며 빈 칸은 건너뛰고, 숫자마다 그 행, 열, 박스에서 지금까지 본 숫자 중에 있는지 찾아봅니다."
      },
      "views": {
       "board": {
@@ -183,35 +183,28 @@
        ],
        "marks": {
         "lit": [],
-        "good": [],
         "bad": [],
         "path": []
        }
       },
       "rows": {
-       "members": [],
-       "probes": [],
+       "entries": [],
        "marks": {
         "good": [],
-        "bad": [],
         "path": []
        }
       },
       "cols": {
-       "members": [],
-       "probes": [],
+       "entries": [],
        "marks": {
         "good": [],
-        "bad": [],
         "path": []
        }
       },
       "boxes": {
-       "members": [],
-       "probes": [],
+       "entries": [],
        "marks": {
         "good": [],
-        "bad": [],
         "path": []
        }
       }
@@ -219,8 +212,8 @@
     },
     {
      "caption": {
-      "en": "Cell 1,1 holds 1: keys 1:1, 1:1 and 0,0:1 are not in the set yet, so all three go in.",
-      "ko": "1,1 칸의 숫자 1: 키 세 개(1:1, 1:1, 0,0:1)가 아직 집합에 없으므로 모두 넣습니다."
+      "en": "Cell 1,1 holds 1: row 1, column 1, box (0,0) have not seen a 1 yet, so it goes into all three.",
+      "ko": "1,1 칸의 숫자 1: 1행, 1열, (0,0) 박스 어디에도 아직 1이 없으므로 세 곳 모두에 넣습니다."
      },
      "views": {
       "board": {
@@ -326,8 +319,7 @@
         ]
        ],
        "marks": {
-        "lit": [],
-        "good": [
+        "lit": [
          [
           1,
           1
@@ -335,60 +327,176 @@
         ],
         "bad": [],
         "path": []
-       }
+       },
+       "shade": [
+        [
+         0,
+         0
+        ],
+        [
+         0,
+         1
+        ],
+        [
+         0,
+         2
+        ],
+        [
+         1,
+         0
+        ],
+        [
+         1,
+         1
+        ],
+        [
+         1,
+         2
+        ],
+        [
+         1,
+         3
+        ],
+        [
+         1,
+         4
+        ],
+        [
+         1,
+         5
+        ],
+        [
+         1,
+         6
+        ],
+        [
+         1,
+         7
+        ],
+        [
+         1,
+         8
+        ],
+        [
+         2,
+         0
+        ],
+        [
+         2,
+         1
+        ],
+        [
+         2,
+         2
+        ],
+        [
+         3,
+         1
+        ],
+        [
+         4,
+         1
+        ],
+        [
+         5,
+         1
+        ],
+        [
+         6,
+         1
+        ],
+        [
+         7,
+         1
+        ],
+        [
+         8,
+         1
+        ]
+       ]
       },
       "rows": {
-       "members": [
-        "1:1"
-       ],
-       "probes": [
+       "entries": [
         {
-         "value": "1:1",
-         "hit": false
+         "key": "row 1",
+         "label": {
+          "en": "row 1",
+          "ko": "1행"
+         },
+         "value": [
+          "1"
+         ]
         }
        ],
        "marks": {
         "good": [
-         "1:1"
+         "row 1"
         ],
-        "bad": [],
         "path": []
+       },
+       "probe": {
+        "key": "row 1",
+        "hit": false,
+        "label": {
+         "en": "1 in row 1?",
+         "ko": "1행에 1?"
+        }
        }
       },
       "cols": {
-       "members": [
-        "1:1"
-       ],
-       "probes": [
+       "entries": [
         {
-         "value": "1:1",
-         "hit": false
+         "key": "col 1",
+         "label": {
+          "en": "column 1",
+          "ko": "1열"
+         },
+         "value": [
+          "1"
+         ]
         }
        ],
        "marks": {
         "good": [
-         "1:1"
+         "col 1"
         ],
-        "bad": [],
         "path": []
+       },
+       "probe": {
+        "key": "col 1",
+        "hit": false,
+        "label": {
+         "en": "1 in column 1?",
+         "ko": "1열에 1?"
+        }
        }
       },
       "boxes": {
-       "members": [
-        "0,0:1"
-       ],
-       "probes": [
+       "entries": [
         {
-         "value": "0,0:1",
-         "hit": false
+         "key": "box 0,0",
+         "label": {
+          "en": "box (0,0)",
+          "ko": "(0,0) 박스"
+         },
+         "value": [
+          "1"
+         ]
         }
        ],
        "marks": {
         "good": [
-         "0,0:1"
+         "box 0,0"
         ],
-        "bad": [],
         "path": []
+       },
+       "probe": {
+        "key": "box 0,0",
+        "hit": false,
+        "label": {
+         "en": "1 in box (0,0)?",
+         "ko": "(0,0) 박스에 1?"
+        }
        }
       }
      },
@@ -403,9 +511,9 @@
        },
        "to": {
         "view": "rows",
-        "at": "1:1"
+        "at": "row 1"
        },
-       "value": "1:1"
+       "value": "1"
       },
       {
        "from": {
@@ -417,9 +525,9 @@
        },
        "to": {
         "view": "cols",
-        "at": "1:1"
+        "at": "col 1"
        },
-       "value": "1:1"
+       "value": "1"
       },
       {
        "from": {
@@ -431,16 +539,16 @@
        },
        "to": {
         "view": "boxes",
-        "at": "0,0:1"
+        "at": "box 0,0"
        },
-       "value": "0,0:1"
+       "value": "1"
       }
      ]
     },
     {
      "caption": {
-      "en": "Cell 1,4 holds 2: keys 1:2, 4:2 and 0,1:2 are not in the set yet, so all three go in.",
-      "ko": "1,4 칸의 숫자 2: 키 세 개(1:2, 4:2, 0,1:2)가 아직 집합에 없으므로 모두 넣습니다."
+      "en": "Cell 1,4 holds 2: row 1, column 4, box (0,1) have not seen a 2 yet, so it goes into all three.",
+      "ko": "1,4 칸의 숫자 2: 1행, 4열, (0,1) 박스 어디에도 아직 2가 없으므로 세 곳 모두에 넣습니다."
      },
      "views": {
       "board": {
@@ -546,8 +654,7 @@
         ]
        ],
        "marks": {
-        "lit": [],
-        "good": [
+        "lit": [
          [
           1,
           4
@@ -555,63 +662,197 @@
         ],
         "bad": [],
         "path": []
-       }
+       },
+       "shade": [
+        [
+         0,
+         3
+        ],
+        [
+         0,
+         4
+        ],
+        [
+         0,
+         5
+        ],
+        [
+         1,
+         0
+        ],
+        [
+         1,
+         1
+        ],
+        [
+         1,
+         2
+        ],
+        [
+         1,
+         3
+        ],
+        [
+         1,
+         4
+        ],
+        [
+         1,
+         5
+        ],
+        [
+         1,
+         6
+        ],
+        [
+         1,
+         7
+        ],
+        [
+         1,
+         8
+        ],
+        [
+         2,
+         3
+        ],
+        [
+         2,
+         4
+        ],
+        [
+         2,
+         5
+        ],
+        [
+         3,
+         4
+        ],
+        [
+         4,
+         4
+        ],
+        [
+         5,
+         4
+        ],
+        [
+         6,
+         4
+        ],
+        [
+         7,
+         4
+        ],
+        [
+         8,
+         4
+        ]
+       ]
       },
       "rows": {
-       "members": [
-        "1:1",
-        "1:2"
-       ],
-       "probes": [
+       "entries": [
         {
-         "value": "1:2",
-         "hit": false
+         "key": "row 1",
+         "label": {
+          "en": "row 1",
+          "ko": "1행"
+         },
+         "value": [
+          "1",
+          "2"
+         ]
         }
        ],
        "marks": {
         "good": [
-         "1:2"
+         "row 1"
         ],
-        "bad": [],
         "path": []
+       },
+       "probe": {
+        "key": "row 1",
+        "hit": false,
+        "label": {
+         "en": "2 in row 1?",
+         "ko": "1행에 2?"
+        }
        }
       },
       "cols": {
-       "members": [
-        "1:1",
-        "4:2"
-       ],
-       "probes": [
+       "entries": [
         {
-         "value": "4:2",
-         "hit": false
+         "key": "col 1",
+         "label": {
+          "en": "column 1",
+          "ko": "1열"
+         },
+         "value": [
+          "1"
+         ]
+        },
+        {
+         "key": "col 4",
+         "label": {
+          "en": "column 4",
+          "ko": "4열"
+         },
+         "value": [
+          "2"
+         ]
         }
        ],
        "marks": {
         "good": [
-         "4:2"
+         "col 4"
         ],
-        "bad": [],
         "path": []
+       },
+       "probe": {
+        "key": "col 4",
+        "hit": false,
+        "label": {
+         "en": "2 in column 4?",
+         "ko": "4열에 2?"
+        }
        }
       },
       "boxes": {
-       "members": [
-        "0,0:1",
-        "0,1:2"
-       ],
-       "probes": [
+       "entries": [
         {
-         "value": "0,1:2",
-         "hit": false
+         "key": "box 0,0",
+         "label": {
+          "en": "box (0,0)",
+          "ko": "(0,0) 박스"
+         },
+         "value": [
+          "1"
+         ]
+        },
+        {
+         "key": "box 0,1",
+         "label": {
+          "en": "box (0,1)",
+          "ko": "(0,1) 박스"
+         },
+         "value": [
+          "2"
+         ]
         }
        ],
        "marks": {
         "good": [
-         "0,1:2"
+         "box 0,1"
         ],
-        "bad": [],
         "path": []
+       },
+       "probe": {
+        "key": "box 0,1",
+        "hit": false,
+        "label": {
+         "en": "2 in box (0,1)?",
+         "ko": "(0,1) 박스에 2?"
+        }
        }
       }
      },
@@ -626,9 +867,9 @@
        },
        "to": {
         "view": "rows",
-        "at": "1:2"
+        "at": "row 1"
        },
-       "value": "1:2"
+       "value": "2"
       },
       {
        "from": {
@@ -640,9 +881,9 @@
        },
        "to": {
         "view": "cols",
-        "at": "4:2"
+        "at": "col 4"
        },
-       "value": "4:2"
+       "value": "2"
       },
       {
        "from": {
@@ -654,16 +895,16 @@
        },
        "to": {
         "view": "boxes",
-        "at": "0,1:2"
+        "at": "box 0,1"
        },
-       "value": "0,1:2"
+       "value": "2"
       }
      ]
     },
     {
      "caption": {
-      "en": "Cell 1,7 holds 3: keys 1:3, 7:3 and 0,2:3 are not in the set yet, so all three go in.",
-      "ko": "1,7 칸의 숫자 3: 키 세 개(1:3, 7:3, 0,2:3)가 아직 집합에 없으므로 모두 넣습니다."
+      "en": "Cell 1,7 holds 3: row 1, column 7, box (0,2) have not seen a 3 yet, so it goes into all three.",
+      "ko": "1,7 칸의 숫자 3: 1행, 7열, (0,2) 박스 어디에도 아직 3이 없으므로 세 곳 모두에 넣습니다."
      },
      "views": {
       "board": {
@@ -769,8 +1010,7 @@
         ]
        ],
        "marks": {
-        "lit": [],
-        "good": [
+        "lit": [
          [
           1,
           7
@@ -778,66 +1018,218 @@
         ],
         "bad": [],
         "path": []
-       }
+       },
+       "shade": [
+        [
+         0,
+         6
+        ],
+        [
+         0,
+         7
+        ],
+        [
+         0,
+         8
+        ],
+        [
+         1,
+         0
+        ],
+        [
+         1,
+         1
+        ],
+        [
+         1,
+         2
+        ],
+        [
+         1,
+         3
+        ],
+        [
+         1,
+         4
+        ],
+        [
+         1,
+         5
+        ],
+        [
+         1,
+         6
+        ],
+        [
+         1,
+         7
+        ],
+        [
+         1,
+         8
+        ],
+        [
+         2,
+         6
+        ],
+        [
+         2,
+         7
+        ],
+        [
+         2,
+         8
+        ],
+        [
+         3,
+         7
+        ],
+        [
+         4,
+         7
+        ],
+        [
+         5,
+         7
+        ],
+        [
+         6,
+         7
+        ],
+        [
+         7,
+         7
+        ],
+        [
+         8,
+         7
+        ]
+       ]
       },
       "rows": {
-       "members": [
-        "1:1",
-        "1:2",
-        "1:3"
-       ],
-       "probes": [
+       "entries": [
         {
-         "value": "1:3",
-         "hit": false
+         "key": "row 1",
+         "label": {
+          "en": "row 1",
+          "ko": "1행"
+         },
+         "value": [
+          "1",
+          "2",
+          "3"
+         ]
         }
        ],
        "marks": {
         "good": [
-         "1:3"
+         "row 1"
         ],
-        "bad": [],
         "path": []
+       },
+       "probe": {
+        "key": "row 1",
+        "hit": false,
+        "label": {
+         "en": "3 in row 1?",
+         "ko": "1행에 3?"
+        }
        }
       },
       "cols": {
-       "members": [
-        "1:1",
-        "4:2",
-        "7:3"
-       ],
-       "probes": [
+       "entries": [
         {
-         "value": "7:3",
-         "hit": false
+         "key": "col 1",
+         "label": {
+          "en": "column 1",
+          "ko": "1열"
+         },
+         "value": [
+          "1"
+         ]
+        },
+        {
+         "key": "col 4",
+         "label": {
+          "en": "column 4",
+          "ko": "4열"
+         },
+         "value": [
+          "2"
+         ]
+        },
+        {
+         "key": "col 7",
+         "label": {
+          "en": "column 7",
+          "ko": "7열"
+         },
+         "value": [
+          "3"
+         ]
         }
        ],
        "marks": {
         "good": [
-         "7:3"
+         "col 7"
         ],
-        "bad": [],
         "path": []
+       },
+       "probe": {
+        "key": "col 7",
+        "hit": false,
+        "label": {
+         "en": "3 in column 7?",
+         "ko": "7열에 3?"
+        }
        }
       },
       "boxes": {
-       "members": [
-        "0,0:1",
-        "0,1:2",
-        "0,2:3"
-       ],
-       "probes": [
+       "entries": [
         {
-         "value": "0,2:3",
-         "hit": false
+         "key": "box 0,0",
+         "label": {
+          "en": "box (0,0)",
+          "ko": "(0,0) 박스"
+         },
+         "value": [
+          "1"
+         ]
+        },
+        {
+         "key": "box 0,1",
+         "label": {
+          "en": "box (0,1)",
+          "ko": "(0,1) 박스"
+         },
+         "value": [
+          "2"
+         ]
+        },
+        {
+         "key": "box 0,2",
+         "label": {
+          "en": "box (0,2)",
+          "ko": "(0,2) 박스"
+         },
+         "value": [
+          "3"
+         ]
         }
        ],
        "marks": {
         "good": [
-         "0,2:3"
+         "box 0,2"
         ],
-        "bad": [],
         "path": []
+       },
+       "probe": {
+        "key": "box 0,2",
+        "hit": false,
+        "label": {
+         "en": "3 in box (0,2)?",
+         "ko": "(0,2) 박스에 3?"
+        }
        }
       }
      },
@@ -852,9 +1244,9 @@
        },
        "to": {
         "view": "rows",
-        "at": "1:3"
+        "at": "row 1"
        },
-       "value": "1:3"
+       "value": "3"
       },
       {
        "from": {
@@ -866,9 +1258,9 @@
        },
        "to": {
         "view": "cols",
-        "at": "7:3"
+        "at": "col 7"
        },
-       "value": "7:3"
+       "value": "3"
       },
       {
        "from": {
@@ -880,16 +1272,16 @@
        },
        "to": {
         "view": "boxes",
-        "at": "0,2:3"
+        "at": "box 0,2"
        },
-       "value": "0,2:3"
+       "value": "3"
       }
      ]
     },
     {
      "caption": {
-      "en": "Cell 4,1 holds 4: keys 4:4, 1:4 and 1,0:4 are not in the set yet, so all three go in.",
-      "ko": "4,1 칸의 숫자 4: 키 세 개(4:4, 1:4, 1,0:4)가 아직 집합에 없으므로 모두 넣습니다."
+      "en": "Cell 4,1 holds 4: row 4, column 1, box (1,0) have not seen a 4 yet, so it goes into all three.",
+      "ko": "4,1 칸의 숫자 4: 4행, 1열, (1,0) 박스 어디에도 아직 4가 없으므로 세 곳 모두에 넣습니다."
      },
      "views": {
       "board": {
@@ -995,8 +1387,7 @@
         ]
        ],
        "marks": {
-        "lit": [],
-        "good": [
+        "lit": [
          [
           4,
           1
@@ -1004,69 +1395,239 @@
         ],
         "bad": [],
         "path": []
-       }
+       },
+       "shade": [
+        [
+         0,
+         1
+        ],
+        [
+         1,
+         1
+        ],
+        [
+         2,
+         1
+        ],
+        [
+         3,
+         0
+        ],
+        [
+         3,
+         1
+        ],
+        [
+         3,
+         2
+        ],
+        [
+         4,
+         0
+        ],
+        [
+         4,
+         1
+        ],
+        [
+         4,
+         2
+        ],
+        [
+         4,
+         3
+        ],
+        [
+         4,
+         4
+        ],
+        [
+         4,
+         5
+        ],
+        [
+         4,
+         6
+        ],
+        [
+         4,
+         7
+        ],
+        [
+         4,
+         8
+        ],
+        [
+         5,
+         0
+        ],
+        [
+         5,
+         1
+        ],
+        [
+         5,
+         2
+        ],
+        [
+         6,
+         1
+        ],
+        [
+         7,
+         1
+        ],
+        [
+         8,
+         1
+        ]
+       ]
       },
       "rows": {
-       "members": [
-        "1:1",
-        "1:2",
-        "1:3",
-        "4:4"
-       ],
-       "probes": [
+       "entries": [
         {
-         "value": "4:4",
-         "hit": false
+         "key": "row 1",
+         "label": {
+          "en": "row 1",
+          "ko": "1행"
+         },
+         "value": [
+          "1",
+          "2",
+          "3"
+         ]
+        },
+        {
+         "key": "row 4",
+         "label": {
+          "en": "row 4",
+          "ko": "4행"
+         },
+         "value": [
+          "4"
+         ]
         }
        ],
        "marks": {
         "good": [
-         "4:4"
+         "row 4"
         ],
-        "bad": [],
         "path": []
+       },
+       "probe": {
+        "key": "row 4",
+        "hit": false,
+        "label": {
+         "en": "4 in row 4?",
+         "ko": "4행에 4?"
+        }
        }
       },
       "cols": {
-       "members": [
-        "1:1",
-        "4:2",
-        "7:3",
-        "1:4"
-       ],
-       "probes": [
+       "entries": [
         {
-         "value": "1:4",
-         "hit": false
+         "key": "col 1",
+         "label": {
+          "en": "column 1",
+          "ko": "1열"
+         },
+         "value": [
+          "1",
+          "4"
+         ]
+        },
+        {
+         "key": "col 4",
+         "label": {
+          "en": "column 4",
+          "ko": "4열"
+         },
+         "value": [
+          "2"
+         ]
+        },
+        {
+         "key": "col 7",
+         "label": {
+          "en": "column 7",
+          "ko": "7열"
+         },
+         "value": [
+          "3"
+         ]
         }
        ],
        "marks": {
         "good": [
-         "1:4"
+         "col 1"
         ],
-        "bad": [],
         "path": []
+       },
+       "probe": {
+        "key": "col 1",
+        "hit": false,
+        "label": {
+         "en": "4 in column 1?",
+         "ko": "1열에 4?"
+        }
        }
       },
       "boxes": {
-       "members": [
-        "0,0:1",
-        "0,1:2",
-        "0,2:3",
-        "1,0:4"
-       ],
-       "probes": [
+       "entries": [
         {
-         "value": "1,0:4",
-         "hit": false
+         "key": "box 0,0",
+         "label": {
+          "en": "box (0,0)",
+          "ko": "(0,0) 박스"
+         },
+         "value": [
+          "1"
+         ]
+        },
+        {
+         "key": "box 0,1",
+         "label": {
+          "en": "box (0,1)",
+          "ko": "(0,1) 박스"
+         },
+         "value": [
+          "2"
+         ]
+        },
+        {
+         "key": "box 0,2",
+         "label": {
+          "en": "box (0,2)",
+          "ko": "(0,2) 박스"
+         },
+         "value": [
+          "3"
+         ]
+        },
+        {
+         "key": "box 1,0",
+         "label": {
+          "en": "box (1,0)",
+          "ko": "(1,0) 박스"
+         },
+         "value": [
+          "4"
+         ]
         }
        ],
        "marks": {
         "good": [
-         "1,0:4"
+         "box 1,0"
         ],
-        "bad": [],
         "path": []
+       },
+       "probe": {
+        "key": "box 1,0",
+        "hit": false,
+        "label": {
+         "en": "4 in box (1,0)?",
+         "ko": "(1,0) 박스에 4?"
+        }
        }
       }
      },
@@ -1081,9 +1642,9 @@
        },
        "to": {
         "view": "rows",
-        "at": "4:4"
+        "at": "row 4"
        },
-       "value": "4:4"
+       "value": "4"
       },
       {
        "from": {
@@ -1095,9 +1656,9 @@
        },
        "to": {
         "view": "cols",
-        "at": "1:4"
+        "at": "col 1"
        },
-       "value": "1:4"
+       "value": "4"
       },
       {
        "from": {
@@ -1109,16 +1670,16 @@
        },
        "to": {
         "view": "boxes",
-        "at": "1,0:4"
+        "at": "box 1,0"
        },
-       "value": "1,0:4"
+       "value": "4"
       }
      ]
     },
     {
      "caption": {
-      "en": "Cell 4,4 holds 5: keys 4:5, 4:5 and 1,1:5 are not in the set yet, so all three go in.",
-      "ko": "4,4 칸의 숫자 5: 키 세 개(4:5, 4:5, 1,1:5)가 아직 집합에 없으므로 모두 넣습니다."
+      "en": "Cell 4,4 holds 5: row 4, column 4, box (1,1) have not seen a 5 yet, so it goes into all three.",
+      "ko": "4,4 칸의 숫자 5: 4행, 4열, (1,1) 박스 어디에도 아직 5가 없으므로 세 곳 모두에 넣습니다."
      },
      "views": {
       "board": {
@@ -1224,8 +1785,7 @@
         ]
        ],
        "marks": {
-        "lit": [],
-        "good": [
+        "lit": [
          [
           4,
           4
@@ -1233,72 +1793,251 @@
         ],
         "bad": [],
         "path": []
-       }
+       },
+       "shade": [
+        [
+         0,
+         4
+        ],
+        [
+         1,
+         4
+        ],
+        [
+         2,
+         4
+        ],
+        [
+         3,
+         3
+        ],
+        [
+         3,
+         4
+        ],
+        [
+         3,
+         5
+        ],
+        [
+         4,
+         0
+        ],
+        [
+         4,
+         1
+        ],
+        [
+         4,
+         2
+        ],
+        [
+         4,
+         3
+        ],
+        [
+         4,
+         4
+        ],
+        [
+         4,
+         5
+        ],
+        [
+         4,
+         6
+        ],
+        [
+         4,
+         7
+        ],
+        [
+         4,
+         8
+        ],
+        [
+         5,
+         3
+        ],
+        [
+         5,
+         4
+        ],
+        [
+         5,
+         5
+        ],
+        [
+         6,
+         4
+        ],
+        [
+         7,
+         4
+        ],
+        [
+         8,
+         4
+        ]
+       ]
       },
       "rows": {
-       "members": [
-        "1:1",
-        "1:2",
-        "1:3",
-        "4:4",
-        "4:5"
-       ],
-       "probes": [
+       "entries": [
         {
-         "value": "4:5",
-         "hit": false
+         "key": "row 1",
+         "label": {
+          "en": "row 1",
+          "ko": "1행"
+         },
+         "value": [
+          "1",
+          "2",
+          "3"
+         ]
+        },
+        {
+         "key": "row 4",
+         "label": {
+          "en": "row 4",
+          "ko": "4행"
+         },
+         "value": [
+          "4",
+          "5"
+         ]
         }
        ],
        "marks": {
         "good": [
-         "4:5"
+         "row 4"
         ],
-        "bad": [],
         "path": []
+       },
+       "probe": {
+        "key": "row 4",
+        "hit": false,
+        "label": {
+         "en": "5 in row 4?",
+         "ko": "4행에 5?"
+        }
        }
       },
       "cols": {
-       "members": [
-        "1:1",
-        "4:2",
-        "7:3",
-        "1:4",
-        "4:5"
-       ],
-       "probes": [
+       "entries": [
         {
-         "value": "4:5",
-         "hit": false
+         "key": "col 1",
+         "label": {
+          "en": "column 1",
+          "ko": "1열"
+         },
+         "value": [
+          "1",
+          "4"
+         ]
+        },
+        {
+         "key": "col 4",
+         "label": {
+          "en": "column 4",
+          "ko": "4열"
+         },
+         "value": [
+          "2",
+          "5"
+         ]
+        },
+        {
+         "key": "col 7",
+         "label": {
+          "en": "column 7",
+          "ko": "7열"
+         },
+         "value": [
+          "3"
+         ]
         }
        ],
        "marks": {
         "good": [
-         "4:5"
+         "col 4"
         ],
-        "bad": [],
         "path": []
+       },
+       "probe": {
+        "key": "col 4",
+        "hit": false,
+        "label": {
+         "en": "5 in column 4?",
+         "ko": "4열에 5?"
+        }
        }
       },
       "boxes": {
-       "members": [
-        "0,0:1",
-        "0,1:2",
-        "0,2:3",
-        "1,0:4",
-        "1,1:5"
-       ],
-       "probes": [
+       "entries": [
         {
-         "value": "1,1:5",
-         "hit": false
+         "key": "box 0,0",
+         "label": {
+          "en": "box (0,0)",
+          "ko": "(0,0) 박스"
+         },
+         "value": [
+          "1"
+         ]
+        },
+        {
+         "key": "box 0,1",
+         "label": {
+          "en": "box (0,1)",
+          "ko": "(0,1) 박스"
+         },
+         "value": [
+          "2"
+         ]
+        },
+        {
+         "key": "box 0,2",
+         "label": {
+          "en": "box (0,2)",
+          "ko": "(0,2) 박스"
+         },
+         "value": [
+          "3"
+         ]
+        },
+        {
+         "key": "box 1,0",
+         "label": {
+          "en": "box (1,0)",
+          "ko": "(1,0) 박스"
+         },
+         "value": [
+          "4"
+         ]
+        },
+        {
+         "key": "box 1,1",
+         "label": {
+          "en": "box (1,1)",
+          "ko": "(1,1) 박스"
+         },
+         "value": [
+          "5"
+         ]
         }
        ],
        "marks": {
         "good": [
-         "1,1:5"
+         "box 1,1"
         ],
-        "bad": [],
         "path": []
+       },
+       "probe": {
+        "key": "box 1,1",
+        "hit": false,
+        "label": {
+         "en": "5 in box (1,1)?",
+         "ko": "(1,1) 박스에 5?"
+        }
        }
       }
      },
@@ -1313,9 +2052,9 @@
        },
        "to": {
         "view": "rows",
-        "at": "4:5"
+        "at": "row 4"
        },
-       "value": "4:5"
+       "value": "5"
       },
       {
        "from": {
@@ -1327,9 +2066,9 @@
        },
        "to": {
         "view": "cols",
-        "at": "4:5"
+        "at": "col 4"
        },
-       "value": "4:5"
+       "value": "5"
       },
       {
        "from": {
@@ -1341,16 +2080,16 @@
        },
        "to": {
         "view": "boxes",
-        "at": "1,1:5"
+        "at": "box 1,1"
        },
-       "value": "1,1:5"
+       "value": "5"
       }
      ]
     },
     {
      "caption": {
-      "en": "Cell 4,7 holds 6: keys 4:6, 7:6 and 1,2:6 are not in the set yet, so all three go in.",
-      "ko": "4,7 칸의 숫자 6: 키 세 개(4:6, 7:6, 1,2:6)가 아직 집합에 없으므로 모두 넣습니다."
+      "en": "Cell 4,7 holds 6: row 4, column 7, box (1,2) have not seen a 6 yet, so it goes into all three.",
+      "ko": "4,7 칸의 숫자 6: 4행, 7열, (1,2) 박스 어디에도 아직 6이 없으므로 세 곳 모두에 넣습니다."
      },
      "views": {
       "board": {
@@ -1456,8 +2195,7 @@
         ]
        ],
        "marks": {
-        "lit": [],
-        "good": [
+        "lit": [
          [
           4,
           7
@@ -1465,75 +2203,263 @@
         ],
         "bad": [],
         "path": []
-       }
+       },
+       "shade": [
+        [
+         0,
+         7
+        ],
+        [
+         1,
+         7
+        ],
+        [
+         2,
+         7
+        ],
+        [
+         3,
+         6
+        ],
+        [
+         3,
+         7
+        ],
+        [
+         3,
+         8
+        ],
+        [
+         4,
+         0
+        ],
+        [
+         4,
+         1
+        ],
+        [
+         4,
+         2
+        ],
+        [
+         4,
+         3
+        ],
+        [
+         4,
+         4
+        ],
+        [
+         4,
+         5
+        ],
+        [
+         4,
+         6
+        ],
+        [
+         4,
+         7
+        ],
+        [
+         4,
+         8
+        ],
+        [
+         5,
+         6
+        ],
+        [
+         5,
+         7
+        ],
+        [
+         5,
+         8
+        ],
+        [
+         6,
+         7
+        ],
+        [
+         7,
+         7
+        ],
+        [
+         8,
+         7
+        ]
+       ]
       },
       "rows": {
-       "members": [
-        "1:1",
-        "1:2",
-        "1:3",
-        "4:4",
-        "4:5",
-        "4:6"
-       ],
-       "probes": [
+       "entries": [
         {
-         "value": "4:6",
-         "hit": false
+         "key": "row 1",
+         "label": {
+          "en": "row 1",
+          "ko": "1행"
+         },
+         "value": [
+          "1",
+          "2",
+          "3"
+         ]
+        },
+        {
+         "key": "row 4",
+         "label": {
+          "en": "row 4",
+          "ko": "4행"
+         },
+         "value": [
+          "4",
+          "5",
+          "6"
+         ]
         }
        ],
        "marks": {
         "good": [
-         "4:6"
+         "row 4"
         ],
-        "bad": [],
         "path": []
+       },
+       "probe": {
+        "key": "row 4",
+        "hit": false,
+        "label": {
+         "en": "6 in row 4?",
+         "ko": "4행에 6?"
+        }
        }
       },
       "cols": {
-       "members": [
-        "1:1",
-        "4:2",
-        "7:3",
-        "1:4",
-        "4:5",
-        "7:6"
-       ],
-       "probes": [
+       "entries": [
         {
-         "value": "7:6",
-         "hit": false
+         "key": "col 1",
+         "label": {
+          "en": "column 1",
+          "ko": "1열"
+         },
+         "value": [
+          "1",
+          "4"
+         ]
+        },
+        {
+         "key": "col 4",
+         "label": {
+          "en": "column 4",
+          "ko": "4열"
+         },
+         "value": [
+          "2",
+          "5"
+         ]
+        },
+        {
+         "key": "col 7",
+         "label": {
+          "en": "column 7",
+          "ko": "7열"
+         },
+         "value": [
+          "3",
+          "6"
+         ]
         }
        ],
        "marks": {
         "good": [
-         "7:6"
+         "col 7"
         ],
-        "bad": [],
         "path": []
+       },
+       "probe": {
+        "key": "col 7",
+        "hit": false,
+        "label": {
+         "en": "6 in column 7?",
+         "ko": "7열에 6?"
+        }
        }
       },
       "boxes": {
-       "members": [
-        "0,0:1",
-        "0,1:2",
-        "0,2:3",
-        "1,0:4",
-        "1,1:5",
-        "1,2:6"
-       ],
-       "probes": [
+       "entries": [
         {
-         "value": "1,2:6",
-         "hit": false
+         "key": "box 0,0",
+         "label": {
+          "en": "box (0,0)",
+          "ko": "(0,0) 박스"
+         },
+         "value": [
+          "1"
+         ]
+        },
+        {
+         "key": "box 0,1",
+         "label": {
+          "en": "box (0,1)",
+          "ko": "(0,1) 박스"
+         },
+         "value": [
+          "2"
+         ]
+        },
+        {
+         "key": "box 0,2",
+         "label": {
+          "en": "box (0,2)",
+          "ko": "(0,2) 박스"
+         },
+         "value": [
+          "3"
+         ]
+        },
+        {
+         "key": "box 1,0",
+         "label": {
+          "en": "box (1,0)",
+          "ko": "(1,0) 박스"
+         },
+         "value": [
+          "4"
+         ]
+        },
+        {
+         "key": "box 1,1",
+         "label": {
+          "en": "box (1,1)",
+          "ko": "(1,1) 박스"
+         },
+         "value": [
+          "5"
+         ]
+        },
+        {
+         "key": "box 1,2",
+         "label": {
+          "en": "box (1,2)",
+          "ko": "(1,2) 박스"
+         },
+         "value": [
+          "6"
+         ]
         }
        ],
        "marks": {
         "good": [
-         "1,2:6"
+         "box 1,2"
         ],
-        "bad": [],
         "path": []
+       },
+       "probe": {
+        "key": "box 1,2",
+        "hit": false,
+        "label": {
+         "en": "6 in box (1,2)?",
+         "ko": "(1,2) 박스에 6?"
+        }
        }
       }
      },
@@ -1548,9 +2474,9 @@
        },
        "to": {
         "view": "rows",
-        "at": "4:6"
+        "at": "row 4"
        },
-       "value": "4:6"
+       "value": "6"
       },
       {
        "from": {
@@ -1562,9 +2488,9 @@
        },
        "to": {
         "view": "cols",
-        "at": "7:6"
+        "at": "col 7"
        },
-       "value": "7:6"
+       "value": "6"
       },
       {
        "from": {
@@ -1576,16 +2502,16 @@
        },
        "to": {
         "view": "boxes",
-        "at": "1,2:6"
+        "at": "box 1,2"
        },
-       "value": "1,2:6"
+       "value": "6"
       }
      ]
     },
     {
      "caption": {
-      "en": "Cell 7,1 holds 7: keys 7:7, 1:7 and 2,0:7 are not in the set yet, so all three go in.",
-      "ko": "7,1 칸의 숫자 7: 키 세 개(7:7, 1:7, 2,0:7)가 아직 집합에 없으므로 모두 넣습니다."
+      "en": "Cell 7,1 holds 7: row 7, column 1, box (2,0) have not seen a 7 yet, so it goes into all three.",
+      "ko": "7,1 칸의 숫자 7: 7행, 1열, (2,0) 박스 어디에도 아직 7이 없으므로 세 곳 모두에 넣습니다."
      },
      "views": {
       "board": {
@@ -1691,8 +2617,7 @@
         ]
        ],
        "marks": {
-        "lit": [],
-        "good": [
+        "lit": [
          [
           7,
           1
@@ -1700,78 +2625,284 @@
         ],
         "bad": [],
         "path": []
-       }
+       },
+       "shade": [
+        [
+         0,
+         1
+        ],
+        [
+         1,
+         1
+        ],
+        [
+         2,
+         1
+        ],
+        [
+         3,
+         1
+        ],
+        [
+         4,
+         1
+        ],
+        [
+         5,
+         1
+        ],
+        [
+         6,
+         0
+        ],
+        [
+         6,
+         1
+        ],
+        [
+         6,
+         2
+        ],
+        [
+         7,
+         0
+        ],
+        [
+         7,
+         1
+        ],
+        [
+         7,
+         2
+        ],
+        [
+         7,
+         3
+        ],
+        [
+         7,
+         4
+        ],
+        [
+         7,
+         5
+        ],
+        [
+         7,
+         6
+        ],
+        [
+         7,
+         7
+        ],
+        [
+         7,
+         8
+        ],
+        [
+         8,
+         0
+        ],
+        [
+         8,
+         1
+        ],
+        [
+         8,
+         2
+        ]
+       ]
       },
       "rows": {
-       "members": [
-        "1:1",
-        "1:2",
-        "1:3",
-        "4:4",
-        "4:5",
-        "4:6",
-        "7:7"
-       ],
-       "probes": [
+       "entries": [
         {
-         "value": "7:7",
-         "hit": false
+         "key": "row 1",
+         "label": {
+          "en": "row 1",
+          "ko": "1행"
+         },
+         "value": [
+          "1",
+          "2",
+          "3"
+         ]
+        },
+        {
+         "key": "row 4",
+         "label": {
+          "en": "row 4",
+          "ko": "4행"
+         },
+         "value": [
+          "4",
+          "5",
+          "6"
+         ]
+        },
+        {
+         "key": "row 7",
+         "label": {
+          "en": "row 7",
+          "ko": "7행"
+         },
+         "value": [
+          "7"
+         ]
         }
        ],
        "marks": {
         "good": [
-         "7:7"
+         "row 7"
         ],
-        "bad": [],
         "path": []
+       },
+       "probe": {
+        "key": "row 7",
+        "hit": false,
+        "label": {
+         "en": "7 in row 7?",
+         "ko": "7행에 7?"
+        }
        }
       },
       "cols": {
-       "members": [
-        "1:1",
-        "4:2",
-        "7:3",
-        "1:4",
-        "4:5",
-        "7:6",
-        "1:7"
-       ],
-       "probes": [
+       "entries": [
         {
-         "value": "1:7",
-         "hit": false
+         "key": "col 1",
+         "label": {
+          "en": "column 1",
+          "ko": "1열"
+         },
+         "value": [
+          "1",
+          "4",
+          "7"
+         ]
+        },
+        {
+         "key": "col 4",
+         "label": {
+          "en": "column 4",
+          "ko": "4열"
+         },
+         "value": [
+          "2",
+          "5"
+         ]
+        },
+        {
+         "key": "col 7",
+         "label": {
+          "en": "column 7",
+          "ko": "7열"
+         },
+         "value": [
+          "3",
+          "6"
+         ]
         }
        ],
        "marks": {
         "good": [
-         "1:7"
+         "col 1"
         ],
-        "bad": [],
         "path": []
+       },
+       "probe": {
+        "key": "col 1",
+        "hit": false,
+        "label": {
+         "en": "7 in column 1?",
+         "ko": "1열에 7?"
+        }
        }
       },
       "boxes": {
-       "members": [
-        "0,0:1",
-        "0,1:2",
-        "0,2:3",
-        "1,0:4",
-        "1,1:5",
-        "1,2:6",
-        "2,0:7"
-       ],
-       "probes": [
+       "entries": [
         {
-         "value": "2,0:7",
-         "hit": false
+         "key": "box 0,0",
+         "label": {
+          "en": "box (0,0)",
+          "ko": "(0,0) 박스"
+         },
+         "value": [
+          "1"
+         ]
+        },
+        {
+         "key": "box 0,1",
+         "label": {
+          "en": "box (0,1)",
+          "ko": "(0,1) 박스"
+         },
+         "value": [
+          "2"
+         ]
+        },
+        {
+         "key": "box 0,2",
+         "label": {
+          "en": "box (0,2)",
+          "ko": "(0,2) 박스"
+         },
+         "value": [
+          "3"
+         ]
+        },
+        {
+         "key": "box 1,0",
+         "label": {
+          "en": "box (1,0)",
+          "ko": "(1,0) 박스"
+         },
+         "value": [
+          "4"
+         ]
+        },
+        {
+         "key": "box 1,1",
+         "label": {
+          "en": "box (1,1)",
+          "ko": "(1,1) 박스"
+         },
+         "value": [
+          "5"
+         ]
+        },
+        {
+         "key": "box 1,2",
+         "label": {
+          "en": "box (1,2)",
+          "ko": "(1,2) 박스"
+         },
+         "value": [
+          "6"
+         ]
+        },
+        {
+         "key": "box 2,0",
+         "label": {
+          "en": "box (2,0)",
+          "ko": "(2,0) 박스"
+         },
+         "value": [
+          "7"
+         ]
         }
        ],
        "marks": {
         "good": [
-         "2,0:7"
+         "box 2,0"
         ],
-        "bad": [],
         "path": []
+       },
+       "probe": {
+        "key": "box 2,0",
+        "hit": false,
+        "label": {
+         "en": "7 in box (2,0)?",
+         "ko": "(2,0) 박스에 7?"
+        }
        }
       }
      },
@@ -1786,9 +2917,9 @@
        },
        "to": {
         "view": "rows",
-        "at": "7:7"
+        "at": "row 7"
        },
-       "value": "7:7"
+       "value": "7"
       },
       {
        "from": {
@@ -1800,9 +2931,9 @@
        },
        "to": {
         "view": "cols",
-        "at": "1:7"
+        "at": "col 1"
        },
-       "value": "1:7"
+       "value": "7"
       },
       {
        "from": {
@@ -1814,16 +2945,16 @@
        },
        "to": {
         "view": "boxes",
-        "at": "2,0:7"
+        "at": "box 2,0"
        },
-       "value": "2,0:7"
+       "value": "7"
       }
      ]
     },
     {
      "caption": {
-      "en": "Cell 7,4 holds 8: keys 7:8, 4:8 and 2,1:8 are not in the set yet, so all three go in.",
-      "ko": "7,4 칸의 숫자 8: 키 세 개(7:8, 4:8, 2,1:8)가 아직 집합에 없으므로 모두 넣습니다."
+      "en": "Cell 7,4 holds 8: row 7, column 4, box (2,1) have not seen a 8 yet, so it goes into all three.",
+      "ko": "7,4 칸의 숫자 8: 7행, 4열, (2,1) 박스 어디에도 아직 8이 없으므로 세 곳 모두에 넣습니다."
      },
      "views": {
       "board": {
@@ -1929,8 +3060,7 @@
         ]
        ],
        "marks": {
-        "lit": [],
-        "good": [
+        "lit": [
          [
           7,
           4
@@ -1938,81 +3068,296 @@
         ],
         "bad": [],
         "path": []
-       }
+       },
+       "shade": [
+        [
+         0,
+         4
+        ],
+        [
+         1,
+         4
+        ],
+        [
+         2,
+         4
+        ],
+        [
+         3,
+         4
+        ],
+        [
+         4,
+         4
+        ],
+        [
+         5,
+         4
+        ],
+        [
+         6,
+         3
+        ],
+        [
+         6,
+         4
+        ],
+        [
+         6,
+         5
+        ],
+        [
+         7,
+         0
+        ],
+        [
+         7,
+         1
+        ],
+        [
+         7,
+         2
+        ],
+        [
+         7,
+         3
+        ],
+        [
+         7,
+         4
+        ],
+        [
+         7,
+         5
+        ],
+        [
+         7,
+         6
+        ],
+        [
+         7,
+         7
+        ],
+        [
+         7,
+         8
+        ],
+        [
+         8,
+         3
+        ],
+        [
+         8,
+         4
+        ],
+        [
+         8,
+         5
+        ]
+       ]
       },
       "rows": {
-       "members": [
-        "1:1",
-        "1:2",
-        "1:3",
-        "4:4",
-        "4:5",
-        "4:6",
-        "7:7",
-        "7:8"
-       ],
-       "probes": [
+       "entries": [
         {
-         "value": "7:8",
-         "hit": false
+         "key": "row 1",
+         "label": {
+          "en": "row 1",
+          "ko": "1행"
+         },
+         "value": [
+          "1",
+          "2",
+          "3"
+         ]
+        },
+        {
+         "key": "row 4",
+         "label": {
+          "en": "row 4",
+          "ko": "4행"
+         },
+         "value": [
+          "4",
+          "5",
+          "6"
+         ]
+        },
+        {
+         "key": "row 7",
+         "label": {
+          "en": "row 7",
+          "ko": "7행"
+         },
+         "value": [
+          "7",
+          "8"
+         ]
         }
        ],
        "marks": {
         "good": [
-         "7:8"
+         "row 7"
         ],
-        "bad": [],
         "path": []
+       },
+       "probe": {
+        "key": "row 7",
+        "hit": false,
+        "label": {
+         "en": "8 in row 7?",
+         "ko": "7행에 8?"
+        }
        }
       },
       "cols": {
-       "members": [
-        "1:1",
-        "4:2",
-        "7:3",
-        "1:4",
-        "4:5",
-        "7:6",
-        "1:7",
-        "4:8"
-       ],
-       "probes": [
+       "entries": [
         {
-         "value": "4:8",
-         "hit": false
+         "key": "col 1",
+         "label": {
+          "en": "column 1",
+          "ko": "1열"
+         },
+         "value": [
+          "1",
+          "4",
+          "7"
+         ]
+        },
+        {
+         "key": "col 4",
+         "label": {
+          "en": "column 4",
+          "ko": "4열"
+         },
+         "value": [
+          "2",
+          "5",
+          "8"
+         ]
+        },
+        {
+         "key": "col 7",
+         "label": {
+          "en": "column 7",
+          "ko": "7열"
+         },
+         "value": [
+          "3",
+          "6"
+         ]
         }
        ],
        "marks": {
         "good": [
-         "4:8"
+         "col 4"
         ],
-        "bad": [],
         "path": []
+       },
+       "probe": {
+        "key": "col 4",
+        "hit": false,
+        "label": {
+         "en": "8 in column 4?",
+         "ko": "4열에 8?"
+        }
        }
       },
       "boxes": {
-       "members": [
-        "0,0:1",
-        "0,1:2",
-        "0,2:3",
-        "1,0:4",
-        "1,1:5",
-        "1,2:6",
-        "2,0:7",
-        "2,1:8"
-       ],
-       "probes": [
+       "entries": [
         {
-         "value": "2,1:8",
-         "hit": false
+         "key": "box 0,0",
+         "label": {
+          "en": "box (0,0)",
+          "ko": "(0,0) 박스"
+         },
+         "value": [
+          "1"
+         ]
+        },
+        {
+         "key": "box 0,1",
+         "label": {
+          "en": "box (0,1)",
+          "ko": "(0,1) 박스"
+         },
+         "value": [
+          "2"
+         ]
+        },
+        {
+         "key": "box 0,2",
+         "label": {
+          "en": "box (0,2)",
+          "ko": "(0,2) 박스"
+         },
+         "value": [
+          "3"
+         ]
+        },
+        {
+         "key": "box 1,0",
+         "label": {
+          "en": "box (1,0)",
+          "ko": "(1,0) 박스"
+         },
+         "value": [
+          "4"
+         ]
+        },
+        {
+         "key": "box 1,1",
+         "label": {
+          "en": "box (1,1)",
+          "ko": "(1,1) 박스"
+         },
+         "value": [
+          "5"
+         ]
+        },
+        {
+         "key": "box 1,2",
+         "label": {
+          "en": "box (1,2)",
+          "ko": "(1,2) 박스"
+         },
+         "value": [
+          "6"
+         ]
+        },
+        {
+         "key": "box 2,0",
+         "label": {
+          "en": "box (2,0)",
+          "ko": "(2,0) 박스"
+         },
+         "value": [
+          "7"
+         ]
+        },
+        {
+         "key": "box 2,1",
+         "label": {
+          "en": "box (2,1)",
+          "ko": "(2,1) 박스"
+         },
+         "value": [
+          "8"
+         ]
         }
        ],
        "marks": {
         "good": [
-         "2,1:8"
+         "box 2,1"
         ],
-        "bad": [],
         "path": []
+       },
+       "probe": {
+        "key": "box 2,1",
+        "hit": false,
+        "label": {
+         "en": "8 in box (2,1)?",
+         "ko": "(2,1) 박스에 8?"
+        }
        }
       }
      },
@@ -2027,9 +3372,9 @@
        },
        "to": {
         "view": "rows",
-        "at": "7:8"
+        "at": "row 7"
        },
-       "value": "7:8"
+       "value": "8"
       },
       {
        "from": {
@@ -2041,9 +3386,9 @@
        },
        "to": {
         "view": "cols",
-        "at": "4:8"
+        "at": "col 4"
        },
-       "value": "4:8"
+       "value": "8"
       },
       {
        "from": {
@@ -2055,16 +3400,16 @@
        },
        "to": {
         "view": "boxes",
-        "at": "2,1:8"
+        "at": "box 2,1"
        },
-       "value": "2,1:8"
+       "value": "8"
       }
      ]
     },
     {
      "caption": {
-      "en": "Cell 7,7 holds 9: keys 7:9, 7:9 and 2,2:9 are not in the set yet, so all three go in.",
-      "ko": "7,7 칸의 숫자 9: 키 세 개(7:9, 7:9, 2,2:9)가 아직 집합에 없으므로 모두 넣습니다."
+      "en": "Cell 7,7 holds 9: row 7, column 7, box (2,2) have not seen a 9 yet, so it goes into all three.",
+      "ko": "7,7 칸의 숫자 9: 7행, 7열, (2,2) 박스 어디에도 아직 9가 없으므로 세 곳 모두에 넣습니다."
      },
      "views": {
       "board": {
@@ -2170,8 +3515,7 @@
         ]
        ],
        "marks": {
-        "lit": [],
-        "good": [
+        "lit": [
          [
           7,
           7
@@ -2179,84 +3523,308 @@
         ],
         "bad": [],
         "path": []
-       }
+       },
+       "shade": [
+        [
+         0,
+         7
+        ],
+        [
+         1,
+         7
+        ],
+        [
+         2,
+         7
+        ],
+        [
+         3,
+         7
+        ],
+        [
+         4,
+         7
+        ],
+        [
+         5,
+         7
+        ],
+        [
+         6,
+         6
+        ],
+        [
+         6,
+         7
+        ],
+        [
+         6,
+         8
+        ],
+        [
+         7,
+         0
+        ],
+        [
+         7,
+         1
+        ],
+        [
+         7,
+         2
+        ],
+        [
+         7,
+         3
+        ],
+        [
+         7,
+         4
+        ],
+        [
+         7,
+         5
+        ],
+        [
+         7,
+         6
+        ],
+        [
+         7,
+         7
+        ],
+        [
+         7,
+         8
+        ],
+        [
+         8,
+         6
+        ],
+        [
+         8,
+         7
+        ],
+        [
+         8,
+         8
+        ]
+       ]
       },
       "rows": {
-       "members": [
-        "1:1",
-        "1:2",
-        "1:3",
-        "4:4",
-        "4:5",
-        "4:6",
-        "7:7",
-        "7:8",
-        "7:9"
-       ],
-       "probes": [
+       "entries": [
         {
-         "value": "7:9",
-         "hit": false
+         "key": "row 1",
+         "label": {
+          "en": "row 1",
+          "ko": "1행"
+         },
+         "value": [
+          "1",
+          "2",
+          "3"
+         ]
+        },
+        {
+         "key": "row 4",
+         "label": {
+          "en": "row 4",
+          "ko": "4행"
+         },
+         "value": [
+          "4",
+          "5",
+          "6"
+         ]
+        },
+        {
+         "key": "row 7",
+         "label": {
+          "en": "row 7",
+          "ko": "7행"
+         },
+         "value": [
+          "7",
+          "8",
+          "9"
+         ]
         }
        ],
        "marks": {
         "good": [
-         "7:9"
+         "row 7"
         ],
-        "bad": [],
         "path": []
+       },
+       "probe": {
+        "key": "row 7",
+        "hit": false,
+        "label": {
+         "en": "9 in row 7?",
+         "ko": "7행에 9?"
+        }
        }
       },
       "cols": {
-       "members": [
-        "1:1",
-        "4:2",
-        "7:3",
-        "1:4",
-        "4:5",
-        "7:6",
-        "1:7",
-        "4:8",
-        "7:9"
-       ],
-       "probes": [
+       "entries": [
         {
-         "value": "7:9",
-         "hit": false
+         "key": "col 1",
+         "label": {
+          "en": "column 1",
+          "ko": "1열"
+         },
+         "value": [
+          "1",
+          "4",
+          "7"
+         ]
+        },
+        {
+         "key": "col 4",
+         "label": {
+          "en": "column 4",
+          "ko": "4열"
+         },
+         "value": [
+          "2",
+          "5",
+          "8"
+         ]
+        },
+        {
+         "key": "col 7",
+         "label": {
+          "en": "column 7",
+          "ko": "7열"
+         },
+         "value": [
+          "3",
+          "6",
+          "9"
+         ]
         }
        ],
        "marks": {
         "good": [
-         "7:9"
+         "col 7"
         ],
-        "bad": [],
         "path": []
+       },
+       "probe": {
+        "key": "col 7",
+        "hit": false,
+        "label": {
+         "en": "9 in column 7?",
+         "ko": "7열에 9?"
+        }
        }
       },
       "boxes": {
-       "members": [
-        "0,0:1",
-        "0,1:2",
-        "0,2:3",
-        "1,0:4",
-        "1,1:5",
-        "1,2:6",
-        "2,0:7",
-        "2,1:8",
-        "2,2:9"
-       ],
-       "probes": [
+       "entries": [
         {
-         "value": "2,2:9",
-         "hit": false
+         "key": "box 0,0",
+         "label": {
+          "en": "box (0,0)",
+          "ko": "(0,0) 박스"
+         },
+         "value": [
+          "1"
+         ]
+        },
+        {
+         "key": "box 0,1",
+         "label": {
+          "en": "box (0,1)",
+          "ko": "(0,1) 박스"
+         },
+         "value": [
+          "2"
+         ]
+        },
+        {
+         "key": "box 0,2",
+         "label": {
+          "en": "box (0,2)",
+          "ko": "(0,2) 박스"
+         },
+         "value": [
+          "3"
+         ]
+        },
+        {
+         "key": "box 1,0",
+         "label": {
+          "en": "box (1,0)",
+          "ko": "(1,0) 박스"
+         },
+         "value": [
+          "4"
+         ]
+        },
+        {
+         "key": "box 1,1",
+         "label": {
+          "en": "box (1,1)",
+          "ko": "(1,1) 박스"
+         },
+         "value": [
+          "5"
+         ]
+        },
+        {
+         "key": "box 1,2",
+         "label": {
+          "en": "box (1,2)",
+          "ko": "(1,2) 박스"
+         },
+         "value": [
+          "6"
+         ]
+        },
+        {
+         "key": "box 2,0",
+         "label": {
+          "en": "box (2,0)",
+          "ko": "(2,0) 박스"
+         },
+         "value": [
+          "7"
+         ]
+        },
+        {
+         "key": "box 2,1",
+         "label": {
+          "en": "box (2,1)",
+          "ko": "(2,1) 박스"
+         },
+         "value": [
+          "8"
+         ]
+        },
+        {
+         "key": "box 2,2",
+         "label": {
+          "en": "box (2,2)",
+          "ko": "(2,2) 박스"
+         },
+         "value": [
+          "9"
+         ]
         }
        ],
        "marks": {
         "good": [
-         "2,2:9"
+         "box 2,2"
         ],
-        "bad": [],
         "path": []
+       },
+       "probe": {
+        "key": "box 2,2",
+        "hit": false,
+        "label": {
+         "en": "9 in box (2,2)?",
+         "ko": "(2,2) 박스에 9?"
+        }
        }
       }
      },
@@ -2271,9 +3839,9 @@
        },
        "to": {
         "view": "rows",
-        "at": "7:9"
+        "at": "row 7"
        },
-       "value": "7:9"
+       "value": "9"
       },
       {
        "from": {
@@ -2285,9 +3853,9 @@
        },
        "to": {
         "view": "cols",
-        "at": "7:9"
+        "at": "col 7"
        },
-       "value": "7:9"
+       "value": "9"
       },
       {
        "from": {
@@ -2299,16 +3867,16 @@
        },
        "to": {
         "view": "boxes",
-        "at": "2,2:9"
+        "at": "box 2,2"
        },
-       "value": "2,2:9"
+       "value": "9"
       }
      ]
     },
     {
      "caption": {
-      "en": "Every one of the 9 digits added three new keys and none repeated, so no row, column or box holds a digit twice. Answer true.",
-      "ko": "숫자 9개가 모두 새 키 세 개씩을 더했고 겹친 키가 없으므로, 어떤 행, 열, 박스에도 같은 숫자가 두 번 나오지 않습니다. 답은 true입니다."
+      "en": "All 9 digits went in without a repeat, so no row, column or box holds a digit twice. Answer true.",
+      "ko": "숫자 9개가 모두 중복 없이 들어갔으므로, 어떤 행, 열, 박스에도 같은 숫자가 두 번 나오지 않습니다. 답은 true입니다."
      },
      "views": {
       "board": {
@@ -2415,7 +3983,6 @@
        ],
        "marks": {
         "lit": [],
-        "good": [],
         "bad": [],
         "path": [
          [
@@ -2458,89 +4025,206 @@
        }
       },
       "rows": {
-       "members": [
-        "1:1",
-        "1:2",
-        "1:3",
-        "4:4",
-        "4:5",
-        "4:6",
-        "7:7",
-        "7:8",
-        "7:9"
+       "entries": [
+        {
+         "key": "row 1",
+         "label": {
+          "en": "row 1",
+          "ko": "1행"
+         },
+         "value": [
+          "1",
+          "2",
+          "3"
+         ]
+        },
+        {
+         "key": "row 4",
+         "label": {
+          "en": "row 4",
+          "ko": "4행"
+         },
+         "value": [
+          "4",
+          "5",
+          "6"
+         ]
+        },
+        {
+         "key": "row 7",
+         "label": {
+          "en": "row 7",
+          "ko": "7행"
+         },
+         "value": [
+          "7",
+          "8",
+          "9"
+         ]
+        }
        ],
-       "probes": [],
        "marks": {
         "good": [],
-        "bad": [],
         "path": [
-         "1:1",
-         "1:2",
-         "1:3",
-         "4:4",
-         "4:5",
-         "4:6",
-         "7:7",
-         "7:8",
-         "7:9"
+         "row 1",
+         "row 4",
+         "row 7"
         ]
        }
       },
       "cols": {
-       "members": [
-        "1:1",
-        "4:2",
-        "7:3",
-        "1:4",
-        "4:5",
-        "7:6",
-        "1:7",
-        "4:8",
-        "7:9"
+       "entries": [
+        {
+         "key": "col 1",
+         "label": {
+          "en": "column 1",
+          "ko": "1열"
+         },
+         "value": [
+          "1",
+          "4",
+          "7"
+         ]
+        },
+        {
+         "key": "col 4",
+         "label": {
+          "en": "column 4",
+          "ko": "4열"
+         },
+         "value": [
+          "2",
+          "5",
+          "8"
+         ]
+        },
+        {
+         "key": "col 7",
+         "label": {
+          "en": "column 7",
+          "ko": "7열"
+         },
+         "value": [
+          "3",
+          "6",
+          "9"
+         ]
+        }
        ],
-       "probes": [],
        "marks": {
         "good": [],
-        "bad": [],
         "path": [
-         "1:1",
-         "4:2",
-         "7:3",
-         "1:4",
-         "4:5",
-         "7:6",
-         "1:7",
-         "4:8",
-         "7:9"
+         "col 1",
+         "col 4",
+         "col 7"
         ]
        }
       },
       "boxes": {
-       "members": [
-        "0,0:1",
-        "0,1:2",
-        "0,2:3",
-        "1,0:4",
-        "1,1:5",
-        "1,2:6",
-        "2,0:7",
-        "2,1:8",
-        "2,2:9"
+       "entries": [
+        {
+         "key": "box 0,0",
+         "label": {
+          "en": "box (0,0)",
+          "ko": "(0,0) 박스"
+         },
+         "value": [
+          "1"
+         ]
+        },
+        {
+         "key": "box 0,1",
+         "label": {
+          "en": "box (0,1)",
+          "ko": "(0,1) 박스"
+         },
+         "value": [
+          "2"
+         ]
+        },
+        {
+         "key": "box 0,2",
+         "label": {
+          "en": "box (0,2)",
+          "ko": "(0,2) 박스"
+         },
+         "value": [
+          "3"
+         ]
+        },
+        {
+         "key": "box 1,0",
+         "label": {
+          "en": "box (1,0)",
+          "ko": "(1,0) 박스"
+         },
+         "value": [
+          "4"
+         ]
+        },
+        {
+         "key": "box 1,1",
+         "label": {
+          "en": "box (1,1)",
+          "ko": "(1,1) 박스"
+         },
+         "value": [
+          "5"
+         ]
+        },
+        {
+         "key": "box 1,2",
+         "label": {
+          "en": "box (1,2)",
+          "ko": "(1,2) 박스"
+         },
+         "value": [
+          "6"
+         ]
+        },
+        {
+         "key": "box 2,0",
+         "label": {
+          "en": "box (2,0)",
+          "ko": "(2,0) 박스"
+         },
+         "value": [
+          "7"
+         ]
+        },
+        {
+         "key": "box 2,1",
+         "label": {
+          "en": "box (2,1)",
+          "ko": "(2,1) 박스"
+         },
+         "value": [
+          "8"
+         ]
+        },
+        {
+         "key": "box 2,2",
+         "label": {
+          "en": "box (2,2)",
+          "ko": "(2,2) 박스"
+         },
+         "value": [
+          "9"
+         ]
+        }
        ],
-       "probes": [],
        "marks": {
         "good": [],
-        "bad": [],
         "path": [
-         "0,0:1",
-         "0,1:2",
-         "0,2:3",
-         "1,0:4",
-         "1,1:5",
-         "1,2:6",
-         "2,0:7",
-         "2,1:8",
-         "2,2:9"
+         "box 0,0",
+         "box 0,1",
+         "box 0,2",
+         "box 1,0",
+         "box 1,1",
+         "box 1,2",
+         "box 2,0",
+         "box 2,1",
+         "box 2,2"
         ]
        }
       }
@@ -2560,8 +4244,8 @@
    "frames": [
     {
      "caption": {
-      "en": "The board has 9 filled cells. Read it row by row; an empty cell is skipped, a digit's three keys are looked up in the set of keys seen so far.",
-      "ko": "채워진 칸은 9개입니다. 보드를 행 순서로 읽으며 빈 칸은 건너뛰고, 숫자의 키 세 개를 지금까지 본 키의 집합에서 찾아봅니다."
+      "en": "The board has 9 filled cells. Read it row by row, skipping empty cells; each digit is looked up in the digits its row, column and box have seen so far.",
+      "ko": "채워진 칸은 9개입니다. 보드를 행 순서로 읽으며 빈 칸은 건너뛰고, 숫자마다 그 행, 열, 박스에서 지금까지 본 숫자 중에 있는지 찾아봅니다."
      },
      "views": {
       "board": {
@@ -2668,35 +4352,28 @@
        ],
        "marks": {
         "lit": [],
-        "good": [],
         "bad": [],
         "path": []
        }
       },
       "rows": {
-       "members": [],
-       "probes": [],
+       "entries": [],
        "marks": {
         "good": [],
-        "bad": [],
         "path": []
        }
       },
       "cols": {
-       "members": [],
-       "probes": [],
+       "entries": [],
        "marks": {
         "good": [],
-        "bad": [],
         "path": []
        }
       },
       "boxes": {
-       "members": [],
-       "probes": [],
+       "entries": [],
        "marks": {
         "good": [],
-        "bad": [],
         "path": []
        }
       }
@@ -2704,8 +4381,8 @@
     },
     {
      "caption": {
-      "en": "Cell 1,1 holds 1: keys 1:1, 1:1 and 0,0:1 are not in the set yet, so all three go in.",
-      "ko": "1,1 칸의 숫자 1: 키 세 개(1:1, 1:1, 0,0:1)가 아직 집합에 없으므로 모두 넣습니다."
+      "en": "Cell 1,1 holds 1: row 1, column 1, box (0,0) have not seen a 1 yet, so it goes into all three.",
+      "ko": "1,1 칸의 숫자 1: 1행, 1열, (0,0) 박스 어디에도 아직 1이 없으므로 세 곳 모두에 넣습니다."
      },
      "views": {
       "board": {
@@ -2811,8 +4488,7 @@
         ]
        ],
        "marks": {
-        "lit": [],
-        "good": [
+        "lit": [
          [
           1,
           1
@@ -2820,60 +4496,176 @@
         ],
         "bad": [],
         "path": []
-       }
+       },
+       "shade": [
+        [
+         0,
+         0
+        ],
+        [
+         0,
+         1
+        ],
+        [
+         0,
+         2
+        ],
+        [
+         1,
+         0
+        ],
+        [
+         1,
+         1
+        ],
+        [
+         1,
+         2
+        ],
+        [
+         1,
+         3
+        ],
+        [
+         1,
+         4
+        ],
+        [
+         1,
+         5
+        ],
+        [
+         1,
+         6
+        ],
+        [
+         1,
+         7
+        ],
+        [
+         1,
+         8
+        ],
+        [
+         2,
+         0
+        ],
+        [
+         2,
+         1
+        ],
+        [
+         2,
+         2
+        ],
+        [
+         3,
+         1
+        ],
+        [
+         4,
+         1
+        ],
+        [
+         5,
+         1
+        ],
+        [
+         6,
+         1
+        ],
+        [
+         7,
+         1
+        ],
+        [
+         8,
+         1
+        ]
+       ]
       },
       "rows": {
-       "members": [
-        "1:1"
-       ],
-       "probes": [
+       "entries": [
         {
-         "value": "1:1",
-         "hit": false
+         "key": "row 1",
+         "label": {
+          "en": "row 1",
+          "ko": "1행"
+         },
+         "value": [
+          "1"
+         ]
         }
        ],
        "marks": {
         "good": [
-         "1:1"
+         "row 1"
         ],
-        "bad": [],
         "path": []
+       },
+       "probe": {
+        "key": "row 1",
+        "hit": false,
+        "label": {
+         "en": "1 in row 1?",
+         "ko": "1행에 1?"
+        }
        }
       },
       "cols": {
-       "members": [
-        "1:1"
-       ],
-       "probes": [
+       "entries": [
         {
-         "value": "1:1",
-         "hit": false
+         "key": "col 1",
+         "label": {
+          "en": "column 1",
+          "ko": "1열"
+         },
+         "value": [
+          "1"
+         ]
         }
        ],
        "marks": {
         "good": [
-         "1:1"
+         "col 1"
         ],
-        "bad": [],
         "path": []
+       },
+       "probe": {
+        "key": "col 1",
+        "hit": false,
+        "label": {
+         "en": "1 in column 1?",
+         "ko": "1열에 1?"
+        }
        }
       },
       "boxes": {
-       "members": [
-        "0,0:1"
-       ],
-       "probes": [
+       "entries": [
         {
-         "value": "0,0:1",
-         "hit": false
+         "key": "box 0,0",
+         "label": {
+          "en": "box (0,0)",
+          "ko": "(0,0) 박스"
+         },
+         "value": [
+          "1"
+         ]
         }
        ],
        "marks": {
         "good": [
-         "0,0:1"
+         "box 0,0"
         ],
-        "bad": [],
         "path": []
+       },
+       "probe": {
+        "key": "box 0,0",
+        "hit": false,
+        "label": {
+         "en": "1 in box (0,0)?",
+         "ko": "(0,0) 박스에 1?"
+        }
        }
       }
      },
@@ -2888,9 +4680,9 @@
        },
        "to": {
         "view": "rows",
-        "at": "1:1"
+        "at": "row 1"
        },
-       "value": "1:1"
+       "value": "1"
       },
       {
        "from": {
@@ -2902,9 +4694,9 @@
        },
        "to": {
         "view": "cols",
-        "at": "1:1"
+        "at": "col 1"
        },
-       "value": "1:1"
+       "value": "1"
       },
       {
        "from": {
@@ -2916,16 +4708,16 @@
        },
        "to": {
         "view": "boxes",
-        "at": "0,0:1"
+        "at": "box 0,0"
        },
-       "value": "0,0:1"
+       "value": "1"
       }
      ]
     },
     {
      "caption": {
-      "en": "Cell 1,4 holds 2: keys 1:2, 4:2 and 0,1:2 are not in the set yet, so all three go in.",
-      "ko": "1,4 칸의 숫자 2: 키 세 개(1:2, 4:2, 0,1:2)가 아직 집합에 없으므로 모두 넣습니다."
+      "en": "Cell 1,4 holds 2: row 1, column 4, box (0,1) have not seen a 2 yet, so it goes into all three.",
+      "ko": "1,4 칸의 숫자 2: 1행, 4열, (0,1) 박스 어디에도 아직 2가 없으므로 세 곳 모두에 넣습니다."
      },
      "views": {
       "board": {
@@ -3031,8 +4823,7 @@
         ]
        ],
        "marks": {
-        "lit": [],
-        "good": [
+        "lit": [
          [
           1,
           4
@@ -3040,63 +4831,197 @@
         ],
         "bad": [],
         "path": []
-       }
+       },
+       "shade": [
+        [
+         0,
+         3
+        ],
+        [
+         0,
+         4
+        ],
+        [
+         0,
+         5
+        ],
+        [
+         1,
+         0
+        ],
+        [
+         1,
+         1
+        ],
+        [
+         1,
+         2
+        ],
+        [
+         1,
+         3
+        ],
+        [
+         1,
+         4
+        ],
+        [
+         1,
+         5
+        ],
+        [
+         1,
+         6
+        ],
+        [
+         1,
+         7
+        ],
+        [
+         1,
+         8
+        ],
+        [
+         2,
+         3
+        ],
+        [
+         2,
+         4
+        ],
+        [
+         2,
+         5
+        ],
+        [
+         3,
+         4
+        ],
+        [
+         4,
+         4
+        ],
+        [
+         5,
+         4
+        ],
+        [
+         6,
+         4
+        ],
+        [
+         7,
+         4
+        ],
+        [
+         8,
+         4
+        ]
+       ]
       },
       "rows": {
-       "members": [
-        "1:1",
-        "1:2"
-       ],
-       "probes": [
+       "entries": [
         {
-         "value": "1:2",
-         "hit": false
+         "key": "row 1",
+         "label": {
+          "en": "row 1",
+          "ko": "1행"
+         },
+         "value": [
+          "1",
+          "2"
+         ]
         }
        ],
        "marks": {
         "good": [
-         "1:2"
+         "row 1"
         ],
-        "bad": [],
         "path": []
+       },
+       "probe": {
+        "key": "row 1",
+        "hit": false,
+        "label": {
+         "en": "2 in row 1?",
+         "ko": "1행에 2?"
+        }
        }
       },
       "cols": {
-       "members": [
-        "1:1",
-        "4:2"
-       ],
-       "probes": [
+       "entries": [
         {
-         "value": "4:2",
-         "hit": false
+         "key": "col 1",
+         "label": {
+          "en": "column 1",
+          "ko": "1열"
+         },
+         "value": [
+          "1"
+         ]
+        },
+        {
+         "key": "col 4",
+         "label": {
+          "en": "column 4",
+          "ko": "4열"
+         },
+         "value": [
+          "2"
+         ]
         }
        ],
        "marks": {
         "good": [
-         "4:2"
+         "col 4"
         ],
-        "bad": [],
         "path": []
+       },
+       "probe": {
+        "key": "col 4",
+        "hit": false,
+        "label": {
+         "en": "2 in column 4?",
+         "ko": "4열에 2?"
+        }
        }
       },
       "boxes": {
-       "members": [
-        "0,0:1",
-        "0,1:2"
-       ],
-       "probes": [
+       "entries": [
         {
-         "value": "0,1:2",
-         "hit": false
+         "key": "box 0,0",
+         "label": {
+          "en": "box (0,0)",
+          "ko": "(0,0) 박스"
+         },
+         "value": [
+          "1"
+         ]
+        },
+        {
+         "key": "box 0,1",
+         "label": {
+          "en": "box (0,1)",
+          "ko": "(0,1) 박스"
+         },
+         "value": [
+          "2"
+         ]
         }
        ],
        "marks": {
         "good": [
-         "0,1:2"
+         "box 0,1"
         ],
-        "bad": [],
         "path": []
+       },
+       "probe": {
+        "key": "box 0,1",
+        "hit": false,
+        "label": {
+         "en": "2 in box (0,1)?",
+         "ko": "(0,1) 박스에 2?"
+        }
        }
       }
      },
@@ -3111,9 +5036,9 @@
        },
        "to": {
         "view": "rows",
-        "at": "1:2"
+        "at": "row 1"
        },
-       "value": "1:2"
+       "value": "2"
       },
       {
        "from": {
@@ -3125,9 +5050,9 @@
        },
        "to": {
         "view": "cols",
-        "at": "4:2"
+        "at": "col 4"
        },
-       "value": "4:2"
+       "value": "2"
       },
       {
        "from": {
@@ -3139,16 +5064,16 @@
        },
        "to": {
         "view": "boxes",
-        "at": "0,1:2"
+        "at": "box 0,1"
        },
-       "value": "0,1:2"
+       "value": "2"
       }
      ]
     },
     {
      "caption": {
-      "en": "Cell 1,7 holds 1, and key 1:1 is already in the set: row 1 has a 1 at cell 1,1. A repeat, so the answer is false.",
-      "ko": "1,7 칸의 숫자 1: 키 1:1 → 이미 집합에 있습니다. 1행의 1,1 칸에 같은 숫자가 있으니 중복이고, 답은 false입니다."
+      "en": "Cell 1,7 holds 1, and row 1 has seen a 1 already, at cell 1,1. A repeat, so the answer is false.",
+      "ko": "1,7 칸의 숫자 1: 1행에서 이미 1,1 칸의 1을 봤습니다. 중복이므로 답은 false입니다."
      },
      "views": {
       "board": {
@@ -3255,7 +5180,6 @@
        ],
        "marks": {
         "lit": [],
-        "good": [],
         "bad": [
          [
           1,
@@ -3267,48 +5191,179 @@
          ]
         ],
         "path": []
-       }
+       },
+       "shade": [
+        [
+         0,
+         6
+        ],
+        [
+         0,
+         7
+        ],
+        [
+         0,
+         8
+        ],
+        [
+         1,
+         0
+        ],
+        [
+         1,
+         1
+        ],
+        [
+         1,
+         2
+        ],
+        [
+         1,
+         3
+        ],
+        [
+         1,
+         4
+        ],
+        [
+         1,
+         5
+        ],
+        [
+         1,
+         6
+        ],
+        [
+         1,
+         7
+        ],
+        [
+         1,
+         8
+        ],
+        [
+         2,
+         6
+        ],
+        [
+         2,
+         7
+        ],
+        [
+         2,
+         8
+        ],
+        [
+         3,
+         7
+        ],
+        [
+         4,
+         7
+        ],
+        [
+         5,
+         7
+        ],
+        [
+         6,
+         7
+        ],
+        [
+         7,
+         7
+        ],
+        [
+         8,
+         7
+        ]
+       ]
       },
       "rows": {
-       "members": [
-        "1:1",
-        "1:2"
-       ],
-       "probes": [
+       "entries": [
         {
-         "value": "1:1",
-         "hit": true
+         "key": "row 1",
+         "label": {
+          "en": "row 1",
+          "ko": "1행"
+         },
+         "value": [
+          "1",
+          "2"
+         ],
+         "marks": {
+          "bad": [
+           0
+          ]
+         }
         }
        ],
        "marks": {
         "good": [],
-        "bad": [
-         "1:1"
-        ],
         "path": []
+       },
+       "probe": {
+        "key": "row 1",
+        "hit": true,
+        "label": {
+         "en": "1 in row 1?",
+         "ko": "1행에 1?"
+        }
        }
       },
       "cols": {
-       "members": [
-        "1:1",
-        "4:2"
+       "entries": [
+        {
+         "key": "col 1",
+         "label": {
+          "en": "column 1",
+          "ko": "1열"
+         },
+         "value": [
+          "1"
+         ]
+        },
+        {
+         "key": "col 4",
+         "label": {
+          "en": "column 4",
+          "ko": "4열"
+         },
+         "value": [
+          "2"
+         ]
+        }
        ],
-       "probes": [],
        "marks": {
         "good": [],
-        "bad": [],
         "path": []
        }
       },
       "boxes": {
-       "members": [
-        "0,0:1",
-        "0,1:2"
+       "entries": [
+        {
+         "key": "box 0,0",
+         "label": {
+          "en": "box (0,0)",
+          "ko": "(0,0) 박스"
+         },
+         "value": [
+          "1"
+         ]
+        },
+        {
+         "key": "box 0,1",
+         "label": {
+          "en": "box (0,1)",
+          "ko": "(0,1) 박스"
+         },
+         "value": [
+          "2"
+         ]
+        }
        ],
-       "probes": [],
        "marks": {
         "good": [],
-        "bad": [],
         "path": []
        }
       }
@@ -3324,9 +5379,9 @@
        },
        "to": {
         "view": "rows",
-        "at": "1:1"
+        "at": "row 1"
        },
-       "value": "1:1",
+       "value": "1",
        "mark": "bad"
       }
      ],
