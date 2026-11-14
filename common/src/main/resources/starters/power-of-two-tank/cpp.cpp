@@ -1,6 +1,6 @@
 class Solution {
 public:
-    bool isSoloSpecies(int specimenCount) {
+    bool isPowerOfTwo(int n) {
         // Write your solution here
     }
 };

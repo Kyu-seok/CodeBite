@@ -8,7 +8,7 @@ int main() {
     string line;
     getline(cin, line);
     int n = stoi(line);
-    bool result = Solution().isSoloSpecies(n);
+    bool result = Solution().isPowerOfTwo(n);
     cout << (result ? "true" : "false") << endl;
     return 0;
 }
