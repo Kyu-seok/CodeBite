@@ -11,7 +11,7 @@ public class Main {
         String line2 = sc.nextLine().trim();
         ListNode l1 = ListNode.fromArray(line1);
         ListNode l2 = ListNode.fromArray(line2);
-        ListNode result = new Solution().tallyPickRoutes(l1, l2);
+        ListNode result = new Solution().addScoreLists(l1, l2);
         System.out.println(ListNode.toJsonArray(result));
     }
 }

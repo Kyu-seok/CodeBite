@@ -13,7 +13,7 @@ int main() {
     getline(cin, line2);
     ListNode* l1 = listFromArray(line1);
     ListNode* l2 = listFromArray(line2);
-    ListNode* result = Solution().tallyPickRoutes(l1, l2);
+    ListNode* result = Solution().addScoreLists(l1, l2);
     cout << listToJsonArray(result) << endl;
     return 0;
 }
