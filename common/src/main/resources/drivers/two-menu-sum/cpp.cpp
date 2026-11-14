@@ -9,18 +9,18 @@ using namespace std;
 {USER_CODE}
 
 int main() {
-    string numsLine;
-    getline(cin, numsLine);
-    string inner = numsLine.substr(1, numsLine.size() - 2);
-    vector<int> numbers;
+    string menuPriceLine;
+    getline(cin, menuPriceLine);
+    string inner = menuPriceLine.substr(1, menuPriceLine.size() - 2);
+    vector<int> menuPrice;
     stringstream ss(inner);
     string token;
     while (getline(ss, token, ',')) {
-        numbers.push_back(stoi(token));
+        menuPrice.push_back(stoi(token));
     }
-    int target;
-    cin >> target;
-    vector<int> result = Solution().pairTiersBudget(numbers, target);
+    int budget;
+    cin >> budget;
+    vector<int> result = Solution().findMenuPair(menuPrice, budget);
     cout << JsonOutput::intVector(result) << endl;
     return 0;
 }

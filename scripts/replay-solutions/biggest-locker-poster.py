@@ -1,5 +1,5 @@
 class Solution:
-    def frameLargestBale(self, lockers: list[int]) -> int:
+    def largestPosterArea(self, lockers: list[int]) -> int:
         left, right = 0, len(lockers) - 1
         best = 0
         while left < right:

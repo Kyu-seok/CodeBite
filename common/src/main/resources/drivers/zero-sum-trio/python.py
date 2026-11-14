@@ -1,8 +1,8 @@
 {USER_CODE}
 
 import json
-nums = json.loads(input())
-result = Solution().triageZeroPriority(nums)
+deltas = json.loads(input())
+result = Solution().zeroSumTrios(deltas)
 result = [sorted(t) for t in result]
 result.sort()
 print(json.dumps(result, separators=(',', ':')))

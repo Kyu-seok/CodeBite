@@ -9,7 +9,7 @@ public class Main {
         Scanner sc = new Scanner(System.in);
         String line = sc.nextLine().trim();
         TreeNode root = TreeNode.fromArray(line);
-        root = new Solution().reflectBlend(root);
+        root = new Solution().mirrorTree(root);
         System.out.println(TreeNode.toJsonArray(root));
     }
 }
