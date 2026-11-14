@@ -1,6 +1,6 @@
 class Solution {
 public:
-    vector<int> orderTankDeviations(vector<int>& drifts) {
+    vector<int> sortedSquaredDrifts(vector<int>& drifts) {
         // Write your solution here
     }
 };

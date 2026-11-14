@@ -1,5 +1,5 @@
 class Solution {
-    public int[] orderTankDeviations(int[] drifts) {
+    public int[] sortedSquaredDrifts(int[] drifts) {
         // Write your solution here
     }
 }
