@@ -16,7 +16,7 @@ int main() {
     getline(cin, kStr);
     int k = stoi(kStr);
     TreeNode* root = treeFromArray(line);
-    int result = Solution().pickNthTarget(root, k);
+    int result = Solution().nthLowestScore(root, k);
     cout << result << endl;
     return 0;
 }

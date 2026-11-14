@@ -7,6 +7,6 @@ class TreeNode:
         self.right = right
 
 class Solution:
-    def pickNthTarget(self, root: Optional[TreeNode], k: int) -> int:
+    def nthLowestScore(self, root: Optional[TreeNode], k: int) -> int:
         # Write your solution here
         pass

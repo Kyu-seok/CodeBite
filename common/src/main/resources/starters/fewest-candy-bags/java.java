@@ -1,5 +1,5 @@
 class Solution {
-    public int fewestBagSizes(int[] bagSizes, int quota) {
+    public int fewestBags(int[] bagSizes, int quota) {
         // Write your solution here
     }
 }

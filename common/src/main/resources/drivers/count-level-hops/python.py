@@ -1,5 +1,5 @@
 {USER_CODE}
 
 n = int(input())
-result = Solution().countReservoirPaths(n)
+result = Solution().countHopSequences(n)
 print(result)

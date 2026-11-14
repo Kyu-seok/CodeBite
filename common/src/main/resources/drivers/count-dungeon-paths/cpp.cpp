@@ -5,9 +5,9 @@ using namespace std;
 {USER_CODE}
 
 int main() {
-    int m, n;
-    cin >> m >> n;
-    int result = Solution().countGateRoutes(m, n);
+    int rows, cols;
+    cin >> rows >> cols;
+    int result = Solution().countPaths(rows, cols);
     cout << result << endl;
     return 0;
 }

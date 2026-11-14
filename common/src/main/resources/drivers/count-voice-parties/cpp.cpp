@@ -12,7 +12,7 @@ int main() {
     getline(cin, line);
     int n = stoi(nStr);
 
-    vector<vector<int>> edges;
+    vector<vector<int>> relays;
     if (line != "[]") {
         string inner = line.substr(1, line.size() - 2);
         int depth = 0;
@@ -27,13 +27,13 @@ int main() {
                     string a, b;
                     getline(ss, a, ',');
                     getline(ss, b, ',');
-                    edges.push_back({stoi(a), stoi(b)});
+                    relays.push_back({stoi(a), stoi(b)});
                 }
             }
         }
     }
 
-    int result = Solution().tallyDeviceMeshes(n, edges);
+    int result = Solution().countParties(n, relays);
     cout << result << endl;
     return 0;
 }

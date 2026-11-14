@@ -11,7 +11,7 @@
  */
 class Solution {
 public:
-    int widestCatalogSpan(TreeNode* root) {
+    int longestPathEdges(TreeNode* root) {
         // Write your solution here
     }
 };

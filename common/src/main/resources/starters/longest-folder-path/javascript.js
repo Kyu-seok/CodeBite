@@ -14,7 +14,7 @@ class Solution {
      * @param {TreeNode} root
      * @return {number}
      */
-    widestCatalogSpan(root) {
+    longestPathEdges(root) {
         // Write your solution here
     }
 }

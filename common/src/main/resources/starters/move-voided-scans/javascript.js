@@ -1,5 +1,5 @@
 class Solution {
-    voidEmptyScans(scans) {
+    moveVoidsToEnd(scans) {
 
     }
 }

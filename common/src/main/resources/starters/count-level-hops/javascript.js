@@ -3,7 +3,7 @@ class Solution {
      * @param {number} n
      * @return {number}
      */
-    countReservoirPaths(n) {
+    countHopSequences(n) {
         // Write your solution here
     }
 }

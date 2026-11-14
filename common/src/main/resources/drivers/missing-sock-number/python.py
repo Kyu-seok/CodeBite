@@ -1,5 +1,5 @@
 {USER_CODE}
 
-nums = eval(input())
-result = Solution().lowestMissingTarget(nums)
+socks = eval(input())
+result = Solution().smallestMissingNumber(socks)
 print(result)

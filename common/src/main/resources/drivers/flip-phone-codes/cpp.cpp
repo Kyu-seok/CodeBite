@@ -9,7 +9,7 @@ using namespace std;
 int main() {
     string digits;
     getline(cin, digits);
-    vector<string> result = Solution().mapKeypadCodes(digits);
+    vector<string> result = Solution().letterCombinations(digits);
     sort(result.begin(), result.end());
     cout << "[";
     for (int i = 0; i < (int)result.size(); i++) {
