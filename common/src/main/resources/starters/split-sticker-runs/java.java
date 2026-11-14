@@ -1,5 +1,5 @@
 class Solution {
-    public List<Integer> splitZoneRuns(String stickers) {
+    public List<Integer> splitStickerRuns(String stickers) {
         // Write your solution here
     }
 }
