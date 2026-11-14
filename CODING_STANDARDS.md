@@ -16,7 +16,7 @@ _Example:_ `GitHubRepo.name()` gives `codebite-solutions` from `octocat/codebite
 
 ## A guard test shows what it catches
 
-A test that guards data (every migrated Diagram, every Test Case) has cases showing wrong data failing it, one for each way the data can go wrong. Passing on today's data says nothing about the check, and a loose comparison passes on anything.
+A test that guards data (every migrated Diagram, every Test Case) has cases showing wrong data failing it, one for each way the data can go wrong. Passing on today's data says nothing about the check, and a loose comparison passes on anything. Each exception the check allows gets a case just outside it that fails, since an exception is where wrong data slips through: an excuse for a value leaving gets a value arriving under the same excuse.
 
 _Example:_ `DiagramsMatchExamplesTest.aWrongDiagramIsCaught` holds a wrong Diagram for each way one could slip through: one row of a grid, a pinned Diagram under the wrong example, `after` copied from the input.
 
@@ -25,6 +25,8 @@ _Example:_ `DiagramsMatchExamplesTest.aWrongDiagramIsCaught` holds a wrong Diagr
 A test that needs a problem without some optional asset (a Walkthrough, a Diagram, a Solution, a Driver for a language) makes that state itself: it renames the problem to a Slug no file is named for, deletes the row, or uses a fixture. It doesn't name a real problem that lacks the asset today, since filling the gaps is ongoing work and the next ticket turns such a test red.
 
 _Example:_ `WalkthroughEndpointTest` renames `rotting-donuts` to a Slug with no Walkthrough file instead of naming `snack-drawer-pair`, which #264 gave one.
+
+The same holds for the wrong data a guard test feeds its check: it builds a small fixture, never edits a real file at a fixed frame, row or key, since regenerating that file moves what the position holds and the case then fails for the wrong reason or passes without testing anything. `WalkthroughsMatchSamplesTest`'s rule checks break `step(...)` and `varsFixture()` Walkthroughs they build (#296).
 
 ## A highlight marks what its example points at
 
