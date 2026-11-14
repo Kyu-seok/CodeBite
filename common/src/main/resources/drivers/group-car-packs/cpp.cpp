@@ -27,7 +27,7 @@ int main() {
     getline(cin, spdLine);
     vector<int> position = parseArray(posLine);
     vector<int> speed = parseArray(spdLine);
-    int result = Solution().groupTrainPacks(target, position, speed);
+    int result = Solution().countCarPacks(target, position, speed);
     cout << result << endl;
     return 0;
 }
