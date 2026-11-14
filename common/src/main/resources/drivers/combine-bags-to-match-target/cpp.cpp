@@ -18,24 +18,24 @@ vector<int> parseArray(const string& s) {
 }
 
 int main() {
-    string tripletsLine, targetLine;
-    getline(cin, tripletsLine);
+    string bagsLine, targetLine;
+    getline(cin, bagsLine);
     getline(cin, targetLine);
     // Parse 2D array
-    vector<vector<int>> triplets;
+    vector<vector<int>> bags;
     int i = 0;
-    while (i < (int)tripletsLine.size()) {
-        if (tripletsLine[i] == '[' && i > 0) {
-            int j = tripletsLine.find(']', i);
-            string sub = tripletsLine.substr(i, j - i + 1);
-            triplets.push_back(parseArray(sub));
+    while (i < (int)bagsLine.size()) {
+        if (bagsLine[i] == '[' && i > 0) {
+            int j = bagsLine.find(']', i);
+            string sub = bagsLine.substr(i, j - i + 1);
+            bags.push_back(parseArray(sub));
             i = j + 1;
         } else {
             i++;
         }
     }
     vector<int> target = parseArray(targetLine);
-    bool result = Solution().canBuildBales(triplets, target);
+    bool result = Solution().canMatchTarget(bags, target);
     cout << (result ? "true" : "false") << endl;
     return 0;
 }

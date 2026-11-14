@@ -1,8 +1,8 @@
 class Solution:
-    def canBuildBales(self, triplets: list[list[int]], target: list[int]) -> bool:
+    def canMatchTarget(self, bags: list[list[int]], target: list[int]) -> bool:
         # Taking every usable bag never hurts; it only has to reach each cap somewhere.
         reached = [False, False, False]
-        for bag in triplets:
+        for bag in bags:
             if all(reading <= cap for reading, cap in zip(bag, target)):
                 for channel in range(3):
                     if bag[channel] == target[channel]:

@@ -4,7 +4,7 @@ class Solution {
      * @param {number[]} target
      * @return {boolean}
      */
-    canBuildBales(bags, target) {
+    canMatchTarget(bags, target) {
         // Write your solution here
     }
 }
