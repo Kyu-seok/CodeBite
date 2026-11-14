@@ -22,8 +22,8 @@ public class Main {
                 i++;
             }
         }
-        int[][] grid = rows.toArray(new int[0][]);
-        int result = new Solution().crossFloodedCorridors(grid);
+        int[][] elevation = rows.toArray(new int[0][]);
+        int result = new Solution().earliestCrossingTime(elevation);
         System.out.println(result);
     }
 }
