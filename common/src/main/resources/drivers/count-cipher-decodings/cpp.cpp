@@ -5,9 +5,9 @@ using namespace std;
 {USER_CODE}
 
 int main() {
-    string s;
-    getline(cin, s);
-    int result = Solution().countScanDecodings(s);
+    string digits;
+    getline(cin, digits);
+    int result = Solution().countDecodings(digits);
     cout << result << endl;
     return 0;
 }

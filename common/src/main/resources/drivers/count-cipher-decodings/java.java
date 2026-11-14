@@ -5,8 +5,8 @@ import java.util.*;
 public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        String s = sc.nextLine().trim();
-        int result = new Solution().countScanDecodings(s);
+        String digits = sc.nextLine().trim();
+        int result = new Solution().countDecodings(digits);
         System.out.println(result);
     }
 }
