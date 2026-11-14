@@ -1,5 +1,5 @@
 {USER_CODE}
 
 stones = eval(input())
-result = Solution().last_stone_weight(stones)
+result = Solution().crushHeaviestBlocks(stones)
 print(result)

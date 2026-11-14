@@ -2,7 +2,7 @@ import heapq
 
 
 class Solution:
-    def last_stone_weight(self, blocks: list[int]) -> int:
+    def crushHeaviestBlocks(self, blocks: list[int]) -> int:
         pile = [-weight for weight in blocks]
         heapq.heapify(pile)
         while len(pile) > 1:

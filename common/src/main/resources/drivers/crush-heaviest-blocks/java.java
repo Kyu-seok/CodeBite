@@ -10,7 +10,7 @@ public class Main {
         String[] parts = inner.split(",");
         int[] stones = new int[parts.length];
         for (int i = 0; i < parts.length; i++) stones[i] = Integer.parseInt(parts[i].trim());
-        int result = new Solution().crushHeaviestBales(stones);
+        int result = new Solution().crushHeaviestBlocks(stones);
         System.out.println(result);
     }
 }

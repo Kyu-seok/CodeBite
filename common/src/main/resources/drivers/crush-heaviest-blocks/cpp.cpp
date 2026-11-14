@@ -15,7 +15,7 @@ int main() {
     stringstream ss(inner);
     string token;
     while (getline(ss, token, ',')) stones.push_back(stoi(token));
-    int result = Solution().crushHeaviestBales(stones);
+    int result = Solution().crushHeaviestBlocks(stones);
     cout << result << endl;
     return 0;
 }
