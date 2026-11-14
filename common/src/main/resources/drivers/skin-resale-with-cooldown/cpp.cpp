@@ -16,7 +16,7 @@ int main() {
     while (getline(ss, token, ',')) {
         prices.push_back(stoi(token));
     }
-    int result = Solution().bestTierResale(prices);
+    int result = Solution().maxProfit(prices);
     cout << result << endl;
     return 0;
 }

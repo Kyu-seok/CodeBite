@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {number[]} tierPrices
+     * @param {number[]} prices
      * @return {number}
      */
-    bestTierResale(tierPrices) {
+    maxProfit(prices) {
         // Write your solution here
     }
 }

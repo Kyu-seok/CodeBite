@@ -10,7 +10,7 @@ public class Main {
         String[] parts = inner.split(",");
         int[] prices = new int[parts.length];
         for (int i = 0; i < parts.length; i++) prices[i] = Integer.parseInt(parts[i].trim());
-        int result = new Solution().bestTierResale(prices);
+        int result = new Solution().maxProfit(prices);
         System.out.println(result);
     }
 }

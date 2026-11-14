@@ -1,6 +1,6 @@
 class Solution {
 public:
-    int bestTierResale(vector<int>& tierPrices) {
+    int maxProfit(vector<int>& prices) {
         // Write your solution here
     }
 };

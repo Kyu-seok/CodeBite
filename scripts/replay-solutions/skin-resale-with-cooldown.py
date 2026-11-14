@@ -1,5 +1,5 @@
 class Solution:
-    def bestTierResale(self, prices: list[int]) -> int:
+    def maxProfit(self, prices: list[int]) -> int:
         holding = float("-inf")  # best profit while holding a copy
         sold = 0                 # best profit having sold today (cooldown tomorrow)
         resting = 0              # best profit while free to buy

@@ -1,6 +1,6 @@
 from typing import List
 
 class Solution:
-    def bestTierResale(self, tierPrices: List[int]) -> int:
+    def maxProfit(self, prices: List[int]) -> int:
         # Write your solution here
         pass

@@ -1,5 +1,5 @@
 class Solution {
-    public int bestTierResale(int[] tierPrices) {
+    public int maxProfit(int[] prices) {
         // Write your solution here
     }
 }

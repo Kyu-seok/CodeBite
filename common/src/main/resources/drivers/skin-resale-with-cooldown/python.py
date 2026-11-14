@@ -2,5 +2,5 @@
 
 import json
 prices = json.loads(input())
-result = Solution().bestTierResale(prices)
+result = Solution().maxProfit(prices)
 print(result)
