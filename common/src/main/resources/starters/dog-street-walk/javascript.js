@@ -3,7 +3,7 @@ class Solution {
      * @param {string[][]} routes
      * @return {string[]}
      */
-    traceStreetSweep(routes) {
+    planWalk(routes) {
         // Write your solution here
     }
 }

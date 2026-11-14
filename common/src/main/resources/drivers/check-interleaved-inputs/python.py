@@ -6,8 +6,8 @@ def _safe_input():
     except EOFError:
         return ''
 
-s1 = _safe_input()
-s2 = _safe_input()
-s3 = _safe_input()
-result = Solution().checkMergedQueue(s1, s2, s3)
+controllerA = _safe_input()
+controllerB = _safe_input()
+merged = _safe_input()
+result = Solution().isInterleaving(controllerA, controllerB, merged)
 print(str(result).lower())

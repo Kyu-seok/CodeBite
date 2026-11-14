@@ -1,5 +1,5 @@
 class Solution {
-    public void clearDefectRows(int[][] board) {
+    public void zeroOutRowsAndCols(int[][] board) {
         // Write your solution here
     }
 }
