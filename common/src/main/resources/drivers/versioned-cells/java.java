@@ -37,25 +37,25 @@ public class Main {
         }
 
         StringBuilder sb = new StringBuilder("[");
-        VersionedCells snapArr = null;
+        VersionedCells cells = null;
         for (int idx = 0; idx < ops.size(); idx++) {
             if (idx > 0) sb.append(",");
-            String op = ops.readAt(idx);
-            int[] opArgs = argsList.readAt(idx);
+            String op = ops.get(idx);
+            int[] opArgs = argsList.get(idx);
             switch (op) {
                 case "VersionedCells":
-                    snapArr = new VersionedCells(opArgs[0]);
+                    cells = new VersionedCells(opArgs[0]);
                     sb.append("null");
                     break;
                 case "set":
-                    snapArr.set(opArgs[0], opArgs[1]);
+                    cells.set(opArgs[0], opArgs[1]);
                     sb.append("null");
                     break;
                 case "commit":
-                    sb.append(snapArr.commit());
+                    sb.append(cells.commit());
                     break;
                 case "readAt":
-                    sb.append(snapArr.readAt(opArgs[0], opArgs[1]));
+                    sb.append(cells.readAt(opArgs[0], opArgs[1]));
                     break;
             }
         }

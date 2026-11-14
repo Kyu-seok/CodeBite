@@ -1,5 +1,5 @@
 {USER_CODE}
 
-n = int(input())
-result = Solution().reversePrinterFlags(n)
+statusWord = int(input())
+result = Solution().reverseFlags(statusWord)
 print(result)

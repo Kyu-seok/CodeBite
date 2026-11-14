@@ -5,9 +5,9 @@ using namespace std;
 {USER_CODE}
 
 int main() {
-    int x;
-    cin >> x;
-    bool result = Solution().isReversibleCode(x);
+    int episode;
+    cin >> episode;
+    bool result = Solution().isPalindrome(episode);
     cout << (result ? "true" : "false") << endl;
     return 0;
 }

@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {number} code
+     * @param {number} episode
      * @return {boolean}
      */
-    isReversibleCode(code) {
+    isPalindrome(episode) {
         // Write your solution here
     }
 }

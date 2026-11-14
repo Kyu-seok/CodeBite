@@ -1,4 +1,4 @@
 class Solution:
-    def isReversibleCode(self, code: int) -> bool:
+    def isPalindrome(self, episode: int) -> bool:
         # Write your solution here
         pass

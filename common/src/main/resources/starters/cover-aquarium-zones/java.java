@@ -1,5 +1,5 @@
 class Solution {
-    public int coverAllWindows(int[][] zones) {
+    public int minPellets(int[][] zones) {
         // Write your solution here
     }
 }

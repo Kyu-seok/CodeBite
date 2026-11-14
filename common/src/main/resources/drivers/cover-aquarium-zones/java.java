@@ -21,8 +21,8 @@ public class Main {
                 }
             }
         }
-        int[][] targets = list.toArray(new int[0][]);
-        int result = new Solution().coverAllWindows(targets);
+        int[][] zones = list.toArray(new int[0][]);
+        int result = new Solution().minPellets(zones);
         System.out.println(result);
     }
 }

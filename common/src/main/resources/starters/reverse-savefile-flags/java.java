@@ -1,5 +1,5 @@
 class Solution {
-    public long reversePrinterFlags(long statusWord) {
+    public long reverseFlags(long statusWord) {
         // Write your solution here
     }
 }

@@ -1,5 +1,5 @@
 {USER_CODE}
 
-x = int(input().strip())
-result = Solution().isReversibleCode(x)
+episode = int(input().strip())
+result = Solution().isPalindrome(episode)
 print(str(result).lower())

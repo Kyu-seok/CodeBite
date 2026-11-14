@@ -1,5 +1,5 @@
 class Solution {
-    public boolean isReversibleCode(int code) {
+    public boolean isPalindrome(int episode) {
         // Write your solution here
     }
 }

@@ -49,23 +49,23 @@ int main() {
     }
 
     cout << "[";
-    VersionedCells* snapArr = nullptr;
+    VersionedCells* cells = nullptr;
     for (size_t idx = 0; idx < ops.size(); idx++) {
         if (idx > 0) cout << ",";
         string op = ops[idx];
         if (op == "VersionedCells") {
-            snapArr = new VersionedCells(argsList[idx][0]);
+            cells = new VersionedCells(argsList[idx][0]);
             cout << "null";
         } else if (op == "set") {
-            snapArr->set(argsList[idx][0], argsList[idx][1]);
+            cells->set(argsList[idx][0], argsList[idx][1]);
             cout << "null";
         } else if (op == "commit") {
-            cout << snapArr->commit();
+            cout << cells->commit();
         } else if (op == "readAt") {
-            cout << snapArr->readAt(argsList[idx][0], argsList[idx][1]);
+            cout << cells->readAt(argsList[idx][0], argsList[idx][1]);
         }
     }
     cout << "]" << endl;
-    delete snapArr;
+    delete cells;
     return 0;
 }
