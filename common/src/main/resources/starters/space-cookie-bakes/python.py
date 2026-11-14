@@ -1,4 +1,4 @@
 class Solution:
-    def orderRecipeBakes(self, cookies: str) -> str:
+    def spaceBakes(self, cookies: str) -> str:
         # Write your solution here
         pass

@@ -3,7 +3,7 @@ class Solution {
      * @param {string} cookies
      * @return {string}
      */
-    orderRecipeBakes(cookies) {
+    spaceBakes(cookies) {
         // Write your solution here
     }
 }
