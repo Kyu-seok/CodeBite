@@ -11,7 +11,7 @@
  */
 class Solution {
 public:
-    vector<vector<int>> alternateWardSweep(TreeNode* root) {
+    vector<vector<int>> zigzagRows(TreeNode* root) {
         // Write your solution here
     }
 };

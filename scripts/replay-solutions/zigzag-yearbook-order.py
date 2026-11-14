@@ -9,7 +9,7 @@ class TreeNode:
 
 
 class Solution:
-    def alternateWardSweep(self, root: Optional[TreeNode]) -> list[list[int]]:
+    def zigzagRows(self, root: Optional[TreeNode]) -> list[list[int]]:
         rows: list[list[int]] = []
         level = [root] if root else []
         while level:

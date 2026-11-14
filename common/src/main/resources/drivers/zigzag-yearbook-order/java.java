@@ -10,7 +10,7 @@ public class Main {
         Scanner sc = new Scanner(System.in);
         String line = sc.nextLine().trim();
         TreeNode root = TreeNode.fromArray(line);
-        List<List<Integer>> result = new Solution().alternateWardSweep(root);
+        List<List<Integer>> result = new Solution().zigzagRows(root);
         System.out.println(JsonOutput.intList2D(result));
     }
 }
