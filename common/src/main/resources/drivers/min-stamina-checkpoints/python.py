@@ -1,5 +1,5 @@
 {USER_CODE}
 
 cost = eval(input())
-result = Solution().pickLeastEffort(cost)
+result = Solution().minStaminaToFinish(cost)
 print(result)

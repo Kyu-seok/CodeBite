@@ -10,7 +10,7 @@ public class Main {
         String[] parts = inner.split(",");
         int[] cost = new int[parts.length];
         for (int i = 0; i < parts.length; i++) cost[i] = Integer.parseInt(parts[i].trim());
-        int result = new Solution().pickLeastEffort(cost);
+        int result = new Solution().minStaminaToFinish(cost);
         System.out.println(result);
     }
 }

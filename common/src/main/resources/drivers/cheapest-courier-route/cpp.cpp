@@ -13,7 +13,7 @@ int main() {
     string line;
     getline(cin, line);
     // Parse 2D int array [[0,1,100],[1,2,100]]
-    vector<vector<int>> flights;
+    vector<vector<int>> links;
     string inner = line.substr(1, line.size() - 2);
     if (!inner.empty() && inner.find('[') != string::npos) {
         int i = 0;
@@ -27,16 +27,16 @@ int main() {
                 while (getline(ss, token, ',')) {
                     trip.push_back(stoi(token));
                 }
-                flights.push_back(trip);
+                links.push_back(trip);
                 i = j + 1;
             } else {
                 i++;
             }
         }
     }
-    int src, dst, k;
-    cin >> src >> dst >> k;
-    int result = Solution().relayDispatchCost(n, flights, src, dst, k);
+    int src, dst, maxStops;
+    cin >> src >> dst >> maxStops;
+    int result = Solution().cheapestRoute(n, links, src, dst, maxStops);
     cout << result << endl;
     return 0;
 }
