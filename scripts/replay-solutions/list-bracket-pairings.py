@@ -1,5 +1,5 @@
 class Solution:
-    def listSlateSequences(self, pairCount: int) -> list[str]:
+    def listBracketPairings(self, pairCount: int) -> list[str]:
         sequences: list[str] = []
 
         def build(prefix: str, opened: int, closed: int) -> None:

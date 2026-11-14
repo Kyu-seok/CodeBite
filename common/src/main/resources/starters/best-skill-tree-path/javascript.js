@@ -14,7 +14,7 @@ class Solution {
      * @param {TreeNode} root
      * @return {number}
      */
-    maxBranchTotal(root) {
+    maxPathSum(root) {
         // Write your solution here
     }
 }

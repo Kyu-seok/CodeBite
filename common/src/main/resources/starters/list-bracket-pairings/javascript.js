@@ -1,5 +1,5 @@
 class Solution {
-    listSlateSequences(pairCount) {
+    listBracketPairings(pairCount) {
 
     }
 }

@@ -17,9 +17,9 @@ int main() {
     while (getline(ss, token, ',')) {
         piles.push_back(stoi(token));
     }
-    int h;
-    cin >> h;
-    int result = Solution().slowestConveyorSpeed(piles, h);
+    int hours;
+    cin >> hours;
+    int result = Solution().minEatingRate(piles, hours);
     cout << result << endl;
     return 0;
 }
