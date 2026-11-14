@@ -4,7 +4,7 @@ class Solution {
      * @param {number} k
      * @return {number}
      */
-    findBrightestTargets(scores, k) {
+    kthHighestScore(scores, k) {
         // Write your solution here
     }
 }

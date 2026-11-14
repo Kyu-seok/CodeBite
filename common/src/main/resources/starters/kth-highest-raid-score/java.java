@@ -1,5 +1,5 @@
 class Solution {
-    public int findBrightestTargets(int[] scores, int k) {
+    public int kthHighestScore(int[] scores, int k) {
         // Write your solution here
     }
 }
