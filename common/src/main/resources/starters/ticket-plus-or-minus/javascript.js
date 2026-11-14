@@ -4,7 +4,7 @@ class Solution {
      * @param {number} target
      * @return {number}
      */
-    partitionTankDoses(tickets, target) {
+    countSignAssignments(tickets, target) {
         // Write your solution here
     }
 }
