@@ -1,6 +1,6 @@
 class Solution {
 public:
-    vector<string> splitZoneCodes(string digits) {
+    vector<string> restoreIpAddresses(string digits) {
         // Write your solution here
     }
 };
