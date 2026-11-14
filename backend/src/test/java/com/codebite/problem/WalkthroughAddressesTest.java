@@ -26,8 +26,6 @@ class WalkthroughAddressesTest {
     void theCopiedTableNamesTheViewTypesThatTakeAddresses() {
         WalkthroughAddresses kit = WalkthroughAddresses.kit();
         assertEquals(Set.of("grid", "array", "map", "set", "output", "queue", "table", "graph", "intervals"), kit.viewTypes());
-        assertEquals("a [row, col]", kit.what("grid").orElseThrow());
-        assertTrue(kit.what("vars").isEmpty());
     }
 
     @Test
@@ -66,6 +64,9 @@ class WalkthroughAddressesTest {
         assertEquals(Map.of("a", json("0"), "b", json("null"), "[a,b]", json("5")), kit.places("graph",
                 json("{'nodes': [{'id': 'a'}, {'id': 'b'}], 'edges': [{'from': 'a', 'to': 'b', 'label': 5}], 'values': {'a': 0}}")));
         assertEquals(Map.of(), kit.places("vars", json("{'items': [{'label': 'k', 'value': 2}]}")));
+        assertEquals(Set.of("b"), kit.onward("graph", json("['a', 'b']")));
+        assertEquals(Set.of(), kit.onward("graph", json("'a'")));
+        assertEquals(Set.of(), kit.onward("table", json("[0, 1]")));
         assertTrue(kit.indexed("queue"));
         assertFalse(kit.indexed("graph"));
         assertEquals("4", WalkthroughAddresses.address(json("'4'")));

@@ -111,6 +111,17 @@ async function open({ width, theme, lang, jwt }) {
   return waitFor(`!!document.querySelector('[role=tab]')`);
 }
 
+// Opens the Walkthrough tab and reveals the player, in language strings `s`: waits for the tab, clicks it, waits for
+// the intro's reveal button, clicks it, and waits for the player. `atTab(shown)` runs once the tab shows (or doesn't),
+// `atIntro(shown)` once the reveal button does, so a caller checks and shoots each stage. Whether the player mounted.
+async function openPlayer(s, { atTab = async () => {}, atIntro = async () => {} } = {}) {
+  await atTab(await waitFor(`[...document.querySelectorAll('[role=tab]')].some(e => e.textContent.includes(${JSON.stringify(s.tab)}))`));
+  await clickText('[role=tab]', s.tab);
+  await atIntro(await waitFor(`[...document.querySelectorAll('button')].some(b => b.textContent.includes(${JSON.stringify(s.reveal)}))`));
+  await clickText('button', s.reveal);
+  return waitFor(`!!document.querySelector('.wt-count')`);
+}
+
 const L = { en: { tab: 'Walkthrough', reveal: "Show how it's solved", desc: 'Description', next: 'Next step' },
             ko: { tab: '풀이 과정', reveal: '풀이 과정 보기', desc: '설명', next: '다음 단계' } };
 
@@ -127,19 +138,23 @@ for (const r of runs) {
   check(await open({ ...r, jwt }), `${r.name}: page loads`);
   const desc = await js(`[...document.querySelectorAll('[role=tab]')].find(e => e.textContent.includes(${JSON.stringify(s.desc)}))?.textContent.trim() ?? null`);
   check(!!desc, `${r.name}: tabs in ${r.lang} (${desc})`);
-  check(await waitFor(`[...document.querySelectorAll('[role=tab]')].some(e => e.textContent.includes(${JSON.stringify(s.tab)}))`), `${r.name}: Walkthrough tab shows`);
-  const fit = await js(`(() => { const t = [...document.querySelectorAll('[role=tab]')].find(e => e.textContent.includes(${JSON.stringify(s.tab)}));
-    const list = t.parentElement, l = list.getBoundingClientRect(), b = t.getBoundingClientRect();
-    return { right: Math.round(b.right), listRight: Math.round(l.right), scroll: list.scrollWidth, client: list.clientWidth, row: Math.round(list.parentElement.getBoundingClientRect().width) }; })()`);
-  check(fit.right <= fit.listRight + 1, `${r.name}: Walkthrough tab fully visible ${JSON.stringify(fit)}`);
-  if (r.jwt === undefined) check(await waitFor(`!!localStorage.getItem('token')`), `${r.name}: signed in`);
-  await shot(`${r.name}-1-tabs`);
-  await clickText('[role=tab]', s.tab);
-  check(await waitFor(`[...document.querySelectorAll('button')].some(b => b.textContent.includes(${JSON.stringify(s.reveal)}))`), `${r.name}: intro with the reveal button`);
-  check(!(await js(`!!document.querySelector('.wt')`)), `${r.name}: no player before the reveal`);
-  await shot(`${r.name}-2-intro`);
-  await clickText('button', s.reveal);
-  check(await waitFor(`!!document.querySelector('.wt-count')`), `${r.name}: player mounts after the reveal`);
+  const mounted = await openPlayer(s, {
+    async atTab(shown) {
+      check(shown, `${r.name}: Walkthrough tab shows`);
+      const fit = await js(`(() => { const t = [...document.querySelectorAll('[role=tab]')].find(e => e.textContent.includes(${JSON.stringify(s.tab)}));
+        const list = t.parentElement, l = list.getBoundingClientRect(), b = t.getBoundingClientRect();
+        return { right: Math.round(b.right), listRight: Math.round(l.right), scroll: list.scrollWidth, client: list.clientWidth, row: Math.round(list.parentElement.getBoundingClientRect().width) }; })()`);
+      check(fit.right <= fit.listRight + 1, `${r.name}: Walkthrough tab fully visible ${JSON.stringify(fit)}`);
+      if (r.jwt === undefined) check(await waitFor(`!!localStorage.getItem('token')`), `${r.name}: signed in`);
+      await shot(`${r.name}-1-tabs`);
+    },
+    async atIntro(shown) {
+      check(shown, `${r.name}: intro with the reveal button`);
+      check(!(await js(`!!document.querySelector('.wt')`)), `${r.name}: no player before the reveal`);
+      await shot(`${r.name}-2-intro`);
+    },
+  });
+  check(mounted, `${r.name}: player mounts after the reveal`);
   const theme = await js(`document.querySelector('.wt').dataset.theme`);
   const pageTheme = await js(`document.documentElement.classList.contains('dark') ? 'dark' : 'light'`);
   check(theme === pageTheme && theme === r.theme, `${r.name}: player theme ${theme}, page ${pageTheme}`);
@@ -223,10 +238,7 @@ else {
   check(n === beside.kinds.length, `description draws its ${beside.kinds.length} Diagram(s) (${beside.kinds.join(', ')}): ${n} drawn`);
   const diagrams = [];
   for (let i = 0; i < n; i++) diagrams.push(await clip(`${drawn}[${i}]`));
-  await waitFor(`[...document.querySelectorAll('[role=tab]')].some(e => e.textContent.includes(${JSON.stringify(L.en.tab)}))`);
-  await clickText('[role=tab]', L.en.tab);
-  await waitFor(`[...document.querySelectorAll('button')].some(b => b.textContent.includes(${JSON.stringify(L.en.reveal)}))`);
-  await clickText('button', L.en.reveal);
+  await openPlayer(L.en);
   const opened = await waitFor(`document.querySelector('.wt-count')?.textContent.startsWith('1 /')`);
   check(opened, `the Walkthrough opens on its first frame (${await count()})`);
   const frame = await clip(`document.querySelector('.wt')`);
