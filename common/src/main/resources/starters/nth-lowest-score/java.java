@@ -10,7 +10,7 @@
  * }
  */
 class Solution {
-    public int pickNthTarget(TreeNode root, int k) {
+    public int nthLowestScore(TreeNode root, int k) {
         // Write your solution here
     }
 }
