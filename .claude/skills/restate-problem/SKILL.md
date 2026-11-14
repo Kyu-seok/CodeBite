@@ -36,6 +36,7 @@ Done when you can state, from the Test Cases alone, what the problem computes, a
 1. Draft the English title, description and constraints, then the Korean ones, following the house style of recent Restatements (`V192__rename_product_of_all_other_elements.sql` is the model: a direct statement, **Example N:** blocks, constraints as a bullet list). Keep each example's Input and Output on one line each, even when the requested text wraps them: `DiagramsMatchExamplesTest` reads the `Output:` line alone. Carry every Diagram (a ` ```diagram-* ` block, `.claude/skills/add-diagram/SKILL.md`) over byte for byte, under the same example in both languages: its data is the Test Cases', which stay.
 2. Pick the Slug: kebab-case of the new title. It must be neither a current Slug nor a Former Slug (`ProblemRepository.isSlugTaken`; check both tables, or `ls common/src/main/resources/drivers/` plus `problem_former_slugs`).
 3. Pick the method and parameter names, if they change. Every name in the description's examples must match a name in the Starter Code.
+4. Keep each Korean constraint's code spans in the English order: `StatementsMatchTestCasesTest` checks it, so write "`0 <= parent[i] < n` (`i >= 1`인 경우)", not "`i >= 1`이면 `0 <= parent[i] < n`".
 
 Done when each example's Input and Output are exactly a sample case's input and expected output (order_index 1 and 2), restated in the new names, the constraints describe the inputs the Test Cases actually contain, and each language has every Diagram the old description had.
 
@@ -100,9 +101,19 @@ A **text-only Restatement** (the Slug, the method and parameter names, the Drive
 
 Done when all five are green and `judge-local.sh` says ACCEPTED for all 4 Languages (step 1 green, for a text-only Restatement). Then `scripts/dev-branch-servers.sh stop`.
 
+## Several problems in one PR
+
+A ticket of several problems is one branch, one PR and one commit per problem. What changes from doing them one at a time:
+
+- **Number the migrations up front**, one per problem in commit order, from one above `origin/master`'s highest (step 3).
+- **Check the rule against every case before drafting.** A short script over every problem's cases (`scripts/db-sql.sh` or `docker exec codebite-postgres psql`) that brute-forces the rule you are about to state (the tie-break, the modulus, what is counted) catches what reading misses: a sample with three valid answers where the statement said "unique".
+- **The branch database runs only the migrations it started with.** Once a commit moves a Slug, `judge-local.sh <new-slug>` finds no Test Cases and `judge-local.sh <old-slug>` no Driver: export the old Slug's cases to JSON and pass `--cases` until the servers restart. Restart `scripts/dev-branch-servers.sh` once, after the last migration, and run step 5.2 to 5.5 for the whole batch in that one session: a single script can Run every problem in every Language, 5.5 s apart.
+- **Run the tests once per batch.** The pre-commit hook runs every module's full suite on each commit; commit the later problems with `--no-verify` and run step 5.1, then the full suite, at the end. `--no-verify` also skips the commit-msg hook: check each message with `.githooks/commit-msg <file>` (step 6).
+- **A fix found later goes into its problem's commit**: `git commit --fixup=<that commit>`, then `GIT_SEQUENCE_EDITOR=: git rebase -i --autosquash origin/master` (without `-i`, `--autosquash` does nothing).
+
 ## 6. Commit and PR
 
-Commit `refactor(problem): restate <old-slug> as <new-slug>` (or `restate <slug>` when it stays) with the migration, the moved assets, the reference solutions and the grep fixes together. Open the PR, then merge it with `scripts/ship-branch.sh <branch>` from the main checkout. In the PR body, state what users will notice:
+Commit `refactor(problem): restate <old-slug> as <new-slug>` (or `restate <slug>` when it stays; when that passes the 72-character subject limit, `restate <old-slug>, renamed` with the new Slug in the body) with the migration, the moved assets, the reference solutions and the grep fixes together. Open the PR, then merge it with `scripts/ship-branch.sh <branch>` from the main checkout. In the PR body, state what users will notice:
 
 - When the method or parameter names changed: earlier code calling the old names no longer compiles, if resubmitted or loaded from a past submission. Stored Verdicts are untouched.
 - When the Slug changed: editor drafts saved in the browser under the old Slug are left behind; Solution Repositories keep the old folder, and new Solution Commits go to `<new-slug>/`; old links and READMEs still reach the problem through the Former Slug.
