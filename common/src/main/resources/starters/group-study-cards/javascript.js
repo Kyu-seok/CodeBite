@@ -4,7 +4,7 @@ class Solution {
      * @param {number} groupSize
      * @return {boolean}
      */
-    canGroupBakes(cards, groupSize) {
+    canGroupCards(cards, groupSize) {
         // Write your solution here
     }
 }
