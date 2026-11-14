@@ -23,5 +23,5 @@ def _build_tree(arr):
 
 arr = json.loads(input())
 root = _build_tree(arr)
-result = Solution().verifyWardOrder(root)
+result = Solution().isValidBST(root)
 print(str(result).lower())

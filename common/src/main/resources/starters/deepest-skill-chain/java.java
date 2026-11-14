@@ -10,7 +10,7 @@
  * }
  */
 class Solution {
-    public int deepestZoneChain(TreeNode root) {
+    public int maxSkillDepth(TreeNode root) {
         // Write your solution here
     }
 }
