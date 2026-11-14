@@ -1,5 +1,5 @@
 class Solution {
-    public int[][] orderTicketHolders(int[][] players) {
+    public int[][] rebuildLine(int[][] players) {
         // Write your solution here
     }
 }
