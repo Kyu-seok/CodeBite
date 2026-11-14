@@ -5,7 +5,9 @@
 #
 # For each branch in order, it takes origin/<branch> when that exists, else the local branch, and
 # merges it with --no-ff and the attribution trailer (MERGE_TICKET_TRAILER overrides it). It refuses
-# on master, a detached HEAD, a dirty tree, or a branch already merged. On a conflict it aborts that
+# on master, a detached HEAD, a dirty tree, a branch already merged, or a branch with a non-merge
+# commit whose subject passes 72 characters (scripts/check-commit-subjects.sh, the commit-msg hook
+# that --no-verify skipped; its own "Merge …" subjects are exempt). On a conflict it aborts that
 # merge, lists the files and stops: earlier merges stay committed and unpushed. After the last merge
 # it runs, once, the checks git skips on a clean merge (no pre-commit hook runs): the backend and
 # worker tests, forced past UP-TO-DATE, then the frontend lint (no warnings), tests and build. It
@@ -17,7 +19,8 @@
 # `spec/`, as .github/workflows/ci.yml lists), the merge's tree is the ticket branch's own tree and
 # CI checks it after the push, so the local checks are skipped and the merge commit pushed straight
 # away, with one line saying why. Ticket branches have no PR of their own, so on any other branch
-# the checks run.
+# the checks run, and a loud warning first names the cost and the rename to `spec/<issue>-<slug>`
+# (a warning, not a refusal: the merge is still checked, only slower).
 #
 # It refuses, before merging anything, when a CI run on the integration branch's HEAD failed or was
 # cancelled: a skipped-check push (above) is checked only by that run, and a merge stacked on a red
@@ -27,6 +30,7 @@
 # `scripts/merge-ticket.sh --checks-and-push`: bash read this copy before the merge, so its checks are
 # the old ones. Keep that mode in every later version.
 set -euo pipefail
+merge_ticket_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 # Why not to merge, or nothing: on branch $1 (empty when detached), with `git status --porcelain`
 # output $2, and $3 = yes when the ticket branch is already in HEAD.
@@ -107,6 +111,18 @@ ci_checks_pushes() {
   [[ "$1" == integration/* || "$1" == spec/* ]]
 }
 
+# The warning for merging into branch $1 when CI doesn't run on its pushes, or nothing. It warns and
+# goes on rather than refusing: the local checks still gate the push, so the merge is only slower.
+integration_branch_warning() {
+  ci_checks_pushes "$1" && return
+  sed 's/^/merge-ticket: WARNING: /' <<EOF
+CI doesn't run on pushes to $1 (only spec/** and integration/**),
+so every merge runs the full local checks (about 1.5-3 min each), even a ticket
+that already contains HEAD. Rename it before the next merge:
+  git branch -m spec/<issue>-<slug> && git push -u origin spec/<issue>-<slug>
+EOF
+}
+
 # The push of branch $1 with no checks, after merging $2, which already contained $1: the merge's
 # tree is $2's own tree, and CI checks it on this push.
 push_checked_by_ci() {
@@ -142,6 +158,11 @@ merge_one() {
     return 1
   fi
 
+  if ! "$merge_ticket_dir/check-commit-subjects.sh" "HEAD..$ref"; then
+    echo "merge-ticket: $ref has a commit subject over 72 characters; not merged" >&2
+    return 1
+  fi
+
   echo "merge-ticket: merging $ref into $current"
   if ! git merge -q --no-ff -m "$(merge_message "$branch" "$title")" "$ref"; then
     conflicts=$(git diff --name-only --diff-filter=U)
@@ -157,6 +178,7 @@ merge_ticket() {
   local current start all_contain_head=yes ref contains_head red
   current=$(git branch --show-current)
   start=$(git rev-parse HEAD)
+  [[ -z "$current" || "$current" == master ]] || integration_branch_warning "$current" >&2
   git fetch -q origin
   red=$(red_tip_refusal "$(ci_runs "$start")")
   if [[ -n "$red" ]]; then
