@@ -5,16 +5,16 @@ import java.util.*;
 public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        String matrixLine = sc.nextLine().trim();
+        String menuLine = sc.nextLine().trim();
         int target = Integer.parseInt(sc.nextLine().trim());
 
         // Parse 2D array: [[1,4,7,11,15],[2,5,8,12,19],...]
         List<int[]> rows = new ArrayList<>();
         int i = 1; // skip leading '['
-        while (i < matrixLine.length()) {
-            if (matrixLine.charAt(i) == '[') {
-                int j = matrixLine.indexOf(']', i);
-                String sub = matrixLine.substring(i + 1, j);
+        while (i < menuLine.length()) {
+            if (menuLine.charAt(i) == '[') {
+                int j = menuLine.indexOf(']', i);
+                String sub = menuLine.substring(i + 1, j);
                 String[] parts = sub.split(",");
                 int[] row = new int[parts.length];
                 for (int k = 0; k < parts.length; k++) row[k] = Integer.parseInt(parts[k].trim());
@@ -24,8 +24,8 @@ public class Main {
                 i++;
             }
         }
-        int[][] matrix = rows.toArray(new int[0][]);
-        boolean result = new Solution().probeSugarReading(matrix, target);
+        int[][] menu = rows.toArray(new int[0][]);
+        boolean result = new Solution().findCalorie(menu, target);
         System.out.println(result);
     }
 }
