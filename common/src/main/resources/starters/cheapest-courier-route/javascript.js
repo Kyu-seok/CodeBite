@@ -4,10 +4,10 @@ class Solution {
      * @param {number[][]} links
      * @param {number} src
      * @param {number} dst
-     * @param {number} maxHops
+     * @param {number} maxStops
      * @return {number}
      */
-    relayDispatchCost(n, links, src, dst, maxHops) {
+    cheapestRoute(n, links, src, dst, maxStops) {
         // Write your solution here
     }
 }
