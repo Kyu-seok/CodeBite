@@ -10,7 +10,7 @@
  * }
  */
 class Solution {
-    public void unrollSchedule(TreeNode root) {
+    public void flattenAgenda(TreeNode root) {
         // Write your solution here
     }
 }

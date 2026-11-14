@@ -11,7 +11,7 @@
  */
 class Solution {
 public:
-    void unrollSchedule(TreeNode* root) {
+    void flattenAgenda(TreeNode* root) {
         // Write your solution here
     }
 };
