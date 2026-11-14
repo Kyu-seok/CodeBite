@@ -34,7 +34,7 @@ wt = Walkthrough(
 
 
 def solve(socks, run):
-    """Solution.lowestMissingTarget with a frame per swap, per number left in place and per index
+    """Solution.smallestMissingNumber with a frame per swap, per number left in place and per index
     checked."""
     n = len(socks)
     i = None
