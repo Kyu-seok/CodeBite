@@ -1,6 +1,6 @@
 class Solution {
 public:
-    int longestSeatBlock(vector<int>& seatIds) {
+    int longestSeatRun(vector<int>& seatIds) {
         // Write your solution here
     }
 };
