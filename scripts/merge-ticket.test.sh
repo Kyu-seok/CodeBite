@@ -31,6 +31,16 @@ check "integration/ pushes run CI" "$(ci_checks_pushes integration/x && echo yes
 check "spec/ pushes run CI" "$(ci_checks_pushes spec/258-walkthroughs && echo yes || echo no)" yes
 check "other pushes run no CI" "$(ci_checks_pushes feat/x && echo yes || echo no)" no
 
+# --- an integration branch CI doesn't run on: a loud warning, and the merge goes on ------------
+
+check "no warning on spec/" "$(integration_branch_warning spec/301-statement-audit)" ""
+check "no warning on integration/" "$(integration_branch_warning integration/x)" ""
+check "warning elsewhere" "$(integration_branch_warning statement-audit-2026-11)" \
+"merge-ticket: WARNING: CI doesn't run on pushes to statement-audit-2026-11 (only spec/** and integration/**),
+merge-ticket: WARNING: so every merge runs the full local checks (about 1.5-3 min each), even a ticket
+merge-ticket: WARNING: that already contains HEAD. Rename it before the next merge:
+merge-ticket: WARNING:   git branch -m spec/<issue>-<slug> && git push -u origin spec/<issue>-<slug>"
+
 # --- refusals ----------------------------------------------------------------------------------
 
 check "on master" "$(merge_refusal master '' no)" "refusing to merge on master; check out the integration branch"
@@ -114,6 +124,7 @@ grep -q 'shared.txt' <<<"$out" || { echo "FAIL: conflict must list shared.txt: $
 check "conflict aborted" "$(git -C "$scratch/work" status --porcelain)" ""
 check "conflict leaves HEAD" "$(git -C "$scratch/work" rev-parse HEAD)" "$before"
 grep -q backend-ran <<<"$out" && { echo "FAIL: checks ran after a conflict"; fail=1; }
+grep -q WARNING <<<"$out" && { echo "FAIL: warned on integration/x: $out"; fail=1; }
 
 frontend_checks() { echo frontend-ran; return 1; }
 if out=$(run_merge ticket/ok 'Ok ticket'); then echo "FAIL: a failing check must fail"; fail=1; fi
@@ -182,6 +193,18 @@ check "two-conflict: clean tree" "$(git -C "$scratch/work" status --porcelain)" 
 check "two-conflict: first merge kept" "$(git -C "$scratch/work" log -1 --format=%s)" "Merge ticket/two-c: Two C"
 check "two-conflict: not pushed" "$(remote_head)" "$before"
 g -C "$scratch/work" reset -q --hard "$before"
+
+# An integration branch outside spec/ and integration/: the warning comes first, then the merge,
+# checks and push go ahead as usual.
+g -C "$scratch/work" switch -qc audit-2026-11
+(cd "$scratch/seed" && g fetch -q origin && g switch -q --detach origin/integration/x \
+  && g switch -qc ticket/audit && echo audit > audit.txt && g add . && g commit -qm audit && g push -q origin ticket/audit)
+if ! out=$(run_merge ticket/audit 'Audit'); then echo "FAIL: merge on an unprefixed branch failed: $out"; fail=1; fi
+check "unprefixed: warning first" "$(head -1 <<<"$out")" \
+  "merge-ticket: WARNING: CI doesn't run on pushes to audit-2026-11 (only spec/** and integration/**),"
+[[ "$out" == *backend-ran*frontend-ran* ]] || { echo "FAIL: unprefixed: checks not run: $out"; fail=1; }
+check "unprefixed: pushed" "$(git -C "$scratch/origin.git" rev-parse audit-2026-11)" "$(git -C "$scratch/work" rev-parse HEAD)"
+g -C "$scratch/work" switch -q integration/x
 
 echo dirt > "$scratch/work/dirt.txt"
 if out=$(run_merge ticket/clash 'Clash'); then echo "FAIL: a dirty tree must fail"; fail=1; fi

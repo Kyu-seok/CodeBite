@@ -17,7 +17,8 @@
 # `spec/`, as .github/workflows/ci.yml lists), the merge's tree is the ticket branch's own tree and
 # CI checks it after the push, so the local checks are skipped and the merge commit pushed straight
 # away, with one line saying why. Ticket branches have no PR of their own, so on any other branch
-# the checks run.
+# the checks run, and a loud warning first names the cost and the rename to `spec/<issue>-<slug>`
+# (a warning, not a refusal: the merge is still checked, only slower).
 #
 # It refuses, before merging anything, when a CI run on the integration branch's HEAD failed or was
 # cancelled: a skipped-check push (above) is checked only by that run, and a merge stacked on a red
@@ -107,6 +108,18 @@ ci_checks_pushes() {
   [[ "$1" == integration/* || "$1" == spec/* ]]
 }
 
+# The warning for merging into branch $1 when CI doesn't run on its pushes, or nothing. It warns and
+# goes on rather than refusing: the local checks still gate the push, so the merge is only slower.
+integration_branch_warning() {
+  ci_checks_pushes "$1" && return
+  sed 's/^/merge-ticket: WARNING: /' <<EOF
+CI doesn't run on pushes to $1 (only spec/** and integration/**),
+so every merge runs the full local checks (about 1.5-3 min each), even a ticket
+that already contains HEAD. Rename it before the next merge:
+  git branch -m spec/<issue>-<slug> && git push -u origin spec/<issue>-<slug>
+EOF
+}
+
 # The push of branch $1 with no checks, after merging $2, which already contained $1: the merge's
 # tree is $2's own tree, and CI checks it on this push.
 push_checked_by_ci() {
@@ -157,6 +170,7 @@ merge_ticket() {
   local current start all_contain_head=yes ref contains_head red
   current=$(git branch --show-current)
   start=$(git rev-parse HEAD)
+  [[ -z "$current" || "$current" == master ]] || integration_branch_warning "$current" >&2
   git fetch -q origin
   red=$(red_tip_refusal "$(ci_runs "$start")")
   if [[ -n "$red" ]]; then
