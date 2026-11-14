@@ -4,7 +4,7 @@ class Solution {
      * @param {number[]} drain
      * @return {number}
      */
-    pickStartStation(energy, drain) {
+    pickStartStop(energy, drain) {
         // Write your solution here
     }
 }
