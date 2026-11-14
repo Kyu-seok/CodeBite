@@ -15,7 +15,7 @@ int main() {
     string line;
     getline(cin, line);
     Node* node = graphFromAdjList(line);
-    Node* cloned = Solution().snapshotMeshLayout(node);
+    Node* cloned = Solution().cloneMap(node);
     cout << graphToAdjListJson(cloned) << endl;
     return 0;
 }

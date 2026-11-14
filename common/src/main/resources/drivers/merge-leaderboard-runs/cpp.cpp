@@ -11,9 +11,9 @@ int main() {
     string line1, line2;
     getline(cin, line1);
     getline(cin, line2);
-    ListNode* list1 = listFromArray(line1);
-    ListNode* list2 = listFromArray(line2);
-    ListNode* result = Solution().combineOvenRotations(list1, list2);
+    ListNode* runA = listFromArray(line1);
+    ListNode* runB = listFromArray(line2);
+    ListNode* result = Solution().mergeRuns(runA, runB);
     cout << listToJsonArray(result) << endl;
     return 0;
 }

@@ -9,9 +9,9 @@ public class Main {
         Scanner sc = new Scanner(System.in);
         String line1 = sc.nextLine().trim();
         String line2 = sc.nextLine().trim();
-        ListNode list1 = ListNode.fromArray(line1);
-        ListNode list2 = ListNode.fromArray(line2);
-        ListNode result = new Solution().combineOvenRotations(list1, list2);
+        ListNode runA = ListNode.fromArray(line1);
+        ListNode runB = ListNode.fromArray(line2);
+        ListNode result = new Solution().mergeRuns(runA, runB);
         System.out.println(ListNode.toJsonArray(result));
     }
 }
