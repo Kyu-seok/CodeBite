@@ -7,6 +7,6 @@ class TreeNode:
         self.right = right
 
 class Solution:
-    def widestCatalogSpan(self, root: Optional[TreeNode]) -> int:
+    def longestPathEdges(self, root: Optional[TreeNode]) -> int:
         # Write your solution here
         pass
