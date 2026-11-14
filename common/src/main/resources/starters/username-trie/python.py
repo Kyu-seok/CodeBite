@@ -11,6 +11,6 @@ class PrefixIndex:
         # Write your solution here
         pass
 
-    def starts_with(self, prefix: str) -> bool:
+    def startsWith(self, prefix: str) -> bool:
         # Write your solution here
         pass

@@ -17,6 +17,6 @@ for cmd, arg in zip(cmds, args):
     elif cmd == "search":
         result.append(trie.search(arg[0]))
     elif cmd == "startsWith":
-        result.append(trie.starts_with(arg[0]))
+        result.append(trie.startsWith(arg[0]))
 
 print(json.dumps(result, separators=(',', ':')).replace('True', 'true').replace('False', 'false').replace('None', 'null'))
