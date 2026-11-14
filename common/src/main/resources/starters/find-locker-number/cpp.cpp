@@ -3,7 +3,7 @@ using namespace std;
 
 class Solution {
 public:
-    int locateCallNumber(vector<int>& shelf, int target) {
+    int findLocker(vector<int>& lockers, int target) {
         // Write your solution here
     }
 };
