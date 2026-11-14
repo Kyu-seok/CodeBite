@@ -6,7 +6,7 @@ public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         int n = Integer.parseInt(sc.nextLine().trim());
-        boolean result = new Solution().isSoloSpecies(n);
+        boolean result = new Solution().isPowerOfTwo(n);
         System.out.println(result);
     }
 }

@@ -3,7 +3,7 @@ using namespace std;
 
 class Solution {
 public:
-    int countScanDecodings(string scan) {
+    int countDecodings(string digits) {
         // Write your solution here
     }
 };

@@ -36,3 +36,6 @@ docs/portfolio/
 .impeccable/config.local.json
 .impeccable/hook.cache.json
 .impeccable/critique/
+
+# Python bytecode
+__pycache__/

@@ -15,7 +15,7 @@ class Solution {
      * @param {TreeNode} q
      * @return {boolean}
      */
-    matchCatalogLayout(p, q) {
+    isSameTree(p, q) {
         // Write your solution here
     }
 }

@@ -352,7 +352,7 @@ class WalkthroughsMatchSamplesTest {
         assertCaught("cheapest-courier-route", walkthrough, breakage, expected);
     }
 
-    // --- spans and slots, on a copy of unique-genre-window ------------------------------------------
+    // --- spans and slots, on a copy of longest-window-with-at-most-k-genres ------------------------------------------
 
     @ParameterizedTest(name = "{0}")
     @CsvSource(delimiter = '|', quoteCharacter = '`', value = {
@@ -367,7 +367,7 @@ class WalkthroughsMatchSamplesTest {
             "struck key not held              | struck names \"no such genre\", not a key",
     })
     void aBrokenSpanOrSlotIsCaught(String breakage, String expected) throws Exception {
-        ObjectNode walkthrough = (ObjectNode) JSON.readTree(WALKTHROUGHS.of("unique-genre-window").orElseThrow());
+        ObjectNode walkthrough = (ObjectNode) JSON.readTree(WALKTHROUGHS.of("longest-window-with-at-most-k-genres").orElseThrow());
         ObjectNode frame = (ObjectNode) walkthrough.get("runs").get(0).get("frames").get(1);
         ObjectNode queue = (ObjectNode) frame.get("views").get("queue");
         ObjectNode window = (ObjectNode) queue.get("spans").get("window");
@@ -385,7 +385,7 @@ class WalkthroughsMatchSamplesTest {
             case "struck key not held" -> genres.putArray("struck").add("no such genre");
             default -> throw new IllegalArgumentException(breakage);
         }
-        assertCaught("unique-genre-window", walkthrough, breakage, expected);
+        assertCaught("longest-window-with-at-most-k-genres", walkthrough, breakage, expected);
     }
 
     /** {@code breakage} was caught, by a line naming the Slug that says {@code expected}. */
@@ -645,9 +645,9 @@ class WalkthroughsMatchSamplesTest {
 
     @Test
     void aWhyThatIsNotAReasonIsCaught() throws Exception {
-        ObjectNode walkthrough = (ObjectNode) JSON.readTree(WALKTHROUGHS.of("unique-genre-window").orElseThrow());
+        ObjectNode walkthrough = (ObjectNode) JSON.readTree(WALKTHROUGHS.of("longest-window-with-at-most-k-genres").orElseThrow());
         addItem(walkthrough, "limit", s -> JSON.getNodeFactory().numberNode(2), " ");
-        List<String> found = mismatches("unique-genre-window", walkthrough, SAMPLES.get("unique-genre-window"));
+        List<String> found = mismatches("longest-window-with-at-most-k-genres", walkthrough, SAMPLES.get("longest-window-with-at-most-k-genres"));
         assertTrue(found.stream().anyMatch(m -> m.contains("item \"limit\": why must be a non-empty string")), found.toString());
     }
 

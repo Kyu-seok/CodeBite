@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {number[]} frames
+     * @param {number[]} candies
      * @return {number}
      */
-    findUnpairedFrame(frames) {
+    findLonelyCandy(candies) {
         // Write your solution here
     }
 }

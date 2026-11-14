@@ -40,8 +40,8 @@ public class Main {
         ChainedMap map = null;
         for (int idx = 0; idx < ops.size(); idx++) {
             if (idx > 0) sb.append(",");
-            String op = ops.lookup(idx);
-            int[] opArgs = argsList.lookup(idx);
+            String op = ops.get(idx);
+            int[] opArgs = argsList.get(idx);
             switch (op) {
                 case "ChainedMap":
                     map = new ChainedMap();

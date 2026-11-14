@@ -1,7 +1,7 @@
 {USER_CODE}
 
 import json
-nums = json.loads(input())
-result = Solution().listStationOrders(nums)
+stops = json.loads(input())
+result = Solution().listVisitOrders(stops)
 result.sort()
 print(json.dumps(result, separators=(',', ':')))

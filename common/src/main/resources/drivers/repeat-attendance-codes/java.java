@@ -5,17 +5,17 @@ import java.util.*;
 public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        String numsLine = sc.nextLine().trim();
-        String inner = numsLine.substring(1, numsLine.length() - 1);
-        int[] nums;
+        String codesLine = sc.nextLine().trim();
+        String inner = codesLine.substring(1, codesLine.length() - 1);
+        int[] codes;
         if (inner.isEmpty()) {
-            nums = new int[0];
+            codes = new int[0];
         } else {
             String[] parts = inner.split(",");
-            nums = new int[parts.length];
-            for (int i = 0; i < parts.length; i++) nums[i] = Integer.parseInt(parts[i].trim());
+            codes = new int[parts.length];
+            for (int i = 0; i < parts.length; i++) codes[i] = Integer.parseInt(parts[i].trim());
         }
-        List<Integer> result = new Solution().listRepeatedCodes(nums);
+        List<Integer> result = new Solution().listRepeatedCodes(codes);
         Collections.sort(result);
         StringBuilder sb = new StringBuilder("[");
         for (int i = 0; i < result.size(); i++) {

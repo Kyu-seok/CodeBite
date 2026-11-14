@@ -1,6 +1,6 @@
 from typing import List
 
 class Solution:
-    def splitHeadlineTokens(self, headline: str, topics: List[str]) -> bool:
+    def canSplitMessage(self, message: str, words: List[str]) -> bool:
         # Write your solution here
         pass

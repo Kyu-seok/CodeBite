@@ -4,7 +4,7 @@ class Solution {
      * @param {number} n
      * @return {number}
      */
-    planStationRuns(jobs, n) {
+    minPrintSlots(jobs, n) {
         // Write your solution here
     }
 }

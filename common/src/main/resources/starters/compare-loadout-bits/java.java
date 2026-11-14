@@ -1,5 +1,5 @@
 class Solution {
-    public int countFlagMismatches(int x, int y) {
+    public int countFlagMismatches(int leftFlags, int rightFlags) {
         // Write your solution here
     }
 }

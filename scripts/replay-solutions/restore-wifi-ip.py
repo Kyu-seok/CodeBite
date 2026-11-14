@@ -1,5 +1,5 @@
 class Solution:
-    def splitZoneCodes(self, digits: str) -> list[str]:
+    def restoreIpAddresses(self, digits: str) -> list[str]:
         def valid(segment: str) -> bool:
             return 0 < len(segment) <= 3 and (segment == "0" or segment[0] != "0") and int(segment) <= 255
 

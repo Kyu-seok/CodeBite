@@ -3,6 +3,6 @@
 import json
 
 n = int(input())
-edges = json.loads(input())
-result = Solution().count_components(n, edges)
+relays = json.loads(input())
+result = Solution().countParties(n, relays)
 print(result)

@@ -3,7 +3,7 @@ class Solution {
      * @param {number[][]} elevation
      * @return {number}
      */
-    crossFloodedCorridors(elevation) {
+    earliestCrossingTime(elevation) {
         // Write your solution here
     }
 }

@@ -1,6 +1,6 @@
 {USER_CODE}
 
 import json
-s = input().strip()
-word_dict = json.loads(input())
-print(str(Solution().splitHeadlineTokens(s, word_dict)).lower())
+message = input().strip()
+words = json.loads(input())
+print(str(Solution().canSplitMessage(message, words)).lower())

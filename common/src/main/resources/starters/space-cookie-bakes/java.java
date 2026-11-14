@@ -1,5 +1,5 @@
 class Solution {
-    public String orderRecipeBakes(String cookies) {
+    public String spaceBakes(String cookies) {
         // Write your solution here
     }
 }

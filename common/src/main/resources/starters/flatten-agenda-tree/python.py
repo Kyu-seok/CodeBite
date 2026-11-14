@@ -7,6 +7,6 @@ class TreeNode:
         self.right = right
 
 class Solution:
-    def unrollSchedule(self, root: Optional[TreeNode]) -> None:
+    def flattenAgenda(self, root: Optional[TreeNode]) -> None:
         # Write your solution here
         pass

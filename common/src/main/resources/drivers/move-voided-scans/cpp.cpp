@@ -12,13 +12,13 @@ int main() {
     string line;
     getline(cin, line);
     string inner = line.substr(1, line.size() - 2);
-    vector<int> nums;
+    vector<int> scans;
     stringstream ss(inner);
     string token;
     while (getline(ss, token, ',')) {
-        nums.push_back(stoi(token));
+        scans.push_back(stoi(token));
     }
-    Solution().voidEmptyScans(nums);
-    cout << JsonOutput::intVector(nums) << endl;
+    Solution().moveVoidsToEnd(scans);
+    cout << JsonOutput::intVector(scans) << endl;
     return 0;
 }

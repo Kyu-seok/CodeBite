@@ -1,4 +1,4 @@
 class Solution:
-    def countFlagMismatches(self, x: int, y: int) -> int:
+    def countFlagMismatches(self, leftFlags: int, rightFlags: int) -> int:
         # Write your solution here
         pass

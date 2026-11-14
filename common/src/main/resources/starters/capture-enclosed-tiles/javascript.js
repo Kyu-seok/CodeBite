@@ -3,7 +3,7 @@ class Solution {
      * @param {string[][]} board
      * @return {void}
      */
-    seizeEnclosedZones(board) {
+    captureEnclosedTiles(board) {
         // Write your solution here
     }
 }

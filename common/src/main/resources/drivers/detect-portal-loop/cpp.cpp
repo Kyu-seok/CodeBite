@@ -34,7 +34,7 @@ int main() {
         nodes[nodes.size() - 1]->next = nodes[pos];
     }
 
-    bool result = Solution().detectTransferLoop(head);
+    bool result = Solution().hasPortalLoop(head);
     cout << (result ? "true" : "false") << endl;
     return 0;
 }

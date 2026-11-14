@@ -11,7 +11,7 @@ int main() {
     string line;
     getline(cin, line);
 
-    vector<vector<int>> intervals;
+    vector<vector<int>> visits;
     string inner = line.substr(1, line.size() - 2);
     int depth = 0, start = 0;
     for (int i = 0; i < (int)inner.size(); i++) {
@@ -24,12 +24,12 @@ int main() {
                 string a, b;
                 getline(ss, a, ',');
                 getline(ss, b, ',');
-                intervals.push_back({stoi(a), stoi(b)});
+                visits.push_back({stoi(a), stoi(b)});
             }
         }
     }
 
-    int result = Solution().findPeakGates(intervals);
+    int result = Solution().minTables(visits);
     cout << result << endl;
     return 0;
 }

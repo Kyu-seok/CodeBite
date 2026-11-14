@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {string} tape
+     * @param {string} brackets
      * @return {boolean}
      */
-    verifyJobNesting(tape) {
+    isValidBrackets(brackets) {
         // Write your solution here
     }
 }

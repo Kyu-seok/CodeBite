@@ -11,7 +11,7 @@ int main() {
     string line;
     getline(cin, line);
     // Parse [[0,2],[1,3]]
-    vector<vector<int>> grid;
+    vector<vector<int>> elevation;
     int i = 0;
     while (i < (int)line.size()) {
         if (line[i] == '[' && i > 0) {
@@ -23,12 +23,12 @@ int main() {
             while (getline(ss, token, ',')) {
                 row.push_back(stoi(token));
             }
-            grid.push_back(row);
+            elevation.push_back(row);
             i = j + 1;
         } else {
             i++;
         }
     }
-    cout << Solution().crossFloodedCorridors(grid) << endl;
+    cout << Solution().earliestCrossingTime(elevation) << endl;
     return 0;
 }

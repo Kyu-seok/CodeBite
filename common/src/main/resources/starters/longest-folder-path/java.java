@@ -10,7 +10,7 @@
  * }
  */
 class Solution {
-    public int widestCatalogSpan(TreeNode root) {
+    public int longestPathEdges(TreeNode root) {
         // Write your solution here
     }
 }

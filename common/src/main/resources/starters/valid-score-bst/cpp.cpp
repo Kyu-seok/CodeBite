@@ -11,7 +11,7 @@
  */
 class Solution {
 public:
-    bool verifyWardOrder(TreeNode* root) {
+    bool isValidBST(TreeNode* root) {
         // Write your solution here
     }
 };

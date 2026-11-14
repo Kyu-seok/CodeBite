@@ -2,6 +2,6 @@
 
 import json
 
-intervals = json.loads(input())
-result = Solution().min_meeting_rooms(intervals)
+visits = json.loads(input())
+result = Solution().minTables(visits)
 print(result)

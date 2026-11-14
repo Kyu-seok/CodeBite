@@ -9,7 +9,7 @@ class TreeNode:
 
 
 class Solution:
-    def listRuntimeBranches(self, root: Optional[TreeNode], target: int) -> list[list[int]]:
+    def listBuildPaths(self, root: Optional[TreeNode], target: int) -> list[list[int]]:
         paths: list[list[int]] = []
         # Right is pushed before left so the stack pops in left-first DFS order.
         stack = [(root, [root.val], root.val)] if root else []

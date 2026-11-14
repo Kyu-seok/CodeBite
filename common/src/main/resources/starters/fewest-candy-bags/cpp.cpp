@@ -1,6 +1,6 @@
 class Solution {
 public:
-    int fewestBagSizes(vector<int>& bagSizes, int quota) {
+    int fewestBags(vector<int>& bagSizes, int quota) {
         // Write your solution here
     }
 };

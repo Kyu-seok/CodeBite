@@ -1,5 +1,5 @@
 class Solution {
-    public boolean splitHeadlineTokens(String headline, List<String> topics) {
+    public boolean canSplitMessage(String message, List<String> words) {
         // Write your solution here
     }
 }

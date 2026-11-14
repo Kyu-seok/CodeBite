@@ -3,7 +3,7 @@ class Solution {
      * @param {number} n
      * @return {number}
      */
-    nthSmoothBatch(n) {
+    nthUnlockableLevel(n) {
         // Write your solution here
     }
 }

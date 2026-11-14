@@ -13,7 +13,7 @@ int main() {
     string line;
     getline(cin, line);
     TreeNode* root = treeFromArray(line);
-    root = Solution().reflectBlend(root);
+    root = Solution().mirrorTree(root);
     cout << treeToJsonArray(root) << endl;
     return 0;
 }

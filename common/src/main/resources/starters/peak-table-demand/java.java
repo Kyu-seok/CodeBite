@@ -1,5 +1,5 @@
 class Solution {
-    public int findPeakGates(int[][] visits) {
+    public int minTables(int[][] visits) {
         // Write your solution here
     }
 }

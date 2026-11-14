@@ -13,7 +13,7 @@ int main() {
     string line;
     getline(cin, line);
     TreeNode* root = treeFromArray(line);
-    int result = Solution().widestCatalogSpan(root);
+    int result = Solution().longestPathEdges(root);
     cout << result << endl;
     return 0;
 }

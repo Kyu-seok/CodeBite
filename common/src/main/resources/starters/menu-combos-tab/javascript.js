@@ -4,7 +4,7 @@ class Solution {
      * @param {number} tab
      * @return {number[][]}
      */
-    listQuotaBatches(pastries, tab) {
+    listTabCombos(pastries, tab) {
         // Write your solution here
     }
 }

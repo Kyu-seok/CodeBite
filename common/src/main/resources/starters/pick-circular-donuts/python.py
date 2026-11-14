@@ -1,4 +1,4 @@
 class Solution:
-    def pickCircuitTargets(self, yields: list[int]) -> int:
+    def maxTastiness(self, tastiness: list[int]) -> int:
         # Write your solution here
         pass

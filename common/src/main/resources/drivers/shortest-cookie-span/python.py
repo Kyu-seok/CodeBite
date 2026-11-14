@@ -1,6 +1,6 @@
 {USER_CODE}
 
-nums = eval(input())
+trays = eval(input())
 target = int(input())
-result = Solution().shortestBakeSpan(nums, target)
+result = Solution().shortestCookieSpan(trays, target)
 print(result)

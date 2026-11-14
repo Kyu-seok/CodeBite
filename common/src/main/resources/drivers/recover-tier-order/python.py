@@ -1,6 +1,6 @@
 {USER_CODE}
 
 import json
-words = json.loads(input())
-result = Solution().orderSceneShoot(words)
+tags = json.loads(input())
+result = Solution().recoverTierOrder(tags)
 print(result)

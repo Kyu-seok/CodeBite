@@ -14,7 +14,7 @@ class Solution {
      * @param {TreeNode} root
      * @return {number[][]}
      */
-    alternateWardSweep(root) {
+    zigzagRows(root) {
         // Write your solution here
     }
 }

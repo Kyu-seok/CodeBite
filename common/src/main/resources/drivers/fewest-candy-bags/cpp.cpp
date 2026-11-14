@@ -10,14 +10,14 @@ int main() {
     string line;
     getline(cin, line);
     string inner = line.substr(1, line.size() - 2);
-    vector<int> coins;
+    vector<int> bagSizes;
     stringstream ss(inner);
     string token;
     while (getline(ss, token, ',')) {
-        coins.push_back(stoi(token));
+        bagSizes.push_back(stoi(token));
     }
-    int amount;
-    cin >> amount;
-    cout << Solution().fewestBagSizes(coins, amount) << endl;
+    int quota;
+    cin >> quota;
+    cout << Solution().fewestBags(bagSizes, quota) << endl;
     return 0;
 }

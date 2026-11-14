@@ -5,12 +5,12 @@ import java.util.*;
 public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        int numCourses = Integer.parseInt(sc.nextLine().trim());
+        int numTasks = Integer.parseInt(sc.nextLine().trim());
         String line = sc.nextLine().trim();
 
-        int[][] prerequisites;
+        int[][] prereqs;
         if (line.equals("[]")) {
-            prerequisites = new int[0][];
+            prereqs = new int[0][];
         } else {
             String inner = line.substring(1, line.length() - 1);
             List<int[]> list = new ArrayList<>();
@@ -27,11 +27,11 @@ public class Main {
                     }
                 }
             }
-            prerequisites = list.toArray(new int[0][]);
+            prereqs = list.toArray(new int[0][]);
         }
 
-        int[] result = new Solution().sequenceAssemblySteps(numCourses, prerequisites);
-        System.out.println(isValid(numCourses, prerequisites, result) ? "VALID" : "INVALID");
+        int[] result = new Solution().findTaskOrder(numTasks, prereqs);
+        System.out.println(isValid(numTasks, prereqs, result) ? "VALID" : "INVALID");
     }
 
     private static boolean isValid(int n, int[][] prereqs, int[] result) {

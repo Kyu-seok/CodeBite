@@ -4,7 +4,7 @@ class Solution {
      * @param {number} demand
      * @return {number[][]}
      */
-    quadTrayDemand(trays, demand) {
+    fourTraySum(trays, demand) {
         // Write your solution here
     }
 }

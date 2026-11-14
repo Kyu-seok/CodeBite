@@ -9,7 +9,7 @@
  * }
  */
 class Solution {
-    public boolean detectTransferLoop(ListNode head) {
+    public boolean hasPortalLoop(ListNode head) {
         // Write your solution here
     }
 }

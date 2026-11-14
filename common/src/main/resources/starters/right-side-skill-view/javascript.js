@@ -14,7 +14,7 @@ class Solution {
      * @param {TreeNode} root
      * @return {number[]}
      */
-    captureDockSilhouette(root) {
+    rightSideView(root) {
         // Write your solution here
     }
 }

@@ -7,6 +7,6 @@ class TreeNode:
         self.right = right
 
 class Solution:
-    def listRuntimeBranches(self, root: Optional[TreeNode], target: int) -> List[List[int]]:
+    def listBuildPaths(self, root: Optional[TreeNode], target: int) -> List[List[int]]:
         # Write your solution here
         pass

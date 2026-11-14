@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {number[]} yields
+     * @param {number[]} tastiness
      * @return {number}
      */
-    pickCircuitTargets(yields) {
+    maxTastiness(tastiness) {
         // Write your solution here
     }
 }

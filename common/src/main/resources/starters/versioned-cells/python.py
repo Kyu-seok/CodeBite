@@ -11,6 +11,6 @@ class VersionedCells:
         # Write your solution here
         pass
 
-    def readAt(self, index: int, snap_id: int) -> int:
+    def readAt(self, index: int, snapId: int) -> int:
         # Write your solution here
         pass

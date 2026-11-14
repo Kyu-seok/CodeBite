@@ -6,6 +6,6 @@ class Node:
         self.neighbors = neighbors if neighbors is not None else []
 
 class Solution:
-    def snapshotMeshLayout(self, node: Optional['Node']) -> Optional['Node']:
+    def cloneMap(self, node: Optional['Node']) -> Optional['Node']:
         # Write your solution here
         pass

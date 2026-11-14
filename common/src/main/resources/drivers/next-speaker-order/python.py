@@ -1,6 +1,6 @@
 {USER_CODE}
 
 import json
-nums = json.loads(input())
-Solution().advanceShotOrder(nums)
-print(json.dumps(nums, separators=(',', ':')))
+lineup = json.loads(input())
+Solution().nextLineup(lineup)
+print(json.dumps(lineup, separators=(',', ':')))

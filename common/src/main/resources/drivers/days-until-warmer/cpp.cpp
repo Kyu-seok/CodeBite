@@ -10,16 +10,16 @@ using namespace std;
 {USER_CODE}
 
 int main() {
-    string numsLine;
-    getline(cin, numsLine);
-    string inner = numsLine.substr(1, numsLine.size() - 2);
-    vector<int> temperatures;
+    string readingsLine;
+    getline(cin, readingsLine);
+    string inner = readingsLine.substr(1, readingsLine.size() - 2);
+    vector<int> readings;
     stringstream ss(inner);
     string token;
     while (getline(ss, token, ',')) {
-        temperatures.push_back(stoi(token));
+        readings.push_back(stoi(token));
     }
-    vector<int> result = Solution().daysToUpgrade(temperatures);
+    vector<int> result = Solution().daysUntilWarmer(readings);
     cout << JsonOutput::intVector(result) << endl;
     return 0;
 }

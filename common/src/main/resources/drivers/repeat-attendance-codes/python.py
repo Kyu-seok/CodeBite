@@ -1,7 +1,7 @@
 {USER_CODE}
 
 import json
-nums = eval(input())
-result = Solution().listRepeatedCodes(nums)
+codes = eval(input())
+result = Solution().listRepeatedCodes(codes)
 result.sort()
 print(json.dumps(result, separators=(',', ':')))

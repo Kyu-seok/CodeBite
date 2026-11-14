@@ -9,7 +9,7 @@ class TreeNode:
 
 
 class Solution:
-    def verifyWardOrder(self, root: Optional[TreeNode]) -> bool:
+    def isValidBST(self, root: Optional[TreeNode]) -> bool:
         stack = [(root, float("-inf"), float("inf"))]
         while stack:
             node, low, high = stack.pop()

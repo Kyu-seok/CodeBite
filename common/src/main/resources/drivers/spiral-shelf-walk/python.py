@@ -2,6 +2,6 @@
 
 import json
 
-matrix = json.loads(input())
-result = Solution().traceOutwardWalk(matrix)
+shelf = json.loads(input())
+result = Solution().spiralOrder(shelf)
 print(json.dumps(result, separators=(',', ':')))

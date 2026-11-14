@@ -1,4 +1,4 @@
 class Solution:
-    def countReservoirPaths(self, n: int) -> int:
+    def countHopSequences(self, n: int) -> int:
         # Write your solution here
         pass

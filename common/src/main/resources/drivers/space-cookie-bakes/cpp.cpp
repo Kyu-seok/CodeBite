@@ -8,7 +8,7 @@ using namespace std;
 int main() {
     string s;
     getline(cin, s);
-    string result = Solution().orderRecipeBakes(s);
+    string result = Solution().spaceBakes(s);
     if (result.empty()) {
         cout << "" << endl;
     } else {

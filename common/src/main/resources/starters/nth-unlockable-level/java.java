@@ -1,5 +1,5 @@
 class Solution {
-    public int nthSmoothBatch(int n) {
+    public int nthUnlockableLevel(int n) {
         // Write your solution here
     }
 }

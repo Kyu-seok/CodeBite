@@ -3,7 +3,7 @@
 from collections import Counter
 
 s = input().strip()
-result = Solution().orderRecipeBakes(s)
+result = Solution().spaceBakes(s)
 if not result:
     print("")
 else:

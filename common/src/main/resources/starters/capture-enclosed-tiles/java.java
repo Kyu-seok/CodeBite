@@ -1,5 +1,5 @@
 class Solution {
-    public void seizeEnclosedZones(char[][] board) {
+    public void captureEnclosedTiles(char[][] board) {
         // Write your solution here
     }
 }

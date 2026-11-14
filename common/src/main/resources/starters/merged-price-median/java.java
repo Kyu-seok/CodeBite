@@ -1,5 +1,5 @@
 class Solution {
-    public double mergedZoneMedian(int[] zonesA, int[] zonesB) {
+    public double mergedPriceMedian(int[] pricesA, int[] pricesB) {
         // Write your solution here
     }
 }

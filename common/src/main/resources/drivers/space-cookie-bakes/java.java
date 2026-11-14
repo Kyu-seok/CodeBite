@@ -6,7 +6,7 @@ public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         String s = sc.nextLine().trim();
-        String result = new Solution().orderRecipeBakes(s);
+        String result = new Solution().spaceBakes(s);
         if (result == null || result.isEmpty()) {
             System.out.println("");
         } else if (isValid(s, result)) {

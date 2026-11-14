@@ -2,7 +2,7 @@
 
 const input = require('fs').readFileSync('/dev/stdin', 'utf8').trim();
 const lines = input.split('\n');
-const nums = JSON.parse(lines[0]);
+const trays = JSON.parse(lines[0]);
 const target = parseInt(lines[1]);
-const result = new Solution().shortestBakeSpan(nums, target);
+const result = new Solution().shortestCookieSpan(trays, target);
 console.log(result);

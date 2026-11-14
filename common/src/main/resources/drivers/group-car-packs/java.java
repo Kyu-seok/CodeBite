@@ -16,7 +16,7 @@ public class Main {
         int[] speed = new int[spdParts.length];
         for (int i = 0; i < posParts.length; i++) position[i] = Integer.parseInt(posParts[i].trim());
         for (int i = 0; i < spdParts.length; i++) speed[i] = Integer.parseInt(spdParts[i].trim());
-        int result = new Solution().groupTrainPacks(target, position, speed);
+        int result = new Solution().countCarPacks(target, position, speed);
         System.out.println(result);
     }
 }

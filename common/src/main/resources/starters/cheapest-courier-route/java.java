@@ -1,5 +1,5 @@
 class Solution {
-    public int relayDispatchCost(int n, int[][] links, int src, int dst, int maxHops) {
+    public int cheapestRoute(int n, int[][] links, int src, int dst, int maxStops) {
         // Write your solution here
     }
 }

@@ -1,5 +1,5 @@
 {USER_CODE}
 
-height = eval(input())
-result = Solution().frameLargestBale(height)
+lockers = eval(input())
+result = Solution().largestPosterArea(lockers)
 print(result)

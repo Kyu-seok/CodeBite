@@ -1,5 +1,5 @@
 class Solution {
-    public int shortestBakeSpan(int[] trays, int target) {
+    public int shortestCookieSpan(int[] trays, int target) {
         // Write your solution here
     }
 }

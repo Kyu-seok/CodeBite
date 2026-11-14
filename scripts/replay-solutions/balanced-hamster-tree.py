@@ -9,7 +9,7 @@ class TreeNode:
 
 
 class Solution:
-    def checkHubEvenness(self, root: Optional[TreeNode]) -> bool:
+    def isBalanced(self, root: Optional[TreeNode]) -> bool:
         # Post-order without recursion: a node's height once both children are known.
         height: dict[TreeNode | None, int] = {None: 0}
         stack = [(root, False)] if root else []

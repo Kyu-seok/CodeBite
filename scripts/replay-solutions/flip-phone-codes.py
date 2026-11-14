@@ -7,7 +7,7 @@ KEYPAD = {
 
 
 class Solution:
-    def letter_combinations(self, digits: str) -> list[str]:
+    def letterCombinations(self, digits: str) -> list[str]:
         if not digits:
             return []
         return ["".join(letters) for letters in product(*(KEYPAD[d] for d in digits))]

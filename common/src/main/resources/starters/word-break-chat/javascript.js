@@ -1,10 +1,10 @@
 class Solution {
     /**
-     * @param {string} headline
-     * @param {string[]} topics
+     * @param {string} message
+     * @param {string[]} words
      * @return {boolean}
      */
-    splitHeadlineTokens(headline, topics) {
+    canSplitMessage(message, words) {
         // Write your solution here
     }
 }

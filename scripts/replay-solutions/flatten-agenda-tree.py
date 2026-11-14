@@ -9,7 +9,7 @@ class TreeNode:
 
 
 class Solution:
-    def unrollSchedule(self, root: Optional[TreeNode]) -> None:
+    def flattenAgenda(self, root: Optional[TreeNode]) -> None:
         node = root
         while node:
             if node.left:

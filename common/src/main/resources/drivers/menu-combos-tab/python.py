@@ -1,9 +1,9 @@
 {USER_CODE}
 
 import json
-candidates = json.loads(input())
-target = int(input())
-result = Solution().listQuotaBatches(candidates, target)
+pastries = json.loads(input())
+tab = int(input())
+result = Solution().listTabCombos(pastries, tab)
 result = [sorted(c) for c in result]
 result.sort()
 print(json.dumps(result, separators=(',', ':')))

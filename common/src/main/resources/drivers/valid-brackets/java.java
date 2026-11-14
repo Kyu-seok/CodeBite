@@ -5,8 +5,8 @@ import java.util.*;
 public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        String s = sc.nextLine().trim();
-        boolean result = new Solution().verifyJobNesting(s);
+        String brackets = sc.nextLine().trim();
+        boolean result = new Solution().isValidBrackets(brackets);
         System.out.println(result);
     }
 }

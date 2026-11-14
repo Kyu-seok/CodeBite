@@ -10,9 +10,9 @@ public class Main {
         String intLine = sc.nextLine().trim();
         String newLine = sc.nextLine().trim();
 
-        int[][] intervals;
+        int[][] meetings;
         if (intLine.equals("[]")) {
-            intervals = new int[0][];
+            meetings = new int[0][];
         } else {
             String inner = intLine.substring(1, intLine.length() - 1);
             List<int[]> list = new ArrayList<>();
@@ -28,14 +28,14 @@ public class Main {
                     }
                 }
             }
-            intervals = list.toArray(new int[0][]);
+            meetings = list.toArray(new int[0][]);
         }
 
         String ni = newLine.substring(1, newLine.length() - 1);
         String[] np = ni.split(",");
-        int[] newInterval = {Integer.parseInt(np[0].trim()), Integer.parseInt(np[1].trim())};
+        int[] newMeeting = {Integer.parseInt(np[0].trim()), Integer.parseInt(np[1].trim())};
 
-        int[][] result = new Solution().scheduleObservingWindow(intervals, newInterval);
+        int[][] result = new Solution().insertMeeting(meetings, newMeeting);
         List<List<Integer>> res = new ArrayList<>();
         for (int[] r : result) res.add(Arrays.asList(r[0], r[1]));
         System.out.println(JsonOutput.intList2D(res));

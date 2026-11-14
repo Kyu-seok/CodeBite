@@ -24,8 +24,8 @@ public class Main {
                 }
             }
         }
-        int[][] grid = rows.toArray(new int[0][]);
-        int result = new Solution().spreadContaminationWave(grid);
+        int[][] tray = rows.toArray(new int[0][]);
+        int result = new Solution().minutesUntilStale(tray);
         System.out.println(result);
     }
 }

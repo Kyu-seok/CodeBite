@@ -11,7 +11,7 @@ int main() {
     string line;
     getline(cin, line);
 
-    vector<vector<int>> targets;
+    vector<vector<int>> zones;
     string inner = line.substr(1, line.size() - 2);
     int depth = 0, start = 0;
     for (int i = 0; i < (int)inner.size(); i++) {
@@ -24,12 +24,12 @@ int main() {
                 string a, b;
                 getline(ss, a, ',');
                 getline(ss, b, ',');
-                targets.push_back({(int)stol(a), (int)stol(b)});
+                zones.push_back({(int)stol(a), (int)stol(b)});
             }
         }
     }
 
-    int result = Solution().coverAllWindows(targets);
+    int result = Solution().minPellets(zones);
     cout << result << endl;
     return 0;
 }

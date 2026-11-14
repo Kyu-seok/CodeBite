@@ -1,4 +1,4 @@
 class Solution:
-    def isSoloSpecies(self, specimenCount: int) -> bool:
+    def isPowerOfTwo(self, n: int) -> bool:
         # Write your solution here
         pass

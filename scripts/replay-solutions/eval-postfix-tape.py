@@ -1,7 +1,7 @@
 class Solution:
-    def foldBaleOps(self, baleTape: list[str]) -> int:
+    def evalPostfix(self, tokens: list[str]) -> int:
         stack: list[int] = []
-        for token in baleTape:
+        for token in tokens:
             if token not in ("+", "-", "*", "/"):
                 stack.append(int(token))
                 continue

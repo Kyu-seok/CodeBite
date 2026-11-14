@@ -5,8 +5,8 @@ import java.util.*;
 public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        long n = Long.parseLong(sc.nextLine().trim());
-        long result = new Solution().reversePrinterFlags(n);
+        long statusWord = Long.parseLong(sc.nextLine().trim());
+        long result = new Solution().reverseFlags(statusWord);
         System.out.println(result);
     }
 }

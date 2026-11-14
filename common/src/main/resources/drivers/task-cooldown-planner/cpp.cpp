@@ -20,7 +20,7 @@ int main() {
             jobs.push_back(jobsLine[i]);
         }
     }
-    int result = Solution().planStationRuns(jobs, n);
+    int result = Solution().minPrintSlots(jobs, n);
     cout << result << endl;
     return 0;
 }

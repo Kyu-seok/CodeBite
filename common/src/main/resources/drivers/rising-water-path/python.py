@@ -1,6 +1,6 @@
 {USER_CODE}
 
 import json
-grid = json.loads(input())
-result = Solution().crossFloodedCorridors(grid)
+elevation = json.loads(input())
+result = Solution().earliestCrossingTime(elevation)
 print(result)

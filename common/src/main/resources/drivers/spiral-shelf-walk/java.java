@@ -23,9 +23,9 @@ public class Main {
                 }
             }
         }
-        int[][] matrix = rows.toArray(new int[0][]);
+        int[][] shelf = rows.toArray(new int[0][]);
 
-        List<Integer> result = new Solution().traceOutwardWalk(matrix);
+        List<Integer> result = new Solution().spiralOrder(shelf);
         StringBuilder sb = new StringBuilder("[");
         for (int i = 0; i < result.size(); i++) {
             if (i > 0) sb.append(",");

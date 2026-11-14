@@ -1,5 +1,5 @@
 class Solution:
-    def pairTiersBudget(self, menuPrice: list[int], budget: int) -> list[int]:
+    def findMenuPair(self, menuPrice: list[int], budget: int) -> list[int]:
         left, right = 0, len(menuPrice) - 1
         while left < right:
             total = menuPrice[left] + menuPrice[right]

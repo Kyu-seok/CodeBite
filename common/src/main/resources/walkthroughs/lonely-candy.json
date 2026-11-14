@@ -13,8 +13,8 @@
    "id": "candies",
    "type": "array",
    "title": {
-    "en": "frames (tag: bits)",
-    "ko": "frames (태그: 비트)"
+    "en": "candies (tag: bits)",
+    "ko": "candies (태그: 비트)"
    }
   },
   {
@@ -32,7 +32,7 @@
     "en": "Example 1",
     "ko": "예시 1"
    },
-   "input": "frames = [5,5,3]",
+   "input": "candies = [5,5,3]",
    "expected": "3",
    "frames": [
     {
@@ -344,7 +344,7 @@
     "en": "Example 2",
     "ko": "예시 2"
    },
-   "input": "frames = [8,2,6,2,6]",
+   "input": "candies = [8,2,6,2,6]",
    "expected": "8",
    "frames": [
     {
@@ -861,7 +861,7 @@
     "en": "Case 3",
     "ko": "케이스 3"
    },
-   "input": "frames = [7]",
+   "input": "candies = [7]",
    "expected": "7",
    "frames": [
     {

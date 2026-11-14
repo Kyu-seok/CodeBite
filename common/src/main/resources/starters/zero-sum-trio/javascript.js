@@ -3,7 +3,7 @@ class Solution {
      * @param {number[]} deltas
      * @return {number[][]}
      */
-    triageZeroPriority(deltas) {
+    zeroSumTrios(deltas) {
         // Write your solution here
     }
 }

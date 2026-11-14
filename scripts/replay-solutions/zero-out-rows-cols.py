@@ -1,5 +1,5 @@
 class Solution:
-    def clearDefectRows(self, board: list[list[int]]) -> None:
+    def zeroOutRowsAndCols(self, board: list[list[int]]) -> None:
         zero_rows = {r for r, row in enumerate(board) if 0 in row}
         zero_cols = {c for row in board for c, value in enumerate(row) if value == 0}
         for r, row in enumerate(board):

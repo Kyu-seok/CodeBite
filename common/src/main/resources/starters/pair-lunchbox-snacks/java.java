@@ -1,5 +1,5 @@
 class Solution {
-    public int pairCrates(int[] crates, int capacity) {
+    public int minLunchboxes(int[] weights, int capacity) {
         // Write your solution here
     }
 }

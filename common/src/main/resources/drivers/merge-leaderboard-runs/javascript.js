@@ -22,7 +22,7 @@ function _listToArray(head) {
 const lines = require('fs').readFileSync('/dev/stdin', 'utf8').trim().split('\n');
 const arr1 = JSON.parse(lines[0]);
 const arr2 = JSON.parse(lines[1]);
-const list1 = _buildList(arr1);
-const list2 = _buildList(arr2);
-const result = new Solution().combineOvenRotations(list1, list2);
+const runA = _buildList(arr1);
+const runB = _buildList(arr2);
+const result = new Solution().mergeRuns(runA, runB);
 console.log(JSON.stringify(_listToArray(result)));

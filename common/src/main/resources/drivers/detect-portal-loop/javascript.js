@@ -18,5 +18,5 @@ if (pos >= 0 && nodes.length > 0) {
     nodes[nodes.length - 1].next = nodes[pos];
 }
 
-const result = new Solution().detectTransferLoop(head);
+const result = new Solution().hasPortalLoop(head);
 console.log(JSON.stringify(result));

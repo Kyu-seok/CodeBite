@@ -4,7 +4,7 @@ class Solution {
      * @param {number} target
      * @return {number}
      */
-    shortestBakeSpan(trays, target) {
+    shortestCookieSpan(trays, target) {
         // Write your solution here
     }
 }

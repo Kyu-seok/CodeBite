@@ -6,5 +6,5 @@ try:
     digits = input().strip()
 except EOFError:
     digits = ''
-result = sorted(Solution().letter_combinations(digits))
+result = sorted(Solution().letterCombinations(digits))
 print(json.dumps(result, separators=(',', ':')))

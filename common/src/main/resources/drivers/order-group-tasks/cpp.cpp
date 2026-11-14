@@ -48,9 +48,9 @@ int main() {
     string nStr, line;
     getline(cin, nStr);
     getline(cin, line);
-    int numCourses = stoi(nStr);
+    int numTasks = stoi(nStr);
 
-    vector<vector<int>> prerequisites;
+    vector<vector<int>> prereqs;
     if (line != "[]") {
         string inner = line.substr(1, line.size() - 2);
         int depth = 0;
@@ -65,13 +65,13 @@ int main() {
                     string a, b;
                     getline(ss, a, ',');
                     getline(ss, b, ',');
-                    prerequisites.push_back({stoi(a), stoi(b)});
+                    prereqs.push_back({stoi(a), stoi(b)});
                 }
             }
         }
     }
 
-    vector<int> result = Solution().sequenceAssemblySteps(numCourses, prerequisites);
-    cout << (isValid(numCourses, prerequisites, result) ? "VALID" : "INVALID") << endl;
+    vector<int> result = Solution().findTaskOrder(numTasks, prereqs);
+    cout << (isValid(numTasks, prereqs, result) ? "VALID" : "INVALID") << endl;
     return 0;
 }

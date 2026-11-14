@@ -1,5 +1,5 @@
 class Solution {
-    public int[] sequenceAssemblySteps(int numSteps, int[][] prereqs) {
+    public int[] findTaskOrder(int numTasks, int[][] prereqs) {
         // Write your solution here
     }
 }

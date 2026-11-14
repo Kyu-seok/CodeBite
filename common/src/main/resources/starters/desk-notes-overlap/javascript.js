@@ -4,7 +4,7 @@ class Solution {
      * @param {string} right
      * @return {number}
      */
-    shelfOverlapLength(left, right) {
+    longestCommonSubsequence(left, right) {
         // Write your solution here
     }
 }

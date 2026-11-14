@@ -1,6 +1,6 @@
 class Solution {
 public:
-    int pickPlotHaul(vector<int>& snacks) {
+    int maxSnackHaul(vector<int>& snacks) {
         // Write your solution here
     }
 };

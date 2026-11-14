@@ -3,7 +3,7 @@ using namespace std;
 
 class Solution {
 public:
-    int pickCircuitTargets(vector<int>& yields) {
+    int maxTastiness(vector<int>& tastiness) {
         // Write your solution here
     }
 };

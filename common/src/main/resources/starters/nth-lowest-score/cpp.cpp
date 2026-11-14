@@ -11,7 +11,7 @@
  */
 class Solution {
 public:
-    int pickNthTarget(TreeNode* root, int k) {
+    int nthLowestScore(TreeNode* root, int k) {
         // Write your solution here
     }
 };

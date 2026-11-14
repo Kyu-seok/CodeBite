@@ -1,6 +1,6 @@
 class Solution {
 public:
-    int findUnpairedFrame(vector<int>& frames) {
+    int findLonelyCandy(vector<int>& candies) {
         // Write your solution here
     }
 };

@@ -1,8 +1,8 @@
 class Solution:
-    def verifyJobNesting(self, tape: str) -> bool:
+    def isValidBrackets(self, brackets: str) -> bool:
         opener_of = {")": "(", "]": "[", "}": "{"}
         stack: list[str] = []
-        for ch in tape:
+        for ch in brackets:
             if ch in opener_of:
                 if not stack or stack.pop() != opener_of[ch]:
                     return False

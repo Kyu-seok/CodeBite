@@ -6,7 +6,7 @@ class TreeNode:
 
 
 class Solution:
-    def maxBranchTotal(self, root: TreeNode | None) -> int:
+    def maxPathSum(self, root: TreeNode | None) -> int:
         best = float("-inf")
 
         def gain(node: TreeNode | None) -> int:

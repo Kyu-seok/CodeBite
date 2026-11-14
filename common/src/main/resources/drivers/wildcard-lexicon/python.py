@@ -12,7 +12,7 @@ for cmd, arg in zip(cmds, args):
         dict_obj = WildcardLexicon()
         result.append(None)
     elif cmd == "enroll":
-        dict_obj.add_word(arg[0])
+        dict_obj.enroll(arg[0])
         result.append(None)
     elif cmd == "match":
         result.append(dict_obj.match(arg[0]))

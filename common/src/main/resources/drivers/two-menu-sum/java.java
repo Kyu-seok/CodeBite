@@ -7,13 +7,13 @@ import java.util.*;
 public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        String numsLine = sc.nextLine().trim();
-        int target = Integer.parseInt(sc.nextLine().trim());
-        String inner = numsLine.substring(1, numsLine.length() - 1);
+        String menuPriceLine = sc.nextLine().trim();
+        int budget = Integer.parseInt(sc.nextLine().trim());
+        String inner = menuPriceLine.substring(1, menuPriceLine.length() - 1);
         String[] parts = inner.split(",");
-        int[] numbers = new int[parts.length];
-        for (int i = 0; i < parts.length; i++) numbers[i] = Integer.parseInt(parts[i].trim());
-        int[] result = new Solution().pairTiersBudget(numbers, target);
+        int[] menuPrice = new int[parts.length];
+        for (int i = 0; i < parts.length; i++) menuPrice[i] = Integer.parseInt(parts[i].trim());
+        int[] result = new Solution().findMenuPair(menuPrice, budget);
         System.out.println(JsonOutput.intArray(result));
     }
 }

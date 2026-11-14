@@ -1,6 +1,6 @@
 class Solution {
 public:
-    void clearDefectRows(vector<vector<int>>& board) {
+    void zeroOutRowsAndCols(vector<vector<int>>& board) {
         // Write your solution here
     }
 };

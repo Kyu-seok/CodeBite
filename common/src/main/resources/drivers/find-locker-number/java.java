@@ -5,13 +5,13 @@ import java.util.*;
 public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        String numsLine = sc.nextLine().trim();
+        String lockersLine = sc.nextLine().trim();
         int target = Integer.parseInt(sc.nextLine().trim());
-        String inner = numsLine.substring(1, numsLine.length() - 1);
+        String inner = lockersLine.substring(1, lockersLine.length() - 1);
         String[] parts = inner.split(",");
-        int[] nums = new int[parts.length];
-        for (int i = 0; i < parts.length; i++) nums[i] = Integer.parseInt(parts[i].trim());
-        int result = new Solution().locateCallNumber(nums, target);
+        int[] lockers = new int[parts.length];
+        for (int i = 0; i < parts.length; i++) lockers[i] = Integer.parseInt(parts[i].trim());
+        int result = new Solution().findLocker(lockers, target);
         System.out.println(result);
     }
 }

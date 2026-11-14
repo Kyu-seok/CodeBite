@@ -7,15 +7,15 @@ public class Main {
         Scanner sc = new Scanner(System.in);
         String numsLine = sc.nextLine().trim();
         String inner = numsLine.substring(1, numsLine.length() - 1);
-        int[] nums;
+        int[] seatIds;
         if (inner.isEmpty()) {
-            nums = new int[0];
+            seatIds = new int[0];
         } else {
             String[] parts = inner.split(",");
-            nums = new int[parts.length];
-            for (int i = 0; i < parts.length; i++) nums[i] = Integer.parseInt(parts[i].trim());
+            seatIds = new int[parts.length];
+            for (int i = 0; i < parts.length; i++) seatIds[i] = Integer.parseInt(parts[i].trim());
         }
-        int result = new Solution().longestSeatBlock(nums);
+        int result = new Solution().longestSeatRun(seatIds);
         System.out.println(result);
     }
 }

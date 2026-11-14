@@ -10,7 +10,7 @@
  * }
  */
 class Solution {
-    public boolean checkHubEvenness(TreeNode root) {
+    public boolean isBalanced(TreeNode root) {
         // Write your solution here
     }
 }

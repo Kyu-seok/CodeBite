@@ -10,7 +10,7 @@ int main() {
     string line;
     getline(cin, line);
     // Parse 2D int array [[2,1,1],[2,3,1],[3,4,1]]
-    vector<vector<int>> edges;
+    vector<vector<int>> links;
     string inner = line.substr(1, line.size() - 2);
     if (!inner.empty() && inner.find('[') != string::npos) {
         int i = 0;
@@ -24,7 +24,7 @@ int main() {
                 while (getline(ss, token, ',')) {
                     triple.push_back(stoi(token));
                 }
-                edges.push_back(triple);
+                links.push_back(triple);
                 i = j + 1;
             } else {
                 i++;
@@ -33,7 +33,7 @@ int main() {
     }
     int n, src;
     cin >> n >> src;
-    int result = Solution().propagateAlertWave(edges, n, src);
+    int result = Solution().minutesToReachAll(links, n, src);
     cout << result << endl;
     return 0;
 }

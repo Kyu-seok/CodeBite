@@ -13,7 +13,7 @@ int main() {
     string line;
     getline(cin, line);
     TreeNode* root = treeFromArray(line);
-    vector<int> result = Solution().captureDockSilhouette(root);
+    vector<int> result = Solution().rightSideView(root);
     cout << "[";
     for (int i = 0; i < (int)result.size(); i++) {
         if (i > 0) cout << ",";

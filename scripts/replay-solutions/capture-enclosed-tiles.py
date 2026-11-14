@@ -1,5 +1,5 @@
 class Solution:
-    def seizeEnclosedZones(self, board: list[list[str]]) -> list[list[str]]:
+    def captureEnclosedTiles(self, board: list[list[str]]) -> None:
         rows, cols = len(board), len(board[0])
         # Mark every 'O' reachable from the border as safe ('S'), then flip the rest.
         stack = [(r, c) for r in range(rows) for c in range(cols)
@@ -12,4 +12,3 @@ class Solution:
         for row in board:
             for c, cell in enumerate(row):
                 row[c] = 'O' if cell == 'S' else 'X'
-        return board

@@ -3,7 +3,7 @@ class Solution {
      * @param {string[]} tags
      * @return {string}
      */
-    orderSceneShoot(tags) {
+    recoverTierOrder(tags) {
         // Write your solution here
     }
 }

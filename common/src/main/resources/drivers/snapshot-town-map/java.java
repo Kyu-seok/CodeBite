@@ -9,7 +9,7 @@ public class Main {
         Scanner sc = new Scanner(System.in);
         String line = sc.nextLine().trim();
         Node node = Node.fromAdjList(line);
-        Node cloned = new Solution().snapshotMeshLayout(node);
+        Node cloned = new Solution().cloneMap(node);
         System.out.println(Node.toAdjListJson(cloned));
     }
 }

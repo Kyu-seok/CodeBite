@@ -13,7 +13,7 @@ class Solution {
      * @param {Node} node
      * @return {Node}
      */
-    snapshotMeshLayout(node) {
+    cloneMap(node) {
         // Write your solution here
     }
 }

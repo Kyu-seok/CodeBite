@@ -3,7 +3,7 @@ class Solution {
      * @param {number[]} lockers
      * @return {number}
      */
-    frameLargestBale(lockers) {
+    largestPosterArea(lockers) {
         // Write your solution here
     }
 }

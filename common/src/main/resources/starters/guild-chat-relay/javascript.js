@@ -5,7 +5,7 @@ class Solution {
      * @param {number} src
      * @return {number}
      */
-    propagateAlertWave(links, n, src) {
+    minutesToReachAll(links, n, src) {
         // Write your solution here
     }
 }

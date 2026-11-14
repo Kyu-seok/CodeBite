@@ -2,5 +2,5 @@
 
 const input = require('fs').readFileSync('/dev/stdin', 'utf8').trim();
 const tokens = JSON.parse(input);
-const result = new Solution().foldBaleOps(tokens);
+const result = new Solution().evalPostfix(tokens);
 console.log(result);

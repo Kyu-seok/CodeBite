@@ -1,5 +1,5 @@
 class Solution {
-    daysToUpgrade(readings) {
+    daysUntilWarmer(readings) {
 
     }
 }

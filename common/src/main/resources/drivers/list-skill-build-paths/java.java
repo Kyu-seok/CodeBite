@@ -11,7 +11,7 @@ public class Main {
         String line = sc.nextLine().trim();
         int target = Integer.parseInt(sc.nextLine().trim());
         TreeNode root = TreeNode.fromArray(line);
-        List<List<Integer>> result = new Solution().listRuntimeBranches(root, target);
+        List<List<Integer>> result = new Solution().listBuildPaths(root, target);
         result.sort((a, b) -> {
             for (int i = 0; i < Math.min(a.size(), b.size()); i++) {
                 if (!a.get(i).equals(b.get(i))) return a.get(i) - b.get(i);

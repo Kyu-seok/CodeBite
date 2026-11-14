@@ -3,7 +3,7 @@ using namespace std;
 
 class Solution {
 public:
-    int minVanHops(vector<int>& fuel) {
+    int minJumps(vector<int>& maxJump) {
         // Write your solution here
     }
 };

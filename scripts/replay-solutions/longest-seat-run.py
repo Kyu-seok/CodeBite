@@ -1,5 +1,5 @@
 class Solution:
-    def longestSeatBlock(self, seatIds: list[int]) -> int:
+    def longestSeatRun(self, seatIds: list[int]) -> int:
         seats = set(seatIds)
         longest = 0
         for seat in seats:

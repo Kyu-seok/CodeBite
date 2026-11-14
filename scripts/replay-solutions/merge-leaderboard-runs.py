@@ -5,7 +5,7 @@ class ListNode:
 
 
 class Solution:
-    def combineOvenRotations(self, runA: ListNode | None, runB: ListNode | None) -> ListNode | None:
+    def mergeRuns(self, runA: ListNode | None, runB: ListNode | None) -> ListNode | None:
         dummy = tail = ListNode()
         while runA and runB:
             if runA.val <= runB.val:

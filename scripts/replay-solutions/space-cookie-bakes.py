@@ -2,7 +2,7 @@ from collections import Counter
 
 
 class Solution:
-    def orderRecipeBakes(self, cookies: str) -> str:
+    def spaceBakes(self, cookies: str) -> str:
         # Lay the letters, most frequent first, into the even slots and then the odd ones.
         counts = Counter(cookies)
         if counts and max(counts.values()) > (len(cookies) + 1) // 2:

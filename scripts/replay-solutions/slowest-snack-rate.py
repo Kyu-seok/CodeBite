@@ -1,5 +1,5 @@
 class Solution:
-    def min_eating_speed(self, piles: list[int], hours: int) -> int:
+    def minEatingRate(self, piles: list[int], hours: int) -> int:
         low, high = 1, max(piles)
         while low < high:
             speed = (low + high) // 2
