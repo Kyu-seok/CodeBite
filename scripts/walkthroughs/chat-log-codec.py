@@ -2,7 +2,10 @@
 """chat-log-codec's Walkthrough: the reference solution (scripts/replay-solutions/chat-log-codec.py),
 length-prefixed packing (`<length>#<message>`) and the unpack that reads it back, one frame per message
 packed and per message unpacked on each sample Test Case, plus an extra run whose messages hold `#` and
-digits.
+digits. Each character pack writes moves into its blob cell from the sender's row (the length's
+digits from the length cell, the message's from its text). Each message pack writes and unpack reads
+is a span on the blob, beside its length header; unpack's messages move from the blob into the
+receiver's box.
 
     CODEBITE_DB=<database> scripts/walkthroughs/chat-log-codec.py
 
@@ -15,7 +18,7 @@ import sys
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
 from codebite import driver_list, josa, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
-from walkthrough_trace import Walkthrough  # noqa: E402
+from walkthrough_trace import Walkthrough, at, move, span  # noqa: E402
 
 SLUG = "chat-log-codec"
 COLUMNS = [{"en": "text", "ko": "내용"}, {"en": "length", "ko": "길이"}]
@@ -29,8 +32,8 @@ wt = Walkthrough(
     views=[
         {"id": "messages", "type": "table", "title": {"en": "messages (sender)", "ko": "messages (보내는 쪽)"}},
         {"id": "blob", "type": "array", "title": {"en": "blob", "ko": "blob"}},
-        {"id": "unpacked", "type": "table", "title": {"en": "unpack(blob) (receiver)", "ko": "unpack(blob) (받는 쪽)"}},
-        {"id": "state", "type": "vars"},
+        {"id": "unpacked", "type": "output", "title": {"en": "unpack(blob) (receiver)", "ko": "unpack(blob) (받는 쪽)"},
+         "empty": {"en": "nothing yet", "ko": "아직 없음"}},
     ],
 )
 
@@ -38,6 +41,17 @@ wt = Walkthrough(
 def rows(messages):
     return [{"label": {"en": f"message {n}", "ko": f"메시지 {n}"}, "cells": [json.dumps(m, ensure_ascii=False), len(m)]}
             for n, m in enumerate(messages, start=1)]
+
+
+def written(row, start, message):
+    """pack writing message `row` from `start`: each digit of its length moves from the length cell, the # is
+    written there, and each character moves from the text cell."""
+    digits = str(len(message))
+    moves = [move(at("messages", [row, 1]), at("blob", start + k), value=d) for k, d in enumerate(digits)]
+    moves.append(move(None, at("blob", start + len(digits)), value="#"))
+    body = start + len(digits) + 1
+    moves += [move(at("messages", [row, 0]), at("blob", body + k), value=ch) for k, ch in enumerate(message)]
+    return moves
 
 
 def quoted(m):
@@ -52,21 +66,26 @@ def solve(messages, run):
     width = sum(len(f"{len(m)}#") + len(m) for m in messages)
     out = []
     i = None
-    length = None
 
-    def frame(caption, sent=(), sender_done=False, lit=(), good=(), got=(), path=False, **answer):
+    def frame(caption, sent=(), sender_done=False, lit=(), good=(), got=(), path=False, spans=None, moves=None,
+              **answer):
         sender_marks = ([[r, c] for r in range(len(messages)) for c in (0, 1)] if sender_done
                         else [[r, c] for r in sent for c in (0, 1)])
         run.frame(caption,
                   messages={"columns": COLUMNS, "rows": rows(messages),
                             "marks": {"dim" if sender_done else "lit": sender_marks}},
-                  blob={"values": list(blob) + [""] * (width - len(blob)), "pointers": {"i": i if i is not None and i < len(blob) else None},
-                        "marks": {"lit": list(lit), "good": list(good)}},
-                  unpacked={"columns": COLUMNS, "rows": rows(out),
-                            "marks": {"path" if path else "good": [[r, c] for r in got for c in (0, 1)]}},
-                  state={"items": [{"label": "i", "value": "–" if i is None else i},
-                                   {"label": {"en": "length", "ko": "length (길이)"}, "value": "–" if length is None else length}]},
-                  **answer)
+                  blob={"values": list(blob) + [""] * (width - len(blob)),
+                        "pointers": {"i": i if i is not None and i < len(blob) else None},
+                        "unread": list(range(len(blob), width)) if i is None else [],
+                        "spans": spans or {}, "marks": {"lit": list(lit), "good": list(good)}},
+                  unpacked={"values": [quoted(m) for m in out],
+                            "marks": {"path" if path else "good": list(got)}},
+                  moves=moves, **answer)
+
+    def message_span(body_from, body_to, n, mark):
+        """The message's characters as a span over the blob, after its length header."""
+        return {"body": span(body_from, body_to, {"en": f"message {n}", "ko": f"메시지 {n}"}, mark=mark)
+                } if body_to >= body_from else {}
 
     count = len(messages)
     frame({"en": f"pack gets {count} {plural(count, 'message', 'messages')}. It writes each one as its length, "
@@ -83,13 +102,17 @@ def solve(messages, run):
         what_ko = ("빈 메시지라 # 뒤에 아무것도 붙지 않습니다" if not message else f"문자 {len(message)}개입니다")
         frame({"en": f"Message {n}, {quoted(message)}, is {what}: append {piece}.",
                "ko": f"메시지 {n}({quoted(message)}): {what_ko}. blob 끝에 이어 붙입니다: {piece}"},
-              sent=[n - 1], good=range(start, len(blob)))
+              sent=[n - 1], good=range(start, len(blob)),
+              moves=written(n - 1, start, message),
+              spans=message_span(start + len(str(len(message))) + 1, len(blob) - 1, n, "good"))
     i = 0
     frame({"en": f"pack returns the blob {blob}, {len(blob)} characters. unpack gets only this string and reads "
                  f"it from i = 0.",
            "ko": f"pack이 돌려준 문자열은 {blob}, 문자 {len(blob)}개입니다. unpack은 이 문자열만 받아 "
                  f"i = 0부터 읽습니다."},
-          sender_done=True)
+          sender_done=True, lit=[0],
+          # the handover: the whole blob flies from where pack stopped writing to where unpack starts reading
+          moves=[move(at("blob", len(blob) - 1), at("blob", 0), value=blob)])
     # unpack
     while i < len(blob):
         hash_at = blob.index("#", i)
@@ -99,7 +122,7 @@ def solve(messages, run):
         out.append(message)
         head = range(i, hash_at + 1)
         took = range(start, start + length)
-        at = i
+        was = i
         i = start + length
         n = len(out)
         if length:
@@ -113,10 +136,13 @@ def solve(messages, run):
         if "#" in message:
             note = " The # inside it is only a character: unpack never searches the counted characters for a marker."
             note_ko = " 그 안의 # 기호는 그냥 문자일 뿐, unpack은 길이만큼 가져오는 문자 안에서 구분자를 찾지 않습니다."
-        frame({"en": f"At i = {at}, the digits up to the next # read {length}: {take}, then jump to i = {i}.{note}",
-               "ko": f"i = {at}에서 다음 #까지의 숫자 {josa(length, '을를')} 읽고, {take_ko} "
+        frame({"en": f"At i = {was}, the digits up to the next # read {length}: {take}, then jump to i = {i}.{note}",
+               "ko": f"i = {was}에서 다음 #까지의 숫자 {josa(length, '을를')} 읽고, {take_ko} "
                      f"i = {josa(i, '(으)로')} 건너뜁니다.{note_ko}"},
-              sender_done=True, lit=head, good=took, got=[n - 1])
+              sender_done=True, lit=head, good=took, got=[n - 1],
+              spans=message_span(start, start + length - 1, n, "good"),
+              moves=[move(at("blob", start if length else hash_at), at("unpacked", n - 1), value=quoted(message),
+                          mark="good")])
     answer = driver_list(out)
     frame({"en": f"i = {i} is the end of the blob, so unpack stops with {len(out)} "
                  f"{plural(len(out), 'message', 'messages')}, the same as the sender's: answer {answer}.",

@@ -19,7 +19,7 @@ Done when you can say what each sample's answer is and why, and the reference so
 
 ## 2. Write the tracer
 
-Copy the tracer closest to your problem's shape: one in `scripts/walkthroughs/` (`rotting-donuts.py`: grid, `cheapest-courier-route.py`: graph and cost table, and the Arrays & Hashing ones for maps, sets, strings and windows), or the public skill's example. [views.md](views.md) says which view each common shape takes, and the marks and tags that read right. Name it `scripts/walkthroughs/<slug>.py`, keep its `#!/usr/bin/env python3.12` shebang and `chmod +x` it. CodeBite's tracers differ from the public examples in three ways, all through `scripts/walkthroughs/codebite.py`, which also holds the caption helpers `driver_list`, `plural` and `josa`:
+Copy the tracer closest to your problem's shape: one in `scripts/walkthroughs/` (`rotting-donuts.py`: grid and BFS queue, `cheapest-courier-route.py`: graph relaxations into cost arrays, `rotate-pixel-art.py`: a grid rotated through a one-cell temp, `valid-sudoku.py`: a board with boxes and a map per region, and the Arrays & Hashing ones for maps, sets, strings and windows), or the public skill's example. [views.md](views.md) says which view each common shape takes, and the marks and tags that read right. Name it `scripts/walkthroughs/<slug>.py`, keep its `#!/usr/bin/env python3.12` shebang and `chmod +x` it. CodeBite's tracers differ from the public examples in three ways, all through `scripts/walkthroughs/codebite.py`, which also holds the caption helpers `driver_list`, `plural` and `josa`:
 
 - **Samples come from the database**, never a literal list: `sample_cases(slug)` returns them in `order_index` order as `{"input", "expected", "label"}`, input and expected verbatim. Parse `input` exactly as the problem's Python Driver (`common/src/main/resources/drivers/<slug>/python.py`) reads it: usually one parameter per line, a list as JSON.
 - **One run per sample** through `sample_run(wt, n, sample, input=...)`: it pins the run to the sample (`sampleInput`, and `expected` as the sample's expected-output text) and labels it "Example N"/"예시 N" when the description shows that example, else "Case N"/"케이스 N" as the test panel numbers samples (a problem often has more samples than Examples). `input=` is the display line, written like the description's `Input:` line. An extra run is `wt.run(..., extra=True)` after the sample runs; it has no `sampleInput`, and its `expected` is what the Driver prints for that input, written as a literal (for a round trip, the input itself).
@@ -35,6 +35,8 @@ A caption is one or two sentences in each language, and the setup frame names th
 
 ## 3. Review the frames
 
+Besides the public checklist, hold every frame to the two rules (#273): (1) the drawing shows where the step's value came from and where it went, by a move or by marking both places; (2) a value with a position or range (a pointer, a window, the best range, a count per key, the answer so far) is drawn on the data, and `vars` holds only values with no place in it, such as `k`. A frame failing either goes back to the tracer.
+
 The public skill's steps 5 and 6, with the pages and shots kept out of the repo under a name of your own (`<scratch>` below: another session's review script or page in a shared scratchpad gets overwritten):
 
 ```sh
@@ -42,9 +44,9 @@ node ~/.agents/skills/walkthrough/scripts/build.mjs common/src/main/resources/wa
 node ~/.agents/skills/walkthrough/scripts/capture.mjs <scratch>/<slug>.html --review --dir <scratch>/<slug>-review
 ```
 
-and again with `--lang ko` on the build, into a `-ko` page and review directory. Build prints the page's path; when it prints nothing, no page was written (an older `build.mjs` run through the `~/.agents` symlink exits 0 silently: run `~/Work/walkthrough-skill/scripts/build.mjs` instead, or update the skill). Read every PNG against the public skill's `references/verify.md`, the Korean sheets too (a caption cut short, a label that wraps over a value). Read the 390 shots view by view: capture.mjs only catches the page scrolling sideways, so a table wider than about 7 data columns loses its right-hand columns inside the card while the capture still passes (lay it out as rows instead, [views.md](views.md)). Fix the tracer, run it, rebuild, shoot again.
+and again with `--lang ko` on the build, into a `-ko` page and review directory. Build prints the page's path; when it prints nothing, no page was written (an older `build.mjs` run through the `~/.agents` symlink exits 0 silently: run `~/Work/walkthrough-skill/scripts/build.mjs` instead, or update the skill). Read every PNG against the public skill's `references/verify.md`, the Korean sheets too (a caption cut short, a label that wraps over a value). The capture fails on a view clipped in its card at 1440 or 390, naming the view's `id`, the width and the frames (a table wider than about 7 data columns is the usual one): lay that view out narrower, as rows instead of columns ([views.md](views.md)). Fix the tracer, run it, rebuild, shoot again.
 
-Done when both captures end `✓ no console errors, no sideways scroll` and every checklist item holds in every shot, in both languages.
+Done when both captures end `✓ no console errors, no sideways scroll, no view clipped in its card` and every checklist item holds in every shot, in both languages.
 
 ## 4. Run the answer test
 

@@ -15,7 +15,7 @@ import sys
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
 from codebite import driver_list, sample_cases, sample_run, walkthrough_path  # noqa: E402
-from walkthrough_trace import Walkthrough  # noqa: E402
+from walkthrough_trace import Walkthrough, at, move, span, swap  # noqa: E402
 
 SLUG = "missing-sock-number"
 
@@ -27,7 +27,8 @@ wt = Walkthrough(
            "인덱스로 옮기면, 제 번호를 갖지 못한 첫 칸이 빠진 번호를 알려 줍니다."},
     views=[
         {"id": "socks", "type": "array", "title": {"en": "socks", "ko": "socks (양말 번호)"}},
-        {"id": "state", "type": "vars"},
+        {"id": "result", "type": "output", "title": {"en": "answer", "ko": "답"},
+         "empty": {"en": "not found yet", "ko": "아직 없음"}},
     ],
 )
 
@@ -39,16 +40,18 @@ def solve(socks, run):
     i = None
     homes = [[k, {"en": f"for {k + 1}", "ko": f"{k + 1}번 칸"}] for k in range(n)]
 
-    def frame(caption, lit=(), good=(), bad=(), path=(), **answer):
-        placed = sum(1 for k in range(n) if socks[k] == k + 1)
+    def frame(caption, lit=(), good=(), bad=(), path=(), present=0, moves=None, result=(), **answer):
+        """`present`: how many slots from the left were found holding their number (a span below them)."""
+        spans = {}
+        if present:
+            label = ({"en": "1 present", "ko": "1번 있음"} if present == 1
+                     else {"en": f"1..{present} present", "ko": f"1..{present}번 있음"})
+            spans["present"] = span(0, present - 1, label, below=True, mark="path" if result else None)
         run.frame(caption,
-                  socks={"values": socks, "pointers": {"i": i}, "tags": homes,
+                  socks={"values": list(socks), "pointers": {"i": i}, "tags": homes, "spans": spans,
                          "marks": {"lit": list(lit), "good": list(good), "bad": list(bad), "path": list(path)}},
-                  state={"items": [
-                      {"label": "n", "value": n},
-                      {"label": {"en": "slots holding their number", "ko": "제 번호가 든 칸"}, "value": placed},
-                  ]},
-                  **answer)
+                  result={"values": list(result), "marks": {"path": list(range(len(result)))}},
+                  moves=moves, **answer)
 
     frame({"en": f"{n} socks, so the answer is between 1 and {n + 1}. The slot at index k is for number k + 1, "
                  f"as the label above each cell says.",
@@ -63,7 +66,8 @@ def solve(socks, run):
                          f"and {w} lands at index {i} to be placed next.",
                    "ko": f"socks[{i}] = {v}: 이 번호의 자리는 인덱스 {target}이고, 거기에는 {w}번이 있었습니다. "
                          f"맞바꾸면 {v}번은 제자리에 가고, {w}번이 인덱스 {i}에 와서 다음으로 자리를 찾습니다."},
-                  good=[i, target])
+                  good=[i, target],
+                  moves=swap("socks", i, target, v, w))
         v = socks[i]
         if not 1 <= v <= n:
             frame({"en": f"socks[{i}] = {v} is outside 1 to {n}: no slot is for it, and it can't be the answer. "
@@ -92,15 +96,16 @@ def solve(socks, run):
                          f"{before['en']}the smallest missing number is {i + 1}.",
                    "ko": f"인덱스 {i}의 칸은 {i + 1}번 칸인데 {socks[i]}번이 들어 있으니 {i + 1}번 양말은 없습니다. "
                          f"{before['ko']}빠진 가장 작은 번호는 {i + 1}번입니다."},
-                  bad=[i], path=range(i), answer=answer)
+                  bad=[i], present=i, result=[i + 1],
+                  moves=[move(at("socks", i), at("result", 0), value=i + 1)], answer=answer)
             return
         frame({"en": f"Index {i} holds {i + 1}: number {i + 1} is in the pile.",
                "ko": f"인덱스 {i}에 {i + 1}번이 있습니다. {i + 1}번 양말은 있습니다."},
-              lit=[i])
+              lit=[i], present=i + 1)
     i = None
     frame({"en": f"Every slot holds its own number, so 1 to {n} are all there: the answer is {n + 1}.",
            "ko": f"모든 칸에 제 번호가 있으니 1부터 {n}까지 다 있습니다. 답은 {n + 1}번입니다."},
-          path=range(n), answer=str(n + 1))
+          present=n, result=[n + 1], moves=[move(None, at("result", 0), value=n + 1)], answer=str(n + 1))
 
 
 for number, sample in enumerate(sample_cases(SLUG), start=1):

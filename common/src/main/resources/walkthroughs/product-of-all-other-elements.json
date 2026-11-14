@@ -24,10 +24,6 @@
     "en": "answer",
     "ko": "answer"
    }
-  },
-  {
-   "id": "state",
-   "type": "vars"
   }
  ],
  "runs": [
@@ -55,9 +51,7 @@
        "pointers": {
         "i": null
        },
-       "marks": {
-        "lit": []
-       }
+       "spans": {}
       },
       "result": {
        "values": [
@@ -73,24 +67,6 @@
         "good": [],
         "path": []
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "prefix",
-          "ko": "prefix (왼쪽 곱)"
-         },
-         "value": 1
-        },
-        {
-         "label": {
-          "en": "suffix",
-          "ko": "suffix (오른쪽 곱)"
-         },
-         "value": 1
-        }
-       ]
       }
      }
     },
@@ -110,9 +86,7 @@
        "pointers": {
         "i": 0
        },
-       "marks": {
-        "lit": []
-       }
+       "spans": {}
       },
       "result": {
        "values": [
@@ -130,26 +104,17 @@
         ],
         "path": []
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "prefix",
-          "ko": "prefix (왼쪽 곱)"
-         },
-         "value": 2
-        },
-        {
-         "label": {
-          "en": "suffix",
-          "ko": "suffix (오른쪽 곱)"
-         },
-         "value": 1
-        }
-       ]
       }
-     }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "result",
+        "at": 0
+       },
+       "value": 1
+      }
+     ]
     },
     {
      "caption": {
@@ -167,10 +132,15 @@
        "pointers": {
         "i": 1
        },
-       "marks": {
-        "lit": [
-         0
-        ]
+       "spans": {
+        "prefix": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "prefix = 2",
+          "ko": "prefix (왼쪽 곱) = 2"
+         }
+        }
        }
       },
       "result": {
@@ -189,26 +159,21 @@
         ],
         "path": []
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "prefix",
-          "ko": "prefix (왼쪽 곱)"
-         },
-         "value": 6
-        },
-        {
-         "label": {
-          "en": "suffix",
-          "ko": "suffix (오른쪽 곱)"
-         },
-         "value": 1
-        }
-       ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nums",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       },
+       "value": 2
+      }
+     ]
     },
     {
      "caption": {
@@ -226,11 +191,15 @@
        "pointers": {
         "i": 2
        },
-       "marks": {
-        "lit": [
-         0,
-         1
-        ]
+       "spans": {
+        "prefix": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "prefix = 6",
+          "ko": "prefix (왼쪽 곱) = 6"
+         }
+        }
        }
       },
       "result": {
@@ -249,26 +218,21 @@
         ],
         "path": []
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "prefix",
-          "ko": "prefix (왼쪽 곱)"
-         },
-         "value": 30
-        },
-        {
-         "label": {
-          "en": "suffix",
-          "ko": "suffix (오른쪽 곱)"
-         },
-         "value": 1
-        }
-       ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nums",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       },
+       "value": 6
+      }
+     ]
     },
     {
      "caption": {
@@ -286,12 +250,15 @@
        "pointers": {
         "i": 3
        },
-       "marks": {
-        "lit": [
-         0,
-         1,
-         2
-        ]
+       "spans": {
+        "prefix": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "prefix = 30",
+          "ko": "prefix (왼쪽 곱) = 30"
+         }
+        }
        }
       },
       "result": {
@@ -310,26 +277,21 @@
         ],
         "path": []
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "prefix",
-          "ko": "prefix (왼쪽 곱)"
-         },
-         "value": 120
-        },
-        {
-         "label": {
-          "en": "suffix",
-          "ko": "suffix (오른쪽 곱)"
-         },
-         "value": 1
-        }
-       ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nums",
+        "at": 2
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       },
+       "value": 30
+      }
+     ]
     },
     {
      "caption": {
@@ -347,9 +309,7 @@
        "pointers": {
         "i": null
        },
-       "marks": {
-        "lit": []
-       }
+       "spans": {}
       },
       "result": {
        "values": [
@@ -365,24 +325,6 @@
         "good": [],
         "path": []
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "prefix",
-          "ko": "prefix (왼쪽 곱)"
-         },
-         "value": 120
-        },
-        {
-         "label": {
-          "en": "suffix",
-          "ko": "suffix (오른쪽 곱)"
-         },
-         "value": 1
-        }
-       ]
       }
      }
     },
@@ -402,9 +344,7 @@
        "pointers": {
         "i": 3
        },
-       "marks": {
-        "lit": []
-       }
+       "spans": {}
       },
       "result": {
        "values": [
@@ -422,26 +362,17 @@
         ],
         "path": []
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "prefix",
-          "ko": "prefix (왼쪽 곱)"
-         },
-         "value": 120
-        },
-        {
-         "label": {
-          "en": "suffix",
-          "ko": "suffix (오른쪽 곱)"
-         },
-         "value": 4
-        }
-       ]
       }
-     }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "result",
+        "at": 3
+       },
+       "value": "×1"
+      }
+     ]
     },
     {
      "caption": {
@@ -459,10 +390,15 @@
        "pointers": {
         "i": 2
        },
-       "marks": {
-        "lit": [
-         3
-        ]
+       "spans": {
+        "suffix": {
+         "from": 3,
+         "to": 3,
+         "label": {
+          "en": "suffix = 4",
+          "ko": "suffix (오른쪽 곱) = 4"
+         }
+        }
        }
       },
       "result": {
@@ -481,26 +417,21 @@
         ],
         "path": []
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "prefix",
-          "ko": "prefix (왼쪽 곱)"
-         },
-         "value": 120
-        },
-        {
-         "label": {
-          "en": "suffix",
-          "ko": "suffix (오른쪽 곱)"
-         },
-         "value": 20
-        }
-       ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nums",
+        "at": 3
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       },
+       "value": "×4"
+      }
+     ]
     },
     {
      "caption": {
@@ -518,11 +449,15 @@
        "pointers": {
         "i": 1
        },
-       "marks": {
-        "lit": [
-         2,
-         3
-        ]
+       "spans": {
+        "suffix": {
+         "from": 2,
+         "to": 3,
+         "label": {
+          "en": "suffix = 20",
+          "ko": "suffix (오른쪽 곱) = 20"
+         }
+        }
        }
       },
       "result": {
@@ -541,26 +476,21 @@
         ],
         "path": []
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "prefix",
-          "ko": "prefix (왼쪽 곱)"
-         },
-         "value": 120
-        },
-        {
-         "label": {
-          "en": "suffix",
-          "ko": "suffix (오른쪽 곱)"
-         },
-         "value": 60
-        }
-       ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nums",
+        "at": 2
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       },
+       "value": "×20"
+      }
+     ]
     },
     {
      "caption": {
@@ -578,12 +508,15 @@
        "pointers": {
         "i": 0
        },
-       "marks": {
-        "lit": [
-         1,
-         2,
-         3
-        ]
+       "spans": {
+        "suffix": {
+         "from": 1,
+         "to": 3,
+         "label": {
+          "en": "suffix = 60",
+          "ko": "suffix (오른쪽 곱) = 60"
+         }
+        }
        }
       },
       "result": {
@@ -602,26 +535,21 @@
         ],
         "path": []
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "prefix",
-          "ko": "prefix (왼쪽 곱)"
-         },
-         "value": 120
-        },
-        {
-         "label": {
-          "en": "suffix",
-          "ko": "suffix (오른쪽 곱)"
-         },
-         "value": 120
-        }
-       ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nums",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       },
+       "value": "×60"
+      }
+     ]
     },
     {
      "caption": {
@@ -639,9 +567,7 @@
        "pointers": {
         "i": null
        },
-       "marks": {
-        "lit": []
-       }
+       "spans": {}
       },
       "result": {
        "values": [
@@ -662,24 +588,6 @@
          3
         ]
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "prefix",
-          "ko": "prefix (왼쪽 곱)"
-         },
-         "value": 120
-        },
-        {
-         "label": {
-          "en": "suffix",
-          "ko": "suffix (오른쪽 곱)"
-         },
-         "value": 120
-        }
-       ]
       }
      },
      "answer": "[60,40,24,30]"
@@ -712,9 +620,7 @@
        "pointers": {
         "i": null
        },
-       "marks": {
-        "lit": []
-       }
+       "spans": {}
       },
       "result": {
        "values": [
@@ -731,24 +637,6 @@
         "good": [],
         "path": []
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "prefix",
-          "ko": "prefix (왼쪽 곱)"
-         },
-         "value": 1
-        },
-        {
-         "label": {
-          "en": "suffix",
-          "ko": "suffix (오른쪽 곱)"
-         },
-         "value": 1
-        }
-       ]
       }
      }
     },
@@ -769,9 +657,7 @@
        "pointers": {
         "i": 0
        },
-       "marks": {
-        "lit": []
-       }
+       "spans": {}
       },
       "result": {
        "values": [
@@ -790,26 +676,17 @@
         ],
         "path": []
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "prefix",
-          "ko": "prefix (왼쪽 곱)"
-         },
-         "value": -2
-        },
-        {
-         "label": {
-          "en": "suffix",
-          "ko": "suffix (오른쪽 곱)"
-         },
-         "value": 1
-        }
-       ]
       }
-     }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "result",
+        "at": 0
+       },
+       "value": 1
+      }
+     ]
     },
     {
      "caption": {
@@ -828,10 +705,15 @@
        "pointers": {
         "i": 1
        },
-       "marks": {
-        "lit": [
-         0
-        ]
+       "spans": {
+        "prefix": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "prefix = -2",
+          "ko": "prefix (왼쪽 곱) = -2"
+         }
+        }
        }
       },
       "result": {
@@ -851,26 +733,21 @@
         ],
         "path": []
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "prefix",
-          "ko": "prefix (왼쪽 곱)"
-         },
-         "value": -2
-        },
-        {
-         "label": {
-          "en": "suffix",
-          "ko": "suffix (오른쪽 곱)"
-         },
-         "value": 1
-        }
-       ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nums",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       },
+       "value": -2
+      }
+     ]
     },
     {
      "caption": {
@@ -889,11 +766,15 @@
        "pointers": {
         "i": 2
        },
-       "marks": {
-        "lit": [
-         0,
-         1
-        ]
+       "spans": {
+        "prefix": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "prefix = -2",
+          "ko": "prefix (왼쪽 곱) = -2"
+         }
+        }
        }
       },
       "result": {
@@ -913,26 +794,21 @@
         ],
         "path": []
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "prefix",
-          "ko": "prefix (왼쪽 곱)"
-         },
-         "value": 0
-        },
-        {
-         "label": {
-          "en": "suffix",
-          "ko": "suffix (오른쪽 곱)"
-         },
-         "value": 1
-        }
-       ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nums",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       },
+       "value": -2
+      }
+     ]
     },
     {
      "caption": {
@@ -951,12 +827,15 @@
        "pointers": {
         "i": 3
        },
-       "marks": {
-        "lit": [
-         0,
-         1,
-         2
-        ]
+       "spans": {
+        "prefix": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "prefix = 0",
+          "ko": "prefix (왼쪽 곱) = 0"
+         }
+        }
        }
       },
       "result": {
@@ -976,26 +855,21 @@
         ],
         "path": []
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "prefix",
-          "ko": "prefix (왼쪽 곱)"
-         },
-         "value": 0
-        },
-        {
-         "label": {
-          "en": "suffix",
-          "ko": "suffix (오른쪽 곱)"
-         },
-         "value": 1
-        }
-       ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nums",
+        "at": 2
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       },
+       "value": 0
+      }
+     ]
     },
     {
      "caption": {
@@ -1014,13 +888,15 @@
        "pointers": {
         "i": 4
        },
-       "marks": {
-        "lit": [
-         0,
-         1,
-         2,
-         3
-        ]
+       "spans": {
+        "prefix": {
+         "from": 0,
+         "to": 3,
+         "label": {
+          "en": "prefix = 0",
+          "ko": "prefix (왼쪽 곱) = 0"
+         }
+        }
        }
       },
       "result": {
@@ -1040,26 +916,21 @@
         ],
         "path": []
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "prefix",
-          "ko": "prefix (왼쪽 곱)"
-         },
-         "value": 0
-        },
-        {
-         "label": {
-          "en": "suffix",
-          "ko": "suffix (오른쪽 곱)"
-         },
-         "value": 1
-        }
-       ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nums",
+        "at": 3
+       },
+       "to": {
+        "view": "result",
+        "at": 4
+       },
+       "value": 0
+      }
+     ]
     },
     {
      "caption": {
@@ -1078,9 +949,7 @@
        "pointers": {
         "i": null
        },
-       "marks": {
-        "lit": []
-       }
+       "spans": {}
       },
       "result": {
        "values": [
@@ -1097,24 +966,6 @@
         "good": [],
         "path": []
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "prefix",
-          "ko": "prefix (왼쪽 곱)"
-         },
-         "value": 0
-        },
-        {
-         "label": {
-          "en": "suffix",
-          "ko": "suffix (오른쪽 곱)"
-         },
-         "value": 1
-        }
-       ]
       }
      }
     },
@@ -1135,9 +986,7 @@
        "pointers": {
         "i": 4
        },
-       "marks": {
-        "lit": []
-       }
+       "spans": {}
       },
       "result": {
        "values": [
@@ -1156,26 +1005,17 @@
         ],
         "path": []
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "prefix",
-          "ko": "prefix (왼쪽 곱)"
-         },
-         "value": 0
-        },
-        {
-         "label": {
-          "en": "suffix",
-          "ko": "suffix (오른쪽 곱)"
-         },
-         "value": -1
-        }
-       ]
       }
-     }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "result",
+        "at": 4
+       },
+       "value": "×1"
+      }
+     ]
     },
     {
      "caption": {
@@ -1194,10 +1034,15 @@
        "pointers": {
         "i": 3
        },
-       "marks": {
-        "lit": [
-         4
-        ]
+       "spans": {
+        "suffix": {
+         "from": 4,
+         "to": 4,
+         "label": {
+          "en": "suffix = -1",
+          "ko": "suffix (오른쪽 곱) = -1"
+         }
+        }
        }
       },
       "result": {
@@ -1217,26 +1062,21 @@
         ],
         "path": []
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "prefix",
-          "ko": "prefix (왼쪽 곱)"
-         },
-         "value": 0
-        },
-        {
-         "label": {
-          "en": "suffix",
-          "ko": "suffix (오른쪽 곱)"
-         },
-         "value": -4
-        }
-       ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nums",
+        "at": 4
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       },
+       "value": "×(-1)"
+      }
+     ]
     },
     {
      "caption": {
@@ -1255,11 +1095,15 @@
        "pointers": {
         "i": 2
        },
-       "marks": {
-        "lit": [
-         3,
-         4
-        ]
+       "spans": {
+        "suffix": {
+         "from": 3,
+         "to": 4,
+         "label": {
+          "en": "suffix = -4",
+          "ko": "suffix (오른쪽 곱) = -4"
+         }
+        }
        }
       },
       "result": {
@@ -1279,26 +1123,21 @@
         ],
         "path": []
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "prefix",
-          "ko": "prefix (왼쪽 곱)"
-         },
-         "value": 0
-        },
-        {
-         "label": {
-          "en": "suffix",
-          "ko": "suffix (오른쪽 곱)"
-         },
-         "value": 0
-        }
-       ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nums",
+        "at": 3
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       },
+       "value": "×(-4)"
+      }
+     ]
     },
     {
      "caption": {
@@ -1317,12 +1156,15 @@
        "pointers": {
         "i": 1
        },
-       "marks": {
-        "lit": [
-         2,
-         3,
-         4
-        ]
+       "spans": {
+        "suffix": {
+         "from": 2,
+         "to": 4,
+         "label": {
+          "en": "suffix = 0",
+          "ko": "suffix (오른쪽 곱) = 0"
+         }
+        }
        }
       },
       "result": {
@@ -1342,26 +1184,21 @@
         ],
         "path": []
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "prefix",
-          "ko": "prefix (왼쪽 곱)"
-         },
-         "value": 0
-        },
-        {
-         "label": {
-          "en": "suffix",
-          "ko": "suffix (오른쪽 곱)"
-         },
-         "value": 0
-        }
-       ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nums",
+        "at": 2
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       },
+       "value": "×0"
+      }
+     ]
     },
     {
      "caption": {
@@ -1380,13 +1217,15 @@
        "pointers": {
         "i": 0
        },
-       "marks": {
-        "lit": [
-         1,
-         2,
-         3,
-         4
-        ]
+       "spans": {
+        "suffix": {
+         "from": 1,
+         "to": 4,
+         "label": {
+          "en": "suffix = 0",
+          "ko": "suffix (오른쪽 곱) = 0"
+         }
+        }
        }
       },
       "result": {
@@ -1406,26 +1245,21 @@
         ],
         "path": []
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "prefix",
-          "ko": "prefix (왼쪽 곱)"
-         },
-         "value": 0
-        },
-        {
-         "label": {
-          "en": "suffix",
-          "ko": "suffix (오른쪽 곱)"
-         },
-         "value": 0
-        }
-       ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nums",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       },
+       "value": "×0"
+      }
+     ]
     },
     {
      "caption": {
@@ -1444,9 +1278,7 @@
        "pointers": {
         "i": null
        },
-       "marks": {
-        "lit": []
-       }
+       "spans": {}
       },
       "result": {
        "values": [
@@ -1469,24 +1301,6 @@
          4
         ]
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "prefix",
-          "ko": "prefix (왼쪽 곱)"
-         },
-         "value": 0
-        },
-        {
-         "label": {
-          "en": "suffix",
-          "ko": "suffix (오른쪽 곱)"
-         },
-         "value": 0
-        }
-       ]
       }
      },
      "answer": "[0,0,8,0,0]"

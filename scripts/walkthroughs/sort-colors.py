@@ -1,7 +1,8 @@
 #!/usr/bin/env python3.12
 """sort-colors' Walkthrough: the reference solution (scripts/replay-solutions/sort-colors.py), the
 Dutch national flag partition with low, mid and high, recording one frame per value mid reads on each
-sample Test Case.
+sample Test Case. The settled 0s, 1s and 2s are spans over nums, the cells mid has yet to read are dashed, and
+each swap is two moves between cells.
 
     CODEBITE_DB=<database> scripts/walkthroughs/sort-colors.py
 
@@ -14,7 +15,7 @@ import sys
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
 from codebite import driver_list, sample_cases, sample_run, walkthrough_path  # noqa: E402
-from walkthrough_trace import Walkthrough  # noqa: E402
+from walkthrough_trace import Walkthrough, span, swap  # noqa: E402
 
 SLUG = "sort-colors"
 
@@ -26,7 +27,6 @@ wt = Walkthrough(
            "0은 low 쪽으로, 2는 high 쪽으로 맞바꿉니다."},
     views=[
         {"id": "nums", "type": "array", "title": "nums"},
-        {"id": "state", "type": "vars"},
     ],
 )
 
@@ -37,19 +37,18 @@ def solve(nums, run):
     n = len(nums)
     low, mid, high = 0, 0, n - 1
 
-    def frame(caption, lit=(), good=(), path=(), **answer):
-        settled = [k for k in range(n) if k < low or k > high]  # placed for good: out of play
+    def frame(caption, lit=(), good=(), path=(), moves=None, **answer):
+        spans = {"zeros": span(0, low - 1, {"en": "0s", "ko": "0"}) if low > 0 else None,
+                 "ones": span(low, mid - 1, {"en": "1s", "ko": "1"}) if mid > low else None,
+                 "twos": span(high + 1, n - 1, {"en": "2s", "ko": "2"}) if high < n - 1 else None}
+        if path:
+            spans = {}
         run.frame(caption,
-                  nums={"values": nums,
-                        "pointers": {"low": low, "mid": mid if mid < n else None, "high": high},
-                        "marks": {"dim": [] if path else settled, "lit": list(lit), "good": list(good),
-                                  "path": list(path)}},
-                  state={"items": [
-                      {"label": {"en": "0s placed", "ko": "자리 잡은 0"}, "value": low},
-                      {"label": {"en": "2s placed", "ko": "자리 잡은 2"}, "value": n - 1 - high},
-                      {"label": {"en": "unread", "ko": "안 읽은 칸"}, "value": max(0, high - mid + 1)},
-                  ]},
-                  **answer)
+                  nums={"values": nums, "spans": spans,
+                        "unread": [] if path else list(range(mid, high + 1)),
+                        "pointers": {} if path else {"low": low, "mid": mid if mid < n else None, "high": high},
+                        "marks": {"lit": list(lit), "good": list(good), "path": list(path)}},
+                  moves=moves, **answer)
 
     frame({"en": f"low and mid start at 0, high at {n - 1}. Every cell from mid to high is still unread.",
            "ko": f"low와 mid는 0, high는 {n - 1}에서 시작합니다. mid부터 high까지는 아직 읽지 않은 칸입니다."})
@@ -69,7 +68,7 @@ def solve(nums, run):
                              f"moves up to index {m}. Both low and mid step right.",
                        "ko": f"nums[{m}] = 0: low 자리의 nums[{lo}] 값과 맞바꿔 0을 앞쪽 0들에 붙이고, 1은 인덱스 "
                              f"{m}의 칸으로 옮깁니다. low와 mid가 함께 오른쪽으로 한 칸 갑니다."},
-                      good=[lo, m])
+                      good=[lo, m], moves=swap("nums", lo, m, nums[m], nums[lo]))
         elif v == 2:
             hi = high
             nums[mid], nums[high] = nums[high], nums[mid]
@@ -83,7 +82,7 @@ def solve(nums, run):
                              f"left; mid stays, because the {nums[m]} that came back hasn't been read.",
                        "ko": f"nums[{m}] = 2: high 자리의 nums[{hi}] 값과 맞바꿔 2를 뒤쪽 2들에 붙이고, high는 왼쪽으로 "
                              f"한 칸 갑니다. 맞바꿔 온 nums[{m}] = {nums[m]}: 아직 읽지 않은 값이라 mid는 그대로입니다."},
-                      good=[m, hi])
+                      good=[m, hi], moves=swap("nums", m, hi, nums[hi], nums[m]))
         else:
             mid += 1
             frame({"en": f"nums[{m}] = 1: a 1 belongs between the 0s and the 2s, where it already is. "

@@ -12,6 +12,20 @@
     run.frame("Answer 4.", answer=4, board=...)   # the last frame carries the answer
     wt.write("walkthrough.json")                  # fails if a run's answer is not its expected output
 
+A value going from one place to another is a move, by address (an array or output index, a map key, a set member,
+a queue position from the front, a grid or table [row, col], an intervals [group, index], a graph node id or
+[from, to] edge):
+
+    from walkthrough_trace import at, move, map_entries, probe, span
+    run.frame("4 goes into the map.", xs={"values": nums}, uses={"entries": map_entries(counts)},
+              moves=[move(at("xs", i), at("uses", 4))])   # move(dst=...) creates, move(src) drops
+
+Two values trading places are `swap(view, a, b, was_at_a, was_at_b)`, the two moves of one swap.
+
+A lookup in a `set` view is a probe: `seen={"members": list(seen), "probes": [probe(x, hit=x in seen)]}`.
+
+A window or a record on an array is a span: `xs={"values": nums, "spans": {"window": span(left, right, "window")}}`.
+
 Every state you pass is snapshotted (deep-copied through JSON) when `frame` is called, so keep mutating
 your own structures freely. Floats like inf are rejected: show them as a string ("∞").
 """
@@ -35,6 +49,67 @@ def _snapshot(value, where):
     return json.loads(json.dumps(value, ensure_ascii=False))
 
 
+def at(view, where):
+    """An address: a place in a view (an array or output index, a map key, a set member, a queue position from the
+    front, a grid or table [row, col], an intervals [group, index], a graph node id or [from, to] edge)."""
+    return {"view": view, "at": where}
+
+
+def move(src=None, dst=None, value=_MISSING, mark=None):
+    """A value going from `src` to `dst` (addresses from `at`). No src: created at dst; no dst: dropped from src.
+    `value` is the flying chip's text (default: the source's); `mark` ("good", "bad", "path") overrides its colour."""
+    if src is None and dst is None:
+        raise ValueError("a move needs a src, a dst or both")
+    m = {}
+    if src is not None:
+        m["from"] = src
+    if dst is not None:
+        m["to"] = dst
+    if value is not _MISSING:
+        m["value"] = value
+    if mark is not None:
+        m["mark"] = mark
+    return m
+
+
+def swap(view, a, b, was_at_a, was_at_b):
+    """The two moves of a swap in one view: the value that was at `a` flies to `b`, and the one at `b` to `a`.
+    Pass the values as they were before the swap, so each chip carries what left its place."""
+    return [move(at(view, a), at(view, b), value=was_at_a), move(at(view, b), at(view, a), value=was_at_b)]
+
+
+def span(start, end, label=None, mark=None, below=False, fade=False):
+    """An `array` view's span: the range start..end (inclusive) with a label and a mark. Above the cells by default
+    (a live window); `below=True` draws it dashed under them (a record, such as the best so far). `fade=True` fades
+    the cells outside it. Pass spans by name: `queue={"values": q, "spans": {"window": span(l, r, "window")}}`."""
+    s = {"from": start, "to": end}
+    if label is not None:
+        s["label"] = label
+    if mark is not None:
+        s["mark"] = mark
+    if below:
+        s["below"] = True
+    if fade:
+        s["fade"] = True
+    return s
+
+
+def probe(value, hit=None, label=None):
+    """A `set` view's lookup of `value`: `set={"members": list(seen), "probes": [probe(x)]}`. Whether it hits defaults to
+    whether `value` is a member; pass `hit=False` for a value looked up and then added in the same step."""
+    p = {"value": value}
+    if hit is not None:
+        p["hit"] = hit
+    if label is not None:
+        p["label"] = label
+    return p
+
+
+def map_entries(mapping):
+    """A dict as a `map` view's entries, in its insertion order."""
+    return [{"key": k, "value": v} for k, v in mapping.items()]
+
+
 class Run:
     def __init__(self, label, input, expected, extra, setup):
         self.data = {"label": label, "input": input, "expected": expected, "frames": []}
@@ -43,9 +118,13 @@ class Run:
         if setup:
             self.data["setup"] = _snapshot(setup, f"{label} setup")
 
-    def frame(self, caption, answer=_MISSING, **views):
-        """One step: a caption (string, or {"en": ..., "ko": ...}) and each view's state by view id."""
-        f = {"caption": caption, "views": _snapshot(views, f"{self.data['label']} frame {len(self.data['frames'])}")}
+    def frame(self, caption, answer=_MISSING, moves=None, **views):
+        """One step: a caption (string, or {"en": ..., "ko": ...}), each view's state by view id, and the values
+        that moved in this step (`move(...)` items)."""
+        where = f"{self.data['label']} frame {len(self.data['frames'])}"
+        f = {"caption": caption, "views": _snapshot(views, where)}
+        if moves:
+            f["moves"] = _snapshot(moves, where)
         if answer is not _MISSING:
             f["answer"] = _snapshot(answer, "answer")
         self.data["frames"].append(f)
@@ -80,6 +159,10 @@ class Walkthrough:
                 unknown = set(f["views"]) - ids
                 if unknown:
                     raise ValueError(f"run {name} frame {i}: unknown view ids {sorted(unknown)}")
+                for m in f.get("moves", []):
+                    for end in ("from", "to"):
+                        if end in m and m[end]["view"] not in ids:
+                            raise ValueError(f"run {name} frame {i}: a move names unknown view {json.dumps(m[end]['view'])}")
             runs.append(d)
         return {**self.data, "runs": runs}
 

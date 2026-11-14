@@ -1,6 +1,7 @@
 #!/usr/bin/env python3.12
 """lonely-candy's Walkthrough: the reference solution (scripts/replay-solutions/lonely-candy.py), one
-running XOR over the candies, recording one frame per candy on each sample Test Case.
+running XOR over the candies, recording one frame per candy on each sample Test Case. The running XOR is a box
+each candy moves into; a cancelled pair fades.
 
     CODEBITE_DB=<database> scripts/walkthroughs/lonely-candy.py
 
@@ -13,7 +14,7 @@ import sys
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
 from codebite import plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
-from walkthrough_trace import Walkthrough  # noqa: E402
+from walkthrough_trace import Walkthrough, at, move  # noqa: E402
 
 SLUG = "lonely-candy"
 
@@ -23,7 +24,7 @@ wt = Walkthrough(
      "ko": "모든 맛을 XOR로 한 수에 모읍니다: x ^ x = 0이라 짝은 서로 지워지고 외톨이의 비트만 남습니다."},
     views=[
         {"id": "candies", "type": "array", "title": {"en": "frames (tag: bits)", "ko": "frames (태그: 비트)"}},
-        {"id": "state", "type": "vars"},
+        {"id": "loner", "type": "output", "title": {"en": "loner (running XOR)", "ko": "loner (누적 XOR)"}},
     ],
 )
 
@@ -39,15 +40,15 @@ def solve(frames, run):
     cancelled = []  # indexes whose pair has been XORed in, so the reader sees them drop out
 
     def frame(caption, i=None, lit=(), good=(), path=(), **answer):
-        items = [{"label": {"en": "loner (running XOR)", "ko": "loner (누적 XOR)"}, "value": loner,
-                  "mark": "good" if good or path else None}]
-        if show_bits:
-            items.append({"label": {"en": "loner in bits", "ko": "loner의 비트"}, "value": bits(loner)})
+        shown = f"{loner} ({bits(loner)})" if show_bits else loner
         run.frame(caption,
                   candies={"values": frames, "pointers": {"i": i},
                            "tags": [[k, bits(v)] for k, v in enumerate(frames)] if show_bits else [],
                            "marks": {"dim": cancelled, "lit": list(lit), "good": list(good), "path": list(path)}},
-                  state={"items": items},
+                  loner={"values": [shown],
+                         "marks": {"path": [0]} if path else {"good": [0]} if i is not None else {}},
+                  moves=[move(at("candies", i), at("loner", 0), value=f"^ {frames[i]}", mark="good")]
+                  if i is not None else None,
                   **answer)
 
     loner = 0

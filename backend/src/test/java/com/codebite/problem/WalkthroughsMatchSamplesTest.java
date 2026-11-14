@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.sql.SQLException;
@@ -17,19 +18,23 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Every Walkthrough (GLOSSARY.md, ADR 0011) shows the samples it claims to: its problem exists
  * under the Slug it is filed under; it is a well-formed {@code walkthrough/1} document (the public
  * walkthrough skill's {@code references/format.md}: known view types, marks inside the data they
- * name, the answer on the last frame only); its sample runs are, in order, exactly the problem's
+ * name, moves whose addresses exist in that frame, unique map keys and set members, set probes that hit only members, spans inside their array, map slots a
+ * non-negative integer, a map probe with a key that it hits only when held, intervals that start no later than they end, queue marks and tags on its positions, a grid's boxes a whole number and its shade on its cells, map entry labels as Text and chip marks on their list, the answer on the last frame only); its sample runs are, in order, exactly the problem's
  * sample Test Cases by {@code sampleInput} and {@code expected}, compared trimmed as the Grader
  * compares; each run ends on its {@code expected}; and any run marked {@code extra} comes after
  * the sample runs; and every caption is one or two sentences in each language (#258). Correcting, adding or reordering a sample without regenerating the Walkthrough
@@ -41,7 +46,7 @@ class WalkthroughsMatchSamplesTest {
     private static final MigratedDatabase DATABASE = new MigratedDatabase("walkthroughs-match-samples");
     private static final Walkthroughs WALKTHROUGHS = new Walkthroughs();
 
-    private static final List<String> VIEW_TYPES = List.of("grid", "array", "graph", "table", "vars");
+    private static final List<String> VIEW_TYPES = List.of("grid", "array", "map", "set", "output", "queue", "intervals", "graph", "table", "vars");
     private static final List<String> MARKS = List.of("lit", "good", "bad", "path", "dim");
 
     /**
@@ -123,6 +128,327 @@ class WalkthroughsMatchSamplesTest {
         List<String> found = mismatches("rotting-donuts", walkthrough, SAMPLES.get("rotting-donuts"));
         assertFalse(found.isEmpty(), breakage + " was not caught");
         assertTrue(found.stream().allMatch(m -> m.startsWith("rotting-donuts")), "Unnamed: " + found);
+    }
+
+    // --- moves and the map, on a copy of top-espresso-machines ---------------------------------------
+
+    @ParameterizedTest(name = "{0}")
+    @CsvSource(delimiter = '|', quoteCharacter = '`', value = {
+            "move to a missing key                   | to {\"view\":\"uses\",\"at\":99} is not a key of map \"uses\"",
+            "move from outside the array             | is not an index of array \"log\"",
+            "move to an unknown view                 | to names unknown view \"nope\"",
+            "move with no ends                       | move 0: no from and no to",
+            "move to a view type without addresses   | view type \"vars\" has no addresses",
+            "move with an unknown mark               | move 0: unknown mark \"loud\"",
+            "moves not a list                        | moves is not a list",
+            "move to a view not drawn in this frame  | view \"uses\" is not drawn in this frame",
+            "repeated map key                        | view \"uses\": key",
+            "rank of a missing key                   | rank 1 names 99, not a key",
+            "repeated ranks key                      | rank 2 repeats key",
+            "probe with no key                       | probe has no key",
+            "probe hit that isn't true or false      | probe hit must be true or false",
+            "probe hitting a key not held            | probe hits 99, not a key",
+            "output mark out of range                | view \"board\": mark \"good\" names 99",
+    })
+    void aBrokenMoveOrMapIsCaught(String breakage, String expected) throws Exception {
+        ObjectNode walkthrough = (ObjectNode) JSON.readTree(WALKTHROUGHS.of("top-espresso-machines").orElseThrow());
+        ObjectNode run = (ObjectNode) walkthrough.get("runs").get(0);
+        ArrayNode frames = (ArrayNode) run.get("frames");
+        ObjectNode move = (ObjectNode) frames.get(1).get("moves").get(0);
+        ObjectNode views = (ObjectNode) frames.get(1).get("views");
+        ObjectNode uses = (ObjectNode) views.get("uses");
+        JsonNode firstKey = uses.get("entries").get(0).get("key");
+        switch (breakage) {
+            case "move to a missing key" -> ((ObjectNode) move.get("to")).put("at", 99);
+            case "move from outside the array" -> ((ObjectNode) move.get("from")).put("at", 99);
+            case "move to an unknown view" -> ((ObjectNode) move.get("to")).put("view", "nope");
+            case "move with no ends" -> move.removeAll();
+            case "move to a view type without addresses" -> ((ObjectNode) move.get("to")).put("view", "state");
+            case "move with an unknown mark" -> move.put("mark", "loud");
+            case "moves not a list" -> ((ObjectNode) frames.get(1)).put("moves", "uses");
+            case "move to a view not drawn in this frame" -> {
+                views.remove("uses");
+                if (run.get("setup") instanceof ObjectNode setup) setup.remove("uses");
+            }
+            case "repeated map key" -> ((ArrayNode) uses.get("entries")).add(uses.get("entries").get(0).deepCopy());
+            case "rank of a missing key" -> uses.putArray("ranks").add(99);
+            case "repeated ranks key" -> uses.putArray("ranks").add(firstKey).add(firstKey);
+            case "probe with no key" -> uses.putObject("probe").put("label", "lookup");
+            case "probe hit that isn't true or false" -> uses.putObject("probe").put("key", 99).put("hit", "yes");
+            case "probe hitting a key not held" -> uses.putObject("probe").put("key", 99).put("hit", true);
+            case "output mark out of range" -> {
+                ObjectNode board = views.putObject("board");
+                board.putArray("values");
+                board.putObject("marks").putArray("good").add(99);
+            }
+            default -> throw new IllegalArgumentException(breakage);
+        }
+        assertCaught("top-espresso-machines", walkthrough, breakage, expected);
+    }
+
+    // --- table cells, on a copy of group-anagrams ------------------------------------------------------
+
+    @ParameterizedTest(name = "{0}")
+    @ValueSource(strings = {"move from a row that isn't there", "move from a column that isn't there", "move from a bare index"})
+    void aBrokenTableAddressIsCaught(String breakage) throws Exception {
+        ObjectNode walkthrough = (ObjectNode) JSON.readTree(WALKTHROUGHS.of("group-anagrams").orElseThrow());
+        ArrayNode frames = (ArrayNode) walkthrough.get("runs").get(0).get("frames");
+        ObjectNode from = (ObjectNode) frames.get(1).get("moves").get(0).get("from");
+        switch (breakage) {
+            case "move from a row that isn't there" -> from.set("at", JSON.readTree("[99, 0]"));
+            case "move from a column that isn't there" -> from.set("at", JSON.readTree("[0, 9]"));
+            case "move from a bare index" -> from.put("at", 0);
+            default -> throw new IllegalArgumentException(breakage);
+        }
+        List<String> found = mismatches("group-anagrams", walkthrough, SAMPLES.get("group-anagrams"));
+        assertTrue(found.stream().anyMatch(m -> m.contains("is not a [row, col] of table")), breakage + " was not caught: " + found);
+    }
+
+    // --- intervals, on a copy of merge-reservation-slots ---------------------------------------------
+
+    @ParameterizedTest(name = "{0}")
+    @CsvSource(delimiter = '|', quoteCharacter = '`', value = {
+            "interval starting after its end    | group 1 interval 0 [9,1] starts after it ends",
+            "move to a missing interval         | to {\"view\":\"line\",\"at\":[1,5]} is not a [group, index] of intervals",
+            "move to a group that isn't there   | to {\"view\":\"line\",\"at\":[2,0]} is not a [group, index] of intervals",
+            "mark outside its group             | group 1: mark \"good\" names 5",
+            "point off the axis                 | point 0 at 999 is outside the axis",
+            "domain not [low, high]             | domain [5,1] is not [low, high]",
+            "point with an unknown mark         | point 0 has unknown mark \"loud\"",
+    })
+    void aBrokenIntervalsViewIsCaught(String breakage, String expected) throws Exception {
+        ObjectNode walkthrough = (ObjectNode) JSON.readTree(WALKTHROUGHS.of("merge-reservation-slots").orElseThrow());
+        ArrayNode frames = (ArrayNode) walkthrough.get("runs").get(0).get("frames");
+        ObjectNode move = (ObjectNode) frames.get(1).get("moves").get(0);
+        ObjectNode line = (ObjectNode) frames.get(1).get("views").get("line");
+        ObjectNode merged = (ObjectNode) line.get("groups").get(1);
+        switch (breakage) {
+            case "interval starting after its end" -> merged.set("intervals", JSON.readTree("[[9, 1]]"));
+            case "move to a missing interval" -> ((ObjectNode) move.get("to")).set("at", JSON.readTree("[1, 5]"));
+            case "move to a group that isn't there" -> ((ObjectNode) move.get("to")).set("at", JSON.readTree("[2, 0]"));
+            case "mark outside its group" -> merged.putObject("marks").putArray("good").add(5);
+            case "point off the axis" -> line.putArray("points").addObject().put("at", 999);
+            case "domain not [low, high]" -> line.set("domain", JSON.readTree("[5, 1]"));
+            case "point with an unknown mark" -> line.putArray("points").addObject()
+                    .put("at", line.get("groups").get(0).get("intervals").get(0).get(0).asInt()).put("mark", "loud");
+            default -> throw new IllegalArgumentException(breakage);
+        }
+        assertCaught("merge-reservation-slots", walkthrough, breakage, expected);
+    }
+
+    // --- the set, on a copy of spot-duplicate-locker ----------------------------------------------------
+
+    @ParameterizedTest(name = "{0}")
+    @ValueSource(strings = {
+            "repeated set member", "move to a missing member", "probe hitting a non-member", "probe with no value",
+            "mark on a missing member", "probes not a list",
+    })
+    void aBrokenSetIsCaught(String breakage) throws Exception {
+        ObjectNode walkthrough = (ObjectNode) JSON.readTree(WALKTHROUGHS.of("spot-duplicate-locker").orElseThrow());
+        ObjectNode frame = (ObjectNode) walkthrough.get("runs").get(0).get("frames").get(1);
+        ObjectNode move = (ObjectNode) frame.get("moves").get(0);
+        ObjectNode seen = (ObjectNode) frame.get("views").get("seen");
+        switch (breakage) {
+            case "repeated set member" -> ((ArrayNode) seen.get("members")).add(seen.get("members").get(0).asText());
+            case "move to a missing member" -> ((ObjectNode) move.get("to")).put("at", 999);
+            case "probe hitting a non-member" -> ((ArrayNode) seen.get("probes")).addObject().put("value", 999).put("hit", true);
+            case "probe with no value" -> ((ArrayNode) seen.get("probes")).addObject().put("hit", false);
+            case "mark on a missing member" -> seen.putObject("marks").putArray("lit").add(999);
+            case "probes not a list" -> seen.put("probes", 4);
+            default -> throw new IllegalArgumentException(breakage);
+        }
+        List<String> found = mismatches("spot-duplicate-locker", walkthrough, SAMPLES.get("spot-duplicate-locker"));
+        assertFalse(found.isEmpty(), breakage + " was not caught");
+        assertTrue(found.stream().anyMatch(m -> m.contains("\"seen\"")), breakage + " was caught as something else: " + found);
+    }
+
+    // --- the queue and grid moves, on a copy of rotting-donuts ------------------------------------------
+
+    @ParameterizedTest(name = "{0}")
+    @CsvSource(delimiter = '|', quoteCharacter = '`', value = {
+            "move from a missing grid cell                     | is not a [row, col] of grid \"tray\"",
+            "move from a grid address that isn't [row, col]    | is not a [row, col] of grid \"tray\"",
+            "move to a missing queue position                  | is not a position from the front of queue \"queue\"",
+            "queue mark past the queue                         | view \"queue\": mark \"good\" names",
+            "queue tag past the queue                          | is outside the queue",
+            "queue without values                              | view \"queue\": values must be a list, front first",
+            "deque flag not true or false                      | view \"queue\": deque must be true or false",
+    })
+    void aBrokenQueueOrGridMoveIsCaught(String breakage, String expected) throws Exception {
+        ObjectNode walkthrough = rottingDonuts();
+        ArrayNode frames = (ArrayNode) walkthrough.get("runs").get(0).get("frames");
+        ObjectNode joins = (ObjectNode) frames.get(0).get("moves").get(0); // a stale donut joins from its cell
+        ObjectNode queue = (ObjectNode) frames.get(0).get("views").get("queue");
+        int n = queue.get("values").size();
+        switch (breakage) {
+            case "move from a missing grid cell" -> ((ObjectNode) joins.get("from")).set("at", JSON.readTree("[9, 0]"));
+            case "move from a grid address that isn't [row, col]" -> ((ObjectNode) joins.get("from")).put("at", 0);
+            case "move to a missing queue position" -> ((ObjectNode) joins.get("to")).put("at", n);
+            case "queue mark past the queue" -> queue.putObject("marks").putArray("good").add(n);
+            case "queue tag past the queue" -> queue.putArray("tags").addArray().add(n).add("x");
+            case "queue without values" -> queue.remove("values");
+            case "deque flag not true or false" -> ((ObjectNode) walkthrough.get("views").get(1)).put("deque", "yes");
+            default -> throw new IllegalArgumentException(breakage);
+        }
+        assertCaught("rotting-donuts", walkthrough, breakage, expected);
+    }
+
+    // --- grid boxes and shade, map entry labels and chip marks, on a copy of valid-sudoku ----------------
+
+    @ParameterizedTest(name = "{0}")
+    @CsvSource(delimiter = '|', quoteCharacter = '`', value = {
+            "boxes not a whole number            | view \"board\": boxes must be a whole number of cells, 1 or more",
+            "boxes of zero                       | view \"board\": boxes must be a whole number of cells, 1 or more",
+            "shade outside the grid              | view \"board\": shade names [9,0], not a cell [r, c]",
+            "entry label not Text                | view \"rows\": entry row 1 has a label that is not Text",
+            "chip mark past the entry's list     | view \"rows\": entry row 1: mark \"bad\" names 5, not a chip index",
+    })
+    void aBrokenBoardOrRegionCardIsCaught(String breakage, String expected) throws Exception {
+        ObjectNode walkthrough = (ObjectNode) JSON.readTree(WALKTHROUGHS.of("valid-sudoku").orElseThrow());
+        ArrayNode frames = (ArrayNode) walkthrough.get("runs").get(0).get("frames");
+        ObjectNode board = (ObjectNode) walkthrough.get("views").get(0);
+        ObjectNode read = (ObjectNode) frames.get(1).get("views").get("board"); // the first digit read, its band shaded
+        ObjectNode entry = (ObjectNode) frames.get(1).get("views").get("rows").get("entries").get(0);
+        switch (breakage) {
+            case "boxes not a whole number" -> board.put("boxes", "3");
+            case "boxes of zero" -> board.put("boxes", 0);
+            case "shade outside the grid" -> ((ArrayNode) read.get("shade")).addArray().add(9).add(0);
+            case "entry label not Text" -> entry.put("label", 3);
+            case "chip mark past the entry's list" -> entry.putObject("marks").putArray("bad").add(5);
+            default -> throw new IllegalArgumentException(breakage);
+        }
+        assertCaught("valid-sudoku", walkthrough, breakage, expected);
+    }
+
+    // --- graph moves, on a copy of cheapest-courier-route ------------------------------------------
+
+    @ParameterizedTest(name = "{0}")
+    @ValueSource(strings = {
+            "move from a directed edge turned around", "move from an edge that isn't there",
+            "move from an edge address that isn't [from, to]", "move to a missing node",
+    })
+    void aBrokenGraphMoveIsCaught(String breakage) throws Exception {
+        String expected = "is not a node id or a [from, to] edge of graph \"cafes\"";
+        ObjectNode walkthrough = (ObjectNode) JSON.readTree(WALKTHROUGHS.of("cheapest-courier-route").orElseThrow());
+        ObjectNode relaxes = null; // the first move from an edge: a relaxed cost comes down into this round's row
+        for (JsonNode frame : walkthrough.get("runs").get(0).get("frames")) {
+            for (JsonNode move : frame.path("moves")) {
+                if (relaxes == null && "cafes".equals(move.path("from").path("view").asText())) relaxes = (ObjectNode) move;
+            }
+        }
+        assertNotNull(relaxes, "no move from an edge of cheapest-courier-route's graph");
+        ObjectNode from = (ObjectNode) relaxes.get("from");
+        JsonNode edge = from.get("at");
+        switch (breakage) {
+            case "move from a directed edge turned around" -> from.set("at", JSON.createArrayNode().add(edge.get(1)).add(edge.get(0)));
+            case "move from an edge that isn't there" -> from.set("at", JSON.createArrayNode().add(edge.get(0)).add(99));
+            case "move from an edge address that isn't [from, to]" -> from.set("at", JSON.createArrayNode().add(edge.get(0)).add(edge.get(1)).add(0));
+            case "move to a missing node" -> relaxes.set("to", JSON.createObjectNode().put("view", "cafes").put("at", 99));
+            default -> throw new IllegalArgumentException(breakage);
+        }
+        assertCaught("cheapest-courier-route", walkthrough, breakage, expected);
+    }
+
+    // --- spans and slots, on a copy of unique-genre-window ------------------------------------------
+
+    @ParameterizedTest(name = "{0}")
+    @CsvSource(delimiter = '|', quoteCharacter = '`', value = {
+            "span past the array's end        | view \"queue\": span \"window\"",
+            "span turned around               | view \"queue\": span \"window\"",
+            "span with an unknown mark        | span \"window\" has unknown mark \"loud\"",
+            "span label that is not text      | span \"window\" has a label that is not Text",
+            "negative slots                   | slots -1 is not a non-negative integer",
+            "fractional slots                 | slots 1.5 is not a non-negative integer",
+            "unread outside the array         | unread names",
+            "label under outside the array    | label under",
+            "struck key not held              | struck names \"no such genre\", not a key",
+    })
+    void aBrokenSpanOrSlotIsCaught(String breakage, String expected) throws Exception {
+        ObjectNode walkthrough = (ObjectNode) JSON.readTree(WALKTHROUGHS.of("unique-genre-window").orElseThrow());
+        ObjectNode frame = (ObjectNode) walkthrough.get("runs").get(0).get("frames").get(1);
+        ObjectNode queue = (ObjectNode) frame.get("views").get("queue");
+        ObjectNode window = (ObjectNode) queue.get("spans").get("window");
+        ObjectNode genres = (ObjectNode) frame.get("views").get("window");
+        int n = queue.get("values").size();
+        switch (breakage) {
+            case "span past the array's end" -> window.put("to", n);
+            case "span turned around" -> window.put("from", window.get("to").asInt() + 1);
+            case "span with an unknown mark" -> window.put("mark", "loud");
+            case "span label that is not text" -> window.put("label", 5);
+            case "negative slots" -> genres.put("slots", -1);
+            case "fractional slots" -> genres.put("slots", 1.5);
+            case "unread outside the array" -> queue.putArray("unread").add(n);
+            case "label under outside the array" -> queue.putArray("under").addArray().add(n).add("x");
+            case "struck key not held" -> genres.putArray("struck").add("no such genre");
+            default -> throw new IllegalArgumentException(breakage);
+        }
+        assertCaught("unique-genre-window", walkthrough, breakage, expected);
+    }
+
+    /** {@code breakage} was caught, by a line naming the Slug that says {@code expected}. */
+    private static void assertCaught(String slug, JsonNode walkthrough, String breakage, String expected) {
+        List<String> found = mismatches(slug, walkthrough, SAMPLES.get(slug));
+        assertTrue(found.stream().anyMatch(m -> m.startsWith(slug + ": ") && m.contains(expected)),
+                breakage + " was not caught as \"" + expected + "\": " + found);
+    }
+
+    /**
+     * #273's first rule for a copy or a swap: an {@code array} cell whose value changes from one frame to the next
+     * shows where the new value came from, by a move ending on that cell in the frame that writes it.
+     */
+    @Test
+    void everyArrayCellWrittenInPlaceHasAMoveIntoIt() throws Exception {
+        List<String> found = new ArrayList<>();
+        for (String slug : WALKTHROUGHS.slugs()) {
+            found.addAll(cellWritesWithoutMoves(slug, JSON.readTree(WALKTHROUGHS.of(slug).orElseThrow())));
+        }
+        assertTrue(found.isEmpty(), "Array cells written with no move into them:\n" + String.join("\n", found));
+    }
+
+    @Test
+    void aCellWrittenWithNoMoveIsCaught() throws Exception {
+        ObjectNode walkthrough = (ObjectNode) JSON.readTree(WALKTHROUGHS.of("unique-genre-window").orElseThrow());
+        JsonNode frame = walkthrough.get("runs").get(0).get("frames").get(1);
+        ArrayNode values = (ArrayNode) frame.get("views").get("queue").get("values");
+        values.set(0, values.get(0).asText() + "x");
+        assertFalse(cellWritesWithoutMoves("unique-genre-window", walkthrough).isEmpty());
+    }
+
+    private static List<String> cellWritesWithoutMoves(String slug, JsonNode walkthrough) {
+        Set<String> arrays = new HashSet<>();
+        for (JsonNode view : walkthrough.path("views")) {
+            if ("array".equals(view.path("type").asText())) arrays.add(view.path("id").asText());
+        }
+        List<String> found = new ArrayList<>();
+        JsonNode runs = walkthrough.path("runs");
+        for (int r = 0; r < runs.size(); r++) {
+            Map<String, JsonNode> previous = new HashMap<>();
+            JsonNode frames = runs.get(r).path("frames");
+            for (int f = 0; f < frames.size(); f++) {
+                JsonNode frame = frames.get(f);
+                for (String id : arrays) {
+                    JsonNode values = frame.path("views").path(id).get("values");
+                    if (values == null) continue;
+                    JsonNode before = previous.put(id, values);
+                    if (before == null || before.size() != values.size()) continue;
+                    for (int i = 0; i < values.size(); i++) {
+                        if (before.get(i).equals(values.get(i)) || movedInto(frame, id, i)) continue;
+                        found.add(slug + ": " + runName(runs.get(r), r) + ", frame " + (f + 1) + ": " + id + "[" + i
+                                + "] goes " + before.get(i) + " → " + values.get(i) + " with no move into it");
+                    }
+                }
+            }
+        }
+        return found;
+    }
+
+    private static boolean movedInto(JsonNode frame, String view, int index) {
+        for (JsonNode move : frame.path("moves")) {
+            JsonNode to = move.get("to");
+            if (to != null && view.equals(to.path("view").asText()) && to.path("at").isInt()
+                    && to.path("at").asInt() == index) return true;
+        }
+        return false;
     }
 
     @Test
@@ -227,6 +553,13 @@ class WalkthroughsMatchSamplesTest {
             if (!VIEW_TYPES.contains(view.path("type").asText())) {
                 p.add("view \"" + id + "\": unknown type " + view.get("type") + " (one of " + VIEW_TYPES + ")");
             }
+            if ("queue".equals(view.path("type").asText()) && view.has("deque") && !view.get("deque").isBoolean()) {
+                p.add("view \"" + id + "\": deque must be true or false");
+            }
+            if ("grid".equals(view.path("type").asText()) && view.has("boxes")
+                    && !(view.get("boxes").isIntegralNumber() && view.get("boxes").asLong() >= 1)) {
+                p.add("view \"" + id + "\": boxes must be a whole number of cells, 1 or more");
+            }
         }
         if (views.isEmpty()) p.add("no views");
         JsonNode runs = wt.path("runs");
@@ -256,6 +589,16 @@ class WalkthroughsMatchSamplesTest {
                                     + MAX_CAPTION_SENTENCES + ": " + quote(caption));
                         }
                     });
+                }
+                JsonNode moves = frame.get("moves");
+                if (moves != null && !moves.isArray()) {
+                    p.add(at + ": moves is not a list");
+                } else if (moves != null) {
+                    for (int m = 0; m < moves.size(); m++) {
+                        for (String problem : move(moves.get(m), views, run.path("setup"), frame.path("views"))) {
+                            p.add(at + " move " + m + ": " + problem);
+                        }
+                    }
                 }
                 if (frame.has("answer") && f != frames.size() - 1) {
                     p.add(at + ": answer " + frame.get("answer") + " on a frame before the last; only the last "
@@ -288,6 +631,138 @@ class WalkthroughsMatchSamplesTest {
         return p;
     }
 
+    private static final List<String> MOVE_MARKS = List.of("good", "bad", "path");
+
+    /**
+     * What is wrong with one move: each end it has must name a place that exists in that frame's state of its view
+     * (the skill's {@code ADDRESSES}: an array or output index, a map key, a set member, a queue position from the
+     * front, a grid or table {@code [row, col]}, an intervals {@code [group, index]}, a graph node id or
+     * {@code [from, to]} edge, either order when the graph isn't {@code directed}).
+     */
+    private static List<String> move(JsonNode move, Map<String, JsonNode> views, JsonNode setup, JsonNode states) {
+        if (!move.isObject() || (!move.hasNonNull("from") && !move.hasNonNull("to"))) return List.of("no from and no to");
+        List<String> p = new ArrayList<>();
+        unknownMark(move.get("mark"), MOVE_MARKS).ifPresent(p::add);
+        for (String end : List.of("from", "to")) {
+            JsonNode address = move.get(end);
+            if (address == null || address.isNull()) continue;
+            String id = address.path("view").asText();
+            JsonNode view = views.get(id);
+            if (view == null) {
+                p.add(end + " names unknown view \"" + id + "\"");
+                continue;
+            }
+            String type = view.path("type").asText();
+            String where = end + " " + address;
+            Address kind = ADDRESSES.get(type);
+            if (kind == null) {
+                p.add(where + ": view type \"" + type + "\" has no addresses");
+                continue;
+            }
+            if (!states.has(id) && !setup.has(id)) {
+                p.add(where + ": view \"" + id + "\" is not drawn in this frame");
+                continue;
+            }
+            ObjectNode state = JSON.createObjectNode();
+            if (setup.get(id) instanceof ObjectNode own) state.setAll(own);
+            if (states.get(id) instanceof ObjectNode own) state.setAll(own);
+            if (!kind.exists().test(address.get("at"), state, view)) {
+                p.add(where + " is not " + kind.what() + " of " + type + " \"" + id + "\"");
+            }
+        }
+        return p;
+    }
+
+    /** Whether {@code at} names a place in {@code state}, the frame's state of {@code view}. */
+    private interface Place {
+        boolean test(JsonNode at, JsonNode state, JsonNode view);
+    }
+
+    /** What a view type's move address is, as a move's error says it, and whether one exists in a state. */
+    private record Address(String what, Place exists) {
+    }
+
+    /** The view types that have addresses: the skill's {@code ADDRESSES} in {@code scripts/validate.mjs}. */
+    private static final Map<String, Address> ADDRESSES = Map.of(
+            "array", new Address("an index", (at, s, v) -> index(at, s.path("values"))),
+            "output", new Address("an index", (at, s, v) -> index(at, s.path("values"))),
+            "queue", new Address("a position from the front", (at, s, v) -> index(at, s.path("values"))),
+            "map", new Address("a key", (at, s, v) -> keys(s).contains(key(at))),
+            "set", new Address("a member", (at, s, v) -> members(s).contains(key(at))),
+            "grid", new Address("a [row, col]", (at, s, v) -> pair(at, s.path("cells"), row -> row)),
+            "table", new Address("a [row, col]", (at, s, v) -> pair(at, s.path("rows"), row -> row.path("cells"))),
+            "intervals", new Address("a [group, index]",
+                    (at, s, v) -> pair(at, s.path("groups"), group -> group.path("intervals"))),
+            "graph", new Address("a node id or a [from, to] edge", (at, s, v) -> at != null && at.isArray()
+                    ? at.size() == 2 && edge(s.path("edges"), key(at.get(0)), key(at.get(1)), v.path("directed").asBoolean(true))
+                    : node(s.path("nodes"), key(at))));
+
+    /** Whether {@code at} is {@code [i, j]} with i an index into {@code outer} and j one into that item's list. */
+    private static boolean pair(JsonNode at, JsonNode outer, UnaryOperator<JsonNode> inner) {
+        return at != null && at.isArray() && at.size() == 2 && index(at.get(0), outer)
+                && index(at.get(1), inner.apply(outer.path(at.get(0).asInt())));
+    }
+
+    /** "unknown mark …" when {@code mark} is given and isn't one of {@code known}. */
+    private static Optional<String> unknownMark(JsonNode mark, List<String> known) {
+        return mark != null && !mark.isNull() && !known.contains(mark.asText())
+                ? Optional.of("unknown mark " + mark + " (one of " + known + ")")
+                : Optional.empty();
+    }
+
+    /**
+     * The distinct keys of {@code items} by {@code key} (a string or a number, {@code 4} and {@code "4"} one key),
+     * adding to {@code p} each that isn't one and each that repeats, named as a {@code noun}.
+     */
+    private static Set<String> distinct(JsonNode items, UnaryOperator<JsonNode> key, String noun,
+                                        List<String> p) {
+        Set<String> seen = new HashSet<>();
+        for (JsonNode item : items) {
+            String k = key(key.apply(item));
+            if (k == null) p.add(noun + " " + key.apply(item) + " is not a string or a number");
+            else if (!seen.add(k)) p.add(noun + " " + k + " repeats");
+        }
+        return seen;
+    }
+
+    /** Whether a graph's {@code nodes} hold one whose id is {@code id}. */
+    private static boolean node(JsonNode nodes, String id) {
+        for (JsonNode n : nodes) if (id != null && id.equals(key(n.get("id")))) return true;
+        return false;
+    }
+
+    /** Whether a graph's {@code edges} hold one from {@code a} to {@code b}, or either way when undirected. */
+    private static boolean edge(JsonNode edges, String a, String b, boolean directed) {
+        if (a == null || b == null) return false;
+        for (JsonNode e : edges) {
+            String from = key(e.get("from")), to = key(e.get("to"));
+            if ((a.equals(from) && b.equals(to)) || (!directed && a.equals(to) && b.equals(from))) return true;
+        }
+        return false;
+    }
+
+    /** Whether {@code i} is an index into the list {@code list}. */
+    private static boolean index(JsonNode i, JsonNode list) {
+        return i != null && i.isInt() && i.asInt() >= 0 && list.isArray() && i.asInt() < list.size();
+    }
+
+    /** A map key as the player compares it: a string or a number, by its text. Null for anything else. */
+    private static String key(JsonNode k) {
+        return k != null && (k.isTextual() || k.isNumber()) ? k.asText() : null;
+    }
+
+    private static List<String> keys(JsonNode map) {
+        List<String> keys = new ArrayList<>();
+        for (JsonNode entry : map.path("entries")) keys.add(key(entry.get("key")));
+        return keys;
+    }
+
+    private static List<String> members(JsonNode set) {
+        List<String> members = new ArrayList<>();
+        for (JsonNode member : set.path("members")) members.add(key(member));
+        return members;
+    }
+
     /** Text compared trimmed, as the Grader compares output; anything else as JSON. */
     private static boolean sameAnswer(JsonNode answer, JsonNode expected) {
         if (answer.isTextual() && expected != null && expected.isTextual()) {
@@ -309,6 +784,7 @@ class WalkthroughsMatchSamplesTest {
                         && k.get(1).asInt() < cols;
                 List<String> p = marks(s.get("marks"), inside, "cell [r, c]");
                 for (JsonNode tag : s.path("tags")) if (!inside.test(tag)) p.add("tag " + tag + " is outside the grid");
+                for (JsonNode cell : s.path("shade")) if (!inside.test(cell)) p.add("shade names " + cell + ", not a cell [r, c]");
                 yield p;
             }
             case "array" -> {
@@ -323,8 +799,74 @@ class WalkthroughsMatchSamplesTest {
                 });
                 if (s.has("fill") && s.get("fill").size() != values.size()) p.add("fill and values differ in length");
                 for (JsonNode tag : s.path("tags")) if (!inside.test(tag.path(0))) p.add("tag " + tag + " is outside the array");
+                s.path("spans").fields().forEachRemaining(named -> {
+                    JsonNode span = named.getValue();
+                    if (span.isNull()) return;
+                    JsonNode from = span.path("from"), to = span.path("to");
+                    if (!inside.test(from) || !inside.test(to) || from.asInt() > to.asInt()) {
+                        p.add("span \"" + named.getKey() + "\" (" + from + ".." + to + ") is outside the array");
+                    }
+                    unknownMark(span.get("mark"), MARKS).ifPresent(m -> p.add("span \"" + named.getKey() + "\" has " + m));
+                    if (span.has("label") && !isText(span.get("label"))) p.add("span \"" + named.getKey() + "\" has a label that is not Text");
+                });
+                for (JsonNode i : s.path("unread")) if (!inside.test(i)) p.add("unread names " + i + ", not an index");
+                for (JsonNode under : s.path("under")) if (!inside.test(under.path(0))) p.add("label under " + under + " is outside the array");
                 yield p;
             }
+            case "map" -> {
+                JsonNode entries = s.get("entries");
+                if (entries == null || !entries.isArray()) yield List.of("entries must be a list of { key, value }");
+                List<String> p = new ArrayList<>();
+                Set<String> seen = distinct(entries, entry -> entry.get("key"), "key", p);
+                for (JsonNode entry : entries) {
+                    String k = key(entry.get("key"));
+                    if (entry.hasNonNull("label") && !isText(entry.get("label"))) p.add("entry " + k + " has a label that is not Text");
+                    JsonNode chips = entry.path("value");
+                    if (entry.has("marks")) {
+                        for (String m : marks(entry.get("marks"), i -> index(i, chips), "chip index")) p.add("entry " + k + ": " + m);
+                    }
+                }
+                p.addAll(marks(s.get("marks"), k -> seen.contains(key(k)), "key"));
+                JsonNode slots = s.get("slots");
+                if (slots != null && !(slots.isIntegralNumber() && slots.asLong() >= 0)) p.add("slots " + slots + " is not a non-negative integer");
+                for (JsonNode k : s.path("struck")) if (!seen.contains(key(k))) p.add("struck names " + k + ", not a key");
+                JsonNode probe = s.get("probe");
+                if (probe != null) {
+                    String k = key(probe.get("key"));
+                    JsonNode hit = probe.get("hit");
+                    if (k == null) p.add("probe has no key (a string or a number)");
+                    else if (hit != null && !hit.isBoolean()) p.add("probe hit must be true or false");
+                    else if (hit != null && hit.asBoolean() && !seen.contains(k)) p.add("probe hits " + k + ", not a key");
+                }
+                JsonNode ranks = s.get("ranks");
+                if (ranks != null && !ranks.isArray()) {
+                    p.add("ranks must be a list of keys, first is #1");
+                } else if (ranks != null) {
+                    Set<String> ranked = new HashSet<>();
+                    for (int i = 0; i < ranks.size(); i++) {
+                        String k = key(ranks.get(i));
+                        if (!seen.contains(k)) p.add("rank " + (i + 1) + " names " + ranks.get(i) + ", not a key");
+                        else if (!ranked.add(k)) p.add("rank " + (i + 1) + " repeats key " + k);
+                    }
+                }
+                yield p;
+            }
+            case "set" -> set(s);
+            case "output" -> {
+                JsonNode values = s.get("values");
+                if (values == null || !values.isArray()) yield List.of("values must be a list");
+                yield marks(s.get("marks"), i -> i.isInt() && i.asInt() >= 0 && i.asInt() < values.size(), "index");
+            }
+            case "queue" -> {
+                JsonNode values = s.get("values");
+                if (values == null || !values.isArray()) yield List.of("values must be a list, front first");
+                List<String> p = marks(s.get("marks"), i -> index(i, values), "position");
+                for (JsonNode tag : s.path("tags")) {
+                    if (!tag.isArray() || !index(tag.get(0), values)) p.add("tag " + tag + " is outside the queue");
+                }
+                yield p;
+            }
+            case "intervals" -> intervals(s);
             case "graph" -> {
                 JsonNode nodes = s.get("nodes"), edges = s.get("edges");
                 if (nodes == null || !nodes.isArray() || edges == null || !edges.isArray()) {
@@ -360,15 +902,83 @@ class WalkthroughsMatchSamplesTest {
                 if (items == null || !items.isArray()) yield List.of("items must be a list");
                 List<String> p = new ArrayList<>();
                 for (JsonNode item : items) {
-                    JsonNode mark = item.get("mark");
-                    if (mark != null && !mark.isNull() && !MARKS.contains(mark.asText())) {
-                        p.add("item " + item.get("label") + " has unknown mark " + mark);
-                    }
+                    unknownMark(item.get("mark"), MARKS).ifPresent(m -> p.add("item " + item.get("label") + " has " + m));
                 }
                 yield p;
             }
             default -> List.of(); // an unknown type is reported with the views
         };
+    }
+
+    /**
+     * What is wrong with an intervals state: each group's intervals two numbers with start no later than end and inside
+     * the axis ({@code domain}, when given), its marks indexes into the group, and each point a number on the axis.
+     */
+    private static List<String> intervals(JsonNode s) {
+        JsonNode groups = s.get("groups");
+        if (groups == null || !groups.isArray()) return List.of("groups must be a list of { label, intervals }");
+        List<String> p = new ArrayList<>();
+        JsonNode d = s.get("domain");
+        boolean axis = d != null && d.isArray() && d.size() == 2 && d.get(0).isNumber() && d.get(1).isNumber()
+                && d.get(0).asDouble() <= d.get(1).asDouble();
+        if (d != null && !axis) p.add("domain " + d + " is not [low, high]");
+        Predicate<Double> onAxis = v -> !axis || (v >= d.get(0).asDouble() && v <= d.get(1).asDouble());
+        for (int g = 0; g < groups.size(); g++) {
+            JsonNode list = groups.get(g).get("intervals");
+            if (list == null || !list.isArray()) {
+                p.add("group " + g + ": intervals must be a list of [start, end]");
+                continue;
+            }
+            for (int i = 0; i < list.size(); i++) {
+                JsonNode iv = list.get(i);
+                String where = "group " + g + " interval " + i + " " + iv;
+                if (!iv.isArray() || iv.size() != 2 || !iv.get(0).isNumber() || !iv.get(1).isNumber()) {
+                    p.add(where + " is not two numbers");
+                } else if (iv.get(0).asDouble() > iv.get(1).asDouble()) {
+                    p.add(where + " starts after it ends");
+                } else if (!onAxis.test(iv.get(0).asDouble()) || !onAxis.test(iv.get(1).asDouble())) {
+                    p.add(where + " is outside the axis " + d);
+                }
+            }
+            String group = "group " + g + ": ";
+            marks(groups.get(g).get("marks"), k -> index(k, list), "row index").forEach(m -> p.add(group + m));
+        }
+        JsonNode points = s.get("points");
+        for (int i = 0; points != null && i < points.size(); i++) {
+            JsonNode point = points.get(i), at = point.get("at");
+            if (at == null || !at.isNumber()) p.add("point " + i + " at " + at + " is not a number");
+            else if (!onAxis.test(at.asDouble())) p.add("point " + i + " at " + at + " is outside the axis " + d);
+            String which = "point " + i + " has ";
+            unknownMark(point.get("mark"), MARKS).ifPresent(m -> p.add(which + m));
+        }
+        return p;
+    }
+
+    /**
+     * What is wrong with a set state: members strings or numbers, none twice (4 and "4" are one member), marks on
+     * members, and each probe a value; a probe that says it hits must name a member.
+     */
+    private static List<String> set(JsonNode s) {
+        JsonNode members = s.get("members");
+        if (members == null || !members.isArray()) return List.of("members must be a list of strings or numbers");
+        List<String> p = new ArrayList<>();
+        Set<String> seen = distinct(members, member -> member, "member", p);
+        p.addAll(marks(s.get("marks"), k -> seen.contains(key(k)), "member"));
+        JsonNode probes = s.get("probes");
+        if (probes != null && !probes.isArray()) {
+            p.add("probes must be a list of { value, hit? }");
+        } else if (probes != null) {
+            for (int i = 0; i < probes.size(); i++) {
+                JsonNode probe = probes.get(i), hit = probe.get("hit");
+                String value = key(probe.get("value"));
+                if (value == null) p.add("probe " + i + " has no value (a string or a number)");
+                else if (hit != null && hit.isBoolean() && hit.asBoolean() && !seen.contains(value)) {
+                    p.add("probe " + i + " hits " + probe.get("value") + ", not a member");
+                }
+                if (hit != null && !hit.isBoolean()) p.add("probe " + i + ": hit is not true or false");
+            }
+        }
+        return p;
     }
 
     private static boolean allRows(JsonNode cells) {

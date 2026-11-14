@@ -38,10 +38,10 @@
 .wt-runbtn[aria-selected="true"] { border-color: var(--wt-ink); color: var(--wt-ink); font-weight: 600; }
 .wt-extra { margin-left: 6px; font-size: 11px; color: var(--wt-mid); font-weight: 400; border: 1px dashed var(--wt-lo); border-radius: 999px; padding: 0 6px; }
 .wt-card { background: var(--wt-card); border: 1px solid var(--wt-faint); border-radius: 14px; overflow: hidden; }
-.wt-head { display: flex; justify-content: space-between; gap: 12px; padding: 10px 14px; font-size: 12px; color: var(--wt-mid); border-bottom: 1px solid var(--wt-faint); }
+.wt-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 12px; padding: 10px 14px; font-size: 12px; color: var(--wt-mid); border-bottom: 1px solid var(--wt-faint); }
 .wt-input { font-family: var(--wt-mono); color: var(--wt-ink); overflow-wrap: anywhere; }
-.wt-expected { white-space: nowrap; }
-.wt-stage { display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start; gap: 18px 32px; padding: 20px 14px; }
+.wt-expected { overflow-wrap: anywhere; }
+.wt-stage { position: relative; display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start; gap: 18px 32px; padding: 20px 14px; }
 .wt-view { margin: 0; min-width: 0; max-width: 100%; }
 .wt-viewtitle { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--wt-mid); margin-bottom: 6px; }
 .wt-viewbody { overflow-x: auto; }
@@ -73,6 +73,9 @@
 .wt-ptr { font: 700 12px var(--wt-mono); fill: var(--wt-accent) !important; }
 .wt-tile { fill: var(--wt-bg); stroke: var(--wt-faint); stroke-width: 1.5; transition: fill .35s, stroke .35s, opacity .35s; }
 
+/* grid boxes and a shaded region */
+.wt-boxline { stroke: var(--wt-ink); stroke-width: 3; stroke-linecap: round; opacity: .7; }
+.wt-cell.wt-shaded .wt-tile { fill: var(--wt-accent-soft); }
 /* grid tones (by cell value) */
 .wt-tone-empty .wt-tile { fill: transparent; stroke-dasharray: 4 4; }
 .wt-tone-wall .wt-tile { fill: var(--wt-wall); stroke: var(--wt-wall); }
@@ -105,6 +108,26 @@
 .wt-item.wt-path .wt-bar { fill: var(--wt-accent); }
 .wt-item.wt-good .wt-fill { opacity: 1; }
 
+/* array spans: a window above the cells, a record dashed below; cells outside a fading span fade, unread cells are dashed */
+.wt-item { transition: opacity .3s; }
+.wt-item.wt-faded { opacity: .35; }
+.wt-item.wt-unread { opacity: .5; }
+.wt-item.wt-unread .wt-tile { stroke-dasharray: 4 3; }
+.wt-under { font: 600 11px var(--wt-mono); fill: var(--wt-mid) !important; }
+.wt-spanline { fill: none; stroke: var(--wt-mid); stroke-width: 2; stroke-linejoin: round; transition: d .3s cubic-bezier(.2,.8,.2,1), stroke .3s; }
+.wt-span.wt-below .wt-spanline { stroke-dasharray: 4 3; }
+.wt-spantag { transition: transform .3s cubic-bezier(.2,.8,.2,1); }
+.wt-spanbg { fill: var(--wt-card); }
+.wt-spanlabel { font: 600 11px var(--wt-mono) !important; fill: var(--wt-mid) !important; }
+.wt-span.wt-lit .wt-spanline, .wt-span.wt-path .wt-spanline { stroke: var(--wt-accent); }
+.wt-span.wt-lit .wt-spanlabel, .wt-span.wt-path .wt-spanlabel { fill: var(--wt-accent) !important; }
+.wt-span.wt-path .wt-spanline { stroke-width: 3; }
+.wt-span.wt-good .wt-spanline { stroke: var(--wt-good); }
+.wt-span.wt-good .wt-spanlabel { fill: var(--wt-good) !important; }
+.wt-span.wt-bad .wt-spanline { stroke: var(--wt-bad); }
+.wt-span.wt-bad .wt-spanlabel { fill: var(--wt-bad) !important; }
+.wt-span.wt-dim { opacity: .4; }
+
 /* graph */
 .wt-edge { fill: none; stroke: var(--wt-lo); stroke-width: 1.6; transition: stroke .3s, stroke-width .3s; }
 .wt-ah { fill: var(--wt-lo); }
@@ -115,6 +138,7 @@
 .wt-e.wt-path .wt-edge { stroke: var(--wt-accent); stroke-width: 3.4; }
 .wt-e.wt-dim { opacity: .3; }
 .wt-chipbg { fill: var(--wt-card); stroke: var(--wt-faint); }
+.wt-espot { fill: none; }
 .wt-elabel { font: 600 11px var(--wt-mono); fill: var(--wt-mid) !important; }
 .wt-e.wt-lit .wt-elabel, .wt-e.wt-path .wt-elabel { fill: var(--wt-accent) !important; }
 .wt-e.wt-good .wt-elabel { fill: var(--wt-good) !important; }
@@ -147,8 +171,127 @@
 .wt-var.wt-good .wt-varvalue { color: var(--wt-good); }
 .wt-var.wt-bad .wt-varvalue { color: var(--wt-bad); }
 .wt-var.wt-lit .wt-varvalue { color: var(--wt-accent); }
+.wt-var.wt-path .wt-varvalue { color: var(--wt-accent); font-weight: 800; }
+.wt-var.wt-dim { opacity: .35; }
 .wt-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; max-width: 220px; }
 .wt-chip { font: 600 12px var(--wt-mono); color: var(--wt-accent); background: var(--wt-accent-soft); border: 1px solid var(--wt-accent); border-radius: 999px; padding: 2px 10px; }
+/* a list's chips take the item's mark; an unmarked or lit list keeps the accent chips */
+.wt-var.wt-good .wt-chip { color: var(--wt-good); background: var(--wt-good-soft); border-color: var(--wt-good); }
+.wt-var.wt-bad .wt-chip { color: var(--wt-bad); background: var(--wt-bad-soft); border-color: var(--wt-bad); }
+.wt-var.wt-path .wt-chip { color: var(--wt-card); background: var(--wt-accent); border-width: 2px; padding: 1px 9px; }
+/* a map entry's marked chips */
+.wt-chip.wt-good { color: var(--wt-good); background: var(--wt-good-soft); border-color: var(--wt-good); }
+.wt-chip.wt-bad { color: var(--wt-card); background: var(--wt-bad); border-color: var(--wt-bad); }
+.wt-chip.wt-lit { border-width: 2px; padding: 1px 9px; }
+.wt-chip.wt-path { color: var(--wt-card); background: var(--wt-accent); }
+.wt-chip.wt-dim { opacity: .35; }
 .wt-empty { font-size: 13px; color: var(--wt-lo); font-style: italic; }
+
+/* map: a box of key cards, in insertion order, wrapping on narrow screens */
+.wt-map { display: flex; flex-wrap: wrap; gap: 14px 8px; padding: 14px 8px 8px; min-height: 64px; min-width: 120px; max-width: 420px; border: 1.5px dashed var(--wt-faint); border-radius: 12px; }
+.wt-mapcard { position: relative; min-width: 62px; max-width: 180px; padding: 6px 8px; text-align: center; background: var(--wt-bg); border: 2px solid var(--wt-faint); border-radius: 10px; transition: border-color .3s, background .3s, opacity .3s; }
+.wt-mapkey { font: 700 15px var(--wt-mono); overflow-wrap: anywhere; }
+.wt-mapval { font: 12px var(--wt-mono); color: var(--wt-mid); }
+.wt-dots { display: flex; flex-wrap: wrap; justify-content: center; gap: 3px; max-width: 76px; margin: 5px auto 2px; min-height: 9px; }
+.wt-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--wt-mid); }
+.wt-mapcard .wt-chips { justify-content: center; margin-top: 5px; }
+.wt-rank { position: absolute; top: -10px; right: -6px; font: 700 11px/1 var(--wt-mono); padding: 3px 6px; border-radius: 999px; background: var(--wt-ink); color: var(--wt-card); }
+.wt-mapcard.wt-lit { border-color: var(--wt-accent); background: var(--wt-accent-soft); }
+.wt-mapcard.wt-good { border-color: var(--wt-good); background: var(--wt-good-soft); }
+.wt-mapcard.wt-good .wt-dot:last-child { background: var(--wt-good); }
+.wt-mapcard.wt-bad { border-color: var(--wt-bad); background: var(--wt-bad-soft); }
+.wt-mapcard.wt-path { border-color: var(--wt-accent); }
+.wt-mapcard.wt-path .wt-rank { background: var(--wt-accent); }
+.wt-mapcard.wt-dim, .wt-mapcard.wt-unranked:not(.wt-path) { opacity: .4; }
+
+/* map slots: a map that holds at most k keys; a key beyond them is red, and a key whose count reached 0 is struck */
+.wt-mapspace { width: 62px; height: 0; visibility: hidden; } /* room kept for a card a later frame adds */
+.wt-mapslot { min-width: 62px; min-height: 58px; border: 2px dashed var(--wt-faint); border-radius: 10px; }
+.wt-mapcard.wt-over { border-color: var(--wt-bad); background: var(--wt-bad-soft); }
+.wt-mapcard.wt-struck { border-style: dashed; border-color: var(--wt-bad); background: transparent; opacity: .55; }
+.wt-mapcard.wt-struck .wt-mapkey { text-decoration: line-through; text-decoration-color: var(--wt-bad); text-decoration-thickness: 2px; color: var(--wt-bad); }
+
+/* map probe: a lookup, on its own row above the cards; a hit rings its key's card, a miss is red and dashed */
+.wt-mapprobe { flex-basis: 100%; min-width: 0; }
+.wt-mapprobechip { display: inline-block; max-width: 100%; box-sizing: border-box; padding: 2px 10px; font: 700 13px var(--wt-mono); border: 2px solid var(--wt-accent); border-radius: 999px; color: var(--wt-accent); background: var(--wt-accent-soft); overflow-wrap: anywhere; }
+.wt-mapprobe.wt-miss .wt-mapprobechip { border-style: dashed; border-color: var(--wt-bad); color: var(--wt-bad); background: var(--wt-bad-soft); }
+.wt-mapprobe.wt-idle .wt-mapprobechip { visibility: hidden; }
+.wt-mapcard.wt-probed { box-shadow: 0 0 0 3px var(--wt-accent-soft), 0 0 0 5px var(--wt-accent); }
+
+/* set: a bag of member chips; a probe above it is a lookup that hits (the member lights) or misses */
+.wt-set { display: flex; max-width: 100%; flex-wrap: wrap; align-content: flex-start; gap: 6px; padding: 12px; min-height: 52px; min-width: 120px; border: 1.5px dashed var(--wt-lo); border-radius: 22px; }
+.wt-member { font: 600 14px var(--wt-mono); padding: 4px 11px; border-radius: 999px; background: var(--wt-bg); border: 2px solid var(--wt-faint); white-space: nowrap; transition: border-color .3s, background .3s, color .3s, opacity .3s; }
+.wt-member.wt-lit { border-color: var(--wt-accent); background: var(--wt-accent-soft); color: var(--wt-accent); }
+.wt-member.wt-good { border-color: var(--wt-good); background: var(--wt-good-soft); color: var(--wt-good); }
+.wt-member.wt-bad { border-color: var(--wt-bad); background: var(--wt-bad-soft); color: var(--wt-bad); }
+.wt-member.wt-path { border-color: var(--wt-accent); background: var(--wt-accent); color: var(--wt-card); }
+.wt-member.wt-dim { opacity: .4; }
+.wt-member.wt-found { animation: wt-pop .45s cubic-bezier(.2,.8,.2,1); }
+.wt-probes { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; min-height: 25px; }
+.wt-probe { display: inline-flex; align-items: baseline; gap: 6px; font: 12px var(--wt-mono); padding: 3px 9px; border-radius: 7px; border: 1.5px dashed var(--wt-mid); color: var(--wt-mid); }
+.wt-probelabel, .wt-probeword { font-family: var(--wt-sans); }
+.wt-probevalue { font-weight: 700; font-size: 14px; color: var(--wt-ink); }
+.wt-probe.wt-hit { border-style: solid; border-color: var(--wt-accent); color: var(--wt-accent); }
+.wt-probe.wt-hit .wt-probevalue { color: var(--wt-accent); }
+
+/* output: the box the answer's values move into */
+.wt-output { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; min-width: 96px; min-height: 46px; padding: 6px; border: 2px solid var(--wt-lo); border-radius: 10px; background: var(--wt-bg); }
+.wt-output > .wt-empty { padding: 0 6px; }
+.wt-outchip.wt-outspace { visibility: hidden; } /* room kept for a value a later frame adds */
+.wt-outchip { font: 700 15px var(--wt-mono); padding: 5px 10px; border-radius: 7px; color: var(--wt-card); background: var(--wt-accent); }
+.wt-outchip.wt-good { background: var(--wt-good); }
+.wt-outchip.wt-dim { opacity: .4; }
+
+/* queue: a horizontal pipe open at the back (in, right) and the front (out, left); a deque is open at both */
+.wt-queue { display: flex; align-items: center; gap: 6px; }
+.wt-qend { display: flex; flex-direction: column; align-items: center; min-width: 30px; font: 600 10px var(--wt-sans); letter-spacing: .06em; text-transform: uppercase; color: var(--wt-mid); }
+.wt-qarrow { font: 600 16px/1 var(--wt-sans); color: var(--wt-lo); }
+.wt-qpipe { display: flex; align-items: flex-end; gap: 6px; min-width: 96px; min-height: 62px; padding: 6px 8px; border-top: 2px solid var(--wt-lo); border-bottom: 2px solid var(--wt-lo); background: var(--wt-bg); }
+.wt-qpipe > .wt-empty { align-self: center; padding: 0 6px; }
+.wt-qitem { display: flex; flex-direction: column; align-items: center; gap: 2px; transition: opacity .3s; }
+.wt-qtag { font: 600 10px var(--wt-mono); color: var(--wt-mid); min-height: 13px; white-space: nowrap; }
+.wt-qval { font: 600 13px var(--wt-mono); min-width: 44px; padding: 7px 8px; text-align: center; white-space: nowrap; background: var(--wt-card); border: 2px solid var(--wt-faint); border-radius: 8px; transition: border-color .3s, background .3s; }
+.wt-qitem.wt-lit .wt-qval { border-color: var(--wt-accent); background: var(--wt-accent-soft); }
+.wt-qitem.wt-good .wt-qval { border-color: var(--wt-good); background: var(--wt-good-soft); }
+.wt-qitem.wt-good .wt-qtag { color: var(--wt-good); }
+.wt-qitem.wt-bad .wt-qval { border-color: var(--wt-bad); background: var(--wt-bad-soft); }
+.wt-qitem.wt-path .wt-qval { border-color: var(--wt-accent); color: var(--wt-card); background: var(--wt-accent); }
+.wt-qitem.wt-dim { opacity: .35; }
+
+/* intervals: bars on one number line, as a problem's intervals Diagram draws them */
+.wt-intervals .wt-ivgroup { font: 600 10px var(--wt-sans); letter-spacing: .08em; text-transform: uppercase; fill: var(--wt-mid) !important; }
+.wt-intervals .wt-ivempty { font: italic 12px var(--wt-sans); fill: var(--wt-lo) !important; }
+.wt-intervals .wt-ivlabel { font: 500 12px var(--wt-mono); fill: var(--wt-mid) !important; }
+.wt-ivbar { fill: var(--wt-ink); fill-opacity: .15; stroke: var(--wt-mid); stroke-width: 1.5; transition: fill .3s, stroke .3s; }
+.wt-ivrow.wt-lit .wt-ivbar { fill: var(--wt-accent); fill-opacity: .25; stroke: var(--wt-accent); }
+.wt-ivrow.wt-good .wt-ivbar { fill: var(--wt-good); fill-opacity: .3; stroke: var(--wt-good); }
+.wt-ivrow.wt-bad .wt-ivbar { fill: var(--wt-bad); fill-opacity: .25; stroke: var(--wt-bad); stroke-dasharray: 4 2; }
+.wt-ivrow.wt-path .wt-ivbar { fill: var(--wt-accent); fill-opacity: 1; stroke: var(--wt-accent); }
+.wt-intervals .wt-ivrow.wt-lit .wt-ivlabel, .wt-ivrow.wt-path .wt-ivlabel { font-weight: 700; fill: var(--wt-accent) !important; }
+.wt-intervals .wt-ivrow.wt-good .wt-ivlabel { font-weight: 700; fill: var(--wt-good) !important; }
+.wt-intervals .wt-ivrow.wt-bad .wt-ivlabel { font-weight: 700; fill: var(--wt-bad) !important; }
+.wt-ivrow.wt-dim { opacity: .35; }
+.wt-ivaxis { stroke: var(--wt-lo); stroke-width: 1; }
+.wt-ivpline { stroke: var(--wt-mid); stroke-width: 1.5; stroke-dasharray: 4 3; }
+.wt-intervals .wt-ivptext { font: 600 11px var(--wt-mono); }
+.wt-ivpoint.wt-lit .wt-ivpline, .wt-ivpoint.wt-path .wt-ivpline { stroke: var(--wt-accent); }
+.wt-ivpoint.wt-lit .wt-ivptext, .wt-ivpoint.wt-path .wt-ivptext { fill: var(--wt-accent) !important; }
+.wt-ivpoint.wt-good .wt-ivpline { stroke: var(--wt-good); }
+.wt-ivpoint.wt-good .wt-ivptext { fill: var(--wt-good) !important; }
+.wt-ivpoint.wt-bad .wt-ivpline { stroke: var(--wt-bad); }
+.wt-ivpoint.wt-bad .wt-ivptext { fill: var(--wt-bad) !important; }
+.wt-ivpoint.wt-dim { opacity: .35; }
+
+/* moves: drawn over the stage, never catching the pointer */
+.wt-moves { position: absolute; inset: 0; pointer-events: none; z-index: 2; }
+.wt-movesvg { position: absolute; left: 0; top: 0; overflow: visible; }
+.wt-movearrow { fill: none; stroke-width: 1.8; stroke-dasharray: 4 3; opacity: .8; }
+.wt-movearrow.wt-good { stroke: var(--wt-good); }
+.wt-movearrow.wt-bad { stroke: var(--wt-bad); }
+.wt-movearrow.wt-path { stroke: var(--wt-accent); }
+.wt-flychip { position: absolute; transform: translate(-50%, -50%); font: 700 14px var(--wt-mono); padding: 4px 9px; border-radius: 7px; color: var(--wt-card); box-shadow: 0 4px 12px rgba(0,0,0,.25); white-space: nowrap; }
+.wt-flychip.wt-good { background: var(--wt-good); }
+.wt-flychip.wt-bad { background: var(--wt-bad); }
+.wt-flychip.wt-path { background: var(--wt-accent); }
 
 @media (prefers-reduced-motion: reduce) { .wt *, .wt *::before { transition: none !important; animation: none !important; } }

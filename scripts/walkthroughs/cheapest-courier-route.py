@@ -1,7 +1,8 @@
 #!/usr/bin/env python3.12
 """cheapest-courier-route's Walkthrough: the reference solution
 (scripts/replay-solutions/cheapest-courier-route.py), Bellman-Ford limited to maxHops + 1 rounds,
-recording one frame per leg relaxed on each sample Test Case.
+recording one frame per leg relaxed on each sample Test Case: last round's cost goes up onto the
+link it travels, and the sum comes down into this round's cost when it beats it.
 
     CODEBITE_DB=<database> scripts/walkthroughs/cheapest-courier-route.py
 
@@ -14,7 +15,7 @@ import sys
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
 from codebite import driver_list, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
-from walkthrough_trace import Walkthrough  # noqa: E402
+from walkthrough_trace import Walkthrough, at, move  # noqa: E402
 
 SLUG = "cheapest-courier-route"
 INF = float("inf")
@@ -28,7 +29,8 @@ wt = Walkthrough(
     views=[
         {"id": "cafes", "type": "graph", "title": {"en": "cafes and links (minutes)", "ko": "카페와 링크 (분)"},
          "directed": True},
-        {"id": "costs", "type": "table", "title": {"en": "cheapest minutes so far", "ko": "지금까지의 최소 분"}},
+        {"id": "last", "type": "array", "title": {"en": "last round (minutes, by cafe)", "ko": "지난 라운드 (분, 카페별)"}},
+        {"id": "now", "type": "array", "title": {"en": "this round (minutes, by cafe)", "ko": "이번 라운드 (분, 카페별)"}},
         {"id": "state", "type": "vars"},
     ],
 )
@@ -73,32 +75,30 @@ def solve(n, links, src, dst, k, run):
     via_history = [via]       # via as it stood after each round, so a route can be walked back
     cost_history = [cost[:]]  # cost after each round, so the last frame shows what the route used
 
-    def frame(caption, rnd, leg=None, improved=False, path=(), used=None, **answer):
+    def frame(caption, rnd, leg=None, improved=False, path=(), used=None, moves=(), **answer):
         shown = [used[v] if used and v in used else updated[v] for v in range(n)]
         node_marks = {"dim": [v for v in range(n) if shown[v] == INF], "path": list(path)}
         edge_marks = {"path": [i for i, (a, b, _) in enumerate(links)
                                if a in path and b in path and path.index(b) == path.index(a) + 1]}
         # on the last frame, the last-round costs the route left each cafe with, and the answer
-        cell_marks = {"path": [[0, v] for v in path if v != dst and used[v] == last_row[v]] + [[1, dst]]
-                      if path else []}
+        last_marks = {"path": [v for v in path if v != dst and used[v] == last_row[v]]} if path else {}
+        now_marks = {"path": [dst]} if path else {}
         if leg is not None:
             a, b, _ = links[leg]
             edge_marks["good" if improved else "lit"] = [leg]
             node_marks["lit"] = [a]
-            cell_marks["lit"] = [[0, a]]
+            last_marks["lit"] = [a]
             if improved:
                 node_marks["good"] = [b]
-                cell_marks["good"] = [[1, b]]
+                now_marks["good"] = [b]
         run.frame(caption,
                   cafes={"values": {str(v): show(shown[v]) for v in range(n)},
                          "nodeMarks": node_marks, "edgeMarks": edge_marks},
-                  costs={"columns": [{"en": f"cafe {v}", "ko": f"카페 {v}"} for v in range(n)],
-                         "rows": [{"label": {"en": "last round", "ko": "지난 라운드"}, "cells": [show(c) for c in last_row]},
-                                  {"label": {"en": "this round", "ko": "이번 라운드"}, "cells": [show(c) for c in updated]}],
-                         "marks": cell_marks},
+                  last={"values": [show(c) for c in last_row], "marks": last_marks},
+                  now={"values": [show(c) for c in updated], "marks": now_marks},
                   state={"items": [{"label": {"en": "round", "ko": "라운드"}, "value": f"{rnd} / {rounds}"},
                                    {"label": {"en": "legs allowed", "ko": "허용 구간 수"}, "value": rounds}]},
-                  **answer)
+                  moves=list(moves), **answer)
 
     frame({"en": f"Before any leg only cafe {src} is reached: 0 minutes there, ∞ elsewhere. "
                  f"maxHops = {k} allows {rounds} {plural(rounds, 'leg', 'legs')}, so {rounds} "
@@ -114,7 +114,7 @@ def solve(n, links, src, dst, k, run):
                      f"row, so a route can grow by one leg this round, never two.",
                "ko": f"{rnd}라운드: 지난 라운드 행을 이번 라운드 행에 복사합니다. 모든 구간은 지난 라운드 행만 읽으므로 "
                      f"이번 라운드에 경로는 구간 하나만 늘어날 수 있고, 두 개는 안 됩니다."},
-              rnd)
+              rnd, moves=[move(at("now", v), at("last", v)) for v in range(n) if cost[v] != INF])
         for i, (a, b, w) in enumerate(links):
             if cost[a] == INF:
                 if updated[a] != INF:
@@ -134,13 +134,16 @@ def solve(n, links, src, dst, k, run):
                              f"so cafe {b} costs {updated[b]} now.",
                        "ko": f"링크 {a}→{b}: {cost[a]} + {w} = {updated[b]}분이 기존 {show(old)}보다 짧으므로 "
                              f"카페 {b}의 비용을 {updated[b]}분으로 바꿉니다."},
-                      rnd, leg=i, improved=True)
+                      rnd, leg=i, improved=True,
+                      moves=[move(at("last", a), at("cafes", [a, b])),
+                             move(at("cafes", [a, b]), at("now", b), value=updated[b])])
             else:
                 frame({"en": f"Link {a}→{b}: {cost[a]} + {w} = {cost[a] + w} doesn't beat {show(updated[b])}, "
                              f"so cafe {b} keeps it.",
                        "ko": f"링크 {a}→{b}: {cost[a]} + {w} = {cost[a] + w}분이 기존 {show(updated[b])}보다 짧지 않으므로 "
                              f"카페 {b}의 비용은 그대로입니다."},
-                      rnd, leg=i)
+                      rnd, leg=i,
+                      moves=[move(at("last", a), at("cafes", [a, b])), move(at("cafes", [a, b]), value=cost[a] + w)])
         cost, via = updated, new_via
         via_history.append(via)
         cost_history.append(cost[:])
