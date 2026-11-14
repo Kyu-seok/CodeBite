@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * under the Slug it is filed under; it is a well-formed {@code walkthrough/1} document (the public
  * walkthrough skill's {@code references/format.md}: known view types, marks inside the data they
  * name, moves whose addresses exist in that frame, unique map keys and set members, set probes that hit only members, spans inside their array, map slots a
- * non-negative integer, a map probe with a key that it hits only when held, intervals that start no later than they end, queue marks and tags on its positions, the answer on the last frame only); its sample runs are, in order, exactly the problem's
+ * non-negative integer, a map probe with a key that it hits only when held, intervals that start no later than they end, queue marks and tags on its positions, a grid's boxes a whole number and its shade on its cells, map entry labels as Text and chip marks on their list, the answer on the last frame only); its sample runs are, in order, exactly the problem's
  * sample Test Cases by {@code sampleInput} and {@code expected}, compared trimmed as the Grader
  * compares; each run ends on its {@code expected}; and any run marked {@code extra} comes after
  * the sample runs; and every caption is one or two sentences in each language (#258). Correcting, adding or reordering a sample without regenerating the Walkthrough
@@ -293,6 +293,33 @@ class WalkthroughsMatchSamplesTest {
         assertCaught("rotting-donuts", walkthrough, breakage, expected);
     }
 
+    // --- grid boxes and shade, map entry labels and chip marks, on a copy of valid-sudoku ----------------
+
+    @ParameterizedTest(name = "{0}")
+    @CsvSource(delimiter = '|', quoteCharacter = '`', value = {
+            "boxes not a whole number            | view \"board\": boxes must be a whole number of cells, 1 or more",
+            "boxes of zero                       | view \"board\": boxes must be a whole number of cells, 1 or more",
+            "shade outside the grid              | view \"board\": shade names [9,0], not a cell [r, c]",
+            "entry label not Text                | view \"rows\": entry row 1 has a label that is not Text",
+            "chip mark past the entry's list     | view \"rows\": entry row 1: mark \"bad\" names 5, not a chip index",
+    })
+    void aBrokenBoardOrRegionCardIsCaught(String breakage, String expected) throws Exception {
+        ObjectNode walkthrough = (ObjectNode) JSON.readTree(WALKTHROUGHS.of("valid-sudoku").orElseThrow());
+        ArrayNode frames = (ArrayNode) walkthrough.get("runs").get(0).get("frames");
+        ObjectNode board = (ObjectNode) walkthrough.get("views").get(0);
+        ObjectNode read = (ObjectNode) frames.get(1).get("views").get("board"); // the first digit read, its band shaded
+        ObjectNode entry = (ObjectNode) frames.get(1).get("views").get("rows").get("entries").get(0);
+        switch (breakage) {
+            case "boxes not a whole number" -> board.put("boxes", "3");
+            case "boxes of zero" -> board.put("boxes", 0);
+            case "shade outside the grid" -> ((ArrayNode) read.get("shade")).addArray().add(9).add(0);
+            case "entry label not Text" -> entry.put("label", 3);
+            case "chip mark past the entry's list" -> entry.putObject("marks").putArray("bad").add(5);
+            default -> throw new IllegalArgumentException(breakage);
+        }
+        assertCaught("valid-sudoku", walkthrough, breakage, expected);
+    }
+
     // --- graph moves, on a copy of cheapest-courier-route ------------------------------------------
 
     @ParameterizedTest(name = "{0}")
@@ -529,6 +556,10 @@ class WalkthroughsMatchSamplesTest {
             if ("queue".equals(view.path("type").asText()) && view.has("deque") && !view.get("deque").isBoolean()) {
                 p.add("view \"" + id + "\": deque must be true or false");
             }
+            if ("grid".equals(view.path("type").asText()) && view.has("boxes")
+                    && !(view.get("boxes").isIntegralNumber() && view.get("boxes").asLong() >= 1)) {
+                p.add("view \"" + id + "\": boxes must be a whole number of cells, 1 or more");
+            }
         }
         if (views.isEmpty()) p.add("no views");
         JsonNode runs = wt.path("runs");
@@ -753,6 +784,7 @@ class WalkthroughsMatchSamplesTest {
                         && k.get(1).asInt() < cols;
                 List<String> p = marks(s.get("marks"), inside, "cell [r, c]");
                 for (JsonNode tag : s.path("tags")) if (!inside.test(tag)) p.add("tag " + tag + " is outside the grid");
+                for (JsonNode cell : s.path("shade")) if (!inside.test(cell)) p.add("shade names " + cell + ", not a cell [r, c]");
                 yield p;
             }
             case "array" -> {
@@ -786,6 +818,14 @@ class WalkthroughsMatchSamplesTest {
                 if (entries == null || !entries.isArray()) yield List.of("entries must be a list of { key, value }");
                 List<String> p = new ArrayList<>();
                 Set<String> seen = distinct(entries, entry -> entry.get("key"), "key", p);
+                for (JsonNode entry : entries) {
+                    String k = key(entry.get("key"));
+                    if (entry.hasNonNull("label") && !isText(entry.get("label"))) p.add("entry " + k + " has a label that is not Text");
+                    JsonNode chips = entry.path("value");
+                    if (entry.has("marks")) {
+                        for (String m : marks(entry.get("marks"), i -> index(i, chips), "chip index")) p.add("entry " + k + ": " + m);
+                    }
+                }
                 p.addAll(marks(s.get("marks"), k -> seen.contains(key(k)), "key"));
                 JsonNode slots = s.get("slots");
                 if (slots != null && !(slots.isIntegralNumber() && slots.asLong() >= 0)) p.add("slots " + slots + " is not a non-negative integer");

@@ -73,6 +73,9 @@
 .wt-ptr { font: 700 12px var(--wt-mono); fill: var(--wt-accent) !important; }
 .wt-tile { fill: var(--wt-bg); stroke: var(--wt-faint); stroke-width: 1.5; transition: fill .35s, stroke .35s, opacity .35s; }
 
+/* grid boxes and a shaded region */
+.wt-boxline { stroke: var(--wt-ink); stroke-width: 3; stroke-linecap: round; opacity: .7; }
+.wt-cell.wt-shaded .wt-tile { fill: var(--wt-accent-soft); }
 /* grid tones (by cell value) */
 .wt-tone-empty .wt-tile { fill: transparent; stroke-dasharray: 4 4; }
 .wt-tone-wall .wt-tile { fill: var(--wt-wall); stroke: var(--wt-wall); }
@@ -176,6 +179,12 @@
 .wt-var.wt-good .wt-chip { color: var(--wt-good); background: var(--wt-good-soft); border-color: var(--wt-good); }
 .wt-var.wt-bad .wt-chip { color: var(--wt-bad); background: var(--wt-bad-soft); border-color: var(--wt-bad); }
 .wt-var.wt-path .wt-chip { color: var(--wt-card); background: var(--wt-accent); border-width: 2px; padding: 1px 9px; }
+/* a map entry's marked chips */
+.wt-chip.wt-good { color: var(--wt-good); background: var(--wt-good-soft); border-color: var(--wt-good); }
+.wt-chip.wt-bad { color: var(--wt-card); background: var(--wt-bad); border-color: var(--wt-bad); }
+.wt-chip.wt-lit { border-width: 2px; padding: 1px 9px; }
+.wt-chip.wt-path { color: var(--wt-card); background: var(--wt-accent); }
+.wt-chip.wt-dim { opacity: .35; }
 .wt-empty { font-size: 13px; color: var(--wt-lo); font-style: italic; }
 
 /* map: a box of key cards, in insertion order, wrapping on narrow screens */
