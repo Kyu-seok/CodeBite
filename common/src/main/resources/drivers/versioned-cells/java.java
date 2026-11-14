@@ -40,8 +40,8 @@ public class Main {
         VersionedCells snapArr = null;
         for (int idx = 0; idx < ops.size(); idx++) {
             if (idx > 0) sb.append(",");
-            String op = ops.readAt(idx);
-            int[] opArgs = argsList.readAt(idx);
+            String op = ops.get(idx);
+            int[] opArgs = argsList.get(idx);
             switch (op) {
                 case "VersionedCells":
                     snapArr = new VersionedCells(opArgs[0]);
