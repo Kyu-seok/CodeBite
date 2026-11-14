@@ -12,7 +12,7 @@
   {
    "id": "order",
    "type": "array",
-   "title": "shotOrder"
+   "title": "lineup"
   }
  ],
  "runs": [
@@ -21,7 +21,7 @@
     "en": "Example 1",
     "ko": "예시 1"
    },
-   "input": "shotOrder = [2,3,4]",
+   "input": "lineup = [2,3,4]",
    "expected": "[2,4,3]",
    "frames": [
     {
@@ -60,8 +60,8 @@
     },
     {
      "caption": {
-      "en": "shotOrder[1] = 3 < shotOrder[2] = 4: index 1 is the rightmost place that can grow. Now find the id from the tail to put there.",
-      "ko": "shotOrder[1] = 3 < shotOrder[2] = 4: 인덱스 1의 자리가 커질 수 있는 가장 오른쪽 자리입니다. 이제 꼬리에서 이 자리에 올 ID를 찾습니다."
+      "en": "lineup[1] = 3 < lineup[2] = 4: index 1 is the rightmost place that can grow. Now find the id from the tail to put there.",
+      "ko": "lineup[1] = 3 < lineup[2] = 4: 인덱스 1의 자리가 커질 수 있는 가장 오른쪽 자리입니다. 이제 꼬리에서 이 자리에 올 ID를 찾습니다."
      },
      "views": {
       "order": {
@@ -107,8 +107,8 @@
     },
     {
      "caption": {
-      "en": "shotOrder[2] = 4 > 3: the rightmost bigger id. The tail falls, so it is also the smallest id in the tail bigger than 3.",
-      "ko": "shotOrder[2] = 4 > 3: 더 큰 ID 중 가장 오른쪽입니다. 꼬리가 내려가므로 꼬리에서 3보다 큰 ID 중 가장 작은 ID이기도 합니다."
+      "en": "lineup[2] = 4 > 3: the rightmost bigger id. The tail falls, so it is also the smallest id in the tail bigger than 3.",
+      "ko": "lineup[2] = 4 > 3: 더 큰 ID 중 가장 오른쪽입니다. 꼬리가 내려가므로 꼬리에서 3보다 큰 ID 중 가장 작은 ID이기도 합니다."
      },
      "views": {
       "order": {
@@ -261,7 +261,7 @@
     "en": "Example 2",
     "ko": "예시 2"
    },
-   "input": "shotOrder = [5,4,3,2]",
+   "input": "lineup = [5,4,3,2]",
    "expected": "[2,3,4,5]",
    "frames": [
     {
@@ -301,8 +301,8 @@
     },
     {
      "caption": {
-      "en": "shotOrder[2] = 3 ≥ shotOrder[3] = 2: the tail still only falls, and a falling tail has no bigger arrangement. Move i left.",
-      "ko": "shotOrder[2] = 3 ≥ shotOrder[3] = 2: 꼬리는 여전히 내려가기만 하고, 내려가는 꼬리는 더 크게 배치할 수 없습니다. i를 왼쪽으로 옮깁니다."
+      "en": "lineup[2] = 3 ≥ lineup[3] = 2: the tail still only falls, and a falling tail has no bigger arrangement. Move i left.",
+      "ko": "lineup[2] = 3 ≥ lineup[3] = 2: 꼬리는 여전히 내려가기만 하고, 내려가는 꼬리는 더 크게 배치할 수 없습니다. i를 왼쪽으로 옮깁니다."
      },
      "views": {
       "order": {
@@ -339,8 +339,8 @@
     },
     {
      "caption": {
-      "en": "shotOrder[1] = 4 ≥ shotOrder[2] = 3: the tail still only falls, and a falling tail has no bigger arrangement. Move i left.",
-      "ko": "shotOrder[1] = 4 ≥ shotOrder[2] = 3: 꼬리는 여전히 내려가기만 하고, 내려가는 꼬리는 더 크게 배치할 수 없습니다. i를 왼쪽으로 옮깁니다."
+      "en": "lineup[1] = 4 ≥ lineup[2] = 3: the tail still only falls, and a falling tail has no bigger arrangement. Move i left.",
+      "ko": "lineup[1] = 4 ≥ lineup[2] = 3: 꼬리는 여전히 내려가기만 하고, 내려가는 꼬리는 더 크게 배치할 수 없습니다. i를 왼쪽으로 옮깁니다."
      },
      "views": {
       "order": {
@@ -377,8 +377,8 @@
     },
     {
      "caption": {
-      "en": "shotOrder[0] = 5 ≥ shotOrder[1] = 4: the tail still only falls, and a falling tail has no bigger arrangement. Move i left.",
-      "ko": "shotOrder[0] = 5 ≥ shotOrder[1] = 4: 꼬리는 여전히 내려가기만 하고, 내려가는 꼬리는 더 크게 배치할 수 없습니다. i를 왼쪽으로 옮깁니다."
+      "en": "lineup[0] = 5 ≥ lineup[1] = 4: the tail still only falls, and a falling tail has no bigger arrangement. Move i left.",
+      "ko": "lineup[0] = 5 ≥ lineup[1] = 4: 꼬리는 여전히 내려가기만 하고, 내려가는 꼬리는 더 크게 배치할 수 없습니다. i를 왼쪽으로 옮깁니다."
      },
      "views": {
       "order": {
@@ -544,7 +544,7 @@
     "en": "Case 3",
     "ko": "케이스 3"
    },
-   "input": "shotOrder = [1,2,7,6,3]",
+   "input": "lineup = [1,2,7,6,3]",
    "expected": "[1,3,2,6,7]",
    "frames": [
     {
@@ -585,8 +585,8 @@
     },
     {
      "caption": {
-      "en": "shotOrder[3] = 6 ≥ shotOrder[4] = 3: the tail still only falls, and a falling tail has no bigger arrangement. Move i left.",
-      "ko": "shotOrder[3] = 6 ≥ shotOrder[4] = 3: 꼬리는 여전히 내려가기만 하고, 내려가는 꼬리는 더 크게 배치할 수 없습니다. i를 왼쪽으로 옮깁니다."
+      "en": "lineup[3] = 6 ≥ lineup[4] = 3: the tail still only falls, and a falling tail has no bigger arrangement. Move i left.",
+      "ko": "lineup[3] = 6 ≥ lineup[4] = 3: 꼬리는 여전히 내려가기만 하고, 내려가는 꼬리는 더 크게 배치할 수 없습니다. i를 왼쪽으로 옮깁니다."
      },
      "views": {
       "order": {
@@ -624,8 +624,8 @@
     },
     {
      "caption": {
-      "en": "shotOrder[2] = 7 ≥ shotOrder[3] = 6: the tail still only falls, and a falling tail has no bigger arrangement. Move i left.",
-      "ko": "shotOrder[2] = 7 ≥ shotOrder[3] = 6: 꼬리는 여전히 내려가기만 하고, 내려가는 꼬리는 더 크게 배치할 수 없습니다. i를 왼쪽으로 옮깁니다."
+      "en": "lineup[2] = 7 ≥ lineup[3] = 6: the tail still only falls, and a falling tail has no bigger arrangement. Move i left.",
+      "ko": "lineup[2] = 7 ≥ lineup[3] = 6: 꼬리는 여전히 내려가기만 하고, 내려가는 꼬리는 더 크게 배치할 수 없습니다. i를 왼쪽으로 옮깁니다."
      },
      "views": {
       "order": {
@@ -663,8 +663,8 @@
     },
     {
      "caption": {
-      "en": "shotOrder[1] = 2 < shotOrder[2] = 7: index 1 is the rightmost place that can grow. Now find the id from the tail to put there.",
-      "ko": "shotOrder[1] = 2 < shotOrder[2] = 7: 인덱스 1의 자리가 커질 수 있는 가장 오른쪽 자리입니다. 이제 꼬리에서 이 자리에 올 ID를 찾습니다."
+      "en": "lineup[1] = 2 < lineup[2] = 7: index 1 is the rightmost place that can grow. Now find the id from the tail to put there.",
+      "ko": "lineup[1] = 2 < lineup[2] = 7: 인덱스 1의 자리가 커질 수 있는 가장 오른쪽 자리입니다. 이제 꼬리에서 이 자리에 올 ID를 찾습니다."
      },
      "views": {
       "order": {
@@ -712,8 +712,8 @@
     },
     {
      "caption": {
-      "en": "shotOrder[4] = 3 > 2: the rightmost bigger id. The tail falls, so it is also the smallest id in the tail bigger than 2.",
-      "ko": "shotOrder[4] = 3 > 2: 더 큰 ID 중 가장 오른쪽입니다. 꼬리가 내려가므로 꼬리에서 2보다 큰 ID 중 가장 작은 ID이기도 합니다."
+      "en": "lineup[4] = 3 > 2: the rightmost bigger id. The tail falls, so it is also the smallest id in the tail bigger than 2.",
+      "ko": "lineup[4] = 3 > 2: 더 큰 ID 중 가장 오른쪽입니다. 꼬리가 내려가므로 꼬리에서 2보다 큰 ID 중 가장 작은 ID이기도 합니다."
      },
      "views": {
       "order": {
