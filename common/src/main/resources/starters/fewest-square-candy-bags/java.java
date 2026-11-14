@@ -1,5 +1,5 @@
 class Solution {
-    public int countExactTargets(int pages) {
+    public int fewestBags(int candies) {
         // Write your solution here
     }
 }

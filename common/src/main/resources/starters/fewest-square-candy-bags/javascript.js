@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {number} pages
+     * @param {number} candies
      * @return {number}
      */
-    countExactTargets(pages) {
+    fewestBags(candies) {
         // Write your solution here
     }
 }

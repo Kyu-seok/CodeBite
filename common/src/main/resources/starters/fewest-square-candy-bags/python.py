@@ -1,4 +1,4 @@
 class Solution:
-    def perfect_sum(self, pages: int) -> int:
+    def fewestBags(self, candies: int) -> int:
         # Write your solution here
         pass
