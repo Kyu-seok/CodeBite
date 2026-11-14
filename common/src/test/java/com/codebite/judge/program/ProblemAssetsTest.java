@@ -103,8 +103,8 @@ class ProblemAssetsTest {
     @ParameterizedTest
     @CsvSource({
             "snack-drawer-pair, findPairIndices",
-            "valid-brackets,    verifyJobNesting",
-            "zero-sum-trio,     triageZeroPriority",
+            "valid-brackets,    isValidBrackets",
+            "zero-sum-trio,     zeroSumTrios",
     })
     void starters_defineTheMethodTheProblemCalls(String slug, String method) {
         assertThat(ASSETS.starters(slug).values()).hasSize(4).allMatch(code -> code.contains(method));

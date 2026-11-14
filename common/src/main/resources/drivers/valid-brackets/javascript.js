@@ -1,5 +1,5 @@
 {USER_CODE}
 
-const input = require('fs').readFileSync('/dev/stdin', 'utf8').trim();
-const result = new Solution().verifyJobNesting(input);
+const brackets = require('fs').readFileSync('/dev/stdin', 'utf8').trim();
+const result = new Solution().isValidBrackets(brackets);
 console.log(result);

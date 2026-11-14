@@ -1,5 +1,5 @@
 {USER_CODE}
 
-s = input().strip()
-result = Solution().verifyJobNesting(s)
+brackets = input().strip()
+result = Solution().isValidBrackets(brackets)
 print(str(result).lower())
