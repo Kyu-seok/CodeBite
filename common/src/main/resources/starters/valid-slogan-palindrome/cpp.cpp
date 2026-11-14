@@ -1,6 +1,6 @@
 class Solution {
 public:
-    bool verifyMirrorCode(string phrase) {
+    bool isPalindrome(string phrase) {
         // Write your solution here
     }
 };
