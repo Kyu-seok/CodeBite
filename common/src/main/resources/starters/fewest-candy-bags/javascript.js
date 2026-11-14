@@ -4,7 +4,7 @@ class Solution {
      * @param {number} quota
      * @return {number}
      */
-    fewestBagSizes(bagSizes, quota) {
+    fewestBags(bagSizes, quota) {
         // Write your solution here
     }
 }
