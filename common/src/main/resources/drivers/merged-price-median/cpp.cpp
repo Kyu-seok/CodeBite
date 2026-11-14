@@ -23,9 +23,9 @@ int main() {
     string line1, line2;
     getline(cin, line1);
     getline(cin, line2);
-    vector<int> nums1 = parseIntArray(line1);
-    vector<int> nums2 = parseIntArray(line2);
-    double result = Solution().mergedZoneMedian(nums1, nums2);
+    vector<int> pricesA = parseIntArray(line1);
+    vector<int> pricesB = parseIntArray(line2);
+    double result = Solution().mergedPriceMedian(pricesA, pricesB);
     cout << fixed << setprecision(1) << result << endl;
     return 0;
 }

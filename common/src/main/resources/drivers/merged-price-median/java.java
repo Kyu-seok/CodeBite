@@ -7,9 +7,9 @@ public class Main {
         Scanner sc = new Scanner(System.in);
         String line1 = sc.nextLine().trim();
         String line2 = sc.nextLine().trim();
-        int[] nums1 = parseIntArray(line1);
-        int[] nums2 = parseIntArray(line2);
-        double result = new Solution().mergedZoneMedian(nums1, nums2);
+        int[] pricesA = parseIntArray(line1);
+        int[] pricesB = parseIntArray(line2);
+        double result = new Solution().mergedPriceMedian(pricesA, pricesB);
         if (result == (long) result) {
             System.out.println(String.format("%.1f", result));
         } else {
