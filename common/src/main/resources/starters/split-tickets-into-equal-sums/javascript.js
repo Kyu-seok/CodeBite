@@ -3,7 +3,7 @@ class Solution {
      * @param {number[]} tickets
      * @return {boolean}
      */
-    canSplitLoads(tickets) {
+    canSplitEqually(tickets) {
         // Write your solution here
     }
 }

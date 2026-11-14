@@ -1,5 +1,5 @@
 class Solution {
-    public boolean canSplitLoads(int[] tickets) {
+    public boolean canSplitEqually(int[] tickets) {
         // Write your solution here
     }
 }

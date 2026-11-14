@@ -1,6 +1,6 @@
 {USER_CODE}
 
 const input = require('fs').readFileSync('/dev/stdin', 'utf8').trim();
-const nums = JSON.parse(input);
-const result = new Solution().canSplitLoads(nums);
+const tickets = JSON.parse(input);
+const result = new Solution().canSplitEqually(tickets);
 console.log(result);

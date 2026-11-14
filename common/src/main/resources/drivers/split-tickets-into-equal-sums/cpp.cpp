@@ -7,16 +7,16 @@ using namespace std;
 {USER_CODE}
 
 int main() {
-    string numsLine;
-    getline(cin, numsLine);
-    string inner = numsLine.substr(1, numsLine.size() - 2);
-    vector<int> nums;
+    string ticketsLine;
+    getline(cin, ticketsLine);
+    string inner = ticketsLine.substr(1, ticketsLine.size() - 2);
+    vector<int> tickets;
     stringstream ss(inner);
     string token;
     while (getline(ss, token, ',')) {
-        nums.push_back(stoi(token));
+        tickets.push_back(stoi(token));
     }
-    bool result = Solution().canSplitLoads(nums);
+    bool result = Solution().canSplitEqually(tickets);
     cout << (result ? "true" : "false") << endl;
     return 0;
 }
