@@ -11,7 +11,7 @@
  */
 class Solution {
 public:
-    vector<vector<int>> listRuntimeBranches(TreeNode* root, int target) {
+    vector<vector<int>> listBuildPaths(TreeNode* root, int target) {
         // Write your solution here
     }
 };

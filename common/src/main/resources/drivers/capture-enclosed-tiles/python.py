@@ -2,5 +2,5 @@
 
 import json
 board = json.loads(input())
-Solution().seizeEnclosedZones(board)
+Solution().captureEnclosedTiles(board)
 print(json.dumps(board, separators=(',', ':')))

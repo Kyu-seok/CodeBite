@@ -14,7 +14,7 @@ class Solution {
      * @param {TreeNode} root
      * @return {void}
      */
-    unrollSchedule(root) {
+    flattenAgenda(root) {
         // Write your solution here
     }
 }
