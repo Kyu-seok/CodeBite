@@ -10,7 +10,7 @@
  * }
  */
 class Solution {
-    public List<List<Integer>> listRuntimeBranches(TreeNode root, int target) {
+    public List<List<Integer>> listBuildPaths(TreeNode root, int target) {
         // Write your solution here
     }
 }
