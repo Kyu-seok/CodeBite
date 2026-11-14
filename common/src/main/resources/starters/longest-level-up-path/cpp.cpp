@@ -1,6 +1,6 @@
 class Solution {
 public:
-    int longestVineAscent(vector<vector<int>>& scores) {
+    int longestIncreasingPath(vector<vector<int>>& scores) {
         // Write your solution here
     }
 };
