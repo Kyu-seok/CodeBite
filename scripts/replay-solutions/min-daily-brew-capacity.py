@@ -1,5 +1,5 @@
 class Solution:
-    def smallestFlowRate(self, volumes: list[int], days: int) -> int:
+    def minDailyCapacity(self, volumes: list[int], days: int) -> int:
         def days_needed(capacity: int) -> int:
             used, load = 1, 0
             for volume in volumes:

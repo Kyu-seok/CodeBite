@@ -13,11 +13,11 @@ int main() {
     string line;
     getline(cin, line);
     string inner = line.substr(1, line.size() - 2);
-    vector<int> nums;
+    vector<int> snacks;
     stringstream ss(inner);
     string token;
-    while (getline(ss, token, ',')) nums.push_back(stoi(token));
-    vector<vector<int>> result = Solution().listMontageScenes(nums);
+    while (getline(ss, token, ',')) snacks.push_back(stoi(token));
+    vector<vector<int>> result = Solution().listSnackCombos(snacks);
     for (auto& s : result) sort(s.begin(), s.end());
     sort(result.begin(), result.end());
     cout << JsonOutput::intVector2D(result) << endl;

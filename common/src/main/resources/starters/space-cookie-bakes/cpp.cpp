@@ -1,6 +1,6 @@
 class Solution {
 public:
-    string orderRecipeBakes(string cookies) {
+    string spaceBakes(string cookies) {
         // Write your solution here
     }
 };
