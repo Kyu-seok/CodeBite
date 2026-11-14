@@ -9,7 +9,7 @@ int main() {
     string s, p;
     getline(cin, s);
     getline(cin, p);
-    bool result = Solution().validatePartStream(s, p);
+    bool result = Solution().isMatch(s, p);
     cout << (result ? "true" : "false") << endl;
     return 0;
 }

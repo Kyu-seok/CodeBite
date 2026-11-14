@@ -1,5 +1,5 @@
 class Solution {
-    public boolean validatePartStream(String s, String p) {
+    public boolean isMatch(String s, String p) {
         // Write your solution here
     }
 }

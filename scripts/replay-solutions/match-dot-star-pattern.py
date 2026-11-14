@@ -2,7 +2,7 @@ from functools import cache
 
 
 class Solution:
-    def validatePartStream(self, s: str, p: str) -> bool:
+    def isMatch(self, s: str, p: str) -> bool:
         @cache
         def matches(i: int, j: int) -> bool:
             """Whether p[j:] matches all of s[i:]."""

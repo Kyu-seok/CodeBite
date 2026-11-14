@@ -2,5 +2,5 @@
 
 s = input().strip()
 p = input().strip()
-result = Solution().validatePartStream(s, p)
+result = Solution().isMatch(s, p)
 print(str(result).lower())

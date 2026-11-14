@@ -4,7 +4,7 @@ class Solution {
      * @param {string} p
      * @return {boolean}
      */
-    validatePartStream(s, p) {
+    isMatch(s, p) {
         // Write your solution here
     }
 }

@@ -7,7 +7,7 @@ public class Main {
         Scanner sc = new Scanner(System.in);
         String s = sc.nextLine().trim();
         String p = sc.nextLine().trim();
-        boolean result = new Solution().validatePartStream(s, p);
+        boolean result = new Solution().isMatch(s, p);
         System.out.println(result);
     }
 }
