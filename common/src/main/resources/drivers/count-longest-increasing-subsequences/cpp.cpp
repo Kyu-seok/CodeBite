@@ -16,7 +16,7 @@ int main() {
     while (getline(ss, token, ',')) {
         nums.push_back(stoi(token));
     }
-    int result = Solution().countLongestTrail(nums);
+    int result = Solution().countLongestIncreasing(nums);
     cout << result << endl;
     return 0;
 }
