@@ -12,9 +12,9 @@ else:
         nodes[i].next = nodes[i + 1]
     for i, p in enumerate(data):
         if p[1] is not None:
-            nodes[i].random = nodes[p[1]]
+            nodes[i].related = nodes[p[1]]
 
-    result = Solution().copy_random_list(nodes[0])
+    result = Solution().cloneQuestLog(nodes[0])
 
     index_map = {}
     curr = result
@@ -27,8 +27,8 @@ else:
     output = []
     curr = result
     while curr:
-        rand_idx = index_map[id(curr.random)] if curr.random else None
-        output.append([curr.val, rand_idx])
+        related_idx = index_map[id(curr.related)] if curr.related else None
+        output.append([curr.val, related_idx])
         curr = curr.next
 
     print(json.dumps(output, separators=(',', ':')))

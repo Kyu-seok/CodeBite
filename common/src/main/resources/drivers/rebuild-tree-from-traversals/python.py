@@ -22,5 +22,5 @@ def _tree_to_array(root):
 
 preorder = json.loads(input())
 inorder = json.loads(input())
-result = Solution().assembleBreakdown(preorder, inorder)
+result = Solution().rebuildTree(preorder, inorder)
 print(json.dumps(_tree_to_array(result), separators=(',', ':')))

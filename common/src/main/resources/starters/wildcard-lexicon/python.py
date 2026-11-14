@@ -3,7 +3,7 @@ class WildcardLexicon:
         # Initialize your data structure here
         pass
 
-    def add_word(self, word: str) -> None:
+    def enroll(self, word: str) -> None:
         # Write your solution here
         pass
 

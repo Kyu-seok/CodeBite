@@ -27,7 +27,7 @@ int main() {
     getline(cin, inLine);
     vector<int> preorder = parseArray(preLine);
     vector<int> inorder = parseArray(inLine);
-    TreeNode* result = Solution().assembleBreakdown(preorder, inorder);
+    TreeNode* result = Solution().rebuildTree(preorder, inorder);
     cout << treeToJsonArray(result) << endl;
     return 0;
 }

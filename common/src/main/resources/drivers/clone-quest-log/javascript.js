@@ -12,11 +12,11 @@ if (!data.length) {
     }
     for (let i = 0; i < data.length; i++) {
         if (data[i][1] !== null) {
-            nodes[i].random = nodes[data[i][1]];
+            nodes[i].related = nodes[data[i][1]];
         }
     }
 
-    const result = new Solution().duplicateTopicWeb(nodes[0]);
+    const result = new Solution().cloneQuestLog(nodes[0]);
 
     const indexMap = new Map();
     let curr = result;
@@ -29,8 +29,8 @@ if (!data.length) {
     const output = [];
     curr = result;
     while (curr) {
-        const randIdx = curr.random !== null ? indexMap.get(curr.random) : null;
-        output.push([curr.val, randIdx]);
+        const relatedIdx = curr.related !== null ? indexMap.get(curr.related) : null;
+        output.push([curr.val, relatedIdx]);
         curr = curr.next;
     }
 

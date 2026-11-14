@@ -2,7 +2,7 @@ class WildcardLexicon:
     def __init__(self) -> None:
         self.root: dict = {}
 
-    def add_word(self, word: str) -> None:
+    def enroll(self, word: str) -> None:
         node = self.root
         for ch in word:
             node = node.setdefault(ch, {})

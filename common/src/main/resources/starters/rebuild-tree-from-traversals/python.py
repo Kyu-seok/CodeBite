@@ -7,6 +7,6 @@ class TreeNode:
         self.right = right
 
 class Solution:
-    def assembleBreakdown(self, preorder: list[int], inorder: list[int]) -> Optional[TreeNode]:
+    def rebuildTree(self, preorder: list[int], inorder: list[int]) -> Optional[TreeNode]:
         # Write your solution here
         pass

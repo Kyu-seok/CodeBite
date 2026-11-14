@@ -23,5 +23,5 @@ function _treeToArray(root) {
 const lines = require('fs').readFileSync('/dev/stdin', 'utf8').trim().split('\n');
 const preorder = JSON.parse(lines[0]);
 const inorder = JSON.parse(lines[1]);
-const result = new Solution().assembleBreakdown(preorder, inorder);
+const result = new Solution().rebuildTree(preorder, inorder);
 console.log(JSON.stringify(_treeToArray(result)));

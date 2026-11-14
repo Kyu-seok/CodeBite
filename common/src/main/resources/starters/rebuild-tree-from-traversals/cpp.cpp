@@ -14,7 +14,7 @@ using namespace std;
  */
 class Solution {
 public:
-    TreeNode* assembleBreakdown(vector<int>& preorder, vector<int>& inorder) {
+    TreeNode* rebuildTree(vector<int>& preorder, vector<int>& inorder) {
         // Write your solution here
     }
 };
