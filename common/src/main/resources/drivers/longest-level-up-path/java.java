@@ -22,7 +22,7 @@ public class Main {
                 i++;
             }
         }
-        int[][] matrix = rows.toArray(new int[0][]);
-        System.out.println(new Solution().longestVineAscent(matrix));
+        int[][] scores = rows.toArray(new int[0][]);
+        System.out.println(new Solution().longestIncreasingPath(scores));
     }
 }

@@ -1,6 +1,6 @@
 from typing import List
 
 class Solution:
-    def longestVineAscent(self, scores: List[List[int]]) -> int:
+    def longestIncreasingPath(self, scores: List[List[int]]) -> int:
         # Write your solution here
         pass
