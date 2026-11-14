@@ -5,13 +5,13 @@ import java.util.*;
 public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        int numCourses = Integer.parseInt(sc.nextLine().trim());
+        int numTasks = Integer.parseInt(sc.nextLine().trim());
         String line = sc.nextLine().trim();
         // Parse 2D int array [[1,0],[2,1]]
-        int[][] prerequisites;
+        int[][] prereqs;
         String inner = line.substring(1, line.length() - 1);
         if (inner.isEmpty() || !inner.contains("[")) {
-            prerequisites = new int[0][];
+            prereqs = new int[0][];
         } else {
             List<int[]> list = new ArrayList<>();
             int i = 0;
@@ -28,9 +28,9 @@ public class Main {
                     i++;
                 }
             }
-            prerequisites = list.toArray(new int[0][]);
+            prereqs = list.toArray(new int[0][]);
         }
-        boolean result = new Solution().verifyShootPlan(numCourses, prerequisites);
+        boolean result = new Solution().canFinishAllTasks(numTasks, prereqs);
         System.out.println(result);
     }
 }

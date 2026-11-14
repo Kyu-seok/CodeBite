@@ -1,10 +1,10 @@
 class Solution {
     /**
-     * @param {number} numScenes
+     * @param {number} numTasks
      * @param {number[][]} prereqs
      * @return {boolean}
      */
-    verifyShootPlan(numScenes, prereqs) {
+    canFinishAllTasks(numTasks, prereqs) {
         // Write your solution here
     }
 }
