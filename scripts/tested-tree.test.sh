@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Checks scripts/tested-tree.sh against a stub gh: a squash commit counts as tested when its PR's
+# Checks scripts/tested-tree.sh against a stub gh and ci.yml's own job list: a squash commit counts as tested when its PR's
 # head has the same tree and a CI run on that head succeeded with every job; a different tree, a
 # run whose jobs were skipped, no run, or a gh error each mean not tested.
 set -euo pipefail
@@ -31,6 +31,22 @@ esac
 STUB
 chmod +x "$dir/bin/gh"
 
+# A green CI run as GitHub reports it, read from ci.yml itself: each job succeeds, except one whose
+# `if:` needs failure(), which is skipped. A new job in ci.yml that a green run skips turns this test
+# red until tested-tree.sh says whether to ignore it, instead of the gate silently never matching.
+green=$(awk '
+  /^jobs:/ { in_jobs = 1; next }
+  in_jobs && /^[^ #]/ { in_jobs = 0 }
+  in_jobs && /^  [A-Za-z0-9_-]+:[[:space:]]*$/ {
+    if (job) print job "=" result
+    job = substr($1, 1, length($1) - 1); result = "success"; next
+  }
+  in_jobs && job && /^    if:/ && /failure\(\)/ { result = "skipped" }
+  in_jobs && job && /^    name:/ { sub(/^    name:[[:space:]]*/, ""); job = $0 }
+  END { if (job) print job "=" result }
+' "$(dirname "$script")/../.github/workflows/ci.yml" | tr '\n' ' ')
+[[ $green == *backend-test=success* ]] || { echo "FAIL: read no jobs from ci.yml: $green"; exit 1; }
+
 fail=0
 run() { env PATH="$dir/bin:$PATH" GITHUB_REPOSITORY=o/r "$@" "$script" merge 2>/dev/null; }
 expect_tested() {
@@ -44,19 +60,19 @@ expect_untested() {
 }
 
 expect_tested "PR head with the same tree, all jobs green" head \
-  PR_HEADS=head RUNS_head=7 JOBS_7="backend-test=success worker-test=success notify-failure=skipped"
+  PR_HEADS=head RUNS_head=7 JOBS_7="$green"
 expect_tested "the commit's own green run (a manual deploy)" merge \
-  RUNS_merge=8 JOBS_8="backend-test=success worker-test=success notify-failure=skipped"
+  RUNS_merge=8 JOBS_8="$green"
 expect_tested "a skipped-jobs run beside a real one" head \
-  PR_HEADS=head RUNS_head=$'5\n6' JOBS_5="backend-test=skipped worker-test=skipped notify-failure=skipped" JOBS_6="backend-test=success worker-test=success notify-failure=skipped"
+  PR_HEADS=head RUNS_head=$'5\n6' JOBS_5="backend-test=skipped worker-test=skipped notify-failure=skipped" JOBS_6="$green"
 expect_untested "PR head behind master (another tree)" \
-  PR_HEADS=behind RUNS_behind=7 JOBS_7="backend-test=success worker-test=success notify-failure=skipped"
+  PR_HEADS=behind RUNS_behind=7 JOBS_7="$green"
 expect_untested "only a run whose jobs were skipped" \
   PR_HEADS=head RUNS_head=5 JOBS_5="backend-test=skipped worker-test=skipped notify-failure=skipped"
 expect_untested "a run with a failed job" \
   PR_HEADS=head RUNS_head=9 JOBS_9="backend-test=failure worker-test=success notify-failure=skipped"
 expect_untested "no successful run" PR_HEADS=head
-expect_untested "gh error" TREE_FAIL=1 PR_HEADS=head RUNS_head=7 JOBS_7="backend-test=success worker-test=success notify-failure=skipped"
+expect_untested "gh error" TREE_FAIL=1 PR_HEADS=head RUNS_head=7 JOBS_7="$green"
 
 (( fail )) && exit 1
 echo "PASS: tested-tree.sh trusts only a green CI run on the same tree"

@@ -79,6 +79,8 @@ jobs:
   # master here is the only sign of two PRs that break together: push a phone notification through
   # ntfy (topic in the NTFY_TOPIC secret). Only for this workflow's own master push runs; when
   # Deploy calls this file, github.workflow is "Deploy" and Deploy's own notify-failure reports.
+  # scripts/tested-tree.sh ignores this job by name, since a green run skips it; a new job a green
+  # run skips needs the same there (scripts/tested-tree.test.sh reads this file and fails until then).
   notify-failure:
     runs-on: ubuntu-latest
     needs: [backend-test, worker-test, frontend-check, scripts-check]
