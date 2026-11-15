@@ -13,11 +13,14 @@ a Language without one is NOT JUDGED. A --former belongs to the slug before it: 
 Runs go JUDGE_RUN_SPACING seconds apart (5.5, past the backend's 5 s per-IP Run cooldown), and a
 429 is waited out, up to JUDGE_RUN_MAX_WAITS times (12), never reported as a verdict.
 
-Exits 0 when every Language was Accepted and every Former Slug resolves, 1 on any other verdict or
-Former Slug, 2 when the backend can't be reached (or keeps answering 429), lacks a problem, or a
-Language has no reference solution.
+Exits 0 when every judged Language was Accepted (each problem judged in at least one) and every
+Former Slug resolves; a Language NOT JUDGED leaves the exit code alone. Exits 1 on any other
+verdict, an HTTP error, a Former Slug that doesn't resolve or a problem with no judged Language,
+and 2 when the backend can't be reached, keeps answering 429 or lacks a problem (404); the worst
+wins.
 """
 import json, os, re, subprocess, sys, time, urllib.error, urllib.request
+from enum import IntEnum
 from pathlib import Path
 
 LANGUAGES = {"python": "py", "java": "java", "javascript": "js", "cpp": "cpp"}  # code -> extension, as Language
@@ -26,6 +29,13 @@ MAX_WAITS = int(os.environ.get("JUDGE_RUN_MAX_WAITS", "12"))
 RUN_TIMEOUT_S = 180
 USAGE = ("usage: scripts/judge-run.sh <slug> [--former <old-slug>] [<slug> ...] "
          "[--languages python,java,javascript,cpp] [--backend <url>]")
+
+
+class Outcome(IntEnum):
+    """A problem's result, worst wins; its value is the exit code."""
+    PASSED = 0  # every judged Language Accepted, every Former Slug resolves
+    FAILED = 1  # another verdict, an HTTP error, a Former Slug that doesn't resolve, or nothing judged
+    ABSENT = 2  # the backend lacks the problem, or can't be reached (Unreachable)
 
 
 class Unreachable(Exception):
@@ -158,29 +168,34 @@ def describe(body):
 
 
 def judge(root, runner, slug, languages):
-    """Prints a line per Language; returns 'failed', 'missing' or None."""
-    worst = None
+    """Prints a line per Language; returns the problem's worst Outcome. A Language without a
+    reference solution is NOT JUDGED and leaves the Outcome as it is, but a problem with no judged
+    Language at all FAILED."""
+    worst, judged = Outcome.PASSED, 0
     for language in languages:
         path = root / "scripts/replay-solutions" / f"{slug}.{LANGUAGES[language]}"
         if not path.is_file():
             print(f"  {language:<11} NOT JUDGED: no reference solution scripts/replay-solutions/{path.name}", flush=True)
-            worst = worst or "missing"
             continue
         status, body = runner.run(slug, language, path.read_text())
         if status == 404:
             print(f"  no problem {slug} at {runner.api} ({message(body)}); after a new migration: "
                   f"scripts/dev-branch-servers.sh restart", flush=True)
-            return worst if worst == "failed" else "missing"
+            return Outcome.ABSENT
+        judged += 1
         if status != 200:
             print(f"  {language:<11} HTTP {status}: {message(body)}", flush=True)
-            worst = "failed"
+            worst = max(worst, Outcome.FAILED)
             continue
         verdict, lines = describe(body)
         print(f"  {language:<11} {verdict}", flush=True)
         for line in lines:
             print(f"  {'':<11} {line}", flush=True)
         if verdict != "ACCEPTED":
-            worst = "failed"
+            worst = max(worst, Outcome.FAILED)
+    if not judged:
+        print(f"  no Language judged: no reference solution for {', '.join(languages)}", flush=True)
+        worst = max(worst, Outcome.FAILED)
     return worst
 
 
@@ -204,19 +219,18 @@ def main(argv):
     problems, languages, backend = parse(argv[1:])
     api = api_base(backend or default_backend(root))
     runner = Runner(api)
-    failed = missing = False
+    worst = Outcome.PASSED
     try:
         for slug, formers in problems:
             print(f"== running {slug} on {api}", flush=True)
-            outcome = judge(root, runner, slug, languages)
-            failed |= outcome == "failed"
-            missing |= outcome == "missing"
+            worst = max(worst, judge(root, runner, slug, languages))
             for former in formers:
-                failed |= not check_former(api, slug, former)
+                if not check_former(api, slug, former):
+                    worst = max(worst, Outcome.FAILED)
     except Unreachable as e:
         print(f"judge-run.sh: {e}", file=sys.stderr)
-        sys.exit(2)
-    sys.exit(1 if failed else 2 if missing else 0)
+        sys.exit(Outcome.ABSENT)
+    sys.exit(worst)
 
 
 if __name__ == "__main__":

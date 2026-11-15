@@ -146,14 +146,28 @@ class JudgeRun(unittest.TestCase):
         self.assertEqual(code, 1, out)
         self.assertRegex(out, r"cpp +HTTP 400: No driver for cpp")
 
-    def test_a_language_without_a_reference_solution_is_not_judged(self):
+    def test_a_language_without_a_reference_solution_is_not_judged_and_leaves_the_exit_code(self):
         self.solutions("only-python", "py")
         code, out = self.run_script("only-python")
-        self.assertEqual(code, 2, out)
+        self.assertEqual(code, 0, out)
         self.assertRegex(out, r"python +ACCEPTED")
         for language in ("java", "javascript", "cpp"):
             self.assertRegex(out, rf"{language} +NOT JUDGED: no reference solution")
         self.assertEqual([body["language"] for _, _, _, body in self.stub.posts()], ["python"])
+
+    def test_a_problem_with_no_judged_language_fails(self):
+        self.solutions("only-python", "py")
+        code, out = self.run_script("only-python", "--languages", "java,cpp")
+        self.assertEqual(code, 1, out)
+        self.assertIn("no Language judged", out)
+        self.assertEqual(self.stub.posts(), [])
+
+    def test_a_language_not_judged_does_not_hide_another_failure(self):
+        self.solutions("only-java", "java")
+        self.stub.runs = lambda language: compile_error()
+        code, out = self.run_script("only-java")
+        self.assertEqual(code, 1, out)
+        self.assertRegex(out, r"python +NOT JUDGED")
 
     def test_languages_picks_the_languages(self):
         code, out = self.run_script("piggy-bank-total", "--languages", "python,cpp")
@@ -180,6 +194,20 @@ class JudgeRun(unittest.TestCase):
         self.assertEqual(code, 2, out)
         self.assertIn("restart", out)
         self.assertEqual(len(self.stub.posts()), 1, "one 404 is enough to know the problem is missing")
+
+    def test_a_missing_problem_outranks_an_earlier_failure(self):
+        self.solutions("other-problem", "py")
+        self.stub.runs = lambda language: (wrong_on_second() if language == "python"
+                                           else (404, {"status": 404, "message": "Problem not found"}))
+        code, out = self.run_script("other-problem", "piggy-bank-total", "--languages", "python,java")
+        self.assertEqual(code, 2, out)
+        self.assertRegex(out, r"python +WRONG_ANSWER")
+
+    def test_a_failure_after_a_missing_problem_still_exits_2(self):
+        self.solutions("other-problem", "py")
+        self.stub.runs = [(404, {"status": 404, "message": "Problem not found"}), wrong_on_second()]
+        code, out = self.run_script("piggy-bank-total", "other-problem", "--languages", "python")
+        self.assertEqual(code, 2, out)
 
     # --- the Run cooldown ------------------------------------------------------------------------
 
