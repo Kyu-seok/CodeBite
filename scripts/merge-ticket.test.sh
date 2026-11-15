@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Checks scripts/merge-ticket.sh without Gradle or npm: when it refuses to merge, the merge commit's
+# Checks scripts/merge-ticket.sh without Gradle or npm: the usage line, when it refuses to merge, the merge commit's
 # message, the warning on an integration branch CI doesn't run on, that the frontend checks lint with no warnings before the tests and build (npm faked), and
 # (in scratch repositories with the checks faked) that a conflict aborts and lists the
 # files, a failing check leaves the merge commit unpushed, green checks push it, a ticket that already
@@ -15,6 +15,16 @@ source "$script"
 
 fail=0
 check() { [[ "$2" == "$3" ]] || { echo "FAIL: $1: expected '$3', got '$2'"; fail=1; }; }
+
+# --- the usage line: both modes, the second also the rerun after a flaky check ----------------
+
+usage_out=$(bash "$script" 2>&1) && { echo "FAIL: no arguments must exit non-zero"; fail=1; }
+check "usage names both modes" "$usage_out" \
+"usage: scripts/merge-ticket.sh <branch> <title> [<branch> <title> ...]
+       scripts/merge-ticket.sh --checks-and-push <integration branch>"
+usage_out=$(bash "$script" --checks-and-push 2>&1) && { echo "FAIL: --checks-and-push alone must exit non-zero"; fail=1; }
+[[ "$usage_out" == *"--checks-and-push <integration branch>"* ]] \
+  || { echo "FAIL: --checks-and-push without a branch must print the usage: $usage_out"; fail=1; }
 
 # --- a red integration tip: CI's runs on HEAD, one "<conclusion> <url>" line each ------------------
 

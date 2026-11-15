@@ -136,7 +136,9 @@ for (const r of runs) {
   const s = L[r.lang];
   const jwt = r.user ? await token(`${r.user}${Date.now() % 100000}`) : null; // a fresh user: no stored theme or language
   check(await open({ ...r, jwt }), `${r.name}: page loads`);
-  const desc = await js(`[...document.querySelectorAll('[role=tab]')].find(e => e.textContent.includes(${JSON.stringify(s.desc)}))?.textContent.trim() ?? null`);
+  const descTab = `[...document.querySelectorAll('[role=tab]')].find(e => e.textContent.includes(${JSON.stringify(s.desc)}))`;
+  await waitFor(`!!${descTab}`); // the first tab can show before the language does on a slow render
+  const desc = await js(`${descTab}?.textContent.trim() ?? null`);
   check(!!desc, `${r.name}: tabs in ${r.lang} (${desc})`);
   const mounted = await openPlayer(s, {
     async atTab(shown) {
