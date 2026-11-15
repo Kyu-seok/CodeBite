@@ -186,7 +186,7 @@ if [[ -n "$branch_db" ]]; then
   if [[ -n "$bdb" ]]; then
     echo "branch database $branch_db: at V$bdb"
     if (( bdb < ours )); then
-      echo "  BEHIND  this checkout has migrations up to V$ours; restart scripts/dev-branch-servers.sh to apply them"
+      echo "  BEHIND  this checkout has migrations up to V$ours; scripts/dev-branch-servers.sh migrate applies them (restart, when its servers run)"
       problems=1
     fi
   fi

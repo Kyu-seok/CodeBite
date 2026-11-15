@@ -10,13 +10,16 @@
 #   scripts/dev-branch-servers.sh stop      stop them from another shell
 #   scripts/dev-branch-servers.sh status    print where they run (ports, database, logs); exits 1, saying
 #                                           why, until each port is this checkout's app listening
+#   scripts/dev-branch-servers.sh migrate   create the branch database if missing and run this checkout's
+#                                           migrations on it, starting no server: for reading a problem
+#                                           (CODEBITE_DB=<it> scripts/problem-text.sh) as the branch has it
 #   scripts/dev-branch-servers.sh drop      drop the branch database, Kafka topics and groups, Redis index
 #   scripts/dev-branch-servers.sh name      print the branch database name
 #
 # It refuses to run from the main checkout (only name and status work there): the servers there
 # are the shared ones. Each piece is kept off the user's servers and data, and off other sessions':
 #   database  codebite_<branch>_<hash of this worktree's path> in the codebite-postgres container,
-#             migrated by the backend on start; its COMMENT names this worktree, and drop refuses a
+#             migrated by the backend on start (or by migrate, with no server); its COMMENT names this worktree, and drop refuses a
 #             database whose comment names another
 #   Kafka     topics and consumer groups prefixed with that name (app.kafka.topic.*, app.kafka.group-prefix),
 #             so neither side takes a share of the other's submissions or results
@@ -388,31 +391,57 @@ stop_all() {
   return 0
 }
 
-cmd_start() {
-  if [[ -n "$(branch_pids)" ]]; then
-    echo "already running for this checkout:" >&2
-    [[ -f "$state/ports" ]] && summary >&2
-    exit 1
-  fi
+require_postgres() {
   docker exec codebite-postgres pg_isready -q -U codebite \
     || { echo "codebite-postgres is not running: docker compose -f infra/docker-compose.yml up -d" >&2; exit 1; }
-  if ! docker exec codebite-kafka true || ! docker exec codebite-redis true; then
-    echo "codebite-kafka or codebite-redis is not running" >&2
-    exit 1
-  fi
+}
 
+# Creates the branch database, marked this worktree's, when it doesn't exist ($1 says what
+# migrates it); exits when it exists but is another worktree's.
+ensure_database() {
   local comment
   comment=$(db_owner_comment "$root")
   case "$(database_verdict "$(database_state)" "$comment")" in
     create)
       psql_admin "CREATE DATABASE \"$db\"" >/dev/null
       psql_admin "COMMENT ON DATABASE \"$db\" IS $(sql_literal "$comment")" >/dev/null
-      echo "database $db: created (the backend migrates it on start)" ;;
+      echo "database $db: created ($1)" ;;
     ours) echo "database $db: exists" ;;
     *)
       echo "database $db exists but isn't this worktree's (its comment isn't '$comment'); not using it" >&2
       exit 1 ;;
   esac
+}
+
+# Runs this checkout's Flyway migrations, SQL and Java, against JDBC URL $1, as the backend does
+# on start (common's migrateDatabase task; no server).
+run_flyway() {
+  (cd "$root" && ./gradlew -q --console=plain :common:migrateDatabase -PmigrateUrl="$1")
+}
+
+# The branch database migrated to this checkout and nothing else: no server, Kafka topic or Redis
+# index. For reading a problem as this checkout has it (scripts/problem-text.sh).
+cmd_migrate() {
+  require_postgres
+  ensure_database "migrating it now"
+  echo "database $db: running this checkout's migrations"
+  run_flyway "jdbc:postgresql://localhost:5433/$db"
+  echo "database $db: at V$(flyway_version "$db")"
+  echo "read it with CODEBITE_DB=$db (scripts/problem-text.sh, scripts/db-sql.sh, scripts/judge-local.sh)"
+}
+
+cmd_start() {
+  if [[ -n "$(branch_pids)" ]]; then
+    echo "already running for this checkout:" >&2
+    [[ -f "$state/ports" ]] && summary >&2
+    exit 1
+  fi
+  require_postgres
+  if ! docker exec codebite-kafka true || ! docker exec codebite-redis true; then
+    echo "codebite-kafka or codebite-redis is not running" >&2
+    exit 1
+  fi
+  ensure_database "the backend migrates it on start"
 
   local redis_db
   redis_db=$(claim_redis_index)
@@ -596,7 +625,7 @@ main() {
         --detach) detach=true ;;
         *) usage; exit 2 ;;
       esac ;;
-    restart | stop | status | drop | name) [[ $# -le 1 ]] || { usage; exit 2; } ;;
+    restart | stop | status | migrate | drop | name) [[ $# -le 1 ]] || { usage; exit 2; } ;;
     *) usage; exit 2 ;;
   esac
   (( $# <= 2 )) || { usage; exit 2; }
@@ -609,6 +638,7 @@ main() {
   case "$cmd" in
     start) if $detach; then cmd_start_detached; else cmd_start; fi ;;
     restart) cmd_restart ;;
+    migrate) cmd_migrate ;;
     stop) stop_all ;;
     status) cmd_status ;;
     drop) cmd_drop ;;

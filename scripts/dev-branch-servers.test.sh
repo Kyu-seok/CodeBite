@@ -195,6 +195,38 @@ unset -f branch_pids port_listeners env_value process_name curl kill
 # shellcheck source=SCRIPTDIR/dev-branch-servers.sh
 source "$script"
 
+# --- migrate ----------------------------------------------------------------------------------
+
+# migrate creates the branch database as start does (with this worktree's COMMENT), runs Flyway
+# on it through Gradle, and starts nothing; it refuses another worktree's database.
+root=/work/wt-a db=codebite_mine
+: > "$fake/calls"
+docker() { echo "docker $*" >> "$fake/calls"; }
+psql_admin() { echo "psql $1" >> "$fake/calls"; [[ "$1" == SELECT* ]] && cat "$fake/db-state" 2>/dev/null; return 0; }
+run_flyway() { echo "flyway $1" >> "$fake/calls"; }
+flyway_version() { echo 260; }
+rm -f "$fake/db-state"
+out=$(cmd_migrate 2>&1) && code=0 || code=$?
+check "migrate a new database" "$code" 0
+calls=$(cat "$fake/calls")
+[[ "$calls" == *"psql CREATE DATABASE \"codebite_mine\""* ]] || { echo "FAIL: migrate should create the database: $calls"; fail=1; }
+[[ "$calls" == *"COMMENT ON DATABASE \"codebite_mine\" IS 'codebite-dev-branch:/work/wt-a'"* ]] \
+  || { echo "FAIL: migrate should mark the database this worktree's: $calls"; fail=1; }
+[[ "$calls" == *"flyway jdbc:postgresql://localhost:5433/codebite_mine"* ]] || { echo "FAIL: migrate should run Flyway on it: $calls"; fail=1; }
+[[ "$out" == *"CODEBITE_DB=codebite_mine"* && "$out" == *"at V260"* ]] || { echo "FAIL: migrate should print the database and its version: $out"; fail=1; }
+: > "$fake/calls"
+echo "x$(db_owner_comment /work/wt-a)" > "$fake/db-state"
+cmd_migrate >/dev/null 2>&1 || { echo "FAIL: migrate on its own database"; fail=1; }
+[[ "$(cat "$fake/calls")" != *CREATE* && "$(cat "$fake/calls")" == *flyway* ]] || { echo "FAIL: migrate on an existing database: $(cat "$fake/calls")"; fail=1; }
+: > "$fake/calls"
+echo "x$(db_owner_comment /work/wt-b)" > "$fake/db-state"
+out=$(cmd_migrate 2>&1) && code=0 || code=$?
+check "migrate refuses another worktree's database" "$code" 1
+[[ "$(cat "$fake/calls")" != *flyway* ]] || { echo "FAIL: migrate ran Flyway on another worktree's database"; fail=1; }
+unset -f docker psql_admin run_flyway flyway_version
+# shellcheck source=SCRIPTDIR/dev-branch-servers.sh
+source "$script"
+
 # --- the main checkout ------------------------------------------------------------------------
 
 # A throwaway repository with a worktree: the script must refuse everything but name and status
@@ -209,7 +241,7 @@ for tool in docker pgrep kill; do
   printf '#!/bin/sh\necho "%s $*" >> "%s/escaped"; exit 1\n' "$tool" "$fake" > "$fake/bin/$tool"
   chmod +x "$fake/bin/$tool"
 done
-for cmd in start 'start --detach' restart stop drop; do
+for cmd in start 'start --detach' restart stop drop migrate; do
   # shellcheck disable=SC2086  # 'start --detach' is two words
   out=$(cd "$repo" && PATH="$fake/bin:$PATH" "$script" $cmd 2>&1) && code=0 || code=$?
   check "$cmd refused in the main checkout" "$code" 1
@@ -224,7 +256,7 @@ check "worktree name" "$(cd "$fake/wt" && "$script" name)" \
 
 out=$("$script" bogus 2>&1) && code=0 || code=$?
 check "unknown subcommand" "$code" 2
-for cmd in '[start [--detach]]' restart stop status drop name; do
+for cmd in '[start [--detach]]' restart stop status migrate drop name; do
   [[ "$out" == *"dev-branch-servers.sh $cmd"* ]] || { echo "FAIL: usage lacks $cmd: $out"; fail=1; }
 done
 
