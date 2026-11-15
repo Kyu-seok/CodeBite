@@ -205,9 +205,9 @@ port_listener() {
 
 # Whether each port in $state/ports is listened on by this checkout's app; says which isn't.
 listeners_ours() {
-  # shellcheck disable=SC1091  # written by cmd_start
+  local backend_port worker_port vite_port redis_db ok=0 app port who
+  # shellcheck disable=SC1091  # written by cmd_start; sets the locals above, not the caller's
   source "$state/ports"
-  local ok=0 app port who
   for app in backend:$backend_port worker:$worker_port frontend:$vite_port; do
     port=${app#*:}
     app=${app%%:*}
@@ -324,7 +324,8 @@ setup() {
 }
 
 summary() {
-  # shellcheck disable=SC1091  # written by cmd_start
+  local backend_port worker_port vite_port redis_db
+  # shellcheck disable=SC1091  # written by cmd_start; sets the locals above, not the caller's
   source "$state/ports"
   cat <<EOS
 

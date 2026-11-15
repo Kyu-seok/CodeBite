@@ -198,6 +198,9 @@ printf 'backend_port=18080\nworker_port=18180\nvite_port=15180\nredis_db=3\n' > 
 out=$(cmd_status) && code=0 || code=$?
 check "status when all three are up" "$code" 0
 [[ "$out" == *"http://127.0.0.1:18080/api"* ]] || { echo "FAIL: status should print the summary: $out"; fail=1; }
+backend_port=1 worker_port=2 vite_port=3 redis_db=4
+cmd_status >/dev/null || true
+check "status leaves the caller's ports alone" "$backend_port $worker_port $vite_port $redis_db" "1 2 3 4"
 port_listeners() { case "$1" in 18080) echo 101 ;; esac; }
 out=$(cmd_status) && code=0 || code=$?
 check "status while starting" "$code" 1
