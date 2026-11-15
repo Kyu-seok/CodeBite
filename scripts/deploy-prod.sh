@@ -27,7 +27,11 @@ needs_roll() {
   local id old
   for id in "$@"; do
     old=$(docker inspect -f '{{.Image}} {{index .Config.Labels "com.docker.compose.config-hash"}}' "$id" 2>/dev/null) || old=""
-    [[ $old == "$image $hash" ]] || return 0
+    if [[ $old != "$image $hash" ]]; then
+      # Which of the two differs, so a roll of unchanged code can be traced to its cause.
+      echo "--- Rolling: replica $id has image/config '$old', the build has '$image $hash' ---"
+      return 0
+    fi
   done
   return 1
 }
