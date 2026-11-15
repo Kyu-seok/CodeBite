@@ -8,8 +8,8 @@
 #   scripts/dev-branch-servers.sh restart   stop, then start detached: the backend migrates the branch
 #                                           database to the migrations written since the last start
 #   scripts/dev-branch-servers.sh stop      stop them from another shell
-#   scripts/dev-branch-servers.sh status    print where they run (ports, database, logs); exits 1 when
-#                                           they aren't running
+#   scripts/dev-branch-servers.sh status    print where they run (ports, database, logs); exits 1, saying
+#                                           why, until each port is this checkout's app listening
 #   scripts/dev-branch-servers.sh drop      drop the branch database, Kafka topics and groups, Redis index
 #   scripts/dev-branch-servers.sh name      print the branch database name
 #
@@ -23,7 +23,9 @@
 #   Redis     a database index of its own (a fresh database's user ids collide with the shared one's),
 #             claimed by an owner key holding the database name; drop flushes only that index, never 0
 #   processes only those started with CODEBITE_DEV_BRANCH=<this database> are ever stopped
-#   ports     free ones from 18080 (backend), 18180 (worker), 15180 (Vite)
+#   ports     free ones from 18080 (backend), 18180 (worker), 15180 (Vite), each claimed under a lock
+#             so starts in two worktrees at once never take one port; start and status check that
+#             each port's listener is this checkout's process
 #   browser   Vite on 127.0.0.1, whose localStorage is apart from the user's localhost sessions
 #   Judge0    the shell's JUDGE0_URL when it is a dev one (a Tailscale name), else the dev profile's
 #             LAN default; never production's http://judge0:...
@@ -80,17 +82,130 @@ port_busy() {
   lsof -nP -iTCP:"$1" -sTCP:LISTEN >/dev/null 2>&1
 }
 
-# The first port in [from, to] that is neither reserved nor listened on.
-first_free_port() {
+# A port is checked free here but bound only when its server comes up, minutes later, so two
+# starts at once could both take it. Each port handed out is claimed first: a file in $port_locks
+# named for the port, holding the database and the pid of the start that claimed it, written
+# under a mutex. A claim holds until that start's stop releases it or its pid is gone.
+
+# Runs $@ holding the port mutex, a directory (mkdir is atomic). A mutex older than a minute was
+# left by a start that died while picking, and is broken.
+with_port_mutex() {
+  local m="$port_locks/.mutex" i rc=0
+  mkdir -p "$port_locks"
+  for (( i = 0; ; i++ )); do
+    mkdir "$m" 2>/dev/null && break
+    if [[ -n "$(find "$m" -maxdepth 0 -mmin +1 2>/dev/null)" ]]; then
+      rm -rf "$m"
+      continue
+    fi
+    if (( i >= 1200 )); then
+      echo "the port mutex $m has been held for two minutes; remove it if no start is picking ports" >&2
+      return 1
+    fi
+    sleep 0.1
+  done
+  "$@" || rc=$?
+  rmdir "$m"
+  return "$rc"
+}
+
+# Whether port $1 is claimed by another database's start that is still running.
+port_held() {
+  local f="$port_locks/$1" owner="" pid=""
+  [[ -f "$f" ]] || return 1
+  read -r owner pid < "$f" || true
+  [[ "$owner" != "$db" && -n "$pid" ]] && kill -0 "$pid" 2>/dev/null
+}
+
+# Claims and prints the first port in [from, to] that is neither reserved, listened on nor held
+# by another start. Run under with_port_mutex.
+claim_port() {
   local p r
   for (( p = $1; p <= $2; p++ )); do
     for r in "${RESERVED_PORTS[@]}"; do
       [[ $p -eq $r ]] && continue 2
     done
-    port_busy "$p" || { echo "$p"; return 0; }
+    port_busy "$p" && continue
+    port_held "$p" && continue
+    mkdir -p "$port_locks"
+    printf '%s %s\n' "$db" "$$" > "$port_locks/$p"
+    echo "$p"
+    return 0
   done
   echo "no free port in $1-$2" >&2
   return 1
+}
+
+# Drops every claim $db holds.
+release_ports() {
+  local f owner
+  [[ -n "${port_locks:-}" && -d "$port_locks" ]] || return 0
+  for f in "$port_locks"/[0-9]*; do
+    [[ -f "$f" ]] || continue
+    read -r owner _ < "$f" || true
+    if [[ "$owner" == "$db" ]]; then rm -f "$f"; fi
+  done
+}
+
+pick_ports() {
+  release_ports
+  backend_port=$(claim_port 18080 18179) \
+    && worker_port=$(claim_port 18180 18279) \
+    && vite_port=$(claim_port 15180 15279)
+}
+
+# Sets backend_port, worker_port and vite_port to ports claimed for this start.
+reserve_ports() {
+  with_port_mutex pick_ports
+}
+
+port_listeners() {
+  lsof -nP -iTCP:"$1" -sTCP:LISTEN -t 2>/dev/null || true
+}
+
+process_name() {
+  basename "$(ps -o comm= -p "$1" 2>/dev/null || echo gone)"
+}
+
+# Who listens on port $1: ours (a process of this checkout's start), none, or which other process.
+port_listener() {
+  local pids pid other
+  pids=$(port_listeners "$1")
+  if [[ -z "$pids" ]]; then
+    echo none
+    return 0
+  fi
+  for pid in $pids; do
+    if is_ours "$pid"; then
+      echo ours
+      return 0
+    fi
+  done
+  pid=$(echo "$pids" | head -n 1)
+  other=$(env_value "$pid" CODEBITE_DEV_BRANCH)
+  if [[ -n "$other" ]]; then
+    echo "pid $pid, the branch servers of $other"
+  else
+    echo "pid $pid ($(process_name "$pid")), not a branch server"
+  fi
+}
+
+# Whether each port in $state/ports is listened on by this checkout's app; says which isn't.
+listeners_ours() {
+  # shellcheck disable=SC1091  # written by cmd_start
+  source "$state/ports"
+  local ok=0 app port who
+  for app in backend:$backend_port worker:$worker_port frontend:$vite_port; do
+    port=${app#*:}
+    app=${app%%:*}
+    who=$(port_listener "$port")
+    case "$who" in
+      ours) ;;
+      none) echo "$app: nothing listens on $port yet (starting, or stopped)"; ok=1 ;;
+      *) echo "$app: port $port is held by $who, not this checkout's $app"; ok=1 ;;
+    esac
+  done
+  return "$ok"
 }
 
 # Pids of this checkout's apps $@ (backend, worker, frontend; all three when none is named) that
@@ -180,7 +295,8 @@ kafka_bin() {
 }
 
 # Sets the globals the subcommands read: root (this checkout), main (the main checkout), db (the
-# branch database), prefix (its Kafka topic and group prefix) and state (the ports, pids and logs).
+# branch database), prefix (its Kafka topic and group prefix), state (the ports, pids and logs)
+# and port_locks (every start's port claims).
 setup() {
   root=$(git rev-parse --show-toplevel)
   main=$(main_checkout)
@@ -189,6 +305,7 @@ setup() {
   db=$(branch_db_name "${branch:-$(basename "$root")}" "$root")
   prefix="$db-"
   state="${TMPDIR:-/tmp}"
+  port_locks="${state%/}/codebite-dev-branch/.ports"
   state="${state%/}/codebite-dev-branch/$db"
 }
 
@@ -215,13 +332,21 @@ Stop: Ctrl-C (unless detached), or scripts/dev-branch-servers.sh stop.  After a 
 EOS
 }
 
-# Waits until $2 answers or the process $1 dies; on death prints the log's tail.
+# Waits until $2 answers from this checkout's process listening on port $5, or the process $1
+# dies; on death prints the log's tail. Another server answering on the port is an error at once:
+# the start would otherwise take it for its own.
 wait_for() {
-  local pid=$1 url=$2 log=$3 what=$4 i
+  local pid=$1 url=$2 log=$3 what=$4 port=$5 i who
   for (( i = 0; i < 600; i++ )); do
     if curl -fsS -o /dev/null "$url" 2>/dev/null; then
-      echo "$what: up"
-      return 0
+      who=$(port_listener "$port")
+      case "$who" in
+        ours) echo "$what: up"; return 0 ;;
+        none) ;;
+        *)
+          echo "$what: port $port answers, but its listener is $who, not this checkout's $what" >&2
+          return 1 ;;
+      esac
     fi
     if ! kill -0 "$pid" 2>/dev/null; then
       echo "$what: exited before it came up; the end of $log:" >&2
@@ -259,6 +384,7 @@ stop_all() {
     done < "$state/pids"
     rm -f "$state/pids"
   fi
+  release_ports
   return 0
 }
 
@@ -296,9 +422,7 @@ cmd_start() {
   echo $$ > "$state/start.pid"
   : > "$state/pids"
   local backend_port worker_port vite_port
-  backend_port=$(first_free_port 18080 18179)
-  worker_port=$(first_free_port 18180 18279)
-  vite_port=$(first_free_port 15180 15279)
+  reserve_ports
   printf 'backend_port=%s\nworker_port=%s\nvite_port=%s\nredis_db=%s\n' \
     "$backend_port" "$worker_port" "$vite_port" "$redis_db" > "$state/ports"
 
@@ -342,20 +466,20 @@ JSON
   echo "backend: starting on $backend_port (log $state/backend.log)"
   SPRING_PROFILES_ACTIVE=dev SERVER_PORT=$backend_port ./gradlew :backend:bootRun > "$state/backend.log" 2>&1 &
   echo $! >> "$state/pids"
-  wait_for $! "http://127.0.0.1:$backend_port/api/health" "$state/backend.log" backend || exit 1
+  wait_for $! "http://127.0.0.1:$backend_port/api/health" "$state/backend.log" backend "$backend_port" || exit 1
 
   # After the backend: it creates the topics, and the two Gradle builds don't contend for common.
   echo "worker: starting on $worker_port (log $state/worker.log)"
   SERVER_PORT=$worker_port ./gradlew :worker:bootRun > "$state/worker.log" 2>&1 &
   echo $! >> "$state/pids"
-  wait_for $! "http://127.0.0.1:$worker_port/actuator/health" "$state/worker.log" worker || exit 1
+  wait_for $! "http://127.0.0.1:$worker_port/actuator/health" "$state/worker.log" worker "$worker_port" || exit 1
 
   echo "frontend: starting on $vite_port (log $state/vite.log)"
   (cd frontend && VITE_API_URL="http://127.0.0.1:$backend_port/api" \
     exec "$root/frontend/node_modules/.bin/vite" --host 127.0.0.1 --port "$vite_port" --strictPort) \
     > "$state/vite.log" 2>&1 &
   echo $! >> "$state/pids"
-  wait_for $! "$vite_origin" "$state/vite.log" frontend || exit 1
+  wait_for $! "$vite_origin" "$state/vite.log" frontend "$vite_port" || exit 1
 
   echo "database $db: at V$(flyway_version "$db")"
   summary
@@ -416,15 +540,16 @@ cmd_restart() {
   cmd_start_detached
 }
 
-# Prints where the servers run and returns 0, or says they aren't running and returns 1, so an
-# agent can wait on it: until scripts/dev-branch-servers.sh status >/dev/null; do sleep 2; done
+# Prints where the servers run and returns 0 once each of their ports is listened on by this
+# checkout's app; else says what isn't up, or held by another process, and returns 1. An agent
+# can wait on it: until scripts/dev-branch-servers.sh status >/dev/null; do sleep 2; done
 cmd_status() {
-  if [[ -n "$(branch_pids)" && -f "$state/ports" ]]; then
-    summary
-  else
+  if [[ -z "$(branch_pids)" || ! -f "$state/ports" ]]; then
     echo "not running ($db)"
     return 1
   fi
+  listeners_ours || return 1
+  summary
 }
 
 cmd_drop() {

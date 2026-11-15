@@ -98,9 +98,68 @@ stop_all >/dev/null
 check "stop kills only this checkout's processes and saved pids" "$(sort -u "$fake/killed" | paste -sd' ' -)" "101 201"
 unset -f pgrep kill sleep env_value
 
+# --- ports ------------------------------------------------------------------------------------
+
+port_locks="$fake/locks"
+busy=" 18080 18081 "
+port_busy() { [[ "$busy" == *" $1 "* ]]; }
+check "skips busy ports" "$(claim_port 18080 18179)" 18082
+check "a claimed port names its database and start" "$(cat "$port_locks/18082")" "$db $$"
+check "never a shared server's port, even when free" "$(claim_port 8080 8082)" 8082
+check "never a shared server's port, even when free" "$(claim_port 5173 5175)" 5175
+if claim_port 18080 18081 2>/dev/null; then echo "FAIL: a full range must fail"; fail=1; fi
+busy=""
+rm -rf "$port_locks"; mkdir -p "$port_locks"
+sh -c 'sleep 30' & alive=$!
+sh -c 'exit 0' & wait $!; dead=$!
+echo "codebite_theirs $alive" > "$port_locks/18080"   # a running start's
+echo "codebite_gone $dead" > "$port_locks/18081"      # a start that died without a stop
+echo "$db 1" > "$port_locks/18090"                    # this database's, from its last start
+check "skips a port another running start claimed" "$(claim_port 18080 18080 2>/dev/null || echo none)" none
+check "takes a port whose start is gone" "$(claim_port 18081 18081)" 18081
+release_ports
+check "release drops this database's claims" "$(ls "$port_locks" | paste -sd' ' -)" 18080
+{ kill "$alive"; wait "$alive"; } 2>/dev/null || true
+
+# Starts in several worktrees at once each get ports of their own. Each picker is a process of its
+# own (its $$ the start pid its claims name) that stays alive while the others pick, as a start does.
+rm -rf "$port_locks"
+for i in 1 2 3 4 5 6; do
+  bash -c '
+    source "$1"; port_locks=$2; db=codebite_wt$3
+    port_busy() { return 1; }
+    reserve_ports && echo "$backend_port $worker_port $vite_port"
+    sleep 2' _ "$script" "$port_locks" "$i" > "$fake/picked-$i" 2>&1 &
+done
+wait
+picked=$(cat "$fake"/picked-*)
+check "six concurrent starts all got ports" "$(echo "$picked" | grep -cE '^[0-9]+ [0-9]+ [0-9]+$')" 6
+for col in 1 2 3; do
+  check "concurrent starts get distinct ports (column $col)" \
+    "$(echo "$picked" | awk -v c="$col" '{print $c}' | sort | uniq -d)" ""
+done
+[[ ! -d "$port_locks/.mutex" ]] || { echo "FAIL: the port mutex was left behind"; fail=1; }
+
+# --- who listens on a port ----------------------------------------------------------------------
+
+# Fakes: 18080 is ours (pid 101), 18180 another worktree's (103), 15180 a stray process (104),
+# 18081 nobody's.
+port_listeners() {
+  case "$1" in 18080) echo 101 ;; 18180) echo 103 ;; 15180) echo 104 ;; esac
+}
+env_value() {
+  case "$1" in 101) echo "$db" ;; 103) echo codebite_theirs ;; *) echo ;; esac
+}
+process_name() { echo node; }
+check "our listener" "$(port_listener 18080)" ours
+check "no listener" "$(port_listener 18081)" none
+check "another worktree's listener" "$(port_listener 18180)" "pid 103, the branch servers of codebite_theirs"
+check "a stray listener" "$(port_listener 15180)" "pid 104 (node), not a branch server"
+
 # --- status ---------------------------------------------------------------------------------
 
-# status exits 1 when this checkout's servers aren't running, so `until status; do sleep; done` waits.
+# status exits 0 only when every port it prints is listened on by this checkout's servers, so
+# `until status; do sleep; done` waits for them all to be up, and never takes another's for ours.
 state="$fake/status-state" prefix="$db-"
 mkdir -p "$state"
 branch_pids() { :; }
@@ -108,22 +167,33 @@ out=$(cmd_status) && code=0 || code=$?
 check "status when not running" "$code" 1
 check "status says not running" "$out" "not running ($db)"
 branch_pids() { echo 101; }
+port_listeners() { case "$1" in 18080 | 18180 | 15180) echo 101 ;; esac; }
 printf 'backend_port=18080\nworker_port=18180\nvite_port=15180\nredis_db=3\n' > "$state/ports"
 out=$(cmd_status) && code=0 || code=$?
-check "status when running" "$code" 0
+check "status when all three are up" "$code" 0
 [[ "$out" == *"http://127.0.0.1:18080/api"* ]] || { echo "FAIL: status should print the summary: $out"; fail=1; }
-unset -f branch_pids
+port_listeners() { case "$1" in 18080) echo 101 ;; esac; }
+out=$(cmd_status) && code=0 || code=$?
+check "status while starting" "$code" 1
+[[ "$out" == *"worker: nothing listens on 18180 yet"* ]] || { echo "FAIL: status should name the app not up: $out"; fail=1; }
+port_listeners() { case "$1" in 18080 | 18180) echo 101 ;; 15180) echo 103 ;; esac; }
+out=$(cmd_status) && code=0 || code=$?
+check "status with a port held by another" "$code" 1
+[[ "$out" == *"frontend: port 15180 is held by pid 103, the branch servers of codebite_theirs, not this checkout's"* ]] \
+  || { echo "FAIL: status should name who holds the port: $out"; fail=1; }
+
+# A start waiting on its backend fails at once when the port answers for another's server.
+curl() { return 0; }
+kill() { return 0; }
+out=$(wait_for 999 http://127.0.0.1:15180 "$fake/vite.log" frontend 15180 2>&1) && code=0 || code=$?
+check "start refuses another's server on its port" "$code" 1
+[[ "$out" == *"frontend: port 15180 answers, but its listener is pid 103"* ]] \
+  || { echo "FAIL: wait_for should name who holds the port: $out"; fail=1; }
+out=$(wait_for 999 http://127.0.0.1:18080 "$fake/backend.log" backend 18080 2>&1) && code=0 || code=$?
+check "start sees its own server up" "$out" "backend: up"
+unset -f branch_pids port_listeners env_value process_name curl kill
 # shellcheck source=SCRIPTDIR/dev-branch-servers.sh
 source "$script"
-
-# --- ports ------------------------------------------------------------------------------------
-
-busy=" 18080 18081 "
-port_busy() { [[ "$busy" == *" $1 "* ]]; }
-check "skips busy ports" "$(first_free_port 18080 18179)" 18082
-check "never a shared server's port, even when free" "$(first_free_port 8080 8082)" 8082
-check "never a shared server's port, even when free" "$(first_free_port 5173 5175)" 5175
-if first_free_port 18080 18081 2>/dev/null; then echo "FAIL: a full range must fail"; fail=1; fi
 
 # --- the main checkout ------------------------------------------------------------------------
 
