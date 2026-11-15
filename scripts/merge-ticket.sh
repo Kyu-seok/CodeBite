@@ -2,6 +2,7 @@
 # Merges finished ticket branches into the integration branch checked out in this worktree:
 #
 #   scripts/merge-ticket.sh <branch> <title> [<branch> <title> ...]
+#   scripts/merge-ticket.sh --checks-and-push <integration branch>
 #
 # For each branch in order, it takes origin/<branch> when that exists, else the local branch, and
 # merges it with --no-ff and the attribution trailer (MERGE_TICKET_TRAILER overrides it). It refuses
@@ -26,9 +27,13 @@
 # cancelled: a skipped-check push (above) is checked only by that run, and a merge stacked on a red
 # tip hides which merge broke it (#264). A pending run doesn't stop it.
 #
-# A merge that changes this script hands the checks and the push to the merged copy, run as
-# `scripts/merge-ticket.sh --checks-and-push`: bash read this copy before the merge, so its checks are
-# the old ones. Keep that mode in every later version.
+# The second form merges nothing: it runs the checks below on HEAD and pushes it to <integration
+# branch> when they pass. It is the rerun after a failed check that turned out flaky: the merge
+# commits are already in place and unpushed, so rerun with the branch checked out here, e.g.
+# `scripts/merge-ticket.sh --checks-and-push spec/348-dev-tooling`, rather than merging again.
+# A merge that changes this script also hands the checks and the push to the merged copy this way:
+# bash read this copy before the merge, so its checks are the old ones. Keep that mode in every
+# later version.
 set -euo pipefail
 merge_ticket_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
@@ -213,6 +218,7 @@ if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
   fi
   if (( $# < 2 || $# % 2 != 0 )); then
     echo "usage: scripts/merge-ticket.sh <branch> <title> [<branch> <title> ...]" >&2
+    echo "       scripts/merge-ticket.sh --checks-and-push <integration branch>" >&2
     exit 2
   fi
   cd "$(git rev-parse --show-toplevel)"
