@@ -14,9 +14,11 @@
 #                                           migrations on it, starting no server: for reading a problem
 #                                           (CODEBITE_DB=<it> scripts/problem-text.sh) as the branch has it
 #   scripts/dev-branch-servers.sh drop      drop the branch database, Kafka topics and groups, Redis index
+#   scripts/dev-branch-servers.sh orphans   list the branch databases whose worktree is gone
+#   scripts/dev-branch-servers.sh drop [<name>]  with a name, drop one of those, from any checkout
 #   scripts/dev-branch-servers.sh name      print the branch database name
 #
-# It refuses to run from the main checkout (only name and status work there): the servers there
+# It refuses to run from the main checkout (only name, status, orphans and drop <name> work there): the servers there
 # are the shared ones. Each piece is kept off the user's servers and data, and off other sessions':
 #   database  codebite_<branch>_<hash of this worktree's path> in the codebite-postgres container,
 #             migrated by the backend on start (or by migrate, with no server); its COMMENT names this worktree, and drop refuses a
@@ -299,7 +301,7 @@ kafka_bin() {
 
 # Sets the globals the subcommands read: root (this checkout), main (the main checkout), db (the
 # branch database), prefix (its Kafka topic and group prefix), state (the ports, pids and logs)
-# and port_locks (every start's port claims).
+# port_locks (every start's port claims) and state_base (every branch database's state).
 setup() {
   root=$(git rev-parse --show-toplevel)
   main=$(main_checkout)
@@ -307,9 +309,10 @@ setup() {
   branch=$(git -C "$root" branch --show-current)
   db=$(branch_db_name "${branch:-$(basename "$root")}" "$root")
   prefix="$db-"
-  state="${TMPDIR:-/tmp}"
-  port_locks="${state%/}/codebite-dev-branch/.ports"
-  state="${state%/}/codebite-dev-branch/$db"
+  state_base="${TMPDIR:-/tmp}"
+  state_base="${state_base%/}/codebite-dev-branch"
+  port_locks="$state_base/.ports"
+  state="$state_base/$db"
 }
 
 summary() {
@@ -589,14 +592,30 @@ cmd_drop() {
   local comment
   comment=$(db_owner_comment "$root")
   case "$(database_verdict "$(database_state)" "$comment")" in
-    create) echo "database $db: none" ;;
-    ours)
-      psql_admin "DROP DATABASE IF EXISTS \"$db\" WITH (FORCE)" >/dev/null
-      echo "database $db: dropped" ;;
+    create)
+      # Nothing was ever started here (start makes the state directory, start and migrate the
+      # database): nothing to look for in Kafka or Redis.
+      if [[ ! -d "$state" ]]; then
+        echo "database $db: none; nothing to drop"
+        return 0
+      fi
+      echo "database $db: none" ;;
+    ours) drop_database ;;
     *)
       echo "database $db isn't this worktree's (its comment isn't '$comment'); dropping nothing" >&2
       exit 1 ;;
   esac
+  drop_branch_data
+}
+
+drop_database() {
+  psql_admin "DROP DATABASE IF EXISTS \"$db\" WITH (FORCE)" >/dev/null
+  echo "database $db: dropped"
+}
+
+# Deletes $db's Kafka topics and groups, flushes its Redis index and removes its state and port
+# claims: everything but the database.
+drop_branch_data() {
   local topics groups g
   topics=$(kafka_bin kafka-topics.sh --list | grep "^$prefix" || true)
   if [[ -n "$topics" ]]; then
@@ -609,7 +628,60 @@ cmd_drop() {
   done
   [[ -n "$groups" ]] && echo "Kafka groups: deleted $(echo "$groups" | paste -sd' ' -)"
   flush_owned_redis_index
+  release_ports
   rm -rf "$state"
+}
+
+# Each branch database (its COMMENT says this script made it) and the worktree that made it,
+# tab-separated.
+branch_databases() {
+  local tag
+  tag=$(db_owner_comment '')
+  psql_admin "SELECT datname || E'\\t' || substr(shobj_description(oid, 'pg_database'), $(( ${#tag} + 1 ))) FROM pg_database WHERE shobj_description(oid, 'pg_database') LIKE $(sql_literal "$tag%") ORDER BY datname"
+}
+
+# The branch databases whose worktree no longer exists (a shipped or removed branch's), with it.
+orphan_databases() {
+  local name path
+  branch_databases | while IFS=$'\t' read -r name path; do
+    [[ -n "$name" && ! -d "$path" ]] && printf '%s\t%s\n' "$name" "$path"
+  done
+  return 0
+}
+
+cmd_orphans() {
+  local list
+  list=$(orphan_databases)
+  if [[ -z "$list" ]]; then
+    echo "no branch database outlives its worktree"
+    return 0
+  fi
+  echo "branch databases whose worktree is gone:"
+  printf '%s\n' "$list" | while IFS=$'\t' read -r name path; do
+    echo "  $name  (was $path)"
+  done
+  echo "drop one, with its Kafka topics and Redis index: scripts/dev-branch-servers.sh drop <name>"
+}
+
+# Drops branch database $1 by name, from any checkout, when its worktree is gone; a live
+# worktree's is dropped from that worktree, and any other database is never touched.
+cmd_drop_orphan() {
+  local name=$1
+  if ! orphan_databases | cut -f1 | grep -qx -- "$name"; then
+    echo "$name isn't a branch database whose worktree is gone (scripts/dev-branch-servers.sh orphans lists those); dropping nothing" >&2
+    exit 1
+  fi
+  db=$name
+  prefix="$db-"
+  state="$state_base/$db"
+  # Its servers, from whatever checkout they run.
+  root=""
+  if [[ -n "$(branch_pids)" ]]; then
+    echo "servers of $db still run (pids $(branch_pids | paste -sd' ' -)); dropping nothing" >&2
+    exit 1
+  fi
+  drop_database
+  drop_branch_data
 }
 
 usage() {
@@ -617,7 +689,7 @@ usage() {
 }
 
 main() {
-  local cmd=${1:-start} detach=false
+  local cmd=${1:-start} detach=false orphan=""
   case "$cmd" in
     start)
       case "${2:-}" in
@@ -625,14 +697,15 @@ main() {
         --detach) detach=true ;;
         *) usage; exit 2 ;;
       esac ;;
-    restart | stop | status | migrate | drop | name) [[ $# -le 1 ]] || { usage; exit 2; } ;;
+    drop) orphan=${2:-} ;;
+    restart | stop | status | migrate | orphans | name) [[ $# -le 1 ]] || { usage; exit 2; } ;;
     *) usage; exit 2 ;;
   esac
   (( $# <= 2 )) || { usage; exit 2; }
   setup
-  if [[ "$cmd" != name && "$cmd" != status && "$root" == "$main" ]]; then
+  if [[ "$cmd" != name && "$cmd" != status && "$cmd" != orphans && -z "$orphan" && "$root" == "$main" ]]; then
     echo "dev-branch-servers.sh: $root is the main checkout, whose servers are the shared ones;" \
-      "run it from a worktree (only name and status work here)" >&2
+      "run it from a worktree (only name, status, orphans and drop <name> work here)" >&2
     exit 1
   fi
   case "$cmd" in
@@ -641,7 +714,8 @@ main() {
     migrate) cmd_migrate ;;
     stop) stop_all ;;
     status) cmd_status ;;
-    drop) cmd_drop ;;
+    drop) if [[ -n "$orphan" ]]; then cmd_drop_orphan "$orphan"; else cmd_drop; fi ;;
+    orphans) cmd_orphans ;;
     name) echo "$db" ;;
   esac
 }

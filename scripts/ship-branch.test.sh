@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 # Checks scripts/ship-branch.sh against a stub gh and a throwaway origin: it reuses or opens the
 # PR, waits past "no checks reported", merges only when the checks pass, and then deletes the
-# remote branch, the worktree and the local branch; it refuses master, a branch with no PR and
+# remote branch, the branch database scripts/dev-branch-servers.sh made for the worktree, the
+# worktree and the local branch; it refuses master, a branch with no PR and
 # no --title, and a run from inside the branch's worktree.
-# shellcheck disable=SC2016 # check() evals its single-quoted conditions later
+# shellcheck disable=SC2016,SC2034 # check() evals its single-quoted conditions (and the variables they read) later
 set -euo pipefail
 
 script="$(cd "$(dirname "$0")" && pwd)/ship-branch.sh"
@@ -43,6 +44,20 @@ reset_branch() {
   git -C "$main" push -q origin --delete feat 2>/dev/null || true
   git -C "$main" worktree add -q "$dir/wt" -b feat master
   git -C "$dir/wt" -c user.name=t -c user.email=t@t commit -q --allow-empty -m feat
+  # With "servers", the branch has a scripts/dev-branch-servers.sh stub that logs its calls and
+  # the directory they run in; its drop fails when SERVERS_STUB_FAIL is set.
+  if [[ ${1:-} == servers ]]; then
+    mkdir -p "$dir/wt/scripts"
+    cat > "$dir/wt/scripts/dev-branch-servers.sh" <<'SERVERS'
+#!/usr/bin/env bash
+echo "servers $* in $PWD" >> "$GH_STUB_LOG"
+[[ $1 == drop && -n "${SERVERS_STUB_FAIL:-}" ]] && exit 1
+exit 0
+SERVERS
+    chmod +x "$dir/wt/scripts/dev-branch-servers.sh"
+    git -C "$dir/wt" add scripts
+    git -C "$dir/wt" -c user.name=t -c user.email=t@t commit -q -m servers
+  fi
   git -C "$dir/wt" push -q -u origin feat 2>/dev/null
 }
 
@@ -85,6 +100,22 @@ run "$main" feat --title "feat: thing" --body-file "$dir/body.md"
 check "with --title and --body-file it opens the PR and merges it" \
   'grep -qx "pr create --base master --head feat --title feat: thing --body-file $dir/body.md" <<<"$log" && grep -qx "pr merge 9 --squash" <<<"$log"'
 check "the opened PR's branch is cleaned up too" '[[ $status == 0 ]] && ! remote_has feat && ! local_has feat'
+
+check "a worktree with no branch servers script is not asked to drop" '! grep -q "^servers" <<<"$log"'
+
+# The shipped worktree's branch database goes with it: its servers stopped, then dropped, from
+# inside the worktree before it is removed.
+reset_branch servers
+wt_real=$(cd "$dir/wt" && pwd -P)
+GH_STUB_PR=7 run "$main" feat
+check "it stops the branch servers, then drops their data, in the worktree" \
+  '[[ $status == 0 && $(grep "^servers" <<<"$log" | paste -sd"|" -) == "servers stop in $wt_real|servers drop in $wt_real" ]]'
+check "the worktree is gone after the drop" '[[ ! -d $dir/wt ]] && ! local_has feat'
+
+reset_branch servers
+GH_STUB_PR=7 SERVERS_STUB_FAIL=1 run "$main" feat
+check "a failed drop still ships, and says how to drop it later" \
+  '[[ $status == 0 && ! -d $dir/wt && $err == *"dev-branch-servers.sh orphans"* ]]'
 
 run "$main"
 check "no branch prints usage" '[[ $status == 2 && $err == usage:* ]]'

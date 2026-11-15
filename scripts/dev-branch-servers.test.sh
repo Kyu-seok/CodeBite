@@ -227,6 +227,54 @@ unset -f docker psql_admin run_flyway flyway_version
 # shellcheck source=SCRIPTDIR/dev-branch-servers.sh
 source "$script"
 
+# --- databases left behind ------------------------------------------------------------------------
+
+# orphans lists the branch databases whose worktree is gone; drop <name> drops only such a one,
+# with its Kafka topics and groups and Redis index, and only when none of its servers still run.
+mkdir -p "$fake/live-wt"; state_base="$fake/state-base"
+: > "$fake/calls"
+psql_admin() {
+  echo "psql $1" >> "$fake/calls"
+  case "$1" in
+    *shobj_description*LIKE*) printf 'codebite_gone_1\t%s\ncodebite_live_2\t%s\n' "$fake/gone-wt" "$fake/live-wt" ;;
+  esac
+  return 0
+}
+kafka_bin() {
+  echo "kafka $*" >> "$fake/calls"
+  case "$1 $2" in
+    "kafka-topics.sh --list") printf 'codebite_gone_1-submission-events\ncodebite_live_2-submission-events\n' ;;
+  esac
+}
+flush_owned_redis_index() { echo "redis flush $db" >> "$fake/calls"; }
+branch_pids() { :; }
+check "orphans lists a database whose worktree is gone" "$(orphan_databases)" "codebite_gone_1	$fake/gone-wt"
+out=$(cmd_orphans)
+[[ "$out" == *codebite_gone_1* && "$out" != *codebite_live_2* ]] || { echo "FAIL: orphans printed: $out"; fail=1; }
+for name in codebite_live_2 codebite codebite_nope; do
+  : > "$fake/calls"
+  out=$(cmd_drop_orphan "$name" 2>&1) && code=0 || code=$?
+  check "drop $name by name refused" "$code" 1
+  [[ "$(cat "$fake/calls")" != *DROP* && "$(cat "$fake/calls")" != *delete* ]] \
+    || { echo "FAIL: drop $name dropped something: $(cat "$fake/calls")"; fail=1; }
+done
+: > "$fake/calls"
+out=$(cmd_drop_orphan codebite_gone_1 2>&1) && code=0 || code=$?
+check "drop an orphan by name" "$code" 0
+calls=$(cat "$fake/calls")
+[[ "$calls" == *'DROP DATABASE IF EXISTS "codebite_gone_1"'* ]] || { echo "FAIL: the orphan wasn't dropped: $calls"; fail=1; }
+[[ "$calls" == *"--delete --topic codebite_gone_1-submission-events"* && "$calls" != *"topic codebite_live_2"* ]] \
+  || { echo "FAIL: drop should delete only the orphan's topics: $calls"; fail=1; }
+[[ "$calls" == *"redis flush codebite_gone_1"* ]] || { echo "FAIL: drop should flush the orphan's Redis index: $calls"; fail=1; }
+branch_pids() { echo 301; }
+: > "$fake/calls"
+out=$(cmd_drop_orphan codebite_gone_1 2>&1) && code=0 || code=$?
+check "drop by name refused while its servers run" "$code" 1
+[[ "$(cat "$fake/calls")" != *DROP* ]] || { echo "FAIL: dropped an orphan whose servers run"; fail=1; }
+unset -f psql_admin kafka_bin flush_owned_redis_index branch_pids
+# shellcheck source=SCRIPTDIR/dev-branch-servers.sh
+source "$script"
+
 # --- the main checkout ------------------------------------------------------------------------
 
 # A throwaway repository with a worktree: the script must refuse everything but name and status
@@ -248,6 +296,11 @@ for cmd in start 'start --detach' restart stop drop migrate; do
   [[ "$out" == *"is the main checkout"* ]] || { echo "FAIL: $cmd: no refusal message: $out"; fail=1; }
 done
 [[ ! -f "$fake/escaped" ]] || { echo "FAIL: ran past the refusal: $(cat "$fake/escaped")"; fail=1; }
+out=$(cd "$repo" && PATH="$fake/bin:$PATH" "$script" drop codebite_x 2>&1) || true
+[[ "$out" != *"is the main checkout"* ]] || { echo "FAIL: drop <name> refused in the main checkout: $out"; fail=1; }
+out=$(cd "$repo" && PATH="$fake/bin:$PATH" "$script" orphans 2>&1) || true
+[[ "$out" != *"is the main checkout"* ]] || { echo "FAIL: orphans refused in the main checkout: $out"; fail=1; }
+rm -f "$fake/escaped"
 out=$(cd "$repo" && "$script" name)
 [[ "$out" == codebite_master_* ]] || { echo "FAIL: name in the main checkout printed '$out'"; fail=1; }
 check "worktree name" "$(cd "$fake/wt" && "$script" name)" \
@@ -256,7 +309,7 @@ check "worktree name" "$(cd "$fake/wt" && "$script" name)" \
 
 out=$("$script" bogus 2>&1) && code=0 || code=$?
 check "unknown subcommand" "$code" 2
-for cmd in '[start [--detach]]' restart stop status migrate drop name; do
+for cmd in '[start [--detach]]' restart stop status migrate 'drop [<name>]' orphans name; do
   [[ "$out" == *"dev-branch-servers.sh $cmd"* ]] || { echo "FAIL: usage lacks $cmd: $out"; fail=1; }
 done
 
