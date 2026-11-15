@@ -276,7 +276,9 @@ docker compose -f infra/docker-compose.prod.yml logs -f frontend
 
 ---
 
-## Phase 3: GitHub Actions CI/CD
+## Phase 3: GitHub Actions CI/CD — COMPLETED
+
+The pipeline below is the original plan. The live one is `.github/workflows/ci.yml` and `deploy.yml`, with the roll in `scripts/deploy-prod.sh` (docs/adr/0013); the secrets and SSH setup in 3.4 and 3.5 still apply.
 
 ### 3.1 Pipeline Overview
 
