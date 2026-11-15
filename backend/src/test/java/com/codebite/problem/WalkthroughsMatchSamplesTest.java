@@ -126,6 +126,9 @@ class WalkthroughsMatchSamplesTest {
             "Example label for a non-Example        | run 3 (Example 3): en label is \"Example 3\", not \"Case 3\": the description has no **Example 3:**",
             "Korean Example label for a non-Example | run 3 (Case 3): ko label is \"예시 3\", not \"케이스 3\": the description has no **예시 3:**",
             "label numbered past its run            | run 1 (Example 2): en label is \"Example 2\", not \"Example 1\"",
+            "free label on a sample run             | run 3 (All fresh): en label is \"All fresh\", not \"Case 3\"",
+            "Korean free label on a sample run      | run 3 (Case 3): ko label is \"모두 신선\", not \"케이스 3\"",
+            "no label                               | run 2 (?): en label is missing, not \"Example 2\"",
     })
     void aRunLabelledAgainstItsExampleIsCaught(String breakage, String expected) throws Exception {
         ObjectNode walkthrough = labelledFixture();
@@ -136,6 +139,9 @@ class WalkthroughsMatchSamplesTest {
             case "Example label for a non-Example" -> label(runs.get(2), "Example 3", "케이스 3");
             case "Korean Example label for a non-Example" -> label(runs.get(2), "Case 3", "예시 3");
             case "label numbered past its run" -> label(runs.get(0), "Example 2", "예시 1");
+            case "free label on a sample run" -> label(runs.get(2), "All fresh", "케이스 3");
+            case "Korean free label on a sample run" -> label(runs.get(2), "Case 3", "모두 신선");
+            case "no label" -> ((ObjectNode) runs.get(1)).remove("label");
             default -> throw new IllegalArgumentException(breakage);
         }
         List<String> found = labelMismatches("fixture", walkthrough, TWO_EXAMPLES);
@@ -148,6 +154,23 @@ class WalkthroughsMatchSamplesTest {
         ObjectNode walkthrough = labelledFixture();
         ((ArrayNode) walkthrough.get("runs")).addObject().put("extra", true).putObject("label").put("en", "All fresh").put("ko", "모두 신선");
         assertEquals(List.of(), labelMismatches("fixture", walkthrough, TWO_EXAMPLES));
+    }
+
+    /**
+     * A problem with no Korean description still has its Korean labels checked, against the English description's
+     * Examples: the samples it shows as Examples are the same in both languages, and skipping Korean would let any
+     * Korean label through.
+     */
+    @Test
+    void withNoKoreanDescriptionKoreanLabelsFollowTheEnglishExamples() throws Exception {
+        Map<String, String> englishOnly = Map.of("en", TWO_EXAMPLES.get("en"));
+        assertEquals(List.of(), labelMismatches("fixture", labelledFixture(), englishOnly));
+
+        ObjectNode walkthrough = labelledFixture();
+        label(walkthrough.get("runs").get(2), "Case 3", "예시 3");
+        List<String> found = labelMismatches("fixture", walkthrough, englishOnly);
+        assertTrue(found.stream().anyMatch(m -> m.contains("run 3 (Case 3): ko label is \"예시 3\", not \"케이스 3\"")),
+                found.toString());
     }
 
     /** {@link #samplesFixture()} labelled for {@link #TWO_EXAMPLES}: Example 1, Example 2, Case 3. */
@@ -1065,7 +1088,8 @@ class WalkthroughsMatchSamplesTest {
     /**
      * Each sample run of {@code walkthrough} labelled against its problem's {@code descriptions} (by language): run N is
      * "Example N" ("예시 N") exactly when the description has {@code **Example N:**} ({@code **예시 N:**}), and "Case N"
-     * ("케이스 N") otherwise. Extra runs are labelled freely; descriptions null: no problem, reported by {@link #mismatches}.
+     * ("케이스 N") otherwise; a language with no description follows the English one's Examples. Extra runs are labelled
+     * freely; descriptions null: no problem, reported by {@link #mismatches}.
      */
     static List<String> labelMismatches(String slug, JsonNode walkthrough, Map<String, String> descriptions) {
         List<String> found = new ArrayList<>();
@@ -1077,9 +1101,11 @@ class WalkthroughsMatchSamplesTest {
             if (run.path("extra").asBoolean(false)) continue;
             n++;
             Map<String, String> labels = run.get("label") == null ? Map.of() : texts(run.get("label"));
-            for (var description : descriptions.entrySet()) {
-                String language = description.getKey(), example = "**" + EXAMPLE_WORD.get(language) + " " + n + ":**";
-                boolean shown = description.getValue().contains(example);
+            for (String language : List.of("en", "ko")) {
+                // With no description in a language, its labels follow the English one's Examples: the same samples
+                String shownIn = descriptions.containsKey(language) ? language : "en";
+                String example = "**" + EXAMPLE_WORD.get(shownIn) + " " + n + ":**";
+                boolean shown = descriptions.getOrDefault(shownIn, "").contains(example);
                 String expected = (shown ? EXAMPLE_WORD : CASE_WORD).get(language) + " " + n;
                 String label = labels.get(language);
                 if (!expected.equals(label)) {
