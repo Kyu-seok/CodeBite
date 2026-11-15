@@ -315,11 +315,16 @@ setup() {
   main=$(main_checkout)
   local branch
   branch=$(git -C "$root" branch --show-current)
-  db=$(branch_db_name "${branch:-$(basename "$root")}" "$root")
-  prefix="$db-"
   state_base="${TMPDIR:-/tmp}"
   state_base="${state_base%/}/codebite-dev-branch"
   port_locks="$state_base/.ports"
+  use_database "$(branch_db_name "${branch:-$(basename "$root")}" "$root")"
+}
+
+# Sets db to branch database $1, and the globals named for it: prefix and state.
+use_database() {
+  db=$1
+  prefix="$db-"
   state="$state_base/$db"
 }
 
@@ -680,9 +685,7 @@ cmd_drop_orphan() {
     echo "$name isn't a branch database whose worktree is gone (scripts/dev-branch-servers.sh orphans lists those); dropping nothing" >&2
     exit 1
   fi
-  db=$name
-  prefix="$db-"
-  state="$state_base/$db"
+  use_database "$name"
   # Its servers, from whatever checkout they run.
   root=""
   if [[ -n "$(branch_pids)" ]]; then
