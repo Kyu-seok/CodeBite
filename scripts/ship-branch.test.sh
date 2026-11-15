@@ -3,7 +3,8 @@
 # PR, waits past "no checks reported", merges only when the checks pass, and then deletes the
 # remote branch, the branch database scripts/dev-branch-servers.sh made for the worktree, the
 # worktree and the local branch; it refuses master, a branch with no PR and
-# no --title, and a run from inside the branch's worktree.
+# no --title, a run from inside the branch's worktree, and a branch whose walkthrough kit copy
+# fails scripts/copy-walkthrough-kit.py --check.
 # shellcheck disable=SC2016,SC2034 # check() evals its single-quoted conditions (and the variables they read) later
 set -euo pipefail
 
@@ -58,6 +59,21 @@ SERVERS
     git -C "$dir/wt" add scripts
     git -C "$dir/wt" -c user.name=t -c user.email=t@t commit -q -m servers
   fi
+  # With "kit", the branch has a scripts/copy-walkthrough-kit.py stub that logs its arguments, the
+  # directory it was run from and the kit it was given; it fails when KIT_STUB_FAIL is set.
+  if [[ ${1:-} == kit ]]; then
+    mkdir -p "$dir/wt/scripts"
+    cat > "$dir/wt/scripts/copy-walkthrough-kit.py" <<'KIT'
+import os, sys
+from pathlib import Path
+with open(os.environ["GH_STUB_LOG"], "a") as log:
+    print("kit", *sys.argv[1:], "in", Path(__file__).resolve().parents[1].name,
+          "with", os.environ.get("WALKTHROUGH_KIT", ""), file=log)
+sys.exit(1 if os.environ.get("KIT_STUB_FAIL") else 0)
+KIT
+    git -C "$dir/wt" add scripts
+    git -C "$dir/wt" -c user.name=t -c user.email=t@t commit -q -m kit
+  fi
   git -C "$dir/wt" push -q -u origin feat 2>/dev/null
 }
 
@@ -67,7 +83,7 @@ run() {
   local cwd=$1; shift
   : > "$dir/log"; rm -f "$dir/count"
   status=0
-  out=$(cd "$cwd" && PATH="$dir/bin:$PATH" GH_STUB_LOG="$dir/log" GH_STUB_COUNT="$dir/count" SHIP_BRANCH_POLL=0 "$script" "$@" 2> "$dir/err") || status=$?
+  out=$(cd "$cwd" && unset WALKTHROUGH_KIT && PATH="$dir/bin:$PATH" GH_STUB_LOG="$dir/log" GH_STUB_COUNT="$dir/count" SHIP_BRANCH_POLL=0 "$script" "$@" 2> "$dir/err") || status=$?
   err=$(cat "$dir/err"); log=$(cat "$dir/log")
 }
 check() { if ! eval "$2"; then echo "FAIL: $1"; echo "  out=$out status=$status err=$err"; echo "  log=$log"; fail=1; fi; }
@@ -116,6 +132,19 @@ reset_branch servers
 GH_STUB_PR=7 SERVERS_STUB_FAIL=1 run "$main" feat
 check "a failed drop still ships, and says how to drop it later" \
   '[[ $status == 0 && ! -d $dir/wt && $err == *"dev-branch-servers.sh orphans"* ]]'
+
+# The walkthrough kit copy is checked on the branch's tree before merging, with the kit beside the
+# main checkout; a failing check ships nothing.
+mkdir -p "$dir/walkthrough-skill/kit"
+reset_branch kit
+GH_STUB_PR=7 KIT_STUB_FAIL=1 run "$main" feat
+check "a failing kit check exits 1, before waiting on CI" \
+  '[[ $status == 1 && $err == *"copy-walkthrough-kit"* ]] && ! grep -q "^pr checks" <<<"$log"'
+check "a failing kit check merges and deletes nothing" '! grep -q "pr merge" <<<"$log" && remote_has feat && local_has feat && [[ -d $dir/wt ]]'
+GH_STUB_PR=7 run "$main" feat
+check "the branch's own copy-walkthrough-kit.py checks, given the kit beside the main checkout" \
+  '[[ $status == 0 ]] && grep -q "^kit --check in .* with $(cd "$dir" && pwd -P)/walkthrough-skill$" <<<"$log" && grep -qx "pr merge 7 --squash" <<<"$log"'
+rm -rf "$dir/walkthrough-skill"
 
 run "$main"
 check "no branch prints usage" '[[ $status == 2 && $err == usage:* ]]'

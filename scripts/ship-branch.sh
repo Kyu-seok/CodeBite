@@ -5,7 +5,9 @@
 #   scripts/ship-branch.sh <branch> [--title <title> --body-file <file>]
 #
 # Run it from the main checkout. It fetches, reuses the branch's open PR (or opens one when given
-# --title and --body-file, pushing the branch first), waits for CI to register and finish,
+# --title and --body-file, pushing the branch first), runs the branch's
+# scripts/copy-walkthrough-kit.py --check with the kit on this machine (CI has no kit), waits for
+# CI to register and finish,
 # squash-merges, then deletes the remote branch, the worktree checked out on it (first stopping
 # its branch servers and dropping their database: scripts/dev-branch-servers.sh) and the local
 # branch. It refuses master, a branch with no PR and no --title, and a run from inside that
@@ -60,6 +62,20 @@ if [[ -z $n ]]; then
   n=${url##*/}
 fi
 echo "ship-branch: PR #$n"
+
+# CI can't see the walkthrough kit (it lives only on this machine), so the kit check that needs it
+# (the recorded kit commit is on the kit's main) runs here, on the branch's tree, with the kit
+# beside the main checkout.
+tree=$(mktemp -d)
+trap 'rm -rf "$tree"' EXIT
+git archive "origin/$branch" | tar -x -C "$tree"
+if [[ -f $tree/scripts/copy-walkthrough-kit.py ]]; then
+  kit=${WALKTHROUGH_KIT:-$(dirname "$(dirname "$(git rev-parse --path-format=absolute --git-common-dir)")")/walkthrough-skill}
+  if ! WALKTHROUGH_KIT=$kit python3 -I "$tree/scripts/copy-walkthrough-kit.py" --check; then
+    echo "ship-branch: $branch's walkthrough kit copy fails scripts/copy-walkthrough-kit.py --check, nothing merged" >&2
+    exit 1
+  fi
+fi
 
 poll=${SHIP_BRANCH_POLL:-10}
 for _ in $(seq 1 30); do
