@@ -11,9 +11,10 @@ records the kit commit and each file's git blob id in KIT_VERSION.json beside th
 
 --check fails (exit 1) when a copied file differs from its recorded blob, is missing, or a file the
 copy didn't write sits beside the player: an edit made here instead of in the kit. When the kit is
-on this machine it also fails when the recorded commit doesn't hold those blobs, and notes (without
-failing) a kit HEAD whose kit/ has moved on. Without the kit (CI) it checks the record alone.
-The pre-commit hook and CI's scripts-check run it.
+on this machine it also fails when the recorded commit doesn't hold those blobs or isn't on the
+kit's main (every session draws with main's kit), and notes (without failing) a kit HEAD whose kit/
+has moved on. Without the kit (CI) it checks the record alone. The pre-commit hook, CI's
+scripts-check and scripts/ship-branch.sh (on the branch's tree, before merging) run it.
 
 The kit is --kit, else $WALKTHROUGH_KIT, else walkthrough-skill beside the main checkout.
 """
@@ -119,6 +120,21 @@ def copy_in(root, kit, ref):
     print(f"copied {len(files)} kit files at {commit[:7]}; recorded in {RECORD}")
 
 
+def off_main(kit, commit, notes):
+    """The problem when commit isn't on the kit's main, whose sessions would draw with another kit."""
+    try:
+        main = git(kit, "rev-parse", "--verify", "refs/heads/main")
+    except Refusal:
+        notes.append(f"note: the kit at {kit} has no main branch; didn't check {commit[:7]} is on it")
+        return []
+    on_main = subprocess.run(["git", "-C", str(kit), "merge-base", "--is-ancestor", commit, main],
+                             capture_output=True).returncode == 0
+    if on_main:
+        return []
+    return [f"the record's kit {commit[:7]} is not on the kit's main ({main[:7]}): bring main up to it, "
+            f"on main in {kit}: git merge --ff-only {commit[:7]}"]
+
+
 def check(root, kit):
     """Returns (problems, notes)."""
     record = read_record(root)
@@ -150,6 +166,7 @@ def check(root, kit):
                 if at_commit.get(path) != recorded.get(path):
                     where = destination(path)
                     problems.append(f"{where}: the record's kit {record['kit_commit'][:7]} holds another {path}")
+            problems += off_main(kit, record["kit_commit"], notes)
             if not problems:
                 head = kit_tree(kit, "HEAD")
                 moved = sorted(p for p in set(head) | set(recorded) if head.get(p) != recorded.get(p))
