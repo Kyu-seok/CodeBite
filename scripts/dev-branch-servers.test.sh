@@ -98,6 +98,24 @@ stop_all >/dev/null
 check "stop kills only this checkout's processes and saved pids" "$(sort -u "$fake/killed" | paste -sd' ' -)" "101 201"
 unset -f pgrep kill sleep env_value
 
+# --- status ---------------------------------------------------------------------------------
+
+# status exits 1 when this checkout's servers aren't running, so `until status; do sleep; done` waits.
+state="$fake/status-state" prefix="$db-"
+mkdir -p "$state"
+branch_pids() { :; }
+out=$(cmd_status) && code=0 || code=$?
+check "status when not running" "$code" 1
+check "status says not running" "$out" "not running ($db)"
+branch_pids() { echo 101; }
+printf 'backend_port=18080\nworker_port=18180\nvite_port=15180\nredis_db=3\n' > "$state/ports"
+out=$(cmd_status) && code=0 || code=$?
+check "status when running" "$code" 0
+[[ "$out" == *"http://127.0.0.1:18080/api"* ]] || { echo "FAIL: status should print the summary: $out"; fail=1; }
+unset -f branch_pids
+# shellcheck source=SCRIPTDIR/dev-branch-servers.sh
+source "$script"
+
 # --- ports ------------------------------------------------------------------------------------
 
 busy=" 18080 18081 "

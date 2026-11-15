@@ -8,7 +8,8 @@
 #   scripts/dev-branch-servers.sh restart   stop, then start detached: the backend migrates the branch
 #                                           database to the migrations written since the last start
 #   scripts/dev-branch-servers.sh stop      stop them from another shell
-#   scripts/dev-branch-servers.sh status    print where they run (ports, database, logs)
+#   scripts/dev-branch-servers.sh status    print where they run (ports, database, logs); exits 1 when
+#                                           they aren't running
 #   scripts/dev-branch-servers.sh drop      drop the branch database, Kafka topics and groups, Redis index
 #   scripts/dev-branch-servers.sh name      print the branch database name
 #
@@ -415,6 +416,17 @@ cmd_restart() {
   cmd_start_detached
 }
 
+# Prints where the servers run and returns 0, or says they aren't running and returns 1, so an
+# agent can wait on it: until scripts/dev-branch-servers.sh status >/dev/null; do sleep 2; done
+cmd_status() {
+  if [[ -n "$(branch_pids)" && -f "$state/ports" ]]; then
+    summary
+  else
+    echo "not running ($db)"
+    return 1
+  fi
+}
+
 cmd_drop() {
   if [[ -n "$(branch_pids)" ]]; then
     echo "the branch servers are running; stop them first: scripts/dev-branch-servers.sh stop" >&2
@@ -473,8 +485,7 @@ main() {
     start) if $detach; then cmd_start_detached; else cmd_start; fi ;;
     restart) cmd_restart ;;
     stop) stop_all ;;
-    status)
-      if [[ -n "$(branch_pids)" && -f "$state/ports" ]]; then summary; else echo "not running ($db)"; fi ;;
+    status) cmd_status ;;
     drop) cmd_drop ;;
     name) echo "$db" ;;
   esac
