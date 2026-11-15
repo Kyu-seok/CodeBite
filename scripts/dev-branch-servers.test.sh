@@ -138,23 +138,49 @@ for col in 1 2 3; do
   check "concurrent starts get distinct ports (column $col)" \
     "$(echo "$picked" | awk -v c="$col" '{print $c}' | sort | uniq -d)" ""
 done
-[[ ! -d "$port_locks/.mutex" ]] || { echo "FAIL: the port mutex was left behind"; fail=1; }
+[[ ! -e "$port_locks/.mutex-pid" && ! -L "$port_locks/.mutex-pid" ]] || { echo "FAIL: the port mutex was left behind"; fail=1; }
+
+# The mutex a start holds is never broken, however long it holds it; one whose start died is
+# broken, by one waiter only. Each waiter enters a critical section that notes any overlap.
+rm -rf "$port_locks"; mkdir -p "$port_locks"
+sh -c 'sleep 30' & holder=$!
+ln -s "$holder" "$port_locks/.mutex-pid"
+touch -h -t 202001010000 "$port_locks/.mutex-pid" 2>/dev/null || true   # older than any staleness by age
+inside() {
+  mkdir "$fake/inside" 2>/dev/null || echo overlap >> "$fake/overlaps"
+  echo "$$ ${BASHPID:-}" >> "$fake/entered"
+  sleep 0.2
+  rmdir "$fake/inside"
+}
+export -f inside
+export fake
+rm -f "$fake/overlaps" "$fake/entered"
+for i in 1 2 3 4 5 6; do
+  bash -c 'source "$1"; port_locks=$2; with_port_mutex inside' _ "$script" "$port_locks" &
+done
+command sleep 1.5
+check "a live start's mutex is never broken" "$(cat "$fake/entered" 2>/dev/null | wc -l | tr -d ' ')" 0
+{ kill "$holder"; wait "$holder"; } 2>/dev/null || true
+wait
+check "once its start is gone, every waiter gets the mutex" "$(wc -l < "$fake/entered" | tr -d ' ')" 6
+check "a broken mutex lets in one waiter at a time" "$(cat "$fake/overlaps" 2>/dev/null)" ""
+[[ ! -e "$port_locks/.mutex-pid" && ! -L "$port_locks/.mutex-pid" ]] || { echo "FAIL: the port mutex was left behind"; fail=1; }
 
 # --- who listens on a port ----------------------------------------------------------------------
 
 # Fakes: 18080 is ours (pid 101), 18180 another worktree's (103), 15180 a stray process (104),
 # 18081 nobody's.
-port_listeners() {
+listener_pids() {
   case "$1" in 18080) echo 101 ;; 18180) echo 103 ;; 15180) echo 104 ;; esac
 }
 env_value() {
   case "$1" in 101) echo "$db" ;; 103) echo codebite_theirs ;; *) echo ;; esac
 }
 process_name() { echo node; }
-check "our listener" "$(port_listener 18080)" ours
-check "no listener" "$(port_listener 18081)" none
-check "another worktree's listener" "$(port_listener 18180)" "pid 103, the branch servers of codebite_theirs"
-check "a stray listener" "$(port_listener 15180)" "pid 104 (node), not a branch server"
+check "our listener" "$(listener_verdict 18080)" ours
+check "no listener" "$(listener_verdict 18081)" none
+check "another worktree's listener" "$(listener_verdict 18180)" "pid 103, the branch servers of codebite_theirs"
+check "a stray listener" "$(listener_verdict 15180)" "pid 104 (node), not a branch server"
 
 # --- status ---------------------------------------------------------------------------------
 
@@ -167,16 +193,19 @@ out=$(cmd_status) && code=0 || code=$?
 check "status when not running" "$code" 1
 check "status says not running" "$out" "not running ($db)"
 branch_pids() { echo 101; }
-port_listeners() { case "$1" in 18080 | 18180 | 15180) echo 101 ;; esac; }
+listener_pids() { case "$1" in 18080 | 18180 | 15180) echo 101 ;; esac; }
 printf 'backend_port=18080\nworker_port=18180\nvite_port=15180\nredis_db=3\n' > "$state/ports"
 out=$(cmd_status) && code=0 || code=$?
 check "status when all three are up" "$code" 0
 [[ "$out" == *"http://127.0.0.1:18080/api"* ]] || { echo "FAIL: status should print the summary: $out"; fail=1; }
-port_listeners() { case "$1" in 18080) echo 101 ;; esac; }
+backend_port=1 worker_port=2 vite_port=3 redis_db=4
+cmd_status >/dev/null || true
+check "status leaves the caller's ports alone" "$backend_port $worker_port $vite_port $redis_db" "1 2 3 4"
+listener_pids() { case "$1" in 18080) echo 101 ;; esac; }
 out=$(cmd_status) && code=0 || code=$?
 check "status while starting" "$code" 1
 [[ "$out" == *"worker: nothing listens on 18180 yet"* ]] || { echo "FAIL: status should name the app not up: $out"; fail=1; }
-port_listeners() { case "$1" in 18080 | 18180) echo 101 ;; 15180) echo 103 ;; esac; }
+listener_pids() { case "$1" in 18080 | 18180) echo 101 ;; 15180) echo 103 ;; esac; }
 out=$(cmd_status) && code=0 || code=$?
 check "status with a port held by another" "$code" 1
 [[ "$out" == *"frontend: port 15180 is held by pid 103, the branch servers of codebite_theirs, not this checkout's"* ]] \
@@ -191,7 +220,7 @@ check "start refuses another's server on its port" "$code" 1
   || { echo "FAIL: wait_for should name who holds the port: $out"; fail=1; }
 out=$(wait_for 999 http://127.0.0.1:18080 "$fake/backend.log" backend 18080 2>&1) && code=0 || code=$?
 check "start sees its own server up" "$out" "backend: up"
-unset -f branch_pids port_listeners env_value process_name curl kill
+unset -f branch_pids listener_pids env_value process_name curl kill
 # shellcheck source=SCRIPTDIR/dev-branch-servers.sh
 source "$script"
 

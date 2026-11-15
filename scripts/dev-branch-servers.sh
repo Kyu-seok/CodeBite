@@ -92,25 +92,33 @@ port_busy() {
 # named for the port, holding the database and the pid of the start that claimed it, written
 # under a mutex. A claim holds until that start's stop releases it or its pid is gone.
 
-# Runs $@ holding the port mutex, a directory (mkdir is atomic). A mutex older than a minute was
-# left by a start that died while picking, and is broken.
+# Runs $@ holding the port mutex: a symlink naming the holding start's pid (ln -s is atomic, and a
+# start that dies leaves its pid behind). A mutex whose pid is gone is broken, never one whose
+# start still runs, however long it holds it; and only under a second such link, the breaker, so
+# two waiters that both find it dead don't both break it (the second would break the first's new
+# mutex). A start killed while breaking leaves the breaker behind, and waiters give up after two
+# minutes, naming both links.
 with_port_mutex() {
-  local m="$port_locks/.mutex" i rc=0
+  local m="$port_locks/.mutex-pid" i rc=0 holder  # not .mutex, the directory an earlier version made
   mkdir -p "$port_locks"
   for (( i = 0; ; i++ )); do
-    mkdir "$m" 2>/dev/null && break
-    if [[ -n "$(find "$m" -maxdepth 0 -mmin +1 2>/dev/null)" ]]; then
-      rm -rf "$m"
+    ln -s "$$" "$m" 2>/dev/null && break
+    holder=$(readlink "$m" 2>/dev/null) || continue  # released meanwhile: try again at once
+    if ! kill -0 "$holder" 2>/dev/null && ln -s "$$" "$m.break" 2>/dev/null; then
+      # Under the breaker nobody else removes the mutex, so the dead pid read now is still its.
+      holder=$(readlink "$m" 2>/dev/null) && ! kill -0 "$holder" 2>/dev/null && rm -f "$m"
+      rm -f "$m.break"
       continue
     fi
     if (( i >= 1200 )); then
-      echo "the port mutex $m has been held for two minutes; remove it if no start is picking ports" >&2
+      echo "the port mutex $m (pid $holder) has been held for two minutes; if no start is picking ports," \
+        "remove it and $m.break" >&2
       return 1
     fi
     sleep 0.1
   done
   "$@" || rc=$?
-  rmdir "$m"
+  rm -f "$m"
   return "$rc"
 }
 
@@ -164,7 +172,8 @@ reserve_ports() {
   with_port_mutex pick_ports
 }
 
-port_listeners() {
+# The pids listening on port $1, one a line; none when it is free.
+listener_pids() {
   lsof -nP -iTCP:"$1" -sTCP:LISTEN -t 2>/dev/null || true
 }
 
@@ -173,9 +182,9 @@ process_name() {
 }
 
 # Who listens on port $1: ours (a process of this checkout's start), none, or which other process.
-port_listener() {
+listener_verdict() {
   local pids pid other
-  pids=$(port_listeners "$1")
+  pids=$(listener_pids "$1")
   if [[ -z "$pids" ]]; then
     echo none
     return 0
@@ -197,13 +206,13 @@ port_listener() {
 
 # Whether each port in $state/ports is listened on by this checkout's app; says which isn't.
 listeners_ours() {
-  # shellcheck disable=SC1091  # written by cmd_start
+  local backend_port worker_port vite_port redis_db ok=0 app port who
+  # shellcheck disable=SC1091  # written by cmd_start; sets the locals above, not the caller's
   source "$state/ports"
-  local ok=0 app port who
   for app in backend:$backend_port worker:$worker_port frontend:$vite_port; do
     port=${app#*:}
     app=${app%%:*}
-    who=$(port_listener "$port")
+    who=$(listener_verdict "$port")
     case "$who" in
       ours) ;;
       none) echo "$app: nothing listens on $port yet (starting, or stopped)"; ok=1 ;;
@@ -307,16 +316,22 @@ setup() {
   main=$(main_checkout)
   local branch
   branch=$(git -C "$root" branch --show-current)
-  db=$(branch_db_name "${branch:-$(basename "$root")}" "$root")
-  prefix="$db-"
   state_base="${TMPDIR:-/tmp}"
   state_base="${state_base%/}/codebite-dev-branch"
   port_locks="$state_base/.ports"
+  use_database "$(branch_db_name "${branch:-$(basename "$root")}" "$root")"
+}
+
+# Sets db to branch database $1, and the globals named for it: prefix and state.
+use_database() {
+  db=$1
+  prefix="$db-"
   state="$state_base/$db"
 }
 
 summary() {
-  # shellcheck disable=SC1091  # written by cmd_start
+  local backend_port worker_port vite_port redis_db
+  # shellcheck disable=SC1091  # written by cmd_start; sets the locals above, not the caller's
   source "$state/ports"
   cat <<EOS
 
@@ -345,7 +360,7 @@ wait_for() {
   local pid=$1 url=$2 log=$3 what=$4 port=$5 i who
   for (( i = 0; i < 600; i++ )); do
     if curl -fsS -o /dev/null "$url" 2>/dev/null; then
-      who=$(port_listener "$port")
+      who=$(listener_verdict "$port")
       case "$who" in
         ours) echo "$what: up"; return 0 ;;
         none) ;;
@@ -671,9 +686,7 @@ cmd_drop_orphan() {
     echo "$name isn't a branch database whose worktree is gone (scripts/dev-branch-servers.sh orphans lists those); dropping nothing" >&2
     exit 1
   fi
-  db=$name
-  prefix="$db-"
-  state="$state_base/$db"
+  use_database "$name"
   # Its servers, from whatever checkout they run.
   root=""
   if [[ -n "$(branch_pids)" ]]; then
