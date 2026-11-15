@@ -39,7 +39,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * non-negative integer, a map probe with a key that it hits only when held, intervals that start no later than they end, queue marks and tags on its positions, a grid's boxes a whole number and its shade on its cells, map entry labels as Text and chip marks on their list, the answer on the last frame only); its sample runs are, in order, exactly the problem's
  * sample Test Cases by {@code sampleInput} and {@code expected}, compared trimmed as the Grader
  * compares; each run ends on its {@code expected}; and any run marked {@code extra} comes after
- * the sample runs; every caption is one or two sentences in each language (#258); and every frame keeps #273's two rules (a change has a move into it, and {@code vars} repeats nothing drawn on the data; see the tests below). Correcting, adding or reordering a sample without regenerating the Walkthrough
+ * the sample runs; run N is labelled "Example N" exactly when the description shows {@code **Example N:**} ("Case N"
+ * otherwise, in Korean too); every caption is one or two sentences in each language (#258); and every frame keeps #273's two rules (a change has a move into it, and {@code vars} repeats nothing drawn on the data; see the tests below). Correcting, adding or reordering a sample without regenerating the Walkthrough
  * (its tracer is {@code scripts/walkthroughs/<slug>.py}) fails here.
  */
 class WalkthroughsMatchSamplesTest {
@@ -65,6 +66,13 @@ class WalkthroughsMatchSamplesTest {
 
     private static final Map<String, List<Sample>> SAMPLES = new HashMap<>();
 
+    /** Each problem's description by language ("en", "ko"), for the run labels. */
+    private static final Map<String, Map<String, String>> DESCRIPTIONS = new HashMap<>();
+
+    /** The word a run's label starts with, by language: for a sample its description shows as an Example, and for one it doesn't. */
+    private static final Map<String, String> EXAMPLE_WORD = Map.of("en", "Example", "ko", "예시");
+    private static final Map<String, String> CASE_WORD = Map.of("en", "Case", "ko", "케이스");
+
     @BeforeAll
     static void migrate() throws SQLException {
         DATABASE.migrate();
@@ -76,6 +84,12 @@ class WalkthroughsMatchSamplesTest {
                 row -> SAMPLES.get(row.getString(1)).add(new Sample(
                         MigratedDatabase.postgresText(row.getString(2)),
                         MigratedDatabase.postgresText(row.getString(3)))));
+        DATABASE.query("SELECT slug, description FROM problems", row -> DESCRIPTIONS
+                .computeIfAbsent(row.getString(1), k -> new HashMap<>()).put("en", MigratedDatabase.postgresText(row.getString(2))));
+        DATABASE.query("""
+                        SELECT p.slug, t.description FROM problem_translations t JOIN problems p ON p.id = t.problem_id
+                        WHERE t.locale = 'ko'""", row -> DESCRIPTIONS
+                .computeIfAbsent(row.getString(1), k -> new HashMap<>()).put("ko", MigratedDatabase.postgresText(row.getString(2))));
     }
 
     @Test
@@ -88,6 +102,63 @@ class WalkthroughsMatchSamplesTest {
         }
         assertTrue(mismatches.isEmpty(), "Walkthroughs that disagree with their problem's samples "
                 + "(regenerate with scripts/walkthroughs/<slug>.py):\n" + String.join("\n", mismatches));
+    }
+
+    @Test
+    void everyRunIsLabelledByItsExample() throws Exception {
+        List<String> mismatches = new ArrayList<>();
+        for (String slug : WALKTHROUGHS.slugs()) {
+            mismatches.addAll(labelMismatches(slug, JSON.readTree(WALKTHROUGHS.of(slug).orElseThrow()), DESCRIPTIONS.get(slug)));
+        }
+        assertTrue(mismatches.isEmpty(), "Walkthrough runs labelled against their problem's Examples (rerun "
+                + "scripts/walkthroughs/<slug>.py, .claude/skills/add-walkthrough/SKILL.md):\n" + String.join("\n", mismatches));
+    }
+
+    /** Descriptions of three samples where the first two are Examples, in English and Korean. */
+    private static final Map<String, String> TWO_EXAMPLES = Map.of(
+            "en", "Count them.\n\n**Example 1:**\n```\nInput: in 1\n```\n\n**Example 2:**\n```\nInput: in 2\n```",
+            "ko", "세어 보세요.\n\n**예시 1:**\n```\nInput: in 1\n```\n\n**예시 2:**\n```\nInput: in 2\n```");
+
+    @ParameterizedTest(name = "{0}")
+    @CsvSource(delimiter = '|', quoteCharacter = '`', value = {
+            "Case label for an Example              | run 2 (Case 2): en label is \"Case 2\", not \"Example 2\": the description has **Example 2:**",
+            "Korean Case label for an Example       | run 2 (Example 2): ko label is \"케이스 2\", not \"예시 2\": the description has **예시 2:**",
+            "Example label for a non-Example        | run 3 (Example 3): en label is \"Example 3\", not \"Case 3\": the description has no **Example 3:**",
+            "Korean Example label for a non-Example | run 3 (Case 3): ko label is \"예시 3\", not \"케이스 3\": the description has no **예시 3:**",
+            "label numbered past its run            | run 1 (Example 2): en label is \"Example 2\", not \"Example 1\"",
+    })
+    void aRunLabelledAgainstItsExampleIsCaught(String breakage, String expected) throws Exception {
+        ObjectNode walkthrough = labelledFixture();
+        ArrayNode runs = (ArrayNode) walkthrough.get("runs");
+        switch (breakage) {
+            case "Case label for an Example" -> label(runs.get(1), "Case 2", "케이스 2");
+            case "Korean Case label for an Example" -> label(runs.get(1), "Example 2", "케이스 2");
+            case "Example label for a non-Example" -> label(runs.get(2), "Example 3", "케이스 3");
+            case "Korean Example label for a non-Example" -> label(runs.get(2), "Case 3", "예시 3");
+            case "label numbered past its run" -> label(runs.get(0), "Example 2", "예시 1");
+            default -> throw new IllegalArgumentException(breakage);
+        }
+        List<String> found = labelMismatches("fixture", walkthrough, TWO_EXAMPLES);
+        assertTrue(found.stream().anyMatch(m -> m.startsWith("fixture: ") && m.contains(expected)),
+                breakage + " was not caught as \"" + expected + "\": " + found);
+    }
+
+    @Test
+    void runsLabelledByTheirExamplesPass() throws Exception {
+        ObjectNode walkthrough = labelledFixture();
+        ((ArrayNode) walkthrough.get("runs")).addObject().put("extra", true).putObject("label").put("en", "All fresh").put("ko", "모두 신선");
+        assertEquals(List.of(), labelMismatches("fixture", walkthrough, TWO_EXAMPLES));
+    }
+
+    /** {@link #samplesFixture()} labelled for {@link #TWO_EXAMPLES}: Example 1, Example 2, Case 3. */
+    private static ObjectNode labelledFixture() throws Exception {
+        ObjectNode walkthrough = samplesFixture();
+        label(walkthrough.get("runs").get(2), "Case 3", "케이스 3");
+        return walkthrough;
+    }
+
+    private static void label(JsonNode run, String english, String korean) {
+        ((ObjectNode) run).putObject("label").put("en", english).put("ko", korean);
     }
 
     // --- the checks catch what they should, each on a Walkthrough it builds ---------------------------------
@@ -987,6 +1058,35 @@ class WalkthroughsMatchSamplesTest {
         for (int s = sampleRuns; s < samples.size(); s++) {
             found.add(slug + ": sample " + (s + 1) + " (input " + quote(samples.get(s).input())
                     + ", expected output " + quote(samples.get(s).expected()) + ") has no run");
+        }
+        return found;
+    }
+
+    /**
+     * Each sample run of {@code walkthrough} labelled against its problem's {@code descriptions} (by language): run N is
+     * "Example N" ("예시 N") exactly when the description has {@code **Example N:**} ({@code **예시 N:**}), and "Case N"
+     * ("케이스 N") otherwise. Extra runs are labelled freely; descriptions null: no problem, reported by {@link #mismatches}.
+     */
+    static List<String> labelMismatches(String slug, JsonNode walkthrough, Map<String, String> descriptions) {
+        List<String> found = new ArrayList<>();
+        if (descriptions == null) return found;
+        JsonNode runs = walkthrough.path("runs");
+        int n = 0;
+        for (int r = 0; r < runs.size(); r++) {
+            JsonNode run = runs.get(r);
+            if (run.path("extra").asBoolean(false)) continue;
+            n++;
+            Map<String, String> labels = run.get("label") == null ? Map.of() : texts(run.get("label"));
+            for (var description : descriptions.entrySet()) {
+                String language = description.getKey(), example = "**" + EXAMPLE_WORD.get(language) + " " + n + ":**";
+                boolean shown = description.getValue().contains(example);
+                String expected = (shown ? EXAMPLE_WORD : CASE_WORD).get(language) + " " + n;
+                String label = labels.get(language);
+                if (!expected.equals(label)) {
+                    found.add(slug + ": " + runName(run, r) + ": " + language + " label is " + (label == null ? "missing" : quote(label))
+                            + ", not " + quote(expected) + ": the description has " + (shown ? "" : "no ") + example);
+                }
+            }
         }
         return found;
     }
