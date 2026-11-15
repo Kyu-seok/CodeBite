@@ -172,7 +172,8 @@ reserve_ports() {
   with_port_mutex pick_ports
 }
 
-port_listeners() {
+# The pids listening on port $1, one a line; none when it is free.
+listener_pids() {
   lsof -nP -iTCP:"$1" -sTCP:LISTEN -t 2>/dev/null || true
 }
 
@@ -181,9 +182,9 @@ process_name() {
 }
 
 # Who listens on port $1: ours (a process of this checkout's start), none, or which other process.
-port_listener() {
+listener_verdict() {
   local pids pid other
-  pids=$(port_listeners "$1")
+  pids=$(listener_pids "$1")
   if [[ -z "$pids" ]]; then
     echo none
     return 0
@@ -211,7 +212,7 @@ listeners_ours() {
   for app in backend:$backend_port worker:$worker_port frontend:$vite_port; do
     port=${app#*:}
     app=${app%%:*}
-    who=$(port_listener "$port")
+    who=$(listener_verdict "$port")
     case "$who" in
       ours) ;;
       none) echo "$app: nothing listens on $port yet (starting, or stopped)"; ok=1 ;;
@@ -359,7 +360,7 @@ wait_for() {
   local pid=$1 url=$2 log=$3 what=$4 port=$5 i who
   for (( i = 0; i < 600; i++ )); do
     if curl -fsS -o /dev/null "$url" 2>/dev/null; then
-      who=$(port_listener "$port")
+      who=$(listener_verdict "$port")
       case "$who" in
         ours) echo "$what: up"; return 0 ;;
         none) ;;
