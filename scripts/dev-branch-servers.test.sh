@@ -138,7 +138,33 @@ for col in 1 2 3; do
   check "concurrent starts get distinct ports (column $col)" \
     "$(echo "$picked" | awk -v c="$col" '{print $c}' | sort | uniq -d)" ""
 done
-[[ ! -d "$port_locks/.mutex" ]] || { echo "FAIL: the port mutex was left behind"; fail=1; }
+[[ ! -e "$port_locks/.mutex-pid" && ! -L "$port_locks/.mutex-pid" ]] || { echo "FAIL: the port mutex was left behind"; fail=1; }
+
+# The mutex a start holds is never broken, however long it holds it; one whose start died is
+# broken, by one waiter only. Each waiter enters a critical section that notes any overlap.
+rm -rf "$port_locks"; mkdir -p "$port_locks"
+sh -c 'sleep 30' & holder=$!
+ln -s "$holder" "$port_locks/.mutex-pid"
+touch -h -t 202001010000 "$port_locks/.mutex-pid" 2>/dev/null || true   # older than any staleness by age
+inside() {
+  mkdir "$fake/inside" 2>/dev/null || echo overlap >> "$fake/overlaps"
+  echo "$$ ${BASHPID:-}" >> "$fake/entered"
+  sleep 0.2
+  rmdir "$fake/inside"
+}
+export -f inside
+export fake
+rm -f "$fake/overlaps" "$fake/entered"
+for i in 1 2 3 4 5 6; do
+  bash -c 'source "$1"; port_locks=$2; with_port_mutex inside' _ "$script" "$port_locks" &
+done
+command sleep 1.5
+check "a live start's mutex is never broken" "$(cat "$fake/entered" 2>/dev/null | wc -l | tr -d ' ')" 0
+{ kill "$holder"; wait "$holder"; } 2>/dev/null || true
+wait
+check "once its start is gone, every waiter gets the mutex" "$(wc -l < "$fake/entered" | tr -d ' ')" 6
+check "a broken mutex lets in one waiter at a time" "$(cat "$fake/overlaps" 2>/dev/null)" ""
+[[ ! -e "$port_locks/.mutex-pid" && ! -L "$port_locks/.mutex-pid" ]] || { echo "FAIL: the port mutex was left behind"; fail=1; }
 
 # --- who listens on a port ----------------------------------------------------------------------
 

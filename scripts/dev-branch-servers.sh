@@ -92,25 +92,33 @@ port_busy() {
 # named for the port, holding the database and the pid of the start that claimed it, written
 # under a mutex. A claim holds until that start's stop releases it or its pid is gone.
 
-# Runs $@ holding the port mutex, a directory (mkdir is atomic). A mutex older than a minute was
-# left by a start that died while picking, and is broken.
+# Runs $@ holding the port mutex: a symlink naming the holding start's pid (ln -s is atomic, and a
+# start that dies leaves its pid behind). A mutex whose pid is gone is broken, never one whose
+# start still runs, however long it holds it; and only under a second such link, the breaker, so
+# two waiters that both find it dead don't both break it (the second would break the first's new
+# mutex). A start killed while breaking leaves the breaker behind, and waiters give up after two
+# minutes, naming both links.
 with_port_mutex() {
-  local m="$port_locks/.mutex" i rc=0
+  local m="$port_locks/.mutex-pid" i rc=0 holder  # not .mutex, the directory an earlier version made
   mkdir -p "$port_locks"
   for (( i = 0; ; i++ )); do
-    mkdir "$m" 2>/dev/null && break
-    if [[ -n "$(find "$m" -maxdepth 0 -mmin +1 2>/dev/null)" ]]; then
-      rm -rf "$m"
+    ln -s "$$" "$m" 2>/dev/null && break
+    holder=$(readlink "$m" 2>/dev/null) || continue  # released meanwhile: try again at once
+    if ! kill -0 "$holder" 2>/dev/null && ln -s "$$" "$m.break" 2>/dev/null; then
+      # Under the breaker nobody else removes the mutex, so the dead pid read now is still its.
+      holder=$(readlink "$m" 2>/dev/null) && ! kill -0 "$holder" 2>/dev/null && rm -f "$m"
+      rm -f "$m.break"
       continue
     fi
     if (( i >= 1200 )); then
-      echo "the port mutex $m has been held for two minutes; remove it if no start is picking ports" >&2
+      echo "the port mutex $m (pid $holder) has been held for two minutes; if no start is picking ports," \
+        "remove it and $m.break" >&2
       return 1
     fi
     sleep 0.1
   done
   "$@" || rc=$?
-  rmdir "$m"
+  rm -f "$m"
   return "$rc"
 }
 
