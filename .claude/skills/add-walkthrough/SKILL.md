@@ -62,7 +62,7 @@ Done when both captures end `✓ no console errors, no sideways scroll, no view 
 ./gradlew :backend:test --tests 'com.codebite.problem.*'
 ```
 
-`WalkthroughsMatchSamplesTest` checks every file in `walkthroughs/` against the migrated samples (one run per sample, in order, by `sampleInput` and `expected`, each ending on its answer) and the format; `ProblemSlugsTest` that the file names a current Slug. The rest of the package runs too because a new file changes what the endpoint and `hasWalkthrough` answer: #264's first file broke `WalkthroughEndpointTest`. It also fails on a caption of three or more sentences in either language, and on a frame breaking either of step 3's two rules. Wait until no other worktree's Gradle test run is going (`pgrep -f "Gradle Test Executor"` prints nothing): the machine fits one. Don't run it while `dev-branch-servers.sh` is compiling the backend: two Gradle builds in one worktree corrupt the backend build output (`./gradlew :backend:clean` recovers). Done when the package is green.
+`WalkthroughsMatchSamplesTest` checks every file in `walkthroughs/` against the migrated samples (one run per sample, in order, by `sampleInput` and `expected`, each ending on its answer) and the format; `ProblemSlugsTest` that the file names a current Slug. The rest of the package runs too because a new file changes what the endpoint and `hasWalkthrough` answer: #264's first file broke `WalkthroughEndpointTest`. It also fails on a run labelled against the description (run N is "Example N"/"예시 N" exactly when the description has `**Example N:**`/`**예시 N:**`, else "Case N"/"케이스 N"), on a caption of three or more sentences in either language, and on a frame breaking either of step 3's two rules. Wait until no other worktree's Gradle test run is going (`pgrep -f "Gradle Test Executor"` prints nothing): the machine fits one. Don't run it while `dev-branch-servers.sh` is compiling the backend: two Gradle builds in one worktree corrupt the backend build output (`./gradlew :backend:clean` recovers). Done when the package is green.
 
 ## 5. Check the tab
 
@@ -81,4 +81,4 @@ Commit `feat(problem): Walkthrough for <slug>` with the tracer and the JSON toge
 ## When a problem changes
 
 - **A sample Test Case changes** (`correct-test-cases`): `WalkthroughsMatchSamplesTest` goes red; run the tracer against a database with the correction and commit the new JSON with it.
-- **The Slug, title or parameter names change**: `.claude/skills/restate-problem/SKILL.md`, step 4, moves or regenerates the Walkthrough.
+- **The Slug, title, parameter names or Examples change**: `.claude/skills/restate-problem/SKILL.md`, step 4, moves or regenerates the Walkthrough.

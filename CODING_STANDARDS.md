@@ -26,7 +26,7 @@ A test that needs a problem without some optional asset (a Walkthrough, a Diagra
 
 _Example:_ `WalkthroughEndpointTest` renames `rotting-donuts` to a Slug with no Walkthrough file instead of naming `snack-drawer-pair`, which #264 gave one.
 
-The same holds for the wrong data a guard test feeds its check: it builds a small fixture, never edits a real file at a fixed frame, row or key, since regenerating that file moves what the position holds and the case then fails for the wrong reason or passes without testing anything. `WalkthroughsMatchSamplesTest`'s rule checks break `step(...)` and `varsFixture()` Walkthroughs they build (#296).
+The same holds for the wrong data a guard test feeds its check: it builds a small fixture, never edits a real file at a fixed frame, row or key, since regenerating that file moves what the position holds and the case then fails for the wrong reason or passes without testing anything. `WalkthroughsMatchSamplesTest`'s breakage cases each break a Walkthrough they build (`walkthrough(...)`, `step(...)`, `varsFixture()`; #296, #332).
 
 ## A highlight marks what its example points at
 
