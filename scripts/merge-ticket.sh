@@ -10,7 +10,8 @@
 # commit whose subject passes 72 characters (scripts/check-commit-subjects.sh, the commit-msg hook
 # that --no-verify skipped; its own "Merge …" subjects are exempt). On a conflict it aborts that
 # merge, lists the files and stops: earlier merges stay committed and unpushed. After the last merge
-# it runs, once, the checks git skips on a clean merge (no pre-commit hook runs): the backend and
+# it runs, once, the checks git skips on a clean merge (no pre-commit hook runs): the pre-commit
+# hook's repo-wide checks (doc references, kit copy, shellcheck, script tests), the backend and
 # worker tests, forced past UP-TO-DATE, then the frontend lint (no warnings), tests and build. It
 # pushes the integration branch once, only when all of them pass; otherwise it names the failed
 # check and leaves the merge commits unpushed (undo them with `git reset --hard origin/<integration>`).
@@ -58,6 +59,16 @@ merge_message() {
     "${MERGE_TICKET_TRAILER:-Co-Authored-By: Claude <noreply@anthropic.com>}"
 }
 
+# The repo-wide checks the pre-commit hook and CI run, which a ticket committed with --no-verify
+# skipped: doc references (CLAUDE.md's size ceiling too), the walkthrough kit copy, shellcheck and the
+# script tests. Seconds, so they go before Gradle.
+repo_checks() {
+  python3 -I scripts/check-doc-references.py \
+    && python3 -I scripts/copy-walkthrough-kit.py --check \
+    && if command -v shellcheck >/dev/null 2>&1; then shellcheck -S warning scripts/*.sh; fi \
+    && scripts/run-script-tests.sh
+}
+
 # The backend and worker tests, forced to run: a merge can leave Gradle's inputs looking unchanged,
 # and git runs no pre-commit hook on a clean merge, so UP-TO-DATE would mean they never ran.
 backend_checks() {
@@ -83,7 +94,7 @@ push_merge() {
 # The checks, then the push of branch $1 when all of them pass.
 check_and_push() {
   local current=$1 check
-  for check in backend frontend; do
+  for check in repo backend frontend; do
     echo "merge-ticket: running the $check checks"
     if ! "${check}_checks"; then
       echo "merge-ticket: $check checks failed; the merge commit $(git rev-parse --short HEAD) is not pushed" >&2
