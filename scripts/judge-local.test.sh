@@ -12,13 +12,13 @@ fail=0
 check() { [[ "$2" == "$3" ]] || { echo "FAIL: $1: expected '$3', got '$2'"; fail=1; }; }
 contains() { grep -qE -- "$3" <<<"$2" || { echo "FAIL: $1: no /$3/ in:"; echo "$2"; fail=1; }; }
 
-# The fake database: the newest migration is applied, and the export answers $fake/export.json.
+# The fake database: the newest migration is applied (FAKE_VERSION sets another), and the export answers $fake/export.json.
 mkdir "$fake/bin"
 cat > "$fake/bin/docker" <<'SH'
 #!/usr/bin/env bash
 sql=$(cat)
 echo "$* $sql" >> "$FAKE_DIR/docker.log"
-if [[ "$*$sql" == *flyway_schema_history* ]]; then echo 99999; else cat "$FAKE_DIR/export.json"; fi
+if [[ "$*$sql" == *flyway_schema_history* ]]; then echo "${FAKE_VERSION:-99999}"; else cat "$FAKE_DIR/export.json"; fi
 SH
 chmod +x "$fake/bin/docker"
 export FAKE_DIR=$fake PATH="$fake/bin:$PATH"
@@ -70,6 +70,18 @@ unset CODEBITE_DB
 check "a branch database's cases pass" "$code" 0
 contains "CODEBITE_DB names the database" "$(cat "$fake/docker.log")" "-d codebite_branch "
 if grep -q -- "-d codebite " "$fake/docker.log"; then echo "FAIL: CODEBITE_DB should replace the default"; fail=1; fi
+
+# --- a database behind this checkout --------------------------------------------------------------
+
+# Judging an older version of the cases would report ACCEPTED on cases that no longer exist, so a
+# database missing this checkout's migrations is refused, as problem-text.sh and db-sql.sh refuse it.
+FAKE_VERSION=1 run piggy-bank-total --languages python
+check "a database behind this checkout is refused" "$code" 2
+contains "the refusal names both versions" "$out" "database codebite at V1, this checkout.s migrations reach V[0-9]"
+contains "the refusal names the way past it" "$out" "CODEBITE_ALLOW_STALE=1"
+FAKE_VERSION=1 CODEBITE_ALLOW_STALE=1 run piggy-bank-total --languages python
+check "CODEBITE_ALLOW_STALE=1 judges a database behind" "$code" 0
+contains "judging a database behind still warns" "$out" "WARNING: database codebite at V1"
 
 # --- from a file, before the migration exists -------------------------------------------------
 
