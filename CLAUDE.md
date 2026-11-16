@@ -204,7 +204,7 @@ The problem workspace, solution pages and admin pages are `lazy` routes in `App.
 
 ### Issue tracker
 
-GitHub Issues in `Kyu-seok/CodeBite`, via the `gh` CLI. See `docs/agents/issue-tracker.md`.
+GitHub Issues in `Kyu-seok/CodeBite`. Reading, filing or commenting on an issue: the commands in `docs/agents/issue-tracker.md` (`scripts/gh-ticket.sh` files one, `--json` reads one with its comments).
 
 ### Triage labels
 
