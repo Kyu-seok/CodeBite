@@ -1,6 +1,6 @@
 # shellcheck shell=bash
-# Helpers scripts/dev-status.sh, scripts/dev-branch-servers.sh, scripts/problem-text.sh and
-# scripts/db-sql.sh share. Sourcing it runs nothing.
+# Helpers scripts/dev-status.sh, scripts/dev-branch-servers.sh, scripts/problem-text.sh,
+# scripts/db-sql.sh and scripts/judge-local.sh share. Sourcing it runs nothing.
 
 # The main checkout, which runs the shared dev servers: the parent of the common .git, the same
 # from the main checkout and from every worktree.

@@ -9,6 +9,9 @@
 #   CODEBITE_DB=<database> scripts/judge-local.sh <slug>         # a database other than codebite, such as
 #                                                                # the one scripts/dev-branch-servers.sh prints
 #
+# A database missing this checkout's migrations is refused (exit 2), as scripts/problem-text.sh and
+# scripts/db-sql.sh refuse it; CODEBITE_ALLOW_STALE=1 judges it anyway.
+#
 # Reference solutions are scripts/replay-solutions/<slug>.<py|java|js|cpp>, Solution class only, as
 # a user would submit it. A Former Slug works for the database. cases.json is a list of
 # {"input": ..., "expected_output": ...}; a null expected output only has to run.
@@ -20,6 +23,8 @@
 # C++ compiler when python3.12 and g++ on PATH aren't the ones to use.
 set -euo pipefail
 root="$(cd "$(dirname "$0")/.." && pwd)"
+# shellcheck source=SCRIPTDIR/dev-servers-common.sh
+source "$root/scripts/dev-servers-common.sh"
 
 usage() { echo "usage: scripts/judge-local.sh <slug> [--languages python,java,javascript,cpp] [--cases cases.json]" >&2; exit 2; }
 [[ $# -ge 1 && "$1" != -* ]] || usage
@@ -40,15 +45,9 @@ trap 'rm -rf "$work"' EXIT
 if [[ -z "$cases_file" ]]; then
   database=${CODEBITE_DB:-codebite}
   psql() { docker exec -i codebite-postgres psql -U codebite -d "$database" -X -q -v ON_ERROR_STOP=1 -tA "$@"; }
-  if ! db=$(psql -c "SELECT max(version::int) FROM flyway_schema_history WHERE success AND version ~ '^[0-9]+\$'" </dev/null 2>/dev/null); then
-    echo "judge-local.sh: database not reachable (docker container codebite-postgres); pass --cases instead" >&2
-    exit 2
-  fi
-  ours=$(find "$root/common/src/main/resources/db/migration" "$root/common/src/main/java/db/migration" \
-    -name 'V*__*' | sed -E 's|.*/V([0-9]+)__.*|\1|' | sort -n | tail -n 1)
-  if (( db < ours )); then
-    echo "WARNING: database $database at V$db, this checkout's migrations reach V$ours; run scripts/dev-branch-servers.sh migrate and rerun with CODEBITE_DB=<the database it prints>" >&2
-  fi
+  # A database missing this checkout's migrations holds the cases as they were: judging those
+  # would report ACCEPTED on cases the branch has changed.
+  require_current_db "$database" "$root" judge-local.sh || exit 2
   psql -v slug="$slug" > "$work/export.json" <<'SQL'
 SELECT json_build_object(
     'slug', p.slug,
