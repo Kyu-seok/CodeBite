@@ -52,6 +52,7 @@ One or more problem slugs to translate (e.g., `popular-vote` or `popular-vote,re
 - Paraphrase the English description in natural, easy-to-understand Korean
 - Do NOT translate literally word-by-word — rephrase so it reads naturally in Korean
 - Keep the same Markdown structure as the English version
+- Translate a judging-rule sentence into its Korean standard sentence word for word, not a paraphrase: the standard sentences for the judging rules (GLOSSARY.md: Level-Order Array, Any-Order Result, In-Place Method), as `V590__explain_level_order_arrays.java`, `V591__explain_any_order_results.java` and `V592__explain_in_place_methods.java` in `common/src/main/java/db/migration/` wrote them; `StatementsExplainJudgingTest` fails without them
 
 **What to translate:**
 - Problem statement text
