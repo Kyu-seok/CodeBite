@@ -8,21 +8,29 @@
 #   scripts/dev-branch-servers.sh restart   stop, then start detached: the backend migrates the branch
 #                                           database to the migrations written since the last start
 #   scripts/dev-branch-servers.sh stop      stop them from another shell
-#   scripts/dev-branch-servers.sh status    print where they run (ports, database, logs)
+#   scripts/dev-branch-servers.sh status    print where they run (ports, database, logs); exits 1, saying
+#                                           why, until each port is this checkout's app listening
+#   scripts/dev-branch-servers.sh migrate   create the branch database if missing and run this checkout's
+#                                           migrations on it, starting no server: for reading a problem
+#                                           (CODEBITE_DB=<it> scripts/problem-text.sh) as the branch has it
 #   scripts/dev-branch-servers.sh drop      drop the branch database, Kafka topics and groups, Redis index
+#   scripts/dev-branch-servers.sh orphans   list the branch databases whose worktree is gone
+#   scripts/dev-branch-servers.sh drop [<name>]  with a name, drop one of those, from any checkout
 #   scripts/dev-branch-servers.sh name      print the branch database name
 #
-# It refuses to run from the main checkout (only name and status work there): the servers there
+# It refuses to run from the main checkout (only name, status, orphans and drop <name> work there): the servers there
 # are the shared ones. Each piece is kept off the user's servers and data, and off other sessions':
 #   database  codebite_<branch>_<hash of this worktree's path> in the codebite-postgres container,
-#             migrated by the backend on start; its COMMENT names this worktree, and drop refuses a
+#             migrated by the backend on start (or by migrate, with no server); its COMMENT names this worktree, and drop refuses a
 #             database whose comment names another
 #   Kafka     topics and consumer groups prefixed with that name (app.kafka.topic.*, app.kafka.group-prefix),
 #             so neither side takes a share of the other's submissions or results
 #   Redis     a database index of its own (a fresh database's user ids collide with the shared one's),
 #             claimed by an owner key holding the database name; drop flushes only that index, never 0
 #   processes only those started with CODEBITE_DEV_BRANCH=<this database> are ever stopped
-#   ports     free ones from 18080 (backend), 18180 (worker), 15180 (Vite)
+#   ports     free ones from 18080 (backend), 18180 (worker), 15180 (Vite), each claimed under a lock
+#             so starts in two worktrees at once never take one port; start and status check that
+#             each port's listener is this checkout's process
 #   browser   Vite on 127.0.0.1, whose localStorage is apart from the user's localhost sessions
 #   Judge0    the shell's JUDGE0_URL when it is a dev one (a Tailscale name), else the dev profile's
 #             LAN default; never production's http://judge0:...
@@ -79,17 +87,139 @@ port_busy() {
   lsof -nP -iTCP:"$1" -sTCP:LISTEN >/dev/null 2>&1
 }
 
-# The first port in [from, to] that is neither reserved nor listened on.
-first_free_port() {
+# A port is checked free here but bound only when its server comes up, minutes later, so two
+# starts at once could both take it. Each port handed out is claimed first: a file in $port_locks
+# named for the port, holding the database and the pid of the start that claimed it, written
+# under a mutex. A claim holds until that start's stop releases it or its pid is gone.
+
+# Runs $@ holding the port mutex: a symlink naming the holding start's pid (ln -s is atomic, and a
+# start that dies leaves its pid behind). A mutex whose pid is gone is broken, never one whose
+# start still runs, however long it holds it; and only under a second such link, the breaker, so
+# two waiters that both find it dead don't both break it (the second would break the first's new
+# mutex). A start killed while breaking leaves the breaker behind, and waiters give up after two
+# minutes, naming both links.
+with_port_mutex() {
+  local m="$port_locks/.mutex-pid" i rc=0 holder  # not .mutex, the directory an earlier version made
+  mkdir -p "$port_locks"
+  for (( i = 0; ; i++ )); do
+    ln -s "$$" "$m" 2>/dev/null && break
+    holder=$(readlink "$m" 2>/dev/null) || continue  # released meanwhile: try again at once
+    if ! kill -0 "$holder" 2>/dev/null && ln -s "$$" "$m.break" 2>/dev/null; then
+      # Under the breaker nobody else removes the mutex, so the dead pid read now is still its.
+      holder=$(readlink "$m" 2>/dev/null) && ! kill -0 "$holder" 2>/dev/null && rm -f "$m"
+      rm -f "$m.break"
+      continue
+    fi
+    if (( i >= 1200 )); then
+      echo "the port mutex $m (pid $holder) has been held for two minutes; if no start is picking ports," \
+        "remove it and $m.break" >&2
+      return 1
+    fi
+    sleep 0.1
+  done
+  "$@" || rc=$?
+  rm -f "$m"
+  return "$rc"
+}
+
+# Whether port $1 is claimed by another database's start that is still running.
+port_held() {
+  local f="$port_locks/$1" owner="" pid=""
+  [[ -f "$f" ]] || return 1
+  read -r owner pid < "$f" || true
+  [[ "$owner" != "$db" && -n "$pid" ]] && kill -0 "$pid" 2>/dev/null
+}
+
+# Claims and prints the first port in [from, to] that is neither reserved, listened on nor held
+# by another start. Run under with_port_mutex.
+claim_port() {
   local p r
   for (( p = $1; p <= $2; p++ )); do
     for r in "${RESERVED_PORTS[@]}"; do
       [[ $p -eq $r ]] && continue 2
     done
-    port_busy "$p" || { echo "$p"; return 0; }
+    port_busy "$p" && continue
+    port_held "$p" && continue
+    mkdir -p "$port_locks"
+    printf '%s %s\n' "$db" "$$" > "$port_locks/$p"
+    echo "$p"
+    return 0
   done
   echo "no free port in $1-$2" >&2
   return 1
+}
+
+# Drops every claim $db holds.
+release_ports() {
+  local f owner
+  [[ -n "${port_locks:-}" && -d "$port_locks" ]] || return 0
+  for f in "$port_locks"/[0-9]*; do
+    [[ -f "$f" ]] || continue
+    read -r owner _ < "$f" || true
+    if [[ "$owner" == "$db" ]]; then rm -f "$f"; fi
+  done
+}
+
+pick_ports() {
+  release_ports
+  backend_port=$(claim_port 18080 18179) \
+    && worker_port=$(claim_port 18180 18279) \
+    && vite_port=$(claim_port 15180 15279)
+}
+
+# Sets backend_port, worker_port and vite_port to ports claimed for this start.
+reserve_ports() {
+  with_port_mutex pick_ports
+}
+
+# The pids listening on port $1, one a line; none when it is free.
+listener_pids() {
+  lsof -nP -iTCP:"$1" -sTCP:LISTEN -t 2>/dev/null || true
+}
+
+process_name() {
+  basename "$(ps -o comm= -p "$1" 2>/dev/null || echo gone)"
+}
+
+# Who listens on port $1: ours (a process of this checkout's start), none, or which other process.
+listener_verdict() {
+  local pids pid other
+  pids=$(listener_pids "$1")
+  if [[ -z "$pids" ]]; then
+    echo none
+    return 0
+  fi
+  for pid in $pids; do
+    if is_ours "$pid"; then
+      echo ours
+      return 0
+    fi
+  done
+  pid=$(echo "$pids" | head -n 1)
+  other=$(env_value "$pid" CODEBITE_DEV_BRANCH)
+  if [[ -n "$other" ]]; then
+    echo "pid $pid, the branch servers of $other"
+  else
+    echo "pid $pid ($(process_name "$pid")), not a branch server"
+  fi
+}
+
+# Whether each port in $state/ports is listened on by this checkout's app; says which isn't.
+listeners_ours() {
+  local backend_port worker_port vite_port redis_db ok=0 app port who
+  # shellcheck disable=SC1091  # written by cmd_start; sets the locals above, not the caller's
+  source "$state/ports"
+  for app in backend:$backend_port worker:$worker_port frontend:$vite_port; do
+    port=${app#*:}
+    app=${app%%:*}
+    who=$(listener_verdict "$port")
+    case "$who" in
+      ours) ;;
+      none) echo "$app: nothing listens on $port yet (starting, or stopped)"; ok=1 ;;
+      *) echo "$app: port $port is held by $who, not this checkout's $app"; ok=1 ;;
+    esac
+  done
+  return "$ok"
 }
 
 # Pids of this checkout's apps $@ (backend, worker, frontend; all three when none is named) that
@@ -179,20 +309,29 @@ kafka_bin() {
 }
 
 # Sets the globals the subcommands read: root (this checkout), main (the main checkout), db (the
-# branch database), prefix (its Kafka topic and group prefix) and state (the ports, pids and logs).
+# branch database), prefix (its Kafka topic and group prefix), state (the ports, pids and logs)
+# port_locks (every start's port claims) and state_base (every branch database's state).
 setup() {
   root=$(git rev-parse --show-toplevel)
   main=$(main_checkout)
   local branch
   branch=$(git -C "$root" branch --show-current)
-  db=$(branch_db_name "${branch:-$(basename "$root")}" "$root")
+  state_base="${TMPDIR:-/tmp}"
+  state_base="${state_base%/}/codebite-dev-branch"
+  port_locks="$state_base/.ports"
+  use_database "$(branch_db_name "${branch:-$(basename "$root")}" "$root")"
+}
+
+# Sets db to branch database $1, and the globals named for it: prefix and state.
+use_database() {
+  db=$1
   prefix="$db-"
-  state="${TMPDIR:-/tmp}"
-  state="${state%/}/codebite-dev-branch/$db"
+  state="$state_base/$db"
 }
 
 summary() {
-  # shellcheck disable=SC1091  # written by cmd_start
+  local backend_port worker_port vite_port redis_db
+  # shellcheck disable=SC1091  # written by cmd_start; sets the locals above, not the caller's
   source "$state/ports"
   cat <<EOS
 
@@ -214,13 +353,21 @@ Stop: Ctrl-C (unless detached), or scripts/dev-branch-servers.sh stop.  After a 
 EOS
 }
 
-# Waits until $2 answers or the process $1 dies; on death prints the log's tail.
+# Waits until $2 answers from this checkout's process listening on port $5, or the process $1
+# dies; on death prints the log's tail. Another server answering on the port is an error at once:
+# the start would otherwise take it for its own.
 wait_for() {
-  local pid=$1 url=$2 log=$3 what=$4 i
+  local pid=$1 url=$2 log=$3 what=$4 port=$5 i who
   for (( i = 0; i < 600; i++ )); do
     if curl -fsS -o /dev/null "$url" 2>/dev/null; then
-      echo "$what: up"
-      return 0
+      who=$(listener_verdict "$port")
+      case "$who" in
+        ours) echo "$what: up"; return 0 ;;
+        none) ;;
+        *)
+          echo "$what: port $port answers, but its listener is $who, not this checkout's $what" >&2
+          return 1 ;;
+      esac
     fi
     if ! kill -0 "$pid" 2>/dev/null; then
       echo "$what: exited before it came up; the end of $log:" >&2
@@ -258,7 +405,47 @@ stop_all() {
     done < "$state/pids"
     rm -f "$state/pids"
   fi
+  release_ports
   return 0
+}
+
+require_postgres() {
+  docker exec codebite-postgres pg_isready -q -U codebite \
+    || { echo "codebite-postgres is not running: docker compose -f infra/docker-compose.yml up -d" >&2; exit 1; }
+}
+
+# Creates the branch database, marked this worktree's, when it doesn't exist ($1 says what
+# migrates it); exits when it exists but is another worktree's.
+ensure_database() {
+  local comment
+  comment=$(db_owner_comment "$root")
+  case "$(database_verdict "$(database_state)" "$comment")" in
+    create)
+      psql_admin "CREATE DATABASE \"$db\"" >/dev/null
+      psql_admin "COMMENT ON DATABASE \"$db\" IS $(sql_literal "$comment")" >/dev/null
+      echo "database $db: created ($1)" ;;
+    ours) echo "database $db: exists" ;;
+    *)
+      echo "database $db exists but isn't this worktree's (its comment isn't '$comment'); not using it" >&2
+      exit 1 ;;
+  esac
+}
+
+# Runs this checkout's Flyway migrations, SQL and Java, against JDBC URL $1, as the backend does
+# on start (common's migrateDatabase task; no server).
+run_flyway() {
+  (cd "$root" && ./gradlew -q --console=plain :common:migrateDatabase -PmigrateUrl="$1")
+}
+
+# The branch database migrated to this checkout and nothing else: no server, Kafka topic or Redis
+# index. For reading a problem as this checkout has it (scripts/problem-text.sh).
+cmd_migrate() {
+  require_postgres
+  ensure_database "migrating it now"
+  echo "database $db: running this checkout's migrations"
+  run_flyway "jdbc:postgresql://localhost:5433/$db"
+  echo "database $db: at V$(flyway_version "$db")"
+  echo "read it with CODEBITE_DB=$db (scripts/problem-text.sh, scripts/db-sql.sh, scripts/judge-local.sh)"
 }
 
 cmd_start() {
@@ -267,25 +454,12 @@ cmd_start() {
     [[ -f "$state/ports" ]] && summary >&2
     exit 1
   fi
-  docker exec codebite-postgres pg_isready -q -U codebite \
-    || { echo "codebite-postgres is not running: docker compose -f infra/docker-compose.yml up -d" >&2; exit 1; }
+  require_postgres
   if ! docker exec codebite-kafka true || ! docker exec codebite-redis true; then
     echo "codebite-kafka or codebite-redis is not running" >&2
     exit 1
   fi
-
-  local comment
-  comment=$(db_owner_comment "$root")
-  case "$(database_verdict "$(database_state)" "$comment")" in
-    create)
-      psql_admin "CREATE DATABASE \"$db\"" >/dev/null
-      psql_admin "COMMENT ON DATABASE \"$db\" IS $(sql_literal "$comment")" >/dev/null
-      echo "database $db: created (the backend migrates it on start)" ;;
-    ours) echo "database $db: exists" ;;
-    *)
-      echo "database $db exists but isn't this worktree's (its comment isn't '$comment'); not using it" >&2
-      exit 1 ;;
-  esac
+  ensure_database "the backend migrates it on start"
 
   local redis_db
   redis_db=$(claim_redis_index)
@@ -295,9 +469,7 @@ cmd_start() {
   echo $$ > "$state/start.pid"
   : > "$state/pids"
   local backend_port worker_port vite_port
-  backend_port=$(first_free_port 18080 18179)
-  worker_port=$(first_free_port 18180 18279)
-  vite_port=$(first_free_port 15180 15279)
+  reserve_ports
   printf 'backend_port=%s\nworker_port=%s\nvite_port=%s\nredis_db=%s\n' \
     "$backend_port" "$worker_port" "$vite_port" "$redis_db" > "$state/ports"
 
@@ -341,20 +513,20 @@ JSON
   echo "backend: starting on $backend_port (log $state/backend.log)"
   SPRING_PROFILES_ACTIVE=dev SERVER_PORT=$backend_port ./gradlew :backend:bootRun > "$state/backend.log" 2>&1 &
   echo $! >> "$state/pids"
-  wait_for $! "http://127.0.0.1:$backend_port/api/health" "$state/backend.log" backend || exit 1
+  wait_for $! "http://127.0.0.1:$backend_port/api/health" "$state/backend.log" backend "$backend_port" || exit 1
 
   # After the backend: it creates the topics, and the two Gradle builds don't contend for common.
   echo "worker: starting on $worker_port (log $state/worker.log)"
   SERVER_PORT=$worker_port ./gradlew :worker:bootRun > "$state/worker.log" 2>&1 &
   echo $! >> "$state/pids"
-  wait_for $! "http://127.0.0.1:$worker_port/actuator/health" "$state/worker.log" worker || exit 1
+  wait_for $! "http://127.0.0.1:$worker_port/actuator/health" "$state/worker.log" worker "$worker_port" || exit 1
 
   echo "frontend: starting on $vite_port (log $state/vite.log)"
   (cd frontend && VITE_API_URL="http://127.0.0.1:$backend_port/api" \
     exec "$root/frontend/node_modules/.bin/vite" --host 127.0.0.1 --port "$vite_port" --strictPort) \
     > "$state/vite.log" 2>&1 &
   echo $! >> "$state/pids"
-  wait_for $! "$vite_origin" "$state/vite.log" frontend || exit 1
+  wait_for $! "$vite_origin" "$state/vite.log" frontend "$vite_port" || exit 1
 
   echo "database $db: at V$(flyway_version "$db")"
   summary
@@ -415,6 +587,18 @@ cmd_restart() {
   cmd_start_detached
 }
 
+# Prints where the servers run and returns 0 once each of their ports is listened on by this
+# checkout's app; else says what isn't up, or held by another process, and returns 1. An agent
+# can wait on it: until scripts/dev-branch-servers.sh status >/dev/null; do sleep 2; done
+cmd_status() {
+  if [[ -z "$(branch_pids)" || ! -f "$state/ports" ]]; then
+    echo "not running ($db)"
+    return 1
+  fi
+  listeners_ours || return 1
+  summary
+}
+
 cmd_drop() {
   if [[ -n "$(branch_pids)" ]]; then
     echo "the branch servers are running; stop them first: scripts/dev-branch-servers.sh stop" >&2
@@ -423,14 +607,30 @@ cmd_drop() {
   local comment
   comment=$(db_owner_comment "$root")
   case "$(database_verdict "$(database_state)" "$comment")" in
-    create) echo "database $db: none" ;;
-    ours)
-      psql_admin "DROP DATABASE IF EXISTS \"$db\" WITH (FORCE)" >/dev/null
-      echo "database $db: dropped" ;;
+    create)
+      # Nothing was ever started here (start makes the state directory, start and migrate the
+      # database): nothing to look for in Kafka or Redis.
+      if [[ ! -d "$state" ]]; then
+        echo "database $db: none; nothing to drop"
+        return 0
+      fi
+      echo "database $db: none" ;;
+    ours) drop_database ;;
     *)
       echo "database $db isn't this worktree's (its comment isn't '$comment'); dropping nothing" >&2
       exit 1 ;;
   esac
+  drop_branch_data
+}
+
+drop_database() {
+  psql_admin "DROP DATABASE IF EXISTS \"$db\" WITH (FORCE)" >/dev/null
+  echo "database $db: dropped"
+}
+
+# Deletes $db's Kafka topics and groups, flushes its Redis index and removes its state and port
+# claims: everything but the database.
+drop_branch_data() {
   local topics groups g
   topics=$(kafka_bin kafka-topics.sh --list | grep "^$prefix" || true)
   if [[ -n "$topics" ]]; then
@@ -443,7 +643,58 @@ cmd_drop() {
   done
   [[ -n "$groups" ]] && echo "Kafka groups: deleted $(echo "$groups" | paste -sd' ' -)"
   flush_owned_redis_index
+  release_ports
   rm -rf "$state"
+}
+
+# Each branch database (its COMMENT says this script made it) and the worktree that made it,
+# tab-separated.
+branch_databases() {
+  local tag
+  tag=$(db_owner_comment '')
+  psql_admin "SELECT datname || E'\\t' || substr(shobj_description(oid, 'pg_database'), $(( ${#tag} + 1 ))) FROM pg_database WHERE shobj_description(oid, 'pg_database') LIKE $(sql_literal "$tag%") ORDER BY datname"
+}
+
+# The branch databases whose worktree no longer exists (a shipped or removed branch's), with it.
+orphan_databases() {
+  local name path
+  branch_databases | while IFS=$'\t' read -r name path; do
+    [[ -n "$name" && ! -d "$path" ]] && printf '%s\t%s\n' "$name" "$path"
+  done
+  return 0
+}
+
+cmd_orphans() {
+  local list
+  list=$(orphan_databases)
+  if [[ -z "$list" ]]; then
+    echo "no branch database outlives its worktree"
+    return 0
+  fi
+  echo "branch databases whose worktree is gone:"
+  printf '%s\n' "$list" | while IFS=$'\t' read -r name path; do
+    echo "  $name  (was $path)"
+  done
+  echo "drop one, with its Kafka topics and Redis index: scripts/dev-branch-servers.sh drop <name>"
+}
+
+# Drops branch database $1 by name, from any checkout, when its worktree is gone; a live
+# worktree's is dropped from that worktree, and any other database is never touched.
+cmd_drop_orphan() {
+  local name=$1
+  if ! orphan_databases | cut -f1 | grep -qx -- "$name"; then
+    echo "$name isn't a branch database whose worktree is gone (scripts/dev-branch-servers.sh orphans lists those); dropping nothing" >&2
+    exit 1
+  fi
+  use_database "$name"
+  # Its servers, from whatever checkout they run.
+  root=""
+  if [[ -n "$(branch_pids)" ]]; then
+    echo "servers of $db still run (pids $(branch_pids | paste -sd' ' -)); dropping nothing" >&2
+    exit 1
+  fi
+  drop_database
+  drop_branch_data
 }
 
 usage() {
@@ -451,7 +702,7 @@ usage() {
 }
 
 main() {
-  local cmd=${1:-start} detach=false
+  local cmd=${1:-start} detach=false orphan=""
   case "$cmd" in
     start)
       case "${2:-}" in
@@ -459,23 +710,25 @@ main() {
         --detach) detach=true ;;
         *) usage; exit 2 ;;
       esac ;;
-    restart | stop | status | drop | name) [[ $# -le 1 ]] || { usage; exit 2; } ;;
+    drop) orphan=${2:-} ;;
+    restart | stop | status | migrate | orphans | name) [[ $# -le 1 ]] || { usage; exit 2; } ;;
     *) usage; exit 2 ;;
   esac
   (( $# <= 2 )) || { usage; exit 2; }
   setup
-  if [[ "$cmd" != name && "$cmd" != status && "$root" == "$main" ]]; then
+  if [[ "$cmd" != name && "$cmd" != status && "$cmd" != orphans && -z "$orphan" && "$root" == "$main" ]]; then
     echo "dev-branch-servers.sh: $root is the main checkout, whose servers are the shared ones;" \
-      "run it from a worktree (only name and status work here)" >&2
+      "run it from a worktree (only name, status, orphans and drop <name> work here)" >&2
     exit 1
   fi
   case "$cmd" in
     start) if $detach; then cmd_start_detached; else cmd_start; fi ;;
     restart) cmd_restart ;;
+    migrate) cmd_migrate ;;
     stop) stop_all ;;
-    status)
-      if [[ -n "$(branch_pids)" && -f "$state/ports" ]]; then summary; else echo "not running ($db)"; fi ;;
-    drop) cmd_drop ;;
+    status) cmd_status ;;
+    drop) if [[ -n "$orphan" ]]; then cmd_drop_orphan "$orphan"; else cmd_drop; fi ;;
+    orphans) cmd_orphans ;;
     name) echo "$db" ;;
   esac
 }

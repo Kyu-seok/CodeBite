@@ -47,7 +47,7 @@ if [[ -z "$cases_file" ]]; then
   ours=$(find "$root/common/src/main/resources/db/migration" "$root/common/src/main/java/db/migration" \
     -name 'V*__*' | sed -E 's|.*/V([0-9]+)__.*|\1|' | sort -n | tail -n 1)
   if (( db < ours )); then
-    echo "WARNING: database $database at V$db, this checkout's migrations reach V$ours; start scripts/dev-branch-servers.sh and rerun with CODEBITE_DB=<the database it prints>" >&2
+    echo "WARNING: database $database at V$db, this checkout's migrations reach V$ours; run scripts/dev-branch-servers.sh migrate and rerun with CODEBITE_DB=<the database it prints>" >&2
   fi
   psql -v slug="$slug" > "$work/export.json" <<'SQL'
 SELECT json_build_object(

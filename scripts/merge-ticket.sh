@@ -2,6 +2,7 @@
 # Merges finished ticket branches into the integration branch checked out in this worktree:
 #
 #   scripts/merge-ticket.sh <branch> <title> [<branch> <title> ...]
+#   scripts/merge-ticket.sh --checks-and-push <integration branch>
 #
 # For each branch in order, it takes origin/<branch> when that exists, else the local branch, and
 # merges it with --no-ff and the attribution trailer (MERGE_TICKET_TRAILER overrides it). It refuses
@@ -9,7 +10,8 @@
 # commit whose subject passes 72 characters (scripts/check-commit-subjects.sh, the commit-msg hook
 # that --no-verify skipped; its own "Merge …" subjects are exempt). On a conflict it aborts that
 # merge, lists the files and stops: earlier merges stay committed and unpushed. After the last merge
-# it runs, once, the checks git skips on a clean merge (no pre-commit hook runs): the backend and
+# it runs, once, the checks git skips on a clean merge (no pre-commit hook runs): the pre-commit
+# hook's repo-wide checks (doc references, kit copy, shellcheck, script tests), the backend and
 # worker tests, forced past UP-TO-DATE, then the frontend lint (no warnings), tests and build. It
 # pushes the integration branch once, only when all of them pass; otherwise it names the failed
 # check and leaves the merge commits unpushed (undo them with `git reset --hard origin/<integration>`).
@@ -26,9 +28,13 @@
 # cancelled: a skipped-check push (above) is checked only by that run, and a merge stacked on a red
 # tip hides which merge broke it (#264). A pending run doesn't stop it.
 #
-# A merge that changes this script hands the checks and the push to the merged copy, run as
-# `scripts/merge-ticket.sh --checks-and-push`: bash read this copy before the merge, so its checks are
-# the old ones. Keep that mode in every later version.
+# The second form merges nothing: it runs the checks below on HEAD and pushes it to <integration
+# branch> when they pass. It is the rerun after a failed check that turned out flaky: the merge
+# commits are already in place and unpushed, so rerun with the branch checked out here, e.g.
+# `scripts/merge-ticket.sh --checks-and-push spec/348-dev-tooling`, rather than merging again.
+# A merge that changes this script also hands the checks and the push to the merged copy this way:
+# bash read this copy before the merge, so its checks are the old ones. Keep that mode in every
+# later version.
 set -euo pipefail
 merge_ticket_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
@@ -51,6 +57,16 @@ merge_refusal() {
 merge_message() {
   printf 'Merge %s: %s\n\n%s\n' "$1" "$2" \
     "${MERGE_TICKET_TRAILER:-Co-Authored-By: Claude <noreply@anthropic.com>}"
+}
+
+# The repo-wide checks the pre-commit hook and CI run, which a ticket committed with --no-verify
+# skipped: doc references (CLAUDE.md's size ceiling too), the walkthrough kit copy, shellcheck and the
+# script tests. Seconds, so they go before Gradle.
+repo_checks() {
+  python3 -I scripts/check-doc-references.py \
+    && python3 -I scripts/copy-walkthrough-kit.py --check \
+    && if command -v shellcheck >/dev/null 2>&1; then shellcheck -S warning scripts/*.sh; fi \
+    && scripts/run-script-tests.sh
 }
 
 # The backend and worker tests, forced to run: a merge can leave Gradle's inputs looking unchanged,
@@ -78,7 +94,7 @@ push_merge() {
 # The checks, then the push of branch $1 when all of them pass.
 check_and_push() {
   local current=$1 check
-  for check in backend frontend; do
+  for check in repo backend frontend; do
     echo "merge-ticket: running the $check checks"
     if ! "${check}_checks"; then
       echo "merge-ticket: $check checks failed; the merge commit $(git rev-parse --short HEAD) is not pushed" >&2
@@ -213,6 +229,7 @@ if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
   fi
   if (( $# < 2 || $# % 2 != 0 )); then
     echo "usage: scripts/merge-ticket.sh <branch> <title> [<branch> <title> ...]" >&2
+    echo "       scripts/merge-ticket.sh --checks-and-push <integration branch>" >&2
     exit 2
   fi
   cd "$(git rev-parse --show-toplevel)"

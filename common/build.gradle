@@ -8,3 +8,19 @@ dependencies {
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
+
+// scripts/dev-branch-servers.sh migrate: a branch database migrated as the backend's Flyway would
+// on start, with no server. A source set of its own keeps the runner out of every jar.
+sourceSets {
+    migrate {
+        compileClasspath += sourceSets.main.output + sourceSets.main.compileClasspath
+        runtimeClasspath += sourceSets.main.output + sourceSets.main.runtimeClasspath
+    }
+}
+
+tasks.register('migrateDatabase', JavaExec) {
+    description = 'Runs the Flyway migrations against -PmigrateUrl (user and password codebite)'
+    classpath = sourceSets.migrate.runtimeClasspath
+    mainClass.set('com.codebite.migrate.MigrateBranchDatabase')
+    args = [project.findProperty('migrateUrl') ?: '', 'codebite', 'codebite']
+}

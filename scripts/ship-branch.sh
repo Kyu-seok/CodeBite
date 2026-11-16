@@ -5,8 +5,11 @@
 #   scripts/ship-branch.sh <branch> [--title <title> --body-file <file>]
 #
 # Run it from the main checkout. It fetches, reuses the branch's open PR (or opens one when given
-# --title and --body-file, pushing the branch first), waits for CI to register and finish,
-# squash-merges, then deletes the remote branch, the worktree checked out on it and the local
+# --title and --body-file, pushing the branch first), runs the branch's
+# scripts/copy-walkthrough-kit.py --check with the kit on this machine (CI has no kit), waits for
+# CI to register and finish,
+# squash-merges, then deletes the remote branch, the worktree checked out on it (first stopping
+# its branch servers and dropping their database: scripts/dev-branch-servers.sh) and the local
 # branch. It refuses master, a branch with no PR and no --title, and a run from inside that
 # branch's own worktree (the cleanup would remove the directory it runs in). When a check fails
 # it names it and leaves everything in place.
@@ -29,6 +32,17 @@ while [[ $# -gt 0 ]]; do
 done
 [[ $branch != master ]] || { echo "ship-branch: master is not shipped" >&2; exit 2; }
 
+# Stops the branch servers worktree $1 ran with scripts/dev-branch-servers.sh and drops their
+# database, Kafka topics and Redis index, from inside it: once it is gone only the main checkout's
+# `dev-branch-servers.sh orphans` finds them. A failure (Docker down, say) only warns.
+drop_branch_database() {
+  local script="$1/scripts/dev-branch-servers.sh"
+  [[ -x $script ]] || return 0
+  if ! (cd "$1" && "$script" stop >/dev/null && "$script" drop); then
+    echo "ship-branch: couldn't drop $1's branch database; later, from the main checkout: scripts/dev-branch-servers.sh orphans, then drop <name>" >&2
+  fi
+}
+
 here=$(git rev-parse --show-toplevel)
 worktree=$(git worktree list --porcelain | awk -v b="refs/heads/$branch" '$1=="worktree"{w=$2} $1=="branch" && $2==b {print w}')
 if [[ -n $worktree && $here == "$worktree" ]]; then
@@ -49,6 +63,20 @@ if [[ -z $n ]]; then
 fi
 echo "ship-branch: PR #$n"
 
+# CI can't see the walkthrough kit (it lives only on this machine), so the kit check that needs it
+# (the recorded kit commit is on the kit's main) runs here, on the branch's tree, with the kit
+# beside the main checkout.
+tree=$(mktemp -d)
+trap 'rm -rf "$tree"' EXIT
+git archive "origin/$branch" | tar -x -C "$tree"
+if [[ -f $tree/scripts/copy-walkthrough-kit.py ]]; then
+  kit=${WALKTHROUGH_KIT:-$(dirname "$(dirname "$(git rev-parse --path-format=absolute --git-common-dir)")")/walkthrough-skill}
+  if ! WALKTHROUGH_KIT=$kit python3 -I "$tree/scripts/copy-walkthrough-kit.py" --check; then
+    echo "ship-branch: $branch's walkthrough kit copy fails scripts/copy-walkthrough-kit.py --check, nothing merged" >&2
+    exit 1
+  fi
+fi
+
 poll=${SHIP_BRANCH_POLL:-10}
 for _ in $(seq 1 30); do
   out=$(gh pr checks "$n" 2>&1) && break
@@ -63,6 +91,9 @@ fi
 
 gh pr merge "$n" --squash
 git push -q origin --delete "$branch"
-[[ -z $worktree ]] || git worktree remove "$worktree"
+if [[ -n $worktree ]]; then
+  drop_branch_database "$worktree"
+  git worktree remove "$worktree"
+fi
 if git show-ref -q --verify "refs/heads/$branch"; then git branch -D "$branch" >/dev/null; fi
 echo "ship-branch: merged #$n, deleted $branch${worktree:+ and $worktree}"

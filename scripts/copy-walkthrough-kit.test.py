@@ -23,7 +23,7 @@ class CopyWalkthroughKit(unittest.TestCase):
         self.root = tmp / "codebite"
         (self.root / "scripts/walkthroughs").mkdir(parents=True)
         (self.root / "scripts/walkthroughs/codebite.py").write_text("# CodeBite's own\n")
-        git(tmp, "init", "-q", str(self.kit))
+        git(tmp, "init", "-q", "-b", "main", str(self.kit))
         git(self.kit, "config", "user.email", "t@example.com")
         git(self.kit, "config", "user.name", "t")
         self.kit_commit({"kit/walkthrough.js": "js 1\n", "kit/walkthrough.css": "css 1\n",
@@ -169,6 +169,28 @@ class CopyWalkthroughKit(unittest.TestCase):
         self.copy_in()
         self.kit_commit({"SKILL.md": "changed\n"})
         self.assertEqual(self.check(kit=self.kit), (0, ""))
+
+    def test_a_recorded_commit_only_on_a_side_branch_fails_until_main_contains_it(self):
+        git(self.kit, "switch", "-q", "-c", "side")
+        side = self.kit_commit({"kit/walkthrough.js": "js side\n"})
+        self.copy_in()
+        git(self.kit, "switch", "-q", "main")
+        main = git(self.kit, "rev-parse", "main")
+        self.assertEqual(self.check()[0], 0)
+        code, out = self.check(kit=self.kit)
+        self.assertEqual(code, 1)
+        self.assertIn(side[:7], out)
+        self.assertIn(main[:7], out)
+        self.assertIn("merge --ff-only " + side[:7], out)
+        git(self.kit, "merge", "-q", "--ff-only", "side")
+        self.assertEqual(self.check(kit=self.kit), (0, ""))
+
+    def test_a_kit_without_a_main_branch_is_noted_but_passes(self):
+        self.copy_in()
+        git(self.kit, "branch", "-m", "main", "trunk")
+        code, out = self.check(kit=self.kit)
+        self.assertEqual(code, 0)
+        self.assertIn("main", out)
 
 
 if __name__ == "__main__":

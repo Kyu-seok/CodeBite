@@ -39,7 +39,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * non-negative integer, a map probe with a key that it hits only when held, intervals that start no later than they end, queue marks and tags on its positions, a grid's boxes a whole number and its shade on its cells, map entry labels as Text and chip marks on their list, the answer on the last frame only); its sample runs are, in order, exactly the problem's
  * sample Test Cases by {@code sampleInput} and {@code expected}, compared trimmed as the Grader
  * compares; each run ends on its {@code expected}; and any run marked {@code extra} comes after
- * the sample runs; every caption is one or two sentences in each language (#258); and every frame keeps #273's two rules (a change has a move into it, and {@code vars} repeats nothing drawn on the data; see the tests below). Correcting, adding or reordering a sample without regenerating the Walkthrough
+ * the sample runs; run N is labelled "Example N" exactly when the description shows {@code **Example N:**} ("Case N"
+ * otherwise, in Korean too); every caption is one or two sentences in each language (#258); and every frame keeps #273's two rules (a change has a move into it, and {@code vars} repeats nothing drawn on the data; see the tests below). Correcting, adding or reordering a sample without regenerating the Walkthrough
  * (its tracer is {@code scripts/walkthroughs/<slug>.py}) fails here.
  */
 class WalkthroughsMatchSamplesTest {
@@ -65,6 +66,13 @@ class WalkthroughsMatchSamplesTest {
 
     private static final Map<String, List<Sample>> SAMPLES = new HashMap<>();
 
+    /** Each problem's description by language ("en", "ko"), for the run labels. */
+    private static final Map<String, Map<String, String>> DESCRIPTIONS = new HashMap<>();
+
+    /** The word a run's label starts with, by language: for a sample its description shows as an Example, and for one it doesn't. */
+    private static final Map<String, String> EXAMPLE_WORD = Map.of("en", "Example", "ko", "예시");
+    private static final Map<String, String> CASE_WORD = Map.of("en", "Case", "ko", "케이스");
+
     @BeforeAll
     static void migrate() throws SQLException {
         DATABASE.migrate();
@@ -76,6 +84,12 @@ class WalkthroughsMatchSamplesTest {
                 row -> SAMPLES.get(row.getString(1)).add(new Sample(
                         MigratedDatabase.postgresText(row.getString(2)),
                         MigratedDatabase.postgresText(row.getString(3)))));
+        DATABASE.query("SELECT slug, description FROM problems", row -> DESCRIPTIONS
+                .computeIfAbsent(row.getString(1), k -> new HashMap<>()).put("en", MigratedDatabase.postgresText(row.getString(2))));
+        DATABASE.query("""
+                        SELECT p.slug, t.description FROM problem_translations t JOIN problems p ON p.id = t.problem_id
+                        WHERE t.locale = 'ko'""", row -> DESCRIPTIONS
+                .computeIfAbsent(row.getString(1), k -> new HashMap<>()).put("ko", MigratedDatabase.postgresText(row.getString(2))));
     }
 
     @Test
@@ -90,17 +104,126 @@ class WalkthroughsMatchSamplesTest {
                 + "(regenerate with scripts/walkthroughs/<slug>.py):\n" + String.join("\n", mismatches));
     }
 
-    // --- the checks catch what they should, on a copy of rotting-donuts --------------------------
+    @Test
+    void everyRunIsLabelledByItsExample() throws Exception {
+        List<String> mismatches = new ArrayList<>();
+        for (String slug : WALKTHROUGHS.slugs()) {
+            mismatches.addAll(labelMismatches(slug, JSON.readTree(WALKTHROUGHS.of(slug).orElseThrow()), DESCRIPTIONS.get(slug)));
+        }
+        assertTrue(mismatches.isEmpty(), "Walkthrough runs labelled against their problem's Examples (rerun "
+                + "scripts/walkthroughs/<slug>.py, .claude/skills/add-walkthrough/SKILL.md):\n" + String.join("\n", mismatches));
+    }
+
+    /** Descriptions of three samples where the first two are Examples, in English and Korean. */
+    private static final Map<String, String> TWO_EXAMPLES = Map.of(
+            "en", "Count them.\n\n**Example 1:**\n```\nInput: in 1\n```\n\n**Example 2:**\n```\nInput: in 2\n```",
+            "ko", "세어 보세요.\n\n**예시 1:**\n```\nInput: in 1\n```\n\n**예시 2:**\n```\nInput: in 2\n```");
 
     @ParameterizedTest(name = "{0}")
-    @ValueSource(strings = {
-            "unknown view type", "mark outside the grid", "answer on a middle frame", "no answer on the last frame",
-            "answer not the expected", "expected not the sample's", "sampleInput not the sample's", "missing run",
-            "swapped runs", "extra run before a sample run", "extra run with a sampleInput", "run past the samples",
-            "empty caption", "three-sentence caption", "three-sentence Korean caption",
+    @CsvSource(delimiter = '|', quoteCharacter = '`', value = {
+            "Case label for an Example              | run 2 (Case 2): en label is \"Case 2\", not \"Example 2\": the description has **Example 2:**",
+            "Korean Case label for an Example       | run 2 (Example 2): ko label is \"케이스 2\", not \"예시 2\": the description has **예시 2:**",
+            "Example label for a non-Example        | run 3 (Example 3): en label is \"Example 3\", not \"Case 3\": the description has no **Example 3:**",
+            "Korean Example label for a non-Example | run 3 (Case 3): ko label is \"예시 3\", not \"케이스 3\": the description has no **예시 3:**",
+            "label numbered past its run            | run 1 (Example 2): en label is \"Example 2\", not \"Example 1\"",
+            "free label on a sample run             | run 3 (All fresh): en label is \"All fresh\", not \"Case 3\"",
+            "Korean free label on a sample run      | run 3 (Case 3): ko label is \"모두 신선\", not \"케이스 3\"",
+            "no label                               | run 2 (?): en label is missing, not \"Example 2\"",
     })
-    void aBrokenWalkthroughIsCaught(String breakage) throws Exception {
-        ObjectNode walkthrough = rottingDonuts();
+    void aRunLabelledAgainstItsExampleIsCaught(String breakage, String expected) throws Exception {
+        ObjectNode walkthrough = labelledFixture();
+        ArrayNode runs = (ArrayNode) walkthrough.get("runs");
+        switch (breakage) {
+            case "Case label for an Example" -> label(runs.get(1), "Case 2", "케이스 2");
+            case "Korean Case label for an Example" -> label(runs.get(1), "Example 2", "케이스 2");
+            case "Example label for a non-Example" -> label(runs.get(2), "Example 3", "케이스 3");
+            case "Korean Example label for a non-Example" -> label(runs.get(2), "Case 3", "예시 3");
+            case "label numbered past its run" -> label(runs.get(0), "Example 2", "예시 1");
+            case "free label on a sample run" -> label(runs.get(2), "All fresh", "케이스 3");
+            case "Korean free label on a sample run" -> label(runs.get(2), "Case 3", "모두 신선");
+            case "no label" -> ((ObjectNode) runs.get(1)).remove("label");
+            default -> throw new IllegalArgumentException(breakage);
+        }
+        List<String> found = labelMismatches("fixture", walkthrough, TWO_EXAMPLES);
+        assertTrue(found.stream().anyMatch(m -> m.startsWith("fixture: ") && m.contains(expected)),
+                breakage + " was not caught as \"" + expected + "\": " + found);
+    }
+
+    @Test
+    void runsLabelledByTheirExamplesPass() throws Exception {
+        ObjectNode walkthrough = labelledFixture();
+        ((ArrayNode) walkthrough.get("runs")).addObject().put("extra", true).putObject("label").put("en", "All fresh").put("ko", "모두 신선");
+        assertEquals(List.of(), labelMismatches("fixture", walkthrough, TWO_EXAMPLES));
+    }
+
+    /**
+     * A problem with no Korean description still has its Korean labels checked, against the English description's
+     * Examples: the samples it shows as Examples are the same in both languages, and skipping Korean would let any
+     * Korean label through.
+     */
+    @Test
+    void withNoKoreanDescriptionKoreanLabelsFollowTheEnglishExamples() throws Exception {
+        Map<String, String> englishOnly = Map.of("en", TWO_EXAMPLES.get("en"));
+        assertEquals(List.of(), labelMismatches("fixture", labelledFixture(), englishOnly));
+
+        ObjectNode walkthrough = labelledFixture();
+        label(walkthrough.get("runs").get(2), "Case 3", "예시 3");
+        List<String> found = labelMismatches("fixture", walkthrough, englishOnly);
+        assertTrue(found.stream().anyMatch(m -> m.contains("run 3 (Case 3): ko label is \"예시 3\", not \"케이스 3\"")),
+                found.toString());
+    }
+
+    /** {@link #samplesFixture()} labelled for {@link #TWO_EXAMPLES}: Example 1, Example 2, Case 3. */
+    private static ObjectNode labelledFixture() throws Exception {
+        ObjectNode walkthrough = samplesFixture();
+        label(walkthrough.get("runs").get(2), "Case 3", "케이스 3");
+        return walkthrough;
+    }
+
+    private static void label(JsonNode run, String english, String korean) {
+        ((ObjectNode) run).putObject("label").put("en", english).put("ko", korean);
+    }
+
+    // --- the checks catch what they should, each on a Walkthrough it builds ---------------------------------
+    //
+    // Each case breaks a fixture below, never a real Walkthrough at a fixed frame or move: regenerating a tracer moves
+    // what a position holds, and the case would then fail for the wrong reason or pass without testing anything
+    // (CODING_STANDARDS.md, "A test makes the missing asset it needs").
+
+    /**
+     * Three sample runs of a grid {@code tray} and a queue {@code queue}: in each, a cell joins the queue from the grid
+     * in its first frame and spreads to its neighbour in the second.
+     */
+    private static ObjectNode samplesFixture() throws Exception {
+        String run = """
+                [{'views': {'tray': {'cells': [[2, 1]]}, 'queue': {'values': [[0, 0]]}},
+                  'moves': [{'from': {'view': 'tray', 'at': [0, 0]}, 'to': {'view': 'queue', 'at': 0}}]},
+                 {'views': {'tray': {'cells': [[2, 2]]}, 'queue': {'values': []}},
+                  'moves': [{'from': {'view': 'tray', 'at': [0, 0]}, 'to': {'view': 'tray', 'at': [0, 1]}}]},
+                 {'views': {'tray': {'cells': [[2, 2]]}, 'queue': {'values': []}}}]""";
+        return walkthrough("[{'id': 'tray', 'type': 'grid'}, {'id': 'queue', 'type': 'queue'}]", run, run, run);
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @CsvSource(delimiter = '|', quoteCharacter = '`', value = {
+            "unknown view type               | view \"tray\": unknown type \"tree\"",
+            "mark outside the grid           | view \"tray\": mark \"lit\" names [9,9], not a cell [r, c] in the data",
+            "answer on a middle frame        | run 1 (Example 1) frame 2 of 3: answer \"4\" on a frame before the last",
+            "no answer on the last frame     | run 1 (Example 1): the last frame has no answer",
+            "answer not the expected         | run 1 (Example 1): the last frame's answer is \"5\", the run's expected is \"out 1\"",
+            "expected not the sample's       | run 1 (Example 1): expected is \"5\", sample 1's expected output is \"out 1\"",
+            "sampleInput not the sample's    | run 1 (Example 1): sampleInput is \"[[2,1]]\", sample 1's input is \"in 1\"",
+            "missing run                     | sample 3 (input \"in 3\", expected output \"out 3\") has no run",
+            "swapped runs                    | run 1 (Example 2): sampleInput is \"in 2\", sample 1's input is \"in 1\"",
+            "extra run before a sample run   | run 3 (Example 3): is a sample run after an extra run",
+            "extra run with a sampleInput    | run 4 (Example 1): is marked extra but has a sampleInput",
+            "run past the samples            | run 4 (Example 1): is not marked extra, but the problem has only 3 samples",
+            "empty caption                   | run 1 (Example 1) frame 1 of 3: caption missing",
+            "three-sentence caption          | run 1 (Example 1) frame 1 of 3: en caption has 3 sentences",
+            "three-sentence Korean caption   | run 1 (Example 1) frame 1 of 3: ko caption has 3 sentences",
+    })
+    void aBrokenWalkthroughIsCaught(String breakage, String expected) throws Exception {
+        ObjectNode walkthrough = samplesFixture();
         ArrayNode runs = (ArrayNode) walkthrough.get("runs");
         ObjectNode first = (ObjectNode) runs.get(0);
         ArrayNode frames = (ArrayNode) first.get("frames");
@@ -128,12 +251,18 @@ class WalkthroughsMatchSamplesTest {
                     .put("ko", "0분입니다. 상한 도넛이 둘입니다. 둘 다에서 퍼집니다.");
             default -> throw new IllegalArgumentException(breakage);
         }
-        List<String> found = mismatches("rotting-donuts", walkthrough, SAMPLES.get("rotting-donuts"));
-        assertFalse(found.isEmpty(), breakage + " was not caught");
-        assertTrue(found.stream().allMatch(m -> m.startsWith("rotting-donuts")), "Unnamed: " + found);
+        assertCaught(walkthrough, samples(3), breakage, expected);
     }
 
-    // --- moves and the map, on a copy of top-espresso-machines ---------------------------------------
+    /** One run of an array {@code log} counted into a map {@code uses}, beside a {@code vars} view and an output not drawn. */
+    private static ObjectNode movesFixture() throws Exception {
+        return walkthrough("""
+                        [{'id': 'log', 'type': 'array'}, {'id': 'uses', 'type': 'map'}, {'id': 'state', 'type': 'vars'},
+                         {'id': 'board', 'type': 'output'}]""", """
+                        [{'views': {'log': {'values': [3, 5]}, 'uses': {'entries': []}, 'state': {'items': []}}},
+                         {'views': {'log': {'values': [3, 5]}, 'uses': {'entries': [{'key': 3, 'value': 1}]}, 'state': {'items': []}},
+                          'moves': [{'from': {'view': 'log', 'at': 0}, 'to': {'view': 'uses', 'at': 3}}]}]""");
+    }
 
     @ParameterizedTest(name = "{0}")
     @CsvSource(delimiter = '|', quoteCharacter = '`', value = {
@@ -154,9 +283,8 @@ class WalkthroughsMatchSamplesTest {
             "output mark out of range                | view \"board\": mark \"good\" names 99",
     })
     void aBrokenMoveOrMapIsCaught(String breakage, String expected) throws Exception {
-        ObjectNode walkthrough = (ObjectNode) JSON.readTree(WALKTHROUGHS.of("top-espresso-machines").orElseThrow());
-        ObjectNode run = (ObjectNode) walkthrough.get("runs").get(0);
-        ArrayNode frames = (ArrayNode) run.get("frames");
+        ObjectNode walkthrough = movesFixture();
+        ArrayNode frames = (ArrayNode) walkthrough.get("runs").get(0).get("frames");
         ObjectNode move = (ObjectNode) frames.get(1).get("moves").get(0);
         ObjectNode views = (ObjectNode) frames.get(1).get("views");
         ObjectNode uses = (ObjectNode) views.get("uses");
@@ -169,10 +297,7 @@ class WalkthroughsMatchSamplesTest {
             case "move to a view type without addresses" -> ((ObjectNode) move.get("to")).put("view", "state");
             case "move with an unknown mark" -> move.put("mark", "loud");
             case "moves not a list" -> ((ObjectNode) frames.get(1)).put("moves", "uses");
-            case "move to a view not drawn in this frame" -> {
-                views.remove("uses");
-                if (run.get("setup") instanceof ObjectNode setup) setup.remove("uses");
-            }
+            case "move to a view not drawn in this frame" -> views.remove("uses");
             case "repeated map key" -> ((ArrayNode) uses.get("entries")).add(uses.get("entries").get(0).deepCopy());
             case "rank of a missing key" -> uses.putArray("ranks").add(99);
             case "repeated ranks key" -> uses.putArray("ranks").add(firstKey).add(firstKey);
@@ -186,15 +311,20 @@ class WalkthroughsMatchSamplesTest {
             }
             default -> throw new IllegalArgumentException(breakage);
         }
-        assertCaught("top-espresso-machines", walkthrough, breakage, expected);
+        assertCaught(walkthrough, samples(1), breakage, expected);
     }
 
-    // --- table cells, on a copy of group-anagrams ------------------------------------------------------
+    /** One run of a table {@code groups} whose second frame moves a value out of a cell. */
+    private static ObjectNode tableFixture() throws Exception {
+        return walkthrough("[{'id': 'groups', 'type': 'table'}]", """
+                [{'views': {'groups': {'rows': [{'cells': ['aet', ['eat']]}]}}},
+                 {'views': {'groups': {'rows': [{'cells': ['aet', ['eat']]}]}}, 'moves': [{'from': {'view': 'groups', 'at': [0, 1]}, 'mark': 'good'}]}]""");
+    }
 
     @ParameterizedTest(name = "{0}")
     @ValueSource(strings = {"move from a row that isn't there", "move from a column that isn't there", "move from a bare index"})
     void aBrokenTableAddressIsCaught(String breakage) throws Exception {
-        ObjectNode walkthrough = (ObjectNode) JSON.readTree(WALKTHROUGHS.of("group-anagrams").orElseThrow());
+        ObjectNode walkthrough = tableFixture();
         ArrayNode frames = (ArrayNode) walkthrough.get("runs").get(0).get("frames");
         ObjectNode from = (ObjectNode) frames.get(1).get("moves").get(0).get("from");
         switch (breakage) {
@@ -203,11 +333,16 @@ class WalkthroughsMatchSamplesTest {
             case "move from a bare index" -> from.put("at", 0);
             default -> throw new IllegalArgumentException(breakage);
         }
-        List<String> found = mismatches("group-anagrams", walkthrough, SAMPLES.get("group-anagrams"));
-        assertTrue(found.stream().anyMatch(m -> m.contains("is not a [row, col] of table")), breakage + " was not caught: " + found);
+        assertCaught(walkthrough, samples(1), breakage, "is not a [row, col] of table");
     }
 
-    // --- intervals, on a copy of merge-reservation-slots ---------------------------------------------
+    /** One run of an intervals view {@code line} on the axis 0 to 10: two slots in group 0 merged into group 1. */
+    private static ObjectNode intervalsFixture() throws Exception {
+        return walkthrough("[{'id': 'line', 'type': 'intervals'}]", """
+                [{'views': {'line': {'domain': [0, 10], 'groups': [{'intervals': [[1, 3], [2, 5]]}, {'intervals': []}]}}},
+                 {'views': {'line': {'domain': [0, 10], 'groups': [{'intervals': [[1, 3], [2, 5]]}, {'intervals': [[1, 5]]}]}},
+                  'moves': [{'from': {'view': 'line', 'at': [0, 1]}, 'to': {'view': 'line', 'at': [1, 0]}}]}]""");
+    }
 
     @ParameterizedTest(name = "{0}")
     @CsvSource(delimiter = '|', quoteCharacter = '`', value = {
@@ -220,7 +355,7 @@ class WalkthroughsMatchSamplesTest {
             "point with an unknown mark         | point 0 has unknown mark \"loud\"",
     })
     void aBrokenIntervalsViewIsCaught(String breakage, String expected) throws Exception {
-        ObjectNode walkthrough = (ObjectNode) JSON.readTree(WALKTHROUGHS.of("merge-reservation-slots").orElseThrow());
+        ObjectNode walkthrough = intervalsFixture();
         ArrayNode frames = (ArrayNode) walkthrough.get("runs").get(0).get("frames");
         ObjectNode move = (ObjectNode) frames.get(1).get("moves").get(0);
         ObjectNode line = (ObjectNode) frames.get(1).get("views").get("line");
@@ -232,22 +367,31 @@ class WalkthroughsMatchSamplesTest {
             case "mark outside its group" -> merged.putObject("marks").putArray("good").add(5);
             case "point off the axis" -> line.putArray("points").addObject().put("at", 999);
             case "domain not [low, high]" -> line.set("domain", JSON.readTree("[5, 1]"));
-            case "point with an unknown mark" -> line.putArray("points").addObject()
-                    .put("at", line.get("groups").get(0).get("intervals").get(0).get(0).asInt()).put("mark", "loud");
+            case "point with an unknown mark" -> line.putArray("points").addObject().put("at", 1).put("mark", "loud");
             default -> throw new IllegalArgumentException(breakage);
         }
-        assertCaught("merge-reservation-slots", walkthrough, breakage, expected);
+        assertCaught(walkthrough, samples(1), breakage, expected);
     }
 
-    // --- the set, on a copy of spot-duplicate-locker ----------------------------------------------------
+    /** One run of an array {@code lockers} read into a set {@code seen}, which a probe has missed. */
+    private static ObjectNode setFixture() throws Exception {
+        return walkthrough("[{'id': 'lockers', 'type': 'array'}, {'id': 'seen', 'type': 'set'}]", """
+                [{'views': {'lockers': {'values': [4, 7, 4]}, 'seen': {'members': [], 'probes': []}}},
+                 {'views': {'lockers': {'values': [4, 7, 4]}, 'seen': {'members': [4], 'probes': [{'value': 4, 'hit': false}]}},
+                  'moves': [{'from': {'view': 'lockers', 'at': 0}, 'to': {'view': 'seen', 'at': 4}}]}]""");
+    }
 
     @ParameterizedTest(name = "{0}")
-    @ValueSource(strings = {
-            "repeated set member", "move to a missing member", "probe hitting a non-member", "probe with no value",
-            "mark on a missing member", "probes not a list",
+    @CsvSource(delimiter = '|', quoteCharacter = '`', value = {
+            "repeated set member           | view \"seen\": member 4 repeats",
+            "move to a missing member      | to {\"view\":\"seen\",\"at\":999} is not a member of set \"seen\"",
+            "probe hitting a non-member    | view \"seen\": probe 1 hits 999, not a member",
+            "probe with no value           | view \"seen\": probe 1 has no value",
+            "mark on a missing member      | view \"seen\": mark \"lit\" names 999, not a member in the data",
+            "probes not a list             | view \"seen\": probes must be a list",
     })
-    void aBrokenSetIsCaught(String breakage) throws Exception {
-        ObjectNode walkthrough = (ObjectNode) JSON.readTree(WALKTHROUGHS.of("spot-duplicate-locker").orElseThrow());
+    void aBrokenSetIsCaught(String breakage, String expected) throws Exception {
+        ObjectNode walkthrough = setFixture();
         ObjectNode frame = (ObjectNode) walkthrough.get("runs").get(0).get("frames").get(1);
         ObjectNode move = (ObjectNode) frame.get("moves").get(0);
         ObjectNode seen = (ObjectNode) frame.get("views").get("seen");
@@ -260,12 +404,8 @@ class WalkthroughsMatchSamplesTest {
             case "probes not a list" -> seen.put("probes", 4);
             default -> throw new IllegalArgumentException(breakage);
         }
-        List<String> found = mismatches("spot-duplicate-locker", walkthrough, SAMPLES.get("spot-duplicate-locker"));
-        assertFalse(found.isEmpty(), breakage + " was not caught");
-        assertTrue(found.stream().anyMatch(m -> m.contains("\"seen\"")), breakage + " was caught as something else: " + found);
+        assertCaught(walkthrough, samples(1), breakage, expected);
     }
-
-    // --- the queue and grid moves, on a copy of rotting-donuts ------------------------------------------
 
     @ParameterizedTest(name = "{0}")
     @CsvSource(delimiter = '|', quoteCharacter = '`', value = {
@@ -278,9 +418,9 @@ class WalkthroughsMatchSamplesTest {
             "deque flag not true or false                      | view \"queue\": deque must be true or false",
     })
     void aBrokenQueueOrGridMoveIsCaught(String breakage, String expected) throws Exception {
-        ObjectNode walkthrough = rottingDonuts();
+        ObjectNode walkthrough = samplesFixture();
         ArrayNode frames = (ArrayNode) walkthrough.get("runs").get(0).get("frames");
-        ObjectNode joins = (ObjectNode) frames.get(0).get("moves").get(0); // a stale donut joins from its cell
+        ObjectNode joins = (ObjectNode) frames.get(0).get("moves").get(0); // a cell joins the queue from the grid
         ObjectNode queue = (ObjectNode) frames.get(0).get("views").get("queue");
         int n = queue.get("values").size();
         switch (breakage) {
@@ -293,10 +433,20 @@ class WalkthroughsMatchSamplesTest {
             case "deque flag not true or false" -> ((ObjectNode) walkthrough.get("views").get(1)).put("deque", "yes");
             default -> throw new IllegalArgumentException(breakage);
         }
-        assertCaught("rotting-donuts", walkthrough, breakage, expected);
+        assertCaught(walkthrough, samples(3), breakage, expected);
     }
 
-    // --- grid boxes and shade, map entry labels and chip marks, on a copy of valid-sudoku ----------------
+    /**
+     * One run of a 2x2 grid {@code board} in boxes of one cell, read into a map {@code rows} of chip lists, the cell
+     * read shaded with its band.
+     */
+    private static ObjectNode boardFixture() throws Exception {
+        return walkthrough("[{'id': 'board', 'type': 'grid', 'boxes': 1}, {'id': 'rows', 'type': 'map'}]", """
+                [{'views': {'board': {'cells': [['5', '3'], ['6', '.']]}, 'rows': {'entries': []}}},
+                 {'views': {'board': {'cells': [['5', '3'], ['6', '.']], 'shade': [[0, 0], [0, 1]], 'marks': {'lit': [[0, 0]]}},
+                            'rows': {'entries': [{'key': 'row 1', 'label': 'row 1', 'value': ['5']}]}},
+                  'moves': [{'from': {'view': 'board', 'at': [0, 0]}, 'to': {'view': 'rows', 'at': 'row 1'}}]}]""");
+    }
 
     @ParameterizedTest(name = "{0}")
     @CsvSource(delimiter = '|', quoteCharacter = '`', value = {
@@ -307,10 +457,10 @@ class WalkthroughsMatchSamplesTest {
             "chip mark past the entry's list     | view \"rows\": entry row 1: mark \"bad\" names 5, not a chip index",
     })
     void aBrokenBoardOrRegionCardIsCaught(String breakage, String expected) throws Exception {
-        ObjectNode walkthrough = (ObjectNode) JSON.readTree(WALKTHROUGHS.of("valid-sudoku").orElseThrow());
+        ObjectNode walkthrough = boardFixture();
         ArrayNode frames = (ArrayNode) walkthrough.get("runs").get(0).get("frames");
         ObjectNode board = (ObjectNode) walkthrough.get("views").get(0);
-        ObjectNode read = (ObjectNode) frames.get(1).get("views").get("board"); // the first digit read, its band shaded
+        ObjectNode read = (ObjectNode) frames.get(1).get("views").get("board");
         ObjectNode entry = (ObjectNode) frames.get(1).get("views").get("rows").get("entries").get(0);
         switch (breakage) {
             case "boxes not a whole number" -> board.put("boxes", "3");
@@ -320,10 +470,17 @@ class WalkthroughsMatchSamplesTest {
             case "chip mark past the entry's list" -> entry.putObject("marks").putArray("bad").add(5);
             default -> throw new IllegalArgumentException(breakage);
         }
-        assertCaught("valid-sudoku", walkthrough, breakage, expected);
+        assertCaught(walkthrough, samples(1), breakage, expected);
     }
 
-    // --- graph moves, on a copy of cheapest-courier-route ------------------------------------------
+    /** One run of a directed graph {@code cafes}, 0 to 1, whose edge relaxes node 1's cost into an array {@code now}. */
+    private static ObjectNode graphFixture() throws Exception {
+        String graph = "'nodes': [{'id': 0}, {'id': 1}], 'edges': [{'from': 0, 'to': 1, 'label': 50}]";
+        return walkthrough("[{'id': 'cafes', 'type': 'graph', 'directed': true}, {'id': 'now', 'type': 'array'}]",
+                "[{'views': {'cafes': {" + graph + "}, 'now': {'values': [0, 'inf']}}},"
+                        + " {'views': {'cafes': {" + graph + ", 'values': {'1': 50}}, 'now': {'values': [0, 50]}},"
+                        + "  'moves': [{'from': {'view': 'cafes', 'at': [0, 1]}, 'to': {'view': 'now', 'at': 1}, 'mark': 'good'}]}]");
+    }
 
     @ParameterizedTest(name = "{0}")
     @ValueSource(strings = {
@@ -332,14 +489,8 @@ class WalkthroughsMatchSamplesTest {
     })
     void aBrokenGraphMoveIsCaught(String breakage) throws Exception {
         String expected = "is not a node id or a [from, to] edge of graph \"cafes\"";
-        ObjectNode walkthrough = (ObjectNode) JSON.readTree(WALKTHROUGHS.of("cheapest-courier-route").orElseThrow());
-        ObjectNode relaxes = null; // the first move from an edge: a relaxed cost comes down into this round's row
-        for (JsonNode frame : walkthrough.get("runs").get(0).get("frames")) {
-            for (JsonNode move : frame.path("moves")) {
-                if (relaxes == null && "cafes".equals(move.path("from").path("view").asText())) relaxes = (ObjectNode) move;
-            }
-        }
-        assertNotNull(relaxes, "no move from an edge of cheapest-courier-route's graph");
+        ObjectNode walkthrough = graphFixture();
+        ObjectNode relaxes = (ObjectNode) walkthrough.get("runs").get(0).get("frames").get(1).get("moves").get(0);
         ObjectNode from = (ObjectNode) relaxes.get("from");
         JsonNode edge = from.get("at");
         switch (breakage) {
@@ -349,10 +500,17 @@ class WalkthroughsMatchSamplesTest {
             case "move to a missing node" -> relaxes.set("to", JSON.createObjectNode().put("view", "cafes").put("at", 99));
             default -> throw new IllegalArgumentException(breakage);
         }
-        assertCaught("cheapest-courier-route", walkthrough, breakage, expected);
+        assertCaught(walkthrough, samples(1), breakage, expected);
     }
 
-    // --- spans and slots, on a copy of longest-window-with-at-most-k-genres ------------------------------------------
+    /** One run of an array {@code queue} under a span {@code window}, counted into a map {@code window} of two slots. */
+    private static ObjectNode spanFixture() throws Exception {
+        return walkthrough("[{'id': 'queue', 'type': 'array'}, {'id': 'window', 'type': 'map'}]", """
+                [{'views': {'queue': {'values': ['a', 'b', 'a']}, 'window': {'entries': [], 'slots': 2}}},
+                 {'views': {'queue': {'values': ['a', 'b', 'a'], 'spans': {'window': {'from': 0, 'to': 0}}},
+                            'window': {'entries': [{'key': 'a', 'value': 1}], 'slots': 2}},
+                  'moves': [{'from': {'view': 'queue', 'at': 0}, 'to': {'view': 'window', 'at': 'a'}}]}]""");
+    }
 
     @ParameterizedTest(name = "{0}")
     @CsvSource(delimiter = '|', quoteCharacter = '`', value = {
@@ -367,7 +525,7 @@ class WalkthroughsMatchSamplesTest {
             "struck key not held              | struck names \"no such genre\", not a key",
     })
     void aBrokenSpanOrSlotIsCaught(String breakage, String expected) throws Exception {
-        ObjectNode walkthrough = (ObjectNode) JSON.readTree(WALKTHROUGHS.of("longest-window-with-at-most-k-genres").orElseThrow());
+        ObjectNode walkthrough = spanFixture();
         ObjectNode frame = (ObjectNode) walkthrough.get("runs").get(0).get("frames").get(1);
         ObjectNode queue = (ObjectNode) frame.get("views").get("queue");
         ObjectNode window = (ObjectNode) queue.get("spans").get("window");
@@ -385,13 +543,60 @@ class WalkthroughsMatchSamplesTest {
             case "struck key not held" -> genres.putArray("struck").add("no such genre");
             default -> throw new IllegalArgumentException(breakage);
         }
-        assertCaught("longest-window-with-at-most-k-genres", walkthrough, breakage, expected);
+        assertCaught(walkthrough, samples(1), breakage, expected);
     }
 
-    /** {@code breakage} was caught, by a line naming the Slug that says {@code expected}. */
-    private static void assertCaught(String slug, JsonNode walkthrough, String breakage, String expected) {
-        List<String> found = mismatches(slug, walkthrough, SAMPLES.get(slug));
-        assertTrue(found.stream().anyMatch(m -> m.startsWith(slug + ": ") && m.contains(expected)),
+    @ParameterizedTest(name = "{0}")
+    @ValueSource(strings = {"samples", "moves", "table", "intervals", "set", "board", "graph", "span"})
+    void aFixtureUnbrokenPasses(String fixture) throws Exception {
+        ObjectNode walkthrough = switch (fixture) {
+            case "samples" -> samplesFixture();
+            case "moves" -> movesFixture();
+            case "table" -> tableFixture();
+            case "intervals" -> intervalsFixture();
+            case "set" -> setFixture();
+            case "board" -> boardFixture();
+            case "graph" -> graphFixture();
+            case "span" -> spanFixture();
+            default -> throw new IllegalArgumentException(fixture);
+        };
+        assertEquals(List.of(), mismatches("fixture", walkthrough, samples(walkthrough.get("runs").size())));
+    }
+
+    /**
+     * A well-formed Walkthrough of {@code views}, one sample run per entry of {@code runs} (each a list of frames, JSON
+     * with single quotes for double): run n is labelled Example n, its sampleInput "in n" and expected "out n", every
+     * frame given a caption and the last the answer.
+     */
+    private static ObjectNode walkthrough(String views, String... runs) throws Exception {
+        ObjectNode walkthrough = (ObjectNode) fixture("{'format': 'walkthrough/1', 'title': 'Fixture', 'approach': 'Read each value once.', "
+                + "'views': " + views + "}");
+        ArrayNode all = walkthrough.putArray("runs");
+        for (int r = 0; r < runs.length; r++) {
+            int n = r + 1;
+            ArrayNode frames = (ArrayNode) fixture(runs[r]);
+            for (int f = 0; f < frames.size(); f++) {
+                ((ObjectNode) frames.get(f)).putObject("caption").put("en", "Step " + (f + 1) + ".").put("ko", (f + 1) + "단계입니다.");
+            }
+            ((ObjectNode) frames.get(frames.size() - 1)).put("answer", "out " + n);
+            ObjectNode run = all.addObject();
+            run.putObject("label").put("en", "Example " + n).put("ko", "예시 " + n);
+            run.put("sampleInput", "in " + n).put("expected", "out " + n).set("frames", frames);
+        }
+        return walkthrough;
+    }
+
+    /** The samples a {@link #walkthrough} of {@code count} runs shows: "in n" giving "out n". */
+    private static List<Sample> samples(int count) {
+        List<Sample> samples = new ArrayList<>();
+        for (int n = 1; n <= count; n++) samples.add(new Sample("in " + n, "out " + n));
+        return samples;
+    }
+
+    /** {@code breakage} to a fixture showing {@code samples} was caught, by a line naming it that says {@code expected}. */
+    private static void assertCaught(JsonNode walkthrough, List<Sample> samples, String breakage, String expected) {
+        List<String> found = mismatches("fixture", walkthrough, samples);
+        assertTrue(found.stream().anyMatch(m -> m.startsWith("fixture: ") && m.contains(expected)),
                 breakage + " was not caught as \"" + expected + "\": " + found);
     }
 
@@ -645,9 +850,9 @@ class WalkthroughsMatchSamplesTest {
 
     @Test
     void aWhyThatIsNotAReasonIsCaught() throws Exception {
-        ObjectNode walkthrough = (ObjectNode) JSON.readTree(WALKTHROUGHS.of("longest-window-with-at-most-k-genres").orElseThrow());
+        ObjectNode walkthrough = varsFixture();
         addItem(walkthrough, "limit", s -> JSON.getNodeFactory().numberNode(2), " ");
-        List<String> found = mismatches("longest-window-with-at-most-k-genres", walkthrough, SAMPLES.get("longest-window-with-at-most-k-genres"));
+        List<String> found = mismatches("fixture", walkthrough, null);
         assertTrue(found.stream().anyMatch(m -> m.contains("item \"limit\": why must be a non-empty string")), found.toString());
     }
 
@@ -799,10 +1004,10 @@ class WalkthroughsMatchSamplesTest {
 
     @Test
     void textDifferingOnlyInSurroundingWhitespaceMatchesAsTheGraderComparesIt() throws Exception {
-        List<Sample> samples = SAMPLES.get("rotting-donuts");
+        List<Sample> samples = samples(3);
         List<Sample> padded = List.of(new Sample(samples.get(0).input() + "\n", samples.get(0).expected()),
                 samples.get(1), new Sample(samples.get(2).input(), " " + samples.get(2).expected() + "\n"));
-        List<String> found = mismatches("rotting-donuts", rottingDonuts(), padded);
+        List<String> found = mismatches("fixture", samplesFixture(), padded);
         assertTrue(found.isEmpty(), String.join("\n", found));
     }
 
@@ -815,21 +1020,18 @@ class WalkthroughsMatchSamplesTest {
 
     @Test
     void aWalkthroughForNoProblemIsCaught() throws Exception {
-        assertFalse(mismatches("no-such-problem", rottingDonuts(), null).isEmpty());
+        List<String> found = mismatches("no-such-problem", samplesFixture(), null);
+        assertTrue(found.stream().anyMatch(m -> m.contains("no problem has this Slug")), found.toString());
     }
 
     @Test
     void anExtraRunAfterTheSamplesPasses() throws Exception {
-        ObjectNode walkthrough = rottingDonuts();
+        ObjectNode walkthrough = samplesFixture();
         ObjectNode extra = ((ArrayNode) walkthrough.get("runs")).addObject();
         extra.put("label", "All fresh").put("input", "ward = [[1]]").put("expected", "-1").put("extra", true);
         extra.putArray("frames").addObject().put("caption", "No stale donut: -1.").put("answer", "-1");
-        List<String> found = mismatches("rotting-donuts", walkthrough, SAMPLES.get("rotting-donuts"));
+        List<String> found = mismatches("fixture", walkthrough, samples(3));
         assertTrue(found.isEmpty(), String.join("\n", found));
-    }
-
-    private static ObjectNode rottingDonuts() throws Exception {
-        return (ObjectNode) JSON.readTree(WALKTHROUGHS.of("rotting-donuts").orElseThrow());
     }
 
     // --- the checks --------------------------------------------------------------------------------
@@ -879,6 +1081,38 @@ class WalkthroughsMatchSamplesTest {
         for (int s = sampleRuns; s < samples.size(); s++) {
             found.add(slug + ": sample " + (s + 1) + " (input " + quote(samples.get(s).input())
                     + ", expected output " + quote(samples.get(s).expected()) + ") has no run");
+        }
+        return found;
+    }
+
+    /**
+     * Each sample run of {@code walkthrough} labelled against its problem's {@code descriptions} (by language): run N is
+     * "Example N" ("예시 N") exactly when the description has {@code **Example N:**} ({@code **예시 N:**}), and "Case N"
+     * ("케이스 N") otherwise; a language with no description follows the English one's Examples. Extra runs are labelled
+     * freely; descriptions null: no problem, reported by {@link #mismatches}.
+     */
+    static List<String> labelMismatches(String slug, JsonNode walkthrough, Map<String, String> descriptions) {
+        List<String> found = new ArrayList<>();
+        if (descriptions == null) return found;
+        JsonNode runs = walkthrough.path("runs");
+        int n = 0;
+        for (int r = 0; r < runs.size(); r++) {
+            JsonNode run = runs.get(r);
+            if (run.path("extra").asBoolean(false)) continue;
+            n++;
+            Map<String, String> labels = run.get("label") == null ? Map.of() : texts(run.get("label"));
+            for (String language : List.of("en", "ko")) {
+                // With no description in a language, its labels follow the English one's Examples: the same samples
+                String shownIn = descriptions.containsKey(language) ? language : "en";
+                String example = "**" + EXAMPLE_WORD.get(shownIn) + " " + n + ":**";
+                boolean shown = descriptions.getOrDefault(shownIn, "").contains(example);
+                String expected = (shown ? EXAMPLE_WORD : CASE_WORD).get(language) + " " + n;
+                String label = labels.get(language);
+                if (!expected.equals(label)) {
+                    found.add(slug + ": " + runName(run, r) + ": " + language + " label is " + (label == null ? "missing" : quote(label))
+                            + ", not " + quote(expected) + ": the description has " + (shown ? "" : "no ") + example);
+                }
+            }
         }
         return found;
     }
