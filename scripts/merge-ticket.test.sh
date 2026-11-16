@@ -117,6 +117,7 @@ run_merge() {
     GIT_CONFIG_KEY_1=user.email GIT_CONFIG_VALUE_1=t@t GIT_CONFIG_KEY_2=core.hooksPath GIT_CONFIG_VALUE_2=/dev/null \
     merge_ticket "$@") 2>&1
 }
+repo_checks() { echo repo-ran; }
 backend_checks() { echo backend-ran; }
 frontend_checks() { echo frontend-ran; }
 ci_runs() { :; }  # no CI runs on HEAD unless a test says so
@@ -146,8 +147,18 @@ check "red: two parents" "$(git -C "$scratch/work" rev-list --parents -1 HEAD | 
 g -C "$scratch/work" reset -q --hard "$before"
 
 frontend_checks() { echo frontend-ran; }
+# The checks the pre-commit hook runs and --no-verify skipped (doc references, kit copy, scripts) go
+# first: a red one stops the merge before the minutes of Gradle.
+repo_checks() { echo repo-ran; return 1; }
+if out=$(run_merge ticket/ok 'Ok ticket'); then echo "FAIL: a failing repo check must fail"; fail=1; fi
+grep -q 'repo checks failed' <<<"$out" || { echo "FAIL: must name the repo checks: $out"; fail=1; }
+grep -q backend-ran <<<"$out" && { echo "FAIL: Gradle ran after a red repo check: $out"; fail=1; }
+check "repo red: not pushed" "$(remote_head)" "$before"
+g -C "$scratch/work" reset -q --hard "$before"
+repo_checks() { echo repo-ran; }
+
 if ! out=$(run_merge ticket/ok 'Ok ticket'); then echo "FAIL: green merge failed: $out"; fail=1; fi
-[[ "$out" == *backend-ran*frontend-ran* ]] || { echo "FAIL: checks not run: $out"; fail=1; }
+[[ "$out" == *repo-ran*backend-ran*frontend-ran* ]] || { echo "FAIL: checks not run: $out"; fail=1; }
 check "green: pushed" "$(remote_head)" "$(git -C "$scratch/work" rev-parse HEAD)"
 check "green: trailer" "$(git -C "$scratch/work" log -1 --format=%B | sed "/^$/d" | tail -1)" \
   "Co-Authored-By: Claude <noreply@anthropic.com>"
