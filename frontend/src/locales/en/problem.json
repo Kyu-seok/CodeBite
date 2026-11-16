@@ -348,7 +348,7 @@
     },
     "returnedNothing": {
       "title": "Your function didn't return anything",
-      "body": "CodeBite calls your function with each input and checks what it returns, not what it prints. Hand your answer back with return instead of printing it (print, console.log or System.out.println)."
+      "body": "CodeBite calls your function with each input and checks what it returns (or, when the statement says it changes its input in place, that input after the call), not what it prints. Hand your answer back with return instead of printing it (print, console.log or System.out.println)."
     },
     "compileError": {
       "title": "Compile Error: the code couldn't start",

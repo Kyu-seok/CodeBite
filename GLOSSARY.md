@@ -22,8 +22,20 @@ Changing a problem's Test Cases so they agree with its statement, where a case b
 _Avoid_: Regenerating test cases, test case fix
 
 **Guarantee**:
-What a problem's statement promises about every Test Case: that its input keeps the constraints and other promises ("sorted", "exactly one pair"), and that its expected output is the only answer the statement accepts. It is worked out from the statement alone, never from a solution, since a solution finds only one of several right answers.
+What a problem's statement promises about every Test Case: that its input keeps the constraints and other promises ("sorted", "exactly one pair"), and that its expected output is the only answer the statement accepts. Answers that differ only in an order the statement leaves free (an Any-Order Result) count as one answer. It is worked out from the statement alone, never from a solution, since a solution finds only one of several right answers.
 _Avoid_: Checker, validator, invariant
+
+**Level-Order Array**:
+A binary tree written as a list, row by row from the root and left to right within a row, with `null` for a missing child and the trailing `null`s left out. Every problem that takes or returns a tree as a list writes it this way, and its statement says so.
+_Avoid_: Serialized tree, tree array, BFS array
+
+**Any-Order Result**:
+A result whose order the statement leaves free, at the outer level or also within each item. It is judged after sorting, so every order of the same items passes, and the statement says both that the order is free and that it is sorted before comparing.
+_Avoid_: Unordered output, set result
+
+**In-Place Method**:
+A method that returns nothing and is judged on the input it was given, as it stands after the call. Its statement names the input that is read after the call.
+_Avoid_: Void method, mutating function
 
 **Problem Report**:
 A user's report that something in a problem is wrong (a Test Case, the description, the Starter Code), made from the problem page or from a Failing Case. CodeBite doesn't receive it: the user posts it publicly themselves, so it never carries a hidden case's input or expected output.

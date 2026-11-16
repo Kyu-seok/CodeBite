@@ -40,7 +40,8 @@ Done when you can state, from the Test Cases alone, what the problem computes, e
 2. Pick the Slug: kebab-case of the new title. It must be neither a current Slug nor a Former Slug (`ProblemRepository.isSlugTaken`; check both tables, or `ls common/src/main/resources/drivers/` plus `problem_former_slugs`).
 3. Pick the method and parameter names, if they change. Every name in the description's examples must match a name in the Starter Code.
 4. Keep each Korean constraint's code spans in the English order: `StatementsMatchTestCasesTest` checks it, so write "`0 <= parent[i] < n` (`i >= 1`인 경우)", not "`i >= 1`이면 `0 <= parent[i] < n`".
-5. When the rule hangs on an edge case, look for it among the samples (often the third: `amount = 0`, `")("`): making it an Example states the rule for free. An Example whose inputs are all empty strings can't be matched by `StatementsMatchTestCasesTest`, so state that rule in prose.
+5. Keep the standard sentences for the judging rules (a Level-Order Array, an Any-Order Result, an In-Place Method, GLOSSARY.md) word for word, as V590 to V592 in `common/src/main/java/db/migration/` wrote them; only the nouns before "in any order" and the input the grader reads may change. `StatementsExplainJudgingTest` fails on a statement without them.
+6. When the rule hangs on an edge case, look for it among the samples (often the third: `amount = 0`, `")("`): making it an Example states the rule for free. An Example whose inputs are all empty strings can't be matched by `StatementsMatchTestCasesTest`, so state that rule in prose.
 
 Done when each example's Input and Output are exactly a sample case's input and expected output (order_index 1 and 2), restated in the new names, the constraints describe the inputs the Test Cases actually contain, and each language has every Diagram the old description had.
 

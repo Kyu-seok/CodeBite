@@ -79,6 +79,7 @@ Rules:
 - Keep descriptions concise and clear
 - Use backticks for variable names and code
 - Add a Diagram under an example when the input is a grid, tree, graph or a linked list with a cycle or intersection: the rule and the block format are in `.claude/skills/add-diagram/SKILL.md`. Put the block straight into the description, the same in the Korean translation
+- State the judging rules the Driver and Starter Code imply, in the standard sentences (GLOSSARY.md: Level-Order Array, Any-Order Result, In-Place Method), copied from `V590__explain_level_order_arrays.java`, `V591__explain_any_order_results.java` and `V592__explain_in_place_methods.java` in `common/src/main/java/db/migration/`, in English and Korean: a tree taken or returned as a list, a result the Driver sorts ("both" when it also sorts each item), a `Solution` method that returns nothing. `StatementsExplainJudgingTest` fails without them
 
 ## Step 3: Write Test Cases
 
