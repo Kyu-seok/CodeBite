@@ -348,7 +348,7 @@
     },
     "returnedNothing": {
       "title": "함수가 아무것도 반환하지 않았습니다",
-      "body": "CodeBite는 입력마다 함수를 호출하고, 출력한 값이 아니라 반환한 값을 확인합니다. 답을 출력(print, console.log, System.out.println)하지 말고 return으로 돌려주세요."
+      "body": "CodeBite는 입력마다 함수를 호출하고, 출력한 값이 아니라 반환한 값(문제가 입력을 제자리에서 바꾸라고 하면 호출이 끝난 뒤의 그 입력)을 확인합니다. 답을 출력(print, console.log, System.out.println)하지 말고 return으로 돌려주세요."
     },
     "compileError": {
       "title": "컴파일 에러: 코드를 시작하지 못했습니다",
