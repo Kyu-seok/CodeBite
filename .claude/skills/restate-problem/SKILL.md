@@ -76,6 +76,8 @@ WHERE locale = 'ko'
 
 Leave out the `problem_former_slugs` insert and the `slug =` line when the Slug stays. Leave out any column that stays.
 
+For a text-only Restatement, `scripts/restate-text.py <spec.json>` writes this migration from exact old-to-new replacements on the statement as it stands (its header shows the spec), so no column is retyped: it refuses an edit whose old text isn't found exactly once.
+
 ## 4. Move and rename the assets
 
 1. When the Slug changes: `git mv` both `drivers/<old-slug>` and `starters/<old-slug>` to `<new-slug>`, and each `scripts/replay-solutions/<old-slug>.*` to `<new-slug>.*`.
