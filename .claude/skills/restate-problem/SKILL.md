@@ -44,6 +44,8 @@ Done when you can state, from the Test Cases alone, what the problem computes, e
 
 Done when each example's Input and Output are exactly a sample case's input and expected output (order_index 1 and 2), restated in the new names, the constraints describe the inputs the Test Cases actually contain, and each language has every Diagram the old description had.
 
+The exception is a problem whose Driver prints a check of the answer (`VALID`, or `k` and then the values), listed in `StatementsMatchTestCasesTest`'s `DRIVER_PRINTS_ANOTHER_FORM`: its Examples show the answer a user returns, and the statement says in prose what the judge prints.
+
 ## 3. Write the migration
 
 Create `common/src/main/resources/db/migration/V<next>__restate_<new_slug_with_underscores>.sql`, where `<next>` is one above the highest version on `origin/master` (another branch may have taken the next number: re-check before merging). The name is `V<n>__restate_<slug>.sql` when the English (or both languages) change and `V<n>__restate_<slug>_ko.sql` for a Korean-only Restatement (V218 to V272 are the examples). Use `$$…$$` quoting so backticks and apostrophes need no escaping. In this order:
