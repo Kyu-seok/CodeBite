@@ -1,0 +1,511 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Detect Portal Loop",
+  "ko": "포털 루프 감지"
+ },
+ "approach": {
+  "en": "fast moves two rooms for slow's one: on a chain that ends, fast reaches the end; on a loop, fast gains one room a step on slow and must land on it.",
+  "ko": "slow가 방 한 칸을 갈 때 fast는 두 칸을 갑니다. 끝이 있는 체인이면 fast가 끝에 닿고, 루프가 있으면 fast가 한 단계에 한 칸씩 slow를 따라잡아 결국 같은 방에 섭니다."
+ },
+ "views": [
+  {
+   "id": "rooms",
+   "type": "linkedlist",
+   "title": {
+    "en": "rooms from head",
+    "ko": "head부터의 방들"
+   },
+   "empty": {
+    "en": "no rooms",
+    "ko": "방 없음"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "head = [8,5,2,6,9], pos = 2",
+   "expected": "true",
+   "frames": [
+    {
+     "caption": {
+      "en": "slow and fast both start at the head 8; the last room 9 teleports back to 2 (index 2).",
+      "ko": "slow와 fast 모두 head 8에서 시작합니다. 마지막 방 9의 next가 인덱스 2의 방 2로 되돌아갑니다."
+     },
+     "views": {
+      "rooms": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 8
+        },
+        {
+         "id": 1,
+         "value": 5
+        },
+        {
+         "id": 2,
+         "value": 2
+        },
+        {
+         "id": 3,
+         "value": 6
+        },
+        {
+         "id": 4,
+         "value": 9
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": 4,
+        "4": 2
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       },
+       "pointers": {
+        "slow": 0,
+        "fast": 0
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "slow steps to 5; fast jumps two to 2.",
+      "ko": "slow는 5로 한 칸, fast는 2로 두 칸 갑니다."
+     },
+     "views": {
+      "rooms": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 8
+        },
+        {
+         "id": 1,
+         "value": 5
+        },
+        {
+         "id": 2,
+         "value": 2
+        },
+        {
+         "id": 3,
+         "value": 6
+        },
+        {
+         "id": 4,
+         "value": 9
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": 4,
+        "4": 2
+       },
+       "marks": {
+        "lit": [
+         1,
+         2
+        ]
+       },
+       "pointers": {
+        "slow": 1,
+        "fast": 2
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "slow steps to 2; fast jumps two to 9.",
+      "ko": "slow는 2로 한 칸, fast는 9로 두 칸 갑니다."
+     },
+     "views": {
+      "rooms": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 8
+        },
+        {
+         "id": 1,
+         "value": 5
+        },
+        {
+         "id": 2,
+         "value": 2
+        },
+        {
+         "id": 3,
+         "value": 6
+        },
+        {
+         "id": 4,
+         "value": 9
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": 4,
+        "4": 2
+       },
+       "marks": {
+        "lit": [
+         2,
+         4
+        ]
+       },
+       "pointers": {
+        "slow": 2,
+        "fast": 4
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "slow steps to 6 and fast jumps two to 6: they meet, so the chain loops. true.",
+      "ko": "slow는 6으로 한 칸, fast는 6으로 두 칸 갑니다. 둘이 만났으니 루프가 있고, 답은 true입니다."
+     },
+     "views": {
+      "rooms": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 8
+        },
+        {
+         "id": 1,
+         "value": 5
+        },
+        {
+         "id": 2,
+         "value": 2
+        },
+        {
+         "id": 3,
+         "value": 6
+        },
+        {
+         "id": 4,
+         "value": 9
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": 4,
+        "4": 2
+       },
+       "marks": {
+        "path": [
+         3
+        ]
+       },
+       "pointers": {
+        "slow": 3,
+        "fast": 3
+       }
+      }
+     },
+     "answer": "true"
+    }
+   ],
+   "sampleInput": "[8,5,2,6,9]\n2"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "head = [4,7,3], pos = 0",
+   "expected": "true",
+   "frames": [
+    {
+     "caption": {
+      "en": "slow and fast both start at the head 4; the last room 3 teleports back to 4 (index 0).",
+      "ko": "slow와 fast 모두 head 4에서 시작합니다. 마지막 방 3의 next가 인덱스 0의 방 4로 되돌아갑니다."
+     },
+     "views": {
+      "rooms": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 4
+        },
+        {
+         "id": 1,
+         "value": 7
+        },
+        {
+         "id": 2,
+         "value": 3
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       },
+       "pointers": {
+        "slow": 0,
+        "fast": 0
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "slow steps to 7; fast jumps two to 3.",
+      "ko": "slow는 7로 한 칸, fast는 3으로 두 칸 갑니다."
+     },
+     "views": {
+      "rooms": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 4
+        },
+        {
+         "id": 1,
+         "value": 7
+        },
+        {
+         "id": 2,
+         "value": 3
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 0
+       },
+       "marks": {
+        "lit": [
+         1,
+         2
+        ]
+       },
+       "pointers": {
+        "slow": 1,
+        "fast": 2
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "slow steps to 3; fast jumps two to 7.",
+      "ko": "slow는 3으로 한 칸, fast는 7로 두 칸 갑니다."
+     },
+     "views": {
+      "rooms": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 4
+        },
+        {
+         "id": 1,
+         "value": 7
+        },
+        {
+         "id": 2,
+         "value": 3
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 0
+       },
+       "marks": {
+        "lit": [
+         2,
+         1
+        ]
+       },
+       "pointers": {
+        "slow": 2,
+        "fast": 1
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "slow steps to 4 and fast jumps two to 4: they meet, so the chain loops. true.",
+      "ko": "slow는 4로 한 칸, fast는 4로 두 칸 갑니다. 둘이 만났으니 루프가 있고, 답은 true입니다."
+     },
+     "views": {
+      "rooms": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 4
+        },
+        {
+         "id": 1,
+         "value": 7
+        },
+        {
+         "id": 2,
+         "value": 3
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 0
+       },
+       "marks": {
+        "path": [
+         0
+        ]
+       },
+       "pointers": {
+        "slow": 0,
+        "fast": 0
+       }
+      }
+     },
+     "answer": "true"
+    }
+   ],
+   "sampleInput": "[4,7,3]\n0"
+  },
+  {
+   "label": {
+    "en": "Example 3",
+    "ko": "예시 3"
+   },
+   "input": "head = [6,2], pos = -1",
+   "expected": "false",
+   "frames": [
+    {
+     "caption": {
+      "en": "slow and fast both start at the head 6; the last room's next is null.",
+      "ko": "slow와 fast 모두 head 6에서 시작합니다. 마지막 방의 next는 null입니다."
+     },
+     "views": {
+      "rooms": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 6
+        },
+        {
+         "id": 1,
+         "value": 2
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": null
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       },
+       "pointers": {
+        "slow": 0,
+        "fast": 0
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "slow steps to 2; fast jumps two, past the last room to null.",
+      "ko": "slow는 2로 한 칸, fast는 두 칸 가서 마지막 방을 지나 null이 됩니다."
+     },
+     "views": {
+      "rooms": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 6
+        },
+        {
+         "id": 1,
+         "value": 2
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": null
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       },
+       "pointers": {
+        "slow": 1,
+        "fast": null
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Now fast is null: the chain ends, so there is no loop. false.",
+      "ko": "fast가 null이므로 체인이 끝납니다. 루프가 없으니 답은 false입니다."
+     },
+     "views": {
+      "rooms": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 6
+        },
+        {
+         "id": 1,
+         "value": 2
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": null
+       },
+       "marks": {
+        "dim": [
+         0,
+         1
+        ]
+       },
+       "pointers": {
+        "slow": 1,
+        "fast": null
+       }
+      }
+     },
+     "answer": "false"
+    }
+   ],
+   "sampleInput": "[6,2]\n-1"
+  }
+ ]
+}
