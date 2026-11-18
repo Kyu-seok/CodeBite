@@ -3,7 +3,7 @@
 of fixed capacity in a circular array of k slots, driven by the sample's list of calls, recording one frame per call
 on each sample Test Case.
 
-The call-list pattern (add-walkthrough views.md): the calls are an array with a pointer on the current one, each
+The call-list pattern (add-walkthrough views.md): the calls are a table, one row per call, the current one lit and those before it faded, each
 call's return value moves into an `output` (the Driver's printed list), and the slots change underneath, with head
 and rear as pointers and the slots outside the queue dimmed (a pulled message stays in its slot until a push
 writes over it).
@@ -30,7 +30,7 @@ wt = Walkthrough(
      "ko": "k개의 칸을 원형으로 씁니다. head가 맨 앞이고 size가 메시지 수이며, push는 (head + size) % k에 쓰므로 "
            "뒤쪽이 한 바퀴 돌아 pull로 비운 칸을 다시 씁니다."},
     views=[
-        {"id": "calls", "type": "array", "title": {"en": "calls (tag: method)", "ko": "calls (태그: 메서드)"}},
+        {"id": "calls", "type": "table", "title": {"en": "calls", "ko": "호출"}},
         {"id": "slots", "type": "array",
          "title": {"en": "slots (faded: not in the queue)", "ko": "slots (흐린 칸: 큐 밖)"}},
         {"id": "state", "type": "vars"},
@@ -43,8 +43,7 @@ def solve(ops, args, run):
     """The Driver's loop over the calls with the reference FixedRing inside, a frame per call. Returns the printed
     list."""
     n = len(ops)
-    cells = [str(a[0]) if a else "()" for a in args]
-    tags = [[i, "new" if op == "FixedRing" else op] for i, op in enumerate(ops)]
+    rows = [{"label": str(i), "cells": [op, str(a[0]) if a else ""]} for i, (op, a) in enumerate(zip(ops, args))]
     k = args[0][0]
     slots = [0] * k
     head = size = 0
@@ -61,9 +60,9 @@ def solve(ops, args, run):
         marks = {"dim": [s for s in range(k) if s not in live()]}
         marks.update(slot_marks or {})
         run.frame(caption,
-                  calls={"values": cells, "tags": tags, "pointers": {"call": None if path else i},
-                         "unread": list(range(i + 1, n)),
-                         "marks": {"lit": [] if path else [i], "dim": list(range(n)) if path else list(range(i))}},
+                  calls={"columns": [{"en": "call", "ko": "호출"}, {"en": "argument", "ko": "인자"}], "rows": rows,
+                         "marks": {} if path else {"dim": [[r, c] for r in range(i) for c in (0, 1)],
+                                                    "lit": [[i, 0], [i, 1]]}},
                   slots={"values": slots, "marks": marks,
                          "pointers": {"head": head, "rear": (head + size - 1) % k if size else None}},
                   state={"items": [{"label": "size", "value": size}]},
@@ -77,11 +76,11 @@ def solve(ops, args, run):
 
     def back(value):
         """A return value created by the call itself (a boolean, or -1), moving from the call into the output."""
-        return move(at("calls", i), at("result", returned(value)), value=json.dumps(value))
+        return move(at("calls", [i, 0]), at("result", returned(value)), value=json.dumps(value))
 
     returned(None)
     frame({"en": f"FixedRing({k}) makes {k} slots, all 0, with head = 0 and size = 0: an empty queue. It returns null.",
-           "ko": f"FixedRing({k})는 0으로 채운 칸 {k}개를 만들고 head = 0, size = 0인 빈 큐로 시작합니다. null을 반환합니다."})
+           "ko": f"FixedRing({k}): 0으로 채운 칸 {k}개를 만들고 head = 0, size = 0인 빈 큐로 시작합니다. null을 반환합니다."})
     for i in range(1, n):
         op = ops[i]
         if op == "push":
@@ -101,7 +100,7 @@ def solve(ops, args, run):
                    "ko": f"push({value}): {where}번 칸에 넣습니다{' (한 바퀴 돌아옴)' if wrap else ''}. "
                          f"size는 {josa(size, '이가')} 되고 true를 반환합니다."},
                   slot_marks={"good": [slot]},
-                  moves=[move(at("calls", i), at("slots", slot), value=str(value)), back(True)])
+                  moves=[move(at("calls", [i, 1]), at("slots", slot), value=str(value)), back(True)])
         elif op == "pull":
             if size == 0:
                 frame({"en": "pull(): size = 0, so the queue is empty and pull returns false.",

@@ -3,7 +3,7 @@
 queue built from an inbox and an outbox stack, driven by the sample's list of calls, recording one frame per call
 and one per value shifted from inbox to outbox, on each sample Test Case.
 
-The call-list pattern (add-walkthrough views.md): the calls are an array with a pointer on the current one, each
+The call-list pattern (add-walkthrough views.md): the calls are a table, one row per call, the current one lit and those before it faded, each
 call's return value moves into an `output` (the Driver's printed list), and the structure changes underneath.
 
     CODEBITE_DB=<database> scripts/walkthroughs/queue-from-stacks.py
@@ -28,7 +28,7 @@ wt = Walkthrough(
      "ko": "push는 inbox에 쌓고, pop과 peek은 outbox의 맨 위를 읽습니다. outbox가 비었을 때만 inbox 전체를 옮기며, "
            "옮기면 순서가 뒤집혀 가장 오래된 주문이 맨 위에 옵니다."},
     views=[
-        {"id": "calls", "type": "array", "title": {"en": "calls (tag: method)", "ko": "calls (태그: 메서드)"}},
+        {"id": "calls", "type": "table", "title": {"en": "calls", "ko": "호출"}},
         {"id": "inbox", "type": "array", "title": {"en": "inbox (stack, top on the right)", "ko": "inbox (스택, 오른쪽이 맨 위)"},
          "empty": {"en": "empty", "ko": "비어 있음"}},
         {"id": "outbox", "type": "array", "title": {"en": "outbox (stack, top on the right)", "ko": "outbox (스택, 오른쪽이 맨 위)"},
@@ -47,8 +47,7 @@ def solve(ops, args, run):
     """The Driver's loop over the calls with the reference QueueFromStacks inside, a frame per call and per value
     shifted. Returns the printed list."""
     n = len(ops)
-    cells = [str(a[0]) if a else "()" for a in args]
-    tags = [[i, "new" if op == "QueueFromStacks" else op] for i, op in enumerate(ops)]
+    rows = [{"label": str(i), "cells": [op, str(a[0]) if a else ""]} for i, (op, a) in enumerate(zip(ops, args))]
     inbox, outbox, result = [], [], []
     i = 0
 
@@ -58,9 +57,9 @@ def solve(ops, args, run):
         fresh = list(range(drawn[0], len(result)))
         drawn[0] = len(result)
         run.frame(caption,
-                  calls={"values": cells, "tags": tags, "pointers": {"call": None if path else i},
-                         "unread": list(range(i + 1, n)),
-                         "marks": {"lit": [] if path else [i], "dim": list(range(n)) if path else list(range(i))}},
+                  calls={"columns": [{"en": "call", "ko": "호출"}, {"en": "x", "ko": "x"}], "rows": rows,
+                         "marks": {} if path else {"dim": [[r, c] for r in range(i) for c in (0, 1)],
+                                                    "lit": [[i, 0], [i, 1]]}},
                   inbox={"values": inbox, "marks": inbox_marks or {}},
                   outbox={"values": outbox, "marks": outbox_marks or {}},
                   result={"values": result, "marks": {"path": list(range(len(result)))} if path
@@ -73,7 +72,7 @@ def solve(ops, args, run):
 
     returned(None)
     frame({"en": "QueueFromStacks() starts with two empty stacks, inbox and outbox, and returns null.",
-           "ko": "QueueFromStacks()는 빈 스택 inbox와 outbox 두 개로 시작하고 null을 반환합니다."})
+           "ko": "QueueFromStacks(): 빈 스택 inbox와 outbox 두 개로 시작하고 null을 반환합니다."})
 
     def shift():
         """_shift: when outbox is empty, every value in inbox moves over, one pop and push at a time."""
@@ -110,8 +109,8 @@ def solve(ops, args, run):
             frame({"en": f"push({x}): {x} goes on top of inbox, the back of the queue; push returns null.",
                    "ko": f"push({x}): {josa(x, '을를')} 큐의 뒤쪽인 inbox 맨 위에 넣고 null을 반환합니다."},
                   inbox_marks={"good": [len(inbox) - 1]},
-                  moves=[move(at("calls", i), at("inbox", len(inbox) - 1), value=str(x)),
-                         move(at("calls", i), at("result", k), value="null")])
+                  moves=[move(at("calls", [i, 1]), at("inbox", len(inbox) - 1), value=str(x)),
+                         move(at("calls", [i, 0]), at("result", k), value="null")])
         elif op in ("pop", "peek"):
             shifted = shift()
             top = len(outbox) - 1
@@ -141,7 +140,7 @@ def solve(ops, args, run):
                        "ko": f"두 스택에 주문이 {held}개 남아 있으므로 false를 반환합니다."}
             frame({"en": f"empty(): {why['en']}", "ko": f"empty(): {why['ko']}"},
                   inbox_marks={"lit": list(range(len(inbox)))}, outbox_marks={"lit": list(range(len(outbox)))},
-                  moves=[move(at("calls", i), at("result", k), value=shown(value))])
+                  moves=[move(at("calls", [i, 0]), at("result", k), value=shown(value))])
         else:
             raise ValueError(op)
     printed = driver_list([json.loads(v) for v in result])

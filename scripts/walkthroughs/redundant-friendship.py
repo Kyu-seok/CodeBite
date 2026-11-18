@@ -87,7 +87,7 @@ def solve(links, run):
             if len(seen) == 1:
                 return {"en": f"{x} is a root", "ko": f"{x}번은 루트"}
             return {"en": f"find({x}) climbs {' → '.join(map(str, seen))}",
-                    "ko": f"find({x})는 {''.join(f'{v} → ' for v in seen[:-1])}{josa(seen[-1], '(으)로')} 올라감"}
+                    "ko": f"{x}번에서 {''.join(f'{v} → ' for v in seen[:-1])}{josa(seen[-1], '(으)로')} 올라감"}
         ca, cb = climb(a, seen_a, root_a), climb(b, seen_b, root_b)
         halved = ""
         halved_ko = ""

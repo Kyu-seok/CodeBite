@@ -21,7 +21,7 @@ wt = Walkthrough(
     {"en": "Count Flag Bits", "ko": "비트 플래그 개수 세기"},
     {"en": "i & (i − 1) is i with its lowest 1 bit cleared, a smaller number already counted, "
            "so flagCounts[i] = flagCounts[i & (i − 1)] + 1.",
-     "ko": "i & (i − 1)은 i에서 가장 낮은 1 비트를 끈 더 작은 수라 이미 세어 두었으므로, "
+     "ko": "i & (i − 1) 값은 i에서 가장 낮은 1 비트를 끈 더 작은 수라 이미 세어 두었으므로, "
            "flagCounts[i] = flagCounts[i & (i − 1)] + 1입니다."},
     views=[
         {"id": "counts", "type": "array",

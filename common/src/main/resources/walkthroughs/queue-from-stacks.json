@@ -11,10 +11,10 @@
  "views": [
   {
    "id": "calls",
-   "type": "array",
+   "type": "table",
    "title": {
-    "en": "calls (tag: method)",
-    "ko": "calls (태그: 메서드)"
+    "en": "calls",
+    "ko": "호출"
    }
   },
   {
@@ -62,59 +62,76 @@
     {
      "caption": {
       "en": "QueueFromStacks() starts with two empty stacks, inbox and outbox, and returns null.",
-      "ko": "QueueFromStacks()는 빈 스택 inbox와 outbox 두 개로 시작하고 null을 반환합니다."
+      "ko": "QueueFromStacks(): 빈 스택 inbox와 outbox 두 개로 시작하고 null을 반환합니다."
      },
      "views": {
       "calls": {
-       "values": [
-        "()",
-        "1",
-        "2",
-        "()",
-        "()",
-        "()"
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "x",
+         "ko": "x"
+        }
        ],
-       "tags": [
-        [
-         0,
-         "new"
-        ],
-        [
-         1,
-         "push"
-        ],
-        [
-         2,
-         "push"
-        ],
-        [
-         3,
-         "peek"
-        ],
-        [
-         4,
-         "pop"
-        ],
-        [
-         5,
-         "empty"
-        ]
-       ],
-       "pointers": {
-        "call": 0
-       },
-       "unread": [
-        1,
-        2,
-        3,
-        4,
-        5
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "QueueFromStacks",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "peek",
+          ""
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "empty",
+          ""
+         ]
+        }
        ],
        "marks": {
+        "dim": [],
         "lit": [
-         0
-        ],
-        "dim": []
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ]
        }
       },
       "inbox": {
@@ -144,55 +161,80 @@
      },
      "views": {
       "calls": {
-       "values": [
-        "()",
-        "1",
-        "2",
-        "()",
-        "()",
-        "()"
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "x",
+         "ko": "x"
+        }
        ],
-       "tags": [
-        [
-         0,
-         "new"
-        ],
-        [
-         1,
-         "push"
-        ],
-        [
-         2,
-         "push"
-        ],
-        [
-         3,
-         "peek"
-        ],
-        [
-         4,
-         "pop"
-        ],
-        [
-         5,
-         "empty"
-        ]
-       ],
-       "pointers": {
-        "call": 1
-       },
-       "unread": [
-        2,
-        3,
-        4,
-        5
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "QueueFromStacks",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "peek",
+          ""
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "empty",
+          ""
+         ]
+        }
        ],
        "marks": {
-        "lit": [
-         1
-        ],
         "dim": [
-         0
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
         ]
        }
       },
@@ -226,7 +268,10 @@
       {
        "from": {
         "view": "calls",
-        "at": 1
+        "at": [
+         1,
+         1
+        ]
        },
        "to": {
         "view": "inbox",
@@ -237,7 +282,10 @@
       {
        "from": {
         "view": "calls",
-        "at": 1
+        "at": [
+         1,
+         0
+        ]
        },
        "to": {
         "view": "result",
@@ -254,55 +302,88 @@
      },
      "views": {
       "calls": {
-       "values": [
-        "()",
-        "1",
-        "2",
-        "()",
-        "()",
-        "()"
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "x",
+         "ko": "x"
+        }
        ],
-       "tags": [
-        [
-         0,
-         "new"
-        ],
-        [
-         1,
-         "push"
-        ],
-        [
-         2,
-         "push"
-        ],
-        [
-         3,
-         "peek"
-        ],
-        [
-         4,
-         "pop"
-        ],
-        [
-         5,
-         "empty"
-        ]
-       ],
-       "pointers": {
-        "call": 2
-       },
-       "unread": [
-        3,
-        4,
-        5
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "QueueFromStacks",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "peek",
+          ""
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "empty",
+          ""
+         ]
+        }
        ],
        "marks": {
-        "lit": [
-         2
-        ],
         "dim": [
-         0,
-         1
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
         ]
        }
       },
@@ -338,7 +419,10 @@
       {
        "from": {
         "view": "calls",
-        "at": 2
+        "at": [
+         2,
+         1
+        ]
        },
        "to": {
         "view": "inbox",
@@ -349,7 +433,10 @@
       {
        "from": {
         "view": "calls",
-        "at": 2
+        "at": [
+         2,
+         0
+        ]
        },
        "to": {
         "view": "result",
@@ -366,55 +453,96 @@
      },
      "views": {
       "calls": {
-       "values": [
-        "()",
-        "1",
-        "2",
-        "()",
-        "()",
-        "()"
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "x",
+         "ko": "x"
+        }
        ],
-       "tags": [
-        [
-         0,
-         "new"
-        ],
-        [
-         1,
-         "push"
-        ],
-        [
-         2,
-         "push"
-        ],
-        [
-         3,
-         "peek"
-        ],
-        [
-         4,
-         "pop"
-        ],
-        [
-         5,
-         "empty"
-        ]
-       ],
-       "pointers": {
-        "call": 3
-       },
-       "unread": [
-        4,
-        5
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "QueueFromStacks",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "peek",
+          ""
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "empty",
+          ""
+         ]
+        }
        ],
        "marks": {
-        "lit": [
-         3
-        ],
         "dim": [
-         0,
-         1,
-         2
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
         ]
        }
       },
@@ -470,55 +598,96 @@
      },
      "views": {
       "calls": {
-       "values": [
-        "()",
-        "1",
-        "2",
-        "()",
-        "()",
-        "()"
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "x",
+         "ko": "x"
+        }
        ],
-       "tags": [
-        [
-         0,
-         "new"
-        ],
-        [
-         1,
-         "push"
-        ],
-        [
-         2,
-         "push"
-        ],
-        [
-         3,
-         "peek"
-        ],
-        [
-         4,
-         "pop"
-        ],
-        [
-         5,
-         "empty"
-        ]
-       ],
-       "pointers": {
-        "call": 3
-       },
-       "unread": [
-        4,
-        5
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "QueueFromStacks",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "peek",
+          ""
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "empty",
+          ""
+         ]
+        }
        ],
        "marks": {
-        "lit": [
-         3
-        ],
         "dim": [
-         0,
-         1,
-         2
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
         ]
        }
       },
@@ -574,55 +743,96 @@
      },
      "views": {
       "calls": {
-       "values": [
-        "()",
-        "1",
-        "2",
-        "()",
-        "()",
-        "()"
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "x",
+         "ko": "x"
+        }
        ],
-       "tags": [
-        [
-         0,
-         "new"
-        ],
-        [
-         1,
-         "push"
-        ],
-        [
-         2,
-         "push"
-        ],
-        [
-         3,
-         "peek"
-        ],
-        [
-         4,
-         "pop"
-        ],
-        [
-         5,
-         "empty"
-        ]
-       ],
-       "pointers": {
-        "call": 3
-       },
-       "unread": [
-        4,
-        5
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "QueueFromStacks",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "peek",
+          ""
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "empty",
+          ""
+         ]
+        }
        ],
        "marks": {
-        "lit": [
-         3
-        ],
         "dim": [
-         0,
-         1,
-         2
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
         ]
        }
       },
@@ -675,55 +885,104 @@
      },
      "views": {
       "calls": {
-       "values": [
-        "()",
-        "1",
-        "2",
-        "()",
-        "()",
-        "()"
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "x",
+         "ko": "x"
+        }
        ],
-       "tags": [
-        [
-         0,
-         "new"
-        ],
-        [
-         1,
-         "push"
-        ],
-        [
-         2,
-         "push"
-        ],
-        [
-         3,
-         "peek"
-        ],
-        [
-         4,
-         "pop"
-        ],
-        [
-         5,
-         "empty"
-        ]
-       ],
-       "pointers": {
-        "call": 4
-       },
-       "unread": [
-        5
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "QueueFromStacks",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "peek",
+          ""
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "empty",
+          ""
+         ]
+        }
        ],
        "marks": {
-        "lit": [
-         4
-        ],
         "dim": [
-         0,
-         1,
-         2,
-         3
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
         ]
        }
       },
@@ -777,54 +1036,112 @@
      },
      "views": {
       "calls": {
-       "values": [
-        "()",
-        "1",
-        "2",
-        "()",
-        "()",
-        "()"
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "x",
+         "ko": "x"
+        }
        ],
-       "tags": [
-        [
-         0,
-         "new"
-        ],
-        [
-         1,
-         "push"
-        ],
-        [
-         2,
-         "push"
-        ],
-        [
-         3,
-         "peek"
-        ],
-        [
-         4,
-         "pop"
-        ],
-        [
-         5,
-         "empty"
-        ]
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "QueueFromStacks",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "peek",
+          ""
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "empty",
+          ""
+         ]
+        }
        ],
-       "pointers": {
-        "call": 5
-       },
-       "unread": [],
        "marks": {
-        "lit": [
-         5
-        ],
         "dim": [
-         0,
-         1,
-         2,
-         3,
-         4
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ]
         ]
        }
       },
@@ -864,7 +1181,10 @@
       {
        "from": {
         "view": "calls",
-        "at": 5
+        "at": [
+         5,
+         0
+        ]
        },
        "to": {
         "view": "result",
@@ -881,55 +1201,61 @@
      },
      "views": {
       "calls": {
-       "values": [
-        "()",
-        "1",
-        "2",
-        "()",
-        "()",
-        "()"
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "x",
+         "ko": "x"
+        }
        ],
-       "tags": [
-        [
-         0,
-         "new"
-        ],
-        [
-         1,
-         "push"
-        ],
-        [
-         2,
-         "push"
-        ],
-        [
-         3,
-         "peek"
-        ],
-        [
-         4,
-         "pop"
-        ],
-        [
-         5,
-         "empty"
-        ]
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "QueueFromStacks",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "peek",
+          ""
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "empty",
+          ""
+         ]
+        }
        ],
-       "pointers": {
-        "call": null
-       },
-       "unread": [],
-       "marks": {
-        "lit": [],
-        "dim": [
-         0,
-         1,
-         2,
-         3,
-         4,
-         5
-        ]
-       }
+       "marks": {}
       },
       "inbox": {
        "values": [],
@@ -978,71 +1304,90 @@
     {
      "caption": {
       "en": "QueueFromStacks() starts with two empty stacks, inbox and outbox, and returns null.",
-      "ko": "QueueFromStacks()는 빈 스택 inbox와 outbox 두 개로 시작하고 null을 반환합니다."
+      "ko": "QueueFromStacks(): 빈 스택 inbox와 outbox 두 개로 시작하고 null을 반환합니다."
      },
      "views": {
       "calls": {
-       "values": [
-        "()",
-        "10",
-        "20",
-        "30",
-        "()",
-        "()",
-        "()",
-        "()"
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "x",
+         "ko": "x"
+        }
        ],
-       "tags": [
-        [
-         0,
-         "new"
-        ],
-        [
-         1,
-         "push"
-        ],
-        [
-         2,
-         "push"
-        ],
-        [
-         3,
-         "push"
-        ],
-        [
-         4,
-         "pop"
-        ],
-        [
-         5,
-         "pop"
-        ],
-        [
-         6,
-         "peek"
-        ],
-        [
-         7,
-         "empty"
-        ]
-       ],
-       "pointers": {
-        "call": 0
-       },
-       "unread": [
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "QueueFromStacks",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "push",
+          "30"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "peek",
+          ""
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "empty",
+          ""
+         ]
+        }
        ],
        "marks": {
+        "dim": [],
         "lit": [
-         0
-        ],
-        "dim": []
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ]
        }
       },
       "inbox": {
@@ -1072,67 +1417,94 @@
      },
      "views": {
       "calls": {
-       "values": [
-        "()",
-        "10",
-        "20",
-        "30",
-        "()",
-        "()",
-        "()",
-        "()"
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "x",
+         "ko": "x"
+        }
        ],
-       "tags": [
-        [
-         0,
-         "new"
-        ],
-        [
-         1,
-         "push"
-        ],
-        [
-         2,
-         "push"
-        ],
-        [
-         3,
-         "push"
-        ],
-        [
-         4,
-         "pop"
-        ],
-        [
-         5,
-         "pop"
-        ],
-        [
-         6,
-         "peek"
-        ],
-        [
-         7,
-         "empty"
-        ]
-       ],
-       "pointers": {
-        "call": 1
-       },
-       "unread": [
-        2,
-        3,
-        4,
-        5,
-        6,
-        7
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "QueueFromStacks",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "push",
+          "30"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "peek",
+          ""
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "empty",
+          ""
+         ]
+        }
        ],
        "marks": {
-        "lit": [
-         1
-        ],
         "dim": [
-         0
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
         ]
        }
       },
@@ -1166,7 +1538,10 @@
       {
        "from": {
         "view": "calls",
-        "at": 1
+        "at": [
+         1,
+         1
+        ]
        },
        "to": {
         "view": "inbox",
@@ -1177,7 +1552,10 @@
       {
        "from": {
         "view": "calls",
-        "at": 1
+        "at": [
+         1,
+         0
+        ]
        },
        "to": {
         "view": "result",
@@ -1194,67 +1572,102 @@
      },
      "views": {
       "calls": {
-       "values": [
-        "()",
-        "10",
-        "20",
-        "30",
-        "()",
-        "()",
-        "()",
-        "()"
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "x",
+         "ko": "x"
+        }
        ],
-       "tags": [
-        [
-         0,
-         "new"
-        ],
-        [
-         1,
-         "push"
-        ],
-        [
-         2,
-         "push"
-        ],
-        [
-         3,
-         "push"
-        ],
-        [
-         4,
-         "pop"
-        ],
-        [
-         5,
-         "pop"
-        ],
-        [
-         6,
-         "peek"
-        ],
-        [
-         7,
-         "empty"
-        ]
-       ],
-       "pointers": {
-        "call": 2
-       },
-       "unread": [
-        3,
-        4,
-        5,
-        6,
-        7
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "QueueFromStacks",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "push",
+          "30"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "peek",
+          ""
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "empty",
+          ""
+         ]
+        }
        ],
        "marks": {
-        "lit": [
-         2
-        ],
         "dim": [
-         0,
-         1
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
         ]
        }
       },
@@ -1290,7 +1703,10 @@
       {
        "from": {
         "view": "calls",
-        "at": 2
+        "at": [
+         2,
+         1
+        ]
        },
        "to": {
         "view": "inbox",
@@ -1301,7 +1717,10 @@
       {
        "from": {
         "view": "calls",
-        "at": 2
+        "at": [
+         2,
+         0
+        ]
        },
        "to": {
         "view": "result",
@@ -1318,67 +1737,110 @@
      },
      "views": {
       "calls": {
-       "values": [
-        "()",
-        "10",
-        "20",
-        "30",
-        "()",
-        "()",
-        "()",
-        "()"
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "x",
+         "ko": "x"
+        }
        ],
-       "tags": [
-        [
-         0,
-         "new"
-        ],
-        [
-         1,
-         "push"
-        ],
-        [
-         2,
-         "push"
-        ],
-        [
-         3,
-         "push"
-        ],
-        [
-         4,
-         "pop"
-        ],
-        [
-         5,
-         "pop"
-        ],
-        [
-         6,
-         "peek"
-        ],
-        [
-         7,
-         "empty"
-        ]
-       ],
-       "pointers": {
-        "call": 3
-       },
-       "unread": [
-        4,
-        5,
-        6,
-        7
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "QueueFromStacks",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "push",
+          "30"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "peek",
+          ""
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "empty",
+          ""
+         ]
+        }
        ],
        "marks": {
-        "lit": [
-         3
-        ],
         "dim": [
-         0,
-         1,
-         2
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
         ]
        }
       },
@@ -1416,7 +1878,10 @@
       {
        "from": {
         "view": "calls",
-        "at": 3
+        "at": [
+         3,
+         1
+        ]
        },
        "to": {
         "view": "inbox",
@@ -1427,7 +1892,10 @@
       {
        "from": {
         "view": "calls",
-        "at": 3
+        "at": [
+         3,
+         0
+        ]
        },
        "to": {
         "view": "result",
@@ -1444,67 +1912,118 @@
      },
      "views": {
       "calls": {
-       "values": [
-        "()",
-        "10",
-        "20",
-        "30",
-        "()",
-        "()",
-        "()",
-        "()"
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "x",
+         "ko": "x"
+        }
        ],
-       "tags": [
-        [
-         0,
-         "new"
-        ],
-        [
-         1,
-         "push"
-        ],
-        [
-         2,
-         "push"
-        ],
-        [
-         3,
-         "push"
-        ],
-        [
-         4,
-         "pop"
-        ],
-        [
-         5,
-         "pop"
-        ],
-        [
-         6,
-         "peek"
-        ],
-        [
-         7,
-         "empty"
-        ]
-       ],
-       "pointers": {
-        "call": 4
-       },
-       "unread": [
-        5,
-        6,
-        7
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "QueueFromStacks",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "push",
+          "30"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "peek",
+          ""
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "empty",
+          ""
+         ]
+        }
        ],
        "marks": {
-        "lit": [
-         4
-        ],
         "dim": [
-         0,
-         1,
-         2,
-         3
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
         ]
        }
       },
@@ -1562,67 +2081,118 @@
      },
      "views": {
       "calls": {
-       "values": [
-        "()",
-        "10",
-        "20",
-        "30",
-        "()",
-        "()",
-        "()",
-        "()"
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "x",
+         "ko": "x"
+        }
        ],
-       "tags": [
-        [
-         0,
-         "new"
-        ],
-        [
-         1,
-         "push"
-        ],
-        [
-         2,
-         "push"
-        ],
-        [
-         3,
-         "push"
-        ],
-        [
-         4,
-         "pop"
-        ],
-        [
-         5,
-         "pop"
-        ],
-        [
-         6,
-         "peek"
-        ],
-        [
-         7,
-         "empty"
-        ]
-       ],
-       "pointers": {
-        "call": 4
-       },
-       "unread": [
-        5,
-        6,
-        7
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "QueueFromStacks",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "push",
+          "30"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "peek",
+          ""
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "empty",
+          ""
+         ]
+        }
        ],
        "marks": {
-        "lit": [
-         4
-        ],
         "dim": [
-         0,
-         1,
-         2,
-         3
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
         ]
        }
       },
@@ -1680,67 +2250,118 @@
      },
      "views": {
       "calls": {
-       "values": [
-        "()",
-        "10",
-        "20",
-        "30",
-        "()",
-        "()",
-        "()",
-        "()"
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "x",
+         "ko": "x"
+        }
        ],
-       "tags": [
-        [
-         0,
-         "new"
-        ],
-        [
-         1,
-         "push"
-        ],
-        [
-         2,
-         "push"
-        ],
-        [
-         3,
-         "push"
-        ],
-        [
-         4,
-         "pop"
-        ],
-        [
-         5,
-         "pop"
-        ],
-        [
-         6,
-         "peek"
-        ],
-        [
-         7,
-         "empty"
-        ]
-       ],
-       "pointers": {
-        "call": 4
-       },
-       "unread": [
-        5,
-        6,
-        7
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "QueueFromStacks",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "push",
+          "30"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "peek",
+          ""
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "empty",
+          ""
+         ]
+        }
        ],
        "marks": {
-        "lit": [
-         4
-        ],
         "dim": [
-         0,
-         1,
-         2,
-         3
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
         ]
        }
       },
@@ -1798,67 +2419,118 @@
      },
      "views": {
       "calls": {
-       "values": [
-        "()",
-        "10",
-        "20",
-        "30",
-        "()",
-        "()",
-        "()",
-        "()"
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "x",
+         "ko": "x"
+        }
        ],
-       "tags": [
-        [
-         0,
-         "new"
-        ],
-        [
-         1,
-         "push"
-        ],
-        [
-         2,
-         "push"
-        ],
-        [
-         3,
-         "push"
-        ],
-        [
-         4,
-         "pop"
-        ],
-        [
-         5,
-         "pop"
-        ],
-        [
-         6,
-         "peek"
-        ],
-        [
-         7,
-         "empty"
-        ]
-       ],
-       "pointers": {
-        "call": 4
-       },
-       "unread": [
-        5,
-        6,
-        7
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "QueueFromStacks",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "push",
+          "30"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "peek",
+          ""
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "empty",
+          ""
+         ]
+        }
        ],
        "marks": {
-        "lit": [
-         4
-        ],
         "dim": [
-         0,
-         1,
-         2,
-         3
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
         ]
        }
       },
@@ -1913,67 +2585,126 @@
      },
      "views": {
       "calls": {
-       "values": [
-        "()",
-        "10",
-        "20",
-        "30",
-        "()",
-        "()",
-        "()",
-        "()"
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "x",
+         "ko": "x"
+        }
        ],
-       "tags": [
-        [
-         0,
-         "new"
-        ],
-        [
-         1,
-         "push"
-        ],
-        [
-         2,
-         "push"
-        ],
-        [
-         3,
-         "push"
-        ],
-        [
-         4,
-         "pop"
-        ],
-        [
-         5,
-         "pop"
-        ],
-        [
-         6,
-         "peek"
-        ],
-        [
-         7,
-         "empty"
-        ]
-       ],
-       "pointers": {
-        "call": 5
-       },
-       "unread": [
-        6,
-        7
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "QueueFromStacks",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "push",
+          "30"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "peek",
+          ""
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "empty",
+          ""
+         ]
+        }
        ],
        "marks": {
-        "lit": [
-         5
-        ],
         "dim": [
-         0,
-         1,
-         2,
-         3,
-         4
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ]
         ]
        }
       },
@@ -2028,67 +2759,134 @@
      },
      "views": {
       "calls": {
-       "values": [
-        "()",
-        "10",
-        "20",
-        "30",
-        "()",
-        "()",
-        "()",
-        "()"
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "x",
+         "ko": "x"
+        }
        ],
-       "tags": [
-        [
-         0,
-         "new"
-        ],
-        [
-         1,
-         "push"
-        ],
-        [
-         2,
-         "push"
-        ],
-        [
-         3,
-         "push"
-        ],
-        [
-         4,
-         "pop"
-        ],
-        [
-         5,
-         "pop"
-        ],
-        [
-         6,
-         "peek"
-        ],
-        [
-         7,
-         "empty"
-        ]
-       ],
-       "pointers": {
-        "call": 6
-       },
-       "unread": [
-        7
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "QueueFromStacks",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "push",
+          "30"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "peek",
+          ""
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "empty",
+          ""
+         ]
+        }
        ],
        "marks": {
-        "lit": [
-         6
-        ],
         "dim": [
-         0,
-         1,
-         2,
-         3,
-         4,
-         5
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ],
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          6,
+          0
+         ],
+         [
+          6,
+          1
+         ]
         ]
        }
       },
@@ -2143,66 +2941,142 @@
      },
      "views": {
       "calls": {
-       "values": [
-        "()",
-        "10",
-        "20",
-        "30",
-        "()",
-        "()",
-        "()",
-        "()"
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "x",
+         "ko": "x"
+        }
        ],
-       "tags": [
-        [
-         0,
-         "new"
-        ],
-        [
-         1,
-         "push"
-        ],
-        [
-         2,
-         "push"
-        ],
-        [
-         3,
-         "push"
-        ],
-        [
-         4,
-         "pop"
-        ],
-        [
-         5,
-         "pop"
-        ],
-        [
-         6,
-         "peek"
-        ],
-        [
-         7,
-         "empty"
-        ]
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "QueueFromStacks",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "push",
+          "30"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "peek",
+          ""
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "empty",
+          ""
+         ]
+        }
        ],
-       "pointers": {
-        "call": 7
-       },
-       "unread": [],
        "marks": {
-        "lit": [
-         7
-        ],
         "dim": [
-         0,
-         1,
-         2,
-         3,
-         4,
-         5,
-         6
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ],
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ],
+         [
+          6,
+          0
+         ],
+         [
+          6,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          7,
+          0
+         ],
+         [
+          7,
+          1
+         ]
         ]
        }
       },
@@ -2244,7 +3118,10 @@
       {
        "from": {
         "view": "calls",
-        "at": 7
+        "at": [
+         7,
+         0
+        ]
        },
        "to": {
         "view": "result",
@@ -2261,67 +3138,75 @@
      },
      "views": {
       "calls": {
-       "values": [
-        "()",
-        "10",
-        "20",
-        "30",
-        "()",
-        "()",
-        "()",
-        "()"
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "x",
+         "ko": "x"
+        }
        ],
-       "tags": [
-        [
-         0,
-         "new"
-        ],
-        [
-         1,
-         "push"
-        ],
-        [
-         2,
-         "push"
-        ],
-        [
-         3,
-         "push"
-        ],
-        [
-         4,
-         "pop"
-        ],
-        [
-         5,
-         "pop"
-        ],
-        [
-         6,
-         "peek"
-        ],
-        [
-         7,
-         "empty"
-        ]
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "QueueFromStacks",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "push",
+          "30"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "peek",
+          ""
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "empty",
+          ""
+         ]
+        }
        ],
-       "pointers": {
-        "call": null
-       },
-       "unread": [],
-       "marks": {
-        "lit": [],
-        "dim": [
-         0,
-         1,
-         2,
-         3,
-         4,
-         5,
-         6,
-         7
-        ]
-       }
+       "marks": {}
       },
       "inbox": {
        "values": [],
@@ -2374,47 +3259,62 @@
     {
      "caption": {
       "en": "QueueFromStacks() starts with two empty stacks, inbox and outbox, and returns null.",
-      "ko": "QueueFromStacks()는 빈 스택 inbox와 outbox 두 개로 시작하고 null을 반환합니다."
+      "ko": "QueueFromStacks(): 빈 스택 inbox와 outbox 두 개로 시작하고 null을 반환합니다."
      },
      "views": {
       "calls": {
-       "values": [
-        "()",
-        "42",
-        "()",
-        "()"
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "x",
+         "ko": "x"
+        }
        ],
-       "tags": [
-        [
-         0,
-         "new"
-        ],
-        [
-         1,
-         "push"
-        ],
-        [
-         2,
-         "pop"
-        ],
-        [
-         3,
-         "empty"
-        ]
-       ],
-       "pointers": {
-        "call": 0
-       },
-       "unread": [
-        1,
-        2,
-        3
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "QueueFromStacks",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "42"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "empty",
+          ""
+         ]
+        }
        ],
        "marks": {
+        "dim": [],
         "lit": [
-         0
-        ],
-        "dim": []
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ]
        }
       },
       "inbox": {
@@ -2444,43 +3344,66 @@
      },
      "views": {
       "calls": {
-       "values": [
-        "()",
-        "42",
-        "()",
-        "()"
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "x",
+         "ko": "x"
+        }
        ],
-       "tags": [
-        [
-         0,
-         "new"
-        ],
-        [
-         1,
-         "push"
-        ],
-        [
-         2,
-         "pop"
-        ],
-        [
-         3,
-         "empty"
-        ]
-       ],
-       "pointers": {
-        "call": 1
-       },
-       "unread": [
-        2,
-        3
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "QueueFromStacks",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "42"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "empty",
+          ""
+         ]
+        }
        ],
        "marks": {
-        "lit": [
-         1
-        ],
         "dim": [
-         0
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
         ]
        }
       },
@@ -2514,7 +3437,10 @@
       {
        "from": {
         "view": "calls",
-        "at": 1
+        "at": [
+         1,
+         1
+        ]
        },
        "to": {
         "view": "inbox",
@@ -2525,7 +3451,10 @@
       {
        "from": {
         "view": "calls",
-        "at": 1
+        "at": [
+         1,
+         0
+        ]
        },
        "to": {
         "view": "result",
@@ -2542,43 +3471,74 @@
      },
      "views": {
       "calls": {
-       "values": [
-        "()",
-        "42",
-        "()",
-        "()"
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "x",
+         "ko": "x"
+        }
        ],
-       "tags": [
-        [
-         0,
-         "new"
-        ],
-        [
-         1,
-         "push"
-        ],
-        [
-         2,
-         "pop"
-        ],
-        [
-         3,
-         "empty"
-        ]
-       ],
-       "pointers": {
-        "call": 2
-       },
-       "unread": [
-        3
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "QueueFromStacks",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "42"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "empty",
+          ""
+         ]
+        }
        ],
        "marks": {
-        "lit": [
-         2
-        ],
         "dim": [
-         0,
-         1
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
         ]
        }
       },
@@ -2632,43 +3592,74 @@
      },
      "views": {
       "calls": {
-       "values": [
-        "()",
-        "42",
-        "()",
-        "()"
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "x",
+         "ko": "x"
+        }
        ],
-       "tags": [
-        [
-         0,
-         "new"
-        ],
-        [
-         1,
-         "push"
-        ],
-        [
-         2,
-         "pop"
-        ],
-        [
-         3,
-         "empty"
-        ]
-       ],
-       "pointers": {
-        "call": 2
-       },
-       "unread": [
-        3
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "QueueFromStacks",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "42"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "empty",
+          ""
+         ]
+        }
        ],
        "marks": {
-        "lit": [
-         2
-        ],
         "dim": [
-         0,
-         1
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
         ]
        }
       },
@@ -2719,42 +3710,82 @@
      },
      "views": {
       "calls": {
-       "values": [
-        "()",
-        "42",
-        "()",
-        "()"
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "x",
+         "ko": "x"
+        }
        ],
-       "tags": [
-        [
-         0,
-         "new"
-        ],
-        [
-         1,
-         "push"
-        ],
-        [
-         2,
-         "pop"
-        ],
-        [
-         3,
-         "empty"
-        ]
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "QueueFromStacks",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "42"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "empty",
+          ""
+         ]
+        }
        ],
-       "pointers": {
-        "call": 3
-       },
-       "unread": [],
        "marks": {
-        "lit": [
-         3
-        ],
         "dim": [
-         0,
-         1,
-         2
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
         ]
        }
       },
@@ -2788,7 +3819,10 @@
       {
        "from": {
         "view": "calls",
-        "at": 3
+        "at": [
+         3,
+         0
+        ]
        },
        "to": {
         "view": "result",
@@ -2805,43 +3839,47 @@
      },
      "views": {
       "calls": {
-       "values": [
-        "()",
-        "42",
-        "()",
-        "()"
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "x",
+         "ko": "x"
+        }
        ],
-       "tags": [
-        [
-         0,
-         "new"
-        ],
-        [
-         1,
-         "push"
-        ],
-        [
-         2,
-         "pop"
-        ],
-        [
-         3,
-         "empty"
-        ]
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "QueueFromStacks",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "42"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "empty",
+          ""
+         ]
+        }
        ],
-       "pointers": {
-        "call": null
-       },
-       "unread": [],
-       "marks": {
-        "lit": [],
-        "dim": [
-         0,
-         1,
-         2,
-         3
-        ]
-       }
+       "marks": {}
       },
       "inbox": {
        "values": [],
