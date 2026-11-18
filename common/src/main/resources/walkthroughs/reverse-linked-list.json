@@ -1,0 +1,1204 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Reverse Linked List",
+  "ko": "연결 리스트 뒤집기"
+ },
+ "approach": {
+  "en": "Nothing moves but the arrows: each step saves curr's next, turns curr's arrow back to prev, and steps both pointers forward, so the part up to prev is already reversed.",
+  "ko": "노드는 그대로 두고 화살표만 돌립니다. 한 단계마다 curr의 next를 기억해 두고, curr의 화살표를 prev 쪽으로 돌린 뒤 두 포인터를 한 칸씩 옮기므로 prev까지는 이미 뒤집혀 있습니다."
+ },
+ "views": [
+  {
+   "id": "list",
+   "type": "linkedlist",
+   "title": {
+    "en": "head",
+    "ko": "head (리스트)"
+   },
+   "empty": {
+    "en": "empty list",
+    "ko": "빈 리스트"
+   }
+  },
+  {
+   "id": "result",
+   "type": "output",
+   "title": {
+    "en": "answer",
+    "ko": "답"
+   },
+   "empty": {
+    "en": "not read yet",
+    "ko": "아직 없음"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "head = [8,3,12,5,9]",
+   "expected": "[9,5,12,3,8]",
+   "frames": [
+    {
+     "caption": {
+      "en": "5 nodes from 8 to 9. prev starts as null and curr at the head 8; every arrow still points right.",
+      "ko": "노드 5개가 8에서 9까지 이어집니다. prev는 null, curr는 head 8에서 시작하며 화살표는 아직 모두 오른쪽을 가리킵니다."
+     },
+     "views": {
+      "list": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 8
+        },
+        {
+         "id": 1,
+         "value": 3
+        },
+        {
+         "id": 2,
+         "value": 12
+        },
+        {
+         "id": 3,
+         "value": 5
+        },
+        {
+         "id": 4,
+         "value": 9
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": 4,
+        "4": null
+       },
+       "pointers": {
+        "prev": null,
+        "curr": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Save next = 3, then turn 8's arrow to prev, which is null: 8 will be the tail.",
+      "ko": "next = 3을 기억해 두고, 8의 화살표를 prev(null) 쪽으로 돌립니다. 8이 꼬리가 됩니다."
+     },
+     "views": {
+      "list": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 8
+        },
+        {
+         "id": 1,
+         "value": 3
+        },
+        {
+         "id": 2,
+         "value": 12
+        },
+        {
+         "id": 3,
+         "value": 5
+        },
+        {
+         "id": 4,
+         "value": 9
+        }
+       ],
+       "next": {
+        "0": null,
+        "1": 2,
+        "2": 3,
+        "3": 4,
+        "4": null
+       },
+       "pointers": {
+        "prev": null,
+        "curr": 0,
+        "next": 1
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         0
+        ]
+       },
+       "cut": {
+        "0": 1
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Step forward: prev = 8, curr = 3. Everything up to 8 is reversed.",
+      "ko": "한 칸 나아가 prev = 8, curr = 3이 됩니다. 8까지는 뒤집혔습니다."
+     },
+     "views": {
+      "list": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 8
+        },
+        {
+         "id": 1,
+         "value": 3
+        },
+        {
+         "id": 2,
+         "value": 12
+        },
+        {
+         "id": 3,
+         "value": 5
+        },
+        {
+         "id": 4,
+         "value": 9
+        }
+       ],
+       "next": {
+        "0": null,
+        "1": 2,
+        "2": 3,
+        "3": 4,
+        "4": null
+       },
+       "pointers": {
+        "prev": 0,
+        "curr": 1
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Save next = 12, then turn 3's arrow back to prev (8).",
+      "ko": "next = 12를 기억해 두고, 3의 화살표를 prev(8) 쪽으로 돌립니다."
+     },
+     "views": {
+      "list": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 8
+        },
+        {
+         "id": 1,
+         "value": 3
+        },
+        {
+         "id": 2,
+         "value": 12
+        },
+        {
+         "id": 3,
+         "value": 5
+        },
+        {
+         "id": 4,
+         "value": 9
+        }
+       ],
+       "next": {
+        "0": null,
+        "1": 0,
+        "2": 3,
+        "3": 4,
+        "4": null
+       },
+       "pointers": {
+        "prev": 0,
+        "curr": 1,
+        "next": 2
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         1
+        ]
+       },
+       "cut": {
+        "1": 2
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "list",
+        "at": 1
+       },
+       "to": {
+        "view": "list",
+        "at": 0
+       },
+       "value": "next"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Step forward: prev = 3, curr = 12. Everything up to 3 is reversed.",
+      "ko": "한 칸 나아가 prev = 3, curr = 12가 됩니다. 3까지는 뒤집혔습니다."
+     },
+     "views": {
+      "list": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 8
+        },
+        {
+         "id": 1,
+         "value": 3
+        },
+        {
+         "id": 2,
+         "value": 12
+        },
+        {
+         "id": 3,
+         "value": 5
+        },
+        {
+         "id": 4,
+         "value": 9
+        }
+       ],
+       "next": {
+        "0": null,
+        "1": 0,
+        "2": 3,
+        "3": 4,
+        "4": null
+       },
+       "pointers": {
+        "prev": 1,
+        "curr": 2
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Save next = 5, then turn 12's arrow back to prev (3).",
+      "ko": "next = 5를 기억해 두고, 12의 화살표를 prev(3) 쪽으로 돌립니다."
+     },
+     "views": {
+      "list": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 8
+        },
+        {
+         "id": 1,
+         "value": 3
+        },
+        {
+         "id": 2,
+         "value": 12
+        },
+        {
+         "id": 3,
+         "value": 5
+        },
+        {
+         "id": 4,
+         "value": 9
+        }
+       ],
+       "next": {
+        "0": null,
+        "1": 0,
+        "2": 1,
+        "3": 4,
+        "4": null
+       },
+       "pointers": {
+        "prev": 1,
+        "curr": 2,
+        "next": 3
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         2
+        ]
+       },
+       "cut": {
+        "2": 3
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "list",
+        "at": 2
+       },
+       "to": {
+        "view": "list",
+        "at": 1
+       },
+       "value": "next"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Step forward: prev = 12, curr = 5. Everything up to 12 is reversed.",
+      "ko": "한 칸 나아가 prev = 12, curr = 5가 됩니다. 12까지는 뒤집혔습니다."
+     },
+     "views": {
+      "list": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 8
+        },
+        {
+         "id": 1,
+         "value": 3
+        },
+        {
+         "id": 2,
+         "value": 12
+        },
+        {
+         "id": 3,
+         "value": 5
+        },
+        {
+         "id": 4,
+         "value": 9
+        }
+       ],
+       "next": {
+        "0": null,
+        "1": 0,
+        "2": 1,
+        "3": 4,
+        "4": null
+       },
+       "pointers": {
+        "prev": 2,
+        "curr": 3
+       },
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Save next = 9, then turn 5's arrow back to prev (12).",
+      "ko": "next = 9를 기억해 두고, 5의 화살표를 prev(12) 쪽으로 돌립니다."
+     },
+     "views": {
+      "list": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 8
+        },
+        {
+         "id": 1,
+         "value": 3
+        },
+        {
+         "id": 2,
+         "value": 12
+        },
+        {
+         "id": 3,
+         "value": 5
+        },
+        {
+         "id": 4,
+         "value": 9
+        }
+       ],
+       "next": {
+        "0": null,
+        "1": 0,
+        "2": 1,
+        "3": 2,
+        "4": null
+       },
+       "pointers": {
+        "prev": 2,
+        "curr": 3,
+        "next": 4
+       },
+       "marks": {
+        "lit": [
+         3
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         3
+        ]
+       },
+       "cut": {
+        "3": 4
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "list",
+        "at": 3
+       },
+       "to": {
+        "view": "list",
+        "at": 2
+       },
+       "value": "next"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Step forward: prev = 5, curr = 9. Everything up to 5 is reversed.",
+      "ko": "한 칸 나아가 prev = 5, curr = 9가 됩니다. 5까지는 뒤집혔습니다."
+     },
+     "views": {
+      "list": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 8
+        },
+        {
+         "id": 1,
+         "value": 3
+        },
+        {
+         "id": 2,
+         "value": 12
+        },
+        {
+         "id": 3,
+         "value": 5
+        },
+        {
+         "id": 4,
+         "value": 9
+        }
+       ],
+       "next": {
+        "0": null,
+        "1": 0,
+        "2": 1,
+        "3": 2,
+        "4": null
+       },
+       "pointers": {
+        "prev": 3,
+        "curr": 4
+       },
+       "marks": {
+        "lit": [
+         4
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Save next = null (the last node), then turn 9's arrow back to prev (5).",
+      "ko": "next = null을 기억해 두고, 9의 화살표를 prev(5) 쪽으로 돌립니다."
+     },
+     "views": {
+      "list": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 8
+        },
+        {
+         "id": 1,
+         "value": 3
+        },
+        {
+         "id": 2,
+         "value": 12
+        },
+        {
+         "id": 3,
+         "value": 5
+        },
+        {
+         "id": 4,
+         "value": 9
+        }
+       ],
+       "next": {
+        "0": null,
+        "1": 0,
+        "2": 1,
+        "3": 2,
+        "4": 3
+       },
+       "pointers": {
+        "prev": 3,
+        "curr": 4
+       },
+       "marks": {
+        "lit": [
+         4
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         4
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "list",
+        "at": 4
+       },
+       "to": {
+        "view": "list",
+        "at": 3
+       },
+       "value": "next"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "curr ran off the end, so prev (9) is the new head: reading from it gives [9,5,12,3,8].",
+      "ko": "curr가 끝을 지나갔으므로 prev(9)가 새 head입니다. 여기서부터 읽으면 [9,5,12,3,8]입니다."
+     },
+     "views": {
+      "list": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 8
+        },
+        {
+         "id": 1,
+         "value": 3
+        },
+        {
+         "id": 2,
+         "value": 12
+        },
+        {
+         "id": 3,
+         "value": 5
+        },
+        {
+         "id": 4,
+         "value": 9
+        }
+       ],
+       "next": {
+        "0": null,
+        "1": 0,
+        "2": 1,
+        "3": 2,
+        "4": 3
+       },
+       "pointers": {
+        "prev": 4,
+        "curr": null
+       },
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        9,
+        5,
+        12,
+        3,
+        8
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "list",
+        "at": 4
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       }
+      },
+      {
+       "from": {
+        "view": "list",
+        "at": 3
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       }
+      },
+      {
+       "from": {
+        "view": "list",
+        "at": 2
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       }
+      },
+      {
+       "from": {
+        "view": "list",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       }
+      },
+      {
+       "from": {
+        "view": "list",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 4
+       }
+      }
+     ],
+     "answer": "[9,5,12,3,8]"
+    }
+   ],
+   "sampleInput": "[8,3,12,5,9]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "head = [4,7]",
+   "expected": "[7,4]",
+   "frames": [
+    {
+     "caption": {
+      "en": "2 nodes from 4 to 7. prev starts as null and curr at the head 4; every arrow still points right.",
+      "ko": "노드 2개가 4에서 7까지 이어집니다. prev는 null, curr는 head 4에서 시작하며 화살표는 아직 모두 오른쪽을 가리킵니다."
+     },
+     "views": {
+      "list": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 4
+        },
+        {
+         "id": 1,
+         "value": 7
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": null
+       },
+       "pointers": {
+        "prev": null,
+        "curr": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Save next = 7, then turn 4's arrow to prev, which is null: 4 will be the tail.",
+      "ko": "next = 7을 기억해 두고, 4의 화살표를 prev(null) 쪽으로 돌립니다. 4가 꼬리가 됩니다."
+     },
+     "views": {
+      "list": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 4
+        },
+        {
+         "id": 1,
+         "value": 7
+        }
+       ],
+       "next": {
+        "0": null,
+        "1": null
+       },
+       "pointers": {
+        "prev": null,
+        "curr": 0,
+        "next": 1
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         0
+        ]
+       },
+       "cut": {
+        "0": 1
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Step forward: prev = 4, curr = 7. Everything up to 4 is reversed.",
+      "ko": "한 칸 나아가 prev = 4, curr = 7이 됩니다. 4까지는 뒤집혔습니다."
+     },
+     "views": {
+      "list": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 4
+        },
+        {
+         "id": 1,
+         "value": 7
+        }
+       ],
+       "next": {
+        "0": null,
+        "1": null
+       },
+       "pointers": {
+        "prev": 0,
+        "curr": 1
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Save next = null (the last node), then turn 7's arrow back to prev (4).",
+      "ko": "next = null을 기억해 두고, 7의 화살표를 prev(4) 쪽으로 돌립니다."
+     },
+     "views": {
+      "list": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 4
+        },
+        {
+         "id": 1,
+         "value": 7
+        }
+       ],
+       "next": {
+        "0": null,
+        "1": 0
+       },
+       "pointers": {
+        "prev": 0,
+        "curr": 1
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "list",
+        "at": 1
+       },
+       "to": {
+        "view": "list",
+        "at": 0
+       },
+       "value": "next"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "curr ran off the end, so prev (7) is the new head: reading from it gives [7,4].",
+      "ko": "curr가 끝을 지나갔으므로 prev(7)가 새 head입니다. 여기서부터 읽으면 [7,4]입니다."
+     },
+     "views": {
+      "list": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 4
+        },
+        {
+         "id": 1,
+         "value": 7
+        }
+       ],
+       "next": {
+        "0": null,
+        "1": 0
+       },
+       "pointers": {
+        "prev": 1,
+        "curr": null
+       },
+       "marks": {
+        "path": [
+         0,
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        7,
+        4
+       ],
+       "marks": {
+        "path": [
+         0,
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "list",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       }
+      },
+      {
+       "from": {
+        "view": "list",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       }
+      }
+     ],
+     "answer": "[7,4]"
+    }
+   ],
+   "sampleInput": "[4,7]"
+  },
+  {
+   "label": {
+    "en": "Example 3",
+    "ko": "예시 3"
+   },
+   "input": "head = [1]",
+   "expected": "[1]",
+   "frames": [
+    {
+     "caption": {
+      "en": "One node, 1, whose arrow points to null. prev starts as null and curr at the head 1.",
+      "ko": "노드는 1 하나이고 화살표는 null을 가리킵니다. prev는 null, curr는 head 1에서 시작합니다."
+     },
+     "views": {
+      "list": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 1
+        }
+       ],
+       "next": {
+        "0": null
+       },
+       "pointers": {
+        "prev": null,
+        "curr": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Save next = null (the last node), then turn 1's arrow to prev, which is null: 1 will be the tail.",
+      "ko": "next = null을 기억해 두고, 1의 화살표를 prev(null) 쪽으로 돌립니다. 1이 꼬리가 됩니다."
+     },
+     "views": {
+      "list": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 1
+        }
+       ],
+       "next": {
+        "0": null
+       },
+       "pointers": {
+        "prev": null,
+        "curr": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "curr ran off the end, so prev (1) is the new head: one node reads the same, [1].",
+      "ko": "curr가 끝을 지나갔으므로 prev(1)가 새 head입니다. 노드 하나는 뒤집어도 [1]입니다."
+     },
+     "views": {
+      "list": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 1
+        }
+       ],
+       "next": {
+        "0": null
+       },
+       "pointers": {
+        "prev": 0,
+        "curr": null
+       },
+       "marks": {
+        "path": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        1
+       ],
+       "marks": {
+        "path": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "list",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       }
+      }
+     ],
+     "answer": "[1]"
+    }
+   ],
+   "sampleInput": "[1]"
+  }
+ ]
+}
