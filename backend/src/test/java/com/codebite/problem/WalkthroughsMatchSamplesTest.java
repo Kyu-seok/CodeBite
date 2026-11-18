@@ -51,7 +51,8 @@ class WalkthroughsMatchSamplesTest {
     private static final Walkthroughs WALKTHROUGHS = new Walkthroughs();
     private static final WalkthroughAddresses ADDRESSES = WalkthroughAddresses.kit();
 
-    private static final List<String> VIEW_TYPES = List.of("grid", "array", "map", "set", "output", "queue", "intervals", "graph", "table", "vars");
+    private static final List<String> VIEW_TYPES = List.of("grid", "array", "map", "set", "output", "queue", "intervals", "graph", "tree", "linkedlist",
+            "callstack", "table", "vars");
     private static final List<String> MARKS = List.of("lit", "good", "bad", "path", "dim");
 
     /**
@@ -207,7 +208,7 @@ class WalkthroughsMatchSamplesTest {
 
     @ParameterizedTest(name = "{0}")
     @CsvSource(delimiter = '|', quoteCharacter = '`', value = {
-            "unknown view type               | view \"tray\": unknown type \"tree\"",
+            "unknown view type               | view \"tray\": unknown type \"heap\"",
             "mark outside the grid           | view \"tray\": mark \"lit\" names [9,9], not a cell [r, c] in the data",
             "answer on a middle frame        | run 1 (Example 1) frame 2 of 3: answer \"4\" on a frame before the last",
             "no answer on the last frame     | run 1 (Example 1): the last frame has no answer",
@@ -229,7 +230,7 @@ class WalkthroughsMatchSamplesTest {
         ObjectNode first = (ObjectNode) runs.get(0);
         ArrayNode frames = (ArrayNode) first.get("frames");
         switch (breakage) {
-            case "unknown view type" -> ((ObjectNode) walkthrough.get("views").get(0)).put("type", "tree");
+            case "unknown view type" -> ((ObjectNode) walkthrough.get("views").get(0)).put("type", "heap");
             case "mark outside the grid" -> ((ObjectNode) frames.get(1).get("views").get("tray"))
                     .putObject("marks").putArray("lit").add(JSON.readTree("[9,9]"));
             case "answer on a middle frame" -> ((ObjectNode) frames.get(1)).put("answer", "4");
@@ -645,6 +646,9 @@ class WalkthroughsMatchSamplesTest {
             "output value appended                    | output    | {'values': []}                | {'values': [7]}                           | []                                 | output \"v\" at 0 now holds 7",
             "table cell written                       | table     | {'rows': [{'cells': [1, 2]}]} | {'rows': [{'cells': [1, 'x']}]}           | []                                 | table \"v\" at [0,1] now holds \"x\"",
             "interval added                           | intervals | {'groups': [{'intervals': []}]} | {'groups': [{'intervals': [[0, 1]]}]}   | []                                 | intervals \"v\" at [0,0] now holds [0,1]",
+            "tree child added with no move           | tree      | {'nodes': [{'id': 0, 'value': 'a'}], 'edges': []} | {'nodes': [{'id': 0, 'value': 'a'}, {'id': 1, 'value': 'b'}], 'edges': [{'from': 0, 'to': 1}]} | [] | tree \"v\" at [0,1] now holds null",
+            "tree child added, only its edge moved into | tree    | {'nodes': [{'id': 0, 'value': 'a'}], 'edges': []} | {'nodes': [{'id': 0, 'value': 'a'}, {'id': 1, 'value': 'b'}], 'edges': [{'from': 0, 'to': 1}]} | [{'from': {'view': 'v', 'at': 0}, 'to': {'view': 'v', 'at': [0, 1]}}] | tree \"v\" at 1 now holds \"b\"",
+            "call pushed with no move                 | callstack | {'calls': [{'name': 'f', 'args': {'n': 2}}]} | {'calls': [{'name': 'f', 'args': {'n': 2}}, {'name': 'f', 'args': {'n': 1}}]} | [] | callstack \"v\" at 1 now holds {\"n\":1}",
             "graph node value changed                 | graph     | {'nodes': [{'id': 'a'}, {'id': 'b'}], 'edges': [{'from': 'a', 'to': 'b'}]} | {'nodes': [{'id': 'a'}, {'id': 'b'}], 'edges': [{'from': 'a', 'to': 'b'}], 'values': {'b': 7}} | [] | graph \"v\" at b now holds 7",
     })
     void aChangeWithNoMoveIsCaught(String breakage, String type, String before, String after, String moves, String expected)
@@ -661,6 +665,9 @@ class WalkthroughsMatchSamplesTest {
             "cell emptied with a bad move out         | table | {'rows': [{'cells': [1, [4]]}]} | {'rows': [{'cells': [1, []]}]} | [{'from': {'view': 'v', 'at': [0, 1]}, 'mark': 'bad'}]",
             "front leaving a queue                    | queue | {'values': [1, 2]}              | {'values': [2]}                | [{'from': {'view': 'v', 'at': 0}}]",
             "cost carried along an edge into its node | graph | {'nodes': [{'id': 'a'}, {'id': 'b'}], 'edges': [{'from': 'a', 'to': 'b'}]} | {'nodes': [{'id': 'a'}, {'id': 'b'}], 'edges': [{'from': 'a', 'to': 'b'}], 'values': {'b': 7}} | [{'from': {'view': 'v', 'at': ['a', 'b']}, 'mark': 'good'}]",
+            "tree child added by a move into it       | tree  | {'nodes': [{'id': 0, 'value': 'a'}], 'edges': []} | {'nodes': [{'id': 0, 'value': 'a'}, {'id': 1, 'value': 'b'}], 'edges': [{'from': 0, 'to': 1, 'label': 'x'}]} | [{'from': {'view': 'v', 'at': 0}, 'to': {'view': 'v', 'at': 1}}]",
+            "linked list arrow turned                 | linkedlist | {'nodes': [{'id': 1, 'value': 1}, {'id': 2, 'value': 2}], 'next': {'1': 2, '2': null}} | {'nodes': [{'id': 1, 'value': 1}, {'id': 2, 'value': 2}], 'next': {'1': null, '2': 1}} | []",
+            "call popped                              | callstack | {'calls': [{'name': 'f', 'args': {'n': 2}}, {'name': 'f', 'args': {'n': 1}}]} | {'calls': [{'name': 'f', 'args': {'n': 2}}]} | []",
             "only read                                | array | {'values': [1, 2]}              | {'values': [1, 2], 'marks': {'lit': [0]}} | []",
     })
     void aChangeTheRuleAllowsPasses(String allowed, String type, String before, String after, String moves) throws Exception {
@@ -701,8 +708,11 @@ class WalkthroughsMatchSamplesTest {
                     Map<String, JsonNode> now = state.map(s -> ADDRESSES.places(type, s)).orElse(Map.of());
                     Map<String, JsonNode> before = previous.put(id, now);
                     if (f == 0) continue;
+                    Map<String, String> arrivals = state.map(s -> ADDRESSES.arrivesWith(type, s)).orElse(Map.of());
                     for (String at : changed(type, before, now)) {
                         if (movedInto(frame, id, type, at, before.get(at), now.get(at))) continue;
+                        String with = arrivals.get(at);
+                        if (!before.containsKey(at) && with != null && movedInto(frame, id, type, with, before.get(with), now.get(with))) continue;
                         found.add(slug + ": " + runName(run, r) + ", frame " + (f + 1) + ": " + type + " \"" + id
                                 + "\" at " + at + " now holds " + now.get(at) + " with no move into it");
                     }
@@ -1511,6 +1521,60 @@ class WalkthroughsMatchSamplesTest {
                 });
                 yield p;
             }
+            case "tree" -> {
+                JsonNode nodes = s.get("nodes"), edges = s.get("edges");
+                if (nodes == null || !nodes.isArray() || edges == null || !edges.isArray()) yield List.of("nodes and edges must be lists");
+                Set<String> ids = new HashSet<>();
+                nodes.forEach(n -> ids.add(n.path("id").asText()));
+                Map<String, String> parent = new HashMap<>();
+                List<String> p = new ArrayList<>();
+                for (int i = 0; i < edges.size(); i++) {
+                    JsonNode e = edges.get(i);
+                    String from = e.path("from").asText(), to = e.path("to").asText();
+                    if (!ids.contains(from) || !ids.contains(to)) p.add("edge " + i + " " + e + " names a node that doesn't exist");
+                    else if (parent.put(to, from) != null) p.add("edge " + i + " " + e + ": node " + to + " already has a parent");
+                }
+                p.addAll(marks(s.get("nodeMarks"), k -> ids.contains(k.asText()), "node id"));
+                p.addAll(marks(s.get("edgeMarks"), k -> k.isArray() && k.size() == 2
+                        && from(parent, k.get(1).asText()).equals(k.get(0).asText()), "[from, to] edge"));
+                for (JsonNode id : s.path("shade")) if (!ids.contains(id.asText())) p.add("shade names " + id + ", not a node id");
+                for (JsonNode tag : s.path("tags")) if (!ids.contains(tag.path(0).asText())) p.add("tag " + tag + " names no node");
+                yield p;
+            }
+            case "linkedlist" -> {
+                JsonNode nodes = s.get("nodes");
+                if (nodes == null || !nodes.isArray()) yield List.of("nodes must be a list of { id, value }");
+                Set<String> ids = new HashSet<>();
+                nodes.forEach(n -> ids.add(n.path("id").asText()));
+                Predicate<JsonNode> node = k -> k != null && (k.isTextual() || k.isNumber()) && ids.contains(k.asText());
+                List<String> p = new ArrayList<>();
+                s.path("next").fields().forEachRemaining(e -> {
+                    if (!ids.contains(e.getKey())) p.add("next names " + e.getKey() + ", not a node id");
+                    else if (!e.getValue().isNull() && !node.test(e.getValue())) p.add("next of " + e.getKey() + " is " + e.getValue() + ", not a node id");
+                });
+                s.path("pointers").fields().forEachRemaining(e -> {
+                    if (!e.getValue().isNull() && !node.test(e.getValue())) p.add("pointer " + e.getKey() + " = " + e.getValue() + " is not a node id");
+                });
+                s.path("cut").fields().forEachRemaining(e -> {
+                    if (!ids.contains(e.getKey()) || !node.test(e.getValue())) p.add("cut " + e.getKey() + " → " + e.getValue() + " names a node that doesn't exist");
+                });
+                p.addAll(marks(s.get("marks"), node, "node id"));
+                p.addAll(marks(s.get("linkMarks"), k -> node.test(k) && s.path("next").has(k.asText()), "node with a next"));
+                yield p;
+            }
+            case "callstack" -> {
+                JsonNode calls = s.get("calls");
+                if (calls == null || !calls.isArray()) yield List.of("calls must be a list of { name, args?, note? }, bottom first");
+                List<String> p = new ArrayList<>();
+                for (int i = 0; i < calls.size(); i++) {
+                    JsonNode c = calls.get(i);
+                    if (!isText(c.get("name"))) p.add("call " + i + " has no name");
+                    if (c.has("args") && !c.get("args").isObject()) p.add("call " + i + ": args must be an object of argument names to values");
+                    if (c.has("note") && !isText(c.get("note"))) p.add("call " + i + ": note is not Text");
+                }
+                p.addAll(marks(s.get("marks"), k -> k.isInt() && k.asInt() >= 0 && k.asInt() < calls.size(), "call position"));
+                yield p;
+            }
             case "table" -> {
                 JsonNode rows = s.get("rows");
                 if (rows == null || !rows.isArray()) yield List.of("rows must be a list");
@@ -1534,6 +1598,11 @@ class WalkthroughsMatchSamplesTest {
             }
             default -> List.of(); // an unknown type is reported with the views
         };
+    }
+
+    /** The parent of {@code child} in a tree's child-to-parent map, or "" when it has none. */
+    private static String from(Map<String, String> parent, String child) {
+        return parent.getOrDefault(child, "");
     }
 
     /**

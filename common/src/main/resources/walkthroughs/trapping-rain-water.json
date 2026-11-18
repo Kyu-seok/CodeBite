@@ -1,0 +1,1470 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Trapping Rain Water",
+  "ko": "빗물 가두기"
+ },
+ "approach": {
+  "en": "Two pointers move toward each other, always moving the lower side: the other side already holds a bar at least as tall, so the lower side's running max is the water level over the bar it settles.",
+  "ko": "두 포인터가 양 끝에서 서로를 향해 오며, 항상 더 낮은 쪽을 움직입니다. 반대쪽에 그만큼 높은 막대가 이미 있으므로, 낮은 쪽의 지금까지 최댓값이 그 막대 위의 물 높이입니다."
+ },
+ "views": [
+  {
+   "id": "bars",
+   "type": "array",
+   "display": "bars",
+   "title": {
+    "en": "height (bars) and water",
+    "ko": "height (막대)와 물"
+   }
+  },
+  {
+   "id": "water",
+   "type": "output",
+   "title": {
+    "en": "water trapped",
+    "ko": "갇힌 물"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "height = [0,2,0,3,1,0,2,4,1,2,0,1]",
+   "expected": "10",
+   "frames": [
+    {
+     "caption": {
+      "en": "12 bars. L starts at bar 0 and R at bar 11; the water above a bar is limited by the shorter of the tallest bars on its two sides.",
+      "ko": "막대 12개이고, L은 0번, R은 11번 막대에서 시작합니다. 막대 위의 물은 양쪽에서 가장 높은 막대 중 낮은 쪽까지만 찹니다."
+     },
+     "views": {
+      "bars": {
+       "values": [
+        0,
+        2,
+        0,
+        3,
+        1,
+        0,
+        2,
+        4,
+        1,
+        2,
+        0,
+        1
+       ],
+       "fill": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+       ],
+       "tags": [],
+       "pointers": {
+        "L": 0,
+        "R": 11
+       },
+       "marks": {
+        "dim": [],
+        "path": [],
+        "good": [],
+        "lit": []
+       }
+      },
+      "water": {
+       "values": [
+        0
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "L at bar 0: 0 < 1 at R, so the left side is lower and its max decides the level. Height 0 is no lower than the L max 0, so this bar holds no water.",
+      "ko": "L(0번 막대): 0은 R의 1보다 낮아 왼쪽이 낮은 쪽이고, 왼쪽 최댓값이 물 높이를 정합니다. 높이 0이 L 최댓값 0보다 낮지 않아 이 막대 위에는 물이 없습니다."
+     },
+     "views": {
+      "bars": {
+       "values": [
+        0,
+        2,
+        0,
+        3,
+        1,
+        0,
+        2,
+        4,
+        1,
+        2,
+        0,
+        1
+       ],
+       "fill": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+       ],
+       "tags": [],
+       "pointers": {
+        "L": 1,
+        "R": 11
+       },
+       "marks": {
+        "dim": [],
+        "path": [],
+        "good": [],
+        "lit": [
+         0,
+         11
+        ]
+       }
+      },
+      "water": {
+       "values": [
+        0
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "R at bar 11: 1 ≤ 2 at L, so the right side is lower and its max decides the level. Height 1 is the new R max, so this bar holds no water.",
+      "ko": "R(11번 막대): 1은 L의 2보다 높지 않아 오른쪽이 낮은 쪽이고, 오른쪽 최댓값이 물 높이를 정합니다. 높이 1이 새 R 최댓값이라 이 막대 위에는 물이 없습니다."
+     },
+     "views": {
+      "bars": {
+       "values": [
+        0,
+        2,
+        0,
+        3,
+        1,
+        0,
+        2,
+        4,
+        1,
+        2,
+        0,
+        1
+       ],
+       "fill": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+       ],
+       "tags": [
+        [
+         11,
+         {
+          "en": "R max 1",
+          "ko": "R 최대 1"
+         }
+        ]
+       ],
+       "pointers": {
+        "L": 1,
+        "R": 10
+       },
+       "marks": {
+        "dim": [],
+        "path": [],
+        "good": [
+         11
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "water": {
+       "values": [
+        0
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "R at bar 10: 0 ≤ 2 at L, so the right side is lower and its max decides the level. Level 1 − height 0 = 1 over this bar, so the total is 1.",
+      "ko": "R(10번 막대): 0은 L의 2보다 높지 않아 오른쪽이 낮은 쪽이고, 오른쪽 최댓값이 물 높이를 정합니다. 물 높이 1 − 높이 0 = 1칸이 이 막대 위에 고여 총 1이 됩니다."
+     },
+     "views": {
+      "bars": {
+       "values": [
+        0,
+        2,
+        0,
+        3,
+        1,
+        0,
+        2,
+        4,
+        1,
+        2,
+        0,
+        1
+       ],
+       "fill": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0
+       ],
+       "tags": [
+        [
+         11,
+         {
+          "en": "R max 1",
+          "ko": "R 최대 1"
+         }
+        ]
+       ],
+       "pointers": {
+        "L": 1,
+        "R": 9
+       },
+       "marks": {
+        "dim": [],
+        "path": [],
+        "good": [
+         10
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "water": {
+       "values": [
+        1
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "bars",
+        "at": 10
+       },
+       "to": {
+        "view": "water",
+        "at": 0
+       },
+       "value": "+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "R at bar 9: 2 ≤ 2 at L, so the right side is lower and its max decides the level. Height 2 is the new R max, so this bar holds no water.",
+      "ko": "R(9번 막대): 2는 L의 2보다 높지 않아 오른쪽이 낮은 쪽이고, 오른쪽 최댓값이 물 높이를 정합니다. 높이 2가 새 R 최댓값이라 이 막대 위에는 물이 없습니다."
+     },
+     "views": {
+      "bars": {
+       "values": [
+        0,
+        2,
+        0,
+        3,
+        1,
+        0,
+        2,
+        4,
+        1,
+        2,
+        0,
+        1
+       ],
+       "fill": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0
+       ],
+       "tags": [
+        [
+         9,
+         {
+          "en": "R max 2",
+          "ko": "R 최대 2"
+         }
+        ]
+       ],
+       "pointers": {
+        "L": 1,
+        "R": 8
+       },
+       "marks": {
+        "dim": [],
+        "path": [],
+        "good": [
+         9
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "water": {
+       "values": [
+        1
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "R at bar 8: 1 ≤ 2 at L, so the right side is lower and its max decides the level. Level 2 − height 1 = 1 over this bar, so the total is 2.",
+      "ko": "R(8번 막대): 1은 L의 2보다 높지 않아 오른쪽이 낮은 쪽이고, 오른쪽 최댓값이 물 높이를 정합니다. 물 높이 2 − 높이 1 = 1칸이 이 막대 위에 고여 총 2가 됩니다."
+     },
+     "views": {
+      "bars": {
+       "values": [
+        0,
+        2,
+        0,
+        3,
+        1,
+        0,
+        2,
+        4,
+        1,
+        2,
+        0,
+        1
+       ],
+       "fill": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0
+       ],
+       "tags": [
+        [
+         9,
+         {
+          "en": "R max 2",
+          "ko": "R 최대 2"
+         }
+        ]
+       ],
+       "pointers": {
+        "L": 1,
+        "R": 7
+       },
+       "marks": {
+        "dim": [],
+        "path": [],
+        "good": [
+         8
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "water": {
+       "values": [
+        2
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "bars",
+        "at": 8
+       },
+       "to": {
+        "view": "water",
+        "at": 0
+       },
+       "value": "+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "L at bar 1: 2 < 4 at R, so the left side is lower and its max decides the level. Height 2 is the new L max, so this bar holds no water.",
+      "ko": "L(1번 막대): 2는 R의 4보다 낮아 왼쪽이 낮은 쪽이고, 왼쪽 최댓값이 물 높이를 정합니다. 높이 2가 새 L 최댓값이라 이 막대 위에는 물이 없습니다."
+     },
+     "views": {
+      "bars": {
+       "values": [
+        0,
+        2,
+        0,
+        3,
+        1,
+        0,
+        2,
+        4,
+        1,
+        2,
+        0,
+        1
+       ],
+       "fill": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0
+       ],
+       "tags": [
+        [
+         1,
+         {
+          "en": "L max 2",
+          "ko": "L 최대 2"
+         }
+        ],
+        [
+         9,
+         {
+          "en": "R max 2",
+          "ko": "R 최대 2"
+         }
+        ]
+       ],
+       "pointers": {
+        "L": 2,
+        "R": 7
+       },
+       "marks": {
+        "dim": [],
+        "path": [],
+        "good": [
+         1
+        ],
+        "lit": [
+         7
+        ]
+       }
+      },
+      "water": {
+       "values": [
+        2
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "L at bar 2: 0 < 4 at R, so the left side is lower and its max decides the level. Level 2 − height 0 = 2 over this bar, so the total is 4.",
+      "ko": "L(2번 막대): 0은 R의 4보다 낮아 왼쪽이 낮은 쪽이고, 왼쪽 최댓값이 물 높이를 정합니다. 물 높이 2 − 높이 0 = 2칸이 이 막대 위에 고여 총 4가 됩니다."
+     },
+     "views": {
+      "bars": {
+       "values": [
+        0,
+        2,
+        0,
+        3,
+        1,
+        0,
+        2,
+        4,
+        1,
+        2,
+        0,
+        1
+       ],
+       "fill": [
+        0,
+        0,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0
+       ],
+       "tags": [
+        [
+         1,
+         {
+          "en": "L max 2",
+          "ko": "L 최대 2"
+         }
+        ],
+        [
+         9,
+         {
+          "en": "R max 2",
+          "ko": "R 최대 2"
+         }
+        ]
+       ],
+       "pointers": {
+        "L": 3,
+        "R": 7
+       },
+       "marks": {
+        "dim": [],
+        "path": [],
+        "good": [
+         2
+        ],
+        "lit": [
+         7
+        ]
+       }
+      },
+      "water": {
+       "values": [
+        4
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "bars",
+        "at": 2
+       },
+       "to": {
+        "view": "water",
+        "at": 0
+       },
+       "value": "+2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "L at bar 3: 3 < 4 at R, so the left side is lower and its max decides the level. Height 3 is the new L max, so this bar holds no water.",
+      "ko": "L(3번 막대): 3은 R의 4보다 낮아 왼쪽이 낮은 쪽이고, 왼쪽 최댓값이 물 높이를 정합니다. 높이 3이 새 L 최댓값이라 이 막대 위에는 물이 없습니다."
+     },
+     "views": {
+      "bars": {
+       "values": [
+        0,
+        2,
+        0,
+        3,
+        1,
+        0,
+        2,
+        4,
+        1,
+        2,
+        0,
+        1
+       ],
+       "fill": [
+        0,
+        0,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0
+       ],
+       "tags": [
+        [
+         3,
+         {
+          "en": "L max 3",
+          "ko": "L 최대 3"
+         }
+        ],
+        [
+         9,
+         {
+          "en": "R max 2",
+          "ko": "R 최대 2"
+         }
+        ]
+       ],
+       "pointers": {
+        "L": 4,
+        "R": 7
+       },
+       "marks": {
+        "dim": [],
+        "path": [],
+        "good": [
+         3
+        ],
+        "lit": [
+         7
+        ]
+       }
+      },
+      "water": {
+       "values": [
+        4
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "L at bar 4: 1 < 4 at R, so the left side is lower and its max decides the level. Level 3 − height 1 = 2 over this bar, so the total is 6.",
+      "ko": "L(4번 막대): 1은 R의 4보다 낮아 왼쪽이 낮은 쪽이고, 왼쪽 최댓값이 물 높이를 정합니다. 물 높이 3 − 높이 1 = 2칸이 이 막대 위에 고여 총 6이 됩니다."
+     },
+     "views": {
+      "bars": {
+       "values": [
+        0,
+        2,
+        0,
+        3,
+        1,
+        0,
+        2,
+        4,
+        1,
+        2,
+        0,
+        1
+       ],
+       "fill": [
+        0,
+        0,
+        2,
+        0,
+        2,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0
+       ],
+       "tags": [
+        [
+         3,
+         {
+          "en": "L max 3",
+          "ko": "L 최대 3"
+         }
+        ],
+        [
+         9,
+         {
+          "en": "R max 2",
+          "ko": "R 최대 2"
+         }
+        ]
+       ],
+       "pointers": {
+        "L": 5,
+        "R": 7
+       },
+       "marks": {
+        "dim": [],
+        "path": [],
+        "good": [
+         4
+        ],
+        "lit": [
+         7
+        ]
+       }
+      },
+      "water": {
+       "values": [
+        6
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "bars",
+        "at": 4
+       },
+       "to": {
+        "view": "water",
+        "at": 0
+       },
+       "value": "+2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "L at bar 5: 0 < 4 at R, so the left side is lower and its max decides the level. Level 3 − height 0 = 3 over this bar, so the total is 9.",
+      "ko": "L(5번 막대): 0은 R의 4보다 낮아 왼쪽이 낮은 쪽이고, 왼쪽 최댓값이 물 높이를 정합니다. 물 높이 3 − 높이 0 = 3칸이 이 막대 위에 고여 총 9가 됩니다."
+     },
+     "views": {
+      "bars": {
+       "values": [
+        0,
+        2,
+        0,
+        3,
+        1,
+        0,
+        2,
+        4,
+        1,
+        2,
+        0,
+        1
+       ],
+       "fill": [
+        0,
+        0,
+        2,
+        0,
+        2,
+        3,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0
+       ],
+       "tags": [
+        [
+         3,
+         {
+          "en": "L max 3",
+          "ko": "L 최대 3"
+         }
+        ],
+        [
+         9,
+         {
+          "en": "R max 2",
+          "ko": "R 최대 2"
+         }
+        ]
+       ],
+       "pointers": {
+        "L": 6,
+        "R": 7
+       },
+       "marks": {
+        "dim": [],
+        "path": [],
+        "good": [
+         5
+        ],
+        "lit": [
+         7
+        ]
+       }
+      },
+      "water": {
+       "values": [
+        9
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "bars",
+        "at": 5
+       },
+       "to": {
+        "view": "water",
+        "at": 0
+       },
+       "value": "+3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "L at bar 6: 2 < 4 at R, so the left side is lower and its max decides the level. Level 3 − height 2 = 1 over this bar, so the total is 10.",
+      "ko": "L(6번 막대): 2는 R의 4보다 낮아 왼쪽이 낮은 쪽이고, 왼쪽 최댓값이 물 높이를 정합니다. 물 높이 3 − 높이 2 = 1칸이 이 막대 위에 고여 총 10이 됩니다."
+     },
+     "views": {
+      "bars": {
+       "values": [
+        0,
+        2,
+        0,
+        3,
+        1,
+        0,
+        2,
+        4,
+        1,
+        2,
+        0,
+        1
+       ],
+       "fill": [
+        0,
+        0,
+        2,
+        0,
+        2,
+        3,
+        1,
+        0,
+        1,
+        0,
+        1,
+        0
+       ],
+       "tags": [
+        [
+         3,
+         {
+          "en": "L max 3",
+          "ko": "L 최대 3"
+         }
+        ],
+        [
+         9,
+         {
+          "en": "R max 2",
+          "ko": "R 최대 2"
+         }
+        ]
+       ],
+       "pointers": {
+        "L": 7,
+        "R": null
+       },
+       "marks": {
+        "dim": [],
+        "path": [],
+        "good": [
+         6
+        ],
+        "lit": [
+         7
+        ]
+       }
+      },
+      "water": {
+       "values": [
+        10
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "bars",
+        "at": 6
+       },
+       "to": {
+        "view": "water",
+        "at": 0
+       },
+       "value": "+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "L and R met at bar 7: every bar is settled. Water sits over 6 bars, 10 units in total.",
+      "ko": "L과 R이 7번 막대에서 만나 모든 막대를 처리했습니다. 물은 막대 6개 위에 고였고, 모두 10칸입니다."
+     },
+     "views": {
+      "bars": {
+       "values": [
+        0,
+        2,
+        0,
+        3,
+        1,
+        0,
+        2,
+        4,
+        1,
+        2,
+        0,
+        1
+       ],
+       "fill": [
+        0,
+        0,
+        2,
+        0,
+        2,
+        3,
+        1,
+        0,
+        1,
+        0,
+        1,
+        0
+       ],
+       "tags": [
+        [
+         3,
+         {
+          "en": "L max 3",
+          "ko": "L 최대 3"
+         }
+        ],
+        [
+         9,
+         {
+          "en": "R max 2",
+          "ko": "R 최대 2"
+         }
+        ]
+       ],
+       "pointers": {
+        "L": null,
+        "R": null
+       },
+       "marks": {
+        "dim": [],
+        "path": [
+         2,
+         4,
+         5,
+         6,
+         8,
+         10
+        ],
+        "good": [],
+        "lit": []
+       }
+      },
+      "water": {
+       "values": [
+        10
+       ],
+       "marks": {
+        "path": [
+         0
+        ]
+       }
+      }
+     },
+     "answer": "10"
+    }
+   ],
+   "sampleInput": "[0,2,0,3,1,0,2,4,1,2,0,1]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "height = [3,1,0,2,1,4]",
+   "expected": "8",
+   "frames": [
+    {
+     "caption": {
+      "en": "6 bars. L starts at bar 0 and R at bar 5; the water above a bar is limited by the shorter of the tallest bars on its two sides.",
+      "ko": "막대 6개이고, L은 0번, R은 5번 막대에서 시작합니다. 막대 위의 물은 양쪽에서 가장 높은 막대 중 낮은 쪽까지만 찹니다."
+     },
+     "views": {
+      "bars": {
+       "values": [
+        3,
+        1,
+        0,
+        2,
+        1,
+        4
+       ],
+       "fill": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+       ],
+       "tags": [],
+       "pointers": {
+        "L": 0,
+        "R": 5
+       },
+       "marks": {
+        "dim": [],
+        "path": [],
+        "good": [],
+        "lit": []
+       }
+      },
+      "water": {
+       "values": [
+        0
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "L at bar 0: 3 < 4 at R, so the left side is lower and its max decides the level. Height 3 is the new L max, so this bar holds no water.",
+      "ko": "L(0번 막대): 3은 R의 4보다 낮아 왼쪽이 낮은 쪽이고, 왼쪽 최댓값이 물 높이를 정합니다. 높이 3이 새 L 최댓값이라 이 막대 위에는 물이 없습니다."
+     },
+     "views": {
+      "bars": {
+       "values": [
+        3,
+        1,
+        0,
+        2,
+        1,
+        4
+       ],
+       "fill": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "L max 3",
+          "ko": "L 최대 3"
+         }
+        ]
+       ],
+       "pointers": {
+        "L": 1,
+        "R": 5
+       },
+       "marks": {
+        "dim": [],
+        "path": [],
+        "good": [
+         0
+        ],
+        "lit": [
+         5
+        ]
+       }
+      },
+      "water": {
+       "values": [
+        0
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "L at bar 1: 1 < 4 at R, so the left side is lower and its max decides the level. Level 3 − height 1 = 2 over this bar, so the total is 2.",
+      "ko": "L(1번 막대): 1은 R의 4보다 낮아 왼쪽이 낮은 쪽이고, 왼쪽 최댓값이 물 높이를 정합니다. 물 높이 3 − 높이 1 = 2칸이 이 막대 위에 고여 총 2가 됩니다."
+     },
+     "views": {
+      "bars": {
+       "values": [
+        3,
+        1,
+        0,
+        2,
+        1,
+        4
+       ],
+       "fill": [
+        0,
+        2,
+        0,
+        0,
+        0,
+        0
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "L max 3",
+          "ko": "L 최대 3"
+         }
+        ]
+       ],
+       "pointers": {
+        "L": 2,
+        "R": 5
+       },
+       "marks": {
+        "dim": [],
+        "path": [],
+        "good": [
+         1
+        ],
+        "lit": [
+         5
+        ]
+       }
+      },
+      "water": {
+       "values": [
+        2
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "bars",
+        "at": 1
+       },
+       "to": {
+        "view": "water",
+        "at": 0
+       },
+       "value": "+2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "L at bar 2: 0 < 4 at R, so the left side is lower and its max decides the level. Level 3 − height 0 = 3 over this bar, so the total is 5.",
+      "ko": "L(2번 막대): 0은 R의 4보다 낮아 왼쪽이 낮은 쪽이고, 왼쪽 최댓값이 물 높이를 정합니다. 물 높이 3 − 높이 0 = 3칸이 이 막대 위에 고여 총 5가 됩니다."
+     },
+     "views": {
+      "bars": {
+       "values": [
+        3,
+        1,
+        0,
+        2,
+        1,
+        4
+       ],
+       "fill": [
+        0,
+        2,
+        3,
+        0,
+        0,
+        0
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "L max 3",
+          "ko": "L 최대 3"
+         }
+        ]
+       ],
+       "pointers": {
+        "L": 3,
+        "R": 5
+       },
+       "marks": {
+        "dim": [],
+        "path": [],
+        "good": [
+         2
+        ],
+        "lit": [
+         5
+        ]
+       }
+      },
+      "water": {
+       "values": [
+        5
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "bars",
+        "at": 2
+       },
+       "to": {
+        "view": "water",
+        "at": 0
+       },
+       "value": "+3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "L at bar 3: 2 < 4 at R, so the left side is lower and its max decides the level. Level 3 − height 2 = 1 over this bar, so the total is 6.",
+      "ko": "L(3번 막대): 2는 R의 4보다 낮아 왼쪽이 낮은 쪽이고, 왼쪽 최댓값이 물 높이를 정합니다. 물 높이 3 − 높이 2 = 1칸이 이 막대 위에 고여 총 6이 됩니다."
+     },
+     "views": {
+      "bars": {
+       "values": [
+        3,
+        1,
+        0,
+        2,
+        1,
+        4
+       ],
+       "fill": [
+        0,
+        2,
+        3,
+        1,
+        0,
+        0
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "L max 3",
+          "ko": "L 최대 3"
+         }
+        ]
+       ],
+       "pointers": {
+        "L": 4,
+        "R": 5
+       },
+       "marks": {
+        "dim": [],
+        "path": [],
+        "good": [
+         3
+        ],
+        "lit": [
+         5
+        ]
+       }
+      },
+      "water": {
+       "values": [
+        6
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "bars",
+        "at": 3
+       },
+       "to": {
+        "view": "water",
+        "at": 0
+       },
+       "value": "+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "L at bar 4: 1 < 4 at R, so the left side is lower and its max decides the level. Level 3 − height 1 = 2 over this bar, so the total is 8.",
+      "ko": "L(4번 막대): 1은 R의 4보다 낮아 왼쪽이 낮은 쪽이고, 왼쪽 최댓값이 물 높이를 정합니다. 물 높이 3 − 높이 1 = 2칸이 이 막대 위에 고여 총 8이 됩니다."
+     },
+     "views": {
+      "bars": {
+       "values": [
+        3,
+        1,
+        0,
+        2,
+        1,
+        4
+       ],
+       "fill": [
+        0,
+        2,
+        3,
+        1,
+        2,
+        0
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "L max 3",
+          "ko": "L 최대 3"
+         }
+        ]
+       ],
+       "pointers": {
+        "L": 5,
+        "R": null
+       },
+       "marks": {
+        "dim": [],
+        "path": [],
+        "good": [
+         4
+        ],
+        "lit": [
+         5
+        ]
+       }
+      },
+      "water": {
+       "values": [
+        8
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "bars",
+        "at": 4
+       },
+       "to": {
+        "view": "water",
+        "at": 0
+       },
+       "value": "+2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "L and R met at bar 5: every bar is settled. Water sits over 4 bars, 8 units in total.",
+      "ko": "L과 R이 5번 막대에서 만나 모든 막대를 처리했습니다. 물은 막대 4개 위에 고였고, 모두 8칸입니다."
+     },
+     "views": {
+      "bars": {
+       "values": [
+        3,
+        1,
+        0,
+        2,
+        1,
+        4
+       ],
+       "fill": [
+        0,
+        2,
+        3,
+        1,
+        2,
+        0
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "L max 3",
+          "ko": "L 최대 3"
+         }
+        ]
+       ],
+       "pointers": {
+        "L": null,
+        "R": null
+       },
+       "marks": {
+        "dim": [],
+        "path": [
+         1,
+         2,
+         3,
+         4
+        ],
+        "good": [],
+        "lit": []
+       }
+      },
+      "water": {
+       "values": [
+        8
+       ],
+       "marks": {
+        "path": [
+         0
+        ]
+       }
+      }
+     },
+     "answer": "8"
+    }
+   ],
+   "sampleInput": "[3,1,0,2,1,4]"
+  }
+ ]
+}

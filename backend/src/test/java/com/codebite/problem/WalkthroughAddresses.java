@@ -40,7 +40,7 @@ final class WalkthroughAddresses {
      * One address form, by its name in the table: whether {@code at} names a place in a state, every place a state
      * holds, and where a move out of a place carries its value on to.
      */
-    private record Form(String name, Names names, Places places, Onward onward) {
+    private record Form(String name, String list, Names names, Places places, Onward onward) {
     }
 
     /** Whether {@code at} names a place in {@code state}, the frame's state of {@code view}. */
@@ -96,10 +96,10 @@ final class WalkthroughAddresses {
         String field = f.path("field").asText(null), inner = f.path("inner").asText(null);
         Drawn drawn = new Drawn(f.path("value").asText(null), f.path("valueIn").asText(null));
         return switch (name) {
-            case "index" -> new Form(name, (at, s, v) -> index(at, s.path(list)), (s, into) -> {
+            case "index" -> new Form(name, list, (at, s, v) -> index(at, s.path(list)), (s, into) -> {
                 for (int i = 0; i < s.path(list).size(); i++) into.put(String.valueOf(i), drawn.at(s, null, s.path(list).get(i)));
             }, NOWHERE);
-            case "key" -> new Form(name, (at, s, v) -> {
+            case "key" -> new Form(name, list, (at, s, v) -> {
                 String k = key(at);
                 if (k == null) return false;
                 for (JsonNode item : s.path(list)) if (k.equals(key(field == null ? item : item.get(field)))) return true;
@@ -110,7 +110,7 @@ final class WalkthroughAddresses {
                     if (k != null) into.put(k, drawn.at(s, k, item));
                 }
             }, NOWHERE);
-            case "pair" -> new Form(name, (at, s, v) -> at != null && at.isArray() && at.size() == 2 && index(at.get(0), s.path(list))
+            case "pair" -> new Form(name, list, (at, s, v) -> at != null && at.isArray() && at.size() == 2 && index(at.get(0), s.path(list))
                     && index(at.get(1), inner == null ? s.path(list).path(at.get(0).asInt())
                     : s.path(list).path(at.get(0).asInt()).path(inner)), (s, into) -> {
                 for (int i = 0; i < s.path(list).size(); i++) {
@@ -118,7 +118,7 @@ final class WalkthroughAddresses {
                     for (int j = 0; j < row.size(); j++) into.put(pair(String.valueOf(i), String.valueOf(j)), drawn.at(s, null, row.get(j)));
                 }
             }, NOWHERE);
-            case "edge" -> new Form(name, (at, s, v) -> at != null && at.isArray() && at.size() == 2
+            case "edge" -> new Form(name, list, (at, s, v) -> at != null && at.isArray() && at.size() == 2
                     && edge(s.path(list), key(at.get(0)), key(at.get(1)), v.path("directed").asBoolean(true)), (s, into) -> {
                 for (JsonNode e : s.path(list)) into.put(pair(key(e.get("from")), key(e.get("to"))), drawn.at(s, null, e));
             }, at -> at != null && at.isArray() && at.size() == 2 ? key(at.get(1)) : null);
@@ -162,6 +162,25 @@ final class WalkthroughAddresses {
         Entry entry = byType.get(type);
         if (entry != null) for (Form f : entry.forms()) f.places().list(state, places);
         return places;
+    }
+
+    /**
+     * For each place of {@code type} in {@code state} that arrives with another (an edge, which arrives with the place
+     * its second id names: a tree growing a child), that other place's address, by the place's address. A new place
+     * that arrives with one is drawn by a move into that one, so a tree's new node and the edge into it take one move.
+     */
+    Map<String, String> arrivesWith(String type, JsonNode state) {
+        Map<String, String> arrivals = new LinkedHashMap<>();
+        Entry entry = byType.get(type);
+        if (entry == null) return arrivals;
+        for (Form f : entry.forms()) {
+            if (!f.name().equals("edge")) continue;
+            for (JsonNode e : state.path(f.list())) {
+                String from = key(e.get("from")), to = key(e.get("to"));
+                if (from != null && to != null) arrivals.put(pair(from, to), to);
+            }
+        }
+        return arrivals;
     }
 
     /**

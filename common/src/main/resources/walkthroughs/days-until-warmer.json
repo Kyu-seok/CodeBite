@@ -1,0 +1,2171 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Days Until Warmer",
+  "ko": "기온이 오를 때까지 며칠?"
+ },
+ "approach": {
+  "en": "A stack keeps the days still waiting, their readings falling from bottom to top: a warmer day pops every cooler day off the top, and each popped day's wait is the gap between the two days.",
+  "ko": "아직 기다리는 날들을 스택에 두면 기온이 아래에서 위로 내려갑니다. 더 따뜻한 날이 오면 맨 위의 더 추운 날들을 꺼내고, 꺼낸 날의 wait는 두 날의 차이입니다."
+ },
+ "views": [
+  {
+   "id": "readings",
+   "type": "array",
+   "title": {
+    "en": "readings",
+    "ko": "readings (기온)"
+   }
+  },
+  {
+   "id": "pending",
+   "type": "array",
+   "title": {
+    "en": "pending stack (top on the right)",
+    "ko": "기다리는 날 스택 (오른쪽이 맨 위)"
+   }
+  },
+  {
+   "id": "wait",
+   "type": "array",
+   "title": {
+    "en": "wait",
+    "ko": "wait (기다린 날수)"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "readings = [55,58,52,50,54,60]",
+   "expected": "[1,4,2,1,1,0]",
+   "frames": [
+    {
+     "caption": {
+      "en": "6 days. Every wait starts at 0, and the stack of days still waiting for a warmer reading starts empty.",
+      "ko": "6일입니다. wait는 모두 0에서 시작하고, 더 따뜻한 날을 기다리는 날들의 스택은 비어 있습니다."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        55,
+        58,
+        52,
+        50,
+        54,
+        60
+       ],
+       "pointers": {
+        "day": null
+       },
+       "unread": [],
+       "marks": {
+        "lit": []
+       }
+      },
+      "pending": {
+       "values": [],
+       "tags": [],
+       "marks": {
+        "good": [],
+        "lit": []
+       }
+      },
+      "wait": {
+       "values": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+       ],
+       "marks": {
+        "path": [],
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "The stack is empty: push day 0 (55) on top to wait for a warmer reading.",
+      "ko": "스택이 비었으므로 0일차(55)를 맨 위에 넣어 더 따뜻한 날을 기다리게 합니다."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        55,
+        58,
+        52,
+        50,
+        54,
+        60
+       ],
+       "pointers": {
+        "day": 0
+       },
+       "unread": [
+        1,
+        2,
+        3,
+        4,
+        5
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "pending": {
+       "values": [
+        55
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "day 0",
+          "ko": "0일차"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ],
+        "lit": []
+       }
+      },
+      "wait": {
+       "values": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+       ],
+       "marks": {
+        "path": [],
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "readings",
+        "at": 0
+       },
+       "to": {
+        "view": "pending",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Day 1's 58 is warmer than day 0's 55 on top: pop day 0, which waited 1 − 0 = 1 day.",
+      "ko": "1일차 58은 맨 위 0일차의 55보다 따뜻합니다. 0일차를 꺼내며, 기다린 날수는 1 − 0 = 1일입니다."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        55,
+        58,
+        52,
+        50,
+        54,
+        60
+       ],
+       "pointers": {
+        "day": 1
+       },
+       "unread": [
+        2,
+        3,
+        4,
+        5
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "pending": {
+       "values": [
+        55
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "day 0",
+          "ko": "0일차"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "wait": {
+       "values": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0
+       ],
+       "marks": {
+        "path": [],
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "pending",
+        "at": 0
+       },
+       "to": {
+        "view": "wait",
+        "at": 0
+       },
+       "value": "1−0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The stack is empty: push day 1 (58) on top to wait for a warmer reading.",
+      "ko": "스택이 비었으므로 1일차(58)를 맨 위에 넣어 더 따뜻한 날을 기다리게 합니다."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        55,
+        58,
+        52,
+        50,
+        54,
+        60
+       ],
+       "pointers": {
+        "day": 1
+       },
+       "unread": [
+        2,
+        3,
+        4,
+        5
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "pending": {
+       "values": [
+        58
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "day 1",
+          "ko": "1일차"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ],
+        "lit": []
+       }
+      },
+      "wait": {
+       "values": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0
+       ],
+       "marks": {
+        "path": [],
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "readings",
+        "at": 1
+       },
+       "to": {
+        "view": "pending",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Day 1's 58 on top is not cooler than 52, so it stops there: push day 2 (52) on top to wait for a warmer reading.",
+      "ko": "맨 위 1일차의 기온 58도 52보다 낮지 않아 여기서 멈추므로 2일차(52)를 맨 위에 넣어 더 따뜻한 날을 기다리게 합니다."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        55,
+        58,
+        52,
+        50,
+        54,
+        60
+       ],
+       "pointers": {
+        "day": 2
+       },
+       "unread": [
+        3,
+        4,
+        5
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "pending": {
+       "values": [
+        58,
+        52
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "day 1",
+          "ko": "1일차"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "day 2",
+          "ko": "2일차"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ],
+        "lit": []
+       }
+      },
+      "wait": {
+       "values": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0
+       ],
+       "marks": {
+        "path": [],
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "readings",
+        "at": 2
+       },
+       "to": {
+        "view": "pending",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Day 2's 52 on top is not cooler than 50, so it stops there: push day 3 (50) on top to wait for a warmer reading.",
+      "ko": "맨 위 2일차의 기온 52도 50보다 낮지 않아 여기서 멈추므로 3일차(50)를 맨 위에 넣어 더 따뜻한 날을 기다리게 합니다."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        55,
+        58,
+        52,
+        50,
+        54,
+        60
+       ],
+       "pointers": {
+        "day": 3
+       },
+       "unread": [
+        4,
+        5
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "pending": {
+       "values": [
+        58,
+        52,
+        50
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "day 1",
+          "ko": "1일차"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "day 2",
+          "ko": "2일차"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "day 3",
+          "ko": "3일차"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         2
+        ],
+        "lit": []
+       }
+      },
+      "wait": {
+       "values": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0
+       ],
+       "marks": {
+        "path": [],
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "readings",
+        "at": 3
+       },
+       "to": {
+        "view": "pending",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Day 4's 54 is warmer than day 3's 50 on top: pop day 3, which waited 4 − 3 = 1 day.",
+      "ko": "4일차 54는 맨 위 3일차의 50보다 따뜻합니다. 3일차를 꺼내며, 기다린 날수는 4 − 3 = 1일입니다."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        55,
+        58,
+        52,
+        50,
+        54,
+        60
+       ],
+       "pointers": {
+        "day": 4
+       },
+       "unread": [
+        5
+       ],
+       "marks": {
+        "lit": [
+         4
+        ]
+       }
+      },
+      "pending": {
+       "values": [
+        58,
+        52,
+        50
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "day 1",
+          "ko": "1일차"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "day 2",
+          "ko": "2일차"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "day 3",
+          "ko": "3일차"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [],
+        "lit": [
+         2
+        ]
+       }
+      },
+      "wait": {
+       "values": [
+        1,
+        0,
+        0,
+        1,
+        0,
+        0
+       ],
+       "marks": {
+        "path": [],
+        "good": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "pending",
+        "at": 2
+       },
+       "to": {
+        "view": "wait",
+        "at": 3
+       },
+       "value": "4−3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Day 4's 54 is warmer than day 2's 52 on top: pop day 2, which waited 4 − 2 = 2 days.",
+      "ko": "4일차 54는 맨 위 2일차의 52보다 따뜻합니다. 2일차를 꺼내며, 기다린 날수는 4 − 2 = 2일입니다."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        55,
+        58,
+        52,
+        50,
+        54,
+        60
+       ],
+       "pointers": {
+        "day": 4
+       },
+       "unread": [
+        5
+       ],
+       "marks": {
+        "lit": [
+         4
+        ]
+       }
+      },
+      "pending": {
+       "values": [
+        58,
+        52
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "day 1",
+          "ko": "1일차"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "day 2",
+          "ko": "2일차"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "wait": {
+       "values": [
+        1,
+        0,
+        2,
+        1,
+        0,
+        0
+       ],
+       "marks": {
+        "path": [],
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "pending",
+        "at": 1
+       },
+       "to": {
+        "view": "wait",
+        "at": 2
+       },
+       "value": "4−2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Day 1's 58 on top is not cooler than 54, so it stops there: push day 4 (54) on top to wait for a warmer reading.",
+      "ko": "맨 위 1일차의 기온 58도 54보다 낮지 않아 여기서 멈추므로 4일차(54)를 맨 위에 넣어 더 따뜻한 날을 기다리게 합니다."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        55,
+        58,
+        52,
+        50,
+        54,
+        60
+       ],
+       "pointers": {
+        "day": 4
+       },
+       "unread": [
+        5
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "pending": {
+       "values": [
+        58,
+        54
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "day 1",
+          "ko": "1일차"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "day 4",
+          "ko": "4일차"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ],
+        "lit": []
+       }
+      },
+      "wait": {
+       "values": [
+        1,
+        0,
+        2,
+        1,
+        0,
+        0
+       ],
+       "marks": {
+        "path": [],
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "readings",
+        "at": 4
+       },
+       "to": {
+        "view": "pending",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Day 5's 60 is warmer than day 4's 54 on top: pop day 4, which waited 5 − 4 = 1 day.",
+      "ko": "5일차 60은 맨 위 4일차의 54보다 따뜻합니다. 4일차를 꺼내며, 기다린 날수는 5 − 4 = 1일입니다."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        55,
+        58,
+        52,
+        50,
+        54,
+        60
+       ],
+       "pointers": {
+        "day": 5
+       },
+       "unread": [],
+       "marks": {
+        "lit": [
+         5
+        ]
+       }
+      },
+      "pending": {
+       "values": [
+        58,
+        54
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "day 1",
+          "ko": "1일차"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "day 4",
+          "ko": "4일차"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "wait": {
+       "values": [
+        1,
+        0,
+        2,
+        1,
+        1,
+        0
+       ],
+       "marks": {
+        "path": [],
+        "good": [
+         4
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "pending",
+        "at": 1
+       },
+       "to": {
+        "view": "wait",
+        "at": 4
+       },
+       "value": "5−4"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Day 5's 60 is warmer than day 1's 58 on top: pop day 1, which waited 5 − 1 = 4 days.",
+      "ko": "5일차 60은 맨 위 1일차의 58보다 따뜻합니다. 1일차를 꺼내며, 기다린 날수는 5 − 1 = 4일입니다."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        55,
+        58,
+        52,
+        50,
+        54,
+        60
+       ],
+       "pointers": {
+        "day": 5
+       },
+       "unread": [],
+       "marks": {
+        "lit": [
+         5
+        ]
+       }
+      },
+      "pending": {
+       "values": [
+        58
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "day 1",
+          "ko": "1일차"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "wait": {
+       "values": [
+        1,
+        4,
+        2,
+        1,
+        1,
+        0
+       ],
+       "marks": {
+        "path": [],
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "pending",
+        "at": 0
+       },
+       "to": {
+        "view": "wait",
+        "at": 1
+       },
+       "value": "5−1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The stack is empty: push day 5 (60) on top to wait for a warmer reading.",
+      "ko": "스택이 비었으므로 5일차(60)를 맨 위에 넣어 더 따뜻한 날을 기다리게 합니다."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        55,
+        58,
+        52,
+        50,
+        54,
+        60
+       ],
+       "pointers": {
+        "day": 5
+       },
+       "unread": [],
+       "marks": {
+        "lit": []
+       }
+      },
+      "pending": {
+       "values": [
+        60
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "day 5",
+          "ko": "5일차"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ],
+        "lit": []
+       }
+      },
+      "wait": {
+       "values": [
+        1,
+        4,
+        2,
+        1,
+        1,
+        0
+       ],
+       "marks": {
+        "path": [],
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "readings",
+        "at": 5
+       },
+       "to": {
+        "view": "pending",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every day is read. Day 5 still on the stack never saw a warmer day, so its wait stays 0: [1,4,2,1,1,0].",
+      "ko": "모든 날을 읽었습니다. 스택에 남은 5일차는 더 따뜻한 날을 만나지 못해 wait가 0으로 남습니다: [1,4,2,1,1,0]."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        55,
+        58,
+        52,
+        50,
+        54,
+        60
+       ],
+       "pointers": {
+        "day": null
+       },
+       "unread": [],
+       "marks": {
+        "lit": []
+       }
+      },
+      "pending": {
+       "values": [
+        60
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "day 5",
+          "ko": "5일차"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "wait": {
+       "values": [
+        1,
+        4,
+        2,
+        1,
+        1,
+        0
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ],
+        "good": []
+       }
+      }
+     },
+     "answer": "[1,4,2,1,1,0]"
+    }
+   ],
+   "sampleInput": "[55,58,52,50,54,60]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "readings = [45,45,45,50]",
+   "expected": "[3,2,1,0]",
+   "frames": [
+    {
+     "caption": {
+      "en": "4 days. Every wait starts at 0, and the stack of days still waiting for a warmer reading starts empty.",
+      "ko": "4일입니다. wait는 모두 0에서 시작하고, 더 따뜻한 날을 기다리는 날들의 스택은 비어 있습니다."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        45,
+        45,
+        45,
+        50
+       ],
+       "pointers": {
+        "day": null
+       },
+       "unread": [],
+       "marks": {
+        "lit": []
+       }
+      },
+      "pending": {
+       "values": [],
+       "tags": [],
+       "marks": {
+        "good": [],
+        "lit": []
+       }
+      },
+      "wait": {
+       "values": [
+        0,
+        0,
+        0,
+        0
+       ],
+       "marks": {
+        "path": [],
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "The stack is empty: push day 0 (45) on top to wait for a warmer reading.",
+      "ko": "스택이 비었으므로 0일차(45)를 맨 위에 넣어 더 따뜻한 날을 기다리게 합니다."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        45,
+        45,
+        45,
+        50
+       ],
+       "pointers": {
+        "day": 0
+       },
+       "unread": [
+        1,
+        2,
+        3
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "pending": {
+       "values": [
+        45
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "day 0",
+          "ko": "0일차"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ],
+        "lit": []
+       }
+      },
+      "wait": {
+       "values": [
+        0,
+        0,
+        0,
+        0
+       ],
+       "marks": {
+        "path": [],
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "readings",
+        "at": 0
+       },
+       "to": {
+        "view": "pending",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Day 0's 45 on top is not cooler than 45, so it stops there: push day 1 (45) on top to wait for a warmer reading.",
+      "ko": "맨 위 0일차의 기온 45도 45보다 낮지 않아 여기서 멈추므로 1일차(45)를 맨 위에 넣어 더 따뜻한 날을 기다리게 합니다."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        45,
+        45,
+        45,
+        50
+       ],
+       "pointers": {
+        "day": 1
+       },
+       "unread": [
+        2,
+        3
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "pending": {
+       "values": [
+        45,
+        45
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "day 0",
+          "ko": "0일차"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "day 1",
+          "ko": "1일차"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ],
+        "lit": []
+       }
+      },
+      "wait": {
+       "values": [
+        0,
+        0,
+        0,
+        0
+       ],
+       "marks": {
+        "path": [],
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "readings",
+        "at": 1
+       },
+       "to": {
+        "view": "pending",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Day 1's 45 on top is not cooler than 45, so it stops there: push day 2 (45) on top to wait for a warmer reading.",
+      "ko": "맨 위 1일차의 기온 45도 45보다 낮지 않아 여기서 멈추므로 2일차(45)를 맨 위에 넣어 더 따뜻한 날을 기다리게 합니다."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        45,
+        45,
+        45,
+        50
+       ],
+       "pointers": {
+        "day": 2
+       },
+       "unread": [
+        3
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "pending": {
+       "values": [
+        45,
+        45,
+        45
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "day 0",
+          "ko": "0일차"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "day 1",
+          "ko": "1일차"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "day 2",
+          "ko": "2일차"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         2
+        ],
+        "lit": []
+       }
+      },
+      "wait": {
+       "values": [
+        0,
+        0,
+        0,
+        0
+       ],
+       "marks": {
+        "path": [],
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "readings",
+        "at": 2
+       },
+       "to": {
+        "view": "pending",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Day 3's 50 is warmer than day 2's 45 on top: pop day 2, which waited 3 − 2 = 1 day.",
+      "ko": "3일차 50은 맨 위 2일차의 45보다 따뜻합니다. 2일차를 꺼내며, 기다린 날수는 3 − 2 = 1일입니다."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        45,
+        45,
+        45,
+        50
+       ],
+       "pointers": {
+        "day": 3
+       },
+       "unread": [],
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "pending": {
+       "values": [
+        45,
+        45,
+        45
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "day 0",
+          "ko": "0일차"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "day 1",
+          "ko": "1일차"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "day 2",
+          "ko": "2일차"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [],
+        "lit": [
+         2
+        ]
+       }
+      },
+      "wait": {
+       "values": [
+        0,
+        0,
+        1,
+        0
+       ],
+       "marks": {
+        "path": [],
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "pending",
+        "at": 2
+       },
+       "to": {
+        "view": "wait",
+        "at": 2
+       },
+       "value": "3−2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Day 3's 50 is warmer than day 1's 45 on top: pop day 1, which waited 3 − 1 = 2 days.",
+      "ko": "3일차 50은 맨 위 1일차의 45보다 따뜻합니다. 1일차를 꺼내며, 기다린 날수는 3 − 1 = 2일입니다."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        45,
+        45,
+        45,
+        50
+       ],
+       "pointers": {
+        "day": 3
+       },
+       "unread": [],
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "pending": {
+       "values": [
+        45,
+        45
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "day 0",
+          "ko": "0일차"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "day 1",
+          "ko": "1일차"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "wait": {
+       "values": [
+        0,
+        2,
+        1,
+        0
+       ],
+       "marks": {
+        "path": [],
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "pending",
+        "at": 1
+       },
+       "to": {
+        "view": "wait",
+        "at": 1
+       },
+       "value": "3−1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Day 3's 50 is warmer than day 0's 45 on top: pop day 0, which waited 3 − 0 = 3 days.",
+      "ko": "3일차 50은 맨 위 0일차의 45보다 따뜻합니다. 0일차를 꺼내며, 기다린 날수는 3 − 0 = 3일입니다."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        45,
+        45,
+        45,
+        50
+       ],
+       "pointers": {
+        "day": 3
+       },
+       "unread": [],
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "pending": {
+       "values": [
+        45
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "day 0",
+          "ko": "0일차"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "wait": {
+       "values": [
+        3,
+        2,
+        1,
+        0
+       ],
+       "marks": {
+        "path": [],
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "pending",
+        "at": 0
+       },
+       "to": {
+        "view": "wait",
+        "at": 0
+       },
+       "value": "3−0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The stack is empty: push day 3 (50) on top to wait for a warmer reading.",
+      "ko": "스택이 비었으므로 3일차(50)를 맨 위에 넣어 더 따뜻한 날을 기다리게 합니다."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        45,
+        45,
+        45,
+        50
+       ],
+       "pointers": {
+        "day": 3
+       },
+       "unread": [],
+       "marks": {
+        "lit": []
+       }
+      },
+      "pending": {
+       "values": [
+        50
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "day 3",
+          "ko": "3일차"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ],
+        "lit": []
+       }
+      },
+      "wait": {
+       "values": [
+        3,
+        2,
+        1,
+        0
+       ],
+       "marks": {
+        "path": [],
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "readings",
+        "at": 3
+       },
+       "to": {
+        "view": "pending",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every day is read. Day 3 still on the stack never saw a warmer day, so its wait stays 0: [3,2,1,0].",
+      "ko": "모든 날을 읽었습니다. 스택에 남은 3일차는 더 따뜻한 날을 만나지 못해 wait가 0으로 남습니다: [3,2,1,0]."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        45,
+        45,
+        45,
+        50
+       ],
+       "pointers": {
+        "day": null
+       },
+       "unread": [],
+       "marks": {
+        "lit": []
+       }
+      },
+      "pending": {
+       "values": [
+        50
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "day 3",
+          "ko": "3일차"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "wait": {
+       "values": [
+        3,
+        2,
+        1,
+        0
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3
+        ],
+        "good": []
+       }
+      }
+     },
+     "answer": "[3,2,1,0]"
+    }
+   ],
+   "sampleInput": "[45,45,45,50]"
+  },
+  {
+   "label": {
+    "en": "Case 3",
+    "ko": "케이스 3"
+   },
+   "input": "readings = [30,60,90]",
+   "expected": "[1,1,0]",
+   "frames": [
+    {
+     "caption": {
+      "en": "3 days. Every wait starts at 0, and the stack of days still waiting for a warmer reading starts empty.",
+      "ko": "3일입니다. wait는 모두 0에서 시작하고, 더 따뜻한 날을 기다리는 날들의 스택은 비어 있습니다."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        30,
+        60,
+        90
+       ],
+       "pointers": {
+        "day": null
+       },
+       "unread": [],
+       "marks": {
+        "lit": []
+       }
+      },
+      "pending": {
+       "values": [],
+       "tags": [],
+       "marks": {
+        "good": [],
+        "lit": []
+       }
+      },
+      "wait": {
+       "values": [
+        0,
+        0,
+        0
+       ],
+       "marks": {
+        "path": [],
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "The stack is empty: push day 0 (30) on top to wait for a warmer reading.",
+      "ko": "스택이 비었으므로 0일차(30)를 맨 위에 넣어 더 따뜻한 날을 기다리게 합니다."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        30,
+        60,
+        90
+       ],
+       "pointers": {
+        "day": 0
+       },
+       "unread": [
+        1,
+        2
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "pending": {
+       "values": [
+        30
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "day 0",
+          "ko": "0일차"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ],
+        "lit": []
+       }
+      },
+      "wait": {
+       "values": [
+        0,
+        0,
+        0
+       ],
+       "marks": {
+        "path": [],
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "readings",
+        "at": 0
+       },
+       "to": {
+        "view": "pending",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Day 1's 60 is warmer than day 0's 30 on top: pop day 0, which waited 1 − 0 = 1 day.",
+      "ko": "1일차 60은 맨 위 0일차의 30보다 따뜻합니다. 0일차를 꺼내며, 기다린 날수는 1 − 0 = 1일입니다."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        30,
+        60,
+        90
+       ],
+       "pointers": {
+        "day": 1
+       },
+       "unread": [
+        2
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "pending": {
+       "values": [
+        30
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "day 0",
+          "ko": "0일차"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "wait": {
+       "values": [
+        1,
+        0,
+        0
+       ],
+       "marks": {
+        "path": [],
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "pending",
+        "at": 0
+       },
+       "to": {
+        "view": "wait",
+        "at": 0
+       },
+       "value": "1−0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The stack is empty: push day 1 (60) on top to wait for a warmer reading.",
+      "ko": "스택이 비었으므로 1일차(60)를 맨 위에 넣어 더 따뜻한 날을 기다리게 합니다."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        30,
+        60,
+        90
+       ],
+       "pointers": {
+        "day": 1
+       },
+       "unread": [
+        2
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "pending": {
+       "values": [
+        60
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "day 1",
+          "ko": "1일차"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ],
+        "lit": []
+       }
+      },
+      "wait": {
+       "values": [
+        1,
+        0,
+        0
+       ],
+       "marks": {
+        "path": [],
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "readings",
+        "at": 1
+       },
+       "to": {
+        "view": "pending",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Day 2's 90 is warmer than day 1's 60 on top: pop day 1, which waited 2 − 1 = 1 day.",
+      "ko": "2일차 90은 맨 위 1일차의 60보다 따뜻합니다. 1일차를 꺼내며, 기다린 날수는 2 − 1 = 1일입니다."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        30,
+        60,
+        90
+       ],
+       "pointers": {
+        "day": 2
+       },
+       "unread": [],
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "pending": {
+       "values": [
+        60
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "day 1",
+          "ko": "1일차"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "wait": {
+       "values": [
+        1,
+        1,
+        0
+       ],
+       "marks": {
+        "path": [],
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "pending",
+        "at": 0
+       },
+       "to": {
+        "view": "wait",
+        "at": 1
+       },
+       "value": "2−1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The stack is empty: push day 2 (90) on top to wait for a warmer reading.",
+      "ko": "스택이 비었으므로 2일차(90)를 맨 위에 넣어 더 따뜻한 날을 기다리게 합니다."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        30,
+        60,
+        90
+       ],
+       "pointers": {
+        "day": 2
+       },
+       "unread": [],
+       "marks": {
+        "lit": []
+       }
+      },
+      "pending": {
+       "values": [
+        90
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "day 2",
+          "ko": "2일차"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ],
+        "lit": []
+       }
+      },
+      "wait": {
+       "values": [
+        1,
+        1,
+        0
+       ],
+       "marks": {
+        "path": [],
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "readings",
+        "at": 2
+       },
+       "to": {
+        "view": "pending",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every day is read. Day 2 still on the stack never saw a warmer day, so its wait stays 0: [1,1,0].",
+      "ko": "모든 날을 읽었습니다. 스택에 남은 2일차는 더 따뜻한 날을 만나지 못해 wait가 0으로 남습니다: [1,1,0]."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        30,
+        60,
+        90
+       ],
+       "pointers": {
+        "day": null
+       },
+       "unread": [],
+       "marks": {
+        "lit": []
+       }
+      },
+      "pending": {
+       "values": [
+        90
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "day 2",
+          "ko": "2일차"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "wait": {
+       "values": [
+        1,
+        1,
+        0
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2
+        ],
+        "good": []
+       }
+      }
+     },
+     "answer": "[1,1,0]"
+    }
+   ],
+   "sampleInput": "[30,60,90]"
+  }
+ ]
+}
