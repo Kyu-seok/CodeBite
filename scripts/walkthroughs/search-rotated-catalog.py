@@ -48,7 +48,7 @@ def solve(catalog, target, run):
             a, b = sorted_half
             spans["sorted"] = span(a, b, {"en": "sorted", "ko": "정렬됨"}, below=True,
                                    mark="good" if kept else None)
-        pointers = {} if done else {"low": low if 0 <= low < n and low <= high else None,
+        pointers = {} if done else {"low": low if 0 <= low < n and low <= high and low != mid else None,
                                     "mid": mid,
                                     "high": high if 0 <= high < n and low <= high else None}
         run.frame(caption,

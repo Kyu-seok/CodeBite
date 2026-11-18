@@ -431,7 +431,7 @@
         9
        ],
        "pointers": {
-        "low": 0,
+        "low": null,
         "mid": 0,
         "high": 0
        },
@@ -580,7 +580,7 @@
         8
        ],
        "pointers": {
-        "low": 0,
+        "low": null,
         "mid": 0,
         "high": 0
        },
