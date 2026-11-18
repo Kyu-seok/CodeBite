@@ -1,0 +1,2756 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Eval Postfix Tape",
+  "ko": "후위 표기식 계산"
+ },
+ "approach": {
+  "en": "Read the tokens left to right with a stack: a number goes on top, and an operator pops the top two (b, then a under it) and pushes a op b, so the number pushed earlier is the left operand.",
+  "ko": "토큰을 왼쪽부터 읽으며 스택을 씁니다. 수는 맨 위에 넣고, 연산자는 맨 위의 두 수(b, 그 아래 a)를 꺼내 a op b를 넣습니다. 먼저 넣은 수가 왼쪽 피연산자입니다."
+ },
+ "views": [
+  {
+   "id": "tokens",
+   "type": "array",
+   "title": {
+    "en": "tokens",
+    "ko": "tokens (토큰)"
+   }
+  },
+  {
+   "id": "stack",
+   "type": "array",
+   "title": {
+    "en": "stack (top on the right)",
+    "ko": "스택 (오른쪽이 맨 위)"
+   },
+   "empty": {
+    "en": "empty",
+    "ko": "비어 있음"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "tokens = [\"5\",\"3\",\"-\",\"2\",\"*\"]",
+   "expected": "4",
+   "frames": [
+    {
+     "caption": {
+      "en": "5 tokens: 3 numbers and 2 operators. The stack starts empty.",
+      "ko": "토큰 5개: 수 3개와 연산자 2개입니다. 스택은 비어 있습니다."
+     },
+     "views": {
+      "tokens": {
+       "values": [
+        "5",
+        "3",
+        "-",
+        "2",
+        "*"
+       ],
+       "pointers": {
+        "i": null
+       },
+       "unread": [],
+       "marks": {
+        "lit": [],
+        "dim": []
+       }
+      },
+      "stack": {
+       "values": [],
+       "tags": [],
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "tokens[0] = 5 is a number: push it on top.",
+      "ko": "tokens[0] = 5: 수이므로 맨 위에 넣습니다."
+     },
+     "views": {
+      "tokens": {
+       "values": [
+        "5",
+        "3",
+        "-",
+        "2",
+        "*"
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "unread": [
+        1,
+        2,
+        3,
+        4
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "dim": []
+       }
+      },
+      "stack": {
+       "values": [
+        5
+       ],
+       "tags": [],
+       "marks": {
+        "path": [],
+        "good": [
+         0
+        ],
+        "lit": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tokens",
+        "at": 0
+       },
+       "to": {
+        "view": "stack",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "tokens[1] = 3 is a number: push it on top.",
+      "ko": "tokens[1] = 3: 수이므로 맨 위에 넣습니다."
+     },
+     "views": {
+      "tokens": {
+       "values": [
+        "5",
+        "3",
+        "-",
+        "2",
+        "*"
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "unread": [
+        2,
+        3,
+        4
+       ],
+       "marks": {
+        "lit": [
+         1
+        ],
+        "dim": [
+         0
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        5,
+        3
+       ],
+       "tags": [],
+       "marks": {
+        "path": [],
+        "good": [
+         1
+        ],
+        "lit": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tokens",
+        "at": 1
+       },
+       "to": {
+        "view": "stack",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "tokens[2] = - is an operator: pop b = 3 from the top, then a = 5 under it.",
+      "ko": "tokens[2] = -: 연산자이므로 맨 위의 b = 3, 그 아래 a = 5를 꺼냅니다."
+     },
+     "views": {
+      "tokens": {
+       "values": [
+        "5",
+        "3",
+        "-",
+        "2",
+        "*"
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "unread": [
+        3,
+        4
+       ],
+       "marks": {
+        "lit": [
+         2
+        ],
+        "dim": [
+         0,
+         1
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        5,
+        3
+       ],
+       "tags": [
+        [
+         0,
+         "a"
+        ],
+        [
+         1,
+         "b"
+        ]
+       ],
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": [
+         0,
+         1
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "a − b = 5 − 3 = 2: push it where a was.",
+      "ko": "a − b = 5 − 3 = 2. 이 값을 a가 있던 자리에 넣습니다."
+     },
+     "views": {
+      "tokens": {
+       "values": [
+        "5",
+        "3",
+        "-",
+        "2",
+        "*"
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "unread": [
+        3,
+        4
+       ],
+       "marks": {
+        "lit": [
+         2
+        ],
+        "dim": [
+         0,
+         1
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        2
+       ],
+       "tags": [],
+       "marks": {
+        "path": [],
+        "good": [
+         0
+        ],
+        "lit": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tokens",
+        "at": 2
+       },
+       "to": {
+        "view": "stack",
+        "at": 0
+       },
+       "value": "5−3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "tokens[3] = 2 is a number: push it on top.",
+      "ko": "tokens[3] = 2: 수이므로 맨 위에 넣습니다."
+     },
+     "views": {
+      "tokens": {
+       "values": [
+        "5",
+        "3",
+        "-",
+        "2",
+        "*"
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "unread": [
+        4
+       ],
+       "marks": {
+        "lit": [
+         3
+        ],
+        "dim": [
+         0,
+         1,
+         2
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        2,
+        2
+       ],
+       "tags": [],
+       "marks": {
+        "path": [],
+        "good": [
+         1
+        ],
+        "lit": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tokens",
+        "at": 3
+       },
+       "to": {
+        "view": "stack",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "tokens[4] = * is an operator: pop b = 2 from the top, then a = 2 under it.",
+      "ko": "tokens[4] = *: 연산자이므로 맨 위의 b = 2, 그 아래 a = 2를 꺼냅니다."
+     },
+     "views": {
+      "tokens": {
+       "values": [
+        "5",
+        "3",
+        "-",
+        "2",
+        "*"
+       ],
+       "pointers": {
+        "i": 4
+       },
+       "unread": [],
+       "marks": {
+        "lit": [
+         4
+        ],
+        "dim": [
+         0,
+         1,
+         2,
+         3
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        2,
+        2
+       ],
+       "tags": [
+        [
+         0,
+         "a"
+        ],
+        [
+         1,
+         "b"
+        ]
+       ],
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": [
+         0,
+         1
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "a × b = 2 × 2 = 4: push it where a was.",
+      "ko": "a × b = 2 × 2 = 4. 이 값을 a가 있던 자리에 넣습니다."
+     },
+     "views": {
+      "tokens": {
+       "values": [
+        "5",
+        "3",
+        "-",
+        "2",
+        "*"
+       ],
+       "pointers": {
+        "i": 4
+       },
+       "unread": [],
+       "marks": {
+        "lit": [
+         4
+        ],
+        "dim": [
+         0,
+         1,
+         2,
+         3
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        4
+       ],
+       "tags": [],
+       "marks": {
+        "path": [],
+        "good": [
+         0
+        ],
+        "lit": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tokens",
+        "at": 4
+       },
+       "to": {
+        "view": "stack",
+        "at": 0
+       },
+       "value": "2×2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every token is read and one number is left on the stack: the expression is 4.",
+      "ko": "모든 토큰을 읽었고 스택에 수 하나가 남았습니다: 식의 값은 4입니다."
+     },
+     "views": {
+      "tokens": {
+       "values": [
+        "5",
+        "3",
+        "-",
+        "2",
+        "*"
+       ],
+       "pointers": {
+        "i": null
+       },
+       "unread": [],
+       "marks": {
+        "lit": [],
+        "dim": []
+       }
+      },
+      "stack": {
+       "values": [
+        4
+       ],
+       "tags": [],
+       "marks": {
+        "path": [
+         0
+        ],
+        "good": [],
+        "lit": []
+       }
+      }
+     },
+     "answer": "4"
+    }
+   ],
+   "sampleInput": "[\"5\",\"3\",\"-\",\"2\",\"*\"]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "tokens = [\"8\",\"2\",\"/\",\"7\",\"+\",\"3\",\"*\"]",
+   "expected": "33",
+   "frames": [
+    {
+     "caption": {
+      "en": "7 tokens: 4 numbers and 3 operators. The stack starts empty.",
+      "ko": "토큰 7개: 수 4개와 연산자 3개입니다. 스택은 비어 있습니다."
+     },
+     "views": {
+      "tokens": {
+       "values": [
+        "8",
+        "2",
+        "/",
+        "7",
+        "+",
+        "3",
+        "*"
+       ],
+       "pointers": {
+        "i": null
+       },
+       "unread": [],
+       "marks": {
+        "lit": [],
+        "dim": []
+       }
+      },
+      "stack": {
+       "values": [],
+       "tags": [],
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "tokens[0] = 8 is a number: push it on top.",
+      "ko": "tokens[0] = 8: 수이므로 맨 위에 넣습니다."
+     },
+     "views": {
+      "tokens": {
+       "values": [
+        "8",
+        "2",
+        "/",
+        "7",
+        "+",
+        "3",
+        "*"
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "unread": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "dim": []
+       }
+      },
+      "stack": {
+       "values": [
+        8
+       ],
+       "tags": [],
+       "marks": {
+        "path": [],
+        "good": [
+         0
+        ],
+        "lit": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tokens",
+        "at": 0
+       },
+       "to": {
+        "view": "stack",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "tokens[1] = 2 is a number: push it on top.",
+      "ko": "tokens[1] = 2: 수이므로 맨 위에 넣습니다."
+     },
+     "views": {
+      "tokens": {
+       "values": [
+        "8",
+        "2",
+        "/",
+        "7",
+        "+",
+        "3",
+        "*"
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "unread": [
+        2,
+        3,
+        4,
+        5,
+        6
+       ],
+       "marks": {
+        "lit": [
+         1
+        ],
+        "dim": [
+         0
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        8,
+        2
+       ],
+       "tags": [],
+       "marks": {
+        "path": [],
+        "good": [
+         1
+        ],
+        "lit": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tokens",
+        "at": 1
+       },
+       "to": {
+        "view": "stack",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "tokens[2] = / is an operator: pop b = 2 from the top, then a = 8 under it.",
+      "ko": "tokens[2] = /: 연산자이므로 맨 위의 b = 2, 그 아래 a = 8을 꺼냅니다."
+     },
+     "views": {
+      "tokens": {
+       "values": [
+        "8",
+        "2",
+        "/",
+        "7",
+        "+",
+        "3",
+        "*"
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "unread": [
+        3,
+        4,
+        5,
+        6
+       ],
+       "marks": {
+        "lit": [
+         2
+        ],
+        "dim": [
+         0,
+         1
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        8,
+        2
+       ],
+       "tags": [
+        [
+         0,
+         "a"
+        ],
+        [
+         1,
+         "b"
+        ]
+       ],
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": [
+         0,
+         1
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "a ÷ b = 8 ÷ 2 = 4: push it where a was.",
+      "ko": "a ÷ b = 8 ÷ 2 = 4. 이 값을 a가 있던 자리에 넣습니다."
+     },
+     "views": {
+      "tokens": {
+       "values": [
+        "8",
+        "2",
+        "/",
+        "7",
+        "+",
+        "3",
+        "*"
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "unread": [
+        3,
+        4,
+        5,
+        6
+       ],
+       "marks": {
+        "lit": [
+         2
+        ],
+        "dim": [
+         0,
+         1
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        4
+       ],
+       "tags": [],
+       "marks": {
+        "path": [],
+        "good": [
+         0
+        ],
+        "lit": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tokens",
+        "at": 2
+       },
+       "to": {
+        "view": "stack",
+        "at": 0
+       },
+       "value": "8÷2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "tokens[3] = 7 is a number: push it on top.",
+      "ko": "tokens[3] = 7: 수이므로 맨 위에 넣습니다."
+     },
+     "views": {
+      "tokens": {
+       "values": [
+        "8",
+        "2",
+        "/",
+        "7",
+        "+",
+        "3",
+        "*"
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "unread": [
+        4,
+        5,
+        6
+       ],
+       "marks": {
+        "lit": [
+         3
+        ],
+        "dim": [
+         0,
+         1,
+         2
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        4,
+        7
+       ],
+       "tags": [],
+       "marks": {
+        "path": [],
+        "good": [
+         1
+        ],
+        "lit": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tokens",
+        "at": 3
+       },
+       "to": {
+        "view": "stack",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "tokens[4] = + is an operator: pop b = 7 from the top, then a = 4 under it.",
+      "ko": "tokens[4] = +: 연산자이므로 맨 위의 b = 7, 그 아래 a = 4를 꺼냅니다."
+     },
+     "views": {
+      "tokens": {
+       "values": [
+        "8",
+        "2",
+        "/",
+        "7",
+        "+",
+        "3",
+        "*"
+       ],
+       "pointers": {
+        "i": 4
+       },
+       "unread": [
+        5,
+        6
+       ],
+       "marks": {
+        "lit": [
+         4
+        ],
+        "dim": [
+         0,
+         1,
+         2,
+         3
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        4,
+        7
+       ],
+       "tags": [
+        [
+         0,
+         "a"
+        ],
+        [
+         1,
+         "b"
+        ]
+       ],
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": [
+         0,
+         1
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "a + b = 4 + 7 = 11: push it where a was.",
+      "ko": "a + b = 4 + 7 = 11. 이 값을 a가 있던 자리에 넣습니다."
+     },
+     "views": {
+      "tokens": {
+       "values": [
+        "8",
+        "2",
+        "/",
+        "7",
+        "+",
+        "3",
+        "*"
+       ],
+       "pointers": {
+        "i": 4
+       },
+       "unread": [
+        5,
+        6
+       ],
+       "marks": {
+        "lit": [
+         4
+        ],
+        "dim": [
+         0,
+         1,
+         2,
+         3
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        11
+       ],
+       "tags": [],
+       "marks": {
+        "path": [],
+        "good": [
+         0
+        ],
+        "lit": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tokens",
+        "at": 4
+       },
+       "to": {
+        "view": "stack",
+        "at": 0
+       },
+       "value": "4+7"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "tokens[5] = 3 is a number: push it on top.",
+      "ko": "tokens[5] = 3: 수이므로 맨 위에 넣습니다."
+     },
+     "views": {
+      "tokens": {
+       "values": [
+        "8",
+        "2",
+        "/",
+        "7",
+        "+",
+        "3",
+        "*"
+       ],
+       "pointers": {
+        "i": 5
+       },
+       "unread": [
+        6
+       ],
+       "marks": {
+        "lit": [
+         5
+        ],
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        11,
+        3
+       ],
+       "tags": [],
+       "marks": {
+        "path": [],
+        "good": [
+         1
+        ],
+        "lit": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tokens",
+        "at": 5
+       },
+       "to": {
+        "view": "stack",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "tokens[6] = * is an operator: pop b = 3 from the top, then a = 11 under it.",
+      "ko": "tokens[6] = *: 연산자이므로 맨 위의 b = 3, 그 아래 a = 11을 꺼냅니다."
+     },
+     "views": {
+      "tokens": {
+       "values": [
+        "8",
+        "2",
+        "/",
+        "7",
+        "+",
+        "3",
+        "*"
+       ],
+       "pointers": {
+        "i": 6
+       },
+       "unread": [],
+       "marks": {
+        "lit": [
+         6
+        ],
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        11,
+        3
+       ],
+       "tags": [
+        [
+         0,
+         "a"
+        ],
+        [
+         1,
+         "b"
+        ]
+       ],
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": [
+         0,
+         1
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "a × b = 11 × 3 = 33: push it where a was.",
+      "ko": "a × b = 11 × 3 = 33. 이 값을 a가 있던 자리에 넣습니다."
+     },
+     "views": {
+      "tokens": {
+       "values": [
+        "8",
+        "2",
+        "/",
+        "7",
+        "+",
+        "3",
+        "*"
+       ],
+       "pointers": {
+        "i": 6
+       },
+       "unread": [],
+       "marks": {
+        "lit": [
+         6
+        ],
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        33
+       ],
+       "tags": [],
+       "marks": {
+        "path": [],
+        "good": [
+         0
+        ],
+        "lit": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tokens",
+        "at": 6
+       },
+       "to": {
+        "view": "stack",
+        "at": 0
+       },
+       "value": "11×3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every token is read and one number is left on the stack: the expression is 33.",
+      "ko": "모든 토큰을 읽었고 스택에 수 하나가 남았습니다: 식의 값은 33입니다."
+     },
+     "views": {
+      "tokens": {
+       "values": [
+        "8",
+        "2",
+        "/",
+        "7",
+        "+",
+        "3",
+        "*"
+       ],
+       "pointers": {
+        "i": null
+       },
+       "unread": [],
+       "marks": {
+        "lit": [],
+        "dim": []
+       }
+      },
+      "stack": {
+       "values": [
+        33
+       ],
+       "tags": [],
+       "marks": {
+        "path": [
+         0
+        ],
+        "good": [],
+        "lit": []
+       }
+      }
+     },
+     "answer": "33"
+    }
+   ],
+   "sampleInput": "[\"8\",\"2\",\"/\",\"7\",\"+\",\"3\",\"*\"]"
+  },
+  {
+   "label": {
+    "en": "Case 3",
+    "ko": "케이스 3"
+   },
+   "input": "tokens = [\"10\",\"6\",\"9\",\"3\",\"+\",\"-11\",\"*\",\"/\",\"*\",\"17\",\"+\",\"5\",\"+\"]",
+   "expected": "22",
+   "frames": [
+    {
+     "caption": {
+      "en": "13 tokens: 7 numbers and 6 operators. The stack starts empty.",
+      "ko": "토큰 13개: 수 7개와 연산자 6개입니다. 스택은 비어 있습니다."
+     },
+     "views": {
+      "tokens": {
+       "values": [
+        "10",
+        "6",
+        "9",
+        "3",
+        "+",
+        "-11",
+        "*",
+        "/",
+        "*",
+        "17",
+        "+",
+        "5",
+        "+"
+       ],
+       "pointers": {
+        "i": null
+       },
+       "unread": [],
+       "marks": {
+        "lit": [],
+        "dim": []
+       }
+      },
+      "stack": {
+       "values": [],
+       "tags": [],
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "tokens[0] = 10 is a number: push it on top.",
+      "ko": "tokens[0] = 10: 수이므로 맨 위에 넣습니다."
+     },
+     "views": {
+      "tokens": {
+       "values": [
+        "10",
+        "6",
+        "9",
+        "3",
+        "+",
+        "-11",
+        "*",
+        "/",
+        "*",
+        "17",
+        "+",
+        "5",
+        "+"
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "unread": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "dim": []
+       }
+      },
+      "stack": {
+       "values": [
+        10
+       ],
+       "tags": [],
+       "marks": {
+        "path": [],
+        "good": [
+         0
+        ],
+        "lit": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tokens",
+        "at": 0
+       },
+       "to": {
+        "view": "stack",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "tokens[1] = 6 is a number: push it on top.",
+      "ko": "tokens[1] = 6: 수이므로 맨 위에 넣습니다."
+     },
+     "views": {
+      "tokens": {
+       "values": [
+        "10",
+        "6",
+        "9",
+        "3",
+        "+",
+        "-11",
+        "*",
+        "/",
+        "*",
+        "17",
+        "+",
+        "5",
+        "+"
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "unread": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+       ],
+       "marks": {
+        "lit": [
+         1
+        ],
+        "dim": [
+         0
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        10,
+        6
+       ],
+       "tags": [],
+       "marks": {
+        "path": [],
+        "good": [
+         1
+        ],
+        "lit": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tokens",
+        "at": 1
+       },
+       "to": {
+        "view": "stack",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "tokens[2] = 9 is a number: push it on top.",
+      "ko": "tokens[2] = 9: 수이므로 맨 위에 넣습니다."
+     },
+     "views": {
+      "tokens": {
+       "values": [
+        "10",
+        "6",
+        "9",
+        "3",
+        "+",
+        "-11",
+        "*",
+        "/",
+        "*",
+        "17",
+        "+",
+        "5",
+        "+"
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "unread": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+       ],
+       "marks": {
+        "lit": [
+         2
+        ],
+        "dim": [
+         0,
+         1
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        10,
+        6,
+        9
+       ],
+       "tags": [],
+       "marks": {
+        "path": [],
+        "good": [
+         2
+        ],
+        "lit": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tokens",
+        "at": 2
+       },
+       "to": {
+        "view": "stack",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "tokens[3] = 3 is a number: push it on top.",
+      "ko": "tokens[3] = 3: 수이므로 맨 위에 넣습니다."
+     },
+     "views": {
+      "tokens": {
+       "values": [
+        "10",
+        "6",
+        "9",
+        "3",
+        "+",
+        "-11",
+        "*",
+        "/",
+        "*",
+        "17",
+        "+",
+        "5",
+        "+"
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "unread": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+       ],
+       "marks": {
+        "lit": [
+         3
+        ],
+        "dim": [
+         0,
+         1,
+         2
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        10,
+        6,
+        9,
+        3
+       ],
+       "tags": [],
+       "marks": {
+        "path": [],
+        "good": [
+         3
+        ],
+        "lit": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tokens",
+        "at": 3
+       },
+       "to": {
+        "view": "stack",
+        "at": 3
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "tokens[4] = + is an operator: pop b = 3 from the top, then a = 9 under it.",
+      "ko": "tokens[4] = +: 연산자이므로 맨 위의 b = 3, 그 아래 a = 9를 꺼냅니다."
+     },
+     "views": {
+      "tokens": {
+       "values": [
+        "10",
+        "6",
+        "9",
+        "3",
+        "+",
+        "-11",
+        "*",
+        "/",
+        "*",
+        "17",
+        "+",
+        "5",
+        "+"
+       ],
+       "pointers": {
+        "i": 4
+       },
+       "unread": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+       ],
+       "marks": {
+        "lit": [
+         4
+        ],
+        "dim": [
+         0,
+         1,
+         2,
+         3
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        10,
+        6,
+        9,
+        3
+       ],
+       "tags": [
+        [
+         2,
+         "a"
+        ],
+        [
+         3,
+         "b"
+        ]
+       ],
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": [
+         2,
+         3
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "a + b = 9 + 3 = 12: push it where a was.",
+      "ko": "a + b = 9 + 3 = 12. 이 값을 a가 있던 자리에 넣습니다."
+     },
+     "views": {
+      "tokens": {
+       "values": [
+        "10",
+        "6",
+        "9",
+        "3",
+        "+",
+        "-11",
+        "*",
+        "/",
+        "*",
+        "17",
+        "+",
+        "5",
+        "+"
+       ],
+       "pointers": {
+        "i": 4
+       },
+       "unread": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+       ],
+       "marks": {
+        "lit": [
+         4
+        ],
+        "dim": [
+         0,
+         1,
+         2,
+         3
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        10,
+        6,
+        12
+       ],
+       "tags": [],
+       "marks": {
+        "path": [],
+        "good": [
+         2
+        ],
+        "lit": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tokens",
+        "at": 4
+       },
+       "to": {
+        "view": "stack",
+        "at": 2
+       },
+       "value": "9+3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "tokens[5] = -11 is a number: push it on top.",
+      "ko": "tokens[5] = -11: 수이므로 맨 위에 넣습니다."
+     },
+     "views": {
+      "tokens": {
+       "values": [
+        "10",
+        "6",
+        "9",
+        "3",
+        "+",
+        "-11",
+        "*",
+        "/",
+        "*",
+        "17",
+        "+",
+        "5",
+        "+"
+       ],
+       "pointers": {
+        "i": 5
+       },
+       "unread": [
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+       ],
+       "marks": {
+        "lit": [
+         5
+        ],
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        10,
+        6,
+        12,
+        -11
+       ],
+       "tags": [],
+       "marks": {
+        "path": [],
+        "good": [
+         3
+        ],
+        "lit": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tokens",
+        "at": 5
+       },
+       "to": {
+        "view": "stack",
+        "at": 3
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "tokens[6] = * is an operator: pop b = -11 from the top, then a = 12 under it.",
+      "ko": "tokens[6] = *: 연산자이므로 맨 위의 b = -11, 그 아래 a = 12를 꺼냅니다."
+     },
+     "views": {
+      "tokens": {
+       "values": [
+        "10",
+        "6",
+        "9",
+        "3",
+        "+",
+        "-11",
+        "*",
+        "/",
+        "*",
+        "17",
+        "+",
+        "5",
+        "+"
+       ],
+       "pointers": {
+        "i": 6
+       },
+       "unread": [
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+       ],
+       "marks": {
+        "lit": [
+         6
+        ],
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        10,
+        6,
+        12,
+        -11
+       ],
+       "tags": [
+        [
+         2,
+         "a"
+        ],
+        [
+         3,
+         "b"
+        ]
+       ],
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": [
+         2,
+         3
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "a × b = 12 × -11 = -132: push it where a was.",
+      "ko": "a × b = 12 × -11 = -132. 이 값을 a가 있던 자리에 넣습니다."
+     },
+     "views": {
+      "tokens": {
+       "values": [
+        "10",
+        "6",
+        "9",
+        "3",
+        "+",
+        "-11",
+        "*",
+        "/",
+        "*",
+        "17",
+        "+",
+        "5",
+        "+"
+       ],
+       "pointers": {
+        "i": 6
+       },
+       "unread": [
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+       ],
+       "marks": {
+        "lit": [
+         6
+        ],
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        10,
+        6,
+        -132
+       ],
+       "tags": [],
+       "marks": {
+        "path": [],
+        "good": [
+         2
+        ],
+        "lit": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tokens",
+        "at": 6
+       },
+       "to": {
+        "view": "stack",
+        "at": 2
+       },
+       "value": "12×-11"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "tokens[7] = / is an operator: pop b = -132 from the top, then a = 6 under it.",
+      "ko": "tokens[7] = /: 연산자이므로 맨 위의 b = -132, 그 아래 a = 6을 꺼냅니다."
+     },
+     "views": {
+      "tokens": {
+       "values": [
+        "10",
+        "6",
+        "9",
+        "3",
+        "+",
+        "-11",
+        "*",
+        "/",
+        "*",
+        "17",
+        "+",
+        "5",
+        "+"
+       ],
+       "pointers": {
+        "i": 7
+       },
+       "unread": [
+        8,
+        9,
+        10,
+        11,
+        12
+       ],
+       "marks": {
+        "lit": [
+         7
+        ],
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5,
+         6
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        10,
+        6,
+        -132
+       ],
+       "tags": [
+        [
+         1,
+         "a"
+        ],
+        [
+         2,
+         "b"
+        ]
+       ],
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": [
+         1,
+         2
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "a ÷ b = 6 ÷ -132 = 0 (-0.05 truncated toward zero): push it where a was.",
+      "ko": "a ÷ b = 6 ÷ -132 = 0(-0.05의 소수 부분은 0 쪽으로 버림). 이 값을 a가 있던 자리에 넣습니다."
+     },
+     "views": {
+      "tokens": {
+       "values": [
+        "10",
+        "6",
+        "9",
+        "3",
+        "+",
+        "-11",
+        "*",
+        "/",
+        "*",
+        "17",
+        "+",
+        "5",
+        "+"
+       ],
+       "pointers": {
+        "i": 7
+       },
+       "unread": [
+        8,
+        9,
+        10,
+        11,
+        12
+       ],
+       "marks": {
+        "lit": [
+         7
+        ],
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5,
+         6
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        10,
+        0
+       ],
+       "tags": [],
+       "marks": {
+        "path": [],
+        "good": [
+         1
+        ],
+        "lit": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tokens",
+        "at": 7
+       },
+       "to": {
+        "view": "stack",
+        "at": 1
+       },
+       "value": "6÷-132"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "tokens[8] = * is an operator: pop b = 0 from the top, then a = 10 under it.",
+      "ko": "tokens[8] = *: 연산자이므로 맨 위의 b = 0, 그 아래 a = 10을 꺼냅니다."
+     },
+     "views": {
+      "tokens": {
+       "values": [
+        "10",
+        "6",
+        "9",
+        "3",
+        "+",
+        "-11",
+        "*",
+        "/",
+        "*",
+        "17",
+        "+",
+        "5",
+        "+"
+       ],
+       "pointers": {
+        "i": 8
+       },
+       "unread": [
+        9,
+        10,
+        11,
+        12
+       ],
+       "marks": {
+        "lit": [
+         8
+        ],
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5,
+         6,
+         7
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        10,
+        0
+       ],
+       "tags": [
+        [
+         0,
+         "a"
+        ],
+        [
+         1,
+         "b"
+        ]
+       ],
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": [
+         0,
+         1
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "a × b = 10 × 0 = 0: push it where a was.",
+      "ko": "a × b = 10 × 0 = 0. 이 값을 a가 있던 자리에 넣습니다."
+     },
+     "views": {
+      "tokens": {
+       "values": [
+        "10",
+        "6",
+        "9",
+        "3",
+        "+",
+        "-11",
+        "*",
+        "/",
+        "*",
+        "17",
+        "+",
+        "5",
+        "+"
+       ],
+       "pointers": {
+        "i": 8
+       },
+       "unread": [
+        9,
+        10,
+        11,
+        12
+       ],
+       "marks": {
+        "lit": [
+         8
+        ],
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5,
+         6,
+         7
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        0
+       ],
+       "tags": [],
+       "marks": {
+        "path": [],
+        "good": [
+         0
+        ],
+        "lit": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tokens",
+        "at": 8
+       },
+       "to": {
+        "view": "stack",
+        "at": 0
+       },
+       "value": "10×0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "tokens[9] = 17 is a number: push it on top.",
+      "ko": "tokens[9] = 17: 수이므로 맨 위에 넣습니다."
+     },
+     "views": {
+      "tokens": {
+       "values": [
+        "10",
+        "6",
+        "9",
+        "3",
+        "+",
+        "-11",
+        "*",
+        "/",
+        "*",
+        "17",
+        "+",
+        "5",
+        "+"
+       ],
+       "pointers": {
+        "i": 9
+       },
+       "unread": [
+        10,
+        11,
+        12
+       ],
+       "marks": {
+        "lit": [
+         9
+        ],
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5,
+         6,
+         7,
+         8
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        0,
+        17
+       ],
+       "tags": [],
+       "marks": {
+        "path": [],
+        "good": [
+         1
+        ],
+        "lit": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tokens",
+        "at": 9
+       },
+       "to": {
+        "view": "stack",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "tokens[10] = + is an operator: pop b = 17 from the top, then a = 0 under it.",
+      "ko": "tokens[10] = +: 연산자이므로 맨 위의 b = 17, 그 아래 a = 0을 꺼냅니다."
+     },
+     "views": {
+      "tokens": {
+       "values": [
+        "10",
+        "6",
+        "9",
+        "3",
+        "+",
+        "-11",
+        "*",
+        "/",
+        "*",
+        "17",
+        "+",
+        "5",
+        "+"
+       ],
+       "pointers": {
+        "i": 10
+       },
+       "unread": [
+        11,
+        12
+       ],
+       "marks": {
+        "lit": [
+         10
+        ],
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5,
+         6,
+         7,
+         8,
+         9
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        0,
+        17
+       ],
+       "tags": [
+        [
+         0,
+         "a"
+        ],
+        [
+         1,
+         "b"
+        ]
+       ],
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": [
+         0,
+         1
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "a + b = 0 + 17 = 17: push it where a was.",
+      "ko": "a + b = 0 + 17 = 17. 이 값을 a가 있던 자리에 넣습니다."
+     },
+     "views": {
+      "tokens": {
+       "values": [
+        "10",
+        "6",
+        "9",
+        "3",
+        "+",
+        "-11",
+        "*",
+        "/",
+        "*",
+        "17",
+        "+",
+        "5",
+        "+"
+       ],
+       "pointers": {
+        "i": 10
+       },
+       "unread": [
+        11,
+        12
+       ],
+       "marks": {
+        "lit": [
+         10
+        ],
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5,
+         6,
+         7,
+         8,
+         9
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        17
+       ],
+       "tags": [],
+       "marks": {
+        "path": [],
+        "good": [
+         0
+        ],
+        "lit": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tokens",
+        "at": 10
+       },
+       "to": {
+        "view": "stack",
+        "at": 0
+       },
+       "value": "0+17"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "tokens[11] = 5 is a number: push it on top.",
+      "ko": "tokens[11] = 5: 수이므로 맨 위에 넣습니다."
+     },
+     "views": {
+      "tokens": {
+       "values": [
+        "10",
+        "6",
+        "9",
+        "3",
+        "+",
+        "-11",
+        "*",
+        "/",
+        "*",
+        "17",
+        "+",
+        "5",
+        "+"
+       ],
+       "pointers": {
+        "i": 11
+       },
+       "unread": [
+        12
+       ],
+       "marks": {
+        "lit": [
+         11
+        ],
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5,
+         6,
+         7,
+         8,
+         9,
+         10
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        17,
+        5
+       ],
+       "tags": [],
+       "marks": {
+        "path": [],
+        "good": [
+         1
+        ],
+        "lit": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tokens",
+        "at": 11
+       },
+       "to": {
+        "view": "stack",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "tokens[12] = + is an operator: pop b = 5 from the top, then a = 17 under it.",
+      "ko": "tokens[12] = +: 연산자이므로 맨 위의 b = 5, 그 아래 a = 17을 꺼냅니다."
+     },
+     "views": {
+      "tokens": {
+       "values": [
+        "10",
+        "6",
+        "9",
+        "3",
+        "+",
+        "-11",
+        "*",
+        "/",
+        "*",
+        "17",
+        "+",
+        "5",
+        "+"
+       ],
+       "pointers": {
+        "i": 12
+       },
+       "unread": [],
+       "marks": {
+        "lit": [
+         12
+        ],
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5,
+         6,
+         7,
+         8,
+         9,
+         10,
+         11
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        17,
+        5
+       ],
+       "tags": [
+        [
+         0,
+         "a"
+        ],
+        [
+         1,
+         "b"
+        ]
+       ],
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": [
+         0,
+         1
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "a + b = 17 + 5 = 22: push it where a was.",
+      "ko": "a + b = 17 + 5 = 22. 이 값을 a가 있던 자리에 넣습니다."
+     },
+     "views": {
+      "tokens": {
+       "values": [
+        "10",
+        "6",
+        "9",
+        "3",
+        "+",
+        "-11",
+        "*",
+        "/",
+        "*",
+        "17",
+        "+",
+        "5",
+        "+"
+       ],
+       "pointers": {
+        "i": 12
+       },
+       "unread": [],
+       "marks": {
+        "lit": [
+         12
+        ],
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5,
+         6,
+         7,
+         8,
+         9,
+         10,
+         11
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        22
+       ],
+       "tags": [],
+       "marks": {
+        "path": [],
+        "good": [
+         0
+        ],
+        "lit": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tokens",
+        "at": 12
+       },
+       "to": {
+        "view": "stack",
+        "at": 0
+       },
+       "value": "17+5"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every token is read and one number is left on the stack: the expression is 22.",
+      "ko": "모든 토큰을 읽었고 스택에 수 하나가 남았습니다: 식의 값은 22입니다."
+     },
+     "views": {
+      "tokens": {
+       "values": [
+        "10",
+        "6",
+        "9",
+        "3",
+        "+",
+        "-11",
+        "*",
+        "/",
+        "*",
+        "17",
+        "+",
+        "5",
+        "+"
+       ],
+       "pointers": {
+        "i": null
+       },
+       "unread": [],
+       "marks": {
+        "lit": [],
+        "dim": []
+       }
+      },
+      "stack": {
+       "values": [
+        22
+       ],
+       "tags": [],
+       "marks": {
+        "path": [
+         0
+        ],
+        "good": [],
+        "lit": []
+       }
+      }
+     },
+     "answer": "22"
+    }
+   ],
+   "sampleInput": "[\"10\",\"6\",\"9\",\"3\",\"+\",\"-11\",\"*\",\"/\",\"*\",\"17\",\"+\",\"5\",\"+\"]"
+  }
+ ]
+}
