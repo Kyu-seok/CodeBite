@@ -164,6 +164,74 @@
 .wt-n.wt-bad .wt-node { fill: var(--wt-bad-soft); stroke: var(--wt-bad); stroke-width: 3; }
 .wt-n.wt-path .wt-node { fill: var(--wt-accent-soft); stroke: var(--wt-accent); stroke-width: 3; }
 
+/* tree: nodes as pills joined to their children; the current path (shade) is a soft band under any mark */
+.wt-tedge { fill: none; stroke: var(--wt-lo); stroke-width: 1.6; transition: stroke .3s; }
+.wt-te.wt-tshade .wt-tedge { stroke: var(--wt-accent); stroke-opacity: .45; stroke-width: 4; }
+.wt-te.wt-lit .wt-tedge { stroke: var(--wt-accent); stroke-opacity: 1; stroke-width: 2.6; stroke-dasharray: 5 4; }
+.wt-te.wt-good .wt-tedge { stroke: var(--wt-good); stroke-opacity: 1; stroke-width: 3; }
+.wt-te.wt-bad .wt-tedge { stroke: var(--wt-bad); stroke-opacity: 1; stroke-width: 2.6; stroke-dasharray: 2 4; }
+.wt-te.wt-path .wt-tedge { stroke: var(--wt-accent); stroke-opacity: 1; stroke-width: 3.4; }
+.wt-te.wt-dim { opacity: .3; }
+.wt-tspot { fill: none; }
+.wt-tlabelbg { fill: var(--wt-card); stroke: var(--wt-faint); }
+.wt-tree .wt-tlabel { font: 600 11px var(--wt-mono); fill: var(--wt-mid); }
+.wt-tree .wt-te.wt-lit .wt-tlabel, .wt-tree .wt-te.wt-path .wt-tlabel { fill: var(--wt-accent); }
+.wt-tree .wt-te.wt-good .wt-tlabel { fill: var(--wt-good); }
+.wt-tree .wt-te.wt-bad .wt-tlabel { fill: var(--wt-bad); }
+.wt-tnode { fill: var(--wt-card); stroke: var(--wt-ink); stroke-width: 2; transition: fill .3s, stroke .3s; }
+.wt-tree .wt-tval { font: 600 13px var(--wt-mono); }
+.wt-tn.wt-tshade .wt-tnode { fill: var(--wt-accent-soft); }
+.wt-tn.wt-lit .wt-tnode { stroke: var(--wt-accent); stroke-width: 3; }
+.wt-tn.wt-good .wt-tnode { fill: var(--wt-good-soft); stroke: var(--wt-good); stroke-width: 3; }
+.wt-tn.wt-bad .wt-tnode { fill: var(--wt-bad-soft); stroke: var(--wt-bad); stroke-width: 3; }
+.wt-tn.wt-path .wt-tnode { fill: var(--wt-accent); stroke: var(--wt-accent); stroke-width: 3; }
+.wt-tree .wt-tn.wt-path .wt-tval { fill: var(--wt-card); }
+.wt-tn.wt-dim .wt-tnode { stroke: var(--wt-lo); stroke-dasharray: 3 3; }
+.wt-tree .wt-tn.wt-dim .wt-tval, .wt-tree .wt-ttagg.wt-dim .wt-ttag { fill: var(--wt-lo); }
+.wt-tn.wt-lit .wt-tnode, .wt-tn.wt-good .wt-tnode { animation: wt-pop .45s cubic-bezier(.2,.8,.2,1); transform-box: fill-box; transform-origin: center; }
+.wt-ttagbg { fill: var(--wt-card); }
+.wt-tree .wt-ttag { font: 600 10.5px var(--wt-mono); fill: var(--wt-mid); }
+.wt-tree .wt-ttagg.wt-lit .wt-ttag { fill: var(--wt-accent); }
+.wt-tree .wt-ttagg.wt-good .wt-ttag { fill: var(--wt-good); }
+.wt-tree .wt-ttagg.wt-bad .wt-ttag { fill: var(--wt-bad); }
+.wt-tree .wt-tempty { font: italic 13px var(--wt-sans); fill: var(--wt-lo); }
+
+/* linkedlist: boxes in a row, each next an arrow; a cut arrow is the one this step removed */
+.wt-llbox { fill: var(--wt-bg); stroke: var(--wt-ink); stroke-width: 2; transition: fill .3s, stroke .3s; }
+.wt-linkedlist .wt-llval { font: 600 15px var(--wt-mono); }
+.wt-linkedlist .wt-llptr { font: 700 12px var(--wt-mono); fill: var(--wt-accent); }
+.wt-lllink { fill: none; stroke: var(--wt-mid); stroke-width: 2; }
+.wt-linkedlist .wt-llnil { font: 600 15px var(--wt-mono); fill: var(--wt-mid); }
+.wt-llarrow.wt-lit .wt-lllink { stroke: var(--wt-accent); stroke-width: 2.6; }
+.wt-llarrow.wt-good .wt-lllink { stroke: var(--wt-good); stroke-width: 3; }
+.wt-llarrow.wt-bad .wt-lllink { stroke: var(--wt-bad); stroke-width: 2.6; }
+.wt-llarrow.wt-path .wt-lllink { stroke: var(--wt-accent); stroke-width: 3.2; }
+.wt-llarrow.wt-dim { opacity: .3; }
+.wt-linkedlist .wt-llarrow.wt-good .wt-llnil { fill: var(--wt-good); }
+.wt-linkedlist .wt-llarrow.wt-lit .wt-llnil, .wt-linkedlist .wt-llarrow.wt-path .wt-llnil { fill: var(--wt-accent); }
+.wt-llarrow.wt-llcut { opacity: .55; }
+.wt-llarrow.wt-llcut .wt-lllink { stroke-dasharray: 3 4; stroke-width: 2; }
+.wt-llnode.wt-lit .wt-llbox { stroke: var(--wt-accent); stroke-width: 3; fill: var(--wt-accent-soft); }
+.wt-llnode.wt-good .wt-llbox { stroke: var(--wt-good); stroke-width: 3; fill: var(--wt-good-soft); }
+.wt-llnode.wt-bad .wt-llbox { stroke: var(--wt-bad); stroke-width: 3; fill: var(--wt-bad-soft); }
+.wt-llnode.wt-path .wt-llbox { stroke: var(--wt-accent); stroke-width: 3; fill: var(--wt-accent); }
+.wt-linkedlist .wt-llnode.wt-path .wt-llval { fill: var(--wt-card); }
+.wt-llnode.wt-dim { opacity: .35; }
+.wt-llnode.wt-lit .wt-llbox, .wt-llnode.wt-good .wt-llbox { animation: wt-pop .45s cubic-bezier(.2,.8,.2,1); transform-box: fill-box; transform-origin: center; }
+
+/* callstack: one card per open call, the top first; the bottom stays put as calls are pushed and popped */
+.wt-callstack { display: flex; flex-direction: column-reverse; gap: 6px; min-width: 150px; max-width: 280px; padding: 8px; border: 2px solid var(--wt-lo); border-top: none; border-radius: 0 0 10px 10px; background: var(--wt-bg); }
+.wt-cscall { padding: 6px 10px; border: 2px solid var(--wt-faint); border-radius: 8px; background: var(--wt-card); transition: border-color .3s, background .3s, opacity .3s; }
+.wt-cscall.wt-cstop { border-color: var(--wt-mid); }
+.wt-cscall.wt-csspace { visibility: hidden; } /* room kept for a call a later frame pushes */
+.wt-csline { font: 600 13px var(--wt-mono); overflow-wrap: anywhere; }
+.wt-csnote { font: 12px var(--wt-sans); color: var(--wt-mid); }
+.wt-cscall.wt-lit { border-color: var(--wt-accent); background: var(--wt-accent-soft); }
+.wt-cscall.wt-good { border-color: var(--wt-good); background: var(--wt-good-soft); }
+.wt-cscall.wt-bad { border-color: var(--wt-bad); background: var(--wt-bad-soft); }
+.wt-cscall.wt-path { border-color: var(--wt-accent); }
+.wt-cscall.wt-dim { opacity: .4; }
+
 /* table */
 .wt-table { border-collapse: separate; border-spacing: 4px; font-size: 13px; }
 .wt-table th { font-weight: 400; font-size: 11px; color: var(--wt-lo); text-align: center; }

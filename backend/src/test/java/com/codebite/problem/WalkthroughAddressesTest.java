@@ -25,7 +25,16 @@ class WalkthroughAddressesTest {
     @Test
     void theCopiedTableNamesTheViewTypesThatTakeAddresses() {
         WalkthroughAddresses kit = WalkthroughAddresses.kit();
-        assertEquals(Set.of("grid", "array", "map", "set", "output", "queue", "table", "graph", "intervals"), kit.viewTypes());
+        assertEquals(Set.of("grid", "array", "map", "set", "output", "queue", "table", "graph", "intervals", "tree",
+                "linkedlist", "callstack"), kit.viewTypes());
+    }
+
+    @Test
+    void anEdgeArrivesWithThePlaceItsSecondIdNames() throws Exception {
+        WalkthroughAddresses kit = WalkthroughAddresses.kit();
+        JsonNode tree = json("{'nodes': [{'id': 0}, {'id': 'a'}], 'edges': [{'from': 0, 'to': 'a', 'label': 'take 5'}]}");
+        assertEquals(Map.of("[0,a]", "a"), kit.arrivesWith("tree", tree));
+        assertEquals(Map.of(), kit.arrivesWith("linkedlist", json("{'nodes': [{'id': 1}], 'next': {'1': null}}")));
     }
 
     @Test
