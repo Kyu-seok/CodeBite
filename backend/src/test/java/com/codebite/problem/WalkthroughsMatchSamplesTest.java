@@ -770,7 +770,9 @@ class WalkthroughsMatchSamplesTest {
      * (two or more), the item's value is that value, and the item changes: takes two values or more in some run of the
      * Walkthrough, so a run where it happens to hold still is held to the rule too. The value drawn on the data is any place's
      * value in a view (a cell, a count per key, a member, a node's value), a pointer, a span's start, end or length, a
-     * label under an array, or a whole list. An item that keeps one value is a parameter such as {@code k}, which
+     * label under an array, or a whole list; or one derived from these ({@link #onTheData}); or, following none, one of
+     * them a frame early or late, in every pair of frames that draws both (two pairs or more), a tracer updating
+     * {@code vars} before or after the data. An item that keeps one value is a parameter such as {@code k}, which
      * equals some number in the data by chance. An item that should stay anyway carries a {@code why}, its reason
      * (references/format.md) on any of its frames, which excuses it in every run; a {@code why} on an item that repeats
      * nothing in any run fails, so a stale one goes.
@@ -786,17 +788,19 @@ class WalkthroughsMatchSamplesTest {
     }
 
     /**
-     * A Walkthrough for #273's second rule: an array {@code xs} whose pointer {@code right} and span {@code best} grow
-     * by one each frame, a map {@code counts} whose key {@code y} counts up beside them, and a {@code vars} view
-     * {@code state} for the items a test adds. Its second run holds still, with no span: {@code right} at 0 and
-     * {@code y} at 4.
+     * A Walkthrough for #273's second rule: an array {@code xs} holding a 9 at the frame's index, whose pointer
+     * {@code right} and span {@code best} grow by one each frame, a map {@code counts} whose key {@code y} counts up beside them by more than one (1, 3, 6, so a
+     * value a frame out of step is not also one off), and a {@code vars} view {@code state} for the items a test adds.
+     * Its second run holds still, with no span and no 9: {@code right} at 0 and {@code y} at 4.
      */
     private static ObjectNode varsFixture() throws Exception {
         StringBuilder first = new StringBuilder();
         for (int f = 0; f < 3; f++) {
-            first.append(f == 0 ? "" : ", ").append("{'views': {'xs': {'values': [5, 6, 7, 8], 'pointers': {'right': ").append(f)
+            List<Integer> xs = new ArrayList<>(List.of(5, 6, 7, 8));
+            xs.set(f, 9);
+            first.append(f == 0 ? "" : ", ").append("{'views': {'xs': {'values': ").append(xs).append(", 'pointers': {'right': ").append(f)
                     .append("}, 'spans': {'best': {'from': 0, 'to': ").append(f).append("}}}, 'counts': {'entries': [{'key': 'y', 'value': ")
-                    .append(f + 1).append("}]}, 'state': {'items': []}}}");
+                    .append(triangle(f + 1)).append("}]}, 'state': {'items': []}}}");
         }
         String still = "{'views': {'xs': {'values': [5, 6, 7, 8], 'pointers': {'right': 0}}, 'counts': {'entries': [{'key': 'y', "
                 + "'value': 4}]}, 'state': {'items': []}}}";
@@ -812,6 +816,11 @@ class WalkthroughsMatchSamplesTest {
             "item following a count per key             | run 1 (Example 1): vars \"state\" item \"count\" repeats | a value in map \"counts\"",
             "item changing in one run, repeating in one | run 2 (Example 2): vars \"state\" item \"count\" repeats | a value in map \"counts\"",
             "item with a why repeating nothing          | vars \"state\" item \"limit\" has a why | repeats no value drawn on the data",
+            "item a frame late                          | run 1 (Example 1): vars \"state\" item \"late\" repeats  | a value in map \"counts\", a frame late",
+            "item a frame early                         | run 1 (Example 1): vars \"state\" item \"early\" repeats | a value in map \"counts\", a frame early",
+            "item a pointer plus 1                      | run 1 (Example 1): vars \"state\" item \"r\" repeats     | pointer \"right\" of array \"xs\", plus 1",
+            "item a span's exclusive length             | run 1 (Example 1): vars \"state\" item \"width\" repeats | span \"best\"'s exclusive length on array \"xs\"",
+            "item a list in another order               | run 1 (Example 1): vars \"state\" item \"sorted\" repeats | the values of array \"xs\", in another order",
     })
     void aVarsItemRepeatingTheDataIsCaught(String breakage, String item, String expected) throws Exception {
         ObjectNode walkthrough = varsFixture();
@@ -827,11 +836,36 @@ class WalkthroughsMatchSamplesTest {
                     ? JSON.getNodeFactory().numberNode(10 + s.path("xs").path("pointers").path("right").asInt()) : countOfY(s), null);
             case "item with a why repeating nothing" -> addItem(walkthrough, "limit", s -> JSON.getNodeFactory().numberNode(-7),
                     "a number from nowhere");
+            // y's count is 1, 3, 6: late shows 0, 1, 3 and early 3, 6, 10
+            case "item a frame late" -> addItem(walkthrough, "late", s -> inFirstRun(s, f -> triangle(f)), null);
+            case "item a frame early" -> addItem(walkthrough, "early", s -> inFirstRun(s, f -> triangle(f + 2)), null);
+            // a 1-based position beside the 0-based pointer
+            case "item a pointer plus 1" -> addItem(walkthrough, "r", s -> inFirstRun(s, f -> f + 1), null);
+            // best runs 0 to f: f - 0, which is also where right points
+            case "item a span's exclusive length" -> addItem(walkthrough, "width", s -> inFirstRun(s, f -> f), null);
+            case "item a list in another order" -> addItem(walkthrough, "sorted", s -> {
+                if (!s.path("xs").path("spans").has("best")) return null;
+                List<Integer> xs = new ArrayList<>();
+                s.path("xs").path("values").forEach(x -> xs.add(x.asInt()));
+                xs.sort(null);
+                return JSON.valueToTree(xs);
+            }, null);
             default -> throw new IllegalArgumentException(breakage);
         }
         List<String> found = varsRepeatingTheData("fixture", walkthrough);
         assertTrue(found.stream().anyMatch(m -> m.startsWith("fixture: ") && m.contains(item) && m.contains(expected)),
                 breakage + " was not caught as " + item + " … " + expected + ": " + found);
+    }
+
+    /** The {@code n}th triangle number, y's count in frame {@code n - 1} of the fixture's first run. */
+    private static int triangle(int n) {
+        return n * (n + 1) / 2;
+    }
+
+    /** In the fixture's first run (the one with a span), {@code value} of the frame's index; nothing in the second. */
+    private static JsonNode inFirstRun(JsonNode states, java.util.function.IntUnaryOperator value) {
+        if (!states.path("xs").path("spans").has("best")) return null;
+        return JSON.getNodeFactory().numberNode(value.applyAsInt(states.path("xs").path("pointers").path("right").asInt()));
     }
 
     /** Key {@code y}'s count in the fixture's map {@code counts}, from a frame's states by view id. */
@@ -845,6 +879,13 @@ class WalkthroughsMatchSamplesTest {
         ObjectNode walkthrough = varsFixture();
         addItem(walkthrough, "right", s -> s.path("xs").path("pointers").get("right"), "the index the captions name");
         addItem(walkthrough, "first", s -> JSON.getNodeFactory().numberNode(5), null);
+        // a parameter equal to right plus 1 in frame 0 and to best's exclusive length in frame 1, by chance: it never changes
+        addItem(walkthrough, "k", s -> JSON.getNodeFactory().numberNode(1), null);
+        // a why kept by new forms alone: right minus 1, which is also right a frame late
+        addItem(walkthrough, "position", s -> inFirstRun(s, f -> f - 1), "the index before right, which the captions name");
+        // drawn in frames 0 and 1 only, where frame 1 holds y's count from frame 0: one pair of frames, so by chance
+        addItem(walkthrough, "once", s -> s.path("xs").path("pointers").path("right").asInt() == 2 ? null
+                : inFirstRun(s, f -> f == 0 ? 42 : triangle(1)), null);
         assertEquals(List.of(), varsRepeatingTheData("fixture", walkthrough));
     }
 
@@ -884,8 +925,15 @@ class WalkthroughsMatchSamplesTest {
         }
     }
 
-    /** A frame drawing a {@code vars} item: the item's value, and each value drawn on the data, by what draws it. */
-    private record Sighting(String value, Map<String, Set<String>> onTheData) {
+    /** A frame drawing a {@code vars} item: its index in the run, the item's value there, and its {@link #inOrder} when it is a list. */
+    private record Sighting(int frame, String value, String inOrder) {
+        boolean in(Set<String> drawn) {
+            return drawn.contains(value) || inOrder != null && drawn.contains(inOrder);
+        }
+    }
+
+    /** A frame's values drawn on the data, by what draws them: as drawn, and derived from what is drawn. */
+    private record Drawn(Map<String, Set<String>> asDrawn, Map<String, Set<String>> derived) {
     }
 
     /** A {@code vars} item over the Walkthrough: its frames by run (in run order), and whether any carries a why. */
@@ -899,16 +947,32 @@ class WalkthroughsMatchSamplesTest {
         }
     }
 
+    /** How an item's frame lines up with the frame of the data it is compared with: the same, the one before, the one after. */
+    private enum Shift {
+        NONE(0, ""), LATE(-1, ", a frame late"), EARLY(1, ", a frame early");
+
+        final int offset;
+        final String named;
+
+        Shift(int offset, String named) {
+            this.offset = offset;
+            this.named = named;
+        }
+    }
+
     /** Each {@code vars} item of {@code walkthrough} that repeats a value drawn on the data, by #273's second rule. */
     static List<String> varsRepeatingTheData(String slug, JsonNode walkthrough) {
         Map<String, String> types = new LinkedHashMap<>();
         for (JsonNode view : walkthrough.path("views")) types.put(view.path("id").asText(), view.path("type").asText());
         Map<String, Item> items = new LinkedHashMap<>();
+        List<List<Drawn>> drawnByRun = new ArrayList<>();
         JsonNode runs = walkthrough.path("runs");
         for (int r = 0; r < runs.size(); r++) {
             JsonNode run = runs.get(r);
+            List<Drawn> frames = new ArrayList<>();
+            drawnByRun.add(frames);
             for (JsonNode frame : run.path("frames")) {
-                Map<String, Set<String>> drawn = new LinkedHashMap<>();
+                Drawn drawn = new Drawn(new LinkedHashMap<>(), new LinkedHashMap<>());
                 List<Map.Entry<String, JsonNode>> vars = new ArrayList<>();
                 for (var view : types.entrySet()) {
                     Optional<ObjectNode> state = WalkthroughAddresses.stateIn(view.getKey(), run.path("setup"), frame.path("views"));
@@ -922,16 +986,18 @@ class WalkthroughsMatchSamplesTest {
                 for (var var : vars) {
                     String name = "vars \"" + var.getKey() + "\" item \"" + plain(var.getValue().get("label")) + "\"";
                     Item item = items.computeIfAbsent(name, k -> new Item());
-                    item.byRun.computeIfAbsent(r, k -> new ArrayList<>()).add(new Sighting(value(var.getValue().get("value")), drawn));
+                    item.byRun.computeIfAbsent(r, k -> new ArrayList<>()).add(new Sighting(frames.size(), value(var.getValue().get("value")),
+                            var.getValue().path("value").isArray() ? inOrder(var.getValue().get("value")) : null));
                     item.why |= var.getValue().hasNonNull("why");
                 }
+                frames.add(drawn);
             }
         }
         List<String> found = new ArrayList<>();
         items.forEach((name, item) -> {
             boolean repeatsAny = false;
             for (var run : item.byRun.entrySet()) {
-                List<String> repeats = item.changes() ? repeats(run.getValue()) : List.of();
+                List<String> repeats = item.changes() ? repeats(run.getValue(), drawnByRun.get(run.getKey())) : List.of();
                 repeatsAny |= !repeats.isEmpty();
                 if (!item.why && !repeats.isEmpty()) {
                     found.add(slug + ": " + runName(runs.get(run.getKey()), run.getKey()) + ": " + name + " repeats "
@@ -943,27 +1009,52 @@ class WalkthroughsMatchSamplesTest {
         return found;
     }
 
-    /** The values drawn on the data an item follows in a run: those that hold its value in every frame of the run that draws both, two or more. */
-    private static List<String> repeats(List<Sighting> frames) {
-        Set<String> sources = new LinkedHashSet<>();
-        for (Sighting frame : frames) sources.addAll(frame.onTheData().keySet());
-        List<String> repeats = new ArrayList<>();
-        for (String source : sources) {
-            int both = 0;
-            boolean follows = true;
-            for (Sighting frame : frames) {
-                Set<String> drawn = frame.onTheData().get(source);
-                if (drawn == null) continue;
-                both++;
-                follows &= drawn.contains(frame.value());
-            }
-            if (follows && both >= 2) repeats.add(source);
+    /**
+     * The values drawn on the data an item follows in a run whose frames draw {@code drawn}: those that hold its value,
+     * as drawn or {@linkplain #derive derived}, in every frame of the run that draws both, two or more. When it follows
+     * none, those drawn a frame out of step from it in every pair of frames that draws both, two pairs or more: a
+     * pointer moving by one each frame is a frame out of step from itself plus or minus 1, which is named instead.
+     */
+    private static List<String> repeats(List<Sighting> frames, List<Drawn> drawn) {
+        List<String> repeats = follows(frames, drawn, Drawn::asDrawn, Shift.NONE);
+        for (String derived : follows(frames, drawn, Drawn::derived, Shift.NONE)) {
+            // a list in another order is named only when the item isn't the list in the same order
+            if (repeats.stream().noneMatch(r -> derived.startsWith(r + ", "))) repeats.add(derived);
         }
+        if (!repeats.isEmpty()) return repeats;
+        repeats.addAll(follows(frames, drawn, Drawn::asDrawn, Shift.LATE));
+        repeats.addAll(follows(frames, drawn, Drawn::asDrawn, Shift.EARLY));
         return repeats;
     }
 
-    /** Adds to {@code drawn} each value view {@code id}'s state draws on the data, by what it is. */
-    private static void onTheData(String id, String type, JsonNode state, Map<String, Set<String>> drawn) {
+    /** The values in {@code which} of {@code drawn} that hold the item's value {@code shift}ed, in every frame (or pair) that draws both, two or more. */
+    private static List<String> follows(List<Sighting> frames, List<Drawn> drawn, Function<Drawn, Map<String, Set<String>>> which, Shift shift) {
+        Set<String> sources = new LinkedHashSet<>();
+        for (Drawn frame : drawn) sources.addAll(which.apply(frame).keySet());
+        List<String> follows = new ArrayList<>();
+        for (String source : sources) {
+            int both = 0;
+            boolean every = true;
+            for (Sighting sighting : frames) {
+                int at = sighting.frame() + shift.offset;
+                Set<String> there = at < 0 || at >= drawn.size() ? null : which.apply(drawn.get(at)).get(source);
+                if (there == null) continue;
+                both++;
+                every &= sighting.in(there);
+            }
+            if (every && both >= 2) follows.add(source + shift.named);
+        }
+        return follows;
+    }
+
+    /**
+     * Adds to {@code into} each value view {@code id}'s state draws on the data, by what it is, and each derived from
+     * one: a pointer or a span's start or end plus or minus 1 (a 1-based position beside a 0-based pointer), a span's
+     * exclusive length ({@code to - from}), and a whole list in another order. A part of a list is not derived: nearly
+     * any short list is part of a longer one.
+     */
+    private static void onTheData(String id, String type, JsonNode state, Drawn into) {
+        Map<String, Set<String>> drawn = into.asDrawn(), derived = into.derived();
         String of = type + " \"" + id + "\"";
         Map<String, JsonNode> places = ADDRESSES.places(type, state);
         if (!places.isEmpty()) {
@@ -971,9 +1062,15 @@ class WalkthroughsMatchSamplesTest {
             places.values().forEach(v -> values.add(value(v)));
             drawn.put("a value in " + of, values);
         }
-        if (ADDRESSES.indexed(type)) drawn.put("the values of " + of, Set.of(value(state.path("values"))));
+        if (ADDRESSES.indexed(type)) {
+            drawn.put("the values of " + of, Set.of(value(state.path("values"))));
+            derived.put("the values of " + of + ", in another order", Set.of(inOrder(state.path("values"))));
+        }
         state.path("pointers").fields().forEachRemaining(p -> {
-            if (!p.getValue().isNull()) drawn.put("pointer \"" + p.getKey() + "\" of " + of, Set.of(value(p.getValue())));
+            if (p.getValue().isNull()) return;
+            String name = "pointer \"" + p.getKey() + "\" of " + of;
+            drawn.put(name, Set.of(value(p.getValue())));
+            if (p.getValue().isIntegralNumber()) oneOff(name, p.getValue().asLong(), derived);
         });
         state.path("spans").fields().forEachRemaining(named -> {
             JsonNode span = named.getValue();
@@ -983,12 +1080,29 @@ class WalkthroughsMatchSamplesTest {
             drawn.put(name + "start on " + of, Set.of(String.valueOf(from)));
             drawn.put(name + "end on " + of, Set.of(String.valueOf(to)));
             drawn.put(name + "length on " + of, Set.of(String.valueOf(to - from + 1)));
+            oneOff(name + "start on " + of, from, derived);
+            oneOff(name + "end on " + of, to, derived);
+            derived.put(name + "exclusive length on " + of, Set.of(String.valueOf(to - from)));
         });
         if (state.path("under").isArray() && !state.path("under").isEmpty()) {
             Set<String> labels = new HashSet<>();
             for (JsonNode under : state.path("under")) labels.add(value(under.path(1)));
             drawn.put("a label under " + of, labels);
         }
+    }
+
+    /** Adds {@code drawn}, the number {@code name} draws, plus 1 and minus 1 to {@code derived}. */
+    private static void oneOff(String name, long drawn, Map<String, Set<String>> derived) {
+        derived.put(name + ", plus 1", Set.of(String.valueOf(drawn + 1)));
+        derived.put(name + ", minus 1", Set.of(String.valueOf(drawn - 1)));
+    }
+
+    /** A list's values (each by {@link #value}) sorted, so two lists holding the same values in any order have the same one. */
+    private static String inOrder(JsonNode list) {
+        List<String> values = new ArrayList<>();
+        list.forEach(v -> values.add(value(v)));
+        values.sort(null);
+        return "in order: " + values;
     }
 
     /** A value as the drawing shows it: a string or a number by its text, anything else as JSON. */
