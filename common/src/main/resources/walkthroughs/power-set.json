@@ -1,0 +1,1174 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Power Set",
+  "ko": "멱집합"
+ },
+ "approach": {
+  "en": "Each call holds one subset and extends it only with numbers after the last one it took, so every subset is built exactly once: one node of the recursion tree per subset.",
+  "ko": "호출 하나가 부분집합 하나를 맡고, 마지막으로 고른 수 뒤의 수로만 늘리므로 모든 부분집합이 정확히 한 번씩 만들어집니다. 재귀 트리의 노드 하나가 부분집합 하나입니다."
+ },
+ "views": [
+  {
+   "id": "nums",
+   "type": "array"
+  },
+  {
+   "id": "calls",
+   "type": "tree",
+   "title": {
+    "en": "calls (+x: the number taken)",
+    "ko": "호출 (+x: 고른 수)"
+   }
+  },
+  {
+   "id": "result",
+   "type": "output",
+   "title": {
+    "en": "answer",
+    "ko": "답"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "nums = [2,5,8]",
+   "expected": "[[],[2],[2,5],[2,5,8],[2,8],[5],[5,8],[8]]",
+   "frames": [
+    {
+     "caption": {
+      "en": "The first call holds the empty subset [] and adds it to the answer; it will extend [] with each of 2, 5, 8.",
+      "ko": "첫 호출은 빈 부분집합 []를 맡아 답에 넣고, 여기에 2, 5, 8을 하나씩 붙여 봅니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        2,
+        5,
+        8
+       ]
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        }
+       ],
+       "edges": [],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ]
+      },
+      "result": {
+       "values": [
+        "[]"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "calls",
+        "at": 0
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Take 2: the call for [2] adds it to the answer; next it tries 5, 8.",
+      "ko": "2를 고릅니다. [2] 호출이 이 부분집합을 답에 넣고, 다음으로 5, 8을 붙여 봅니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        2,
+        5,
+        8
+       ]
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[2]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "+2"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         1
+        ]
+       },
+       "shade": [
+        0,
+        1
+       ]
+      },
+      "result": {
+       "values": [
+        "[]",
+        "[2]"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nums",
+        "at": 0
+       },
+       "to": {
+        "view": "calls",
+        "at": 1
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Take 5: the call for [2,5] adds it to the answer; next it tries 8.",
+      "ko": "5를 고릅니다. [2,5] 호출이 이 부분집합을 답에 넣고, 다음으로 8을 붙여 봅니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        2,
+        5,
+        8
+       ]
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[2]"
+        },
+        {
+         "id": 2,
+         "value": "[2,5]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "+2"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "+5"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         2
+        ]
+       },
+       "shade": [
+        0,
+        1,
+        2
+       ]
+      },
+      "result": {
+       "values": [
+        "[]",
+        "[2]",
+        "[2,5]"
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nums",
+        "at": 1
+       },
+       "to": {
+        "view": "calls",
+        "at": 2
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 2
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Take 8: the call for [2,5,8] adds it to the answer; no number comes after 8, so it returns.",
+      "ko": "8을 고릅니다. [2,5,8] 호출이 이 부분집합을 답에 넣고, 8 뒤에 남은 수가 없으므로 돌아갑니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        2,
+        5,
+        8
+       ]
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[2]"
+        },
+        {
+         "id": 2,
+         "value": "[2,5]"
+        },
+        {
+         "id": 3,
+         "value": "[2,5,8]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "+2"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "+5"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "+8"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         3
+        ]
+       },
+       "shade": [
+        0,
+        1,
+        2,
+        3
+       ]
+      },
+      "result": {
+       "values": [
+        "[]",
+        "[2]",
+        "[2,5]",
+        "[2,5,8]"
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nums",
+        "at": 2
+       },
+       "to": {
+        "view": "calls",
+        "at": 3
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 3
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Take 8: the call for [2,8] adds it to the answer; no number comes after 8, so it returns.",
+      "ko": "8을 고릅니다. [2,8] 호출이 이 부분집합을 답에 넣고, 8 뒤에 남은 수가 없으므로 돌아갑니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        2,
+        5,
+        8
+       ]
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[2]"
+        },
+        {
+         "id": 2,
+         "value": "[2,5]"
+        },
+        {
+         "id": 3,
+         "value": "[2,5,8]"
+        },
+        {
+         "id": 4,
+         "value": "[2,8]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "+2"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "+5"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "+8"
+        },
+        {
+         "from": 1,
+         "to": 4,
+         "label": "+8"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         4
+        ]
+       },
+       "shade": [
+        0,
+        1,
+        4
+       ]
+      },
+      "result": {
+       "values": [
+        "[]",
+        "[2]",
+        "[2,5]",
+        "[2,5,8]",
+        "[2,8]"
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nums",
+        "at": 2
+       },
+       "to": {
+        "view": "calls",
+        "at": 4
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 4
+       },
+       "to": {
+        "view": "result",
+        "at": 4
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Take 5: the call for [5] adds it to the answer; next it tries 8.",
+      "ko": "5를 고릅니다. [5] 호출이 이 부분집합을 답에 넣고, 다음으로 8을 붙여 봅니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        2,
+        5,
+        8
+       ]
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[2]"
+        },
+        {
+         "id": 2,
+         "value": "[2,5]"
+        },
+        {
+         "id": 3,
+         "value": "[2,5,8]"
+        },
+        {
+         "id": 4,
+         "value": "[2,8]"
+        },
+        {
+         "id": 5,
+         "value": "[5]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "+2"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "+5"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "+8"
+        },
+        {
+         "from": 1,
+         "to": 4,
+         "label": "+8"
+        },
+        {
+         "from": 0,
+         "to": 5,
+         "label": "+5"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         5
+        ]
+       },
+       "shade": [
+        0,
+        5
+       ]
+      },
+      "result": {
+       "values": [
+        "[]",
+        "[2]",
+        "[2,5]",
+        "[2,5,8]",
+        "[2,8]",
+        "[5]"
+       ],
+       "marks": {
+        "good": [
+         5
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nums",
+        "at": 1
+       },
+       "to": {
+        "view": "calls",
+        "at": 5
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 5
+       },
+       "to": {
+        "view": "result",
+        "at": 5
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Take 8: the call for [5,8] adds it to the answer; no number comes after 8, so it returns.",
+      "ko": "8을 고릅니다. [5,8] 호출이 이 부분집합을 답에 넣고, 8 뒤에 남은 수가 없으므로 돌아갑니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        2,
+        5,
+        8
+       ]
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[2]"
+        },
+        {
+         "id": 2,
+         "value": "[2,5]"
+        },
+        {
+         "id": 3,
+         "value": "[2,5,8]"
+        },
+        {
+         "id": 4,
+         "value": "[2,8]"
+        },
+        {
+         "id": 5,
+         "value": "[5]"
+        },
+        {
+         "id": 6,
+         "value": "[5,8]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "+2"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "+5"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "+8"
+        },
+        {
+         "from": 1,
+         "to": 4,
+         "label": "+8"
+        },
+        {
+         "from": 0,
+         "to": 5,
+         "label": "+5"
+        },
+        {
+         "from": 5,
+         "to": 6,
+         "label": "+8"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         6
+        ]
+       },
+       "shade": [
+        0,
+        5,
+        6
+       ]
+      },
+      "result": {
+       "values": [
+        "[]",
+        "[2]",
+        "[2,5]",
+        "[2,5,8]",
+        "[2,8]",
+        "[5]",
+        "[5,8]"
+       ],
+       "marks": {
+        "good": [
+         6
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nums",
+        "at": 2
+       },
+       "to": {
+        "view": "calls",
+        "at": 6
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 6
+       },
+       "to": {
+        "view": "result",
+        "at": 6
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Take 8: the call for [8] adds it to the answer; no number comes after 8, so it returns.",
+      "ko": "8을 고릅니다. [8] 호출이 이 부분집합을 답에 넣고, 8 뒤에 남은 수가 없으므로 돌아갑니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        2,
+        5,
+        8
+       ]
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[2]"
+        },
+        {
+         "id": 2,
+         "value": "[2,5]"
+        },
+        {
+         "id": 3,
+         "value": "[2,5,8]"
+        },
+        {
+         "id": 4,
+         "value": "[2,8]"
+        },
+        {
+         "id": 5,
+         "value": "[5]"
+        },
+        {
+         "id": 6,
+         "value": "[5,8]"
+        },
+        {
+         "id": 7,
+         "value": "[8]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "+2"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "+5"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "+8"
+        },
+        {
+         "from": 1,
+         "to": 4,
+         "label": "+8"
+        },
+        {
+         "from": 0,
+         "to": 5,
+         "label": "+5"
+        },
+        {
+         "from": 5,
+         "to": 6,
+         "label": "+8"
+        },
+        {
+         "from": 0,
+         "to": 7,
+         "label": "+8"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         7
+        ]
+       },
+       "shade": [
+        0,
+        7
+       ]
+      },
+      "result": {
+       "values": [
+        "[]",
+        "[2]",
+        "[2,5]",
+        "[2,5,8]",
+        "[2,8]",
+        "[5]",
+        "[5,8]",
+        "[8]"
+       ],
+       "marks": {
+        "good": [
+         7
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nums",
+        "at": 2
+       },
+       "to": {
+        "view": "calls",
+        "at": 7
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 7
+       },
+       "to": {
+        "view": "result",
+        "at": 7
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every call has returned: 8 calls, one per subset, so the answer holds all 8 subsets of 3 numbers (2^3 = 8).",
+      "ko": "모든 호출이 끝났습니다. 호출 8번이 부분집합을 하나씩 만들었으니, 답에는 수 3개로 만든 부분집합 8개가 모두 있습니다(2^3 = 8)."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        2,
+        5,
+        8
+       ]
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[2]"
+        },
+        {
+         "id": 2,
+         "value": "[2,5]"
+        },
+        {
+         "id": 3,
+         "value": "[2,5,8]"
+        },
+        {
+         "id": 4,
+         "value": "[2,8]"
+        },
+        {
+         "id": 5,
+         "value": "[5]"
+        },
+        {
+         "id": 6,
+         "value": "[5,8]"
+        },
+        {
+         "id": 7,
+         "value": "[8]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "+2"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "+5"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "+8"
+        },
+        {
+         "from": 1,
+         "to": 4,
+         "label": "+8"
+        },
+        {
+         "from": 0,
+         "to": 5,
+         "label": "+5"
+        },
+        {
+         "from": 5,
+         "to": 6,
+         "label": "+8"
+        },
+        {
+         "from": 0,
+         "to": 7,
+         "label": "+8"
+        }
+       ],
+       "nodeMarks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5,
+         6,
+         7
+        ]
+       },
+       "shade": []
+      },
+      "result": {
+       "values": [
+        "[]",
+        "[2]",
+        "[2,5]",
+        "[2,5,8]",
+        "[2,8]",
+        "[5]",
+        "[5,8]",
+        "[8]"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5,
+         6,
+         7
+        ]
+       }
+      }
+     },
+     "answer": "[[],[2],[2,5],[2,5,8],[2,8],[5],[5,8],[8]]"
+    }
+   ],
+   "sampleInput": "[2,5,8]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "nums = [7]",
+   "expected": "[[],[7]]",
+   "frames": [
+    {
+     "caption": {
+      "en": "The first call holds the empty subset [] and adds it to the answer; it will extend [] with each of 7.",
+      "ko": "첫 호출은 빈 부분집합 []를 맡아 답에 넣고, 여기에 7을 하나씩 붙여 봅니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        7
+       ]
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        }
+       ],
+       "edges": [],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ]
+      },
+      "result": {
+       "values": [
+        "[]"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "calls",
+        "at": 0
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Take 7: the call for [7] adds it to the answer; no number comes after 7, so it returns.",
+      "ko": "7을 고릅니다. [7] 호출이 이 부분집합을 답에 넣고, 7 뒤에 남은 수가 없으므로 돌아갑니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        7
+       ]
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[7]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "+7"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         1
+        ]
+       },
+       "shade": [
+        0,
+        1
+       ]
+      },
+      "result": {
+       "values": [
+        "[]",
+        "[7]"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nums",
+        "at": 0
+       },
+       "to": {
+        "view": "calls",
+        "at": 1
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every call has returned: 2 calls, one per subset, so the answer holds all 2 subsets of 1 numbers (2^1 = 2).",
+      "ko": "모든 호출이 끝났습니다. 호출 2번이 부분집합을 하나씩 만들었으니, 답에는 수 1개로 만든 부분집합 2개가 모두 있습니다(2^1 = 2)."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        7
+       ]
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[7]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "+7"
+        }
+       ],
+       "nodeMarks": {
+        "path": [
+         0,
+         1
+        ]
+       },
+       "shade": []
+      },
+      "result": {
+       "values": [
+        "[]",
+        "[7]"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1
+        ]
+       }
+      }
+     },
+     "answer": "[[],[7]]"
+    }
+   ],
+   "sampleInput": "[7]"
+  }
+ ]
+}

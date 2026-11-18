@@ -1,0 +1,3211 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "K-th Highest Raid Score",
+  "ko": "K번째로 높은 레이드 점수"
+ },
+ "approach": {
+  "en": "Keep the k highest scores so far in a min-heap: its root is the lowest of them, so a new score either beats the root and replaces it, or can't be among the k highest. After the last score the root is the k-th highest.",
+  "ko": "지금까지 가장 높은 점수 k개를 최소 힙에 둡니다. 루트가 그중 가장 낮은 점수이므로, 새 점수는 루트보다 높으면 루트를 밀어내고, 아니면 높은 k개에 들 수 없습니다. 마지막 점수까지 읽고 나면 루트가 k번째로 높은 점수입니다."
+ },
+ "views": [
+  {
+   "id": "scores",
+   "type": "array",
+   "title": {
+    "en": "scores",
+    "ko": "scores (점수)"
+   }
+  },
+  {
+   "id": "heap",
+   "type": "tree",
+   "arity": 2,
+   "title": {
+    "en": "min-heap of the k highest ([i]: array index)",
+    "ko": "높은 점수 k개의 최소 힙 ([i]: 배열 인덱스)"
+   },
+   "empty": {
+    "en": "empty",
+    "ko": "비어 있음"
+   }
+  },
+  {
+   "id": "result",
+   "type": "output",
+   "title": {
+    "en": "answer",
+    "ko": "답"
+   },
+   "empty": {
+    "en": "not yet",
+    "ko": "아직 없음"
+   }
+  },
+  {
+   "id": "state",
+   "type": "vars"
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "scores = [7,2,9,4,9,6,3], k = 3",
+   "expected": "7",
+   "frames": [
+    {
+     "caption": {
+      "en": "7 scores, k = 3. The min-heap will hold the 3 highest scores read so far, so its root is always the lowest of them.",
+      "ko": "점수 7개, k = 3입니다. 최소 힙에 지금까지 읽은 점수 중 가장 높은 3개를 두므로, 루트는 언제나 그중 가장 낮은 점수입니다."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        7,
+        2,
+        9,
+        4,
+        9,
+        6,
+        3
+       ],
+       "pointers": {},
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+       ],
+       "marks": {
+        "dim": []
+       }
+      },
+      "heap": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 3
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "The heap holds 0 of 3, so push 7: it goes in at the end, [0]; it is the root.",
+      "ko": "힙에 0개뿐이고 3개까지 둘 수 있으므로 7을 넣습니다. 맨 끝 [0]에 들어가고, 루트가 됩니다."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        7,
+        2,
+        9,
+        4,
+        9,
+        6,
+        3
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "unread": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 7
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 3
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "scores",
+        "at": 0
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The heap holds 1 of 3, so push 2: it goes in at the end, [1]; it is lower than its parent 7 at [0], so it sifts up.",
+      "ko": "힙에 1개뿐이고 3개까지 둘 수 있으므로 2를 넣습니다. 맨 끝 [1]에 들어가고, 부모 [0]의 7보다 낮으므로 위로 올립니다."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        7,
+        2,
+        9,
+        4,
+        9,
+        6,
+        3
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "unread": [
+        2,
+        3,
+        4,
+        5,
+        6
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 7
+        },
+        {
+         "id": 1,
+         "value": 2
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 3
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "scores",
+        "at": 1
+       },
+       "to": {
+        "view": "heap",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Sift up: 2 at [1] is lower than its parent 7 at [0], so they swap. It is at the root now.",
+      "ko": "위로 올리기: [1]의 2는 부모 [0]의 7보다 낮으므로 자리를 바꿉니다. 이제 루트입니다."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        7,
+        2,
+        9,
+        4,
+        9,
+        6,
+        3
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "unread": [
+        2,
+        3,
+        4,
+        5,
+        6
+       ],
+       "marks": {
+        "dim": []
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 2
+        },
+        {
+         "id": 1,
+         "value": 7
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 3
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 1
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       },
+       "value": 2
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "heap",
+        "at": 1
+       },
+       "value": 7
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The heap holds 2 of 3, so push 9: it goes in at the end, [2]; its parent 2 at [0] is not higher, so it stays.",
+      "ko": "힙에 2개뿐이고 3개까지 둘 수 있으므로 9를 넣습니다. 맨 끝 [2]에 들어가고, 부모 [0]의 2는 더 높지 않으므로 그대로 둡니다."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        7,
+        2,
+        9,
+        4,
+        9,
+        6,
+        3
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "unread": [
+        3,
+        4,
+        5,
+        6
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         2
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 2
+        },
+        {
+         "id": 1,
+         "value": 7
+        },
+        {
+         "id": 2,
+         "value": 9
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ],
+        [
+         2,
+         "[2]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 3
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "scores",
+        "at": 2
+       },
+       "to": {
+        "view": "heap",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "4 beats the root 2, the lowest of the 3 highest: 2 leaves and 4 takes the root; no child is lower, so it stays.",
+      "ko": "4는 높은 3개 중 가장 낮은 루트 2보다 높습니다. 2는 빠지고 4가 루트에 들어가며, 더 낮은 자식이 없으므로 그대로 둡니다."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        7,
+        2,
+        9,
+        4,
+        9,
+        6,
+        3
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "unread": [
+        4,
+        5,
+        6
+       ],
+       "marks": {
+        "dim": [
+         1
+        ],
+        "lit": [
+         3
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 4
+        },
+        {
+         "id": 1,
+         "value": 7
+        },
+        {
+         "id": 2,
+         "value": 9
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ],
+        [
+         2,
+         "[2]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 3
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "scores",
+        "at": 1
+       },
+       "value": 2,
+       "mark": "bad"
+      },
+      {
+       "from": {
+        "view": "scores",
+        "at": 3
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "9 beats the root 4, the lowest of the 3 highest: 4 leaves and 9 takes the root; 9 is higher than its lower child 7, so it sifts down.",
+      "ko": "9는 높은 3개 중 가장 낮은 루트 4보다 높습니다. 4는 빠지고 9가 루트에 들어가며, 9는 더 낮은 자식 7보다 높으므로 아래로 내립니다."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        7,
+        2,
+        9,
+        4,
+        9,
+        6,
+        3
+       ],
+       "pointers": {
+        "i": 4
+       },
+       "unread": [
+        5,
+        6
+       ],
+       "marks": {
+        "dim": [
+         1,
+         3
+        ],
+        "lit": [
+         4
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 9
+        },
+        {
+         "id": 1,
+         "value": 7
+        },
+        {
+         "id": 2,
+         "value": 9
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ],
+        [
+         2,
+         "[2]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 3
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "scores",
+        "at": 3
+       },
+       "value": 4,
+       "mark": "bad"
+      },
+      {
+       "from": {
+        "view": "scores",
+        "at": 4
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Sift down: 9 at [0] is higher than its lower child 7 at [1], so they swap. It is a leaf now, so it stops.",
+      "ko": "아래로 내리기: [0]의 9는 더 낮은 자식 [1]의 7보다 높으므로 자리를 바꿉니다. 이제 잎 노드이므로 멈춥니다."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        7,
+        2,
+        9,
+        4,
+        9,
+        6,
+        3
+       ],
+       "pointers": {
+        "i": 4
+       },
+       "unread": [
+        5,
+        6
+       ],
+       "marks": {
+        "dim": [
+         1,
+         3
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 7
+        },
+        {
+         "id": 1,
+         "value": 9
+        },
+        {
+         "id": 2,
+         "value": 9
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ],
+        [
+         2,
+         "[2]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 3
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "heap",
+        "at": 1
+       },
+       "value": 9
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 1
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       },
+       "value": 7
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "6 is not higher than the root 7, and the heap already holds 3 scores at least 7, so 6 can't be among the 3 highest: skip it.",
+      "ko": "6은 루트 7보다 높지 않고, 힙에는 이미 7 이상인 점수가 3개 있으므로 6은 높은 3개에 들 수 없어 건너뜁니다."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        7,
+        2,
+        9,
+        4,
+        9,
+        6,
+        3
+       ],
+       "pointers": {
+        "i": 5
+       },
+       "unread": [
+        6
+       ],
+       "marks": {
+        "dim": [
+         1,
+         3,
+         5
+        ],
+        "bad": [
+         5
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 7
+        },
+        {
+         "id": 1,
+         "value": 9
+        },
+        {
+         "id": 2,
+         "value": 9
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ],
+        [
+         2,
+         "[2]"
+        ]
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 3
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "scores",
+        "at": 5
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "3 is not higher than the root 7, and the heap already holds 3 scores at least 7, so 3 can't be among the 3 highest: skip it.",
+      "ko": "3은 루트 7보다 높지 않고, 힙에는 이미 7 이상인 점수가 3개 있으므로 3은 높은 3개에 들 수 없어 건너뜁니다."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        7,
+        2,
+        9,
+        4,
+        9,
+        6,
+        3
+       ],
+       "pointers": {
+        "i": 6
+       },
+       "unread": [],
+       "marks": {
+        "dim": [
+         1,
+         3,
+         5,
+         6
+        ],
+        "bad": [
+         6
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 7
+        },
+        {
+         "id": 1,
+         "value": 9
+        },
+        {
+         "id": 2,
+         "value": 9
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ],
+        [
+         2,
+         "[2]"
+        ]
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 3
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "scores",
+        "at": 6
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every score is read. The heap holds the 3 highest, and its root 7 is the lowest of them: the 3rd highest score is 7.",
+      "ko": "모든 점수를 읽었습니다. 힙에는 가장 높은 3개가 있고, 그중 가장 낮은 루트 7이 3번째로 높은 점수입니다."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        7,
+        2,
+        9,
+        4,
+        9,
+        6,
+        3
+       ],
+       "pointers": {},
+       "unread": [],
+       "marks": {
+        "dim": [
+         1,
+         3,
+         5,
+         6
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 7
+        },
+        {
+         "id": 1,
+         "value": 9
+        },
+        {
+         "id": 2,
+         "value": 9
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ],
+        [
+         2,
+         "[2]"
+        ]
+       ],
+       "nodeMarks": {
+        "path": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "7"
+       ],
+       "marks": {
+        "path": [
+         0
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 3
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       }
+      }
+     ],
+     "answer": "7"
+    }
+   ],
+   "sampleInput": "[7,2,9,4,9,6,3]\n3"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "scores = [12,5,8,5,8,15,3,11], k = 4",
+   "expected": "8",
+   "frames": [
+    {
+     "caption": {
+      "en": "8 scores, k = 4. The min-heap will hold the 4 highest scores read so far, so its root is always the lowest of them.",
+      "ko": "점수 8개, k = 4입니다. 최소 힙에 지금까지 읽은 점수 중 가장 높은 4개를 두므로, 루트는 언제나 그중 가장 낮은 점수입니다."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        12,
+        5,
+        8,
+        5,
+        8,
+        15,
+        3,
+        11
+       ],
+       "pointers": {},
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+       ],
+       "marks": {
+        "dim": []
+       }
+      },
+      "heap": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 4
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "The heap holds 0 of 4, so push 12: it goes in at the end, [0]; it is the root.",
+      "ko": "힙에 0개뿐이고 4개까지 둘 수 있으므로 12를 넣습니다. 맨 끝 [0]에 들어가고, 루트가 됩니다."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        12,
+        5,
+        8,
+        5,
+        8,
+        15,
+        3,
+        11
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "unread": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 12
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 4
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "scores",
+        "at": 0
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The heap holds 1 of 4, so push 5: it goes in at the end, [1]; it is lower than its parent 12 at [0], so it sifts up.",
+      "ko": "힙에 1개뿐이고 4개까지 둘 수 있으므로 5를 넣습니다. 맨 끝 [1]에 들어가고, 부모 [0]의 12보다 낮으므로 위로 올립니다."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        12,
+        5,
+        8,
+        5,
+        8,
+        15,
+        3,
+        11
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "unread": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 12
+        },
+        {
+         "id": 1,
+         "value": 5
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 4
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "scores",
+        "at": 1
+       },
+       "to": {
+        "view": "heap",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Sift up: 5 at [1] is lower than its parent 12 at [0], so they swap. It is at the root now.",
+      "ko": "위로 올리기: [1]의 5는 부모 [0]의 12보다 낮으므로 자리를 바꿉니다. 이제 루트입니다."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        12,
+        5,
+        8,
+        5,
+        8,
+        15,
+        3,
+        11
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "unread": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+       ],
+       "marks": {
+        "dim": []
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 5
+        },
+        {
+         "id": 1,
+         "value": 12
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 4
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 1
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       },
+       "value": 5
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "heap",
+        "at": 1
+       },
+       "value": 12
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The heap holds 2 of 4, so push 8: it goes in at the end, [2]; its parent 5 at [0] is not higher, so it stays.",
+      "ko": "힙에 2개뿐이고 4개까지 둘 수 있으므로 8을 넣습니다. 맨 끝 [2]에 들어가고, 부모 [0]의 5는 더 높지 않으므로 그대로 둡니다."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        12,
+        5,
+        8,
+        5,
+        8,
+        15,
+        3,
+        11
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "unread": [
+        3,
+        4,
+        5,
+        6,
+        7
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         2
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 5
+        },
+        {
+         "id": 1,
+         "value": 12
+        },
+        {
+         "id": 2,
+         "value": 8
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ],
+        [
+         2,
+         "[2]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 4
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "scores",
+        "at": 2
+       },
+       "to": {
+        "view": "heap",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The heap holds 3 of 4, so push 5: it goes in at the end, [3]; it is lower than its parent 12 at [1], so it sifts up.",
+      "ko": "힙에 3개뿐이고 4개까지 둘 수 있으므로 5를 넣습니다. 맨 끝 [3]에 들어가고, 부모 [1]의 12보다 낮으므로 위로 올립니다."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        12,
+        5,
+        8,
+        5,
+        8,
+        15,
+        3,
+        11
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "unread": [
+        4,
+        5,
+        6,
+        7
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         3
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 5
+        },
+        {
+         "id": 1,
+         "value": 12
+        },
+        {
+         "id": 2,
+         "value": 8
+        },
+        {
+         "id": 3,
+         "value": 5
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        },
+        {
+         "from": 1,
+         "to": 3,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ],
+        [
+         2,
+         "[2]"
+        ],
+        [
+         3,
+         "[3]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 4
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "scores",
+        "at": 3
+       },
+       "to": {
+        "view": "heap",
+        "at": 3
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Sift up: 5 at [3] is lower than its parent 12 at [1], so they swap. Its new parent [0] holds 5, not higher, so it stops.",
+      "ko": "위로 올리기: [3]의 5는 부모 [1]의 12보다 낮으므로 자리를 바꿉니다. 새 부모 [0]의 5는 더 높지 않으므로 멈춥니다."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        12,
+        5,
+        8,
+        5,
+        8,
+        15,
+        3,
+        11
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "unread": [
+        4,
+        5,
+        6,
+        7
+       ],
+       "marks": {
+        "dim": []
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 5
+        },
+        {
+         "id": 1,
+         "value": 5
+        },
+        {
+         "id": 2,
+         "value": 8
+        },
+        {
+         "id": 3,
+         "value": 12
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        },
+        {
+         "from": 1,
+         "to": 3,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ],
+        [
+         2,
+         "[2]"
+        ],
+        [
+         3,
+         "[3]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         1
+        ],
+        "lit": [
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 4
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 3
+       },
+       "to": {
+        "view": "heap",
+        "at": 1
+       },
+       "value": 5
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 1
+       },
+       "to": {
+        "view": "heap",
+        "at": 3
+       },
+       "value": 12
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "8 beats the root 5, the lowest of the 4 highest: 5 leaves and 8 takes the root; 8 is higher than its lower child 5, so it sifts down.",
+      "ko": "8은 높은 4개 중 가장 낮은 루트 5보다 높습니다. 5는 빠지고 8이 루트에 들어가며, 8은 더 낮은 자식 5보다 높으므로 아래로 내립니다."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        12,
+        5,
+        8,
+        5,
+        8,
+        15,
+        3,
+        11
+       ],
+       "pointers": {
+        "i": 4
+       },
+       "unread": [
+        5,
+        6,
+        7
+       ],
+       "marks": {
+        "dim": [
+         1
+        ],
+        "lit": [
+         4
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 8
+        },
+        {
+         "id": 1,
+         "value": 5
+        },
+        {
+         "id": 2,
+         "value": 8
+        },
+        {
+         "id": 3,
+         "value": 12
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        },
+        {
+         "from": 1,
+         "to": 3,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ],
+        [
+         2,
+         "[2]"
+        ],
+        [
+         3,
+         "[3]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 4
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "scores",
+        "at": 1
+       },
+       "value": 5,
+       "mark": "bad"
+      },
+      {
+       "from": {
+        "view": "scores",
+        "at": 4
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Sift down: 8 at [0] is higher than its lower child 5 at [1], so they swap. No child below is lower, so it stops.",
+      "ko": "아래로 내리기: [0]의 8은 더 낮은 자식 [1]의 5보다 높으므로 자리를 바꿉니다. 아래 자식이 더 낮지 않으므로 멈춥니다."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        12,
+        5,
+        8,
+        5,
+        8,
+        15,
+        3,
+        11
+       ],
+       "pointers": {
+        "i": 4
+       },
+       "unread": [
+        5,
+        6,
+        7
+       ],
+       "marks": {
+        "dim": [
+         1
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 5
+        },
+        {
+         "id": 1,
+         "value": 8
+        },
+        {
+         "id": 2,
+         "value": 8
+        },
+        {
+         "id": 3,
+         "value": 12
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        },
+        {
+         "from": 1,
+         "to": 3,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ],
+        [
+         2,
+         "[2]"
+        ],
+        [
+         3,
+         "[3]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 4
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "heap",
+        "at": 1
+       },
+       "value": 8
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 1
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       },
+       "value": 5
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "15 beats the root 5, the lowest of the 4 highest: 5 leaves and 15 takes the root; 15 is higher than its lower child 8, so it sifts down.",
+      "ko": "15는 높은 4개 중 가장 낮은 루트 5보다 높습니다. 5는 빠지고 15가 루트에 들어가며, 15는 더 낮은 자식 8보다 높으므로 아래로 내립니다."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        12,
+        5,
+        8,
+        5,
+        8,
+        15,
+        3,
+        11
+       ],
+       "pointers": {
+        "i": 5
+       },
+       "unread": [
+        6,
+        7
+       ],
+       "marks": {
+        "dim": [
+         1,
+         3
+        ],
+        "lit": [
+         5
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 15
+        },
+        {
+         "id": 1,
+         "value": 8
+        },
+        {
+         "id": 2,
+         "value": 8
+        },
+        {
+         "id": 3,
+         "value": 12
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        },
+        {
+         "from": 1,
+         "to": 3,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ],
+        [
+         2,
+         "[2]"
+        ],
+        [
+         3,
+         "[3]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 4
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "scores",
+        "at": 3
+       },
+       "value": 5,
+       "mark": "bad"
+      },
+      {
+       "from": {
+        "view": "scores",
+        "at": 5
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Sift down: 15 at [0] is higher than its lower child 8 at [1], so they swap.",
+      "ko": "아래로 내리기: [0]의 15는 더 낮은 자식 [1]의 8보다 높으므로 자리를 바꿉니다."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        12,
+        5,
+        8,
+        5,
+        8,
+        15,
+        3,
+        11
+       ],
+       "pointers": {
+        "i": 5
+       },
+       "unread": [
+        6,
+        7
+       ],
+       "marks": {
+        "dim": [
+         1,
+         3
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 8
+        },
+        {
+         "id": 1,
+         "value": 15
+        },
+        {
+         "id": 2,
+         "value": 8
+        },
+        {
+         "id": 3,
+         "value": 12
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        },
+        {
+         "from": 1,
+         "to": 3,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ],
+        [
+         2,
+         "[2]"
+        ],
+        [
+         3,
+         "[3]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 4
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "heap",
+        "at": 1
+       },
+       "value": 15
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 1
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       },
+       "value": 8
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Sift down: 15 at [1] is higher than its lower child 12 at [3], so they swap. It is a leaf now, so it stops.",
+      "ko": "아래로 내리기: [1]의 15는 더 낮은 자식 [3]의 12보다 높으므로 자리를 바꿉니다. 이제 잎 노드이므로 멈춥니다."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        12,
+        5,
+        8,
+        5,
+        8,
+        15,
+        3,
+        11
+       ],
+       "pointers": {
+        "i": 5
+       },
+       "unread": [
+        6,
+        7
+       ],
+       "marks": {
+        "dim": [
+         1,
+         3
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 8
+        },
+        {
+         "id": 1,
+         "value": 12
+        },
+        {
+         "id": 2,
+         "value": 8
+        },
+        {
+         "id": 3,
+         "value": 15
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        },
+        {
+         "from": 1,
+         "to": 3,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ],
+        [
+         2,
+         "[2]"
+        ],
+        [
+         3,
+         "[3]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         1
+        ],
+        "lit": [
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 4
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 1
+       },
+       "to": {
+        "view": "heap",
+        "at": 3
+       },
+       "value": 15
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 3
+       },
+       "to": {
+        "view": "heap",
+        "at": 1
+       },
+       "value": 12
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "3 is not higher than the root 8, and the heap already holds 4 scores at least 8, so 3 can't be among the 4 highest: skip it.",
+      "ko": "3은 루트 8보다 높지 않고, 힙에는 이미 8 이상인 점수가 4개 있으므로 3은 높은 4개에 들 수 없어 건너뜁니다."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        12,
+        5,
+        8,
+        5,
+        8,
+        15,
+        3,
+        11
+       ],
+       "pointers": {
+        "i": 6
+       },
+       "unread": [
+        7
+       ],
+       "marks": {
+        "dim": [
+         1,
+         3,
+         6
+        ],
+        "bad": [
+         6
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 8
+        },
+        {
+         "id": 1,
+         "value": 12
+        },
+        {
+         "id": 2,
+         "value": 8
+        },
+        {
+         "id": 3,
+         "value": 15
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        },
+        {
+         "from": 1,
+         "to": 3,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ],
+        [
+         2,
+         "[2]"
+        ],
+        [
+         3,
+         "[3]"
+        ]
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 4
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "scores",
+        "at": 6
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "11 beats the root 8, the lowest of the 4 highest: 8 leaves and 11 takes the root; 11 is higher than its lower child 8, so it sifts down.",
+      "ko": "11은 높은 4개 중 가장 낮은 루트 8보다 높습니다. 8은 빠지고 11이 루트에 들어가며, 11은 더 낮은 자식 8보다 높으므로 아래로 내립니다."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        12,
+        5,
+        8,
+        5,
+        8,
+        15,
+        3,
+        11
+       ],
+       "pointers": {
+        "i": 7
+       },
+       "unread": [],
+       "marks": {
+        "dim": [
+         1,
+         3,
+         6,
+         4
+        ],
+        "lit": [
+         7
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 11
+        },
+        {
+         "id": 1,
+         "value": 12
+        },
+        {
+         "id": 2,
+         "value": 8
+        },
+        {
+         "id": 3,
+         "value": 15
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        },
+        {
+         "from": 1,
+         "to": 3,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ],
+        [
+         2,
+         "[2]"
+        ],
+        [
+         3,
+         "[3]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 4
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "scores",
+        "at": 4
+       },
+       "value": 8,
+       "mark": "bad"
+      },
+      {
+       "from": {
+        "view": "scores",
+        "at": 7
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Sift down: 11 at [0] is higher than its lower child 8 at [2], so they swap. It is a leaf now, so it stops.",
+      "ko": "아래로 내리기: [0]의 11은 더 낮은 자식 [2]의 8보다 높으므로 자리를 바꿉니다. 이제 잎 노드이므로 멈춥니다."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        12,
+        5,
+        8,
+        5,
+        8,
+        15,
+        3,
+        11
+       ],
+       "pointers": {
+        "i": 7
+       },
+       "unread": [],
+       "marks": {
+        "dim": [
+         1,
+         3,
+         6,
+         4
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 8
+        },
+        {
+         "id": 1,
+         "value": 12
+        },
+        {
+         "id": 2,
+         "value": 11
+        },
+        {
+         "id": 3,
+         "value": 15
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        },
+        {
+         "from": 1,
+         "to": 3,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ],
+        [
+         2,
+         "[2]"
+        ],
+        [
+         3,
+         "[3]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ],
+        "lit": [
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 4
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "heap",
+        "at": 2
+       },
+       "value": 11
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 2
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       },
+       "value": 8
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every score is read. The heap holds the 4 highest, and its root 8 is the lowest of them: the 4th highest score is 8.",
+      "ko": "모든 점수를 읽었습니다. 힙에는 가장 높은 4개가 있고, 그중 가장 낮은 루트 8이 4번째로 높은 점수입니다."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        12,
+        5,
+        8,
+        5,
+        8,
+        15,
+        3,
+        11
+       ],
+       "pointers": {},
+       "unread": [],
+       "marks": {
+        "dim": [
+         1,
+         3,
+         6,
+         4
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 8
+        },
+        {
+         "id": 1,
+         "value": 12
+        },
+        {
+         "id": 2,
+         "value": 11
+        },
+        {
+         "id": 3,
+         "value": 15
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        },
+        {
+         "from": 1,
+         "to": 3,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ],
+        [
+         2,
+         "[2]"
+        ],
+        [
+         3,
+         "[3]"
+        ]
+       ],
+       "nodeMarks": {
+        "path": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "8"
+       ],
+       "marks": {
+        "path": [
+         0
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 4
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       }
+      }
+     ],
+     "answer": "8"
+    }
+   ],
+   "sampleInput": "[12,5,8,5,8,15,3,11]\n4"
+  },
+  {
+   "label": {
+    "en": "Case 3",
+    "ko": "케이스 3"
+   },
+   "input": "scores = [20], k = 1",
+   "expected": "20",
+   "frames": [
+    {
+     "caption": {
+      "en": "1 score, k = 1. The min-heap will hold the highest score read so far, so its root is always the lowest of them.",
+      "ko": "점수 1개, k = 1입니다. 최소 힙에 지금까지 읽은 점수 중 가장 높은 1개를 두므로, 루트는 언제나 그중 가장 낮은 점수입니다."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        20
+       ],
+       "pointers": {},
+       "unread": [
+        0
+       ],
+       "marks": {
+        "dim": []
+       }
+      },
+      "heap": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "The heap holds 0 of 1, so push 20: it goes in at the end, [0]; it is the root.",
+      "ko": "힙에 0개뿐이고 1개까지 둘 수 있으므로 20을 넣습니다. 맨 끝 [0]에 들어가고, 루트가 됩니다."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        20
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "unread": [],
+       "marks": {
+        "dim": [],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 20
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "scores",
+        "at": 0
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every score is read. The heap holds the highest, and its root 20 is the lowest of them: the 1st highest score is 20.",
+      "ko": "모든 점수를 읽었습니다. 힙에는 가장 높은 1개가 있고, 그중 가장 낮은 루트 20이 1번째로 높은 점수입니다."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        20
+       ],
+       "pointers": {},
+       "unread": [],
+       "marks": {
+        "dim": []
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 20
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {
+        "path": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "20"
+       ],
+       "marks": {
+        "path": [
+         0
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       }
+      }
+     ],
+     "answer": "20"
+    }
+   ],
+   "sampleInput": "[20]\n1"
+  }
+ ]
+}
