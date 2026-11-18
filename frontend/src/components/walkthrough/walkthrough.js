@@ -579,6 +579,368 @@ VIEWS.graph = (host, config, ctx) => {
   };
 };
 
+// ---------- tree layout (pure, exported for tests) ----------
+// A tidy tree: each node gets a span across (its own room, or its children's spans side by side) and sits centred
+// over its children; each depth is one level, the root's at the top, or at the left when `sideways`. With an
+// `arity`, a node's children take fixed slots and a missing child leaves a gap of its own, so a binary tree's lone
+// right child sits right of its parent. `size(id)` is a node's { w, h } (h holds its tag under it), `label(id)` the
+// width of the label on the edge into it: upright, a child's span keeps that label clear of its siblings'.
+// Returns { pos: Map(id -> pill centre), width, height }.
+const TREE = { PH: 28, GAP: 12, GHOST: 30, LEVEL: 40, SIDE_GAP: 8, SIDE_GHOST: 16, SIDE_LEVEL: 30, AT: 0.7, PAD: 6 };
+export function layoutTree(nodes, edges, opts = {}) {
+  const { arity = 0, sideways = false } = opts;
+  const size = opts.size || (() => ({ w: 32, h: TREE.PH })), label = opts.label || (() => 0);
+  const ids = nodes.map(n => keyOf(n.id));
+  const kids = new Map(ids.map(id => [id, []])), hasParent = new Set(), nth = new Map();
+  for (const e of edges) {
+    const a = keyOf(e.from), b = keyOf(e.to);
+    if (!kids.has(a) || !kids.has(b) || hasParent.has(b)) continue;
+    hasParent.add(b);
+    const i = nth.get(a) || 0, list = kids.get(a);
+    nth.set(a, i + 1);
+    if (!arity) { list.push(b); continue; }
+    while (list.length < arity) list.push(null);
+    const slot = e.slot ?? i;
+    if (slot >= 0 && slot < arity && list[slot] == null) list[slot] = b;
+  }
+  const gap = sideways ? TREE.SIDE_GAP : TREE.GAP, ghost = sideways ? TREE.SIDE_GHOST : TREE.GHOST;
+  const across = id => (sideways ? size(id).h : size(id).w);
+  const need = id => Math.max(across(id), sideways ? 0 : label(id) / TREE.AT) + gap;
+  const span = new Map();
+  const spanOf = id => {
+    if (span.has(id)) return span.get(id);
+    span.set(id, need(id)); // a cycle (refused by validate) stops here
+    const sum = kids.get(id).reduce((t, c) => t + (c == null ? ghost : spanOf(c)), 0);
+    span.set(id, Math.max(need(id), sum));
+    return span.get(id);
+  };
+  const mid = new Map(), depth = new Map();
+  const place = (id, start, d) => {
+    depth.set(id, d);
+    const list = kids.get(id), s = span.get(id);
+    let x = start + (s - list.reduce((t, c) => t + (c == null ? ghost : span.get(c)), 0)) / 2;
+    const centres = [];
+    for (const c of list) {
+      const w = c == null ? ghost : span.get(c);
+      if (c != null && !depth.has(c)) place(c, x, d + 1);
+      centres.push(x + w / 2);
+      x += w;
+    }
+    mid.set(id, list.length ? (centres[0] + centres[centres.length - 1]) / 2 : start + s / 2);
+  };
+  let start = TREE.PAD;
+  // the roots side by side, then anything a cycle kept from them (refused by validate)
+  for (const id of [...ids.filter(i => !hasParent.has(i)), ...ids]) if (!depth.has(id)) { spanOf(id); place(id, start, 0); start += span.get(id); }
+  // each level is as deep as its biggest node: upright its tallest (pill and tag), sideways its widest
+  const levels = [];
+  for (const id of ids) { const d = depth.get(id); levels[d] = Math.max(levels[d] || 0, sideways ? size(id).w : size(id).h); }
+  const widest = Math.max(0, ...ids.map(label));
+  const step = sideways ? Math.max(TREE.SIDE_LEVEL, widest + 16) : TREE.LEVEL;
+  const at = [];
+  let edge = TREE.PAD;
+  levels.forEach((l, d) => { at[d] = edge; edge += (l || 0) + step; });
+  const deep = edge - step + TREE.PAD, wide = start + TREE.PAD;
+  const pos = new Map(ids.map(id => {
+    const d = depth.get(id), m = mid.get(id), h = size(id).h;
+    return [id, sideways ? { x: at[d] + levels[d] / 2, y: m - (h - TREE.PH) / 2 } : { x: m, y: at[d] + TREE.PH / 2 }];
+  }));
+  return { pos, width: sideways ? deep : wide, height: sideways ? wide : deep };
+}
+
+// Whether a tree goes on its side: only when it is wider upright than the room it has (`room`, 0 when unknown) and
+// narrower on its side, where it grows down instead of across.
+export const treeSideways = (upright, side, room) => room > 0 && upright.width > room && side.width < upright.width;
+
+// A tree: nodes as pills joined by edges to their children, upright with the root at the top, or on its side with the
+// root at the left when it would not fit upright (treeSideways). The layout is the run's whole tree (every node any
+// frame draws), so a growing tree keeps every node in place and a node appears where it will stay. `tags` write a
+// short label under a node (bounds, a count, a heap index), `shade` the nodes on the current path (the open calls).
+// Address: a node id, or an edge as [from, to].
+VIEWS.tree = (host, config, ctx) => {
+  const PH = TREE.PH, arity = Number.isInteger(config.arity) ? config.arity : 0;
+  const width = (t, px) => [...t].reduce((w, ch) => w + (ch.codePointAt(0) > 0x2e80 ? px : px * 0.6), 0);
+  let whole = null, built = null, tagged = false;
+  // every frame's nodes and edges as one tree, or null when a node changes parent (then each frame is laid out alone)
+  function unite(states) {
+    const nodes = new Map(), edges = new Map(), parent = new Map();
+    for (const st of states) {
+      for (const n of st.nodes || []) {
+        const k = keyOf(n.id), was = nodes.get(k);
+        nodes.set(k, { id: n.id, texts: [...(was ? was.texts : []), fmt(n.value)] });
+      }
+      for (const e of st.edges || []) {
+        const b = keyOf(e.to);
+        if (parent.has(b) && parent.get(b) !== keyOf(e.from)) return null;
+        parent.set(b, keyOf(e.from));
+        const was = edges.get(keyOf(e.from) + '>' + b);
+        edges.set(keyOf(e.from) + '>' + b, { ...e, labels: [...(was ? was.labels : []), textOf(e.label, ctx.lang)] });
+      }
+    }
+    const tags = new Map();
+    for (const st of states) for (const [id, t] of st.tags || []) tags.set(keyOf(id), Math.max(tags.get(keyOf(id)) || 0, width(textOf(t, ctx.lang), 10.5)));
+    return { nodes: [...nodes.values()], edges: [...edges.values()], tags };
+  }
+  const room = () => {
+    const stage = host.closest('.wt-stage');
+    if (!stage || typeof getComputedStyle !== 'function') return 0;
+    const cs = getComputedStyle(stage);
+    return stage.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+  };
+  function build(tree, space) {
+    host.innerHTML = '';
+    const pill = new Map(tree.nodes.map(n => [keyOf(n.id), Math.max(PH, ...n.texts.map(t => width(t, 13) + 18))]));
+    const into = new Map(tree.edges.map(e => [keyOf(e.to), Math.max(0, ...e.labels.map(t => (t ? width(t, 11) + 10 : 0)))]));
+    const size = id => ({ w: Math.max(pill.get(id), (tree.tags.get(id) || 0) + 8), h: PH + (tagged ? 18 : 0) });
+    const opts = { arity, size, label: id => into.get(id) || 0 };
+    const upright = layoutTree(tree.nodes, tree.edges, opts), side = layoutTree(tree.nodes, tree.edges, { ...opts, sideways: true });
+    const sideways = treeSideways(upright, side, space), L = sideways ? side : upright;
+    const root = svg('svg', { viewBox: `0 0 ${L.width} ${L.height}`, width: L.width, class: 'wt-svg wt-tree' + (sideways ? ' wt-tside' : '') }, host);
+    const eg = svg('g', {}, root), lg = svg('g', {}, root), ng = svg('g', {}, root), tg = svg('g', {}, root);
+    const edgeEls = new Map();
+    for (const e of tree.edges) {
+      const a = L.pos.get(keyOf(e.from)), b = L.pos.get(keyOf(e.to));
+      if (!a || !b) continue;
+      const [x1, y1, x2, y2] = sideways
+        ? [a.x + pill.get(keyOf(e.from)) / 2, a.y, b.x - pill.get(keyOf(e.to)) / 2, b.y]
+        : [a.x, a.y + PH / 2 + (tagged ? 18 : 0), b.x, b.y - PH / 2]; // upright, an edge leaves below the tag
+      const g = svg('g', {}, eg);
+      svg('path', { d: `M${x1},${y1} L${x2},${y2}`, class: 'wt-tedge' }, g);
+      const lx = x1 + (x2 - x1) * TREE.AT, ly = y1 + (y2 - y1) * TREE.AT;
+      const lab = svg('g', {}, lg);
+      const bg = svg('rect', { y: ly - 8, height: 16, rx: 8, class: 'wt-tlabelbg' }, lab);
+      const text = svg('text', { x: lx, y: ly + 4, 'text-anchor': 'middle', class: 'wt-tlabel' }, lab);
+      const spot = svg('circle', { cx: (x1 + x2) / 2, cy: (y1 + y2) / 2, r: 1, class: 'wt-tspot' }, g);
+      edgeEls.set(keyOf(e.from) + '>' + keyOf(e.to), { g, lab, bg, text, spot, lx, from: keyOf(e.from), to: keyOf(e.to) });
+    }
+    const nodeEls = new Map();
+    for (const n of tree.nodes) {
+      const k = keyOf(n.id), p = L.pos.get(k), w = pill.get(k);
+      const g = svg('g', { transform: `translate(${p.x},${p.y})` }, ng);
+      const box = svg('rect', { x: -w / 2, y: -PH / 2, width: w, height: PH, rx: PH / 2, class: 'wt-tnode' }, g);
+      const val = svg('text', { y: 5, 'text-anchor': 'middle', class: 'wt-tval' }, g);
+      const tag = svg('g', { transform: `translate(${p.x},${p.y + PH / 2 + 12})` }, tg);
+      const tagbg = svg('rect', { y: -10, height: 14, rx: 3, class: 'wt-ttagbg' }, tag);
+      const tagText = svg('text', { 'text-anchor': 'middle', class: 'wt-ttag' }, tag);
+      nodeEls.set(k, { g, box, val, tag, tagbg, tagText });
+    }
+    const empty = svg('text', { x: TREE.PAD, y: PH / 2 + 5, class: 'wt-tempty' }, root);
+    return { tree, nodeEls, edgeEls, sideways, space, empty };
+  }
+  const shown = (el, on) => { el.style.display = on ? '' : 'none'; };
+  return {
+    locate: at => {
+      if (!built) return null;
+      if (Array.isArray(at)) {
+        const e = at.length === 2 ? built.edgeEls.get(keyOf(at[0]) + '>' + keyOf(at[1])) : null;
+        return e && e.g.style.display !== 'none' ? (e.lab.style.display !== 'none' ? e.bg : e.spot) : null;
+      }
+      const n = built.nodeEls.get(keyOf(at));
+      return n && n.g.style.display !== 'none' ? n.box : null;
+    },
+    prepare(states) {
+      tagged = states.some(st => (st.tags || []).length);
+      whole = unite(states);
+      built = null;
+    },
+    update(s) {
+      const space = room();
+      const tree = whole || unite([s]);
+      if (!built || !whole || (space !== built.space && space > 0)) built = build(tree, space);
+      const nm = markMap(s.nodeMarks), em = markMap(s.edgeMarks), shade = new Set((s.shade || []).map(keyOf));
+      const nodes = new Map((s.nodes || []).map(n => [keyOf(n.id), n])), tags = new Map((s.tags || []).map(([id, t]) => [keyOf(id), t]));
+      for (const [k, el] of built.nodeEls) {
+        const n = nodes.get(k);
+        shown(el.g, !!n); shown(el.tag, !!n && tags.has(k));
+        if (!n) continue;
+        el.g.setAttribute('class', 'wt-tn' + markClass(nm, n.id) + (shade.has(k) ? ' wt-tshade' : ''));
+        el.val.textContent = fmt(n.value);
+        el.box.dataset.token = fmt(n.value) || fmt(n.id);
+        const t = textOf(tags.get(k), ctx.lang), w = width(t, 10.5) + 8;
+        el.tagText.textContent = t;
+        el.tagbg.setAttribute('x', -w / 2); el.tagbg.setAttribute('width', w);
+        el.tag.setAttribute('class', 'wt-ttagg' + markClass(nm, n.id));
+      }
+      const edges = new Map((s.edges || []).map(e => [keyOf(e.from) + '>' + keyOf(e.to), e]));
+      for (const [k, el] of built.edgeEls) {
+        const e = edges.get(k);
+        const label = e ? textOf(e.label, ctx.lang) : '';
+        shown(el.g, !!e); shown(el.lab, !!e && !!label);
+        if (!e) continue;
+        const m = em.get(keyOf([e.from, e.to]));
+        el.g.setAttribute('class', 'wt-te' + (m ? ' wt-' + m : '') + (shade.has(el.from) && shade.has(el.to) ? ' wt-tshade' : ''));
+        el.lab.setAttribute('class', 'wt-te' + (m ? ' wt-' + m : ''));
+        el.text.textContent = label;
+        const w = width(label, 11) + 10;
+        el.bg.setAttribute('x', el.lx - w / 2); el.bg.setAttribute('width', w);
+        el.bg.dataset.token = label;
+      }
+      built.empty.textContent = nodes.size ? '' : config.empty != null ? textOf(config.empty, ctx.lang) : ctx.ui.empty;
+    },
+  };
+};
+
+// ---------- linked list arrows (pure, exported for tests) ----------
+// How each node's next is drawn, the nodes standing in a row in `ids` order: `right` or `left` into the gap beside it
+// when it reaches a neighbour, `over` the row when it skips forward, `under` it when it loops back (or to itself), and
+// `null-right` or `null-left` to ∅, on the side away from the node that reaches it, and off the row's start for the
+// first node of several (a head turned back by a reversal).
+// Two arrows in one gap, one each way, take a lane each (-1 above the middle, 1 below). A node missing from `next`
+// has no arrow. Returns [{ from, to, kind, lane }], ids as text.
+export function linkArrows(ids, next) {
+  const at = new Map(ids.map((id, i) => [keyOf(id), i])), keys = ids.map(keyOf);
+  const reachedFromRight = new Set();
+  for (const k of keys) {
+    const to = next[k];
+    if (to != null && at.has(keyOf(to)) && at.get(keyOf(to)) < at.get(k)) reachedFromRight.add(keyOf(to));
+  }
+  const arrows = [];
+  keys.forEach((k, i) => {
+    if (!(k in next)) return;
+    const to = next[k];
+    if (to == null) {
+      const left = reachedFromRight.has(k) || (i === 0 && keys.length > 1); // a head turned back points off the row's start
+      arrows.push({ from: k, to: null, kind: left ? 'null-left' : 'null-right', lane: 0 });
+      return;
+    }
+    const j = at.get(keyOf(to));
+    if (j === undefined) return;
+    const kind = j === i + 1 ? 'right' : j === i - 1 ? 'left' : j > i ? 'over' : 'under';
+    arrows.push({ from: k, to: keyOf(to), kind, lane: 0 });
+  });
+  // the gap right of node i: an arrow rightwards out of i, or leftwards out of i + 1
+  const gap = a => (a.kind === 'right' || a.kind === 'null-right' ? at.get(a.from) : a.kind === 'left' || a.kind === 'null-left' ? at.get(a.from) - 1 : null);
+  for (const a of arrows) {
+    const g = gap(a);
+    if (g === null) continue;
+    const other = arrows.find(b => b !== a && gap(b) === g);
+    if (other) a.lane = a.kind === 'right' || a.kind === 'null-right' ? -1 : 1;
+  }
+  return arrows;
+}
+
+// A linked list: nodes as boxes in a row, in `nodes` order for the whole run, each next an arrow (linkArrows), so a
+// reversal redraws the arrows and never moves a node. `pointers` stand above their node; `cut` draws an arrow this
+// step removed, faded and dashed. Room for every arc, ∅ and pointer the run draws is kept from its first frame.
+// Address: a node id.
+VIEWS.linkedlist = (host, config, ctx) => {
+  const H = 36, GAP = 36, END = 30, ARC = 24, LINE = 14, P = 6;
+  let built = null, room = null;
+  const ids = st => (st.nodes || []).map(n => keyOf(n.id));
+  function need(states) {
+    const r = { box: 40, left: false, right: false, over: false, under: false, ptrs: 0 };
+    for (const st of states) {
+      for (const n of st.nodes || []) r.box = Math.max(r.box, labelWidth(fmt(n.value)) * 15 / 11 + 18);
+      for (const a of [...linkArrows(ids(st), st.next || {}), ...linkArrows(ids(st), st.cut || {})]) {
+        if (a.kind === 'null-left') r.left = true;
+        if (a.kind === 'null-right' && keyOf(a.from) === ids(st).at(-1)) r.right = true;
+        if (a.kind === 'over') r.over = true;
+        if (a.kind === 'under') r.under = true;
+      }
+      const per = new Map();
+      for (const at of Object.values(st.pointers || {})) if (at != null) per.set(keyOf(at), (per.get(keyOf(at)) || 0) + 1);
+      r.ptrs = Math.max(r.ptrs, ...per.values());
+    }
+    return r;
+  }
+  function build(keys) {
+    host.innerHTML = '';
+    const B = room.box, x0 = P + (room.left ? END : 0);
+    const ptrTop = P + (room.over ? ARC : 0), top = ptrTop + room.ptrs * LINE + (room.ptrs ? 8 : 0);
+    const W = x0 + keys.length * (B + GAP) - GAP + (room.right ? END : 0) + P, Hh = top + H + (room.under ? ARC + 6 : 0) + P;
+    const root = svg('svg', { viewBox: `0 0 ${W} ${Hh}`, width: W, class: 'wt-svg wt-linkedlist' }, host);
+    const defs = svg('defs', {}, root);
+    for (const m of ['plain', ...MARKS]) {
+      const mk = svg('marker', { id: `${ctx.uid}-ll-${m}`, viewBox: '0 0 10 10', refX: 9, refY: 5, markerWidth: 9, markerHeight: 9, markerUnits: 'userSpaceOnUse', orient: 'auto-start-reverse' }, defs);
+      svg('path', { d: 'M0,0 L10,5 L0,10 z', class: 'wt-ah wt-ah-' + m }, mk);
+    }
+    const cx = new Map(keys.map((k, i) => [k, x0 + i * (B + GAP) + B / 2]));
+    const arrows = svg('g', {}, root), boxes = svg('g', {}, root);
+    const nodeEls = new Map();
+    for (const k of keys) {
+      const g = svg('g', { transform: `translate(${cx.get(k)},${top + H / 2})` }, boxes);
+      const box = svg('rect', { x: -B / 2, y: -H / 2, width: B, height: H, rx: 7, class: 'wt-llbox' }, g);
+      const val = svg('text', { y: 5, 'text-anchor': 'middle', class: 'wt-llval' }, g);
+      const ptr = svg('text', { y: -H / 2 - 6, 'text-anchor': 'middle', class: 'wt-llptr' }, g);
+      nodeEls.set(k, { g, box, val, ptr });
+    }
+    return { keys, cx, top, B, W, arrows, nodeEls, ptrTop };
+  }
+  // one arrow's path and where its ∅ goes, from the node's box to its target's
+  function route(a) {
+    const { cx, top, B } = built, mid = top + H / 2, x = cx.get(a.from), dy = a.lane * 7;
+    switch (a.kind) {
+      case 'right': return { d: `M${x + B / 2},${mid + dy} L${cx.get(a.to) - B / 2 - 1},${mid + dy}` };
+      case 'left': return { d: `M${x - B / 2},${mid + dy} L${cx.get(a.to) + B / 2 + 1},${mid + dy}` };
+      case 'null-right': return { d: `M${x + B / 2},${mid + dy} L${x + B / 2 + GAP - 16},${mid + dy}`, nil: [x + B / 2 + GAP - 8, mid + dy] };
+      case 'null-left': return { d: `M${x - B / 2},${mid + dy} L${x - B / 2 - GAP + 16},${mid + dy}`, nil: [x - B / 2 - GAP + 8, mid + dy] };
+      case 'over': {
+        const x2 = cx.get(a.to), y = built.ptrTop - 2;
+        return { d: `M${x + 6},${top} C${x + 6},${y} ${x2 - 6},${y} ${x2 - 6},${top - 1}` };
+      }
+      default: { // under: a loop back, or a node reaching itself
+        const x2 = a.to === a.from ? x + 10 : cx.get(a.to), x1 = a.to === a.from ? x - 10 : x, y = top + H + ARC;
+        return { d: `M${x1 - 6},${top + H} C${x1 - 6},${y} ${x2 + 6},${y} ${x2 + 6},${top + H + 1}` };
+      }
+    }
+  }
+  return {
+    locate: at => (built && built.nodeEls.get(keyOf(at))?.box) || null,
+    prepare(states) { room = need(states); built = null; },
+    update(s) {
+      const keys = ids(s);
+      if (!room) room = need([s]);
+      if (!keys.length) { host.innerHTML = ''; built = null; html('span', 'wt-empty', host, config.empty != null ? textOf(config.empty, ctx.lang) : ctx.ui.empty); return; }
+      if (!built || built.keys.join('\u0000') !== keys.join('\u0000')) built = build(keys);
+      const m = markMap(s.marks), lm = markMap(s.linkMarks), values = new Map((s.nodes || []).map(n => [keyOf(n.id), n.value]));
+      const ptrs = new Map();
+      for (const [name, at] of Object.entries(s.pointers || {})) if (at != null) ptrs.set(keyOf(at), [...(ptrs.get(keyOf(at)) || []), name]);
+      for (const [k, el] of built.nodeEls) {
+        el.g.setAttribute('class', 'wt-llnode' + markClass(m, k) + (ptrs.has(k) ? ' wt-llpointed' : ''));
+        el.val.textContent = fmt(values.get(k));
+        el.box.dataset.token = fmt(values.get(k));
+        el.ptr.replaceChildren();
+        const names = ptrs.get(k) || [];
+        names.forEach((name, i) => { svg('tspan', { x: 0, dy: i ? LINE : -(names.length - 1) * LINE }, el.ptr).textContent = name + (i === names.length - 1 ? ' ↓' : ''); });
+      }
+      built.arrows.replaceChildren();
+      const draw = (a, cls, mark) => {
+        const r = route(a), g = svg('g', { class: cls + (mark ? ' wt-' + mark : '') }, built.arrows);
+        svg('path', { d: r.d, class: 'wt-lllink', 'marker-end': r.nil ? null : `url(#${ctx.uid}-ll-${mark || 'plain'})` }, g);
+        if (r.nil) svg('text', { x: r.nil[0], y: r.nil[1] + 5, 'text-anchor': 'middle', class: 'wt-llnil' }, g).textContent = '∅';
+      };
+      for (const a of linkArrows(keys, s.cut || {})) draw({ ...a, lane: a.lane || 1 }, 'wt-llarrow wt-llcut', 'bad'); // below the live arrow in its gap
+      for (const a of linkArrows(keys, s.next || {})) draw(a, 'wt-llarrow', lm.get(a.from));
+    },
+  };
+};
+
+// A call stack: one card per open call, its name and arguments, the top drawn first and the bottom held in place, so a
+// call pushed appears on top and one popped leaves from it. The column keeps room for the run's deepest stack.
+// Address: a call's position from the bottom (0 is the first call).
+VIEWS.callstack = (host, config, ctx) => {
+  host.innerHTML = '';
+  const box = html('div', 'wt-callstack', host);
+  let cards = [], deepest = 0;
+  const line = c => `${textOf(c.name, ctx.lang)}(${Object.entries(c.args || {}).map(([k, v]) => `${k}=${fmt(v)}`).join(', ')})`;
+  return {
+    locate: at => (Number.isInteger(at) && cards[at]) || null,
+    prepare(states) { deepest = Math.max(0, ...states.map(st => (st.calls || []).length)); },
+    update(s) {
+      const m = markMap(s.marks), calls = s.calls || [];
+      box.innerHTML = '';
+      cards = calls.map((c, i) => {
+        const card = html('div', 'wt-cscall' + markClass(m, i) + (i === calls.length - 1 ? ' wt-cstop' : ''), box);
+        card.dataset.token = line(c);
+        html('div', 'wt-csline', card, line(c));
+        if (c.note != null) html('div', 'wt-csnote', card, textOf(c.note, ctx.lang));
+        return card;
+      });
+      if (!calls.length) html('span', 'wt-empty', box, config.empty != null ? textOf(config.empty, ctx.lang) : ctx.ui.empty);
+      for (let i = Math.max(calls.length, 1); i < deepest; i++) html('div', 'wt-cscall wt-csspace', box, '\u00a0');
+    },
+  };
+};
+
 VIEWS.table = (host, config, ctx) => {
   host.innerHTML = '';
   const table = html('table', 'wt-table', host);

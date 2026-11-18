@@ -1,10 +1,10 @@
 {
   "note": "Written by scripts/copy-walkthrough-kit.py; never edit by hand. Blobs are git blob ids.",
-  "kit_commit": "c250ba36ab140be788c645d9983d7f5997cbf726",
+  "kit_commit": "b4ac6ceb0357c2223cdbd80f65ae35502513705c",
   "files": {
     "frontend/src/components/walkthrough/addresses.json": {
       "from": "kit/addresses.json",
-      "blob": "c82b17d7987d42a3324f348a5148eb611363751c"
+      "blob": "2f6fd2ab848ef408731199151d308aef06627aa3"
     },
     "frontend/src/components/walkthrough/react/Walkthrough.tsx": {
       "from": "kit/react/Walkthrough.tsx",
@@ -12,19 +12,19 @@
     },
     "frontend/src/components/walkthrough/walkthrough.css": {
       "from": "kit/walkthrough.css",
-      "blob": "8bf8a45645c10f75ed12ed1e40577a9c173c8017"
+      "blob": "26aa442c9ba9a7ae083aa7e80e686e9fb62b270f"
     },
     "frontend/src/components/walkthrough/walkthrough.d.ts": {
       "from": "kit/walkthrough.d.ts",
-      "blob": "8ac9376ff4007bedda0a58bf18d596df4b44ae21"
+      "blob": "ae18fd4643c6275205ece1c51156ca5a29bdd771"
     },
     "frontend/src/components/walkthrough/walkthrough.js": {
       "from": "kit/walkthrough.js",
-      "blob": "a3bc0cb9f98eb599506fed7ce7b554868573b99b"
+      "blob": "2b5afa82717ebe468223c252ef322e18eced848b"
     },
     "scripts/walkthroughs/walkthrough_trace.py": {
       "from": "kit/walkthrough_trace.py",
-      "blob": "427626d4edcf81fad50a0c7ffd6943035ede02a6"
+      "blob": "99dcbb7b74a7a2c7c2023e646fe04c37c5e962f2"
     }
   }
 }
