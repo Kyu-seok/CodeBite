@@ -74,7 +74,7 @@ def solve(catalog, target, run):
             half = (low, mid)
             inside = catalog[low] <= target < catalog[mid]
             where_en = f"catalog[{low}..{mid}] runs {catalog[low]}..{catalog[mid]} sorted ({catalog[low]} ≤ {catalog[mid]})"
-            where_ko = f"catalog[{low}..{mid}] 구간은 {catalog[low]}..{catalog[mid]}로 정렬되어 있고({catalog[low]} ≤ {catalog[mid]})"
+            where_ko = f"catalog[{low}..{mid}] 구간은 {catalog[low]}부터 {catalog[mid]}까지 정렬되어 있고({catalog[low]} ≤ {catalog[mid]})"
             span_en = f"[{catalog[low]}, {catalog[mid]})"
             old_low, old_high = low, high
             if inside:
@@ -85,7 +85,7 @@ def solve(catalog, target, run):
             half = (mid, high)
             inside = catalog[mid] < target <= catalog[high]
             where_en = f"catalog[{mid}..{high}] runs {catalog[mid]}..{catalog[high]} sorted ({catalog[mid]} > {catalog[low]} fails)"
-            where_ko = f"catalog[{mid}..{high}] 구간은 {catalog[mid]}..{catalog[high]}로 정렬되어 있고(왼쪽 끝 {josa(catalog[low], '이가')} 더 큼)"
+            where_ko = f"catalog[{mid}..{high}] 구간은 {catalog[mid]}부터 {catalog[high]}까지 정렬되어 있고(왼쪽 끝 {josa(catalog[low], '이가')} 더 큼)"
             span_en = f"({catalog[mid]}, {catalog[high]}]"
             old_low, old_high = low, high
             if inside:

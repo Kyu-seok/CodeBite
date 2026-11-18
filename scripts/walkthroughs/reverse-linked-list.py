@@ -100,10 +100,10 @@ def solve(values, run):
     printed = driver_list(result)
     if n == 1:
         last = {"en": f"curr ran off the end, so prev ({prev.val}) is the new head: one node reads the same, {printed}.",
-                "ko": f"curr가 끝을 지나갔으므로 prev({prev.val})가 새 head입니다. 노드 하나는 뒤집어도 {printed}입니다."}
+                "ko": f"curr가 끝을 지나갔으므로 prev가 가리키는 노드({prev.val})가 새 head입니다. 노드 하나는 뒤집어도 {printed}입니다."}
     else:
         last = {"en": f"curr ran off the end, so prev ({prev.val}) is the new head: reading from it gives {printed}.",
-                "ko": f"curr가 끝을 지나갔으므로 prev({prev.val})가 새 head입니다. 여기서부터 읽으면 {printed}입니다."}
+                "ko": f"curr가 끝을 지나갔으므로 prev가 가리키는 노드({prev.val})가 새 head입니다. 여기서부터 읽으면 {printed}입니다."}
     frame(last, prev, None, marks={"path": list(range(n))}, result=result,
           moves=[move(at("list", node_id(order, nd)), at("result", i)) for i, nd in enumerate(reversed(order))],
           answer=printed)

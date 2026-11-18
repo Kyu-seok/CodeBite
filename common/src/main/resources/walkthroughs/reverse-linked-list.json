@@ -679,7 +679,7 @@
     {
      "caption": {
       "en": "curr ran off the end, so prev (9) is the new head: reading from it gives [9,5,12,3,8].",
-      "ko": "curr가 끝을 지나갔으므로 prev(9)가 새 head입니다. 여기서부터 읽으면 [9,5,12,3,8]입니다."
+      "ko": "curr가 끝을 지나갔으므로 prev가 가리키는 노드(9)가 새 head입니다. 여기서부터 읽으면 [9,5,12,3,8]입니다."
      },
      "views": {
       "list": {
@@ -996,7 +996,7 @@
     {
      "caption": {
       "en": "curr ran off the end, so prev (7) is the new head: reading from it gives [7,4].",
-      "ko": "curr가 끝을 지나갔으므로 prev(7)가 새 head입니다. 여기서부터 읽으면 [7,4]입니다."
+      "ko": "curr가 끝을 지나갔으므로 prev가 가리키는 노드(7)가 새 head입니다. 여기서부터 읽으면 [7,4]입니다."
      },
      "views": {
       "list": {
@@ -1149,7 +1149,7 @@
     {
      "caption": {
       "en": "curr ran off the end, so prev (1) is the new head: one node reads the same, [1].",
-      "ko": "curr가 끝을 지나갔으므로 prev(1)가 새 head입니다. 노드 하나는 뒤집어도 [1]입니다."
+      "ko": "curr가 끝을 지나갔으므로 prev가 가리키는 노드(1)가 새 head입니다. 노드 하나는 뒤집어도 [1]입니다."
      },
      "views": {
       "list": {

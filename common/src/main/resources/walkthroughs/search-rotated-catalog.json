@@ -82,7 +82,7 @@
     {
      "caption": {
       "en": "mid = 3: 31 ≠ 3. catalog[0..3] runs 12..31 sorted (12 ≤ 31); 3 is outside [12, 31), so it can only be in the other half: search the right, low = 4.",
-      "ko": "mid = 3: 31 ≠ 3, catalog[0..3] 구간은 12..31로 정렬되어 있고(12 ≤ 31), target이 [12, 31) 밖이라 다른 절반에만 있을 수 있습니다. 오른쪽을 찾습니다: low = 4."
+      "ko": "mid = 3: 31 ≠ 3, catalog[0..3] 구간은 12부터 31까지 정렬되어 있고(12 ≤ 31), target이 [12, 31) 밖이라 다른 절반에만 있을 수 있습니다. 오른쪽을 찾습니다: low = 4."
      },
      "views": {
       "catalog": {
@@ -141,7 +141,7 @@
     {
      "caption": {
       "en": "mid = 5: 7 ≠ 3. catalog[4..5] runs 3..7 sorted (3 ≤ 7); 3 is in [3, 7), so keep that half: search the left, high = 4.",
-      "ko": "mid = 5: 7 ≠ 3, catalog[4..5] 구간은 3..7로 정렬되어 있고(3 ≤ 7), target이 [3, 7) 안에 있어 그 절반을 남깁니다. 왼쪽을 찾습니다: high = 4."
+      "ko": "mid = 5: 7 ≠ 3, catalog[4..5] 구간은 3부터 7까지 정렬되어 있고(3 ≤ 7), target이 [3, 7) 안에 있어 그 절반을 남깁니다. 왼쪽을 찾습니다: high = 4."
      },
      "views": {
       "catalog": {
@@ -297,7 +297,7 @@
     {
      "caption": {
       "en": "mid = 3: 31 ≠ 15. catalog[0..3] runs 12..31 sorted (12 ≤ 31); 15 is in [12, 31), so keep that half: search the left, high = 2.",
-      "ko": "mid = 3: 31 ≠ 15, catalog[0..3] 구간은 12..31로 정렬되어 있고(12 ≤ 31), target이 [12, 31) 안에 있어 그 절반을 남깁니다. 왼쪽을 찾습니다: high = 2."
+      "ko": "mid = 3: 31 ≠ 15, catalog[0..3] 구간은 12부터 31까지 정렬되어 있고(12 ≤ 31), target이 [12, 31) 안에 있어 그 절반을 남깁니다. 왼쪽을 찾습니다: high = 2."
      },
      "views": {
       "catalog": {
@@ -357,7 +357,7 @@
     {
      "caption": {
       "en": "mid = 1: 18 ≠ 15. catalog[0..1] runs 12..18 sorted (12 ≤ 18); 15 is in [12, 18), so keep that half: search the left, high = 0.",
-      "ko": "mid = 1: 18 ≠ 15, catalog[0..1] 구간은 12..18로 정렬되어 있고(12 ≤ 18), target이 [12, 18) 안에 있어 그 절반을 남깁니다. 왼쪽을 찾습니다: high = 0."
+      "ko": "mid = 1: 18 ≠ 15, catalog[0..1] 구간은 12부터 18까지 정렬되어 있고(12 ≤ 18), target이 [12, 18) 안에 있어 그 절반을 남깁니다. 왼쪽을 찾습니다: high = 0."
      },
      "views": {
       "catalog": {
@@ -417,7 +417,7 @@
     {
      "caption": {
       "en": "mid = 0: 12 ≠ 15. catalog[0..0] runs 12..12 sorted (12 ≤ 12); 15 is outside [12, 12), so it can only be in the other half: search the right, low = 1.",
-      "ko": "mid = 0: 12 ≠ 15, catalog[0..0] 구간은 12..12로 정렬되어 있고(12 ≤ 12), target이 [12, 12) 밖이라 다른 절반에만 있을 수 있습니다. 오른쪽을 찾습니다: low = 1."
+      "ko": "mid = 0: 12 ≠ 15, catalog[0..0] 구간은 12부터 12까지 정렬되어 있고(12 ≤ 12), target이 [12, 12) 밖이라 다른 절반에만 있을 수 있습니다. 오른쪽을 찾습니다: low = 1."
      },
      "views": {
       "catalog": {
@@ -572,7 +572,7 @@
     {
      "caption": {
       "en": "mid = 0: 8 ≠ 3. catalog[0..0] runs 8..8 sorted (8 ≤ 8); 3 is outside [8, 8), so it can only be in the other half: search the right, low = 1.",
-      "ko": "mid = 0: 8 ≠ 3, catalog[0..0] 구간은 8..8로 정렬되어 있고(8 ≤ 8), target이 [8, 8) 밖이라 다른 절반에만 있을 수 있습니다. 오른쪽을 찾습니다: low = 1."
+      "ko": "mid = 0: 8 ≠ 3, catalog[0..0] 구간은 8부터 8까지 정렬되어 있고(8 ≤ 8), target이 [8, 8) 밖이라 다른 절반에만 있을 수 있습니다. 오른쪽을 찾습니다: low = 1."
      },
      "views": {
       "catalog": {

@@ -156,7 +156,7 @@ def solve(cmds, args, run):
         # src is drawn with its top still at the root, the step it leaves
         frame({"en": why["en"] + f" {src}'s top {top} leaves it for the end of {dst}, [{j}]" +
                      ("." if stays else ", where it will sift up."),
-               "ko": why["ko"] + f" {src}의 맨 위 {josa(top, '이가')} 빠져 {dst}의 맨 끝 [{j}]로 갑니다" +
+               "ko": why["ko"] + f" {src}의 맨 위 {josa(top, '이가')} 빠져 {dst}의 맨 끝 [{j}] 자리로 갑니다" +
                      ("." if stays else ". 거기서 위로 올릴 차례입니다.")},
               marks={src: {"lit": [0]}, dst: {"good": [j]}},
               moves=[move(at(src, 0), at(dst, j))])

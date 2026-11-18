@@ -140,7 +140,7 @@ def solve(shelf, needed, run):
     else:
         frame({"en": f"The window reached the end of the shelf with to_cover = {to_cover} still above 0: no window "
                      f"covers \"{needed}\", so the answer is the empty string \"\".",
-               "ko": f"창이 책꽂이 끝에 닿았지만 to_cover = {to_cover}로 0이 되지 못했습니다. \"{needed}\"를 모두 담는 "
+               "ko": f"창이 책꽂이 끝에 닿았지만 to_cover는 {to_cover}에 머물러 0이 되지 못했습니다. \"{needed}\"의 태그를 모두 담는 "
                      f"창이 없으니 답은 빈 문자열 \"\"입니다."},
               key_mark={"bad": [t for t in missing if missing[t] > 0]}, done=True, answer="")
 

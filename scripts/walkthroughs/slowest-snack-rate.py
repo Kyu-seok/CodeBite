@@ -88,7 +88,7 @@ def solve(piles, hours, run):
     speed = low
     frame({"en": f"The range closed on one rate, [{low}, {high}]: k = {low} is the slowest rate that finishes "
                  f"within {hours} hours.",
-           "ko": f"범위가 한 속도 [{low}, {high}]로 좁혀졌습니다. {hours}시간 안에 다 먹는 가장 느린 속도는 k = {low}입니다."},
+           "ko": f"범위가 [{low}, {high}] 구간으로 좁혀져 속도가 하나만 남았습니다. {hours}시간 안에 다 먹는 가장 느린 속도는 k = {low}입니다."},
           done=True, answer=str(low))
 
 

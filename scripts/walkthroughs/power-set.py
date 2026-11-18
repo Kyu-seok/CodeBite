@@ -60,7 +60,7 @@ def solve(nums, run):
         if taken is None:
             frame({"en": f"The first call holds the empty subset [] and adds it to the answer; it will extend [] with "
                          f"each of {listed(later)}.",
-                   "ko": f"첫 호출은 빈 부분집합 []를 맡아 답에 넣고, 여기에 {listed(later[:-1]) + ', ' if later[:-1] else ''}"
+                   "ko": f"첫 호출은 빈 부분집합([])을 맡아 답에 넣고, 여기에 {listed(later[:-1]) + ', ' if later[:-1] else ''}"
                          f"{josa(later[-1], '을를')} 하나씩 붙여 봅니다."},
                   node, [move(dst=at("calls", node)), into])
         else:

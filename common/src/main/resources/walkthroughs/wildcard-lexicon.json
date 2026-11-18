@@ -6,7 +6,7 @@
  },
  "approach": {
   "en": "Saved words share the trie paths of their common prefixes. match follows one edge per letter; a '.' has no one edge to follow, so it tries each child in turn and stops at the first that leads to a ✓ at the word's end.",
-  "ko": "저장된 단어는 공통 접두어의 트라이 경로를 함께 씁니다. match는 글자마다 간선 하나를 따라가고, '.'은 따라갈 간선이 정해져 있지 않으니 자식을 차례로 시도해 단어 끝에서 ✓에 닿는 첫 갈래에서 멈춥니다."
+  "ko": "저장된 단어는 공통 접두어의 트라이 경로를 함께 씁니다. match는 글자마다 간선 하나를 따라가고, '.' 기호는 따라갈 간선이 정해져 있지 않으니 자식을 차례로 시도해 단어 끝에서 ✓에 닿는 첫 갈래에서 멈춥니다."
  },
  "views": [
   {
@@ -3703,7 +3703,7 @@
     {
      "caption": {
       "en": "match(\".ad\"): '.' matches any letter: try the first edge, 'b'.",
-      "ko": "match(\".ad\"): '.'은 아무 글자와 맞으니 첫 간선 'b' 쪽을 시도합니다."
+      "ko": "match(\".ad\"): '.' 기호는 아무 글자와 맞으니 첫 간선 'b' 쪽을 시도합니다."
      },
      "views": {
       "calls": {
@@ -4761,7 +4761,7 @@
     {
      "caption": {
       "en": "match(\"b..\"): '.' matches any letter: try the first edge, 'a'.",
-      "ko": "match(\"b..\"): '.'은 아무 글자와 맞으니 첫 간선 'a' 쪽을 시도합니다."
+      "ko": "match(\"b..\"): '.' 기호는 아무 글자와 맞으니 첫 간선 'a' 쪽을 시도합니다."
      },
      "views": {
       "calls": {
@@ -5026,7 +5026,7 @@
     {
      "caption": {
       "en": "match(\"b..\"): '.' matches any letter: try the first edge, 'd'; the word ends here at a ✓, so it matches: true.",
-      "ko": "match(\"b..\"): '.'은 아무 글자와 맞으니 첫 간선 'd' 쪽을 시도하고, 단어가 끝나는 노드에 ✓가 있어 일치하므로 답은 true입니다."
+      "ko": "match(\"b..\"): '.' 기호는 아무 글자와 맞으니 첫 간선 'd' 쪽을 시도하고, 단어가 끝나는 노드에 ✓가 있어 일치하므로 답은 true입니다."
      },
      "views": {
       "calls": {
@@ -5524,7 +5524,7 @@
   {
    "label": {
     "en": "Extra: '.' backs out",
-    "ko": "추가: '.'이 되돌아가는 경우"
+    "ko": "추가: '.' 기호가 되돌아가는 경우"
    },
    "input": "[\"WildcardLexicon\",\"enroll\",\"enroll\",\"enroll\",\"enroll\",\"match\"]\n[[],[\"bad\"],[\"dad\"],[\"mad\"],[\"dot\"],[\".ot\"]]",
    "expected": "[null,null,null,null,null,true]",
@@ -8982,7 +8982,7 @@
     {
      "caption": {
       "en": "match(\".ot\"): '.' matches any letter: try the first edge, 'b'.",
-      "ko": "match(\".ot\"): '.'은 아무 글자와 맞으니 첫 간선 'b' 쪽을 시도합니다."
+      "ko": "match(\".ot\"): '.' 기호는 아무 글자와 맞으니 첫 간선 'b' 쪽을 시도합니다."
      },
      "views": {
       "calls": {
@@ -9482,7 +9482,7 @@
     {
      "caption": {
       "en": "match(\".ot\"): '.' matches any letter: try the next edge, 'd'.",
-      "ko": "match(\".ot\"): '.'은 아무 글자와 맞으니 다음 간선 'd' 쪽을 시도합니다."
+      "ko": "match(\".ot\"): '.' 기호는 아무 글자와 맞으니 다음 간선 'd' 쪽을 시도합니다."
      },
      "views": {
       "calls": {

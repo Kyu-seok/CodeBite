@@ -1227,7 +1227,7 @@
     {
      "caption": {
       "en": "The range closed on one rate, [6, 6]: k = 6 is the slowest rate that finishes within 9 hours.",
-      "ko": "범위가 한 속도 [6, 6]로 좁혀졌습니다. 9시간 안에 다 먹는 가장 느린 속도는 k = 6입니다."
+      "ko": "범위가 [6, 6] 구간으로 좁혀져 속도가 하나만 남았습니다. 9시간 안에 다 먹는 가장 느린 속도는 k = 6입니다."
      },
      "views": {
       "piles": {
@@ -2610,7 +2610,7 @@
     {
      "caption": {
       "en": "The range closed on one rate, [40, 40]: k = 40 is the slowest rate that finishes within 5 hours.",
-      "ko": "범위가 한 속도 [40, 40]로 좁혀졌습니다. 5시간 안에 다 먹는 가장 느린 속도는 k = 40입니다."
+      "ko": "범위가 [40, 40] 구간으로 좁혀져 속도가 하나만 남았습니다. 5시간 안에 다 먹는 가장 느린 속도는 k = 40입니다."
      },
      "views": {
       "piles": {
@@ -3998,7 +3998,7 @@
     {
      "caption": {
       "en": "The range closed on one rate, [25, 25]: k = 25 is the slowest rate that finishes within 7 hours.",
-      "ko": "범위가 한 속도 [25, 25]로 좁혀졌습니다. 7시간 안에 다 먹는 가장 느린 속도는 k = 25입니다."
+      "ko": "범위가 [25, 25] 구간으로 좁혀져 속도가 하나만 남았습니다. 7시간 안에 다 먹는 가장 느린 속도는 k = 25입니다."
      },
      "views": {
       "piles": {

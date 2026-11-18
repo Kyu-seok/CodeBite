@@ -26,7 +26,7 @@ wt = Walkthrough(
     {"en": "Wildcard Lexicon", "ko": "와일드카드 단어 사전"},
     {"en": "Saved words share the trie paths of their common prefixes. match follows one edge per letter; a '.' has no "
            "one edge to follow, so it tries each child in turn and stops at the first that leads to a ✓ at the word's end.",
-     "ko": "저장된 단어는 공통 접두어의 트라이 경로를 함께 씁니다. match는 글자마다 간선 하나를 따라가고, '.'은 따라갈 간선이 "
+     "ko": "저장된 단어는 공통 접두어의 트라이 경로를 함께 씁니다. match는 글자마다 간선 하나를 따라가고, '.' 기호는 따라갈 간선이 "
            "정해져 있지 않으니 자식을 차례로 시도해 단어 끝에서 ✓에 닿는 첫 갈래에서 멈춥니다."},
     views=[
         {"id": "calls", "type": "table", "title": {"en": "calls", "ko": "호출"}},
@@ -133,8 +133,8 @@ def solve(cmds, args, run):
                     return False
                 for n, (k, child) in enumerate(kids):
                     if arrive(child, i, path, {"en": f"'.' matches any letter: try the {'first' if n == 0 else 'next'} edge, '{k}'",
-                                               "ko": f"'.'은 아무 글자와 맞으니 {'첫' if n == 0 else '다음'} 간선 '{k}' 쪽을 시도합니다",
-                                               "ko_and": f"'.'은 아무 글자와 맞으니 {'첫' if n == 0 else '다음'} 간선 '{k}' 쪽을 시도하고,"}):
+                                               "ko": f"'.' 기호는 아무 글자와 맞으니 {'첫' if n == 0 else '다음'} 간선 '{k}' 쪽을 시도합니다",
+                                               "ko_and": f"'.' 기호는 아무 글자와 맞으니 {'첫' if n == 0 else '다음'} 간선 '{k}' 쪽을 시도하고,"}):
                         return True
                 return False
             child = node.get(ch)
@@ -197,7 +197,7 @@ for number, sample in enumerate(sample_cases(SLUG), start=1):
 # tries 'b' first, finds no 'o' under it and backs out, then succeeds through 'd'.
 EXTRA_CMDS = ["WildcardLexicon", "enroll", "enroll", "enroll", "enroll", "match"]
 EXTRA_ARGS = [[], ["bad"], ["dad"], ["mad"], ["dot"], [".ot"]]
-run = wt.run({"en": "Extra: '.' backs out", "ko": "추가: '.'이 되돌아가는 경우"},
+run = wt.run({"en": "Extra: '.' backs out", "ko": "추가: '.' 기호가 되돌아가는 경우"},
              input=f"{json.dumps(EXTRA_CMDS, separators=(',', ':'))}\n{json.dumps(EXTRA_ARGS, separators=(',', ':'))}",
              expected="[null,null,null,null,null,true]", extra=True)
 solve(EXTRA_CMDS, EXTRA_ARGS, run)

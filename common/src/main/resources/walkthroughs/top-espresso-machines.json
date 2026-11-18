@@ -629,7 +629,7 @@
     {
      "caption": {
       "en": "#2 is machine 7 with 2 uses, the last of the top 2. The whiteboard reads [4,7]: the answer.",
-      "ko": "2위는 머신 7(사용 횟수 2회)으로 상위 2개의 마지막입니다. 답은 [4,7]입니다."
+      "ko": "2위는 머신 7(사용 횟수 2회)이고 상위 2개의 마지막입니다. 답은 [4,7]입니다."
      },
      "views": {
       "log": {
@@ -859,7 +859,7 @@
     {
      "caption": {
       "en": "#1 is machine 9 with 1 use, the last of the top 1. The whiteboard reads [9]: the answer.",
-      "ko": "1위는 머신 9(사용 횟수 1회)으로 상위 1개의 마지막입니다. 답은 [9]입니다."
+      "ko": "1위는 머신 9(사용 횟수 1회)이고 상위 1개의 마지막입니다. 답은 [9]입니다."
      },
      "views": {
       "log": {
