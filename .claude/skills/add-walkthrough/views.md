@@ -24,7 +24,7 @@ What the Arrays & Hashing Walkthroughs settled, on top of the public skill's `re
 
 ## Trees, linked lists and recursion
 
-The kit's `tree`, `linkedlist` and `callstack` views (the public skill's `references/format.md`), and how CodeBite draws recursion. No Walkthrough here uses them yet; the kit's examples do (`~/Work/walkthrough-skill/examples/tree-*`, `linkedlist-*`, `callstack-n-queens`).
+The kit's `tree`, `linkedlist` and `callstack` views (the public skill's `references/format.md`), and how CodeBite draws recursion. Walkthroughs that use them: `tree` in `binary-tree-level-order`, `valid-score-bst`, `kth-highest-raid-score`, `running-median-timer` (heaps), `username-trie`, `wildcard-lexicon` (tries) and `power-set` (a recursion tree); `linkedlist` in `reverse-linked-list` and `detect-portal-loop`; `callstack` in `n-queens`. The kit's examples (`~/Work/walkthrough-skill/examples/tree-*`, `linkedlist-*`, `callstack-n-queens`) show more.
 
 - **A binary tree** given as a Level-Order Array is a `tree` with `"arity": 2`: `level_order_tree(values)` gives `nodes` and `edges` with each node's array index as its id and a gap where a child is `null`. Put it in the run `setup`; each frame carries `nodeMarks`, `edgeMarks` (`[from, to]`), `tags` and `shade`. A tree drawn in the description's Diagram keeps the Diagram's look: values in the nodes, left before right.
 - **A heap** is a `tree` from its array, each node tagged with its index (`[i, f"[{i}]"]`); a sift is a swap between two node ids, `swap("heap", i, j, a, b)`, the same as in its array. Two heaps (a running median) are two `tree` views.
