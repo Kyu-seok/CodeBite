@@ -1,0 +1,2653 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Redundant Friendship",
+  "ko": "불필요한 친구 관계 찾기"
+ },
+ "approach": {
+  "en": "Union-find: each friendship joins its two students' groups; the first one whose students already share a root closes the cycle, and it is the last of the cycle's friendships in links.",
+  "ko": "유니온 파인드: 친구 관계마다 두 학생의 그룹을 합치고, 두 학생의 루트가 이미 같은 첫 친구 관계가 순환을 닫으며, 그것이 links에서 순환의 친구 관계 중 가장 나중 것입니다."
+ },
+ "views": [
+  {
+   "id": "friends",
+   "type": "graph",
+   "directed": false,
+   "title": {
+    "en": "friendships (tag: root of the group)",
+    "ko": "친구 관계 (태그: 그룹의 루트)"
+   }
+  },
+  {
+   "id": "parent",
+   "type": "array",
+   "title": {
+    "en": "parent (index: student)",
+    "ko": "parent (인덱스: 학생)"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "links = [[1,2],[1,3],[2,3]]",
+   "expected": "[2,3]",
+   "frames": [
+    {
+     "caption": {
+      "en": "3 students, each its own group: parent[s] = s, so every student is a root. Each friendship joins two groups; one whose students are already in the same group closes the cycle.",
+      "ko": "학생 3명이 각자 자기 그룹이라 parent[s] = s이고, 모두 루트입니다. 친구 관계마다 두 그룹을 합치며, 두 학생이 이미 같은 그룹이면 그 관계가 순환을 닫습니다."
+     },
+     "views": {
+      "friends": {
+       "nodes": [
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 1",
+          "ko": "루트 1"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 2",
+          "ko": "루트 2"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "dim": [
+         0,
+         1,
+         2
+        ]
+       },
+       "nodeMarks": {}
+      },
+      "parent": {
+       "values": [
+        0,
+        1,
+        2,
+        3
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "unused",
+          "ko": "안 씀"
+         }
+        ]
+       ],
+       "pointers": {},
+       "marks": {
+        "dim": [
+         0
+        ],
+        "lit": [],
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Friendship [1,2]: 1 is a root, 2 is a root. Roots 1 and 2 differ.",
+      "ko": "친구 관계 [1,2]: 1번은 루트, 2번은 루트. 루트 1과 2가 다릅니다."
+     },
+     "views": {
+      "friends": {
+       "nodes": [
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 1",
+          "ko": "루트 1"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 2",
+          "ko": "루트 2"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "dim": [
+         1,
+         2
+        ],
+        "lit": [
+         0
+        ]
+       },
+       "nodeMarks": {
+        "lit": [
+         1,
+         2
+        ]
+       }
+      },
+      "parent": {
+       "values": [
+        0,
+        1,
+        2,
+        3
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "unused",
+          "ko": "안 씀"
+         }
+        ]
+       ],
+       "pointers": {
+        "root a": 1,
+        "root b": 2
+       },
+       "marks": {
+        "dim": [
+         0
+        ],
+        "lit": [
+         1,
+         2
+        ],
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "parent[1] = 2: group 1 joins group 2, so 1 and 2 are now in one group.",
+      "ko": "parent[1] = 2: 1 그룹이 2 그룹에 합쳐져 1번과 2번이 같은 그룹이 됩니다."
+     },
+     "views": {
+      "friends": {
+       "nodes": [
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 2",
+          "ko": "루트 2"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 2",
+          "ko": "루트 2"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "dim": [
+         1,
+         2
+        ],
+        "lit": [
+         0
+        ]
+       },
+       "nodeMarks": {
+        "lit": [
+         1,
+         2
+        ]
+       }
+      },
+      "parent": {
+       "values": [
+        0,
+        2,
+        2,
+        3
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "unused",
+          "ko": "안 씀"
+         }
+        ]
+       ],
+       "pointers": {},
+       "marks": {
+        "dim": [
+         0
+        ],
+        "lit": [],
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "parent",
+        "at": 2
+       },
+       "to": {
+        "view": "parent",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Friendship [1,3]: find(1) climbs 1 → 2, 3 is a root. Roots 2 and 3 differ.",
+      "ko": "친구 관계 [1,3]: find(1)는 1 → 2로 올라감, 3번은 루트. 루트 2와 3이 다릅니다."
+     },
+     "views": {
+      "friends": {
+       "nodes": [
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 2",
+          "ko": "루트 2"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 2",
+          "ko": "루트 2"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "dim": [
+         2
+        ],
+        "lit": [
+         1
+        ]
+       },
+       "nodeMarks": {
+        "lit": [
+         1,
+         3
+        ]
+       }
+      },
+      "parent": {
+       "values": [
+        0,
+        2,
+        2,
+        3
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "unused",
+          "ko": "안 씀"
+         }
+        ]
+       ],
+       "pointers": {
+        "root a": 2,
+        "root b": 3
+       },
+       "marks": {
+        "dim": [
+         0
+        ],
+        "lit": [
+         1,
+         2,
+         3
+        ],
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "parent[2] = 3: group 2 joins group 3, so 1 and 3 are now in one group.",
+      "ko": "parent[2] = 3: 2 그룹이 3 그룹에 합쳐져 1번과 3번이 같은 그룹이 됩니다."
+     },
+     "views": {
+      "friends": {
+       "nodes": [
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "dim": [
+         2
+        ],
+        "lit": [
+         1
+        ]
+       },
+       "nodeMarks": {
+        "lit": [
+         1,
+         3
+        ]
+       }
+      },
+      "parent": {
+       "values": [
+        0,
+        2,
+        3,
+        3
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "unused",
+          "ko": "안 씀"
+         }
+        ]
+       ],
+       "pointers": {},
+       "marks": {
+        "dim": [
+         0
+        ],
+        "lit": [],
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "parent",
+        "at": 3
+       },
+       "to": {
+        "view": "parent",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Friendship [2,3]: find(2) climbs 2 → 3, 3 is a root. Both roots are 3: 2 and 3 are already in one group.",
+      "ko": "친구 관계 [2,3]: find(2)는 2 → 3으로 올라감, 3번은 루트. 두 루트가 모두 3번이라 2번과 3번은 이미 같은 그룹입니다."
+     },
+     "views": {
+      "friends": {
+       "nodes": [
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "dim": [],
+        "lit": [
+         2
+        ]
+       },
+       "nodeMarks": {
+        "lit": [
+         2,
+         3
+        ]
+       }
+      },
+      "parent": {
+       "values": [
+        0,
+        2,
+        3,
+        3
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "unused",
+          "ko": "안 씀"
+         }
+        ]
+       ],
+       "pointers": {
+        "root": 3
+       },
+       "marks": {
+        "dim": [
+         0
+        ],
+        "lit": [
+         2,
+         3
+        ],
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Joining them would close a cycle, so [2,3] is the friendship to remove. Answer [2,3].",
+      "ko": "합치면 순환이 생기므로 없앨 친구 관계는 [2,3]입니다. 답은 [2,3]입니다."
+     },
+     "views": {
+      "friends": {
+       "nodes": [
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "dim": [],
+        "path": [
+         2
+        ]
+       },
+       "nodeMarks": {
+        "path": [
+         2,
+         3
+        ]
+       }
+      },
+      "parent": {
+       "values": [
+        0,
+        2,
+        3,
+        3
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "unused",
+          "ko": "안 씀"
+         }
+        ]
+       ],
+       "pointers": {},
+       "marks": {
+        "dim": [
+         0
+        ],
+        "lit": [],
+        "good": []
+       }
+      }
+     },
+     "answer": "[2,3]"
+    }
+   ],
+   "setup": {
+    "friends": {
+     "edges": [
+      {
+       "from": 1,
+       "to": 2
+      },
+      {
+       "from": 1,
+       "to": 3
+      },
+      {
+       "from": 2,
+       "to": 3
+      }
+     ]
+    }
+   },
+   "sampleInput": "[[1,2],[1,3],[2,3]]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "links = [[1,2],[2,3],[3,4],[4,5],[2,5],[1,6]]",
+   "expected": "[2,5]",
+   "frames": [
+    {
+     "caption": {
+      "en": "6 students, each its own group: parent[s] = s, so every student is a root. Each friendship joins two groups; one whose students are already in the same group closes the cycle.",
+      "ko": "학생 6명이 각자 자기 그룹이라 parent[s] = s이고, 모두 루트입니다. 친구 관계마다 두 그룹을 합치며, 두 학생이 이미 같은 그룹이면 그 관계가 순환을 닫습니다."
+     },
+     "views": {
+      "friends": {
+       "nodes": [
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 1",
+          "ko": "루트 1"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 2",
+          "ko": "루트 2"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        },
+        {
+         "id": 4,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 5,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        },
+        {
+         "id": 6,
+         "tag": {
+          "en": "root 6",
+          "ko": "루트 6"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       },
+       "nodeMarks": {}
+      },
+      "parent": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "unused",
+          "ko": "안 씀"
+         }
+        ]
+       ],
+       "pointers": {},
+       "marks": {
+        "dim": [
+         0
+        ],
+        "lit": [],
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Friendship [1,2]: 1 is a root, 2 is a root. Roots 1 and 2 differ.",
+      "ko": "친구 관계 [1,2]: 1번은 루트, 2번은 루트. 루트 1과 2가 다릅니다."
+     },
+     "views": {
+      "friends": {
+       "nodes": [
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 1",
+          "ko": "루트 1"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 2",
+          "ko": "루트 2"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        },
+        {
+         "id": 4,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 5,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        },
+        {
+         "id": 6,
+         "tag": {
+          "en": "root 6",
+          "ko": "루트 6"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "dim": [
+         1,
+         2,
+         3,
+         4,
+         5
+        ],
+        "lit": [
+         0
+        ]
+       },
+       "nodeMarks": {
+        "lit": [
+         1,
+         2
+        ]
+       }
+      },
+      "parent": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "unused",
+          "ko": "안 씀"
+         }
+        ]
+       ],
+       "pointers": {
+        "root a": 1,
+        "root b": 2
+       },
+       "marks": {
+        "dim": [
+         0
+        ],
+        "lit": [
+         1,
+         2
+        ],
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "parent[1] = 2: group 1 joins group 2, so 1 and 2 are now in one group.",
+      "ko": "parent[1] = 2: 1 그룹이 2 그룹에 합쳐져 1번과 2번이 같은 그룹이 됩니다."
+     },
+     "views": {
+      "friends": {
+       "nodes": [
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 2",
+          "ko": "루트 2"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 2",
+          "ko": "루트 2"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        },
+        {
+         "id": 4,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 5,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        },
+        {
+         "id": 6,
+         "tag": {
+          "en": "root 6",
+          "ko": "루트 6"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "dim": [
+         1,
+         2,
+         3,
+         4,
+         5
+        ],
+        "lit": [
+         0
+        ]
+       },
+       "nodeMarks": {
+        "lit": [
+         1,
+         2
+        ]
+       }
+      },
+      "parent": {
+       "values": [
+        0,
+        2,
+        2,
+        3,
+        4,
+        5,
+        6
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "unused",
+          "ko": "안 씀"
+         }
+        ]
+       ],
+       "pointers": {},
+       "marks": {
+        "dim": [
+         0
+        ],
+        "lit": [],
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "parent",
+        "at": 2
+       },
+       "to": {
+        "view": "parent",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Friendship [2,3]: 2 is a root, 3 is a root. Roots 2 and 3 differ.",
+      "ko": "친구 관계 [2,3]: 2번은 루트, 3번은 루트. 루트 2와 3이 다릅니다."
+     },
+     "views": {
+      "friends": {
+       "nodes": [
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 2",
+          "ko": "루트 2"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 2",
+          "ko": "루트 2"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        },
+        {
+         "id": 4,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 5,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        },
+        {
+         "id": 6,
+         "tag": {
+          "en": "root 6",
+          "ko": "루트 6"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "dim": [
+         2,
+         3,
+         4,
+         5
+        ],
+        "lit": [
+         1
+        ]
+       },
+       "nodeMarks": {
+        "lit": [
+         2,
+         3
+        ]
+       }
+      },
+      "parent": {
+       "values": [
+        0,
+        2,
+        2,
+        3,
+        4,
+        5,
+        6
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "unused",
+          "ko": "안 씀"
+         }
+        ]
+       ],
+       "pointers": {
+        "root a": 2,
+        "root b": 3
+       },
+       "marks": {
+        "dim": [
+         0
+        ],
+        "lit": [
+         2,
+         3
+        ],
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "parent[2] = 3: group 2 joins group 3, so 2 and 3 are now in one group.",
+      "ko": "parent[2] = 3: 2 그룹이 3 그룹에 합쳐져 2번과 3번이 같은 그룹이 됩니다."
+     },
+     "views": {
+      "friends": {
+       "nodes": [
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        },
+        {
+         "id": 4,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 5,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        },
+        {
+         "id": 6,
+         "tag": {
+          "en": "root 6",
+          "ko": "루트 6"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "dim": [
+         2,
+         3,
+         4,
+         5
+        ],
+        "lit": [
+         1
+        ]
+       },
+       "nodeMarks": {
+        "lit": [
+         2,
+         3
+        ]
+       }
+      },
+      "parent": {
+       "values": [
+        0,
+        2,
+        3,
+        3,
+        4,
+        5,
+        6
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "unused",
+          "ko": "안 씀"
+         }
+        ]
+       ],
+       "pointers": {},
+       "marks": {
+        "dim": [
+         0
+        ],
+        "lit": [],
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "parent",
+        "at": 3
+       },
+       "to": {
+        "view": "parent",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Friendship [3,4]: 3 is a root, 4 is a root. Roots 3 and 4 differ.",
+      "ko": "친구 관계 [3,4]: 3번은 루트, 4번은 루트. 루트 3과 4가 다릅니다."
+     },
+     "views": {
+      "friends": {
+       "nodes": [
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        },
+        {
+         "id": 4,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 5,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        },
+        {
+         "id": 6,
+         "tag": {
+          "en": "root 6",
+          "ko": "루트 6"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "dim": [
+         3,
+         4,
+         5
+        ],
+        "lit": [
+         2
+        ]
+       },
+       "nodeMarks": {
+        "lit": [
+         3,
+         4
+        ]
+       }
+      },
+      "parent": {
+       "values": [
+        0,
+        2,
+        3,
+        3,
+        4,
+        5,
+        6
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "unused",
+          "ko": "안 씀"
+         }
+        ]
+       ],
+       "pointers": {
+        "root a": 3,
+        "root b": 4
+       },
+       "marks": {
+        "dim": [
+         0
+        ],
+        "lit": [
+         3,
+         4
+        ],
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "parent[3] = 4: group 3 joins group 4, so 3 and 4 are now in one group.",
+      "ko": "parent[3] = 4: 3 그룹이 4 그룹에 합쳐져 3번과 4번이 같은 그룹이 됩니다."
+     },
+     "views": {
+      "friends": {
+       "nodes": [
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 4,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 5,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        },
+        {
+         "id": 6,
+         "tag": {
+          "en": "root 6",
+          "ko": "루트 6"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "dim": [
+         3,
+         4,
+         5
+        ],
+        "lit": [
+         2
+        ]
+       },
+       "nodeMarks": {
+        "lit": [
+         3,
+         4
+        ]
+       }
+      },
+      "parent": {
+       "values": [
+        0,
+        2,
+        3,
+        4,
+        4,
+        5,
+        6
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "unused",
+          "ko": "안 씀"
+         }
+        ]
+       ],
+       "pointers": {},
+       "marks": {
+        "dim": [
+         0
+        ],
+        "lit": [],
+        "good": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "parent",
+        "at": 4
+       },
+       "to": {
+        "view": "parent",
+        "at": 3
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Friendship [4,5]: 4 is a root, 5 is a root. Roots 4 and 5 differ.",
+      "ko": "친구 관계 [4,5]: 4번은 루트, 5번은 루트. 루트 4와 5가 다릅니다."
+     },
+     "views": {
+      "friends": {
+       "nodes": [
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 4,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 5,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        },
+        {
+         "id": 6,
+         "tag": {
+          "en": "root 6",
+          "ko": "루트 6"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "dim": [
+         4,
+         5
+        ],
+        "lit": [
+         3
+        ]
+       },
+       "nodeMarks": {
+        "lit": [
+         4,
+         5
+        ]
+       }
+      },
+      "parent": {
+       "values": [
+        0,
+        2,
+        3,
+        4,
+        4,
+        5,
+        6
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "unused",
+          "ko": "안 씀"
+         }
+        ]
+       ],
+       "pointers": {
+        "root a": 4,
+        "root b": 5
+       },
+       "marks": {
+        "dim": [
+         0
+        ],
+        "lit": [
+         4,
+         5
+        ],
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "parent[4] = 5: group 4 joins group 5, so 4 and 5 are now in one group.",
+      "ko": "parent[4] = 5: 4 그룹이 5 그룹에 합쳐져 4번과 5번이 같은 그룹이 됩니다."
+     },
+     "views": {
+      "friends": {
+       "nodes": [
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        },
+        {
+         "id": 4,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        },
+        {
+         "id": 5,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        },
+        {
+         "id": 6,
+         "tag": {
+          "en": "root 6",
+          "ko": "루트 6"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "dim": [
+         4,
+         5
+        ],
+        "lit": [
+         3
+        ]
+       },
+       "nodeMarks": {
+        "lit": [
+         4,
+         5
+        ]
+       }
+      },
+      "parent": {
+       "values": [
+        0,
+        2,
+        3,
+        4,
+        5,
+        5,
+        6
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "unused",
+          "ko": "안 씀"
+         }
+        ]
+       ],
+       "pointers": {},
+       "marks": {
+        "dim": [
+         0
+        ],
+        "lit": [],
+        "good": [
+         4
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "parent",
+        "at": 5
+       },
+       "to": {
+        "view": "parent",
+        "at": 4
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Friendship [2,5]: find(2) climbs 2 → 4 → 5, 5 is a root; on the way, parent[2] jumps to 4. Both roots are 5: 2 and 5 are already in one group.",
+      "ko": "친구 관계 [2,5]: find(2)는 2 → 4 → 5로 올라감, 5번은 루트 (올라가는 길에 parent[2] = 4로 건너뜀). 두 루트가 모두 5번이라 2번과 5번은 이미 같은 그룹입니다."
+     },
+     "views": {
+      "friends": {
+       "nodes": [
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        },
+        {
+         "id": 4,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        },
+        {
+         "id": 5,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        },
+        {
+         "id": 6,
+         "tag": {
+          "en": "root 6",
+          "ko": "루트 6"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "dim": [
+         5
+        ],
+        "lit": [
+         4
+        ]
+       },
+       "nodeMarks": {
+        "lit": [
+         2,
+         5
+        ]
+       }
+      },
+      "parent": {
+       "values": [
+        0,
+        2,
+        4,
+        4,
+        5,
+        5,
+        6
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "unused",
+          "ko": "안 씀"
+         }
+        ]
+       ],
+       "pointers": {
+        "root": 5
+       },
+       "marks": {
+        "dim": [
+         0
+        ],
+        "lit": [
+         2,
+         4,
+         5
+        ],
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "parent",
+        "at": 3
+       },
+       "to": {
+        "view": "parent",
+        "at": 2
+       },
+       "value": "4"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Joining them would close a cycle, so [2,5] is the friendship to remove; the friendship after it ([1,6]) is never read. Answer [2,5].",
+      "ko": "합치면 순환이 생기므로 없앨 친구 관계는 [2,5]이고, 뒤의 [1,6] 관계는 읽지 않습니다. 답은 [2,5]입니다."
+     },
+     "views": {
+      "friends": {
+       "nodes": [
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        },
+        {
+         "id": 4,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        },
+        {
+         "id": 5,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        },
+        {
+         "id": 6,
+         "tag": {
+          "en": "root 6",
+          "ko": "루트 6"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "dim": [
+         5
+        ],
+        "path": [
+         4
+        ]
+       },
+       "nodeMarks": {
+        "path": [
+         2,
+         5
+        ]
+       }
+      },
+      "parent": {
+       "values": [
+        0,
+        2,
+        4,
+        4,
+        5,
+        5,
+        6
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "unused",
+          "ko": "안 씀"
+         }
+        ]
+       ],
+       "pointers": {},
+       "marks": {
+        "dim": [
+         0
+        ],
+        "lit": [],
+        "good": []
+       }
+      }
+     },
+     "answer": "[2,5]"
+    }
+   ],
+   "setup": {
+    "friends": {
+     "edges": [
+      {
+       "from": 1,
+       "to": 2
+      },
+      {
+       "from": 2,
+       "to": 3
+      },
+      {
+       "from": 3,
+       "to": 4
+      },
+      {
+       "from": 4,
+       "to": 5
+      },
+      {
+       "from": 2,
+       "to": 5
+      },
+      {
+       "from": 1,
+       "to": 6
+      }
+     ]
+    }
+   },
+   "sampleInput": "[[1,2],[2,3],[3,4],[4,5],[2,5],[1,6]]"
+  },
+  {
+   "label": {
+    "en": "Case 3",
+    "ko": "케이스 3"
+   },
+   "input": "links = [[1,2],[1,3],[1,4],[3,4]]",
+   "expected": "[3,4]",
+   "frames": [
+    {
+     "caption": {
+      "en": "4 students, each its own group: parent[s] = s, so every student is a root. Each friendship joins two groups; one whose students are already in the same group closes the cycle.",
+      "ko": "학생 4명이 각자 자기 그룹이라 parent[s] = s이고, 모두 루트입니다. 친구 관계마다 두 그룹을 합치며, 두 학생이 이미 같은 그룹이면 그 관계가 순환을 닫습니다."
+     },
+     "views": {
+      "friends": {
+       "nodes": [
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 1",
+          "ko": "루트 1"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 2",
+          "ko": "루트 2"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        },
+        {
+         "id": 4,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3
+        ]
+       },
+       "nodeMarks": {}
+      },
+      "parent": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "unused",
+          "ko": "안 씀"
+         }
+        ]
+       ],
+       "pointers": {},
+       "marks": {
+        "dim": [
+         0
+        ],
+        "lit": [],
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Friendship [1,2]: 1 is a root, 2 is a root. Roots 1 and 2 differ.",
+      "ko": "친구 관계 [1,2]: 1번은 루트, 2번은 루트. 루트 1과 2가 다릅니다."
+     },
+     "views": {
+      "friends": {
+       "nodes": [
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 1",
+          "ko": "루트 1"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 2",
+          "ko": "루트 2"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        },
+        {
+         "id": 4,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "dim": [
+         1,
+         2,
+         3
+        ],
+        "lit": [
+         0
+        ]
+       },
+       "nodeMarks": {
+        "lit": [
+         1,
+         2
+        ]
+       }
+      },
+      "parent": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "unused",
+          "ko": "안 씀"
+         }
+        ]
+       ],
+       "pointers": {
+        "root a": 1,
+        "root b": 2
+       },
+       "marks": {
+        "dim": [
+         0
+        ],
+        "lit": [
+         1,
+         2
+        ],
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "parent[1] = 2: group 1 joins group 2, so 1 and 2 are now in one group.",
+      "ko": "parent[1] = 2: 1 그룹이 2 그룹에 합쳐져 1번과 2번이 같은 그룹이 됩니다."
+     },
+     "views": {
+      "friends": {
+       "nodes": [
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 2",
+          "ko": "루트 2"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 2",
+          "ko": "루트 2"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        },
+        {
+         "id": 4,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "dim": [
+         1,
+         2,
+         3
+        ],
+        "lit": [
+         0
+        ]
+       },
+       "nodeMarks": {
+        "lit": [
+         1,
+         2
+        ]
+       }
+      },
+      "parent": {
+       "values": [
+        0,
+        2,
+        2,
+        3,
+        4
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "unused",
+          "ko": "안 씀"
+         }
+        ]
+       ],
+       "pointers": {},
+       "marks": {
+        "dim": [
+         0
+        ],
+        "lit": [],
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "parent",
+        "at": 2
+       },
+       "to": {
+        "view": "parent",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Friendship [1,3]: find(1) climbs 1 → 2, 3 is a root. Roots 2 and 3 differ.",
+      "ko": "친구 관계 [1,3]: find(1)는 1 → 2로 올라감, 3번은 루트. 루트 2와 3이 다릅니다."
+     },
+     "views": {
+      "friends": {
+       "nodes": [
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 2",
+          "ko": "루트 2"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 2",
+          "ko": "루트 2"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        },
+        {
+         "id": 4,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "dim": [
+         2,
+         3
+        ],
+        "lit": [
+         1
+        ]
+       },
+       "nodeMarks": {
+        "lit": [
+         1,
+         3
+        ]
+       }
+      },
+      "parent": {
+       "values": [
+        0,
+        2,
+        2,
+        3,
+        4
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "unused",
+          "ko": "안 씀"
+         }
+        ]
+       ],
+       "pointers": {
+        "root a": 2,
+        "root b": 3
+       },
+       "marks": {
+        "dim": [
+         0
+        ],
+        "lit": [
+         1,
+         2,
+         3
+        ],
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "parent[2] = 3: group 2 joins group 3, so 1 and 3 are now in one group.",
+      "ko": "parent[2] = 3: 2 그룹이 3 그룹에 합쳐져 1번과 3번이 같은 그룹이 됩니다."
+     },
+     "views": {
+      "friends": {
+       "nodes": [
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        },
+        {
+         "id": 4,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "dim": [
+         2,
+         3
+        ],
+        "lit": [
+         1
+        ]
+       },
+       "nodeMarks": {
+        "lit": [
+         1,
+         3
+        ]
+       }
+      },
+      "parent": {
+       "values": [
+        0,
+        2,
+        3,
+        3,
+        4
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "unused",
+          "ko": "안 씀"
+         }
+        ]
+       ],
+       "pointers": {},
+       "marks": {
+        "dim": [
+         0
+        ],
+        "lit": [],
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "parent",
+        "at": 3
+       },
+       "to": {
+        "view": "parent",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Friendship [1,4]: find(1) climbs 1 → 3, 4 is a root; on the way, parent[1] jumps to 3. Roots 3 and 4 differ.",
+      "ko": "친구 관계 [1,4]: find(1)는 1 → 3으로 올라감, 4번은 루트 (올라가는 길에 parent[1] = 3로 건너뜀). 루트 3과 4가 다릅니다."
+     },
+     "views": {
+      "friends": {
+       "nodes": [
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        },
+        {
+         "id": 4,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "dim": [
+         3
+        ],
+        "lit": [
+         2
+        ]
+       },
+       "nodeMarks": {
+        "lit": [
+         1,
+         4
+        ]
+       }
+      },
+      "parent": {
+       "values": [
+        0,
+        3,
+        3,
+        3,
+        4
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "unused",
+          "ko": "안 씀"
+         }
+        ]
+       ],
+       "pointers": {
+        "root a": 3,
+        "root b": 4
+       },
+       "marks": {
+        "dim": [
+         0
+        ],
+        "lit": [
+         1,
+         3,
+         4
+        ],
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "parent",
+        "at": 2
+       },
+       "to": {
+        "view": "parent",
+        "at": 1
+       },
+       "value": "3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "parent[3] = 4: group 3 joins group 4, so 1 and 4 are now in one group.",
+      "ko": "parent[3] = 4: 3 그룹이 4 그룹에 합쳐져 1번과 4번이 같은 그룹이 됩니다."
+     },
+     "views": {
+      "friends": {
+       "nodes": [
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 4,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "dim": [
+         3
+        ],
+        "lit": [
+         2
+        ]
+       },
+       "nodeMarks": {
+        "lit": [
+         1,
+         4
+        ]
+       }
+      },
+      "parent": {
+       "values": [
+        0,
+        3,
+        3,
+        4,
+        4
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "unused",
+          "ko": "안 씀"
+         }
+        ]
+       ],
+       "pointers": {},
+       "marks": {
+        "dim": [
+         0
+        ],
+        "lit": [],
+        "good": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "parent",
+        "at": 4
+       },
+       "to": {
+        "view": "parent",
+        "at": 3
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Friendship [3,4]: find(3) climbs 3 → 4, 4 is a root. Both roots are 4: 3 and 4 are already in one group.",
+      "ko": "친구 관계 [3,4]: find(3)는 3 → 4로 올라감, 4번은 루트. 두 루트가 모두 4번이라 3번과 4번은 이미 같은 그룹입니다."
+     },
+     "views": {
+      "friends": {
+       "nodes": [
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 4,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "dim": [],
+        "lit": [
+         3
+        ]
+       },
+       "nodeMarks": {
+        "lit": [
+         3,
+         4
+        ]
+       }
+      },
+      "parent": {
+       "values": [
+        0,
+        3,
+        3,
+        4,
+        4
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "unused",
+          "ko": "안 씀"
+         }
+        ]
+       ],
+       "pointers": {
+        "root": 4
+       },
+       "marks": {
+        "dim": [
+         0
+        ],
+        "lit": [
+         3,
+         4
+        ],
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Joining them would close a cycle, so [3,4] is the friendship to remove. Answer [3,4].",
+      "ko": "합치면 순환이 생기므로 없앨 친구 관계는 [3,4]입니다. 답은 [3,4]입니다."
+     },
+     "views": {
+      "friends": {
+       "nodes": [
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 4,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "dim": [],
+        "path": [
+         3
+        ]
+       },
+       "nodeMarks": {
+        "path": [
+         3,
+         4
+        ]
+       }
+      },
+      "parent": {
+       "values": [
+        0,
+        3,
+        3,
+        4,
+        4
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "unused",
+          "ko": "안 씀"
+         }
+        ]
+       ],
+       "pointers": {},
+       "marks": {
+        "dim": [
+         0
+        ],
+        "lit": [],
+        "good": []
+       }
+      }
+     },
+     "answer": "[3,4]"
+    }
+   ],
+   "setup": {
+    "friends": {
+     "edges": [
+      {
+       "from": 1,
+       "to": 2
+      },
+      {
+       "from": 1,
+       "to": 3
+      },
+      {
+       "from": 1,
+       "to": 4
+      },
+      {
+       "from": 3,
+       "to": 4
+      }
+     ]
+    }
+   },
+   "sampleInput": "[[1,2],[1,3],[1,4],[3,4]]"
+  }
+ ]
+}
