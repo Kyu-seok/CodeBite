@@ -1,0 +1,3364 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Split Sticker Runs",
+  "ko": "스티커 문자열 구간 분할"
+ },
+ "approach": {
+  "en": "Note each letter's last index first. Then a run must reach the last index of every letter in it: stretch its end as letters are read, and cut the moment the index read is that end.",
+  "ko": "먼저 글자마다 마지막 위치를 적어 둡니다. 구간은 그 안의 모든 글자의 마지막 위치까지 가야 하므로, 글자를 읽을 때마다 구간의 끝을 늘리고 읽은 위치가 그 끝이 되는 순간 자릅니다."
+ },
+ "views": [
+  {
+   "id": "stickers",
+   "type": "array",
+   "title": {
+    "en": "stickers",
+    "ko": "stickers (스티커)"
+   }
+  },
+  {
+   "id": "last",
+   "type": "map",
+   "title": {
+    "en": "last index of each letter",
+    "ko": "글자별 마지막 위치"
+   },
+   "empty": {
+    "en": "none yet",
+    "ko": "아직 없음"
+   }
+  },
+  {
+   "id": "sizes",
+   "type": "output",
+   "title": {
+    "en": "run lengths",
+    "ko": "구간 길이"
+   },
+   "empty": {
+    "en": "none yet",
+    "ko": "아직 없음"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "stickers = \"abacbcd\"",
+   "expected": "[6,1]",
+   "frames": [
+    {
+     "caption": {
+      "en": "\"abacbcd\" has 7 stickers. First pass: write down the last index of every letter.",
+      "ko": "\"abacbcd\"에는 스티커가 7장 있습니다. 첫 번째로 훑으며 글자마다 마지막 위치를 적습니다."
+     },
+     "views": {
+      "stickers": {
+       "values": [
+        "a",
+        "b",
+        "a",
+        "c",
+        "b",
+        "c",
+        "d"
+       ],
+       "pointers": {
+        "i": null
+       },
+       "spans": {},
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": []
+       }
+      },
+      "last": {
+       "entries": [],
+       "marks": {}
+      },
+      "sizes": {
+       "values": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "'a' first appears at index 0; its last index so far is 0.",
+      "ko": "인덱스 0에 'a' 글자가 처음 나옵니다. 지금까지의 마지막 위치는 0입니다."
+     },
+     "views": {
+      "stickers": {
+       "values": [
+        "a",
+        "b",
+        "a",
+        "c",
+        "b",
+        "c",
+        "d"
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "spans": {},
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "last": {
+       "entries": [
+        {
+         "key": "a",
+         "value": "i=0"
+        }
+       ],
+       "marks": {
+        "good": [
+         "a"
+        ]
+       }
+      },
+      "sizes": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "stickers",
+        "at": 0
+       },
+       "to": {
+        "view": "last",
+        "at": "a"
+       },
+       "value": "i=0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "'b' first appears at index 1; its last index so far is 1.",
+      "ko": "인덱스 1에 'b' 글자가 처음 나옵니다. 지금까지의 마지막 위치는 1입니다."
+     },
+     "views": {
+      "stickers": {
+       "values": [
+        "a",
+        "b",
+        "a",
+        "c",
+        "b",
+        "c",
+        "d"
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "spans": {},
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "last": {
+       "entries": [
+        {
+         "key": "a",
+         "value": "i=0"
+        },
+        {
+         "key": "b",
+         "value": "i=1"
+        }
+       ],
+       "marks": {
+        "good": [
+         "b"
+        ]
+       }
+      },
+      "sizes": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "stickers",
+        "at": 1
+       },
+       "to": {
+        "view": "last",
+        "at": "b"
+       },
+       "value": "i=1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "'a' again at index 2: its last index so far moves on to 2.",
+      "ko": "인덱스 2에 'a' 글자가 또 나와, 이 글자의 마지막 위치가 2로 바뀝니다."
+     },
+     "views": {
+      "stickers": {
+       "values": [
+        "a",
+        "b",
+        "a",
+        "c",
+        "b",
+        "c",
+        "d"
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "spans": {},
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": [
+         2
+        ]
+       }
+      },
+      "last": {
+       "entries": [
+        {
+         "key": "a",
+         "value": "i=2"
+        },
+        {
+         "key": "b",
+         "value": "i=1"
+        }
+       ],
+       "marks": {
+        "good": [
+         "a"
+        ]
+       }
+      },
+      "sizes": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "stickers",
+        "at": 2
+       },
+       "to": {
+        "view": "last",
+        "at": "a"
+       },
+       "value": "i=2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "'c' first appears at index 3; its last index so far is 3.",
+      "ko": "인덱스 3에 'c' 글자가 처음 나옵니다. 지금까지의 마지막 위치는 3입니다."
+     },
+     "views": {
+      "stickers": {
+       "values": [
+        "a",
+        "b",
+        "a",
+        "c",
+        "b",
+        "c",
+        "d"
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "spans": {},
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": [
+         3
+        ]
+       }
+      },
+      "last": {
+       "entries": [
+        {
+         "key": "a",
+         "value": "i=2"
+        },
+        {
+         "key": "b",
+         "value": "i=1"
+        },
+        {
+         "key": "c",
+         "value": "i=3"
+        }
+       ],
+       "marks": {
+        "good": [
+         "c"
+        ]
+       }
+      },
+      "sizes": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "stickers",
+        "at": 3
+       },
+       "to": {
+        "view": "last",
+        "at": "c"
+       },
+       "value": "i=3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "'b' again at index 4: its last index so far moves on to 4.",
+      "ko": "인덱스 4에 'b' 글자가 또 나와, 이 글자의 마지막 위치가 4로 바뀝니다."
+     },
+     "views": {
+      "stickers": {
+       "values": [
+        "a",
+        "b",
+        "a",
+        "c",
+        "b",
+        "c",
+        "d"
+       ],
+       "pointers": {
+        "i": 4
+       },
+       "spans": {},
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": [
+         4
+        ]
+       }
+      },
+      "last": {
+       "entries": [
+        {
+         "key": "a",
+         "value": "i=2"
+        },
+        {
+         "key": "b",
+         "value": "i=4"
+        },
+        {
+         "key": "c",
+         "value": "i=3"
+        }
+       ],
+       "marks": {
+        "good": [
+         "b"
+        ]
+       }
+      },
+      "sizes": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "stickers",
+        "at": 4
+       },
+       "to": {
+        "view": "last",
+        "at": "b"
+       },
+       "value": "i=4"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "'c' again at index 5: its last index so far moves on to 5.",
+      "ko": "인덱스 5에 'c' 글자가 또 나와, 이 글자의 마지막 위치가 5로 바뀝니다."
+     },
+     "views": {
+      "stickers": {
+       "values": [
+        "a",
+        "b",
+        "a",
+        "c",
+        "b",
+        "c",
+        "d"
+       ],
+       "pointers": {
+        "i": 5
+       },
+       "spans": {},
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": [
+         5
+        ]
+       }
+      },
+      "last": {
+       "entries": [
+        {
+         "key": "a",
+         "value": "i=2"
+        },
+        {
+         "key": "b",
+         "value": "i=4"
+        },
+        {
+         "key": "c",
+         "value": "i=5"
+        }
+       ],
+       "marks": {
+        "good": [
+         "c"
+        ]
+       }
+      },
+      "sizes": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "stickers",
+        "at": 5
+       },
+       "to": {
+        "view": "last",
+        "at": "c"
+       },
+       "value": "i=5"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "'d' first appears at index 6; its last index so far is 6.",
+      "ko": "인덱스 6에 'd' 글자가 처음 나옵니다. 지금까지의 마지막 위치는 6입니다."
+     },
+     "views": {
+      "stickers": {
+       "values": [
+        "a",
+        "b",
+        "a",
+        "c",
+        "b",
+        "c",
+        "d"
+       ],
+       "pointers": {
+        "i": 6
+       },
+       "spans": {},
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": [
+         6
+        ]
+       }
+      },
+      "last": {
+       "entries": [
+        {
+         "key": "a",
+         "value": "i=2"
+        },
+        {
+         "key": "b",
+         "value": "i=4"
+        },
+        {
+         "key": "c",
+         "value": "i=5"
+        },
+        {
+         "key": "d",
+         "value": "i=6"
+        }
+       ],
+       "marks": {
+        "good": [
+         "d"
+        ]
+       }
+      },
+      "sizes": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "stickers",
+        "at": 6
+       },
+       "to": {
+        "view": "last",
+        "at": "d"
+       },
+       "value": "i=6"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "A new run starts at index 0, and 'a' last appears at 2, so it must reach 2.",
+      "ko": "인덱스 0에서 새 구간이 시작하고, 'a' 글자는 2에서 마지막으로 나오므로 구간은 2까지 가야 합니다."
+     },
+     "views": {
+      "stickers": {
+       "values": [
+        "a",
+        "b",
+        "a",
+        "c",
+        "b",
+        "c",
+        "d"
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "spans": {
+        "run": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "run to 2",
+          "ko": "2까지 구간"
+         },
+         "mark": "good"
+        }
+       },
+       "marks": {
+        "path": [],
+        "good": [
+         2
+        ],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "last": {
+       "entries": [
+        {
+         "key": "a",
+         "value": "i=2"
+        },
+        {
+         "key": "b",
+         "value": "i=4"
+        },
+        {
+         "key": "c",
+         "value": "i=5"
+        },
+        {
+         "key": "d",
+         "value": "i=6"
+        }
+       ],
+       "marks": {},
+       "probe": {
+        "key": "a",
+        "hit": true,
+        "label": {
+         "en": "last of 'a'?",
+         "ko": "'a'의 마지막?"
+        }
+       }
+      },
+      "sizes": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "last",
+        "at": "a"
+       },
+       "to": {
+        "view": "stickers",
+        "at": 2
+       },
+       "value": "2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "'b' at index 1 last appears at 4, past the run's end 2: stretch it to 4.",
+      "ko": "인덱스 1의 'b' 글자는 4에서 마지막으로 나와 구간의 끝 2보다 뒤이므로, 끝을 4로 늘립니다."
+     },
+     "views": {
+      "stickers": {
+       "values": [
+        "a",
+        "b",
+        "a",
+        "c",
+        "b",
+        "c",
+        "d"
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "spans": {
+        "run": {
+         "from": 0,
+         "to": 4,
+         "label": {
+          "en": "run to 4",
+          "ko": "4까지 구간"
+         },
+         "mark": "good"
+        }
+       },
+       "marks": {
+        "path": [],
+        "good": [
+         4
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "last": {
+       "entries": [
+        {
+         "key": "a",
+         "value": "i=2"
+        },
+        {
+         "key": "b",
+         "value": "i=4"
+        },
+        {
+         "key": "c",
+         "value": "i=5"
+        },
+        {
+         "key": "d",
+         "value": "i=6"
+        }
+       ],
+       "marks": {},
+       "probe": {
+        "key": "b",
+        "hit": true,
+        "label": {
+         "en": "last of 'b'?",
+         "ko": "'b'의 마지막?"
+        }
+       }
+      },
+      "sizes": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "last",
+        "at": "b"
+       },
+       "to": {
+        "view": "stickers",
+        "at": 4
+       },
+       "value": "4"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "'a' at index 2 last appears at 2, inside the run to 4: the end stays.",
+      "ko": "인덱스 2의 'a' 글자는 2에서 마지막으로 나와 4까지인 구간 안에 있으므로 끝은 그대로입니다."
+     },
+     "views": {
+      "stickers": {
+       "values": [
+        "a",
+        "b",
+        "a",
+        "c",
+        "b",
+        "c",
+        "d"
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "spans": {
+        "run": {
+         "from": 0,
+         "to": 4,
+         "label": {
+          "en": "run to 4",
+          "ko": "4까지 구간"
+         }
+        }
+       },
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": [
+         2
+        ]
+       }
+      },
+      "last": {
+       "entries": [
+        {
+         "key": "a",
+         "value": "i=2"
+        },
+        {
+         "key": "b",
+         "value": "i=4"
+        },
+        {
+         "key": "c",
+         "value": "i=5"
+        },
+        {
+         "key": "d",
+         "value": "i=6"
+        }
+       ],
+       "marks": {},
+       "probe": {
+        "key": "a",
+        "hit": true,
+        "label": {
+         "en": "last of 'a'?",
+         "ko": "'a'의 마지막?"
+        }
+       }
+      },
+      "sizes": {
+       "values": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "'c' at index 3 last appears at 5, past the run's end 4: stretch it to 5.",
+      "ko": "인덱스 3의 'c' 글자는 5에서 마지막으로 나와 구간의 끝 4보다 뒤이므로, 끝을 5로 늘립니다."
+     },
+     "views": {
+      "stickers": {
+       "values": [
+        "a",
+        "b",
+        "a",
+        "c",
+        "b",
+        "c",
+        "d"
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "spans": {
+        "run": {
+         "from": 0,
+         "to": 5,
+         "label": {
+          "en": "run to 5",
+          "ko": "5까지 구간"
+         },
+         "mark": "good"
+        }
+       },
+       "marks": {
+        "path": [],
+        "good": [
+         5
+        ],
+        "lit": [
+         3
+        ]
+       }
+      },
+      "last": {
+       "entries": [
+        {
+         "key": "a",
+         "value": "i=2"
+        },
+        {
+         "key": "b",
+         "value": "i=4"
+        },
+        {
+         "key": "c",
+         "value": "i=5"
+        },
+        {
+         "key": "d",
+         "value": "i=6"
+        }
+       ],
+       "marks": {},
+       "probe": {
+        "key": "c",
+        "hit": true,
+        "label": {
+         "en": "last of 'c'?",
+         "ko": "'c'의 마지막?"
+        }
+       }
+      },
+      "sizes": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "last",
+        "at": "c"
+       },
+       "to": {
+        "view": "stickers",
+        "at": 5
+       },
+       "value": "5"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "'b' at index 4 last appears at 4, inside the run to 5: the end stays.",
+      "ko": "인덱스 4의 'b' 글자는 4에서 마지막으로 나와 5까지인 구간 안에 있으므로 끝은 그대로입니다."
+     },
+     "views": {
+      "stickers": {
+       "values": [
+        "a",
+        "b",
+        "a",
+        "c",
+        "b",
+        "c",
+        "d"
+       ],
+       "pointers": {
+        "i": 4
+       },
+       "spans": {
+        "run": {
+         "from": 0,
+         "to": 5,
+         "label": {
+          "en": "run to 5",
+          "ko": "5까지 구간"
+         }
+        }
+       },
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": [
+         4
+        ]
+       }
+      },
+      "last": {
+       "entries": [
+        {
+         "key": "a",
+         "value": "i=2"
+        },
+        {
+         "key": "b",
+         "value": "i=4"
+        },
+        {
+         "key": "c",
+         "value": "i=5"
+        },
+        {
+         "key": "d",
+         "value": "i=6"
+        }
+       ],
+       "marks": {},
+       "probe": {
+        "key": "b",
+        "hit": true,
+        "label": {
+         "en": "last of 'b'?",
+         "ko": "'b'의 마지막?"
+        }
+       }
+      },
+      "sizes": {
+       "values": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "'c' at index 5 last appears at 5, inside the run to 5: the end stays. Index 5 is the end, so every letter in it is finished: cut a run of 6.",
+      "ko": "인덱스 5의 'c' 글자는 5에서 마지막으로 나와 5까지인 구간 안에 있으므로 끝은 그대로입니다. 인덱스 5가 끝이라 구간 안의 글자가 모두 끝났으니, 길이 6인 구간을 자릅니다."
+     },
+     "views": {
+      "stickers": {
+       "values": [
+        "a",
+        "b",
+        "a",
+        "c",
+        "b",
+        "c",
+        "d"
+       ],
+       "pointers": {
+        "i": 5
+       },
+       "spans": {
+        "done1": {
+         "from": 0,
+         "to": 5,
+         "label": "6",
+         "mark": "good",
+         "below": true
+        }
+       },
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": [
+         5
+        ]
+       }
+      },
+      "last": {
+       "entries": [
+        {
+         "key": "a",
+         "value": "i=2"
+        },
+        {
+         "key": "b",
+         "value": "i=4"
+        },
+        {
+         "key": "c",
+         "value": "i=5"
+        },
+        {
+         "key": "d",
+         "value": "i=6"
+        }
+       ],
+       "marks": {},
+       "probe": {
+        "key": "c",
+        "hit": true,
+        "label": {
+         "en": "last of 'c'?",
+         "ko": "'c'의 마지막?"
+        }
+       }
+      },
+      "sizes": {
+       "values": [
+        6
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "stickers",
+        "at": 5
+       },
+       "to": {
+        "view": "sizes",
+        "at": 0
+       },
+       "value": "6"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "A new run starts at index 6, and 'd' last appears at 6, so it must reach 6. Index 6 is the end, so every letter in it is finished: cut a run of 1.",
+      "ko": "인덱스 6에서 새 구간이 시작하고, 'd' 글자는 6에서 마지막으로 나오므로 구간은 6까지 가야 합니다. 인덱스 6이 끝이라 구간 안의 글자가 모두 끝났으니, 길이 1인 구간을 자릅니다."
+     },
+     "views": {
+      "stickers": {
+       "values": [
+        "a",
+        "b",
+        "a",
+        "c",
+        "b",
+        "c",
+        "d"
+       ],
+       "pointers": {
+        "i": 6
+       },
+       "spans": {
+        "done1": {
+         "from": 0,
+         "to": 5,
+         "label": "6",
+         "mark": "path",
+         "below": true
+        },
+        "done2": {
+         "from": 6,
+         "to": 6,
+         "label": "1",
+         "mark": "good",
+         "below": true
+        }
+       },
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": [
+         6
+        ]
+       }
+      },
+      "last": {
+       "entries": [
+        {
+         "key": "a",
+         "value": "i=2"
+        },
+        {
+         "key": "b",
+         "value": "i=4"
+        },
+        {
+         "key": "c",
+         "value": "i=5"
+        },
+        {
+         "key": "d",
+         "value": "i=6"
+        }
+       ],
+       "marks": {},
+       "probe": {
+        "key": "d",
+        "hit": true,
+        "label": {
+         "en": "last of 'd'?",
+         "ko": "'d'의 마지막?"
+        }
+       }
+      },
+      "sizes": {
+       "values": [
+        6,
+        1
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "last",
+        "at": "d"
+       },
+       "to": {
+        "view": "stickers",
+        "at": 6
+       },
+       "value": "6"
+      },
+      {
+       "from": {
+        "view": "stickers",
+        "at": 6
+       },
+       "to": {
+        "view": "sizes",
+        "at": 1
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every sticker is in a run: 2 runs, of lengths [6,1].",
+      "ko": "모든 스티커가 구간에 들어갔습니다. 구간 2개의 길이는 [6,1]입니다."
+     },
+     "views": {
+      "stickers": {
+       "values": [
+        "a",
+        "b",
+        "a",
+        "c",
+        "b",
+        "c",
+        "d"
+       ],
+       "pointers": {
+        "i": null
+       },
+       "spans": {
+        "done1": {
+         "from": 0,
+         "to": 5,
+         "label": "6",
+         "mark": "path",
+         "below": true
+        },
+        "done2": {
+         "from": 6,
+         "to": 6,
+         "label": "1",
+         "mark": "path",
+         "below": true
+        }
+       },
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5,
+         6
+        ],
+        "good": [],
+        "lit": []
+       }
+      },
+      "last": {
+       "entries": [
+        {
+         "key": "a",
+         "value": "i=2"
+        },
+        {
+         "key": "b",
+         "value": "i=4"
+        },
+        {
+         "key": "c",
+         "value": "i=5"
+        },
+        {
+         "key": "d",
+         "value": "i=6"
+        }
+       ],
+       "marks": {}
+      },
+      "sizes": {
+       "values": [
+        6,
+        1
+       ],
+       "marks": {
+        "path": [
+         0,
+         1
+        ]
+       }
+      }
+     },
+     "answer": "[6,1]"
+    }
+   ],
+   "sampleInput": "abacbcd"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "stickers = \"rsrsr\"",
+   "expected": "[5]",
+   "frames": [
+    {
+     "caption": {
+      "en": "\"rsrsr\" has 5 stickers. First pass: write down the last index of every letter.",
+      "ko": "\"rsrsr\"에는 스티커가 5장 있습니다. 첫 번째로 훑으며 글자마다 마지막 위치를 적습니다."
+     },
+     "views": {
+      "stickers": {
+       "values": [
+        "r",
+        "s",
+        "r",
+        "s",
+        "r"
+       ],
+       "pointers": {
+        "i": null
+       },
+       "spans": {},
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": []
+       }
+      },
+      "last": {
+       "entries": [],
+       "marks": {}
+      },
+      "sizes": {
+       "values": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "'r' first appears at index 0; its last index so far is 0.",
+      "ko": "인덱스 0에 'r' 글자가 처음 나옵니다. 지금까지의 마지막 위치는 0입니다."
+     },
+     "views": {
+      "stickers": {
+       "values": [
+        "r",
+        "s",
+        "r",
+        "s",
+        "r"
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "spans": {},
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "last": {
+       "entries": [
+        {
+         "key": "r",
+         "value": "i=0"
+        }
+       ],
+       "marks": {
+        "good": [
+         "r"
+        ]
+       }
+      },
+      "sizes": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "stickers",
+        "at": 0
+       },
+       "to": {
+        "view": "last",
+        "at": "r"
+       },
+       "value": "i=0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "'s' first appears at index 1; its last index so far is 1.",
+      "ko": "인덱스 1에 's' 글자가 처음 나옵니다. 지금까지의 마지막 위치는 1입니다."
+     },
+     "views": {
+      "stickers": {
+       "values": [
+        "r",
+        "s",
+        "r",
+        "s",
+        "r"
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "spans": {},
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "last": {
+       "entries": [
+        {
+         "key": "r",
+         "value": "i=0"
+        },
+        {
+         "key": "s",
+         "value": "i=1"
+        }
+       ],
+       "marks": {
+        "good": [
+         "s"
+        ]
+       }
+      },
+      "sizes": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "stickers",
+        "at": 1
+       },
+       "to": {
+        "view": "last",
+        "at": "s"
+       },
+       "value": "i=1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "'r' again at index 2: its last index so far moves on to 2.",
+      "ko": "인덱스 2에 'r' 글자가 또 나와, 이 글자의 마지막 위치가 2로 바뀝니다."
+     },
+     "views": {
+      "stickers": {
+       "values": [
+        "r",
+        "s",
+        "r",
+        "s",
+        "r"
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "spans": {},
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": [
+         2
+        ]
+       }
+      },
+      "last": {
+       "entries": [
+        {
+         "key": "r",
+         "value": "i=2"
+        },
+        {
+         "key": "s",
+         "value": "i=1"
+        }
+       ],
+       "marks": {
+        "good": [
+         "r"
+        ]
+       }
+      },
+      "sizes": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "stickers",
+        "at": 2
+       },
+       "to": {
+        "view": "last",
+        "at": "r"
+       },
+       "value": "i=2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "'s' again at index 3: its last index so far moves on to 3.",
+      "ko": "인덱스 3에 's' 글자가 또 나와, 이 글자의 마지막 위치가 3으로 바뀝니다."
+     },
+     "views": {
+      "stickers": {
+       "values": [
+        "r",
+        "s",
+        "r",
+        "s",
+        "r"
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "spans": {},
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": [
+         3
+        ]
+       }
+      },
+      "last": {
+       "entries": [
+        {
+         "key": "r",
+         "value": "i=2"
+        },
+        {
+         "key": "s",
+         "value": "i=3"
+        }
+       ],
+       "marks": {
+        "good": [
+         "s"
+        ]
+       }
+      },
+      "sizes": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "stickers",
+        "at": 3
+       },
+       "to": {
+        "view": "last",
+        "at": "s"
+       },
+       "value": "i=3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "'r' again at index 4: its last index so far moves on to 4.",
+      "ko": "인덱스 4에 'r' 글자가 또 나와, 이 글자의 마지막 위치가 4로 바뀝니다."
+     },
+     "views": {
+      "stickers": {
+       "values": [
+        "r",
+        "s",
+        "r",
+        "s",
+        "r"
+       ],
+       "pointers": {
+        "i": 4
+       },
+       "spans": {},
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": [
+         4
+        ]
+       }
+      },
+      "last": {
+       "entries": [
+        {
+         "key": "r",
+         "value": "i=4"
+        },
+        {
+         "key": "s",
+         "value": "i=3"
+        }
+       ],
+       "marks": {
+        "good": [
+         "r"
+        ]
+       }
+      },
+      "sizes": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "stickers",
+        "at": 4
+       },
+       "to": {
+        "view": "last",
+        "at": "r"
+       },
+       "value": "i=4"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "A new run starts at index 0, and 'r' last appears at 4, so it must reach 4.",
+      "ko": "인덱스 0에서 새 구간이 시작하고, 'r' 글자는 4에서 마지막으로 나오므로 구간은 4까지 가야 합니다."
+     },
+     "views": {
+      "stickers": {
+       "values": [
+        "r",
+        "s",
+        "r",
+        "s",
+        "r"
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "spans": {
+        "run": {
+         "from": 0,
+         "to": 4,
+         "label": {
+          "en": "run to 4",
+          "ko": "4까지 구간"
+         },
+         "mark": "good"
+        }
+       },
+       "marks": {
+        "path": [],
+        "good": [
+         4
+        ],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "last": {
+       "entries": [
+        {
+         "key": "r",
+         "value": "i=4"
+        },
+        {
+         "key": "s",
+         "value": "i=3"
+        }
+       ],
+       "marks": {},
+       "probe": {
+        "key": "r",
+        "hit": true,
+        "label": {
+         "en": "last of 'r'?",
+         "ko": "'r'의 마지막?"
+        }
+       }
+      },
+      "sizes": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "last",
+        "at": "r"
+       },
+       "to": {
+        "view": "stickers",
+        "at": 4
+       },
+       "value": "4"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "'s' at index 1 last appears at 3, inside the run to 4: the end stays.",
+      "ko": "인덱스 1의 's' 글자는 3에서 마지막으로 나와 4까지인 구간 안에 있으므로 끝은 그대로입니다."
+     },
+     "views": {
+      "stickers": {
+       "values": [
+        "r",
+        "s",
+        "r",
+        "s",
+        "r"
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "spans": {
+        "run": {
+         "from": 0,
+         "to": 4,
+         "label": {
+          "en": "run to 4",
+          "ko": "4까지 구간"
+         }
+        }
+       },
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "last": {
+       "entries": [
+        {
+         "key": "r",
+         "value": "i=4"
+        },
+        {
+         "key": "s",
+         "value": "i=3"
+        }
+       ],
+       "marks": {},
+       "probe": {
+        "key": "s",
+        "hit": true,
+        "label": {
+         "en": "last of 's'?",
+         "ko": "'s'의 마지막?"
+        }
+       }
+      },
+      "sizes": {
+       "values": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "'r' at index 2 last appears at 4, inside the run to 4: the end stays.",
+      "ko": "인덱스 2의 'r' 글자는 4에서 마지막으로 나와 4까지인 구간 안에 있으므로 끝은 그대로입니다."
+     },
+     "views": {
+      "stickers": {
+       "values": [
+        "r",
+        "s",
+        "r",
+        "s",
+        "r"
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "spans": {
+        "run": {
+         "from": 0,
+         "to": 4,
+         "label": {
+          "en": "run to 4",
+          "ko": "4까지 구간"
+         }
+        }
+       },
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": [
+         2
+        ]
+       }
+      },
+      "last": {
+       "entries": [
+        {
+         "key": "r",
+         "value": "i=4"
+        },
+        {
+         "key": "s",
+         "value": "i=3"
+        }
+       ],
+       "marks": {},
+       "probe": {
+        "key": "r",
+        "hit": true,
+        "label": {
+         "en": "last of 'r'?",
+         "ko": "'r'의 마지막?"
+        }
+       }
+      },
+      "sizes": {
+       "values": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "'s' at index 3 last appears at 3, inside the run to 4: the end stays.",
+      "ko": "인덱스 3의 's' 글자는 3에서 마지막으로 나와 4까지인 구간 안에 있으므로 끝은 그대로입니다."
+     },
+     "views": {
+      "stickers": {
+       "values": [
+        "r",
+        "s",
+        "r",
+        "s",
+        "r"
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "spans": {
+        "run": {
+         "from": 0,
+         "to": 4,
+         "label": {
+          "en": "run to 4",
+          "ko": "4까지 구간"
+         }
+        }
+       },
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": [
+         3
+        ]
+       }
+      },
+      "last": {
+       "entries": [
+        {
+         "key": "r",
+         "value": "i=4"
+        },
+        {
+         "key": "s",
+         "value": "i=3"
+        }
+       ],
+       "marks": {},
+       "probe": {
+        "key": "s",
+        "hit": true,
+        "label": {
+         "en": "last of 's'?",
+         "ko": "'s'의 마지막?"
+        }
+       }
+      },
+      "sizes": {
+       "values": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "'r' at index 4 last appears at 4, inside the run to 4: the end stays. Index 4 is the end, so every letter in it is finished: cut a run of 5.",
+      "ko": "인덱스 4의 'r' 글자는 4에서 마지막으로 나와 4까지인 구간 안에 있으므로 끝은 그대로입니다. 인덱스 4가 끝이라 구간 안의 글자가 모두 끝났으니, 길이 5인 구간을 자릅니다."
+     },
+     "views": {
+      "stickers": {
+       "values": [
+        "r",
+        "s",
+        "r",
+        "s",
+        "r"
+       ],
+       "pointers": {
+        "i": 4
+       },
+       "spans": {
+        "done1": {
+         "from": 0,
+         "to": 4,
+         "label": "5",
+         "mark": "good",
+         "below": true
+        }
+       },
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": [
+         4
+        ]
+       }
+      },
+      "last": {
+       "entries": [
+        {
+         "key": "r",
+         "value": "i=4"
+        },
+        {
+         "key": "s",
+         "value": "i=3"
+        }
+       ],
+       "marks": {},
+       "probe": {
+        "key": "r",
+        "hit": true,
+        "label": {
+         "en": "last of 'r'?",
+         "ko": "'r'의 마지막?"
+        }
+       }
+      },
+      "sizes": {
+       "values": [
+        5
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "stickers",
+        "at": 4
+       },
+       "to": {
+        "view": "sizes",
+        "at": 0
+       },
+       "value": "5"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every sticker is in a run: 1 run, of lengths [5].",
+      "ko": "모든 스티커가 구간에 들어갔습니다. 구간 1개의 길이는 [5]입니다."
+     },
+     "views": {
+      "stickers": {
+       "values": [
+        "r",
+        "s",
+        "r",
+        "s",
+        "r"
+       ],
+       "pointers": {
+        "i": null
+       },
+       "spans": {
+        "done1": {
+         "from": 0,
+         "to": 4,
+         "label": "5",
+         "mark": "path",
+         "below": true
+        }
+       },
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ],
+        "good": [],
+        "lit": []
+       }
+      },
+      "last": {
+       "entries": [
+        {
+         "key": "r",
+         "value": "i=4"
+        },
+        {
+         "key": "s",
+         "value": "i=3"
+        }
+       ],
+       "marks": {}
+      },
+      "sizes": {
+       "values": [
+        5
+       ],
+       "marks": {
+        "path": [
+         0
+        ]
+       }
+      }
+     },
+     "answer": "[5]"
+    }
+   ],
+   "sampleInput": "rsrsr"
+  },
+  {
+   "label": {
+    "en": "Example 3",
+    "ko": "예시 3"
+   },
+   "input": "stickers = \"abcdef\"",
+   "expected": "[1,1,1,1,1,1]",
+   "frames": [
+    {
+     "caption": {
+      "en": "\"abcdef\" has 6 stickers. First pass: write down the last index of every letter.",
+      "ko": "\"abcdef\"에는 스티커가 6장 있습니다. 첫 번째로 훑으며 글자마다 마지막 위치를 적습니다."
+     },
+     "views": {
+      "stickers": {
+       "values": [
+        "a",
+        "b",
+        "c",
+        "d",
+        "e",
+        "f"
+       ],
+       "pointers": {
+        "i": null
+       },
+       "spans": {},
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": []
+       }
+      },
+      "last": {
+       "entries": [],
+       "marks": {}
+      },
+      "sizes": {
+       "values": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "'a' first appears at index 0; its last index so far is 0.",
+      "ko": "인덱스 0에 'a' 글자가 처음 나옵니다. 지금까지의 마지막 위치는 0입니다."
+     },
+     "views": {
+      "stickers": {
+       "values": [
+        "a",
+        "b",
+        "c",
+        "d",
+        "e",
+        "f"
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "spans": {},
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "last": {
+       "entries": [
+        {
+         "key": "a",
+         "value": "i=0"
+        }
+       ],
+       "marks": {
+        "good": [
+         "a"
+        ]
+       }
+      },
+      "sizes": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "stickers",
+        "at": 0
+       },
+       "to": {
+        "view": "last",
+        "at": "a"
+       },
+       "value": "i=0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "'b' first appears at index 1; its last index so far is 1.",
+      "ko": "인덱스 1에 'b' 글자가 처음 나옵니다. 지금까지의 마지막 위치는 1입니다."
+     },
+     "views": {
+      "stickers": {
+       "values": [
+        "a",
+        "b",
+        "c",
+        "d",
+        "e",
+        "f"
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "spans": {},
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "last": {
+       "entries": [
+        {
+         "key": "a",
+         "value": "i=0"
+        },
+        {
+         "key": "b",
+         "value": "i=1"
+        }
+       ],
+       "marks": {
+        "good": [
+         "b"
+        ]
+       }
+      },
+      "sizes": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "stickers",
+        "at": 1
+       },
+       "to": {
+        "view": "last",
+        "at": "b"
+       },
+       "value": "i=1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "'c' first appears at index 2; its last index so far is 2.",
+      "ko": "인덱스 2에 'c' 글자가 처음 나옵니다. 지금까지의 마지막 위치는 2입니다."
+     },
+     "views": {
+      "stickers": {
+       "values": [
+        "a",
+        "b",
+        "c",
+        "d",
+        "e",
+        "f"
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "spans": {},
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": [
+         2
+        ]
+       }
+      },
+      "last": {
+       "entries": [
+        {
+         "key": "a",
+         "value": "i=0"
+        },
+        {
+         "key": "b",
+         "value": "i=1"
+        },
+        {
+         "key": "c",
+         "value": "i=2"
+        }
+       ],
+       "marks": {
+        "good": [
+         "c"
+        ]
+       }
+      },
+      "sizes": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "stickers",
+        "at": 2
+       },
+       "to": {
+        "view": "last",
+        "at": "c"
+       },
+       "value": "i=2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "'d' first appears at index 3; its last index so far is 3.",
+      "ko": "인덱스 3에 'd' 글자가 처음 나옵니다. 지금까지의 마지막 위치는 3입니다."
+     },
+     "views": {
+      "stickers": {
+       "values": [
+        "a",
+        "b",
+        "c",
+        "d",
+        "e",
+        "f"
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "spans": {},
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": [
+         3
+        ]
+       }
+      },
+      "last": {
+       "entries": [
+        {
+         "key": "a",
+         "value": "i=0"
+        },
+        {
+         "key": "b",
+         "value": "i=1"
+        },
+        {
+         "key": "c",
+         "value": "i=2"
+        },
+        {
+         "key": "d",
+         "value": "i=3"
+        }
+       ],
+       "marks": {
+        "good": [
+         "d"
+        ]
+       }
+      },
+      "sizes": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "stickers",
+        "at": 3
+       },
+       "to": {
+        "view": "last",
+        "at": "d"
+       },
+       "value": "i=3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "'e' first appears at index 4; its last index so far is 4.",
+      "ko": "인덱스 4에 'e' 글자가 처음 나옵니다. 지금까지의 마지막 위치는 4입니다."
+     },
+     "views": {
+      "stickers": {
+       "values": [
+        "a",
+        "b",
+        "c",
+        "d",
+        "e",
+        "f"
+       ],
+       "pointers": {
+        "i": 4
+       },
+       "spans": {},
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": [
+         4
+        ]
+       }
+      },
+      "last": {
+       "entries": [
+        {
+         "key": "a",
+         "value": "i=0"
+        },
+        {
+         "key": "b",
+         "value": "i=1"
+        },
+        {
+         "key": "c",
+         "value": "i=2"
+        },
+        {
+         "key": "d",
+         "value": "i=3"
+        },
+        {
+         "key": "e",
+         "value": "i=4"
+        }
+       ],
+       "marks": {
+        "good": [
+         "e"
+        ]
+       }
+      },
+      "sizes": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "stickers",
+        "at": 4
+       },
+       "to": {
+        "view": "last",
+        "at": "e"
+       },
+       "value": "i=4"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "'f' first appears at index 5; its last index so far is 5.",
+      "ko": "인덱스 5에 'f' 글자가 처음 나옵니다. 지금까지의 마지막 위치는 5입니다."
+     },
+     "views": {
+      "stickers": {
+       "values": [
+        "a",
+        "b",
+        "c",
+        "d",
+        "e",
+        "f"
+       ],
+       "pointers": {
+        "i": 5
+       },
+       "spans": {},
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": [
+         5
+        ]
+       }
+      },
+      "last": {
+       "entries": [
+        {
+         "key": "a",
+         "value": "i=0"
+        },
+        {
+         "key": "b",
+         "value": "i=1"
+        },
+        {
+         "key": "c",
+         "value": "i=2"
+        },
+        {
+         "key": "d",
+         "value": "i=3"
+        },
+        {
+         "key": "e",
+         "value": "i=4"
+        },
+        {
+         "key": "f",
+         "value": "i=5"
+        }
+       ],
+       "marks": {
+        "good": [
+         "f"
+        ]
+       }
+      },
+      "sizes": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "stickers",
+        "at": 5
+       },
+       "to": {
+        "view": "last",
+        "at": "f"
+       },
+       "value": "i=5"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "A new run starts at index 0, and 'a' last appears at 0, so it must reach 0. Index 0 is the end, so every letter in it is finished: cut a run of 1.",
+      "ko": "인덱스 0에서 새 구간이 시작하고, 'a' 글자는 0에서 마지막으로 나오므로 구간은 0까지 가야 합니다. 인덱스 0이 끝이라 구간 안의 글자가 모두 끝났으니, 길이 1인 구간을 자릅니다."
+     },
+     "views": {
+      "stickers": {
+       "values": [
+        "a",
+        "b",
+        "c",
+        "d",
+        "e",
+        "f"
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "spans": {
+        "done1": {
+         "from": 0,
+         "to": 0,
+         "label": "1",
+         "mark": "good",
+         "below": true
+        }
+       },
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "last": {
+       "entries": [
+        {
+         "key": "a",
+         "value": "i=0"
+        },
+        {
+         "key": "b",
+         "value": "i=1"
+        },
+        {
+         "key": "c",
+         "value": "i=2"
+        },
+        {
+         "key": "d",
+         "value": "i=3"
+        },
+        {
+         "key": "e",
+         "value": "i=4"
+        },
+        {
+         "key": "f",
+         "value": "i=5"
+        }
+       ],
+       "marks": {},
+       "probe": {
+        "key": "a",
+        "hit": true,
+        "label": {
+         "en": "last of 'a'?",
+         "ko": "'a'의 마지막?"
+        }
+       }
+      },
+      "sizes": {
+       "values": [
+        1
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "last",
+        "at": "a"
+       },
+       "to": {
+        "view": "stickers",
+        "at": 0
+       },
+       "value": "0"
+      },
+      {
+       "from": {
+        "view": "stickers",
+        "at": 0
+       },
+       "to": {
+        "view": "sizes",
+        "at": 0
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "A new run starts at index 1, and 'b' last appears at 1, so it must reach 1. Index 1 is the end, so every letter in it is finished: cut a run of 1.",
+      "ko": "인덱스 1에서 새 구간이 시작하고, 'b' 글자는 1에서 마지막으로 나오므로 구간은 1까지 가야 합니다. 인덱스 1이 끝이라 구간 안의 글자가 모두 끝났으니, 길이 1인 구간을 자릅니다."
+     },
+     "views": {
+      "stickers": {
+       "values": [
+        "a",
+        "b",
+        "c",
+        "d",
+        "e",
+        "f"
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "spans": {
+        "done1": {
+         "from": 0,
+         "to": 0,
+         "label": "1",
+         "mark": "path",
+         "below": true
+        },
+        "done2": {
+         "from": 1,
+         "to": 1,
+         "label": "1",
+         "mark": "good",
+         "below": true
+        }
+       },
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "last": {
+       "entries": [
+        {
+         "key": "a",
+         "value": "i=0"
+        },
+        {
+         "key": "b",
+         "value": "i=1"
+        },
+        {
+         "key": "c",
+         "value": "i=2"
+        },
+        {
+         "key": "d",
+         "value": "i=3"
+        },
+        {
+         "key": "e",
+         "value": "i=4"
+        },
+        {
+         "key": "f",
+         "value": "i=5"
+        }
+       ],
+       "marks": {},
+       "probe": {
+        "key": "b",
+        "hit": true,
+        "label": {
+         "en": "last of 'b'?",
+         "ko": "'b'의 마지막?"
+        }
+       }
+      },
+      "sizes": {
+       "values": [
+        1,
+        1
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "last",
+        "at": "b"
+       },
+       "to": {
+        "view": "stickers",
+        "at": 1
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "stickers",
+        "at": 1
+       },
+       "to": {
+        "view": "sizes",
+        "at": 1
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "A new run starts at index 2, and 'c' last appears at 2, so it must reach 2. Index 2 is the end, so every letter in it is finished: cut a run of 1.",
+      "ko": "인덱스 2에서 새 구간이 시작하고, 'c' 글자는 2에서 마지막으로 나오므로 구간은 2까지 가야 합니다. 인덱스 2가 끝이라 구간 안의 글자가 모두 끝났으니, 길이 1인 구간을 자릅니다."
+     },
+     "views": {
+      "stickers": {
+       "values": [
+        "a",
+        "b",
+        "c",
+        "d",
+        "e",
+        "f"
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "spans": {
+        "done1": {
+         "from": 0,
+         "to": 0,
+         "label": "1",
+         "mark": "path",
+         "below": true
+        },
+        "done2": {
+         "from": 1,
+         "to": 1,
+         "label": "1",
+         "mark": "path",
+         "below": true
+        },
+        "done3": {
+         "from": 2,
+         "to": 2,
+         "label": "1",
+         "mark": "good",
+         "below": true
+        }
+       },
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": [
+         2
+        ]
+       }
+      },
+      "last": {
+       "entries": [
+        {
+         "key": "a",
+         "value": "i=0"
+        },
+        {
+         "key": "b",
+         "value": "i=1"
+        },
+        {
+         "key": "c",
+         "value": "i=2"
+        },
+        {
+         "key": "d",
+         "value": "i=3"
+        },
+        {
+         "key": "e",
+         "value": "i=4"
+        },
+        {
+         "key": "f",
+         "value": "i=5"
+        }
+       ],
+       "marks": {},
+       "probe": {
+        "key": "c",
+        "hit": true,
+        "label": {
+         "en": "last of 'c'?",
+         "ko": "'c'의 마지막?"
+        }
+       }
+      },
+      "sizes": {
+       "values": [
+        1,
+        1,
+        1
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "last",
+        "at": "c"
+       },
+       "to": {
+        "view": "stickers",
+        "at": 2
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "stickers",
+        "at": 2
+       },
+       "to": {
+        "view": "sizes",
+        "at": 2
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "A new run starts at index 3, and 'd' last appears at 3, so it must reach 3. Index 3 is the end, so every letter in it is finished: cut a run of 1.",
+      "ko": "인덱스 3에서 새 구간이 시작하고, 'd' 글자는 3에서 마지막으로 나오므로 구간은 3까지 가야 합니다. 인덱스 3이 끝이라 구간 안의 글자가 모두 끝났으니, 길이 1인 구간을 자릅니다."
+     },
+     "views": {
+      "stickers": {
+       "values": [
+        "a",
+        "b",
+        "c",
+        "d",
+        "e",
+        "f"
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "spans": {
+        "done1": {
+         "from": 0,
+         "to": 0,
+         "label": "1",
+         "mark": "path",
+         "below": true
+        },
+        "done2": {
+         "from": 1,
+         "to": 1,
+         "label": "1",
+         "mark": "path",
+         "below": true
+        },
+        "done3": {
+         "from": 2,
+         "to": 2,
+         "label": "1",
+         "mark": "path",
+         "below": true
+        },
+        "done4": {
+         "from": 3,
+         "to": 3,
+         "label": "1",
+         "mark": "good",
+         "below": true
+        }
+       },
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": [
+         3
+        ]
+       }
+      },
+      "last": {
+       "entries": [
+        {
+         "key": "a",
+         "value": "i=0"
+        },
+        {
+         "key": "b",
+         "value": "i=1"
+        },
+        {
+         "key": "c",
+         "value": "i=2"
+        },
+        {
+         "key": "d",
+         "value": "i=3"
+        },
+        {
+         "key": "e",
+         "value": "i=4"
+        },
+        {
+         "key": "f",
+         "value": "i=5"
+        }
+       ],
+       "marks": {},
+       "probe": {
+        "key": "d",
+        "hit": true,
+        "label": {
+         "en": "last of 'd'?",
+         "ko": "'d'의 마지막?"
+        }
+       }
+      },
+      "sizes": {
+       "values": [
+        1,
+        1,
+        1,
+        1
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "last",
+        "at": "d"
+       },
+       "to": {
+        "view": "stickers",
+        "at": 3
+       },
+       "value": "3"
+      },
+      {
+       "from": {
+        "view": "stickers",
+        "at": 3
+       },
+       "to": {
+        "view": "sizes",
+        "at": 3
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "A new run starts at index 4, and 'e' last appears at 4, so it must reach 4. Index 4 is the end, so every letter in it is finished: cut a run of 1.",
+      "ko": "인덱스 4에서 새 구간이 시작하고, 'e' 글자는 4에서 마지막으로 나오므로 구간은 4까지 가야 합니다. 인덱스 4가 끝이라 구간 안의 글자가 모두 끝났으니, 길이 1인 구간을 자릅니다."
+     },
+     "views": {
+      "stickers": {
+       "values": [
+        "a",
+        "b",
+        "c",
+        "d",
+        "e",
+        "f"
+       ],
+       "pointers": {
+        "i": 4
+       },
+       "spans": {
+        "done1": {
+         "from": 0,
+         "to": 0,
+         "label": "1",
+         "mark": "path",
+         "below": true
+        },
+        "done2": {
+         "from": 1,
+         "to": 1,
+         "label": "1",
+         "mark": "path",
+         "below": true
+        },
+        "done3": {
+         "from": 2,
+         "to": 2,
+         "label": "1",
+         "mark": "path",
+         "below": true
+        },
+        "done4": {
+         "from": 3,
+         "to": 3,
+         "label": "1",
+         "mark": "path",
+         "below": true
+        },
+        "done5": {
+         "from": 4,
+         "to": 4,
+         "label": "1",
+         "mark": "good",
+         "below": true
+        }
+       },
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": [
+         4
+        ]
+       }
+      },
+      "last": {
+       "entries": [
+        {
+         "key": "a",
+         "value": "i=0"
+        },
+        {
+         "key": "b",
+         "value": "i=1"
+        },
+        {
+         "key": "c",
+         "value": "i=2"
+        },
+        {
+         "key": "d",
+         "value": "i=3"
+        },
+        {
+         "key": "e",
+         "value": "i=4"
+        },
+        {
+         "key": "f",
+         "value": "i=5"
+        }
+       ],
+       "marks": {},
+       "probe": {
+        "key": "e",
+        "hit": true,
+        "label": {
+         "en": "last of 'e'?",
+         "ko": "'e'의 마지막?"
+        }
+       }
+      },
+      "sizes": {
+       "values": [
+        1,
+        1,
+        1,
+        1,
+        1
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "last",
+        "at": "e"
+       },
+       "to": {
+        "view": "stickers",
+        "at": 4
+       },
+       "value": "4"
+      },
+      {
+       "from": {
+        "view": "stickers",
+        "at": 4
+       },
+       "to": {
+        "view": "sizes",
+        "at": 4
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "A new run starts at index 5, and 'f' last appears at 5, so it must reach 5. Index 5 is the end, so every letter in it is finished: cut a run of 1.",
+      "ko": "인덱스 5에서 새 구간이 시작하고, 'f' 글자는 5에서 마지막으로 나오므로 구간은 5까지 가야 합니다. 인덱스 5가 끝이라 구간 안의 글자가 모두 끝났으니, 길이 1인 구간을 자릅니다."
+     },
+     "views": {
+      "stickers": {
+       "values": [
+        "a",
+        "b",
+        "c",
+        "d",
+        "e",
+        "f"
+       ],
+       "pointers": {
+        "i": 5
+       },
+       "spans": {
+        "done1": {
+         "from": 0,
+         "to": 0,
+         "label": "1",
+         "mark": "path",
+         "below": true
+        },
+        "done2": {
+         "from": 1,
+         "to": 1,
+         "label": "1",
+         "mark": "path",
+         "below": true
+        },
+        "done3": {
+         "from": 2,
+         "to": 2,
+         "label": "1",
+         "mark": "path",
+         "below": true
+        },
+        "done4": {
+         "from": 3,
+         "to": 3,
+         "label": "1",
+         "mark": "path",
+         "below": true
+        },
+        "done5": {
+         "from": 4,
+         "to": 4,
+         "label": "1",
+         "mark": "path",
+         "below": true
+        },
+        "done6": {
+         "from": 5,
+         "to": 5,
+         "label": "1",
+         "mark": "good",
+         "below": true
+        }
+       },
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": [
+         5
+        ]
+       }
+      },
+      "last": {
+       "entries": [
+        {
+         "key": "a",
+         "value": "i=0"
+        },
+        {
+         "key": "b",
+         "value": "i=1"
+        },
+        {
+         "key": "c",
+         "value": "i=2"
+        },
+        {
+         "key": "d",
+         "value": "i=3"
+        },
+        {
+         "key": "e",
+         "value": "i=4"
+        },
+        {
+         "key": "f",
+         "value": "i=5"
+        }
+       ],
+       "marks": {},
+       "probe": {
+        "key": "f",
+        "hit": true,
+        "label": {
+         "en": "last of 'f'?",
+         "ko": "'f'의 마지막?"
+        }
+       }
+      },
+      "sizes": {
+       "values": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+       ],
+       "marks": {
+        "good": [
+         5
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "last",
+        "at": "f"
+       },
+       "to": {
+        "view": "stickers",
+        "at": 5
+       },
+       "value": "5"
+      },
+      {
+       "from": {
+        "view": "stickers",
+        "at": 5
+       },
+       "to": {
+        "view": "sizes",
+        "at": 5
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every sticker is in a run: 6 runs, of lengths [1,1,1,1,1,1].",
+      "ko": "모든 스티커가 구간에 들어갔습니다. 구간 6개의 길이는 [1,1,1,1,1,1]입니다."
+     },
+     "views": {
+      "stickers": {
+       "values": [
+        "a",
+        "b",
+        "c",
+        "d",
+        "e",
+        "f"
+       ],
+       "pointers": {
+        "i": null
+       },
+       "spans": {
+        "done1": {
+         "from": 0,
+         "to": 0,
+         "label": "1",
+         "mark": "path",
+         "below": true
+        },
+        "done2": {
+         "from": 1,
+         "to": 1,
+         "label": "1",
+         "mark": "path",
+         "below": true
+        },
+        "done3": {
+         "from": 2,
+         "to": 2,
+         "label": "1",
+         "mark": "path",
+         "below": true
+        },
+        "done4": {
+         "from": 3,
+         "to": 3,
+         "label": "1",
+         "mark": "path",
+         "below": true
+        },
+        "done5": {
+         "from": 4,
+         "to": 4,
+         "label": "1",
+         "mark": "path",
+         "below": true
+        },
+        "done6": {
+         "from": 5,
+         "to": 5,
+         "label": "1",
+         "mark": "path",
+         "below": true
+        }
+       },
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ],
+        "good": [],
+        "lit": []
+       }
+      },
+      "last": {
+       "entries": [
+        {
+         "key": "a",
+         "value": "i=0"
+        },
+        {
+         "key": "b",
+         "value": "i=1"
+        },
+        {
+         "key": "c",
+         "value": "i=2"
+        },
+        {
+         "key": "d",
+         "value": "i=3"
+        },
+        {
+         "key": "e",
+         "value": "i=4"
+        },
+        {
+         "key": "f",
+         "value": "i=5"
+        }
+       ],
+       "marks": {}
+      },
+      "sizes": {
+       "values": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      }
+     },
+     "answer": "[1,1,1,1,1,1]"
+    }
+   ],
+   "sampleInput": "abcdef"
+  }
+ ]
+}

@@ -1,0 +1,797 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Finish the Level",
+  "ko": "레벨 끝까지 가기"
+ },
+ "approach": {
+  "en": "Every tile up to the farthest reach so far can be landed on, so one pass is enough: on each reachable tile push the reach to tile + jump, and stop when a tile lies past it.",
+  "ko": "지금까지의 최대 도달 거리 안의 타일은 모두 밟을 수 있으므로 한 번 훑으면 됩니다. 밟을 수 있는 타일마다 도달 거리를 타일 + 점프로 늘리고, 그 너머의 타일이 나오면 멈춥니다."
+ },
+ "views": [
+  {
+   "id": "jumps",
+   "type": "array",
+   "title": {
+    "en": "jumps by tile",
+    "ko": "타일별 jumps (점프 거리)"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "jumps = [2,1,3,1,1,2]",
+   "expected": "true",
+   "frames": [
+    {
+     "caption": {
+      "en": "6 tiles, the last is tile 5. Start on tile 0, so the farthest tile reachable so far is 0.",
+      "ko": "타일이 6개이고 마지막은 타일 5입니다. 타일 0에서 출발하므로 지금까지 도달할 수 있는 가장 먼 타일은 0입니다."
+     },
+     "views": {
+      "jumps": {
+       "values": [
+        2,
+        1,
+        3,
+        1,
+        1,
+        2
+       ],
+       "pointers": {
+        "tile": null
+       },
+       "under": [],
+       "spans": {
+        "reach": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "farthest 0",
+          "ko": "최대 도달 0"
+         },
+         "fade": true
+        }
+       },
+       "marks": {
+        "path": [],
+        "bad": [],
+        "good": [],
+        "lit": [
+         0
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Tile 0 is reachable and jumps up to 2: 0 + 2 = 2 beats 0, so the farthest reach grows to 2.",
+      "ko": "타일 0에는 갈 수 있고 최대 2칸 뜁니다: 0 + 2 = 2 > 0이므로 최대 도달 거리가 2로 늘어납니다."
+     },
+     "views": {
+      "jumps": {
+       "values": [
+        2,
+        1,
+        3,
+        1,
+        1,
+        2
+       ],
+       "pointers": {
+        "tile": 0
+       },
+       "under": [
+        [
+         0,
+         "→2"
+        ]
+       ],
+       "spans": {
+        "reach": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "farthest 2",
+          "ko": "최대 도달 2"
+         },
+         "mark": "good",
+         "fade": true
+        }
+       },
+       "marks": {
+        "path": [],
+        "bad": [],
+        "good": [
+         2
+        ],
+        "lit": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "jumps",
+        "at": 0
+       },
+       "to": {
+        "view": "jumps",
+        "at": 2
+       },
+       "value": "0+2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Tile 1 is reachable, but 1 + 1 = 2 doesn't pass 2: the farthest reach stays.",
+      "ko": "타일 1에는 갈 수 있지만 1 + 1 = 2는 2보다 멀지 않아 최대 도달 거리는 그대로입니다."
+     },
+     "views": {
+      "jumps": {
+       "values": [
+        2,
+        1,
+        3,
+        1,
+        1,
+        2
+       ],
+       "pointers": {
+        "tile": 1
+       },
+       "under": [
+        [
+         0,
+         "→2"
+        ],
+        [
+         1,
+         "→2"
+        ]
+       ],
+       "spans": {
+        "reach": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "farthest 2",
+          "ko": "최대 도달 2"
+         },
+         "fade": true
+        }
+       },
+       "marks": {
+        "path": [],
+        "bad": [],
+        "good": [],
+        "lit": [
+         1
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Tile 2 is reachable and jumps up to 3: 2 + 3 = 5 beats 2, so the farthest reach grows to 5.",
+      "ko": "타일 2에는 갈 수 있고 최대 3칸 뜁니다: 2 + 3 = 5 > 2이므로 최대 도달 거리가 5로 늘어납니다."
+     },
+     "views": {
+      "jumps": {
+       "values": [
+        2,
+        1,
+        3,
+        1,
+        1,
+        2
+       ],
+       "pointers": {
+        "tile": 2
+       },
+       "under": [
+        [
+         0,
+         "→2"
+        ],
+        [
+         1,
+         "→2"
+        ],
+        [
+         2,
+         "→5"
+        ]
+       ],
+       "spans": {
+        "reach": {
+         "from": 0,
+         "to": 5,
+         "label": {
+          "en": "farthest 5",
+          "ko": "최대 도달 5"
+         },
+         "mark": "good",
+         "fade": true
+        }
+       },
+       "marks": {
+        "path": [],
+        "bad": [],
+        "good": [
+         5
+        ],
+        "lit": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "jumps",
+        "at": 2
+       },
+       "to": {
+        "view": "jumps",
+        "at": 5
+       },
+       "value": "2+3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Tile 3 is reachable, but 3 + 1 = 4 doesn't pass 5: the farthest reach stays.",
+      "ko": "타일 3에는 갈 수 있지만 3 + 1 = 4는 5보다 멀지 않아 최대 도달 거리는 그대로입니다."
+     },
+     "views": {
+      "jumps": {
+       "values": [
+        2,
+        1,
+        3,
+        1,
+        1,
+        2
+       ],
+       "pointers": {
+        "tile": 3
+       },
+       "under": [
+        [
+         0,
+         "→2"
+        ],
+        [
+         1,
+         "→2"
+        ],
+        [
+         2,
+         "→5"
+        ],
+        [
+         3,
+         "→4"
+        ]
+       ],
+       "spans": {
+        "reach": {
+         "from": 0,
+         "to": 5,
+         "label": {
+          "en": "farthest 5",
+          "ko": "최대 도달 5"
+         },
+         "fade": true
+        }
+       },
+       "marks": {
+        "path": [],
+        "bad": [],
+        "good": [],
+        "lit": [
+         3
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Tile 4 is reachable, but 4 + 1 = 5 doesn't pass 5: the farthest reach stays.",
+      "ko": "타일 4에는 갈 수 있지만 4 + 1 = 5는 5보다 멀지 않아 최대 도달 거리는 그대로입니다."
+     },
+     "views": {
+      "jumps": {
+       "values": [
+        2,
+        1,
+        3,
+        1,
+        1,
+        2
+       ],
+       "pointers": {
+        "tile": 4
+       },
+       "under": [
+        [
+         0,
+         "→2"
+        ],
+        [
+         1,
+         "→2"
+        ],
+        [
+         2,
+         "→5"
+        ],
+        [
+         3,
+         "→4"
+        ],
+        [
+         4,
+         "→5"
+        ]
+       ],
+       "spans": {
+        "reach": {
+         "from": 0,
+         "to": 5,
+         "label": {
+          "en": "farthest 5",
+          "ko": "최대 도달 5"
+         },
+         "fade": true
+        }
+       },
+       "marks": {
+        "path": [],
+        "bad": [],
+        "good": [],
+        "lit": [
+         4
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Tile 5 is reachable and jumps up to 2: 5 + 2 = 7 beats 5, so the farthest reach grows to 7, past the last tile 5.",
+      "ko": "타일 5에는 갈 수 있고 최대 2칸 뜁니다: 5 + 2 = 7 > 5이므로 최대 도달 거리가 7로 늘어납니다(마지막 타일 5 너머)."
+     },
+     "views": {
+      "jumps": {
+       "values": [
+        2,
+        1,
+        3,
+        1,
+        1,
+        2
+       ],
+       "pointers": {
+        "tile": 5
+       },
+       "under": [
+        [
+         0,
+         "→2"
+        ],
+        [
+         1,
+         "→2"
+        ],
+        [
+         2,
+         "→5"
+        ],
+        [
+         3,
+         "→4"
+        ],
+        [
+         4,
+         "→5"
+        ],
+        [
+         5,
+         "→7"
+        ]
+       ],
+       "spans": {
+        "reach": {
+         "from": 0,
+         "to": 5,
+         "label": {
+          "en": "farthest 7",
+          "ko": "최대 도달 7"
+         },
+         "mark": "good",
+         "fade": true
+        }
+       },
+       "marks": {
+        "path": [],
+        "bad": [],
+        "good": [
+         5
+        ],
+        "lit": [
+         5
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "jumps",
+        "at": 5
+       },
+       "to": {
+        "view": "jumps",
+        "at": 5
+       },
+       "value": "5+2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every tile was within reach, and the farthest reach, 7, covers the last tile 5. Answer: true.",
+      "ko": "모든 타일이 도달 거리 안에 있었고, 최대 도달 거리 7이 마지막 타일 5까지 닿습니다. 답은 true입니다."
+     },
+     "views": {
+      "jumps": {
+       "values": [
+        2,
+        1,
+        3,
+        1,
+        1,
+        2
+       ],
+       "pointers": {
+        "tile": null
+       },
+       "under": [
+        [
+         0,
+         "→2"
+        ],
+        [
+         1,
+         "→2"
+        ],
+        [
+         2,
+         "→5"
+        ],
+        [
+         3,
+         "→4"
+        ],
+        [
+         4,
+         "→5"
+        ],
+        [
+         5,
+         "→7"
+        ]
+       ],
+       "spans": {
+        "reach": {
+         "from": 0,
+         "to": 5,
+         "label": {
+          "en": "farthest 7",
+          "ko": "최대 도달 7"
+         },
+         "mark": "path",
+         "fade": true
+        }
+       },
+       "marks": {
+        "path": [
+         5
+        ],
+        "bad": [],
+        "good": [],
+        "lit": []
+       }
+      }
+     },
+     "answer": "true"
+    }
+   ],
+   "sampleInput": "[2,1,3,1,1,2]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "jumps = [2,0,0,1,3]",
+   "expected": "false",
+   "frames": [
+    {
+     "caption": {
+      "en": "5 tiles, the last is tile 4. Start on tile 0, so the farthest tile reachable so far is 0.",
+      "ko": "타일이 5개이고 마지막은 타일 4입니다. 타일 0에서 출발하므로 지금까지 도달할 수 있는 가장 먼 타일은 0입니다."
+     },
+     "views": {
+      "jumps": {
+       "values": [
+        2,
+        0,
+        0,
+        1,
+        3
+       ],
+       "pointers": {
+        "tile": null
+       },
+       "under": [],
+       "spans": {
+        "reach": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "farthest 0",
+          "ko": "최대 도달 0"
+         },
+         "fade": true
+        }
+       },
+       "marks": {
+        "path": [],
+        "bad": [],
+        "good": [],
+        "lit": [
+         0
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Tile 0 is reachable and jumps up to 2: 0 + 2 = 2 beats 0, so the farthest reach grows to 2.",
+      "ko": "타일 0에는 갈 수 있고 최대 2칸 뜁니다: 0 + 2 = 2 > 0이므로 최대 도달 거리가 2로 늘어납니다."
+     },
+     "views": {
+      "jumps": {
+       "values": [
+        2,
+        0,
+        0,
+        1,
+        3
+       ],
+       "pointers": {
+        "tile": 0
+       },
+       "under": [
+        [
+         0,
+         "→2"
+        ]
+       ],
+       "spans": {
+        "reach": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "farthest 2",
+          "ko": "최대 도달 2"
+         },
+         "mark": "good",
+         "fade": true
+        }
+       },
+       "marks": {
+        "path": [],
+        "bad": [],
+        "good": [
+         2
+        ],
+        "lit": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "jumps",
+        "at": 0
+       },
+       "to": {
+        "view": "jumps",
+        "at": 2
+       },
+       "value": "0+2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Tile 1 is reachable, but 1 + 0 = 1 doesn't pass 2: the farthest reach stays.",
+      "ko": "타일 1에는 갈 수 있지만 1 + 0 = 1은 2보다 멀지 않아 최대 도달 거리는 그대로입니다."
+     },
+     "views": {
+      "jumps": {
+       "values": [
+        2,
+        0,
+        0,
+        1,
+        3
+       ],
+       "pointers": {
+        "tile": 1
+       },
+       "under": [
+        [
+         0,
+         "→2"
+        ],
+        [
+         1,
+         "→1"
+        ]
+       ],
+       "spans": {
+        "reach": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "farthest 2",
+          "ko": "최대 도달 2"
+         },
+         "fade": true
+        }
+       },
+       "marks": {
+        "path": [],
+        "bad": [],
+        "good": [],
+        "lit": [
+         1
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Tile 2 is reachable, but 2 + 0 = 2 doesn't pass 2: the farthest reach stays.",
+      "ko": "타일 2에는 갈 수 있지만 2 + 0 = 2는 2보다 멀지 않아 최대 도달 거리는 그대로입니다."
+     },
+     "views": {
+      "jumps": {
+       "values": [
+        2,
+        0,
+        0,
+        1,
+        3
+       ],
+       "pointers": {
+        "tile": 2
+       },
+       "under": [
+        [
+         0,
+         "→2"
+        ],
+        [
+         1,
+         "→1"
+        ],
+        [
+         2,
+         "→2"
+        ]
+       ],
+       "spans": {
+        "reach": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "farthest 2",
+          "ko": "최대 도달 2"
+         },
+         "fade": true
+        }
+       },
+       "marks": {
+        "path": [],
+        "bad": [],
+        "good": [],
+        "lit": [
+         2
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Tile 3 lies past the farthest reach, 2: no tile before it can jump this far, so the last tile can't be reached either. Answer: false.",
+      "ko": "타일 3은 최대 도달 거리 2보다 멀어서, 앞의 어느 타일에서도 여기까지 뛸 수 없습니다. 그러니 마지막 타일에도 갈 수 없어 답은 false입니다."
+     },
+     "views": {
+      "jumps": {
+       "values": [
+        2,
+        0,
+        0,
+        1,
+        3
+       ],
+       "pointers": {
+        "tile": 3
+       },
+       "under": [
+        [
+         0,
+         "→2"
+        ],
+        [
+         1,
+         "→1"
+        ],
+        [
+         2,
+         "→2"
+        ]
+       ],
+       "spans": {
+        "reach": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "farthest 2",
+          "ko": "최대 도달 2"
+         },
+         "mark": "bad",
+         "fade": true
+        }
+       },
+       "marks": {
+        "path": [],
+        "bad": [
+         3,
+         4
+        ],
+        "good": [],
+        "lit": []
+       }
+      }
+     },
+     "answer": "false"
+    }
+   ],
+   "sampleInput": "[2,0,0,1,3]"
+  }
+ ]
+}
