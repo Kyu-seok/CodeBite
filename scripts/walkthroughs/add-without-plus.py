@@ -58,6 +58,23 @@ def passes(first, second):
     return out, signed(a)
 
 
+def redrawn(before, after):
+    """The cells of `after` a reader sees change from `before`: the ones that differ in place, plus those a list
+    compared as shifted values would count (WalkthroughsMatchSamplesTest takes whichever is fewer), so every one
+    gets a move."""
+    in_place = {p for p in range(len(after)) if after[p] != before[p]}
+    length = start = 0
+    for i in range(len(before)):
+        for j in range(len(after)):
+            k = 0
+            while i + k < len(before) and j + k < len(after) and before[i + k] == after[j + k]:
+                k += 1
+            if k > length:
+                length, start = k, j
+    shifted = {j for j in range(len(after)) if j < start or j >= start + length}
+    return sorted(in_place | shifted)
+
+
 def solve(first, second, run):
     """Solution.combineCounters with three frames per pass. Returns the sum."""
     steps, result = passes(first, second)
@@ -115,7 +132,7 @@ def solve(first, second, run):
               marks={"a": {"good": ones}, "b": {"lit": ones}})
 
         nb = bits(carry)
-        changed = [p for p in range(width) if nb[p] != bb[p]]
+        changed = redrawn(bb, nb)
         b = carry
         if b:
             en, ko = (f"b = carry = {b}: the carries still have to be added, so the loop goes on.",

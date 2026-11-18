@@ -65,7 +65,9 @@ def solve(ops, args, run):
                                                     "lit": [[i, 0], [i, 1]]}},
                   slots={"values": slots, "marks": marks,
                          "pointers": {"head": head, "rear": (head + size - 1) % k if size else None}},
-                  state={"items": [{"label": "size", "value": size}]},
+                  state={"items": [{"label": "size", "value": size,
+                                     "why": "size is the field FixedRing keeps; it counts the slots not faded, which "
+                                            "can wrap past the end, so no span can draw it"}]},
                   result={"values": result,
                           "marks": {"path": list(range(len(result)))} if path else {"good": fresh}},
                   moves=moves, **answer)
