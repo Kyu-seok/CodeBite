@@ -18,7 +18,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import josa, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import driver_list, josa, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough, at, move  # noqa: E402
 
 SLUG = "peak-table-demand"
@@ -41,10 +41,6 @@ def table(t):
     return {"en": f"table {t + 1}", "ko": f"테이블 {t + 1}"}
 
 
-def iv(w):
-    return f"[{w[0]},{w[1]}]"
-
-
 def solve(visits, run):
     """Solution.minTables with a frame per visit. Returns the answer as the Driver prints it."""
     ordered = sorted(visits)
@@ -65,12 +61,12 @@ def solve(visits, run):
         frame({"en": "No visits, so no tables are needed. Answer: 0.",
                "ko": "방문한 팀이 없으므로 테이블이 필요 없습니다. 답은 0입니다."}, answer="0")
         return
-    frame({"en": f"Sort the {len(ordered)} visits by arrival: {', '.join(iv(v) for v in ordered)}. "
+    frame({"en": f"Sort the {len(ordered)} visits by arrival: {', '.join(driver_list(v) for v in ordered)}. "
                  "No table is in use yet.",
-           "ko": f"방문 {len(ordered)}개를 도착 시각 순으로 정렬합니다: {', '.join(iv(v) for v in ordered)}. "
+           "ko": f"방문 {len(ordered)}개를 도착 시각 순으로 정렬합니다: {', '.join(driver_list(v) for v in ordered)}. "
                  "아직 사용 중인 테이블이 없습니다."})
     for i, (arrive, leave) in enumerate(ordered):
-        visit = iv((arrive, leave))
+        visit = driver_list((arrive, leave))
         if leaving and leaving[0][0] <= arrive:
             free_at, t = leaving[0]
             heapq.heapreplace(leaving, (leave, t))

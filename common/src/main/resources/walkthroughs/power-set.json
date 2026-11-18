@@ -42,7 +42,7 @@
     {
      "caption": {
       "en": "The first call holds the empty subset [] and adds it to the answer; it will extend [] with each of 2, 5, 8.",
-      "ko": "첫 호출은 빈 부분집합 []를 맡아 답에 넣고, 여기에 2, 5, 8을 하나씩 붙여 봅니다."
+      "ko": "첫 호출은 빈 부분집합([])을 맡아 답에 넣고, 여기에 2, 5, 8을 하나씩 붙여 봅니다."
      },
      "views": {
       "nums": {
@@ -986,7 +986,7 @@
     {
      "caption": {
       "en": "The first call holds the empty subset [] and adds it to the answer; it will extend [] with each of 7.",
-      "ko": "첫 호출은 빈 부분집합 []를 맡아 답에 넣고, 여기에 7을 하나씩 붙여 봅니다."
+      "ko": "첫 호출은 빈 부분집합([])을 맡아 답에 넣고, 여기에 7을 하나씩 붙여 봅니다."
      },
      "views": {
       "nums": {

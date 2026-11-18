@@ -3,10 +3,9 @@
 reach it (the paths from above plus the paths from the left), one frame per tile in row order, on each sample Test
 Case.
 
-The reference solution (scripts/replay-solutions/count-dungeon-paths.py) returns the same count in closed form,
-C(rows + cols - 2, rows - 1); the picks for #359 chose this problem to show the grid DP, which is the table that
-formula counts, so the tracer fills it and the last caption names the formula. Each tile's count moves in from the
-tile above and the tile to the left.
+The reference solution (scripts/replay-solutions/count-dungeon-paths.py) is the same grid DP. Each tile's count moves
+in from the tile above and the tile to the left; the last caption names the closed form, C(rows + cols - 2, rows - 1),
+as an aside.
 
     CODEBITE_DB=<database> scripts/walkthroughs/count-dungeon-paths.py
 
@@ -18,7 +17,7 @@ from math import comb
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import josa, sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import josa, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough, at, move  # noqa: E402
 
 SLUG = "count-dungeon-paths"
@@ -82,11 +81,12 @@ def solve(rows, cols, run):
                      f"{paths[r][c]}가지입니다."
             frame({"en": en, "ko": ko}, marks={"lit": lit, "good": [[r, c]]}, moves=moves)
     total = paths[rows - 1][cols - 1]
-    downs, rights = rows - 1, cols - 1
-    frame({"en": f"The treasure tile holds {total}: the number of ways to order {downs} moves down among "
-                 f"{downs + rights} moves, C({downs + rights}, {downs}) = {comb(downs + rights, downs)}.",
-           "ko": f"보물 타일의 값은 {total}입니다. 이동 {downs + rights}번 중 아래로 가는 {downs}번의 순서를 고르는 "
-                 f"방법의 수 C({downs + rights}, {downs}) = {josa(comb(downs + rights, downs), '과와')} 같습니다."},
+    downs, length = rows - 1, rows + cols - 2
+    assert comb(length, downs) == total
+    frame({"en": f"The treasure tile holds {total}, the answer. Every path makes {length} moves and is fixed by choosing "
+                 f"which {downs} of them {plural(downs, 'goes', 'go')} down, so it is also C({length}, {downs}).",
+           "ko": f"보물 타일의 값 {josa(total, '이가')} 답입니다. 경로는 모두 {length}번 이동하고 그중 아래로 가는 "
+                 f"{downs}번을 고르면 정해지므로, 이 값은 조합 수 C({length}, {downs})이기도 합니다."},
           marks={"path": [[rows - 1, cols - 1]]}, answer=str(total))
 
 

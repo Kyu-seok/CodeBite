@@ -1162,7 +1162,7 @@
     {
      "caption": {
       "en": "isFull(): size = 3, k = 3, so it returns true.",
-      "ko": "isFull(): size = 3, k = 3이므로 true를 반환합니다."
+      "ko": "isFull(): size = 3, k = 3이므로 true 값을 반환합니다."
      },
      "views": {
       "calls": {
@@ -3163,7 +3163,7 @@
     {
      "caption": {
       "en": "isEmpty(): size = 0, so it returns true.",
-      "ko": "isEmpty(): size = 0이므로 true를 반환합니다."
+      "ko": "isEmpty(): size = 0이므로 true 값을 반환합니다."
      },
      "views": {
       "calls": {
@@ -3478,7 +3478,7 @@
     {
      "caption": {
       "en": "isEmpty(): size = 1, so it returns false.",
-      "ko": "isEmpty(): size = 1이므로 false를 반환합니다."
+      "ko": "isEmpty(): size = 1이므로 false 값을 반환합니다."
      },
      "views": {
       "calls": {
@@ -3640,7 +3640,7 @@
     {
      "caption": {
       "en": "isFull(): size = 1, k = 2, so it returns false.",
-      "ko": "isFull(): size = 1, k = 2이므로 false를 반환합니다."
+      "ko": "isFull(): size = 1, k = 2이므로 false 값을 반환합니다."
      },
      "views": {
       "calls": {
@@ -4006,7 +4006,7 @@
     {
      "caption": {
       "en": "isFull(): size = 2, k = 2, so it returns true.",
-      "ko": "isFull(): size = 2, k = 2이므로 true를 반환합니다."
+      "ko": "isFull(): size = 2, k = 2이므로 true 값을 반환합니다."
      },
      "views": {
       "calls": {

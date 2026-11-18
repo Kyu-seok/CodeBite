@@ -134,7 +134,7 @@ def solve(ops, args, run):
             value = size == 0 if op == "isEmpty" else size == k
             compare = f"size = {size}" + ("" if op == "isEmpty" else f", k = {k}")
             frame({"en": f"{op}(): {compare}, so it returns {json.dumps(value)}.",
-                   "ko": f"{op}(): {compare}이므로 {json.dumps(value)}를 반환합니다."},
+                   "ko": f"{op}(): {compare}이므로 {json.dumps(value)} 값을 반환합니다."},
                   moves=[back(value)])
         else:
             raise ValueError(op)

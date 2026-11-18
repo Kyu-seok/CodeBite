@@ -7,7 +7,8 @@ sample runs pinned to them (docs/adr/0011).
     run.frame(..., answer="4")                         # the answer as the Driver prints it
     run.frame(..., answer=driver_list(result))         # a list, printed as the Driver prints one
 
-Captions share driver_list, plural (English) and josa (a Korean particle after a number).
+Captions share driver_list, driver_value, plural (English) and josa (a Korean particle after a number).
+The solution's own node classes are shared too: TreeNode with build_tree (a Level-Order Array), and ListNode.
     wt.write(walkthrough_path("rotting-donuts"))
 
 The samples come through scripts/db-sql.sh, so the local database (or CODEBITE_DB's) must be at this
@@ -17,6 +18,8 @@ import json
 import os
 import re
 import subprocess
+
+from walkthrough_trace import level_order_tree
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 
@@ -67,6 +70,36 @@ def walkthrough_path(slug):
 def driver_list(values):
     """`values` as the Python Drivers print a list: compact JSON, json.dumps(values, separators=(',', ':'))."""
     return json.dumps(values, separators=(",", ":"))
+
+
+def driver_value(value):
+    """`value` as the Python Drivers print one: null, true or false for None and the booleans, compact JSON
+    for anything else (driver_list for a list)."""
+    return json.dumps(value, separators=(",", ":"))
+
+
+class TreeNode:
+    """A binary tree node as the solution sees it, carrying its level-order index `id` (the tree view's id)."""
+
+    def __init__(self, id, val):
+        self.id, self.val, self.left, self.right = id, val, None, None
+
+
+def build_tree(values):
+    """A Level-Order Array as the tree view's state (level_order_tree) and the solution's root TreeNode, None
+    for an empty tree: `tree, root = build_tree(values)`."""
+    tree = level_order_tree(values)
+    nodes = {n["id"]: TreeNode(n["id"], n["value"]) for n in tree["nodes"]}
+    for e in tree["edges"]:
+        setattr(nodes[e["from"]], "right" if e["slot"] else "left", nodes[e["to"]])
+    return tree, nodes.get(0)
+
+
+class ListNode:
+    """A singly linked list node as the solution sees it."""
+
+    def __init__(self, val):
+        self.val, self.next = val, None
 
 
 def plural(n, one, many):

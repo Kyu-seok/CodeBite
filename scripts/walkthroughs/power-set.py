@@ -33,10 +33,6 @@ wt = Walkthrough(
 )
 
 
-def text(subset):
-    return "[" + ",".join(map(str, subset)) + "]"
-
-
 def listed(values):
     return ", ".join(map(str, values))
 
@@ -51,12 +47,12 @@ def solve(nums, run):
         run.frame(caption,
                   nums={"values": nums},
                   calls={**tree.state(), "nodeMarks": marks, "shade": [] if done else list(open_calls)},
-                  result={"values": [text(s) for s in subsets],
+                  result={"values": [driver_list(s) for s in subsets],
                           "marks": {"path": list(range(len(subsets)))} if done else {"good": [len(subsets) - 1]}},
                   moves=moves, **answer)
 
     def build(start, chosen, parent, taken):
-        node = tree.add(text(chosen), parent=parent, label=None if taken is None else f"+{nums[taken]}")
+        node = tree.add(driver_list(chosen), parent=parent, label=None if taken is None else f"+{nums[taken]}")
         open_calls.append(node)
         subsets.append(chosen[:])
         into = move(at("calls", node), at("result", len(subsets) - 1))
@@ -64,7 +60,7 @@ def solve(nums, run):
         if taken is None:
             frame({"en": f"The first call holds the empty subset [] and adds it to the answer; it will extend [] with "
                          f"each of {listed(later)}.",
-                   "ko": f"첫 호출은 빈 부분집합 []를 맡아 답에 넣고, 여기에 {listed(later[:-1]) + ', ' if later[:-1] else ''}"
+                   "ko": f"첫 호출은 빈 부분집합([])을 맡아 답에 넣고, 여기에 {listed(later[:-1]) + ', ' if later[:-1] else ''}"
                          f"{josa(later[-1], '을를')} 하나씩 붙여 봅니다."},
                   node, [move(dst=at("calls", node)), into])
         else:
@@ -72,8 +68,8 @@ def solve(nums, run):
                      "ko": f"다음으로 {listed(later[:-1]) + ', ' if later[:-1] else ''}{josa(later[-1], '을를')} 붙여 봅니다."}
                     if later else {"en": f"no number comes after {nums[taken]}, so it returns.",
                                    "ko": f"{nums[taken]} 뒤에 남은 수가 없으므로 돌아갑니다."})
-            frame({"en": f"Take {nums[taken]}: the call for {text(chosen)} adds it to the answer; " + then["en"],
-                   "ko": f"{josa(nums[taken], '을를')} 고릅니다. {text(chosen)} 호출이 이 부분집합을 답에 넣고, " + then["ko"]},
+            frame({"en": f"Take {nums[taken]}: the call for {driver_list(chosen)} adds it to the answer; " + then["en"],
+                   "ko": f"{josa(nums[taken], '을를')} 고릅니다. {driver_list(chosen)} 호출이 이 부분집합을 답에 넣고, " + then["ko"]},
                   node, [move(at("nums", taken), at("calls", node)), into])
         for i in range(start, len(nums)):
             if i > start and nums[i] == nums[i - 1]:

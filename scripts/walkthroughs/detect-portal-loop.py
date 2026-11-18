@@ -14,7 +14,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import driver_list, josa, sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import ListNode, driver_list, josa, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough, linked_list, node_id  # noqa: E402
 
 SLUG = "detect-portal-loop"
@@ -28,11 +28,6 @@ wt = Walkthrough(
     views=[{"id": "rooms", "type": "linkedlist", "title": {"en": "rooms from head", "ko": "head부터의 방들"},
             "empty": {"en": "no rooms", "ko": "방 없음"}}],
 )
-
-
-class ListNode:
-    def __init__(self, val):
-        self.val, self.next = val, None
 
 
 def solve(values, pos, run):

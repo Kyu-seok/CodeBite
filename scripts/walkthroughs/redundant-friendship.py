@@ -93,7 +93,7 @@ def solve(links, run):
         halved_ko = ""
         if writes:
             halved = "; on the way, " + ", ".join(f"parent[{x}] jumps to {v}" for _, x, v in writes)
-            halved_ko = " (올라가는 길에 " + ", ".join(f"parent[{x}] = {v}" for _, x, v in writes) + "로 건너뜀)"
+            halved_ko = " (올라가는 길에 건너뜀: " + ", ".join(f"parent[{x}] = {v}" for _, x, v in writes) + ")"
         same = root_a == root_b
         if same:
             verdict = {"en": f"Both roots are {root_a}: {a} and {b} are already in one group.",

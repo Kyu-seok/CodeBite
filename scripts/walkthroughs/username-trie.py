@@ -15,7 +15,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import driver_list, driver_value, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Tree, Walkthrough, at, move  # noqa: E402
 
 SLUG = "username-trie"
@@ -34,11 +34,6 @@ wt = Walkthrough(
          "empty": {"en": "none yet", "ko": "아직 없음"}},
     ],
 )
-
-
-def text(value):
-    """A result as the Driver prints it."""
-    return "null" if value is None else "true" if value is True else "false"
 
 
 def solve(cmds, args, run):
@@ -61,13 +56,13 @@ def solve(cmds, args, run):
                          "marks": cell_marks},
                   trie={**tree.state(), "nodeMarks": {"lit": list(lit), "good": list(good), "bad": list(bad)},
                         "shade": list(shade)},
-                  result={"values": [text(v) for v in result],
+                  result={"values": [driver_value(v) for v in result],
                           "marks": {"path": list(range(len(result)))} if done else {"good": [len(result) - 1]} if answered else {}},
                   moves=moves, **answer)
 
     def answer(value):
         result.append(value)
-        return move(at("calls", [state["row"], 0]), at("result", len(result) - 1), value=text(value))
+        return move(at("calls", [state["row"], 0]), at("result", len(result) - 1), value=driver_value(value))
 
     for row, (cmd, arg) in enumerate(zip(cmds, args)):
         state["row"] = row
@@ -144,7 +139,7 @@ def solve(cmds, args, run):
                              f"등록된 유저명이 아니므로 false입니다."},
                       bad=[path[-1]], shade=path, moves=[answer(value)])
 
-    printed = "[" + ",".join(text(v) for v in result) + "]"
+    printed = driver_list(result)
     state["row"] = len(cmds)
     frame({"en": f"Every call has run; the answer lists one value per call: {printed}.",
            "ko": f"모든 호출이 끝났습니다. 답은 호출마다 값 하나씩입니다: {printed}."}, done=True, answer=printed)

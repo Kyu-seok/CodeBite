@@ -331,7 +331,7 @@
     {
      "caption": {
       "en": "low's largest belongs in the upper half if anything does: low's top 1 leaves it for the end of high, [0].",
-      "ko": "low의 가장 큰 값이 위쪽 절반에 들어갈 후보이므로, low의 맨 위 1이 빠져 high의 맨 끝 [0]로 갑니다."
+      "ko": "low의 가장 큰 값이 위쪽 절반에 들어갈 후보이므로, low의 맨 위 1이 빠져 high의 맨 끝 [0] 자리로 갑니다."
      },
      "views": {
       "calls": {
@@ -482,7 +482,7 @@
     {
      "caption": {
       "en": "high has 1 and low 0, but low must hold at least as many: high's top 1 leaves it for the end of low, [0].",
-      "ko": "high는 1개, low는 0개인데 low가 적어도 같은 수를 가져야 하므로, high의 맨 위 1이 빠져 low의 맨 끝 [0]로 갑니다."
+      "ko": "high는 1개, low는 0개인데 low가 적어도 같은 수를 가져야 하므로, high의 맨 위 1이 빠져 low의 맨 끝 [0] 자리로 갑니다."
      },
      "views": {
       "calls": {
@@ -1283,7 +1283,7 @@
     {
      "caption": {
       "en": "low's largest belongs in the upper half if anything does: low's top 2 leaves it for the end of high, [0].",
-      "ko": "low의 가장 큰 값이 위쪽 절반에 들어갈 후보이므로, low의 맨 위 2가 빠져 high의 맨 끝 [0]로 갑니다."
+      "ko": "low의 가장 큰 값이 위쪽 절반에 들어갈 후보이므로, low의 맨 위 2가 빠져 high의 맨 끝 [0] 자리로 갑니다."
      },
      "views": {
       "calls": {
@@ -2421,7 +2421,7 @@
     {
      "caption": {
       "en": "low's largest belongs in the upper half if anything does: low's top 3 leaves it for the end of high, [1].",
-      "ko": "low의 가장 큰 값이 위쪽 절반에 들어갈 후보이므로, low의 맨 위 3이 빠져 high의 맨 끝 [1]로 갑니다."
+      "ko": "low의 가장 큰 값이 위쪽 절반에 들어갈 후보이므로, low의 맨 위 3이 빠져 high의 맨 끝 [1] 자리로 갑니다."
      },
      "views": {
       "calls": {
@@ -2847,7 +2847,7 @@
     {
      "caption": {
       "en": "high has 2 and low 1, but low must hold at least as many: high's top 2 leaves it for the end of low, [1], where it will sift up.",
-      "ko": "high는 2개, low는 1개인데 low가 적어도 같은 수를 가져야 하므로, high의 맨 위 2가 빠져 low의 맨 끝 [1]로 갑니다. 거기서 위로 올릴 차례입니다."
+      "ko": "high는 2개, low는 1개인데 low가 적어도 같은 수를 가져야 하므로, high의 맨 위 2가 빠져 low의 맨 끝 [1] 자리로 갑니다. 거기서 위로 올릴 차례입니다."
      },
      "views": {
       "calls": {
@@ -4307,7 +4307,7 @@
     {
      "caption": {
       "en": "low's largest belongs in the upper half if anything does: low's top 4 leaves it for the end of high, [0].",
-      "ko": "low의 가장 큰 값이 위쪽 절반에 들어갈 후보이므로, low의 맨 위 4가 빠져 high의 맨 끝 [0]로 갑니다."
+      "ko": "low의 가장 큰 값이 위쪽 절반에 들어갈 후보이므로, low의 맨 위 4가 빠져 high의 맨 끝 [0] 자리로 갑니다."
      },
      "views": {
       "calls": {
@@ -4451,7 +4451,7 @@
     {
      "caption": {
       "en": "high has 1 and low 0, but low must hold at least as many: high's top 4 leaves it for the end of low, [0].",
-      "ko": "high는 1개, low는 0개인데 low가 적어도 같은 수를 가져야 하므로, high의 맨 위 4가 빠져 low의 맨 끝 [0]로 갑니다."
+      "ko": "high는 1개, low는 0개인데 low가 적어도 같은 수를 가져야 하므로, high의 맨 위 4가 빠져 low의 맨 끝 [0] 자리로 갑니다."
      },
      "views": {
       "calls": {
@@ -4887,7 +4887,7 @@
     {
      "caption": {
       "en": "low's largest belongs in the upper half if anything does: low's top 4 leaves it for the end of high, [0].",
-      "ko": "low의 가장 큰 값이 위쪽 절반에 들어갈 후보이므로, low의 맨 위 4가 빠져 high의 맨 끝 [0]로 갑니다."
+      "ko": "low의 가장 큰 값이 위쪽 절반에 들어갈 후보이므로, low의 맨 위 4가 빠져 high의 맨 끝 [0] 자리로 갑니다."
      },
      "views": {
       "calls": {
@@ -5734,7 +5734,7 @@
     {
      "caption": {
       "en": "low's largest belongs in the upper half if anything does: low's top 5 leaves it for the end of high, [1].",
-      "ko": "low의 가장 큰 값이 위쪽 절반에 들어갈 후보이므로, low의 맨 위 5가 빠져 high의 맨 끝 [1]로 갑니다."
+      "ko": "low의 가장 큰 값이 위쪽 절반에 들어갈 후보이므로, low의 맨 위 5가 빠져 high의 맨 끝 [1] 자리로 갑니다."
      },
      "views": {
       "calls": {
@@ -6110,7 +6110,7 @@
     {
      "caption": {
       "en": "high has 2 and low 1, but low must hold at least as many: high's top 4 leaves it for the end of low, [1], where it will sift up.",
-      "ko": "high는 2개, low는 1개인데 low가 적어도 같은 수를 가져야 하므로, high의 맨 위 4가 빠져 low의 맨 끝 [1]로 갑니다. 거기서 위로 올릴 차례입니다."
+      "ko": "high는 2개, low는 1개인데 low가 적어도 같은 수를 가져야 하므로, high의 맨 위 4가 빠져 low의 맨 끝 [1] 자리로 갑니다. 거기서 위로 올릴 차례입니다."
      },
      "views": {
       "calls": {
@@ -7048,7 +7048,7 @@
     {
      "caption": {
       "en": "low's largest belongs in the upper half if anything does: low's top 4 leaves it for the end of high, [1], where it will sift up.",
-      "ko": "low의 가장 큰 값이 위쪽 절반에 들어갈 후보이므로, low의 맨 위 4가 빠져 high의 맨 끝 [1]로 갑니다. 거기서 위로 올릴 차례입니다."
+      "ko": "low의 가장 큰 값이 위쪽 절반에 들어갈 후보이므로, low의 맨 위 4가 빠져 high의 맨 끝 [1] 자리로 갑니다. 거기서 위로 올릴 차례입니다."
      },
      "views": {
       "calls": {
@@ -8501,7 +8501,7 @@
     {
      "caption": {
       "en": "low's largest belongs in the upper half if anything does: low's top 7 leaves it for the end of high, [0].",
-      "ko": "low의 가장 큰 값이 위쪽 절반에 들어갈 후보이므로, low의 맨 위 7이 빠져 high의 맨 끝 [0]로 갑니다."
+      "ko": "low의 가장 큰 값이 위쪽 절반에 들어갈 후보이므로, low의 맨 위 7이 빠져 high의 맨 끝 [0] 자리로 갑니다."
      },
      "views": {
       "calls": {
@@ -8638,7 +8638,7 @@
     {
      "caption": {
       "en": "high has 1 and low 0, but low must hold at least as many: high's top 7 leaves it for the end of low, [0].",
-      "ko": "high는 1개, low는 0개인데 low가 적어도 같은 수를 가져야 하므로, high의 맨 위 7이 빠져 low의 맨 끝 [0]로 갑니다."
+      "ko": "high는 1개, low는 0개인데 low가 적어도 같은 수를 가져야 하므로, high의 맨 위 7이 빠져 low의 맨 끝 [0] 자리로 갑니다."
      },
      "views": {
       "calls": {
@@ -9199,7 +9199,7 @@
     {
      "caption": {
       "en": "low's largest belongs in the upper half if anything does: low's top 7 leaves it for the end of high, [0].",
-      "ko": "low의 가장 큰 값이 위쪽 절반에 들어갈 후보이므로, low의 맨 위 7이 빠져 high의 맨 끝 [0]로 갑니다."
+      "ko": "low의 가장 큰 값이 위쪽 절반에 들어갈 후보이므로, low의 맨 위 7이 빠져 high의 맨 끝 [0] 자리로 갑니다."
      },
      "views": {
       "calls": {

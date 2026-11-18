@@ -548,8 +548,54 @@ class WalkthroughsMatchSamplesTest {
         assertCaught(walkthrough, samples(1), breakage, expected);
     }
 
+    /**
+     * One run of a tree {@code t} (0 with children 1 and 2), a linked list {@code l} (1 → 2) with a pointer {@code p}
+     * and a call stack {@code s} of two calls, read twice with nothing changed.
+     */
+    private static ObjectNode recursionFixture() throws Exception {
+        String state = """
+                {'t': {'nodes': [{'id': 0, 'value': 5}, {'id': 1, 'value': 3}, {'id': 2, 'value': 8}],
+                       'edges': [{'from': 0, 'to': 1}, {'from': 0, 'to': 2}], 'edgeMarks': {'lit': [[0, 1]]}},
+                 'l': {'nodes': [{'id': 1, 'value': 1}, {'id': 2, 'value': 2}], 'next': {'1': 2, '2': null},
+                       'pointers': {'p': 1}},
+                 's': {'calls': [{'name': 'f', 'args': {'n': 2}}, {'name': 'f', 'args': {'n': 1}}], 'marks': {'lit': [1]}}}""";
+        return walkthrough("[{'id': 't', 'type': 'tree'}, {'id': 'l', 'type': 'linkedlist'}, {'id': 's', 'type': 'callstack'}]",
+                "[{'views': " + state + "}, {'views': " + state + "}]");
+    }
+
     @ParameterizedTest(name = "{0}")
-    @ValueSource(strings = {"samples", "moves", "table", "intervals", "set", "board", "graph", "span"})
+    @CsvSource(delimiter = '|', quoteCharacter = '`', value = {
+            "tree node with a second parent       | view \"t\": edge 2 {\"from\":1,\"to\":2}: node 2 already has a parent",
+            "tree edge naming no node             | view \"t\": edge 1 {\"from\":0,\"to\":9} names a node that doesn't exist",
+            "tree edgeMarks naming no edge        | view \"t\": mark \"lit\" names [0,9], not a [from, to] edge",
+            "linked list next not a node id       | view \"l\": next of 2 is 9, not a node id",
+            "linked list pointer naming no node   | view \"l\": pointer p = 9 is not a node id",
+            "linked list cut naming no node       | view \"l\": cut 1 → 9 names a node that doesn't exist",
+            "callstack calls not a list           | view \"s\": calls must be a list",
+            "call with no name                    | view \"s\": call 1 has no name",
+            "callstack mark out of range          | view \"s\": mark \"lit\" names 2, not a call position",
+    })
+    void aBrokenTreeListOrStackIsCaught(String breakage, String expected) throws Exception {
+        ObjectNode walkthrough = recursionFixture();
+        ObjectNode views = (ObjectNode) walkthrough.get("runs").get(0).get("frames").get(1).get("views");
+        ObjectNode tree = (ObjectNode) views.get("t"), list = (ObjectNode) views.get("l"), stack = (ObjectNode) views.get("s");
+        switch (breakage) {
+            case "tree node with a second parent" -> ((ArrayNode) tree.get("edges")).addObject().put("from", 1).put("to", 2);
+            case "tree edge naming no node" -> ((ObjectNode) tree.get("edges").get(1)).put("to", 9);
+            case "tree edgeMarks naming no edge" -> ((ObjectNode) tree.get("edgeMarks")).putArray("lit").addArray().add(0).add(9);
+            case "linked list next not a node id" -> ((ObjectNode) list.get("next")).put("2", 9);
+            case "linked list pointer naming no node" -> ((ObjectNode) list.get("pointers")).put("p", 9);
+            case "linked list cut naming no node" -> list.putObject("cut").put("1", 9);
+            case "callstack calls not a list" -> stack.put("calls", "f(2)");
+            case "call with no name" -> ((ObjectNode) stack.get("calls").get(1)).remove("name");
+            case "callstack mark out of range" -> ((ObjectNode) stack.get("marks")).putArray("lit").add(2);
+            default -> throw new IllegalArgumentException(breakage);
+        }
+        assertCaught(walkthrough, samples(1), breakage, expected);
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @ValueSource(strings = {"samples", "moves", "table", "intervals", "set", "board", "graph", "span", "recursion"})
     void aFixtureUnbrokenPasses(String fixture) throws Exception {
         ObjectNode walkthrough = switch (fixture) {
             case "samples" -> samplesFixture();
@@ -560,6 +606,7 @@ class WalkthroughsMatchSamplesTest {
             case "board" -> boardFixture();
             case "graph" -> graphFixture();
             case "span" -> spanFixture();
+            case "recursion" -> recursionFixture();
             default -> throw new IllegalArgumentException(fixture);
         };
         assertEquals(List.of(), mismatches("fixture", walkthrough, samples(walkthrough.get("runs").size())));
@@ -648,6 +695,7 @@ class WalkthroughsMatchSamplesTest {
             "interval added                           | intervals | {'groups': [{'intervals': []}]} | {'groups': [{'intervals': [[0, 1]]}]}   | []                                 | intervals \"v\" at [0,0] now holds [0,1]",
             "tree child added with no move           | tree      | {'nodes': [{'id': 0, 'value': 'a'}], 'edges': []} | {'nodes': [{'id': 0, 'value': 'a'}, {'id': 1, 'value': 'b'}], 'edges': [{'from': 0, 'to': 1}]} | [] | tree \"v\" at [0,1] now holds null",
             "tree child added, only its edge moved into | tree    | {'nodes': [{'id': 0, 'value': 'a'}], 'edges': []} | {'nodes': [{'id': 0, 'value': 'a'}, {'id': 1, 'value': 'b'}], 'edges': [{'from': 0, 'to': 1}]} | [{'from': {'view': 'v', 'at': 0}, 'to': {'view': 'v', 'at': [0, 1]}}] | tree \"v\" at 1 now holds \"b\"",
+            "tree edge relabelled, a move into its child only | tree | {'nodes': [{'id': 0, 'value': 'a'}, {'id': 1, 'value': 'b'}], 'edges': [{'from': 0, 'to': 1, 'label': 'x'}]} | {'nodes': [{'id': 0, 'value': 'a'}, {'id': 1, 'value': 'b'}], 'edges': [{'from': 0, 'to': 1, 'label': 'y'}]} | [{'from': {'view': 'v', 'at': 0}, 'to': {'view': 'v', 'at': 1}}] | tree \"v\" at [0,1] now holds \"y\"",
             "call pushed with no move                 | callstack | {'calls': [{'name': 'f', 'args': {'n': 2}}]} | {'calls': [{'name': 'f', 'args': {'n': 2}}, {'name': 'f', 'args': {'n': 1}}]} | [] | callstack \"v\" at 1 now holds {\"n\":1}",
             "graph node value changed                 | graph     | {'nodes': [{'id': 'a'}, {'id': 'b'}], 'edges': [{'from': 'a', 'to': 'b'}]} | {'nodes': [{'id': 'a'}, {'id': 'b'}], 'edges': [{'from': 'a', 'to': 'b'}], 'values': {'b': 7}} | [] | graph \"v\" at b now holds 7",
     })
@@ -1536,7 +1584,7 @@ class WalkthroughsMatchSamplesTest {
                 }
                 p.addAll(marks(s.get("nodeMarks"), k -> ids.contains(k.asText()), "node id"));
                 p.addAll(marks(s.get("edgeMarks"), k -> k.isArray() && k.size() == 2
-                        && from(parent, k.get(1).asText()).equals(k.get(0).asText()), "[from, to] edge"));
+                        && parentOf(parent, k.get(1).asText()).equals(k.get(0).asText()), "[from, to] edge"));
                 for (JsonNode id : s.path("shade")) if (!ids.contains(id.asText())) p.add("shade names " + id + ", not a node id");
                 for (JsonNode tag : s.path("tags")) if (!ids.contains(tag.path(0).asText())) p.add("tag " + tag + " names no node");
                 yield p;
@@ -1601,7 +1649,7 @@ class WalkthroughsMatchSamplesTest {
     }
 
     /** The parent of {@code child} in a tree's child-to-parent map, or "" when it has none. */
-    private static String from(Map<String, String> parent, String child) {
+    private static String parentOf(Map<String, String> parent, String child) {
         return parent.getOrDefault(child, "");
     }
 
