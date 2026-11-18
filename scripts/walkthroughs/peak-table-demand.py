@@ -103,8 +103,8 @@ def solve(visits, run):
                   moves=[move(at("line", [0, i]), at("line", [1 + t, 0]))])
     k = len(leaving)
     if k == 1:
-        caption = {"en": "Every group is seated at table 1: each one arrived after the one before had left. Answer: 1.",
-                   "ko": "모든 팀이 테이블 1에 앉았습니다. 앞 팀이 떠난 뒤에 다음 팀이 왔기 때문입니다. 답은 1입니다."}
+        caption = {"en": "Every group is seated at table 1, since each one arrived after the one before had left. Answer: 1.",
+                   "ko": "앞 팀이 떠난 뒤에 다음 팀이 왔으므로 모든 팀이 테이블 1에 앉았습니다. 답은 1입니다."}
         points = []
     else:
         caption = {"en": f"Every group is seated, at {k} {plural(k, 'table', 'tables')}: from minute {peak_at}, all "

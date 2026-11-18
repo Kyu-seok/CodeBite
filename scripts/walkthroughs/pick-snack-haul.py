@@ -67,10 +67,10 @@ def solve(snacks, run):
         if skip_from == TAKE:
             moves.insert(0, move(at("best", TAKE), at("best", SKIP), value=str(old_take)))
         changed = [c for c, (a, b) in enumerate([(old_skip, skipped), (old_take, taken)]) if a != b]
-        frame({"en": f"Machine {i} has {haul}. Skip it: the larger of {old_skip} and {old_take}, {skipped}. "
-                     f"Take it: the skipped haul {old_skip} + {haul} = {taken}, since machine {i - 1} "
-                     f"must then be skipped." if i > 0 else
-                     f"Machine 0 has {haul}. Skip it: {skipped}. Take it: 0 + {haul} = {taken}.",
+        frame({"en": f"Machine {i} has {haul}: skipping it keeps the larger of {old_skip} and {old_take}, {skipped}. "
+                     f"Taking it adds {haul} to the skipped haul, {old_skip} + {haul} = {taken}, since machine "
+                     f"{i - 1} must then be skipped." if i > 0 else
+                     f"Machine 0 has {haul}: skipping it keeps {skipped}, and taking it gives 0 + {haul} = {taken}.",
                "ko": f"자판기 {i}에는 {haul}개가 있습니다. 건너뛰면 {josa(old_skip, '과와')} {old_take} 중 큰 값 {skipped}, "
                      f"고르면 자판기 {josa(i - 1, '을를')} 건너뛰어야 하므로 "
                      f"{old_skip} + {haul} = {taken}입니다." if i > 0 else

@@ -90,7 +90,7 @@
     },
     {
      "caption": {
-      "en": "Machine 0 has 4. Skip it: 0. Take it: 0 + 4 = 4.",
+      "en": "Machine 0 has 4: skipping it keeps 0, and taking it gives 0 + 4 = 4.",
       "ko": "자판기 0에는 4개가 있습니다. 건너뛰면 0, 고르면 0 + 4 = 4입니다."
      },
      "views": {
@@ -174,7 +174,7 @@
     },
     {
      "caption": {
-      "en": "Machine 1 has 1. Skip it: the larger of 0 and 4, 4. Take it: the skipped haul 0 + 1 = 1, since machine 0 must then be skipped.",
+      "en": "Machine 1 has 1: skipping it keeps the larger of 0 and 4, 4. Taking it adds 1 to the skipped haul, 0 + 1 = 1, since machine 0 must then be skipped.",
       "ko": "자판기 1에는 1개가 있습니다. 건너뛰면 0과 4 중 큰 값 4, 고르면 자판기 0을 건너뛰어야 하므로 0 + 1 = 1입니다."
      },
      "views": {
@@ -269,7 +269,7 @@
     },
     {
      "caption": {
-      "en": "Machine 2 has 1. Skip it: the larger of 4 and 1, 4. Take it: the skipped haul 4 + 1 = 5, since machine 1 must then be skipped.",
+      "en": "Machine 2 has 1: skipping it keeps the larger of 4 and 1, 4. Taking it adds 1 to the skipped haul, 4 + 1 = 5, since machine 1 must then be skipped.",
       "ko": "자판기 2에는 1개가 있습니다. 건너뛰면 4와 1 중 큰 값 4, 고르면 자판기 1을 건너뛰어야 하므로 4 + 1 = 5입니다."
      },
      "views": {
@@ -351,7 +351,7 @@
     },
     {
      "caption": {
-      "en": "Machine 3 has 9. Skip it: the larger of 4 and 5, 5. Take it: the skipped haul 4 + 9 = 13, since machine 2 must then be skipped.",
+      "en": "Machine 3 has 9: skipping it keeps the larger of 4 and 5, 5. Taking it adds 9 to the skipped haul, 4 + 9 = 13, since machine 2 must then be skipped.",
       "ko": "자판기 3에는 9개가 있습니다. 건너뛰면 4와 5 중 큰 값 5, 고르면 자판기 2를 건너뛰어야 하므로 4 + 9 = 13입니다."
      },
      "views": {
@@ -444,7 +444,7 @@
     },
     {
      "caption": {
-      "en": "Machine 4 has 1. Skip it: the larger of 5 and 13, 13. Take it: the skipped haul 5 + 1 = 6, since machine 3 must then be skipped.",
+      "en": "Machine 4 has 1: skipping it keeps the larger of 5 and 13, 13. Taking it adds 1 to the skipped haul, 5 + 1 = 6, since machine 3 must then be skipped.",
       "ko": "자판기 4에는 1개가 있습니다. 건너뛰면 5와 13 중 큰 값 13, 고르면 자판기 3을 건너뛰어야 하므로 5 + 1 = 6입니다."
      },
      "views": {
@@ -536,7 +536,7 @@
     },
     {
      "caption": {
-      "en": "Machine 5 has 3. Skip it: the larger of 13 and 6, 13. Take it: the skipped haul 13 + 3 = 16, since machine 4 must then be skipped.",
+      "en": "Machine 5 has 3: skipping it keeps the larger of 13 and 6, 13. Taking it adds 3 to the skipped haul, 13 + 3 = 16, since machine 4 must then be skipped.",
       "ko": "자판기 5에는 3개가 있습니다. 건너뛰면 13과 6 중 큰 값 13, 고르면 자판기 4를 건너뛰어야 하므로 13 + 3 = 16입니다."
      },
      "views": {
@@ -740,7 +740,7 @@
     },
     {
      "caption": {
-      "en": "Machine 0 has 5. Skip it: 0. Take it: 0 + 5 = 5.",
+      "en": "Machine 0 has 5: skipping it keeps 0, and taking it gives 0 + 5 = 5.",
       "ko": "자판기 0에는 5개가 있습니다. 건너뛰면 0, 고르면 0 + 5 = 5입니다."
      },
      "views": {
@@ -824,7 +824,7 @@
     },
     {
      "caption": {
-      "en": "Machine 1 has 5. Skip it: the larger of 0 and 5, 5. Take it: the skipped haul 0 + 5 = 5, since machine 0 must then be skipped.",
+      "en": "Machine 1 has 5: skipping it keeps the larger of 0 and 5, 5. Taking it adds 5 to the skipped haul, 0 + 5 = 5, since machine 0 must then be skipped.",
       "ko": "자판기 1에는 5개가 있습니다. 건너뛰면 0과 5 중 큰 값 5, 고르면 자판기 0을 건너뛰어야 하므로 0 + 5 = 5입니다."
      },
      "views": {
@@ -918,7 +918,7 @@
     },
     {
      "caption": {
-      "en": "Machine 2 has 10. Skip it: the larger of 5 and 5, 5. Take it: the skipped haul 5 + 10 = 15, since machine 1 must then be skipped.",
+      "en": "Machine 2 has 10: skipping it keeps the larger of 5 and 5, 5. Taking it adds 10 to the skipped haul, 5 + 10 = 15, since machine 1 must then be skipped.",
       "ko": "자판기 2에는 10개가 있습니다. 건너뛰면 5와 5 중 큰 값 5, 고르면 자판기 1을 건너뛰어야 하므로 5 + 10 = 15입니다."
      },
      "views": {
@@ -1000,7 +1000,7 @@
     },
     {
      "caption": {
-      "en": "Machine 3 has 100. Skip it: the larger of 5 and 15, 15. Take it: the skipped haul 5 + 100 = 105, since machine 2 must then be skipped.",
+      "en": "Machine 3 has 100: skipping it keeps the larger of 5 and 15, 15. Taking it adds 100 to the skipped haul, 5 + 100 = 105, since machine 2 must then be skipped.",
       "ko": "자판기 3에는 100개가 있습니다. 건너뛰면 5와 15 중 큰 값 15, 고르면 자판기 2를 건너뛰어야 하므로 5 + 100 = 105입니다."
      },
      "views": {
@@ -1093,7 +1093,7 @@
     },
     {
      "caption": {
-      "en": "Machine 4 has 10. Skip it: the larger of 15 and 105, 105. Take it: the skipped haul 15 + 10 = 25, since machine 3 must then be skipped.",
+      "en": "Machine 4 has 10: skipping it keeps the larger of 15 and 105, 105. Taking it adds 10 to the skipped haul, 15 + 10 = 25, since machine 3 must then be skipped.",
       "ko": "자판기 4에는 10개가 있습니다. 건너뛰면 15와 105 중 큰 값 105, 고르면 자판기 3을 건너뛰어야 하므로 15 + 10 = 25입니다."
      },
      "views": {
@@ -1185,7 +1185,7 @@
     },
     {
      "caption": {
-      "en": "Machine 5 has 5. Skip it: the larger of 105 and 25, 105. Take it: the skipped haul 105 + 5 = 110, since machine 4 must then be skipped.",
+      "en": "Machine 5 has 5: skipping it keeps the larger of 105 and 25, 105. Taking it adds 5 to the skipped haul, 105 + 5 = 110, since machine 4 must then be skipped.",
       "ko": "자판기 5에는 5개가 있습니다. 건너뛰면 105와 25 중 큰 값 105, 고르면 자판기 4를 건너뛰어야 하므로 105 + 5 = 110입니다."
      },
      "views": {
