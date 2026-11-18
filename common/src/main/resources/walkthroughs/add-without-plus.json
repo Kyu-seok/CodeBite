@@ -1,0 +1,1571 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Add Without the Plus Sign",
+  "ko": "더하기 없이 더하기"
+ },
+ "approach": {
+  "en": "a ^ b adds every column without carrying and (a & b) << 1 is the carries, one column left; add those carries the same way until there are none.",
+  "ko": "a ^ b는 올림 없이 자리마다 더한 값이고 (a & b) << 1은 한 칸 왼쪽으로 올라간 올림이므로, 올림이 없어질 때까지 같은 방법으로 더합니다."
+ },
+ "views": [
+  {
+   "id": "a",
+   "type": "array",
+   "title": {
+    "en": "a (tag: place value)",
+    "ko": "a (태그: 자릿값)"
+   }
+  },
+  {
+   "id": "b",
+   "type": "array",
+   "title": {
+    "en": "b (what is left to add)",
+    "ko": "b (더할 남은 값)"
+   }
+  },
+  {
+   "id": "carry",
+   "type": "array",
+   "title": {
+    "en": "carry = (a & b) << 1",
+    "ko": "carry = (a & b) << 1"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "firstCount = 12, secondCount = 9",
+   "expected": "21",
+   "frames": [
+    {
+     "caption": {
+      "en": "a = 12 and b = 9 as 6-bit two's complement: the top bit counts -32, and the 26 bits above it, left out here, copy it.",
+      "ko": "a = 12, b = 9를 6비트 2의 보수로 그렸습니다. 맨 위 비트는 -32를 뜻하고, 생략한 그 위 26비트는 맨 위 비트와 같습니다."
+     },
+     "views": {
+      "a": {
+       "values": [
+        0,
+        0,
+        1,
+        1,
+        0,
+        0
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 5,
+         "label": "a = 12"
+        }
+       },
+       "marks": {},
+       "tags": [
+        [
+         0,
+         "-32"
+        ],
+        [
+         1,
+         "16"
+        ],
+        [
+         2,
+         "8"
+        ],
+        [
+         3,
+         "4"
+        ],
+        [
+         4,
+         "2"
+        ],
+        [
+         5,
+         "1"
+        ]
+       ]
+      },
+      "b": {
+       "values": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        1
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 5,
+         "label": "b = 9"
+        }
+       },
+       "marks": {}
+      },
+      "carry": {
+       "values": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 5,
+         "label": "carry = 0"
+        }
+       },
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Column 8 holds a 1 in both a and b, so it carries a 1 one column left: carry = 16.",
+      "ko": "a와 b가 모두 1인 자리(8)마다 1이 한 칸 왼쪽으로 올라갑니다. carry = 16이 됩니다."
+     },
+     "views": {
+      "a": {
+       "values": [
+        0,
+        0,
+        1,
+        1,
+        0,
+        0
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 5,
+         "label": "a = 12"
+        }
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       },
+       "tags": [
+        [
+         0,
+         "-32"
+        ],
+        [
+         1,
+         "16"
+        ],
+        [
+         2,
+         "8"
+        ],
+        [
+         3,
+         "4"
+        ],
+        [
+         4,
+         "2"
+        ],
+        [
+         5,
+         "1"
+        ]
+       ]
+      },
+      "b": {
+       "values": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        1
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 5,
+         "label": "b = 9"
+        }
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "carry": {
+       "values": [
+        0,
+        1,
+        0,
+        0,
+        0,
+        0
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 5,
+         "label": "carry = 16"
+        }
+       },
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "a",
+        "at": 2
+       },
+       "to": {
+        "view": "carry",
+        "at": 1
+       },
+       "value": "1&1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "a = a ^ b = 12 ^ 9 = 5: each 1 in b flips a's bit in its column (8, 1).",
+      "ko": "a = a ^ b = 12 ^ 9 = 5가 됩니다. b에 1이 있는 자리(8, 1)마다 a의 비트가 뒤집힙니다."
+     },
+     "views": {
+      "a": {
+       "values": [
+        0,
+        0,
+        0,
+        1,
+        0,
+        1
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 5,
+         "label": "a = 5"
+        }
+       },
+       "marks": {
+        "good": [
+         2,
+         5
+        ]
+       },
+       "tags": [
+        [
+         0,
+         "-32"
+        ],
+        [
+         1,
+         "16"
+        ],
+        [
+         2,
+         "8"
+        ],
+        [
+         3,
+         "4"
+        ],
+        [
+         4,
+         "2"
+        ],
+        [
+         5,
+         "1"
+        ]
+       ]
+      },
+      "b": {
+       "values": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        1
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 5,
+         "label": "b = 9"
+        }
+       },
+       "marks": {
+        "lit": [
+         2,
+         5
+        ]
+       }
+      },
+      "carry": {
+       "values": [
+        0,
+        1,
+        0,
+        0,
+        0,
+        0
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 5,
+         "label": "carry = 16"
+        }
+       },
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "b",
+        "at": 2
+       },
+       "to": {
+        "view": "a",
+        "at": 2
+       },
+       "value": "^1"
+      },
+      {
+       "from": {
+        "view": "b",
+        "at": 5
+       },
+       "to": {
+        "view": "a",
+        "at": 5
+       },
+       "value": "^1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "b = carry = 16: the carries still have to be added, so the loop goes on.",
+      "ko": "b = carry = 16이므로 아직 더할 올림이 남아 반복을 계속합니다."
+     },
+     "views": {
+      "a": {
+       "values": [
+        0,
+        0,
+        0,
+        1,
+        0,
+        1
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 5,
+         "label": "a = 5"
+        }
+       },
+       "marks": {},
+       "tags": [
+        [
+         0,
+         "-32"
+        ],
+        [
+         1,
+         "16"
+        ],
+        [
+         2,
+         "8"
+        ],
+        [
+         3,
+         "4"
+        ],
+        [
+         4,
+         "2"
+        ],
+        [
+         5,
+         "1"
+        ]
+       ]
+      },
+      "b": {
+       "values": [
+        0,
+        1,
+        0,
+        0,
+        0,
+        0
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 5,
+         "label": "b = 16"
+        }
+       },
+       "marks": {
+        "good": [
+         1,
+         2,
+         5
+        ]
+       }
+      },
+      "carry": {
+       "values": [
+        0,
+        1,
+        0,
+        0,
+        0,
+        0
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 5,
+         "label": "carry = 16"
+        }
+       },
+       "marks": {
+        "lit": [
+         1,
+         2,
+         5
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "carry",
+        "at": 1
+       },
+       "to": {
+        "view": "b",
+        "at": 1
+       }
+      },
+      {
+       "from": {
+        "view": "carry",
+        "at": 2
+       },
+       "to": {
+        "view": "b",
+        "at": 2
+       }
+      },
+      {
+       "from": {
+        "view": "carry",
+        "at": 5
+       },
+       "to": {
+        "view": "b",
+        "at": 5
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "No column holds a 1 in both a and b, so nothing carries: carry = 0.",
+      "ko": "a와 b가 모두 1인 자리가 없어 올림이 없습니다. carry = 0이 됩니다."
+     },
+     "views": {
+      "a": {
+       "values": [
+        0,
+        0,
+        0,
+        1,
+        0,
+        1
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 5,
+         "label": "a = 5"
+        }
+       },
+       "marks": {
+        "lit": []
+       },
+       "tags": [
+        [
+         0,
+         "-32"
+        ],
+        [
+         1,
+         "16"
+        ],
+        [
+         2,
+         "8"
+        ],
+        [
+         3,
+         "4"
+        ],
+        [
+         4,
+         "2"
+        ],
+        [
+         5,
+         "1"
+        ]
+       ]
+      },
+      "b": {
+       "values": [
+        0,
+        1,
+        0,
+        0,
+        0,
+        0
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 5,
+         "label": "b = 16"
+        }
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "carry": {
+       "values": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 5,
+         "label": "carry = 0"
+        }
+       },
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "a",
+        "at": 2
+       },
+       "to": {
+        "view": "carry",
+        "at": 1
+       },
+       "value": "0&0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "a = a ^ b = 5 ^ 16 = 21: each 1 in b flips a's bit in its column (16).",
+      "ko": "a = a ^ b = 5 ^ 16 = 21이 됩니다. b에 1이 있는 자리(16)마다 a의 비트가 뒤집힙니다."
+     },
+     "views": {
+      "a": {
+       "values": [
+        0,
+        1,
+        0,
+        1,
+        0,
+        1
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 5,
+         "label": "a = 21"
+        }
+       },
+       "marks": {
+        "good": [
+         1
+        ]
+       },
+       "tags": [
+        [
+         0,
+         "-32"
+        ],
+        [
+         1,
+         "16"
+        ],
+        [
+         2,
+         "8"
+        ],
+        [
+         3,
+         "4"
+        ],
+        [
+         4,
+         "2"
+        ],
+        [
+         5,
+         "1"
+        ]
+       ]
+      },
+      "b": {
+       "values": [
+        0,
+        1,
+        0,
+        0,
+        0,
+        0
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 5,
+         "label": "b = 16"
+        }
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "carry": {
+       "values": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 5,
+         "label": "carry = 0"
+        }
+       },
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "b",
+        "at": 1
+       },
+       "to": {
+        "view": "a",
+        "at": 1
+       },
+       "value": "^1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "b = carry = 0: nothing is left to add, so the loop stops.",
+      "ko": "b = carry = 0이므로 더할 것이 없어 반복을 멈춥니다."
+     },
+     "views": {
+      "a": {
+       "values": [
+        0,
+        1,
+        0,
+        1,
+        0,
+        1
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 5,
+         "label": "a = 21"
+        }
+       },
+       "marks": {},
+       "tags": [
+        [
+         0,
+         "-32"
+        ],
+        [
+         1,
+         "16"
+        ],
+        [
+         2,
+         "8"
+        ],
+        [
+         3,
+         "4"
+        ],
+        [
+         4,
+         "2"
+        ],
+        [
+         5,
+         "1"
+        ]
+       ]
+      },
+      "b": {
+       "values": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 5,
+         "label": "b = 0"
+        }
+       },
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "carry": {
+       "values": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 5,
+         "label": "carry = 0"
+        }
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "carry",
+        "at": 1
+       },
+       "to": {
+        "view": "b",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "b is 0, so a holds the whole sum: answer 21.",
+      "ko": "b가 0이라 a가 합 전체입니다. 답은 21입니다."
+     },
+     "views": {
+      "a": {
+       "values": [
+        0,
+        1,
+        0,
+        1,
+        0,
+        1
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 5,
+         "label": "a = 21",
+         "mark": "path"
+        }
+       },
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       },
+       "tags": [
+        [
+         0,
+         "-32"
+        ],
+        [
+         1,
+         "16"
+        ],
+        [
+         2,
+         "8"
+        ],
+        [
+         3,
+         "4"
+        ],
+        [
+         4,
+         "2"
+        ],
+        [
+         5,
+         "1"
+        ]
+       ]
+      },
+      "b": {
+       "values": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 5,
+         "label": "b = 0"
+        }
+       },
+       "marks": {}
+      },
+      "carry": {
+       "values": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 5,
+         "label": "carry = 0"
+        }
+       },
+       "marks": {}
+      }
+     },
+     "answer": "21"
+    }
+   ],
+   "sampleInput": "12\n9"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "firstCount = -15, secondCount = 4",
+   "expected": "-11",
+   "frames": [
+    {
+     "caption": {
+      "en": "a = -15 and b = 4 as 5-bit two's complement: the top bit counts -16, and the 27 bits above it, left out here, copy it.",
+      "ko": "a = -15, b = 4를 5비트 2의 보수로 그렸습니다. 맨 위 비트는 -16을 뜻하고, 생략한 그 위 27비트는 맨 위 비트와 같습니다."
+     },
+     "views": {
+      "a": {
+       "values": [
+        1,
+        0,
+        0,
+        0,
+        1
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 4,
+         "label": "a = -15"
+        }
+       },
+       "marks": {},
+       "tags": [
+        [
+         0,
+         "-16"
+        ],
+        [
+         1,
+         "8"
+        ],
+        [
+         2,
+         "4"
+        ],
+        [
+         3,
+         "2"
+        ],
+        [
+         4,
+         "1"
+        ]
+       ]
+      },
+      "b": {
+       "values": [
+        0,
+        0,
+        1,
+        0,
+        0
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 4,
+         "label": "b = 4"
+        }
+       },
+       "marks": {}
+      },
+      "carry": {
+       "values": [
+        0,
+        0,
+        0,
+        0,
+        0
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 4,
+         "label": "carry = 0"
+        }
+       },
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "No column holds a 1 in both a and b, so nothing carries: carry = 0.",
+      "ko": "a와 b가 모두 1인 자리가 없어 올림이 없습니다. carry = 0이 됩니다."
+     },
+     "views": {
+      "a": {
+       "values": [
+        1,
+        0,
+        0,
+        0,
+        1
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 4,
+         "label": "a = -15"
+        }
+       },
+       "marks": {
+        "lit": []
+       },
+       "tags": [
+        [
+         0,
+         "-16"
+        ],
+        [
+         1,
+         "8"
+        ],
+        [
+         2,
+         "4"
+        ],
+        [
+         3,
+         "2"
+        ],
+        [
+         4,
+         "1"
+        ]
+       ]
+      },
+      "b": {
+       "values": [
+        0,
+        0,
+        1,
+        0,
+        0
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 4,
+         "label": "b = 4"
+        }
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "carry": {
+       "values": [
+        0,
+        0,
+        0,
+        0,
+        0
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 4,
+         "label": "carry = 0"
+        }
+       },
+       "marks": {
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "a = a ^ b = -15 ^ 4 = -11: each 1 in b flips a's bit in its column (4).",
+      "ko": "a = a ^ b = -15 ^ 4 = -11이 됩니다. b에 1이 있는 자리(4)마다 a의 비트가 뒤집힙니다."
+     },
+     "views": {
+      "a": {
+       "values": [
+        1,
+        0,
+        1,
+        0,
+        1
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 4,
+         "label": "a = -11"
+        }
+       },
+       "marks": {
+        "good": [
+         2
+        ]
+       },
+       "tags": [
+        [
+         0,
+         "-16"
+        ],
+        [
+         1,
+         "8"
+        ],
+        [
+         2,
+         "4"
+        ],
+        [
+         3,
+         "2"
+        ],
+        [
+         4,
+         "1"
+        ]
+       ]
+      },
+      "b": {
+       "values": [
+        0,
+        0,
+        1,
+        0,
+        0
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 4,
+         "label": "b = 4"
+        }
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "carry": {
+       "values": [
+        0,
+        0,
+        0,
+        0,
+        0
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 4,
+         "label": "carry = 0"
+        }
+       },
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "b",
+        "at": 2
+       },
+       "to": {
+        "view": "a",
+        "at": 2
+       },
+       "value": "^1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "b = carry = 0: nothing is left to add, so the loop stops.",
+      "ko": "b = carry = 0이므로 더할 것이 없어 반복을 멈춥니다."
+     },
+     "views": {
+      "a": {
+       "values": [
+        1,
+        0,
+        1,
+        0,
+        1
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 4,
+         "label": "a = -11"
+        }
+       },
+       "marks": {},
+       "tags": [
+        [
+         0,
+         "-16"
+        ],
+        [
+         1,
+         "8"
+        ],
+        [
+         2,
+         "4"
+        ],
+        [
+         3,
+         "2"
+        ],
+        [
+         4,
+         "1"
+        ]
+       ]
+      },
+      "b": {
+       "values": [
+        0,
+        0,
+        0,
+        0,
+        0
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 4,
+         "label": "b = 0"
+        }
+       },
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      },
+      "carry": {
+       "values": [
+        0,
+        0,
+        0,
+        0,
+        0
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 4,
+         "label": "carry = 0"
+        }
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "carry",
+        "at": 2
+       },
+       "to": {
+        "view": "b",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "b is 0, so a holds the whole sum; its top bit is 1, so it is negative: answer -11.",
+      "ko": "b가 0이라 a가 합 전체이고, 맨 위 비트가 1이라 음수입니다. 답은 -11입니다."
+     },
+     "views": {
+      "a": {
+       "values": [
+        1,
+        0,
+        1,
+        0,
+        1
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 4,
+         "label": "a = -11",
+         "mark": "path"
+        }
+       },
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ]
+       },
+       "tags": [
+        [
+         0,
+         "-16"
+        ],
+        [
+         1,
+         "8"
+        ],
+        [
+         2,
+         "4"
+        ],
+        [
+         3,
+         "2"
+        ],
+        [
+         4,
+         "1"
+        ]
+       ]
+      },
+      "b": {
+       "values": [
+        0,
+        0,
+        0,
+        0,
+        0
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 4,
+         "label": "b = 0"
+        }
+       },
+       "marks": {}
+      },
+      "carry": {
+       "values": [
+        0,
+        0,
+        0,
+        0,
+        0
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 4,
+         "label": "carry = 0"
+        }
+       },
+       "marks": {}
+      }
+     },
+     "answer": "-11"
+    }
+   ],
+   "sampleInput": "-15\n4"
+  },
+  {
+   "label": {
+    "en": "Case 3",
+    "ko": "케이스 3"
+   },
+   "input": "firstCount = 0, secondCount = 0",
+   "expected": "0",
+   "frames": [
+    {
+     "caption": {
+      "en": "a = 0 and b = 0 as 4-bit two's complement: the top bit counts -8, and the 28 bits above it, left out here, copy it.",
+      "ko": "a = 0, b = 0을 4비트 2의 보수로 그렸습니다. 맨 위 비트는 -8을 뜻하고, 생략한 그 위 28비트는 맨 위 비트와 같습니다."
+     },
+     "views": {
+      "a": {
+       "values": [
+        0,
+        0,
+        0,
+        0
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 3,
+         "label": "a = 0"
+        }
+       },
+       "marks": {},
+       "tags": [
+        [
+         0,
+         "-8"
+        ],
+        [
+         1,
+         "4"
+        ],
+        [
+         2,
+         "2"
+        ],
+        [
+         3,
+         "1"
+        ]
+       ]
+      },
+      "b": {
+       "values": [
+        0,
+        0,
+        0,
+        0
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 3,
+         "label": "b = 0"
+        }
+       },
+       "marks": {}
+      },
+      "carry": {
+       "values": [
+        0,
+        0,
+        0,
+        0
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 3,
+         "label": "carry = 0"
+        }
+       },
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "b is 0 from the start, so the loop never runs and a is already the sum: answer 0.",
+      "ko": "b가 처음부터 0이라 반복 없이 a가 바로 합입니다. 답은 0입니다."
+     },
+     "views": {
+      "a": {
+       "values": [
+        0,
+        0,
+        0,
+        0
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 3,
+         "label": "a = 0",
+         "mark": "path"
+        }
+       },
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3
+        ]
+       },
+       "tags": [
+        [
+         0,
+         "-8"
+        ],
+        [
+         1,
+         "4"
+        ],
+        [
+         2,
+         "2"
+        ],
+        [
+         3,
+         "1"
+        ]
+       ]
+      },
+      "b": {
+       "values": [
+        0,
+        0,
+        0,
+        0
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 3,
+         "label": "b = 0"
+        }
+       },
+       "marks": {}
+      },
+      "carry": {
+       "values": [
+        0,
+        0,
+        0,
+        0
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 3,
+         "label": "carry = 0"
+        }
+       },
+       "marks": {}
+      }
+     },
+     "answer": "0"
+    }
+   ],
+   "sampleInput": "0\n0"
+  }
+ ]
+}
