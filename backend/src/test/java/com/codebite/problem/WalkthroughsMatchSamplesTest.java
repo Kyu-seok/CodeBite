@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.IntUnaryOperator;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
@@ -789,8 +790,9 @@ class WalkthroughsMatchSamplesTest {
 
     /**
      * A Walkthrough for #273's second rule: an array {@code xs} holding a 9 at the frame's index, whose pointer
-     * {@code right} and span {@code best} grow by one each frame, a map {@code counts} whose key {@code y} counts up beside them by more than one (1, 3, 6, so a
-     * value a frame out of step is not also one off), and a {@code vars} view {@code state} for the items a test adds.
+     * {@code right} and span {@code best} grow by one each frame, a map {@code counts} whose key {@code y} counts up
+     * beside them by more than one (1, 3, 6, so a value a frame out of step is not also one off), and a {@code vars}
+     * view {@code state} for the items a test adds.
      * Its second run holds still, with no span and no 9: {@code right} at 0 and {@code y} at 4.
      */
     private static ObjectNode varsFixture() throws Exception {
@@ -819,6 +821,7 @@ class WalkthroughsMatchSamplesTest {
             "item a frame late                          | run 1 (Example 1): vars \"state\" item \"late\" repeats  | a value in map \"counts\", a frame late",
             "item a frame early                         | run 1 (Example 1): vars \"state\" item \"early\" repeats | a value in map \"counts\", a frame early",
             "item a pointer plus 1                      | run 1 (Example 1): vars \"state\" item \"r\" repeats     | pointer \"right\" of array \"xs\", plus 1",
+            "item a pointer minus 1                     | run 1 (Example 1): vars \"state\" item \"l\" repeats     | pointer \"right\" of array \"xs\", minus 1",
             "item a span's exclusive length             | run 1 (Example 1): vars \"state\" item \"width\" repeats | span \"best\"'s exclusive length on array \"xs\"",
             "item a list in another order               | run 1 (Example 1): vars \"state\" item \"sorted\" repeats | the values of array \"xs\", in another order",
     })
@@ -841,6 +844,8 @@ class WalkthroughsMatchSamplesTest {
             case "item a frame early" -> addItem(walkthrough, "early", s -> inFirstRun(s, f -> triangle(f + 2)), null);
             // a 1-based position beside the 0-based pointer
             case "item a pointer plus 1" -> addItem(walkthrough, "r", s -> inFirstRun(s, f -> f + 1), null);
+            // also right a frame late, named as the one-off form instead
+            case "item a pointer minus 1" -> addItem(walkthrough, "l", s -> inFirstRun(s, f -> f - 1), null);
             // best runs 0 to f: f - 0, which is also where right points
             case "item a span's exclusive length" -> addItem(walkthrough, "width", s -> inFirstRun(s, f -> f), null);
             case "item a list in another order" -> addItem(walkthrough, "sorted", s -> {
@@ -863,7 +868,7 @@ class WalkthroughsMatchSamplesTest {
     }
 
     /** In the fixture's first run (the one with a span), {@code value} of the frame's index; nothing in the second. */
-    private static JsonNode inFirstRun(JsonNode states, java.util.function.IntUnaryOperator value) {
+    private static JsonNode inFirstRun(JsonNode states, IntUnaryOperator value) {
         if (!states.path("xs").path("spans").has("best")) return null;
         return JSON.getNodeFactory().numberNode(value.applyAsInt(states.path("xs").path("pointers").path("right").asInt()));
     }
@@ -925,10 +930,10 @@ class WalkthroughsMatchSamplesTest {
         }
     }
 
-    /** A frame drawing a {@code vars} item: its index in the run, the item's value there, and its {@link #inOrder} when it is a list. */
-    private record Sighting(int frame, String value, String inOrder) {
+    /** A frame drawing a {@code vars} item: its index in the run, the item's value there, and its {@link #sorted} when it is a list. */
+    private record Sighting(int frame, String value, String sorted) {
         boolean in(Set<String> drawn) {
-            return drawn.contains(value) || inOrder != null && drawn.contains(inOrder);
+            return drawn.contains(value) || sorted != null && drawn.contains(sorted);
         }
     }
 
@@ -947,16 +952,19 @@ class WalkthroughsMatchSamplesTest {
         }
     }
 
+    /** What names a whole list drawn on the data in another order, after what draws it. */
+    private static final String IN_ANOTHER_ORDER = ", in another order";
+
     /** How an item's frame lines up with the frame of the data it is compared with: the same, the one before, the one after. */
     private enum Shift {
         NONE(0, ""), LATE(-1, ", a frame late"), EARLY(1, ", a frame early");
 
         final int offset;
-        final String named;
+        final String suffix;
 
-        Shift(int offset, String named) {
+        Shift(int offset, String suffix) {
             this.offset = offset;
-            this.named = named;
+            this.suffix = suffix;
         }
     }
 
@@ -987,7 +995,7 @@ class WalkthroughsMatchSamplesTest {
                     String name = "vars \"" + var.getKey() + "\" item \"" + plain(var.getValue().get("label")) + "\"";
                     Item item = items.computeIfAbsent(name, k -> new Item());
                     item.byRun.computeIfAbsent(r, k -> new ArrayList<>()).add(new Sighting(frames.size(), value(var.getValue().get("value")),
-                            var.getValue().path("value").isArray() ? inOrder(var.getValue().get("value")) : null));
+                            var.getValue().path("value").isArray() ? sorted(var.getValue().get("value")) : null));
                     item.why |= var.getValue().hasNonNull("why");
                 }
                 frames.add(drawn);
@@ -1019,7 +1027,9 @@ class WalkthroughsMatchSamplesTest {
         List<String> repeats = follows(frames, drawn, Drawn::asDrawn, Shift.NONE);
         for (String derived : follows(frames, drawn, Drawn::derived, Shift.NONE)) {
             // a list in another order is named only when the item isn't the list in the same order
-            if (repeats.stream().noneMatch(r -> derived.startsWith(r + ", "))) repeats.add(derived);
+            boolean inSameOrder = derived.endsWith(IN_ANOTHER_ORDER)
+                    && repeats.contains(derived.substring(0, derived.length() - IN_ANOTHER_ORDER.length()));
+            if (!inSameOrder) repeats.add(derived);
         }
         if (!repeats.isEmpty()) return repeats;
         repeats.addAll(follows(frames, drawn, Drawn::asDrawn, Shift.LATE));
@@ -1042,7 +1052,7 @@ class WalkthroughsMatchSamplesTest {
                 both++;
                 every &= sighting.in(there);
             }
-            if (every && both >= 2) follows.add(source + shift.named);
+            if (every && both >= 2) follows.add(source + shift.suffix);
         }
         return follows;
     }
@@ -1064,7 +1074,7 @@ class WalkthroughsMatchSamplesTest {
         }
         if (ADDRESSES.indexed(type)) {
             drawn.put("the values of " + of, Set.of(value(state.path("values"))));
-            derived.put("the values of " + of + ", in another order", Set.of(inOrder(state.path("values"))));
+            derived.put("the values of " + of + IN_ANOTHER_ORDER, Set.of(sorted(state.path("values"))));
         }
         state.path("pointers").fields().forEachRemaining(p -> {
             if (p.getValue().isNull()) return;
@@ -1077,11 +1087,12 @@ class WalkthroughsMatchSamplesTest {
             if (span.isNull()) return;
             String name = "span \"" + named.getKey() + "\"'s ";
             int from = span.path("from").asInt(), to = span.path("to").asInt();
-            drawn.put(name + "start on " + of, Set.of(String.valueOf(from)));
-            drawn.put(name + "end on " + of, Set.of(String.valueOf(to)));
+            String start = name + "start on " + of, end = name + "end on " + of;
+            drawn.put(start, Set.of(String.valueOf(from)));
+            drawn.put(end, Set.of(String.valueOf(to)));
             drawn.put(name + "length on " + of, Set.of(String.valueOf(to - from + 1)));
-            oneOff(name + "start on " + of, from, derived);
-            oneOff(name + "end on " + of, to, derived);
+            oneOff(start, from, derived);
+            oneOff(end, to, derived);
             derived.put(name + "exclusive length on " + of, Set.of(String.valueOf(to - from)));
         });
         if (state.path("under").isArray() && !state.path("under").isEmpty()) {
@@ -1098,11 +1109,11 @@ class WalkthroughsMatchSamplesTest {
     }
 
     /** A list's values (each by {@link #value}) sorted, so two lists holding the same values in any order have the same one. */
-    private static String inOrder(JsonNode list) {
+    private static String sorted(JsonNode list) {
         List<String> values = new ArrayList<>();
         list.forEach(v -> values.add(value(v)));
         values.sort(null);
-        return "in order: " + values;
+        return "sorted: " + values;
     }
 
     /** A value as the drawing shows it: a string or a number by its text, anything else as JSON. */
