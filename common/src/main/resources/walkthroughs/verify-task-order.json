@@ -1,0 +1,1729 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Verify Task Order",
+  "ko": "작업 순서 검증"
+ },
+ "approach": {
+  "en": "Count what each task waits for; a task waiting for nothing is ready, and finishing it lowers the count of every task that needs it. Every task gets finished exactly when no cycle holds some of them waiting.",
+  "ko": "작업마다 기다리는 선행 작업 수를 셉니다. 기다리는 것이 없는 작업은 준비된 것이고, 그 작업을 끝내면 그것이 필요한 작업들의 수가 줄어듭니다. 순환이 없을 때만 모든 작업이 끝납니다."
+ },
+ "views": [
+  {
+   "id": "tasks",
+   "type": "graph",
+   "directed": true,
+   "title": {
+    "en": "tasks (arrow: needs; under: waiting for)",
+    "ko": "작업 (화살표: 필요함, 아래: 기다리는 수)"
+   }
+  },
+  {
+   "id": "ready",
+   "type": "queue",
+   "title": {
+    "en": "ready",
+    "ko": "ready (준비된 작업)"
+   },
+   "empty": {
+    "en": "empty",
+    "ko": "비어 있음"
+   }
+  },
+  {
+   "id": "done",
+   "type": "output",
+   "title": {
+    "en": "finished, in order",
+    "ko": "끝낸 작업 (순서대로)"
+   },
+   "empty": {
+    "en": "none yet",
+    "ko": "아직 없음"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "numTasks = 4, prereqs = [[1,0],[2,0],[3,1]]",
+   "expected": "true",
+   "frames": [
+    {
+     "caption": {
+      "en": "4 tasks and 3 prerequisites: an arrow a → b means task a needs b finished first. First count what each task waits for.",
+      "ko": "작업 4개와 선행 조건 3개이며, 화살표 a → b는 작업 a가 b를 먼저 끝내야 한다는 뜻입니다. 먼저 작업마다 기다리는 수를 셉니다."
+     },
+     "views": {
+      "tasks": {
+       "nodes": [
+        {
+         "id": 1
+        },
+        {
+         "id": 0
+        },
+        {
+         "id": 2
+        },
+        {
+         "id": 3
+        }
+       ],
+       "values": {
+        "0": 0,
+        "1": 0,
+        "2": 0,
+        "3": 0
+       },
+       "nodeMarks": {
+        "dim": [],
+        "path": [],
+        "bad": [],
+        "good": [],
+        "lit": []
+       },
+       "edgeMarks": {
+        "bad": [],
+        "lit": []
+       }
+      },
+      "ready": {
+       "values": [],
+       "marks": {
+        "lit": [],
+        "good": []
+       }
+      },
+      "done": {
+       "values": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "[1,0]: task 1 needs 0, so it now waits for 1 task.",
+      "ko": "[1,0]: 작업 1이 0을 필요로 하므로 이제 1개를 기다립니다."
+     },
+     "views": {
+      "tasks": {
+       "nodes": [
+        {
+         "id": 1
+        },
+        {
+         "id": 0
+        },
+        {
+         "id": 2
+        },
+        {
+         "id": 3
+        }
+       ],
+       "values": {
+        "0": 0,
+        "1": 1,
+        "2": 0,
+        "3": 0
+       },
+       "nodeMarks": {
+        "dim": [],
+        "path": [],
+        "bad": [],
+        "good": [
+         1
+        ],
+        "lit": []
+       },
+       "edgeMarks": {
+        "bad": [],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "ready": {
+       "values": [],
+       "marks": {
+        "lit": [],
+        "good": []
+       }
+      },
+      "done": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tasks",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "to": {
+        "view": "tasks",
+        "at": 1
+       },
+       "value": "+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "[2,0]: task 2 needs 0, so it now waits for 1 task.",
+      "ko": "[2,0]: 작업 2가 0을 필요로 하므로 이제 1개를 기다립니다."
+     },
+     "views": {
+      "tasks": {
+       "nodes": [
+        {
+         "id": 1
+        },
+        {
+         "id": 0
+        },
+        {
+         "id": 2
+        },
+        {
+         "id": 3
+        }
+       ],
+       "values": {
+        "0": 0,
+        "1": 1,
+        "2": 1,
+        "3": 0
+       },
+       "nodeMarks": {
+        "dim": [],
+        "path": [],
+        "bad": [],
+        "good": [
+         2
+        ],
+        "lit": []
+       },
+       "edgeMarks": {
+        "bad": [],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "ready": {
+       "values": [],
+       "marks": {
+        "lit": [],
+        "good": []
+       }
+      },
+      "done": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tasks",
+        "at": [
+         2,
+         0
+        ]
+       },
+       "to": {
+        "view": "tasks",
+        "at": 2
+       },
+       "value": "+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "[3,1]: task 3 needs 1, so it now waits for 1 task.",
+      "ko": "[3,1]: 작업 3이 1을 필요로 하므로 이제 1개를 기다립니다."
+     },
+     "views": {
+      "tasks": {
+       "nodes": [
+        {
+         "id": 1
+        },
+        {
+         "id": 0
+        },
+        {
+         "id": 2
+        },
+        {
+         "id": 3
+        }
+       ],
+       "values": {
+        "0": 0,
+        "1": 1,
+        "2": 1,
+        "3": 1
+       },
+       "nodeMarks": {
+        "dim": [],
+        "path": [],
+        "bad": [],
+        "good": [
+         3
+        ],
+        "lit": []
+       },
+       "edgeMarks": {
+        "bad": [],
+        "lit": [
+         2
+        ]
+       }
+      },
+      "ready": {
+       "values": [],
+       "marks": {
+        "lit": [],
+        "good": []
+       }
+      },
+      "done": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tasks",
+        "at": [
+         3,
+         1
+        ]
+       },
+       "to": {
+        "view": "tasks",
+        "at": 3
+       },
+       "value": "+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Task 0 waits for nothing, so it joins the ready queue.",
+      "ko": "작업 0: 기다리는 것이 없으므로 준비 큐에 들어갑니다."
+     },
+     "views": {
+      "tasks": {
+       "nodes": [
+        {
+         "id": 1
+        },
+        {
+         "id": 0
+        },
+        {
+         "id": 2
+        },
+        {
+         "id": 3
+        }
+       ],
+       "values": {
+        "0": 0,
+        "1": 1,
+        "2": 1,
+        "3": 1
+       },
+       "nodeMarks": {
+        "dim": [],
+        "path": [],
+        "bad": [],
+        "good": [],
+        "lit": []
+       },
+       "edgeMarks": {
+        "bad": [],
+        "lit": []
+       }
+      },
+      "ready": {
+       "values": [
+        0
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         0
+        ]
+       }
+      },
+      "done": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tasks",
+        "at": 0
+       },
+       "to": {
+        "view": "ready",
+        "at": 0
+       },
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Take task 0 from the front of ready and finish it: 1 of 4 done.",
+      "ko": "ready 앞에서 작업 0을 꺼내 끝냅니다: 4개 중 1개 완료."
+     },
+     "views": {
+      "tasks": {
+       "nodes": [
+        {
+         "id": 1
+        },
+        {
+         "id": 0,
+         "tag": {
+          "en": "#1",
+          "ko": "1번째"
+         }
+        },
+        {
+         "id": 2
+        },
+        {
+         "id": 3
+        }
+       ],
+       "values": {
+        "0": 0,
+        "1": 1,
+        "2": 1,
+        "3": 1
+       },
+       "nodeMarks": {
+        "dim": [
+         0
+        ],
+        "path": [],
+        "bad": [],
+        "good": [],
+        "lit": [
+         0
+        ]
+       },
+       "edgeMarks": {
+        "bad": [],
+        "lit": []
+       }
+      },
+      "ready": {
+       "values": [
+        0
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": []
+       }
+      },
+      "done": {
+       "values": [
+        0
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "ready",
+        "at": 0
+       },
+       "to": {
+        "view": "done",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Task 1 needed 0, so it waits for one fewer: 0 left. It can start now.",
+      "ko": "작업 1이 0을 필요로 했으므로 기다리는 수가 하나 줄어 0개입니다. 이제 시작할 수 있습니다."
+     },
+     "views": {
+      "tasks": {
+       "nodes": [
+        {
+         "id": 1
+        },
+        {
+         "id": 0,
+         "tag": {
+          "en": "#1",
+          "ko": "1번째"
+         }
+        },
+        {
+         "id": 2
+        },
+        {
+         "id": 3
+        }
+       ],
+       "values": {
+        "0": 0,
+        "1": 0,
+        "2": 1,
+        "3": 1
+       },
+       "nodeMarks": {
+        "dim": [
+         0
+        ],
+        "path": [],
+        "bad": [],
+        "good": [
+         1
+        ],
+        "lit": []
+       },
+       "edgeMarks": {
+        "bad": [],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "ready": {
+       "values": [],
+       "marks": {
+        "lit": [],
+        "good": []
+       }
+      },
+      "done": {
+       "values": [
+        0
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tasks",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "to": {
+        "view": "tasks",
+        "at": 1
+       },
+       "value": "−1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Task 1 waits for nothing now: it joins the back of ready.",
+      "ko": "작업 1은 이제 기다리는 것이 없어 ready 뒤에 들어갑니다."
+     },
+     "views": {
+      "tasks": {
+       "nodes": [
+        {
+         "id": 1
+        },
+        {
+         "id": 0,
+         "tag": {
+          "en": "#1",
+          "ko": "1번째"
+         }
+        },
+        {
+         "id": 2
+        },
+        {
+         "id": 3
+        }
+       ],
+       "values": {
+        "0": 0,
+        "1": 0,
+        "2": 1,
+        "3": 1
+       },
+       "nodeMarks": {
+        "dim": [
+         0
+        ],
+        "path": [],
+        "bad": [],
+        "good": [],
+        "lit": []
+       },
+       "edgeMarks": {
+        "bad": [],
+        "lit": []
+       }
+      },
+      "ready": {
+       "values": [
+        1
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         0
+        ]
+       }
+      },
+      "done": {
+       "values": [
+        0
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tasks",
+        "at": 1
+       },
+       "to": {
+        "view": "ready",
+        "at": 0
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Task 2 needed 0, so it waits for one fewer: 0 left. It can start now.",
+      "ko": "작업 2가 0을 필요로 했으므로 기다리는 수가 하나 줄어 0개입니다. 이제 시작할 수 있습니다."
+     },
+     "views": {
+      "tasks": {
+       "nodes": [
+        {
+         "id": 1
+        },
+        {
+         "id": 0,
+         "tag": {
+          "en": "#1",
+          "ko": "1번째"
+         }
+        },
+        {
+         "id": 2
+        },
+        {
+         "id": 3
+        }
+       ],
+       "values": {
+        "0": 0,
+        "1": 0,
+        "2": 0,
+        "3": 1
+       },
+       "nodeMarks": {
+        "dim": [
+         0
+        ],
+        "path": [],
+        "bad": [],
+        "good": [
+         2
+        ],
+        "lit": []
+       },
+       "edgeMarks": {
+        "bad": [],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "ready": {
+       "values": [
+        1
+       ],
+       "marks": {
+        "lit": [],
+        "good": []
+       }
+      },
+      "done": {
+       "values": [
+        0
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tasks",
+        "at": [
+         2,
+         0
+        ]
+       },
+       "to": {
+        "view": "tasks",
+        "at": 2
+       },
+       "value": "−1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Task 2 waits for nothing now: it joins the back of ready.",
+      "ko": "작업 2는 이제 기다리는 것이 없어 ready 뒤에 들어갑니다."
+     },
+     "views": {
+      "tasks": {
+       "nodes": [
+        {
+         "id": 1
+        },
+        {
+         "id": 0,
+         "tag": {
+          "en": "#1",
+          "ko": "1번째"
+         }
+        },
+        {
+         "id": 2
+        },
+        {
+         "id": 3
+        }
+       ],
+       "values": {
+        "0": 0,
+        "1": 0,
+        "2": 0,
+        "3": 1
+       },
+       "nodeMarks": {
+        "dim": [
+         0
+        ],
+        "path": [],
+        "bad": [],
+        "good": [],
+        "lit": []
+       },
+       "edgeMarks": {
+        "bad": [],
+        "lit": []
+       }
+      },
+      "ready": {
+       "values": [
+        1,
+        2
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         1
+        ]
+       }
+      },
+      "done": {
+       "values": [
+        0
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tasks",
+        "at": 2
+       },
+       "to": {
+        "view": "ready",
+        "at": 1
+       },
+       "value": "2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Take task 1 from the front of ready and finish it: 2 of 4 done.",
+      "ko": "ready 앞에서 작업 1을 꺼내 끝냅니다: 4개 중 2개 완료."
+     },
+     "views": {
+      "tasks": {
+       "nodes": [
+        {
+         "id": 1,
+         "tag": {
+          "en": "#2",
+          "ko": "2번째"
+         }
+        },
+        {
+         "id": 0,
+         "tag": {
+          "en": "#1",
+          "ko": "1번째"
+         }
+        },
+        {
+         "id": 2
+        },
+        {
+         "id": 3
+        }
+       ],
+       "values": {
+        "0": 0,
+        "1": 0,
+        "2": 0,
+        "3": 1
+       },
+       "nodeMarks": {
+        "dim": [
+         0,
+         1
+        ],
+        "path": [],
+        "bad": [],
+        "good": [],
+        "lit": [
+         1
+        ]
+       },
+       "edgeMarks": {
+        "bad": [],
+        "lit": []
+       }
+      },
+      "ready": {
+       "values": [
+        1,
+        2
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": []
+       }
+      },
+      "done": {
+       "values": [
+        0,
+        1
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "ready",
+        "at": 0
+       },
+       "to": {
+        "view": "done",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Task 3 needed 1, so it waits for one fewer: 0 left. It can start now.",
+      "ko": "작업 3이 1을 필요로 했으므로 기다리는 수가 하나 줄어 0개입니다. 이제 시작할 수 있습니다."
+     },
+     "views": {
+      "tasks": {
+       "nodes": [
+        {
+         "id": 1,
+         "tag": {
+          "en": "#2",
+          "ko": "2번째"
+         }
+        },
+        {
+         "id": 0,
+         "tag": {
+          "en": "#1",
+          "ko": "1번째"
+         }
+        },
+        {
+         "id": 2
+        },
+        {
+         "id": 3
+        }
+       ],
+       "values": {
+        "0": 0,
+        "1": 0,
+        "2": 0,
+        "3": 0
+       },
+       "nodeMarks": {
+        "dim": [
+         0,
+         1
+        ],
+        "path": [],
+        "bad": [],
+        "good": [
+         3
+        ],
+        "lit": []
+       },
+       "edgeMarks": {
+        "bad": [],
+        "lit": [
+         2
+        ]
+       }
+      },
+      "ready": {
+       "values": [
+        2
+       ],
+       "marks": {
+        "lit": [],
+        "good": []
+       }
+      },
+      "done": {
+       "values": [
+        0,
+        1
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tasks",
+        "at": [
+         3,
+         1
+        ]
+       },
+       "to": {
+        "view": "tasks",
+        "at": 3
+       },
+       "value": "−1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Task 3 waits for nothing now: it joins the back of ready.",
+      "ko": "작업 3은 이제 기다리는 것이 없어 ready 뒤에 들어갑니다."
+     },
+     "views": {
+      "tasks": {
+       "nodes": [
+        {
+         "id": 1,
+         "tag": {
+          "en": "#2",
+          "ko": "2번째"
+         }
+        },
+        {
+         "id": 0,
+         "tag": {
+          "en": "#1",
+          "ko": "1번째"
+         }
+        },
+        {
+         "id": 2
+        },
+        {
+         "id": 3
+        }
+       ],
+       "values": {
+        "0": 0,
+        "1": 0,
+        "2": 0,
+        "3": 0
+       },
+       "nodeMarks": {
+        "dim": [
+         0,
+         1
+        ],
+        "path": [],
+        "bad": [],
+        "good": [],
+        "lit": []
+       },
+       "edgeMarks": {
+        "bad": [],
+        "lit": []
+       }
+      },
+      "ready": {
+       "values": [
+        2,
+        3
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         1
+        ]
+       }
+      },
+      "done": {
+       "values": [
+        0,
+        1
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tasks",
+        "at": 3
+       },
+       "to": {
+        "view": "ready",
+        "at": 1
+       },
+       "value": "3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Take task 2 from the front of ready and finish it: 3 of 4 done.",
+      "ko": "ready 앞에서 작업 2를 꺼내 끝냅니다: 4개 중 3개 완료."
+     },
+     "views": {
+      "tasks": {
+       "nodes": [
+        {
+         "id": 1,
+         "tag": {
+          "en": "#2",
+          "ko": "2번째"
+         }
+        },
+        {
+         "id": 0,
+         "tag": {
+          "en": "#1",
+          "ko": "1번째"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "#3",
+          "ko": "3번째"
+         }
+        },
+        {
+         "id": 3
+        }
+       ],
+       "values": {
+        "0": 0,
+        "1": 0,
+        "2": 0,
+        "3": 0
+       },
+       "nodeMarks": {
+        "dim": [
+         0,
+         1,
+         2
+        ],
+        "path": [],
+        "bad": [],
+        "good": [],
+        "lit": [
+         2
+        ]
+       },
+       "edgeMarks": {
+        "bad": [],
+        "lit": []
+       }
+      },
+      "ready": {
+       "values": [
+        2,
+        3
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": []
+       }
+      },
+      "done": {
+       "values": [
+        0,
+        1,
+        2
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "ready",
+        "at": 0
+       },
+       "to": {
+        "view": "done",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Take task 3 from the front of ready and finish it: 4 of 4 done.",
+      "ko": "ready 앞에서 작업 3을 꺼내 끝냅니다: 4개 중 4개 완료."
+     },
+     "views": {
+      "tasks": {
+       "nodes": [
+        {
+         "id": 1,
+         "tag": {
+          "en": "#2",
+          "ko": "2번째"
+         }
+        },
+        {
+         "id": 0,
+         "tag": {
+          "en": "#1",
+          "ko": "1번째"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "#3",
+          "ko": "3번째"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "#4",
+          "ko": "4번째"
+         }
+        }
+       ],
+       "values": {
+        "0": 0,
+        "1": 0,
+        "2": 0,
+        "3": 0
+       },
+       "nodeMarks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3
+        ],
+        "path": [],
+        "bad": [],
+        "good": [],
+        "lit": [
+         3
+        ]
+       },
+       "edgeMarks": {
+        "bad": [],
+        "lit": []
+       }
+      },
+      "ready": {
+       "values": [
+        3
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": []
+       }
+      },
+      "done": {
+       "values": [
+        0,
+        1,
+        2,
+        3
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "ready",
+        "at": 0
+       },
+       "to": {
+        "view": "done",
+        "at": 3
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "ready is empty and all 4 tasks are finished, in the order 0 → 1 → 2 → 3: true.",
+      "ko": "ready가 비었고 작업 4개를 모두 0 → 1 → 2 → 3 순서로 끝냈습니다: true."
+     },
+     "views": {
+      "tasks": {
+       "nodes": [
+        {
+         "id": 1,
+         "tag": {
+          "en": "#2",
+          "ko": "2번째"
+         }
+        },
+        {
+         "id": 0,
+         "tag": {
+          "en": "#1",
+          "ko": "1번째"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "#3",
+          "ko": "3번째"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "#4",
+          "ko": "4번째"
+         }
+        }
+       ],
+       "values": {
+        "0": 0,
+        "1": 0,
+        "2": 0,
+        "3": 0
+       },
+       "nodeMarks": {
+        "dim": [],
+        "path": [
+         0,
+         1,
+         2,
+         3
+        ],
+        "bad": [],
+        "good": [],
+        "lit": []
+       },
+       "edgeMarks": {
+        "bad": [],
+        "lit": []
+       }
+      },
+      "ready": {
+       "values": [],
+       "marks": {
+        "lit": [],
+        "good": []
+       }
+      },
+      "done": {
+       "values": [
+        0,
+        1,
+        2,
+        3
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3
+        ]
+       }
+      }
+     },
+     "answer": "true"
+    }
+   ],
+   "setup": {
+    "tasks": {
+     "edges": [
+      {
+       "from": 1,
+       "to": 0
+      },
+      {
+       "from": 2,
+       "to": 0
+      },
+      {
+       "from": 3,
+       "to": 1
+      }
+     ]
+    }
+   },
+   "sampleInput": "4\n[[1,0],[2,0],[3,1]]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "numTasks = 3, prereqs = [[0,2],[2,1],[1,0]]",
+   "expected": "false",
+   "frames": [
+    {
+     "caption": {
+      "en": "3 tasks and 3 prerequisites: an arrow a → b means task a needs b finished first. First count what each task waits for.",
+      "ko": "작업 3개와 선행 조건 3개이며, 화살표 a → b는 작업 a가 b를 먼저 끝내야 한다는 뜻입니다. 먼저 작업마다 기다리는 수를 셉니다."
+     },
+     "views": {
+      "tasks": {
+       "nodes": [
+        {
+         "id": 0
+        },
+        {
+         "id": 2
+        },
+        {
+         "id": 1
+        }
+       ],
+       "values": {
+        "0": 0,
+        "1": 0,
+        "2": 0
+       },
+       "nodeMarks": {
+        "dim": [],
+        "path": [],
+        "bad": [],
+        "good": [],
+        "lit": []
+       },
+       "edgeMarks": {
+        "bad": [],
+        "lit": []
+       }
+      },
+      "ready": {
+       "values": [],
+       "marks": {
+        "lit": [],
+        "good": []
+       }
+      },
+      "done": {
+       "values": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "[0,2]: task 0 needs 2, so it now waits for 1 task.",
+      "ko": "[0,2]: 작업 0이 2를 필요로 하므로 이제 1개를 기다립니다."
+     },
+     "views": {
+      "tasks": {
+       "nodes": [
+        {
+         "id": 0
+        },
+        {
+         "id": 2
+        },
+        {
+         "id": 1
+        }
+       ],
+       "values": {
+        "0": 1,
+        "1": 0,
+        "2": 0
+       },
+       "nodeMarks": {
+        "dim": [],
+        "path": [],
+        "bad": [],
+        "good": [
+         0
+        ],
+        "lit": []
+       },
+       "edgeMarks": {
+        "bad": [],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "ready": {
+       "values": [],
+       "marks": {
+        "lit": [],
+        "good": []
+       }
+      },
+      "done": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tasks",
+        "at": [
+         0,
+         2
+        ]
+       },
+       "to": {
+        "view": "tasks",
+        "at": 0
+       },
+       "value": "+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "[2,1]: task 2 needs 1, so it now waits for 1 task.",
+      "ko": "[2,1]: 작업 2가 1을 필요로 하므로 이제 1개를 기다립니다."
+     },
+     "views": {
+      "tasks": {
+       "nodes": [
+        {
+         "id": 0
+        },
+        {
+         "id": 2
+        },
+        {
+         "id": 1
+        }
+       ],
+       "values": {
+        "0": 1,
+        "1": 0,
+        "2": 1
+       },
+       "nodeMarks": {
+        "dim": [],
+        "path": [],
+        "bad": [],
+        "good": [
+         2
+        ],
+        "lit": []
+       },
+       "edgeMarks": {
+        "bad": [],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "ready": {
+       "values": [],
+       "marks": {
+        "lit": [],
+        "good": []
+       }
+      },
+      "done": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tasks",
+        "at": [
+         2,
+         1
+        ]
+       },
+       "to": {
+        "view": "tasks",
+        "at": 2
+       },
+       "value": "+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "[1,0]: task 1 needs 0, so it now waits for 1 task.",
+      "ko": "[1,0]: 작업 1이 0을 필요로 하므로 이제 1개를 기다립니다."
+     },
+     "views": {
+      "tasks": {
+       "nodes": [
+        {
+         "id": 0
+        },
+        {
+         "id": 2
+        },
+        {
+         "id": 1
+        }
+       ],
+       "values": {
+        "0": 1,
+        "1": 1,
+        "2": 1
+       },
+       "nodeMarks": {
+        "dim": [],
+        "path": [],
+        "bad": [],
+        "good": [
+         1
+        ],
+        "lit": []
+       },
+       "edgeMarks": {
+        "bad": [],
+        "lit": [
+         2
+        ]
+       }
+      },
+      "ready": {
+       "values": [],
+       "marks": {
+        "lit": [],
+        "good": []
+       }
+      },
+      "done": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tasks",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "to": {
+        "view": "tasks",
+        "at": 1
+       },
+       "value": "+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every task waits for another, so nothing is ready to start.",
+      "ko": "모든 작업이 다른 작업을 기다리므로 시작할 수 있는 작업이 없습니다."
+     },
+     "views": {
+      "tasks": {
+       "nodes": [
+        {
+         "id": 0
+        },
+        {
+         "id": 2
+        },
+        {
+         "id": 1
+        }
+       ],
+       "values": {
+        "0": 1,
+        "1": 1,
+        "2": 1
+       },
+       "nodeMarks": {
+        "dim": [],
+        "path": [],
+        "bad": [
+         0,
+         1,
+         2
+        ],
+        "good": [],
+        "lit": []
+       },
+       "edgeMarks": {
+        "bad": [],
+        "lit": []
+       }
+      },
+      "ready": {
+       "values": [],
+       "marks": {
+        "lit": [],
+        "good": []
+       }
+      },
+      "done": {
+       "values": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "ready is empty with only 0 of 3 tasks finished: tasks 0, 1, 2 wait on each other in a cycle, so they can never start: false.",
+      "ko": "ready가 비었지만 작업 3개 중 0개만 끝났습니다. 작업 0, 1, 2: 서로를 순환으로 기다려 영영 시작할 수 없으므로 false입니다."
+     },
+     "views": {
+      "tasks": {
+       "nodes": [
+        {
+         "id": 0
+        },
+        {
+         "id": 2
+        },
+        {
+         "id": 1
+        }
+       ],
+       "values": {
+        "0": 1,
+        "1": 1,
+        "2": 1
+       },
+       "nodeMarks": {
+        "dim": [],
+        "path": [],
+        "bad": [
+         0,
+         1,
+         2
+        ],
+        "good": [],
+        "lit": []
+       },
+       "edgeMarks": {
+        "bad": [
+         0,
+         1,
+         2
+        ],
+        "lit": []
+       }
+      },
+      "ready": {
+       "values": [],
+       "marks": {
+        "lit": [],
+        "good": []
+       }
+      },
+      "done": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "answer": "false"
+    }
+   ],
+   "setup": {
+    "tasks": {
+     "edges": [
+      {
+       "from": 0,
+       "to": 2
+      },
+      {
+       "from": 2,
+       "to": 1
+      },
+      {
+       "from": 1,
+       "to": 0
+      }
+     ]
+    }
+   },
+   "sampleInput": "3\n[[0,2],[2,1],[1,0]]"
+  }
+ ]
+}
