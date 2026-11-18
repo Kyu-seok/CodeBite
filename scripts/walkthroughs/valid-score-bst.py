@@ -16,7 +16,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import driver_list, josa, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import build_tree, driver_list, josa, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough, at, level_order_tree, move  # noqa: E402
 
 SLUG = "valid-score-bst"
@@ -32,27 +32,13 @@ wt = Walkthrough(
 )
 
 
-class TreeNode:
-    def __init__(self, id, val):
-        self.id, self.val, self.left, self.right = id, val, None, None
-
-
-def build(values):
-    """The tree as the solution sees it, each node carrying its level-order index (the tree view's id)."""
-    tree = level_order_tree(values)
-    nodes = {n["id"]: TreeNode(n["id"], n["value"]) for n in tree["nodes"]}
-    for e in tree["edges"]:
-        setattr(nodes[e["from"]], "right" if e["slot"] else "left", nodes[e["to"]])
-    return tree, nodes.get(0)
-
-
 def rng(low, high):
     return f"({'-∞' if low is None else low}, {'∞' if high is None else high})"
 
 
 def solve(values, run):
     """Solution.isValidBST with a frame per node checked. Returns the answer as the Driver prints it."""
-    tree, root = build(values)
+    tree, root = build_tree(values)
     tags, stack, done, failed = {}, [], [], []
 
     def frame(caption, lit=None, bad=None, moves=None, edge=None, **answer):

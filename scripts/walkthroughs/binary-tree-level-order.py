@@ -15,7 +15,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import driver_list, josa, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import build_tree, driver_list, josa, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough, at, level_order_tree, move  # noqa: E402
 
 SLUG = "binary-tree-level-order"
@@ -37,27 +37,13 @@ wt = Walkthrough(
 )
 
 
-class TreeNode:
-    def __init__(self, id, val):
-        self.id, self.val, self.left, self.right = id, val, None, None
-
-
-def build(values):
-    """The tree as the solution sees it, each node carrying its level-order index (the tree view's id)."""
-    tree = level_order_tree(values)
-    nodes = {n["id"]: TreeNode(n["id"], n["value"]) for n in tree["nodes"]}
-    for e in tree["edges"]:
-        setattr(nodes[e["from"]], "right" if e["slot"] else "left", nodes[e["to"]])
-    return tree, nodes.get(0)
-
-
 def depth_tag(d):
     return {"en": f"depth {d}", "ko": f"깊이 {d}"}
 
 
 def solve(values, run):
     """Solution.levelOrder with a frame per step. Returns the answer as the Driver prints it."""
-    tree, root = build(values)
+    tree, root = build_tree(values)
     levels = []
     queue = []      # (node, depth), front first: the level being read, then the next level as it grows
     leaving = None  # the front, drawn for the frame it leaves

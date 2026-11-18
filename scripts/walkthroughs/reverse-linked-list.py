@@ -14,7 +14,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import driver_list, josa, sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import ListNode, driver_list, josa, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough, at, linked_list, move, node_id  # noqa: E402
 
 SLUG = "reverse-linked-list"
@@ -32,11 +32,6 @@ wt = Walkthrough(
          "empty": {"en": "not read yet", "ko": "아직 없음"}},
     ],
 )
-
-
-class ListNode:
-    def __init__(self, val):
-        self.val, self.next = val, None
 
 
 def solve(values, run):
