@@ -1,9 +1,8 @@
 #!/usr/bin/env python3.12
 """valid-score-bst's Walkthrough: the reference solution (scripts/replay-solutions/valid-score-bst.py) checks every
-node against the open range (low, high) its ancestors leave it, the left child getting (low, value) and the right one
-(value, high). The reference keeps the pending nodes on an explicit stack (a tree may be 2 * 10^5 deep); the
-Walkthrough draws the same check as the depth-first recursion it stands for, left before right, with no drawing of
-its own (#359): the current call's node is lit on the input tree, the calls still open are shaded, and each visited
+node against the open range (low, high) its ancestors leave it, recursing depth-first, left before right, the left
+child getting (low, value) and the right one (value, high). The recursion walks the input tree, so it has no drawing
+of its own (#359): the current call's node is lit on the input tree, the calls still open are shaded, and each visited
 node is tagged with its range. One frame per node checked, on each sample Test Case.
 
     CODEBITE_DB=<database> scripts/walkthroughs/valid-score-bst.py
