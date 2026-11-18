@@ -1,0 +1,3915 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Queue From Stacks",
+  "ko": "스택으로 큐 만들기"
+ },
+ "approach": {
+  "en": "push goes onto inbox; pop and peek read outbox's top, and only when outbox is empty does all of inbox move over, which reverses it so the oldest order ends on top.",
+  "ko": "push는 inbox에 쌓고, pop과 peek은 outbox의 맨 위를 읽습니다. outbox가 비었을 때만 inbox 전체를 옮기며, 옮기면 순서가 뒤집혀 가장 오래된 주문이 맨 위에 옵니다."
+ },
+ "views": [
+  {
+   "id": "calls",
+   "type": "table",
+   "title": {
+    "en": "calls",
+    "ko": "호출"
+   }
+  },
+  {
+   "id": "inbox",
+   "type": "array",
+   "title": {
+    "en": "inbox (stack, top on the right)",
+    "ko": "inbox (스택, 오른쪽이 맨 위)"
+   },
+   "empty": {
+    "en": "empty",
+    "ko": "비어 있음"
+   }
+  },
+  {
+   "id": "outbox",
+   "type": "array",
+   "title": {
+    "en": "outbox (stack, top on the right)",
+    "ko": "outbox (스택, 오른쪽이 맨 위)"
+   },
+   "empty": {
+    "en": "empty",
+    "ko": "비어 있음"
+   }
+  },
+  {
+   "id": "result",
+   "type": "output",
+   "title": {
+    "en": "returned",
+    "ko": "반환값"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "[\"QueueFromStacks\",\"push\",\"push\",\"peek\",\"pop\",\"empty\"]\n[[],[1],[2],[],[],[]]",
+   "expected": "[null,null,null,1,1,false]",
+   "frames": [
+    {
+     "caption": {
+      "en": "QueueFromStacks() starts with two empty stacks, inbox and outbox, and returns null.",
+      "ko": "QueueFromStacks(): 빈 스택 inbox와 outbox 두 개로 시작하고 null을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "x",
+         "ko": "x"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "QueueFromStacks",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "peek",
+          ""
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "empty",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ]
+       }
+      },
+      "inbox": {
+       "values": [],
+       "marks": {}
+      },
+      "outbox": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "push(1): 1 goes on top of inbox, the back of the queue; push returns null.",
+      "ko": "push(1): 1을 큐의 뒤쪽인 inbox 맨 위에 넣고 null을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "x",
+         "ko": "x"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "QueueFromStacks",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "peek",
+          ""
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "empty",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "inbox": {
+       "values": [
+        1
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "outbox": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         1,
+         1
+        ]
+       },
+       "to": {
+        "view": "inbox",
+        "at": 0
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       },
+       "value": "null"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "push(2): 2 goes on top of inbox, the back of the queue; push returns null.",
+      "ko": "push(2): 2를 큐의 뒤쪽인 inbox 맨 위에 넣고 null을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "x",
+         "ko": "x"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "QueueFromStacks",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "peek",
+          ""
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "empty",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ]
+       }
+      },
+      "inbox": {
+       "values": [
+        1,
+        2
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "outbox": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         2,
+         1
+        ]
+       },
+       "to": {
+        "view": "inbox",
+        "at": 1
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         2,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       },
+       "value": "null"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "peek(): outbox is empty, so inbox's 2 values move over, top first: 2 goes first.",
+      "ko": "peek(): outbox가 비어 있어 inbox의 값 2개를 맨 위부터 옮깁니다. 먼저 2가 갑니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "x",
+         "ko": "x"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "QueueFromStacks",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "peek",
+          ""
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "empty",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      },
+      "inbox": {
+       "values": [
+        1,
+        2
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "outbox": {
+       "values": [
+        2
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "inbox",
+        "at": 1
+       },
+       "to": {
+        "view": "outbox",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "1 lands last, on top of outbox: the oldest order is now the first one out.",
+      "ko": "마지막으로 1이 outbox 맨 위에 놓여, 가장 오래된 주문이 가장 먼저 나갈 자리에 옵니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "x",
+         "ko": "x"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "QueueFromStacks",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "peek",
+          ""
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "empty",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      },
+      "inbox": {
+       "values": [
+        1
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "outbox": {
+       "values": [
+        2,
+        1
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "inbox",
+        "at": 0
+       },
+       "to": {
+        "view": "outbox",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "peek(): outbox's top, 1, is the front of the queue; it stays.",
+      "ko": "peek(): 큐의 맨 앞인 outbox 맨 위의 1을 반환하고 그대로 둡니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "x",
+         "ko": "x"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "QueueFromStacks",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "peek",
+          ""
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "empty",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      },
+      "inbox": {
+       "values": [],
+       "marks": {}
+      },
+      "outbox": {
+       "values": [
+        2,
+        1
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "1"
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "outbox",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "pop(): outbox isn't empty, so nothing moves over; it takes outbox's top, 1, the front of the queue, and returns it.",
+      "ko": "pop(): outbox가 비어 있지 않아 옮기지 않고 큐의 맨 앞인 outbox 맨 위의 1을 꺼내 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "x",
+         "ko": "x"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "QueueFromStacks",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "peek",
+          ""
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "empty",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ]
+       }
+      },
+      "inbox": {
+       "values": [],
+       "marks": {}
+      },
+      "outbox": {
+       "values": [
+        2,
+        1
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "1",
+        "1"
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "outbox",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 4
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "empty(): the stacks still hold 1 order, so it returns false.",
+      "ko": "empty(): 두 스택에 주문이 1개 남아 있으므로 false를 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "x",
+         "ko": "x"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "QueueFromStacks",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "peek",
+          ""
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "empty",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ]
+        ]
+       }
+      },
+      "inbox": {
+       "values": [],
+       "marks": {
+        "lit": []
+       }
+      },
+      "outbox": {
+       "values": [
+        2
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "1",
+        "1",
+        "false"
+       ],
+       "marks": {
+        "good": [
+         5
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         5,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 5
+       },
+       "value": "false"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every call is answered, in order: answer [null,null,null,1,1,false].",
+      "ko": "모든 호출의 반환값을 차례로 모았습니다. 답은 [null,null,null,1,1,false]입니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "x",
+         "ko": "x"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "QueueFromStacks",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "peek",
+          ""
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "empty",
+          ""
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "inbox": {
+       "values": [],
+       "marks": {}
+      },
+      "outbox": {
+       "values": [
+        2
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "1",
+        "1",
+        "false"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      }
+     },
+     "answer": "[null,null,null,1,1,false]"
+    }
+   ],
+   "sampleInput": "[\"QueueFromStacks\",\"push\",\"push\",\"peek\",\"pop\",\"empty\"]\n[[],[1],[2],[],[],[]]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "[\"QueueFromStacks\",\"push\",\"push\",\"push\",\"pop\",\"pop\",\"peek\",\"empty\"]\n[[],[10],[20],[30],[],[],[],[]]",
+   "expected": "[null,null,null,null,10,20,30,false]",
+   "frames": [
+    {
+     "caption": {
+      "en": "QueueFromStacks() starts with two empty stacks, inbox and outbox, and returns null.",
+      "ko": "QueueFromStacks(): 빈 스택 inbox와 outbox 두 개로 시작하고 null을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "x",
+         "ko": "x"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "QueueFromStacks",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "push",
+          "30"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "peek",
+          ""
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "empty",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ]
+       }
+      },
+      "inbox": {
+       "values": [],
+       "marks": {}
+      },
+      "outbox": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "push(10): 10 goes on top of inbox, the back of the queue; push returns null.",
+      "ko": "push(10): 10을 큐의 뒤쪽인 inbox 맨 위에 넣고 null을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "x",
+         "ko": "x"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "QueueFromStacks",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "push",
+          "30"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "peek",
+          ""
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "empty",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "inbox": {
+       "values": [
+        10
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "outbox": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         1,
+         1
+        ]
+       },
+       "to": {
+        "view": "inbox",
+        "at": 0
+       },
+       "value": "10"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       },
+       "value": "null"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "push(20): 20 goes on top of inbox, the back of the queue; push returns null.",
+      "ko": "push(20): 20을 큐의 뒤쪽인 inbox 맨 위에 넣고 null을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "x",
+         "ko": "x"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "QueueFromStacks",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "push",
+          "30"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "peek",
+          ""
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "empty",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ]
+       }
+      },
+      "inbox": {
+       "values": [
+        10,
+        20
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "outbox": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         2,
+         1
+        ]
+       },
+       "to": {
+        "view": "inbox",
+        "at": 1
+       },
+       "value": "20"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         2,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       },
+       "value": "null"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "push(30): 30 goes on top of inbox, the back of the queue; push returns null.",
+      "ko": "push(30): 30을 큐의 뒤쪽인 inbox 맨 위에 넣고 null을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "x",
+         "ko": "x"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "QueueFromStacks",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "push",
+          "30"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "peek",
+          ""
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "empty",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      },
+      "inbox": {
+       "values": [
+        10,
+        20,
+        30
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      },
+      "outbox": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         3,
+         1
+        ]
+       },
+       "to": {
+        "view": "inbox",
+        "at": 2
+       },
+       "value": "30"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         3,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       },
+       "value": "null"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "pop(): outbox is empty, so inbox's 3 values move over, top first: 30 goes first.",
+      "ko": "pop(): outbox가 비어 있어 inbox의 값 3개를 맨 위부터 옮깁니다. 먼저 30이 갑니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "x",
+         "ko": "x"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "QueueFromStacks",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "push",
+          "30"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "peek",
+          ""
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "empty",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ]
+       }
+      },
+      "inbox": {
+       "values": [
+        10,
+        20,
+        30
+       ],
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "outbox": {
+       "values": [
+        30
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "inbox",
+        "at": 2
+       },
+       "to": {
+        "view": "outbox",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "20 goes next, on top of 30.",
+      "ko": "다음으로 20이 30 위에 놓입니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "x",
+         "ko": "x"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "QueueFromStacks",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "push",
+          "30"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "peek",
+          ""
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "empty",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ]
+       }
+      },
+      "inbox": {
+       "values": [
+        10,
+        20
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "outbox": {
+       "values": [
+        30,
+        20
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "inbox",
+        "at": 1
+       },
+       "to": {
+        "view": "outbox",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "10 lands last, on top of outbox: the oldest order is now the first one out.",
+      "ko": "마지막으로 10이 outbox 맨 위에 놓여, 가장 오래된 주문이 가장 먼저 나갈 자리에 옵니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "x",
+         "ko": "x"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "QueueFromStacks",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "push",
+          "30"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "peek",
+          ""
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "empty",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ]
+       }
+      },
+      "inbox": {
+       "values": [
+        10
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "outbox": {
+       "values": [
+        30,
+        20,
+        10
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "inbox",
+        "at": 0
+       },
+       "to": {
+        "view": "outbox",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "pop(): it takes outbox's top, 10, the front of the queue, and returns it.",
+      "ko": "pop(): 큐의 맨 앞인 outbox 맨 위의 10을 꺼내 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "x",
+         "ko": "x"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "QueueFromStacks",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "push",
+          "30"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "peek",
+          ""
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "empty",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ]
+       }
+      },
+      "inbox": {
+       "values": [],
+       "marks": {}
+      },
+      "outbox": {
+       "values": [
+        30,
+        20,
+        10
+       ],
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "null",
+        "10"
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "outbox",
+        "at": 2
+       },
+       "to": {
+        "view": "result",
+        "at": 4
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "pop(): outbox isn't empty, so nothing moves over; it takes outbox's top, 20, the front of the queue, and returns it.",
+      "ko": "pop(): outbox가 비어 있지 않아 옮기지 않고 큐의 맨 앞인 outbox 맨 위의 20을 꺼내 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "x",
+         "ko": "x"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "QueueFromStacks",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "push",
+          "30"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "peek",
+          ""
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "empty",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ]
+        ]
+       }
+      },
+      "inbox": {
+       "values": [],
+       "marks": {}
+      },
+      "outbox": {
+       "values": [
+        30,
+        20
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "null",
+        "10",
+        "20"
+       ],
+       "marks": {
+        "good": [
+         5
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "outbox",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 5
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "peek(): outbox isn't empty, so nothing moves over; outbox's top, 30, is the front of the queue; it stays.",
+      "ko": "peek(): outbox가 비어 있지 않아 옮기지 않고 큐의 맨 앞인 outbox 맨 위의 30을 반환하고 그대로 둡니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "x",
+         "ko": "x"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "QueueFromStacks",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "push",
+          "30"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "peek",
+          ""
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "empty",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ],
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          6,
+          0
+         ],
+         [
+          6,
+          1
+         ]
+        ]
+       }
+      },
+      "inbox": {
+       "values": [],
+       "marks": {}
+      },
+      "outbox": {
+       "values": [
+        30
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "null",
+        "10",
+        "20",
+        "30"
+       ],
+       "marks": {
+        "good": [
+         6
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "outbox",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 6
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "empty(): the stacks still hold 1 order, so it returns false.",
+      "ko": "empty(): 두 스택에 주문이 1개 남아 있으므로 false를 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "x",
+         "ko": "x"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "QueueFromStacks",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "push",
+          "30"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "peek",
+          ""
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "empty",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ],
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ],
+         [
+          6,
+          0
+         ],
+         [
+          6,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          7,
+          0
+         ],
+         [
+          7,
+          1
+         ]
+        ]
+       }
+      },
+      "inbox": {
+       "values": [],
+       "marks": {
+        "lit": []
+       }
+      },
+      "outbox": {
+       "values": [
+        30
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "null",
+        "10",
+        "20",
+        "30",
+        "false"
+       ],
+       "marks": {
+        "good": [
+         7
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         7,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 7
+       },
+       "value": "false"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every call is answered, in order: answer [null,null,null,null,10,20,30,false].",
+      "ko": "모든 호출의 반환값을 차례로 모았습니다. 답은 [null,null,null,null,10,20,30,false]입니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "x",
+         "ko": "x"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "QueueFromStacks",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "push",
+          "30"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "peek",
+          ""
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "empty",
+          ""
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "inbox": {
+       "values": [],
+       "marks": {}
+      },
+      "outbox": {
+       "values": [
+        30
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "null",
+        "10",
+        "20",
+        "30",
+        "false"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5,
+         6,
+         7
+        ]
+       }
+      }
+     },
+     "answer": "[null,null,null,null,10,20,30,false]"
+    }
+   ],
+   "sampleInput": "[\"QueueFromStacks\",\"push\",\"push\",\"push\",\"pop\",\"pop\",\"peek\",\"empty\"]\n[[],[10],[20],[30],[],[],[],[]]"
+  },
+  {
+   "label": {
+    "en": "Case 3",
+    "ko": "케이스 3"
+   },
+   "input": "[\"QueueFromStacks\",\"push\",\"pop\",\"empty\"]\n[[],[42],[],[]]",
+   "expected": "[null,null,42,true]",
+   "frames": [
+    {
+     "caption": {
+      "en": "QueueFromStacks() starts with two empty stacks, inbox and outbox, and returns null.",
+      "ko": "QueueFromStacks(): 빈 스택 inbox와 outbox 두 개로 시작하고 null을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "x",
+         "ko": "x"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "QueueFromStacks",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "42"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "empty",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ]
+       }
+      },
+      "inbox": {
+       "values": [],
+       "marks": {}
+      },
+      "outbox": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "push(42): 42 goes on top of inbox, the back of the queue; push returns null.",
+      "ko": "push(42): 42를 큐의 뒤쪽인 inbox 맨 위에 넣고 null을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "x",
+         "ko": "x"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "QueueFromStacks",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "42"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "empty",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "inbox": {
+       "values": [
+        42
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "outbox": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         1,
+         1
+        ]
+       },
+       "to": {
+        "view": "inbox",
+        "at": 0
+       },
+       "value": "42"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       },
+       "value": "null"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "pop(): outbox is empty, so inbox's 1 value moves over, top first: 42 goes first.",
+      "ko": "pop(): outbox가 비어 있어 inbox의 값 1개를 맨 위부터 옮깁니다. 먼저 42가 갑니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "x",
+         "ko": "x"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "QueueFromStacks",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "42"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "empty",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ]
+       }
+      },
+      "inbox": {
+       "values": [
+        42
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "outbox": {
+       "values": [
+        42
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "inbox",
+        "at": 0
+       },
+       "to": {
+        "view": "outbox",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "pop(): it takes outbox's top, 42, the front of the queue, and returns it.",
+      "ko": "pop(): 큐의 맨 앞인 outbox 맨 위의 42를 꺼내 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "x",
+         "ko": "x"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "QueueFromStacks",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "42"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "empty",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ]
+       }
+      },
+      "inbox": {
+       "values": [],
+       "marks": {}
+      },
+      "outbox": {
+       "values": [
+        42
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "42"
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "outbox",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "empty(): both stacks are empty, so the queue is empty: true.",
+      "ko": "empty(): 두 스택이 모두 비어 있으므로 큐가 비었습니다. true를 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "x",
+         "ko": "x"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "QueueFromStacks",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "42"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "empty",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      },
+      "inbox": {
+       "values": [],
+       "marks": {
+        "lit": []
+       }
+      },
+      "outbox": {
+       "values": [],
+       "marks": {
+        "lit": []
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "42",
+        "true"
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         3,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       },
+       "value": "true"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every call is answered, in order: answer [null,null,42,true].",
+      "ko": "모든 호출의 반환값을 차례로 모았습니다. 답은 [null,null,42,true]입니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "x",
+         "ko": "x"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "QueueFromStacks",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "42"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "empty",
+          ""
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "inbox": {
+       "values": [],
+       "marks": {}
+      },
+      "outbox": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "42",
+        "true"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3
+        ]
+       }
+      }
+     },
+     "answer": "[null,null,42,true]"
+    }
+   ],
+   "sampleInput": "[\"QueueFromStacks\",\"push\",\"pop\",\"empty\"]\n[[],[42],[],[]]"
+  }
+ ]
+}
