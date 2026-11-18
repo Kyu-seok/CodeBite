@@ -116,7 +116,7 @@ def solve(cmds, args, run):
             node["$"] = True
             tree.set(path[-1], "✓")
             frame({"en": f'Mark the node after the last letter ✓: "{word}" is saved. enroll returns null.',
-                   "ko": f'마지막 글자의 노드에 ✓를 표시해 "{word}"를 저장합니다. enroll은 null을 반환합니다.'},
+                   "ko": f'마지막 글자의 노드에 ✓를 표시해 "{word}" 단어를 저장합니다. enroll은 null을 반환합니다.'},
                   row, good=[path[-1]], shade=path, moves=[move(at("calls", [row, 1]), at("trie", path[-1]), value="✓")])
             answer(row, None, {"en": "", "ko": ""})
             continue
@@ -144,8 +144,9 @@ def solve(cmds, args, run):
                 return False
             child = node.get(ch)
             if child is None:
-                frame({"en": f'match("{word}"): no edge \'{ch}\' from here, so this path fails.',
-                       "ko": f'match("{word}"): 여기서 나가는 \'{ch}\' 간선이 없으므로 이 경로는 실패합니다.'},
+                back = {"en": " and the walk backs out", "ko": "하고 되돌아갑니다"} if len(path) > 1 else {"en": "", "ko": "합니다"}
+                frame({"en": f'match("{word}"): no edge \'{ch}\' from here, so this path fails{back["en"]}.',
+                       "ko": f'match("{word}"): 여기서 나가는 \'{ch}\' 간선이 없으므로 이 경로는 실패{back["ko"]}.'},
                       row, bad=[here], dim=failed, shade=path)
                 return False
             return arrive(child, i, path, {"en": f"follow the edge '{ch}'", "ko": f"'{ch}' 간선을 따라갑니다",
@@ -196,4 +197,13 @@ for number, sample in enumerate(sample_cases(SLUG), start=1):
     run = sample_run(wt, number, sample, input=f"{json.dumps(cmds, separators=(',', ':'))}\n"
                                                f"{json.dumps(args, separators=(',', ':'))}")
     solve(cmds, args, run)
+
+# The sample's '.' always succeeds on its first branch. This extra run adds "dot" to the sample's words, so ".ot"
+# tries 'b' first, finds no 'o' under it and backs out, then succeeds through 'd'.
+EXTRA_CMDS = ["WildcardLexicon", "enroll", "enroll", "enroll", "enroll", "match"]
+EXTRA_ARGS = [[], ["bad"], ["dad"], ["mad"], ["dot"], [".ot"]]
+run = wt.run({"en": "Extra: '.' backs out", "ko": "추가: '.'이 되돌아가는 경우"},
+             input=f"{json.dumps(EXTRA_CMDS, separators=(',', ':'))}\n{json.dumps(EXTRA_ARGS, separators=(',', ':'))}",
+             expected="[null,null,null,null,null,true]", extra=True)
+solve(EXTRA_CMDS, EXTRA_ARGS, run)
 wt.write(walkthrough_path(SLUG))

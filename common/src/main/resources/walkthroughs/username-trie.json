@@ -670,7 +670,7 @@
     {
      "caption": {
       "en": "Mark the node after the last letter ✓: \"cat\" is a full username. insert returns null.",
-      "ko": "마지막 글자의 노드에 ✓를 표시해 \"cat\"가 완전한 유저명임을 남깁니다. insert는 null을 반환합니다."
+      "ko": "마지막 글자의 노드에 ✓를 표시해 \"cat\" 이름이 완전한 유저명임을 남깁니다. insert는 null을 반환합니다."
      },
      "views": {
       "calls": {
@@ -1378,7 +1378,7 @@
     {
      "caption": {
       "en": "Mark the node after the last letter ✓: \"car\" is a full username. insert returns null.",
-      "ko": "마지막 글자의 노드에 ✓를 표시해 \"car\"가 완전한 유저명임을 남깁니다. insert는 null을 반환합니다."
+      "ko": "마지막 글자의 노드에 ✓를 표시해 \"car\" 이름이 완전한 유저명임을 남깁니다. insert는 null을 반환합니다."
      },
      "views": {
       "calls": {
@@ -1950,7 +1950,7 @@
     {
      "caption": {
       "en": "search(\"cat\"): follow the edge 't'. The node is marked ✓, so \"cat\" was inserted whole: true.",
-      "ko": "search(\"cat\"): 't' 간선을 따라갑니다. 노드에 ✓가 있으니 \"cat\"는 완전한 유저명으로 등록된 것이고, 답은 true입니다."
+      "ko": "search(\"cat\"): 't' 간선을 따라갑니다. 노드에 ✓가 있으니 \"cat\" 이름은 완전한 유저명으로 등록된 것이고, 답은 true입니다."
      },
      "views": {
       "calls": {
@@ -2344,7 +2344,7 @@
     {
      "caption": {
       "en": "search(\"ca\"): follow the edge 'a'. The node has no ✓: \"ca\" is only a prefix, never inserted whole, so false.",
-      "ko": "search(\"ca\"): 'a' 간선을 따라갑니다. 노드에 ✓가 없어 \"ca\"는 접두어일 뿐 등록된 유저명이 아니므로 false입니다."
+      "ko": "search(\"ca\"): 'a' 간선을 따라갑니다. 노드에 ✓가 없어 \"ca\" 이름은 접두어일 뿐 등록된 유저명이 아니므로 false입니다."
      },
      "views": {
       "calls": {
@@ -3393,7 +3393,7 @@
     {
      "caption": {
       "en": "search(\"car\"): follow the edge 'r'. The node is marked ✓, so \"car\" was inserted whole: true.",
-      "ko": "search(\"car\"): 'r' 간선을 따라갑니다. 노드에 ✓가 있으니 \"car\"는 완전한 유저명으로 등록된 것이고, 답은 true입니다."
+      "ko": "search(\"car\"): 'r' 간선을 따라갑니다. 노드에 ✓가 있으니 \"car\" 이름은 완전한 유저명으로 등록된 것이고, 답은 true입니다."
      },
      "views": {
       "calls": {
@@ -3624,7 +3624,7 @@
     {
      "caption": {
       "en": "startsWith(\"dog\"): no edge 'd' from here, so no username starts with \"d\". It returns false.",
-      "ko": "startsWith(\"dog\"): 여기서 나가는 'd' 간선이 없으므로 \"d\"로 시작하는 유저명이 없습니다. false를 반환합니다."
+      "ko": "startsWith(\"dog\"): 여기서 나가는 'd' 간선이 없으므로 \"d\" 접두어로 시작하는 유저명이 없습니다. false를 반환합니다."
      },
      "views": {
       "calls": {

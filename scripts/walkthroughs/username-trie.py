@@ -100,7 +100,7 @@ def solve(cmds, args, run):
             node["$"] = True
             tree.set(path[-1], "✓")
             frame({"en": f'Mark the node after the last letter ✓: "{word}" is a full username. insert returns null.',
-                   "ko": f'마지막 글자의 노드에 ✓를 표시해 "{word}"가 완전한 유저명임을 남깁니다. insert는 null을 반환합니다.'},
+                   "ko": f'마지막 글자의 노드에 ✓를 표시해 "{word}" 이름이 완전한 유저명임을 남깁니다. insert는 null을 반환합니다.'},
                   good=[path[-1]], shade=path,
                   moves=[move(at("calls", [row, 1]), at("trie", path[-1]), value="✓"), answer(None)])
             continue
@@ -111,7 +111,7 @@ def solve(cmds, args, run):
                 value = False
                 frame({"en": f'{cmd}("{word}"): no edge \'{ch}\' from here, so no username starts with "{word[:k + 1]}". '
                              f"It returns false.",
-                       "ko": f'{cmd}("{word}"): 여기서 나가는 \'{ch}\' 간선이 없으므로 "{word[:k + 1]}"로 시작하는 유저명이 '
+                       "ko": f'{cmd}("{word}"): 여기서 나가는 \'{ch}\' 간선이 없으므로 "{word[:k + 1]}" 접두어로 시작하는 유저명이 '
                              f"없습니다. false를 반환합니다."},
                       bad=[path[-1]], shade=path, word_mark="bad", moves=[answer(value)])
                 break
@@ -133,14 +133,14 @@ def solve(cmds, args, run):
                 value = True
                 frame({"en": f'search("{word}"): follow the edge \'{ch}\'. The node is marked ✓, so "{word}" was inserted '
                              f"whole: true.",
-                       "ko": f'search("{word}"): \'{ch}\' 간선을 따라갑니다. 노드에 ✓가 있으니 "{word}"는 완전한 유저명으로 '
+                       "ko": f'search("{word}"): \'{ch}\' 간선을 따라갑니다. 노드에 ✓가 있으니 "{word}" 이름은 완전한 유저명으로 '
                              f"등록된 것이고, 답은 true입니다."},
                       lit=[path[-1]], shade=path, moves=[answer(value)])
             else:
                 value = False
                 frame({"en": f'search("{word}"): follow the edge \'{ch}\'. The node has no ✓: "{word}" is only a prefix, '
                              f"never inserted whole, so false.",
-                       "ko": f'search("{word}"): \'{ch}\' 간선을 따라갑니다. 노드에 ✓가 없어 "{word}"는 접두어일 뿐 '
+                       "ko": f'search("{word}"): \'{ch}\' 간선을 따라갑니다. 노드에 ✓가 없어 "{word}" 이름은 접두어일 뿐 '
                              f"등록된 유저명이 아니므로 false입니다."},
                       bad=[path[-1]], shade=path, moves=[answer(value)])
 
