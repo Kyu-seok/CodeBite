@@ -207,6 +207,7 @@ VIEWS.array = (host, config, ctx) => {
     update(s) {
       const vals = s.values || [], fills = s.fill || [];
       const max = bars ? Math.max(1, ...vals.map((v, i) => (+v || 0) + (+fills[i] || 0)), config.max || 0) : 0;
+      if (!vals.length) { host.innerHTML = ''; built = null; html('span', 'wt-empty', host, config.empty != null ? textOf(config.empty, ctx.lang) : ctx.ui.empty); return; }
       const need = arrayNeeds(s);
       const grow = Object.keys(need).some(k => need[k] && !room[k]);
       for (const k in need) room[k] = room[k] || need[k];
@@ -818,16 +819,35 @@ export function linkArrows(ids, next) {
   return arrows;
 }
 
+// How each node's second link (`links`: a copy's random, a doubly linked list's prev) is drawn: always under the row,
+// so it never shares the gap with next. `arc` reaches a node, `level` deep: its distance in nodes, half a step more
+// going back (or to itself), so two arcs over one stretch, one each way, nest instead of crossing; capped at 4.5.
+// `null` hooks out to ∅ just under the gap on the node's right. A node missing from `to` has no arrow. Returns [{ from, to, kind, level }].
+export function sideArrows(ids, to) {
+  const at = new Map(ids.map((id, i) => [keyOf(id), i])), arrows = [];
+  ids.map(keyOf).forEach((k, i) => {
+    if (!(k in to)) return;
+    if (to[k] == null) { arrows.push({ from: k, to: null, kind: 'null', level: 0 }); return; }
+    const j = at.get(keyOf(to[k]));
+    if (j === undefined) return;
+    arrows.push({ from: k, to: keyOf(to[k]), kind: 'arc', level: Math.min(4, Math.abs(j - i)) + (j <= i ? 0.5 : 0) });
+  });
+  return arrows;
+}
+
 // A linked list: nodes as boxes in a row, in `nodes` order for the whole run, each next an arrow (linkArrows), so a
 // reversal redraws the arrows and never moves a node. `pointers` stand above their node; `cut` draws an arrow this
-// step removed, faded and dashed. Room for every arc, ∅ and pointer the run draws is kept from its first frame.
-// Address: a node id.
+// step removed, faded and dashed. A second link per node (`links`, one kind) runs under the row (sideArrows), dashed in
+// a colour of its own, with `linkCuts` its removed arrows. Room for every arc, ∅ and pointer the run draws is kept from
+// its first frame. Address: a node id.
 VIEWS.linkedlist = (host, config, ctx) => {
-  const H = 36, GAP = 36, END = 30, ARC = 24, LINE = 14, P = 6;
+  const H = 36, GAP = 36, END = 30, ARC = 24, LINE = 14, P = 6, NIL = 9;
   let built = null, room = null;
   const ids = st => (st.nodes || []).map(n => keyOf(n.id));
+  const kind = st => Object.keys(st.links || {})[0];
+  const sideDepth = level => 12 + 12 * level; // a side arc's control points; the curve reaches 3/4 of it
   function need(states) {
-    const r = { box: 40, left: false, right: false, over: false, under: false, ptrs: 0 };
+    const r = { box: 40, left: false, right: false, over: false, under: false, ptrs: 0, side: 0 };
     for (const st of states) {
       for (const n of st.nodes || []) r.box = Math.max(r.box, labelWidth(fmt(n.value)) * 15 / 11 + 18);
       for (const a of [...linkArrows(ids(st), st.next || {}), ...linkArrows(ids(st), st.cut || {})]) {
@@ -835,6 +855,11 @@ VIEWS.linkedlist = (host, config, ctx) => {
         if (a.kind === 'null-right' && keyOf(a.from) === ids(st).at(-1)) r.right = true;
         if (a.kind === 'over') r.over = true;
         if (a.kind === 'under') r.under = true;
+      }
+      const name = kind(st);
+      for (const a of name ? [...sideArrows(ids(st), st.links[name]), ...sideArrows(ids(st), (st.linkCuts || {})[name] || {})] : []) {
+        r.side = Math.max(r.side, a.kind === 'null' ? NIL + 10 : sideDepth(a.level) * 0.75 + 6);
+        if (a.kind === 'null' && a.from === ids(st).at(-1)) r.right = true;
       }
       const per = new Map();
       for (const at of Object.values(st.pointers || {})) if (at != null) per.set(keyOf(at), (per.get(keyOf(at)) || 0) + 1);
@@ -846,10 +871,10 @@ VIEWS.linkedlist = (host, config, ctx) => {
     host.innerHTML = '';
     const B = room.box, x0 = P + (room.left ? END : 0);
     const ptrTop = P + (room.over ? ARC : 0), top = ptrTop + room.ptrs * LINE + (room.ptrs ? 8 : 0);
-    const W = x0 + keys.length * (B + GAP) - GAP + (room.right ? END : 0) + P, Hh = top + H + (room.under ? ARC + 6 : 0) + P;
+    const W = x0 + keys.length * (B + GAP) - GAP + (room.right ? END : 0) + P, Hh = top + H + Math.max(room.under ? ARC + 6 : 0, room.side) + P;
     const root = svg('svg', { viewBox: `0 0 ${W} ${Hh}`, width: W, class: 'wt-svg wt-linkedlist' }, host);
     const defs = svg('defs', {}, root);
-    for (const m of ['plain', ...MARKS]) {
+    for (const m of ['plain', 'side', ...MARKS]) {
       const mk = svg('marker', { id: `${ctx.uid}-ll-${m}`, viewBox: '0 0 10 10', refX: 9, refY: 5, markerWidth: 9, markerHeight: 9, markerUnits: 'userSpaceOnUse', orient: 'auto-start-reverse' }, defs);
       svg('path', { d: 'M0,0 L10,5 L0,10 z', class: 'wt-ah wt-ah-' + m }, mk);
     }
@@ -867,8 +892,14 @@ VIEWS.linkedlist = (host, config, ctx) => {
   }
   // one arrow's path and where its ∅ goes, from the node's box to its target's
   function route(a) {
-    const { cx, top, B } = built, mid = top + H / 2, x = cx.get(a.from), dy = a.lane * 7;
+    const { cx, top, B } = built, mid = top + H / 2, x = cx.get(a.from), dy = a.lane * 7, bot = top + H;
     switch (a.kind) {
+      case 'arc': { // a second link: out of the box's right half, into the target's left half
+        const x2 = cx.get(a.to) - 8, y = bot + sideDepth(a.level);
+        return { d: `M${x + 8},${bot} C${x + 8},${y} ${x2},${y} ${x2},${bot + 1}` };
+      }
+      case 'null': // a hook out to ∅ in the gap on its right, under next's arrows and over the arcs passing below
+        return { d: `M${x + 8},${bot} Q${x + 8},${bot + NIL} ${x + B / 2 + 3},${bot + NIL}`, nil: [x + B / 2 + 11, bot + NIL] };
       case 'right': return { d: `M${x + B / 2},${mid + dy} L${cx.get(a.to) - B / 2 - 1},${mid + dy}` };
       case 'left': return { d: `M${x - B / 2},${mid + dy} L${cx.get(a.to) + B / 2 + 1},${mid + dy}` };
       case 'null-right': return { d: `M${x + B / 2},${mid + dy} L${x + B / 2 + GAP - 16},${mid + dy}`, nil: [x + B / 2 + GAP - 8, mid + dy] };
@@ -903,13 +934,18 @@ VIEWS.linkedlist = (host, config, ctx) => {
         names.forEach((name, i) => { svg('tspan', { x: 0, dy: i ? LINE : -(names.length - 1) * LINE }, el.ptr).textContent = name + (i === names.length - 1 ? ' ↓' : ''); });
       }
       built.arrows.replaceChildren();
-      const draw = (a, cls, mark) => {
+      const draw = (a, cls, mark, plain = 'plain') => {
         const r = route(a), g = svg('g', { class: cls + (mark ? ' wt-' + mark : '') }, built.arrows);
-        svg('path', { d: r.d, class: 'wt-lllink', 'marker-end': r.nil ? null : `url(#${ctx.uid}-ll-${mark || 'plain'})` }, g);
+        svg('path', { d: r.d, class: 'wt-lllink', 'marker-end': r.nil ? null : `url(#${ctx.uid}-ll-${mark || plain})` }, g);
         if (r.nil) svg('text', { x: r.nil[0], y: r.nil[1] + 5, 'text-anchor': 'middle', class: 'wt-llnil' }, g).textContent = '∅';
       };
       for (const a of linkArrows(keys, s.cut || {})) draw({ ...a, lane: a.lane || 1 }, 'wt-llarrow wt-llcut', 'bad'); // below the live arrow in its gap
       for (const a of linkArrows(keys, s.next || {})) draw(a, 'wt-llarrow', lm.get(a.from));
+      const name = kind(s);
+      if (name) {
+        for (const a of sideArrows(keys, (s.linkCuts || {})[name] || {})) draw(a, 'wt-llarrow wt-llside wt-llcut', 'bad');
+        for (const a of sideArrows(keys, s.links[name])) draw(a, 'wt-llarrow wt-llside', lm.get(keyOf([name, a.from])), 'side');
+      }
     },
   };
 };
