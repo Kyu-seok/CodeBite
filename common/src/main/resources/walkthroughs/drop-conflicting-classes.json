@@ -1,0 +1,1362 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Drop Conflicting Classes",
+  "ko": "충돌 수업 빼기"
+ },
+ "approach": {
+  "en": "Sort the classes by end time and keep each one that starts at or after the last kept class ends: ending earliest leaves the most room for the rest, so every class that would overlap is dropped.",
+  "ko": "수업을 끝 시각 순으로 정렬하고, 마지막으로 남긴 수업이 끝난 뒤(같은 시각 포함)에 시작하는 수업만 남깁니다. 가장 일찍 끝나는 수업을 남겨야 나머지에 자리가 가장 많이 남으므로, 겹치는 수업은 모두 뺍니다."
+ },
+ "views": [
+  {
+   "id": "line",
+   "type": "intervals",
+   "empty": {
+    "en": "none yet",
+    "ko": "아직 없음"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "classes = [[10,20],[12,18],[22,30]]",
+   "expected": "1",
+   "frames": [
+    {
+     "caption": {
+      "en": "Sort the 3 classes by end time: [12,18], [10,20], [22,30]. Nothing is kept yet, so the first one can't conflict.",
+      "ko": "수업 3개를 끝 시각 순으로 정렬합니다: [12,18], [10,20], [22,30]. 아직 남긴 수업이 없으므로 첫 수업은 충돌할 수 없습니다."
+     },
+     "views": {
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "classes, by end",
+          "ko": "끝 시각 순으로 정렬한 수업"
+         },
+         "intervals": [
+          [
+           12,
+           18
+          ],
+          [
+           10,
+           20
+          ],
+          [
+           22,
+           30
+          ]
+         ],
+         "marks": {
+          "lit": [
+           0,
+           1,
+           2
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "kept",
+          "ko": "남긴 수업"
+         },
+         "intervals": [],
+         "marks": {}
+        },
+        {
+         "label": {
+          "en": "dropped",
+          "ko": "뺀 수업"
+         },
+         "intervals": [],
+         "marks": {}
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "[12,18]: nothing is kept yet, so keep it. Its end, 18, is now the last end.",
+      "ko": "[12,18] 수업: 아직 남긴 수업이 없으므로 남깁니다. 이제 마지막 끝은 18이 됩니다."
+     },
+     "views": {
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "classes, by end",
+          "ko": "끝 시각 순으로 정렬한 수업"
+         },
+         "intervals": [
+          [
+           12,
+           18
+          ],
+          [
+           10,
+           20
+          ],
+          [
+           22,
+           30
+          ]
+         ],
+         "marks": {
+          "lit": [
+           0
+          ],
+          "dim": []
+         }
+        },
+        {
+         "label": {
+          "en": "kept",
+          "ko": "남긴 수업"
+         },
+         "intervals": [
+          [
+           12,
+           18
+          ]
+         ],
+         "marks": {
+          "good": [
+           0
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "dropped",
+          "ko": "뺀 수업"
+         },
+         "intervals": [],
+         "marks": {}
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "line",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "to": {
+        "view": "line",
+        "at": [
+         1,
+         0
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "[10,20] starts at 10 < last end 18: it overlaps the kept class [12,18], so drop it (1 dropped so far).",
+      "ko": "[10,20] 수업은 10분에 시작해 마지막 끝 18보다 앞이므로 남긴 [12,18] 수업과 겹칩니다. 이 수업을 뺍니다(지금까지 1개)."
+     },
+     "views": {
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "classes, by end",
+          "ko": "끝 시각 순으로 정렬한 수업"
+         },
+         "intervals": [
+          [
+           12,
+           18
+          ],
+          [
+           10,
+           20
+          ],
+          [
+           22,
+           30
+          ]
+         ],
+         "marks": {
+          "lit": [
+           1
+          ],
+          "dim": [
+           0
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "kept",
+          "ko": "남긴 수업"
+         },
+         "intervals": [
+          [
+           12,
+           18
+          ]
+         ],
+         "marks": {
+          "lit": [
+           0
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "dropped",
+          "ko": "뺀 수업"
+         },
+         "intervals": [
+          [
+           10,
+           20
+          ]
+         ],
+         "marks": {
+          "bad": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 18,
+         "label": {
+          "en": "last end",
+          "ko": "마지막 끝"
+         },
+         "mark": "lit"
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "line",
+        "at": [
+         0,
+         1
+        ]
+       },
+       "to": {
+        "view": "line",
+        "at": [
+         2,
+         0
+        ]
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "[22,30] starts at 22 ≥ last end 18, so it fits after the kept classes: keep it, and the last end becomes 30.",
+      "ko": "[22,30] 수업은 22분에 시작해 마지막 끝 18 이후이므로 남긴 수업 뒤에 들어갑니다. 남기고, 마지막 끝은 30이 됩니다."
+     },
+     "views": {
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "classes, by end",
+          "ko": "끝 시각 순으로 정렬한 수업"
+         },
+         "intervals": [
+          [
+           12,
+           18
+          ],
+          [
+           10,
+           20
+          ],
+          [
+           22,
+           30
+          ]
+         ],
+         "marks": {
+          "lit": [
+           2
+          ],
+          "dim": [
+           0,
+           1
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "kept",
+          "ko": "남긴 수업"
+         },
+         "intervals": [
+          [
+           12,
+           18
+          ],
+          [
+           22,
+           30
+          ]
+         ],
+         "marks": {
+          "lit": [
+           0
+          ],
+          "good": [
+           1
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "dropped",
+          "ko": "뺀 수업"
+         },
+         "intervals": [
+          [
+           10,
+           20
+          ]
+         ],
+         "marks": {}
+        }
+       ],
+       "points": [
+        {
+         "at": 18,
+         "label": {
+          "en": "last end",
+          "ko": "마지막 끝"
+         },
+         "mark": "lit"
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "line",
+        "at": [
+         0,
+         2
+        ]
+       },
+       "to": {
+        "view": "line",
+        "at": [
+         1,
+         1
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "2 classes kept without overlap, 1 dropped: the fewest that can go. Answer: 1.",
+      "ko": "겹치지 않게 수업 2개를 남기고 1개를 뺐습니다. 이보다 적게 뺄 수는 없습니다. 답은 1입니다."
+     },
+     "views": {
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "classes, by end",
+          "ko": "끝 시각 순으로 정렬한 수업"
+         },
+         "intervals": [
+          [
+           12,
+           18
+          ],
+          [
+           10,
+           20
+          ],
+          [
+           22,
+           30
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1,
+           2
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "kept",
+          "ko": "남긴 수업"
+         },
+         "intervals": [
+          [
+           12,
+           18
+          ],
+          [
+           22,
+           30
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "dropped",
+          "ko": "뺀 수업"
+         },
+         "intervals": [
+          [
+           10,
+           20
+          ]
+         ],
+         "marks": {
+          "path": [
+           0
+          ]
+         }
+        }
+       ]
+      }
+     },
+     "answer": "1"
+    }
+   ],
+   "setup": {
+    "line": {
+     "domain": [
+      10,
+      30
+     ]
+    }
+   },
+   "sampleInput": "[[10,20],[12,18],[22,30]]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "classes = [[1,4],[1,4],[1,4],[1,4]]",
+   "expected": "3",
+   "frames": [
+    {
+     "caption": {
+      "en": "Sort the 4 classes by end time: [1,4], [1,4], [1,4], [1,4]. Nothing is kept yet, so the first one can't conflict.",
+      "ko": "수업 4개를 끝 시각 순으로 정렬합니다: [1,4], [1,4], [1,4], [1,4]. 아직 남긴 수업이 없으므로 첫 수업은 충돌할 수 없습니다."
+     },
+     "views": {
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "classes, by end",
+          "ko": "끝 시각 순으로 정렬한 수업"
+         },
+         "intervals": [
+          [
+           1,
+           4
+          ],
+          [
+           1,
+           4
+          ],
+          [
+           1,
+           4
+          ],
+          [
+           1,
+           4
+          ]
+         ],
+         "marks": {
+          "lit": [
+           0,
+           1,
+           2,
+           3
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "kept",
+          "ko": "남긴 수업"
+         },
+         "intervals": [],
+         "marks": {}
+        },
+        {
+         "label": {
+          "en": "dropped",
+          "ko": "뺀 수업"
+         },
+         "intervals": [],
+         "marks": {}
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "[1,4]: nothing is kept yet, so keep it. Its end, 4, is now the last end.",
+      "ko": "[1,4] 수업: 아직 남긴 수업이 없으므로 남깁니다. 이제 마지막 끝은 4가 됩니다."
+     },
+     "views": {
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "classes, by end",
+          "ko": "끝 시각 순으로 정렬한 수업"
+         },
+         "intervals": [
+          [
+           1,
+           4
+          ],
+          [
+           1,
+           4
+          ],
+          [
+           1,
+           4
+          ],
+          [
+           1,
+           4
+          ]
+         ],
+         "marks": {
+          "lit": [
+           0
+          ],
+          "dim": []
+         }
+        },
+        {
+         "label": {
+          "en": "kept",
+          "ko": "남긴 수업"
+         },
+         "intervals": [
+          [
+           1,
+           4
+          ]
+         ],
+         "marks": {
+          "good": [
+           0
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "dropped",
+          "ko": "뺀 수업"
+         },
+         "intervals": [],
+         "marks": {}
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "line",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "to": {
+        "view": "line",
+        "at": [
+         1,
+         0
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "[1,4] starts at 1 < last end 4: it overlaps the kept class [1,4], so drop it (1 dropped so far).",
+      "ko": "[1,4] 수업은 1분에 시작해 마지막 끝 4보다 앞이므로 남긴 [1,4] 수업과 겹칩니다. 이 수업을 뺍니다(지금까지 1개)."
+     },
+     "views": {
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "classes, by end",
+          "ko": "끝 시각 순으로 정렬한 수업"
+         },
+         "intervals": [
+          [
+           1,
+           4
+          ],
+          [
+           1,
+           4
+          ],
+          [
+           1,
+           4
+          ],
+          [
+           1,
+           4
+          ]
+         ],
+         "marks": {
+          "lit": [
+           1
+          ],
+          "dim": [
+           0
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "kept",
+          "ko": "남긴 수업"
+         },
+         "intervals": [
+          [
+           1,
+           4
+          ]
+         ],
+         "marks": {
+          "lit": [
+           0
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "dropped",
+          "ko": "뺀 수업"
+         },
+         "intervals": [
+          [
+           1,
+           4
+          ]
+         ],
+         "marks": {
+          "bad": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 4,
+         "label": {
+          "en": "last end",
+          "ko": "마지막 끝"
+         },
+         "mark": "lit"
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "line",
+        "at": [
+         0,
+         1
+        ]
+       },
+       "to": {
+        "view": "line",
+        "at": [
+         2,
+         0
+        ]
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "[1,4] starts at 1 < last end 4: it overlaps the kept class [1,4], so drop it (2 dropped so far).",
+      "ko": "[1,4] 수업은 1분에 시작해 마지막 끝 4보다 앞이므로 남긴 [1,4] 수업과 겹칩니다. 이 수업을 뺍니다(지금까지 2개)."
+     },
+     "views": {
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "classes, by end",
+          "ko": "끝 시각 순으로 정렬한 수업"
+         },
+         "intervals": [
+          [
+           1,
+           4
+          ],
+          [
+           1,
+           4
+          ],
+          [
+           1,
+           4
+          ],
+          [
+           1,
+           4
+          ]
+         ],
+         "marks": {
+          "lit": [
+           2
+          ],
+          "dim": [
+           0,
+           1
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "kept",
+          "ko": "남긴 수업"
+         },
+         "intervals": [
+          [
+           1,
+           4
+          ]
+         ],
+         "marks": {
+          "lit": [
+           0
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "dropped",
+          "ko": "뺀 수업"
+         },
+         "intervals": [
+          [
+           1,
+           4
+          ],
+          [
+           1,
+           4
+          ]
+         ],
+         "marks": {
+          "bad": [
+           1
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 4,
+         "label": {
+          "en": "last end",
+          "ko": "마지막 끝"
+         },
+         "mark": "lit"
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "line",
+        "at": [
+         0,
+         2
+        ]
+       },
+       "to": {
+        "view": "line",
+        "at": [
+         2,
+         1
+        ]
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "[1,4] starts at 1 < last end 4: it overlaps the kept class [1,4], so drop it (3 dropped so far).",
+      "ko": "[1,4] 수업은 1분에 시작해 마지막 끝 4보다 앞이므로 남긴 [1,4] 수업과 겹칩니다. 이 수업을 뺍니다(지금까지 3개)."
+     },
+     "views": {
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "classes, by end",
+          "ko": "끝 시각 순으로 정렬한 수업"
+         },
+         "intervals": [
+          [
+           1,
+           4
+          ],
+          [
+           1,
+           4
+          ],
+          [
+           1,
+           4
+          ],
+          [
+           1,
+           4
+          ]
+         ],
+         "marks": {
+          "lit": [
+           3
+          ],
+          "dim": [
+           0,
+           1,
+           2
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "kept",
+          "ko": "남긴 수업"
+         },
+         "intervals": [
+          [
+           1,
+           4
+          ]
+         ],
+         "marks": {
+          "lit": [
+           0
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "dropped",
+          "ko": "뺀 수업"
+         },
+         "intervals": [
+          [
+           1,
+           4
+          ],
+          [
+           1,
+           4
+          ],
+          [
+           1,
+           4
+          ]
+         ],
+         "marks": {
+          "bad": [
+           2
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 4,
+         "label": {
+          "en": "last end",
+          "ko": "마지막 끝"
+         },
+         "mark": "lit"
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "line",
+        "at": [
+         0,
+         3
+        ]
+       },
+       "to": {
+        "view": "line",
+        "at": [
+         2,
+         2
+        ]
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "1 class kept without overlap, 3 dropped: the fewest that can go. Answer: 3.",
+      "ko": "겹치지 않게 수업 1개를 남기고 3개를 뺐습니다. 이보다 적게 뺄 수는 없습니다. 답은 3입니다."
+     },
+     "views": {
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "classes, by end",
+          "ko": "끝 시각 순으로 정렬한 수업"
+         },
+         "intervals": [
+          [
+           1,
+           4
+          ],
+          [
+           1,
+           4
+          ],
+          [
+           1,
+           4
+          ],
+          [
+           1,
+           4
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1,
+           2,
+           3
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "kept",
+          "ko": "남긴 수업"
+         },
+         "intervals": [
+          [
+           1,
+           4
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "dropped",
+          "ko": "뺀 수업"
+         },
+         "intervals": [
+          [
+           1,
+           4
+          ],
+          [
+           1,
+           4
+          ],
+          [
+           1,
+           4
+          ]
+         ],
+         "marks": {
+          "path": [
+           0,
+           1,
+           2
+          ]
+         }
+        }
+       ]
+      }
+     },
+     "answer": "3"
+    }
+   ],
+   "setup": {
+    "line": {
+     "domain": [
+      1,
+      4
+     ]
+    }
+   },
+   "sampleInput": "[[1,4],[1,4],[1,4],[1,4]]"
+  },
+  {
+   "label": {
+    "en": "Example 3",
+    "ko": "예시 3"
+   },
+   "input": "classes = [[1,5],[6,10]]",
+   "expected": "0",
+   "frames": [
+    {
+     "caption": {
+      "en": "Sort the 2 classes by end time: [1,5], [6,10]. Nothing is kept yet, so the first one can't conflict.",
+      "ko": "수업 2개를 끝 시각 순으로 정렬합니다: [1,5], [6,10]. 아직 남긴 수업이 없으므로 첫 수업은 충돌할 수 없습니다."
+     },
+     "views": {
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "classes, by end",
+          "ko": "끝 시각 순으로 정렬한 수업"
+         },
+         "intervals": [
+          [
+           1,
+           5
+          ],
+          [
+           6,
+           10
+          ]
+         ],
+         "marks": {
+          "lit": [
+           0,
+           1
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "kept",
+          "ko": "남긴 수업"
+         },
+         "intervals": [],
+         "marks": {}
+        },
+        {
+         "label": {
+          "en": "dropped",
+          "ko": "뺀 수업"
+         },
+         "intervals": [],
+         "marks": {}
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "[1,5]: nothing is kept yet, so keep it. Its end, 5, is now the last end.",
+      "ko": "[1,5] 수업: 아직 남긴 수업이 없으므로 남깁니다. 이제 마지막 끝은 5가 됩니다."
+     },
+     "views": {
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "classes, by end",
+          "ko": "끝 시각 순으로 정렬한 수업"
+         },
+         "intervals": [
+          [
+           1,
+           5
+          ],
+          [
+           6,
+           10
+          ]
+         ],
+         "marks": {
+          "lit": [
+           0
+          ],
+          "dim": []
+         }
+        },
+        {
+         "label": {
+          "en": "kept",
+          "ko": "남긴 수업"
+         },
+         "intervals": [
+          [
+           1,
+           5
+          ]
+         ],
+         "marks": {
+          "good": [
+           0
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "dropped",
+          "ko": "뺀 수업"
+         },
+         "intervals": [],
+         "marks": {}
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "line",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "to": {
+        "view": "line",
+        "at": [
+         1,
+         0
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "[6,10] starts at 6 ≥ last end 5, so it fits after the kept classes: keep it, and the last end becomes 10.",
+      "ko": "[6,10] 수업은 6분에 시작해 마지막 끝 5 이후이므로 남긴 수업 뒤에 들어갑니다. 남기고, 마지막 끝은 10이 됩니다."
+     },
+     "views": {
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "classes, by end",
+          "ko": "끝 시각 순으로 정렬한 수업"
+         },
+         "intervals": [
+          [
+           1,
+           5
+          ],
+          [
+           6,
+           10
+          ]
+         ],
+         "marks": {
+          "lit": [
+           1
+          ],
+          "dim": [
+           0
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "kept",
+          "ko": "남긴 수업"
+         },
+         "intervals": [
+          [
+           1,
+           5
+          ],
+          [
+           6,
+           10
+          ]
+         ],
+         "marks": {
+          "lit": [
+           0
+          ],
+          "good": [
+           1
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "dropped",
+          "ko": "뺀 수업"
+         },
+         "intervals": [],
+         "marks": {}
+        }
+       ],
+       "points": [
+        {
+         "at": 5,
+         "label": {
+          "en": "last end",
+          "ko": "마지막 끝"
+         },
+         "mark": "lit"
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "line",
+        "at": [
+         0,
+         1
+        ]
+       },
+       "to": {
+        "view": "line",
+        "at": [
+         1,
+         1
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "No class overlapped the one kept before it, so all 2 stay. Answer: 0.",
+      "ko": "어떤 수업도 앞서 남긴 수업과 겹치지 않아 2개 모두 남습니다. 답은 0입니다."
+     },
+     "views": {
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "classes, by end",
+          "ko": "끝 시각 순으로 정렬한 수업"
+         },
+         "intervals": [
+          [
+           1,
+           5
+          ],
+          [
+           6,
+           10
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "kept",
+          "ko": "남긴 수업"
+         },
+         "intervals": [
+          [
+           1,
+           5
+          ],
+          [
+           6,
+           10
+          ]
+         ],
+         "marks": {
+          "path": [
+           0,
+           1
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "dropped",
+          "ko": "뺀 수업"
+         },
+         "intervals": [],
+         "marks": {}
+        }
+       ]
+      }
+     },
+     "answer": "0"
+    }
+   ],
+   "setup": {
+    "line": {
+     "domain": [
+      1,
+      10
+     ]
+    }
+   },
+   "sampleInput": "[[1,5],[6,10]]"
+  }
+ ]
+}
