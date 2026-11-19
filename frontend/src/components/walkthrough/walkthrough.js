@@ -587,7 +587,7 @@ VIEWS.graph = (host, config, ctx) => {
 // right child sits right of its parent. `size(id)` is a node's { w, h } (h holds its tag under it), `label(id)` the
 // width of the label on the edge into it: upright, a child's span keeps that label clear of its siblings'.
 // Returns { pos: Map(id -> pill centre), width, height }.
-const TREE = { PH: 28, GAP: 12, GHOST: 30, LEVEL: 40, SIDE_GAP: 8, SIDE_GHOST: 16, SIDE_LEVEL: 30, AT: 0.7, PAD: 6 };
+const TREE = { LINK_GAP: 30, SIDE_LINK_GAP: 24, PH: 28, GAP: 12, GHOST: 30, LEVEL: 40, SIDE_GAP: 8, SIDE_GHOST: 16, SIDE_LEVEL: 30, AT: 0.7, PAD: 6 };
 export function layoutTree(nodes, edges, opts = {}) {
   const { arity = 0, sideways = false } = opts;
   const size = opts.size || (() => ({ w: 32, h: TREE.PH })), label = opts.label || (() => 0);
@@ -604,7 +604,7 @@ export function layoutTree(nodes, edges, opts = {}) {
     const slot = e.slot ?? i;
     if (slot >= 0 && slot < arity && list[slot] == null) list[slot] = b;
   }
-  const gap = sideways ? TREE.SIDE_GAP : TREE.GAP, ghost = sideways ? TREE.SIDE_GHOST : TREE.GHOST;
+  const gap = opts.gap ?? (sideways ? TREE.SIDE_GAP : TREE.GAP), ghost = sideways ? TREE.SIDE_GHOST : TREE.GHOST;
   const across = id => (sideways ? size(id).h : size(id).w);
   const need = id => Math.max(across(id), sideways ? 0 : label(id) / TREE.AT) + gap;
   const span = new Map();
@@ -648,6 +648,36 @@ export function layoutTree(nodes, edges, opts = {}) {
   return { pos, width: sideways ? deep : wide, height: sideways ? wide : deep };
 }
 
+// How a tree's second link (`links`: next to the node on its right) is drawn: a straight arrow from one pill's edge to
+// the other's, so a link along a level runs level through the gap between the pills; a pair each way between two
+// nodes takes a lane each, 5px to either side. `null` hooks out to ∅ just past the pill: on its right upright, under
+// it on its side, where a level runs down the column. `box(id)` is a pill's { x, y, w, h } (centre and size), or
+// nothing for a node not drawn. Returns [{ from, to, x1, y1, x2, y2, nil? }], ids as text, nil the ∅'s centre.
+const TREE_NIL = 16;
+export function treeLinks(to, box, opts = {}) {
+  const arrows = [];
+  for (const [k, t] of Object.entries(to)) {
+    const a = box(k);
+    if (!a) continue;
+    if (t == null) {
+      const [x, y] = opts.sideways ? [a.x, a.y + a.h / 2 + TREE_NIL] : [a.x + a.w / 2 + TREE_NIL, a.y];
+      arrows.push({ from: k, to: null, x1: opts.sideways ? a.x : a.x + a.w / 2, y1: opts.sideways ? a.y + a.h / 2 : a.y, x2: x, y2: y, nil: [x, y] });
+      continue;
+    }
+    const b = box(keyOf(t));
+    if (!b || keyOf(t) === k) continue;
+    const dx = b.x - a.x, dy = b.y - a.y;
+    const clip = p => Math.min(dx ? p.w / 2 / Math.abs(dx) : Infinity, dy ? p.h / 2 / Math.abs(dy) : Infinity);
+    const ta = clip(a), tb = clip(b);
+    // a pair each way: the link to the right (or down) takes the lane before it, the one back the lane after
+    const back = to[keyOf(t)] != null && keyOf(to[keyOf(t)]) === k, len = Math.hypot(dx, dy);
+    const lane = back ? (dx > 0 || (!dx && dy > 0) ? -5 : 5) * Math.sign(dx || dy) : 0;
+    const ox = (-dy / len) * lane, oy = (dx / len) * lane;
+    arrows.push({ from: k, to: keyOf(t), x1: a.x + dx * ta + ox, y1: a.y + dy * ta + oy, x2: b.x - dx * tb + ox, y2: b.y - dy * tb + oy });
+  }
+  return arrows;
+}
+
 // Whether a tree goes on its side: only when it is wider upright than the room it has (`room`, 0 when unknown) and
 // narrower on its side, where it grows down instead of across.
 export const treeSideways = (upright, side, room) => room > 0 && upright.width > room && side.width < upright.width;
@@ -660,7 +690,7 @@ export const treeSideways = (upright, side, room) => room > 0 && upright.width >
 VIEWS.tree = (host, config, ctx) => {
   const PH = TREE.PH, arity = Number.isInteger(config.arity) ? config.arity : 0;
   const width = (t, px) => [...t].reduce((w, ch) => w + (ch.codePointAt(0) > 0x2e80 ? px : px * 0.6), 0);
-  let whole = null, built = null, tagged = false;
+  let whole = null, built = null, tagged = false, linked = false, nils = new Set();
   // every frame's nodes and edges as one tree, or null when a node changes parent (then each frame is laid out alone)
   function unite(states) {
     const nodes = new Map(), edges = new Map(), parent = new Map();
@@ -692,11 +722,26 @@ VIEWS.tree = (host, config, ctx) => {
     const pill = new Map(tree.nodes.map(n => [keyOf(n.id), Math.max(PH, ...n.texts.map(t => width(t, 13) + 18))]));
     const into = new Map(tree.edges.map(e => [keyOf(e.to), Math.max(0, ...e.labels.map(t => (t ? width(t, 11) + 10 : 0)))]));
     const size = id => ({ w: Math.max(pill.get(id), (tree.tags.get(id) || 0) + 8), h: PH + (tagged ? 18 : 0) });
+    // a second link runs through the gap between pills on a level, so the gaps widen to hold an arrow
     const opts = { arity, size, label: id => into.get(id) || 0 };
-    const upright = layoutTree(tree.nodes, tree.edges, opts), side = layoutTree(tree.nodes, tree.edges, { ...opts, sideways: true });
+    const upright = layoutTree(tree.nodes, tree.edges, { ...opts, gap: linked ? TREE.LINK_GAP : undefined });
+    const side = layoutTree(tree.nodes, tree.edges, { ...opts, sideways: true, gap: linked ? TREE.SIDE_LINK_GAP : undefined });
     const sideways = treeSideways(upright, side, space), L = sideways ? side : upright;
-    const root = svg('svg', { viewBox: `0 0 ${L.width} ${L.height}`, width: L.width, class: 'wt-svg wt-tree' + (sideways ? ' wt-tside' : '') }, host);
-    const eg = svg('g', {}, root), lg = svg('g', {}, root), ng = svg('g', {}, root), tg = svg('g', {}, root);
+    let W = L.width, Hh = L.height; // room for each ∅ a null link hangs past its pill
+    for (const id of nils) {
+      const p = L.pos.get(id);
+      if (!p) continue;
+      if (sideways) Hh = Math.max(Hh, p.y + PH / 2 + TREE_NIL + 10); else W = Math.max(W, p.x + pill.get(id) / 2 + TREE_NIL + 10);
+    }
+    const root = svg('svg', { viewBox: `0 0 ${W} ${Hh}`, width: W, class: 'wt-svg wt-tree' + (sideways ? ' wt-tside' : '') }, host);
+    if (linked) {
+      const defs = svg('defs', {}, root);
+      for (const m of ['side', ...MARKS]) {
+        const mk = svg('marker', { id: `${ctx.uid}-tl-${m}`, viewBox: '0 0 10 10', refX: 9, refY: 5, markerWidth: 8, markerHeight: 8, markerUnits: 'userSpaceOnUse', orient: 'auto-start-reverse' }, defs);
+        svg('path', { d: 'M0,0 L10,5 L0,10 z', class: 'wt-ah wt-ah-' + m }, mk);
+      }
+    }
+    const eg = svg('g', {}, root), lg = svg('g', {}, root), kg = svg('g', {}, root), ng = svg('g', {}, root), tg = svg('g', {}, root);
     const edgeEls = new Map();
     for (const e of tree.edges) {
       const a = L.pos.get(keyOf(e.from)), b = L.pos.get(keyOf(e.to));
@@ -725,7 +770,7 @@ VIEWS.tree = (host, config, ctx) => {
       nodeEls.set(k, { g, box, val, tag, tagbg, tagText });
     }
     const empty = svg('text', { x: TREE.PAD, y: PH / 2 + 5, class: 'wt-tempty' }, root);
-    return { tree, nodeEls, edgeEls, sideways, space, empty };
+    return { tree, nodeEls, edgeEls, sideways, space, empty, kg, pos: L.pos, pill };
   }
   const shown = (el, on) => { el.style.display = on ? '' : 'none'; };
   return {
@@ -740,6 +785,8 @@ VIEWS.tree = (host, config, ctx) => {
     },
     prepare(states) {
       tagged = states.some(st => (st.tags || []).length);
+      linked = states.some(st => Object.keys(st.links || {}).length);
+      nils = new Set(states.flatMap(st => Object.values(st.links || {}).flatMap(to => Object.keys(to).filter(k => to[k] == null))));
       whole = unite(states);
       built = null;
     },
@@ -774,6 +821,18 @@ VIEWS.tree = (host, config, ctx) => {
         const w = width(label, 11) + 10;
         el.bg.setAttribute('x', el.lx - w / 2); el.bg.setAttribute('width', w);
         el.bg.dataset.token = label;
+      }
+      // the second link, one kind: an arrow from pill to pill, or a hook to ∅
+      built.kg.replaceChildren();
+      const name = Object.keys(s.links || {})[0], lm = markMap(s.linkMarks);
+      const box = k => (nodes.has(k) && built.pos.get(k) ? { ...built.pos.get(k), w: built.pill.get(k), h: PH } : null);
+      for (const a of name ? treeLinks(s.links[name], box, { sideways: built.sideways }) : []) {
+        const mark = lm.get(keyOf([name, a.from])), g = svg('g', { class: 'wt-tlink' + (mark ? ' wt-' + mark : '') }, built.kg);
+        if (a.nil) {
+          const [x, y] = a.nil, d = built.sideways ? `M${a.x1},${a.y1} L${x},${y - 8}` : `M${a.x1},${a.y1} L${x - 8},${y}`;
+          svg('path', { d, class: 'wt-tlinkpath' }, g);
+          svg('text', { x, y: y + 5, 'text-anchor': 'middle', class: 'wt-tnil' }, g).textContent = '∅';
+        } else svg('path', { d: `M${a.x1},${a.y1} L${a.x2},${a.y2}`, class: 'wt-tlinkpath', 'marker-end': `url(#${ctx.uid}-tl-${mark || 'side'})` }, g);
       }
       built.empty.textContent = nodes.size ? '' : config.empty != null ? textOf(config.empty, ctx.lang) : ctx.ui.empty;
     },

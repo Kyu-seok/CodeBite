@@ -1,0 +1,1554 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Split Tickets into Equal Sums",
+  "ko": "티켓을 합이 같은 두 그룹으로 나누기"
+ },
+ "approach": {
+  "en": "Two equal groups each sum to half the total, so the question is whether some tickets add up to half. Keep every sum some of the tickets seen so far reach: each ticket adds itself to every one of them.",
+  "ko": "합이 같은 두 그룹은 각각 전체 합의 절반이므로, 몇 장의 티켓으로 절반을 만들 수 있는지가 문제입니다. 지금까지 본 티켓 일부로 만들 수 있는 합을 모두 모아 두고, 티켓마다 그 합 각각에 자기 점수를 더합니다."
+ },
+ "views": [
+  {
+   "id": "tickets",
+   "type": "array",
+   "title": {
+    "en": "tickets",
+    "ko": "tickets (티켓 점수)"
+   }
+  },
+  {
+   "id": "reachable",
+   "type": "set",
+   "title": {
+    "en": "reachable sums",
+    "ko": "reachable (만들 수 있는 합)"
+   },
+   "hit": {
+    "en": "reachable",
+    "ko": "만들 수 있음"
+   },
+   "miss": {
+    "en": "not reachable",
+    "ko": "만들 수 없음"
+   }
+  },
+  {
+   "id": "state",
+   "type": "vars"
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "tickets = [3,1,1,2,2,1]",
+   "expected": "true",
+   "frames": [
+    {
+     "caption": {
+      "en": "The tickets add up to 10, so each group must sum to 5. Before any ticket, the only reachable sum is 0, the empty group.",
+      "ko": "티켓 합이 10이므로 각 그룹의 합은 5가 되어야 합니다. 아직 티켓을 보지 않았으니 만들 수 있는 합은 빈 그룹의 0뿐입니다."
+     },
+     "views": {
+      "tickets": {
+       "values": [
+        3,
+        1,
+        1,
+        2,
+        2,
+        1
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {},
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+       ]
+      },
+      "reachable": {
+       "members": [
+        0
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       },
+       "probes": []
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "total",
+          "ko": "total (전체 합)"
+         },
+         "value": 10
+        },
+        {
+         "label": {
+          "en": "half",
+          "ko": "half (절반)"
+         },
+         "value": 5
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Ticket 0 is worth 3: adding it to each of the 1 sums so far gives 1 new: 3.",
+      "ko": "티켓 0의 점수는 3입니다. 지금까지의 합 1개 각각에 더하면 새로운 합 1개가 생깁니다: 3."
+     },
+     "views": {
+      "tickets": {
+       "values": [
+        3,
+        1,
+        1,
+        2,
+        2,
+        1
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       },
+       "unread": [
+        1,
+        2,
+        3,
+        4,
+        5
+       ]
+      },
+      "reachable": {
+       "members": [
+        0,
+        3
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       },
+       "probes": []
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "total",
+          "ko": "total (전체 합)"
+         },
+         "value": 10
+        },
+        {
+         "label": {
+          "en": "half",
+          "ko": "half (절반)"
+         },
+         "value": 5
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "reachable",
+        "at": 0
+       },
+       "to": {
+        "view": "reachable",
+        "at": 3
+       },
+       "value": "0+3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Ticket 1 is worth 1: adding it to each of the 2 sums so far gives 2 new: 1, 4.",
+      "ko": "티켓 1의 점수는 1입니다. 지금까지의 합 2개 각각에 더하면 새로운 합 2개가 생깁니다: 1, 4."
+     },
+     "views": {
+      "tickets": {
+       "values": [
+        3,
+        1,
+        1,
+        2,
+        2,
+        1
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       },
+       "unread": [
+        2,
+        3,
+        4,
+        5
+       ]
+      },
+      "reachable": {
+       "members": [
+        0,
+        3,
+        1,
+        4
+       ],
+       "marks": {
+        "good": [
+         1,
+         4
+        ]
+       },
+       "probes": []
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "total",
+          "ko": "total (전체 합)"
+         },
+         "value": 10
+        },
+        {
+         "label": {
+          "en": "half",
+          "ko": "half (절반)"
+         },
+         "value": 5
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "reachable",
+        "at": 0
+       },
+       "to": {
+        "view": "reachable",
+        "at": 1
+       },
+       "value": "0+1"
+      },
+      {
+       "from": {
+        "view": "reachable",
+        "at": 3
+       },
+       "to": {
+        "view": "reachable",
+        "at": 4
+       },
+       "value": "3+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Ticket 2 is worth 1: adding it to each of the 4 sums so far gives 2 new: 2, 5.",
+      "ko": "티켓 2의 점수는 1입니다. 지금까지의 합 4개 각각에 더하면 새로운 합 2개가 생깁니다: 2, 5."
+     },
+     "views": {
+      "tickets": {
+       "values": [
+        3,
+        1,
+        1,
+        2,
+        2,
+        1
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       },
+       "unread": [
+        3,
+        4,
+        5
+       ]
+      },
+      "reachable": {
+       "members": [
+        0,
+        3,
+        1,
+        4,
+        2,
+        5
+       ],
+       "marks": {
+        "good": [
+         2,
+         5
+        ]
+       },
+       "probes": []
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "total",
+          "ko": "total (전체 합)"
+         },
+         "value": 10
+        },
+        {
+         "label": {
+          "en": "half",
+          "ko": "half (절반)"
+         },
+         "value": 5
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "reachable",
+        "at": 1
+       },
+       "to": {
+        "view": "reachable",
+        "at": 2
+       },
+       "value": "1+1"
+      },
+      {
+       "from": {
+        "view": "reachable",
+        "at": 4
+       },
+       "to": {
+        "view": "reachable",
+        "at": 5
+       },
+       "value": "4+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Ticket 3 is worth 2: adding it to each of the 6 sums so far gives 2 new: 6, 7.",
+      "ko": "티켓 3의 점수는 2입니다. 지금까지의 합 6개 각각에 더하면 새로운 합 2개가 생깁니다: 6, 7."
+     },
+     "views": {
+      "tickets": {
+       "values": [
+        3,
+        1,
+        1,
+        2,
+        2,
+        1
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "marks": {
+        "lit": [
+         3
+        ]
+       },
+       "unread": [
+        4,
+        5
+       ]
+      },
+      "reachable": {
+       "members": [
+        0,
+        3,
+        1,
+        4,
+        2,
+        5,
+        6,
+        7
+       ],
+       "marks": {
+        "good": [
+         6,
+         7
+        ]
+       },
+       "probes": []
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "total",
+          "ko": "total (전체 합)"
+         },
+         "value": 10
+        },
+        {
+         "label": {
+          "en": "half",
+          "ko": "half (절반)"
+         },
+         "value": 5
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "reachable",
+        "at": 4
+       },
+       "to": {
+        "view": "reachable",
+        "at": 6
+       },
+       "value": "4+2"
+      },
+      {
+       "from": {
+        "view": "reachable",
+        "at": 5
+       },
+       "to": {
+        "view": "reachable",
+        "at": 7
+       },
+       "value": "5+2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Ticket 4 is worth 2: adding it to each of the 8 sums so far gives 2 new: 8, 9.",
+      "ko": "티켓 4의 점수는 2입니다. 지금까지의 합 8개 각각에 더하면 새로운 합 2개가 생깁니다: 8, 9."
+     },
+     "views": {
+      "tickets": {
+       "values": [
+        3,
+        1,
+        1,
+        2,
+        2,
+        1
+       ],
+       "pointers": {
+        "i": 4
+       },
+       "marks": {
+        "lit": [
+         4
+        ]
+       },
+       "unread": [
+        5
+       ]
+      },
+      "reachable": {
+       "members": [
+        0,
+        3,
+        1,
+        4,
+        2,
+        5,
+        6,
+        7,
+        8,
+        9
+       ],
+       "marks": {
+        "good": [
+         8,
+         9
+        ]
+       },
+       "probes": []
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "total",
+          "ko": "total (전체 합)"
+         },
+         "value": 10
+        },
+        {
+         "label": {
+          "en": "half",
+          "ko": "half (절반)"
+         },
+         "value": 5
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "reachable",
+        "at": 6
+       },
+       "to": {
+        "view": "reachable",
+        "at": 8
+       },
+       "value": "6+2"
+      },
+      {
+       "from": {
+        "view": "reachable",
+        "at": 7
+       },
+       "to": {
+        "view": "reachable",
+        "at": 9
+       },
+       "value": "7+2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Ticket 5 is worth 1: adding it to each of the 10 sums so far gives 1 new: 10.",
+      "ko": "티켓 5의 점수는 1입니다. 지금까지의 합 10개 각각에 더하면 새로운 합 1개가 생깁니다: 10."
+     },
+     "views": {
+      "tickets": {
+       "values": [
+        3,
+        1,
+        1,
+        2,
+        2,
+        1
+       ],
+       "pointers": {
+        "i": 5
+       },
+       "marks": {
+        "lit": [
+         5
+        ]
+       },
+       "unread": []
+      },
+      "reachable": {
+       "members": [
+        0,
+        3,
+        1,
+        4,
+        2,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+       ],
+       "marks": {
+        "good": [
+         10
+        ]
+       },
+       "probes": []
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "total",
+          "ko": "total (전체 합)"
+         },
+         "value": 10
+        },
+        {
+         "label": {
+          "en": "half",
+          "ko": "half (절반)"
+         },
+         "value": 5
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "reachable",
+        "at": 9
+       },
+       "to": {
+        "view": "reachable",
+        "at": 10
+       },
+       "value": "9+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Is 5 reachable? Yes: tickets 0, 1, 2 (3 + 1 + 1 = 5) form one group and the rest the other, so the answer is true.",
+      "ko": "5를 만들 수 있을까요? 네, 티켓 0, 1, 2번으로(3 + 1 + 1 = 5) 한 그룹, 나머지로 다른 그룹을 만들므로 답은 true입니다."
+     },
+     "views": {
+      "tickets": {
+       "values": [
+        3,
+        1,
+        1,
+        2,
+        2,
+        1
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "path": [
+         0,
+         1,
+         2
+        ]
+       },
+       "unread": []
+      },
+      "reachable": {
+       "members": [
+        0,
+        3,
+        1,
+        4,
+        2,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+       ],
+       "marks": {
+        "path": [
+         5
+        ]
+       },
+       "probes": [
+        {
+         "value": 5,
+         "hit": true,
+         "label": {
+          "en": "10 / 2 = 5",
+          "ko": "10 / 2 = 5"
+         }
+        }
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "total",
+          "ko": "total (전체 합)"
+         },
+         "value": 10
+        },
+        {
+         "label": {
+          "en": "half",
+          "ko": "half (절반)"
+         },
+         "value": 5
+        }
+       ]
+      }
+     },
+     "answer": "true"
+    }
+   ],
+   "sampleInput": "[3,1,1,2,2,1]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "tickets = [2,2,3,5]",
+   "expected": "false",
+   "frames": [
+    {
+     "caption": {
+      "en": "The tickets add up to 12, so each group must sum to 6. Before any ticket, the only reachable sum is 0, the empty group.",
+      "ko": "티켓 합이 12이므로 각 그룹의 합은 6이 되어야 합니다. 아직 티켓을 보지 않았으니 만들 수 있는 합은 빈 그룹의 0뿐입니다."
+     },
+     "views": {
+      "tickets": {
+       "values": [
+        2,
+        2,
+        3,
+        5
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {},
+       "unread": [
+        0,
+        1,
+        2,
+        3
+       ]
+      },
+      "reachable": {
+       "members": [
+        0
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       },
+       "probes": []
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "total",
+          "ko": "total (전체 합)"
+         },
+         "value": 12
+        },
+        {
+         "label": {
+          "en": "half",
+          "ko": "half (절반)"
+         },
+         "value": 6
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Ticket 0 is worth 2: adding it to each of the 1 sums so far gives 1 new: 2.",
+      "ko": "티켓 0의 점수는 2입니다. 지금까지의 합 1개 각각에 더하면 새로운 합 1개가 생깁니다: 2."
+     },
+     "views": {
+      "tickets": {
+       "values": [
+        2,
+        2,
+        3,
+        5
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       },
+       "unread": [
+        1,
+        2,
+        3
+       ]
+      },
+      "reachable": {
+       "members": [
+        0,
+        2
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       },
+       "probes": []
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "total",
+          "ko": "total (전체 합)"
+         },
+         "value": 12
+        },
+        {
+         "label": {
+          "en": "half",
+          "ko": "half (절반)"
+         },
+         "value": 6
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "reachable",
+        "at": 0
+       },
+       "to": {
+        "view": "reachable",
+        "at": 2
+       },
+       "value": "0+2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Ticket 1 is worth 2: adding it to each of the 2 sums so far gives 1 new: 4.",
+      "ko": "티켓 1의 점수는 2입니다. 지금까지의 합 2개 각각에 더하면 새로운 합 1개가 생깁니다: 4."
+     },
+     "views": {
+      "tickets": {
+       "values": [
+        2,
+        2,
+        3,
+        5
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       },
+       "unread": [
+        2,
+        3
+       ]
+      },
+      "reachable": {
+       "members": [
+        0,
+        2,
+        4
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       },
+       "probes": []
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "total",
+          "ko": "total (전체 합)"
+         },
+         "value": 12
+        },
+        {
+         "label": {
+          "en": "half",
+          "ko": "half (절반)"
+         },
+         "value": 6
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "reachable",
+        "at": 2
+       },
+       "to": {
+        "view": "reachable",
+        "at": 4
+       },
+       "value": "2+2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Ticket 2 is worth 3: adding it to each of the 3 sums so far gives 3 new: 3, 5, 7.",
+      "ko": "티켓 2의 점수는 3입니다. 지금까지의 합 3개 각각에 더하면 새로운 합 3개가 생깁니다: 3, 5, 7."
+     },
+     "views": {
+      "tickets": {
+       "values": [
+        2,
+        2,
+        3,
+        5
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       },
+       "unread": [
+        3
+       ]
+      },
+      "reachable": {
+       "members": [
+        0,
+        2,
+        4,
+        3,
+        5,
+        7
+       ],
+       "marks": {
+        "good": [
+         3,
+         5,
+         7
+        ]
+       },
+       "probes": []
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "total",
+          "ko": "total (전체 합)"
+         },
+         "value": 12
+        },
+        {
+         "label": {
+          "en": "half",
+          "ko": "half (절반)"
+         },
+         "value": 6
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "reachable",
+        "at": 0
+       },
+       "to": {
+        "view": "reachable",
+        "at": 3
+       },
+       "value": "0+3"
+      },
+      {
+       "from": {
+        "view": "reachable",
+        "at": 2
+       },
+       "to": {
+        "view": "reachable",
+        "at": 5
+       },
+       "value": "2+3"
+      },
+      {
+       "from": {
+        "view": "reachable",
+        "at": 4
+       },
+       "to": {
+        "view": "reachable",
+        "at": 7
+       },
+       "value": "4+3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Ticket 3 is worth 5: adding it to each of the 6 sums so far gives 4 new: 9, 8, 10, 12.",
+      "ko": "티켓 3의 점수는 5입니다. 지금까지의 합 6개 각각에 더하면 새로운 합 4개가 생깁니다: 9, 8, 10, 12."
+     },
+     "views": {
+      "tickets": {
+       "values": [
+        2,
+        2,
+        3,
+        5
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "marks": {
+        "lit": [
+         3
+        ]
+       },
+       "unread": []
+      },
+      "reachable": {
+       "members": [
+        0,
+        2,
+        4,
+        3,
+        5,
+        7,
+        9,
+        8,
+        10,
+        12
+       ],
+       "marks": {
+        "good": [
+         9,
+         8,
+         10,
+         12
+        ]
+       },
+       "probes": []
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "total",
+          "ko": "total (전체 합)"
+         },
+         "value": 12
+        },
+        {
+         "label": {
+          "en": "half",
+          "ko": "half (절반)"
+         },
+         "value": 6
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "reachable",
+        "at": 4
+       },
+       "to": {
+        "view": "reachable",
+        "at": 9
+       },
+       "value": "4+5"
+      },
+      {
+       "from": {
+        "view": "reachable",
+        "at": 3
+       },
+       "to": {
+        "view": "reachable",
+        "at": 8
+       },
+       "value": "3+5"
+      },
+      {
+       "from": {
+        "view": "reachable",
+        "at": 5
+       },
+       "to": {
+        "view": "reachable",
+        "at": 10
+       },
+       "value": "5+5"
+      },
+      {
+       "from": {
+        "view": "reachable",
+        "at": 7
+       },
+       "to": {
+        "view": "reachable",
+        "at": 12
+       },
+       "value": "7+5"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Is 6 reachable? No group of tickets adds up to 6, so they can't be split evenly and the answer is false.",
+      "ko": "6을 만들 수 있을까요? 어떤 티켓 조합도 합이 6이 되지 않아 똑같이 나눌 수 없으므로 답은 false입니다."
+     },
+     "views": {
+      "tickets": {
+       "values": [
+        2,
+        2,
+        3,
+        5
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {},
+       "unread": []
+      },
+      "reachable": {
+       "members": [
+        0,
+        2,
+        4,
+        3,
+        5,
+        7,
+        9,
+        8,
+        10,
+        12
+       ],
+       "marks": {},
+       "probes": [
+        {
+         "value": 6,
+         "hit": false,
+         "label": {
+          "en": "12 / 2 = 6",
+          "ko": "12 / 2 = 6"
+         }
+        }
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "total",
+          "ko": "total (전체 합)"
+         },
+         "value": 12
+        },
+        {
+         "label": {
+          "en": "half",
+          "ko": "half (절반)"
+         },
+         "value": 6
+        }
+       ]
+      }
+     },
+     "answer": "false"
+    }
+   ],
+   "sampleInput": "[2,2,3,5]"
+  },
+  {
+   "label": {
+    "en": "Case 3",
+    "ko": "케이스 3"
+   },
+   "input": "tickets = [1,1]",
+   "expected": "true",
+   "frames": [
+    {
+     "caption": {
+      "en": "The tickets add up to 2, so each group must sum to 1. Before any ticket, the only reachable sum is 0, the empty group.",
+      "ko": "티켓 합이 2이므로 각 그룹의 합은 1이 되어야 합니다. 아직 티켓을 보지 않았으니 만들 수 있는 합은 빈 그룹의 0뿐입니다."
+     },
+     "views": {
+      "tickets": {
+       "values": [
+        1,
+        1
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {},
+       "unread": [
+        0,
+        1
+       ]
+      },
+      "reachable": {
+       "members": [
+        0
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       },
+       "probes": []
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "total",
+          "ko": "total (전체 합)"
+         },
+         "value": 2
+        },
+        {
+         "label": {
+          "en": "half",
+          "ko": "half (절반)"
+         },
+         "value": 1
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Ticket 0 is worth 1: adding it to each of the 1 sums so far gives 1 new: 1.",
+      "ko": "티켓 0의 점수는 1입니다. 지금까지의 합 1개 각각에 더하면 새로운 합 1개가 생깁니다: 1."
+     },
+     "views": {
+      "tickets": {
+       "values": [
+        1,
+        1
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       },
+       "unread": [
+        1
+       ]
+      },
+      "reachable": {
+       "members": [
+        0,
+        1
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       },
+       "probes": []
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "total",
+          "ko": "total (전체 합)"
+         },
+         "value": 2
+        },
+        {
+         "label": {
+          "en": "half",
+          "ko": "half (절반)"
+         },
+         "value": 1
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "reachable",
+        "at": 0
+       },
+       "to": {
+        "view": "reachable",
+        "at": 1
+       },
+       "value": "0+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Ticket 1 is worth 1: adding it to each of the 2 sums so far gives 1 new: 2.",
+      "ko": "티켓 1의 점수는 1입니다. 지금까지의 합 2개 각각에 더하면 새로운 합 1개가 생깁니다: 2."
+     },
+     "views": {
+      "tickets": {
+       "values": [
+        1,
+        1
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       },
+       "unread": []
+      },
+      "reachable": {
+       "members": [
+        0,
+        1,
+        2
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       },
+       "probes": []
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "total",
+          "ko": "total (전체 합)"
+         },
+         "value": 2
+        },
+        {
+         "label": {
+          "en": "half",
+          "ko": "half (절반)"
+         },
+         "value": 1
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "reachable",
+        "at": 1
+       },
+       "to": {
+        "view": "reachable",
+        "at": 2
+       },
+       "value": "1+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Is 1 reachable? Yes: ticket 0 (1 = 1) form one group and the rest the other, so the answer is true.",
+      "ko": "1을 만들 수 있을까요? 네, 티켓 0번으로(1 = 1) 한 그룹, 나머지로 다른 그룹을 만들므로 답은 true입니다."
+     },
+     "views": {
+      "tickets": {
+       "values": [
+        1,
+        1
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "path": [
+         0
+        ]
+       },
+       "unread": []
+      },
+      "reachable": {
+       "members": [
+        0,
+        1,
+        2
+       ],
+       "marks": {
+        "path": [
+         1
+        ]
+       },
+       "probes": [
+        {
+         "value": 1,
+         "hit": true,
+         "label": {
+          "en": "2 / 2 = 1",
+          "ko": "2 / 2 = 1"
+         }
+        }
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "total",
+          "ko": "total (전체 합)"
+         },
+         "value": 2
+        },
+        {
+         "label": {
+          "en": "half",
+          "ko": "half (절반)"
+         },
+         "value": 1
+        }
+       ]
+      }
+     },
+     "answer": "true"
+    }
+   ],
+   "sampleInput": "[1,1]"
+  },
+  {
+   "label": {
+    "en": "Odd total",
+    "ko": "홀수 합"
+   },
+   "input": "tickets = [1,2,4]",
+   "expected": "false",
+   "frames": [
+    {
+     "caption": {
+      "en": "The tickets add up to 7, which is odd, so no two groups can have equal sums.",
+      "ko": "티켓 합이 7이 홀수이므로 합이 같은 두 그룹으로 나눌 수 없습니다."
+     },
+     "views": {
+      "tickets": {
+       "values": [
+        1,
+        2,
+        4
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "lit": [
+         0,
+         1,
+         2
+        ]
+       },
+       "unread": []
+      },
+      "reachable": {
+       "members": [
+        0
+       ],
+       "marks": {},
+       "probes": []
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "total",
+          "ko": "total (전체 합)"
+         },
+         "value": 7
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "The solution returns false before building any sums. Answer: false.",
+      "ko": "합을 만들어 보기도 전에 false를 반환합니다. 답은 false입니다."
+     },
+     "views": {
+      "tickets": {
+       "values": [
+        1,
+        2,
+        4
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "bad": [
+         0,
+         1,
+         2
+        ]
+       },
+       "unread": []
+      },
+      "reachable": {
+       "members": [
+        0
+       ],
+       "marks": {},
+       "probes": []
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "total",
+          "ko": "total (전체 합)"
+         },
+         "value": 7
+        }
+       ]
+      }
+     },
+     "answer": "false"
+    }
+   ],
+   "extra": true
+  }
+ ]
+}
