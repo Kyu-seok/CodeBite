@@ -10,4 +10,6 @@ class Solution:
                 # Lowering the earlier element is best; if that would break order behind it, raise this one.
                 if i >= 2 and nums[i] < nums[i - 2]:
                     nums[i] = nums[i - 1]
+                else:
+                    nums[i - 1] = nums[i]
         return True

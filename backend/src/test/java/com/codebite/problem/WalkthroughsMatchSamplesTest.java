@@ -727,9 +727,10 @@ class WalkthroughsMatchSamplesTest {
      *   <li>a move out of a place reaches the places the address table says it carries its value on to (an edge's
      *       far end), as a relaxation draws a graph node's new cost.</li>
      * </ul>
-     * A list by index (an array, an output, a queue) is compared both in place and as a sequence whose values shift
-     * (a queue's front leaving, a value joining an end), whichever changes fewer places; a view hidden in a frame is
-     * empty there, so everything it shows when it comes back is new.
+     * A list by index (an array, an output, a queue) is compared in place, as a sequence whose values shift (a queue's
+     * front leaving, a value joining an end) and as one whose front and back both hold (a value inserted in the
+     * middle), whichever changes fewest places; a view hidden in a frame is empty there, so everything it shows when
+     * it comes back is new.
      */
     @Test
     void everyPlaceThatChangesHasAMoveIntoIt() throws Exception {
@@ -785,6 +786,7 @@ class WalkthroughsMatchSamplesTest {
             "value popped                             | stack | {'values': [3, 1]}              | {'values': [3]}                | []",
             "value popped                             | stack | {'values': [3, 1]}              | {'values': [3]}                | []",
             "only read                                | array | {'values': [1, 2]}              | {'values': [1, 2], 'marks': {'lit': [0]}} | []",
+            "value inserted in the middle             | array | {'values': [1, 5, 6]}           | {'values': [1, 2, 5, 6]}       | [{'to': {'view': 'v', 'at': 1}}]",
     })
     void aChangeTheRuleAllowsPasses(String allowed, String type, String before, String after, String moves) throws Exception {
         assertEquals(List.of(), changesWithoutMoves("fixture", step(type, before, after, moves)), allowed);
@@ -840,8 +842,8 @@ class WalkthroughsMatchSamplesTest {
 
     /**
      * The addresses of {@code now} that are new or hold a new value since {@code before}. A list by index is compared
-     * in place and as a shifted sequence (its longest run of values in common with before kept, the rest new),
-     * whichever finds fewer.
+     * in place, as a shifted sequence (its longest run of values in common with before kept, the rest new) and as an
+     * insert or removal in the middle (its common front and back kept, the rest new), whichever finds fewest.
      */
     private static List<String> changed(String type, Map<String, JsonNode> before, Map<String, JsonNode> now) {
         List<String> inPlace = new ArrayList<>();
@@ -863,7 +865,14 @@ class WalkthroughsMatchSamplesTest {
         }
         List<String> shifted = new ArrayList<>();
         for (int j = 0; j < a.size(); j++) if (j < start || j >= start + length) shifted.add(String.valueOf(j));
-        return shifted.size() < inPlace.size() ? shifted : inPlace;
+        int front = 0, back = 0;
+        while (front < b.size() && front < a.size() && b.get(front).equals(a.get(front))) front++;
+        while (back < b.size() - front && back < a.size() - front
+                && b.get(b.size() - 1 - back).equals(a.get(a.size() - 1 - back))) back++;
+        List<String> middle = new ArrayList<>();
+        for (int j = front; j < a.size() - back; j++) middle.add(String.valueOf(j));
+        List<String> fewest = shifted.size() < inPlace.size() ? shifted : inPlace;
+        return middle.size() < fewest.size() ? middle : fewest;
     }
 
     /**

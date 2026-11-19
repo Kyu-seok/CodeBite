@@ -1,0 +1,2678 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Count Voice Relay Parties",
+  "ko": "음성 릴레이 파티 세기"
+ },
+ "approach": {
+  "en": "Union-find: every player starts as a party of one; a relay between two different parties joins them, so each union leaves one party fewer, and the parties left are the answer.",
+  "ko": "유니온 파인드: 플레이어마다 혼자서 한 파티로 시작합니다. 서로 다른 두 파티를 잇는 릴레이는 둘을 합치므로 합칠 때마다 파티가 하나 줄고, 남은 파티 수가 답입니다."
+ },
+ "views": [
+  {
+   "id": "players",
+   "type": "graph",
+   "directed": false,
+   "title": {
+    "en": "relays (tag: root of the party)",
+    "ko": "릴레이 (태그: 파티의 루트)"
+   }
+  },
+  {
+   "id": "parent",
+   "type": "array",
+   "title": {
+    "en": "parent (index: player)",
+    "ko": "parent (인덱스: 플레이어)"
+   }
+  },
+  {
+   "id": "parties",
+   "type": "output",
+   "title": {
+    "en": "parties, by root (faded: joined another)",
+    "ko": "파티 (루트 번호, 흐림: 다른 파티에 합쳐짐)"
+   },
+   "empty": {
+    "en": "none",
+    "ko": "없음"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "n = 6, relays = [[0,1],[2,3],[3,4]]",
+   "expected": "3",
+   "frames": [
+    {
+     "caption": {
+      "en": "6 players, each its own party: parent[p] = p, so every player is a root, and there are 6 parties. Now read the 3 relays.",
+      "ko": "플레이어 6명이 각자 한 파티라 parent[p] = p이고, 모두 루트이므로 파티는 6개입니다. 이제 릴레이 3개를 읽습니다."
+     },
+     "views": {
+      "players": {
+       "nodes": [
+        {
+         "id": 0,
+         "tag": {
+          "en": "root 0",
+          "ko": "루트 0"
+         }
+        },
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 1",
+          "ko": "루트 1"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 2",
+          "ko": "루트 2"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        },
+        {
+         "id": 4,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 5,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "dim": [
+         0,
+         1,
+         2
+        ]
+       },
+       "nodeMarks": {}
+      },
+      "parent": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+       ],
+       "pointers": {},
+       "marks": {
+        "lit": [],
+        "good": []
+       }
+      },
+      "parties": {
+       "values": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+       ],
+       "marks": {
+        "dim": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Relay [0,1]: 0 is a root, 1 is a root. Roots 0 and 1 differ: two parties.",
+      "ko": "릴레이 [0,1]: 0번은 루트, 1번은 루트. 루트 0과 1이 달라 서로 다른 두 파티입니다."
+     },
+     "views": {
+      "players": {
+       "nodes": [
+        {
+         "id": 0,
+         "tag": {
+          "en": "root 0",
+          "ko": "루트 0"
+         }
+        },
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 1",
+          "ko": "루트 1"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 2",
+          "ko": "루트 2"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        },
+        {
+         "id": 4,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 5,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "dim": [
+         1,
+         2
+        ],
+        "lit": [
+         0
+        ]
+       },
+       "nodeMarks": {
+        "lit": [
+         0,
+         1
+        ]
+       }
+      },
+      "parent": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+       ],
+       "pointers": {
+        "root a": 0,
+        "root b": 1
+       },
+       "marks": {
+        "lit": [
+         0,
+         1
+        ],
+        "good": []
+       }
+      },
+      "parties": {
+       "values": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+       ],
+       "marks": {
+        "dim": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "parent[0] = 1: party 0 joins party 1, so the party with root 0 is gone: 5 parties left.",
+      "ko": "parent[0] = 1: 0번 파티가 1번 파티에 합쳐져 루트 0의 파티가 사라지고, 파티는 5개 남습니다."
+     },
+     "views": {
+      "players": {
+       "nodes": [
+        {
+         "id": 0,
+         "tag": {
+          "en": "root 1",
+          "ko": "루트 1"
+         }
+        },
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 1",
+          "ko": "루트 1"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 2",
+          "ko": "루트 2"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        },
+        {
+         "id": 4,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 5,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "dim": [
+         1,
+         2
+        ],
+        "lit": [
+         0
+        ]
+       },
+       "nodeMarks": {
+        "lit": [
+         0,
+         1
+        ]
+       }
+      },
+      "parent": {
+       "values": [
+        1,
+        1,
+        2,
+        3,
+        4,
+        5
+       ],
+       "pointers": {},
+       "marks": {
+        "lit": [],
+        "good": [
+         0
+        ]
+       }
+      },
+      "parties": {
+       "values": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+       ],
+       "marks": {
+        "dim": [],
+        "bad": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "parent",
+        "at": 1
+       },
+       "to": {
+        "view": "parent",
+        "at": 0
+       }
+      },
+      {
+       "from": {
+        "view": "parties",
+        "at": 0
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Relay [2,3]: 2 is a root, 3 is a root. Roots 2 and 3 differ: two parties.",
+      "ko": "릴레이 [2,3]: 2번은 루트, 3번은 루트. 루트 2와 3이 달라 서로 다른 두 파티입니다."
+     },
+     "views": {
+      "players": {
+       "nodes": [
+        {
+         "id": 0,
+         "tag": {
+          "en": "root 1",
+          "ko": "루트 1"
+         }
+        },
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 1",
+          "ko": "루트 1"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 2",
+          "ko": "루트 2"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        },
+        {
+         "id": 4,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 5,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "dim": [
+         2
+        ],
+        "lit": [
+         1
+        ]
+       },
+       "nodeMarks": {
+        "lit": [
+         2,
+         3
+        ]
+       }
+      },
+      "parent": {
+       "values": [
+        1,
+        1,
+        2,
+        3,
+        4,
+        5
+       ],
+       "pointers": {
+        "root a": 2,
+        "root b": 3
+       },
+       "marks": {
+        "lit": [
+         2,
+         3
+        ],
+        "good": []
+       }
+      },
+      "parties": {
+       "values": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+       ],
+       "marks": {
+        "dim": [
+         0
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "parent[2] = 3: party 2 joins party 3, so the party with root 2 is gone: 4 parties left.",
+      "ko": "parent[2] = 3: 2번 파티가 3번 파티에 합쳐져 루트 2의 파티가 사라지고, 파티는 4개 남습니다."
+     },
+     "views": {
+      "players": {
+       "nodes": [
+        {
+         "id": 0,
+         "tag": {
+          "en": "root 1",
+          "ko": "루트 1"
+         }
+        },
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 1",
+          "ko": "루트 1"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        },
+        {
+         "id": 4,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 5,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "dim": [
+         2
+        ],
+        "lit": [
+         1
+        ]
+       },
+       "nodeMarks": {
+        "lit": [
+         2,
+         3
+        ]
+       }
+      },
+      "parent": {
+       "values": [
+        1,
+        1,
+        3,
+        3,
+        4,
+        5
+       ],
+       "pointers": {},
+       "marks": {
+        "lit": [],
+        "good": [
+         2
+        ]
+       }
+      },
+      "parties": {
+       "values": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+       ],
+       "marks": {
+        "dim": [
+         0
+        ],
+        "bad": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "parent",
+        "at": 3
+       },
+       "to": {
+        "view": "parent",
+        "at": 2
+       }
+      },
+      {
+       "from": {
+        "view": "parties",
+        "at": 2
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Relay [3,4]: 3 is a root, 4 is a root. Roots 3 and 4 differ: two parties.",
+      "ko": "릴레이 [3,4]: 3번은 루트, 4번은 루트. 루트 3과 4가 달라 서로 다른 두 파티입니다."
+     },
+     "views": {
+      "players": {
+       "nodes": [
+        {
+         "id": 0,
+         "tag": {
+          "en": "root 1",
+          "ko": "루트 1"
+         }
+        },
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 1",
+          "ko": "루트 1"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        },
+        {
+         "id": 4,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 5,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "dim": [],
+        "lit": [
+         2
+        ]
+       },
+       "nodeMarks": {
+        "lit": [
+         3,
+         4
+        ]
+       }
+      },
+      "parent": {
+       "values": [
+        1,
+        1,
+        3,
+        3,
+        4,
+        5
+       ],
+       "pointers": {
+        "root a": 3,
+        "root b": 4
+       },
+       "marks": {
+        "lit": [
+         3,
+         4
+        ],
+        "good": []
+       }
+      },
+      "parties": {
+       "values": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         2
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "parent[3] = 4: party 3 joins party 4, so the party with root 3 is gone: 3 parties left.",
+      "ko": "parent[3] = 4: 3번 파티가 4번 파티에 합쳐져 루트 3의 파티가 사라지고, 파티는 3개 남습니다."
+     },
+     "views": {
+      "players": {
+       "nodes": [
+        {
+         "id": 0,
+         "tag": {
+          "en": "root 1",
+          "ko": "루트 1"
+         }
+        },
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 1",
+          "ko": "루트 1"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 4,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 5,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "dim": [],
+        "lit": [
+         2
+        ]
+       },
+       "nodeMarks": {
+        "lit": [
+         3,
+         4
+        ]
+       }
+      },
+      "parent": {
+       "values": [
+        1,
+        1,
+        3,
+        4,
+        4,
+        5
+       ],
+       "pointers": {},
+       "marks": {
+        "lit": [],
+        "good": [
+         3
+        ]
+       }
+      },
+      "parties": {
+       "values": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         2
+        ],
+        "bad": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "parent",
+        "at": 4
+       },
+       "to": {
+        "view": "parent",
+        "at": 3
+       }
+      },
+      {
+       "from": {
+        "view": "parties",
+        "at": 3
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every relay is read. 3 roots are left (1, 4, 5), one per party: answer 3.",
+      "ko": "릴레이를 모두 읽었습니다. 남은 루트는 1, 4, 5, 3개이므로 답은 3입니다."
+     },
+     "views": {
+      "players": {
+       "nodes": [
+        {
+         "id": 0,
+         "tag": {
+          "en": "root 1",
+          "ko": "루트 1"
+         }
+        },
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 1",
+          "ko": "루트 1"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 4,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 5,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "dim": []
+       },
+       "nodeMarks": {}
+      },
+      "parent": {
+       "values": [
+        1,
+        1,
+        3,
+        4,
+        4,
+        5
+       ],
+       "pointers": {},
+       "marks": {
+        "lit": [],
+        "good": []
+       }
+      },
+      "parties": {
+       "values": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         2,
+         3
+        ],
+        "good": [
+         1,
+         4,
+         5
+        ]
+       }
+      }
+     },
+     "answer": "3"
+    }
+   ],
+   "setup": {
+    "players": {
+     "edges": [
+      {
+       "from": 0,
+       "to": 1
+      },
+      {
+       "from": 2,
+       "to": 3
+      },
+      {
+       "from": 3,
+       "to": 4
+      }
+     ]
+    }
+   },
+   "sampleInput": "6\n[[0,1],[2,3],[3,4]]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "n = 7, relays = [[0,1],[1,2],[2,3],[3,4],[4,5],[5,6]]",
+   "expected": "1",
+   "frames": [
+    {
+     "caption": {
+      "en": "7 players, each its own party: parent[p] = p, so every player is a root, and there are 7 parties. Now read the 6 relays.",
+      "ko": "플레이어 7명이 각자 한 파티라 parent[p] = p이고, 모두 루트이므로 파티는 7개입니다. 이제 릴레이 6개를 읽습니다."
+     },
+     "views": {
+      "players": {
+       "nodes": [
+        {
+         "id": 0,
+         "tag": {
+          "en": "root 0",
+          "ko": "루트 0"
+         }
+        },
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 1",
+          "ko": "루트 1"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 2",
+          "ko": "루트 2"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        },
+        {
+         "id": 4,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 5,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        },
+        {
+         "id": 6,
+         "tag": {
+          "en": "root 6",
+          "ko": "루트 6"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       },
+       "nodeMarks": {}
+      },
+      "parent": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+       ],
+       "pointers": {},
+       "marks": {
+        "lit": [],
+        "good": []
+       }
+      },
+      "parties": {
+       "values": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6"
+       ],
+       "marks": {
+        "dim": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Relay [0,1]: 0 is a root, 1 is a root. Roots 0 and 1 differ: two parties.",
+      "ko": "릴레이 [0,1]: 0번은 루트, 1번은 루트. 루트 0과 1이 달라 서로 다른 두 파티입니다."
+     },
+     "views": {
+      "players": {
+       "nodes": [
+        {
+         "id": 0,
+         "tag": {
+          "en": "root 0",
+          "ko": "루트 0"
+         }
+        },
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 1",
+          "ko": "루트 1"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 2",
+          "ko": "루트 2"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        },
+        {
+         "id": 4,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 5,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        },
+        {
+         "id": 6,
+         "tag": {
+          "en": "root 6",
+          "ko": "루트 6"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "dim": [
+         1,
+         2,
+         3,
+         4,
+         5
+        ],
+        "lit": [
+         0
+        ]
+       },
+       "nodeMarks": {
+        "lit": [
+         0,
+         1
+        ]
+       }
+      },
+      "parent": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+       ],
+       "pointers": {
+        "root a": 0,
+        "root b": 1
+       },
+       "marks": {
+        "lit": [
+         0,
+         1
+        ],
+        "good": []
+       }
+      },
+      "parties": {
+       "values": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6"
+       ],
+       "marks": {
+        "dim": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "parent[0] = 1: party 0 joins party 1, so the party with root 0 is gone: 6 parties left.",
+      "ko": "parent[0] = 1: 0번 파티가 1번 파티에 합쳐져 루트 0의 파티가 사라지고, 파티는 6개 남습니다."
+     },
+     "views": {
+      "players": {
+       "nodes": [
+        {
+         "id": 0,
+         "tag": {
+          "en": "root 1",
+          "ko": "루트 1"
+         }
+        },
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 1",
+          "ko": "루트 1"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 2",
+          "ko": "루트 2"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        },
+        {
+         "id": 4,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 5,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        },
+        {
+         "id": 6,
+         "tag": {
+          "en": "root 6",
+          "ko": "루트 6"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "dim": [
+         1,
+         2,
+         3,
+         4,
+         5
+        ],
+        "lit": [
+         0
+        ]
+       },
+       "nodeMarks": {
+        "lit": [
+         0,
+         1
+        ]
+       }
+      },
+      "parent": {
+       "values": [
+        1,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+       ],
+       "pointers": {},
+       "marks": {
+        "lit": [],
+        "good": [
+         0
+        ]
+       }
+      },
+      "parties": {
+       "values": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6"
+       ],
+       "marks": {
+        "dim": [],
+        "bad": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "parent",
+        "at": 1
+       },
+       "to": {
+        "view": "parent",
+        "at": 0
+       }
+      },
+      {
+       "from": {
+        "view": "parties",
+        "at": 0
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Relay [1,2]: 1 is a root, 2 is a root. Roots 1 and 2 differ: two parties.",
+      "ko": "릴레이 [1,2]: 1번은 루트, 2번은 루트. 루트 1과 2가 달라 서로 다른 두 파티입니다."
+     },
+     "views": {
+      "players": {
+       "nodes": [
+        {
+         "id": 0,
+         "tag": {
+          "en": "root 1",
+          "ko": "루트 1"
+         }
+        },
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 1",
+          "ko": "루트 1"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 2",
+          "ko": "루트 2"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        },
+        {
+         "id": 4,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 5,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        },
+        {
+         "id": 6,
+         "tag": {
+          "en": "root 6",
+          "ko": "루트 6"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "dim": [
+         2,
+         3,
+         4,
+         5
+        ],
+        "lit": [
+         1
+        ]
+       },
+       "nodeMarks": {
+        "lit": [
+         1,
+         2
+        ]
+       }
+      },
+      "parent": {
+       "values": [
+        1,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+       ],
+       "pointers": {
+        "root a": 1,
+        "root b": 2
+       },
+       "marks": {
+        "lit": [
+         1,
+         2
+        ],
+        "good": []
+       }
+      },
+      "parties": {
+       "values": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6"
+       ],
+       "marks": {
+        "dim": [
+         0
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "parent[1] = 2: party 1 joins party 2, so the party with root 1 is gone: 5 parties left.",
+      "ko": "parent[1] = 2: 1번 파티가 2번 파티에 합쳐져 루트 1의 파티가 사라지고, 파티는 5개 남습니다."
+     },
+     "views": {
+      "players": {
+       "nodes": [
+        {
+         "id": 0,
+         "tag": {
+          "en": "root 2",
+          "ko": "루트 2"
+         }
+        },
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 2",
+          "ko": "루트 2"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 2",
+          "ko": "루트 2"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        },
+        {
+         "id": 4,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 5,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        },
+        {
+         "id": 6,
+         "tag": {
+          "en": "root 6",
+          "ko": "루트 6"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "dim": [
+         2,
+         3,
+         4,
+         5
+        ],
+        "lit": [
+         1
+        ]
+       },
+       "nodeMarks": {
+        "lit": [
+         1,
+         2
+        ]
+       }
+      },
+      "parent": {
+       "values": [
+        1,
+        2,
+        2,
+        3,
+        4,
+        5,
+        6
+       ],
+       "pointers": {},
+       "marks": {
+        "lit": [],
+        "good": [
+         1
+        ]
+       }
+      },
+      "parties": {
+       "values": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6"
+       ],
+       "marks": {
+        "dim": [
+         0
+        ],
+        "bad": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "parent",
+        "at": 2
+       },
+       "to": {
+        "view": "parent",
+        "at": 1
+       }
+      },
+      {
+       "from": {
+        "view": "parties",
+        "at": 1
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Relay [2,3]: 2 is a root, 3 is a root. Roots 2 and 3 differ: two parties.",
+      "ko": "릴레이 [2,3]: 2번은 루트, 3번은 루트. 루트 2와 3이 달라 서로 다른 두 파티입니다."
+     },
+     "views": {
+      "players": {
+       "nodes": [
+        {
+         "id": 0,
+         "tag": {
+          "en": "root 2",
+          "ko": "루트 2"
+         }
+        },
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 2",
+          "ko": "루트 2"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 2",
+          "ko": "루트 2"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        },
+        {
+         "id": 4,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 5,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        },
+        {
+         "id": 6,
+         "tag": {
+          "en": "root 6",
+          "ko": "루트 6"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "dim": [
+         3,
+         4,
+         5
+        ],
+        "lit": [
+         2
+        ]
+       },
+       "nodeMarks": {
+        "lit": [
+         2,
+         3
+        ]
+       }
+      },
+      "parent": {
+       "values": [
+        1,
+        2,
+        2,
+        3,
+        4,
+        5,
+        6
+       ],
+       "pointers": {
+        "root a": 2,
+        "root b": 3
+       },
+       "marks": {
+        "lit": [
+         2,
+         3
+        ],
+        "good": []
+       }
+      },
+      "parties": {
+       "values": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "parent[2] = 3: party 2 joins party 3, so the party with root 2 is gone: 4 parties left.",
+      "ko": "parent[2] = 3: 2번 파티가 3번 파티에 합쳐져 루트 2의 파티가 사라지고, 파티는 4개 남습니다."
+     },
+     "views": {
+      "players": {
+       "nodes": [
+        {
+         "id": 0,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        },
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        },
+        {
+         "id": 4,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 5,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        },
+        {
+         "id": 6,
+         "tag": {
+          "en": "root 6",
+          "ko": "루트 6"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "dim": [
+         3,
+         4,
+         5
+        ],
+        "lit": [
+         2
+        ]
+       },
+       "nodeMarks": {
+        "lit": [
+         2,
+         3
+        ]
+       }
+      },
+      "parent": {
+       "values": [
+        1,
+        2,
+        3,
+        3,
+        4,
+        5,
+        6
+       ],
+       "pointers": {},
+       "marks": {
+        "lit": [],
+        "good": [
+         2
+        ]
+       }
+      },
+      "parties": {
+       "values": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1
+        ],
+        "bad": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "parent",
+        "at": 3
+       },
+       "to": {
+        "view": "parent",
+        "at": 2
+       }
+      },
+      {
+       "from": {
+        "view": "parties",
+        "at": 2
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Relay [3,4]: 3 is a root, 4 is a root. Roots 3 and 4 differ: two parties.",
+      "ko": "릴레이 [3,4]: 3번은 루트, 4번은 루트. 루트 3과 4가 달라 서로 다른 두 파티입니다."
+     },
+     "views": {
+      "players": {
+       "nodes": [
+        {
+         "id": 0,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        },
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        },
+        {
+         "id": 4,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 5,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        },
+        {
+         "id": 6,
+         "tag": {
+          "en": "root 6",
+          "ko": "루트 6"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "dim": [
+         4,
+         5
+        ],
+        "lit": [
+         3
+        ]
+       },
+       "nodeMarks": {
+        "lit": [
+         3,
+         4
+        ]
+       }
+      },
+      "parent": {
+       "values": [
+        1,
+        2,
+        3,
+        3,
+        4,
+        5,
+        6
+       ],
+       "pointers": {
+        "root a": 3,
+        "root b": 4
+       },
+       "marks": {
+        "lit": [
+         3,
+         4
+        ],
+        "good": []
+       }
+      },
+      "parties": {
+       "values": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "parent[3] = 4: party 3 joins party 4, so the party with root 3 is gone: 3 parties left.",
+      "ko": "parent[3] = 4: 3번 파티가 4번 파티에 합쳐져 루트 3의 파티가 사라지고, 파티는 3개 남습니다."
+     },
+     "views": {
+      "players": {
+       "nodes": [
+        {
+         "id": 0,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 4,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 5,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        },
+        {
+         "id": 6,
+         "tag": {
+          "en": "root 6",
+          "ko": "루트 6"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "dim": [
+         4,
+         5
+        ],
+        "lit": [
+         3
+        ]
+       },
+       "nodeMarks": {
+        "lit": [
+         3,
+         4
+        ]
+       }
+      },
+      "parent": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        4,
+        5,
+        6
+       ],
+       "pointers": {},
+       "marks": {
+        "lit": [],
+        "good": [
+         3
+        ]
+       }
+      },
+      "parties": {
+       "values": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2
+        ],
+        "bad": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "parent",
+        "at": 4
+       },
+       "to": {
+        "view": "parent",
+        "at": 3
+       }
+      },
+      {
+       "from": {
+        "view": "parties",
+        "at": 3
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Relay [4,5]: 4 is a root, 5 is a root. Roots 4 and 5 differ: two parties.",
+      "ko": "릴레이 [4,5]: 4번은 루트, 5번은 루트. 루트 4와 5가 달라 서로 다른 두 파티입니다."
+     },
+     "views": {
+      "players": {
+       "nodes": [
+        {
+         "id": 0,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 4,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 5,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        },
+        {
+         "id": 6,
+         "tag": {
+          "en": "root 6",
+          "ko": "루트 6"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "dim": [
+         5
+        ],
+        "lit": [
+         4
+        ]
+       },
+       "nodeMarks": {
+        "lit": [
+         4,
+         5
+        ]
+       }
+      },
+      "parent": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        4,
+        5,
+        6
+       ],
+       "pointers": {
+        "root a": 4,
+        "root b": 5
+       },
+       "marks": {
+        "lit": [
+         4,
+         5
+        ],
+        "good": []
+       }
+      },
+      "parties": {
+       "values": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "parent[4] = 5: party 4 joins party 5, so the party with root 4 is gone: 2 parties left.",
+      "ko": "parent[4] = 5: 4번 파티가 5번 파티에 합쳐져 루트 4의 파티가 사라지고, 파티는 2개 남습니다."
+     },
+     "views": {
+      "players": {
+       "nodes": [
+        {
+         "id": 0,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        },
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        },
+        {
+         "id": 4,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        },
+        {
+         "id": 5,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        },
+        {
+         "id": 6,
+         "tag": {
+          "en": "root 6",
+          "ko": "루트 6"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "dim": [
+         5
+        ],
+        "lit": [
+         4
+        ]
+       },
+       "nodeMarks": {
+        "lit": [
+         4,
+         5
+        ]
+       }
+      },
+      "parent": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        5,
+        6
+       ],
+       "pointers": {},
+       "marks": {
+        "lit": [],
+        "good": [
+         4
+        ]
+       }
+      },
+      "parties": {
+       "values": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3
+        ],
+        "bad": [
+         4
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "parent",
+        "at": 5
+       },
+       "to": {
+        "view": "parent",
+        "at": 4
+       }
+      },
+      {
+       "from": {
+        "view": "parties",
+        "at": 4
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Relay [5,6]: 5 is a root, 6 is a root. Roots 5 and 6 differ: two parties.",
+      "ko": "릴레이 [5,6]: 5번은 루트, 6번은 루트. 루트 5와 6이 달라 서로 다른 두 파티입니다."
+     },
+     "views": {
+      "players": {
+       "nodes": [
+        {
+         "id": 0,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        },
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        },
+        {
+         "id": 4,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        },
+        {
+         "id": 5,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        },
+        {
+         "id": 6,
+         "tag": {
+          "en": "root 6",
+          "ko": "루트 6"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "dim": [],
+        "lit": [
+         5
+        ]
+       },
+       "nodeMarks": {
+        "lit": [
+         5,
+         6
+        ]
+       }
+      },
+      "parent": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        5,
+        6
+       ],
+       "pointers": {
+        "root a": 5,
+        "root b": 6
+       },
+       "marks": {
+        "lit": [
+         5,
+         6
+        ],
+        "good": []
+       }
+      },
+      "parties": {
+       "values": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "parent[5] = 6: party 5 joins party 6, so the party with root 5 is gone: 1 party left.",
+      "ko": "parent[5] = 6: 5번 파티가 6번 파티에 합쳐져 루트 5의 파티가 사라지고, 파티는 1개 남습니다."
+     },
+     "views": {
+      "players": {
+       "nodes": [
+        {
+         "id": 0,
+         "tag": {
+          "en": "root 6",
+          "ko": "루트 6"
+         }
+        },
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 6",
+          "ko": "루트 6"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 6",
+          "ko": "루트 6"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 6",
+          "ko": "루트 6"
+         }
+        },
+        {
+         "id": 4,
+         "tag": {
+          "en": "root 6",
+          "ko": "루트 6"
+         }
+        },
+        {
+         "id": 5,
+         "tag": {
+          "en": "root 6",
+          "ko": "루트 6"
+         }
+        },
+        {
+         "id": 6,
+         "tag": {
+          "en": "root 6",
+          "ko": "루트 6"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "dim": [],
+        "lit": [
+         5
+        ]
+       },
+       "nodeMarks": {
+        "lit": [
+         5,
+         6
+        ]
+       }
+      },
+      "parent": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        6
+       ],
+       "pointers": {},
+       "marks": {
+        "lit": [],
+        "good": [
+         5
+        ]
+       }
+      },
+      "parties": {
+       "values": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ],
+        "bad": [
+         5
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "parent",
+        "at": 6
+       },
+       "to": {
+        "view": "parent",
+        "at": 5
+       }
+      },
+      {
+       "from": {
+        "view": "parties",
+        "at": 5
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every relay is read. 1 root is left (6), one per party: answer 1.",
+      "ko": "릴레이를 모두 읽었습니다. 남은 루트는 6, 1개이므로 답은 1입니다."
+     },
+     "views": {
+      "players": {
+       "nodes": [
+        {
+         "id": 0,
+         "tag": {
+          "en": "root 6",
+          "ko": "루트 6"
+         }
+        },
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 6",
+          "ko": "루트 6"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 6",
+          "ko": "루트 6"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 6",
+          "ko": "루트 6"
+         }
+        },
+        {
+         "id": 4,
+         "tag": {
+          "en": "root 6",
+          "ko": "루트 6"
+         }
+        },
+        {
+         "id": 5,
+         "tag": {
+          "en": "root 6",
+          "ko": "루트 6"
+         }
+        },
+        {
+         "id": 6,
+         "tag": {
+          "en": "root 6",
+          "ko": "루트 6"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "dim": []
+       },
+       "nodeMarks": {}
+      },
+      "parent": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        6
+       ],
+       "pointers": {},
+       "marks": {
+        "lit": [],
+        "good": []
+       }
+      },
+      "parties": {
+       "values": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ],
+        "good": [
+         6
+        ]
+       }
+      }
+     },
+     "answer": "1"
+    }
+   ],
+   "setup": {
+    "players": {
+     "edges": [
+      {
+       "from": 0,
+       "to": 1
+      },
+      {
+       "from": 1,
+       "to": 2
+      },
+      {
+       "from": 2,
+       "to": 3
+      },
+      {
+       "from": 3,
+       "to": 4
+      },
+      {
+       "from": 4,
+       "to": 5
+      },
+      {
+       "from": 5,
+       "to": 6
+      }
+     ]
+    }
+   },
+   "sampleInput": "7\n[[0,1],[1,2],[2,3],[3,4],[4,5],[5,6]]"
+  }
+ ]
+}
