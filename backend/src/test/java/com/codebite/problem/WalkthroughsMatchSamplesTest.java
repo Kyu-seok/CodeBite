@@ -21,10 +21,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.IntUnaryOperator;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -41,7 +44,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * sample Test Cases by {@code sampleInput} and {@code expected}, compared trimmed as the Grader
  * compares; each run ends on its {@code expected}; and any run marked {@code extra} comes after
  * the sample runs; run N is labelled "Example N" exactly when the description shows {@code **Example N:**} ("Case N"
- * otherwise, in Korean too); every caption is one or two sentences in each language (#258); and every frame keeps #273's two rules (a change has a move into it, and {@code vars} repeats nothing drawn on the data; see the tests below). Correcting, adding or reordering a sample without regenerating the Walkthrough
+ * otherwise, in Korean too); every caption is one or two sentences in each language (#258); and every frame keeps #273's two rules (a change has a move into it, and {@code vars} repeats nothing drawn on the data; see the tests below). Every Korean particle fits the word it follows, and every label is Text in both languages (the add-walkthrough skill's "Korean particles" and Text rules). Correcting, adding or reordering a sample without regenerating the Walkthrough
  * (its tracer is {@code scripts/walkthroughs/<slug>.py}) fails here.
  */
 class WalkthroughsMatchSamplesTest {
@@ -1293,6 +1296,167 @@ class WalkthroughsMatchSamplesTest {
         assertTrue(found.isEmpty(), String.join("\n", found));
     }
 
+    // --- Korean particles and labels (SKILL.md "Korean particles", Text fields) --------------------------
+
+    @Test
+    void everyKoreanParticleFitsTheWordItFollows() throws Exception {
+        List<String> found = new ArrayList<>();
+        for (String slug : WALKTHROUGHS.slugs()) {
+            found.addAll(particleMismatches(slug, JSON.readTree(WALKTHROUGHS.of(slug).orElseThrow())));
+        }
+        assertTrue(found.isEmpty(), "Korean particles that don't fit how the word before them is read (the tracer writes "
+                + "josa() after a number, or a noun before the particle; .claude/skills/add-walkthrough/SKILL.md, Korean "
+                + "particles):\n" + String.join("\n", found));
+    }
+
+    @Test
+    void everyLabelIsTextInBothLanguages() throws Exception {
+        List<String> found = new ArrayList<>();
+        for (String slug : WALKTHROUGHS.slugs()) {
+            found.addAll(plainLabels(slug, JSON.readTree(WALKTHROUGHS.of(slug).orElseThrow())));
+        }
+        assertTrue(found.isEmpty(), "Labels written as a plain string, shown untranslated in Korean (the tracer writes "
+                + "{\"en\": ..., \"ko\": ...}; .claude/skills/add-walkthrough/SKILL.md):\n" + String.join("\n", found));
+    }
+
+    /**
+     * One run of a tree {@code t} (titled in both languages, a node tagged), a {@code vars} view {@code s} and a table
+     * {@code g}, every label Text or a plain string the label rule allows, and the Korean caption {@code korean} on its
+     * first frame.
+     */
+    private static ObjectNode labelsFixture(String korean) throws Exception {
+        ObjectNode walkthrough = walkthrough("""
+                        [{'id': 't', 'type': 'tree', 'title': {'en': 'Heap', 'ko': '힙'}}, {'id': 's', 'type': 'vars'},
+                         {'id': 'g', 'type': 'table', 'title': 'nums'}]""", """
+                        [{'views': {'t': {'nodes': [{'id': 0, 'value': 3}], 'edges': [],
+                                          'tags': [[0, {'en': 'root', 'ko': 'root (뿌리)'}]]},
+                                    's': {'items': [{'label': {'en': 'best', 'ko': 'best (최장 길이)'}, 'value': 2},
+                                                    {'label': 'k', 'value': 1}]},
+                                    'g': {'columns': ['[0]', {'en': 'sum', 'ko': '합'}],
+                                          'rows': [{'label': 'n − 1', 'cells': [1, 2]}]}}},
+                         {'views': {'t': {'nodes': [{'id': 0, 'value': 3}], 'edges': [], 'tags': [[0, '(-∞, 10)']]}}}]""");
+        ((ObjectNode) walkthrough.get("runs").get(0).get("frames").get(0).get("caption")).put("ko", korean);
+        return walkthrough;
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @CsvSource(delimiter = '|', quoteCharacter = '`', value = {
+            "로 after a 3                     | 칸 3로 갑니다.               | \"칸 3로\": 3 is read so it takes \"으로\", not \"로\"",
+            "은 after a 4                     | 4은 짝수입니다.              | \"4은\": 4 is read so it takes \"는\", not \"은\"",
+            "으로 after a 1                   | 1으로 바꿉니다.              | \"1으로\": 1 is read so it takes \"로\", not \"으로\"",
+            "가 after a 0                     | 합 0가 됩니다.               | \"합 0가\": 0 is read so it takes \"이\", not \"가\"",
+            "particle after a bracket         | 구간 [1,3]과 겹칩니다.       | \"구간 [1,3]과\": a particle after \"]\" can't follow how the text before it is read",
+            "particle after an index          | s[0]를 봅니다.               | \"s[0]를\": a particle after \"]\" can't follow",
+            "particle a space after a bracket | 구간 [1,3] 과 겹칩니다.      | \"구간 [1,3] 과\": a particle after \"]\" can't follow",
+            "particle after a brace           | {a}는 비었습니다.            | \"{a}는\": a particle after \"}\" can't follow",
+            "particle after a quoted letter   | 글자 'l'을 셉니다.           | \"글자 'l'을\": a particle after \"'\" can't follow",
+            "particle after a quoted word     | \"abc\"를 찾습니다.           | \"\\\"abc\\\"를\": a particle after \"\\\"\" can't follow",
+            "particle after a curly quote     | ‘ab’를 찾습니다.             | \"‘ab’를\": a particle after \"’\" can't follow",
+            "particle after a code call       | f(x)를 부릅니다.             | \"f(x)를\": a particle after \")\" can't follow",
+            "particle a gloss's word refuses  | 왼쪽 자식(2)가 큐에 듭니다.  | \"왼쪽 자식(2)가\": the particle follows \"식\", which takes \"이\", not \"가\"",
+            "particle a quoted word refuses   | '사과'을 셉니다.             | \"'사과'을\": the particle follows \"과\", which takes \"를\", not \"을\"",
+    })
+    void aParticleThatDoesntFitIsCaught(String breakage, String korean, String expected) throws Exception {
+        List<String> found = particleMismatches("fixture", labelsFixture(korean));
+        assertTrue(found.stream().anyMatch(m -> m.startsWith("fixture: run 1 (Example 1) frame 1 of 2: ") && m.contains(expected)
+                        && m.contains("josa()")),
+                breakage + " was not caught as \"" + expected + "\": " + found);
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @CsvSource(delimiter = '|', quoteCharacter = '`', value = {
+            "으로 after a 3                     | 칸 3으로 갑니다.",
+            "는 after a 4                       | 4는 짝수입니다.",
+            "로 after a 7, read 칠              | 7로 바꿉니다.",
+            "을 after a 10, read 십             | 10을 셉니다.",
+            "는 after a decimal's last digit    | 0.5는 절반입니다.",
+            "a copula after a bracket           | 답은 [1,3]이다.",
+            "a copula after a quote             | 답은 'abc'입니다.",
+            "a word starting 이 after a bracket | [1,3] 이번에는 넘깁니다.",
+            "a word starting 가 after a bracket | [1,3] 가장 깁니다.",
+            "a word starting 로 after a quote   | 'x' 로그를 봅니다.",
+            "a gloss after a word it fits       | 왼쪽 자식(2)과 오른쪽 자식(3)이 큐에 듭니다.",
+            "a gloss with a quote inside        | 칸을 안전('S')으로 표시합니다.",
+            "a gloss after a number             | 가장 낮은 1(자릿값 2)을 0으로 바꿉니다.",
+            "a nested gloss                     | 책(books[k-1])과 비교합니다.",
+            "a quoted Korean word it fits       | '사과'를 셉니다.",
+            "a quoted question it fits          | \"비어 있나?\"를 묻습니다.",
+            "a noun before the particle         | 구간 [1,3] 구간과 겹칩니다.",
+    })
+    void aParticleThatFitsPasses(String allowed, String korean) throws Exception {
+        assertEquals(List.of(), particleMismatches("fixture", labelsFixture(korean)), allowed);
+    }
+
+    @Test
+    void aParticleInATitleOrLabelIsCaughtToo() throws Exception {
+        ObjectNode walkthrough = labelsFixture("1단계입니다.");
+        ((ObjectNode) walkthrough.get("views").get(0).get("title")).put("ko", "힙 [0]이 맨 위");
+        ((ObjectNode) walkthrough.at("/runs/0/frames/0/views/t/tags/0/1")).put("ko", "root(3)가");
+        List<String> found = particleMismatches("fixture", walkthrough);
+        assertTrue(found.stream().anyMatch(m -> m.startsWith("fixture: view \"t\": \"힙 [0]이\"")), found.toString());
+        assertTrue(found.stream().anyMatch(m -> m.startsWith("fixture: run 1 (Example 1) frame 1 of 2: \"root(3)가\"")), found.toString());
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @CsvSource(delimiter = '|', quoteCharacter = '`', value = {
+            "plain view title  | view \"t\": title \"Heap\" is a plain string",
+            "plain vars label  | run 1 (Example 1) frame 1 of 2 view \"s\": vars label \"best\" is a plain string",
+            "plain column      | run 1 (Example 1) frame 1 of 2 view \"g\": column \"sum\" is a plain string",
+            "plain row label   | run 1 (Example 1) frame 1 of 2 view \"g\": row label \"row 1\" is a plain string",
+            "plain node tag    | run 1 (Example 1) frame 1 of 2 view \"t\": tag \"node\" is a plain string",
+            "3-letter word     | run 1 (Example 1) frame 2 of 2 view \"t\": tag \"mid\" is a plain string",
+            "word beside math  | run 1 (Example 1) frame 2 of 2 view \"t\": tag \"∏ size\" is a plain string",
+            "plain tag in setup | run 1 (Example 1) setup view \"t\": tag \"tail\" is a plain string",
+    })
+    void aPlainLabelIsCaught(String breakage, String expected) throws Exception {
+        ObjectNode walkthrough = labelsFixture("1단계입니다.");
+        JsonNode first = walkthrough.at("/runs/0/frames/0/views");
+        switch (breakage) {
+            case "plain view title" -> ((ObjectNode) walkthrough.get("views").get(0)).put("title", "Heap");
+            case "plain vars label" -> ((ObjectNode) first.at("/s/items/0")).put("label", "best");
+            case "plain column" -> ((ArrayNode) first.at("/g/columns")).set(1, JSON.getNodeFactory().textNode("sum"));
+            case "plain row label" -> ((ObjectNode) first.at("/g/rows/0")).put("label", "row 1");
+            case "plain node tag" -> ((ArrayNode) first.at("/t/tags/0")).set(1, JSON.getNodeFactory().textNode("node"));
+            case "3-letter word" -> ((ArrayNode) walkthrough.at("/runs/0/frames/1/views/t/tags/0")).set(1, JSON.getNodeFactory().textNode("mid"));
+            case "word beside math" -> ((ArrayNode) walkthrough.at("/runs/0/frames/1/views/t/tags/0")).set(1, JSON.getNodeFactory().textNode("∏ size"));
+            case "plain tag in setup" -> ((ObjectNode) walkthrough.get("runs").get(0)).set("setup", fixture("{'t': {'tags': [[0, 'tail']]}}"));
+            default -> throw new IllegalArgumentException(breakage);
+        }
+        List<String> found = plainLabels("fixture", walkthrough);
+        assertTrue(found.stream().anyMatch(m -> m.equals("fixture: " + expected.strip() + ": write {\"en\": ..., \"ko\": ...}, "
+                        + "keeping an English code name with a Korean gloss ({\"en\": \"best\", \"ko\": \"best (최장 길이)\"})")),
+                breakage + " was not caught as \"" + expected + "\": " + found);
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @CsvSource(delimiter = '|', quoteCharacter = '`', value = {
+            "two characters          | lo",
+            "a named code name       | nums",
+            "one-letter math         | n & (n − 1)",
+            "math with superscripts  | x² + y²",
+            "an index                | [12]",
+            "bounds                  | (-∞, 10)",
+            "a heap index and a time | [0] t0",
+            "a number and a unit     | 5km/h",
+    })
+    void aPlainLabelTheRuleAllowsPasses(String allowed, String label) throws Exception {
+        ObjectNode walkthrough = labelsFixture("1단계입니다.");
+        JsonNode first = walkthrough.at("/runs/0/frames/0/views");
+        ((ObjectNode) walkthrough.get("views").get(0)).put("title", label);
+        ((ObjectNode) first.at("/s/items/0")).put("label", label);
+        ((ArrayNode) first.at("/g/columns")).set(1, JSON.getNodeFactory().textNode(label));
+        ((ArrayNode) first.at("/t/tags/0")).set(1, JSON.getNodeFactory().textNode(label));
+        assertEquals(List.of(), plainLabels("fixture", walkthrough), allowed);
+    }
+
+    @Test
+    void theLabelsFixtureUnbrokenPasses() throws Exception {
+        ObjectNode walkthrough = labelsFixture("1단계입니다.");
+        assertEquals(List.of(), particleMismatches("fixture", walkthrough));
+        assertEquals(List.of(), plainLabels("fixture", walkthrough));
+        assertEquals(List.of(), mismatches("fixture", walkthrough, samples(1)));
+    }
+
     // --- the checks --------------------------------------------------------------------------------
 
     /** Everything wrong with {@code slug}'s Walkthrough, each line naming the Slug; samples null: no problem. */
@@ -1374,6 +1538,186 @@ class WalkthroughsMatchSamplesTest {
             }
         }
         return found;
+    }
+
+    /**
+     * A Korean particle (을/를, 이/가, 은/는, 과/와, 으로/로) as a word of its own, not the start of a longer one (이번, 가장,
+     * 로그, a copula's 이다), right after a digit or after a closing bracket, brace or quote, or one space after one of
+     * those. Group 1 is what it follows, group 2 the particle.
+     */
+    private static final Pattern PARTICLE = Pattern.compile("(\\d|[\\])}'\"’”]( ?))(으로|로|을|를|이|가|은|는|과|와)(?![가-힣])");
+    private static final Map<String, String> OTHER_FORM = Map.of("을", "를", "를", "을", "이", "가", "가", "이", "은", "는",
+            "는", "은", "과", "와", "와", "과", "으로", "로", "로", "으로");
+    /** How a word's last sound ends, which picks the particle: a vowel, ㄹ (which takes 로 as a vowel does), or another consonant. */
+    private enum Ending { VOWEL, RIEUL, CONSONANT }
+
+    /**
+     * Each Korean particle in {@code walkthrough}'s Korean text (titles, approach, labels, tags, captions: every
+     * {@code "ko"} string) that doesn't fit how the word before it is read, by SKILL.md's "Korean particles". After a
+     * digit, the number's last digit picks it as {@code josa()} does (scripts/walkthroughs/codebite.py): 2, 4, 5 and 9
+     * end in a vowel, 1, 7 and 8 in ㄹ, and 0, 3 and 6 in another consonant (영, 십, 삼, 육). After a closing bracket,
+     * brace or quote no rule can say how the text is read, so the particle fails, except where Korean puts it after a
+     * gloss: after {@code (…)} it belongs to the word before the {@code (}, and after a quote to the quote's last word,
+     * and when that word ends in a Hangul syllable or a digit the particle must fit it.
+     */
+    static List<String> particleMismatches(String slug, JsonNode walkthrough) {
+        List<String> found = new ArrayList<>();
+        BiConsumer<String, JsonNode> check = (where, node) -> koreanTexts(node, korean -> {
+            for (String problem : particleProblems(korean)) found.add(slug + ": " + where + ": " + problem);
+        });
+        check.accept("title", walkthrough.path("title"));
+        check.accept("approach", walkthrough.path("approach"));
+        for (JsonNode view : walkthrough.path("views")) check.accept("view " + quote(view.path("id").asText()), view);
+        JsonNode runs = walkthrough.path("runs");
+        for (int r = 0; r < runs.size(); r++) {
+            JsonNode run = runs.get(r), frames = run.path("frames");
+            String name = runName(run, r);
+            check.accept(name, run.path("label"));
+            check.accept(name + " setup", run.path("setup"));
+            for (int f = 0; f < frames.size(); f++) check.accept(name + " frame " + (f + 1) + " of " + frames.size(), frames.get(f));
+        }
+        return found.stream().distinct().toList();
+    }
+
+    /** Every {@code "ko"} string in {@code node}, at any depth. */
+    private static void koreanTexts(JsonNode node, Consumer<String> visit) {
+        if (node.isObject() && node.path("ko").isTextual()) visit.accept(node.get("ko").asText());
+        for (JsonNode child : node) koreanTexts(child, visit);
+    }
+
+    /** What is wrong with each particle in one Korean string, by {@link #particleMismatches}. */
+    static List<String> particleProblems(String text) {
+        List<String> p = new ArrayList<>();
+        Matcher m = PARTICLE.matcher(text);
+        while (m.find()) {
+            char after = text.charAt(m.start(1));
+            String particle = m.group(3), snippet = quote(text.substring(wordsBefore(text, m.start(1)), m.end()));
+            String reason;
+            if (Character.isDigit(after)) {
+                String fits = fitting(particle, ending(after));
+                if (fits.equals(particle)) continue;
+                reason = after + " is read so it takes " + quote(fits) + ", not " + quote(particle);
+            } else {
+                int word = after == ')' ? beforeOpening(text, m.start(1)) : lastWordInQuote(text, m.start(1));
+                char last = word < 0 ? ' ' : text.charAt(word);
+                if (after != ']' && after != '}' && (isHangul(last) || Character.isDigit(last))) {
+                    String fits = fitting(particle, ending(last));
+                    if (fits.equals(particle)) continue;
+                    reason = "the particle follows " + quote(String.valueOf(last)) + ", which takes " + quote(fits) + ", not "
+                            + quote(particle);
+                } else {
+                    reason = "a particle after " + quote(String.valueOf(after)) + " can't follow how the text before it is read";
+                }
+            }
+            p.add(snippet + ": " + reason + "; write josa() after a number, or put a noun before the particle "
+                    + "(SKILL.md, Korean particles)");
+        }
+        return p;
+    }
+
+    /** Where the word before the one holding {@code at} starts (or that word's start, when it is the first). */
+    private static int wordsBefore(String text, int at) {
+        int start = at;
+        while (start > 0 && !Character.isWhitespace(text.charAt(start - 1))) start--;
+        int before = start;
+        while (before > 0 && Character.isWhitespace(text.charAt(before - 1))) before--;
+        if (before == 0) return start;
+        while (before > 0 && !Character.isWhitespace(text.charAt(before - 1))) before--;
+        return before;
+    }
+
+    /** The index of the character before the {@code (} that the {@code )} at {@code close} closes, or -1. */
+    private static int beforeOpening(String text, int close) {
+        int depth = 0;
+        for (int i = close; i >= 0; i--) {
+            if (text.charAt(i) == ')') depth++;
+            else if (text.charAt(i) == '(' && --depth == 0) return i - 1;
+        }
+        return -1;
+    }
+
+    /** The index of the last character inside the quote closing at {@code close} that isn't a question, exclamation or full stop. */
+    private static int lastWordInQuote(String text, int close) {
+        int i = close - 1;
+        while (i >= 0 && "?!.…".indexOf(text.charAt(i)) >= 0) i--;
+        return i;
+    }
+
+    private static boolean isHangul(char c) {
+        return c >= '가' && c <= '힣';
+    }
+
+    /** How a Hangul syllable or a digit (read as a Korean number ends: 영 일 이 삼 사 오 육 칠 팔 구, or 십 for a final 0) ends. */
+    private static Ending ending(char c) {
+        if (Character.isDigit(c)) {
+            return "2459".indexOf(c) >= 0 ? Ending.VOWEL : "178".indexOf(c) >= 0 ? Ending.RIEUL : Ending.CONSONANT;
+        }
+        int last = (c - '가') % 28; // the syllable's final consonant, 0 for none and 8 for ㄹ
+        return last == 0 ? Ending.VOWEL : last == 8 ? Ending.RIEUL : Ending.CONSONANT;
+    }
+
+    /** The form of {@code particle} after a word ending as {@code ending} does: 으로 only after a consonant other than ㄹ. */
+    private static String fitting(String particle, Ending ending) {
+        boolean afterConsonant = Set.of("을", "이", "은", "과", "으로").contains(particle);
+        boolean wantsConsonantForm = particle.endsWith("로") ? ending == Ending.CONSONANT : ending != Ending.VOWEL;
+        return afterConsonant == wantsConsonantForm ? particle : OTHER_FORM.get(particle);
+    }
+
+    /** Code names a label may keep as a plain string, the same in both languages (SKILL.md: one-letter names and {@code nums}). */
+    private static final Set<String> CODE_NAMES = Set.of("nums");
+    /** A word: three letters or more in a row, which a Korean reader needs translated. */
+    private static final Pattern WORD = Pattern.compile("\\p{L}{3,}");
+
+    /**
+     * Each label of {@code walkthrough} written as a plain string where SKILL.md says it is Text: a view's title, a
+     * {@code vars} item's label, a table's column or row label, and a tree node's tag. A plain string shows the same
+     * text in Korean, so it passes only when it reads the same in both languages: at most 2 characters, a name in
+     * {@link #CODE_NAMES}, or no word of three letters or more (a number, an index {@code [0]}, bounds
+     * {@code (-∞, 10)}, one-letter math such as {@code n & (n − 1)} or {@code x² + y²}). Each label is reported where
+     * it first shows.
+     */
+    static List<String> plainLabels(String slug, JsonNode walkthrough) {
+        Map<String, String> found = new LinkedHashMap<>(); // by view, place and text: a label repeats in every frame
+        Map<String, String> types = new HashMap<>();
+        for (JsonNode view : walkthrough.path("views")) {
+            String id = view.path("id").asText();
+            types.put(id, view.path("type").asText());
+            plainLabel(slug + ": ", "view " + quote(id) + ": title", view.get("title"), found);
+        }
+        JsonNode runs = walkthrough.path("runs");
+        for (int r = 0; r < runs.size(); r++) {
+            JsonNode run = runs.get(r), frames = run.path("frames");
+            String name = runName(run, r);
+            Map<String, JsonNode> states = new LinkedHashMap<>();
+            states.put(name + " setup", run.path("setup"));
+            for (int f = 0; f < frames.size(); f++) {
+                states.put(name + " frame " + (f + 1) + " of " + frames.size(), frames.get(f).path("views"));
+            }
+            states.forEach((where, views) -> views.fields().forEachRemaining(view -> {
+                String at = slug + ": " + where + " ", place = "view " + quote(view.getKey()) + ": ";
+                JsonNode s = view.getValue();
+                switch (types.getOrDefault(view.getKey(), "")) {
+                    case "vars" -> s.path("items").forEach(item -> plainLabel(at, place + "vars label", item.get("label"), found));
+                    case "table" -> {
+                        s.path("columns").forEach(column -> plainLabel(at, place + "column", column, found));
+                        s.path("rows").forEach(row -> plainLabel(at, place + "row label", row.get("label"), found));
+                    }
+                    case "tree" -> s.path("tags").forEach(tag -> plainLabel(at, place + "tag", tag.get(1), found));
+                    default -> { }
+                }
+            }));
+        }
+        return List.copyOf(found.values());
+    }
+
+    /** Reports {@code label}, a {@code place} first seen {@code at}, unless it is Text or a plain string {@link #plainLabels} allows. */
+    private static void plainLabel(String at, String place, JsonNode label, Map<String, String> found) {
+        if (label == null || !label.isTextual()) return;
+        String text = label.asText();
+        if (text.codePointCount(0, text.length()) <= 2 || CODE_NAMES.contains(text) || !WORD.matcher(text).find()) return;
+        String line = place + " " + quote(text);
+        found.putIfAbsent(line, at + line + " is a plain string: write {\"en\": ..., \"ko\": ...}, keeping an English "
+                + "code name with a Korean gloss ({\"en\": \"best\", \"ko\": \"best (최장 길이)\"})");
     }
 
     /** What breaks the {@code walkthrough/1} format, as the skill's {@code scripts/validate.mjs} checks it. */
