@@ -1,0 +1,1712 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Longest Rising Quiz Scores",
+  "ko": "가장 긴 상승 퀴즈 점수"
+ },
+ "approach": {
+  "en": "Keep, for every run length, the smallest score a rising run of that length can end on. Each score either extends the longest run or lowers the end of a shorter one, so the list's length is the answer.",
+  "ko": "길이마다 그 길이의 증가 부분수열이 끝날 수 있는 가장 작은 점수를 기억합니다. 각 점수는 가장 긴 수열을 늘리거나 더 짧은 수열의 끝을 낮추므로, 이 목록의 길이가 답입니다."
+ },
+ "views": [
+  {
+   "id": "scores",
+   "type": "array",
+   "title": {
+    "en": "scores",
+    "ko": "scores (퀴즈 점수)"
+   }
+  },
+  {
+   "id": "tails",
+   "type": "array",
+   "title": {
+    "en": "tails: smallest end of a rise of each length",
+    "ko": "tails: 길이별 증가 수열의 가장 작은 끝"
+   },
+   "empty": {
+    "en": "empty",
+    "ko": "비어 있음"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "scores = [4,10,2,6,3,5,8,11]",
+   "expected": "5",
+   "frames": [
+    {
+     "caption": {
+      "en": "8 scores. tails starts empty: no run is known yet.",
+      "ko": "점수가 8개입니다. 아직 아는 수열이 없으므로 tails는 비어 있습니다."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        4,
+        10,
+        2,
+        6,
+        3,
+        5,
+        8,
+        11
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {},
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+       ]
+      },
+      "tails": {
+       "values": [],
+       "tags": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Score 4: tails is empty, so 4 starts a run of length 1.",
+      "ko": "점수 4: tails가 비어 있으므로 4에서 길이 1인 수열이 시작됩니다."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        4,
+        10,
+        2,
+        6,
+        3,
+        5,
+        8,
+        11
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       },
+       "unread": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+       ]
+      },
+      "tails": {
+       "values": [
+        4
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "len 1",
+          "ko": "길이 1"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "scores",
+        "at": 0
+       },
+       "to": {
+        "view": "tails",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Score 10 is above every tail, the last being 4: it extends that run of length 1 to length 2, and tails grows.",
+      "ko": "점수 10은 마지막 끝 4를 포함해 모든 끝보다 큽니다. 길이 1인 수열을 길이 2로 늘리므로 tails가 길어집니다."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        4,
+        10,
+        2,
+        6,
+        3,
+        5,
+        8,
+        11
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       },
+       "unread": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+       ]
+      },
+      "tails": {
+       "values": [
+        4,
+        10
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "len 1",
+          "ko": "길이 1"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "len 2",
+          "ko": "길이 2"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "scores",
+        "at": 1
+       },
+       "to": {
+        "view": "tails",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Score 2 is below every tail. A run of length 1 can now end on 2 instead of 4, so it replaces 4.",
+      "ko": "점수 2는 모든 끝보다 작습니다. 길이 1인 수열이 4 대신 2에서 끝날 수 있으므로 4를 바꿉니다."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        4,
+        10,
+        2,
+        6,
+        3,
+        5,
+        8,
+        11
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       },
+       "unread": [
+        3,
+        4,
+        5,
+        6,
+        7
+       ]
+      },
+      "tails": {
+       "values": [
+        2,
+        10
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "len 1",
+          "ko": "길이 1"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "len 2",
+          "ko": "길이 2"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "scores",
+        "at": 2
+       },
+       "to": {
+        "view": "tails",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Score 6: the first tail not below it is 10, at length 2. 6 extends the length-1 run ending on 2, so a length-2 run can end lower: 6 replaces 10.",
+      "ko": "점수 6: 이보다 작지 않은 첫 끝은 길이 2의 10입니다. 2에서 끝나는 길이 1 수열을 6이 늘리므로, 길이 2 수열이 더 낮은 6에서 끝날 수 있어 10을 바꿉니다."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        4,
+        10,
+        2,
+        6,
+        3,
+        5,
+        8,
+        11
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "marks": {
+        "lit": [
+         3
+        ]
+       },
+       "unread": [
+        4,
+        5,
+        6,
+        7
+       ]
+      },
+      "tails": {
+       "values": [
+        2,
+        6
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "len 1",
+          "ko": "길이 1"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "len 2",
+          "ko": "길이 2"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "scores",
+        "at": 3
+       },
+       "to": {
+        "view": "tails",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Score 3: the first tail not below it is 6, at length 2. 3 extends the length-1 run ending on 2, so a length-2 run can end lower: 3 replaces 6.",
+      "ko": "점수 3: 이보다 작지 않은 첫 끝은 길이 2의 6입니다. 2에서 끝나는 길이 1 수열을 3이 늘리므로, 길이 2 수열이 더 낮은 3에서 끝날 수 있어 6을 바꿉니다."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        4,
+        10,
+        2,
+        6,
+        3,
+        5,
+        8,
+        11
+       ],
+       "pointers": {
+        "i": 4
+       },
+       "marks": {
+        "lit": [
+         4
+        ]
+       },
+       "unread": [
+        5,
+        6,
+        7
+       ]
+      },
+      "tails": {
+       "values": [
+        2,
+        3
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "len 1",
+          "ko": "길이 1"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "len 2",
+          "ko": "길이 2"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "scores",
+        "at": 4
+       },
+       "to": {
+        "view": "tails",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Score 5 is above every tail, the last being 3: it extends that run of length 2 to length 3, and tails grows.",
+      "ko": "점수 5는 마지막 끝 3을 포함해 모든 끝보다 큽니다. 길이 2인 수열을 길이 3으로 늘리므로 tails가 길어집니다."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        4,
+        10,
+        2,
+        6,
+        3,
+        5,
+        8,
+        11
+       ],
+       "pointers": {
+        "i": 5
+       },
+       "marks": {
+        "lit": [
+         5
+        ]
+       },
+       "unread": [
+        6,
+        7
+       ]
+      },
+      "tails": {
+       "values": [
+        2,
+        3,
+        5
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "len 1",
+          "ko": "길이 1"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "len 2",
+          "ko": "길이 2"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "len 3",
+          "ko": "길이 3"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         1
+        ],
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "scores",
+        "at": 5
+       },
+       "to": {
+        "view": "tails",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Score 8 is above every tail, the last being 5: it extends that run of length 3 to length 4, and tails grows.",
+      "ko": "점수 8은 마지막 끝 5를 포함해 모든 끝보다 큽니다. 길이 3인 수열을 길이 4로 늘리므로 tails가 길어집니다."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        4,
+        10,
+        2,
+        6,
+        3,
+        5,
+        8,
+        11
+       ],
+       "pointers": {
+        "i": 6
+       },
+       "marks": {
+        "lit": [
+         6
+        ]
+       },
+       "unread": [
+        7
+       ]
+      },
+      "tails": {
+       "values": [
+        2,
+        3,
+        5,
+        8
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "len 1",
+          "ko": "길이 1"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "len 2",
+          "ko": "길이 2"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "len 3",
+          "ko": "길이 3"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "len 4",
+          "ko": "길이 4"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         2
+        ],
+        "good": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "scores",
+        "at": 6
+       },
+       "to": {
+        "view": "tails",
+        "at": 3
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Score 11 is above every tail, the last being 8: it extends that run of length 4 to length 5, and tails grows.",
+      "ko": "점수 11은 마지막 끝 8을 포함해 모든 끝보다 큽니다. 길이 4인 수열을 길이 5로 늘리므로 tails가 길어집니다."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        4,
+        10,
+        2,
+        6,
+        3,
+        5,
+        8,
+        11
+       ],
+       "pointers": {
+        "i": 7
+       },
+       "marks": {
+        "lit": [
+         7
+        ]
+       },
+       "unread": []
+      },
+      "tails": {
+       "values": [
+        2,
+        3,
+        5,
+        8,
+        11
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "len 1",
+          "ko": "길이 1"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "len 2",
+          "ko": "길이 2"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "len 3",
+          "ko": "길이 3"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "len 4",
+          "ko": "길이 4"
+         }
+        ],
+        [
+         4,
+         {
+          "en": "len 5",
+          "ko": "길이 5"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         3
+        ],
+        "good": [
+         4
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "scores",
+        "at": 7
+       },
+       "to": {
+        "view": "tails",
+        "at": 4
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every score read: tails holds 5 ends, so the longest rising run has length 5. Following each score back to the one it extended gives [2,3,5,8,11]. Answer: 5.",
+      "ko": "모든 점수를 읽었고 tails에 끝이 5개 있으므로 가장 긴 증가 부분수열의 길이는 5입니다. 각 점수가 늘린 점수를 거슬러 가면 [2,3,5,8,11]입니다. 답은 5입니다."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        4,
+        10,
+        2,
+        6,
+        3,
+        5,
+        8,
+        11
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "path": [
+         2,
+         4,
+         5,
+         6,
+         7
+        ],
+        "dim": [
+         0,
+         1,
+         3
+        ]
+       },
+       "unread": []
+      },
+      "tails": {
+       "values": [
+        2,
+        3,
+        5,
+        8,
+        11
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "len 1",
+          "ko": "길이 1"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "len 2",
+          "ko": "길이 2"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "len 3",
+          "ko": "길이 3"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "len 4",
+          "ko": "길이 4"
+         }
+        ],
+        [
+         4,
+         {
+          "en": "len 5",
+          "ko": "길이 5"
+         }
+        ]
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      }
+     },
+     "answer": "5"
+    }
+   ],
+   "sampleInput": "[4,10,2,6,3,5,8,11]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "scores = [9,2,7,4,6,8]",
+   "expected": "4",
+   "frames": [
+    {
+     "caption": {
+      "en": "6 scores. tails starts empty: no run is known yet.",
+      "ko": "점수가 6개입니다. 아직 아는 수열이 없으므로 tails는 비어 있습니다."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        9,
+        2,
+        7,
+        4,
+        6,
+        8
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {},
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+       ]
+      },
+      "tails": {
+       "values": [],
+       "tags": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Score 9: tails is empty, so 9 starts a run of length 1.",
+      "ko": "점수 9: tails가 비어 있으므로 9에서 길이 1인 수열이 시작됩니다."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        9,
+        2,
+        7,
+        4,
+        6,
+        8
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       },
+       "unread": [
+        1,
+        2,
+        3,
+        4,
+        5
+       ]
+      },
+      "tails": {
+       "values": [
+        9
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "len 1",
+          "ko": "길이 1"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "scores",
+        "at": 0
+       },
+       "to": {
+        "view": "tails",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Score 2 is below every tail. A run of length 1 can now end on 2 instead of 9, so it replaces 9.",
+      "ko": "점수 2는 모든 끝보다 작습니다. 길이 1인 수열이 9 대신 2에서 끝날 수 있으므로 9를 바꿉니다."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        9,
+        2,
+        7,
+        4,
+        6,
+        8
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       },
+       "unread": [
+        2,
+        3,
+        4,
+        5
+       ]
+      },
+      "tails": {
+       "values": [
+        2
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "len 1",
+          "ko": "길이 1"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "scores",
+        "at": 1
+       },
+       "to": {
+        "view": "tails",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Score 7 is above every tail, the last being 2: it extends that run of length 1 to length 2, and tails grows.",
+      "ko": "점수 7은 마지막 끝 2를 포함해 모든 끝보다 큽니다. 길이 1인 수열을 길이 2로 늘리므로 tails가 길어집니다."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        9,
+        2,
+        7,
+        4,
+        6,
+        8
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       },
+       "unread": [
+        3,
+        4,
+        5
+       ]
+      },
+      "tails": {
+       "values": [
+        2,
+        7
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "len 1",
+          "ko": "길이 1"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "len 2",
+          "ko": "길이 2"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "scores",
+        "at": 2
+       },
+       "to": {
+        "view": "tails",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Score 4: the first tail not below it is 7, at length 2. 4 extends the length-1 run ending on 2, so a length-2 run can end lower: 4 replaces 7.",
+      "ko": "점수 4: 이보다 작지 않은 첫 끝은 길이 2의 7입니다. 2에서 끝나는 길이 1 수열을 4가 늘리므로, 길이 2 수열이 더 낮은 4에서 끝날 수 있어 7을 바꿉니다."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        9,
+        2,
+        7,
+        4,
+        6,
+        8
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "marks": {
+        "lit": [
+         3
+        ]
+       },
+       "unread": [
+        4,
+        5
+       ]
+      },
+      "tails": {
+       "values": [
+        2,
+        4
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "len 1",
+          "ko": "길이 1"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "len 2",
+          "ko": "길이 2"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "scores",
+        "at": 3
+       },
+       "to": {
+        "view": "tails",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Score 6 is above every tail, the last being 4: it extends that run of length 2 to length 3, and tails grows.",
+      "ko": "점수 6은 마지막 끝 4를 포함해 모든 끝보다 큽니다. 길이 2인 수열을 길이 3으로 늘리므로 tails가 길어집니다."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        9,
+        2,
+        7,
+        4,
+        6,
+        8
+       ],
+       "pointers": {
+        "i": 4
+       },
+       "marks": {
+        "lit": [
+         4
+        ]
+       },
+       "unread": [
+        5
+       ]
+      },
+      "tails": {
+       "values": [
+        2,
+        4,
+        6
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "len 1",
+          "ko": "길이 1"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "len 2",
+          "ko": "길이 2"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "len 3",
+          "ko": "길이 3"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         1
+        ],
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "scores",
+        "at": 4
+       },
+       "to": {
+        "view": "tails",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Score 8 is above every tail, the last being 6: it extends that run of length 3 to length 4, and tails grows.",
+      "ko": "점수 8은 마지막 끝 6을 포함해 모든 끝보다 큽니다. 길이 3인 수열을 길이 4로 늘리므로 tails가 길어집니다."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        9,
+        2,
+        7,
+        4,
+        6,
+        8
+       ],
+       "pointers": {
+        "i": 5
+       },
+       "marks": {
+        "lit": [
+         5
+        ]
+       },
+       "unread": []
+      },
+      "tails": {
+       "values": [
+        2,
+        4,
+        6,
+        8
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "len 1",
+          "ko": "길이 1"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "len 2",
+          "ko": "길이 2"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "len 3",
+          "ko": "길이 3"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "len 4",
+          "ko": "길이 4"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         2
+        ],
+        "good": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "scores",
+        "at": 5
+       },
+       "to": {
+        "view": "tails",
+        "at": 3
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every score read: tails holds 4 ends, so the longest rising run has length 4. Following each score back to the one it extended gives [2,4,6,8]. Answer: 4.",
+      "ko": "모든 점수를 읽었고 tails에 끝이 4개 있으므로 가장 긴 증가 부분수열의 길이는 4입니다. 각 점수가 늘린 점수를 거슬러 가면 [2,4,6,8]입니다. 답은 4입니다."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        9,
+        2,
+        7,
+        4,
+        6,
+        8
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "path": [
+         1,
+         3,
+         4,
+         5
+        ],
+        "dim": [
+         0,
+         2
+        ]
+       },
+       "unread": []
+      },
+      "tails": {
+       "values": [
+        2,
+        4,
+        6,
+        8
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "len 1",
+          "ko": "길이 1"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "len 2",
+          "ko": "길이 2"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "len 3",
+          "ko": "길이 3"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "len 4",
+          "ko": "길이 4"
+         }
+        ]
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3
+        ]
+       }
+      }
+     },
+     "answer": "4"
+    }
+   ],
+   "sampleInput": "[9,2,7,4,6,8]"
+  },
+  {
+   "label": {
+    "en": "Example 3",
+    "ko": "예시 3"
+   },
+   "input": "scores = [5,5,5,5]",
+   "expected": "1",
+   "frames": [
+    {
+     "caption": {
+      "en": "4 scores. tails starts empty: no run is known yet.",
+      "ko": "점수가 4개입니다. 아직 아는 수열이 없으므로 tails는 비어 있습니다."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        5,
+        5,
+        5,
+        5
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {},
+       "unread": [
+        0,
+        1,
+        2,
+        3
+       ]
+      },
+      "tails": {
+       "values": [],
+       "tags": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Score 5: tails is empty, so 5 starts a run of length 1.",
+      "ko": "점수 5: tails가 비어 있으므로 5에서 길이 1인 수열이 시작됩니다."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        5,
+        5,
+        5,
+        5
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       },
+       "unread": [
+        1,
+        2,
+        3
+       ]
+      },
+      "tails": {
+       "values": [
+        5
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "len 1",
+          "ko": "길이 1"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "scores",
+        "at": 0
+       },
+       "to": {
+        "view": "tails",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Score 5 equals the end of the length-1 run, and equal scores don't rise, so it can't extend it. It takes that place, and the end stays 5.",
+      "ko": "점수 5는 길이 1인 수열의 끝과 같고, 같은 점수는 증가가 아니라 늘릴 수 없습니다. 그 자리에 들어가며 끝은 5 그대로입니다."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        5,
+        5,
+        5,
+        5
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       },
+       "unread": [
+        2,
+        3
+       ]
+      },
+      "tails": {
+       "values": [
+        5
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "len 1",
+          "ko": "길이 1"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "scores",
+        "at": 1
+       },
+       "to": {
+        "view": "tails",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Score 5 equals the end of the length-1 run, and equal scores don't rise, so it can't extend it. It takes that place, and the end stays 5.",
+      "ko": "점수 5는 길이 1인 수열의 끝과 같고, 같은 점수는 증가가 아니라 늘릴 수 없습니다. 그 자리에 들어가며 끝은 5 그대로입니다."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        5,
+        5,
+        5,
+        5
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       },
+       "unread": [
+        3
+       ]
+      },
+      "tails": {
+       "values": [
+        5
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "len 1",
+          "ko": "길이 1"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "scores",
+        "at": 2
+       },
+       "to": {
+        "view": "tails",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Score 5 equals the end of the length-1 run, and equal scores don't rise, so it can't extend it. It takes that place, and the end stays 5.",
+      "ko": "점수 5는 길이 1인 수열의 끝과 같고, 같은 점수는 증가가 아니라 늘릴 수 없습니다. 그 자리에 들어가며 끝은 5 그대로입니다."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        5,
+        5,
+        5,
+        5
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "marks": {
+        "lit": [
+         3
+        ]
+       },
+       "unread": []
+      },
+      "tails": {
+       "values": [
+        5
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "len 1",
+          "ko": "길이 1"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "scores",
+        "at": 3
+       },
+       "to": {
+        "view": "tails",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every score read: tails holds 1 end, so the longest rising run has length 1. Following each score back to the one it extended gives [5]. Answer: 1.",
+      "ko": "모든 점수를 읽었고 tails에 끝이 1개 있으므로 가장 긴 증가 부분수열의 길이는 1입니다. 각 점수가 늘린 점수를 거슬러 가면 [5]입니다. 답은 1입니다."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        5,
+        5,
+        5,
+        5
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "path": [
+         3
+        ],
+        "dim": [
+         0,
+         1,
+         2
+        ]
+       },
+       "unread": []
+      },
+      "tails": {
+       "values": [
+        5
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "len 1",
+          "ko": "길이 1"
+         }
+        ]
+       ],
+       "marks": {
+        "path": [
+         0
+        ]
+       }
+      }
+     },
+     "answer": "1"
+    }
+   ],
+   "sampleInput": "[5,5,5,5]"
+  }
+ ]
+}

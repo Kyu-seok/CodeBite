@@ -1,0 +1,3514 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Word Break Chat",
+  "ko": "채팅 메시지 단어 나누기"
+ },
+ "approach": {
+  "en": "The first end letters split when some word ends them and the letters before that word split too. Fill that answer for every end, left to right, so each one reads only ends already filled.",
+  "ko": "앞 end글자는 그 끝에 오는 단어가 있고 그 단어 앞부분도 나뉠 때 나뉩니다. 모든 end에 대해 왼쪽부터 채우므로, 각 칸은 이미 채운 칸만 읽습니다."
+ },
+ "views": [
+  {
+   "id": "message",
+   "type": "array",
+   "title": {
+    "en": "message",
+    "ko": "message (채팅 메시지)"
+   }
+  },
+  {
+   "id": "split",
+   "type": "array",
+   "title": {
+    "en": "splittable: do the first end letters split?",
+    "ko": "splittable: 앞 end글자가 나뉘는가?"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "message = \"morningwire\", words = [\"morning\",\"wire\"]",
+   "expected": "true",
+   "frames": [
+    {
+     "caption": {
+      "en": "11 letters. Cell 0, no letters at all, splits (T); every other cell starts F, not filled yet.",
+      "ko": "글자가 11개입니다. 글자가 하나도 없는 0번 칸은 나뉘는 것으로(T) 시작하고, 나머지 칸은 아직 채우지 않은 F입니다."
+     },
+     "views": {
+      "message": {
+       "values": [
+        "m",
+        "o",
+        "r",
+        "n",
+        "i",
+        "n",
+        "g",
+        "w",
+        "i",
+        "r",
+        "e"
+       ],
+       "spans": {},
+       "marks": {}
+      },
+      "split": {
+       "values": [
+        "T",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F"
+       ],
+       "pointers": {
+        "end": null
+       },
+       "tags": [],
+       "marks": {
+        "good": [
+         0
+        ]
+       },
+       "unread": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "End 1, 'm': no known word ends it, so it can't split. It stays F.",
+      "ko": "end 1, 'm': 끝에 오는 아는 단어가 없어 나눌 수 없습니다. F 그대로입니다."
+     },
+     "views": {
+      "message": {
+       "values": [
+        "m",
+        "o",
+        "r",
+        "n",
+        "i",
+        "n",
+        "g",
+        "w",
+        "i",
+        "r",
+        "e"
+       ],
+       "spans": {},
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "split": {
+       "values": [
+        "T",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F"
+       ],
+       "pointers": {
+        "end": 1
+       },
+       "tags": [],
+       "marks": {
+        "bad": [
+         1
+        ]
+       },
+       "unread": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "End 2, 'mo': no known word ends it, so it can't split. It stays F.",
+      "ko": "end 2, 'mo': 끝에 오는 아는 단어가 없어 나눌 수 없습니다. F 그대로입니다."
+     },
+     "views": {
+      "message": {
+       "values": [
+        "m",
+        "o",
+        "r",
+        "n",
+        "i",
+        "n",
+        "g",
+        "w",
+        "i",
+        "r",
+        "e"
+       ],
+       "spans": {},
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "split": {
+       "values": [
+        "T",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F"
+       ],
+       "pointers": {
+        "end": 2
+       },
+       "tags": [],
+       "marks": {
+        "bad": [
+         2
+        ]
+       },
+       "unread": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "End 3, 'mor': no known word ends it, so it can't split. It stays F.",
+      "ko": "end 3, 'mor': 끝에 오는 아는 단어가 없어 나눌 수 없습니다. F 그대로입니다."
+     },
+     "views": {
+      "message": {
+       "values": [
+        "m",
+        "o",
+        "r",
+        "n",
+        "i",
+        "n",
+        "g",
+        "w",
+        "i",
+        "r",
+        "e"
+       ],
+       "spans": {},
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "split": {
+       "values": [
+        "T",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F"
+       ],
+       "pointers": {
+        "end": 3
+       },
+       "tags": [],
+       "marks": {
+        "bad": [
+         3
+        ]
+       },
+       "unread": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "End 4, 'morn': no known word ends it, so it can't split. It stays F.",
+      "ko": "end 4, 'morn': 끝에 오는 아는 단어가 없어 나눌 수 없습니다. F 그대로입니다."
+     },
+     "views": {
+      "message": {
+       "values": [
+        "m",
+        "o",
+        "r",
+        "n",
+        "i",
+        "n",
+        "g",
+        "w",
+        "i",
+        "r",
+        "e"
+       ],
+       "spans": {},
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "split": {
+       "values": [
+        "T",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F"
+       ],
+       "pointers": {
+        "end": 4
+       },
+       "tags": [],
+       "marks": {
+        "bad": [
+         4
+        ]
+       },
+       "unread": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "End 5, 'morni': no known word ends it, so it can't split. It stays F.",
+      "ko": "end 5, 'morni': 끝에 오는 아는 단어가 없어 나눌 수 없습니다. F 그대로입니다."
+     },
+     "views": {
+      "message": {
+       "values": [
+        "m",
+        "o",
+        "r",
+        "n",
+        "i",
+        "n",
+        "g",
+        "w",
+        "i",
+        "r",
+        "e"
+       ],
+       "spans": {},
+       "marks": {
+        "lit": [
+         4
+        ]
+       }
+      },
+      "split": {
+       "values": [
+        "T",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F"
+       ],
+       "pointers": {
+        "end": 5
+       },
+       "tags": [],
+       "marks": {
+        "bad": [
+         5
+        ]
+       },
+       "unread": [
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "End 6, 'mornin': no known word ends it, so it can't split. It stays F.",
+      "ko": "end 6, 'mornin': 끝에 오는 아는 단어가 없어 나눌 수 없습니다. F 그대로입니다."
+     },
+     "views": {
+      "message": {
+       "values": [
+        "m",
+        "o",
+        "r",
+        "n",
+        "i",
+        "n",
+        "g",
+        "w",
+        "i",
+        "r",
+        "e"
+       ],
+       "spans": {},
+       "marks": {
+        "lit": [
+         5
+        ]
+       }
+      },
+      "split": {
+       "values": [
+        "T",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F"
+       ],
+       "pointers": {
+        "end": 6
+       },
+       "tags": [],
+       "marks": {
+        "bad": [
+         6
+        ]
+       },
+       "unread": [
+        7,
+        8,
+        9,
+        10,
+        11
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "End 7: 'morning' ends it, and nothing before it splits (cell 0 is T), so 'morning' splits: T.",
+      "ko": "end 7: 단어 'morning'에서 끝나고 그 앞 빈 앞부분이 나뉘므로(칸 0 T), 'morning' 부분도 나뉩니다: T."
+     },
+     "views": {
+      "message": {
+       "values": [
+        "m",
+        "o",
+        "r",
+        "n",
+        "i",
+        "n",
+        "g",
+        "w",
+        "i",
+        "r",
+        "e"
+       ],
+       "spans": {
+        "w0": {
+         "from": 0,
+         "to": 6,
+         "label": "morning",
+         "mark": "good"
+        }
+       },
+       "marks": {}
+      },
+      "split": {
+       "values": [
+        "T",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "T",
+        "F",
+        "F",
+        "F",
+        "F"
+       ],
+       "pointers": {
+        "end": 7
+       },
+       "tags": [
+        [
+         0,
+         "morning"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": [
+         7
+        ]
+       },
+       "unread": [
+        8,
+        9,
+        10,
+        11
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "split",
+        "at": 0
+       },
+       "to": {
+        "view": "split",
+        "at": 7
+       },
+       "value": "T"
+      },
+      {
+       "from": {
+        "view": "message",
+        "at": 0
+       },
+       "to": {
+        "view": "split",
+        "at": 7
+       },
+       "value": "morning"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "End 8, 'morningw': no known word ends it, so it can't split. It stays F.",
+      "ko": "end 8, 'morningw': 끝에 오는 아는 단어가 없어 나눌 수 없습니다. F 그대로입니다."
+     },
+     "views": {
+      "message": {
+       "values": [
+        "m",
+        "o",
+        "r",
+        "n",
+        "i",
+        "n",
+        "g",
+        "w",
+        "i",
+        "r",
+        "e"
+       ],
+       "spans": {},
+       "marks": {
+        "lit": [
+         7
+        ]
+       }
+      },
+      "split": {
+       "values": [
+        "T",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "T",
+        "F",
+        "F",
+        "F",
+        "F"
+       ],
+       "pointers": {
+        "end": 8
+       },
+       "tags": [],
+       "marks": {
+        "bad": [
+         8
+        ]
+       },
+       "unread": [
+        9,
+        10,
+        11
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "End 9, 'morningwi': no known word ends it, so it can't split. It stays F.",
+      "ko": "end 9, 'morningwi': 끝에 오는 아는 단어가 없어 나눌 수 없습니다. F 그대로입니다."
+     },
+     "views": {
+      "message": {
+       "values": [
+        "m",
+        "o",
+        "r",
+        "n",
+        "i",
+        "n",
+        "g",
+        "w",
+        "i",
+        "r",
+        "e"
+       ],
+       "spans": {},
+       "marks": {
+        "lit": [
+         8
+        ]
+       }
+      },
+      "split": {
+       "values": [
+        "T",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "T",
+        "F",
+        "F",
+        "F",
+        "F"
+       ],
+       "pointers": {
+        "end": 9
+       },
+       "tags": [],
+       "marks": {
+        "bad": [
+         9
+        ]
+       },
+       "unread": [
+        10,
+        11
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "End 10, 'morningwir': no known word ends it, so it can't split. It stays F.",
+      "ko": "end 10, 'morningwir': 끝에 오는 아는 단어가 없어 나눌 수 없습니다. F 그대로입니다."
+     },
+     "views": {
+      "message": {
+       "values": [
+        "m",
+        "o",
+        "r",
+        "n",
+        "i",
+        "n",
+        "g",
+        "w",
+        "i",
+        "r",
+        "e"
+       ],
+       "spans": {},
+       "marks": {
+        "lit": [
+         9
+        ]
+       }
+      },
+      "split": {
+       "values": [
+        "T",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "T",
+        "F",
+        "F",
+        "F",
+        "F"
+       ],
+       "pointers": {
+        "end": 10
+       },
+       "tags": [],
+       "marks": {
+        "bad": [
+         10
+        ]
+       },
+       "unread": [
+        11
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "End 11: 'wire' ends it, and 'morning' before it splits (cell 7 is T), so 'morningwire' splits: T.",
+      "ko": "end 11: 단어 'wire'에서 끝나고 그 앞 'morning' 부분이 나뉘므로(칸 7 T), 'morningwire' 부분도 나뉩니다: T."
+     },
+     "views": {
+      "message": {
+       "values": [
+        "m",
+        "o",
+        "r",
+        "n",
+        "i",
+        "n",
+        "g",
+        "w",
+        "i",
+        "r",
+        "e"
+       ],
+       "spans": {
+        "w0": {
+         "from": 7,
+         "to": 10,
+         "label": "wire",
+         "mark": "good"
+        }
+       },
+       "marks": {}
+      },
+      "split": {
+       "values": [
+        "T",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "T",
+        "F",
+        "F",
+        "F",
+        "T"
+       ],
+       "pointers": {
+        "end": 11
+       },
+       "tags": [
+        [
+         7,
+         "wire"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         7
+        ],
+        "good": [
+         11
+        ]
+       },
+       "unread": []
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "split",
+        "at": 7
+       },
+       "to": {
+        "view": "split",
+        "at": 11
+       },
+       "value": "T"
+      },
+      {
+       "from": {
+        "view": "message",
+        "at": 7
+       },
+       "to": {
+        "view": "split",
+        "at": 11
+       },
+       "value": "wire"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Cell 11 is T. Following each T back to the cell its word started from splits the message into 'morning' + 'wire'. Answer: true.",
+      "ko": "11번 칸이 T입니다. 각 T 칸을 그 단어가 시작한 칸으로 거슬러 가면 메시지가 이렇게 나뉩니다: 'morning' + 'wire'. 답은 true입니다."
+     },
+     "views": {
+      "message": {
+       "values": [
+        "m",
+        "o",
+        "r",
+        "n",
+        "i",
+        "n",
+        "g",
+        "w",
+        "i",
+        "r",
+        "e"
+       ],
+       "spans": {
+        "p0": {
+         "from": 0,
+         "to": 6,
+         "label": "morning",
+         "mark": "path",
+         "below": true
+        },
+        "p1": {
+         "from": 7,
+         "to": 10,
+         "label": "wire",
+         "mark": "path",
+         "below": true
+        }
+       },
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5,
+         6,
+         7,
+         8,
+         9,
+         10
+        ]
+       }
+      },
+      "split": {
+       "values": [
+        "T",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "T",
+        "F",
+        "F",
+        "F",
+        "T"
+       ],
+       "pointers": {
+        "end": null
+       },
+       "tags": [],
+       "marks": {
+        "path": [
+         11,
+         7,
+         0
+        ]
+       },
+       "unread": []
+      }
+     },
+     "answer": "true"
+    }
+   ],
+   "sampleInput": "morningwire\n[\"morning\",\"wire\"]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "message = \"topstoryalert\", words = [\"top\",\"story\",\"alert\"]",
+   "expected": "true",
+   "frames": [
+    {
+     "caption": {
+      "en": "13 letters. Cell 0, no letters at all, splits (T); every other cell starts F, not filled yet.",
+      "ko": "글자가 13개입니다. 글자가 하나도 없는 0번 칸은 나뉘는 것으로(T) 시작하고, 나머지 칸은 아직 채우지 않은 F입니다."
+     },
+     "views": {
+      "message": {
+       "values": [
+        "t",
+        "o",
+        "p",
+        "s",
+        "t",
+        "o",
+        "r",
+        "y",
+        "a",
+        "l",
+        "e",
+        "r",
+        "t"
+       ],
+       "spans": {},
+       "marks": {}
+      },
+      "split": {
+       "values": [
+        "T",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F"
+       ],
+       "pointers": {
+        "end": null
+       },
+       "tags": [],
+       "marks": {
+        "good": [
+         0
+        ]
+       },
+       "unread": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "End 1, 't': no known word ends it, so it can't split. It stays F.",
+      "ko": "end 1, 't': 끝에 오는 아는 단어가 없어 나눌 수 없습니다. F 그대로입니다."
+     },
+     "views": {
+      "message": {
+       "values": [
+        "t",
+        "o",
+        "p",
+        "s",
+        "t",
+        "o",
+        "r",
+        "y",
+        "a",
+        "l",
+        "e",
+        "r",
+        "t"
+       ],
+       "spans": {},
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "split": {
+       "values": [
+        "T",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F"
+       ],
+       "pointers": {
+        "end": 1
+       },
+       "tags": [],
+       "marks": {
+        "bad": [
+         1
+        ]
+       },
+       "unread": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "End 2, 'to': no known word ends it, so it can't split. It stays F.",
+      "ko": "end 2, 'to': 끝에 오는 아는 단어가 없어 나눌 수 없습니다. F 그대로입니다."
+     },
+     "views": {
+      "message": {
+       "values": [
+        "t",
+        "o",
+        "p",
+        "s",
+        "t",
+        "o",
+        "r",
+        "y",
+        "a",
+        "l",
+        "e",
+        "r",
+        "t"
+       ],
+       "spans": {},
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "split": {
+       "values": [
+        "T",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F"
+       ],
+       "pointers": {
+        "end": 2
+       },
+       "tags": [],
+       "marks": {
+        "bad": [
+         2
+        ]
+       },
+       "unread": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "End 3: 'top' ends it, and nothing before it splits (cell 0 is T), so 'top' splits: T.",
+      "ko": "end 3: 단어 'top'에서 끝나고 그 앞 빈 앞부분이 나뉘므로(칸 0 T), 'top' 부분도 나뉩니다: T."
+     },
+     "views": {
+      "message": {
+       "values": [
+        "t",
+        "o",
+        "p",
+        "s",
+        "t",
+        "o",
+        "r",
+        "y",
+        "a",
+        "l",
+        "e",
+        "r",
+        "t"
+       ],
+       "spans": {
+        "w0": {
+         "from": 0,
+         "to": 2,
+         "label": "top",
+         "mark": "good"
+        }
+       },
+       "marks": {}
+      },
+      "split": {
+       "values": [
+        "T",
+        "F",
+        "F",
+        "T",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F"
+       ],
+       "pointers": {
+        "end": 3
+       },
+       "tags": [
+        [
+         0,
+         "top"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": [
+         3
+        ]
+       },
+       "unread": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "split",
+        "at": 0
+       },
+       "to": {
+        "view": "split",
+        "at": 3
+       },
+       "value": "T"
+      },
+      {
+       "from": {
+        "view": "message",
+        "at": 0
+       },
+       "to": {
+        "view": "split",
+        "at": 3
+       },
+       "value": "top"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "End 4, 'tops': no known word ends it, so it can't split. It stays F.",
+      "ko": "end 4, 'tops': 끝에 오는 아는 단어가 없어 나눌 수 없습니다. F 그대로입니다."
+     },
+     "views": {
+      "message": {
+       "values": [
+        "t",
+        "o",
+        "p",
+        "s",
+        "t",
+        "o",
+        "r",
+        "y",
+        "a",
+        "l",
+        "e",
+        "r",
+        "t"
+       ],
+       "spans": {},
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "split": {
+       "values": [
+        "T",
+        "F",
+        "F",
+        "T",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F"
+       ],
+       "pointers": {
+        "end": 4
+       },
+       "tags": [],
+       "marks": {
+        "bad": [
+         4
+        ]
+       },
+       "unread": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "End 5, 'topst': no known word ends it, so it can't split. It stays F.",
+      "ko": "end 5, 'topst': 끝에 오는 아는 단어가 없어 나눌 수 없습니다. F 그대로입니다."
+     },
+     "views": {
+      "message": {
+       "values": [
+        "t",
+        "o",
+        "p",
+        "s",
+        "t",
+        "o",
+        "r",
+        "y",
+        "a",
+        "l",
+        "e",
+        "r",
+        "t"
+       ],
+       "spans": {},
+       "marks": {
+        "lit": [
+         4
+        ]
+       }
+      },
+      "split": {
+       "values": [
+        "T",
+        "F",
+        "F",
+        "T",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F"
+       ],
+       "pointers": {
+        "end": 5
+       },
+       "tags": [],
+       "marks": {
+        "bad": [
+         5
+        ]
+       },
+       "unread": [
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "End 6, 'topsto': no known word ends it, so it can't split. It stays F.",
+      "ko": "end 6, 'topsto': 끝에 오는 아는 단어가 없어 나눌 수 없습니다. F 그대로입니다."
+     },
+     "views": {
+      "message": {
+       "values": [
+        "t",
+        "o",
+        "p",
+        "s",
+        "t",
+        "o",
+        "r",
+        "y",
+        "a",
+        "l",
+        "e",
+        "r",
+        "t"
+       ],
+       "spans": {},
+       "marks": {
+        "lit": [
+         5
+        ]
+       }
+      },
+      "split": {
+       "values": [
+        "T",
+        "F",
+        "F",
+        "T",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F"
+       ],
+       "pointers": {
+        "end": 6
+       },
+       "tags": [],
+       "marks": {
+        "bad": [
+         6
+        ]
+       },
+       "unread": [
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "End 7, 'topstor': no known word ends it, so it can't split. It stays F.",
+      "ko": "end 7, 'topstor': 끝에 오는 아는 단어가 없어 나눌 수 없습니다. F 그대로입니다."
+     },
+     "views": {
+      "message": {
+       "values": [
+        "t",
+        "o",
+        "p",
+        "s",
+        "t",
+        "o",
+        "r",
+        "y",
+        "a",
+        "l",
+        "e",
+        "r",
+        "t"
+       ],
+       "spans": {},
+       "marks": {
+        "lit": [
+         6
+        ]
+       }
+      },
+      "split": {
+       "values": [
+        "T",
+        "F",
+        "F",
+        "T",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F"
+       ],
+       "pointers": {
+        "end": 7
+       },
+       "tags": [],
+       "marks": {
+        "bad": [
+         7
+        ]
+       },
+       "unread": [
+        8,
+        9,
+        10,
+        11,
+        12,
+        13
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "End 8: 'story' ends it, and 'top' before it splits (cell 3 is T), so 'topstory' splits: T.",
+      "ko": "end 8: 단어 'story'에서 끝나고 그 앞 'top' 부분이 나뉘므로(칸 3 T), 'topstory' 부분도 나뉩니다: T."
+     },
+     "views": {
+      "message": {
+       "values": [
+        "t",
+        "o",
+        "p",
+        "s",
+        "t",
+        "o",
+        "r",
+        "y",
+        "a",
+        "l",
+        "e",
+        "r",
+        "t"
+       ],
+       "spans": {
+        "w0": {
+         "from": 3,
+         "to": 7,
+         "label": "story",
+         "mark": "good"
+        }
+       },
+       "marks": {}
+      },
+      "split": {
+       "values": [
+        "T",
+        "F",
+        "F",
+        "T",
+        "F",
+        "F",
+        "F",
+        "F",
+        "T",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F"
+       ],
+       "pointers": {
+        "end": 8
+       },
+       "tags": [
+        [
+         3,
+         "story"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         3
+        ],
+        "good": [
+         8
+        ]
+       },
+       "unread": [
+        9,
+        10,
+        11,
+        12,
+        13
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "split",
+        "at": 3
+       },
+       "to": {
+        "view": "split",
+        "at": 8
+       },
+       "value": "T"
+      },
+      {
+       "from": {
+        "view": "message",
+        "at": 3
+       },
+       "to": {
+        "view": "split",
+        "at": 8
+       },
+       "value": "story"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "End 9, 'topstorya': no known word ends it, so it can't split. It stays F.",
+      "ko": "end 9, 'topstorya': 끝에 오는 아는 단어가 없어 나눌 수 없습니다. F 그대로입니다."
+     },
+     "views": {
+      "message": {
+       "values": [
+        "t",
+        "o",
+        "p",
+        "s",
+        "t",
+        "o",
+        "r",
+        "y",
+        "a",
+        "l",
+        "e",
+        "r",
+        "t"
+       ],
+       "spans": {},
+       "marks": {
+        "lit": [
+         8
+        ]
+       }
+      },
+      "split": {
+       "values": [
+        "T",
+        "F",
+        "F",
+        "T",
+        "F",
+        "F",
+        "F",
+        "F",
+        "T",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F"
+       ],
+       "pointers": {
+        "end": 9
+       },
+       "tags": [],
+       "marks": {
+        "bad": [
+         9
+        ]
+       },
+       "unread": [
+        10,
+        11,
+        12,
+        13
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "End 10, 'topstoryal': no known word ends it, so it can't split. It stays F.",
+      "ko": "end 10, 'topstoryal': 끝에 오는 아는 단어가 없어 나눌 수 없습니다. F 그대로입니다."
+     },
+     "views": {
+      "message": {
+       "values": [
+        "t",
+        "o",
+        "p",
+        "s",
+        "t",
+        "o",
+        "r",
+        "y",
+        "a",
+        "l",
+        "e",
+        "r",
+        "t"
+       ],
+       "spans": {},
+       "marks": {
+        "lit": [
+         9
+        ]
+       }
+      },
+      "split": {
+       "values": [
+        "T",
+        "F",
+        "F",
+        "T",
+        "F",
+        "F",
+        "F",
+        "F",
+        "T",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F"
+       ],
+       "pointers": {
+        "end": 10
+       },
+       "tags": [],
+       "marks": {
+        "bad": [
+         10
+        ]
+       },
+       "unread": [
+        11,
+        12,
+        13
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "End 11, 'topstoryale': no known word ends it, so it can't split. It stays F.",
+      "ko": "end 11, 'topstoryale': 끝에 오는 아는 단어가 없어 나눌 수 없습니다. F 그대로입니다."
+     },
+     "views": {
+      "message": {
+       "values": [
+        "t",
+        "o",
+        "p",
+        "s",
+        "t",
+        "o",
+        "r",
+        "y",
+        "a",
+        "l",
+        "e",
+        "r",
+        "t"
+       ],
+       "spans": {},
+       "marks": {
+        "lit": [
+         10
+        ]
+       }
+      },
+      "split": {
+       "values": [
+        "T",
+        "F",
+        "F",
+        "T",
+        "F",
+        "F",
+        "F",
+        "F",
+        "T",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F"
+       ],
+       "pointers": {
+        "end": 11
+       },
+       "tags": [],
+       "marks": {
+        "bad": [
+         11
+        ]
+       },
+       "unread": [
+        12,
+        13
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "End 12, 'topstoryaler': no known word ends it, so it can't split. It stays F.",
+      "ko": "end 12, 'topstoryaler': 끝에 오는 아는 단어가 없어 나눌 수 없습니다. F 그대로입니다."
+     },
+     "views": {
+      "message": {
+       "values": [
+        "t",
+        "o",
+        "p",
+        "s",
+        "t",
+        "o",
+        "r",
+        "y",
+        "a",
+        "l",
+        "e",
+        "r",
+        "t"
+       ],
+       "spans": {},
+       "marks": {
+        "lit": [
+         11
+        ]
+       }
+      },
+      "split": {
+       "values": [
+        "T",
+        "F",
+        "F",
+        "T",
+        "F",
+        "F",
+        "F",
+        "F",
+        "T",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F"
+       ],
+       "pointers": {
+        "end": 12
+       },
+       "tags": [],
+       "marks": {
+        "bad": [
+         12
+        ]
+       },
+       "unread": [
+        13
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "End 13: 'alert' ends it, and 'topstory' before it splits (cell 8 is T), so 'topstoryalert' splits: T.",
+      "ko": "end 13: 단어 'alert'에서 끝나고 그 앞 'topstory' 부분이 나뉘므로(칸 8 T), 'topstoryalert' 부분도 나뉩니다: T."
+     },
+     "views": {
+      "message": {
+       "values": [
+        "t",
+        "o",
+        "p",
+        "s",
+        "t",
+        "o",
+        "r",
+        "y",
+        "a",
+        "l",
+        "e",
+        "r",
+        "t"
+       ],
+       "spans": {
+        "w0": {
+         "from": 8,
+         "to": 12,
+         "label": "alert",
+         "mark": "good"
+        }
+       },
+       "marks": {}
+      },
+      "split": {
+       "values": [
+        "T",
+        "F",
+        "F",
+        "T",
+        "F",
+        "F",
+        "F",
+        "F",
+        "T",
+        "F",
+        "F",
+        "F",
+        "F",
+        "T"
+       ],
+       "pointers": {
+        "end": 13
+       },
+       "tags": [
+        [
+         8,
+         "alert"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         8
+        ],
+        "good": [
+         13
+        ]
+       },
+       "unread": []
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "split",
+        "at": 8
+       },
+       "to": {
+        "view": "split",
+        "at": 13
+       },
+       "value": "T"
+      },
+      {
+       "from": {
+        "view": "message",
+        "at": 8
+       },
+       "to": {
+        "view": "split",
+        "at": 13
+       },
+       "value": "alert"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Cell 13 is T. Following each T back to the cell its word started from splits the message into 'top' + 'story' + 'alert'. Answer: true.",
+      "ko": "13번 칸이 T입니다. 각 T 칸을 그 단어가 시작한 칸으로 거슬러 가면 메시지가 이렇게 나뉩니다: 'top' + 'story' + 'alert'. 답은 true입니다."
+     },
+     "views": {
+      "message": {
+       "values": [
+        "t",
+        "o",
+        "p",
+        "s",
+        "t",
+        "o",
+        "r",
+        "y",
+        "a",
+        "l",
+        "e",
+        "r",
+        "t"
+       ],
+       "spans": {
+        "p0": {
+         "from": 0,
+         "to": 2,
+         "label": "top",
+         "mark": "path",
+         "below": true
+        },
+        "p1": {
+         "from": 3,
+         "to": 7,
+         "label": "story",
+         "mark": "path",
+         "below": true
+        },
+        "p2": {
+         "from": 8,
+         "to": 12,
+         "label": "alert",
+         "mark": "path",
+         "below": true
+        }
+       },
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5,
+         6,
+         7,
+         8,
+         9,
+         10,
+         11,
+         12
+        ]
+       }
+      },
+      "split": {
+       "values": [
+        "T",
+        "F",
+        "F",
+        "T",
+        "F",
+        "F",
+        "F",
+        "F",
+        "T",
+        "F",
+        "F",
+        "F",
+        "F",
+        "T"
+       ],
+       "pointers": {
+        "end": null
+       },
+       "tags": [],
+       "marks": {
+        "path": [
+         13,
+         8,
+         3,
+         0
+        ]
+       },
+       "unread": []
+      }
+     },
+     "answer": "true"
+    }
+   ],
+   "sampleInput": "topstoryalert\n[\"top\",\"story\",\"alert\"]"
+  },
+  {
+   "label": {
+    "en": "Example 3",
+    "ko": "예시 3"
+   },
+   "input": "message = \"breakingnews\", words = [\"break\",\"breaking\",\"new\",\"ing\"]",
+   "expected": "false",
+   "frames": [
+    {
+     "caption": {
+      "en": "12 letters. Cell 0, no letters at all, splits (T); every other cell starts F, not filled yet.",
+      "ko": "글자가 12개입니다. 글자가 하나도 없는 0번 칸은 나뉘는 것으로(T) 시작하고, 나머지 칸은 아직 채우지 않은 F입니다."
+     },
+     "views": {
+      "message": {
+       "values": [
+        "b",
+        "r",
+        "e",
+        "a",
+        "k",
+        "i",
+        "n",
+        "g",
+        "n",
+        "e",
+        "w",
+        "s"
+       ],
+       "spans": {},
+       "marks": {}
+      },
+      "split": {
+       "values": [
+        "T",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F"
+       ],
+       "pointers": {
+        "end": null
+       },
+       "tags": [],
+       "marks": {
+        "good": [
+         0
+        ]
+       },
+       "unread": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "End 1, 'b': no known word ends it, so it can't split. It stays F.",
+      "ko": "end 1, 'b': 끝에 오는 아는 단어가 없어 나눌 수 없습니다. F 그대로입니다."
+     },
+     "views": {
+      "message": {
+       "values": [
+        "b",
+        "r",
+        "e",
+        "a",
+        "k",
+        "i",
+        "n",
+        "g",
+        "n",
+        "e",
+        "w",
+        "s"
+       ],
+       "spans": {},
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "split": {
+       "values": [
+        "T",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F"
+       ],
+       "pointers": {
+        "end": 1
+       },
+       "tags": [],
+       "marks": {
+        "bad": [
+         1
+        ]
+       },
+       "unread": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "End 2, 'br': no known word ends it, so it can't split. It stays F.",
+      "ko": "end 2, 'br': 끝에 오는 아는 단어가 없어 나눌 수 없습니다. F 그대로입니다."
+     },
+     "views": {
+      "message": {
+       "values": [
+        "b",
+        "r",
+        "e",
+        "a",
+        "k",
+        "i",
+        "n",
+        "g",
+        "n",
+        "e",
+        "w",
+        "s"
+       ],
+       "spans": {},
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "split": {
+       "values": [
+        "T",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F"
+       ],
+       "pointers": {
+        "end": 2
+       },
+       "tags": [],
+       "marks": {
+        "bad": [
+         2
+        ]
+       },
+       "unread": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "End 3, 'bre': no known word ends it, so it can't split. It stays F.",
+      "ko": "end 3, 'bre': 끝에 오는 아는 단어가 없어 나눌 수 없습니다. F 그대로입니다."
+     },
+     "views": {
+      "message": {
+       "values": [
+        "b",
+        "r",
+        "e",
+        "a",
+        "k",
+        "i",
+        "n",
+        "g",
+        "n",
+        "e",
+        "w",
+        "s"
+       ],
+       "spans": {},
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "split": {
+       "values": [
+        "T",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F"
+       ],
+       "pointers": {
+        "end": 3
+       },
+       "tags": [],
+       "marks": {
+        "bad": [
+         3
+        ]
+       },
+       "unread": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "End 4, 'brea': no known word ends it, so it can't split. It stays F.",
+      "ko": "end 4, 'brea': 끝에 오는 아는 단어가 없어 나눌 수 없습니다. F 그대로입니다."
+     },
+     "views": {
+      "message": {
+       "values": [
+        "b",
+        "r",
+        "e",
+        "a",
+        "k",
+        "i",
+        "n",
+        "g",
+        "n",
+        "e",
+        "w",
+        "s"
+       ],
+       "spans": {},
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "split": {
+       "values": [
+        "T",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F"
+       ],
+       "pointers": {
+        "end": 4
+       },
+       "tags": [],
+       "marks": {
+        "bad": [
+         4
+        ]
+       },
+       "unread": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "End 5: 'break' ends it, and nothing before it splits (cell 0 is T), so 'break' splits: T.",
+      "ko": "end 5: 단어 'break'에서 끝나고 그 앞 빈 앞부분이 나뉘므로(칸 0 T), 'break' 부분도 나뉩니다: T."
+     },
+     "views": {
+      "message": {
+       "values": [
+        "b",
+        "r",
+        "e",
+        "a",
+        "k",
+        "i",
+        "n",
+        "g",
+        "n",
+        "e",
+        "w",
+        "s"
+       ],
+       "spans": {
+        "w0": {
+         "from": 0,
+         "to": 4,
+         "label": "break",
+         "mark": "good"
+        }
+       },
+       "marks": {}
+      },
+      "split": {
+       "values": [
+        "T",
+        "F",
+        "F",
+        "F",
+        "F",
+        "T",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F"
+       ],
+       "pointers": {
+        "end": 5
+       },
+       "tags": [
+        [
+         0,
+         "break"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": [
+         5
+        ]
+       },
+       "unread": [
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "split",
+        "at": 0
+       },
+       "to": {
+        "view": "split",
+        "at": 5
+       },
+       "value": "T"
+      },
+      {
+       "from": {
+        "view": "message",
+        "at": 0
+       },
+       "to": {
+        "view": "split",
+        "at": 5
+       },
+       "value": "break"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "End 6, 'breaki': no known word ends it, so it can't split. It stays F.",
+      "ko": "end 6, 'breaki': 끝에 오는 아는 단어가 없어 나눌 수 없습니다. F 그대로입니다."
+     },
+     "views": {
+      "message": {
+       "values": [
+        "b",
+        "r",
+        "e",
+        "a",
+        "k",
+        "i",
+        "n",
+        "g",
+        "n",
+        "e",
+        "w",
+        "s"
+       ],
+       "spans": {},
+       "marks": {
+        "lit": [
+         5
+        ]
+       }
+      },
+      "split": {
+       "values": [
+        "T",
+        "F",
+        "F",
+        "F",
+        "F",
+        "T",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F"
+       ],
+       "pointers": {
+        "end": 6
+       },
+       "tags": [],
+       "marks": {
+        "bad": [
+         6
+        ]
+       },
+       "unread": [
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "End 7, 'breakin': no known word ends it, so it can't split. It stays F.",
+      "ko": "end 7, 'breakin': 끝에 오는 아는 단어가 없어 나눌 수 없습니다. F 그대로입니다."
+     },
+     "views": {
+      "message": {
+       "values": [
+        "b",
+        "r",
+        "e",
+        "a",
+        "k",
+        "i",
+        "n",
+        "g",
+        "n",
+        "e",
+        "w",
+        "s"
+       ],
+       "spans": {},
+       "marks": {
+        "lit": [
+         6
+        ]
+       }
+      },
+      "split": {
+       "values": [
+        "T",
+        "F",
+        "F",
+        "F",
+        "F",
+        "T",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F"
+       ],
+       "pointers": {
+        "end": 7
+       },
+       "tags": [],
+       "marks": {
+        "bad": [
+         7
+        ]
+       },
+       "unread": [
+        8,
+        9,
+        10,
+        11,
+        12
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "End 8: 'breaking' ends it, and nothing before it splits (cell 0 is T), so 'breaking' splits: T.",
+      "ko": "end 8: 단어 'breaking'에서 끝나고 그 앞 빈 앞부분이 나뉘므로(칸 0 T), 'breaking' 부분도 나뉩니다: T."
+     },
+     "views": {
+      "message": {
+       "values": [
+        "b",
+        "r",
+        "e",
+        "a",
+        "k",
+        "i",
+        "n",
+        "g",
+        "n",
+        "e",
+        "w",
+        "s"
+       ],
+       "spans": {
+        "w0": {
+         "from": 0,
+         "to": 7,
+         "label": "breaking",
+         "mark": "good"
+        }
+       },
+       "marks": {}
+      },
+      "split": {
+       "values": [
+        "T",
+        "F",
+        "F",
+        "F",
+        "F",
+        "T",
+        "F",
+        "F",
+        "T",
+        "F",
+        "F",
+        "F",
+        "F"
+       ],
+       "pointers": {
+        "end": 8
+       },
+       "tags": [
+        [
+         0,
+         "breaking"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": [
+         8
+        ]
+       },
+       "unread": [
+        9,
+        10,
+        11,
+        12
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "split",
+        "at": 0
+       },
+       "to": {
+        "view": "split",
+        "at": 8
+       },
+       "value": "T"
+      },
+      {
+       "from": {
+        "view": "message",
+        "at": 0
+       },
+       "to": {
+        "view": "split",
+        "at": 8
+       },
+       "value": "breaking"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "End 9, 'breakingn': no known word ends it, so it can't split. It stays F.",
+      "ko": "end 9, 'breakingn': 끝에 오는 아는 단어가 없어 나눌 수 없습니다. F 그대로입니다."
+     },
+     "views": {
+      "message": {
+       "values": [
+        "b",
+        "r",
+        "e",
+        "a",
+        "k",
+        "i",
+        "n",
+        "g",
+        "n",
+        "e",
+        "w",
+        "s"
+       ],
+       "spans": {},
+       "marks": {
+        "lit": [
+         8
+        ]
+       }
+      },
+      "split": {
+       "values": [
+        "T",
+        "F",
+        "F",
+        "F",
+        "F",
+        "T",
+        "F",
+        "F",
+        "T",
+        "F",
+        "F",
+        "F",
+        "F"
+       ],
+       "pointers": {
+        "end": 9
+       },
+       "tags": [],
+       "marks": {
+        "bad": [
+         9
+        ]
+       },
+       "unread": [
+        10,
+        11,
+        12
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "End 10, 'breakingne': no known word ends it, so it can't split. It stays F.",
+      "ko": "end 10, 'breakingne': 끝에 오는 아는 단어가 없어 나눌 수 없습니다. F 그대로입니다."
+     },
+     "views": {
+      "message": {
+       "values": [
+        "b",
+        "r",
+        "e",
+        "a",
+        "k",
+        "i",
+        "n",
+        "g",
+        "n",
+        "e",
+        "w",
+        "s"
+       ],
+       "spans": {},
+       "marks": {
+        "lit": [
+         9
+        ]
+       }
+      },
+      "split": {
+       "values": [
+        "T",
+        "F",
+        "F",
+        "F",
+        "F",
+        "T",
+        "F",
+        "F",
+        "T",
+        "F",
+        "F",
+        "F",
+        "F"
+       ],
+       "pointers": {
+        "end": 10
+       },
+       "tags": [],
+       "marks": {
+        "bad": [
+         10
+        ]
+       },
+       "unread": [
+        11,
+        12
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "End 11: 'new' ends it, and 'breaking' before it splits (cell 8 is T), so 'breakingnew' splits: T.",
+      "ko": "end 11: 단어 'new'에서 끝나고 그 앞 'breaking' 부분이 나뉘므로(칸 8 T), 'breakingnew' 부분도 나뉩니다: T."
+     },
+     "views": {
+      "message": {
+       "values": [
+        "b",
+        "r",
+        "e",
+        "a",
+        "k",
+        "i",
+        "n",
+        "g",
+        "n",
+        "e",
+        "w",
+        "s"
+       ],
+       "spans": {
+        "w0": {
+         "from": 8,
+         "to": 10,
+         "label": "new",
+         "mark": "good"
+        }
+       },
+       "marks": {}
+      },
+      "split": {
+       "values": [
+        "T",
+        "F",
+        "F",
+        "F",
+        "F",
+        "T",
+        "F",
+        "F",
+        "T",
+        "F",
+        "F",
+        "T",
+        "F"
+       ],
+       "pointers": {
+        "end": 11
+       },
+       "tags": [
+        [
+         8,
+         "new"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         8
+        ],
+        "good": [
+         11
+        ]
+       },
+       "unread": [
+        12
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "split",
+        "at": 8
+       },
+       "to": {
+        "view": "split",
+        "at": 11
+       },
+       "value": "T"
+      },
+      {
+       "from": {
+        "view": "message",
+        "at": 8
+       },
+       "to": {
+        "view": "split",
+        "at": 11
+       },
+       "value": "new"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "End 12, 'breakingnews': no known word ends it, so it can't split. It stays F.",
+      "ko": "end 12, 'breakingnews': 끝에 오는 아는 단어가 없어 나눌 수 없습니다. F 그대로입니다."
+     },
+     "views": {
+      "message": {
+       "values": [
+        "b",
+        "r",
+        "e",
+        "a",
+        "k",
+        "i",
+        "n",
+        "g",
+        "n",
+        "e",
+        "w",
+        "s"
+       ],
+       "spans": {},
+       "marks": {
+        "lit": [
+         11
+        ]
+       }
+      },
+      "split": {
+       "values": [
+        "T",
+        "F",
+        "F",
+        "F",
+        "F",
+        "T",
+        "F",
+        "F",
+        "T",
+        "F",
+        "F",
+        "T",
+        "F"
+       ],
+       "pointers": {
+        "end": 12
+       },
+       "tags": [],
+       "marks": {
+        "bad": [
+         12
+        ]
+       },
+       "unread": []
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Cell 12 is F: no split of 'breakingnews' uses only known words. Answer: false.",
+      "ko": "12번 칸이 F입니다. 'breakingnews' 메시지는 아는 단어로만 나눌 수 없습니다. 답은 false입니다."
+     },
+     "views": {
+      "message": {
+       "values": [
+        "b",
+        "r",
+        "e",
+        "a",
+        "k",
+        "i",
+        "n",
+        "g",
+        "n",
+        "e",
+        "w",
+        "s"
+       ],
+       "spans": {},
+       "marks": {}
+      },
+      "split": {
+       "values": [
+        "T",
+        "F",
+        "F",
+        "F",
+        "F",
+        "T",
+        "F",
+        "F",
+        "T",
+        "F",
+        "F",
+        "T",
+        "F"
+       ],
+       "pointers": {
+        "end": null
+       },
+       "tags": [],
+       "marks": {
+        "bad": [
+         12
+        ]
+       },
+       "unread": []
+      }
+     },
+     "answer": "false"
+    }
+   ],
+   "sampleInput": "breakingnews\n[\"break\",\"breaking\",\"new\",\"ing\"]"
+  },
+  {
+   "label": {
+    "en": "Extra: a word after a prefix that doesn't split",
+    "ko": "추가: 앞부분이 나뉘지 않는 단어"
+   },
+   "input": "message = \"yolomg\", words = [\"lo\",\"yolo\",\"omg\"]",
+   "expected": "false",
+   "frames": [
+    {
+     "caption": {
+      "en": "6 letters. Cell 0, no letters at all, splits (T); every other cell starts F, not filled yet.",
+      "ko": "글자가 6개입니다. 글자가 하나도 없는 0번 칸은 나뉘는 것으로(T) 시작하고, 나머지 칸은 아직 채우지 않은 F입니다."
+     },
+     "views": {
+      "message": {
+       "values": [
+        "y",
+        "o",
+        "l",
+        "o",
+        "m",
+        "g"
+       ],
+       "spans": {},
+       "marks": {}
+      },
+      "split": {
+       "values": [
+        "T",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F"
+       ],
+       "pointers": {
+        "end": null
+       },
+       "tags": [],
+       "marks": {
+        "good": [
+         0
+        ]
+       },
+       "unread": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "End 1, 'y': no known word ends it, so it can't split. It stays F.",
+      "ko": "end 1, 'y': 끝에 오는 아는 단어가 없어 나눌 수 없습니다. F 그대로입니다."
+     },
+     "views": {
+      "message": {
+       "values": [
+        "y",
+        "o",
+        "l",
+        "o",
+        "m",
+        "g"
+       ],
+       "spans": {},
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "split": {
+       "values": [
+        "T",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F"
+       ],
+       "pointers": {
+        "end": 1
+       },
+       "tags": [],
+       "marks": {
+        "bad": [
+         1
+        ]
+       },
+       "unread": [
+        2,
+        3,
+        4,
+        5,
+        6
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "End 2, 'yo': no known word ends it, so it can't split. It stays F.",
+      "ko": "end 2, 'yo': 끝에 오는 아는 단어가 없어 나눌 수 없습니다. F 그대로입니다."
+     },
+     "views": {
+      "message": {
+       "values": [
+        "y",
+        "o",
+        "l",
+        "o",
+        "m",
+        "g"
+       ],
+       "spans": {},
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "split": {
+       "values": [
+        "T",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F"
+       ],
+       "pointers": {
+        "end": 2
+       },
+       "tags": [],
+       "marks": {
+        "bad": [
+         2
+        ]
+       },
+       "unread": [
+        3,
+        4,
+        5,
+        6
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "End 3, 'yol': no known word ends it, so it can't split. It stays F.",
+      "ko": "end 3, 'yol': 끝에 오는 아는 단어가 없어 나눌 수 없습니다. F 그대로입니다."
+     },
+     "views": {
+      "message": {
+       "values": [
+        "y",
+        "o",
+        "l",
+        "o",
+        "m",
+        "g"
+       ],
+       "spans": {},
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "split": {
+       "values": [
+        "T",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F",
+        "F"
+       ],
+       "pointers": {
+        "end": 3
+       },
+       "tags": [],
+       "marks": {
+        "bad": [
+         3
+        ]
+       },
+       "unread": [
+        4,
+        5,
+        6
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "End 4: 'lo' ends it, but 'yo' before it doesn't split (cell 2 is F). 'yolo' ends it, and nothing before it splits (cell 0 is T), so 'yolo' splits: T.",
+      "ko": "end 4: 단어 'lo'에서 끝나지만 그 앞 'yo' 부분은 나뉘지 않습니다(칸 2 F). 단어 'yolo'에서 끝나고 그 앞 빈 앞부분이 나뉘므로(칸 0 T), 'yolo' 부분도 나뉩니다: T."
+     },
+     "views": {
+      "message": {
+       "values": [
+        "y",
+        "o",
+        "l",
+        "o",
+        "m",
+        "g"
+       ],
+       "spans": {
+        "w0": {
+         "from": 2,
+         "to": 3,
+         "label": "lo",
+         "mark": "bad",
+         "below": true
+        },
+        "w1": {
+         "from": 0,
+         "to": 3,
+         "label": "yolo",
+         "mark": "good"
+        }
+       },
+       "marks": {}
+      },
+      "split": {
+       "values": [
+        "T",
+        "F",
+        "F",
+        "F",
+        "T",
+        "F",
+        "F"
+       ],
+       "pointers": {
+        "end": 4
+       },
+       "tags": [
+        [
+         2,
+         "lo"
+        ],
+        [
+         0,
+         "yolo"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         2,
+         0
+        ],
+        "good": [
+         4
+        ]
+       },
+       "unread": [
+        5,
+        6
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "split",
+        "at": 0
+       },
+       "to": {
+        "view": "split",
+        "at": 4
+       },
+       "value": "T"
+      },
+      {
+       "from": {
+        "view": "message",
+        "at": 0
+       },
+       "to": {
+        "view": "split",
+        "at": 4
+       },
+       "value": "yolo"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "End 5, 'yolom': no known word ends it, so it can't split. It stays F.",
+      "ko": "end 5, 'yolom': 끝에 오는 아는 단어가 없어 나눌 수 없습니다. F 그대로입니다."
+     },
+     "views": {
+      "message": {
+       "values": [
+        "y",
+        "o",
+        "l",
+        "o",
+        "m",
+        "g"
+       ],
+       "spans": {},
+       "marks": {
+        "lit": [
+         4
+        ]
+       }
+      },
+      "split": {
+       "values": [
+        "T",
+        "F",
+        "F",
+        "F",
+        "T",
+        "F",
+        "F"
+       ],
+       "pointers": {
+        "end": 5
+       },
+       "tags": [],
+       "marks": {
+        "bad": [
+         5
+        ]
+       },
+       "unread": [
+        6
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "End 6: 'omg' ends it, but 'yol' before it doesn't split (cell 3 is F). No other word ends it, so it stays F.",
+      "ko": "end 6: 단어 'omg'에서 끝나지만 그 앞 'yol' 부분은 나뉘지 않습니다(칸 3 F). 끝나는 다른 단어가 없어 F 그대로입니다."
+     },
+     "views": {
+      "message": {
+       "values": [
+        "y",
+        "o",
+        "l",
+        "o",
+        "m",
+        "g"
+       ],
+       "spans": {
+        "w0": {
+         "from": 3,
+         "to": 5,
+         "label": "omg",
+         "mark": "bad",
+         "below": true
+        }
+       },
+       "marks": {}
+      },
+      "split": {
+       "values": [
+        "T",
+        "F",
+        "F",
+        "F",
+        "T",
+        "F",
+        "F"
+       ],
+       "pointers": {
+        "end": 6
+       },
+       "tags": [
+        [
+         3,
+         "omg"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         3
+        ],
+        "bad": [
+         6
+        ]
+       },
+       "unread": []
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Cell 6 is F: no split of 'yolomg' uses only known words. Answer: false.",
+      "ko": "6번 칸이 F입니다. 'yolomg' 메시지는 아는 단어로만 나눌 수 없습니다. 답은 false입니다."
+     },
+     "views": {
+      "message": {
+       "values": [
+        "y",
+        "o",
+        "l",
+        "o",
+        "m",
+        "g"
+       ],
+       "spans": {},
+       "marks": {}
+      },
+      "split": {
+       "values": [
+        "T",
+        "F",
+        "F",
+        "F",
+        "T",
+        "F",
+        "F"
+       ],
+       "pointers": {
+        "end": null
+       },
+       "tags": [],
+       "marks": {
+        "bad": [
+         6
+        ]
+       },
+       "unread": []
+      }
+     },
+     "answer": "false"
+    }
+   ],
+   "extra": true
+  }
+ ]
+}
