@@ -60,7 +60,7 @@ def solve(fighters, run):
 
     frame({"en": f"{n} {plural(n, 'fighter', 'fighters')}: a positive power moves right (→), a negative one left (←). "
                  f"The stack of fighters still standing starts empty.",
-           "ko": f"투사 {n}명입니다. 힘이 양수면 오른쪽(→), 음수면 왼쪽(←)으로 갑니다. 살아남은 투사의 스택은 비어 "
+           "ko": f"투사 {n}명이며, 힘이 양수면 오른쪽(→), 음수면 왼쪽(←)으로 갑니다. 살아남은 투사의 스택은 비어 "
                  f"있습니다."})
     for i, fighter in enumerate(fighters):
         alive = True

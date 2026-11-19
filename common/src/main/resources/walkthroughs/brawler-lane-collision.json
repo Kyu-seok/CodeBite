@@ -42,7 +42,7 @@
     {
      "caption": {
       "en": "3 fighters: a positive power moves right (→), a negative one left (←). The stack of fighters still standing starts empty.",
-      "ko": "투사 3명입니다. 힘이 양수면 오른쪽(→), 음수면 왼쪽(←)으로 갑니다. 살아남은 투사의 스택은 비어 있습니다."
+      "ko": "투사 3명이며, 힘이 양수면 오른쪽(→), 음수면 왼쪽(←)으로 갑니다. 살아남은 투사의 스택은 비어 있습니다."
      },
      "views": {
       "fighters": {
@@ -522,7 +522,7 @@
     {
      "caption": {
       "en": "4 fighters: a positive power moves right (→), a negative one left (←). The stack of fighters still standing starts empty.",
-      "ko": "투사 4명입니다. 힘이 양수면 오른쪽(→), 음수면 왼쪽(←)으로 갑니다. 살아남은 투사의 스택은 비어 있습니다."
+      "ko": "투사 4명이며, 힘이 양수면 오른쪽(→), 음수면 왼쪽(←)으로 갑니다. 살아남은 투사의 스택은 비어 있습니다."
      },
      "views": {
       "fighters": {
@@ -978,7 +978,7 @@
     {
      "caption": {
       "en": "4 fighters: a positive power moves right (→), a negative one left (←). The stack of fighters still standing starts empty.",
-      "ko": "투사 4명입니다. 힘이 양수면 오른쪽(→), 음수면 왼쪽(←)으로 갑니다. 살아남은 투사의 스택은 비어 있습니다."
+      "ko": "투사 4명이며, 힘이 양수면 오른쪽(→), 음수면 왼쪽(←)으로 갑니다. 살아남은 투사의 스택은 비어 있습니다."
      },
      "views": {
       "fighters": {

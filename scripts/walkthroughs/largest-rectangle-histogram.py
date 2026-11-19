@@ -15,7 +15,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import josa, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough, at, move, span, stack  # noqa: E402
 
 SLUG = "largest-rectangle-histogram"
@@ -77,15 +77,15 @@ def solve(heights, run):
             if beats:
                 best, best_span = area, (left, i - 1)
             where = ({"en": f"the stack below it is empty, so it reaches back to bar 0",
-                      "ko": "그 아래 스택이 비어 있어 0번 막대까지 닿습니다"} if not held else
+                      "ko": "그 아래 스택이 비어 있어 0번 막대까지 닿으며"} if not held else
                      {"en": f"bar {held[-1]} under it is lower, so it starts at bar {left}",
-                      "ko": f"그 아래 {held[-1]}번 막대가 더 낮아 {left}번 막대부터 시작합니다"})
+                      "ko": f"그 아래 {held[-1]}번 막대가 더 낮아 {left}번 막대부터 시작하며"})
             verdict = ({"en": f"a new best, {area}", "ko": "새 best (최대 넓이)입니다"} if beats else
                        {"en": f"not more than best, {best}", "ko": f"best (최대 넓이) {best}보다 크지 않습니다"})
             frame({"en": f"Bar {i} ({height}) is not taller than bar {j} ({tall}) on top: pop it. Its rectangle ends "
                          f"at bar {i - 1}; {where['en']}: {tall} × {width} = {area}, {verdict['en']}.",
                    "ko": f"{i}번 막대({height})가 맨 위 {j}번 막대({tall})보다 높지 않아 꺼냅니다. 직사각형은 "
-                         f"{i - 1}번 막대에서 끝나고 {where['ko']}. 넓이 {tall} × {width} = {area}: {verdict['ko']}."},
+                         f"{i - 1}번 막대에서 끝나고 {where['ko']}, 넓이는 {tall} × {width} = {josa(area, '(으)로')} {verdict['ko']}."},
                   leaving=j, lit=[i], stack_marks={"lit": [top]},
                   rect=span(left, i - 1, f"{tall}×{width} = {area}", mark="good" if beats else None),
                   best_mark="good" if beats else None,

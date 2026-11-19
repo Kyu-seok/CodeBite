@@ -542,12 +542,22 @@
       "prefix": {
        "values": [
         "(",
-        "(",
-        ")",
-        ")"
+        "",
+        "",
+        ""
        ],
-       "unread": [],
-       "marks": {}
+       "unread": [
+        1,
+        2,
+        3
+       ],
+       "marks": {
+        "bad": [
+         1,
+         2,
+         3
+        ]
+       }
       },
       "calls": {
        "calls": [
@@ -610,19 +620,22 @@
        "from": {
         "view": "prefix",
         "at": 1
-       }
+       },
+       "value": "("
       },
       {
        "from": {
         "view": "prefix",
         "at": 2
-       }
+       },
+       "value": ")"
       },
       {
        "from": {
         "view": "prefix",
         "at": 3
-       }
+       },
+       "value": ")"
       }
      ]
     },
@@ -999,12 +1012,17 @@
      "views": {
       "prefix": {
        "values": [
-        "(",
-        ")",
-        "(",
-        ")"
+        "",
+        "",
+        "",
+        ""
        ],
-       "unread": [],
+       "unread": [
+        0,
+        1,
+        2,
+        3
+       ],
        "marks": {
         "bad": [
          0,
@@ -1080,25 +1098,29 @@
        "from": {
         "view": "prefix",
         "at": 0
-       }
+       },
+       "value": "("
       },
       {
        "from": {
         "view": "prefix",
         "at": 1
-       }
+       },
+       "value": ")"
       },
       {
        "from": {
         "view": "prefix",
         "at": 2
-       }
+       },
+       "value": "("
       },
       {
        "from": {
         "view": "prefix",
         "at": 3
-       }
+       },
+       "value": ")"
       }
      ],
      "answer": "[\"(())\",\"()()\"]"
@@ -2159,14 +2181,28 @@
         "(",
         "(",
         "(",
-        "(",
-        ")",
-        ")",
-        ")",
-        ")"
+        "",
+        "",
+        "",
+        "",
+        ""
        ],
-       "unread": [],
-       "marks": {}
+       "unread": [
+        3,
+        4,
+        5,
+        6,
+        7
+       ],
+       "marks": {
+        "bad": [
+         3,
+         4,
+         5,
+         6,
+         7
+        ]
+       }
       },
       "calls": {
        "calls": [
@@ -2259,31 +2295,36 @@
        "from": {
         "view": "prefix",
         "at": 3
-       }
+       },
+       "value": "("
       },
       {
        "from": {
         "view": "prefix",
         "at": 4
-       }
+       },
+       "value": ")"
       },
       {
        "from": {
         "view": "prefix",
         "at": 5
-       }
+       },
+       "value": ")"
       },
       {
        "from": {
         "view": "prefix",
         "at": 6
-       }
+       },
+       "value": ")"
       },
       {
        "from": {
         "view": "prefix",
         "at": 7
-       }
+       },
+       "value": ")"
       }
      ]
     },
@@ -3012,13 +3053,25 @@
         "(",
         "(",
         ")",
-        "(",
-        ")",
-        ")",
-        ")"
+        "",
+        "",
+        "",
+        ""
        ],
-       "unread": [],
-       "marks": {}
+       "unread": [
+        4,
+        5,
+        6,
+        7
+       ],
+       "marks": {
+        "bad": [
+         4,
+         5,
+         6,
+         7
+        ]
+       }
       },
       "calls": {
        "calls": [
@@ -3111,25 +3164,29 @@
        "from": {
         "view": "prefix",
         "at": 4
-       }
+       },
+       "value": "("
       },
       {
        "from": {
         "view": "prefix",
         "at": 5
-       }
+       },
+       "value": ")"
       },
       {
        "from": {
         "view": "prefix",
         "at": 6
-       }
+       },
+       "value": ")"
       },
       {
        "from": {
         "view": "prefix",
         "at": 7
-       }
+       },
+       "value": ")"
       }
      ]
     },
@@ -3759,12 +3816,22 @@
         "(",
         ")",
         ")",
-        "(",
-        ")",
-        ")"
+        "",
+        "",
+        ""
        ],
-       "unread": [],
-       "marks": {}
+       "unread": [
+        5,
+        6,
+        7
+       ],
+       "marks": {
+        "bad": [
+         5,
+         6,
+         7
+        ]
+       }
       },
       "calls": {
        "calls": [
@@ -3857,19 +3924,22 @@
        "from": {
         "view": "prefix",
         "at": 5
-       }
+       },
+       "value": "("
       },
       {
        "from": {
         "view": "prefix",
         "at": 6
-       }
+       },
+       "value": ")"
       },
       {
        "from": {
         "view": "prefix",
         "at": 7
-       }
+       },
+       "value": ")"
       }
      ]
     },
@@ -4388,15 +4458,31 @@
        "values": [
         "(",
         "(",
-        "(",
-        ")",
-        ")",
-        ")",
-        "(",
-        ")"
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
        ],
-       "unread": [],
-       "marks": {}
+       "unread": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+       ],
+       "marks": {
+        "bad": [
+         2,
+         3,
+         4,
+         5,
+         6,
+         7
+        ]
+       }
       },
       "calls": {
        "calls": [
@@ -4493,37 +4579,43 @@
        "from": {
         "view": "prefix",
         "at": 2
-       }
+       },
+       "value": "("
       },
       {
        "from": {
         "view": "prefix",
         "at": 3
-       }
+       },
+       "value": ")"
       },
       {
        "from": {
         "view": "prefix",
         "at": 4
-       }
+       },
+       "value": ")"
       },
       {
        "from": {
         "view": "prefix",
         "at": 5
-       }
+       },
+       "value": ")"
       },
       {
        "from": {
         "view": "prefix",
         "at": 6
-       }
+       },
+       "value": "("
       },
       {
        "from": {
         "view": "prefix",
         "at": 7
-       }
+       },
+       "value": ")"
       }
      ]
     },
@@ -5372,13 +5464,25 @@
         "(",
         ")",
         "(",
-        "(",
-        ")",
-        ")",
-        ")"
+        "",
+        "",
+        "",
+        ""
        ],
-       "unread": [],
-       "marks": {}
+       "unread": [
+        4,
+        5,
+        6,
+        7
+       ],
+       "marks": {
+        "bad": [
+         4,
+         5,
+         6,
+         7
+        ]
+       }
       },
       "calls": {
        "calls": [
@@ -5474,25 +5578,29 @@
        "from": {
         "view": "prefix",
         "at": 4
-       }
+       },
+       "value": "("
       },
       {
        "from": {
         "view": "prefix",
         "at": 5
-       }
+       },
+       "value": ")"
       },
       {
        "from": {
         "view": "prefix",
         "at": 6
-       }
+       },
+       "value": ")"
       },
       {
        "from": {
         "view": "prefix",
         "at": 7
-       }
+       },
+       "value": ")"
       }
      ]
     },
@@ -6137,12 +6245,22 @@
         ")",
         "(",
         ")",
-        "(",
-        ")",
-        ")"
+        "",
+        "",
+        ""
        ],
-       "unread": [],
-       "marks": {}
+       "unread": [
+        5,
+        6,
+        7
+       ],
+       "marks": {
+        "bad": [
+         5,
+         6,
+         7
+        ]
+       }
       },
       "calls": {
        "calls": [
@@ -6238,19 +6356,22 @@
        "from": {
         "view": "prefix",
         "at": 5
-       }
+       },
+       "value": "("
       },
       {
        "from": {
         "view": "prefix",
         "at": 6
-       }
+       },
+       "value": ")"
       },
       {
        "from": {
         "view": "prefix",
         "at": 7
-       }
+       },
+       "value": ")"
       }
      ]
     },
@@ -6782,14 +6903,28 @@
         "(",
         "(",
         ")",
-        "(",
-        ")",
-        ")",
-        "(",
-        ")"
+        "",
+        "",
+        "",
+        "",
+        ""
        ],
-       "unread": [],
-       "marks": {}
+       "unread": [
+        3,
+        4,
+        5,
+        6,
+        7
+       ],
+       "marks": {
+        "bad": [
+         3,
+         4,
+         5,
+         6,
+         7
+        ]
+       }
       },
       "calls": {
        "calls": [
@@ -6888,31 +7023,36 @@
        "from": {
         "view": "prefix",
         "at": 3
-       }
+       },
+       "value": "("
       },
       {
        "from": {
         "view": "prefix",
         "at": 4
-       }
+       },
+       "value": ")"
       },
       {
        "from": {
         "view": "prefix",
         "at": 5
-       }
+       },
+       "value": ")"
       },
       {
        "from": {
         "view": "prefix",
         "at": 6
-       }
+       },
+       "value": "("
       },
       {
        "from": {
         "view": "prefix",
         "at": 7
-       }
+       },
+       "value": ")"
       }
      ]
     },
@@ -7678,12 +7818,22 @@
         ")",
         ")",
         "(",
-        "(",
-        ")",
-        ")"
+        "",
+        "",
+        ""
        ],
-       "unread": [],
-       "marks": {}
+       "unread": [
+        5,
+        6,
+        7
+       ],
+       "marks": {
+        "bad": [
+         5,
+         6,
+         7
+        ]
+       }
       },
       "calls": {
        "calls": [
@@ -7781,19 +7931,22 @@
        "from": {
         "view": "prefix",
         "at": 5
-       }
+       },
+       "value": "("
       },
       {
        "from": {
         "view": "prefix",
         "at": 6
-       }
+       },
+       "value": ")"
       },
       {
        "from": {
         "view": "prefix",
         "at": 7
-       }
+       },
+       "value": ")"
       }
      ]
     },
@@ -8331,16 +8484,34 @@
       "prefix": {
        "values": [
         "(",
-        "(",
-        ")",
-        ")",
-        "(",
-        ")",
-        "(",
-        ")"
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
        ],
-       "unread": [],
-       "marks": {}
+       "unread": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+       ],
+       "marks": {
+        "bad": [
+         1,
+         2,
+         3,
+         4,
+         5,
+         6,
+         7
+        ]
+       }
       },
       "calls": {
        "calls": [
@@ -8443,43 +8614,50 @@
        "from": {
         "view": "prefix",
         "at": 1
-       }
+       },
+       "value": "("
       },
       {
        "from": {
         "view": "prefix",
         "at": 2
-       }
+       },
+       "value": ")"
       },
       {
        "from": {
         "view": "prefix",
         "at": 3
-       }
+       },
+       "value": ")"
       },
       {
        "from": {
         "view": "prefix",
         "at": 4
-       }
+       },
+       "value": "("
       },
       {
        "from": {
         "view": "prefix",
         "at": 5
-       }
+       },
+       "value": ")"
       },
       {
        "from": {
         "view": "prefix",
         "at": 6
-       }
+       },
+       "value": "("
       },
       {
        "from": {
         "view": "prefix",
         "at": 7
-       }
+       },
+       "value": ")"
       }
      ]
     },
@@ -9464,13 +9642,25 @@
         ")",
         "(",
         "(",
-        "(",
-        ")",
-        ")",
-        ")"
+        "",
+        "",
+        "",
+        ""
        ],
-       "unread": [],
-       "marks": {}
+       "unread": [
+        4,
+        5,
+        6,
+        7
+       ],
+       "marks": {
+        "bad": [
+         4,
+         5,
+         6,
+         7
+        ]
+       }
       },
       "calls": {
        "calls": [
@@ -9571,25 +9761,29 @@
        "from": {
         "view": "prefix",
         "at": 4
-       }
+       },
+       "value": "("
       },
       {
        "from": {
         "view": "prefix",
         "at": 5
-       }
+       },
+       "value": ")"
       },
       {
        "from": {
         "view": "prefix",
         "at": 6
-       }
+       },
+       "value": ")"
       },
       {
        "from": {
         "view": "prefix",
         "at": 7
-       }
+       },
+       "value": ")"
       }
      ]
     },
@@ -10259,12 +10453,22 @@
         "(",
         "(",
         ")",
-        "(",
-        ")",
-        ")"
+        "",
+        "",
+        ""
        ],
-       "unread": [],
-       "marks": {}
+       "unread": [
+        5,
+        6,
+        7
+       ],
+       "marks": {
+        "bad": [
+         5,
+         6,
+         7
+        ]
+       }
       },
       "calls": {
        "calls": [
@@ -10365,19 +10569,22 @@
        "from": {
         "view": "prefix",
         "at": 5
-       }
+       },
+       "value": "("
       },
       {
        "from": {
         "view": "prefix",
         "at": 6
-       }
+       },
+       "value": ")"
       },
       {
        "from": {
         "view": "prefix",
         "at": 7
-       }
+       },
+       "value": ")"
       }
      ]
     },
@@ -10929,14 +11136,28 @@
         "(",
         ")",
         "(",
-        "(",
-        ")",
-        ")",
-        "(",
-        ")"
+        "",
+        "",
+        "",
+        "",
+        ""
        ],
-       "unread": [],
-       "marks": {}
+       "unread": [
+        3,
+        4,
+        5,
+        6,
+        7
+       ],
+       "marks": {
+        "bad": [
+         3,
+         4,
+         5,
+         6,
+         7
+        ]
+       }
       },
       "calls": {
        "calls": [
@@ -11040,31 +11261,36 @@
        "from": {
         "view": "prefix",
         "at": 3
-       }
+       },
+       "value": "("
       },
       {
        "from": {
         "view": "prefix",
         "at": 4
-       }
+       },
+       "value": ")"
       },
       {
        "from": {
         "view": "prefix",
         "at": 5
-       }
+       },
+       "value": ")"
       },
       {
        "from": {
         "view": "prefix",
         "at": 6
-       }
+       },
+       "value": "("
       },
       {
        "from": {
         "view": "prefix",
         "at": 7
-       }
+       },
+       "value": ")"
       }
      ]
     },
@@ -11860,12 +12086,22 @@
         "(",
         ")",
         "(",
-        "(",
-        ")",
-        ")"
+        "",
+        "",
+        ""
        ],
-       "unread": [],
-       "marks": {}
+       "unread": [
+        5,
+        6,
+        7
+       ],
+       "marks": {
+        "bad": [
+         5,
+         6,
+         7
+        ]
+       }
       },
       "calls": {
        "calls": [
@@ -11968,19 +12204,22 @@
        "from": {
         "view": "prefix",
         "at": 5
-       }
+       },
+       "value": "("
       },
       {
        "from": {
         "view": "prefix",
         "at": 6
-       }
+       },
+       "value": ")"
       },
       {
        "from": {
         "view": "prefix",
         "at": 7
-       }
+       },
+       "value": ")"
       }
      ]
     },
@@ -12537,16 +12776,25 @@
      "views": {
       "prefix": {
        "values": [
-        "(",
-        ")",
-        "(",
-        ")",
-        "(",
-        ")",
-        "(",
-        ")"
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
        ],
-       "unread": [],
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+       ],
        "marks": {
         "bad": [
          0,
@@ -12682,49 +12930,57 @@
        "from": {
         "view": "prefix",
         "at": 0
-       }
+       },
+       "value": "("
       },
       {
        "from": {
         "view": "prefix",
         "at": 1
-       }
+       },
+       "value": ")"
       },
       {
        "from": {
         "view": "prefix",
         "at": 2
-       }
+       },
+       "value": "("
       },
       {
        "from": {
         "view": "prefix",
         "at": 3
-       }
+       },
+       "value": ")"
       },
       {
        "from": {
         "view": "prefix",
         "at": 4
-       }
+       },
+       "value": "("
       },
       {
        "from": {
         "view": "prefix",
         "at": 5
-       }
+       },
+       "value": ")"
       },
       {
        "from": {
         "view": "prefix",
         "at": 6
-       }
+       },
+       "value": "("
       },
       {
        "from": {
         "view": "prefix",
         "at": 7
-       }
+       },
+       "value": ")"
       }
      ],
      "answer": "[\"(((())))\",\"((()()))\",\"((())())\",\"((()))()\",\"(()(()))\",\"(()()())\",\"(()())()\",\"(())(())\",\"(())()()\",\"()((()))\",\"()(()())\",\"()(())()\",\"()()(())\",\"()()()()\"]"

@@ -56,10 +56,13 @@ def solve(pair_count, run):
                   moves=moves, **answer)
 
     def unwind(depth):
-        """Drop the calls above `depth` and their brackets: they stay drawn this frame and are gone after it."""
+        """Drop the brackets from `depth` on, each leaving its cell with a move out in this frame; the calls above
+        `depth` stay drawn this frame (the caller deletes them after it)."""
         gone = len(cards) - depth - 1
-        moves = [move(at("prefix", k)) for k in range(depth, len(prefix))]
-        return gone, moves
+        moves = [move(at("prefix", k), value=prefix[k]) for k in range(depth, len(prefix))]
+        emptied = list(range(depth, len(prefix)))
+        del prefix[depth:]
+        return gone, moves, emptied
 
     def add(bracket, why):
         o, c = cards[-1]
@@ -95,15 +98,14 @@ def solve(pair_count, run):
         if closed < opened:
             if tried_open:
                 found = len(sequences) - before
-                gone, moves = unwind(depth)
+                gone, moves, emptied = unwind(depth)
                 frame({"en": f"build(opened={opened}, closed={closed}) is back from its ( branch with {found} "
                              f"{plural(found, 'string', 'strings')} found; now closed {closed} < opened {opened}, so it "
                              f"tries ).",
                        "ko": f"build(opened={opened}, closed={closed}) 호출이 ( 쪽 호출에서 문자열 {found}개를 찾고 "
                              f"돌아왔습니다. 이제 closed {closed} < opened {opened}이므로 ) 괄호를 시도합니다."},
-                      call_marks={"lit": [depth]}, leaving=gone, moves=moves)
+                      prefix_marks={"bad": emptied}, call_marks={"lit": [depth]}, leaving=gone, moves=moves)
                 del cards[depth + 1:]
-                del prefix[depth:]
             add(")", {"en": f"closed {closed} < opened {opened}",
                       "ko": f"closed {closed} < opened {opened}이므로"})
             build(opened, closed + 1)
@@ -117,13 +119,13 @@ def solve(pair_count, run):
     build(0, 0)
     k = len(sequences)
     printed = driver_list(sorted(sequences))
-    _, moves = unwind(0)
+    _, moves, emptied = unwind(0)
     gone = len(cards)
     frame({"en": f"Every call has returned: {k} well-formed {plural(k, 'string', 'strings')}, already in sorted order "
                  f"since each call tries ( before ).",
            "ko": f"모든 호출이 끝났습니다. 올바른 문자열은 {k}개이고, 호출마다 ( 괄호를 ) 괄호보다 먼저 시도했으므로 이미 정렬된 "
                  f"순서입니다."},
-          leaving=gone, prefix_marks={"bad": list(range(len(prefix)))},
+          leaving=gone, prefix_marks={"bad": emptied},
           result_marks={"path": list(range(k))}, moves=moves, answer=printed)
     return printed
 

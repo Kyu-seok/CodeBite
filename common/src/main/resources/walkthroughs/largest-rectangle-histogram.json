@@ -159,7 +159,7 @@
     {
      "caption": {
       "en": "Bar 1 (1) is not taller than bar 0 (3) on top: pop it. Its rectangle ends at bar 0; the stack below it is empty, so it reaches back to bar 0: 3 × 1 = 3, a new best, 3.",
-      "ko": "1번 막대(1)가 맨 위 0번 막대(3)보다 높지 않아 꺼냅니다. 직사각형은 0번 막대에서 끝나고 그 아래 스택이 비어 있어 0번 막대까지 닿습니다. 넓이 3 × 1 = 3: 새 best (최대 넓이)입니다."
+      "ko": "1번 막대(1)가 맨 위 0번 막대(3)보다 높지 않아 꺼냅니다. 직사각형은 0번 막대에서 끝나고 그 아래 스택이 비어 있어 0번 막대까지 닿으며, 넓이는 3 × 1 = 3으로 새 best (최대 넓이)입니다."
      },
      "views": {
       "heights": {
@@ -511,7 +511,7 @@
     {
      "caption": {
       "en": "Bar 4 (2) is not taller than bar 3 (5) on top: pop it. Its rectangle ends at bar 3; bar 2 under it is lower, so it starts at bar 3: 5 × 1 = 5, a new best, 5.",
-      "ko": "4번 막대(2)가 맨 위 3번 막대(5)보다 높지 않아 꺼냅니다. 직사각형은 3번 막대에서 끝나고 그 아래 2번 막대가 더 낮아 3번 막대부터 시작합니다. 넓이 5 × 1 = 5: 새 best (최대 넓이)입니다."
+      "ko": "4번 막대(2)가 맨 위 3번 막대(5)보다 높지 않아 꺼냅니다. 직사각형은 3번 막대에서 끝나고 그 아래 2번 막대가 더 낮아 3번 막대부터 시작하며, 넓이는 5 × 1 = 5로 새 best (최대 넓이)입니다."
      },
      "views": {
       "heights": {
@@ -609,7 +609,7 @@
     {
      "caption": {
       "en": "Bar 4 (2) is not taller than bar 2 (4) on top: pop it. Its rectangle ends at bar 3; bar 1 under it is lower, so it starts at bar 2: 4 × 2 = 8, a new best, 8.",
-      "ko": "4번 막대(2)가 맨 위 2번 막대(4)보다 높지 않아 꺼냅니다. 직사각형은 3번 막대에서 끝나고 그 아래 1번 막대가 더 낮아 2번 막대부터 시작합니다. 넓이 4 × 2 = 8: 새 best (최대 넓이)입니다."
+      "ko": "4번 막대(2)가 맨 위 2번 막대(4)보다 높지 않아 꺼냅니다. 직사각형은 3번 막대에서 끝나고 그 아래 1번 막대가 더 낮아 2번 막대부터 시작하며, 넓이는 4 × 2 = 8로 새 best (최대 넓이)입니다."
      },
      "views": {
       "heights": {
@@ -876,7 +876,7 @@
     {
      "caption": {
       "en": "Bar 6 (0) is not taller than bar 5 (3) on top: pop it. Its rectangle ends at bar 5; bar 4 under it is lower, so it starts at bar 5: 3 × 1 = 3, not more than best, 8.",
-      "ko": "6번 막대(0)가 맨 위 5번 막대(3)보다 높지 않아 꺼냅니다. 직사각형은 5번 막대에서 끝나고 그 아래 4번 막대가 더 낮아 5번 막대부터 시작합니다. 넓이 3 × 1 = 3: best (최대 넓이) 8보다 크지 않습니다."
+      "ko": "6번 막대(0)가 맨 위 5번 막대(3)보다 높지 않아 꺼냅니다. 직사각형은 5번 막대에서 끝나고 그 아래 4번 막대가 더 낮아 5번 막대부터 시작하며, 넓이는 3 × 1 = 3으로 best (최대 넓이) 8보다 크지 않습니다."
      },
      "views": {
       "heights": {
@@ -969,7 +969,7 @@
     {
      "caption": {
       "en": "Bar 6 (0) is not taller than bar 4 (2) on top: pop it. Its rectangle ends at bar 5; bar 1 under it is lower, so it starts at bar 2: 2 × 4 = 8, not more than best, 8.",
-      "ko": "6번 막대(0)가 맨 위 4번 막대(2)보다 높지 않아 꺼냅니다. 직사각형은 5번 막대에서 끝나고 그 아래 1번 막대가 더 낮아 2번 막대부터 시작합니다. 넓이 2 × 4 = 8: best (최대 넓이) 8보다 크지 않습니다."
+      "ko": "6번 막대(0)가 맨 위 4번 막대(2)보다 높지 않아 꺼냅니다. 직사각형은 5번 막대에서 끝나고 그 아래 1번 막대가 더 낮아 2번 막대부터 시작하며, 넓이는 2 × 4 = 8로 best (최대 넓이) 8보다 크지 않습니다."
      },
      "views": {
       "heights": {
@@ -1057,7 +1057,7 @@
     {
      "caption": {
       "en": "Bar 6 (0) is not taller than bar 1 (1) on top: pop it. Its rectangle ends at bar 5; the stack below it is empty, so it reaches back to bar 0: 1 × 6 = 6, not more than best, 8.",
-      "ko": "6번 막대(0)가 맨 위 1번 막대(1)보다 높지 않아 꺼냅니다. 직사각형은 5번 막대에서 끝나고 그 아래 스택이 비어 있어 0번 막대까지 닿습니다. 넓이 1 × 6 = 6: best (최대 넓이) 8보다 크지 않습니다."
+      "ko": "6번 막대(0)가 맨 위 1번 막대(1)보다 높지 않아 꺼냅니다. 직사각형은 5번 막대에서 끝나고 그 아래 스택이 비어 있어 0번 막대까지 닿으며, 넓이는 1 × 6 = 6으로 best (최대 넓이) 8보다 크지 않습니다."
      },
      "views": {
       "heights": {
@@ -1411,7 +1411,7 @@
     {
      "caption": {
       "en": "Bar 1 (2) is not taller than bar 0 (4) on top: pop it. Its rectangle ends at bar 0; the stack below it is empty, so it reaches back to bar 0: 4 × 1 = 4, a new best, 4.",
-      "ko": "1번 막대(2)가 맨 위 0번 막대(4)보다 높지 않아 꺼냅니다. 직사각형은 0번 막대에서 끝나고 그 아래 스택이 비어 있어 0번 막대까지 닿습니다. 넓이 4 × 1 = 4: 새 best (최대 넓이)입니다."
+      "ko": "1번 막대(2)가 맨 위 0번 막대(4)보다 높지 않아 꺼냅니다. 직사각형은 0번 막대에서 끝나고 그 아래 스택이 비어 있어 0번 막대까지 닿으며, 넓이는 4 × 1 = 4로 새 best (최대 넓이)입니다."
      },
      "views": {
       "heights": {
@@ -1678,7 +1678,7 @@
     {
      "caption": {
       "en": "Bar 3 (3) is not taller than bar 2 (6) on top: pop it. Its rectangle ends at bar 2; bar 1 under it is lower, so it starts at bar 2: 6 × 1 = 6, a new best, 6.",
-      "ko": "3번 막대(3)가 맨 위 2번 막대(6)보다 높지 않아 꺼냅니다. 직사각형은 2번 막대에서 끝나고 그 아래 1번 막대가 더 낮아 2번 막대부터 시작합니다. 넓이 6 × 1 = 6: 새 best (최대 넓이)입니다."
+      "ko": "3번 막대(3)가 맨 위 2번 막대(6)보다 높지 않아 꺼냅니다. 직사각형은 2번 막대에서 끝나고 그 아래 1번 막대가 더 낮아 2번 막대부터 시작하며, 넓이는 6 × 1 = 6으로 새 best (최대 넓이)입니다."
      },
      "views": {
       "heights": {
@@ -1954,7 +1954,7 @@
     {
      "caption": {
       "en": "Bar 5 (5) is not taller than bar 4 (7) on top: pop it. Its rectangle ends at bar 4; bar 3 under it is lower, so it starts at bar 4: 7 × 1 = 7, a new best, 7.",
-      "ko": "5번 막대(5)가 맨 위 4번 막대(7)보다 높지 않아 꺼냅니다. 직사각형은 4번 막대에서 끝나고 그 아래 3번 막대가 더 낮아 4번 막대부터 시작합니다. 넓이 7 × 1 = 7: 새 best (최대 넓이)입니다."
+      "ko": "5번 막대(5)가 맨 위 4번 막대(7)보다 높지 않아 꺼냅니다. 직사각형은 4번 막대에서 끝나고 그 아래 3번 막대가 더 낮아 4번 막대부터 시작하며, 넓이는 7 × 1 = 7로 새 best (최대 넓이)입니다."
      },
      "views": {
       "heights": {
@@ -2144,7 +2144,7 @@
     {
      "caption": {
       "en": "Bar 6 (3) is not taller than bar 5 (5) on top: pop it. Its rectangle ends at bar 5; bar 3 under it is lower, so it starts at bar 4: 5 × 2 = 10, a new best, 10.",
-      "ko": "6번 막대(3)가 맨 위 5번 막대(5)보다 높지 않아 꺼냅니다. 직사각형은 5번 막대에서 끝나고 그 아래 3번 막대가 더 낮아 4번 막대부터 시작합니다. 넓이 5 × 2 = 10: 새 best (최대 넓이)입니다."
+      "ko": "6번 막대(3)가 맨 위 5번 막대(5)보다 높지 않아 꺼냅니다. 직사각형은 5번 막대에서 끝나고 그 아래 3번 막대가 더 낮아 4번 막대부터 시작하며, 넓이는 5 × 2 = 10으로 새 best (최대 넓이)입니다."
      },
      "views": {
       "heights": {
@@ -2242,7 +2242,7 @@
     {
      "caption": {
       "en": "Bar 6 (3) is not taller than bar 3 (3) on top: pop it. Its rectangle ends at bar 5; bar 1 under it is lower, so it starts at bar 2: 3 × 4 = 12, a new best, 12.",
-      "ko": "6번 막대(3)가 맨 위 3번 막대(3)보다 높지 않아 꺼냅니다. 직사각형은 5번 막대에서 끝나고 그 아래 1번 막대가 더 낮아 2번 막대부터 시작합니다. 넓이 3 × 4 = 12: 새 best (최대 넓이)입니다."
+      "ko": "6번 막대(3)가 맨 위 3번 막대(3)보다 높지 않아 꺼냅니다. 직사각형은 5번 막대에서 끝나고 그 아래 1번 막대가 더 낮아 2번 막대부터 시작하며, 넓이는 3 × 4 = 12로 새 best (최대 넓이)입니다."
      },
      "views": {
       "heights": {
@@ -2420,7 +2420,7 @@
     {
      "caption": {
       "en": "Bar 7 (0) is not taller than bar 6 (3) on top: pop it. Its rectangle ends at bar 6; bar 1 under it is lower, so it starts at bar 2: 3 × 5 = 15, a new best, 15.",
-      "ko": "7번 막대(0)가 맨 위 6번 막대(3)보다 높지 않아 꺼냅니다. 직사각형은 6번 막대에서 끝나고 그 아래 1번 막대가 더 낮아 2번 막대부터 시작합니다. 넓이 3 × 5 = 15: 새 best (최대 넓이)입니다."
+      "ko": "7번 막대(0)가 맨 위 6번 막대(3)보다 높지 않아 꺼냅니다. 직사각형은 6번 막대에서 끝나고 그 아래 1번 막대가 더 낮아 2번 막대부터 시작하며, 넓이는 3 × 5 = 15로 새 best (최대 넓이)입니다."
      },
      "views": {
       "heights": {
@@ -2511,7 +2511,7 @@
     {
      "caption": {
       "en": "Bar 7 (0) is not taller than bar 1 (2) on top: pop it. Its rectangle ends at bar 6; the stack below it is empty, so it reaches back to bar 0: 2 × 7 = 14, not more than best, 15.",
-      "ko": "7번 막대(0)가 맨 위 1번 막대(2)보다 높지 않아 꺼냅니다. 직사각형은 6번 막대에서 끝나고 그 아래 스택이 비어 있어 0번 막대까지 닿습니다. 넓이 2 × 7 = 14: best (최대 넓이) 15보다 크지 않습니다."
+      "ko": "7번 막대(0)가 맨 위 1번 막대(2)보다 높지 않아 꺼냅니다. 직사각형은 6번 막대에서 끝나고 그 아래 스택이 비어 있어 0번 막대까지 닿으며, 넓이는 2 × 7 = 14로 best (최대 넓이) 15보다 크지 않습니다."
      },
      "views": {
       "heights": {
@@ -2871,7 +2871,7 @@
     {
      "caption": {
       "en": "Bar 1 (2) is not taller than bar 0 (6) on top: pop it. Its rectangle ends at bar 0; the stack below it is empty, so it reaches back to bar 0: 6 × 1 = 6, a new best, 6.",
-      "ko": "1번 막대(2)가 맨 위 0번 막대(6)보다 높지 않아 꺼냅니다. 직사각형은 0번 막대에서 끝나고 그 아래 스택이 비어 있어 0번 막대까지 닿습니다. 넓이 6 × 1 = 6: 새 best (최대 넓이)입니다."
+      "ko": "1번 막대(2)가 맨 위 0번 막대(6)보다 높지 않아 꺼냅니다. 직사각형은 0번 막대에서 끝나고 그 아래 스택이 비어 있어 0번 막대까지 닿으며, 넓이는 6 × 1 = 6으로 새 best (최대 넓이)입니다."
      },
      "views": {
       "heights": {
@@ -3138,7 +3138,7 @@
     {
      "caption": {
       "en": "Bar 3 (4) is not taller than bar 2 (5) on top: pop it. Its rectangle ends at bar 2; bar 1 under it is lower, so it starts at bar 2: 5 × 1 = 5, not more than best, 6.",
-      "ko": "3번 막대(4)가 맨 위 2번 막대(5)보다 높지 않아 꺼냅니다. 직사각형은 2번 막대에서 끝나고 그 아래 1번 막대가 더 낮아 2번 막대부터 시작합니다. 넓이 5 × 1 = 5: best (최대 넓이) 6보다 크지 않습니다."
+      "ko": "3번 막대(4)가 맨 위 2번 막대(5)보다 높지 않아 꺼냅니다. 직사각형은 2번 막대에서 끝나고 그 아래 1번 막대가 더 낮아 2번 막대부터 시작하며, 넓이는 5 × 1 = 5로 best (최대 넓이) 6보다 크지 않습니다."
      },
      "views": {
       "heights": {
@@ -3412,7 +3412,7 @@
     {
      "caption": {
       "en": "Bar 5 (1) is not taller than bar 4 (5) on top: pop it. Its rectangle ends at bar 4; bar 3 under it is lower, so it starts at bar 4: 5 × 1 = 5, not more than best, 6.",
-      "ko": "5번 막대(1)가 맨 위 4번 막대(5)보다 높지 않아 꺼냅니다. 직사각형은 4번 막대에서 끝나고 그 아래 3번 막대가 더 낮아 4번 막대부터 시작합니다. 넓이 5 × 1 = 5: best (최대 넓이) 6보다 크지 않습니다."
+      "ko": "5번 막대(1)가 맨 위 4번 막대(5)보다 높지 않아 꺼냅니다. 직사각형은 4번 막대에서 끝나고 그 아래 3번 막대가 더 낮아 4번 막대부터 시작하며, 넓이는 5 × 1 = 5로 best (최대 넓이) 6보다 크지 않습니다."
      },
      "views": {
       "heights": {
@@ -3509,7 +3509,7 @@
     {
      "caption": {
       "en": "Bar 5 (1) is not taller than bar 3 (4) on top: pop it. Its rectangle ends at bar 4; bar 1 under it is lower, so it starts at bar 2: 4 × 3 = 12, a new best, 12.",
-      "ko": "5번 막대(1)가 맨 위 3번 막대(4)보다 높지 않아 꺼냅니다. 직사각형은 4번 막대에서 끝나고 그 아래 1번 막대가 더 낮아 2번 막대부터 시작합니다. 넓이 4 × 3 = 12: 새 best (최대 넓이)입니다."
+      "ko": "5번 막대(1)가 맨 위 3번 막대(4)보다 높지 않아 꺼냅니다. 직사각형은 4번 막대에서 끝나고 그 아래 1번 막대가 더 낮아 2번 막대부터 시작하며, 넓이는 4 × 3 = 12로 새 best (최대 넓이)입니다."
      },
      "views": {
       "heights": {
@@ -3603,7 +3603,7 @@
     {
      "caption": {
       "en": "Bar 5 (1) is not taller than bar 1 (2) on top: pop it. Its rectangle ends at bar 4; the stack below it is empty, so it reaches back to bar 0: 2 × 5 = 10, not more than best, 12.",
-      "ko": "5번 막대(1)가 맨 위 1번 막대(2)보다 높지 않아 꺼냅니다. 직사각형은 4번 막대에서 끝나고 그 아래 스택이 비어 있어 0번 막대까지 닿습니다. 넓이 2 × 5 = 10: best (최대 넓이) 12보다 크지 않습니다."
+      "ko": "5번 막대(1)가 맨 위 1번 막대(2)보다 높지 않아 꺼냅니다. 직사각형은 4번 막대에서 끝나고 그 아래 스택이 비어 있어 0번 막대까지 닿으며, 넓이는 2 × 5 = 10으로 best (최대 넓이) 12보다 크지 않습니다."
      },
      "views": {
       "heights": {
@@ -3856,7 +3856,7 @@
     {
      "caption": {
       "en": "Bar 7 (0) is not taller than bar 6 (6) on top: pop it. Its rectangle ends at bar 6; bar 5 under it is lower, so it starts at bar 6: 6 × 1 = 6, not more than best, 12.",
-      "ko": "7번 막대(0)가 맨 위 6번 막대(6)보다 높지 않아 꺼냅니다. 직사각형은 6번 막대에서 끝나고 그 아래 5번 막대가 더 낮아 6번 막대부터 시작합니다. 넓이 6 × 1 = 6: best (최대 넓이) 12보다 크지 않습니다."
+      "ko": "7번 막대(0)가 맨 위 6번 막대(6)보다 높지 않아 꺼냅니다. 직사각형은 6번 막대에서 끝나고 그 아래 5번 막대가 더 낮아 6번 막대부터 시작하며, 넓이는 6 × 1 = 6으로 best (최대 넓이) 12보다 크지 않습니다."
      },
      "views": {
       "heights": {
@@ -3945,7 +3945,7 @@
     {
      "caption": {
       "en": "Bar 7 (0) is not taller than bar 5 (1) on top: pop it. Its rectangle ends at bar 6; the stack below it is empty, so it reaches back to bar 0: 1 × 7 = 7, not more than best, 12.",
-      "ko": "7번 막대(0)가 맨 위 5번 막대(1)보다 높지 않아 꺼냅니다. 직사각형은 6번 막대에서 끝나고 그 아래 스택이 비어 있어 0번 막대까지 닿습니다. 넓이 1 × 7 = 7: best (최대 넓이) 12보다 크지 않습니다."
+      "ko": "7번 막대(0)가 맨 위 5번 막대(1)보다 높지 않아 꺼냅니다. 직사각형은 6번 막대에서 끝나고 그 아래 스택이 비어 있어 0번 막대까지 닿으며, 넓이는 1 × 7 = 7로 best (최대 넓이) 12보다 크지 않습니다."
      },
      "views": {
       "heights": {
