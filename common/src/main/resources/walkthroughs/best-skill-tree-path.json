@@ -1,0 +1,965 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Best Skill Tree Path",
+  "ko": "최고의 스킬 트리 경로"
+ },
+ "approach": {
+  "en": "Every path turns at one highest node: that node's score plus the best chain down its left and the best chain down its right, a chain worth less than 0 left out. One pass from the leaves up: each node returns its best chain down one side (its gain) and tries the path turning at it.",
+  "ko": "모든 경로는 가장 높은 노드 하나에서 꺾입니다. 그 노드의 점수에 왼쪽으로 내려가는 가장 좋은 체인과 오른쪽으로 내려가는 가장 좋은 체인을 더하되, 0보다 작은 체인은 뺍니다. 리프에서 위로 한 번 훑으며 각 노드는 한쪽으로 내려가는 가장 좋은 체인(gain)을 돌려주고, 자기에서 꺾이는 경로를 재 봅니다."
+ },
+ "views": [
+  {
+   "id": "tree",
+   "type": "tree",
+   "arity": 2,
+   "title": {
+    "en": "root (under each node: the gain it returns)",
+    "ko": "root (노드 아래: 돌려주는 gain)"
+   }
+  },
+  {
+   "id": "best",
+   "type": "output",
+   "title": {
+    "en": "best: largest path sum so far",
+    "ko": "best (지금까지 가장 큰 경로 합)"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "root = [4,5,6]",
+   "expected": "15",
+   "frames": [
+    {
+     "caption": {
+      "en": "A skill tree of 3 nodes. Each call returns its node's gain; best starts at -∞, since a path may be a single negative node.",
+      "ko": "노드 3개짜리 스킬 트리이며, 각 호출은 자기 노드의 gain을 돌려줍니다. 경로가 음수 노드 하나일 수도 있으므로 best는 -∞에서 시작합니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": []
+       },
+       "shade": [],
+       "edgeMarks": {},
+       "tags": []
+      },
+      "best": {
+       "values": [
+        "-∞"
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "4 has children: first find its left child 5's gain.",
+      "ko": "4에는 자식이 있으므로 먼저 왼쪽 자식 5의 gain을 구합니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ],
+       "edgeMarks": {},
+       "tags": []
+      },
+      "best": {
+       "values": [
+        "-∞"
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "5 is a leaf: the path of just 5 sums to 5, a new best. It returns gain 5.",
+      "ko": "5: 리프이므로 이 노드 하나뿐인 경로의 합 5, 새 best입니다. gain 5를 돌려줍니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "good": [
+         1
+        ]
+       },
+       "shade": [
+        0
+       ],
+       "edgeMarks": {},
+       "tags": [
+        [
+         1,
+         {
+          "en": "gain 5",
+          "ko": "gain 5"
+         }
+        ]
+       ]
+      },
+      "best": {
+       "values": [
+        "5"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 1
+       },
+       "to": {
+        "view": "best",
+        "at": 0
+       },
+       "value": "5"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "6 is a leaf: the path of just 6 sums to 6, a new best. It returns gain 6.",
+      "ko": "6: 리프이므로 이 노드 하나뿐인 경로의 합 6, 새 best입니다. gain 6을 돌려줍니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         1
+        ],
+        "good": [
+         2
+        ]
+       },
+       "shade": [
+        0
+       ],
+       "edgeMarks": {},
+       "tags": [
+        [
+         1,
+         {
+          "en": "gain 5",
+          "ko": "gain 5"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "gain 6",
+          "ko": "gain 6"
+         }
+        ]
+       ]
+      },
+      "best": {
+       "values": [
+        "6"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 2
+       },
+       "to": {
+        "view": "best",
+        "at": 0
+       },
+       "value": "6"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "4 + left 5 + right 6 = 15 for the path turning here, a new best. It returns 4 + 6 = 10.",
+      "ko": "4 + 왼쪽 5 + 오른쪽 6 = 15: 여기서 꺾이는 경로의 합이며 새 best입니다. 4 + 6 = 10을 돌려줍니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         1,
+         2
+        ],
+        "good": [
+         0
+        ]
+       },
+       "shade": [],
+       "edgeMarks": {},
+       "tags": [
+        [
+         1,
+         {
+          "en": "gain 5",
+          "ko": "gain 5"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "gain 6",
+          "ko": "gain 6"
+         }
+        ],
+        [
+         0,
+         {
+          "en": "gain 10",
+          "ko": "gain 10"
+         }
+        ]
+       ]
+      },
+      "best": {
+       "values": [
+        "15"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 1
+       },
+       "to": {
+        "view": "tree",
+        "at": 0
+       },
+       "value": "5"
+      },
+      {
+       "from": {
+        "view": "tree",
+        "at": 2
+       },
+       "to": {
+        "view": "tree",
+        "at": 0
+       },
+       "value": "6"
+      },
+      {
+       "from": {
+        "view": "tree",
+        "at": 0
+       },
+       "to": {
+        "view": "best",
+        "at": 0
+       },
+       "value": "15"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The best path turns at 4: 5 -> 4 -> 6, 5 + 4 + 6 = 15.",
+      "ko": "가장 좋은 경로는 4에서 꺾이는 경로 5 -> 4 -> 6, 합계 5 + 4 + 6 = 15입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "path": [
+         1,
+         0,
+         2
+        ],
+        "dim": []
+       },
+       "shade": [],
+       "edgeMarks": {
+        "path": [
+         [
+          0,
+          1
+         ],
+         [
+          0,
+          2
+         ]
+        ]
+       },
+       "tags": [
+        [
+         1,
+         {
+          "en": "gain 5",
+          "ko": "gain 5"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "gain 6",
+          "ko": "gain 6"
+         }
+        ],
+        [
+         0,
+         {
+          "en": "gain 10",
+          "ko": "gain 10"
+         }
+        ]
+       ]
+      },
+      "best": {
+       "values": [
+        "15"
+       ],
+       "marks": {}
+      }
+     },
+     "answer": "15"
+    }
+   ],
+   "setup": {
+    "tree": {
+     "nodes": [
+      {
+       "id": 0,
+       "value": 4
+      },
+      {
+       "id": 1,
+       "value": 5
+      },
+      {
+       "id": 2,
+       "value": 6
+      }
+     ],
+     "edges": [
+      {
+       "from": 0,
+       "to": 1,
+       "slot": 0
+      },
+      {
+       "from": 0,
+       "to": 2,
+       "slot": 1
+      }
+     ]
+    }
+   },
+   "sampleInput": "[4,5,6]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "root = [-8,11,25,null,null,13,9]",
+   "expected": "47",
+   "frames": [
+    {
+     "caption": {
+      "en": "A skill tree of 5 nodes. Each call returns its node's gain; best starts at -∞, since a path may be a single negative node.",
+      "ko": "노드 5개짜리 스킬 트리이며, 각 호출은 자기 노드의 gain을 돌려줍니다. 경로가 음수 노드 하나일 수도 있으므로 best는 -∞에서 시작합니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": []
+       },
+       "shade": [],
+       "edgeMarks": {},
+       "tags": []
+      },
+      "best": {
+       "values": [
+        "-∞"
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "-8 has children: first find its left child 11's gain.",
+      "ko": "-8에는 자식이 있으므로 먼저 왼쪽 자식 11의 gain을 구합니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ],
+       "edgeMarks": {},
+       "tags": []
+      },
+      "best": {
+       "values": [
+        "-∞"
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "11 is a leaf: the path of just 11 sums to 11, a new best. It returns gain 11.",
+      "ko": "11: 리프이므로 이 노드 하나뿐인 경로의 합 11, 새 best입니다. gain 11을 돌려줍니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "good": [
+         1
+        ]
+       },
+       "shade": [
+        0
+       ],
+       "edgeMarks": {},
+       "tags": [
+        [
+         1,
+         {
+          "en": "gain 11",
+          "ko": "gain 11"
+         }
+        ]
+       ]
+      },
+      "best": {
+       "values": [
+        "11"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 1
+       },
+       "to": {
+        "view": "best",
+        "at": 0
+       },
+       "value": "11"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "25 has children: first find its left child 13's gain.",
+      "ko": "25에는 자식이 있으므로 먼저 왼쪽 자식 13의 gain을 구합니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         1
+        ],
+        "lit": [
+         2
+        ]
+       },
+       "shade": [
+        0,
+        2
+       ],
+       "edgeMarks": {},
+       "tags": [
+        [
+         1,
+         {
+          "en": "gain 11",
+          "ko": "gain 11"
+         }
+        ]
+       ]
+      },
+      "best": {
+       "values": [
+        "11"
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "13 is a leaf: the path of just 13 sums to 13, a new best. It returns gain 13.",
+      "ko": "13: 리프이므로 이 노드 하나뿐인 경로의 합 13, 새 best입니다. gain 13을 돌려줍니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         1
+        ],
+        "good": [
+         5
+        ]
+       },
+       "shade": [
+        0,
+        2
+       ],
+       "edgeMarks": {},
+       "tags": [
+        [
+         1,
+         {
+          "en": "gain 11",
+          "ko": "gain 11"
+         }
+        ],
+        [
+         5,
+         {
+          "en": "gain 13",
+          "ko": "gain 13"
+         }
+        ]
+       ]
+      },
+      "best": {
+       "values": [
+        "13"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 5
+       },
+       "to": {
+        "view": "best",
+        "at": 0
+       },
+       "value": "13"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "9 is a leaf: the path of just 9 sums to 9, not more than best 13. It returns gain 9.",
+      "ko": "9: 리프이므로 이 노드 하나뿐인 경로의 합 9, best 13보다 크지 않습니다. gain 9를 돌려줍니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         1,
+         5
+        ],
+        "good": [
+         6
+        ]
+       },
+       "shade": [
+        0,
+        2
+       ],
+       "edgeMarks": {},
+       "tags": [
+        [
+         1,
+         {
+          "en": "gain 11",
+          "ko": "gain 11"
+         }
+        ],
+        [
+         5,
+         {
+          "en": "gain 13",
+          "ko": "gain 13"
+         }
+        ],
+        [
+         6,
+         {
+          "en": "gain 9",
+          "ko": "gain 9"
+         }
+        ]
+       ]
+      },
+      "best": {
+       "values": [
+        "13"
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "25 + left 13 + right 9 = 47 for the path turning here, a new best. It returns 25 + 13 = 38.",
+      "ko": "25 + 왼쪽 13 + 오른쪽 9 = 47: 여기서 꺾이는 경로의 합이며 새 best입니다. 25 + 13 = 38을 돌려줍니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         1,
+         5,
+         6
+        ],
+        "good": [
+         2
+        ]
+       },
+       "shade": [
+        0
+       ],
+       "edgeMarks": {},
+       "tags": [
+        [
+         1,
+         {
+          "en": "gain 11",
+          "ko": "gain 11"
+         }
+        ],
+        [
+         5,
+         {
+          "en": "gain 13",
+          "ko": "gain 13"
+         }
+        ],
+        [
+         6,
+         {
+          "en": "gain 9",
+          "ko": "gain 9"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "gain 38",
+          "ko": "gain 38"
+         }
+        ]
+       ]
+      },
+      "best": {
+       "values": [
+        "47"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 5
+       },
+       "to": {
+        "view": "tree",
+        "at": 2
+       },
+       "value": "13"
+      },
+      {
+       "from": {
+        "view": "tree",
+        "at": 6
+       },
+       "to": {
+        "view": "tree",
+        "at": 2
+       },
+       "value": "9"
+      },
+      {
+       "from": {
+        "view": "tree",
+        "at": 2
+       },
+       "to": {
+        "view": "best",
+        "at": 0
+       },
+       "value": "47"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "-8 + left 11 + right 38 = 41 for the path turning here, not more than best 47. It returns -8 + 38 = 30.",
+      "ko": "-8 + 왼쪽 11 + 오른쪽 38 = 41: 여기서 꺾이는 경로의 합이며 best 47보다 크지 않습니다. -8 + 38 = 30을 돌려줍니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         1,
+         5,
+         6,
+         2
+        ],
+        "good": [
+         0
+        ]
+       },
+       "shade": [],
+       "edgeMarks": {},
+       "tags": [
+        [
+         1,
+         {
+          "en": "gain 11",
+          "ko": "gain 11"
+         }
+        ],
+        [
+         5,
+         {
+          "en": "gain 13",
+          "ko": "gain 13"
+         }
+        ],
+        [
+         6,
+         {
+          "en": "gain 9",
+          "ko": "gain 9"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "gain 38",
+          "ko": "gain 38"
+         }
+        ],
+        [
+         0,
+         {
+          "en": "gain 30",
+          "ko": "gain 30"
+         }
+        ]
+       ]
+      },
+      "best": {
+       "values": [
+        "47"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 1
+       },
+       "to": {
+        "view": "tree",
+        "at": 0
+       },
+       "value": "11"
+      },
+      {
+       "from": {
+        "view": "tree",
+        "at": 2
+       },
+       "to": {
+        "view": "tree",
+        "at": 0
+       },
+       "value": "38"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The best path turns at 25: 13 -> 25 -> 9, 13 + 25 + 9 = 47.",
+      "ko": "가장 좋은 경로는 25에서 꺾이는 경로 13 -> 25 -> 9, 합계 13 + 25 + 9 = 47입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "path": [
+         5,
+         2,
+         6
+        ],
+        "dim": [
+         1,
+         0
+        ]
+       },
+       "shade": [],
+       "edgeMarks": {
+        "path": [
+         [
+          2,
+          5
+         ],
+         [
+          2,
+          6
+         ]
+        ]
+       },
+       "tags": [
+        [
+         1,
+         {
+          "en": "gain 11",
+          "ko": "gain 11"
+         }
+        ],
+        [
+         5,
+         {
+          "en": "gain 13",
+          "ko": "gain 13"
+         }
+        ],
+        [
+         6,
+         {
+          "en": "gain 9",
+          "ko": "gain 9"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "gain 38",
+          "ko": "gain 38"
+         }
+        ],
+        [
+         0,
+         {
+          "en": "gain 30",
+          "ko": "gain 30"
+         }
+        ]
+       ]
+      },
+      "best": {
+       "values": [
+        "47"
+       ],
+       "marks": {}
+      }
+     },
+     "answer": "47"
+    }
+   ],
+   "setup": {
+    "tree": {
+     "nodes": [
+      {
+       "id": 0,
+       "value": -8
+      },
+      {
+       "id": 1,
+       "value": 11
+      },
+      {
+       "id": 2,
+       "value": 25
+      },
+      {
+       "id": 5,
+       "value": 13
+      },
+      {
+       "id": 6,
+       "value": 9
+      }
+     ],
+     "edges": [
+      {
+       "from": 0,
+       "to": 1,
+       "slot": 0
+      },
+      {
+       "from": 0,
+       "to": 2,
+       "slot": 1
+      },
+      {
+       "from": 2,
+       "to": 5,
+       "slot": 0
+      },
+      {
+       "from": 2,
+       "to": 6,
+       "slot": 1
+      }
+     ]
+    }
+   },
+   "sampleInput": "[-8,11,25,null,null,13,9]"
+  }
+ ]
+}

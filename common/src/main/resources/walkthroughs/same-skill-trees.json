@@ -1,0 +1,877 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Same Skill Trees",
+  "ko": "같은 스킬 트리 확인"
+ },
+ "approach": {
+  "en": "Two trees are the same when both are empty, or their roots hold the same value and their left subtrees are the same and their right subtrees are the same: compare the roots, then recurse into each side in step.",
+  "ko": "두 트리가 같으려면 둘 다 비어 있거나, 루트 값이 같고 왼쪽 서브트리끼리, 오른쪽 서브트리끼리도 같아야 합니다. 루트를 비교한 뒤 양쪽을 나란히 재귀로 내려갑니다."
+ },
+ "views": [
+  {
+   "id": "p",
+   "type": "tree",
+   "arity": 2,
+   "title": "p",
+   "empty": {
+    "en": "empty tree",
+    "ko": "빈 트리"
+   }
+  },
+  {
+   "id": "q",
+   "type": "tree",
+   "arity": 2,
+   "title": "q",
+   "empty": {
+    "en": "empty tree",
+    "ko": "빈 트리"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "p = [8,4,12], q = [8,4,12]",
+   "expected": "true",
+   "frames": [
+    {
+     "caption": {
+      "en": "p has 3 nodes and q has 3 nodes. Compare them root to root, then side by side, left before right.",
+      "ko": "p는 노드 3개, q는 노드 3개입니다. 루트끼리 비교한 뒤 왼쪽, 오른쪽 순으로 나란히 비교합니다."
+     },
+     "views": {
+      "p": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [],
+        "good": [],
+        "bad": []
+       },
+       "shade": [],
+       "tags": []
+      },
+      "q": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [],
+        "good": [],
+        "bad": []
+       },
+       "shade": [],
+       "tags": []
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Both hold 8: now compare their left subtrees, then their right ones.",
+      "ko": "둘 다 8을 가지고 있습니다. 이제 왼쪽 서브트리끼리, 그다음 오른쪽 서브트리끼리 비교합니다."
+     },
+     "views": {
+      "p": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [
+         0
+        ],
+        "good": [],
+        "bad": []
+       },
+       "shade": [
+        0
+       ],
+       "tags": []
+      },
+      "q": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [
+         0
+        ],
+        "good": [],
+        "bad": []
+       },
+       "shade": [
+        0
+       ],
+       "tags": []
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Both hold 4, and neither has children: this pair is the same.",
+      "ko": "둘 다 4를 가지고 있고 자식이 없습니다. 이 쌍은 같습니다."
+     },
+     "views": {
+      "p": {
+       "nodeMarks": {
+        "dim": [
+         1
+        ],
+        "lit": [],
+        "good": [
+         1
+        ],
+        "bad": []
+       },
+       "shade": [
+        0
+       ],
+       "tags": [
+        [
+         1,
+         {
+          "en": "same",
+          "ko": "같음"
+         }
+        ]
+       ]
+      },
+      "q": {
+       "nodeMarks": {
+        "dim": [
+         1
+        ],
+        "lit": [],
+        "good": [
+         1
+        ],
+        "bad": []
+       },
+       "shade": [
+        0
+       ],
+       "tags": [
+        [
+         1,
+         {
+          "en": "same",
+          "ko": "같음"
+         }
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Both hold 12, and neither has children: this pair is the same.",
+      "ko": "둘 다 12를 가지고 있고 자식이 없습니다. 이 쌍은 같습니다."
+     },
+     "views": {
+      "p": {
+       "nodeMarks": {
+        "dim": [
+         1,
+         2
+        ],
+        "lit": [],
+        "good": [
+         2
+        ],
+        "bad": []
+       },
+       "shade": [
+        0
+       ],
+       "tags": [
+        [
+         1,
+         {
+          "en": "same",
+          "ko": "같음"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "same",
+          "ko": "같음"
+         }
+        ]
+       ]
+      },
+      "q": {
+       "nodeMarks": {
+        "dim": [
+         1,
+         2
+        ],
+        "lit": [],
+        "good": [
+         2
+        ],
+        "bad": []
+       },
+       "shade": [
+        0
+       ],
+       "tags": [
+        [
+         1,
+         {
+          "en": "same",
+          "ko": "같음"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "same",
+          "ko": "같음"
+         }
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Both sides under 8 came back the same, so this pair is the same too.",
+      "ko": "8 아래 양쪽이 모두 같다고 돌아왔으므로 이 쌍도 같습니다."
+     },
+     "views": {
+      "p": {
+       "nodeMarks": {
+        "dim": [
+         1,
+         2,
+         0
+        ],
+        "lit": [],
+        "good": [
+         0
+        ],
+        "bad": []
+       },
+       "shade": [],
+       "tags": [
+        [
+         1,
+         {
+          "en": "same",
+          "ko": "같음"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "same",
+          "ko": "같음"
+         }
+        ],
+        [
+         0,
+         {
+          "en": "same",
+          "ko": "같음"
+         }
+        ]
+       ]
+      },
+      "q": {
+       "nodeMarks": {
+        "dim": [
+         1,
+         2,
+         0
+        ],
+        "lit": [],
+        "good": [
+         0
+        ],
+        "bad": []
+       },
+       "shade": [],
+       "tags": [
+        [
+         1,
+         {
+          "en": "same",
+          "ko": "같음"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "same",
+          "ko": "같음"
+         }
+        ],
+        [
+         0,
+         {
+          "en": "same",
+          "ko": "같음"
+         }
+        ]
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "p",
+        "at": 1
+       },
+       "to": {
+        "view": "p",
+        "at": 0
+       },
+       "value": "true"
+      },
+      {
+       "from": {
+        "view": "p",
+        "at": 2
+       },
+       "to": {
+        "view": "p",
+        "at": 0
+       },
+       "value": "true"
+      },
+      {
+       "from": {
+        "view": "q",
+        "at": 1
+       },
+       "to": {
+        "view": "q",
+        "at": 0
+       },
+       "value": "true"
+      },
+      {
+       "from": {
+        "view": "q",
+        "at": 2
+       },
+       "to": {
+        "view": "q",
+        "at": 0
+       },
+       "value": "true"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every pair matched, root to leaves: the trees are the same, true.",
+      "ko": "루트부터 리프까지 모든 쌍이 같으므로 두 트리는 같습니다. 답은 true입니다."
+     },
+     "views": {
+      "p": {
+       "nodeMarks": {
+        "path": [
+         0,
+         1,
+         2
+        ]
+       },
+       "shade": [],
+       "tags": [
+        [
+         1,
+         {
+          "en": "same",
+          "ko": "같음"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "same",
+          "ko": "같음"
+         }
+        ],
+        [
+         0,
+         {
+          "en": "same",
+          "ko": "같음"
+         }
+        ]
+       ]
+      },
+      "q": {
+       "nodeMarks": {
+        "path": [
+         0,
+         1,
+         2
+        ]
+       },
+       "shade": [],
+       "tags": [
+        [
+         1,
+         {
+          "en": "same",
+          "ko": "같음"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "same",
+          "ko": "같음"
+         }
+        ],
+        [
+         0,
+         {
+          "en": "same",
+          "ko": "같음"
+         }
+        ]
+       ]
+      }
+     },
+     "answer": "true"
+    }
+   ],
+   "setup": {
+    "p": {
+     "nodes": [
+      {
+       "id": 0,
+       "value": 8
+      },
+      {
+       "id": 1,
+       "value": 4
+      },
+      {
+       "id": 2,
+       "value": 12
+      }
+     ],
+     "edges": [
+      {
+       "from": 0,
+       "to": 1,
+       "slot": 0
+      },
+      {
+       "from": 0,
+       "to": 2,
+       "slot": 1
+      }
+     ]
+    },
+    "q": {
+     "nodes": [
+      {
+       "id": 0,
+       "value": 8
+      },
+      {
+       "id": 1,
+       "value": 4
+      },
+      {
+       "id": 2,
+       "value": 12
+      }
+     ],
+     "edges": [
+      {
+       "from": 0,
+       "to": 1,
+       "slot": 0
+      },
+      {
+       "from": 0,
+       "to": 2,
+       "slot": 1
+      }
+     ]
+    }
+   },
+   "sampleInput": "[8,4,12]\n[8,4,12]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "p = [3,5], q = [3,null,5]",
+   "expected": "false",
+   "frames": [
+    {
+     "caption": {
+      "en": "p has 2 nodes and q has 2 nodes. Compare them root to root, then side by side, left before right.",
+      "ko": "p는 노드 2개, q는 노드 2개입니다. 루트끼리 비교한 뒤 왼쪽, 오른쪽 순으로 나란히 비교합니다."
+     },
+     "views": {
+      "p": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [],
+        "good": [],
+        "bad": []
+       },
+       "shade": [],
+       "tags": []
+      },
+      "q": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [],
+        "good": [],
+        "bad": []
+       },
+       "shade": [],
+       "tags": []
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Both hold 3: now compare their left subtrees, then their right ones.",
+      "ko": "둘 다 3을 가지고 있습니다. 이제 왼쪽 서브트리끼리, 그다음 오른쪽 서브트리끼리 비교합니다."
+     },
+     "views": {
+      "p": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [
+         0
+        ],
+        "good": [],
+        "bad": []
+       },
+       "shade": [
+        0
+       ],
+       "tags": []
+      },
+      "q": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [
+         0
+        ],
+        "good": [],
+        "bad": []
+       },
+       "shade": [
+        0
+       ],
+       "tags": []
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "p's 3 has a left child 5, but q's 3 has none: the shapes differ, so this pair is not the same.",
+      "ko": "p의 3에는 왼쪽 자식 5가 있지만 q의 3에는 없습니다. 모양이 다르므로 같지 않습니다."
+     },
+     "views": {
+      "p": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [],
+        "good": [],
+        "bad": [
+         1
+        ]
+       },
+       "shade": [
+        0
+       ],
+       "tags": []
+      },
+      "q": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [],
+        "good": [],
+        "bad": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ],
+       "tags": []
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "One pair differs, and a single difference makes the whole trees differ: false.",
+      "ko": "한 쌍이 다르고, 한 곳만 달라도 두 트리는 다릅니다. 답은 false입니다."
+     },
+     "views": {
+      "p": {
+       "nodeMarks": {
+        "bad": [
+         1
+        ]
+       },
+       "shade": [],
+       "tags": []
+      },
+      "q": {
+       "nodeMarks": {
+        "bad": [
+         0
+        ]
+       },
+       "shade": [],
+       "tags": []
+      }
+     },
+     "answer": "false"
+    }
+   ],
+   "setup": {
+    "p": {
+     "nodes": [
+      {
+       "id": 0,
+       "value": 3
+      },
+      {
+       "id": 1,
+       "value": 5
+      }
+     ],
+     "edges": [
+      {
+       "from": 0,
+       "to": 1,
+       "slot": 0
+      }
+     ]
+    },
+    "q": {
+     "nodes": [
+      {
+       "id": 0,
+       "value": 3
+      },
+      {
+       "id": 2,
+       "value": 5
+      }
+     ],
+     "edges": [
+      {
+       "from": 0,
+       "to": 2,
+       "slot": 1
+      }
+     ]
+    }
+   },
+   "sampleInput": "[3,5]\n[3,null,5]"
+  },
+  {
+   "label": {
+    "en": "Example 3",
+    "ko": "예시 3"
+   },
+   "input": "p = [6,2,9], q = [6,9,2]",
+   "expected": "false",
+   "frames": [
+    {
+     "caption": {
+      "en": "p has 3 nodes and q has 3 nodes. Compare them root to root, then side by side, left before right.",
+      "ko": "p는 노드 3개, q는 노드 3개입니다. 루트끼리 비교한 뒤 왼쪽, 오른쪽 순으로 나란히 비교합니다."
+     },
+     "views": {
+      "p": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [],
+        "good": [],
+        "bad": []
+       },
+       "shade": [],
+       "tags": []
+      },
+      "q": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [],
+        "good": [],
+        "bad": []
+       },
+       "shade": [],
+       "tags": []
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Both hold 6: now compare their left subtrees, then their right ones.",
+      "ko": "둘 다 6을 가지고 있습니다. 이제 왼쪽 서브트리끼리, 그다음 오른쪽 서브트리끼리 비교합니다."
+     },
+     "views": {
+      "p": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [
+         0
+        ],
+        "good": [],
+        "bad": []
+       },
+       "shade": [
+        0
+       ],
+       "tags": []
+      },
+      "q": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [
+         0
+        ],
+        "good": [],
+        "bad": []
+       },
+       "shade": [
+        0
+       ],
+       "tags": []
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "p holds 2 here but q holds 9: the values differ, so this pair is not the same.",
+      "ko": "이 자리에 p는 2를, q는 9를 가지고 있습니다. 값이 다르므로 같지 않습니다."
+     },
+     "views": {
+      "p": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [],
+        "good": [],
+        "bad": [
+         1
+        ]
+       },
+       "shade": [
+        0,
+        1
+       ],
+       "tags": []
+      },
+      "q": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [],
+        "good": [],
+        "bad": [
+         1
+        ]
+       },
+       "shade": [
+        0,
+        1
+       ],
+       "tags": []
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "One pair differs, and a single difference makes the whole trees differ: false.",
+      "ko": "한 쌍이 다르고, 한 곳만 달라도 두 트리는 다릅니다. 답은 false입니다."
+     },
+     "views": {
+      "p": {
+       "nodeMarks": {
+        "bad": [
+         1
+        ]
+       },
+       "shade": [],
+       "tags": []
+      },
+      "q": {
+       "nodeMarks": {
+        "bad": [
+         1
+        ]
+       },
+       "shade": [],
+       "tags": []
+      }
+     },
+     "answer": "false"
+    }
+   ],
+   "setup": {
+    "p": {
+     "nodes": [
+      {
+       "id": 0,
+       "value": 6
+      },
+      {
+       "id": 1,
+       "value": 2
+      },
+      {
+       "id": 2,
+       "value": 9
+      }
+     ],
+     "edges": [
+      {
+       "from": 0,
+       "to": 1,
+       "slot": 0
+      },
+      {
+       "from": 0,
+       "to": 2,
+       "slot": 1
+      }
+     ]
+    },
+    "q": {
+     "nodes": [
+      {
+       "id": 0,
+       "value": 6
+      },
+      {
+       "id": 1,
+       "value": 9
+      },
+      {
+       "id": 2,
+       "value": 2
+      }
+     ],
+     "edges": [
+      {
+       "from": 0,
+       "to": 1,
+       "slot": 0
+      },
+      {
+       "from": 0,
+       "to": 2,
+       "slot": 1
+      }
+     ]
+    }
+   },
+   "sampleInput": "[6,2,9]\n[6,9,2]"
+  }
+ ]
+}
