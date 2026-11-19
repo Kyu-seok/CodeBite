@@ -1,0 +1,1002 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Word Ladder",
+  "ko": "단어 사다리"
+ },
+ "approach": {
+  "en": "BFS from beginWord: the word at the front tries every one-letter change, and each change still in the unvisited set is one step longer. The first time a change is endWord, its length is the shortest.",
+  "ko": "beginWord에서 BFS: 큐 앞의 단어가 글자 하나를 바꾼 모든 단어를 시도하고, 아직 방문하지 않은 집합에 있는 단어는 한 단계 더 긴 길이를 받습니다. 처음 endWord가 나오는 순간의 길이가 가장 짧습니다."
+ },
+ "views": [
+  {
+   "id": "words",
+   "type": "graph",
+   "directed": false,
+   "title": {
+    "en": "words one letter apart (under: ladder length)",
+    "ko": "한 글자 차이인 단어 (아래: 사다리 길이)"
+   }
+  },
+  {
+   "id": "unvisited",
+   "type": "set",
+   "title": {
+    "en": "unvisited",
+    "ko": "unvisited (방문 전 단어)"
+   },
+   "empty": {
+    "en": "empty",
+    "ko": "비어 있음"
+   },
+   "hit": {
+    "en": "unvisited",
+    "ko": "방문 전"
+   },
+   "miss": {
+    "en": "not in it",
+    "ko": "없음"
+   }
+  },
+  {
+   "id": "queue",
+   "type": "queue",
+   "title": {
+    "en": "queue (tag: length)",
+    "ko": "큐 (태그: 길이)"
+   },
+   "empty": {
+    "en": "empty",
+    "ko": "비어 있음"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "beginWord = \"pet\", endWord = \"pot\", wordList = [\"pit\",\"pot\",\"pat\"]",
+   "expected": "2",
+   "frames": [
+    {
+     "caption": {
+      "en": "From 'pet' to 'pot' through 3 dictionary words; 6 pairs are one letter apart. Every dictionary word starts unvisited.",
+      "ko": "사전 단어 3개를 거쳐 'pet' 단어에서 'pot' 단어까지 갑니다. 한 글자 차이인 쌍은 6개이고, 사전 단어는 모두 방문 전 집합에서 시작합니다."
+     },
+     "views": {
+      "words": {
+       "values": {},
+       "nodeMarks": {
+        "path": [],
+        "bad": [],
+        "good": [],
+        "lit": []
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": []
+       }
+      },
+      "unvisited": {
+       "members": [
+        "pit",
+        "pot",
+        "pat"
+       ],
+       "probes": [],
+       "marks": {}
+      },
+      "queue": {
+       "values": [],
+       "tags": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "'pet' joins the queue with length 1: a ladder of one word. 'pot' is in the dictionary, so a ladder can end there.",
+      "ko": "'pet' 단어가 길이 1로 큐에 들어갑니다: 단어 하나짜리 사다리입니다. 'pot' 단어는 사전에 있으니 사다리가 거기서 끝날 수 있습니다."
+     },
+     "views": {
+      "words": {
+       "values": {
+        "pet": 1
+       },
+       "nodeMarks": {
+        "path": [],
+        "bad": [],
+        "good": [
+         "pet"
+        ],
+        "lit": []
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": []
+       }
+      },
+      "unvisited": {
+       "members": [
+        "pit",
+        "pot",
+        "pat"
+       ],
+       "probes": [
+        {
+         "value": "pot",
+         "hit": true
+        }
+       ],
+       "marks": {}
+      },
+      "queue": {
+       "values": [
+        "pet"
+       ],
+       "tags": [
+        [
+         0,
+         "1"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "words",
+        "at": "pet"
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "words",
+        "at": "pet"
+       },
+       "to": {
+        "view": "queue",
+        "at": 0
+       },
+       "value": "pet"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "'pet' leaves the front at length 1 and tries each one-letter change: 'pat', 'pit' are unvisited, so they get length 1 + 1 = 2.",
+      "ko": "길이 1인 'pet' 단어가 큐 앞에서 나와 글자 하나씩 바꿔 봅니다. 방문 전인 'pat', 'pit' 단어는 길이 1 + 1 = 2를 받습니다."
+     },
+     "views": {
+      "words": {
+       "values": {
+        "pet": 1,
+        "pat": 2,
+        "pit": 2
+       },
+       "nodeMarks": {
+        "path": [],
+        "bad": [],
+        "good": [
+         "pat",
+         "pit"
+        ],
+        "lit": [
+         "pet"
+        ]
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": [
+         2,
+         0
+        ]
+       }
+      },
+      "unvisited": {
+       "members": [
+        "pit",
+        "pot",
+        "pat"
+       ],
+       "probes": [
+        {
+         "value": "pat",
+         "hit": true
+        },
+        {
+         "value": "pit",
+         "hit": true
+        }
+       ],
+       "marks": {}
+      },
+      "queue": {
+       "values": [
+        "pet"
+       ],
+       "tags": [
+        [
+         0,
+         "1"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "queue",
+        "at": 0
+       },
+       "to": {
+        "view": "words",
+        "at": "pat"
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "queue",
+        "at": 0
+       },
+       "to": {
+        "view": "words",
+        "at": "pit"
+       },
+       "value": "2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "They leave unvisited and join the back of the queue with length 2.",
+      "ko": "새로 닿은 단어 2개가 방문 전 집합에서 빠져 길이 2로 큐 뒤에 들어갑니다."
+     },
+     "views": {
+      "words": {
+       "values": {
+        "pet": 1,
+        "pat": 2,
+        "pit": 2
+       },
+       "nodeMarks": {
+        "path": [],
+        "bad": [],
+        "good": [
+         "pat",
+         "pit"
+        ],
+        "lit": []
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": []
+       }
+      },
+      "unvisited": {
+       "members": [
+        "pot"
+       ],
+       "probes": [],
+       "marks": {}
+      },
+      "queue": {
+       "values": [
+        "pat",
+        "pit"
+       ],
+       "tags": [
+        [
+         0,
+         "2"
+        ],
+        [
+         1,
+         "2"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0,
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "words",
+        "at": "pat"
+       },
+       "to": {
+        "view": "queue",
+        "at": 0
+       },
+       "value": "pat"
+      },
+      {
+       "from": {
+        "view": "words",
+        "at": "pit"
+       },
+       "to": {
+        "view": "queue",
+        "at": 1
+       },
+       "value": "pit"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Still on 'pet': changing 'e' to 'o' gives 'pot', the end word, so the shortest ladder is pet → pot: answer 1 + 1 = 2.",
+      "ko": "아직 'pet' 단어의 'e' 글자를 'o' 글자로 바꾸면 endWord 'pot' 단어가 나오므로 가장 짧은 사다리는 pet → pot 순서이고, 답은 1 + 1 = 2입니다."
+     },
+     "views": {
+      "words": {
+       "values": {
+        "pet": 1,
+        "pat": 2,
+        "pit": 2,
+        "pot": 2
+       },
+       "nodeMarks": {
+        "path": [
+         "pet",
+         "pot"
+        ],
+        "bad": [],
+        "good": [],
+        "lit": []
+       },
+       "edgeMarks": {
+        "path": [
+         1
+        ],
+        "lit": []
+       }
+      },
+      "unvisited": {
+       "members": [
+        "pot"
+       ],
+       "probes": [
+        {
+         "value": "pot",
+         "hit": true
+        }
+       ],
+       "marks": {}
+      },
+      "queue": {
+       "values": [
+        "pat",
+        "pit"
+       ],
+       "tags": [
+        [
+         0,
+         "2"
+        ],
+        [
+         1,
+         "2"
+        ]
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "words",
+        "at": "pet"
+       },
+       "to": {
+        "view": "words",
+        "at": "pot"
+       },
+       "value": "2"
+      }
+     ],
+     "answer": "2"
+    }
+   ],
+   "setup": {
+    "words": {
+     "nodes": [
+      {
+       "id": "pet",
+       "tag": {
+        "en": "begin",
+        "ko": "시작"
+       }
+      },
+      {
+       "id": "pit"
+      },
+      {
+       "id": "pot",
+       "tag": {
+        "en": "end",
+        "ko": "끝"
+       }
+      },
+      {
+       "id": "pat"
+      }
+     ],
+     "edges": [
+      {
+       "from": "pet",
+       "to": "pit"
+      },
+      {
+       "from": "pet",
+       "to": "pot"
+      },
+      {
+       "from": "pet",
+       "to": "pat"
+      },
+      {
+       "from": "pit",
+       "to": "pot"
+      },
+      {
+       "from": "pit",
+       "to": "pat"
+      },
+      {
+       "from": "pot",
+       "to": "pat"
+      }
+     ]
+    }
+   },
+   "sampleInput": "pet\npot\n[\"pit\",\"pot\",\"pat\"]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "beginWord = \"pet\", endWord = \"pot\", wordList = [\"pit\",\"pat\"]",
+   "expected": "0",
+   "frames": [
+    {
+     "caption": {
+      "en": "From 'pet' to 'pot' through 2 dictionary words; 3 pairs are one letter apart. Every dictionary word starts unvisited.",
+      "ko": "사전 단어 2개를 거쳐 'pet' 단어에서 'pot' 단어까지 갑니다. 한 글자 차이인 쌍은 3개이고, 사전 단어는 모두 방문 전 집합에서 시작합니다."
+     },
+     "views": {
+      "words": {
+       "values": {},
+       "nodeMarks": {
+        "path": [],
+        "bad": [],
+        "good": [],
+        "lit": []
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": []
+       }
+      },
+      "unvisited": {
+       "members": [
+        "pit",
+        "pat"
+       ],
+       "probes": [],
+       "marks": {}
+      },
+      "queue": {
+       "values": [],
+       "tags": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "'pot' is not in the dictionary, so no ladder can end on it: answer 0.",
+      "ko": "'pot' 단어가 사전에 없으므로 어떤 사다리도 거기서 끝날 수 없습니다: 답은 0입니다."
+     },
+     "views": {
+      "words": {
+       "values": {},
+       "nodeMarks": {
+        "path": [],
+        "bad": [],
+        "good": [],
+        "lit": []
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": []
+       }
+      },
+      "unvisited": {
+       "members": [
+        "pit",
+        "pat"
+       ],
+       "probes": [
+        {
+         "value": "pot",
+         "hit": false
+        }
+       ],
+       "marks": {}
+      },
+      "queue": {
+       "values": [],
+       "tags": [],
+       "marks": {}
+      }
+     },
+     "answer": "0"
+    }
+   ],
+   "setup": {
+    "words": {
+     "nodes": [
+      {
+       "id": "pet",
+       "tag": {
+        "en": "begin",
+        "ko": "시작"
+       }
+      },
+      {
+       "id": "pit"
+      },
+      {
+       "id": "pat"
+      }
+     ],
+     "edges": [
+      {
+       "from": "pet",
+       "to": "pit"
+      },
+      {
+       "from": "pet",
+       "to": "pat"
+      },
+      {
+       "from": "pit",
+       "to": "pat"
+      }
+     ]
+    }
+   },
+   "sampleInput": "pet\npot\n[\"pit\",\"pat\"]"
+  },
+  {
+   "label": {
+    "en": "Case 3",
+    "ko": "케이스 3"
+   },
+   "input": "beginWord = \"x\", endWord = \"z\", wordList = [\"x\",\"y\",\"z\"]",
+   "expected": "2",
+   "frames": [
+    {
+     "caption": {
+      "en": "From 'x' to 'z' through 3 dictionary words; 3 pairs are one letter apart. Every dictionary word starts unvisited.",
+      "ko": "사전 단어 3개를 거쳐 'x' 단어에서 'z' 단어까지 갑니다. 한 글자 차이인 쌍은 3개이고, 사전 단어는 모두 방문 전 집합에서 시작합니다."
+     },
+     "views": {
+      "words": {
+       "values": {},
+       "nodeMarks": {
+        "path": [],
+        "bad": [],
+        "good": [],
+        "lit": []
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": []
+       }
+      },
+      "unvisited": {
+       "members": [
+        "x",
+        "y",
+        "z"
+       ],
+       "probes": [],
+       "marks": {}
+      },
+      "queue": {
+       "values": [],
+       "tags": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "'z' is in the dictionary. 'x' is too, so take it out of unvisited: the ladder starts there.",
+      "ko": "'z' 단어는 사전에 있습니다. 'x' 단어도 있으므로 방문 전 집합에서 빼서 사다리의 시작으로 삼습니다."
+     },
+     "views": {
+      "words": {
+       "values": {},
+       "nodeMarks": {
+        "path": [],
+        "bad": [],
+        "good": [],
+        "lit": [
+         "x"
+        ]
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": []
+       }
+      },
+      "unvisited": {
+       "members": [
+        "x",
+        "y",
+        "z"
+       ],
+       "probes": [
+        {
+         "value": "z",
+         "hit": true
+        }
+       ],
+       "marks": {
+        "bad": [
+         "x"
+        ]
+       }
+      },
+      "queue": {
+       "values": [],
+       "tags": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "unvisited",
+        "at": "x"
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "'x' joins the queue with length 1: a ladder of one word.",
+      "ko": "'x' 단어가 길이 1로 큐에 들어갑니다: 단어 하나짜리 사다리입니다."
+     },
+     "views": {
+      "words": {
+       "values": {
+        "x": 1
+       },
+       "nodeMarks": {
+        "path": [],
+        "bad": [],
+        "good": [
+         "x"
+        ],
+        "lit": []
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": []
+       }
+      },
+      "unvisited": {
+       "members": [
+        "y",
+        "z"
+       ],
+       "probes": [],
+       "marks": {}
+      },
+      "queue": {
+       "values": [
+        "x"
+       ],
+       "tags": [
+        [
+         0,
+         "1"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "words",
+        "at": "x"
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "words",
+        "at": "x"
+       },
+       "to": {
+        "view": "queue",
+        "at": 0
+       },
+       "value": "x"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "'x' leaves the front at length 1 and tries each one-letter change: 'y' is unvisited, so it gets length 1 + 1 = 2.",
+      "ko": "길이 1인 'x' 단어가 큐 앞에서 나와 글자 하나씩 바꿔 봅니다. 방문 전인 'y' 단어는 길이 1 + 1 = 2를 받습니다."
+     },
+     "views": {
+      "words": {
+       "values": {
+        "x": 1,
+        "y": 2
+       },
+       "nodeMarks": {
+        "path": [],
+        "bad": [],
+        "good": [
+         "y"
+        ],
+        "lit": [
+         "x"
+        ]
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "unvisited": {
+       "members": [
+        "y",
+        "z"
+       ],
+       "probes": [
+        {
+         "value": "y",
+         "hit": true
+        }
+       ],
+       "marks": {}
+      },
+      "queue": {
+       "values": [
+        "x"
+       ],
+       "tags": [
+        [
+         0,
+         "1"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "queue",
+        "at": 0
+       },
+       "to": {
+        "view": "words",
+        "at": "y"
+       },
+       "value": "2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "It leaves unvisited and joins the back of the queue with length 2.",
+      "ko": "새로 닿은 단어 1개가 방문 전 집합에서 빠져 길이 2로 큐 뒤에 들어갑니다."
+     },
+     "views": {
+      "words": {
+       "values": {
+        "x": 1,
+        "y": 2
+       },
+       "nodeMarks": {
+        "path": [],
+        "bad": [],
+        "good": [
+         "y"
+        ],
+        "lit": []
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": []
+       }
+      },
+      "unvisited": {
+       "members": [
+        "z"
+       ],
+       "probes": [],
+       "marks": {}
+      },
+      "queue": {
+       "values": [
+        "y"
+       ],
+       "tags": [
+        [
+         0,
+         "2"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "words",
+        "at": "y"
+       },
+       "to": {
+        "view": "queue",
+        "at": 0
+       },
+       "value": "y"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Still on 'x': changing 'x' to 'z' gives 'z', the end word, so the shortest ladder is x → z: answer 1 + 1 = 2.",
+      "ko": "아직 'x' 단어의 'x' 글자를 'z' 글자로 바꾸면 endWord 'z' 단어가 나오므로 가장 짧은 사다리는 x → z 순서이고, 답은 1 + 1 = 2입니다."
+     },
+     "views": {
+      "words": {
+       "values": {
+        "x": 1,
+        "y": 2,
+        "z": 2
+       },
+       "nodeMarks": {
+        "path": [
+         "x",
+         "z"
+        ],
+        "bad": [],
+        "good": [],
+        "lit": []
+       },
+       "edgeMarks": {
+        "path": [
+         1
+        ],
+        "lit": []
+       }
+      },
+      "unvisited": {
+       "members": [
+        "z"
+       ],
+       "probes": [
+        {
+         "value": "z",
+         "hit": true
+        }
+       ],
+       "marks": {}
+      },
+      "queue": {
+       "values": [
+        "y"
+       ],
+       "tags": [
+        [
+         0,
+         "2"
+        ]
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "words",
+        "at": "x"
+       },
+       "to": {
+        "view": "words",
+        "at": "z"
+       },
+       "value": "2"
+      }
+     ],
+     "answer": "2"
+    }
+   ],
+   "setup": {
+    "words": {
+     "nodes": [
+      {
+       "id": "x",
+       "tag": {
+        "en": "begin",
+        "ko": "시작"
+       }
+      },
+      {
+       "id": "y"
+      },
+      {
+       "id": "z",
+       "tag": {
+        "en": "end",
+        "ko": "끝"
+       }
+      }
+     ],
+     "edges": [
+      {
+       "from": "x",
+       "to": "y"
+      },
+      {
+       "from": "x",
+       "to": "z"
+      },
+      {
+       "from": "y",
+       "to": "z"
+      }
+     ]
+    }
+   },
+   "sampleInput": "x\nz\n[\"x\",\"y\",\"z\"]"
+  }
+ ]
+}

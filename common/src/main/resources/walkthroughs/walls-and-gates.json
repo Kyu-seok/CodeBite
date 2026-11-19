@@ -1,0 +1,1562 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Walls and Gates",
+  "ko": "벽과 문 거리 채우기"
+ },
+ "approach": {
+  "en": "Multi-source BFS: every gate starts in the queue, so each room is first reached from its nearest gate, and it takes the distance of the room that reached it plus 1.",
+  "ko": "다중 출발 BFS: 문이 모두 큐에서 시작하므로 각 방은 가장 가까운 문에서 처음 닿고, 자신에게 닿은 칸의 거리에 1을 더한 값을 받습니다."
+ },
+ "views": [
+  {
+   "id": "rooms",
+   "type": "grid",
+   "title": {
+    "en": "rooms",
+    "ko": "rooms (방)"
+   },
+   "values": {
+    "-1": {
+     "label": {
+      "en": "wall",
+      "ko": "벽"
+     },
+     "tone": "wall",
+     "glyph": ""
+    },
+    "0": {
+     "label": {
+      "en": "gate",
+      "ko": "문"
+     },
+     "tone": "b"
+    },
+    "2147483647": {
+     "label": {
+      "en": "empty room (INF)",
+      "ko": "빈 방 (INF)"
+     },
+     "tone": "empty",
+     "glyph": "INF"
+    }
+   }
+  },
+  {
+   "id": "queue",
+   "type": "queue",
+   "title": {
+    "en": "queue (tag: distance)",
+    "ko": "큐 (태그: 거리)"
+   },
+   "empty": {
+    "en": "empty",
+    "ko": "비어 있음"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "rooms = [[2147483647,0],[2147483647,2147483647]]",
+   "expected": "[[1,0],[2,1]]",
+   "frames": [
+    {
+     "caption": {
+      "en": "A 2×2 grid with 3 empty rooms. Every gate, (0,1), joins the queue at distance 0.",
+      "ko": "2×2 격자에 빈 방이 3개 있습니다. 문 1개, (0,1) 칸이 모두 거리 0으로 큐에 들어갑니다."
+     },
+     "views": {
+      "rooms": {
+       "cells": [
+        [
+         2147483647,
+         0
+        ],
+        [
+         2147483647,
+         2147483647
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          0,
+          1
+         ]
+        ],
+        "good": [],
+        "path": []
+       }
+      },
+      "queue": {
+       "values": [
+        "0,1"
+       ],
+       "tags": [
+        [
+         0,
+         "0"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "rooms",
+        "at": [
+         0,
+         1
+        ]
+       },
+       "to": {
+        "view": "queue",
+        "at": 0
+       },
+       "value": "0,1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "(0,1) leaves the front at distance 0: (1,1), (0,0) are empty rooms, so they get 0 + 1 = 1.",
+      "ko": "거리 0인 (0,1) 칸이 큐 앞에서 나옵니다. 빈 방 (1,1), (0,0) 칸은 거리 0 + 1 = 1을 받습니다."
+     },
+     "views": {
+      "rooms": {
+       "cells": [
+        [
+         1,
+         0
+        ],
+        [
+         2147483647,
+         1
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          0,
+          1
+         ]
+        ],
+        "good": [
+         [
+          1,
+          1
+         ],
+         [
+          0,
+          0
+         ]
+        ],
+        "path": []
+       }
+      },
+      "queue": {
+       "values": [
+        "0,1"
+       ],
+       "tags": [
+        [
+         0,
+         "0"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "queue",
+        "at": 0
+       },
+       "to": {
+        "view": "rooms",
+        "at": [
+         1,
+         1
+        ]
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "queue",
+        "at": 0
+       },
+       "to": {
+        "view": "rooms",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "They join the back of the queue, after every room at distance 0.",
+      "ko": "새로 채운 방 2개가 거리 0의 칸들 뒤로 큐에 들어갑니다."
+     },
+     "views": {
+      "rooms": {
+       "cells": [
+        [
+         1,
+         0
+        ],
+        [
+         2147483647,
+         1
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         [
+          1,
+          1
+         ],
+         [
+          0,
+          0
+         ]
+        ],
+        "path": []
+       }
+      },
+      "queue": {
+       "values": [
+        "1,1",
+        "0,0"
+       ],
+       "tags": [
+        [
+         0,
+         "1"
+        ],
+        [
+         1,
+         "1"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0,
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "rooms",
+        "at": [
+         1,
+         1
+        ]
+       },
+       "to": {
+        "view": "queue",
+        "at": 0
+       },
+       "value": "1,1"
+      },
+      {
+       "from": {
+        "view": "rooms",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "to": {
+        "view": "queue",
+        "at": 1
+       },
+       "value": "0,0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "(1,1) leaves the front at distance 1: (1,0) is an empty room, so it gets 1 + 1 = 2.",
+      "ko": "거리 1인 (1,1) 칸이 큐 앞에서 나옵니다. 빈 방 (1,0) 칸은 거리 1 + 1 = 2를 받습니다."
+     },
+     "views": {
+      "rooms": {
+       "cells": [
+        [
+         1,
+         0
+        ],
+        [
+         2,
+         1
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          1,
+          1
+         ]
+        ],
+        "good": [
+         [
+          1,
+          0
+         ]
+        ],
+        "path": []
+       }
+      },
+      "queue": {
+       "values": [
+        "1,1",
+        "0,0"
+       ],
+       "tags": [
+        [
+         0,
+         "1"
+        ],
+        [
+         1,
+         "1"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "queue",
+        "at": 0
+       },
+       "to": {
+        "view": "rooms",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "value": "2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "It joins the back of the queue, after every room at distance 1.",
+      "ko": "새로 채운 방 1개가 거리 1의 칸들 뒤로 큐에 들어갑니다."
+     },
+     "views": {
+      "rooms": {
+       "cells": [
+        [
+         1,
+         0
+        ],
+        [
+         2,
+         1
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         [
+          1,
+          0
+         ]
+        ],
+        "path": []
+       }
+      },
+      "queue": {
+       "values": [
+        "0,0",
+        "1,0"
+       ],
+       "tags": [
+        [
+         0,
+         "1"
+        ],
+        [
+         1,
+         "2"
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "rooms",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "to": {
+        "view": "queue",
+        "at": 1
+       },
+       "value": "1,0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "(0,0), (1,0) leave the front: every neighbour is a wall, a gate or already filled. The queue is empty.",
+      "ko": "(0,0), (1,0) 칸이 큐 앞에서 나오지만, 이웃이 모두 벽이거나 문이거나 이미 채워졌습니다. 큐가 비었습니다."
+     },
+     "views": {
+      "rooms": {
+       "cells": [
+        [
+         1,
+         0
+        ],
+        [
+         2,
+         1
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          0,
+          0
+         ],
+         [
+          1,
+          0
+         ]
+        ],
+        "good": [],
+        "path": []
+       }
+      },
+      "queue": {
+       "values": [
+        "0,0",
+        "1,0"
+       ],
+       "tags": [
+        [
+         0,
+         "1"
+        ],
+        [
+         1,
+         "2"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "queue",
+        "at": 0
+       }
+      },
+      {
+       "from": {
+        "view": "queue",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every room reachable now holds its distance to the nearest gate. Answer: [[1,0],[2,1]].",
+      "ko": "닿을 수 있는 방마다 가장 가까운 문까지의 거리가 채워졌습니다. 답은 [[1,0],[2,1]]입니다."
+     },
+     "views": {
+      "rooms": {
+       "cells": [
+        [
+         1,
+         0
+        ],
+        [
+         2,
+         1
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [],
+        "path": [
+         [
+          0,
+          0
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "queue": {
+       "values": [],
+       "tags": [],
+       "marks": {}
+      }
+     },
+     "answer": "[[1,0],[2,1]]"
+    }
+   ],
+   "sampleInput": "[[2147483647,0],[2147483647,2147483647]]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "rooms = [[0,2147483647,2147483647],[-1,2147483647,-1],[2147483647,2147483647,0]]",
+   "expected": "[[0,1,2],[-1,2,-1],[2,1,0]]",
+   "frames": [
+    {
+     "caption": {
+      "en": "A 3×3 grid with 5 empty rooms. Every gate, (0,0), (2,2), joins the queue at distance 0.",
+      "ko": "3×3 격자에 빈 방이 5개 있습니다. 문 2개, (0,0), (2,2) 칸이 모두 거리 0으로 큐에 들어갑니다."
+     },
+     "views": {
+      "rooms": {
+       "cells": [
+        [
+         0,
+         2147483647,
+         2147483647
+        ],
+        [
+         -1,
+         2147483647,
+         -1
+        ],
+        [
+         2147483647,
+         2147483647,
+         0
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          0,
+          0
+         ],
+         [
+          2,
+          2
+         ]
+        ],
+        "good": [],
+        "path": []
+       }
+      },
+      "queue": {
+       "values": [
+        "0,0",
+        "2,2"
+       ],
+       "tags": [
+        [
+         0,
+         "0"
+        ],
+        [
+         1,
+         "0"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0,
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "rooms",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "to": {
+        "view": "queue",
+        "at": 0
+       },
+       "value": "0,0"
+      },
+      {
+       "from": {
+        "view": "rooms",
+        "at": [
+         2,
+         2
+        ]
+       },
+       "to": {
+        "view": "queue",
+        "at": 1
+       },
+       "value": "2,2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "(0,0) leaves the front at distance 0: (0,1) is an empty room, so it gets 0 + 1 = 1.",
+      "ko": "거리 0인 (0,0) 칸이 큐 앞에서 나옵니다. 빈 방 (0,1) 칸은 거리 0 + 1 = 1을 받습니다."
+     },
+     "views": {
+      "rooms": {
+       "cells": [
+        [
+         0,
+         1,
+         2147483647
+        ],
+        [
+         -1,
+         2147483647,
+         -1
+        ],
+        [
+         2147483647,
+         2147483647,
+         0
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          0,
+          0
+         ]
+        ],
+        "good": [
+         [
+          0,
+          1
+         ]
+        ],
+        "path": []
+       }
+      },
+      "queue": {
+       "values": [
+        "0,0",
+        "2,2"
+       ],
+       "tags": [
+        [
+         0,
+         "0"
+        ],
+        [
+         1,
+         "0"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "queue",
+        "at": 0
+       },
+       "to": {
+        "view": "rooms",
+        "at": [
+         0,
+         1
+        ]
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "It joins the back of the queue, after every room at distance 0.",
+      "ko": "새로 채운 방 1개가 거리 0의 칸들 뒤로 큐에 들어갑니다."
+     },
+     "views": {
+      "rooms": {
+       "cells": [
+        [
+         0,
+         1,
+         2147483647
+        ],
+        [
+         -1,
+         2147483647,
+         -1
+        ],
+        [
+         2147483647,
+         2147483647,
+         0
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         [
+          0,
+          1
+         ]
+        ],
+        "path": []
+       }
+      },
+      "queue": {
+       "values": [
+        "2,2",
+        "0,1"
+       ],
+       "tags": [
+        [
+         0,
+         "0"
+        ],
+        [
+         1,
+         "1"
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "rooms",
+        "at": [
+         0,
+         1
+        ]
+       },
+       "to": {
+        "view": "queue",
+        "at": 1
+       },
+       "value": "0,1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "(2,2) leaves the front at distance 0: (2,1) is an empty room, so it gets 0 + 1 = 1.",
+      "ko": "거리 0인 (2,2) 칸이 큐 앞에서 나옵니다. 빈 방 (2,1) 칸은 거리 0 + 1 = 1을 받습니다."
+     },
+     "views": {
+      "rooms": {
+       "cells": [
+        [
+         0,
+         1,
+         2147483647
+        ],
+        [
+         -1,
+         2147483647,
+         -1
+        ],
+        [
+         2147483647,
+         1,
+         0
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          2,
+          2
+         ]
+        ],
+        "good": [
+         [
+          2,
+          1
+         ]
+        ],
+        "path": []
+       }
+      },
+      "queue": {
+       "values": [
+        "2,2",
+        "0,1"
+       ],
+       "tags": [
+        [
+         0,
+         "0"
+        ],
+        [
+         1,
+         "1"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "queue",
+        "at": 0
+       },
+       "to": {
+        "view": "rooms",
+        "at": [
+         2,
+         1
+        ]
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "It joins the back of the queue, after every room at distance 0.",
+      "ko": "새로 채운 방 1개가 거리 0의 칸들 뒤로 큐에 들어갑니다."
+     },
+     "views": {
+      "rooms": {
+       "cells": [
+        [
+         0,
+         1,
+         2147483647
+        ],
+        [
+         -1,
+         2147483647,
+         -1
+        ],
+        [
+         2147483647,
+         1,
+         0
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         [
+          2,
+          1
+         ]
+        ],
+        "path": []
+       }
+      },
+      "queue": {
+       "values": [
+        "0,1",
+        "2,1"
+       ],
+       "tags": [
+        [
+         0,
+         "1"
+        ],
+        [
+         1,
+         "1"
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "rooms",
+        "at": [
+         2,
+         1
+        ]
+       },
+       "to": {
+        "view": "queue",
+        "at": 1
+       },
+       "value": "2,1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "(0,1) leaves the front at distance 1: (1,1), (0,2) are empty rooms, so they get 1 + 1 = 2.",
+      "ko": "거리 1인 (0,1) 칸이 큐 앞에서 나옵니다. 빈 방 (1,1), (0,2) 칸은 거리 1 + 1 = 2를 받습니다."
+     },
+     "views": {
+      "rooms": {
+       "cells": [
+        [
+         0,
+         1,
+         2
+        ],
+        [
+         -1,
+         2,
+         -1
+        ],
+        [
+         2147483647,
+         1,
+         0
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          0,
+          1
+         ]
+        ],
+        "good": [
+         [
+          1,
+          1
+         ],
+         [
+          0,
+          2
+         ]
+        ],
+        "path": []
+       }
+      },
+      "queue": {
+       "values": [
+        "0,1",
+        "2,1"
+       ],
+       "tags": [
+        [
+         0,
+         "1"
+        ],
+        [
+         1,
+         "1"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "queue",
+        "at": 0
+       },
+       "to": {
+        "view": "rooms",
+        "at": [
+         1,
+         1
+        ]
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "queue",
+        "at": 0
+       },
+       "to": {
+        "view": "rooms",
+        "at": [
+         0,
+         2
+        ]
+       },
+       "value": "2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "They join the back of the queue, after every room at distance 1.",
+      "ko": "새로 채운 방 2개가 거리 1의 칸들 뒤로 큐에 들어갑니다."
+     },
+     "views": {
+      "rooms": {
+       "cells": [
+        [
+         0,
+         1,
+         2
+        ],
+        [
+         -1,
+         2,
+         -1
+        ],
+        [
+         2147483647,
+         1,
+         0
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         [
+          1,
+          1
+         ],
+         [
+          0,
+          2
+         ]
+        ],
+        "path": []
+       }
+      },
+      "queue": {
+       "values": [
+        "2,1",
+        "1,1",
+        "0,2"
+       ],
+       "tags": [
+        [
+         0,
+         "1"
+        ],
+        [
+         1,
+         "2"
+        ],
+        [
+         2,
+         "2"
+        ]
+       ],
+       "marks": {
+        "good": [
+         1,
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "rooms",
+        "at": [
+         1,
+         1
+        ]
+       },
+       "to": {
+        "view": "queue",
+        "at": 1
+       },
+       "value": "1,1"
+      },
+      {
+       "from": {
+        "view": "rooms",
+        "at": [
+         0,
+         2
+        ]
+       },
+       "to": {
+        "view": "queue",
+        "at": 2
+       },
+       "value": "0,2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "(2,1) leaves the front at distance 1: (2,0) is an empty room, so it gets 1 + 1 = 2.",
+      "ko": "거리 1인 (2,1) 칸이 큐 앞에서 나옵니다. 빈 방 (2,0) 칸은 거리 1 + 1 = 2를 받습니다."
+     },
+     "views": {
+      "rooms": {
+       "cells": [
+        [
+         0,
+         1,
+         2
+        ],
+        [
+         -1,
+         2,
+         -1
+        ],
+        [
+         2,
+         1,
+         0
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          2,
+          1
+         ]
+        ],
+        "good": [
+         [
+          2,
+          0
+         ]
+        ],
+        "path": []
+       }
+      },
+      "queue": {
+       "values": [
+        "2,1",
+        "1,1",
+        "0,2"
+       ],
+       "tags": [
+        [
+         0,
+         "1"
+        ],
+        [
+         1,
+         "2"
+        ],
+        [
+         2,
+         "2"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "queue",
+        "at": 0
+       },
+       "to": {
+        "view": "rooms",
+        "at": [
+         2,
+         0
+        ]
+       },
+       "value": "2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "It joins the back of the queue, after every room at distance 1.",
+      "ko": "새로 채운 방 1개가 거리 1의 칸들 뒤로 큐에 들어갑니다."
+     },
+     "views": {
+      "rooms": {
+       "cells": [
+        [
+         0,
+         1,
+         2
+        ],
+        [
+         -1,
+         2,
+         -1
+        ],
+        [
+         2,
+         1,
+         0
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         [
+          2,
+          0
+         ]
+        ],
+        "path": []
+       }
+      },
+      "queue": {
+       "values": [
+        "1,1",
+        "0,2",
+        "2,0"
+       ],
+       "tags": [
+        [
+         0,
+         "2"
+        ],
+        [
+         1,
+         "2"
+        ],
+        [
+         2,
+         "2"
+        ]
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "rooms",
+        "at": [
+         2,
+         0
+        ]
+       },
+       "to": {
+        "view": "queue",
+        "at": 2
+       },
+       "value": "2,0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "(1,1), (0,2), (2,0) leave the front: every neighbour is a wall, a gate or already filled. The queue is empty.",
+      "ko": "(1,1), (0,2), (2,0) 칸이 큐 앞에서 나오지만, 이웃이 모두 벽이거나 문이거나 이미 채워졌습니다. 큐가 비었습니다."
+     },
+     "views": {
+      "rooms": {
+       "cells": [
+        [
+         0,
+         1,
+         2
+        ],
+        [
+         -1,
+         2,
+         -1
+        ],
+        [
+         2,
+         1,
+         0
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          1,
+          1
+         ],
+         [
+          0,
+          2
+         ],
+         [
+          2,
+          0
+         ]
+        ],
+        "good": [],
+        "path": []
+       }
+      },
+      "queue": {
+       "values": [
+        "1,1",
+        "0,2",
+        "2,0"
+       ],
+       "tags": [
+        [
+         0,
+         "2"
+        ],
+        [
+         1,
+         "2"
+        ],
+        [
+         2,
+         "2"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1,
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "queue",
+        "at": 0
+       }
+      },
+      {
+       "from": {
+        "view": "queue",
+        "at": 1
+       }
+      },
+      {
+       "from": {
+        "view": "queue",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every room reachable now holds its distance to the nearest gate. Answer: [[0,1,2],[-1,2,-1],[2,1,0]].",
+      "ko": "닿을 수 있는 방마다 가장 가까운 문까지의 거리가 채워졌습니다. 답은 [[0,1,2],[-1,2,-1],[2,1,0]]입니다."
+     },
+     "views": {
+      "rooms": {
+       "cells": [
+        [
+         0,
+         1,
+         2
+        ],
+        [
+         -1,
+         2,
+         -1
+        ],
+        [
+         2,
+         1,
+         0
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [],
+        "path": [
+         [
+          0,
+          1
+         ],
+         [
+          0,
+          2
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ]
+       }
+      },
+      "queue": {
+       "values": [],
+       "tags": [],
+       "marks": {}
+      }
+     },
+     "answer": "[[0,1,2],[-1,2,-1],[2,1,0]]"
+    }
+   ],
+   "sampleInput": "[[0,2147483647,2147483647],[-1,2147483647,-1],[2147483647,2147483647,0]]"
+  },
+  {
+   "label": {
+    "en": "Case 3",
+    "ko": "케이스 3"
+   },
+   "input": "rooms = [[2147483647,2147483647],[2147483647,-1]]",
+   "expected": "[[2147483647,2147483647],[2147483647,-1]]",
+   "frames": [
+    {
+     "caption": {
+      "en": "A 2×2 grid with 3 empty rooms and no gate, so the queue starts empty.",
+      "ko": "2×2 격자에 빈 방이 3개 있지만 문이 없어서 큐가 빈 채로 시작합니다."
+     },
+     "views": {
+      "rooms": {
+       "cells": [
+        [
+         2147483647,
+         2147483647
+        ],
+        [
+         2147483647,
+         -1
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [],
+        "path": []
+       }
+      },
+      "queue": {
+       "values": [],
+       "tags": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "With no gate, no room is reached: all 3 stay INF (2147483647). Answer: [[2147483647,2147483647],[2147483647,-1]].",
+      "ko": "문이 없으니 어떤 방에도 닿지 않아 3개 모두 INF(2147483647)로 남습니다. 답은 [[2147483647,2147483647],[2147483647,-1]]입니다."
+     },
+     "views": {
+      "rooms": {
+       "cells": [
+        [
+         2147483647,
+         2147483647
+        ],
+        [
+         2147483647,
+         -1
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ]
+        ],
+        "good": [],
+        "path": []
+       }
+      },
+      "queue": {
+       "values": [],
+       "tags": [],
+       "marks": {}
+      }
+     },
+     "answer": "[[2147483647,2147483647],[2147483647,-1]]"
+    }
+   ],
+   "sampleInput": "[[2147483647,2147483647],[2147483647,-1]]"
+  }
+ ]
+}
