@@ -1,0 +1,5040 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Word Search II",
+  "ko": "단어 찾기 II"
+ },
+ "approach": {
+  "en": "Put every word in a trie, then walk the board depth-first from each cell, stepping only onto a neighbour whose letter is a child of the current trie node: one walk checks every word at once. A word found is taken out of the trie, and a node left empty is pruned.",
+  "ko": "모든 단어를 트라이에 넣고, 칸마다 깊이 우선으로 보드를 걸으며 현재 트라이 노드의 자식 글자인 이웃 칸으로만 이동합니다. 한 번의 탐색으로 모든 단어를 함께 확인합니다. 찾은 단어는 트라이에서 빼고, 비게 된 노드는 잘라 냅니다."
+ },
+ "views": [
+  {
+   "id": "board",
+   "type": "grid"
+  },
+  {
+   "id": "trie",
+   "type": "tree",
+   "title": {
+    "en": "trie (a word sits on the node where it ends)",
+    "ko": "트라이 (단어는 끝나는 노드에 있음)"
+   }
+  },
+  {
+   "id": "words",
+   "type": "table",
+   "title": {
+    "en": "words",
+    "ko": "words (단어 목록)"
+   }
+  },
+  {
+   "id": "result",
+   "type": "output",
+   "title": {
+    "en": "found",
+    "ko": "찾은 단어"
+   },
+   "empty": {
+    "en": "none yet",
+    "ko": "아직 없음"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "board = [[\"c\",\"o\",\"d\",\"e\"],[\"h\",\"a\",\"t\",\"s\"],[\"i\",\"r\",\"n\",\"m\"],[\"p\",\"u\",\"a\",\"l\"]], words = [\"code\",\"chat\",\"maze\",\"nail\"]",
+   "expected": "[\"chat\",\"code\"]",
+   "frames": [
+    {
+     "caption": {
+      "en": "A 4×4 board and 4 words. First, every word goes into a trie, which starts as just its root.",
+      "ko": "4×4 보드와 단어 4개가 있습니다. 먼저 루트만 있는 트라이에 모든 단어를 넣습니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         "c",
+         "o",
+         "d",
+         "e"
+        ],
+        [
+         "h",
+         "a",
+         "t",
+         "s"
+        ],
+        [
+         "i",
+         "r",
+         "n",
+         "m"
+        ],
+        [
+         "p",
+         "u",
+         "a",
+         "l"
+        ]
+       ],
+       "marks": {},
+       "shade": []
+      },
+      "trie": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": null
+        }
+       ],
+       "edges": [],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       },
+       "shade": []
+      },
+      "words": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "code"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "chat"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "maze"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "nail"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Insert \"code\": every letter gets a new node, and the word sits on its last node.",
+      "ko": "\"code\" 단어를 넣습니다. 글자마다 노드를 새로 만들고, 단어를 마지막 노드에 둡니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         "c",
+         "o",
+         "d",
+         "e"
+        ],
+        [
+         "h",
+         "a",
+         "t",
+         "s"
+        ],
+        [
+         "i",
+         "r",
+         "n",
+         "m"
+        ],
+        [
+         "p",
+         "u",
+         "a",
+         "l"
+        ]
+       ],
+       "marks": {},
+       "shade": []
+      },
+      "trie": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": null
+        },
+        {
+         "id": 1,
+         "value": null
+        },
+        {
+         "id": 2,
+         "value": null
+        },
+        {
+         "id": 3,
+         "value": null
+        },
+        {
+         "id": 4,
+         "value": "code"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "c"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "o"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "d"
+        },
+        {
+         "from": 3,
+         "to": 4,
+         "label": "e"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         1,
+         2,
+         3,
+         4
+        ],
+        "lit": []
+       },
+       "shade": []
+      },
+      "words": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "code"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "chat"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "maze"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "nail"
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         [
+          0,
+          0
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "words",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "to": {
+        "view": "trie",
+        "at": 1
+       },
+       "value": "c"
+      },
+      {
+       "from": {
+        "view": "words",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "to": {
+        "view": "trie",
+        "at": 2
+       },
+       "value": "o"
+      },
+      {
+       "from": {
+        "view": "words",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "to": {
+        "view": "trie",
+        "at": 3
+       },
+       "value": "d"
+      },
+      {
+       "from": {
+        "view": "words",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "to": {
+        "view": "trie",
+        "at": 4
+       },
+       "value": "code"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Insert \"chat\": the path for \"c\" is already there, so it adds only \"hat\", and the word sits on its last node.",
+      "ko": "\"chat\" 단어를 넣습니다. \"c\" 경로는 이미 있으니 \"hat\" 부분만 새로 만들고, 단어를 마지막 노드에 둡니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         "c",
+         "o",
+         "d",
+         "e"
+        ],
+        [
+         "h",
+         "a",
+         "t",
+         "s"
+        ],
+        [
+         "i",
+         "r",
+         "n",
+         "m"
+        ],
+        [
+         "p",
+         "u",
+         "a",
+         "l"
+        ]
+       ],
+       "marks": {},
+       "shade": []
+      },
+      "trie": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": null
+        },
+        {
+         "id": 1,
+         "value": null
+        },
+        {
+         "id": 2,
+         "value": null
+        },
+        {
+         "id": 3,
+         "value": null
+        },
+        {
+         "id": 4,
+         "value": "code"
+        },
+        {
+         "id": 5,
+         "value": null
+        },
+        {
+         "id": 6,
+         "value": null
+        },
+        {
+         "id": 7,
+         "value": "chat"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "c"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "o"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "d"
+        },
+        {
+         "from": 3,
+         "to": 4,
+         "label": "e"
+        },
+        {
+         "from": 1,
+         "to": 5,
+         "label": "h"
+        },
+        {
+         "from": 5,
+         "to": 6,
+         "label": "a"
+        },
+        {
+         "from": 6,
+         "to": 7,
+         "label": "t"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         5,
+         6,
+         7
+        ],
+        "lit": [
+         1
+        ]
+       },
+       "shade": []
+      },
+      "words": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "code"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "chat"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "maze"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "nail"
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         [
+          1,
+          0
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "words",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "to": {
+        "view": "trie",
+        "at": 5
+       },
+       "value": "h"
+      },
+      {
+       "from": {
+        "view": "words",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "to": {
+        "view": "trie",
+        "at": 6
+       },
+       "value": "a"
+      },
+      {
+       "from": {
+        "view": "words",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "to": {
+        "view": "trie",
+        "at": 7
+       },
+       "value": "chat"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Insert \"maze\": every letter gets a new node, and the word sits on its last node.",
+      "ko": "\"maze\" 단어를 넣습니다. 글자마다 노드를 새로 만들고, 단어를 마지막 노드에 둡니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         "c",
+         "o",
+         "d",
+         "e"
+        ],
+        [
+         "h",
+         "a",
+         "t",
+         "s"
+        ],
+        [
+         "i",
+         "r",
+         "n",
+         "m"
+        ],
+        [
+         "p",
+         "u",
+         "a",
+         "l"
+        ]
+       ],
+       "marks": {},
+       "shade": []
+      },
+      "trie": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": null
+        },
+        {
+         "id": 1,
+         "value": null
+        },
+        {
+         "id": 2,
+         "value": null
+        },
+        {
+         "id": 3,
+         "value": null
+        },
+        {
+         "id": 4,
+         "value": "code"
+        },
+        {
+         "id": 5,
+         "value": null
+        },
+        {
+         "id": 6,
+         "value": null
+        },
+        {
+         "id": 7,
+         "value": "chat"
+        },
+        {
+         "id": 8,
+         "value": null
+        },
+        {
+         "id": 9,
+         "value": null
+        },
+        {
+         "id": 10,
+         "value": null
+        },
+        {
+         "id": 11,
+         "value": "maze"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "c"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "o"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "d"
+        },
+        {
+         "from": 3,
+         "to": 4,
+         "label": "e"
+        },
+        {
+         "from": 1,
+         "to": 5,
+         "label": "h"
+        },
+        {
+         "from": 5,
+         "to": 6,
+         "label": "a"
+        },
+        {
+         "from": 6,
+         "to": 7,
+         "label": "t"
+        },
+        {
+         "from": 0,
+         "to": 8,
+         "label": "m"
+        },
+        {
+         "from": 8,
+         "to": 9,
+         "label": "a"
+        },
+        {
+         "from": 9,
+         "to": 10,
+         "label": "z"
+        },
+        {
+         "from": 10,
+         "to": 11,
+         "label": "e"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         8,
+         9,
+         10,
+         11
+        ],
+        "lit": []
+       },
+       "shade": []
+      },
+      "words": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "code"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "chat"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "maze"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "nail"
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         [
+          2,
+          0
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "words",
+        "at": [
+         2,
+         0
+        ]
+       },
+       "to": {
+        "view": "trie",
+        "at": 8
+       },
+       "value": "m"
+      },
+      {
+       "from": {
+        "view": "words",
+        "at": [
+         2,
+         0
+        ]
+       },
+       "to": {
+        "view": "trie",
+        "at": 9
+       },
+       "value": "a"
+      },
+      {
+       "from": {
+        "view": "words",
+        "at": [
+         2,
+         0
+        ]
+       },
+       "to": {
+        "view": "trie",
+        "at": 10
+       },
+       "value": "z"
+      },
+      {
+       "from": {
+        "view": "words",
+        "at": [
+         2,
+         0
+        ]
+       },
+       "to": {
+        "view": "trie",
+        "at": 11
+       },
+       "value": "maze"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Insert \"nail\": every letter gets a new node, and the word sits on its last node.",
+      "ko": "\"nail\" 단어를 넣습니다. 글자마다 노드를 새로 만들고, 단어를 마지막 노드에 둡니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         "c",
+         "o",
+         "d",
+         "e"
+        ],
+        [
+         "h",
+         "a",
+         "t",
+         "s"
+        ],
+        [
+         "i",
+         "r",
+         "n",
+         "m"
+        ],
+        [
+         "p",
+         "u",
+         "a",
+         "l"
+        ]
+       ],
+       "marks": {},
+       "shade": []
+      },
+      "trie": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": null
+        },
+        {
+         "id": 1,
+         "value": null
+        },
+        {
+         "id": 2,
+         "value": null
+        },
+        {
+         "id": 3,
+         "value": null
+        },
+        {
+         "id": 4,
+         "value": "code"
+        },
+        {
+         "id": 5,
+         "value": null
+        },
+        {
+         "id": 6,
+         "value": null
+        },
+        {
+         "id": 7,
+         "value": "chat"
+        },
+        {
+         "id": 8,
+         "value": null
+        },
+        {
+         "id": 9,
+         "value": null
+        },
+        {
+         "id": 10,
+         "value": null
+        },
+        {
+         "id": 11,
+         "value": "maze"
+        },
+        {
+         "id": 12,
+         "value": null
+        },
+        {
+         "id": 13,
+         "value": null
+        },
+        {
+         "id": 14,
+         "value": null
+        },
+        {
+         "id": 15,
+         "value": "nail"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "c"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "o"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "d"
+        },
+        {
+         "from": 3,
+         "to": 4,
+         "label": "e"
+        },
+        {
+         "from": 1,
+         "to": 5,
+         "label": "h"
+        },
+        {
+         "from": 5,
+         "to": 6,
+         "label": "a"
+        },
+        {
+         "from": 6,
+         "to": 7,
+         "label": "t"
+        },
+        {
+         "from": 0,
+         "to": 8,
+         "label": "m"
+        },
+        {
+         "from": 8,
+         "to": 9,
+         "label": "a"
+        },
+        {
+         "from": 9,
+         "to": 10,
+         "label": "z"
+        },
+        {
+         "from": 10,
+         "to": 11,
+         "label": "e"
+        },
+        {
+         "from": 0,
+         "to": 12,
+         "label": "n"
+        },
+        {
+         "from": 12,
+         "to": 13,
+         "label": "a"
+        },
+        {
+         "from": 13,
+         "to": 14,
+         "label": "i"
+        },
+        {
+         "from": 14,
+         "to": 15,
+         "label": "l"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         12,
+         13,
+         14,
+         15
+        ],
+        "lit": []
+       },
+       "shade": []
+      },
+      "words": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "code"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "chat"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "maze"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "nail"
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         [
+          3,
+          0
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "words",
+        "at": [
+         3,
+         0
+        ]
+       },
+       "to": {
+        "view": "trie",
+        "at": 12
+       },
+       "value": "n"
+      },
+      {
+       "from": {
+        "view": "words",
+        "at": [
+         3,
+         0
+        ]
+       },
+       "to": {
+        "view": "trie",
+        "at": 13
+       },
+       "value": "a"
+      },
+      {
+       "from": {
+        "view": "words",
+        "at": [
+         3,
+         0
+        ]
+       },
+       "to": {
+        "view": "trie",
+        "at": 14
+       },
+       "value": "i"
+      },
+      {
+       "from": {
+        "view": "words",
+        "at": [
+         3,
+         0
+        ]
+       },
+       "to": {
+        "view": "trie",
+        "at": 15
+       },
+       "value": "nail"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The scan reaches (0,0): 'c' is a child of the root, so a word may start here. Step onto it and mark it \"#\".",
+      "ko": "보드를 훑다가 (0,0) 칸에 닿았습니다. 'c' 글자가 루트의 자식이라 여기서 단어가 시작될 수 있으니, 이 칸으로 가서 \"#\" 표시를 합니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         "c",
+         "o",
+         "d",
+         "e"
+        ],
+        [
+         "h",
+         "a",
+         "t",
+         "s"
+        ],
+        [
+         "i",
+         "r",
+         "n",
+         "m"
+        ],
+        [
+         "p",
+         "u",
+         "a",
+         "l"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          0,
+          0
+         ]
+        ]
+       },
+       "shade": [
+        [
+         0,
+         0
+        ]
+       ]
+      },
+      "trie": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": null
+        },
+        {
+         "id": 1,
+         "value": null
+        },
+        {
+         "id": 2,
+         "value": null
+        },
+        {
+         "id": 3,
+         "value": null
+        },
+        {
+         "id": 4,
+         "value": "code"
+        },
+        {
+         "id": 5,
+         "value": null
+        },
+        {
+         "id": 6,
+         "value": null
+        },
+        {
+         "id": 7,
+         "value": "chat"
+        },
+        {
+         "id": 8,
+         "value": null
+        },
+        {
+         "id": 9,
+         "value": null
+        },
+        {
+         "id": 10,
+         "value": null
+        },
+        {
+         "id": 11,
+         "value": "maze"
+        },
+        {
+         "id": 12,
+         "value": null
+        },
+        {
+         "id": 13,
+         "value": null
+        },
+        {
+         "id": 14,
+         "value": null
+        },
+        {
+         "id": 15,
+         "value": "nail"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "c"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "o"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "d"
+        },
+        {
+         "from": 3,
+         "to": 4,
+         "label": "e"
+        },
+        {
+         "from": 1,
+         "to": 5,
+         "label": "h"
+        },
+        {
+         "from": 5,
+         "to": 6,
+         "label": "a"
+        },
+        {
+         "from": 6,
+         "to": 7,
+         "label": "t"
+        },
+        {
+         "from": 0,
+         "to": 8,
+         "label": "m"
+        },
+        {
+         "from": 8,
+         "to": 9,
+         "label": "a"
+        },
+        {
+         "from": 9,
+         "to": 10,
+         "label": "z"
+        },
+        {
+         "from": 10,
+         "to": 11,
+         "label": "e"
+        },
+        {
+         "from": 0,
+         "to": 12,
+         "label": "n"
+        },
+        {
+         "from": 12,
+         "to": 13,
+         "label": "a"
+        },
+        {
+         "from": 13,
+         "to": 14,
+         "label": "i"
+        },
+        {
+         "from": 14,
+         "to": 15,
+         "label": "l"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         1
+        ]
+       },
+       "shade": [
+        0,
+        1
+       ]
+      },
+      "words": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "code"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "chat"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "maze"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "nail"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "board",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "to": {
+        "view": "trie",
+        "at": 1
+       },
+       "value": "c"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "From (0,0), the neighbour (1,0) holds 'h', a child of this node: step onto it.",
+      "ko": "(0,0) 칸의 이웃 (1,0) 칸에 있는 'h' 글자가 이 노드의 자식이므로 그 칸으로 갑니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         "c",
+         "o",
+         "d",
+         "e"
+        ],
+        [
+         "h",
+         "a",
+         "t",
+         "s"
+        ],
+        [
+         "i",
+         "r",
+         "n",
+         "m"
+        ],
+        [
+         "p",
+         "u",
+         "a",
+         "l"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          1,
+          0
+         ]
+        ]
+       },
+       "shade": [
+        [
+         0,
+         0
+        ],
+        [
+         1,
+         0
+        ]
+       ]
+      },
+      "trie": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": null
+        },
+        {
+         "id": 1,
+         "value": null
+        },
+        {
+         "id": 2,
+         "value": null
+        },
+        {
+         "id": 3,
+         "value": null
+        },
+        {
+         "id": 4,
+         "value": "code"
+        },
+        {
+         "id": 5,
+         "value": null
+        },
+        {
+         "id": 6,
+         "value": null
+        },
+        {
+         "id": 7,
+         "value": "chat"
+        },
+        {
+         "id": 8,
+         "value": null
+        },
+        {
+         "id": 9,
+         "value": null
+        },
+        {
+         "id": 10,
+         "value": null
+        },
+        {
+         "id": 11,
+         "value": "maze"
+        },
+        {
+         "id": 12,
+         "value": null
+        },
+        {
+         "id": 13,
+         "value": null
+        },
+        {
+         "id": 14,
+         "value": null
+        },
+        {
+         "id": 15,
+         "value": "nail"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "c"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "o"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "d"
+        },
+        {
+         "from": 3,
+         "to": 4,
+         "label": "e"
+        },
+        {
+         "from": 1,
+         "to": 5,
+         "label": "h"
+        },
+        {
+         "from": 5,
+         "to": 6,
+         "label": "a"
+        },
+        {
+         "from": 6,
+         "to": 7,
+         "label": "t"
+        },
+        {
+         "from": 0,
+         "to": 8,
+         "label": "m"
+        },
+        {
+         "from": 8,
+         "to": 9,
+         "label": "a"
+        },
+        {
+         "from": 9,
+         "to": 10,
+         "label": "z"
+        },
+        {
+         "from": 10,
+         "to": 11,
+         "label": "e"
+        },
+        {
+         "from": 0,
+         "to": 12,
+         "label": "n"
+        },
+        {
+         "from": 12,
+         "to": 13,
+         "label": "a"
+        },
+        {
+         "from": 13,
+         "to": 14,
+         "label": "i"
+        },
+        {
+         "from": 14,
+         "to": 15,
+         "label": "l"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         5
+        ]
+       },
+       "shade": [
+        0,
+        1,
+        5
+       ]
+      },
+      "words": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "code"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "chat"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "maze"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "nail"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "board",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "to": {
+        "view": "trie",
+        "at": 5
+       },
+       "value": "h"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "From (1,0), the neighbour (1,1) holds 'a', a child of this node: step onto it.",
+      "ko": "(1,0) 칸의 이웃 (1,1) 칸에 있는 'a' 글자가 이 노드의 자식이므로 그 칸으로 갑니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         "c",
+         "o",
+         "d",
+         "e"
+        ],
+        [
+         "h",
+         "a",
+         "t",
+         "s"
+        ],
+        [
+         "i",
+         "r",
+         "n",
+         "m"
+        ],
+        [
+         "p",
+         "u",
+         "a",
+         "l"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          1,
+          1
+         ]
+        ]
+       },
+       "shade": [
+        [
+         0,
+         0
+        ],
+        [
+         1,
+         0
+        ],
+        [
+         1,
+         1
+        ]
+       ]
+      },
+      "trie": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": null
+        },
+        {
+         "id": 1,
+         "value": null
+        },
+        {
+         "id": 2,
+         "value": null
+        },
+        {
+         "id": 3,
+         "value": null
+        },
+        {
+         "id": 4,
+         "value": "code"
+        },
+        {
+         "id": 5,
+         "value": null
+        },
+        {
+         "id": 6,
+         "value": null
+        },
+        {
+         "id": 7,
+         "value": "chat"
+        },
+        {
+         "id": 8,
+         "value": null
+        },
+        {
+         "id": 9,
+         "value": null
+        },
+        {
+         "id": 10,
+         "value": null
+        },
+        {
+         "id": 11,
+         "value": "maze"
+        },
+        {
+         "id": 12,
+         "value": null
+        },
+        {
+         "id": 13,
+         "value": null
+        },
+        {
+         "id": 14,
+         "value": null
+        },
+        {
+         "id": 15,
+         "value": "nail"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "c"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "o"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "d"
+        },
+        {
+         "from": 3,
+         "to": 4,
+         "label": "e"
+        },
+        {
+         "from": 1,
+         "to": 5,
+         "label": "h"
+        },
+        {
+         "from": 5,
+         "to": 6,
+         "label": "a"
+        },
+        {
+         "from": 6,
+         "to": 7,
+         "label": "t"
+        },
+        {
+         "from": 0,
+         "to": 8,
+         "label": "m"
+        },
+        {
+         "from": 8,
+         "to": 9,
+         "label": "a"
+        },
+        {
+         "from": 9,
+         "to": 10,
+         "label": "z"
+        },
+        {
+         "from": 10,
+         "to": 11,
+         "label": "e"
+        },
+        {
+         "from": 0,
+         "to": 12,
+         "label": "n"
+        },
+        {
+         "from": 12,
+         "to": 13,
+         "label": "a"
+        },
+        {
+         "from": 13,
+         "to": 14,
+         "label": "i"
+        },
+        {
+         "from": 14,
+         "to": 15,
+         "label": "l"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         6
+        ]
+       },
+       "shade": [
+        0,
+        1,
+        5,
+        6
+       ]
+      },
+      "words": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "code"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "chat"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "maze"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "nail"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "board",
+        "at": [
+         1,
+         1
+        ]
+       },
+       "to": {
+        "view": "trie",
+        "at": 6
+       },
+       "value": "a"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "From (1,1), the neighbour (1,2) holds 't', a child of this node: step onto it; its node holds \"chat\", found, and taken out of the trie so it is found once.",
+      "ko": "(1,1) 칸의 이웃 (1,2) 칸에 있는 't' 글자가 이 노드의 자식이므로 그 칸으로 갑니다. 노드에 \"chat\" 단어가 있으니 찾았고, 한 번만 찾도록 트라이에서 뺍니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         "c",
+         "o",
+         "d",
+         "e"
+        ],
+        [
+         "h",
+         "a",
+         "t",
+         "s"
+        ],
+        [
+         "i",
+         "r",
+         "n",
+         "m"
+        ],
+        [
+         "p",
+         "u",
+         "a",
+         "l"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          1,
+          2
+         ]
+        ]
+       },
+       "shade": [
+        [
+         0,
+         0
+        ],
+        [
+         1,
+         0
+        ],
+        [
+         1,
+         1
+        ],
+        [
+         1,
+         2
+        ]
+       ]
+      },
+      "trie": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": null
+        },
+        {
+         "id": 1,
+         "value": null
+        },
+        {
+         "id": 2,
+         "value": null
+        },
+        {
+         "id": 3,
+         "value": null
+        },
+        {
+         "id": 4,
+         "value": "code"
+        },
+        {
+         "id": 5,
+         "value": null
+        },
+        {
+         "id": 6,
+         "value": null
+        },
+        {
+         "id": 7,
+         "value": null
+        },
+        {
+         "id": 8,
+         "value": null
+        },
+        {
+         "id": 9,
+         "value": null
+        },
+        {
+         "id": 10,
+         "value": null
+        },
+        {
+         "id": 11,
+         "value": "maze"
+        },
+        {
+         "id": 12,
+         "value": null
+        },
+        {
+         "id": 13,
+         "value": null
+        },
+        {
+         "id": 14,
+         "value": null
+        },
+        {
+         "id": 15,
+         "value": "nail"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "c"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "o"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "d"
+        },
+        {
+         "from": 3,
+         "to": 4,
+         "label": "e"
+        },
+        {
+         "from": 1,
+         "to": 5,
+         "label": "h"
+        },
+        {
+         "from": 5,
+         "to": 6,
+         "label": "a"
+        },
+        {
+         "from": 6,
+         "to": 7,
+         "label": "t"
+        },
+        {
+         "from": 0,
+         "to": 8,
+         "label": "m"
+        },
+        {
+         "from": 8,
+         "to": 9,
+         "label": "a"
+        },
+        {
+         "from": 9,
+         "to": 10,
+         "label": "z"
+        },
+        {
+         "from": 10,
+         "to": 11,
+         "label": "e"
+        },
+        {
+         "from": 0,
+         "to": 12,
+         "label": "n"
+        },
+        {
+         "from": 12,
+         "to": 13,
+         "label": "a"
+        },
+        {
+         "from": 13,
+         "to": 14,
+         "label": "i"
+        },
+        {
+         "from": 14,
+         "to": 15,
+         "label": "l"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         7
+        ]
+       },
+       "shade": [
+        0,
+        1,
+        5,
+        6,
+        7
+       ]
+      },
+      "words": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "code"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "chat"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "maze"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "nail"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "chat"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "board",
+        "at": [
+         1,
+         2
+        ]
+       },
+       "to": {
+        "view": "trie",
+        "at": 7
+       },
+       "value": "t"
+      },
+      {
+       "from": {
+        "view": "trie",
+        "at": 7
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       },
+       "value": "chat"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The calls on 't' (1,2), 'a' (1,1) and 'h' (1,0) return in turn, each clearing its \"#\", and the walk is back at the call on 'c' (0,0); 3 trie nodes are left with no word and no child, so pruned.",
+      "ko": "'t' (1,2), 'a' (1,1), 'h' (1,0) 칸의 호출이 차례로 끝나고 \"#\" 표시를 지운 뒤 'c' (0,0) 칸의 호출로 돌아갑니다. 단어도 자식도 없이 남은 트라이 노드 3개는 잘라 냅니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         "c",
+         "o",
+         "d",
+         "e"
+        ],
+        [
+         "h",
+         "a",
+         "t",
+         "s"
+        ],
+        [
+         "i",
+         "r",
+         "n",
+         "m"
+        ],
+        [
+         "p",
+         "u",
+         "a",
+         "l"
+        ]
+       ],
+       "marks": {
+        "bad": [],
+        "dim": [
+         [
+          1,
+          2
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          1,
+          0
+         ]
+        ]
+       },
+       "shade": [
+        [
+         0,
+         0
+        ],
+        [
+         1,
+         2
+        ],
+        [
+         1,
+         1
+        ],
+        [
+         1,
+         0
+        ]
+       ]
+      },
+      "trie": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": null
+        },
+        {
+         "id": 1,
+         "value": null
+        },
+        {
+         "id": 2,
+         "value": null
+        },
+        {
+         "id": 3,
+         "value": null
+        },
+        {
+         "id": 4,
+         "value": "code"
+        },
+        {
+         "id": 5,
+         "value": null
+        },
+        {
+         "id": 6,
+         "value": null
+        },
+        {
+         "id": 7,
+         "value": null
+        },
+        {
+         "id": 8,
+         "value": null
+        },
+        {
+         "id": 9,
+         "value": null
+        },
+        {
+         "id": 10,
+         "value": null
+        },
+        {
+         "id": 11,
+         "value": "maze"
+        },
+        {
+         "id": 12,
+         "value": null
+        },
+        {
+         "id": 13,
+         "value": null
+        },
+        {
+         "id": 14,
+         "value": null
+        },
+        {
+         "id": 15,
+         "value": "nail"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "c"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "o"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "d"
+        },
+        {
+         "from": 3,
+         "to": 4,
+         "label": "e"
+        },
+        {
+         "from": 1,
+         "to": 5,
+         "label": "h"
+        },
+        {
+         "from": 5,
+         "to": 6,
+         "label": "a"
+        },
+        {
+         "from": 6,
+         "to": 7,
+         "label": "t"
+        },
+        {
+         "from": 0,
+         "to": 8,
+         "label": "m"
+        },
+        {
+         "from": 8,
+         "to": 9,
+         "label": "a"
+        },
+        {
+         "from": 9,
+         "to": 10,
+         "label": "z"
+        },
+        {
+         "from": 10,
+         "to": 11,
+         "label": "e"
+        },
+        {
+         "from": 0,
+         "to": 12,
+         "label": "n"
+        },
+        {
+         "from": 12,
+         "to": 13,
+         "label": "a"
+        },
+        {
+         "from": 13,
+         "to": 14,
+         "label": "i"
+        },
+        {
+         "from": 14,
+         "to": 15,
+         "label": "l"
+        }
+       ],
+       "nodeMarks": {
+        "bad": [
+         7,
+         6,
+         5
+        ]
+       },
+       "shade": [
+        0,
+        1,
+        7,
+        6,
+        5
+       ]
+      },
+      "words": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "code"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "chat"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "maze"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "nail"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "chat"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "trie",
+        "at": 7
+       }
+      },
+      {
+       "from": {
+        "view": "trie",
+        "at": 6
+       }
+      },
+      {
+       "from": {
+        "view": "trie",
+        "at": 5
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "From (0,0), the neighbour (0,1) holds 'o', a child of this node: step onto it.",
+      "ko": "(0,0) 칸의 이웃 (0,1) 칸에 있는 'o' 글자가 이 노드의 자식이므로 그 칸으로 갑니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         "c",
+         "o",
+         "d",
+         "e"
+        ],
+        [
+         "h",
+         "a",
+         "t",
+         "s"
+        ],
+        [
+         "i",
+         "r",
+         "n",
+         "m"
+        ],
+        [
+         "p",
+         "u",
+         "a",
+         "l"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          0,
+          1
+         ]
+        ]
+       },
+       "shade": [
+        [
+         0,
+         0
+        ],
+        [
+         0,
+         1
+        ]
+       ]
+      },
+      "trie": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": null
+        },
+        {
+         "id": 1,
+         "value": null
+        },
+        {
+         "id": 2,
+         "value": null
+        },
+        {
+         "id": 3,
+         "value": null
+        },
+        {
+         "id": 4,
+         "value": "code"
+        },
+        {
+         "id": 8,
+         "value": null
+        },
+        {
+         "id": 9,
+         "value": null
+        },
+        {
+         "id": 10,
+         "value": null
+        },
+        {
+         "id": 11,
+         "value": "maze"
+        },
+        {
+         "id": 12,
+         "value": null
+        },
+        {
+         "id": 13,
+         "value": null
+        },
+        {
+         "id": 14,
+         "value": null
+        },
+        {
+         "id": 15,
+         "value": "nail"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "c"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "o"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "d"
+        },
+        {
+         "from": 3,
+         "to": 4,
+         "label": "e"
+        },
+        {
+         "from": 0,
+         "to": 8,
+         "label": "m"
+        },
+        {
+         "from": 8,
+         "to": 9,
+         "label": "a"
+        },
+        {
+         "from": 9,
+         "to": 10,
+         "label": "z"
+        },
+        {
+         "from": 10,
+         "to": 11,
+         "label": "e"
+        },
+        {
+         "from": 0,
+         "to": 12,
+         "label": "n"
+        },
+        {
+         "from": 12,
+         "to": 13,
+         "label": "a"
+        },
+        {
+         "from": 13,
+         "to": 14,
+         "label": "i"
+        },
+        {
+         "from": 14,
+         "to": 15,
+         "label": "l"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         2
+        ]
+       },
+       "shade": [
+        0,
+        1,
+        2
+       ]
+      },
+      "words": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "code"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "chat"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "maze"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "nail"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "chat"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "board",
+        "at": [
+         0,
+         1
+        ]
+       },
+       "to": {
+        "view": "trie",
+        "at": 2
+       },
+       "value": "o"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "From (0,1), the neighbour (0,2) holds 'd', a child of this node: step onto it.",
+      "ko": "(0,1) 칸의 이웃 (0,2) 칸에 있는 'd' 글자가 이 노드의 자식이므로 그 칸으로 갑니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         "c",
+         "o",
+         "d",
+         "e"
+        ],
+        [
+         "h",
+         "a",
+         "t",
+         "s"
+        ],
+        [
+         "i",
+         "r",
+         "n",
+         "m"
+        ],
+        [
+         "p",
+         "u",
+         "a",
+         "l"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          0,
+          2
+         ]
+        ]
+       },
+       "shade": [
+        [
+         0,
+         0
+        ],
+        [
+         0,
+         1
+        ],
+        [
+         0,
+         2
+        ]
+       ]
+      },
+      "trie": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": null
+        },
+        {
+         "id": 1,
+         "value": null
+        },
+        {
+         "id": 2,
+         "value": null
+        },
+        {
+         "id": 3,
+         "value": null
+        },
+        {
+         "id": 4,
+         "value": "code"
+        },
+        {
+         "id": 8,
+         "value": null
+        },
+        {
+         "id": 9,
+         "value": null
+        },
+        {
+         "id": 10,
+         "value": null
+        },
+        {
+         "id": 11,
+         "value": "maze"
+        },
+        {
+         "id": 12,
+         "value": null
+        },
+        {
+         "id": 13,
+         "value": null
+        },
+        {
+         "id": 14,
+         "value": null
+        },
+        {
+         "id": 15,
+         "value": "nail"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "c"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "o"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "d"
+        },
+        {
+         "from": 3,
+         "to": 4,
+         "label": "e"
+        },
+        {
+         "from": 0,
+         "to": 8,
+         "label": "m"
+        },
+        {
+         "from": 8,
+         "to": 9,
+         "label": "a"
+        },
+        {
+         "from": 9,
+         "to": 10,
+         "label": "z"
+        },
+        {
+         "from": 10,
+         "to": 11,
+         "label": "e"
+        },
+        {
+         "from": 0,
+         "to": 12,
+         "label": "n"
+        },
+        {
+         "from": 12,
+         "to": 13,
+         "label": "a"
+        },
+        {
+         "from": 13,
+         "to": 14,
+         "label": "i"
+        },
+        {
+         "from": 14,
+         "to": 15,
+         "label": "l"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         3
+        ]
+       },
+       "shade": [
+        0,
+        1,
+        2,
+        3
+       ]
+      },
+      "words": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "code"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "chat"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "maze"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "nail"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "chat"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "board",
+        "at": [
+         0,
+         2
+        ]
+       },
+       "to": {
+        "view": "trie",
+        "at": 3
+       },
+       "value": "d"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "From (0,2), the neighbour (0,3) holds 'e', a child of this node: step onto it; its node holds \"code\", found, and taken out of the trie so it is found once.",
+      "ko": "(0,2) 칸의 이웃 (0,3) 칸에 있는 'e' 글자가 이 노드의 자식이므로 그 칸으로 갑니다. 노드에 \"code\" 단어가 있으니 찾았고, 한 번만 찾도록 트라이에서 뺍니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         "c",
+         "o",
+         "d",
+         "e"
+        ],
+        [
+         "h",
+         "a",
+         "t",
+         "s"
+        ],
+        [
+         "i",
+         "r",
+         "n",
+         "m"
+        ],
+        [
+         "p",
+         "u",
+         "a",
+         "l"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          0,
+          3
+         ]
+        ]
+       },
+       "shade": [
+        [
+         0,
+         0
+        ],
+        [
+         0,
+         1
+        ],
+        [
+         0,
+         2
+        ],
+        [
+         0,
+         3
+        ]
+       ]
+      },
+      "trie": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": null
+        },
+        {
+         "id": 1,
+         "value": null
+        },
+        {
+         "id": 2,
+         "value": null
+        },
+        {
+         "id": 3,
+         "value": null
+        },
+        {
+         "id": 4,
+         "value": null
+        },
+        {
+         "id": 8,
+         "value": null
+        },
+        {
+         "id": 9,
+         "value": null
+        },
+        {
+         "id": 10,
+         "value": null
+        },
+        {
+         "id": 11,
+         "value": "maze"
+        },
+        {
+         "id": 12,
+         "value": null
+        },
+        {
+         "id": 13,
+         "value": null
+        },
+        {
+         "id": 14,
+         "value": null
+        },
+        {
+         "id": 15,
+         "value": "nail"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "c"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "o"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "d"
+        },
+        {
+         "from": 3,
+         "to": 4,
+         "label": "e"
+        },
+        {
+         "from": 0,
+         "to": 8,
+         "label": "m"
+        },
+        {
+         "from": 8,
+         "to": 9,
+         "label": "a"
+        },
+        {
+         "from": 9,
+         "to": 10,
+         "label": "z"
+        },
+        {
+         "from": 10,
+         "to": 11,
+         "label": "e"
+        },
+        {
+         "from": 0,
+         "to": 12,
+         "label": "n"
+        },
+        {
+         "from": 12,
+         "to": 13,
+         "label": "a"
+        },
+        {
+         "from": 13,
+         "to": 14,
+         "label": "i"
+        },
+        {
+         "from": 14,
+         "to": 15,
+         "label": "l"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         4
+        ]
+       },
+       "shade": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ]
+      },
+      "words": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "code"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "chat"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "maze"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "nail"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "chat",
+        "code"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "board",
+        "at": [
+         0,
+         3
+        ]
+       },
+       "to": {
+        "view": "trie",
+        "at": 4
+       },
+       "value": "e"
+      },
+      {
+       "from": {
+        "view": "trie",
+        "at": 4
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       },
+       "value": "code"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The calls on 'e' (0,3), 'd' (0,2), 'o' (0,1) and 'c' (0,0) return in turn, each clearing its \"#\", and the walk is back at the scan; 4 trie nodes are left with no word and no child, so pruned.",
+      "ko": "'e' (0,3), 'd' (0,2), 'o' (0,1), 'c' (0,0) 칸의 호출이 차례로 끝나고 \"#\" 표시를 지운 뒤 칸 훑기로 돌아갑니다. 단어도 자식도 없이 남은 트라이 노드 4개는 잘라 냅니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         "c",
+         "o",
+         "d",
+         "e"
+        ],
+        [
+         "h",
+         "a",
+         "t",
+         "s"
+        ],
+        [
+         "i",
+         "r",
+         "n",
+         "m"
+        ],
+        [
+         "p",
+         "u",
+         "a",
+         "l"
+        ]
+       ],
+       "marks": {
+        "bad": [],
+        "dim": [
+         [
+          0,
+          3
+         ],
+         [
+          0,
+          2
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          0,
+          0
+         ]
+        ]
+       },
+       "shade": [
+        [
+         0,
+         3
+        ],
+        [
+         0,
+         2
+        ],
+        [
+         0,
+         1
+        ],
+        [
+         0,
+         0
+        ]
+       ]
+      },
+      "trie": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": null
+        },
+        {
+         "id": 1,
+         "value": null
+        },
+        {
+         "id": 2,
+         "value": null
+        },
+        {
+         "id": 3,
+         "value": null
+        },
+        {
+         "id": 4,
+         "value": null
+        },
+        {
+         "id": 8,
+         "value": null
+        },
+        {
+         "id": 9,
+         "value": null
+        },
+        {
+         "id": 10,
+         "value": null
+        },
+        {
+         "id": 11,
+         "value": "maze"
+        },
+        {
+         "id": 12,
+         "value": null
+        },
+        {
+         "id": 13,
+         "value": null
+        },
+        {
+         "id": 14,
+         "value": null
+        },
+        {
+         "id": 15,
+         "value": "nail"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "c"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "o"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "d"
+        },
+        {
+         "from": 3,
+         "to": 4,
+         "label": "e"
+        },
+        {
+         "from": 0,
+         "to": 8,
+         "label": "m"
+        },
+        {
+         "from": 8,
+         "to": 9,
+         "label": "a"
+        },
+        {
+         "from": 9,
+         "to": 10,
+         "label": "z"
+        },
+        {
+         "from": 10,
+         "to": 11,
+         "label": "e"
+        },
+        {
+         "from": 0,
+         "to": 12,
+         "label": "n"
+        },
+        {
+         "from": 12,
+         "to": 13,
+         "label": "a"
+        },
+        {
+         "from": 13,
+         "to": 14,
+         "label": "i"
+        },
+        {
+         "from": 14,
+         "to": 15,
+         "label": "l"
+        }
+       ],
+       "nodeMarks": {
+        "bad": [
+         4,
+         3,
+         2,
+         1
+        ]
+       },
+       "shade": [
+        0,
+        4,
+        3,
+        2,
+        1
+       ]
+      },
+      "words": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "code"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "chat"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "maze"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "nail"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "chat",
+        "code"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "trie",
+        "at": 4
+       }
+      },
+      {
+       "from": {
+        "view": "trie",
+        "at": 3
+       }
+      },
+      {
+       "from": {
+        "view": "trie",
+        "at": 2
+       }
+      },
+      {
+       "from": {
+        "view": "trie",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The scan reaches (2,2): 'n' is a child of the root, so a word may start here. Step onto it and mark it \"#\".",
+      "ko": "보드를 훑다가 (2,2) 칸에 닿았습니다. 'n' 글자가 루트의 자식이라 여기서 단어가 시작될 수 있으니, 이 칸으로 가서 \"#\" 표시를 합니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         "c",
+         "o",
+         "d",
+         "e"
+        ],
+        [
+         "h",
+         "a",
+         "t",
+         "s"
+        ],
+        [
+         "i",
+         "r",
+         "n",
+         "m"
+        ],
+        [
+         "p",
+         "u",
+         "a",
+         "l"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          2,
+          2
+         ]
+        ]
+       },
+       "shade": [
+        [
+         2,
+         2
+        ]
+       ]
+      },
+      "trie": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": null
+        },
+        {
+         "id": 8,
+         "value": null
+        },
+        {
+         "id": 9,
+         "value": null
+        },
+        {
+         "id": 10,
+         "value": null
+        },
+        {
+         "id": 11,
+         "value": "maze"
+        },
+        {
+         "id": 12,
+         "value": null
+        },
+        {
+         "id": 13,
+         "value": null
+        },
+        {
+         "id": 14,
+         "value": null
+        },
+        {
+         "id": 15,
+         "value": "nail"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 8,
+         "label": "m"
+        },
+        {
+         "from": 8,
+         "to": 9,
+         "label": "a"
+        },
+        {
+         "from": 9,
+         "to": 10,
+         "label": "z"
+        },
+        {
+         "from": 10,
+         "to": 11,
+         "label": "e"
+        },
+        {
+         "from": 0,
+         "to": 12,
+         "label": "n"
+        },
+        {
+         "from": 12,
+         "to": 13,
+         "label": "a"
+        },
+        {
+         "from": 13,
+         "to": 14,
+         "label": "i"
+        },
+        {
+         "from": 14,
+         "to": 15,
+         "label": "l"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         12
+        ]
+       },
+       "shade": [
+        0,
+        12
+       ]
+      },
+      "words": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "code"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "chat"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "maze"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "nail"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "chat",
+        "code"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "board",
+        "at": [
+         2,
+         2
+        ]
+       },
+       "to": {
+        "view": "trie",
+        "at": 12
+       },
+       "value": "n"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "From (2,2), the neighbour (3,2) holds 'a', a child of this node: step onto it.",
+      "ko": "(2,2) 칸의 이웃 (3,2) 칸에 있는 'a' 글자가 이 노드의 자식이므로 그 칸으로 갑니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         "c",
+         "o",
+         "d",
+         "e"
+        ],
+        [
+         "h",
+         "a",
+         "t",
+         "s"
+        ],
+        [
+         "i",
+         "r",
+         "n",
+         "m"
+        ],
+        [
+         "p",
+         "u",
+         "a",
+         "l"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          3,
+          2
+         ]
+        ]
+       },
+       "shade": [
+        [
+         2,
+         2
+        ],
+        [
+         3,
+         2
+        ]
+       ]
+      },
+      "trie": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": null
+        },
+        {
+         "id": 8,
+         "value": null
+        },
+        {
+         "id": 9,
+         "value": null
+        },
+        {
+         "id": 10,
+         "value": null
+        },
+        {
+         "id": 11,
+         "value": "maze"
+        },
+        {
+         "id": 12,
+         "value": null
+        },
+        {
+         "id": 13,
+         "value": null
+        },
+        {
+         "id": 14,
+         "value": null
+        },
+        {
+         "id": 15,
+         "value": "nail"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 8,
+         "label": "m"
+        },
+        {
+         "from": 8,
+         "to": 9,
+         "label": "a"
+        },
+        {
+         "from": 9,
+         "to": 10,
+         "label": "z"
+        },
+        {
+         "from": 10,
+         "to": 11,
+         "label": "e"
+        },
+        {
+         "from": 0,
+         "to": 12,
+         "label": "n"
+        },
+        {
+         "from": 12,
+         "to": 13,
+         "label": "a"
+        },
+        {
+         "from": 13,
+         "to": 14,
+         "label": "i"
+        },
+        {
+         "from": 14,
+         "to": 15,
+         "label": "l"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         13
+        ]
+       },
+       "shade": [
+        0,
+        12,
+        13
+       ]
+      },
+      "words": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "code"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "chat"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "maze"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "nail"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "chat",
+        "code"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "board",
+        "at": [
+         3,
+         2
+        ]
+       },
+       "to": {
+        "view": "trie",
+        "at": 13
+       },
+       "value": "a"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The calls on 'a' (3,2) and 'n' (2,2) return in turn (no neighbour of (3,2) holds 'i'), each clearing its \"#\", and the walk is back at the scan.",
+      "ko": "(3,2) 칸의 이웃에 'i' 글자가 없어 'a' (3,2), 'n' (2,2) 칸의 호출이 차례로 끝나고 \"#\" 표시를 지운 뒤 칸 훑기로 돌아갑니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         "c",
+         "o",
+         "d",
+         "e"
+        ],
+        [
+         "h",
+         "a",
+         "t",
+         "s"
+        ],
+        [
+         "i",
+         "r",
+         "n",
+         "m"
+        ],
+        [
+         "p",
+         "u",
+         "a",
+         "l"
+        ]
+       ],
+       "marks": {
+        "bad": [
+         [
+          3,
+          2
+         ],
+         [
+          2,
+          2
+         ]
+        ],
+        "dim": []
+       },
+       "shade": [
+        [
+         3,
+         2
+        ],
+        [
+         2,
+         2
+        ]
+       ]
+      },
+      "trie": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": null
+        },
+        {
+         "id": 8,
+         "value": null
+        },
+        {
+         "id": 9,
+         "value": null
+        },
+        {
+         "id": 10,
+         "value": null
+        },
+        {
+         "id": 11,
+         "value": "maze"
+        },
+        {
+         "id": 12,
+         "value": null
+        },
+        {
+         "id": 13,
+         "value": null
+        },
+        {
+         "id": 14,
+         "value": null
+        },
+        {
+         "id": 15,
+         "value": "nail"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 8,
+         "label": "m"
+        },
+        {
+         "from": 8,
+         "to": 9,
+         "label": "a"
+        },
+        {
+         "from": 9,
+         "to": 10,
+         "label": "z"
+        },
+        {
+         "from": 10,
+         "to": 11,
+         "label": "e"
+        },
+        {
+         "from": 0,
+         "to": 12,
+         "label": "n"
+        },
+        {
+         "from": 12,
+         "to": 13,
+         "label": "a"
+        },
+        {
+         "from": 13,
+         "to": 14,
+         "label": "i"
+        },
+        {
+         "from": 14,
+         "to": 15,
+         "label": "l"
+        }
+       ],
+       "nodeMarks": {
+        "bad": []
+       },
+       "shade": [
+        0,
+        13,
+        12
+       ]
+      },
+      "words": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "code"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "chat"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "maze"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "nail"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "chat",
+        "code"
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "The scan reaches (2,3): 'm' is a child of the root, so a word may start here. Step onto it and mark it \"#\".",
+      "ko": "보드를 훑다가 (2,3) 칸에 닿았습니다. 'm' 글자가 루트의 자식이라 여기서 단어가 시작될 수 있으니, 이 칸으로 가서 \"#\" 표시를 합니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         "c",
+         "o",
+         "d",
+         "e"
+        ],
+        [
+         "h",
+         "a",
+         "t",
+         "s"
+        ],
+        [
+         "i",
+         "r",
+         "n",
+         "m"
+        ],
+        [
+         "p",
+         "u",
+         "a",
+         "l"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          2,
+          3
+         ]
+        ]
+       },
+       "shade": [
+        [
+         2,
+         3
+        ]
+       ]
+      },
+      "trie": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": null
+        },
+        {
+         "id": 8,
+         "value": null
+        },
+        {
+         "id": 9,
+         "value": null
+        },
+        {
+         "id": 10,
+         "value": null
+        },
+        {
+         "id": 11,
+         "value": "maze"
+        },
+        {
+         "id": 12,
+         "value": null
+        },
+        {
+         "id": 13,
+         "value": null
+        },
+        {
+         "id": 14,
+         "value": null
+        },
+        {
+         "id": 15,
+         "value": "nail"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 8,
+         "label": "m"
+        },
+        {
+         "from": 8,
+         "to": 9,
+         "label": "a"
+        },
+        {
+         "from": 9,
+         "to": 10,
+         "label": "z"
+        },
+        {
+         "from": 10,
+         "to": 11,
+         "label": "e"
+        },
+        {
+         "from": 0,
+         "to": 12,
+         "label": "n"
+        },
+        {
+         "from": 12,
+         "to": 13,
+         "label": "a"
+        },
+        {
+         "from": 13,
+         "to": 14,
+         "label": "i"
+        },
+        {
+         "from": 14,
+         "to": 15,
+         "label": "l"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         8
+        ]
+       },
+       "shade": [
+        0,
+        8
+       ]
+      },
+      "words": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "code"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "chat"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "maze"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "nail"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "chat",
+        "code"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "board",
+        "at": [
+         2,
+         3
+        ]
+       },
+       "to": {
+        "view": "trie",
+        "at": 8
+       },
+       "value": "m"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The call on 'm' (2,3) returns (no neighbour of (2,3) holds 'a'), clearing its \"#\", and the walk is back at the scan.",
+      "ko": "(2,3) 칸의 이웃에 'a' 글자가 없어 'm' (2,3) 칸의 호출이 끝나고 \"#\" 표시를 지운 뒤 칸 훑기로 돌아갑니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         "c",
+         "o",
+         "d",
+         "e"
+        ],
+        [
+         "h",
+         "a",
+         "t",
+         "s"
+        ],
+        [
+         "i",
+         "r",
+         "n",
+         "m"
+        ],
+        [
+         "p",
+         "u",
+         "a",
+         "l"
+        ]
+       ],
+       "marks": {
+        "bad": [
+         [
+          2,
+          3
+         ]
+        ],
+        "dim": []
+       },
+       "shade": [
+        [
+         2,
+         3
+        ]
+       ]
+      },
+      "trie": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": null
+        },
+        {
+         "id": 8,
+         "value": null
+        },
+        {
+         "id": 9,
+         "value": null
+        },
+        {
+         "id": 10,
+         "value": null
+        },
+        {
+         "id": 11,
+         "value": "maze"
+        },
+        {
+         "id": 12,
+         "value": null
+        },
+        {
+         "id": 13,
+         "value": null
+        },
+        {
+         "id": 14,
+         "value": null
+        },
+        {
+         "id": 15,
+         "value": "nail"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 8,
+         "label": "m"
+        },
+        {
+         "from": 8,
+         "to": 9,
+         "label": "a"
+        },
+        {
+         "from": 9,
+         "to": 10,
+         "label": "z"
+        },
+        {
+         "from": 10,
+         "to": 11,
+         "label": "e"
+        },
+        {
+         "from": 0,
+         "to": 12,
+         "label": "n"
+        },
+        {
+         "from": 12,
+         "to": 13,
+         "label": "a"
+        },
+        {
+         "from": 13,
+         "to": 14,
+         "label": "i"
+        },
+        {
+         "from": 14,
+         "to": 15,
+         "label": "l"
+        }
+       ],
+       "nodeMarks": {
+        "bad": []
+       },
+       "shade": [
+        0,
+        8
+       ]
+      },
+      "words": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "code"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "chat"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "maze"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "nail"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "chat",
+        "code"
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "The scan has passed every cell: 2 words found, [\"chat\",\"code\"] sorted; \"maze\" and \"nail\" never had a path.",
+      "ko": "모든 칸을 훑어 단어 2개를 찾았고, 정렬하면 [\"chat\",\"code\"]입니다. \"maze\", \"nail\" 단어는 경로가 없었습니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         "c",
+         "o",
+         "d",
+         "e"
+        ],
+        [
+         "h",
+         "a",
+         "t",
+         "s"
+        ],
+        [
+         "i",
+         "r",
+         "n",
+         "m"
+        ],
+        [
+         "p",
+         "u",
+         "a",
+         "l"
+        ]
+       ],
+       "marks": {},
+       "shade": []
+      },
+      "trie": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": null
+        },
+        {
+         "id": 8,
+         "value": null
+        },
+        {
+         "id": 9,
+         "value": null
+        },
+        {
+         "id": 10,
+         "value": null
+        },
+        {
+         "id": 11,
+         "value": "maze"
+        },
+        {
+         "id": 12,
+         "value": null
+        },
+        {
+         "id": 13,
+         "value": null
+        },
+        {
+         "id": 14,
+         "value": null
+        },
+        {
+         "id": 15,
+         "value": "nail"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 8,
+         "label": "m"
+        },
+        {
+         "from": 8,
+         "to": 9,
+         "label": "a"
+        },
+        {
+         "from": 9,
+         "to": 10,
+         "label": "z"
+        },
+        {
+         "from": 10,
+         "to": 11,
+         "label": "e"
+        },
+        {
+         "from": 0,
+         "to": 12,
+         "label": "n"
+        },
+        {
+         "from": 12,
+         "to": 13,
+         "label": "a"
+        },
+        {
+         "from": 13,
+         "to": 14,
+         "label": "i"
+        },
+        {
+         "from": 14,
+         "to": 15,
+         "label": "l"
+        }
+       ],
+       "nodeMarks": {},
+       "shade": []
+      },
+      "words": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "code"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "chat"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "maze"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "nail"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          2,
+          0
+         ],
+         [
+          3,
+          0
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "chat",
+        "code"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1
+        ]
+       }
+      }
+     },
+     "answer": "[\"chat\",\"code\"]"
+    }
+   ],
+   "sampleInput": "[[\"c\",\"o\",\"d\",\"e\"],[\"h\",\"a\",\"t\",\"s\"],[\"i\",\"r\",\"n\",\"m\"],[\"p\",\"u\",\"a\",\"l\"]]\n[\"code\",\"chat\",\"maze\",\"nail\"]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "board = [[\"p\",\"a\"],[\"g\",\"c\"]], words = [\"pcg\"]",
+   "expected": "[]",
+   "frames": [
+    {
+     "caption": {
+      "en": "A 2×2 board and 1 word. First, every word goes into a trie, which starts as just its root.",
+      "ko": "2×2 보드와 단어 1개가 있습니다. 먼저 루트만 있는 트라이에 모든 단어를 넣습니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         "p",
+         "a"
+        ],
+        [
+         "g",
+         "c"
+        ]
+       ],
+       "marks": {},
+       "shade": []
+      },
+      "trie": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": null
+        }
+       ],
+       "edges": [],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       },
+       "shade": []
+      },
+      "words": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "pcg"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Insert \"pcg\": every letter gets a new node, and the word sits on its last node.",
+      "ko": "\"pcg\" 단어를 넣습니다. 글자마다 노드를 새로 만들고, 단어를 마지막 노드에 둡니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         "p",
+         "a"
+        ],
+        [
+         "g",
+         "c"
+        ]
+       ],
+       "marks": {},
+       "shade": []
+      },
+      "trie": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": null
+        },
+        {
+         "id": 1,
+         "value": null
+        },
+        {
+         "id": 2,
+         "value": null
+        },
+        {
+         "id": 3,
+         "value": "pcg"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "p"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "c"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "g"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         1,
+         2,
+         3
+        ],
+        "lit": []
+       },
+       "shade": []
+      },
+      "words": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "pcg"
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         [
+          0,
+          0
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "words",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "to": {
+        "view": "trie",
+        "at": 1
+       },
+       "value": "p"
+      },
+      {
+       "from": {
+        "view": "words",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "to": {
+        "view": "trie",
+        "at": 2
+       },
+       "value": "c"
+      },
+      {
+       "from": {
+        "view": "words",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "to": {
+        "view": "trie",
+        "at": 3
+       },
+       "value": "pcg"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The scan reaches (0,0): 'p' is a child of the root, so a word may start here. Step onto it and mark it \"#\".",
+      "ko": "보드를 훑다가 (0,0) 칸에 닿았습니다. 'p' 글자가 루트의 자식이라 여기서 단어가 시작될 수 있으니, 이 칸으로 가서 \"#\" 표시를 합니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         "p",
+         "a"
+        ],
+        [
+         "g",
+         "c"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          0,
+          0
+         ]
+        ]
+       },
+       "shade": [
+        [
+         0,
+         0
+        ]
+       ]
+      },
+      "trie": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": null
+        },
+        {
+         "id": 1,
+         "value": null
+        },
+        {
+         "id": 2,
+         "value": null
+        },
+        {
+         "id": 3,
+         "value": "pcg"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "p"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "c"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "g"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         1
+        ]
+       },
+       "shade": [
+        0,
+        1
+       ]
+      },
+      "words": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "pcg"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "board",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "to": {
+        "view": "trie",
+        "at": 1
+       },
+       "value": "p"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The call on 'p' (0,0) returns (no neighbour of (0,0) holds 'c'), clearing its \"#\", and the walk is back at the scan.",
+      "ko": "(0,0) 칸의 이웃에 'c' 글자가 없어 'p' (0,0) 칸의 호출이 끝나고 \"#\" 표시를 지운 뒤 칸 훑기로 돌아갑니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         "p",
+         "a"
+        ],
+        [
+         "g",
+         "c"
+        ]
+       ],
+       "marks": {
+        "bad": [
+         [
+          0,
+          0
+         ]
+        ],
+        "dim": []
+       },
+       "shade": [
+        [
+         0,
+         0
+        ]
+       ]
+      },
+      "trie": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": null
+        },
+        {
+         "id": 1,
+         "value": null
+        },
+        {
+         "id": 2,
+         "value": null
+        },
+        {
+         "id": 3,
+         "value": "pcg"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "p"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "c"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "g"
+        }
+       ],
+       "nodeMarks": {
+        "bad": []
+       },
+       "shade": [
+        0,
+        1
+       ]
+      },
+      "words": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "pcg"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "The scan has passed every cell without reaching a word's last node, so the answer is [].",
+      "ko": "모든 칸을 훑었지만 단어의 마지막 노드에 닿지 못했으므로 답은 빈 목록 []입니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         "p",
+         "a"
+        ],
+        [
+         "g",
+         "c"
+        ]
+       ],
+       "marks": {},
+       "shade": []
+      },
+      "trie": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": null
+        },
+        {
+         "id": 1,
+         "value": null
+        },
+        {
+         "id": 2,
+         "value": null
+        },
+        {
+         "id": 3,
+         "value": "pcg"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "p"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "c"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "g"
+        }
+       ],
+       "nodeMarks": {},
+       "shade": []
+      },
+      "words": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "pcg"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "answer": "[]"
+    }
+   ],
+   "sampleInput": "[[\"p\",\"a\"],[\"g\",\"c\"]]\n[\"pcg\"]"
+  }
+ ]
+}

@@ -1,0 +1,4348 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Voucher Price Combos",
+  "ko": "쿠폰 가격 조합"
+ },
+ "approach": {
+  "en": "Sort the prices and grow a basket one price at a time, each call adding only prices from the last one it added on, so a basket is built in one order only; a call stops at the first price dearer than what is left, and a basket with nothing left is an answer.",
+  "ko": "가격을 정렬하고 장바구니에 가격을 하나씩 담습니다. 호출마다 마지막으로 담은 가격부터만 담으므로 장바구니는 한 가지 순서로만 만들어집니다. 남은 금액보다 비싼 가격에서 멈추고, 남은 금액이 0인 장바구니가 답입니다."
+ },
+ "views": [
+  {
+   "id": "prices",
+   "type": "array",
+   "title": {
+    "en": "prices, sorted",
+    "ko": "prices (정렬한 가격)"
+   }
+  },
+  {
+   "id": "calls",
+   "type": "tree",
+   "title": {
+    "en": "calls (basket; tag: left to spend)",
+    "ko": "호출 (장바구니, 태그: 남은 금액)"
+   }
+  },
+  {
+   "id": "result",
+   "type": "output",
+   "title": {
+    "en": "baskets",
+    "ko": "장바구니"
+   },
+   "empty": {
+    "en": "none yet",
+    "ko": "아직 없음"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "prices = [2,4,5], voucher = 9",
+   "expected": "[[2,2,5],[4,5]]",
+   "frames": [
+    {
+     "caption": {
+      "en": "The first call starts with an empty basket and 9 to spend; it will try 2, 4, 5 in turn.",
+      "ko": "첫 호출은 빈 장바구니와 쓸 금액 9에서 시작하고, 2, 4, 5를 차례로 담아 봅니다."
+     },
+     "views": {
+      "prices": {
+       "values": [
+        2,
+        4,
+        5
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         0,
+         1,
+         2
+        ],
+        "bad": []
+       },
+       "pointers": {
+        "start": 0
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        }
+       ],
+       "edges": [],
+       "nodeMarks": {
+        "bad": [],
+        "good": [],
+        "lit": [
+         0
+        ]
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "9 left",
+          "ko": "9 남음"
+         }
+        ]
+       ],
+       "shade": [
+        0
+       ]
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "calls",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Add 2: the call for [2] has 7 left; it will try 2, 4, 5 in turn.",
+      "ko": "2를 담습니다. [2] 호출에는 7이 남았고, 2, 4, 5를 차례로 담아 봅니다."
+     },
+     "views": {
+      "prices": {
+       "values": [
+        2,
+        4,
+        5
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         0,
+         1,
+         2
+        ],
+        "bad": []
+       },
+       "pointers": {
+        "start": 0
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[2]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "+2"
+        }
+       ],
+       "nodeMarks": {
+        "bad": [],
+        "good": [],
+        "lit": [
+         1
+        ]
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "9 left",
+          "ko": "9 남음"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "7 left",
+          "ko": "7 남음"
+         }
+        ]
+       ],
+       "shade": [
+        0,
+        1
+       ]
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "prices",
+        "at": 0
+       },
+       "to": {
+        "view": "calls",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Add 2: the call for [2,2] has 5 left; it will try 2, 4, 5 in turn.",
+      "ko": "2를 담습니다. [2,2] 호출에는 5가 남았고, 2, 4, 5를 차례로 담아 봅니다."
+     },
+     "views": {
+      "prices": {
+       "values": [
+        2,
+        4,
+        5
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         0,
+         1,
+         2
+        ],
+        "bad": []
+       },
+       "pointers": {
+        "start": 0
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[2]"
+        },
+        {
+         "id": 2,
+         "value": "[2,2]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "+2"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "+2"
+        }
+       ],
+       "nodeMarks": {
+        "bad": [],
+        "good": [],
+        "lit": [
+         2
+        ]
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "9 left",
+          "ko": "9 남음"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "7 left",
+          "ko": "7 남음"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "5 left",
+          "ko": "5 남음"
+         }
+        ]
+       ],
+       "shade": [
+        0,
+        1,
+        2
+       ]
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "prices",
+        "at": 0
+       },
+       "to": {
+        "view": "calls",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Add 2: the call for [2,2,2] has 3 left; only 2 still fits, so it tries that.",
+      "ko": "2를 담습니다. [2,2,2] 호출에는 3이 남았고, 아직 담을 수 있는 가격은 2뿐이니 그것을 담아 봅니다."
+     },
+     "views": {
+      "prices": {
+       "values": [
+        2,
+        4,
+        5
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         0
+        ],
+        "bad": [
+         1,
+         2
+        ]
+       },
+       "pointers": {
+        "start": 0
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[2]"
+        },
+        {
+         "id": 2,
+         "value": "[2,2]"
+        },
+        {
+         "id": 3,
+         "value": "[2,2,2]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "+2"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "+2"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "+2"
+        }
+       ],
+       "nodeMarks": {
+        "bad": [],
+        "good": [],
+        "lit": [
+         3
+        ]
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "9 left",
+          "ko": "9 남음"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "7 left",
+          "ko": "7 남음"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "5 left",
+          "ko": "5 남음"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "3 left",
+          "ko": "3 남음"
+         }
+        ]
+       ],
+       "shade": [
+        0,
+        1,
+        2,
+        3
+       ]
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "prices",
+        "at": 0
+       },
+       "to": {
+        "view": "calls",
+        "at": 3
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Add 2: the call for [2,2,2,2] has 1 left, and every price it may add is dearer than 1: a dead end, it returns.",
+      "ko": "2를 담습니다. [2,2,2,2] 호출에는 1이 남았고, 담을 수 있는 가격이 모두 1보다 비싸 막다른 길이므로 돌아갑니다."
+     },
+     "views": {
+      "prices": {
+       "values": [
+        2,
+        4,
+        5
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [],
+        "bad": [
+         0,
+         1,
+         2
+        ]
+       },
+       "pointers": {
+        "start": 0
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[2]"
+        },
+        {
+         "id": 2,
+         "value": "[2,2]"
+        },
+        {
+         "id": 3,
+         "value": "[2,2,2]"
+        },
+        {
+         "id": 4,
+         "value": "[2,2,2,2]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "+2"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "+2"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "+2"
+        },
+        {
+         "from": 3,
+         "to": 4,
+         "label": "+2"
+        }
+       ],
+       "nodeMarks": {
+        "bad": [
+         4
+        ],
+        "good": [],
+        "lit": [
+         4
+        ]
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "9 left",
+          "ko": "9 남음"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "7 left",
+          "ko": "7 남음"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "5 left",
+          "ko": "5 남음"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "3 left",
+          "ko": "3 남음"
+         }
+        ],
+        [
+         4,
+         {
+          "en": "1 left",
+          "ko": "1 남음"
+         }
+        ]
+       ],
+       "shade": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ]
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "prices",
+        "at": 0
+       },
+       "to": {
+        "view": "calls",
+        "at": 4
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Add 4: the call for [2,2,4] has 1 left, and every price it may add is dearer than 1: a dead end, it returns.",
+      "ko": "4를 담습니다. [2,2,4] 호출에는 1이 남았고, 담을 수 있는 가격이 모두 1보다 비싸 막다른 길이므로 돌아갑니다."
+     },
+     "views": {
+      "prices": {
+       "values": [
+        2,
+        4,
+        5
+       ],
+       "marks": {
+        "dim": [
+         0
+        ],
+        "lit": [],
+        "bad": [
+         1,
+         2
+        ]
+       },
+       "pointers": {
+        "start": 1
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[2]"
+        },
+        {
+         "id": 2,
+         "value": "[2,2]"
+        },
+        {
+         "id": 3,
+         "value": "[2,2,2]"
+        },
+        {
+         "id": 4,
+         "value": "[2,2,2,2]"
+        },
+        {
+         "id": 5,
+         "value": "[2,2,4]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "+2"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "+2"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "+2"
+        },
+        {
+         "from": 3,
+         "to": 4,
+         "label": "+2"
+        },
+        {
+         "from": 2,
+         "to": 5,
+         "label": "+4"
+        }
+       ],
+       "nodeMarks": {
+        "bad": [
+         4,
+         5
+        ],
+        "good": [],
+        "lit": [
+         5
+        ]
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "9 left",
+          "ko": "9 남음"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "7 left",
+          "ko": "7 남음"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "5 left",
+          "ko": "5 남음"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "3 left",
+          "ko": "3 남음"
+         }
+        ],
+        [
+         4,
+         {
+          "en": "1 left",
+          "ko": "1 남음"
+         }
+        ],
+        [
+         5,
+         {
+          "en": "1 left",
+          "ko": "1 남음"
+         }
+        ]
+       ],
+       "shade": [
+        0,
+        1,
+        2,
+        5
+       ]
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "prices",
+        "at": 1
+       },
+       "to": {
+        "view": "calls",
+        "at": 5
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Add 5: the call for [2,2,5] has 0 left, so [2,2,5] adds up to exactly 9: it goes into the answer.",
+      "ko": "5를 담습니다. [2,2,5] 호출에는 0이 남았고, 합이 정확히 9이므로 이 장바구니를 답에 넣습니다."
+     },
+     "views": {
+      "prices": {
+       "values": [
+        2,
+        4,
+        5
+       ],
+       "marks": {},
+       "pointers": {
+        "start": 2
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[2]"
+        },
+        {
+         "id": 2,
+         "value": "[2,2]"
+        },
+        {
+         "id": 3,
+         "value": "[2,2,2]"
+        },
+        {
+         "id": 4,
+         "value": "[2,2,2,2]"
+        },
+        {
+         "id": 5,
+         "value": "[2,2,4]"
+        },
+        {
+         "id": 6,
+         "value": "[2,2,5]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "+2"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "+2"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "+2"
+        },
+        {
+         "from": 3,
+         "to": 4,
+         "label": "+2"
+        },
+        {
+         "from": 2,
+         "to": 5,
+         "label": "+4"
+        },
+        {
+         "from": 2,
+         "to": 6,
+         "label": "+5"
+        }
+       ],
+       "nodeMarks": {
+        "bad": [
+         4,
+         5
+        ],
+        "good": [
+         6
+        ],
+        "lit": [
+         6
+        ]
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "9 left",
+          "ko": "9 남음"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "7 left",
+          "ko": "7 남음"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "5 left",
+          "ko": "5 남음"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "3 left",
+          "ko": "3 남음"
+         }
+        ],
+        [
+         4,
+         {
+          "en": "1 left",
+          "ko": "1 남음"
+         }
+        ],
+        [
+         5,
+         {
+          "en": "1 left",
+          "ko": "1 남음"
+         }
+        ],
+        [
+         6,
+         {
+          "en": "0 left",
+          "ko": "0 남음"
+         }
+        ]
+       ],
+       "shade": [
+        0,
+        1,
+        2,
+        6
+       ]
+      },
+      "result": {
+       "values": [
+        "[2,2,5]"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "prices",
+        "at": 2
+       },
+       "to": {
+        "view": "calls",
+        "at": 6
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 6
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Add 4: the call for [2,4] has 3 left, and every price it may add is dearer than 3: a dead end, it returns.",
+      "ko": "4를 담습니다. [2,4] 호출에는 3이 남았고, 담을 수 있는 가격이 모두 3보다 비싸 막다른 길이므로 돌아갑니다."
+     },
+     "views": {
+      "prices": {
+       "values": [
+        2,
+        4,
+        5
+       ],
+       "marks": {
+        "dim": [
+         0
+        ],
+        "lit": [],
+        "bad": [
+         1,
+         2
+        ]
+       },
+       "pointers": {
+        "start": 1
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[2]"
+        },
+        {
+         "id": 2,
+         "value": "[2,2]"
+        },
+        {
+         "id": 3,
+         "value": "[2,2,2]"
+        },
+        {
+         "id": 4,
+         "value": "[2,2,2,2]"
+        },
+        {
+         "id": 5,
+         "value": "[2,2,4]"
+        },
+        {
+         "id": 6,
+         "value": "[2,2,5]"
+        },
+        {
+         "id": 7,
+         "value": "[2,4]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "+2"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "+2"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "+2"
+        },
+        {
+         "from": 3,
+         "to": 4,
+         "label": "+2"
+        },
+        {
+         "from": 2,
+         "to": 5,
+         "label": "+4"
+        },
+        {
+         "from": 2,
+         "to": 6,
+         "label": "+5"
+        },
+        {
+         "from": 1,
+         "to": 7,
+         "label": "+4"
+        }
+       ],
+       "nodeMarks": {
+        "bad": [
+         4,
+         5,
+         7
+        ],
+        "good": [
+         6
+        ],
+        "lit": [
+         7
+        ]
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "9 left",
+          "ko": "9 남음"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "7 left",
+          "ko": "7 남음"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "5 left",
+          "ko": "5 남음"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "3 left",
+          "ko": "3 남음"
+         }
+        ],
+        [
+         4,
+         {
+          "en": "1 left",
+          "ko": "1 남음"
+         }
+        ],
+        [
+         5,
+         {
+          "en": "1 left",
+          "ko": "1 남음"
+         }
+        ],
+        [
+         6,
+         {
+          "en": "0 left",
+          "ko": "0 남음"
+         }
+        ],
+        [
+         7,
+         {
+          "en": "3 left",
+          "ko": "3 남음"
+         }
+        ]
+       ],
+       "shade": [
+        0,
+        1,
+        7
+       ]
+      },
+      "result": {
+       "values": [
+        "[2,2,5]"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "prices",
+        "at": 1
+       },
+       "to": {
+        "view": "calls",
+        "at": 7
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Add 5: the call for [2,5] has 2 left, and every price it may add is dearer than 2: a dead end, it returns.",
+      "ko": "5를 담습니다. [2,5] 호출에는 2가 남았고, 담을 수 있는 가격이 모두 2보다 비싸 막다른 길이므로 돌아갑니다."
+     },
+     "views": {
+      "prices": {
+       "values": [
+        2,
+        4,
+        5
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1
+        ],
+        "lit": [],
+        "bad": [
+         2
+        ]
+       },
+       "pointers": {
+        "start": 2
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[2]"
+        },
+        {
+         "id": 2,
+         "value": "[2,2]"
+        },
+        {
+         "id": 3,
+         "value": "[2,2,2]"
+        },
+        {
+         "id": 4,
+         "value": "[2,2,2,2]"
+        },
+        {
+         "id": 5,
+         "value": "[2,2,4]"
+        },
+        {
+         "id": 6,
+         "value": "[2,2,5]"
+        },
+        {
+         "id": 7,
+         "value": "[2,4]"
+        },
+        {
+         "id": 8,
+         "value": "[2,5]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "+2"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "+2"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "+2"
+        },
+        {
+         "from": 3,
+         "to": 4,
+         "label": "+2"
+        },
+        {
+         "from": 2,
+         "to": 5,
+         "label": "+4"
+        },
+        {
+         "from": 2,
+         "to": 6,
+         "label": "+5"
+        },
+        {
+         "from": 1,
+         "to": 7,
+         "label": "+4"
+        },
+        {
+         "from": 1,
+         "to": 8,
+         "label": "+5"
+        }
+       ],
+       "nodeMarks": {
+        "bad": [
+         4,
+         5,
+         7,
+         8
+        ],
+        "good": [
+         6
+        ],
+        "lit": [
+         8
+        ]
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "9 left",
+          "ko": "9 남음"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "7 left",
+          "ko": "7 남음"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "5 left",
+          "ko": "5 남음"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "3 left",
+          "ko": "3 남음"
+         }
+        ],
+        [
+         4,
+         {
+          "en": "1 left",
+          "ko": "1 남음"
+         }
+        ],
+        [
+         5,
+         {
+          "en": "1 left",
+          "ko": "1 남음"
+         }
+        ],
+        [
+         6,
+         {
+          "en": "0 left",
+          "ko": "0 남음"
+         }
+        ],
+        [
+         7,
+         {
+          "en": "3 left",
+          "ko": "3 남음"
+         }
+        ],
+        [
+         8,
+         {
+          "en": "2 left",
+          "ko": "2 남음"
+         }
+        ]
+       ],
+       "shade": [
+        0,
+        1,
+        8
+       ]
+      },
+      "result": {
+       "values": [
+        "[2,2,5]"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "prices",
+        "at": 2
+       },
+       "to": {
+        "view": "calls",
+        "at": 8
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Add 4: the call for [4] has 5 left; it will try 4, 5 in turn.",
+      "ko": "4를 담습니다. [4] 호출에는 5가 남았고, 4, 5를 차례로 담아 봅니다."
+     },
+     "views": {
+      "prices": {
+       "values": [
+        2,
+        4,
+        5
+       ],
+       "marks": {
+        "dim": [
+         0
+        ],
+        "lit": [
+         1,
+         2
+        ],
+        "bad": []
+       },
+       "pointers": {
+        "start": 1
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[2]"
+        },
+        {
+         "id": 2,
+         "value": "[2,2]"
+        },
+        {
+         "id": 3,
+         "value": "[2,2,2]"
+        },
+        {
+         "id": 4,
+         "value": "[2,2,2,2]"
+        },
+        {
+         "id": 5,
+         "value": "[2,2,4]"
+        },
+        {
+         "id": 6,
+         "value": "[2,2,5]"
+        },
+        {
+         "id": 7,
+         "value": "[2,4]"
+        },
+        {
+         "id": 8,
+         "value": "[2,5]"
+        },
+        {
+         "id": 9,
+         "value": "[4]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "+2"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "+2"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "+2"
+        },
+        {
+         "from": 3,
+         "to": 4,
+         "label": "+2"
+        },
+        {
+         "from": 2,
+         "to": 5,
+         "label": "+4"
+        },
+        {
+         "from": 2,
+         "to": 6,
+         "label": "+5"
+        },
+        {
+         "from": 1,
+         "to": 7,
+         "label": "+4"
+        },
+        {
+         "from": 1,
+         "to": 8,
+         "label": "+5"
+        },
+        {
+         "from": 0,
+         "to": 9,
+         "label": "+4"
+        }
+       ],
+       "nodeMarks": {
+        "bad": [
+         4,
+         5,
+         7,
+         8
+        ],
+        "good": [
+         6
+        ],
+        "lit": [
+         9
+        ]
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "9 left",
+          "ko": "9 남음"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "7 left",
+          "ko": "7 남음"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "5 left",
+          "ko": "5 남음"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "3 left",
+          "ko": "3 남음"
+         }
+        ],
+        [
+         4,
+         {
+          "en": "1 left",
+          "ko": "1 남음"
+         }
+        ],
+        [
+         5,
+         {
+          "en": "1 left",
+          "ko": "1 남음"
+         }
+        ],
+        [
+         6,
+         {
+          "en": "0 left",
+          "ko": "0 남음"
+         }
+        ],
+        [
+         7,
+         {
+          "en": "3 left",
+          "ko": "3 남음"
+         }
+        ],
+        [
+         8,
+         {
+          "en": "2 left",
+          "ko": "2 남음"
+         }
+        ],
+        [
+         9,
+         {
+          "en": "5 left",
+          "ko": "5 남음"
+         }
+        ]
+       ],
+       "shade": [
+        0,
+        9
+       ]
+      },
+      "result": {
+       "values": [
+        "[2,2,5]"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "prices",
+        "at": 1
+       },
+       "to": {
+        "view": "calls",
+        "at": 9
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Add 4: the call for [4,4] has 1 left, and every price it may add is dearer than 1: a dead end, it returns.",
+      "ko": "4를 담습니다. [4,4] 호출에는 1이 남았고, 담을 수 있는 가격이 모두 1보다 비싸 막다른 길이므로 돌아갑니다."
+     },
+     "views": {
+      "prices": {
+       "values": [
+        2,
+        4,
+        5
+       ],
+       "marks": {
+        "dim": [
+         0
+        ],
+        "lit": [],
+        "bad": [
+         1,
+         2
+        ]
+       },
+       "pointers": {
+        "start": 1
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[2]"
+        },
+        {
+         "id": 2,
+         "value": "[2,2]"
+        },
+        {
+         "id": 3,
+         "value": "[2,2,2]"
+        },
+        {
+         "id": 4,
+         "value": "[2,2,2,2]"
+        },
+        {
+         "id": 5,
+         "value": "[2,2,4]"
+        },
+        {
+         "id": 6,
+         "value": "[2,2,5]"
+        },
+        {
+         "id": 7,
+         "value": "[2,4]"
+        },
+        {
+         "id": 8,
+         "value": "[2,5]"
+        },
+        {
+         "id": 9,
+         "value": "[4]"
+        },
+        {
+         "id": 10,
+         "value": "[4,4]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "+2"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "+2"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "+2"
+        },
+        {
+         "from": 3,
+         "to": 4,
+         "label": "+2"
+        },
+        {
+         "from": 2,
+         "to": 5,
+         "label": "+4"
+        },
+        {
+         "from": 2,
+         "to": 6,
+         "label": "+5"
+        },
+        {
+         "from": 1,
+         "to": 7,
+         "label": "+4"
+        },
+        {
+         "from": 1,
+         "to": 8,
+         "label": "+5"
+        },
+        {
+         "from": 0,
+         "to": 9,
+         "label": "+4"
+        },
+        {
+         "from": 9,
+         "to": 10,
+         "label": "+4"
+        }
+       ],
+       "nodeMarks": {
+        "bad": [
+         4,
+         5,
+         7,
+         8,
+         10
+        ],
+        "good": [
+         6
+        ],
+        "lit": [
+         10
+        ]
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "9 left",
+          "ko": "9 남음"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "7 left",
+          "ko": "7 남음"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "5 left",
+          "ko": "5 남음"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "3 left",
+          "ko": "3 남음"
+         }
+        ],
+        [
+         4,
+         {
+          "en": "1 left",
+          "ko": "1 남음"
+         }
+        ],
+        [
+         5,
+         {
+          "en": "1 left",
+          "ko": "1 남음"
+         }
+        ],
+        [
+         6,
+         {
+          "en": "0 left",
+          "ko": "0 남음"
+         }
+        ],
+        [
+         7,
+         {
+          "en": "3 left",
+          "ko": "3 남음"
+         }
+        ],
+        [
+         8,
+         {
+          "en": "2 left",
+          "ko": "2 남음"
+         }
+        ],
+        [
+         9,
+         {
+          "en": "5 left",
+          "ko": "5 남음"
+         }
+        ],
+        [
+         10,
+         {
+          "en": "1 left",
+          "ko": "1 남음"
+         }
+        ]
+       ],
+       "shade": [
+        0,
+        9,
+        10
+       ]
+      },
+      "result": {
+       "values": [
+        "[2,2,5]"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "prices",
+        "at": 1
+       },
+       "to": {
+        "view": "calls",
+        "at": 10
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Add 5: the call for [4,5] has 0 left, so [4,5] adds up to exactly 9: it goes into the answer.",
+      "ko": "5를 담습니다. [4,5] 호출에는 0이 남았고, 합이 정확히 9이므로 이 장바구니를 답에 넣습니다."
+     },
+     "views": {
+      "prices": {
+       "values": [
+        2,
+        4,
+        5
+       ],
+       "marks": {},
+       "pointers": {
+        "start": 2
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[2]"
+        },
+        {
+         "id": 2,
+         "value": "[2,2]"
+        },
+        {
+         "id": 3,
+         "value": "[2,2,2]"
+        },
+        {
+         "id": 4,
+         "value": "[2,2,2,2]"
+        },
+        {
+         "id": 5,
+         "value": "[2,2,4]"
+        },
+        {
+         "id": 6,
+         "value": "[2,2,5]"
+        },
+        {
+         "id": 7,
+         "value": "[2,4]"
+        },
+        {
+         "id": 8,
+         "value": "[2,5]"
+        },
+        {
+         "id": 9,
+         "value": "[4]"
+        },
+        {
+         "id": 10,
+         "value": "[4,4]"
+        },
+        {
+         "id": 11,
+         "value": "[4,5]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "+2"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "+2"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "+2"
+        },
+        {
+         "from": 3,
+         "to": 4,
+         "label": "+2"
+        },
+        {
+         "from": 2,
+         "to": 5,
+         "label": "+4"
+        },
+        {
+         "from": 2,
+         "to": 6,
+         "label": "+5"
+        },
+        {
+         "from": 1,
+         "to": 7,
+         "label": "+4"
+        },
+        {
+         "from": 1,
+         "to": 8,
+         "label": "+5"
+        },
+        {
+         "from": 0,
+         "to": 9,
+         "label": "+4"
+        },
+        {
+         "from": 9,
+         "to": 10,
+         "label": "+4"
+        },
+        {
+         "from": 9,
+         "to": 11,
+         "label": "+5"
+        }
+       ],
+       "nodeMarks": {
+        "bad": [
+         4,
+         5,
+         7,
+         8,
+         10
+        ],
+        "good": [
+         6,
+         11
+        ],
+        "lit": [
+         11
+        ]
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "9 left",
+          "ko": "9 남음"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "7 left",
+          "ko": "7 남음"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "5 left",
+          "ko": "5 남음"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "3 left",
+          "ko": "3 남음"
+         }
+        ],
+        [
+         4,
+         {
+          "en": "1 left",
+          "ko": "1 남음"
+         }
+        ],
+        [
+         5,
+         {
+          "en": "1 left",
+          "ko": "1 남음"
+         }
+        ],
+        [
+         6,
+         {
+          "en": "0 left",
+          "ko": "0 남음"
+         }
+        ],
+        [
+         7,
+         {
+          "en": "3 left",
+          "ko": "3 남음"
+         }
+        ],
+        [
+         8,
+         {
+          "en": "2 left",
+          "ko": "2 남음"
+         }
+        ],
+        [
+         9,
+         {
+          "en": "5 left",
+          "ko": "5 남음"
+         }
+        ],
+        [
+         10,
+         {
+          "en": "1 left",
+          "ko": "1 남음"
+         }
+        ],
+        [
+         11,
+         {
+          "en": "0 left",
+          "ko": "0 남음"
+         }
+        ]
+       ],
+       "shade": [
+        0,
+        9,
+        11
+       ]
+      },
+      "result": {
+       "values": [
+        "[2,2,5]",
+        "[4,5]"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "prices",
+        "at": 2
+       },
+       "to": {
+        "view": "calls",
+        "at": 11
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 11
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Add 5: the call for [5] has 4 left, and every price it may add is dearer than 4: a dead end, it returns.",
+      "ko": "5를 담습니다. [5] 호출에는 4가 남았고, 담을 수 있는 가격이 모두 4보다 비싸 막다른 길이므로 돌아갑니다."
+     },
+     "views": {
+      "prices": {
+       "values": [
+        2,
+        4,
+        5
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1
+        ],
+        "lit": [],
+        "bad": [
+         2
+        ]
+       },
+       "pointers": {
+        "start": 2
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[2]"
+        },
+        {
+         "id": 2,
+         "value": "[2,2]"
+        },
+        {
+         "id": 3,
+         "value": "[2,2,2]"
+        },
+        {
+         "id": 4,
+         "value": "[2,2,2,2]"
+        },
+        {
+         "id": 5,
+         "value": "[2,2,4]"
+        },
+        {
+         "id": 6,
+         "value": "[2,2,5]"
+        },
+        {
+         "id": 7,
+         "value": "[2,4]"
+        },
+        {
+         "id": 8,
+         "value": "[2,5]"
+        },
+        {
+         "id": 9,
+         "value": "[4]"
+        },
+        {
+         "id": 10,
+         "value": "[4,4]"
+        },
+        {
+         "id": 11,
+         "value": "[4,5]"
+        },
+        {
+         "id": 12,
+         "value": "[5]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "+2"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "+2"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "+2"
+        },
+        {
+         "from": 3,
+         "to": 4,
+         "label": "+2"
+        },
+        {
+         "from": 2,
+         "to": 5,
+         "label": "+4"
+        },
+        {
+         "from": 2,
+         "to": 6,
+         "label": "+5"
+        },
+        {
+         "from": 1,
+         "to": 7,
+         "label": "+4"
+        },
+        {
+         "from": 1,
+         "to": 8,
+         "label": "+5"
+        },
+        {
+         "from": 0,
+         "to": 9,
+         "label": "+4"
+        },
+        {
+         "from": 9,
+         "to": 10,
+         "label": "+4"
+        },
+        {
+         "from": 9,
+         "to": 11,
+         "label": "+5"
+        },
+        {
+         "from": 0,
+         "to": 12,
+         "label": "+5"
+        }
+       ],
+       "nodeMarks": {
+        "bad": [
+         4,
+         5,
+         7,
+         8,
+         10,
+         12
+        ],
+        "good": [
+         6,
+         11
+        ],
+        "lit": [
+         12
+        ]
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "9 left",
+          "ko": "9 남음"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "7 left",
+          "ko": "7 남음"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "5 left",
+          "ko": "5 남음"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "3 left",
+          "ko": "3 남음"
+         }
+        ],
+        [
+         4,
+         {
+          "en": "1 left",
+          "ko": "1 남음"
+         }
+        ],
+        [
+         5,
+         {
+          "en": "1 left",
+          "ko": "1 남음"
+         }
+        ],
+        [
+         6,
+         {
+          "en": "0 left",
+          "ko": "0 남음"
+         }
+        ],
+        [
+         7,
+         {
+          "en": "3 left",
+          "ko": "3 남음"
+         }
+        ],
+        [
+         8,
+         {
+          "en": "2 left",
+          "ko": "2 남음"
+         }
+        ],
+        [
+         9,
+         {
+          "en": "5 left",
+          "ko": "5 남음"
+         }
+        ],
+        [
+         10,
+         {
+          "en": "1 left",
+          "ko": "1 남음"
+         }
+        ],
+        [
+         11,
+         {
+          "en": "0 left",
+          "ko": "0 남음"
+         }
+        ],
+        [
+         12,
+         {
+          "en": "4 left",
+          "ko": "4 남음"
+         }
+        ]
+       ],
+       "shade": [
+        0,
+        12
+       ]
+      },
+      "result": {
+       "values": [
+        "[2,2,5]",
+        "[4,5]"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "prices",
+        "at": 2
+       },
+       "to": {
+        "view": "calls",
+        "at": 12
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every call has returned: 13 calls, and 2 baskets add up to exactly 9.",
+      "ko": "모든 호출이 끝났습니다. 호출 13번 가운데 합이 정확히 9인 장바구니는 2개입니다."
+     },
+     "views": {
+      "prices": {
+       "values": [
+        2,
+        4,
+        5
+       ],
+       "marks": {},
+       "pointers": {}
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[2]"
+        },
+        {
+         "id": 2,
+         "value": "[2,2]"
+        },
+        {
+         "id": 3,
+         "value": "[2,2,2]"
+        },
+        {
+         "id": 4,
+         "value": "[2,2,2,2]"
+        },
+        {
+         "id": 5,
+         "value": "[2,2,4]"
+        },
+        {
+         "id": 6,
+         "value": "[2,2,5]"
+        },
+        {
+         "id": 7,
+         "value": "[2,4]"
+        },
+        {
+         "id": 8,
+         "value": "[2,5]"
+        },
+        {
+         "id": 9,
+         "value": "[4]"
+        },
+        {
+         "id": 10,
+         "value": "[4,4]"
+        },
+        {
+         "id": 11,
+         "value": "[4,5]"
+        },
+        {
+         "id": 12,
+         "value": "[5]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "+2"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "+2"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "+2"
+        },
+        {
+         "from": 3,
+         "to": 4,
+         "label": "+2"
+        },
+        {
+         "from": 2,
+         "to": 5,
+         "label": "+4"
+        },
+        {
+         "from": 2,
+         "to": 6,
+         "label": "+5"
+        },
+        {
+         "from": 1,
+         "to": 7,
+         "label": "+4"
+        },
+        {
+         "from": 1,
+         "to": 8,
+         "label": "+5"
+        },
+        {
+         "from": 0,
+         "to": 9,
+         "label": "+4"
+        },
+        {
+         "from": 9,
+         "to": 10,
+         "label": "+4"
+        },
+        {
+         "from": 9,
+         "to": 11,
+         "label": "+5"
+        },
+        {
+         "from": 0,
+         "to": 12,
+         "label": "+5"
+        }
+       ],
+       "nodeMarks": {
+        "path": [
+         6,
+         11
+        ],
+        "dim": [
+         4,
+         5,
+         7,
+         8,
+         10,
+         12
+        ]
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "9 left",
+          "ko": "9 남음"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "7 left",
+          "ko": "7 남음"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "5 left",
+          "ko": "5 남음"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "3 left",
+          "ko": "3 남음"
+         }
+        ],
+        [
+         4,
+         {
+          "en": "1 left",
+          "ko": "1 남음"
+         }
+        ],
+        [
+         5,
+         {
+          "en": "1 left",
+          "ko": "1 남음"
+         }
+        ],
+        [
+         6,
+         {
+          "en": "0 left",
+          "ko": "0 남음"
+         }
+        ],
+        [
+         7,
+         {
+          "en": "3 left",
+          "ko": "3 남음"
+         }
+        ],
+        [
+         8,
+         {
+          "en": "2 left",
+          "ko": "2 남음"
+         }
+        ],
+        [
+         9,
+         {
+          "en": "5 left",
+          "ko": "5 남음"
+         }
+        ],
+        [
+         10,
+         {
+          "en": "1 left",
+          "ko": "1 남음"
+         }
+        ],
+        [
+         11,
+         {
+          "en": "0 left",
+          "ko": "0 남음"
+         }
+        ],
+        [
+         12,
+         {
+          "en": "4 left",
+          "ko": "4 남음"
+         }
+        ]
+       ],
+       "shade": []
+      },
+      "result": {
+       "values": [
+        "[2,2,5]",
+        "[4,5]"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1
+        ]
+       }
+      }
+     },
+     "answer": "[[2,2,5],[4,5]]"
+    }
+   ],
+   "sampleInput": "[2,4,5]\n9"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "prices = [3,4,7], voucher = 10",
+   "expected": "[[3,3,4],[3,7]]",
+   "frames": [
+    {
+     "caption": {
+      "en": "The first call starts with an empty basket and 10 to spend; it will try 3, 4, 7 in turn.",
+      "ko": "첫 호출은 빈 장바구니와 쓸 금액 10에서 시작하고, 3, 4, 7을 차례로 담아 봅니다."
+     },
+     "views": {
+      "prices": {
+       "values": [
+        3,
+        4,
+        7
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         0,
+         1,
+         2
+        ],
+        "bad": []
+       },
+       "pointers": {
+        "start": 0
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        }
+       ],
+       "edges": [],
+       "nodeMarks": {
+        "bad": [],
+        "good": [],
+        "lit": [
+         0
+        ]
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "10 left",
+          "ko": "10 남음"
+         }
+        ]
+       ],
+       "shade": [
+        0
+       ]
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "calls",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Add 3: the call for [3] has 7 left; it will try 3, 4, 7 in turn.",
+      "ko": "3을 담습니다. [3] 호출에는 7이 남았고, 3, 4, 7을 차례로 담아 봅니다."
+     },
+     "views": {
+      "prices": {
+       "values": [
+        3,
+        4,
+        7
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         0,
+         1,
+         2
+        ],
+        "bad": []
+       },
+       "pointers": {
+        "start": 0
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[3]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "+3"
+        }
+       ],
+       "nodeMarks": {
+        "bad": [],
+        "good": [],
+        "lit": [
+         1
+        ]
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "10 left",
+          "ko": "10 남음"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "7 left",
+          "ko": "7 남음"
+         }
+        ]
+       ],
+       "shade": [
+        0,
+        1
+       ]
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "prices",
+        "at": 0
+       },
+       "to": {
+        "view": "calls",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Add 3: the call for [3,3] has 4 left; it will try 3, 4 in turn.",
+      "ko": "3을 담습니다. [3,3] 호출에는 4가 남았고, 3, 4를 차례로 담아 봅니다."
+     },
+     "views": {
+      "prices": {
+       "values": [
+        3,
+        4,
+        7
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         0,
+         1
+        ],
+        "bad": [
+         2
+        ]
+       },
+       "pointers": {
+        "start": 0
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[3]"
+        },
+        {
+         "id": 2,
+         "value": "[3,3]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "+3"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "+3"
+        }
+       ],
+       "nodeMarks": {
+        "bad": [],
+        "good": [],
+        "lit": [
+         2
+        ]
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "10 left",
+          "ko": "10 남음"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "7 left",
+          "ko": "7 남음"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "4 left",
+          "ko": "4 남음"
+         }
+        ]
+       ],
+       "shade": [
+        0,
+        1,
+        2
+       ]
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "prices",
+        "at": 0
+       },
+       "to": {
+        "view": "calls",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Add 3: the call for [3,3,3] has 1 left, and every price it may add is dearer than 1: a dead end, it returns.",
+      "ko": "3을 담습니다. [3,3,3] 호출에는 1이 남았고, 담을 수 있는 가격이 모두 1보다 비싸 막다른 길이므로 돌아갑니다."
+     },
+     "views": {
+      "prices": {
+       "values": [
+        3,
+        4,
+        7
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [],
+        "bad": [
+         0,
+         1,
+         2
+        ]
+       },
+       "pointers": {
+        "start": 0
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[3]"
+        },
+        {
+         "id": 2,
+         "value": "[3,3]"
+        },
+        {
+         "id": 3,
+         "value": "[3,3,3]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "+3"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "+3"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "+3"
+        }
+       ],
+       "nodeMarks": {
+        "bad": [
+         3
+        ],
+        "good": [],
+        "lit": [
+         3
+        ]
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "10 left",
+          "ko": "10 남음"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "7 left",
+          "ko": "7 남음"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "4 left",
+          "ko": "4 남음"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "1 left",
+          "ko": "1 남음"
+         }
+        ]
+       ],
+       "shade": [
+        0,
+        1,
+        2,
+        3
+       ]
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "prices",
+        "at": 0
+       },
+       "to": {
+        "view": "calls",
+        "at": 3
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Add 4: the call for [3,3,4] has 0 left, so [3,3,4] adds up to exactly 10: it goes into the answer.",
+      "ko": "4를 담습니다. [3,3,4] 호출에는 0이 남았고, 합이 정확히 10이므로 이 장바구니를 답에 넣습니다."
+     },
+     "views": {
+      "prices": {
+       "values": [
+        3,
+        4,
+        7
+       ],
+       "marks": {},
+       "pointers": {
+        "start": 1
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[3]"
+        },
+        {
+         "id": 2,
+         "value": "[3,3]"
+        },
+        {
+         "id": 3,
+         "value": "[3,3,3]"
+        },
+        {
+         "id": 4,
+         "value": "[3,3,4]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "+3"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "+3"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "+3"
+        },
+        {
+         "from": 2,
+         "to": 4,
+         "label": "+4"
+        }
+       ],
+       "nodeMarks": {
+        "bad": [
+         3
+        ],
+        "good": [
+         4
+        ],
+        "lit": [
+         4
+        ]
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "10 left",
+          "ko": "10 남음"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "7 left",
+          "ko": "7 남음"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "4 left",
+          "ko": "4 남음"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "1 left",
+          "ko": "1 남음"
+         }
+        ],
+        [
+         4,
+         {
+          "en": "0 left",
+          "ko": "0 남음"
+         }
+        ]
+       ],
+       "shade": [
+        0,
+        1,
+        2,
+        4
+       ]
+      },
+      "result": {
+       "values": [
+        "[3,3,4]"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "prices",
+        "at": 1
+       },
+       "to": {
+        "view": "calls",
+        "at": 4
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 4
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Add 4: the call for [3,4] has 3 left, and every price it may add is dearer than 3: a dead end, it returns.",
+      "ko": "4를 담습니다. [3,4] 호출에는 3이 남았고, 담을 수 있는 가격이 모두 3보다 비싸 막다른 길이므로 돌아갑니다."
+     },
+     "views": {
+      "prices": {
+       "values": [
+        3,
+        4,
+        7
+       ],
+       "marks": {
+        "dim": [
+         0
+        ],
+        "lit": [],
+        "bad": [
+         1,
+         2
+        ]
+       },
+       "pointers": {
+        "start": 1
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[3]"
+        },
+        {
+         "id": 2,
+         "value": "[3,3]"
+        },
+        {
+         "id": 3,
+         "value": "[3,3,3]"
+        },
+        {
+         "id": 4,
+         "value": "[3,3,4]"
+        },
+        {
+         "id": 5,
+         "value": "[3,4]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "+3"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "+3"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "+3"
+        },
+        {
+         "from": 2,
+         "to": 4,
+         "label": "+4"
+        },
+        {
+         "from": 1,
+         "to": 5,
+         "label": "+4"
+        }
+       ],
+       "nodeMarks": {
+        "bad": [
+         3,
+         5
+        ],
+        "good": [
+         4
+        ],
+        "lit": [
+         5
+        ]
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "10 left",
+          "ko": "10 남음"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "7 left",
+          "ko": "7 남음"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "4 left",
+          "ko": "4 남음"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "1 left",
+          "ko": "1 남음"
+         }
+        ],
+        [
+         4,
+         {
+          "en": "0 left",
+          "ko": "0 남음"
+         }
+        ],
+        [
+         5,
+         {
+          "en": "3 left",
+          "ko": "3 남음"
+         }
+        ]
+       ],
+       "shade": [
+        0,
+        1,
+        5
+       ]
+      },
+      "result": {
+       "values": [
+        "[3,3,4]"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "prices",
+        "at": 1
+       },
+       "to": {
+        "view": "calls",
+        "at": 5
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Add 7: the call for [3,7] has 0 left, so [3,7] adds up to exactly 10: it goes into the answer.",
+      "ko": "7을 담습니다. [3,7] 호출에는 0이 남았고, 합이 정확히 10이므로 이 장바구니를 답에 넣습니다."
+     },
+     "views": {
+      "prices": {
+       "values": [
+        3,
+        4,
+        7
+       ],
+       "marks": {},
+       "pointers": {
+        "start": 2
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[3]"
+        },
+        {
+         "id": 2,
+         "value": "[3,3]"
+        },
+        {
+         "id": 3,
+         "value": "[3,3,3]"
+        },
+        {
+         "id": 4,
+         "value": "[3,3,4]"
+        },
+        {
+         "id": 5,
+         "value": "[3,4]"
+        },
+        {
+         "id": 6,
+         "value": "[3,7]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "+3"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "+3"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "+3"
+        },
+        {
+         "from": 2,
+         "to": 4,
+         "label": "+4"
+        },
+        {
+         "from": 1,
+         "to": 5,
+         "label": "+4"
+        },
+        {
+         "from": 1,
+         "to": 6,
+         "label": "+7"
+        }
+       ],
+       "nodeMarks": {
+        "bad": [
+         3,
+         5
+        ],
+        "good": [
+         4,
+         6
+        ],
+        "lit": [
+         6
+        ]
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "10 left",
+          "ko": "10 남음"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "7 left",
+          "ko": "7 남음"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "4 left",
+          "ko": "4 남음"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "1 left",
+          "ko": "1 남음"
+         }
+        ],
+        [
+         4,
+         {
+          "en": "0 left",
+          "ko": "0 남음"
+         }
+        ],
+        [
+         5,
+         {
+          "en": "3 left",
+          "ko": "3 남음"
+         }
+        ],
+        [
+         6,
+         {
+          "en": "0 left",
+          "ko": "0 남음"
+         }
+        ]
+       ],
+       "shade": [
+        0,
+        1,
+        6
+       ]
+      },
+      "result": {
+       "values": [
+        "[3,3,4]",
+        "[3,7]"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "prices",
+        "at": 2
+       },
+       "to": {
+        "view": "calls",
+        "at": 6
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 6
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Add 4: the call for [4] has 6 left; only 4 still fits, so it tries that.",
+      "ko": "4를 담습니다. [4] 호출에는 6이 남았고, 아직 담을 수 있는 가격은 4뿐이니 그것을 담아 봅니다."
+     },
+     "views": {
+      "prices": {
+       "values": [
+        3,
+        4,
+        7
+       ],
+       "marks": {
+        "dim": [
+         0
+        ],
+        "lit": [
+         1
+        ],
+        "bad": [
+         2
+        ]
+       },
+       "pointers": {
+        "start": 1
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[3]"
+        },
+        {
+         "id": 2,
+         "value": "[3,3]"
+        },
+        {
+         "id": 3,
+         "value": "[3,3,3]"
+        },
+        {
+         "id": 4,
+         "value": "[3,3,4]"
+        },
+        {
+         "id": 5,
+         "value": "[3,4]"
+        },
+        {
+         "id": 6,
+         "value": "[3,7]"
+        },
+        {
+         "id": 7,
+         "value": "[4]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "+3"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "+3"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "+3"
+        },
+        {
+         "from": 2,
+         "to": 4,
+         "label": "+4"
+        },
+        {
+         "from": 1,
+         "to": 5,
+         "label": "+4"
+        },
+        {
+         "from": 1,
+         "to": 6,
+         "label": "+7"
+        },
+        {
+         "from": 0,
+         "to": 7,
+         "label": "+4"
+        }
+       ],
+       "nodeMarks": {
+        "bad": [
+         3,
+         5
+        ],
+        "good": [
+         4,
+         6
+        ],
+        "lit": [
+         7
+        ]
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "10 left",
+          "ko": "10 남음"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "7 left",
+          "ko": "7 남음"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "4 left",
+          "ko": "4 남음"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "1 left",
+          "ko": "1 남음"
+         }
+        ],
+        [
+         4,
+         {
+          "en": "0 left",
+          "ko": "0 남음"
+         }
+        ],
+        [
+         5,
+         {
+          "en": "3 left",
+          "ko": "3 남음"
+         }
+        ],
+        [
+         6,
+         {
+          "en": "0 left",
+          "ko": "0 남음"
+         }
+        ],
+        [
+         7,
+         {
+          "en": "6 left",
+          "ko": "6 남음"
+         }
+        ]
+       ],
+       "shade": [
+        0,
+        7
+       ]
+      },
+      "result": {
+       "values": [
+        "[3,3,4]",
+        "[3,7]"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "prices",
+        "at": 1
+       },
+       "to": {
+        "view": "calls",
+        "at": 7
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Add 4: the call for [4,4] has 2 left, and every price it may add is dearer than 2: a dead end, it returns.",
+      "ko": "4를 담습니다. [4,4] 호출에는 2가 남았고, 담을 수 있는 가격이 모두 2보다 비싸 막다른 길이므로 돌아갑니다."
+     },
+     "views": {
+      "prices": {
+       "values": [
+        3,
+        4,
+        7
+       ],
+       "marks": {
+        "dim": [
+         0
+        ],
+        "lit": [],
+        "bad": [
+         1,
+         2
+        ]
+       },
+       "pointers": {
+        "start": 1
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[3]"
+        },
+        {
+         "id": 2,
+         "value": "[3,3]"
+        },
+        {
+         "id": 3,
+         "value": "[3,3,3]"
+        },
+        {
+         "id": 4,
+         "value": "[3,3,4]"
+        },
+        {
+         "id": 5,
+         "value": "[3,4]"
+        },
+        {
+         "id": 6,
+         "value": "[3,7]"
+        },
+        {
+         "id": 7,
+         "value": "[4]"
+        },
+        {
+         "id": 8,
+         "value": "[4,4]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "+3"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "+3"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "+3"
+        },
+        {
+         "from": 2,
+         "to": 4,
+         "label": "+4"
+        },
+        {
+         "from": 1,
+         "to": 5,
+         "label": "+4"
+        },
+        {
+         "from": 1,
+         "to": 6,
+         "label": "+7"
+        },
+        {
+         "from": 0,
+         "to": 7,
+         "label": "+4"
+        },
+        {
+         "from": 7,
+         "to": 8,
+         "label": "+4"
+        }
+       ],
+       "nodeMarks": {
+        "bad": [
+         3,
+         5,
+         8
+        ],
+        "good": [
+         4,
+         6
+        ],
+        "lit": [
+         8
+        ]
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "10 left",
+          "ko": "10 남음"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "7 left",
+          "ko": "7 남음"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "4 left",
+          "ko": "4 남음"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "1 left",
+          "ko": "1 남음"
+         }
+        ],
+        [
+         4,
+         {
+          "en": "0 left",
+          "ko": "0 남음"
+         }
+        ],
+        [
+         5,
+         {
+          "en": "3 left",
+          "ko": "3 남음"
+         }
+        ],
+        [
+         6,
+         {
+          "en": "0 left",
+          "ko": "0 남음"
+         }
+        ],
+        [
+         7,
+         {
+          "en": "6 left",
+          "ko": "6 남음"
+         }
+        ],
+        [
+         8,
+         {
+          "en": "2 left",
+          "ko": "2 남음"
+         }
+        ]
+       ],
+       "shade": [
+        0,
+        7,
+        8
+       ]
+      },
+      "result": {
+       "values": [
+        "[3,3,4]",
+        "[3,7]"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "prices",
+        "at": 1
+       },
+       "to": {
+        "view": "calls",
+        "at": 8
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Add 7: the call for [7] has 3 left, and every price it may add is dearer than 3: a dead end, it returns.",
+      "ko": "7을 담습니다. [7] 호출에는 3이 남았고, 담을 수 있는 가격이 모두 3보다 비싸 막다른 길이므로 돌아갑니다."
+     },
+     "views": {
+      "prices": {
+       "values": [
+        3,
+        4,
+        7
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1
+        ],
+        "lit": [],
+        "bad": [
+         2
+        ]
+       },
+       "pointers": {
+        "start": 2
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[3]"
+        },
+        {
+         "id": 2,
+         "value": "[3,3]"
+        },
+        {
+         "id": 3,
+         "value": "[3,3,3]"
+        },
+        {
+         "id": 4,
+         "value": "[3,3,4]"
+        },
+        {
+         "id": 5,
+         "value": "[3,4]"
+        },
+        {
+         "id": 6,
+         "value": "[3,7]"
+        },
+        {
+         "id": 7,
+         "value": "[4]"
+        },
+        {
+         "id": 8,
+         "value": "[4,4]"
+        },
+        {
+         "id": 9,
+         "value": "[7]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "+3"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "+3"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "+3"
+        },
+        {
+         "from": 2,
+         "to": 4,
+         "label": "+4"
+        },
+        {
+         "from": 1,
+         "to": 5,
+         "label": "+4"
+        },
+        {
+         "from": 1,
+         "to": 6,
+         "label": "+7"
+        },
+        {
+         "from": 0,
+         "to": 7,
+         "label": "+4"
+        },
+        {
+         "from": 7,
+         "to": 8,
+         "label": "+4"
+        },
+        {
+         "from": 0,
+         "to": 9,
+         "label": "+7"
+        }
+       ],
+       "nodeMarks": {
+        "bad": [
+         3,
+         5,
+         8,
+         9
+        ],
+        "good": [
+         4,
+         6
+        ],
+        "lit": [
+         9
+        ]
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "10 left",
+          "ko": "10 남음"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "7 left",
+          "ko": "7 남음"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "4 left",
+          "ko": "4 남음"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "1 left",
+          "ko": "1 남음"
+         }
+        ],
+        [
+         4,
+         {
+          "en": "0 left",
+          "ko": "0 남음"
+         }
+        ],
+        [
+         5,
+         {
+          "en": "3 left",
+          "ko": "3 남음"
+         }
+        ],
+        [
+         6,
+         {
+          "en": "0 left",
+          "ko": "0 남음"
+         }
+        ],
+        [
+         7,
+         {
+          "en": "6 left",
+          "ko": "6 남음"
+         }
+        ],
+        [
+         8,
+         {
+          "en": "2 left",
+          "ko": "2 남음"
+         }
+        ],
+        [
+         9,
+         {
+          "en": "3 left",
+          "ko": "3 남음"
+         }
+        ]
+       ],
+       "shade": [
+        0,
+        9
+       ]
+      },
+      "result": {
+       "values": [
+        "[3,3,4]",
+        "[3,7]"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "prices",
+        "at": 2
+       },
+       "to": {
+        "view": "calls",
+        "at": 9
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every call has returned: 10 calls, and 2 baskets add up to exactly 10.",
+      "ko": "모든 호출이 끝났습니다. 호출 10번 가운데 합이 정확히 10인 장바구니는 2개입니다."
+     },
+     "views": {
+      "prices": {
+       "values": [
+        3,
+        4,
+        7
+       ],
+       "marks": {},
+       "pointers": {}
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[3]"
+        },
+        {
+         "id": 2,
+         "value": "[3,3]"
+        },
+        {
+         "id": 3,
+         "value": "[3,3,3]"
+        },
+        {
+         "id": 4,
+         "value": "[3,3,4]"
+        },
+        {
+         "id": 5,
+         "value": "[3,4]"
+        },
+        {
+         "id": 6,
+         "value": "[3,7]"
+        },
+        {
+         "id": 7,
+         "value": "[4]"
+        },
+        {
+         "id": 8,
+         "value": "[4,4]"
+        },
+        {
+         "id": 9,
+         "value": "[7]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "+3"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "+3"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "+3"
+        },
+        {
+         "from": 2,
+         "to": 4,
+         "label": "+4"
+        },
+        {
+         "from": 1,
+         "to": 5,
+         "label": "+4"
+        },
+        {
+         "from": 1,
+         "to": 6,
+         "label": "+7"
+        },
+        {
+         "from": 0,
+         "to": 7,
+         "label": "+4"
+        },
+        {
+         "from": 7,
+         "to": 8,
+         "label": "+4"
+        },
+        {
+         "from": 0,
+         "to": 9,
+         "label": "+7"
+        }
+       ],
+       "nodeMarks": {
+        "path": [
+         4,
+         6
+        ],
+        "dim": [
+         3,
+         5,
+         8,
+         9
+        ]
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "10 left",
+          "ko": "10 남음"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "7 left",
+          "ko": "7 남음"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "4 left",
+          "ko": "4 남음"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "1 left",
+          "ko": "1 남음"
+         }
+        ],
+        [
+         4,
+         {
+          "en": "0 left",
+          "ko": "0 남음"
+         }
+        ],
+        [
+         5,
+         {
+          "en": "3 left",
+          "ko": "3 남음"
+         }
+        ],
+        [
+         6,
+         {
+          "en": "0 left",
+          "ko": "0 남음"
+         }
+        ],
+        [
+         7,
+         {
+          "en": "6 left",
+          "ko": "6 남음"
+         }
+        ],
+        [
+         8,
+         {
+          "en": "2 left",
+          "ko": "2 남음"
+         }
+        ],
+        [
+         9,
+         {
+          "en": "3 left",
+          "ko": "3 남음"
+         }
+        ]
+       ],
+       "shade": []
+      },
+      "result": {
+       "values": [
+        "[3,3,4]",
+        "[3,7]"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1
+        ]
+       }
+      }
+     },
+     "answer": "[[3,3,4],[3,7]]"
+    }
+   ],
+   "sampleInput": "[3,4,7]\n10"
+  }
+ ]
+}

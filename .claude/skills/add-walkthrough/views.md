@@ -57,6 +57,12 @@ The kit's `tree`, `linkedlist` and `callstack` views (the public skill's `refere
 - **A link between nodes on one level** (`populating-next-pointers`' `next`) has no drawing: a `tree` edge runs from a parent to a child, and a second edge into a node is refused (`node already has a parent`). It waits on a kit change: a second link on the `tree` view, drawn between nodes of one level, as the `linkedlist` view's `links` drew `clone-quest-log`'s.
 - `tree_values(root)` in `codebite.py` turns a built tree back into the Level-Order Array the Driver prints.
 
+### Tries and Backtracking (#371, #373)
+
+- **A trie walked with a grid DFS** draws no call stack: the board and the trie are the drawing, the current cell and node `lit`, the open calls `shade` on both. A cell the code marks `"#"` keeps its letter, shaded, so the word stays readable; the caption says it is marked. Each word sits on its end node as the node's value and moves into the `output` when found; a node pruned is marked `bad` with a drop move and is gone the next frame (filter it out of `Tree().state()`). Consecutive returns are one frame naming the calls (`word-search-ii`). A single-word search tags each cell on the trace with the index it matched (`i=2`) and draws the word as an `array` with `i` on the letter the call matched (`word-search`).
+- **A recursion tree over a list** (subsets, sums, orders) puts the call's partial answer in the node, a value the call carries (what is left to spend) as a node tag, and on the input array fades the cells before `start`, lights the ones the call will try and marks `bad` the ones too dear. A call that makes no call is `bad` until the last frame dims it (`voucher-price-combos`, `menu-combos-tab`, `cafe-stop-orders`). A choice skipped because it equals the one just tried gets a frame of its own, the skipped cells `bad`: it is what keeps the answers distinct (`snack-combo-picks`, `menu-combos-tab`). Choices rejected by a check (a piece that is not a palindrome) are named in the next call's caption, or in a frame where the call gives up when no call follows (`palindrome-menu-splits`).
+- **A call stack over a string** (segments, pieces) draws each piece taken as a span over its characters, labelled with the piece, the card's note the answer so far (`19.216`); the calls returning together leave in one frame, their spans' cells `bad`, and the caption names the lengths the deepest of them passed over (`restore-wifi-ip`).
+
 ## Marks, tags and ids
 
 - `lit` wins over `good` on the same item: mark a changed cell `good` only.
