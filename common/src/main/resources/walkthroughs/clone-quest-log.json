@@ -1,0 +1,2354 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Clone the Quest Log",
+  "ko": "퀘스트 로그 복제"
+ },
+ "approach": {
+  "en": "A copy's related can reach a node that has no copy yet, so make every copy first, keeping a map from each original to its copy; then each copy's next and related are the copies of the nodes the original's reach.",
+  "ko": "사본의 related는 아직 사본이 없는 노드를 가리킬 수 있으므로, 먼저 모든 노드의 사본을 만들어 원본마다 사본을 맵에 적어 둡니다. 그다음 사본의 next와 related를 원본의 next와 related가 가리키는 노드의 사본으로 정합니다."
+ },
+ "views": [
+  {
+   "id": "log",
+   "type": "linkedlist",
+   "title": {
+    "en": "original log: next above, related below",
+    "ko": "원본 로그: 위는 next, 아래는 related"
+   }
+  },
+  {
+   "id": "copy",
+   "type": "linkedlist",
+   "title": {
+    "en": "copies[node], at its original's position",
+    "ko": "copies[node], 원본과 같은 위치"
+   },
+   "empty": {
+    "en": "no copies yet",
+    "ko": "아직 사본 없음"
+   }
+  },
+  {
+   "id": "result",
+   "type": "output",
+   "title": {
+    "en": "printed copy",
+    "ko": "출력한 사본"
+   },
+   "empty": {
+    "en": "not read yet",
+    "ko": "아직 읽지 않음"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "head = [[9,2],[4,null],[6,0],[2,1]]",
+   "expected": "[[9,2],[4,null],[6,0],[2,1]]",
+   "frames": [
+    {
+     "caption": {
+      "en": "The log has 4 nodes, 3 of them with a related pointer (the arrows under the row). copies is an empty map.",
+      "ko": "로그에는 노드가 4개 있고, 그중 3개에 related 포인터(아래쪽 화살표)가 있습니다. 맵 copies는 비어 있습니다."
+     },
+     "views": {
+      "log": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 9
+        },
+        {
+         "id": 1,
+         "value": 4
+        },
+        {
+         "id": 2,
+         "value": 6
+        },
+        {
+         "id": 3,
+         "value": 2
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": null
+       },
+       "links": {
+        "related": {
+         "0": 2,
+         "1": null,
+         "2": 0,
+         "3": 1
+        }
+       },
+       "marks": {}
+      },
+      "copy": {
+       "nodes": [],
+       "next": {},
+       "links": {
+        "related": {}
+       },
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "First pass: copies[node 0] = a new node with value 9 and no links yet.",
+      "ko": "첫 번째 순회: copies[0번 노드]에 값 9의 새 노드를 링크 없이 넣습니다."
+     },
+     "views": {
+      "log": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 9
+        },
+        {
+         "id": 1,
+         "value": 4
+        },
+        {
+         "id": 2,
+         "value": 6
+        },
+        {
+         "id": 3,
+         "value": 2
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": null
+       },
+       "links": {
+        "related": {
+         "0": 2,
+         "1": null,
+         "2": 0,
+         "3": 1
+        }
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "copy": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 9
+        }
+       ],
+       "next": {},
+       "links": {
+        "related": {}
+       },
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "log",
+        "at": 0
+       },
+       "to": {
+        "view": "copy",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "First pass: copies[node 1] = a new node with value 4 and no links yet.",
+      "ko": "첫 번째 순회: copies[1번 노드]에 값 4의 새 노드를 링크 없이 넣습니다."
+     },
+     "views": {
+      "log": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 9
+        },
+        {
+         "id": 1,
+         "value": 4
+        },
+        {
+         "id": 2,
+         "value": 6
+        },
+        {
+         "id": 3,
+         "value": 2
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": null
+       },
+       "links": {
+        "related": {
+         "0": 2,
+         "1": null,
+         "2": 0,
+         "3": 1
+        }
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "copy": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 9
+        },
+        {
+         "id": 1,
+         "value": 4
+        }
+       ],
+       "next": {},
+       "links": {
+        "related": {}
+       },
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "log",
+        "at": 1
+       },
+       "to": {
+        "view": "copy",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "First pass: copies[node 2] = a new node with value 6 and no links yet.",
+      "ko": "첫 번째 순회: copies[2번 노드]에 값 6의 새 노드를 링크 없이 넣습니다."
+     },
+     "views": {
+      "log": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 9
+        },
+        {
+         "id": 1,
+         "value": 4
+        },
+        {
+         "id": 2,
+         "value": 6
+        },
+        {
+         "id": 3,
+         "value": 2
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": null
+       },
+       "links": {
+        "related": {
+         "0": 2,
+         "1": null,
+         "2": 0,
+         "3": 1
+        }
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "copy": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 9
+        },
+        {
+         "id": 1,
+         "value": 4
+        },
+        {
+         "id": 2,
+         "value": 6
+        }
+       ],
+       "next": {},
+       "links": {
+        "related": {}
+       },
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "log",
+        "at": 2
+       },
+       "to": {
+        "view": "copy",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "First pass: copies[node 3] = a new node with value 2 and no links yet.",
+      "ko": "첫 번째 순회: copies[3번 노드]에 값 2의 새 노드를 링크 없이 넣습니다."
+     },
+     "views": {
+      "log": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 9
+        },
+        {
+         "id": 1,
+         "value": 4
+        },
+        {
+         "id": 2,
+         "value": 6
+        },
+        {
+         "id": 3,
+         "value": 2
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": null
+       },
+       "links": {
+        "related": {
+         "0": 2,
+         "1": null,
+         "2": 0,
+         "3": 1
+        }
+       },
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "copy": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 9
+        },
+        {
+         "id": 1,
+         "value": 4
+        },
+        {
+         "id": 2,
+         "value": 6
+        },
+        {
+         "id": 3,
+         "value": 2
+        }
+       ],
+       "next": {},
+       "links": {
+        "related": {}
+       },
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "log",
+        "at": 3
+       },
+       "to": {
+        "view": "copy",
+        "at": 3
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Node 0's next reaches node 1, so copy 0's next is copies[node 1], the copy at position 1, never the original.",
+      "ko": "0번 노드의 next가 1번 노드를 가리키므로, 0번 사본의 next는 원본이 아니라 같은 위치의 사본 copies[1번 노드]입니다."
+     },
+     "views": {
+      "log": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 9
+        },
+        {
+         "id": 1,
+         "value": 4
+        },
+        {
+         "id": 2,
+         "value": 6
+        },
+        {
+         "id": 3,
+         "value": 2
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": null
+       },
+       "links": {
+        "related": {
+         "0": 2,
+         "1": null,
+         "2": 0,
+         "3": 1
+        }
+       },
+       "marks": {
+        "lit": [
+         0,
+         1
+        ]
+       },
+       "linkMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "copy": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 9
+        },
+        {
+         "id": 1,
+         "value": 4
+        },
+        {
+         "id": 2,
+         "value": 6
+        },
+        {
+         "id": 3,
+         "value": 2
+        }
+       ],
+       "next": {
+        "0": 1
+       },
+       "links": {
+        "related": {}
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Node 0's related reaches node 2, so copy 0's related is copies[node 2], the copy at position 2, never the original.",
+      "ko": "0번 노드의 related가 2번 노드를 가리키므로, 0번 사본의 related는 원본이 아니라 같은 위치의 사본 copies[2번 노드]입니다."
+     },
+     "views": {
+      "log": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 9
+        },
+        {
+         "id": 1,
+         "value": 4
+        },
+        {
+         "id": 2,
+         "value": 6
+        },
+        {
+         "id": 3,
+         "value": 2
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": null
+       },
+       "links": {
+        "related": {
+         "0": 2,
+         "1": null,
+         "2": 0,
+         "3": 1
+        }
+       },
+       "marks": {
+        "lit": [
+         0,
+         2
+        ]
+       },
+       "linkMarks": {
+        "lit": [
+         [
+          "related",
+          0
+         ]
+        ]
+       }
+      },
+      "copy": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 9
+        },
+        {
+         "id": 1,
+         "value": 4
+        },
+        {
+         "id": 2,
+         "value": 6
+        },
+        {
+         "id": 3,
+         "value": 2
+        }
+       ],
+       "next": {
+        "0": 1
+       },
+       "links": {
+        "related": {
+         "0": 2
+        }
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         [
+          "related",
+          0
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Node 1's next reaches node 2, so copy 1's next is copies[node 2], the copy at position 2, never the original.",
+      "ko": "1번 노드의 next가 2번 노드를 가리키므로, 1번 사본의 next는 원본이 아니라 같은 위치의 사본 copies[2번 노드]입니다."
+     },
+     "views": {
+      "log": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 9
+        },
+        {
+         "id": 1,
+         "value": 4
+        },
+        {
+         "id": 2,
+         "value": 6
+        },
+        {
+         "id": 3,
+         "value": 2
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": null
+       },
+       "links": {
+        "related": {
+         "0": 2,
+         "1": null,
+         "2": 0,
+         "3": 1
+        }
+       },
+       "marks": {
+        "lit": [
+         1,
+         2
+        ]
+       },
+       "linkMarks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "copy": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 9
+        },
+        {
+         "id": 1,
+         "value": 4
+        },
+        {
+         "id": 2,
+         "value": 6
+        },
+        {
+         "id": 3,
+         "value": 2
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2
+       },
+       "links": {
+        "related": {
+         "0": 2
+        }
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Node 1's related is null, and copies.get(null) is null, so copy 1's related is null too.",
+      "ko": "1번 노드의 related가 null이고 copies.get(null)도 null이므로, 1번 사본의 related도 null입니다."
+     },
+     "views": {
+      "log": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 9
+        },
+        {
+         "id": 1,
+         "value": 4
+        },
+        {
+         "id": 2,
+         "value": 6
+        },
+        {
+         "id": 3,
+         "value": 2
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": null
+       },
+       "links": {
+        "related": {
+         "0": 2,
+         "1": null,
+         "2": 0,
+         "3": 1
+        }
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       },
+       "linkMarks": {
+        "lit": [
+         [
+          "related",
+          1
+         ]
+        ]
+       }
+      },
+      "copy": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 9
+        },
+        {
+         "id": 1,
+         "value": 4
+        },
+        {
+         "id": 2,
+         "value": 6
+        },
+        {
+         "id": 3,
+         "value": 2
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2
+       },
+       "links": {
+        "related": {
+         "0": 2,
+         "1": null
+        }
+       },
+       "marks": {},
+       "linkMarks": {
+        "good": [
+         [
+          "related",
+          1
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Node 2's next reaches node 3, so copy 2's next is copies[node 3], the copy at position 3, never the original.",
+      "ko": "2번 노드의 next가 3번 노드를 가리키므로, 2번 사본의 next는 원본이 아니라 같은 위치의 사본 copies[3번 노드]입니다."
+     },
+     "views": {
+      "log": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 9
+        },
+        {
+         "id": 1,
+         "value": 4
+        },
+        {
+         "id": 2,
+         "value": 6
+        },
+        {
+         "id": 3,
+         "value": 2
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": null
+       },
+       "links": {
+        "related": {
+         "0": 2,
+         "1": null,
+         "2": 0,
+         "3": 1
+        }
+       },
+       "marks": {
+        "lit": [
+         2,
+         3
+        ]
+       },
+       "linkMarks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "copy": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 9
+        },
+        {
+         "id": 1,
+         "value": 4
+        },
+        {
+         "id": 2,
+         "value": 6
+        },
+        {
+         "id": 3,
+         "value": 2
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3
+       },
+       "links": {
+        "related": {
+         "0": 2,
+         "1": null
+        }
+       },
+       "marks": {
+        "lit": [
+         3
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Node 2's related reaches node 0, so copy 2's related is copies[node 0], the copy at position 0, never the original.",
+      "ko": "2번 노드의 related가 0번 노드를 가리키므로, 2번 사본의 related는 원본이 아니라 같은 위치의 사본 copies[0번 노드]입니다."
+     },
+     "views": {
+      "log": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 9
+        },
+        {
+         "id": 1,
+         "value": 4
+        },
+        {
+         "id": 2,
+         "value": 6
+        },
+        {
+         "id": 3,
+         "value": 2
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": null
+       },
+       "links": {
+        "related": {
+         "0": 2,
+         "1": null,
+         "2": 0,
+         "3": 1
+        }
+       },
+       "marks": {
+        "lit": [
+         0,
+         2
+        ]
+       },
+       "linkMarks": {
+        "lit": [
+         [
+          "related",
+          2
+         ]
+        ]
+       }
+      },
+      "copy": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 9
+        },
+        {
+         "id": 1,
+         "value": 4
+        },
+        {
+         "id": 2,
+         "value": 6
+        },
+        {
+         "id": 3,
+         "value": 2
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3
+       },
+       "links": {
+        "related": {
+         "0": 2,
+         "1": null,
+         "2": 0
+        }
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         [
+          "related",
+          2
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Node 3's next is null, and copies.get(null) is null, so copy 3's next is null too.",
+      "ko": "3번 노드의 next가 null이고 copies.get(null)도 null이므로, 3번 사본의 next도 null입니다."
+     },
+     "views": {
+      "log": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 9
+        },
+        {
+         "id": 1,
+         "value": 4
+        },
+        {
+         "id": 2,
+         "value": 6
+        },
+        {
+         "id": 3,
+         "value": 2
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": null
+       },
+       "links": {
+        "related": {
+         "0": 2,
+         "1": null,
+         "2": 0,
+         "3": 1
+        }
+       },
+       "marks": {
+        "lit": [
+         3
+        ]
+       },
+       "linkMarks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "copy": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 9
+        },
+        {
+         "id": 1,
+         "value": 4
+        },
+        {
+         "id": 2,
+         "value": 6
+        },
+        {
+         "id": 3,
+         "value": 2
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": null
+       },
+       "links": {
+        "related": {
+         "0": 2,
+         "1": null,
+         "2": 0
+        }
+       },
+       "marks": {},
+       "linkMarks": {
+        "good": [
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Node 3's related reaches node 1, so copy 3's related is copies[node 1], the copy at position 1, never the original.",
+      "ko": "3번 노드의 related가 1번 노드를 가리키므로, 3번 사본의 related는 원본이 아니라 같은 위치의 사본 copies[1번 노드]입니다."
+     },
+     "views": {
+      "log": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 9
+        },
+        {
+         "id": 1,
+         "value": 4
+        },
+        {
+         "id": 2,
+         "value": 6
+        },
+        {
+         "id": 3,
+         "value": 2
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": null
+       },
+       "links": {
+        "related": {
+         "0": 2,
+         "1": null,
+         "2": 0,
+         "3": 1
+        }
+       },
+       "marks": {
+        "lit": [
+         1,
+         3
+        ]
+       },
+       "linkMarks": {
+        "lit": [
+         [
+          "related",
+          3
+         ]
+        ]
+       }
+      },
+      "copy": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 9
+        },
+        {
+         "id": 1,
+         "value": 4
+        },
+        {
+         "id": 2,
+         "value": 6
+        },
+        {
+         "id": 3,
+         "value": 2
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": null
+       },
+       "links": {
+        "related": {
+         "0": 2,
+         "1": null,
+         "2": 0,
+         "3": 1
+        }
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         [
+          "related",
+          3
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Every copy is linked. Read from copies[head], each related written as a position, the copy prints [[9,2],[4,null],[6,0],[2,1]], the same as the log.",
+      "ko": "모든 사본이 이어졌습니다. copies[head]부터 읽어 related를 위치로 적으면 원본과 같은 [[9,2],[4,null],[6,0],[2,1]]입니다."
+     },
+     "views": {
+      "log": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 9
+        },
+        {
+         "id": 1,
+         "value": 4
+        },
+        {
+         "id": 2,
+         "value": 6
+        },
+        {
+         "id": 3,
+         "value": 2
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": null
+       },
+       "links": {
+        "related": {
+         "0": 2,
+         "1": null,
+         "2": 0,
+         "3": 1
+        }
+       },
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3
+        ]
+       }
+      },
+      "copy": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 9
+        },
+        {
+         "id": 1,
+         "value": 4
+        },
+        {
+         "id": 2,
+         "value": 6
+        },
+        {
+         "id": 3,
+         "value": 2
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": null
+       },
+       "links": {
+        "related": {
+         "0": 2,
+         "1": null,
+         "2": 0,
+         "3": 1
+        }
+       },
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "[9,2]",
+        "[4,null]",
+        "[6,0]",
+        "[2,1]"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "copy",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       },
+       "value": "[9,2]"
+      },
+      {
+       "from": {
+        "view": "copy",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       },
+       "value": "[4,null]"
+      },
+      {
+       "from": {
+        "view": "copy",
+        "at": 2
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       },
+       "value": "[6,0]"
+      },
+      {
+       "from": {
+        "view": "copy",
+        "at": 3
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       },
+       "value": "[2,1]"
+      }
+     ],
+     "answer": "[[9,2],[4,null],[6,0],[2,1]]"
+    }
+   ],
+   "sampleInput": "[[9,2],[4,null],[6,0],[2,1]]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "head = [[5,0]]",
+   "expected": "[[5,0]]",
+   "frames": [
+    {
+     "caption": {
+      "en": "The log has 1 node, 1 of them with a related pointer (the arrows under the row). copies is an empty map.",
+      "ko": "로그에는 노드가 1개 있고, 그중 1개에 related 포인터(아래쪽 화살표)가 있습니다. 맵 copies는 비어 있습니다."
+     },
+     "views": {
+      "log": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 5
+        }
+       ],
+       "next": {
+        "0": null
+       },
+       "links": {
+        "related": {
+         "0": 0
+        }
+       },
+       "marks": {}
+      },
+      "copy": {
+       "nodes": [],
+       "next": {},
+       "links": {
+        "related": {}
+       },
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "First pass: copies[node 0] = a new node with value 5 and no links yet.",
+      "ko": "첫 번째 순회: copies[0번 노드]에 값 5의 새 노드를 링크 없이 넣습니다."
+     },
+     "views": {
+      "log": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 5
+        }
+       ],
+       "next": {
+        "0": null
+       },
+       "links": {
+        "related": {
+         "0": 0
+        }
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "copy": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 5
+        }
+       ],
+       "next": {},
+       "links": {
+        "related": {}
+       },
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "log",
+        "at": 0
+       },
+       "to": {
+        "view": "copy",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Node 0's next is null, and copies.get(null) is null, so copy 0's next is null too.",
+      "ko": "0번 노드의 next가 null이고 copies.get(null)도 null이므로, 0번 사본의 next도 null입니다."
+     },
+     "views": {
+      "log": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 5
+        }
+       ],
+       "next": {
+        "0": null
+       },
+       "links": {
+        "related": {
+         "0": 0
+        }
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       },
+       "linkMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "copy": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 5
+        }
+       ],
+       "next": {
+        "0": null
+       },
+       "links": {
+        "related": {}
+       },
+       "marks": {},
+       "linkMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Node 0's related reaches itself, so copy 0's related is copies[node 0], the copy at position 0, never the original.",
+      "ko": "0번 노드의 related가 자기 자신을 가리키므로, 0번 사본의 related는 원본이 아니라 같은 위치의 사본 copies[0번 노드]입니다."
+     },
+     "views": {
+      "log": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 5
+        }
+       ],
+       "next": {
+        "0": null
+       },
+       "links": {
+        "related": {
+         "0": 0
+        }
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       },
+       "linkMarks": {
+        "lit": [
+         [
+          "related",
+          0
+         ]
+        ]
+       }
+      },
+      "copy": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 5
+        }
+       ],
+       "next": {
+        "0": null
+       },
+       "links": {
+        "related": {
+         "0": 0
+        }
+       },
+       "marks": {},
+       "linkMarks": {
+        "good": [
+         [
+          "related",
+          0
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Every copy is linked. Read from copies[head], each related written as a position, the copy prints [[5,0]], the same as the log.",
+      "ko": "모든 사본이 이어졌습니다. copies[head]부터 읽어 related를 위치로 적으면 원본과 같은 [[5,0]]입니다."
+     },
+     "views": {
+      "log": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 5
+        }
+       ],
+       "next": {
+        "0": null
+       },
+       "links": {
+        "related": {
+         "0": 0
+        }
+       },
+       "marks": {
+        "dim": [
+         0
+        ]
+       }
+      },
+      "copy": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 5
+        }
+       ],
+       "next": {
+        "0": null
+       },
+       "links": {
+        "related": {
+         "0": 0
+        }
+       },
+       "marks": {
+        "path": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "[5,0]"
+       ],
+       "marks": {
+        "path": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "copy",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       },
+       "value": "[5,0]"
+      }
+     ],
+     "answer": "[[5,0]]"
+    }
+   ],
+   "sampleInput": "[[5,0]]"
+  },
+  {
+   "label": {
+    "en": "Example 3",
+    "ko": "예시 3"
+   },
+   "input": "head = [[3,null],[7,null]]",
+   "expected": "[[3,null],[7,null]]",
+   "frames": [
+    {
+     "caption": {
+      "en": "The log has 2 nodes, 0 of them with a related pointer (the arrows under the row). copies is an empty map.",
+      "ko": "로그에는 노드가 2개 있고, 그중 0개에 related 포인터(아래쪽 화살표)가 있습니다. 맵 copies는 비어 있습니다."
+     },
+     "views": {
+      "log": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 3
+        },
+        {
+         "id": 1,
+         "value": 7
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": null
+       },
+       "links": {
+        "related": {
+         "0": null,
+         "1": null
+        }
+       },
+       "marks": {}
+      },
+      "copy": {
+       "nodes": [],
+       "next": {},
+       "links": {
+        "related": {}
+       },
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "First pass: copies[node 0] = a new node with value 3 and no links yet.",
+      "ko": "첫 번째 순회: copies[0번 노드]에 값 3의 새 노드를 링크 없이 넣습니다."
+     },
+     "views": {
+      "log": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 3
+        },
+        {
+         "id": 1,
+         "value": 7
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": null
+       },
+       "links": {
+        "related": {
+         "0": null,
+         "1": null
+        }
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "copy": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 3
+        }
+       ],
+       "next": {},
+       "links": {
+        "related": {}
+       },
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "log",
+        "at": 0
+       },
+       "to": {
+        "view": "copy",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "First pass: copies[node 1] = a new node with value 7 and no links yet.",
+      "ko": "첫 번째 순회: copies[1번 노드]에 값 7의 새 노드를 링크 없이 넣습니다."
+     },
+     "views": {
+      "log": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 3
+        },
+        {
+         "id": 1,
+         "value": 7
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": null
+       },
+       "links": {
+        "related": {
+         "0": null,
+         "1": null
+        }
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "copy": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 3
+        },
+        {
+         "id": 1,
+         "value": 7
+        }
+       ],
+       "next": {},
+       "links": {
+        "related": {}
+       },
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "log",
+        "at": 1
+       },
+       "to": {
+        "view": "copy",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Node 0's next reaches node 1, so copy 0's next is copies[node 1], the copy at position 1, never the original.",
+      "ko": "0번 노드의 next가 1번 노드를 가리키므로, 0번 사본의 next는 원본이 아니라 같은 위치의 사본 copies[1번 노드]입니다."
+     },
+     "views": {
+      "log": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 3
+        },
+        {
+         "id": 1,
+         "value": 7
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": null
+       },
+       "links": {
+        "related": {
+         "0": null,
+         "1": null
+        }
+       },
+       "marks": {
+        "lit": [
+         0,
+         1
+        ]
+       },
+       "linkMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "copy": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 3
+        },
+        {
+         "id": 1,
+         "value": 7
+        }
+       ],
+       "next": {
+        "0": 1
+       },
+       "links": {
+        "related": {}
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Node 0's related is null, and copies.get(null) is null, so copy 0's related is null too.",
+      "ko": "0번 노드의 related가 null이고 copies.get(null)도 null이므로, 0번 사본의 related도 null입니다."
+     },
+     "views": {
+      "log": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 3
+        },
+        {
+         "id": 1,
+         "value": 7
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": null
+       },
+       "links": {
+        "related": {
+         "0": null,
+         "1": null
+        }
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       },
+       "linkMarks": {
+        "lit": [
+         [
+          "related",
+          0
+         ]
+        ]
+       }
+      },
+      "copy": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 3
+        },
+        {
+         "id": 1,
+         "value": 7
+        }
+       ],
+       "next": {
+        "0": 1
+       },
+       "links": {
+        "related": {
+         "0": null
+        }
+       },
+       "marks": {},
+       "linkMarks": {
+        "good": [
+         [
+          "related",
+          0
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Node 1's next is null, and copies.get(null) is null, so copy 1's next is null too.",
+      "ko": "1번 노드의 next가 null이고 copies.get(null)도 null이므로, 1번 사본의 next도 null입니다."
+     },
+     "views": {
+      "log": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 3
+        },
+        {
+         "id": 1,
+         "value": 7
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": null
+       },
+       "links": {
+        "related": {
+         "0": null,
+         "1": null
+        }
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       },
+       "linkMarks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "copy": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 3
+        },
+        {
+         "id": 1,
+         "value": 7
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": null
+       },
+       "links": {
+        "related": {
+         "0": null
+        }
+       },
+       "marks": {},
+       "linkMarks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Node 1's related is null, and copies.get(null) is null, so copy 1's related is null too.",
+      "ko": "1번 노드의 related가 null이고 copies.get(null)도 null이므로, 1번 사본의 related도 null입니다."
+     },
+     "views": {
+      "log": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 3
+        },
+        {
+         "id": 1,
+         "value": 7
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": null
+       },
+       "links": {
+        "related": {
+         "0": null,
+         "1": null
+        }
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       },
+       "linkMarks": {
+        "lit": [
+         [
+          "related",
+          1
+         ]
+        ]
+       }
+      },
+      "copy": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 3
+        },
+        {
+         "id": 1,
+         "value": 7
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": null
+       },
+       "links": {
+        "related": {
+         "0": null,
+         "1": null
+        }
+       },
+       "marks": {},
+       "linkMarks": {
+        "good": [
+         [
+          "related",
+          1
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Every copy is linked. Read from copies[head], each related written as a position, the copy prints [[3,null],[7,null]], the same as the log.",
+      "ko": "모든 사본이 이어졌습니다. copies[head]부터 읽어 related를 위치로 적으면 원본과 같은 [[3,null],[7,null]]입니다."
+     },
+     "views": {
+      "log": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 3
+        },
+        {
+         "id": 1,
+         "value": 7
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": null
+       },
+       "links": {
+        "related": {
+         "0": null,
+         "1": null
+        }
+       },
+       "marks": {
+        "dim": [
+         0,
+         1
+        ]
+       }
+      },
+      "copy": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 3
+        },
+        {
+         "id": 1,
+         "value": 7
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": null
+       },
+       "links": {
+        "related": {
+         "0": null,
+         "1": null
+        }
+       },
+       "marks": {
+        "path": [
+         0,
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "[3,null]",
+        "[7,null]"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "copy",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       },
+       "value": "[3,null]"
+      },
+      {
+       "from": {
+        "view": "copy",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       },
+       "value": "[7,null]"
+      }
+     ],
+     "answer": "[[3,null],[7,null]]"
+    }
+   ],
+   "sampleInput": "[[3,null],[7,null]]"
+  }
+ ]
+}
