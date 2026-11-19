@@ -1,0 +1,1362 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Nearest Cafe Stops",
+  "ko": "가장 가까운 카페 배달지"
+ },
+ "approach": {
+  "en": "Keep the k nearest stops so far in a max-heap by x² + y² (the square keeps the order of the distances, with no square root): its root is the farthest of them, so a nearer stop replaces it and a farther one can't be among the k nearest.",
+  "ko": "지금까지 가장 가까운 배달지 k개를 x² + y² 기준 최대 힙에 둡니다(제곱해도 거리의 순서는 같아 제곱근이 필요 없습니다). 루트가 그중 가장 먼 배달지이므로, 더 가까운 배달지는 루트를 밀어내고 더 먼 배달지는 k개에 들 수 없습니다."
+ },
+ "views": [
+  {
+   "id": "stops",
+   "type": "table",
+   "title": {
+    "en": "stops",
+    "ko": "stops (배달지)"
+   }
+  },
+  {
+   "id": "heap",
+   "type": "tree",
+   "arity": 2,
+   "title": {
+    "en": "max-heap of x² + y², farthest on top",
+    "ko": "x² + y²의 최대 힙 (맨 위가 가장 멂)"
+   },
+   "empty": {
+    "en": "empty",
+    "ko": "비어 있음"
+   }
+  },
+  {
+   "id": "result",
+   "type": "output",
+   "title": {
+    "en": "answer",
+    "ko": "답"
+   },
+   "empty": {
+    "en": "not yet",
+    "ko": "아직 없음"
+   }
+  },
+  {
+   "id": "state",
+   "type": "vars"
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "stops = [[2,4],[7,7]], k = 1",
+   "expected": "[[2,4]]",
+   "frames": [
+    {
+     "caption": {
+      "en": "2 stops, k = 1. The max-heap will hold the 1 nearest read so far, keyed by x² + y², so its root is the farthest of them.",
+      "ko": "배달지 2개, k = 1입니다. 최대 힙에 지금까지 읽은 것 중 가장 가까운 1개를 x² + y² 기준으로 두므로, 루트는 그중 가장 먼 배달지입니다."
+     },
+     "views": {
+      "stops": {
+       "columns": [
+        "x",
+        "y",
+        "x² + y²"
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "2",
+          "4",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "7",
+          "7",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": []
+       }
+      },
+      "heap": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Stop 0 (2,4): 2² + 4² = 20. The heap holds 0 of 1, so it goes in at the end, [0]; it is the root.",
+      "ko": "배달지 0 (2,4): 2² + 4² = 20. 힙에 0개뿐이라 맨 끝 [0]에 넣고, 루트가 됩니다."
+     },
+     "views": {
+      "stops": {
+       "columns": [
+        "x",
+        "y",
+        "x² + y²"
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "2",
+          "4",
+          "20"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "7",
+          "7",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          0,
+          2
+         ]
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 20
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0] (2,4)"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "stops",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "to": {
+        "view": "stops",
+        "at": [
+         0,
+         2
+        ]
+       },
+       "value": "20"
+      },
+      {
+       "from": {
+        "view": "stops",
+        "at": [
+         0,
+         2
+        ]
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Stop 1 (7,7): 7² + 7² = 98, not nearer than the root 20, and the heap already holds 1 stop at most that far: skip it.",
+      "ko": "배달지 1 (7,7): 7² + 7² = 98. 루트 20보다 가깝지 않고, 힙에는 이미 그보다 멀지 않은 배달지가 1개 있으므로 건너뜁니다."
+     },
+     "views": {
+      "stops": {
+       "columns": [
+        "x",
+        "y",
+        "x² + y²"
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "2",
+          "4",
+          "20"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "7",
+          "7",
+          "98"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          1,
+          2
+         ]
+        ],
+        "bad": [
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          1,
+          2
+         ]
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 20
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0] (2,4)"
+        ]
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "stops",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "to": {
+        "view": "stops",
+        "at": [
+         1,
+         2
+        ]
+       },
+       "value": "98"
+      },
+      {
+       "from": {
+        "view": "stops",
+        "at": [
+         1,
+         2
+        ]
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every stop is read. The heap holds the 1 nearest; sorted as the Driver prints them, the answer is [[2,4]].",
+      "ko": "모든 배달지를 읽었습니다. 힙에 가장 가까운 1개가 남았고, 출력할 때처럼 정렬하면 답은 [[2,4]]입니다."
+     },
+     "views": {
+      "stops": {
+       "columns": [
+        "x",
+        "y",
+        "x² + y²"
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "2",
+          "4",
+          "20"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "7",
+          "7",
+          "98"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          1,
+          2
+         ]
+        ],
+        "path": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          0,
+          2
+         ]
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 20
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0] (2,4)"
+        ]
+       ],
+       "nodeMarks": {
+        "path": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "[2,4]"
+       ],
+       "marks": {
+        "path": [
+         0
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       },
+       "value": "[2,4]"
+      }
+     ],
+     "answer": "[[2,4]]"
+    }
+   ],
+   "sampleInput": "[[2,4],[7,7]]\n1"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "stops = [[5,5],[1,2],[-3,1],[4,-4]], k = 2",
+   "expected": "[[-3,1],[1,2]]",
+   "frames": [
+    {
+     "caption": {
+      "en": "4 stops, k = 2. The max-heap will hold the 2 nearest read so far, keyed by x² + y², so its root is the farthest of them.",
+      "ko": "배달지 4개, k = 2입니다. 최대 힙에 지금까지 읽은 것 중 가장 가까운 2개를 x² + y² 기준으로 두므로, 루트는 그중 가장 먼 배달지입니다."
+     },
+     "views": {
+      "stops": {
+       "columns": [
+        "x",
+        "y",
+        "x² + y²"
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "5",
+          "5",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "1",
+          "2",
+          ""
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "-3",
+          "1",
+          ""
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "4",
+          "-4",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": []
+       }
+      },
+      "heap": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 2
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Stop 0 (5,5): 5² + 5² = 50. The heap holds 0 of 2, so it goes in at the end, [0]; it is the root.",
+      "ko": "배달지 0 (5,5): 5² + 5² = 50. 힙에 0개뿐이라 맨 끝 [0]에 넣고, 루트가 됩니다."
+     },
+     "views": {
+      "stops": {
+       "columns": [
+        "x",
+        "y",
+        "x² + y²"
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "5",
+          "5",
+          "50"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "1",
+          "2",
+          ""
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "-3",
+          "1",
+          ""
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "4",
+          "-4",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          0,
+          2
+         ]
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 50
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0] (5,5)"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 2
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "stops",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "to": {
+        "view": "stops",
+        "at": [
+         0,
+         2
+        ]
+       },
+       "value": "50"
+      },
+      {
+       "from": {
+        "view": "stops",
+        "at": [
+         0,
+         2
+        ]
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Stop 1 (1,2): 1² + 2² = 5. The heap holds 1 of 2, so it goes in at the end, [1]; its parent 50 is farther, so it stays.",
+      "ko": "배달지 1 (1,2): 1² + 2² = 5. 힙에 1개뿐이라 맨 끝 [1]에 넣고, 부모 50이 더 멀므로 그대로 둡니다."
+     },
+     "views": {
+      "stops": {
+       "columns": [
+        "x",
+        "y",
+        "x² + y²"
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "5",
+          "5",
+          "50"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "1",
+          "2",
+          "5"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "-3",
+          "1",
+          ""
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "4",
+          "-4",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          1,
+          2
+         ]
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 50
+        },
+        {
+         "id": 1,
+         "value": 5
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0] (5,5)"
+        ],
+        [
+         1,
+         "[1] (1,2)"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 2
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "stops",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "to": {
+        "view": "stops",
+        "at": [
+         1,
+         2
+        ]
+       },
+       "value": "5"
+      },
+      {
+       "from": {
+        "view": "stops",
+        "at": [
+         1,
+         2
+        ]
+       },
+       "to": {
+        "view": "heap",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Stop 2 (-3,1): (-3)² + 1² = 10, nearer than the root 50, the farthest kept: (5,5) leaves and (-3,1) takes the root. No child is farther, so it stays.",
+      "ko": "배달지 2 (-3,1): (-3)² + 1² = 10, 남겨 둔 것 중 가장 먼 루트 50보다 가까우므로 (5,5) 배달지가 빠지고 (-3,1) 배달지가 루트에 들어갑니다. 더 먼 자식이 없으므로 그대로 둡니다."
+     },
+     "views": {
+      "stops": {
+       "columns": [
+        "x",
+        "y",
+        "x² + y²"
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "5",
+          "5",
+          "50"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "1",
+          "2",
+          "5"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "-3",
+          "1",
+          "10"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "4",
+          "-4",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          0,
+          2
+         ]
+        ],
+        "lit": [
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          2,
+          2
+         ]
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 10
+        },
+        {
+         "id": 1,
+         "value": 5
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0] (-3,1)"
+        ],
+        [
+         1,
+         "[1] (1,2)"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 2
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "stops",
+        "at": [
+         2,
+         0
+        ]
+       },
+       "to": {
+        "view": "stops",
+        "at": [
+         2,
+         2
+        ]
+       },
+       "value": "10"
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "stops",
+        "at": [
+         0,
+         2
+        ]
+       },
+       "value": "50",
+       "mark": "bad"
+      },
+      {
+       "from": {
+        "view": "stops",
+        "at": [
+         2,
+         2
+        ]
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Stop 3 (4,-4): 4² + (-4)² = 32, not nearer than the root 10, and the heap already holds 2 stops at most that far: skip it.",
+      "ko": "배달지 3 (4,-4): 4² + (-4)² = 32. 루트 10보다 가깝지 않고, 힙에는 이미 그보다 멀지 않은 배달지가 2개 있으므로 건너뜁니다."
+     },
+     "views": {
+      "stops": {
+       "columns": [
+        "x",
+        "y",
+        "x² + y²"
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "5",
+          "5",
+          "50"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "1",
+          "2",
+          "5"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "-3",
+          "1",
+          "10"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "4",
+          "-4",
+          "32"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          0,
+          2
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          3,
+          2
+         ]
+        ],
+        "bad": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          3,
+          2
+         ]
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 10
+        },
+        {
+         "id": 1,
+         "value": 5
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0] (-3,1)"
+        ],
+        [
+         1,
+         "[1] (1,2)"
+        ]
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 2
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "stops",
+        "at": [
+         3,
+         0
+        ]
+       },
+       "to": {
+        "view": "stops",
+        "at": [
+         3,
+         2
+        ]
+       },
+       "value": "32"
+      },
+      {
+       "from": {
+        "view": "stops",
+        "at": [
+         3,
+         2
+        ]
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every stop is read. The heap holds the 2 nearest; sorted as the Driver prints them, the answer is [[-3,1],[1,2]].",
+      "ko": "모든 배달지를 읽었습니다. 힙에 가장 가까운 2개가 남았고, 출력할 때처럼 정렬하면 답은 [[-3,1],[1,2]]입니다."
+     },
+     "views": {
+      "stops": {
+       "columns": [
+        "x",
+        "y",
+        "x² + y²"
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "5",
+          "5",
+          "50"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "1",
+          "2",
+          "5"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "-3",
+          "1",
+          "10"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "4",
+          "-4",
+          "32"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          0,
+          2
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          3,
+          2
+         ]
+        ],
+        "path": [
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          2,
+          2
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          1,
+          2
+         ]
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 10
+        },
+        {
+         "id": 1,
+         "value": 5
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0] (-3,1)"
+        ],
+        [
+         1,
+         "[1] (1,2)"
+        ]
+       ],
+       "nodeMarks": {
+        "path": [
+         0,
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "[-3,1]",
+        "[1,2]"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 2
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       },
+       "value": "[-3,1]"
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       },
+       "value": "[1,2]"
+      }
+     ],
+     "answer": "[[-3,1],[1,2]]"
+    }
+   ],
+   "sampleInput": "[[5,5],[1,2],[-3,1],[4,-4]]\n2"
+  }
+ ]
+}
