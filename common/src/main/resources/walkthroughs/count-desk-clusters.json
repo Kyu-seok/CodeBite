@@ -867,7 +867,7 @@
     {
      "caption": {
       "en": "Pop (1,0): every desk next to it is already in cluster 1. The stack is empty, so cluster 1 is complete.",
-      "ko": "(1,0) 책상을 꺼냅니다. 맞닿은 책상은 모두 이미 그룹 1번에 있습니다. 스택이 비었으므로 그룹 1번이 완성됩니다."
+      "ko": "(1,0) 책상을 꺼냅니다. 맞닿은 책상은 모두 이미 그룹 1번에 있고, 스택이 비었으므로 그룹 1번이 완성됩니다."
      },
      "views": {
       "board": {
@@ -1428,7 +1428,7 @@
     {
      "caption": {
       "en": "Pop (1,5): every desk next to it is already in cluster 2. The stack is empty, so cluster 2 is complete.",
-      "ko": "(1,5) 책상을 꺼냅니다. 맞닿은 책상은 모두 이미 그룹 2번에 있습니다. 스택이 비었으므로 그룹 2번이 완성됩니다."
+      "ko": "(1,5) 책상을 꺼냅니다. 맞닿은 책상은 모두 이미 그룹 2번에 있고, 스택이 비었으므로 그룹 2번이 완성됩니다."
      },
      "views": {
       "board": {
@@ -2416,7 +2416,7 @@
     {
      "caption": {
       "en": "Pop (3,4): every desk next to it is already in cluster 3. The stack is empty, so cluster 3 is complete.",
-      "ko": "(3,4) 책상을 꺼냅니다. 맞닿은 책상은 모두 이미 그룹 3번에 있습니다. 스택이 비었으므로 그룹 3번이 완성됩니다."
+      "ko": "(3,4) 책상을 꺼냅니다. 맞닿은 책상은 모두 이미 그룹 3번에 있고, 스택이 비었으므로 그룹 3번이 완성됩니다."
      },
      "views": {
       "board": {
@@ -3170,7 +3170,7 @@
     {
      "caption": {
       "en": "Pop (4,0): every desk next to it is already in cluster 4. The stack is empty, so cluster 4 is complete.",
-      "ko": "(4,0) 책상을 꺼냅니다. 맞닿은 책상은 모두 이미 그룹 4번에 있습니다. 스택이 비었으므로 그룹 4번이 완성됩니다."
+      "ko": "(4,0) 책상을 꺼냅니다. 맞닿은 책상은 모두 이미 그룹 4번에 있고, 스택이 비었으므로 그룹 4번이 완성됩니다."
      },
      "views": {
       "board": {
@@ -3578,7 +3578,7 @@
     {
      "caption": {
       "en": "Pop (4,5): every desk next to it is already in cluster 5. The stack is empty, so cluster 5 is complete.",
-      "ko": "(4,5) 책상을 꺼냅니다. 맞닿은 책상은 모두 이미 그룹 5번에 있습니다. 스택이 비었으므로 그룹 5번이 완성됩니다."
+      "ko": "(4,5) 책상을 꺼냅니다. 맞닿은 책상은 모두 이미 그룹 5번에 있고, 스택이 비었으므로 그룹 5번이 완성됩니다."
      },
      "views": {
       "board": {
@@ -4472,7 +4472,7 @@
     {
      "caption": {
       "en": "Pop (1,1): every desk next to it is already in cluster 1. The stack is empty, so cluster 1 is complete.",
-      "ko": "(1,1) 책상을 꺼냅니다. 맞닿은 책상은 모두 이미 그룹 1번에 있습니다. 스택이 비었으므로 그룹 1번이 완성됩니다."
+      "ko": "(1,1) 책상을 꺼냅니다. 맞닿은 책상은 모두 이미 그룹 1번에 있고, 스택이 비었으므로 그룹 1번이 완성됩니다."
      },
      "views": {
       "board": {
@@ -4913,7 +4913,7 @@
     {
      "caption": {
       "en": "Pop (2,3): every desk next to it is already in cluster 2. The stack is empty, so cluster 2 is complete.",
-      "ko": "(2,3) 책상을 꺼냅니다. 맞닿은 책상은 모두 이미 그룹 2번에 있습니다. 스택이 비었으므로 그룹 2번이 완성됩니다."
+      "ko": "(2,3) 책상을 꺼냅니다. 맞닿은 책상은 모두 이미 그룹 2번에 있고, 스택이 비었으므로 그룹 2번이 완성됩니다."
      },
      "views": {
       "board": {

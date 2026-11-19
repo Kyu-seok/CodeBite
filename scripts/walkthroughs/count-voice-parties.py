@@ -2,8 +2,8 @@
 """count-voice-parties' Walkthrough: the reference solution (scripts/replay-solutions/count-voice-parties.py),
 union-find over the relays in order, on each sample Test Case: a frame for each relay's two finds and one for each
 union. The relays are drawn as the description's graph Diagram draws them, each player tagged with the root of its
-party; the parent array is the forest, and the parties are one chip per root, a chip leaving at each union, so the
-answer is how many chips are left.
+party; the parent array is the forest, and the parties are one chip per player, a chip fading when its player stops being a
+root at a union, so the answer is how many chips are still bright.
 
     CODEBITE_DB=<database> scripts/walkthroughs/count-voice-parties.py
 
@@ -30,7 +30,7 @@ wt = Walkthrough(
         {"id": "players", "type": "graph", "directed": False,
          "title": {"en": "relays (tag: root of the party)", "ko": "릴레이 (태그: 파티의 루트)"}},
         {"id": "parent", "type": "array", "title": {"en": "parent (index: player)", "ko": "parent (인덱스: 플레이어)"}},
-        {"id": "parties", "type": "output", "title": {"en": "parties, by root", "ko": "파티 (루트 번호)"},
+        {"id": "parties", "type": "output", "title": {"en": "parties, by root (faded: joined another)", "ko": "파티 (루트 번호, 흐림: 다른 파티에 합쳐짐)"},
          "empty": {"en": "none", "ko": "없음"}},
     ],
 )
@@ -40,6 +40,7 @@ def solve(n, relays, run):
     """Solution.countParties with a frame per pair of finds and per union. Returns the answer."""
     parent = list(range(n))
     roots = list(range(n))  # the parties, by root, in player order
+    gone = []               # the roots that stopped being roots, drawn faded
 
     def root_of(x):
         """The root of x's party, without the halving find does: for the graph's tags only."""
@@ -72,7 +73,8 @@ def solve(n, relays, run):
                            "edgeMarks": edge_marks, "nodeMarks": node_marks},
                   parent={"values": list(parent), "pointers": pointers or {},
                           "marks": {"lit": list(lit_cells), "good": list(good_cells)}},
-                  parties={"values": [str(r) for r in roots], "marks": party_marks or {}},
+                  parties={"values": [str(r) for r in range(n)],
+                           "marks": {"dim": list(gone), **(party_marks or {})}},
                   moves=moves, **answer)
 
     m = len(relays)
@@ -109,20 +111,20 @@ def solve(n, relays, run):
         if same:
             continue
         parent[ra] = rb
-        gone = roots.index(ra)
         left = len(roots) - 1
         frame({"en": f"parent[{ra}] = {rb}: party {ra} joins party {rb}, so the party with root {ra} is gone: "
                      f"{left} {plural(left, 'party', 'parties')} left.",
                "ko": f"parent[{ra}] = {rb}: {ra}번 파티가 {rb}번 파티에 합쳐져 루트 {ra}의 파티가 사라지고, "
                      f"파티는 {left}개 남습니다."},
-              relay=k, done=k, good_cells=[ra], party_marks={"bad": [gone]},
-              moves=[move(at("parent", rb), at("parent", ra)), move(at("parties", gone), mark="bad")])
+              relay=k, done=k, good_cells=[ra], party_marks={"bad": [ra]},
+              moves=[move(at("parent", rb), at("parent", ra)), move(at("parties", ra), mark="bad")])
         roots.remove(ra)
+        gone.append(ra)
     c = len(roots)
     frame({"en": f"Every relay is read. {c} {plural(c, 'root is', 'roots are')} left "
                  f"({', '.join(map(str, roots))}), one per party: answer {c}.",
            "ko": f"릴레이를 모두 읽었습니다. 남은 루트는 {', '.join(map(str, roots))}, {c}개이므로 답은 {c}입니다."},
-          done=m, party_marks={"good": list(range(c))}, answer=str(c))
+          done=m, party_marks={"good": list(roots)}, answer=str(c))
 
 
 for number, sample in enumerate(sample_cases(SLUG), start=1):

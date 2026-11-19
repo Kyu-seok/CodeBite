@@ -97,10 +97,10 @@ def solve(field, run):
             k = len(leaving)
             base = len(todo)
             end = "" if todo else {"en": f" The stack is empty: {len(seen)} cells reach the {bowl['en']} bowl.",
-                                   "ko": f" 스택이 비었습니다. {len(seen)}칸이 {bowl['ko']} 물그릇에 닿습니다."}
+                                   "ko": f" 스택이 비었으므로 {len(seen)}칸이 {bowl['ko']} 물그릇에 닿습니다."}
             frame({"en": f"Pop {listed(leaving)}: no neighbor not reached yet is as high or higher, so "
                          f"{plural(k, 'it adds', 'they add')} nothing." + (end["en"] if end else ""),
-                   "ko": f"{listed(leaving)} 칸을 꺼냅니다. 아직 닿지 않은 이웃 중 같거나 높은 칸이 없어 더할 것이 "
+                   "ko": f"{listed(leaving)} 칸을 꺼내지만 아직 닿지 않은 이웃 중 같거나 높은 칸이 없어 더할 것이 "
                          f"없습니다." + (end["ko"] if end else "")},
                   lit=list(leaving), stack_marks={"lit": list(range(base, base + k))},
                   moves=[move(at("stack", base + i)) for i in range(k)])
@@ -121,7 +121,9 @@ def solve(field, run):
                 continue
             for p in added:
                 del seen[p]  # drawn from the frame that pops (r, c)
+            todo.append((r, c))  # still on the stack while the pops before it are drawn
             flush()
+            todo.pop()
             for p in added:
                 seen[p] = True
             leaving.append((r, c))

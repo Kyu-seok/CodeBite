@@ -1574,7 +1574,7 @@
     {
      "caption": {
       "en": "The stack is empty: all 5 spots are copied, with 10 neighbor links, two for each road. Written as an adjacency list: [[2,3],[1,4],[1,5],[2,5],[3,4]].",
-      "ko": "스택이 비었습니다. 장소 5개가 모두 복사되었고 이웃 연결은 도로마다 두 개씩 10개입니다. 인접 리스트로 적으면 [[2,3],[1,4],[1,5],[2,5],[3,4]]입니다."
+      "ko": "스택이 비었고, 장소 5개가 모두 복사되었으며 이웃 연결은 도로마다 두 개씩 10개입니다. 인접 리스트로 적으면 [[2,3],[1,4],[1,5],[2,5],[3,4]]입니다."
      },
      "views": {
       "town": {
@@ -2395,7 +2395,7 @@
     {
      "caption": {
       "en": "The stack is empty: all 3 spots are copied, with 4 neighbor links, two for each road. Written as an adjacency list: [[2],[1,3],[2]].",
-      "ko": "스택이 비었습니다. 장소 3개가 모두 복사되었고 이웃 연결은 도로마다 두 개씩 4개입니다. 인접 리스트로 적으면 [[2],[1,3],[2]]입니다."
+      "ko": "스택이 비었고, 장소 3개가 모두 복사되었으며 이웃 연결은 도로마다 두 개씩 4개입니다. 인접 리스트로 적으면 [[2],[1,3],[2]]입니다."
      },
      "views": {
       "town": {

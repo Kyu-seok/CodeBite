@@ -101,10 +101,10 @@ def solve(board, run):
                 here = name((y, x))
                 if not added:
                     done = "" if todo else f" The stack is empty, so cluster {k} is complete."
-                    done_ko = "" if todo else f" 스택이 비었으므로 그룹 {k}번이 완성됩니다."
+                    done_ko = "있습니다." if todo else f"있고, 스택이 비었으므로 그룹 {k}번이 완성됩니다."
                     frame({"en": f"Pop ({here}): every desk next to it is already in cluster {k}."
                                  + done,
-                           "ko": f"({here}) 책상을 꺼냅니다. 맞닿은 책상은 모두 이미 그룹 {k}번에 있습니다." + done_ko},
+                           "ko": f"({here}) 책상을 꺼냅니다. 맞닿은 책상은 모두 이미 그룹 {k}번에 " + done_ko},
                           lit=[(y, x)], stack_marks={"lit": [top]}, moves=[move(at("stack", top))])
                     leaving.clear()
                     continue

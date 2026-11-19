@@ -160,7 +160,7 @@ def solve(adj, run):
     m = len(arrows)
     frame({"en": f"The stack is empty: all {n} spots are copied, with {m} neighbor links, two for each road. "
                  f"Written as an adjacency list: {driver_list(result)}.",
-           "ko": f"스택이 비었습니다. 장소 {n}개가 모두 복사되었고 이웃 연결은 도로마다 두 개씩 {m}개입니다. "
+           "ko": f"스택이 비었고, 장소 {n}개가 모두 복사되었으며 이웃 연결은 도로마다 두 개씩 {m}개입니다. "
                  f"인접 리스트로 적으면 {driver_list(result)}입니다."},
           path=True, answer=driver_list(result))
 
