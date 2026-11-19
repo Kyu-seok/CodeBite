@@ -1,0 +1,4281 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Dog Street Walk",
+  "ko": "강아지 동네 산책"
+ },
+ "approach": {
+  "en": "Hierholzer's algorithm: walk the smallest street left from the zone on top of the stack; a zone with no street left is finished and goes onto the walk. Zones finish in reverse order, so the walk reversed is the answer, and a dead end taken too early simply finishes first.",
+  "ko": "히어홀저 알고리즘: 스택 맨 위 구역에서 남은 길 중 가장 작은 길로 걷습니다. 남은 길이 없는 구역은 끝난 것이라 산책 경로에 붙입니다. 구역은 거꾸로 끝나므로 경로를 뒤집으면 답이고, 너무 일찍 들어간 막다른 길은 그냥 먼저 끝납니다."
+ },
+ "views": [
+  {
+   "id": "zones",
+   "type": "graph",
+   "directed": true,
+   "title": {
+    "en": "streets",
+    "ko": "길"
+   }
+  },
+  {
+   "id": "out",
+   "type": "map",
+   "title": {
+    "en": "streets out, largest first (faded: walked)",
+    "ko": "나가는 길, 큰 것부터 (흐림: 걸은 길)"
+   },
+   "empty": {
+    "en": "empty",
+    "ko": "비어 있음"
+   }
+  },
+  {
+   "id": "trail",
+   "type": "stack",
+   "title": {
+    "en": "stack",
+    "ko": "스택"
+   },
+   "empty": {
+    "en": "empty",
+    "ko": "비어 있음"
+   }
+  },
+  {
+   "id": "walk",
+   "type": "output",
+   "title": {
+    "en": "walk, built backwards",
+    "ko": "산책 경로 (거꾸로 쌓임)"
+   },
+   "empty": {
+    "en": "empty",
+    "ko": "비어 있음"
+   }
+  },
+  {
+   "id": "result",
+   "type": "output",
+   "title": {
+    "en": "answer",
+    "ko": "답"
+   },
+   "empty": {
+    "en": "not yet",
+    "ko": "아직 없음"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "routes = [[\"ELM\",\"HUB\"],[\"HUB\",\"BIR\"],[\"BIR\",\"ELM\"],[\"HUB\",\"CED\"]]",
+   "expected": "[\"HUB\",\"BIR\",\"ELM\",\"HUB\",\"CED\"]",
+   "frames": [
+    {
+     "caption": {
+      "en": "4 one-way streets; the walk starts at HUB and must use each exactly once.",
+      "ko": "일방통행 길 4개가 있습니다. 산책은 HUB에서 출발해 길마다 정확히 한 번씩 써야 합니다."
+     },
+     "views": {
+      "zones": {
+       "nodeMarks": {
+        "lit": [
+         "HUB"
+        ]
+       },
+       "edgeMarks": {
+        "dim": []
+       }
+      },
+      "out": {
+       "entries": [],
+       "marks": {}
+      },
+      "trail": {
+       "values": [],
+       "marks": {}
+      },
+      "walk": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Sort the streets largest first and file each under its start zone, so each card ends with its smallest street, the one pop() takes.",
+      "ko": "길을 큰 것부터 정렬해 출발 구역별로 넣습니다. 그래서 카드마다 가장 작은 길이 끝에 오고, pop() 호출이 그 길을 꺼냅니다."
+     },
+     "views": {
+      "zones": {
+       "nodeMarks": {},
+       "edgeMarks": {
+        "dim": []
+       }
+      },
+      "out": {
+       "entries": [
+        {
+         "key": "HUB",
+         "value": [
+          "CED",
+          "BIR"
+         ]
+        },
+        {
+         "key": "ELM",
+         "value": [
+          "HUB"
+         ]
+        },
+        {
+         "key": "BIR",
+         "value": [
+          "ELM"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "trail": {
+       "values": [],
+       "marks": {}
+      },
+      "walk": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "zones",
+        "at": [
+         "HUB",
+         "CED"
+        ]
+       },
+       "to": {
+        "view": "out",
+        "at": "HUB"
+       },
+       "value": "CED"
+      },
+      {
+       "from": {
+        "view": "zones",
+        "at": [
+         "HUB",
+         "BIR"
+        ]
+       },
+       "to": {
+        "view": "out",
+        "at": "HUB"
+       },
+       "value": "BIR"
+      },
+      {
+       "from": {
+        "view": "zones",
+        "at": [
+         "ELM",
+         "HUB"
+        ]
+       },
+       "to": {
+        "view": "out",
+        "at": "ELM"
+       },
+       "value": "HUB"
+      },
+      {
+       "from": {
+        "view": "zones",
+        "at": [
+         "BIR",
+         "ELM"
+        ]
+       },
+       "to": {
+        "view": "out",
+        "at": "BIR"
+       },
+       "value": "ELM"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The stack starts with HUB, where the dog is.",
+      "ko": "스택은 강아지가 있는 HUB 하나로 시작합니다."
+     },
+     "views": {
+      "zones": {
+       "nodeMarks": {
+        "lit": [
+         "HUB"
+        ]
+       },
+       "edgeMarks": {
+        "dim": []
+       }
+      },
+      "out": {
+       "entries": [
+        {
+         "key": "HUB",
+         "value": [
+          "CED",
+          "BIR"
+         ]
+        },
+        {
+         "key": "ELM",
+         "value": [
+          "HUB"
+         ]
+        },
+        {
+         "key": "BIR",
+         "value": [
+          "ELM"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "trail": {
+       "values": [
+        "HUB"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "walk": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "zones",
+        "at": "HUB"
+       },
+       "to": {
+        "view": "trail",
+        "at": 0
+       },
+       "value": "HUB"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "HUB still has a street out: pop its smallest, BIR (smaller than CED), walk HUB → BIR, and push BIR.",
+      "ko": "HUB 구역에 남은 길이 있습니다. 가장 작은 BIR (CED보다 작음) 길을 꺼내 HUB → BIR 방향으로 걷고 BIR 구역을 스택에 넣습니다."
+     },
+     "views": {
+      "zones": {
+       "nodeMarks": {
+        "lit": [
+         "HUB"
+        ],
+        "good": [
+         "BIR"
+        ]
+       },
+       "edgeMarks": {
+        "dim": [
+         1
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "out": {
+       "entries": [
+        {
+         "key": "HUB",
+         "value": [
+          "CED",
+          "BIR"
+         ],
+         "marks": {
+          "dim": [
+           1
+          ]
+         }
+        },
+        {
+         "key": "ELM",
+         "value": [
+          "HUB"
+         ]
+        },
+        {
+         "key": "BIR",
+         "value": [
+          "ELM"
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         "HUB"
+        ]
+       }
+      },
+      "trail": {
+       "values": [
+        "HUB",
+        "BIR"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "walk": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "out",
+        "at": "HUB"
+       },
+       "to": {
+        "view": "trail",
+        "at": 1
+       },
+       "value": "BIR"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "BIR still has a street out: pop its smallest, ELM, walk BIR → ELM, and push ELM.",
+      "ko": "BIR 구역에 남은 길이 있습니다. 가장 작은 ELM 길을 꺼내 BIR → ELM 방향으로 걷고 ELM 구역을 스택에 넣습니다."
+     },
+     "views": {
+      "zones": {
+       "nodeMarks": {
+        "lit": [
+         "BIR"
+        ],
+        "good": [
+         "ELM"
+        ]
+       },
+       "edgeMarks": {
+        "dim": [
+         1,
+         2
+        ],
+        "lit": [
+         2
+        ]
+       }
+      },
+      "out": {
+       "entries": [
+        {
+         "key": "HUB",
+         "value": [
+          "CED",
+          "BIR"
+         ],
+         "marks": {
+          "dim": [
+           1
+          ]
+         }
+        },
+        {
+         "key": "ELM",
+         "value": [
+          "HUB"
+         ]
+        },
+        {
+         "key": "BIR",
+         "value": [
+          "ELM"
+         ],
+         "marks": {
+          "dim": [
+           0
+          ]
+         }
+        }
+       ],
+       "marks": {
+        "lit": [
+         "BIR"
+        ]
+       }
+      },
+      "trail": {
+       "values": [
+        "HUB",
+        "BIR",
+        "ELM"
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      },
+      "walk": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "out",
+        "at": "BIR"
+       },
+       "to": {
+        "view": "trail",
+        "at": 2
+       },
+       "value": "ELM"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "ELM still has a street out: pop its smallest, HUB, walk ELM → HUB, and push HUB.",
+      "ko": "ELM 구역에 남은 길이 있습니다. 가장 작은 HUB 길을 꺼내 ELM → HUB 방향으로 걷고 HUB 구역을 스택에 넣습니다."
+     },
+     "views": {
+      "zones": {
+       "nodeMarks": {
+        "lit": [
+         "ELM"
+        ],
+        "good": [
+         "HUB"
+        ]
+       },
+       "edgeMarks": {
+        "dim": [
+         0,
+         1,
+         2
+        ],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "out": {
+       "entries": [
+        {
+         "key": "HUB",
+         "value": [
+          "CED",
+          "BIR"
+         ],
+         "marks": {
+          "dim": [
+           1
+          ]
+         }
+        },
+        {
+         "key": "ELM",
+         "value": [
+          "HUB"
+         ],
+         "marks": {
+          "dim": [
+           0
+          ]
+         }
+        },
+        {
+         "key": "BIR",
+         "value": [
+          "ELM"
+         ],
+         "marks": {
+          "dim": [
+           0
+          ]
+         }
+        }
+       ],
+       "marks": {
+        "lit": [
+         "ELM"
+        ]
+       }
+      },
+      "trail": {
+       "values": [
+        "HUB",
+        "BIR",
+        "ELM",
+        "HUB"
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      },
+      "walk": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "out",
+        "at": "ELM"
+       },
+       "to": {
+        "view": "trail",
+        "at": 3
+       },
+       "value": "HUB"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "HUB still has a street out: pop its smallest, CED, walk HUB → CED, and push CED.",
+      "ko": "HUB 구역에 남은 길이 있습니다. 가장 작은 CED 길을 꺼내 HUB → CED 방향으로 걷고 CED 구역을 스택에 넣습니다."
+     },
+     "views": {
+      "zones": {
+       "nodeMarks": {
+        "lit": [
+         "HUB"
+        ],
+        "good": [
+         "CED"
+        ]
+       },
+       "edgeMarks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3
+        ],
+        "lit": [
+         3
+        ]
+       }
+      },
+      "out": {
+       "entries": [
+        {
+         "key": "HUB",
+         "value": [
+          "CED",
+          "BIR"
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1
+          ]
+         }
+        },
+        {
+         "key": "ELM",
+         "value": [
+          "HUB"
+         ],
+         "marks": {
+          "dim": [
+           0
+          ]
+         }
+        },
+        {
+         "key": "BIR",
+         "value": [
+          "ELM"
+         ],
+         "marks": {
+          "dim": [
+           0
+          ]
+         }
+        }
+       ],
+       "marks": {
+        "lit": [
+         "HUB"
+        ]
+       }
+      },
+      "trail": {
+       "values": [
+        "HUB",
+        "BIR",
+        "ELM",
+        "HUB",
+        "CED"
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      },
+      "walk": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "out",
+        "at": "HUB"
+       },
+       "to": {
+        "view": "trail",
+        "at": 4
+       },
+       "value": "CED"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "CED has no street left, so it is finished: pop it off the stack onto the walk.",
+      "ko": "CED 구역에는 남은 길이 없으므로 끝났습니다. 스택에서 빼 산책 경로에 붙입니다."
+     },
+     "views": {
+      "zones": {
+       "nodeMarks": {
+        "lit": [
+         "CED"
+        ]
+       },
+       "edgeMarks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3
+        ]
+       }
+      },
+      "out": {
+       "entries": [
+        {
+         "key": "HUB",
+         "value": [
+          "CED",
+          "BIR"
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1
+          ]
+         }
+        },
+        {
+         "key": "ELM",
+         "value": [
+          "HUB"
+         ],
+         "marks": {
+          "dim": [
+           0
+          ]
+         }
+        },
+        {
+         "key": "BIR",
+         "value": [
+          "ELM"
+         ],
+         "marks": {
+          "dim": [
+           0
+          ]
+         }
+        }
+       ],
+       "marks": {}
+      },
+      "trail": {
+       "values": [
+        "HUB",
+        "BIR",
+        "ELM",
+        "HUB",
+        "CED"
+       ],
+       "marks": {
+        "lit": [
+         4
+        ]
+       }
+      },
+      "walk": {
+       "values": [
+        "CED"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "trail",
+        "at": 4
+       },
+       "to": {
+        "view": "walk",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "HUB has no street left, so it is finished: pop it off the stack onto the walk.",
+      "ko": "HUB 구역에는 남은 길이 없으므로 끝났습니다. 스택에서 빼 산책 경로에 붙입니다."
+     },
+     "views": {
+      "zones": {
+       "nodeMarks": {
+        "lit": [
+         "HUB"
+        ]
+       },
+       "edgeMarks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3
+        ]
+       }
+      },
+      "out": {
+       "entries": [
+        {
+         "key": "HUB",
+         "value": [
+          "CED",
+          "BIR"
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1
+          ]
+         }
+        },
+        {
+         "key": "ELM",
+         "value": [
+          "HUB"
+         ],
+         "marks": {
+          "dim": [
+           0
+          ]
+         }
+        },
+        {
+         "key": "BIR",
+         "value": [
+          "ELM"
+         ],
+         "marks": {
+          "dim": [
+           0
+          ]
+         }
+        }
+       ],
+       "marks": {}
+      },
+      "trail": {
+       "values": [
+        "HUB",
+        "BIR",
+        "ELM",
+        "HUB"
+       ],
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "walk": {
+       "values": [
+        "CED",
+        "HUB"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "trail",
+        "at": 3
+       },
+       "to": {
+        "view": "walk",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "ELM has no street left, so it is finished: pop it off the stack onto the walk.",
+      "ko": "ELM 구역에는 남은 길이 없으므로 끝났습니다. 스택에서 빼 산책 경로에 붙입니다."
+     },
+     "views": {
+      "zones": {
+       "nodeMarks": {
+        "lit": [
+         "ELM"
+        ]
+       },
+       "edgeMarks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3
+        ]
+       }
+      },
+      "out": {
+       "entries": [
+        {
+         "key": "HUB",
+         "value": [
+          "CED",
+          "BIR"
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1
+          ]
+         }
+        },
+        {
+         "key": "ELM",
+         "value": [
+          "HUB"
+         ],
+         "marks": {
+          "dim": [
+           0
+          ]
+         }
+        },
+        {
+         "key": "BIR",
+         "value": [
+          "ELM"
+         ],
+         "marks": {
+          "dim": [
+           0
+          ]
+         }
+        }
+       ],
+       "marks": {}
+      },
+      "trail": {
+       "values": [
+        "HUB",
+        "BIR",
+        "ELM"
+       ],
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "walk": {
+       "values": [
+        "CED",
+        "HUB",
+        "ELM"
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "trail",
+        "at": 2
+       },
+       "to": {
+        "view": "walk",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "BIR has no street left, so it is finished: pop it off the stack onto the walk.",
+      "ko": "BIR 구역에는 남은 길이 없으므로 끝났습니다. 스택에서 빼 산책 경로에 붙입니다."
+     },
+     "views": {
+      "zones": {
+       "nodeMarks": {
+        "lit": [
+         "BIR"
+        ]
+       },
+       "edgeMarks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3
+        ]
+       }
+      },
+      "out": {
+       "entries": [
+        {
+         "key": "HUB",
+         "value": [
+          "CED",
+          "BIR"
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1
+          ]
+         }
+        },
+        {
+         "key": "ELM",
+         "value": [
+          "HUB"
+         ],
+         "marks": {
+          "dim": [
+           0
+          ]
+         }
+        },
+        {
+         "key": "BIR",
+         "value": [
+          "ELM"
+         ],
+         "marks": {
+          "dim": [
+           0
+          ]
+         }
+        }
+       ],
+       "marks": {}
+      },
+      "trail": {
+       "values": [
+        "HUB",
+        "BIR"
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "walk": {
+       "values": [
+        "CED",
+        "HUB",
+        "ELM",
+        "BIR"
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "trail",
+        "at": 1
+       },
+       "to": {
+        "view": "walk",
+        "at": 3
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "HUB has no street left, so it is finished: pop it off the stack onto the walk.",
+      "ko": "HUB 구역에는 남은 길이 없으므로 끝났습니다. 스택에서 빼 산책 경로에 붙입니다."
+     },
+     "views": {
+      "zones": {
+       "nodeMarks": {
+        "lit": [
+         "HUB"
+        ]
+       },
+       "edgeMarks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3
+        ]
+       }
+      },
+      "out": {
+       "entries": [
+        {
+         "key": "HUB",
+         "value": [
+          "CED",
+          "BIR"
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1
+          ]
+         }
+        },
+        {
+         "key": "ELM",
+         "value": [
+          "HUB"
+         ],
+         "marks": {
+          "dim": [
+           0
+          ]
+         }
+        },
+        {
+         "key": "BIR",
+         "value": [
+          "ELM"
+         ],
+         "marks": {
+          "dim": [
+           0
+          ]
+         }
+        }
+       ],
+       "marks": {}
+      },
+      "trail": {
+       "values": [
+        "HUB"
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "walk": {
+       "values": [
+        "CED",
+        "HUB",
+        "ELM",
+        "BIR",
+        "HUB"
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "trail",
+        "at": 0
+       },
+       "to": {
+        "view": "walk",
+        "at": 4
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The stack is empty and every street is walked. Zones were finished last-first, so the walk reversed is the route.",
+      "ko": "스택이 비었고 모든 길을 걸었습니다. 구역은 마지막 것부터 끝났으므로 경로를 뒤집으면 산책 순서입니다."
+     },
+     "views": {
+      "zones": {
+       "nodeMarks": {},
+       "edgeMarks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3
+        ]
+       }
+      },
+      "out": {
+       "entries": [
+        {
+         "key": "HUB",
+         "value": [
+          "CED",
+          "BIR"
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1
+          ]
+         }
+        },
+        {
+         "key": "ELM",
+         "value": [
+          "HUB"
+         ],
+         "marks": {
+          "dim": [
+           0
+          ]
+         }
+        },
+        {
+         "key": "BIR",
+         "value": [
+          "ELM"
+         ],
+         "marks": {
+          "dim": [
+           0
+          ]
+         }
+        }
+       ],
+       "marks": {}
+      },
+      "trail": {
+       "values": [],
+       "marks": {}
+      },
+      "walk": {
+       "values": [
+        "CED",
+        "HUB",
+        "ELM",
+        "BIR",
+        "HUB"
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "HUB",
+        "BIR",
+        "ELM",
+        "HUB",
+        "CED"
+       ],
+       "marks": {
+        "good": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "walk",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 4
+       }
+      },
+      {
+       "from": {
+        "view": "walk",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       }
+      },
+      {
+       "from": {
+        "view": "walk",
+        "at": 2
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       }
+      },
+      {
+       "from": {
+        "view": "walk",
+        "at": 3
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       }
+      },
+      {
+       "from": {
+        "view": "walk",
+        "at": 4
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Answer [\"HUB\",\"BIR\",\"ELM\",\"HUB\",\"CED\"]: HUB → BIR → ELM → HUB → CED, using all 4 streets once.",
+      "ko": "답은 [\"HUB\",\"BIR\",\"ELM\",\"HUB\",\"CED\"]입니다. HUB → BIR → ELM → HUB → CED 순서로 길 4개를 한 번씩 씁니다."
+     },
+     "views": {
+      "zones": {
+       "nodeMarks": {
+        "path": [
+         "HUB",
+         "ELM",
+         "BIR",
+         "CED"
+        ]
+       },
+       "edgeMarks": {
+        "path": [
+         0,
+         1,
+         2,
+         3
+        ]
+       }
+      },
+      "out": {
+       "entries": [
+        {
+         "key": "HUB",
+         "value": [
+          "CED",
+          "BIR"
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1
+          ]
+         }
+        },
+        {
+         "key": "ELM",
+         "value": [
+          "HUB"
+         ],
+         "marks": {
+          "dim": [
+           0
+          ]
+         }
+        },
+        {
+         "key": "BIR",
+         "value": [
+          "ELM"
+         ],
+         "marks": {
+          "dim": [
+           0
+          ]
+         }
+        }
+       ],
+       "marks": {}
+      },
+      "trail": {
+       "values": [],
+       "marks": {}
+      },
+      "walk": {
+       "values": [
+        "CED",
+        "HUB",
+        "ELM",
+        "BIR",
+        "HUB"
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "HUB",
+        "BIR",
+        "ELM",
+        "HUB",
+        "CED"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      }
+     },
+     "answer": "[\"HUB\",\"BIR\",\"ELM\",\"HUB\",\"CED\"]"
+    }
+   ],
+   "setup": {
+    "zones": {
+     "nodes": [
+      {
+       "id": "ELM"
+      },
+      {
+       "id": "HUB",
+       "tag": {
+        "en": "home",
+        "ko": "집"
+       }
+      },
+      {
+       "id": "BIR"
+      },
+      {
+       "id": "CED"
+      }
+     ],
+     "edges": [
+      {
+       "from": "ELM",
+       "to": "HUB"
+      },
+      {
+       "from": "HUB",
+       "to": "BIR"
+      },
+      {
+       "from": "BIR",
+       "to": "ELM"
+      },
+      {
+       "from": "HUB",
+       "to": "CED"
+      }
+     ]
+    }
+   },
+   "sampleInput": "[[\"ELM\",\"HUB\"],[\"HUB\",\"BIR\"],[\"BIR\",\"ELM\"],[\"HUB\",\"CED\"]]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "routes = [[\"HUB\",\"NOR\"],[\"HUB\",\"SOU\"],[\"NOR\",\"SOU\"],[\"SOU\",\"HUB\"],[\"SOU\",\"NOR\"]]",
+   "expected": "[\"HUB\",\"NOR\",\"SOU\",\"HUB\",\"SOU\",\"NOR\"]",
+   "frames": [
+    {
+     "caption": {
+      "en": "5 one-way streets; the walk starts at HUB and must use each exactly once.",
+      "ko": "일방통행 길 5개가 있습니다. 산책은 HUB에서 출발해 길마다 정확히 한 번씩 써야 합니다."
+     },
+     "views": {
+      "zones": {
+       "nodeMarks": {
+        "lit": [
+         "HUB"
+        ]
+       },
+       "edgeMarks": {
+        "dim": []
+       }
+      },
+      "out": {
+       "entries": [],
+       "marks": {}
+      },
+      "trail": {
+       "values": [],
+       "marks": {}
+      },
+      "walk": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Sort the streets largest first and file each under its start zone, so each card ends with its smallest street, the one pop() takes.",
+      "ko": "길을 큰 것부터 정렬해 출발 구역별로 넣습니다. 그래서 카드마다 가장 작은 길이 끝에 오고, pop() 호출이 그 길을 꺼냅니다."
+     },
+     "views": {
+      "zones": {
+       "nodeMarks": {},
+       "edgeMarks": {
+        "dim": []
+       }
+      },
+      "out": {
+       "entries": [
+        {
+         "key": "SOU",
+         "value": [
+          "NOR",
+          "HUB"
+         ]
+        },
+        {
+         "key": "NOR",
+         "value": [
+          "SOU"
+         ]
+        },
+        {
+         "key": "HUB",
+         "value": [
+          "SOU",
+          "NOR"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "trail": {
+       "values": [],
+       "marks": {}
+      },
+      "walk": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "zones",
+        "at": [
+         "SOU",
+         "NOR"
+        ]
+       },
+       "to": {
+        "view": "out",
+        "at": "SOU"
+       },
+       "value": "NOR"
+      },
+      {
+       "from": {
+        "view": "zones",
+        "at": [
+         "SOU",
+         "HUB"
+        ]
+       },
+       "to": {
+        "view": "out",
+        "at": "SOU"
+       },
+       "value": "HUB"
+      },
+      {
+       "from": {
+        "view": "zones",
+        "at": [
+         "NOR",
+         "SOU"
+        ]
+       },
+       "to": {
+        "view": "out",
+        "at": "NOR"
+       },
+       "value": "SOU"
+      },
+      {
+       "from": {
+        "view": "zones",
+        "at": [
+         "HUB",
+         "SOU"
+        ]
+       },
+       "to": {
+        "view": "out",
+        "at": "HUB"
+       },
+       "value": "SOU"
+      },
+      {
+       "from": {
+        "view": "zones",
+        "at": [
+         "HUB",
+         "NOR"
+        ]
+       },
+       "to": {
+        "view": "out",
+        "at": "HUB"
+       },
+       "value": "NOR"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The stack starts with HUB, where the dog is.",
+      "ko": "스택은 강아지가 있는 HUB 하나로 시작합니다."
+     },
+     "views": {
+      "zones": {
+       "nodeMarks": {
+        "lit": [
+         "HUB"
+        ]
+       },
+       "edgeMarks": {
+        "dim": []
+       }
+      },
+      "out": {
+       "entries": [
+        {
+         "key": "SOU",
+         "value": [
+          "NOR",
+          "HUB"
+         ]
+        },
+        {
+         "key": "NOR",
+         "value": [
+          "SOU"
+         ]
+        },
+        {
+         "key": "HUB",
+         "value": [
+          "SOU",
+          "NOR"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "trail": {
+       "values": [
+        "HUB"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "walk": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "zones",
+        "at": "HUB"
+       },
+       "to": {
+        "view": "trail",
+        "at": 0
+       },
+       "value": "HUB"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "HUB still has a street out: pop its smallest, NOR (smaller than SOU), walk HUB → NOR, and push NOR.",
+      "ko": "HUB 구역에 남은 길이 있습니다. 가장 작은 NOR (SOU보다 작음) 길을 꺼내 HUB → NOR 방향으로 걷고 NOR 구역을 스택에 넣습니다."
+     },
+     "views": {
+      "zones": {
+       "nodeMarks": {
+        "lit": [
+         "HUB"
+        ],
+        "good": [
+         "NOR"
+        ]
+       },
+       "edgeMarks": {
+        "dim": [
+         0
+        ],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "out": {
+       "entries": [
+        {
+         "key": "SOU",
+         "value": [
+          "NOR",
+          "HUB"
+         ]
+        },
+        {
+         "key": "NOR",
+         "value": [
+          "SOU"
+         ]
+        },
+        {
+         "key": "HUB",
+         "value": [
+          "SOU",
+          "NOR"
+         ],
+         "marks": {
+          "dim": [
+           1
+          ]
+         }
+        }
+       ],
+       "marks": {
+        "lit": [
+         "HUB"
+        ]
+       }
+      },
+      "trail": {
+       "values": [
+        "HUB",
+        "NOR"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "walk": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "out",
+        "at": "HUB"
+       },
+       "to": {
+        "view": "trail",
+        "at": 1
+       },
+       "value": "NOR"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "NOR still has a street out: pop its smallest, SOU, walk NOR → SOU, and push SOU.",
+      "ko": "NOR 구역에 남은 길이 있습니다. 가장 작은 SOU 길을 꺼내 NOR → SOU 방향으로 걷고 SOU 구역을 스택에 넣습니다."
+     },
+     "views": {
+      "zones": {
+       "nodeMarks": {
+        "lit": [
+         "NOR"
+        ],
+        "good": [
+         "SOU"
+        ]
+       },
+       "edgeMarks": {
+        "dim": [
+         0,
+         2
+        ],
+        "lit": [
+         2
+        ]
+       }
+      },
+      "out": {
+       "entries": [
+        {
+         "key": "SOU",
+         "value": [
+          "NOR",
+          "HUB"
+         ]
+        },
+        {
+         "key": "NOR",
+         "value": [
+          "SOU"
+         ],
+         "marks": {
+          "dim": [
+           0
+          ]
+         }
+        },
+        {
+         "key": "HUB",
+         "value": [
+          "SOU",
+          "NOR"
+         ],
+         "marks": {
+          "dim": [
+           1
+          ]
+         }
+        }
+       ],
+       "marks": {
+        "lit": [
+         "NOR"
+        ]
+       }
+      },
+      "trail": {
+       "values": [
+        "HUB",
+        "NOR",
+        "SOU"
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      },
+      "walk": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "out",
+        "at": "NOR"
+       },
+       "to": {
+        "view": "trail",
+        "at": 2
+       },
+       "value": "SOU"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "SOU still has a street out: pop its smallest, HUB (smaller than NOR), walk SOU → HUB, and push HUB.",
+      "ko": "SOU 구역에 남은 길이 있습니다. 가장 작은 HUB (NOR보다 작음) 길을 꺼내 SOU → HUB 방향으로 걷고 HUB 구역을 스택에 넣습니다."
+     },
+     "views": {
+      "zones": {
+       "nodeMarks": {
+        "lit": [
+         "SOU"
+        ],
+        "good": [
+         "HUB"
+        ]
+       },
+       "edgeMarks": {
+        "dim": [
+         0,
+         2,
+         3
+        ],
+        "lit": [
+         3
+        ]
+       }
+      },
+      "out": {
+       "entries": [
+        {
+         "key": "SOU",
+         "value": [
+          "NOR",
+          "HUB"
+         ],
+         "marks": {
+          "dim": [
+           1
+          ]
+         }
+        },
+        {
+         "key": "NOR",
+         "value": [
+          "SOU"
+         ],
+         "marks": {
+          "dim": [
+           0
+          ]
+         }
+        },
+        {
+         "key": "HUB",
+         "value": [
+          "SOU",
+          "NOR"
+         ],
+         "marks": {
+          "dim": [
+           1
+          ]
+         }
+        }
+       ],
+       "marks": {
+        "lit": [
+         "SOU"
+        ]
+       }
+      },
+      "trail": {
+       "values": [
+        "HUB",
+        "NOR",
+        "SOU",
+        "HUB"
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      },
+      "walk": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "out",
+        "at": "SOU"
+       },
+       "to": {
+        "view": "trail",
+        "at": 3
+       },
+       "value": "HUB"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "HUB still has a street out: pop its smallest, SOU, walk HUB → SOU, and push SOU.",
+      "ko": "HUB 구역에 남은 길이 있습니다. 가장 작은 SOU 길을 꺼내 HUB → SOU 방향으로 걷고 SOU 구역을 스택에 넣습니다."
+     },
+     "views": {
+      "zones": {
+       "nodeMarks": {
+        "lit": [
+         "HUB"
+        ],
+        "good": [
+         "SOU"
+        ]
+       },
+       "edgeMarks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "out": {
+       "entries": [
+        {
+         "key": "SOU",
+         "value": [
+          "NOR",
+          "HUB"
+         ],
+         "marks": {
+          "dim": [
+           1
+          ]
+         }
+        },
+        {
+         "key": "NOR",
+         "value": [
+          "SOU"
+         ],
+         "marks": {
+          "dim": [
+           0
+          ]
+         }
+        },
+        {
+         "key": "HUB",
+         "value": [
+          "SOU",
+          "NOR"
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1
+          ]
+         }
+        }
+       ],
+       "marks": {
+        "lit": [
+         "HUB"
+        ]
+       }
+      },
+      "trail": {
+       "values": [
+        "HUB",
+        "NOR",
+        "SOU",
+        "HUB",
+        "SOU"
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      },
+      "walk": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "out",
+        "at": "HUB"
+       },
+       "to": {
+        "view": "trail",
+        "at": 4
+       },
+       "value": "SOU"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "SOU still has a street out: pop its smallest, NOR, walk SOU → NOR, and push NOR.",
+      "ko": "SOU 구역에 남은 길이 있습니다. 가장 작은 NOR 길을 꺼내 SOU → NOR 방향으로 걷고 NOR 구역을 스택에 넣습니다."
+     },
+     "views": {
+      "zones": {
+       "nodeMarks": {
+        "lit": [
+         "SOU"
+        ],
+        "good": [
+         "NOR"
+        ]
+       },
+       "edgeMarks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ],
+        "lit": [
+         4
+        ]
+       }
+      },
+      "out": {
+       "entries": [
+        {
+         "key": "SOU",
+         "value": [
+          "NOR",
+          "HUB"
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1
+          ]
+         }
+        },
+        {
+         "key": "NOR",
+         "value": [
+          "SOU"
+         ],
+         "marks": {
+          "dim": [
+           0
+          ]
+         }
+        },
+        {
+         "key": "HUB",
+         "value": [
+          "SOU",
+          "NOR"
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1
+          ]
+         }
+        }
+       ],
+       "marks": {
+        "lit": [
+         "SOU"
+        ]
+       }
+      },
+      "trail": {
+       "values": [
+        "HUB",
+        "NOR",
+        "SOU",
+        "HUB",
+        "SOU",
+        "NOR"
+       ],
+       "marks": {
+        "good": [
+         5
+        ]
+       }
+      },
+      "walk": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "out",
+        "at": "SOU"
+       },
+       "to": {
+        "view": "trail",
+        "at": 5
+       },
+       "value": "NOR"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "NOR has no street left, so it is finished: pop it off the stack onto the walk.",
+      "ko": "NOR 구역에는 남은 길이 없으므로 끝났습니다. 스택에서 빼 산책 경로에 붙입니다."
+     },
+     "views": {
+      "zones": {
+       "nodeMarks": {
+        "lit": [
+         "NOR"
+        ]
+       },
+       "edgeMarks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      },
+      "out": {
+       "entries": [
+        {
+         "key": "SOU",
+         "value": [
+          "NOR",
+          "HUB"
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1
+          ]
+         }
+        },
+        {
+         "key": "NOR",
+         "value": [
+          "SOU"
+         ],
+         "marks": {
+          "dim": [
+           0
+          ]
+         }
+        },
+        {
+         "key": "HUB",
+         "value": [
+          "SOU",
+          "NOR"
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1
+          ]
+         }
+        }
+       ],
+       "marks": {}
+      },
+      "trail": {
+       "values": [
+        "HUB",
+        "NOR",
+        "SOU",
+        "HUB",
+        "SOU",
+        "NOR"
+       ],
+       "marks": {
+        "lit": [
+         5
+        ]
+       }
+      },
+      "walk": {
+       "values": [
+        "NOR"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "trail",
+        "at": 5
+       },
+       "to": {
+        "view": "walk",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "SOU has no street left, so it is finished: pop it off the stack onto the walk.",
+      "ko": "SOU 구역에는 남은 길이 없으므로 끝났습니다. 스택에서 빼 산책 경로에 붙입니다."
+     },
+     "views": {
+      "zones": {
+       "nodeMarks": {
+        "lit": [
+         "SOU"
+        ]
+       },
+       "edgeMarks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      },
+      "out": {
+       "entries": [
+        {
+         "key": "SOU",
+         "value": [
+          "NOR",
+          "HUB"
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1
+          ]
+         }
+        },
+        {
+         "key": "NOR",
+         "value": [
+          "SOU"
+         ],
+         "marks": {
+          "dim": [
+           0
+          ]
+         }
+        },
+        {
+         "key": "HUB",
+         "value": [
+          "SOU",
+          "NOR"
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1
+          ]
+         }
+        }
+       ],
+       "marks": {}
+      },
+      "trail": {
+       "values": [
+        "HUB",
+        "NOR",
+        "SOU",
+        "HUB",
+        "SOU"
+       ],
+       "marks": {
+        "lit": [
+         4
+        ]
+       }
+      },
+      "walk": {
+       "values": [
+        "NOR",
+        "SOU"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "trail",
+        "at": 4
+       },
+       "to": {
+        "view": "walk",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "HUB has no street left, so it is finished: pop it off the stack onto the walk.",
+      "ko": "HUB 구역에는 남은 길이 없으므로 끝났습니다. 스택에서 빼 산책 경로에 붙입니다."
+     },
+     "views": {
+      "zones": {
+       "nodeMarks": {
+        "lit": [
+         "HUB"
+        ]
+       },
+       "edgeMarks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      },
+      "out": {
+       "entries": [
+        {
+         "key": "SOU",
+         "value": [
+          "NOR",
+          "HUB"
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1
+          ]
+         }
+        },
+        {
+         "key": "NOR",
+         "value": [
+          "SOU"
+         ],
+         "marks": {
+          "dim": [
+           0
+          ]
+         }
+        },
+        {
+         "key": "HUB",
+         "value": [
+          "SOU",
+          "NOR"
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1
+          ]
+         }
+        }
+       ],
+       "marks": {}
+      },
+      "trail": {
+       "values": [
+        "HUB",
+        "NOR",
+        "SOU",
+        "HUB"
+       ],
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "walk": {
+       "values": [
+        "NOR",
+        "SOU",
+        "HUB"
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "trail",
+        "at": 3
+       },
+       "to": {
+        "view": "walk",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "SOU has no street left, so it is finished: pop it off the stack onto the walk.",
+      "ko": "SOU 구역에는 남은 길이 없으므로 끝났습니다. 스택에서 빼 산책 경로에 붙입니다."
+     },
+     "views": {
+      "zones": {
+       "nodeMarks": {
+        "lit": [
+         "SOU"
+        ]
+       },
+       "edgeMarks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      },
+      "out": {
+       "entries": [
+        {
+         "key": "SOU",
+         "value": [
+          "NOR",
+          "HUB"
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1
+          ]
+         }
+        },
+        {
+         "key": "NOR",
+         "value": [
+          "SOU"
+         ],
+         "marks": {
+          "dim": [
+           0
+          ]
+         }
+        },
+        {
+         "key": "HUB",
+         "value": [
+          "SOU",
+          "NOR"
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1
+          ]
+         }
+        }
+       ],
+       "marks": {}
+      },
+      "trail": {
+       "values": [
+        "HUB",
+        "NOR",
+        "SOU"
+       ],
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "walk": {
+       "values": [
+        "NOR",
+        "SOU",
+        "HUB",
+        "SOU"
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "trail",
+        "at": 2
+       },
+       "to": {
+        "view": "walk",
+        "at": 3
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "NOR has no street left, so it is finished: pop it off the stack onto the walk.",
+      "ko": "NOR 구역에는 남은 길이 없으므로 끝났습니다. 스택에서 빼 산책 경로에 붙입니다."
+     },
+     "views": {
+      "zones": {
+       "nodeMarks": {
+        "lit": [
+         "NOR"
+        ]
+       },
+       "edgeMarks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      },
+      "out": {
+       "entries": [
+        {
+         "key": "SOU",
+         "value": [
+          "NOR",
+          "HUB"
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1
+          ]
+         }
+        },
+        {
+         "key": "NOR",
+         "value": [
+          "SOU"
+         ],
+         "marks": {
+          "dim": [
+           0
+          ]
+         }
+        },
+        {
+         "key": "HUB",
+         "value": [
+          "SOU",
+          "NOR"
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1
+          ]
+         }
+        }
+       ],
+       "marks": {}
+      },
+      "trail": {
+       "values": [
+        "HUB",
+        "NOR"
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "walk": {
+       "values": [
+        "NOR",
+        "SOU",
+        "HUB",
+        "SOU",
+        "NOR"
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "trail",
+        "at": 1
+       },
+       "to": {
+        "view": "walk",
+        "at": 4
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "HUB has no street left, so it is finished: pop it off the stack onto the walk.",
+      "ko": "HUB 구역에는 남은 길이 없으므로 끝났습니다. 스택에서 빼 산책 경로에 붙입니다."
+     },
+     "views": {
+      "zones": {
+       "nodeMarks": {
+        "lit": [
+         "HUB"
+        ]
+       },
+       "edgeMarks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      },
+      "out": {
+       "entries": [
+        {
+         "key": "SOU",
+         "value": [
+          "NOR",
+          "HUB"
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1
+          ]
+         }
+        },
+        {
+         "key": "NOR",
+         "value": [
+          "SOU"
+         ],
+         "marks": {
+          "dim": [
+           0
+          ]
+         }
+        },
+        {
+         "key": "HUB",
+         "value": [
+          "SOU",
+          "NOR"
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1
+          ]
+         }
+        }
+       ],
+       "marks": {}
+      },
+      "trail": {
+       "values": [
+        "HUB"
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "walk": {
+       "values": [
+        "NOR",
+        "SOU",
+        "HUB",
+        "SOU",
+        "NOR",
+        "HUB"
+       ],
+       "marks": {
+        "good": [
+         5
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "trail",
+        "at": 0
+       },
+       "to": {
+        "view": "walk",
+        "at": 5
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The stack is empty and every street is walked. Zones were finished last-first, so the walk reversed is the route.",
+      "ko": "스택이 비었고 모든 길을 걸었습니다. 구역은 마지막 것부터 끝났으므로 경로를 뒤집으면 산책 순서입니다."
+     },
+     "views": {
+      "zones": {
+       "nodeMarks": {},
+       "edgeMarks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      },
+      "out": {
+       "entries": [
+        {
+         "key": "SOU",
+         "value": [
+          "NOR",
+          "HUB"
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1
+          ]
+         }
+        },
+        {
+         "key": "NOR",
+         "value": [
+          "SOU"
+         ],
+         "marks": {
+          "dim": [
+           0
+          ]
+         }
+        },
+        {
+         "key": "HUB",
+         "value": [
+          "SOU",
+          "NOR"
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1
+          ]
+         }
+        }
+       ],
+       "marks": {}
+      },
+      "trail": {
+       "values": [],
+       "marks": {}
+      },
+      "walk": {
+       "values": [
+        "NOR",
+        "SOU",
+        "HUB",
+        "SOU",
+        "NOR",
+        "HUB"
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "HUB",
+        "NOR",
+        "SOU",
+        "HUB",
+        "SOU",
+        "NOR"
+       ],
+       "marks": {
+        "good": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "walk",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 5
+       }
+      },
+      {
+       "from": {
+        "view": "walk",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 4
+       }
+      },
+      {
+       "from": {
+        "view": "walk",
+        "at": 2
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       }
+      },
+      {
+       "from": {
+        "view": "walk",
+        "at": 3
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       }
+      },
+      {
+       "from": {
+        "view": "walk",
+        "at": 4
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       }
+      },
+      {
+       "from": {
+        "view": "walk",
+        "at": 5
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Answer [\"HUB\",\"NOR\",\"SOU\",\"HUB\",\"SOU\",\"NOR\"]: HUB → NOR → SOU → HUB → SOU → NOR, using all 5 streets once.",
+      "ko": "답은 [\"HUB\",\"NOR\",\"SOU\",\"HUB\",\"SOU\",\"NOR\"]입니다. HUB → NOR → SOU → HUB → SOU → NOR 순서로 길 5개를 한 번씩 씁니다."
+     },
+     "views": {
+      "zones": {
+       "nodeMarks": {
+        "path": [
+         "SOU",
+         "NOR",
+         "HUB"
+        ]
+       },
+       "edgeMarks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      },
+      "out": {
+       "entries": [
+        {
+         "key": "SOU",
+         "value": [
+          "NOR",
+          "HUB"
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1
+          ]
+         }
+        },
+        {
+         "key": "NOR",
+         "value": [
+          "SOU"
+         ],
+         "marks": {
+          "dim": [
+           0
+          ]
+         }
+        },
+        {
+         "key": "HUB",
+         "value": [
+          "SOU",
+          "NOR"
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1
+          ]
+         }
+        }
+       ],
+       "marks": {}
+      },
+      "trail": {
+       "values": [],
+       "marks": {}
+      },
+      "walk": {
+       "values": [
+        "NOR",
+        "SOU",
+        "HUB",
+        "SOU",
+        "NOR",
+        "HUB"
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "HUB",
+        "NOR",
+        "SOU",
+        "HUB",
+        "SOU",
+        "NOR"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      }
+     },
+     "answer": "[\"HUB\",\"NOR\",\"SOU\",\"HUB\",\"SOU\",\"NOR\"]"
+    }
+   ],
+   "setup": {
+    "zones": {
+     "nodes": [
+      {
+       "id": "HUB",
+       "tag": {
+        "en": "home",
+        "ko": "집"
+       }
+      },
+      {
+       "id": "NOR"
+      },
+      {
+       "id": "SOU"
+      }
+     ],
+     "edges": [
+      {
+       "from": "HUB",
+       "to": "NOR"
+      },
+      {
+       "from": "HUB",
+       "to": "SOU"
+      },
+      {
+       "from": "NOR",
+       "to": "SOU"
+      },
+      {
+       "from": "SOU",
+       "to": "HUB"
+      },
+      {
+       "from": "SOU",
+       "to": "NOR"
+      }
+     ]
+    }
+   },
+   "sampleInput": "[[\"HUB\",\"NOR\"],[\"HUB\",\"SOU\"],[\"NOR\",\"SOU\"],[\"SOU\",\"HUB\"],[\"SOU\",\"NOR\"]]"
+  },
+  {
+   "label": {
+    "en": "Case 3",
+    "ko": "케이스 3"
+   },
+   "input": "routes = [[\"HUB\",\"KUL\"],[\"HUB\",\"NRT\"],[\"NRT\",\"HUB\"]]",
+   "expected": "[\"HUB\",\"NRT\",\"HUB\",\"KUL\"]",
+   "frames": [
+    {
+     "caption": {
+      "en": "3 one-way streets; the walk starts at HUB and must use each exactly once.",
+      "ko": "일방통행 길 3개가 있습니다. 산책은 HUB에서 출발해 길마다 정확히 한 번씩 써야 합니다."
+     },
+     "views": {
+      "zones": {
+       "nodeMarks": {
+        "lit": [
+         "HUB"
+        ]
+       },
+       "edgeMarks": {
+        "dim": []
+       }
+      },
+      "out": {
+       "entries": [],
+       "marks": {}
+      },
+      "trail": {
+       "values": [],
+       "marks": {}
+      },
+      "walk": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Sort the streets largest first and file each under its start zone, so each card ends with its smallest street, the one pop() takes.",
+      "ko": "길을 큰 것부터 정렬해 출발 구역별로 넣습니다. 그래서 카드마다 가장 작은 길이 끝에 오고, pop() 호출이 그 길을 꺼냅니다."
+     },
+     "views": {
+      "zones": {
+       "nodeMarks": {},
+       "edgeMarks": {
+        "dim": []
+       }
+      },
+      "out": {
+       "entries": [
+        {
+         "key": "NRT",
+         "value": [
+          "HUB"
+         ]
+        },
+        {
+         "key": "HUB",
+         "value": [
+          "NRT",
+          "KUL"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "trail": {
+       "values": [],
+       "marks": {}
+      },
+      "walk": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "zones",
+        "at": [
+         "NRT",
+         "HUB"
+        ]
+       },
+       "to": {
+        "view": "out",
+        "at": "NRT"
+       },
+       "value": "HUB"
+      },
+      {
+       "from": {
+        "view": "zones",
+        "at": [
+         "HUB",
+         "NRT"
+        ]
+       },
+       "to": {
+        "view": "out",
+        "at": "HUB"
+       },
+       "value": "NRT"
+      },
+      {
+       "from": {
+        "view": "zones",
+        "at": [
+         "HUB",
+         "KUL"
+        ]
+       },
+       "to": {
+        "view": "out",
+        "at": "HUB"
+       },
+       "value": "KUL"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The stack starts with HUB, where the dog is.",
+      "ko": "스택은 강아지가 있는 HUB 하나로 시작합니다."
+     },
+     "views": {
+      "zones": {
+       "nodeMarks": {
+        "lit": [
+         "HUB"
+        ]
+       },
+       "edgeMarks": {
+        "dim": []
+       }
+      },
+      "out": {
+       "entries": [
+        {
+         "key": "NRT",
+         "value": [
+          "HUB"
+         ]
+        },
+        {
+         "key": "HUB",
+         "value": [
+          "NRT",
+          "KUL"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "trail": {
+       "values": [
+        "HUB"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "walk": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "zones",
+        "at": "HUB"
+       },
+       "to": {
+        "view": "trail",
+        "at": 0
+       },
+       "value": "HUB"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "HUB still has a street out: pop its smallest, KUL (smaller than NRT), walk HUB → KUL, and push KUL.",
+      "ko": "HUB 구역에 남은 길이 있습니다. 가장 작은 KUL (NRT보다 작음) 길을 꺼내 HUB → KUL 방향으로 걷고 KUL 구역을 스택에 넣습니다."
+     },
+     "views": {
+      "zones": {
+       "nodeMarks": {
+        "lit": [
+         "HUB"
+        ],
+        "good": [
+         "KUL"
+        ]
+       },
+       "edgeMarks": {
+        "dim": [
+         0
+        ],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "out": {
+       "entries": [
+        {
+         "key": "NRT",
+         "value": [
+          "HUB"
+         ]
+        },
+        {
+         "key": "HUB",
+         "value": [
+          "NRT",
+          "KUL"
+         ],
+         "marks": {
+          "dim": [
+           1
+          ]
+         }
+        }
+       ],
+       "marks": {
+        "lit": [
+         "HUB"
+        ]
+       }
+      },
+      "trail": {
+       "values": [
+        "HUB",
+        "KUL"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "walk": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "out",
+        "at": "HUB"
+       },
+       "to": {
+        "view": "trail",
+        "at": 1
+       },
+       "value": "KUL"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "KUL has no street left, yet 2 streets are still unwalked: it was entered too early, so it must end the walk. Pop it onto the walk, which puts it last.",
+      "ko": "KUL 구역에는 남은 길이 없는데 아직 걷지 않은 길이 2개 있습니다. 너무 일찍 들어온 막다른 구역이라 산책의 마지막이어야 하므로, 스택에서 빼 산책 경로에 붙입니다(거꾸로 쌓으니 맨 끝이 됩니다)."
+     },
+     "views": {
+      "zones": {
+       "nodeMarks": {
+        "lit": [
+         "KUL"
+        ]
+       },
+       "edgeMarks": {
+        "dim": [
+         0
+        ]
+       }
+      },
+      "out": {
+       "entries": [
+        {
+         "key": "NRT",
+         "value": [
+          "HUB"
+         ]
+        },
+        {
+         "key": "HUB",
+         "value": [
+          "NRT",
+          "KUL"
+         ],
+         "marks": {
+          "dim": [
+           1
+          ]
+         }
+        }
+       ],
+       "marks": {}
+      },
+      "trail": {
+       "values": [
+        "HUB",
+        "KUL"
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "walk": {
+       "values": [
+        "KUL"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "trail",
+        "at": 1
+       },
+       "to": {
+        "view": "walk",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "HUB still has a street out: pop its smallest, NRT, walk HUB → NRT, and push NRT.",
+      "ko": "HUB 구역에 남은 길이 있습니다. 가장 작은 NRT 길을 꺼내 HUB → NRT 방향으로 걷고 NRT 구역을 스택에 넣습니다."
+     },
+     "views": {
+      "zones": {
+       "nodeMarks": {
+        "lit": [
+         "HUB"
+        ],
+        "good": [
+         "NRT"
+        ]
+       },
+       "edgeMarks": {
+        "dim": [
+         0,
+         1
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "out": {
+       "entries": [
+        {
+         "key": "NRT",
+         "value": [
+          "HUB"
+         ]
+        },
+        {
+         "key": "HUB",
+         "value": [
+          "NRT",
+          "KUL"
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1
+          ]
+         }
+        }
+       ],
+       "marks": {
+        "lit": [
+         "HUB"
+        ]
+       }
+      },
+      "trail": {
+       "values": [
+        "HUB",
+        "NRT"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "walk": {
+       "values": [
+        "KUL"
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "out",
+        "at": "HUB"
+       },
+       "to": {
+        "view": "trail",
+        "at": 1
+       },
+       "value": "NRT"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "NRT still has a street out: pop its smallest, HUB, walk NRT → HUB, and push HUB.",
+      "ko": "NRT 구역에 남은 길이 있습니다. 가장 작은 HUB 길을 꺼내 NRT → HUB 방향으로 걷고 HUB 구역을 스택에 넣습니다."
+     },
+     "views": {
+      "zones": {
+       "nodeMarks": {
+        "lit": [
+         "NRT"
+        ],
+        "good": [
+         "HUB"
+        ]
+       },
+       "edgeMarks": {
+        "dim": [
+         0,
+         1,
+         2
+        ],
+        "lit": [
+         2
+        ]
+       }
+      },
+      "out": {
+       "entries": [
+        {
+         "key": "NRT",
+         "value": [
+          "HUB"
+         ],
+         "marks": {
+          "dim": [
+           0
+          ]
+         }
+        },
+        {
+         "key": "HUB",
+         "value": [
+          "NRT",
+          "KUL"
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1
+          ]
+         }
+        }
+       ],
+       "marks": {
+        "lit": [
+         "NRT"
+        ]
+       }
+      },
+      "trail": {
+       "values": [
+        "HUB",
+        "NRT",
+        "HUB"
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      },
+      "walk": {
+       "values": [
+        "KUL"
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "out",
+        "at": "NRT"
+       },
+       "to": {
+        "view": "trail",
+        "at": 2
+       },
+       "value": "HUB"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "HUB has no street left, so it is finished: pop it off the stack onto the walk.",
+      "ko": "HUB 구역에는 남은 길이 없으므로 끝났습니다. 스택에서 빼 산책 경로에 붙입니다."
+     },
+     "views": {
+      "zones": {
+       "nodeMarks": {
+        "lit": [
+         "HUB"
+        ]
+       },
+       "edgeMarks": {
+        "dim": [
+         0,
+         1,
+         2
+        ]
+       }
+      },
+      "out": {
+       "entries": [
+        {
+         "key": "NRT",
+         "value": [
+          "HUB"
+         ],
+         "marks": {
+          "dim": [
+           0
+          ]
+         }
+        },
+        {
+         "key": "HUB",
+         "value": [
+          "NRT",
+          "KUL"
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1
+          ]
+         }
+        }
+       ],
+       "marks": {}
+      },
+      "trail": {
+       "values": [
+        "HUB",
+        "NRT",
+        "HUB"
+       ],
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "walk": {
+       "values": [
+        "KUL",
+        "HUB"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "trail",
+        "at": 2
+       },
+       "to": {
+        "view": "walk",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "NRT has no street left, so it is finished: pop it off the stack onto the walk.",
+      "ko": "NRT 구역에는 남은 길이 없으므로 끝났습니다. 스택에서 빼 산책 경로에 붙입니다."
+     },
+     "views": {
+      "zones": {
+       "nodeMarks": {
+        "lit": [
+         "NRT"
+        ]
+       },
+       "edgeMarks": {
+        "dim": [
+         0,
+         1,
+         2
+        ]
+       }
+      },
+      "out": {
+       "entries": [
+        {
+         "key": "NRT",
+         "value": [
+          "HUB"
+         ],
+         "marks": {
+          "dim": [
+           0
+          ]
+         }
+        },
+        {
+         "key": "HUB",
+         "value": [
+          "NRT",
+          "KUL"
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1
+          ]
+         }
+        }
+       ],
+       "marks": {}
+      },
+      "trail": {
+       "values": [
+        "HUB",
+        "NRT"
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "walk": {
+       "values": [
+        "KUL",
+        "HUB",
+        "NRT"
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "trail",
+        "at": 1
+       },
+       "to": {
+        "view": "walk",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "HUB has no street left, so it is finished: pop it off the stack onto the walk.",
+      "ko": "HUB 구역에는 남은 길이 없으므로 끝났습니다. 스택에서 빼 산책 경로에 붙입니다."
+     },
+     "views": {
+      "zones": {
+       "nodeMarks": {
+        "lit": [
+         "HUB"
+        ]
+       },
+       "edgeMarks": {
+        "dim": [
+         0,
+         1,
+         2
+        ]
+       }
+      },
+      "out": {
+       "entries": [
+        {
+         "key": "NRT",
+         "value": [
+          "HUB"
+         ],
+         "marks": {
+          "dim": [
+           0
+          ]
+         }
+        },
+        {
+         "key": "HUB",
+         "value": [
+          "NRT",
+          "KUL"
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1
+          ]
+         }
+        }
+       ],
+       "marks": {}
+      },
+      "trail": {
+       "values": [
+        "HUB"
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "walk": {
+       "values": [
+        "KUL",
+        "HUB",
+        "NRT",
+        "HUB"
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "trail",
+        "at": 0
+       },
+       "to": {
+        "view": "walk",
+        "at": 3
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The stack is empty and every street is walked. Zones were finished last-first, so the walk reversed is the route.",
+      "ko": "스택이 비었고 모든 길을 걸었습니다. 구역은 마지막 것부터 끝났으므로 경로를 뒤집으면 산책 순서입니다."
+     },
+     "views": {
+      "zones": {
+       "nodeMarks": {},
+       "edgeMarks": {
+        "dim": [
+         0,
+         1,
+         2
+        ]
+       }
+      },
+      "out": {
+       "entries": [
+        {
+         "key": "NRT",
+         "value": [
+          "HUB"
+         ],
+         "marks": {
+          "dim": [
+           0
+          ]
+         }
+        },
+        {
+         "key": "HUB",
+         "value": [
+          "NRT",
+          "KUL"
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1
+          ]
+         }
+        }
+       ],
+       "marks": {}
+      },
+      "trail": {
+       "values": [],
+       "marks": {}
+      },
+      "walk": {
+       "values": [
+        "KUL",
+        "HUB",
+        "NRT",
+        "HUB"
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1,
+         2,
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "HUB",
+        "NRT",
+        "HUB",
+        "KUL"
+       ],
+       "marks": {
+        "good": [
+         0,
+         1,
+         2,
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "walk",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       }
+      },
+      {
+       "from": {
+        "view": "walk",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       }
+      },
+      {
+       "from": {
+        "view": "walk",
+        "at": 2
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       }
+      },
+      {
+       "from": {
+        "view": "walk",
+        "at": 3
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Answer [\"HUB\",\"NRT\",\"HUB\",\"KUL\"]: HUB → NRT → HUB → KUL, using all 3 streets once.",
+      "ko": "답은 [\"HUB\",\"NRT\",\"HUB\",\"KUL\"]입니다. HUB → NRT → HUB → KUL 순서로 길 3개를 한 번씩 씁니다."
+     },
+     "views": {
+      "zones": {
+       "nodeMarks": {
+        "path": [
+         "NRT",
+         "HUB",
+         "KUL"
+        ]
+       },
+       "edgeMarks": {
+        "path": [
+         0,
+         1,
+         2
+        ]
+       }
+      },
+      "out": {
+       "entries": [
+        {
+         "key": "NRT",
+         "value": [
+          "HUB"
+         ],
+         "marks": {
+          "dim": [
+           0
+          ]
+         }
+        },
+        {
+         "key": "HUB",
+         "value": [
+          "NRT",
+          "KUL"
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1
+          ]
+         }
+        }
+       ],
+       "marks": {}
+      },
+      "trail": {
+       "values": [],
+       "marks": {}
+      },
+      "walk": {
+       "values": [
+        "KUL",
+        "HUB",
+        "NRT",
+        "HUB"
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "HUB",
+        "NRT",
+        "HUB",
+        "KUL"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3
+        ]
+       }
+      }
+     },
+     "answer": "[\"HUB\",\"NRT\",\"HUB\",\"KUL\"]"
+    }
+   ],
+   "setup": {
+    "zones": {
+     "nodes": [
+      {
+       "id": "HUB",
+       "tag": {
+        "en": "home",
+        "ko": "집"
+       }
+      },
+      {
+       "id": "KUL"
+      },
+      {
+       "id": "NRT"
+      }
+     ],
+     "edges": [
+      {
+       "from": "HUB",
+       "to": "KUL"
+      },
+      {
+       "from": "HUB",
+       "to": "NRT"
+      },
+      {
+       "from": "NRT",
+       "to": "HUB"
+      }
+     ]
+    }
+   },
+   "sampleInput": "[[\"HUB\",\"KUL\"],[\"HUB\",\"NRT\"],[\"NRT\",\"HUB\"]]"
+  }
+ ]
+}

@@ -1,0 +1,3912 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Recover Tier List Order",
+  "ko": "티어 순서 복원"
+ },
+ "approach": {
+  "en": "Each pair of neighbouring tags gives one rule at its first differing letter (a before b). Then take the letters with nothing left before them, smallest first, each one releasing the letters after it; a letter never released means the rules go in a cycle.",
+  "ko": "이웃한 두 태그는 처음 다른 글자에서 규칙 하나를 줍니다(글자 a가 글자 b보다 앞). 그다음 앞에 남은 글자가 없는 글자를 작은 것부터 꺼내고, 꺼낸 글자는 뒤따르는 글자를 풀어 줍니다. 끝까지 풀리지 않는 글자가 있으면 규칙이 순환합니다."
+ },
+ "views": [
+  {
+   "id": "tags",
+   "type": "table",
+   "title": {
+    "en": "tags (one letter per cell)",
+    "ko": "tags (칸마다 글자 하나)"
+   }
+  },
+  {
+   "id": "letters",
+   "type": "graph",
+   "directed": true,
+   "title": {
+    "en": "rules (arrow: comes before); under a letter: in-degree",
+    "ko": "규칙 (화살표: 앞에 옴); 글자 아래: 진입 차수"
+   }
+  },
+  {
+   "id": "ready",
+   "type": "tree",
+   "arity": 2,
+   "title": {
+    "en": "ready (min-heap of letters)",
+    "ko": "ready (글자 최소 힙)"
+   },
+   "empty": {
+    "en": "empty",
+    "ko": "비어 있음"
+   }
+  },
+  {
+   "id": "order",
+   "type": "output",
+   "title": {
+    "en": "order",
+    "ko": "순서"
+   },
+   "empty": {
+    "en": "empty",
+    "ko": "비어 있음"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "tags = [\"ab\",\"ba\",\"bc\",\"cb\",\"cd\",\"dc\"]",
+   "expected": "abcd",
+   "frames": [
+    {
+     "caption": {
+      "en": "6 tags, sorted by the secret order, using 4 letters: a, b, c, d. Compare each tag with the next one.",
+      "ko": "비밀 순서로 정렬된 태그 6개에 글자 4개가 쓰였습니다: a, b, c, d. 태그마다 다음 태그와 비교합니다."
+     },
+     "views": {
+      "tags": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "a",
+          "b"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "b",
+          "a"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "b",
+          "c"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "c",
+          "b"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "c",
+          "d"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "d",
+          "c"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "letters": {
+       "edges": [],
+       "nodeMarks": {},
+       "edgeMarks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "\"ab\" before \"ba\": they first differ at position 0, so a comes before b.",
+      "ko": "\"ab\" 다음에 \"ba\": 위치 0에서 처음 다르므로 a 글자가 b 글자보다 앞입니다."
+     },
+     "views": {
+      "tags": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "a",
+          "b"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "b",
+          "a"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "b",
+          "c"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "c",
+          "b"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "c",
+          "d"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "d",
+          "c"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [],
+        "good": [
+         [
+          0,
+          0
+         ],
+         [
+          1,
+          0
+         ]
+        ]
+       }
+      },
+      "letters": {
+       "edges": [
+        {
+         "from": "a",
+         "to": "b"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         "a",
+         "b"
+        ]
+       },
+       "edgeMarks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tags",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "to": {
+        "view": "letters",
+        "at": [
+         "a",
+         "b"
+        ]
+       },
+       "value": "a → b"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "\"ba\" before \"bc\": they first differ at position 1, so a comes before c.",
+      "ko": "\"ba\" 다음에 \"bc\": 위치 1에서 처음 다르므로 a 글자가 c 글자보다 앞입니다."
+     },
+     "views": {
+      "tags": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "a",
+          "b"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "b",
+          "a"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "b",
+          "c"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "c",
+          "b"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "c",
+          "d"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "d",
+          "c"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          1,
+          0
+         ],
+         [
+          2,
+          0
+         ]
+        ],
+        "good": [
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          1
+         ]
+        ]
+       }
+      },
+      "letters": {
+       "edges": [
+        {
+         "from": "a",
+         "to": "b"
+        },
+        {
+         "from": "a",
+         "to": "c"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         "a",
+         "c"
+        ]
+       },
+       "edgeMarks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tags",
+        "at": [
+         1,
+         1
+        ]
+       },
+       "to": {
+        "view": "letters",
+        "at": [
+         "a",
+         "c"
+        ]
+       },
+       "value": "a → c"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "\"bc\" before \"cb\": they first differ at position 0, so b comes before c.",
+      "ko": "\"bc\" 다음에 \"cb\": 위치 0에서 처음 다르므로 b 글자가 c 글자보다 앞입니다."
+     },
+     "views": {
+      "tags": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "a",
+          "b"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "b",
+          "a"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "b",
+          "c"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "c",
+          "b"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "c",
+          "d"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "d",
+          "c"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ],
+        "lit": [],
+        "good": [
+         [
+          2,
+          0
+         ],
+         [
+          3,
+          0
+         ]
+        ]
+       }
+      },
+      "letters": {
+       "edges": [
+        {
+         "from": "a",
+         "to": "b"
+        },
+        {
+         "from": "a",
+         "to": "c"
+        },
+        {
+         "from": "b",
+         "to": "c"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         "b",
+         "c"
+        ]
+       },
+       "edgeMarks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tags",
+        "at": [
+         2,
+         0
+        ]
+       },
+       "to": {
+        "view": "letters",
+        "at": [
+         "b",
+         "c"
+        ]
+       },
+       "value": "b → c"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "\"cb\" before \"cd\": they first differ at position 1, so b comes before d.",
+      "ko": "\"cb\" 다음에 \"cd\": 위치 1에서 처음 다르므로 b 글자가 d 글자보다 앞입니다."
+     },
+     "views": {
+      "tags": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "a",
+          "b"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "b",
+          "a"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "b",
+          "c"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "c",
+          "b"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "c",
+          "d"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "d",
+          "c"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          4,
+          0
+         ]
+        ],
+        "good": [
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          1
+         ]
+        ]
+       }
+      },
+      "letters": {
+       "edges": [
+        {
+         "from": "a",
+         "to": "b"
+        },
+        {
+         "from": "a",
+         "to": "c"
+        },
+        {
+         "from": "b",
+         "to": "c"
+        },
+        {
+         "from": "b",
+         "to": "d"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         "b",
+         "d"
+        ]
+       },
+       "edgeMarks": {
+        "good": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tags",
+        "at": [
+         3,
+         1
+        ]
+       },
+       "to": {
+        "view": "letters",
+        "at": [
+         "b",
+         "d"
+        ]
+       },
+       "value": "b → d"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "\"cd\" before \"dc\": they first differ at position 0, so c comes before d.",
+      "ko": "\"cd\" 다음에 \"dc\": 위치 0에서 처음 다르므로 c 글자가 d 글자보다 앞입니다."
+     },
+     "views": {
+      "tags": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "a",
+          "b"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "b",
+          "a"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "b",
+          "c"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "c",
+          "b"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "c",
+          "d"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "d",
+          "c"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ],
+        "lit": [],
+        "good": [
+         [
+          4,
+          0
+         ],
+         [
+          5,
+          0
+         ]
+        ]
+       }
+      },
+      "letters": {
+       "edges": [
+        {
+         "from": "a",
+         "to": "b"
+        },
+        {
+         "from": "a",
+         "to": "c"
+        },
+        {
+         "from": "b",
+         "to": "c"
+        },
+        {
+         "from": "b",
+         "to": "d"
+        },
+        {
+         "from": "c",
+         "to": "d"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         "c",
+         "d"
+        ]
+       },
+       "edgeMarks": {
+        "good": [
+         4
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tags",
+        "at": [
+         4,
+         0
+        ]
+       },
+       "to": {
+        "view": "letters",
+        "at": [
+         "c",
+         "d"
+        ]
+       },
+       "value": "c → d"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "5 rules found. Each letter's in-degree, how many letters must come before it, starts at 0.",
+      "ko": "규칙 5개를 찾았습니다. 글자마다 앞에 와야 하는 글자 수인 진입 차수를 0으로 시작합니다."
+     },
+     "views": {
+      "tags": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "a",
+          "b"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "b",
+          "a"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "b",
+          "c"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "c",
+          "b"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "c",
+          "d"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "d",
+          "c"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "letters": {
+       "edges": [
+        {
+         "from": "a",
+         "to": "b"
+        },
+        {
+         "from": "a",
+         "to": "c"
+        },
+        {
+         "from": "b",
+         "to": "c"
+        },
+        {
+         "from": "b",
+         "to": "d"
+        },
+        {
+         "from": "c",
+         "to": "d"
+        }
+       ],
+       "nodeMarks": {},
+       "edgeMarks": {},
+       "values": {
+        "a": 0,
+        "b": 0,
+        "c": 0,
+        "d": 0
+       }
+      },
+      "ready": {
+       "nodes": [],
+       "edges": [],
+       "nodeMarks": {}
+      },
+      "order": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "letters",
+        "at": "a"
+       },
+       "value": "0"
+      },
+      {
+       "to": {
+        "view": "letters",
+        "at": "b"
+       },
+       "value": "0"
+      },
+      {
+       "to": {
+        "view": "letters",
+        "at": "c"
+       },
+       "value": "0"
+      },
+      {
+       "to": {
+        "view": "letters",
+        "at": "d"
+       },
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Each rule a → b adds 1 to b's in-degree: a has 0, b has 1, c has 2, d has 2.",
+      "ko": "규칙 a → b마다 b의 진입 차수에 1을 더합니다: a 0, b 1, c 2, d 2."
+     },
+     "views": {
+      "tags": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "a",
+          "b"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "b",
+          "a"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "b",
+          "c"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "c",
+          "b"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "c",
+          "d"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "d",
+          "c"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "letters": {
+       "edges": [
+        {
+         "from": "a",
+         "to": "b"
+        },
+        {
+         "from": "a",
+         "to": "c"
+        },
+        {
+         "from": "b",
+         "to": "c"
+        },
+        {
+         "from": "b",
+         "to": "d"
+        },
+        {
+         "from": "c",
+         "to": "d"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         "b",
+         "c",
+         "c",
+         "d",
+         "d"
+        ]
+       },
+       "edgeMarks": {},
+       "values": {
+        "a": 0,
+        "b": 1,
+        "c": 2,
+        "d": 2
+       }
+      },
+      "ready": {
+       "nodes": [],
+       "edges": [],
+       "nodeMarks": {}
+      },
+      "order": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "letters",
+        "at": [
+         "a",
+         "b"
+        ]
+       },
+       "to": {
+        "view": "letters",
+        "at": "b"
+       },
+       "value": "+1"
+      },
+      {
+       "from": {
+        "view": "letters",
+        "at": [
+         "a",
+         "c"
+        ]
+       },
+       "to": {
+        "view": "letters",
+        "at": "c"
+       },
+       "value": "+1"
+      },
+      {
+       "from": {
+        "view": "letters",
+        "at": [
+         "b",
+         "c"
+        ]
+       },
+       "to": {
+        "view": "letters",
+        "at": "c"
+       },
+       "value": "+1"
+      },
+      {
+       "from": {
+        "view": "letters",
+        "at": [
+         "b",
+         "d"
+        ]
+       },
+       "to": {
+        "view": "letters",
+        "at": "d"
+       },
+       "value": "+1"
+      },
+      {
+       "from": {
+        "view": "letters",
+        "at": [
+         "c",
+         "d"
+        ]
+       },
+       "to": {
+        "view": "letters",
+        "at": "d"
+       },
+       "value": "+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The letters with in-degree 0 have nothing before them: a goes into the ready heap.",
+      "ko": "진입 차수가 0인 글자는 앞에 올 글자가 없으므로 ready 힙에 넣습니다: a."
+     },
+     "views": {
+      "tags": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "a",
+          "b"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "b",
+          "a"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "b",
+          "c"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "c",
+          "b"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "c",
+          "d"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "d",
+          "c"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "letters": {
+       "edges": [
+        {
+         "from": "a",
+         "to": "b"
+        },
+        {
+         "from": "a",
+         "to": "c"
+        },
+        {
+         "from": "b",
+         "to": "c"
+        },
+        {
+         "from": "b",
+         "to": "d"
+        },
+        {
+         "from": "c",
+         "to": "d"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         "a"
+        ]
+       },
+       "edgeMarks": {},
+       "values": {
+        "a": 0,
+        "b": 1,
+        "c": 2,
+        "d": 2
+       }
+      },
+      "ready": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "a"
+        }
+       ],
+       "edges": [],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "order": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "letters",
+        "at": "a"
+       },
+       "to": {
+        "view": "ready",
+        "at": 0
+       },
+       "value": "a"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Pop a, the smallest ready letter: it is next in the order.",
+      "ko": "ready에서 가장 작은 a 글자를 꺼내 순서의 다음 자리에 둡니다."
+     },
+     "views": {
+      "tags": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "a",
+          "b"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "b",
+          "a"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "b",
+          "c"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "c",
+          "b"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "c",
+          "d"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "d",
+          "c"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "letters": {
+       "edges": [
+        {
+         "from": "a",
+         "to": "b"
+        },
+        {
+         "from": "a",
+         "to": "c"
+        },
+        {
+         "from": "b",
+         "to": "c"
+        },
+        {
+         "from": "b",
+         "to": "d"
+        },
+        {
+         "from": "c",
+         "to": "d"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         "a"
+        ],
+        "dim": []
+       },
+       "edgeMarks": {},
+       "values": {
+        "a": 0,
+        "b": 1,
+        "c": 2,
+        "d": 2
+       }
+      },
+      "ready": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "a"
+        }
+       ],
+       "edges": [],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "order": {
+       "values": [
+        "a"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "ready",
+        "at": 0
+       },
+       "to": {
+        "view": "order",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Rule a → b is met: b's in-degree reaches 0, so b is ready.",
+      "ko": "a → b 규칙을 만족했으므로 b의 진입 차수가 0이 되어 b 글자도 ready에 들어갑니다."
+     },
+     "views": {
+      "tags": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "a",
+          "b"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "b",
+          "a"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "b",
+          "c"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "c",
+          "b"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "c",
+          "d"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "d",
+          "c"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "letters": {
+       "edges": [
+        {
+         "from": "a",
+         "to": "b"
+        },
+        {
+         "from": "a",
+         "to": "c"
+        },
+        {
+         "from": "b",
+         "to": "c"
+        },
+        {
+         "from": "b",
+         "to": "d"
+        },
+        {
+         "from": "c",
+         "to": "d"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         "a"
+        ],
+        "good": [
+         "b"
+        ],
+        "dim": []
+       },
+       "edgeMarks": {
+        "good": [
+         0
+        ],
+        "dim": []
+       },
+       "values": {
+        "a": 0,
+        "b": 0,
+        "c": 2,
+        "d": 2
+       }
+      },
+      "ready": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "b"
+        }
+       ],
+       "edges": [],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "order": {
+       "values": [
+        "a"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "letters",
+        "at": [
+         "a",
+         "b"
+        ]
+       },
+       "to": {
+        "view": "letters",
+        "at": "b"
+       },
+       "value": "−1"
+      },
+      {
+       "from": {
+        "view": "letters",
+        "at": "b"
+       },
+       "to": {
+        "view": "ready",
+        "at": 0
+       },
+       "value": "b"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Rule a → c is met: c's in-degree is 1: something else must still come first.",
+      "ko": "a → c 규칙을 만족했으므로 c의 진입 차수가 1이 되어 아직 앞에 올 글자가 남았습니다."
+     },
+     "views": {
+      "tags": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "a",
+          "b"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "b",
+          "a"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "b",
+          "c"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "c",
+          "b"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "c",
+          "d"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "d",
+          "c"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "letters": {
+       "edges": [
+        {
+         "from": "a",
+         "to": "b"
+        },
+        {
+         "from": "a",
+         "to": "c"
+        },
+        {
+         "from": "b",
+         "to": "c"
+        },
+        {
+         "from": "b",
+         "to": "d"
+        },
+        {
+         "from": "c",
+         "to": "d"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         "a"
+        ],
+        "good": [
+         "c"
+        ],
+        "dim": []
+       },
+       "edgeMarks": {
+        "good": [
+         1
+        ],
+        "dim": []
+       },
+       "values": {
+        "a": 0,
+        "b": 0,
+        "c": 1,
+        "d": 2
+       }
+      },
+      "ready": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "b"
+        }
+       ],
+       "edges": [],
+       "nodeMarks": {}
+      },
+      "order": {
+       "values": [
+        "a"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "letters",
+        "at": [
+         "a",
+         "c"
+        ]
+       },
+       "to": {
+        "view": "letters",
+        "at": "c"
+       },
+       "value": "−1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Pop b, the smallest ready letter: it is next in the order.",
+      "ko": "ready에서 가장 작은 b 글자를 꺼내 순서의 다음 자리에 둡니다."
+     },
+     "views": {
+      "tags": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "a",
+          "b"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "b",
+          "a"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "b",
+          "c"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "c",
+          "b"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "c",
+          "d"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "d",
+          "c"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "letters": {
+       "edges": [
+        {
+         "from": "a",
+         "to": "b"
+        },
+        {
+         "from": "a",
+         "to": "c"
+        },
+        {
+         "from": "b",
+         "to": "c"
+        },
+        {
+         "from": "b",
+         "to": "d"
+        },
+        {
+         "from": "c",
+         "to": "d"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         "b"
+        ],
+        "dim": [
+         "a"
+        ]
+       },
+       "edgeMarks": {},
+       "values": {
+        "a": 0,
+        "b": 0,
+        "c": 1,
+        "d": 2
+       }
+      },
+      "ready": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "b"
+        }
+       ],
+       "edges": [],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "order": {
+       "values": [
+        "a",
+        "b"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "ready",
+        "at": 0
+       },
+       "to": {
+        "view": "order",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Rule b → c is met: c's in-degree reaches 0, so c is ready.",
+      "ko": "b → c 규칙을 만족했으므로 c의 진입 차수가 0이 되어 c 글자도 ready에 들어갑니다."
+     },
+     "views": {
+      "tags": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "a",
+          "b"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "b",
+          "a"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "b",
+          "c"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "c",
+          "b"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "c",
+          "d"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "d",
+          "c"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "letters": {
+       "edges": [
+        {
+         "from": "a",
+         "to": "b"
+        },
+        {
+         "from": "a",
+         "to": "c"
+        },
+        {
+         "from": "b",
+         "to": "c"
+        },
+        {
+         "from": "b",
+         "to": "d"
+        },
+        {
+         "from": "c",
+         "to": "d"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         "b"
+        ],
+        "good": [
+         "c"
+        ],
+        "dim": [
+         "a"
+        ]
+       },
+       "edgeMarks": {
+        "good": [
+         2
+        ],
+        "dim": [
+         0,
+         1
+        ]
+       },
+       "values": {
+        "a": 0,
+        "b": 0,
+        "c": 0,
+        "d": 2
+       }
+      },
+      "ready": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "c"
+        }
+       ],
+       "edges": [],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "order": {
+       "values": [
+        "a",
+        "b"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "letters",
+        "at": [
+         "b",
+         "c"
+        ]
+       },
+       "to": {
+        "view": "letters",
+        "at": "c"
+       },
+       "value": "−1"
+      },
+      {
+       "from": {
+        "view": "letters",
+        "at": "c"
+       },
+       "to": {
+        "view": "ready",
+        "at": 0
+       },
+       "value": "c"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Rule b → d is met: d's in-degree is 1: something else must still come first.",
+      "ko": "b → d 규칙을 만족했으므로 d의 진입 차수가 1이 되어 아직 앞에 올 글자가 남았습니다."
+     },
+     "views": {
+      "tags": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "a",
+          "b"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "b",
+          "a"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "b",
+          "c"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "c",
+          "b"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "c",
+          "d"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "d",
+          "c"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "letters": {
+       "edges": [
+        {
+         "from": "a",
+         "to": "b"
+        },
+        {
+         "from": "a",
+         "to": "c"
+        },
+        {
+         "from": "b",
+         "to": "c"
+        },
+        {
+         "from": "b",
+         "to": "d"
+        },
+        {
+         "from": "c",
+         "to": "d"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         "b"
+        ],
+        "good": [
+         "d"
+        ],
+        "dim": [
+         "a"
+        ]
+       },
+       "edgeMarks": {
+        "good": [
+         3
+        ],
+        "dim": [
+         0,
+         1
+        ]
+       },
+       "values": {
+        "a": 0,
+        "b": 0,
+        "c": 0,
+        "d": 1
+       }
+      },
+      "ready": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "c"
+        }
+       ],
+       "edges": [],
+       "nodeMarks": {}
+      },
+      "order": {
+       "values": [
+        "a",
+        "b"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "letters",
+        "at": [
+         "b",
+         "d"
+        ]
+       },
+       "to": {
+        "view": "letters",
+        "at": "d"
+       },
+       "value": "−1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Pop c, the smallest ready letter: it is next in the order.",
+      "ko": "ready에서 가장 작은 c 글자를 꺼내 순서의 다음 자리에 둡니다."
+     },
+     "views": {
+      "tags": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "a",
+          "b"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "b",
+          "a"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "b",
+          "c"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "c",
+          "b"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "c",
+          "d"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "d",
+          "c"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "letters": {
+       "edges": [
+        {
+         "from": "a",
+         "to": "b"
+        },
+        {
+         "from": "a",
+         "to": "c"
+        },
+        {
+         "from": "b",
+         "to": "c"
+        },
+        {
+         "from": "b",
+         "to": "d"
+        },
+        {
+         "from": "c",
+         "to": "d"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         "c"
+        ],
+        "dim": [
+         "a",
+         "b"
+        ]
+       },
+       "edgeMarks": {},
+       "values": {
+        "a": 0,
+        "b": 0,
+        "c": 0,
+        "d": 1
+       }
+      },
+      "ready": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "c"
+        }
+       ],
+       "edges": [],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "order": {
+       "values": [
+        "a",
+        "b",
+        "c"
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "ready",
+        "at": 0
+       },
+       "to": {
+        "view": "order",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Rule c → d is met: d's in-degree reaches 0, so d is ready.",
+      "ko": "c → d 규칙을 만족했으므로 d의 진입 차수가 0이 되어 d 글자도 ready에 들어갑니다."
+     },
+     "views": {
+      "tags": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "a",
+          "b"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "b",
+          "a"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "b",
+          "c"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "c",
+          "b"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "c",
+          "d"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "d",
+          "c"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "letters": {
+       "edges": [
+        {
+         "from": "a",
+         "to": "b"
+        },
+        {
+         "from": "a",
+         "to": "c"
+        },
+        {
+         "from": "b",
+         "to": "c"
+        },
+        {
+         "from": "b",
+         "to": "d"
+        },
+        {
+         "from": "c",
+         "to": "d"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         "c"
+        ],
+        "good": [
+         "d"
+        ],
+        "dim": [
+         "a",
+         "b"
+        ]
+       },
+       "edgeMarks": {
+        "good": [
+         4
+        ],
+        "dim": [
+         0,
+         1,
+         2,
+         3
+        ]
+       },
+       "values": {
+        "a": 0,
+        "b": 0,
+        "c": 0,
+        "d": 0
+       }
+      },
+      "ready": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "d"
+        }
+       ],
+       "edges": [],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "order": {
+       "values": [
+        "a",
+        "b",
+        "c"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "letters",
+        "at": [
+         "c",
+         "d"
+        ]
+       },
+       "to": {
+        "view": "letters",
+        "at": "d"
+       },
+       "value": "−1"
+      },
+      {
+       "from": {
+        "view": "letters",
+        "at": "d"
+       },
+       "to": {
+        "view": "ready",
+        "at": 0
+       },
+       "value": "d"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Pop d, the smallest ready letter: it is next in the order.",
+      "ko": "ready에서 가장 작은 d 글자를 꺼내 순서의 다음 자리에 둡니다."
+     },
+     "views": {
+      "tags": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "a",
+          "b"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "b",
+          "a"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "b",
+          "c"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "c",
+          "b"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "c",
+          "d"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "d",
+          "c"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "letters": {
+       "edges": [
+        {
+         "from": "a",
+         "to": "b"
+        },
+        {
+         "from": "a",
+         "to": "c"
+        },
+        {
+         "from": "b",
+         "to": "c"
+        },
+        {
+         "from": "b",
+         "to": "d"
+        },
+        {
+         "from": "c",
+         "to": "d"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         "d"
+        ],
+        "dim": [
+         "a",
+         "b",
+         "c"
+        ]
+       },
+       "edgeMarks": {},
+       "values": {
+        "a": 0,
+        "b": 0,
+        "c": 0,
+        "d": 0
+       }
+      },
+      "ready": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "d"
+        }
+       ],
+       "edges": [],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "order": {
+       "values": [
+        "a",
+        "b",
+        "c",
+        "d"
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "ready",
+        "at": 0
+       },
+       "to": {
+        "view": "order",
+        "at": 3
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every letter was taken, so the order is abcd: answer abcd.",
+      "ko": "모든 글자를 꺼냈으므로 순서는 abcd입니다. 답은 abcd입니다."
+     },
+     "views": {
+      "tags": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "a",
+          "b"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "b",
+          "a"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "b",
+          "c"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "c",
+          "b"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "c",
+          "d"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "d",
+          "c"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "letters": {
+       "edges": [
+        {
+         "from": "a",
+         "to": "b"
+        },
+        {
+         "from": "a",
+         "to": "c"
+        },
+        {
+         "from": "b",
+         "to": "c"
+        },
+        {
+         "from": "b",
+         "to": "d"
+        },
+        {
+         "from": "c",
+         "to": "d"
+        }
+       ],
+       "nodeMarks": {
+        "path": [
+         "a",
+         "b",
+         "c",
+         "d"
+        ]
+       },
+       "edgeMarks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ]
+       },
+       "values": {
+        "a": 0,
+        "b": 0,
+        "c": 0,
+        "d": 0
+       }
+      },
+      "ready": {
+       "nodes": [],
+       "edges": [],
+       "nodeMarks": {}
+      },
+      "order": {
+       "values": [
+        "a",
+        "b",
+        "c",
+        "d"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3
+        ]
+       }
+      }
+     },
+     "answer": "abcd"
+    }
+   ],
+   "setup": {
+    "letters": {
+     "nodes": [
+      {
+       "id": "a"
+      },
+      {
+       "id": "b"
+      },
+      {
+       "id": "c"
+      },
+      {
+       "id": "d"
+      }
+     ]
+    }
+   },
+   "sampleInput": "[\"ab\",\"ba\",\"bc\",\"cb\",\"cd\",\"dc\"]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "tags = [\"studio\",\"stud\"]",
+   "expected": "",
+   "frames": [
+    {
+     "caption": {
+      "en": "2 tags, sorted by the secret order, using 6 letters: s, t, u, d, i, o. Compare each tag with the next one.",
+      "ko": "비밀 순서로 정렬된 태그 2개에 글자 6개가 쓰였습니다: s, t, u, d, i, o. 태그마다 다음 태그와 비교합니다."
+     },
+     "views": {
+      "tags": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "s",
+          "t",
+          "u",
+          "d",
+          "i",
+          "o"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "s",
+          "t",
+          "u",
+          "d",
+          "",
+          ""
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "letters": {
+       "edges": [],
+       "nodeMarks": {},
+       "edgeMarks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "\"stud\" is a prefix of \"studio\" but comes after it, which no tier order allows: answer \"\" (empty).",
+      "ko": "\"stud\" 태그는 \"studio\" 태그의 접두사인데 뒤에 오므로 어떤 티어 순서로도 불가능합니다. 답은 \"\"(빈 문자열)입니다."
+     },
+     "views": {
+      "tags": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "s",
+          "t",
+          "u",
+          "d",
+          "i",
+          "o"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "s",
+          "t",
+          "u",
+          "d",
+          "",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          0,
+          2
+         ],
+         [
+          0,
+          3
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          1,
+          2
+         ],
+         [
+          1,
+          3
+         ]
+        ],
+        "bad": [
+         [
+          0,
+          4
+         ],
+         [
+          0,
+          5
+         ]
+        ]
+       }
+      },
+      "letters": {
+       "edges": [],
+       "nodeMarks": {},
+       "edgeMarks": {}
+      }
+     },
+     "answer": ""
+    }
+   ],
+   "setup": {
+    "letters": {
+     "nodes": [
+      {
+       "id": "s"
+      },
+      {
+       "id": "t"
+      },
+      {
+       "id": "u"
+      },
+      {
+       "id": "d"
+      },
+      {
+       "id": "i"
+      },
+      {
+       "id": "o"
+      }
+     ]
+    }
+   },
+   "sampleInput": "[\"studio\",\"stud\"]"
+  },
+  {
+   "label": {
+    "en": "Case 3",
+    "ko": "케이스 3"
+   },
+   "input": "tags = [\"abc\",\"ab\"]",
+   "expected": "",
+   "frames": [
+    {
+     "caption": {
+      "en": "2 tags, sorted by the secret order, using 3 letters: a, b, c. Compare each tag with the next one.",
+      "ko": "비밀 순서로 정렬된 태그 2개에 글자 3개가 쓰였습니다: a, b, c. 태그마다 다음 태그와 비교합니다."
+     },
+     "views": {
+      "tags": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "a",
+          "b",
+          "c"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "a",
+          "b",
+          ""
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "letters": {
+       "edges": [],
+       "nodeMarks": {},
+       "edgeMarks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "\"ab\" is a prefix of \"abc\" but comes after it, which no tier order allows: answer \"\" (empty).",
+      "ko": "\"ab\" 태그는 \"abc\" 태그의 접두사인데 뒤에 오므로 어떤 티어 순서로도 불가능합니다. 답은 \"\"(빈 문자열)입니다."
+     },
+     "views": {
+      "tags": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "a",
+          "b",
+          "c"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "a",
+          "b",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ],
+        "bad": [
+         [
+          0,
+          2
+         ]
+        ]
+       }
+      },
+      "letters": {
+       "edges": [],
+       "nodeMarks": {},
+       "edgeMarks": {}
+      }
+     },
+     "answer": ""
+    }
+   ],
+   "setup": {
+    "letters": {
+     "nodes": [
+      {
+       "id": "a"
+      },
+      {
+       "id": "b"
+      },
+      {
+       "id": "c"
+      }
+     ]
+    }
+   },
+   "sampleInput": "[\"abc\",\"ab\"]"
+  },
+  {
+   "label": {
+    "en": "Rules in a cycle",
+    "ko": "순환하는 규칙"
+   },
+   "input": "tags = [\"a\",\"b\",\"cc\",\"cb\"]",
+   "expected": "",
+   "frames": [
+    {
+     "caption": {
+      "en": "4 tags, sorted by the secret order, using 3 letters: a, b, c. Compare each tag with the next one.",
+      "ko": "비밀 순서로 정렬된 태그 4개에 글자 3개가 쓰였습니다: a, b, c. 태그마다 다음 태그와 비교합니다."
+     },
+     "views": {
+      "tags": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "a",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "b",
+          ""
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "c",
+          "c"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "c",
+          "b"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "letters": {
+       "edges": [],
+       "nodeMarks": {},
+       "edgeMarks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "\"a\" before \"b\": they first differ at position 0, so a comes before b.",
+      "ko": "\"a\" 다음에 \"b\": 위치 0에서 처음 다르므로 a 글자가 b 글자보다 앞입니다."
+     },
+     "views": {
+      "tags": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "a",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "b",
+          ""
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "c",
+          "c"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "c",
+          "b"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [],
+        "good": [
+         [
+          0,
+          0
+         ],
+         [
+          1,
+          0
+         ]
+        ]
+       }
+      },
+      "letters": {
+       "edges": [
+        {
+         "from": "a",
+         "to": "b"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         "a",
+         "b"
+        ]
+       },
+       "edgeMarks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tags",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "to": {
+        "view": "letters",
+        "at": [
+         "a",
+         "b"
+        ]
+       },
+       "value": "a → b"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "\"b\" before \"cc\": they first differ at position 0, so b comes before c.",
+      "ko": "\"b\" 다음에 \"cc\": 위치 0에서 처음 다르므로 b 글자가 c 글자보다 앞입니다."
+     },
+     "views": {
+      "tags": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "a",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "b",
+          ""
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "c",
+          "c"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "c",
+          "b"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ],
+        "lit": [],
+        "good": [
+         [
+          1,
+          0
+         ],
+         [
+          2,
+          0
+         ]
+        ]
+       }
+      },
+      "letters": {
+       "edges": [
+        {
+         "from": "a",
+         "to": "b"
+        },
+        {
+         "from": "b",
+         "to": "c"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         "b",
+         "c"
+        ]
+       },
+       "edgeMarks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tags",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "to": {
+        "view": "letters",
+        "at": [
+         "b",
+         "c"
+        ]
+       },
+       "value": "b → c"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "\"cc\" before \"cb\": they first differ at position 1, so c comes before b.",
+      "ko": "\"cc\" 다음에 \"cb\": 위치 1에서 처음 다르므로 c 글자가 b 글자보다 앞입니다."
+     },
+     "views": {
+      "tags": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "a",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "b",
+          ""
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "c",
+          "c"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "c",
+          "b"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          2,
+          0
+         ],
+         [
+          3,
+          0
+         ]
+        ],
+        "good": [
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      },
+      "letters": {
+       "edges": [
+        {
+         "from": "a",
+         "to": "b"
+        },
+        {
+         "from": "b",
+         "to": "c"
+        },
+        {
+         "from": "c",
+         "to": "b"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         "c",
+         "b"
+        ]
+       },
+       "edgeMarks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tags",
+        "at": [
+         2,
+         1
+        ]
+       },
+       "to": {
+        "view": "letters",
+        "at": [
+         "c",
+         "b"
+        ]
+       },
+       "value": "c → b"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "3 rules found. Each letter's in-degree, how many letters must come before it, starts at 0.",
+      "ko": "규칙 3개를 찾았습니다. 글자마다 앞에 와야 하는 글자 수인 진입 차수를 0으로 시작합니다."
+     },
+     "views": {
+      "tags": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "a",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "b",
+          ""
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "c",
+          "c"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "c",
+          "b"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "letters": {
+       "edges": [
+        {
+         "from": "a",
+         "to": "b"
+        },
+        {
+         "from": "b",
+         "to": "c"
+        },
+        {
+         "from": "c",
+         "to": "b"
+        }
+       ],
+       "nodeMarks": {},
+       "edgeMarks": {},
+       "values": {
+        "a": 0,
+        "b": 0,
+        "c": 0
+       }
+      },
+      "ready": {
+       "nodes": [],
+       "edges": [],
+       "nodeMarks": {}
+      },
+      "order": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "letters",
+        "at": "a"
+       },
+       "value": "0"
+      },
+      {
+       "to": {
+        "view": "letters",
+        "at": "b"
+       },
+       "value": "0"
+      },
+      {
+       "to": {
+        "view": "letters",
+        "at": "c"
+       },
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Each rule a → b adds 1 to b's in-degree: a has 0, b has 2, c has 1.",
+      "ko": "규칙 a → b마다 b의 진입 차수에 1을 더합니다: a 0, b 2, c 1."
+     },
+     "views": {
+      "tags": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "a",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "b",
+          ""
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "c",
+          "c"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "c",
+          "b"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "letters": {
+       "edges": [
+        {
+         "from": "a",
+         "to": "b"
+        },
+        {
+         "from": "b",
+         "to": "c"
+        },
+        {
+         "from": "c",
+         "to": "b"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         "b",
+         "c",
+         "b"
+        ]
+       },
+       "edgeMarks": {},
+       "values": {
+        "a": 0,
+        "b": 2,
+        "c": 1
+       }
+      },
+      "ready": {
+       "nodes": [],
+       "edges": [],
+       "nodeMarks": {}
+      },
+      "order": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "letters",
+        "at": [
+         "a",
+         "b"
+        ]
+       },
+       "to": {
+        "view": "letters",
+        "at": "b"
+       },
+       "value": "+1"
+      },
+      {
+       "from": {
+        "view": "letters",
+        "at": [
+         "b",
+         "c"
+        ]
+       },
+       "to": {
+        "view": "letters",
+        "at": "c"
+       },
+       "value": "+1"
+      },
+      {
+       "from": {
+        "view": "letters",
+        "at": [
+         "c",
+         "b"
+        ]
+       },
+       "to": {
+        "view": "letters",
+        "at": "b"
+       },
+       "value": "+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The letters with in-degree 0 have nothing before them: a goes into the ready heap.",
+      "ko": "진입 차수가 0인 글자는 앞에 올 글자가 없으므로 ready 힙에 넣습니다: a."
+     },
+     "views": {
+      "tags": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "a",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "b",
+          ""
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "c",
+          "c"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "c",
+          "b"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "letters": {
+       "edges": [
+        {
+         "from": "a",
+         "to": "b"
+        },
+        {
+         "from": "b",
+         "to": "c"
+        },
+        {
+         "from": "c",
+         "to": "b"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         "a"
+        ]
+       },
+       "edgeMarks": {},
+       "values": {
+        "a": 0,
+        "b": 2,
+        "c": 1
+       }
+      },
+      "ready": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "a"
+        }
+       ],
+       "edges": [],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "order": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "letters",
+        "at": "a"
+       },
+       "to": {
+        "view": "ready",
+        "at": 0
+       },
+       "value": "a"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Pop a, the smallest ready letter: it is next in the order.",
+      "ko": "ready에서 가장 작은 a 글자를 꺼내 순서의 다음 자리에 둡니다."
+     },
+     "views": {
+      "tags": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "a",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "b",
+          ""
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "c",
+          "c"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "c",
+          "b"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "letters": {
+       "edges": [
+        {
+         "from": "a",
+         "to": "b"
+        },
+        {
+         "from": "b",
+         "to": "c"
+        },
+        {
+         "from": "c",
+         "to": "b"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         "a"
+        ],
+        "dim": []
+       },
+       "edgeMarks": {},
+       "values": {
+        "a": 0,
+        "b": 2,
+        "c": 1
+       }
+      },
+      "ready": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "a"
+        }
+       ],
+       "edges": [],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "order": {
+       "values": [
+        "a"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "ready",
+        "at": 0
+       },
+       "to": {
+        "view": "order",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Rule a → b is met: b's in-degree is 1: something else must still come first.",
+      "ko": "a → b 규칙을 만족했으므로 b의 진입 차수가 1이 되어 아직 앞에 올 글자가 남았습니다."
+     },
+     "views": {
+      "tags": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "a",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "b",
+          ""
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "c",
+          "c"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "c",
+          "b"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "letters": {
+       "edges": [
+        {
+         "from": "a",
+         "to": "b"
+        },
+        {
+         "from": "b",
+         "to": "c"
+        },
+        {
+         "from": "c",
+         "to": "b"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         "a"
+        ],
+        "good": [
+         "b"
+        ],
+        "dim": []
+       },
+       "edgeMarks": {
+        "good": [
+         0
+        ],
+        "dim": []
+       },
+       "values": {
+        "a": 0,
+        "b": 1,
+        "c": 1
+       }
+      },
+      "ready": {
+       "nodes": [],
+       "edges": [],
+       "nodeMarks": {}
+      },
+      "order": {
+       "values": [
+        "a"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "letters",
+        "at": [
+         "a",
+         "b"
+        ]
+       },
+       "to": {
+        "view": "letters",
+        "at": "b"
+       },
+       "value": "−1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The heap is empty with b, c never ready: their rules go in a cycle, so no order fits. Answer \"\" (empty).",
+      "ko": "힙이 비었는데 b, c 글자는 끝내 준비되지 않았습니다. 규칙이 순환하므로 맞는 순서가 없어 답은 \"\"(빈 문자열)입니다."
+     },
+     "views": {
+      "tags": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "a",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "b",
+          ""
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "c",
+          "c"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "c",
+          "b"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "letters": {
+       "edges": [
+        {
+         "from": "a",
+         "to": "b"
+        },
+        {
+         "from": "b",
+         "to": "c"
+        },
+        {
+         "from": "c",
+         "to": "b"
+        }
+       ],
+       "nodeMarks": {
+        "bad": [
+         "b",
+         "c"
+        ],
+        "dim": [
+         "a"
+        ]
+       },
+       "edgeMarks": {
+        "bad": [
+         1,
+         2
+        ]
+       },
+       "values": {
+        "a": 0,
+        "b": 1,
+        "c": 1
+       }
+      },
+      "ready": {
+       "nodes": [],
+       "edges": [],
+       "nodeMarks": {}
+      },
+      "order": {
+       "values": [
+        "a"
+       ],
+       "marks": {}
+      }
+     },
+     "answer": ""
+    }
+   ],
+   "extra": true,
+   "setup": {
+    "letters": {
+     "nodes": [
+      {
+       "id": "a"
+      },
+      {
+       "id": "b"
+      },
+      {
+       "id": "c"
+      }
+     ]
+    }
+   }
+  }
+ ]
+}

@@ -1,0 +1,1271 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Connect Water Bowls",
+  "ko": "물그릇 연결"
+ },
+ "approach": {
+  "en": "Prim's algorithm: grow one network from bowl 0. Each step joins the outside bowl with the shortest hose to the network, then lets that bowl offer shorter hoses to the bowls still outside.",
+  "ko": "프림 알고리즘: 물그릇 0에서 연결망 하나를 키웁니다. 매 단계 연결망까지 호스가 가장 짧은 바깥 그릇을 잇고, 새로 이은 그릇이 아직 바깥에 있는 그릇들에 더 짧은 호스를 제안합니다."
+ },
+ "views": [
+  {
+   "id": "bowls",
+   "type": "graph",
+   "directed": false,
+   "title": {
+    "en": "bowls and hoses (length)",
+    "ko": "물그릇과 호스 (길이)"
+   }
+  },
+  {
+   "id": "best",
+   "type": "array",
+   "title": {
+    "en": "best: shortest hose to the network (index: bowl)",
+    "ko": "best: 연결망까지 가장 짧은 호스 (인덱스: 그릇)"
+   }
+  },
+  {
+   "id": "total",
+   "type": "output",
+   "title": {
+    "en": "total hose length",
+    "ko": "호스 총 길이"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "bowls = [[4,4],[4,3],[6,7],[10,2]]",
+   "expected": "13",
+   "frames": [
+    {
+     "caption": {
+      "en": "4 bowls: 0 at (4,4), 1 at (4,3), 2 at (6,7), 3 at (10,2); a hose's length is |dx| + |dy|. best[0] = 0 starts the network at bowl 0, and every other bowl is ∞ away.",
+      "ko": "물그릇 4개: 0번 (4,4), 1번 (4,3), 2번 (6,7), 3번 (10,2)이고 호스 길이는 |dx| + |dy|입니다. best[0] = 0으로 그릇 0에서 연결망을 시작하고, 나머지는 모두 ∞입니다."
+     },
+     "views": {
+      "bowls": {
+       "nodeMarks": {
+        "path": [],
+        "lit": [],
+        "good": []
+       },
+       "edgeMarks": {
+        "path": []
+       }
+      },
+      "best": {
+       "values": [
+        0,
+        "∞",
+        "∞",
+        "∞"
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "total": {
+       "values": [
+        0
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Bowl 0 has the smallest best, 0: it starts the network, and the total grows by 0 to 0.",
+      "ko": "best가 0으로 가장 작은 그릇 0번이 연결망을 시작합니다. 총 길이는 0만큼 늘어 0이 됩니다."
+     },
+     "views": {
+      "bowls": {
+       "nodeMarks": {
+        "path": [
+         0
+        ],
+        "lit": [],
+        "good": [
+         0
+        ]
+       },
+       "edgeMarks": {
+        "path": []
+       }
+      },
+      "best": {
+       "values": [
+        0,
+        "∞",
+        "∞",
+        "∞"
+       ],
+       "marks": {
+        "path": [],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "total": {
+       "values": [
+        0
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "best",
+        "at": 0
+       },
+       "to": {
+        "view": "total",
+        "at": 0
+       },
+       "value": "+0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Hose 0–1: |4 − 4| + |4 − 3| = 1, shorter than best[1] = ∞, so best[1] becomes 1.",
+      "ko": "호스 0–1: |4 − 4| + |4 − 3| = 1. best[1] = ∞보다 짧으므로 best[1]를 1로 바꿉니다."
+     },
+     "views": {
+      "bowls": {
+       "nodeMarks": {
+        "path": [
+         0
+        ],
+        "lit": [
+         0
+        ],
+        "good": [
+         1
+        ]
+       },
+       "edgeMarks": {
+        "path": [],
+        "good": [
+         0
+        ]
+       }
+      },
+      "best": {
+       "values": [
+        0,
+        1,
+        "∞",
+        "∞"
+       ],
+       "marks": {
+        "path": [
+         0
+        ],
+        "good": [
+         1
+        ]
+       }
+      },
+      "total": {
+       "values": [
+        0
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "bowls",
+        "at": [
+         0,
+         1
+        ]
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": 1
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Hose 0–2: |4 − 6| + |4 − 7| = 5, shorter than best[2] = ∞, so best[2] becomes 5.",
+      "ko": "호스 0–2: |4 − 6| + |4 − 7| = 5. best[2] = ∞보다 짧으므로 best[2]를 5로 바꿉니다."
+     },
+     "views": {
+      "bowls": {
+       "nodeMarks": {
+        "path": [
+         0
+        ],
+        "lit": [
+         0
+        ],
+        "good": [
+         2
+        ]
+       },
+       "edgeMarks": {
+        "path": [],
+        "good": [
+         1
+        ]
+       }
+      },
+      "best": {
+       "values": [
+        0,
+        1,
+        5,
+        "∞"
+       ],
+       "marks": {
+        "path": [
+         0
+        ],
+        "good": [
+         2
+        ]
+       }
+      },
+      "total": {
+       "values": [
+        0
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "bowls",
+        "at": [
+         0,
+         2
+        ]
+       },
+       "to": {
+        "view": "best",
+        "at": 2
+       },
+       "value": 5
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Hose 0–3: |4 − 10| + |4 − 2| = 8, shorter than best[3] = ∞, so best[3] becomes 8.",
+      "ko": "호스 0–3: |4 − 10| + |4 − 2| = 8. best[3] = ∞보다 짧으므로 best[3]를 8로 바꿉니다."
+     },
+     "views": {
+      "bowls": {
+       "nodeMarks": {
+        "path": [
+         0
+        ],
+        "lit": [
+         0
+        ],
+        "good": [
+         3
+        ]
+       },
+       "edgeMarks": {
+        "path": [],
+        "good": [
+         2
+        ]
+       }
+      },
+      "best": {
+       "values": [
+        0,
+        1,
+        5,
+        8
+       ],
+       "marks": {
+        "path": [
+         0
+        ],
+        "good": [
+         3
+        ]
+       }
+      },
+      "total": {
+       "values": [
+        0
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "bowls",
+        "at": [
+         0,
+         3
+        ]
+       },
+       "to": {
+        "view": "best",
+        "at": 3
+       },
+       "value": 8
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Of the bowls outside, bowl 1 has the smallest best, 1: it joins by the hose from bowl 0, and the total grows by 1 to 1.",
+      "ko": "바깥 그릇 중 best가 1로 가장 작은 그릇 1번을 그릇 0번에서 오는 호스로 잇습니다. 총 길이는 1만큼 늘어 1이 됩니다."
+     },
+     "views": {
+      "bowls": {
+       "nodeMarks": {
+        "path": [
+         0,
+         1
+        ],
+        "lit": [],
+        "good": [
+         1
+        ]
+       },
+       "edgeMarks": {
+        "path": [
+         0
+        ]
+       }
+      },
+      "best": {
+       "values": [
+        0,
+        1,
+        5,
+        8
+       ],
+       "marks": {
+        "path": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "total": {
+       "values": [
+        1
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "best",
+        "at": 1
+       },
+       "to": {
+        "view": "total",
+        "at": 0
+       },
+       "value": "+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Hose 1–2: |4 − 6| + |3 − 7| = 6, not shorter than best[2] = 5 (from bowl 0), so best[2] stays.",
+      "ko": "호스 1–2: |4 − 6| + |3 − 7| = 6. best[2] = 5(그릇 0번에서 오는 호스)보다 짧지 않으므로 best[2]는 그대로입니다."
+     },
+     "views": {
+      "bowls": {
+       "nodeMarks": {
+        "path": [
+         0,
+         1
+        ],
+        "lit": [
+         1,
+         2
+        ],
+        "good": []
+       },
+       "edgeMarks": {
+        "path": [
+         0
+        ],
+        "lit": [
+         3
+        ]
+       }
+      },
+      "best": {
+       "values": [
+        0,
+        1,
+        5,
+        8
+       ],
+       "marks": {
+        "path": [
+         0,
+         1
+        ],
+        "lit": [
+         2
+        ]
+       }
+      },
+      "total": {
+       "values": [
+        1
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "bowls",
+        "at": [
+         1,
+         2
+        ]
+       },
+       "value": 6
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Hose 1–3: |4 − 10| + |3 − 2| = 7, shorter than best[3] = 8, so best[3] becomes 7.",
+      "ko": "호스 1–3: |4 − 10| + |3 − 2| = 7. best[3] = 8보다 짧으므로 best[3]를 7로 바꿉니다."
+     },
+     "views": {
+      "bowls": {
+       "nodeMarks": {
+        "path": [
+         0,
+         1
+        ],
+        "lit": [
+         1
+        ],
+        "good": [
+         3
+        ]
+       },
+       "edgeMarks": {
+        "path": [
+         0
+        ],
+        "good": [
+         4
+        ]
+       }
+      },
+      "best": {
+       "values": [
+        0,
+        1,
+        5,
+        7
+       ],
+       "marks": {
+        "path": [
+         0,
+         1
+        ],
+        "good": [
+         3
+        ]
+       }
+      },
+      "total": {
+       "values": [
+        1
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "bowls",
+        "at": [
+         1,
+         3
+        ]
+       },
+       "to": {
+        "view": "best",
+        "at": 3
+       },
+       "value": 7
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Of the bowls outside, bowl 2 has the smallest best, 5: it joins by the hose from bowl 0, and the total grows by 5 to 6.",
+      "ko": "바깥 그릇 중 best가 5로 가장 작은 그릇 2번을 그릇 0번에서 오는 호스로 잇습니다. 총 길이는 5만큼 늘어 6이 됩니다."
+     },
+     "views": {
+      "bowls": {
+       "nodeMarks": {
+        "path": [
+         0,
+         1,
+         2
+        ],
+        "lit": [],
+        "good": [
+         2
+        ]
+       },
+       "edgeMarks": {
+        "path": [
+         0,
+         1
+        ]
+       }
+      },
+      "best": {
+       "values": [
+        0,
+        1,
+        5,
+        7
+       ],
+       "marks": {
+        "path": [
+         0,
+         1
+        ],
+        "lit": [
+         2
+        ]
+       }
+      },
+      "total": {
+       "values": [
+        6
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "best",
+        "at": 2
+       },
+       "to": {
+        "view": "total",
+        "at": 0
+       },
+       "value": "+5"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Hose 2–3: |6 − 10| + |7 − 2| = 9, not shorter than best[3] = 7 (from bowl 1), so best[3] stays.",
+      "ko": "호스 2–3: |6 − 10| + |7 − 2| = 9. best[3] = 7(그릇 1번에서 오는 호스)보다 짧지 않으므로 best[3]는 그대로입니다."
+     },
+     "views": {
+      "bowls": {
+       "nodeMarks": {
+        "path": [
+         0,
+         1,
+         2
+        ],
+        "lit": [
+         2,
+         3
+        ],
+        "good": []
+       },
+       "edgeMarks": {
+        "path": [
+         0,
+         1
+        ],
+        "lit": [
+         5
+        ]
+       }
+      },
+      "best": {
+       "values": [
+        0,
+        1,
+        5,
+        7
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2
+        ],
+        "lit": [
+         3
+        ]
+       }
+      },
+      "total": {
+       "values": [
+        6
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "bowls",
+        "at": [
+         2,
+         3
+        ]
+       },
+       "value": 9
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Of the bowls outside, bowl 3 has the smallest best, 7: it joins by the hose from bowl 1, and the total grows by 7 to 13.",
+      "ko": "바깥 그릇 중 best가 7로 가장 작은 그릇 3번을 그릇 1번에서 오는 호스로 잇습니다. 총 길이는 7만큼 늘어 13이 됩니다."
+     },
+     "views": {
+      "bowls": {
+       "nodeMarks": {
+        "path": [
+         0,
+         1,
+         2,
+         3
+        ],
+        "lit": [],
+        "good": [
+         3
+        ]
+       },
+       "edgeMarks": {
+        "path": [
+         0,
+         1,
+         4
+        ]
+       }
+      },
+      "best": {
+       "values": [
+        0,
+        1,
+        5,
+        7
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2
+        ],
+        "lit": [
+         3
+        ]
+       }
+      },
+      "total": {
+       "values": [
+        13
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "best",
+        "at": 3
+       },
+       "to": {
+        "view": "total",
+        "at": 0
+       },
+       "value": "+7"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every bowl is in the network; the 3 hoses it used add up to 1 + 5 + 7 = 13: answer 13.",
+      "ko": "모든 그릇이 연결망에 들어왔습니다. 쓴 호스 3개의 길이 합은 1 + 5 + 7 = 13, 답은 13입니다."
+     },
+     "views": {
+      "bowls": {
+       "nodeMarks": {
+        "path": [
+         0,
+         1,
+         2,
+         3
+        ],
+        "lit": [],
+        "good": []
+       },
+       "edgeMarks": {
+        "path": [
+         0,
+         1,
+         4
+        ]
+       }
+      },
+      "best": {
+       "values": [
+        0,
+        1,
+        5,
+        7
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3
+        ]
+       }
+      },
+      "total": {
+       "values": [
+        13
+       ],
+       "marks": {
+        "path": [
+         0
+        ]
+       }
+      }
+     },
+     "answer": "13"
+    }
+   ],
+   "setup": {
+    "bowls": {
+     "nodes": [
+      {
+       "id": 0,
+       "tag": "(4,4)"
+      },
+      {
+       "id": 1,
+       "tag": "(4,3)"
+      },
+      {
+       "id": 2,
+       "tag": "(6,7)"
+      },
+      {
+       "id": 3,
+       "tag": "(10,2)"
+      }
+     ],
+     "edges": [
+      {
+       "from": 0,
+       "to": 1,
+       "label": 1
+      },
+      {
+       "from": 0,
+       "to": 2,
+       "label": 5
+      },
+      {
+       "from": 0,
+       "to": 3,
+       "label": 8
+      },
+      {
+       "from": 1,
+       "to": 2,
+       "label": 6
+      },
+      {
+       "from": 1,
+       "to": 3,
+       "label": 7
+      },
+      {
+       "from": 2,
+       "to": 3,
+       "label": 9
+      }
+     ]
+    }
+   },
+   "sampleInput": "[[4,4],[4,3],[6,7],[10,2]]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "bowls = [[0,0],[2,0]]",
+   "expected": "2",
+   "frames": [
+    {
+     "caption": {
+      "en": "2 bowls: 0 at (0,0), 1 at (2,0); a hose's length is |dx| + |dy|. best[0] = 0 starts the network at bowl 0, and every other bowl is ∞ away.",
+      "ko": "물그릇 2개: 0번 (0,0), 1번 (2,0)이고 호스 길이는 |dx| + |dy|입니다. best[0] = 0으로 그릇 0에서 연결망을 시작하고, 나머지는 모두 ∞입니다."
+     },
+     "views": {
+      "bowls": {
+       "nodeMarks": {
+        "path": [],
+        "lit": [],
+        "good": []
+       },
+       "edgeMarks": {
+        "path": []
+       }
+      },
+      "best": {
+       "values": [
+        0,
+        "∞"
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "total": {
+       "values": [
+        0
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Bowl 0 has the smallest best, 0: it starts the network, and the total grows by 0 to 0.",
+      "ko": "best가 0으로 가장 작은 그릇 0번이 연결망을 시작합니다. 총 길이는 0만큼 늘어 0이 됩니다."
+     },
+     "views": {
+      "bowls": {
+       "nodeMarks": {
+        "path": [
+         0
+        ],
+        "lit": [],
+        "good": [
+         0
+        ]
+       },
+       "edgeMarks": {
+        "path": []
+       }
+      },
+      "best": {
+       "values": [
+        0,
+        "∞"
+       ],
+       "marks": {
+        "path": [],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "total": {
+       "values": [
+        0
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "best",
+        "at": 0
+       },
+       "to": {
+        "view": "total",
+        "at": 0
+       },
+       "value": "+0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Hose 0–1: |0 − 2| + |0 − 0| = 2, shorter than best[1] = ∞, so best[1] becomes 2.",
+      "ko": "호스 0–1: |0 − 2| + |0 − 0| = 2. best[1] = ∞보다 짧으므로 best[1]를 2로 바꿉니다."
+     },
+     "views": {
+      "bowls": {
+       "nodeMarks": {
+        "path": [
+         0
+        ],
+        "lit": [
+         0
+        ],
+        "good": [
+         1
+        ]
+       },
+       "edgeMarks": {
+        "path": [],
+        "good": [
+         0
+        ]
+       }
+      },
+      "best": {
+       "values": [
+        0,
+        2
+       ],
+       "marks": {
+        "path": [
+         0
+        ],
+        "good": [
+         1
+        ]
+       }
+      },
+      "total": {
+       "values": [
+        0
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "bowls",
+        "at": [
+         0,
+         1
+        ]
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": 2
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Of the bowls outside, bowl 1 has the smallest best, 2: it joins by the hose from bowl 0, and the total grows by 2 to 2.",
+      "ko": "바깥 그릇 중 best가 2로 가장 작은 그릇 1번을 그릇 0번에서 오는 호스로 잇습니다. 총 길이는 2만큼 늘어 2가 됩니다."
+     },
+     "views": {
+      "bowls": {
+       "nodeMarks": {
+        "path": [
+         0,
+         1
+        ],
+        "lit": [],
+        "good": [
+         1
+        ]
+       },
+       "edgeMarks": {
+        "path": [
+         0
+        ]
+       }
+      },
+      "best": {
+       "values": [
+        0,
+        2
+       ],
+       "marks": {
+        "path": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "total": {
+       "values": [
+        2
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "best",
+        "at": 1
+       },
+       "to": {
+        "view": "total",
+        "at": 0
+       },
+       "value": "+2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every bowl is in the network; the 1 hose it used add up to 2 = 2: answer 2.",
+      "ko": "모든 그릇이 연결망에 들어왔습니다. 쓴 호스 1개의 길이 합은 2 = 2, 답은 2입니다."
+     },
+     "views": {
+      "bowls": {
+       "nodeMarks": {
+        "path": [
+         0,
+         1
+        ],
+        "lit": [],
+        "good": []
+       },
+       "edgeMarks": {
+        "path": [
+         0
+        ]
+       }
+      },
+      "best": {
+       "values": [
+        0,
+        2
+       ],
+       "marks": {
+        "path": [
+         0,
+         1
+        ]
+       }
+      },
+      "total": {
+       "values": [
+        2
+       ],
+       "marks": {
+        "path": [
+         0
+        ]
+       }
+      }
+     },
+     "answer": "2"
+    }
+   ],
+   "setup": {
+    "bowls": {
+     "nodes": [
+      {
+       "id": 0,
+       "tag": "(0,0)"
+      },
+      {
+       "id": 1,
+       "tag": "(2,0)"
+      }
+     ],
+     "edges": [
+      {
+       "from": 0,
+       "to": 1,
+       "label": 2
+      }
+     ]
+    }
+   },
+   "sampleInput": "[[0,0],[2,0]]"
+  },
+  {
+   "label": {
+    "en": "Example 3",
+    "ko": "예시 3"
+   },
+   "input": "bowls = [[0,0]]",
+   "expected": "0",
+   "frames": [
+    {
+     "caption": {
+      "en": "1 bowl: 0 at (0,0); a hose's length is |dx| + |dy|. best[0] = 0 starts the network at bowl 0, and every other bowl is ∞ away.",
+      "ko": "물그릇 1개: 0번 (0,0)이고 호스 길이는 |dx| + |dy|입니다. best[0] = 0으로 그릇 0에서 연결망을 시작하고, 나머지는 모두 ∞입니다."
+     },
+     "views": {
+      "bowls": {
+       "nodeMarks": {
+        "path": [],
+        "lit": [],
+        "good": []
+       },
+       "edgeMarks": {
+        "path": []
+       }
+      },
+      "best": {
+       "values": [
+        0
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "total": {
+       "values": [
+        0
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Bowl 0 has the smallest best, 0: it starts the network, and the total grows by 0 to 0.",
+      "ko": "best가 0으로 가장 작은 그릇 0번이 연결망을 시작합니다. 총 길이는 0만큼 늘어 0이 됩니다."
+     },
+     "views": {
+      "bowls": {
+       "nodeMarks": {
+        "path": [
+         0
+        ],
+        "lit": [],
+        "good": [
+         0
+        ]
+       },
+       "edgeMarks": {
+        "path": []
+       }
+      },
+      "best": {
+       "values": [
+        0
+       ],
+       "marks": {
+        "path": [],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "total": {
+       "values": [
+        0
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "best",
+        "at": 0
+       },
+       "to": {
+        "view": "total",
+        "at": 0
+       },
+       "value": "+0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "A single bowl needs no hose: answer 0.",
+      "ko": "물그릇이 하나뿐이라 호스가 필요 없습니다. 답은 0입니다."
+     },
+     "views": {
+      "bowls": {
+       "nodeMarks": {
+        "path": [
+         0
+        ],
+        "lit": [],
+        "good": []
+       },
+       "edgeMarks": {
+        "path": []
+       }
+      },
+      "best": {
+       "values": [
+        0
+       ],
+       "marks": {
+        "path": [
+         0
+        ]
+       }
+      },
+      "total": {
+       "values": [
+        0
+       ],
+       "marks": {
+        "path": [
+         0
+        ]
+       }
+      }
+     },
+     "answer": "0"
+    }
+   ],
+   "setup": {
+    "bowls": {
+     "nodes": [
+      {
+       "id": 0,
+       "tag": "(0,0)"
+      }
+     ],
+     "edges": []
+    }
+   },
+   "sampleInput": "[[0,0]]"
+  }
+ ]
+}

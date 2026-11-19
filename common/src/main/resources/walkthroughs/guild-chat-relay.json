@@ -1,0 +1,1817 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Guild Chat Relay",
+  "ko": "길드 공지 전파 시간"
+ },
+ "approach": {
+  "en": "Dijkstra: a min-heap hands out (minute, player) entries soonest first, so the first entry popped for a player is the minute the message really reaches them; later entries for that player are stale.",
+  "ko": "다익스트라: 최소 힙이 (분, 플레이어) 항목을 가장 이른 것부터 꺼내므로, 어떤 플레이어의 항목이 처음 꺼내지는 시각이 그 플레이어가 실제로 메시지를 받는 시각입니다. 그 뒤에 나오는 같은 플레이어의 항목은 지난 것입니다."
+ },
+ "views": [
+  {
+   "id": "players",
+   "type": "graph",
+   "directed": true,
+   "title": {
+    "en": "relays (minutes); under a player: minute reached",
+    "ko": "중계 (분); 플레이어 아래: 받은 시각"
+   }
+  },
+  {
+   "id": "heap",
+   "type": "tree",
+   "arity": 2,
+   "title": {
+    "en": "min-heap (minute, player): soonest on top",
+    "ko": "최소 힙 (분, 플레이어): 가장 이른 것이 맨 위"
+   },
+   "empty": {
+    "en": "empty",
+    "ko": "비어 있음"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "links = [[1,2,4],[1,3,2],[3,2,1],[2,4,3],[3,4,7]], n = 4, src = 1",
+   "expected": "6",
+   "frames": [
+    {
+     "caption": {
+      "en": "Player 1 has the message at minute 0: the heap starts with the one entry (0, 1).",
+      "ko": "플레이어 1은 0분에 메시지를 가지고 있습니다. 힙은 항목 (0, 1) 하나로 시작합니다."
+     },
+     "views": {
+      "players": {
+       "values": {},
+       "nodeMarks": {
+        "lit": [],
+        "good": []
+       },
+       "edgeMarks": {
+        "lit": [],
+        "good": []
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "(0, 1)"
+        }
+       ],
+       "edges": [],
+       "nodeMarks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Pop (0, 1), the soonest entry: player 1 first gets the message at minute 0. No later entry can beat it, since every relay adds minutes.",
+      "ko": "가장 이른 (0, 1) 항목을 꺼내니 플레이어 1은 0분에 처음 메시지를 받습니다. 중계는 시간을 더하기만 하므로 더 이른 항목은 나올 수 없습니다."
+     },
+     "views": {
+      "players": {
+       "values": {
+        "1": 0
+       },
+       "nodeMarks": {
+        "lit": [],
+        "good": [
+         1
+        ]
+       },
+       "edgeMarks": {
+        "lit": [],
+        "good": []
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "(0, 1)"
+        }
+       ],
+       "edges": [],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "players",
+        "at": 1
+       },
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Player 1 relays on at once: push (4, 2) as 0 + 4 = 4, (2, 3) as 0 + 2 = 2. heapq re-sorts so the soonest entry is on top.",
+      "ko": "플레이어 1이 바로 중계합니다: 플레이어 2에게 0 + 4 = 4분, 플레이어 3에게 0 + 2 = 2분 항목을 힙에 넣습니다. heapq가 가장 이른 항목을 맨 위에 둡니다."
+     },
+     "views": {
+      "players": {
+       "values": {
+        "1": 0
+       },
+       "nodeMarks": {
+        "lit": [
+         1
+        ],
+        "good": []
+       },
+       "edgeMarks": {
+        "lit": [
+         0,
+         1
+        ],
+        "good": []
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "(2, 3)"
+        },
+        {
+         "id": 1,
+         "value": "(4, 2)"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         1,
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "players",
+        "at": 1
+       },
+       "to": {
+        "view": "players",
+        "at": [
+         1,
+         2
+        ]
+       },
+       "value": "0"
+      },
+      {
+       "from": {
+        "view": "players",
+        "at": [
+         1,
+         2
+        ]
+       },
+       "to": {
+        "view": "heap",
+        "at": 1
+       },
+       "value": "(4, 2)"
+      },
+      {
+       "from": {
+        "view": "players",
+        "at": 1
+       },
+       "to": {
+        "view": "players",
+        "at": [
+         1,
+         3
+        ]
+       },
+       "value": "0"
+      },
+      {
+       "from": {
+        "view": "players",
+        "at": [
+         1,
+         3
+        ]
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       },
+       "value": "(2, 3)"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Pop (2, 3), the soonest entry: player 3 first gets the message at minute 2. No later entry can beat it, since every relay adds minutes.",
+      "ko": "가장 이른 (2, 3) 항목을 꺼내니 플레이어 3은 2분에 처음 메시지를 받습니다. 중계는 시간을 더하기만 하므로 더 이른 항목은 나올 수 없습니다."
+     },
+     "views": {
+      "players": {
+       "values": {
+        "1": 0,
+        "3": 2
+       },
+       "nodeMarks": {
+        "lit": [],
+        "good": [
+         3
+        ]
+       },
+       "edgeMarks": {
+        "lit": [],
+        "good": [
+         1
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "(2, 3)"
+        },
+        {
+         "id": 1,
+         "value": "(4, 2)"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "players",
+        "at": 3
+       },
+       "value": "2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Player 3 relays on at once: push (3, 2) as 2 + 1 = 3, (9, 4) as 2 + 7 = 9. heapq re-sorts so the soonest entry is on top.",
+      "ko": "플레이어 3이 바로 중계합니다: 플레이어 2에게 2 + 1 = 3분, 플레이어 4에게 2 + 7 = 9분 항목을 힙에 넣습니다. heapq가 가장 이른 항목을 맨 위에 둡니다."
+     },
+     "views": {
+      "players": {
+       "values": {
+        "1": 0,
+        "3": 2
+       },
+       "nodeMarks": {
+        "lit": [
+         3
+        ],
+        "good": []
+       },
+       "edgeMarks": {
+        "lit": [
+         2,
+         4
+        ],
+        "good": []
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "(3, 2)"
+        },
+        {
+         "id": 1,
+         "value": "(4, 2)"
+        },
+        {
+         "id": 2,
+         "value": "(9, 4)"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         0,
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "players",
+        "at": 3
+       },
+       "to": {
+        "view": "players",
+        "at": [
+         3,
+         2
+        ]
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "players",
+        "at": [
+         3,
+         2
+        ]
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       },
+       "value": "(3, 2)"
+      },
+      {
+       "from": {
+        "view": "players",
+        "at": 3
+       },
+       "to": {
+        "view": "players",
+        "at": [
+         3,
+         4
+        ]
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "players",
+        "at": [
+         3,
+         4
+        ]
+       },
+       "to": {
+        "view": "heap",
+        "at": 2
+       },
+       "value": "(9, 4)"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Pop (3, 2), the soonest entry: player 2 first gets the message at minute 3. No later entry can beat it, since every relay adds minutes.",
+      "ko": "가장 이른 (3, 2) 항목을 꺼내니 플레이어 2는 3분에 처음 메시지를 받습니다. 중계는 시간을 더하기만 하므로 더 이른 항목은 나올 수 없습니다."
+     },
+     "views": {
+      "players": {
+       "values": {
+        "1": 0,
+        "3": 2,
+        "2": 3
+       },
+       "nodeMarks": {
+        "lit": [],
+        "good": [
+         2
+        ]
+       },
+       "edgeMarks": {
+        "lit": [],
+        "good": [
+         2
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "(3, 2)"
+        },
+        {
+         "id": 1,
+         "value": "(4, 2)"
+        },
+        {
+         "id": 2,
+         "value": "(9, 4)"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "players",
+        "at": 2
+       },
+       "value": "3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Player 2 relays on at once: push (6, 4) as 3 + 3 = 6. heapq re-sorts so the soonest entry is on top.",
+      "ko": "플레이어 2가 바로 중계합니다: 플레이어 4에게 3 + 3 = 6분 항목을 힙에 넣습니다. heapq가 가장 이른 항목을 맨 위에 둡니다."
+     },
+     "views": {
+      "players": {
+       "values": {
+        "1": 0,
+        "3": 2,
+        "2": 3
+       },
+       "nodeMarks": {
+        "lit": [
+         2
+        ],
+        "good": []
+       },
+       "edgeMarks": {
+        "lit": [
+         3
+        ],
+        "good": []
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "(4, 2)"
+        },
+        {
+         "id": 1,
+         "value": "(9, 4)"
+        },
+        {
+         "id": 2,
+         "value": "(6, 4)"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "players",
+        "at": 2
+       },
+       "to": {
+        "view": "players",
+        "at": [
+         2,
+         4
+        ]
+       },
+       "value": "3"
+      },
+      {
+       "from": {
+        "view": "players",
+        "at": [
+         2,
+         4
+        ]
+       },
+       "to": {
+        "view": "heap",
+        "at": 2
+       },
+       "value": "(6, 4)"
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 1
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       },
+       "value": "(4, 2)"
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 2
+       },
+       "to": {
+        "view": "heap",
+        "at": 1
+       },
+       "value": "(9, 4)"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Pop (4, 2): player 2 already got the message at minute 3, so this later entry is stale and is skipped.",
+      "ko": "(4, 2) 항목을 꺼냅니다. 플레이어 2는 이미 3분에 받았으므로 이 늦은 항목은 지난 것이라 건너뜁니다."
+     },
+     "views": {
+      "players": {
+       "values": {
+        "1": 0,
+        "3": 2,
+        "2": 3
+       },
+       "nodeMarks": {
+        "lit": [
+         2
+        ],
+        "good": []
+       },
+       "edgeMarks": {
+        "lit": [],
+        "good": []
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "(4, 2)"
+        },
+        {
+         "id": 1,
+         "value": "(9, 4)"
+        },
+        {
+         "id": 2,
+         "value": "(6, 4)"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        }
+       ],
+       "nodeMarks": {
+        "bad": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "heappop moved the last entry up to the root and sifted it down: the soonest entry is on top again.",
+      "ko": "heappop이 마지막 항목을 루트로 올린 뒤 아래로 내려 보냈습니다. 다시 가장 이른 항목이 맨 위에 있습니다."
+     },
+     "views": {
+      "players": {
+       "values": {
+        "1": 0,
+        "3": 2,
+        "2": 3
+       },
+       "nodeMarks": {
+        "lit": [],
+        "good": []
+       },
+       "edgeMarks": {
+        "lit": [],
+        "good": []
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "(6, 4)"
+        },
+        {
+         "id": 1,
+         "value": "(9, 4)"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "heap",
+        "at": 0
+       },
+       "value": "(6, 4)"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Pop (6, 4), the soonest entry: player 4 first gets the message at minute 6. No later entry can beat it, since every relay adds minutes.",
+      "ko": "가장 이른 (6, 4) 항목을 꺼내니 플레이어 4는 6분에 처음 메시지를 받습니다. 중계는 시간을 더하기만 하므로 더 이른 항목은 나올 수 없습니다."
+     },
+     "views": {
+      "players": {
+       "values": {
+        "1": 0,
+        "3": 2,
+        "2": 3,
+        "4": 6
+       },
+       "nodeMarks": {
+        "lit": [],
+        "good": [
+         4
+        ]
+       },
+       "edgeMarks": {
+        "lit": [],
+        "good": [
+         3
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "(6, 4)"
+        },
+        {
+         "id": 1,
+         "value": "(9, 4)"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "players",
+        "at": 4
+       },
+       "value": "6"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "heappop moved the last entry up to the root and sifted it down: the soonest entry is on top again.",
+      "ko": "heappop이 마지막 항목을 루트로 올린 뒤 아래로 내려 보냈습니다. 다시 가장 이른 항목이 맨 위에 있습니다."
+     },
+     "views": {
+      "players": {
+       "values": {
+        "1": 0,
+        "3": 2,
+        "2": 3,
+        "4": 6
+       },
+       "nodeMarks": {
+        "lit": [],
+        "good": []
+       },
+       "edgeMarks": {
+        "lit": [],
+        "good": []
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "(9, 4)"
+        }
+       ],
+       "edges": [],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "heap",
+        "at": 0
+       },
+       "value": "(9, 4)"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Pop (9, 4): player 4 already got the message at minute 6, so this later entry is stale and is skipped.",
+      "ko": "(9, 4) 항목을 꺼냅니다. 플레이어 4는 이미 6분에 받았으므로 이 늦은 항목은 지난 것이라 건너뜁니다."
+     },
+     "views": {
+      "players": {
+       "values": {
+        "1": 0,
+        "3": 2,
+        "2": 3,
+        "4": 6
+       },
+       "nodeMarks": {
+        "lit": [
+         4
+        ],
+        "good": []
+       },
+       "edgeMarks": {
+        "lit": [],
+        "good": []
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "(9, 4)"
+        }
+       ],
+       "edges": [],
+       "nodeMarks": {
+        "bad": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The heap is empty and all 4 players have the message. The last is player 4 at minute 6, by 1 → 3 → 2 → 4: answer 6.",
+      "ko": "힙이 비었고 플레이어 4명이 모두 메시지를 받았습니다. 가장 늦게 받는 것은 4번 플레이어로 6분, 경로는 1 → 3 → 2 → 4이고 답은 6입니다."
+     },
+     "views": {
+      "players": {
+       "values": {
+        "1": 0,
+        "3": 2,
+        "2": 3,
+        "4": 6
+       },
+       "nodeMarks": {
+        "lit": [],
+        "good": [],
+        "path": [
+         1,
+         3,
+         2,
+         4
+        ]
+       },
+       "edgeMarks": {
+        "lit": [],
+        "good": [],
+        "path": [
+         1,
+         2,
+         3
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [],
+       "edges": [],
+       "nodeMarks": {}
+      }
+     },
+     "answer": "6"
+    }
+   ],
+   "setup": {
+    "players": {
+     "nodes": [
+      {
+       "id": 1,
+       "tag": {
+        "en": "src",
+        "ko": "출발"
+       }
+      },
+      {
+       "id": 2
+      },
+      {
+       "id": 3
+      },
+      {
+       "id": 4
+      }
+     ],
+     "edges": [
+      {
+       "from": 1,
+       "to": 2,
+       "label": 4
+      },
+      {
+       "from": 1,
+       "to": 3,
+       "label": 2
+      },
+      {
+       "from": 3,
+       "to": 2,
+       "label": 1
+      },
+      {
+       "from": 2,
+       "to": 4,
+       "label": 3
+      },
+      {
+       "from": 3,
+       "to": 4,
+       "label": 7
+      }
+     ]
+    }
+   },
+   "sampleInput": "[[1,2,4],[1,3,2],[3,2,1],[2,4,3],[3,4,7]]\n4\n1"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "links = [[1,2,5]], n = 3, src = 1",
+   "expected": "-1",
+   "frames": [
+    {
+     "caption": {
+      "en": "Player 1 has the message at minute 0: the heap starts with the one entry (0, 1).",
+      "ko": "플레이어 1은 0분에 메시지를 가지고 있습니다. 힙은 항목 (0, 1) 하나로 시작합니다."
+     },
+     "views": {
+      "players": {
+       "values": {},
+       "nodeMarks": {
+        "lit": [],
+        "good": []
+       },
+       "edgeMarks": {
+        "lit": [],
+        "good": []
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "(0, 1)"
+        }
+       ],
+       "edges": [],
+       "nodeMarks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Pop (0, 1), the soonest entry: player 1 first gets the message at minute 0. No later entry can beat it, since every relay adds minutes.",
+      "ko": "가장 이른 (0, 1) 항목을 꺼내니 플레이어 1은 0분에 처음 메시지를 받습니다. 중계는 시간을 더하기만 하므로 더 이른 항목은 나올 수 없습니다."
+     },
+     "views": {
+      "players": {
+       "values": {
+        "1": 0
+       },
+       "nodeMarks": {
+        "lit": [],
+        "good": [
+         1
+        ]
+       },
+       "edgeMarks": {
+        "lit": [],
+        "good": []
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "(0, 1)"
+        }
+       ],
+       "edges": [],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "players",
+        "at": 1
+       },
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Player 1 relays on at once: push (5, 2) as 0 + 5 = 5. heapq re-sorts so the soonest entry is on top.",
+      "ko": "플레이어 1이 바로 중계합니다: 플레이어 2에게 0 + 5 = 5분 항목을 힙에 넣습니다. heapq가 가장 이른 항목을 맨 위에 둡니다."
+     },
+     "views": {
+      "players": {
+       "values": {
+        "1": 0
+       },
+       "nodeMarks": {
+        "lit": [
+         1
+        ],
+        "good": []
+       },
+       "edgeMarks": {
+        "lit": [
+         0
+        ],
+        "good": []
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "(5, 2)"
+        }
+       ],
+       "edges": [],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "players",
+        "at": 1
+       },
+       "to": {
+        "view": "players",
+        "at": [
+         1,
+         2
+        ]
+       },
+       "value": "0"
+      },
+      {
+       "from": {
+        "view": "players",
+        "at": [
+         1,
+         2
+        ]
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       },
+       "value": "(5, 2)"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Pop (5, 2), the soonest entry: player 2 first gets the message at minute 5. No later entry can beat it, since every relay adds minutes.",
+      "ko": "가장 이른 (5, 2) 항목을 꺼내니 플레이어 2는 5분에 처음 메시지를 받습니다. 중계는 시간을 더하기만 하므로 더 이른 항목은 나올 수 없습니다."
+     },
+     "views": {
+      "players": {
+       "values": {
+        "1": 0,
+        "2": 5
+       },
+       "nodeMarks": {
+        "lit": [],
+        "good": [
+         2
+        ]
+       },
+       "edgeMarks": {
+        "lit": [],
+        "good": [
+         0
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "(5, 2)"
+        }
+       ],
+       "edges": [],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "players",
+        "at": 2
+       },
+       "value": "5"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The heap is empty, but only 2 of 3 players got the message: 3 never does. Answer -1.",
+      "ko": "힙이 비었지만 플레이어 3명 중 2명만 받았습니다. 플레이어 3번은 끝내 받지 못하므로 답은 -1입니다."
+     },
+     "views": {
+      "players": {
+       "values": {
+        "1": 0,
+        "2": 5
+       },
+       "nodeMarks": {
+        "lit": [],
+        "good": [],
+        "bad": [
+         3
+        ]
+       },
+       "edgeMarks": {
+        "lit": [],
+        "good": []
+       }
+      },
+      "heap": {
+       "nodes": [],
+       "edges": [],
+       "nodeMarks": {}
+      }
+     },
+     "answer": "-1"
+    }
+   ],
+   "setup": {
+    "players": {
+     "nodes": [
+      {
+       "id": 1,
+       "tag": {
+        "en": "src",
+        "ko": "출발"
+       }
+      },
+      {
+       "id": 2
+      },
+      {
+       "id": 3
+      }
+     ],
+     "edges": [
+      {
+       "from": 1,
+       "to": 2,
+       "label": 5
+      }
+     ]
+    }
+   },
+   "sampleInput": "[[1,2,5]]\n3\n1"
+  },
+  {
+   "label": {
+    "en": "Case 3",
+    "ko": "케이스 3"
+   },
+   "input": "links = [[1,2,3],[1,3,5],[2,3,1]], n = 3, src = 1",
+   "expected": "4",
+   "frames": [
+    {
+     "caption": {
+      "en": "Player 1 has the message at minute 0: the heap starts with the one entry (0, 1).",
+      "ko": "플레이어 1은 0분에 메시지를 가지고 있습니다. 힙은 항목 (0, 1) 하나로 시작합니다."
+     },
+     "views": {
+      "players": {
+       "values": {},
+       "nodeMarks": {
+        "lit": [],
+        "good": []
+       },
+       "edgeMarks": {
+        "lit": [],
+        "good": []
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "(0, 1)"
+        }
+       ],
+       "edges": [],
+       "nodeMarks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Pop (0, 1), the soonest entry: player 1 first gets the message at minute 0. No later entry can beat it, since every relay adds minutes.",
+      "ko": "가장 이른 (0, 1) 항목을 꺼내니 플레이어 1은 0분에 처음 메시지를 받습니다. 중계는 시간을 더하기만 하므로 더 이른 항목은 나올 수 없습니다."
+     },
+     "views": {
+      "players": {
+       "values": {
+        "1": 0
+       },
+       "nodeMarks": {
+        "lit": [],
+        "good": [
+         1
+        ]
+       },
+       "edgeMarks": {
+        "lit": [],
+        "good": []
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "(0, 1)"
+        }
+       ],
+       "edges": [],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "players",
+        "at": 1
+       },
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Player 1 relays on at once: push (3, 2) as 0 + 3 = 3, (5, 3) as 0 + 5 = 5. heapq re-sorts so the soonest entry is on top.",
+      "ko": "플레이어 1이 바로 중계합니다: 플레이어 2에게 0 + 3 = 3분, 플레이어 3에게 0 + 5 = 5분 항목을 힙에 넣습니다. heapq가 가장 이른 항목을 맨 위에 둡니다."
+     },
+     "views": {
+      "players": {
+       "values": {
+        "1": 0
+       },
+       "nodeMarks": {
+        "lit": [
+         1
+        ],
+        "good": []
+       },
+       "edgeMarks": {
+        "lit": [
+         0,
+         1
+        ],
+        "good": []
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "(3, 2)"
+        },
+        {
+         "id": 1,
+         "value": "(5, 3)"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         0,
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "players",
+        "at": 1
+       },
+       "to": {
+        "view": "players",
+        "at": [
+         1,
+         2
+        ]
+       },
+       "value": "0"
+      },
+      {
+       "from": {
+        "view": "players",
+        "at": [
+         1,
+         2
+        ]
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       },
+       "value": "(3, 2)"
+      },
+      {
+       "from": {
+        "view": "players",
+        "at": 1
+       },
+       "to": {
+        "view": "players",
+        "at": [
+         1,
+         3
+        ]
+       },
+       "value": "0"
+      },
+      {
+       "from": {
+        "view": "players",
+        "at": [
+         1,
+         3
+        ]
+       },
+       "to": {
+        "view": "heap",
+        "at": 1
+       },
+       "value": "(5, 3)"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Pop (3, 2), the soonest entry: player 2 first gets the message at minute 3. No later entry can beat it, since every relay adds minutes.",
+      "ko": "가장 이른 (3, 2) 항목을 꺼내니 플레이어 2는 3분에 처음 메시지를 받습니다. 중계는 시간을 더하기만 하므로 더 이른 항목은 나올 수 없습니다."
+     },
+     "views": {
+      "players": {
+       "values": {
+        "1": 0,
+        "2": 3
+       },
+       "nodeMarks": {
+        "lit": [],
+        "good": [
+         2
+        ]
+       },
+       "edgeMarks": {
+        "lit": [],
+        "good": [
+         0
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "(3, 2)"
+        },
+        {
+         "id": 1,
+         "value": "(5, 3)"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "players",
+        "at": 2
+       },
+       "value": "3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Player 2 relays on at once: push (4, 3) as 3 + 1 = 4. heapq re-sorts so the soonest entry is on top.",
+      "ko": "플레이어 2가 바로 중계합니다: 플레이어 3에게 3 + 1 = 4분 항목을 힙에 넣습니다. heapq가 가장 이른 항목을 맨 위에 둡니다."
+     },
+     "views": {
+      "players": {
+       "values": {
+        "1": 0,
+        "2": 3
+       },
+       "nodeMarks": {
+        "lit": [
+         2
+        ],
+        "good": []
+       },
+       "edgeMarks": {
+        "lit": [
+         2
+        ],
+        "good": []
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "(4, 3)"
+        },
+        {
+         "id": 1,
+         "value": "(5, 3)"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "players",
+        "at": 2
+       },
+       "to": {
+        "view": "players",
+        "at": [
+         2,
+         3
+        ]
+       },
+       "value": "3"
+      },
+      {
+       "from": {
+        "view": "players",
+        "at": [
+         2,
+         3
+        ]
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       },
+       "value": "(4, 3)"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Pop (4, 3), the soonest entry: player 3 first gets the message at minute 4. No later entry can beat it, since every relay adds minutes.",
+      "ko": "가장 이른 (4, 3) 항목을 꺼내니 플레이어 3은 4분에 처음 메시지를 받습니다. 중계는 시간을 더하기만 하므로 더 이른 항목은 나올 수 없습니다."
+     },
+     "views": {
+      "players": {
+       "values": {
+        "1": 0,
+        "2": 3,
+        "3": 4
+       },
+       "nodeMarks": {
+        "lit": [],
+        "good": [
+         3
+        ]
+       },
+       "edgeMarks": {
+        "lit": [],
+        "good": [
+         2
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "(4, 3)"
+        },
+        {
+         "id": 1,
+         "value": "(5, 3)"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "players",
+        "at": 3
+       },
+       "value": "4"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "heappop moved the last entry up to the root and sifted it down: the soonest entry is on top again.",
+      "ko": "heappop이 마지막 항목을 루트로 올린 뒤 아래로 내려 보냈습니다. 다시 가장 이른 항목이 맨 위에 있습니다."
+     },
+     "views": {
+      "players": {
+       "values": {
+        "1": 0,
+        "2": 3,
+        "3": 4
+       },
+       "nodeMarks": {
+        "lit": [],
+        "good": []
+       },
+       "edgeMarks": {
+        "lit": [],
+        "good": []
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "(5, 3)"
+        }
+       ],
+       "edges": [],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "heap",
+        "at": 0
+       },
+       "value": "(5, 3)"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Pop (5, 3): player 3 already got the message at minute 4, so this later entry is stale and is skipped.",
+      "ko": "(5, 3) 항목을 꺼냅니다. 플레이어 3은 이미 4분에 받았으므로 이 늦은 항목은 지난 것이라 건너뜁니다."
+     },
+     "views": {
+      "players": {
+       "values": {
+        "1": 0,
+        "2": 3,
+        "3": 4
+       },
+       "nodeMarks": {
+        "lit": [
+         3
+        ],
+        "good": []
+       },
+       "edgeMarks": {
+        "lit": [],
+        "good": []
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "(5, 3)"
+        }
+       ],
+       "edges": [],
+       "nodeMarks": {
+        "bad": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The heap is empty and all 3 players have the message. The last is player 3 at minute 4, by 1 → 2 → 3: answer 4.",
+      "ko": "힙이 비었고 플레이어 3명이 모두 메시지를 받았습니다. 가장 늦게 받는 것은 3번 플레이어로 4분, 경로는 1 → 2 → 3이고 답은 4입니다."
+     },
+     "views": {
+      "players": {
+       "values": {
+        "1": 0,
+        "2": 3,
+        "3": 4
+       },
+       "nodeMarks": {
+        "lit": [],
+        "good": [],
+        "path": [
+         1,
+         2,
+         3
+        ]
+       },
+       "edgeMarks": {
+        "lit": [],
+        "good": [],
+        "path": [
+         0,
+         2
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [],
+       "edges": [],
+       "nodeMarks": {}
+      }
+     },
+     "answer": "4"
+    }
+   ],
+   "setup": {
+    "players": {
+     "nodes": [
+      {
+       "id": 1,
+       "tag": {
+        "en": "src",
+        "ko": "출발"
+       }
+      },
+      {
+       "id": 2
+      },
+      {
+       "id": 3
+      }
+     ],
+     "edges": [
+      {
+       "from": 1,
+       "to": 2,
+       "label": 3
+      },
+      {
+       "from": 1,
+       "to": 3,
+       "label": 5
+      },
+      {
+       "from": 2,
+       "to": 3,
+       "label": 1
+      }
+     ]
+    }
+   },
+   "sampleInput": "[[1,2,3],[1,3,5],[2,3,1]]\n3\n1"
+  }
+ ]
+}
