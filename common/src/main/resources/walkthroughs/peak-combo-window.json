@@ -1,0 +1,3482 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Peak Combo Window",
+  "ko": "구간 최고 콤보"
+ },
+ "approach": {
+  "en": "A deque keeps only the beats that could still be a window's peak, their values falling from front to back: a new beat pops every smaller one off the back, the front leaves once it slides out of the window, and the front is always the window's peak.",
+  "ko": "덱에는 앞으로 윈도의 최댓값이 될 수 있는 비트만 남기며, 값은 앞에서 뒤로 갈수록 작아집니다. 새 비트는 뒤에서 자기보다 작거나 같은 값을 모두 꺼내고, 앞쪽 비트는 윈도 밖으로 밀려나면 빠지므로, 덱의 맨 앞이 언제나 윈도의 최댓값입니다."
+ },
+ "views": [
+  {
+   "id": "combo",
+   "type": "array",
+   "title": {
+    "en": "combo",
+    "ko": "combo (비트별 콤보)"
+   }
+  },
+  {
+   "id": "dq",
+   "type": "queue",
+   "deque": true,
+   "title": {
+    "en": "deque (beats, values falling front to back)",
+    "ko": "덱 (비트, 앞에서 뒤로 작아지는 값)"
+   },
+   "empty": {
+    "en": "empty",
+    "ko": "비어 있음"
+   }
+  },
+  {
+   "id": "peaks",
+   "type": "output",
+   "title": {
+    "en": "peaks",
+    "ko": "peaks (윈도별 최댓값)"
+   },
+   "empty": {
+    "en": "none yet",
+    "ko": "아직 없음"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "combo = [4,2,8,5,1,7,9,3], k = 4",
+   "expected": "[8,8,8,9,9]",
+   "frames": [
+    {
+     "caption": {
+      "en": "8 beats and k = 4, so there are 8 − 4 + 1 = 5 windows. The deque starts empty.",
+      "ko": "비트 8개, k = 4이므로 윈도는 8 − 4 + 1 = 5개입니다. 덱은 비어 있습니다."
+     },
+     "views": {
+      "combo": {
+       "values": [
+        4,
+        2,
+        8,
+        5,
+        1,
+        7,
+        9,
+        3
+       ],
+       "spans": {},
+       "pointers": {},
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "dq": {
+       "values": [],
+       "tags": [],
+       "marks": {
+        "lit": [],
+        "good": [],
+        "dim": []
+       }
+      },
+      "peaks": {
+       "values": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "The deque is empty: push beat 0 (4) on the back.",
+      "ko": "덱이 비어 있어 0번 비트(4)를 뒤에 넣습니다."
+     },
+     "views": {
+      "combo": {
+       "values": [
+        4,
+        2,
+        8,
+        5,
+        1,
+        7,
+        9,
+        3
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "window 1",
+          "ko": "윈도 1"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "i": 0
+       },
+       "unread": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "dq": {
+       "values": [
+        4
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "beat 0",
+          "ko": "0번"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         0
+        ],
+        "dim": []
+       }
+      },
+      "peaks": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "combo",
+        "at": 0
+       },
+       "to": {
+        "view": "dq",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The back's 4 (beat 0) is larger than 2: push beat 1 (2) on the back.",
+      "ko": "뒤쪽 0번 비트의 4보다 2가 작아 1번 비트(2)를 뒤에 넣습니다."
+     },
+     "views": {
+      "combo": {
+       "values": [
+        4,
+        2,
+        8,
+        5,
+        1,
+        7,
+        9,
+        3
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "window 2",
+          "ko": "윈도 2"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "i": 1
+       },
+       "unread": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "dq": {
+       "values": [
+        4,
+        2
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "beat 0",
+          "ko": "0번"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "beat 1",
+          "ko": "1번"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         1
+        ],
+        "dim": []
+       }
+      },
+      "peaks": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "combo",
+        "at": 1
+       },
+       "to": {
+        "view": "dq",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "combo[2] = 8 ≥ 2 at the back (beat 1): beat 1 can never be a peak while beat 2 is in the window, so it leaves the back.",
+      "ko": "combo[2] = 8 ≥ 뒤쪽 1번 비트의 2: 2번 비트가 윈도에 있는 동안 1번은 최댓값이 될 수 없으므로 뒤에서 꺼냅니다."
+     },
+     "views": {
+      "combo": {
+       "values": [
+        4,
+        2,
+        8,
+        5,
+        1,
+        7,
+        9,
+        3
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "window 3",
+          "ko": "윈도 3"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "i": 2
+       },
+       "unread": [
+        3,
+        4,
+        5,
+        6,
+        7
+       ],
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "dq": {
+       "values": [
+        4,
+        2
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "beat 0",
+          "ko": "0번"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "beat 1",
+          "ko": "1번"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         1
+        ],
+        "good": [],
+        "dim": []
+       }
+      },
+      "peaks": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "dq",
+        "at": 1
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "combo[2] = 8 ≥ 4 at the back (beat 0): beat 0 can never be a peak while beat 2 is in the window, so it leaves the back.",
+      "ko": "combo[2] = 8 ≥ 뒤쪽 0번 비트의 4: 2번 비트가 윈도에 있는 동안 0번은 최댓값이 될 수 없으므로 뒤에서 꺼냅니다."
+     },
+     "views": {
+      "combo": {
+       "values": [
+        4,
+        2,
+        8,
+        5,
+        1,
+        7,
+        9,
+        3
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "window 3",
+          "ko": "윈도 3"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "i": 2
+       },
+       "unread": [
+        3,
+        4,
+        5,
+        6,
+        7
+       ],
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "dq": {
+       "values": [
+        4
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "beat 0",
+          "ko": "0번"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": [],
+        "dim": []
+       }
+      },
+      "peaks": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "dq",
+        "at": 0
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The deque is empty: push beat 2 (8) on the back.",
+      "ko": "덱이 비어 있어 2번 비트(8)를 뒤에 넣습니다."
+     },
+     "views": {
+      "combo": {
+       "values": [
+        4,
+        2,
+        8,
+        5,
+        1,
+        7,
+        9,
+        3
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "window 3",
+          "ko": "윈도 3"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "i": 2
+       },
+       "unread": [
+        3,
+        4,
+        5,
+        6,
+        7
+       ],
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "dq": {
+       "values": [
+        8
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "beat 2",
+          "ko": "2번"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         0
+        ],
+        "dim": []
+       }
+      },
+      "peaks": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "combo",
+        "at": 2
+       },
+       "to": {
+        "view": "dq",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The back's 8 (beat 2) is larger than 5: push beat 3 (5) on the back.",
+      "ko": "뒤쪽 2번 비트의 8보다 5가 작아 3번 비트(5)를 뒤에 넣습니다."
+     },
+     "views": {
+      "combo": {
+       "values": [
+        4,
+        2,
+        8,
+        5,
+        1,
+        7,
+        9,
+        3
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 3,
+         "label": {
+          "en": "window 4",
+          "ko": "윈도 4"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "i": 3
+       },
+       "unread": [
+        4,
+        5,
+        6,
+        7
+       ],
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "dq": {
+       "values": [
+        8,
+        5
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "beat 2",
+          "ko": "2번"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "beat 3",
+          "ko": "3번"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         1
+        ],
+        "dim": []
+       }
+      },
+      "peaks": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "combo",
+        "at": 3
+       },
+       "to": {
+        "view": "dq",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The window combo[0..3] is full: its peak is the deque's front, beat 2 with 8.",
+      "ko": "윈도 combo[0..3]가 찼습니다. 최댓값은 덱의 맨 앞, 2번 비트의 8입니다."
+     },
+     "views": {
+      "combo": {
+       "values": [
+        4,
+        2,
+        8,
+        5,
+        1,
+        7,
+        9,
+        3
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 3,
+         "label": {
+          "en": "window 4",
+          "ko": "윈도 4"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "i": 3
+       },
+       "unread": [
+        4,
+        5,
+        6,
+        7
+       ],
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "dq": {
+       "values": [
+        8,
+        5
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "beat 2",
+          "ko": "2번"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "beat 3",
+          "ko": "3번"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": [],
+        "dim": []
+       }
+      },
+      "peaks": {
+       "values": [
+        8
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "dq",
+        "at": 0
+       },
+       "to": {
+        "view": "peaks",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The back's 5 (beat 3) is larger than 1: push beat 4 (1) on the back.",
+      "ko": "뒤쪽 3번 비트의 5보다 1이 작아 4번 비트(1)를 뒤에 넣습니다."
+     },
+     "views": {
+      "combo": {
+       "values": [
+        4,
+        2,
+        8,
+        5,
+        1,
+        7,
+        9,
+        3
+       ],
+       "spans": {
+        "window": {
+         "from": 1,
+         "to": 4,
+         "label": {
+          "en": "window 4",
+          "ko": "윈도 4"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "i": 4
+       },
+       "unread": [
+        5,
+        6,
+        7
+       ],
+       "marks": {
+        "lit": [
+         4
+        ]
+       }
+      },
+      "dq": {
+       "values": [
+        8,
+        5,
+        1
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "beat 2",
+          "ko": "2번"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "beat 3",
+          "ko": "3번"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "beat 4",
+          "ko": "4번"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         2
+        ],
+        "dim": []
+       }
+      },
+      "peaks": {
+       "values": [
+        8
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "combo",
+        "at": 4
+       },
+       "to": {
+        "view": "dq",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The window combo[1..4] is full: its peak is the deque's front, beat 2 with 8.",
+      "ko": "윈도 combo[1..4]가 찼습니다. 최댓값은 덱의 맨 앞, 2번 비트의 8입니다."
+     },
+     "views": {
+      "combo": {
+       "values": [
+        4,
+        2,
+        8,
+        5,
+        1,
+        7,
+        9,
+        3
+       ],
+       "spans": {
+        "window": {
+         "from": 1,
+         "to": 4,
+         "label": {
+          "en": "window 4",
+          "ko": "윈도 4"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "i": 4
+       },
+       "unread": [
+        5,
+        6,
+        7
+       ],
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "dq": {
+       "values": [
+        8,
+        5,
+        1
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "beat 2",
+          "ko": "2번"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "beat 3",
+          "ko": "3번"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "beat 4",
+          "ko": "4번"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": [],
+        "dim": []
+       }
+      },
+      "peaks": {
+       "values": [
+        8,
+        8
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "dq",
+        "at": 0
+       },
+       "to": {
+        "view": "peaks",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "combo[5] = 7 ≥ 1 at the back (beat 4): beat 4 can never be a peak while beat 5 is in the window, so it leaves the back.",
+      "ko": "combo[5] = 7 ≥ 뒤쪽 4번 비트의 1: 5번 비트가 윈도에 있는 동안 4번은 최댓값이 될 수 없으므로 뒤에서 꺼냅니다."
+     },
+     "views": {
+      "combo": {
+       "values": [
+        4,
+        2,
+        8,
+        5,
+        1,
+        7,
+        9,
+        3
+       ],
+       "spans": {
+        "window": {
+         "from": 2,
+         "to": 5,
+         "label": {
+          "en": "window 4",
+          "ko": "윈도 4"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "i": 5
+       },
+       "unread": [
+        6,
+        7
+       ],
+       "marks": {
+        "lit": [
+         5
+        ]
+       }
+      },
+      "dq": {
+       "values": [
+        8,
+        5,
+        1
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "beat 2",
+          "ko": "2번"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "beat 3",
+          "ko": "3번"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "beat 4",
+          "ko": "4번"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         2
+        ],
+        "good": [],
+        "dim": []
+       }
+      },
+      "peaks": {
+       "values": [
+        8,
+        8
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "dq",
+        "at": 2
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "combo[5] = 7 ≥ 5 at the back (beat 3): beat 3 can never be a peak while beat 5 is in the window, so it leaves the back.",
+      "ko": "combo[5] = 7 ≥ 뒤쪽 3번 비트의 5: 5번 비트가 윈도에 있는 동안 3번은 최댓값이 될 수 없으므로 뒤에서 꺼냅니다."
+     },
+     "views": {
+      "combo": {
+       "values": [
+        4,
+        2,
+        8,
+        5,
+        1,
+        7,
+        9,
+        3
+       ],
+       "spans": {
+        "window": {
+         "from": 2,
+         "to": 5,
+         "label": {
+          "en": "window 4",
+          "ko": "윈도 4"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "i": 5
+       },
+       "unread": [
+        6,
+        7
+       ],
+       "marks": {
+        "lit": [
+         5
+        ]
+       }
+      },
+      "dq": {
+       "values": [
+        8,
+        5
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "beat 2",
+          "ko": "2번"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "beat 3",
+          "ko": "3번"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         1
+        ],
+        "good": [],
+        "dim": []
+       }
+      },
+      "peaks": {
+       "values": [
+        8,
+        8
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "dq",
+        "at": 1
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The back's 8 (beat 2) is larger than 7: push beat 5 (7) on the back.",
+      "ko": "뒤쪽 2번 비트의 8보다 7이 작아 5번 비트(7)를 뒤에 넣습니다."
+     },
+     "views": {
+      "combo": {
+       "values": [
+        4,
+        2,
+        8,
+        5,
+        1,
+        7,
+        9,
+        3
+       ],
+       "spans": {
+        "window": {
+         "from": 2,
+         "to": 5,
+         "label": {
+          "en": "window 4",
+          "ko": "윈도 4"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "i": 5
+       },
+       "unread": [
+        6,
+        7
+       ],
+       "marks": {
+        "lit": [
+         5
+        ]
+       }
+      },
+      "dq": {
+       "values": [
+        8,
+        7
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "beat 2",
+          "ko": "2번"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "beat 5",
+          "ko": "5번"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         1
+        ],
+        "dim": []
+       }
+      },
+      "peaks": {
+       "values": [
+        8,
+        8
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "combo",
+        "at": 5
+       },
+       "to": {
+        "view": "dq",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The window combo[2..5] is full: its peak is the deque's front, beat 2 with 8.",
+      "ko": "윈도 combo[2..5]가 찼습니다. 최댓값은 덱의 맨 앞, 2번 비트의 8입니다."
+     },
+     "views": {
+      "combo": {
+       "values": [
+        4,
+        2,
+        8,
+        5,
+        1,
+        7,
+        9,
+        3
+       ],
+       "spans": {
+        "window": {
+         "from": 2,
+         "to": 5,
+         "label": {
+          "en": "window 4",
+          "ko": "윈도 4"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "i": 5
+       },
+       "unread": [
+        6,
+        7
+       ],
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "dq": {
+       "values": [
+        8,
+        7
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "beat 2",
+          "ko": "2번"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "beat 5",
+          "ko": "5번"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": [],
+        "dim": []
+       }
+      },
+      "peaks": {
+       "values": [
+        8,
+        8,
+        8
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "dq",
+        "at": 0
+       },
+       "to": {
+        "view": "peaks",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "combo[6] = 9 ≥ 7 at the back (beat 5): beat 5 can never be a peak while beat 6 is in the window, so it leaves the back.",
+      "ko": "combo[6] = 9 ≥ 뒤쪽 5번 비트의 7: 6번 비트가 윈도에 있는 동안 5번은 최댓값이 될 수 없으므로 뒤에서 꺼냅니다."
+     },
+     "views": {
+      "combo": {
+       "values": [
+        4,
+        2,
+        8,
+        5,
+        1,
+        7,
+        9,
+        3
+       ],
+       "spans": {
+        "window": {
+         "from": 3,
+         "to": 6,
+         "label": {
+          "en": "window 4",
+          "ko": "윈도 4"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "i": 6
+       },
+       "unread": [
+        7
+       ],
+       "marks": {
+        "lit": [
+         6
+        ]
+       }
+      },
+      "dq": {
+       "values": [
+        8,
+        7
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "beat 2",
+          "ko": "2번"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "beat 5",
+          "ko": "5번"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         1
+        ],
+        "good": [],
+        "dim": []
+       }
+      },
+      "peaks": {
+       "values": [
+        8,
+        8,
+        8
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "dq",
+        "at": 1
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "combo[6] = 9 ≥ 8 at the back (beat 2): beat 2 can never be a peak while beat 6 is in the window, so it leaves the back.",
+      "ko": "combo[6] = 9 ≥ 뒤쪽 2번 비트의 8: 6번 비트가 윈도에 있는 동안 2번은 최댓값이 될 수 없으므로 뒤에서 꺼냅니다."
+     },
+     "views": {
+      "combo": {
+       "values": [
+        4,
+        2,
+        8,
+        5,
+        1,
+        7,
+        9,
+        3
+       ],
+       "spans": {
+        "window": {
+         "from": 3,
+         "to": 6,
+         "label": {
+          "en": "window 4",
+          "ko": "윈도 4"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "i": 6
+       },
+       "unread": [
+        7
+       ],
+       "marks": {
+        "lit": [
+         6
+        ]
+       }
+      },
+      "dq": {
+       "values": [
+        8
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "beat 2",
+          "ko": "2번"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": [],
+        "dim": []
+       }
+      },
+      "peaks": {
+       "values": [
+        8,
+        8,
+        8
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "dq",
+        "at": 0
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The deque is empty: push beat 6 (9) on the back.",
+      "ko": "덱이 비어 있어 6번 비트(9)를 뒤에 넣습니다."
+     },
+     "views": {
+      "combo": {
+       "values": [
+        4,
+        2,
+        8,
+        5,
+        1,
+        7,
+        9,
+        3
+       ],
+       "spans": {
+        "window": {
+         "from": 3,
+         "to": 6,
+         "label": {
+          "en": "window 4",
+          "ko": "윈도 4"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "i": 6
+       },
+       "unread": [
+        7
+       ],
+       "marks": {
+        "lit": [
+         6
+        ]
+       }
+      },
+      "dq": {
+       "values": [
+        9
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "beat 6",
+          "ko": "6번"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         0
+        ],
+        "dim": []
+       }
+      },
+      "peaks": {
+       "values": [
+        8,
+        8,
+        8
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "combo",
+        "at": 6
+       },
+       "to": {
+        "view": "dq",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The window combo[3..6] is full: its peak is the deque's front, beat 6 with 9.",
+      "ko": "윈도 combo[3..6]가 찼습니다. 최댓값은 덱의 맨 앞, 6번 비트의 9입니다."
+     },
+     "views": {
+      "combo": {
+       "values": [
+        4,
+        2,
+        8,
+        5,
+        1,
+        7,
+        9,
+        3
+       ],
+       "spans": {
+        "window": {
+         "from": 3,
+         "to": 6,
+         "label": {
+          "en": "window 4",
+          "ko": "윈도 4"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "i": 6
+       },
+       "unread": [
+        7
+       ],
+       "marks": {
+        "lit": [
+         6
+        ]
+       }
+      },
+      "dq": {
+       "values": [
+        9
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "beat 6",
+          "ko": "6번"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": [],
+        "dim": []
+       }
+      },
+      "peaks": {
+       "values": [
+        8,
+        8,
+        8,
+        9
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "dq",
+        "at": 0
+       },
+       "to": {
+        "view": "peaks",
+        "at": 3
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The back's 9 (beat 6) is larger than 3: push beat 7 (3) on the back.",
+      "ko": "뒤쪽 6번 비트의 9보다 3이 작아 7번 비트(3)를 뒤에 넣습니다."
+     },
+     "views": {
+      "combo": {
+       "values": [
+        4,
+        2,
+        8,
+        5,
+        1,
+        7,
+        9,
+        3
+       ],
+       "spans": {
+        "window": {
+         "from": 4,
+         "to": 7,
+         "label": {
+          "en": "window 4",
+          "ko": "윈도 4"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "i": 7
+       },
+       "unread": [],
+       "marks": {
+        "lit": [
+         7
+        ]
+       }
+      },
+      "dq": {
+       "values": [
+        9,
+        3
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "beat 6",
+          "ko": "6번"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "beat 7",
+          "ko": "7번"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         1
+        ],
+        "dim": []
+       }
+      },
+      "peaks": {
+       "values": [
+        8,
+        8,
+        8,
+        9
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "combo",
+        "at": 7
+       },
+       "to": {
+        "view": "dq",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The window combo[4..7] is full: its peak is the deque's front, beat 6 with 9.",
+      "ko": "윈도 combo[4..7]가 찼습니다. 최댓값은 덱의 맨 앞, 6번 비트의 9입니다."
+     },
+     "views": {
+      "combo": {
+       "values": [
+        4,
+        2,
+        8,
+        5,
+        1,
+        7,
+        9,
+        3
+       ],
+       "spans": {
+        "window": {
+         "from": 4,
+         "to": 7,
+         "label": {
+          "en": "window 4",
+          "ko": "윈도 4"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "i": 7
+       },
+       "unread": [],
+       "marks": {
+        "lit": [
+         6
+        ]
+       }
+      },
+      "dq": {
+       "values": [
+        9,
+        3
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "beat 6",
+          "ko": "6번"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "beat 7",
+          "ko": "7번"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": [],
+        "dim": []
+       }
+      },
+      "peaks": {
+       "values": [
+        8,
+        8,
+        8,
+        9,
+        9
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "dq",
+        "at": 0
+       },
+       "to": {
+        "view": "peaks",
+        "at": 4
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every beat is read: each of the 5 windows took its peak from the deque's front, [8,8,8,9,9].",
+      "ko": "모든 비트를 읽었습니다. 윈도 5개가 모두 덱의 맨 앞에서 최댓값을 가져가 [8,8,8,9,9]입니다."
+     },
+     "views": {
+      "combo": {
+       "values": [
+        4,
+        2,
+        8,
+        5,
+        1,
+        7,
+        9,
+        3
+       ],
+       "spans": {},
+       "pointers": {},
+       "unread": [],
+       "marks": {
+        "lit": []
+       }
+      },
+      "dq": {
+       "values": [
+        9,
+        3
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "beat 6",
+          "ko": "6번"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "beat 7",
+          "ko": "7번"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [],
+        "dim": [
+         0,
+         1
+        ]
+       }
+      },
+      "peaks": {
+       "values": [
+        8,
+        8,
+        8,
+        9,
+        9
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      }
+     },
+     "answer": "[8,8,8,9,9]"
+    }
+   ],
+   "sampleInput": "[4,2,8,5,1,7,9,3]\n4"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "combo = [6,6,6], k = 2",
+   "expected": "[6,6]",
+   "frames": [
+    {
+     "caption": {
+      "en": "3 beats and k = 2, so there are 3 − 2 + 1 = 2 windows. The deque starts empty.",
+      "ko": "비트 3개, k = 2이므로 윈도는 3 − 2 + 1 = 2개입니다. 덱은 비어 있습니다."
+     },
+     "views": {
+      "combo": {
+       "values": [
+        6,
+        6,
+        6
+       ],
+       "spans": {},
+       "pointers": {},
+       "unread": [
+        0,
+        1,
+        2
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "dq": {
+       "values": [],
+       "tags": [],
+       "marks": {
+        "lit": [],
+        "good": [],
+        "dim": []
+       }
+      },
+      "peaks": {
+       "values": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "The deque is empty: push beat 0 (6) on the back.",
+      "ko": "덱이 비어 있어 0번 비트(6)를 뒤에 넣습니다."
+     },
+     "views": {
+      "combo": {
+       "values": [
+        6,
+        6,
+        6
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "window 1",
+          "ko": "윈도 1"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "i": 0
+       },
+       "unread": [
+        1,
+        2
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "dq": {
+       "values": [
+        6
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "beat 0",
+          "ko": "0번"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         0
+        ],
+        "dim": []
+       }
+      },
+      "peaks": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "combo",
+        "at": 0
+       },
+       "to": {
+        "view": "dq",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "combo[1] = 6 ≥ 6 at the back (beat 0): beat 0 can never be a peak while beat 1 is in the window, so it leaves the back.",
+      "ko": "combo[1] = 6 ≥ 뒤쪽 0번 비트의 6: 1번 비트가 윈도에 있는 동안 0번은 최댓값이 될 수 없으므로 뒤에서 꺼냅니다."
+     },
+     "views": {
+      "combo": {
+       "values": [
+        6,
+        6,
+        6
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "window 2",
+          "ko": "윈도 2"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "i": 1
+       },
+       "unread": [
+        2
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "dq": {
+       "values": [
+        6
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "beat 0",
+          "ko": "0번"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": [],
+        "dim": []
+       }
+      },
+      "peaks": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "dq",
+        "at": 0
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The deque is empty: push beat 1 (6) on the back.",
+      "ko": "덱이 비어 있어 1번 비트(6)를 뒤에 넣습니다."
+     },
+     "views": {
+      "combo": {
+       "values": [
+        6,
+        6,
+        6
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "window 2",
+          "ko": "윈도 2"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "i": 1
+       },
+       "unread": [
+        2
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "dq": {
+       "values": [
+        6
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "beat 1",
+          "ko": "1번"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         0
+        ],
+        "dim": []
+       }
+      },
+      "peaks": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "combo",
+        "at": 1
+       },
+       "to": {
+        "view": "dq",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The window combo[0..1] is full: its peak is the deque's front, beat 1 with 6.",
+      "ko": "윈도 combo[0..1]가 찼습니다. 최댓값은 덱의 맨 앞, 1번 비트의 6입니다."
+     },
+     "views": {
+      "combo": {
+       "values": [
+        6,
+        6,
+        6
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "window 2",
+          "ko": "윈도 2"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "i": 1
+       },
+       "unread": [
+        2
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "dq": {
+       "values": [
+        6
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "beat 1",
+          "ko": "1번"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": [],
+        "dim": []
+       }
+      },
+      "peaks": {
+       "values": [
+        6
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "dq",
+        "at": 0
+       },
+       "to": {
+        "view": "peaks",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "combo[2] = 6 ≥ 6 at the back (beat 1): beat 1 can never be a peak while beat 2 is in the window, so it leaves the back.",
+      "ko": "combo[2] = 6 ≥ 뒤쪽 1번 비트의 6: 2번 비트가 윈도에 있는 동안 1번은 최댓값이 될 수 없으므로 뒤에서 꺼냅니다."
+     },
+     "views": {
+      "combo": {
+       "values": [
+        6,
+        6,
+        6
+       ],
+       "spans": {
+        "window": {
+         "from": 1,
+         "to": 2,
+         "label": {
+          "en": "window 2",
+          "ko": "윈도 2"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "i": 2
+       },
+       "unread": [],
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "dq": {
+       "values": [
+        6
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "beat 1",
+          "ko": "1번"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": [],
+        "dim": []
+       }
+      },
+      "peaks": {
+       "values": [
+        6
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "dq",
+        "at": 0
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The deque is empty: push beat 2 (6) on the back.",
+      "ko": "덱이 비어 있어 2번 비트(6)를 뒤에 넣습니다."
+     },
+     "views": {
+      "combo": {
+       "values": [
+        6,
+        6,
+        6
+       ],
+       "spans": {
+        "window": {
+         "from": 1,
+         "to": 2,
+         "label": {
+          "en": "window 2",
+          "ko": "윈도 2"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "i": 2
+       },
+       "unread": [],
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "dq": {
+       "values": [
+        6
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "beat 2",
+          "ko": "2번"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         0
+        ],
+        "dim": []
+       }
+      },
+      "peaks": {
+       "values": [
+        6
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "combo",
+        "at": 2
+       },
+       "to": {
+        "view": "dq",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The window combo[1..2] is full: its peak is the deque's front, beat 2 with 6.",
+      "ko": "윈도 combo[1..2]가 찼습니다. 최댓값은 덱의 맨 앞, 2번 비트의 6입니다."
+     },
+     "views": {
+      "combo": {
+       "values": [
+        6,
+        6,
+        6
+       ],
+       "spans": {
+        "window": {
+         "from": 1,
+         "to": 2,
+         "label": {
+          "en": "window 2",
+          "ko": "윈도 2"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "i": 2
+       },
+       "unread": [],
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "dq": {
+       "values": [
+        6
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "beat 2",
+          "ko": "2번"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": [],
+        "dim": []
+       }
+      },
+      "peaks": {
+       "values": [
+        6,
+        6
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "dq",
+        "at": 0
+       },
+       "to": {
+        "view": "peaks",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every beat is read: each of the 2 windows took its peak from the deque's front, [6,6].",
+      "ko": "모든 비트를 읽었습니다. 윈도 2개가 모두 덱의 맨 앞에서 최댓값을 가져가 [6,6]입니다."
+     },
+     "views": {
+      "combo": {
+       "values": [
+        6,
+        6,
+        6
+       ],
+       "spans": {},
+       "pointers": {},
+       "unread": [],
+       "marks": {
+        "lit": []
+       }
+      },
+      "dq": {
+       "values": [
+        6
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "beat 2",
+          "ko": "2번"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [],
+        "dim": [
+         0
+        ]
+       }
+      },
+      "peaks": {
+       "values": [
+        6,
+        6
+       ],
+       "marks": {
+        "path": [
+         0,
+         1
+        ]
+       }
+      }
+     },
+     "answer": "[6,6]"
+    }
+   ],
+   "sampleInput": "[6,6,6]\n2"
+  },
+  {
+   "label": {
+    "en": "Extra: the front slides out",
+    "ko": "추가: 맨 앞이 윈도 밖으로"
+   },
+   "input": "combo = [5,3,1,2], k = 2",
+   "expected": "[5,3,2]",
+   "frames": [
+    {
+     "caption": {
+      "en": "4 beats and k = 2, so there are 4 − 2 + 1 = 3 windows. The deque starts empty.",
+      "ko": "비트 4개, k = 2이므로 윈도는 4 − 2 + 1 = 3개입니다. 덱은 비어 있습니다."
+     },
+     "views": {
+      "combo": {
+       "values": [
+        5,
+        3,
+        1,
+        2
+       ],
+       "spans": {},
+       "pointers": {},
+       "unread": [
+        0,
+        1,
+        2,
+        3
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "dq": {
+       "values": [],
+       "tags": [],
+       "marks": {
+        "lit": [],
+        "good": [],
+        "dim": []
+       }
+      },
+      "peaks": {
+       "values": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "The deque is empty: push beat 0 (5) on the back.",
+      "ko": "덱이 비어 있어 0번 비트(5)를 뒤에 넣습니다."
+     },
+     "views": {
+      "combo": {
+       "values": [
+        5,
+        3,
+        1,
+        2
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "window 1",
+          "ko": "윈도 1"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "i": 0
+       },
+       "unread": [
+        1,
+        2,
+        3
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "dq": {
+       "values": [
+        5
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "beat 0",
+          "ko": "0번"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         0
+        ],
+        "dim": []
+       }
+      },
+      "peaks": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "combo",
+        "at": 0
+       },
+       "to": {
+        "view": "dq",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The back's 5 (beat 0) is larger than 3: push beat 1 (3) on the back.",
+      "ko": "뒤쪽 0번 비트의 5보다 3이 작아 1번 비트(3)를 뒤에 넣습니다."
+     },
+     "views": {
+      "combo": {
+       "values": [
+        5,
+        3,
+        1,
+        2
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "window 2",
+          "ko": "윈도 2"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "i": 1
+       },
+       "unread": [
+        2,
+        3
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "dq": {
+       "values": [
+        5,
+        3
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "beat 0",
+          "ko": "0번"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "beat 1",
+          "ko": "1번"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         1
+        ],
+        "dim": []
+       }
+      },
+      "peaks": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "combo",
+        "at": 1
+       },
+       "to": {
+        "view": "dq",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The window combo[0..1] is full: its peak is the deque's front, beat 0 with 5.",
+      "ko": "윈도 combo[0..1]가 찼습니다. 최댓값은 덱의 맨 앞, 0번 비트의 5입니다."
+     },
+     "views": {
+      "combo": {
+       "values": [
+        5,
+        3,
+        1,
+        2
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "window 2",
+          "ko": "윈도 2"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "i": 1
+       },
+       "unread": [
+        2,
+        3
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "dq": {
+       "values": [
+        5,
+        3
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "beat 0",
+          "ko": "0번"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "beat 1",
+          "ko": "1번"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": [],
+        "dim": []
+       }
+      },
+      "peaks": {
+       "values": [
+        5
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "dq",
+        "at": 0
+       },
+       "to": {
+        "view": "peaks",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The back's 3 (beat 1) is larger than 1: push beat 2 (1) on the back.",
+      "ko": "뒤쪽 1번 비트의 3보다 1이 작아 2번 비트(1)를 뒤에 넣습니다."
+     },
+     "views": {
+      "combo": {
+       "values": [
+        5,
+        3,
+        1,
+        2
+       ],
+       "spans": {
+        "window": {
+         "from": 1,
+         "to": 2,
+         "label": {
+          "en": "window 2",
+          "ko": "윈도 2"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "i": 2
+       },
+       "unread": [
+        3
+       ],
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "dq": {
+       "values": [
+        5,
+        3,
+        1
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "beat 0",
+          "ko": "0번"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "beat 1",
+          "ko": "1번"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "beat 2",
+          "ko": "2번"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         2
+        ],
+        "dim": []
+       }
+      },
+      "peaks": {
+       "values": [
+        5
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "combo",
+        "at": 2
+       },
+       "to": {
+        "view": "dq",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The front, beat 0, is at or before i − k = 0: it slid out of the window, so it leaves the front.",
+      "ko": "맨 앞 0번 비트가 i − k = 0 이하라 윈도 밖으로 밀려났으므로 앞에서 꺼냅니다."
+     },
+     "views": {
+      "combo": {
+       "values": [
+        5,
+        3,
+        1,
+        2
+       ],
+       "spans": {
+        "window": {
+         "from": 1,
+         "to": 2,
+         "label": {
+          "en": "window 2",
+          "ko": "윈도 2"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "i": 2
+       },
+       "unread": [
+        3
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "dq": {
+       "values": [
+        5,
+        3,
+        1
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "beat 0",
+          "ko": "0번"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "beat 1",
+          "ko": "1번"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "beat 2",
+          "ko": "2번"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": [],
+        "dim": []
+       }
+      },
+      "peaks": {
+       "values": [
+        5
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "dq",
+        "at": 0
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The window combo[1..2] is full: its peak is the deque's front, beat 1 with 3.",
+      "ko": "윈도 combo[1..2]가 찼습니다. 최댓값은 덱의 맨 앞, 1번 비트의 3입니다."
+     },
+     "views": {
+      "combo": {
+       "values": [
+        5,
+        3,
+        1,
+        2
+       ],
+       "spans": {
+        "window": {
+         "from": 1,
+         "to": 2,
+         "label": {
+          "en": "window 2",
+          "ko": "윈도 2"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "i": 2
+       },
+       "unread": [
+        3
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "dq": {
+       "values": [
+        3,
+        1
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "beat 1",
+          "ko": "1번"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "beat 2",
+          "ko": "2번"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": [],
+        "dim": []
+       }
+      },
+      "peaks": {
+       "values": [
+        5,
+        3
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "dq",
+        "at": 0
+       },
+       "to": {
+        "view": "peaks",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "combo[3] = 2 ≥ 1 at the back (beat 2): beat 2 can never be a peak while beat 3 is in the window, so it leaves the back.",
+      "ko": "combo[3] = 2 ≥ 뒤쪽 2번 비트의 1: 3번 비트가 윈도에 있는 동안 2번은 최댓값이 될 수 없으므로 뒤에서 꺼냅니다."
+     },
+     "views": {
+      "combo": {
+       "values": [
+        5,
+        3,
+        1,
+        2
+       ],
+       "spans": {
+        "window": {
+         "from": 2,
+         "to": 3,
+         "label": {
+          "en": "window 2",
+          "ko": "윈도 2"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "i": 3
+       },
+       "unread": [],
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "dq": {
+       "values": [
+        3,
+        1
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "beat 1",
+          "ko": "1번"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "beat 2",
+          "ko": "2번"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         1
+        ],
+        "good": [],
+        "dim": []
+       }
+      },
+      "peaks": {
+       "values": [
+        5,
+        3
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "dq",
+        "at": 1
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The back's 3 (beat 1) is larger than 2: push beat 3 (2) on the back.",
+      "ko": "뒤쪽 1번 비트의 3보다 2가 작아 3번 비트(2)를 뒤에 넣습니다."
+     },
+     "views": {
+      "combo": {
+       "values": [
+        5,
+        3,
+        1,
+        2
+       ],
+       "spans": {
+        "window": {
+         "from": 2,
+         "to": 3,
+         "label": {
+          "en": "window 2",
+          "ko": "윈도 2"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "i": 3
+       },
+       "unread": [],
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "dq": {
+       "values": [
+        3,
+        2
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "beat 1",
+          "ko": "1번"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "beat 3",
+          "ko": "3번"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         1
+        ],
+        "dim": []
+       }
+      },
+      "peaks": {
+       "values": [
+        5,
+        3
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "combo",
+        "at": 3
+       },
+       "to": {
+        "view": "dq",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The front, beat 1, is at or before i − k = 1: it slid out of the window, so it leaves the front.",
+      "ko": "맨 앞 1번 비트가 i − k = 1 이하라 윈도 밖으로 밀려났으므로 앞에서 꺼냅니다."
+     },
+     "views": {
+      "combo": {
+       "values": [
+        5,
+        3,
+        1,
+        2
+       ],
+       "spans": {
+        "window": {
+         "from": 2,
+         "to": 3,
+         "label": {
+          "en": "window 2",
+          "ko": "윈도 2"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "i": 3
+       },
+       "unread": [],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "dq": {
+       "values": [
+        3,
+        2
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "beat 1",
+          "ko": "1번"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "beat 3",
+          "ko": "3번"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": [],
+        "dim": []
+       }
+      },
+      "peaks": {
+       "values": [
+        5,
+        3
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "dq",
+        "at": 0
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The window combo[2..3] is full: its peak is the deque's front, beat 3 with 2.",
+      "ko": "윈도 combo[2..3]가 찼습니다. 최댓값은 덱의 맨 앞, 3번 비트의 2입니다."
+     },
+     "views": {
+      "combo": {
+       "values": [
+        5,
+        3,
+        1,
+        2
+       ],
+       "spans": {
+        "window": {
+         "from": 2,
+         "to": 3,
+         "label": {
+          "en": "window 2",
+          "ko": "윈도 2"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "i": 3
+       },
+       "unread": [],
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "dq": {
+       "values": [
+        2
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "beat 3",
+          "ko": "3번"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": [],
+        "dim": []
+       }
+      },
+      "peaks": {
+       "values": [
+        5,
+        3,
+        2
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "dq",
+        "at": 0
+       },
+       "to": {
+        "view": "peaks",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every beat is read: each of the 3 windows took its peak from the deque's front, [5,3,2].",
+      "ko": "모든 비트를 읽었습니다. 윈도 3개가 모두 덱의 맨 앞에서 최댓값을 가져가 [5,3,2]입니다."
+     },
+     "views": {
+      "combo": {
+       "values": [
+        5,
+        3,
+        1,
+        2
+       ],
+       "spans": {},
+       "pointers": {},
+       "unread": [],
+       "marks": {
+        "lit": []
+       }
+      },
+      "dq": {
+       "values": [
+        2
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "beat 3",
+          "ko": "3번"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [],
+        "dim": [
+         0
+        ]
+       }
+      },
+      "peaks": {
+       "values": [
+        5,
+        3,
+        2
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2
+        ]
+       }
+      }
+     },
+     "answer": "[5,3,2]"
+    }
+   ],
+   "extra": true
+  }
+ ]
+}

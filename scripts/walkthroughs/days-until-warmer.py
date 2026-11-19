@@ -2,8 +2,8 @@
 """days-until-warmer's Walkthrough: the reference solution
 (scripts/replay-solutions/days-until-warmer.py), a monotonic stack of the days still waiting for a warmer
 reading, recording one frame per day popped and one per day pushed on each sample Test Case. The stack is
-an array, top on the right, each entry its day's reading tagged with the day; a day popped by a warmer
-reading moves into its wait slot as the gap in days, and each day read moves onto the top.
+drawn upright on a fixed base, each entry its day's reading tagged with the day; a day popped by a warmer
+reading moves from the top into its wait slot as the gap in days, and each day read moves onto the top.
 
     CODEBITE_DB=<database> scripts/walkthroughs/days-until-warmer.py
 
@@ -16,7 +16,7 @@ import sys
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
 from codebite import driver_list, josa, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
-from walkthrough_trace import Walkthrough, at, move  # noqa: E402
+from walkthrough_trace import Walkthrough, at, move, stack  # noqa: E402
 
 SLUG = "days-until-warmer"
 
@@ -28,8 +28,7 @@ wt = Walkthrough(
            "꺼내고, 꺼낸 날의 wait는 두 날의 차이입니다."},
     views=[
         {"id": "readings", "type": "array", "title": {"en": "readings", "ko": "readings (기온)"}},
-        {"id": "pending", "type": "array",
-         "title": {"en": "pending stack (top on the right)", "ko": "기다리는 날 스택 (오른쪽이 맨 위)"}},
+        {"id": "pending", "type": "stack", "title": {"en": "pending days", "ko": "기다리는 날"}},
         {"id": "wait", "type": "array", "title": {"en": "wait", "ko": "wait (기다린 날수)"}},
     ],
 )
@@ -53,7 +52,7 @@ def solve(readings, run):
                   readings={"values": readings, "pointers": {"day": day},
                             "unread": list(range(day + 1, n)) if day is not None else [],
                             "marks": {"lit": list(read_lit)}},
-                  pending={"values": [readings[d] for d in shown], "tags": [[p, day_tag(d)] for p, d in enumerate(shown)],
+                  pending={**stack(shown, value=lambda d: readings[d], tag=day_tag),
                            "marks": {"good": list(stack_good), "lit": list(stack_lit)}},
                   wait={"values": waits, "marks": {"path": list(wait_path), "good": list(wait_good)}},
                   moves=moves, **answer)

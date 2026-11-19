@@ -29,10 +29,8 @@ wt = Walkthrough(
            "옮기면 순서가 뒤집혀 가장 오래된 주문이 맨 위에 옵니다."},
     views=[
         {"id": "calls", "type": "table", "title": {"en": "calls", "ko": "호출"}},
-        {"id": "inbox", "type": "array", "title": {"en": "inbox (stack, top on the right)", "ko": "inbox (스택, 오른쪽이 맨 위)"},
-         "empty": {"en": "empty", "ko": "비어 있음"}},
-        {"id": "outbox", "type": "array", "title": {"en": "outbox (stack, top on the right)", "ko": "outbox (스택, 오른쪽이 맨 위)"},
-         "empty": {"en": "empty", "ko": "비어 있음"}},
+        {"id": "inbox", "type": "stack", "title": {"en": "inbox (stack)", "ko": "inbox (스택)"}},
+        {"id": "outbox", "type": "stack", "title": {"en": "outbox (stack)", "ko": "outbox (스택)"}},
         {"id": "result", "type": "output", "title": {"en": "returned", "ko": "반환값"}},
     ],
 )

@@ -18,6 +18,7 @@
     "intervals": { "what": "a [group, index]", "forms": [{ "form": "pair", "list": "groups", "inner": "intervals" }] },
     "tree": { "what": "a node id or a [from, to] edge", "forms": [{ "form": "key", "list": "nodes", "field": "id", "value": "value" }, { "form": "edge", "list": "edges", "value": "label" }] },
     "linkedlist": { "what": "a node id", "forms": [{ "form": "key", "list": "nodes", "field": "id", "value": "value" }] },
-    "callstack": { "what": "a call's position from the bottom", "forms": [{ "form": "index", "list": "calls", "value": "args" }] }
+    "callstack": { "what": "a call's position from the bottom", "forms": [{ "form": "index", "list": "calls", "value": "args" }] },
+    "stack": { "what": "a position from the bottom", "forms": [{ "form": "index", "list": "values" }] }
   }
 }
