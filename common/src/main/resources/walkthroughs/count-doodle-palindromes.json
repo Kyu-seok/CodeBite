@@ -1,0 +1,1261 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Count Doodle Palindromes",
+  "ko": "낙서 회문 세기"
+ },
+ "approach": {
+  "en": "Every palindrome has a centre, a letter or a gap between two letters. Grow outward from each centre while the two end letters match, counting one palindrome per step.",
+  "ko": "모든 회문에는 가운데가 있습니다: 글자 하나이거나 두 글자 사이입니다. 가운데마다 양 끝 글자가 같은 동안 바깥으로 넓히며, 한 번 넓힐 때마다 회문 하나를 셉니다."
+ },
+ "views": [
+  {
+   "id": "doodle",
+   "type": "array",
+   "title": {
+    "en": "doodle",
+    "ko": "doodle (낙서 문자열)"
+   }
+  },
+  {
+   "id": "found",
+   "type": "output",
+   "title": {
+    "en": "palindromes counted",
+    "ko": "센 회문"
+   },
+   "empty": {
+    "en": "none yet",
+    "ko": "아직 없음"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "doodle = \"klmn\"",
+   "expected": "4",
+   "frames": [
+    {
+     "caption": {
+      "en": "4 letters, so 7 centres: 4 letters and 3 gaps. Each grows outward one pair of letters at a time.",
+      "ko": "글자가 4개이므로 가운데는 7곳입니다: 글자 4개와 사이 3곳. 각 가운데에서 글자 한 쌍씩 바깥으로 넓힙니다."
+     },
+     "views": {
+      "doodle": {
+       "values": [
+        "k",
+        "l",
+        "m",
+        "n"
+       ],
+       "pointers": {
+        "left": null,
+        "right": null
+       },
+       "spans": {},
+       "marks": {}
+      },
+      "found": {
+       "values": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Centre letter 0: 'k' alone is a palindrome, number 1. The next pair would run off the end, so this centre is done.",
+      "ko": "가운데 글자 0: 한 글자 'k'도 회문이고, 1번째입니다. 다음 쌍은 문자열 밖이라 이 가운데는 끝납니다."
+     },
+     "views": {
+      "doodle": {
+       "values": [
+        "k",
+        "l",
+        "m",
+        "n"
+       ],
+       "pointers": {
+        "left": 0,
+        "right": 0
+       },
+       "spans": {
+        "pal": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "1 letter",
+          "ko": "1글자"
+         },
+         "mark": "good"
+        }
+       },
+       "marks": {
+        "lit": [
+         0,
+         0
+        ]
+       }
+      },
+      "found": {
+       "values": [
+        "k"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "doodle",
+        "at": 0
+       },
+       "to": {
+        "view": "found",
+        "at": 0
+       },
+       "value": "k"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Centre gap 0|1: letter 0 is 'k' but letter 1 is 'l', so no palindrome here.",
+      "ko": "가운데 0과 1 사이: 글자 0의 'k', 글자 1의 'l'. 서로 다르므로 여기서는 회문이 없습니다."
+     },
+     "views": {
+      "doodle": {
+       "values": [
+        "k",
+        "l",
+        "m",
+        "n"
+       ],
+       "pointers": {
+        "left": 0,
+        "right": 1
+       },
+       "spans": {},
+       "marks": {
+        "bad": [
+         0,
+         1
+        ]
+       }
+      },
+      "found": {
+       "values": [
+        "k"
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Centre letter 1: 'l' alone is a palindrome, number 2.",
+      "ko": "가운데 글자 1: 한 글자 'l'도 회문이고, 2번째입니다."
+     },
+     "views": {
+      "doodle": {
+       "values": [
+        "k",
+        "l",
+        "m",
+        "n"
+       ],
+       "pointers": {
+        "left": 1,
+        "right": 1
+       },
+       "spans": {
+        "pal": {
+         "from": 1,
+         "to": 1,
+         "label": {
+          "en": "1 letter",
+          "ko": "1글자"
+         },
+         "mark": "good"
+        }
+       },
+       "marks": {
+        "lit": [
+         1,
+         1
+        ]
+       }
+      },
+      "found": {
+       "values": [
+        "k",
+        "l"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "doodle",
+        "at": 1
+       },
+       "to": {
+        "view": "found",
+        "at": 1
+       },
+       "value": "l"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Centre letter 1: letter 0 is 'k' but letter 2 is 'm', so this centre is done.",
+      "ko": "가운데 글자 1: 글자 0의 'k', 글자 2의 'm'. 서로 다르므로 이 가운데는 끝납니다."
+     },
+     "views": {
+      "doodle": {
+       "values": [
+        "k",
+        "l",
+        "m",
+        "n"
+       ],
+       "pointers": {
+        "left": 0,
+        "right": 2
+       },
+       "spans": {},
+       "marks": {
+        "bad": [
+         0,
+         2
+        ]
+       }
+      },
+      "found": {
+       "values": [
+        "k",
+        "l"
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Centre gap 1|2: letter 1 is 'l' but letter 2 is 'm', so no palindrome here.",
+      "ko": "가운데 1과 2 사이: 글자 1의 'l', 글자 2의 'm'. 서로 다르므로 여기서는 회문이 없습니다."
+     },
+     "views": {
+      "doodle": {
+       "values": [
+        "k",
+        "l",
+        "m",
+        "n"
+       ],
+       "pointers": {
+        "left": 1,
+        "right": 2
+       },
+       "spans": {},
+       "marks": {
+        "bad": [
+         1,
+         2
+        ]
+       }
+      },
+      "found": {
+       "values": [
+        "k",
+        "l"
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Centre letter 2: 'm' alone is a palindrome, number 3.",
+      "ko": "가운데 글자 2: 한 글자 'm'도 회문이고, 3번째입니다."
+     },
+     "views": {
+      "doodle": {
+       "values": [
+        "k",
+        "l",
+        "m",
+        "n"
+       ],
+       "pointers": {
+        "left": 2,
+        "right": 2
+       },
+       "spans": {
+        "pal": {
+         "from": 2,
+         "to": 2,
+         "label": {
+          "en": "1 letter",
+          "ko": "1글자"
+         },
+         "mark": "good"
+        }
+       },
+       "marks": {
+        "lit": [
+         2,
+         2
+        ]
+       }
+      },
+      "found": {
+       "values": [
+        "k",
+        "l",
+        "m"
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "doodle",
+        "at": 2
+       },
+       "to": {
+        "view": "found",
+        "at": 2
+       },
+       "value": "m"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Centre letter 2: letter 1 is 'l' but letter 3 is 'n', so this centre is done.",
+      "ko": "가운데 글자 2: 글자 1의 'l', 글자 3의 'n'. 서로 다르므로 이 가운데는 끝납니다."
+     },
+     "views": {
+      "doodle": {
+       "values": [
+        "k",
+        "l",
+        "m",
+        "n"
+       ],
+       "pointers": {
+        "left": 1,
+        "right": 3
+       },
+       "spans": {},
+       "marks": {
+        "bad": [
+         1,
+         3
+        ]
+       }
+      },
+      "found": {
+       "values": [
+        "k",
+        "l",
+        "m"
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Centre gap 2|3: letter 2 is 'm' but letter 3 is 'n', so no palindrome here.",
+      "ko": "가운데 2와 3 사이: 글자 2의 'm', 글자 3의 'n'. 서로 다르므로 여기서는 회문이 없습니다."
+     },
+     "views": {
+      "doodle": {
+       "values": [
+        "k",
+        "l",
+        "m",
+        "n"
+       ],
+       "pointers": {
+        "left": 2,
+        "right": 3
+       },
+       "spans": {},
+       "marks": {
+        "bad": [
+         2,
+         3
+        ]
+       }
+      },
+      "found": {
+       "values": [
+        "k",
+        "l",
+        "m"
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Centre letter 3: 'n' alone is a palindrome, number 4. The next pair would run off the end, so this centre is done.",
+      "ko": "가운데 글자 3: 한 글자 'n'도 회문이고, 4번째입니다. 다음 쌍은 문자열 밖이라 이 가운데는 끝납니다."
+     },
+     "views": {
+      "doodle": {
+       "values": [
+        "k",
+        "l",
+        "m",
+        "n"
+       ],
+       "pointers": {
+        "left": 3,
+        "right": 3
+       },
+       "spans": {
+        "pal": {
+         "from": 3,
+         "to": 3,
+         "label": {
+          "en": "1 letter",
+          "ko": "1글자"
+         },
+         "mark": "good"
+        }
+       },
+       "marks": {
+        "lit": [
+         3,
+         3
+        ]
+       }
+      },
+      "found": {
+       "values": [
+        "k",
+        "l",
+        "m",
+        "n"
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "doodle",
+        "at": 3
+       },
+       "to": {
+        "view": "found",
+        "at": 3
+       },
+       "value": "n"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every centre is done: the box holds 4 palindromes. Answer: 4.",
+      "ko": "모든 가운데를 마쳤고, 상자에 회문이 4개 있습니다. 답은 4입니다."
+     },
+     "views": {
+      "doodle": {
+       "values": [
+        "k",
+        "l",
+        "m",
+        "n"
+       ],
+       "pointers": {
+        "left": null,
+        "right": null
+       },
+       "spans": {},
+       "marks": {}
+      },
+      "found": {
+       "values": [
+        "k",
+        "l",
+        "m",
+        "n"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3
+        ]
+       }
+      }
+     },
+     "answer": "4"
+    }
+   ],
+   "sampleInput": "klmn"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "doodle = \"rrrr\"",
+   "expected": "10",
+   "frames": [
+    {
+     "caption": {
+      "en": "4 letters, so 7 centres: 4 letters and 3 gaps. Each grows outward one pair of letters at a time.",
+      "ko": "글자가 4개이므로 가운데는 7곳입니다: 글자 4개와 사이 3곳. 각 가운데에서 글자 한 쌍씩 바깥으로 넓힙니다."
+     },
+     "views": {
+      "doodle": {
+       "values": [
+        "r",
+        "r",
+        "r",
+        "r"
+       ],
+       "pointers": {
+        "left": null,
+        "right": null
+       },
+       "spans": {},
+       "marks": {}
+      },
+      "found": {
+       "values": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Centre letter 0: 'r' alone is a palindrome, number 1. The next pair would run off the end, so this centre is done.",
+      "ko": "가운데 글자 0: 한 글자 'r'도 회문이고, 1번째입니다. 다음 쌍은 문자열 밖이라 이 가운데는 끝납니다."
+     },
+     "views": {
+      "doodle": {
+       "values": [
+        "r",
+        "r",
+        "r",
+        "r"
+       ],
+       "pointers": {
+        "left": 0,
+        "right": 0
+       },
+       "spans": {
+        "pal": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "1 letter",
+          "ko": "1글자"
+         },
+         "mark": "good"
+        }
+       },
+       "marks": {
+        "lit": [
+         0,
+         0
+        ]
+       }
+      },
+      "found": {
+       "values": [
+        "r"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "doodle",
+        "at": 0
+       },
+       "to": {
+        "view": "found",
+        "at": 0
+       },
+       "value": "r"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Centre gap 0|1: letters 0 and 1 are both 'r', so 'rr' is a palindrome, number 2. The next pair would run off the end, so this centre is done.",
+      "ko": "가운데 0과 1 사이: 글자 0과 1의 글자가 같으므로('r') 'rr' 부분은 회문이고, 2번째입니다. 다음 쌍은 문자열 밖이라 이 가운데는 끝납니다."
+     },
+     "views": {
+      "doodle": {
+       "values": [
+        "r",
+        "r",
+        "r",
+        "r"
+       ],
+       "pointers": {
+        "left": 0,
+        "right": 1
+       },
+       "spans": {
+        "pal": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "2 letters",
+          "ko": "2글자"
+         },
+         "mark": "good"
+        }
+       },
+       "marks": {
+        "lit": [
+         0,
+         1
+        ]
+       }
+      },
+      "found": {
+       "values": [
+        "r",
+        "rr"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "doodle",
+        "at": 0
+       },
+       "to": {
+        "view": "found",
+        "at": 1
+       },
+       "value": "rr"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Centre letter 1: 'r' alone is a palindrome, number 3.",
+      "ko": "가운데 글자 1: 한 글자 'r'도 회문이고, 3번째입니다."
+     },
+     "views": {
+      "doodle": {
+       "values": [
+        "r",
+        "r",
+        "r",
+        "r"
+       ],
+       "pointers": {
+        "left": 1,
+        "right": 1
+       },
+       "spans": {
+        "pal": {
+         "from": 1,
+         "to": 1,
+         "label": {
+          "en": "1 letter",
+          "ko": "1글자"
+         },
+         "mark": "good"
+        }
+       },
+       "marks": {
+        "lit": [
+         1,
+         1
+        ]
+       }
+      },
+      "found": {
+       "values": [
+        "r",
+        "rr",
+        "r"
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "doodle",
+        "at": 1
+       },
+       "to": {
+        "view": "found",
+        "at": 2
+       },
+       "value": "r"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Centre letter 1: letters 0 and 2 are both 'r', so 'rrr' is a palindrome, number 4. The next pair would run off the end, so this centre is done.",
+      "ko": "가운데 글자 1: 글자 0과 2의 글자가 같으므로('r') 'rrr' 부분은 회문이고, 4번째입니다. 다음 쌍은 문자열 밖이라 이 가운데는 끝납니다."
+     },
+     "views": {
+      "doodle": {
+       "values": [
+        "r",
+        "r",
+        "r",
+        "r"
+       ],
+       "pointers": {
+        "left": 0,
+        "right": 2
+       },
+       "spans": {
+        "pal": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "3 letters",
+          "ko": "3글자"
+         },
+         "mark": "good"
+        }
+       },
+       "marks": {
+        "lit": [
+         0,
+         2
+        ]
+       }
+      },
+      "found": {
+       "values": [
+        "r",
+        "rr",
+        "r",
+        "rrr"
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "doodle",
+        "at": 0
+       },
+       "to": {
+        "view": "found",
+        "at": 3
+       },
+       "value": "rrr"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Centre gap 1|2: letters 1 and 2 are both 'r', so 'rr' is a palindrome, number 5.",
+      "ko": "가운데 1과 2 사이: 글자 1과 2의 글자가 같으므로('r') 'rr' 부분은 회문이고, 5번째입니다."
+     },
+     "views": {
+      "doodle": {
+       "values": [
+        "r",
+        "r",
+        "r",
+        "r"
+       ],
+       "pointers": {
+        "left": 1,
+        "right": 2
+       },
+       "spans": {
+        "pal": {
+         "from": 1,
+         "to": 2,
+         "label": {
+          "en": "2 letters",
+          "ko": "2글자"
+         },
+         "mark": "good"
+        }
+       },
+       "marks": {
+        "lit": [
+         1,
+         2
+        ]
+       }
+      },
+      "found": {
+       "values": [
+        "r",
+        "rr",
+        "r",
+        "rrr",
+        "rr"
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "doodle",
+        "at": 1
+       },
+       "to": {
+        "view": "found",
+        "at": 4
+       },
+       "value": "rr"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Centre gap 1|2: letters 0 and 3 are both 'r', so 'rrrr' is a palindrome, number 6. The next pair would run off the end, so this centre is done.",
+      "ko": "가운데 1과 2 사이: 글자 0과 3의 글자가 같으므로('r') 'rrrr' 부분은 회문이고, 6번째입니다. 다음 쌍은 문자열 밖이라 이 가운데는 끝납니다."
+     },
+     "views": {
+      "doodle": {
+       "values": [
+        "r",
+        "r",
+        "r",
+        "r"
+       ],
+       "pointers": {
+        "left": 0,
+        "right": 3
+       },
+       "spans": {
+        "pal": {
+         "from": 0,
+         "to": 3,
+         "label": {
+          "en": "4 letters",
+          "ko": "4글자"
+         },
+         "mark": "good"
+        }
+       },
+       "marks": {
+        "lit": [
+         0,
+         3
+        ]
+       }
+      },
+      "found": {
+       "values": [
+        "r",
+        "rr",
+        "r",
+        "rrr",
+        "rr",
+        "rrrr"
+       ],
+       "marks": {
+        "good": [
+         5
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "doodle",
+        "at": 0
+       },
+       "to": {
+        "view": "found",
+        "at": 5
+       },
+       "value": "rrrr"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Centre letter 2: 'r' alone is a palindrome, number 7.",
+      "ko": "가운데 글자 2: 한 글자 'r'도 회문이고, 7번째입니다."
+     },
+     "views": {
+      "doodle": {
+       "values": [
+        "r",
+        "r",
+        "r",
+        "r"
+       ],
+       "pointers": {
+        "left": 2,
+        "right": 2
+       },
+       "spans": {
+        "pal": {
+         "from": 2,
+         "to": 2,
+         "label": {
+          "en": "1 letter",
+          "ko": "1글자"
+         },
+         "mark": "good"
+        }
+       },
+       "marks": {
+        "lit": [
+         2,
+         2
+        ]
+       }
+      },
+      "found": {
+       "values": [
+        "r",
+        "rr",
+        "r",
+        "rrr",
+        "rr",
+        "rrrr",
+        "r"
+       ],
+       "marks": {
+        "good": [
+         6
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "doodle",
+        "at": 2
+       },
+       "to": {
+        "view": "found",
+        "at": 6
+       },
+       "value": "r"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Centre letter 2: letters 1 and 3 are both 'r', so 'rrr' is a palindrome, number 8. The next pair would run off the end, so this centre is done.",
+      "ko": "가운데 글자 2: 글자 1과 3의 글자가 같으므로('r') 'rrr' 부분은 회문이고, 8번째입니다. 다음 쌍은 문자열 밖이라 이 가운데는 끝납니다."
+     },
+     "views": {
+      "doodle": {
+       "values": [
+        "r",
+        "r",
+        "r",
+        "r"
+       ],
+       "pointers": {
+        "left": 1,
+        "right": 3
+       },
+       "spans": {
+        "pal": {
+         "from": 1,
+         "to": 3,
+         "label": {
+          "en": "3 letters",
+          "ko": "3글자"
+         },
+         "mark": "good"
+        }
+       },
+       "marks": {
+        "lit": [
+         1,
+         3
+        ]
+       }
+      },
+      "found": {
+       "values": [
+        "r",
+        "rr",
+        "r",
+        "rrr",
+        "rr",
+        "rrrr",
+        "r",
+        "rrr"
+       ],
+       "marks": {
+        "good": [
+         7
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "doodle",
+        "at": 1
+       },
+       "to": {
+        "view": "found",
+        "at": 7
+       },
+       "value": "rrr"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Centre gap 2|3: letters 2 and 3 are both 'r', so 'rr' is a palindrome, number 9. The next pair would run off the end, so this centre is done.",
+      "ko": "가운데 2와 3 사이: 글자 2와 3의 글자가 같으므로('r') 'rr' 부분은 회문이고, 9번째입니다. 다음 쌍은 문자열 밖이라 이 가운데는 끝납니다."
+     },
+     "views": {
+      "doodle": {
+       "values": [
+        "r",
+        "r",
+        "r",
+        "r"
+       ],
+       "pointers": {
+        "left": 2,
+        "right": 3
+       },
+       "spans": {
+        "pal": {
+         "from": 2,
+         "to": 3,
+         "label": {
+          "en": "2 letters",
+          "ko": "2글자"
+         },
+         "mark": "good"
+        }
+       },
+       "marks": {
+        "lit": [
+         2,
+         3
+        ]
+       }
+      },
+      "found": {
+       "values": [
+        "r",
+        "rr",
+        "r",
+        "rrr",
+        "rr",
+        "rrrr",
+        "r",
+        "rrr",
+        "rr"
+       ],
+       "marks": {
+        "good": [
+         8
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "doodle",
+        "at": 2
+       },
+       "to": {
+        "view": "found",
+        "at": 8
+       },
+       "value": "rr"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Centre letter 3: 'r' alone is a palindrome, number 10. The next pair would run off the end, so this centre is done.",
+      "ko": "가운데 글자 3: 한 글자 'r'도 회문이고, 10번째입니다. 다음 쌍은 문자열 밖이라 이 가운데는 끝납니다."
+     },
+     "views": {
+      "doodle": {
+       "values": [
+        "r",
+        "r",
+        "r",
+        "r"
+       ],
+       "pointers": {
+        "left": 3,
+        "right": 3
+       },
+       "spans": {
+        "pal": {
+         "from": 3,
+         "to": 3,
+         "label": {
+          "en": "1 letter",
+          "ko": "1글자"
+         },
+         "mark": "good"
+        }
+       },
+       "marks": {
+        "lit": [
+         3,
+         3
+        ]
+       }
+      },
+      "found": {
+       "values": [
+        "r",
+        "rr",
+        "r",
+        "rrr",
+        "rr",
+        "rrrr",
+        "r",
+        "rrr",
+        "rr",
+        "r"
+       ],
+       "marks": {
+        "good": [
+         9
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "doodle",
+        "at": 3
+       },
+       "to": {
+        "view": "found",
+        "at": 9
+       },
+       "value": "r"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every centre is done: the box holds 10 palindromes. Answer: 10.",
+      "ko": "모든 가운데를 마쳤고, 상자에 회문이 10개 있습니다. 답은 10입니다."
+     },
+     "views": {
+      "doodle": {
+       "values": [
+        "r",
+        "r",
+        "r",
+        "r"
+       ],
+       "pointers": {
+        "left": null,
+        "right": null
+       },
+       "spans": {},
+       "marks": {}
+      },
+      "found": {
+       "values": [
+        "r",
+        "rr",
+        "r",
+        "rrr",
+        "rr",
+        "rrrr",
+        "r",
+        "rrr",
+        "rr",
+        "r"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5,
+         6,
+         7,
+         8,
+         9
+        ]
+       }
+      }
+     },
+     "answer": "10"
+    }
+   ],
+   "sampleInput": "rrrr"
+  }
+ ]
+}
