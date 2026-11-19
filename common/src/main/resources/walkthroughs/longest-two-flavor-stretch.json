@@ -1,0 +1,2258 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Longest Two-Flavor Stretch",
+  "ko": "맛이 두 가지 이하인 가장 긴 구간"
+ },
+ "approach": {
+  "en": "Grow the stretch one treat at a time on the right; when it holds a third flavor, drop treats from the left until only two flavors are left. Every stretch it passes through is a candidate.",
+  "ko": "오른쪽으로 간식을 하나씩 넣어 구간을 늘리고, 세 번째 맛이 들어오면 맛이 두 가지만 남을 때까지 왼쪽에서 간식을 뺍니다. 그렇게 지나가는 구간이 모두 후보입니다."
+ },
+ "views": [
+  {
+   "id": "treats",
+   "type": "array",
+   "title": {
+    "en": "treats",
+    "ko": "treats (간식 맛 코드)"
+   }
+  },
+  {
+   "id": "window",
+   "type": "map",
+   "title": {
+    "en": "window (flavor → count, 2 slots)",
+    "ko": "window (맛 → 개수, 2칸)"
+   },
+   "empty": {
+    "en": "empty",
+    "ko": "비어 있음"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "treats = [4,4,7,4,7,2,7,2,2]",
+   "expected": "5",
+   "frames": [
+    {
+     "caption": {
+      "en": "9 treats, and the stretch may hold at most 2 flavors, one per slot. It starts empty; treats join from the left.",
+      "ko": "간식 9개, 구간에는 맛이 최대 2가지, 한 칸에 하나씩 들어갑니다. 빈 구간에서 시작해 왼쪽부터 간식을 넣습니다."
+     },
+     "views": {
+      "treats": {
+       "values": [
+        4,
+        4,
+        7,
+        4,
+        7,
+        2,
+        7,
+        2,
+        2
+       ],
+       "spans": {},
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+       ],
+       "pointers": {
+        "left": null,
+        "right": null
+       },
+       "marks": {}
+      },
+      "window": {
+       "entries": [],
+       "slots": 2,
+       "struck": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "treats[0] = 4 joins: 1 flavor, within 2. Stretch length 1: a new best, 1.",
+      "ko": "treats[0] = 4 추가: 맛 1가지로 2가지 이내입니다. 구간 길이 1, best = 1로 갱신."
+     },
+     "views": {
+      "treats": {
+       "values": [
+        4,
+        4,
+        7,
+        4,
+        7,
+        2,
+        7,
+        2,
+        2
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "stretch 1",
+          "ko": "구간 1"
+         },
+         "mark": "lit",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "best = 1",
+          "ko": "best (최장 길이) = 1"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "unread": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+       ],
+       "pointers": {
+        "left": 0,
+        "right": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": 4,
+         "value": 1
+        }
+       ],
+       "slots": 2,
+       "struck": [],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "treats",
+        "at": 0
+       },
+       "to": {
+        "view": "window",
+        "at": 4
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "treats[1] = 4 joins: 1 flavor, within 2. Stretch length 2: a new best, 2.",
+      "ko": "treats[1] = 4 추가: 맛 1가지로 2가지 이내입니다. 구간 길이 2, best = 2로 갱신."
+     },
+     "views": {
+      "treats": {
+       "values": [
+        4,
+        4,
+        7,
+        4,
+        7,
+        2,
+        7,
+        2,
+        2
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "stretch 2",
+          "ko": "구간 2"
+         },
+         "mark": "lit",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "best = 2",
+          "ko": "best (최장 길이) = 2"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "unread": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+       ],
+       "pointers": {
+        "left": 0,
+        "right": 1
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": 4,
+         "value": 2
+        }
+       ],
+       "slots": 2,
+       "struck": [],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "treats",
+        "at": 1
+       },
+       "to": {
+        "view": "window",
+        "at": 4
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "treats[2] = 7 joins: 2 flavors, within 2. Stretch length 3: a new best, 3.",
+      "ko": "treats[2] = 7 추가: 맛 2가지로 2가지 이내입니다. 구간 길이 3, best = 3으로 갱신."
+     },
+     "views": {
+      "treats": {
+       "values": [
+        4,
+        4,
+        7,
+        4,
+        7,
+        2,
+        7,
+        2,
+        2
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "stretch 3",
+          "ko": "구간 3"
+         },
+         "mark": "lit",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "best = 3",
+          "ko": "best (최장 길이) = 3"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "unread": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+       ],
+       "pointers": {
+        "left": 0,
+        "right": 2
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": 4,
+         "value": 2
+        },
+        {
+         "key": 7,
+         "value": 1
+        }
+       ],
+       "slots": 2,
+       "struck": [],
+       "marks": {
+        "good": [
+         7
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "treats",
+        "at": 2
+       },
+       "to": {
+        "view": "window",
+        "at": 7
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "treats[3] = 4 joins: 2 flavors, within 2. Stretch length 4: a new best, 4.",
+      "ko": "treats[3] = 4 추가: 맛 2가지로 2가지 이내입니다. 구간 길이 4, best = 4로 갱신."
+     },
+     "views": {
+      "treats": {
+       "values": [
+        4,
+        4,
+        7,
+        4,
+        7,
+        2,
+        7,
+        2,
+        2
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 3,
+         "label": {
+          "en": "stretch 4",
+          "ko": "구간 4"
+         },
+         "mark": "lit",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 3,
+         "label": {
+          "en": "best = 4",
+          "ko": "best (최장 길이) = 4"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "unread": [
+        4,
+        5,
+        6,
+        7,
+        8
+       ],
+       "pointers": {
+        "left": 0,
+        "right": 3
+       },
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": 4,
+         "value": 3
+        },
+        {
+         "key": 7,
+         "value": 1
+        }
+       ],
+       "slots": 2,
+       "struck": [],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "treats",
+        "at": 3
+       },
+       "to": {
+        "view": "window",
+        "at": 4
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "treats[4] = 7 joins: 2 flavors, within 2. Stretch length 5: a new best, 5.",
+      "ko": "treats[4] = 7 추가: 맛 2가지로 2가지 이내입니다. 구간 길이 5, best = 5로 갱신."
+     },
+     "views": {
+      "treats": {
+       "values": [
+        4,
+        4,
+        7,
+        4,
+        7,
+        2,
+        7,
+        2,
+        2
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 4,
+         "label": {
+          "en": "stretch 5",
+          "ko": "구간 5"
+         },
+         "mark": "lit",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 4,
+         "label": {
+          "en": "best = 5",
+          "ko": "best (최장 길이) = 5"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "unread": [
+        5,
+        6,
+        7,
+        8
+       ],
+       "pointers": {
+        "left": 0,
+        "right": 4
+       },
+       "marks": {
+        "lit": [
+         4
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": 4,
+         "value": 3
+        },
+        {
+         "key": 7,
+         "value": 2
+        }
+       ],
+       "slots": 2,
+       "struck": [],
+       "marks": {
+        "good": [
+         7
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "treats",
+        "at": 4
+       },
+       "to": {
+        "view": "window",
+        "at": 7
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "treats[5] = 2 joins: 3 flavors, more than 2, so treats leave from the left until only 2 are left.",
+      "ko": "treats[5] = 2 추가: 맛이 3가지로 2가지보다 많아, 2가지만 남을 때까지 왼쪽에서 간식을 뺍니다."
+     },
+     "views": {
+      "treats": {
+       "values": [
+        4,
+        4,
+        7,
+        4,
+        7,
+        2,
+        7,
+        2,
+        2
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 5,
+         "label": {
+          "en": "stretch 6",
+          "ko": "구간 6"
+         },
+         "mark": "bad",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 4,
+         "label": {
+          "en": "best = 5",
+          "ko": "best (최장 길이) = 5"
+         },
+         "below": true
+        }
+       },
+       "unread": [
+        6,
+        7,
+        8
+       ],
+       "pointers": {
+        "left": 0,
+        "right": 5
+       },
+       "marks": {
+        "lit": [
+         5
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": 4,
+         "value": 3
+        },
+        {
+         "key": 7,
+         "value": 2
+        },
+        {
+         "key": 2,
+         "value": 1
+        }
+       ],
+       "slots": 2,
+       "struck": [],
+       "marks": {
+        "bad": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "treats",
+        "at": 5
+       },
+       "to": {
+        "view": "window",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "treats[0] = 4 leaves: flavor 4's count goes 3 → 2.",
+      "ko": "treats[0] = 4 제거: 맛 4의 개수 3 → 2."
+     },
+     "views": {
+      "treats": {
+       "values": [
+        4,
+        4,
+        7,
+        4,
+        7,
+        2,
+        7,
+        2,
+        2
+       ],
+       "spans": {
+        "window": {
+         "from": 1,
+         "to": 5,
+         "label": {
+          "en": "stretch 5",
+          "ko": "구간 5"
+         },
+         "mark": "bad",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 4,
+         "label": {
+          "en": "best = 5",
+          "ko": "best (최장 길이) = 5"
+         },
+         "below": true
+        }
+       },
+       "unread": [
+        6,
+        7,
+        8
+       ],
+       "pointers": {
+        "left": 1,
+        "right": 5
+       },
+       "marks": {
+        "lit": [
+         5
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": 4,
+         "value": 2
+        },
+        {
+         "key": 7,
+         "value": 2
+        },
+        {
+         "key": 2,
+         "value": 1
+        }
+       ],
+       "slots": 2,
+       "struck": [],
+       "marks": {
+        "bad": [
+         4
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "window",
+        "at": 4
+       },
+       "to": {
+        "view": "treats",
+        "at": 0
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "treats[1] = 4 leaves: flavor 4's count goes 2 → 1.",
+      "ko": "treats[1] = 4 제거: 맛 4의 개수 2 → 1."
+     },
+     "views": {
+      "treats": {
+       "values": [
+        4,
+        4,
+        7,
+        4,
+        7,
+        2,
+        7,
+        2,
+        2
+       ],
+       "spans": {
+        "window": {
+         "from": 2,
+         "to": 5,
+         "label": {
+          "en": "stretch 4",
+          "ko": "구간 4"
+         },
+         "mark": "bad",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 4,
+         "label": {
+          "en": "best = 5",
+          "ko": "best (최장 길이) = 5"
+         },
+         "below": true
+        }
+       },
+       "unread": [
+        6,
+        7,
+        8
+       ],
+       "pointers": {
+        "left": 2,
+        "right": 5
+       },
+       "marks": {
+        "lit": [
+         5
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": 4,
+         "value": 1
+        },
+        {
+         "key": 7,
+         "value": 2
+        },
+        {
+         "key": 2,
+         "value": 1
+        }
+       ],
+       "slots": 2,
+       "struck": [],
+       "marks": {
+        "bad": [
+         4
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "window",
+        "at": 4
+       },
+       "to": {
+        "view": "treats",
+        "at": 1
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "treats[2] = 7 leaves: flavor 7's count goes 2 → 1.",
+      "ko": "treats[2] = 7 제거: 맛 7의 개수 2 → 1."
+     },
+     "views": {
+      "treats": {
+       "values": [
+        4,
+        4,
+        7,
+        4,
+        7,
+        2,
+        7,
+        2,
+        2
+       ],
+       "spans": {
+        "window": {
+         "from": 3,
+         "to": 5,
+         "label": {
+          "en": "stretch 3",
+          "ko": "구간 3"
+         },
+         "mark": "bad",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 4,
+         "label": {
+          "en": "best = 5",
+          "ko": "best (최장 길이) = 5"
+         },
+         "below": true
+        }
+       },
+       "unread": [
+        6,
+        7,
+        8
+       ],
+       "pointers": {
+        "left": 3,
+        "right": 5
+       },
+       "marks": {
+        "lit": [
+         5
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": 4,
+         "value": 1
+        },
+        {
+         "key": 7,
+         "value": 1
+        },
+        {
+         "key": 2,
+         "value": 1
+        }
+       ],
+       "slots": 2,
+       "struck": [],
+       "marks": {
+        "bad": [
+         7
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "window",
+        "at": 7
+       },
+       "to": {
+        "view": "treats",
+        "at": 2
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "treats[3] = 4 leaves: flavor 4's count goes 1 → 0, so the flavor leaves the stretch. Back to 2 flavors: stretch length 2, best stays 5.",
+      "ko": "treats[3] = 4 제거: 맛 4의 개수 1 → 0, 구간에서 이 맛이 빠집니다. 다시 맛 2가지: 구간 길이 2, best = 5 그대로."
+     },
+     "views": {
+      "treats": {
+       "values": [
+        4,
+        4,
+        7,
+        4,
+        7,
+        2,
+        7,
+        2,
+        2
+       ],
+       "spans": {
+        "window": {
+         "from": 4,
+         "to": 5,
+         "label": {
+          "en": "stretch 2",
+          "ko": "구간 2"
+         },
+         "mark": "lit",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 4,
+         "label": {
+          "en": "best = 5",
+          "ko": "best (최장 길이) = 5"
+         },
+         "below": true
+        }
+       },
+       "unread": [
+        6,
+        7,
+        8
+       ],
+       "pointers": {
+        "left": 4,
+        "right": 5
+       },
+       "marks": {
+        "lit": [
+         5
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": 4,
+         "value": 0
+        },
+        {
+         "key": 7,
+         "value": 1
+        },
+        {
+         "key": 2,
+         "value": 1
+        }
+       ],
+       "slots": 2,
+       "struck": [
+        4
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "window",
+        "at": 4
+       },
+       "to": {
+        "view": "treats",
+        "at": 3
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "treats[6] = 7 joins: 2 flavors, within 2. Stretch length 3: best stays 5.",
+      "ko": "treats[6] = 7 추가: 맛 2가지로 2가지 이내입니다. 구간 길이 3, best = 5 그대로."
+     },
+     "views": {
+      "treats": {
+       "values": [
+        4,
+        4,
+        7,
+        4,
+        7,
+        2,
+        7,
+        2,
+        2
+       ],
+       "spans": {
+        "window": {
+         "from": 4,
+         "to": 6,
+         "label": {
+          "en": "stretch 3",
+          "ko": "구간 3"
+         },
+         "mark": "lit",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 4,
+         "label": {
+          "en": "best = 5",
+          "ko": "best (최장 길이) = 5"
+         },
+         "below": true
+        }
+       },
+       "unread": [
+        7,
+        8
+       ],
+       "pointers": {
+        "left": 4,
+        "right": 6
+       },
+       "marks": {
+        "lit": [
+         6
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": 7,
+         "value": 2
+        },
+        {
+         "key": 2,
+         "value": 1
+        }
+       ],
+       "slots": 2,
+       "struck": [],
+       "marks": {
+        "good": [
+         7
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "treats",
+        "at": 6
+       },
+       "to": {
+        "view": "window",
+        "at": 7
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "treats[7] = 2 joins: 2 flavors, within 2. Stretch length 4: best stays 5.",
+      "ko": "treats[7] = 2 추가: 맛 2가지로 2가지 이내입니다. 구간 길이 4, best = 5 그대로."
+     },
+     "views": {
+      "treats": {
+       "values": [
+        4,
+        4,
+        7,
+        4,
+        7,
+        2,
+        7,
+        2,
+        2
+       ],
+       "spans": {
+        "window": {
+         "from": 4,
+         "to": 7,
+         "label": {
+          "en": "stretch 4",
+          "ko": "구간 4"
+         },
+         "mark": "lit",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 4,
+         "label": {
+          "en": "best = 5",
+          "ko": "best (최장 길이) = 5"
+         },
+         "below": true
+        }
+       },
+       "unread": [
+        8
+       ],
+       "pointers": {
+        "left": 4,
+        "right": 7
+       },
+       "marks": {
+        "lit": [
+         7
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": 7,
+         "value": 2
+        },
+        {
+         "key": 2,
+         "value": 2
+        }
+       ],
+       "slots": 2,
+       "struck": [],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "treats",
+        "at": 7
+       },
+       "to": {
+        "view": "window",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "treats[8] = 2 joins: 2 flavors, within 2. Stretch length 5: best stays 5.",
+      "ko": "treats[8] = 2 추가: 맛 2가지로 2가지 이내입니다. 구간 길이 5, best = 5 그대로."
+     },
+     "views": {
+      "treats": {
+       "values": [
+        4,
+        4,
+        7,
+        4,
+        7,
+        2,
+        7,
+        2,
+        2
+       ],
+       "spans": {
+        "window": {
+         "from": 4,
+         "to": 8,
+         "label": {
+          "en": "stretch 5",
+          "ko": "구간 5"
+         },
+         "mark": "lit",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 4,
+         "label": {
+          "en": "best = 5",
+          "ko": "best (최장 길이) = 5"
+         },
+         "below": true
+        }
+       },
+       "unread": [],
+       "pointers": {
+        "left": 4,
+        "right": 8
+       },
+       "marks": {
+        "lit": [
+         8
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": 7,
+         "value": 2
+        },
+        {
+         "key": 2,
+         "value": 3
+        }
+       ],
+       "slots": 2,
+       "struck": [],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "treats",
+        "at": 8
+       },
+       "to": {
+        "view": "window",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every treat is in: the run ended on treats[4..8], but the first stretch of the best length was treats[0..4], length 5. Answer 5.",
+      "ko": "모든 간식을 넣었습니다. 실행은 treats[4..8]에서 끝났지만 가장 긴 구간은 처음 찾은 treats[0..4], 길이 5이고, 답은 5입니다."
+     },
+     "views": {
+      "treats": {
+       "values": [
+        4,
+        4,
+        7,
+        4,
+        7,
+        2,
+        7,
+        2,
+        2
+       ],
+       "spans": {
+        "best": {
+         "from": 0,
+         "to": 4,
+         "label": {
+          "en": "best = 5",
+          "ko": "best (최장 길이) = 5"
+         },
+         "mark": "path",
+         "below": true
+        }
+       },
+       "unread": [],
+       "pointers": {
+        "left": null,
+        "right": null
+       },
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": 7,
+         "value": 2
+        },
+        {
+         "key": 2,
+         "value": 3
+        }
+       ],
+       "slots": 2,
+       "struck": [],
+       "marks": {
+        "dim": [
+         7,
+         2
+        ]
+       }
+      }
+     },
+     "answer": "5"
+    }
+   ],
+   "sampleInput": "[4,4,7,4,7,2,7,2,2]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "treats = [9,9,9]",
+   "expected": "3",
+   "frames": [
+    {
+     "caption": {
+      "en": "3 treats, and the stretch may hold at most 2 flavors, one per slot. It starts empty; treats join from the left.",
+      "ko": "간식 3개, 구간에는 맛이 최대 2가지, 한 칸에 하나씩 들어갑니다. 빈 구간에서 시작해 왼쪽부터 간식을 넣습니다."
+     },
+     "views": {
+      "treats": {
+       "values": [
+        9,
+        9,
+        9
+       ],
+       "spans": {},
+       "unread": [
+        0,
+        1,
+        2
+       ],
+       "pointers": {
+        "left": null,
+        "right": null
+       },
+       "marks": {}
+      },
+      "window": {
+       "entries": [],
+       "slots": 2,
+       "struck": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "treats[0] = 9 joins: 1 flavor, within 2. Stretch length 1: a new best, 1.",
+      "ko": "treats[0] = 9 추가: 맛 1가지로 2가지 이내입니다. 구간 길이 1, best = 1로 갱신."
+     },
+     "views": {
+      "treats": {
+       "values": [
+        9,
+        9,
+        9
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "stretch 1",
+          "ko": "구간 1"
+         },
+         "mark": "lit",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "best = 1",
+          "ko": "best (최장 길이) = 1"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "unread": [
+        1,
+        2
+       ],
+       "pointers": {
+        "left": 0,
+        "right": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": 9,
+         "value": 1
+        }
+       ],
+       "slots": 2,
+       "struck": [],
+       "marks": {
+        "good": [
+         9
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "treats",
+        "at": 0
+       },
+       "to": {
+        "view": "window",
+        "at": 9
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "treats[1] = 9 joins: 1 flavor, within 2. Stretch length 2: a new best, 2.",
+      "ko": "treats[1] = 9 추가: 맛 1가지로 2가지 이내입니다. 구간 길이 2, best = 2로 갱신."
+     },
+     "views": {
+      "treats": {
+       "values": [
+        9,
+        9,
+        9
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "stretch 2",
+          "ko": "구간 2"
+         },
+         "mark": "lit",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "best = 2",
+          "ko": "best (최장 길이) = 2"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "unread": [
+        2
+       ],
+       "pointers": {
+        "left": 0,
+        "right": 1
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": 9,
+         "value": 2
+        }
+       ],
+       "slots": 2,
+       "struck": [],
+       "marks": {
+        "good": [
+         9
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "treats",
+        "at": 1
+       },
+       "to": {
+        "view": "window",
+        "at": 9
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "treats[2] = 9 joins: 1 flavor, within 2. Stretch length 3: a new best, 3.",
+      "ko": "treats[2] = 9 추가: 맛 1가지로 2가지 이내입니다. 구간 길이 3, best = 3으로 갱신."
+     },
+     "views": {
+      "treats": {
+       "values": [
+        9,
+        9,
+        9
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "stretch 3",
+          "ko": "구간 3"
+         },
+         "mark": "lit",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "best = 3",
+          "ko": "best (최장 길이) = 3"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "unread": [],
+       "pointers": {
+        "left": 0,
+        "right": 2
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": 9,
+         "value": 3
+        }
+       ],
+       "slots": 2,
+       "struck": [],
+       "marks": {
+        "good": [
+         9
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "treats",
+        "at": 2
+       },
+       "to": {
+        "view": "window",
+        "at": 9
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every treat is in, and the longest stretch was the last one, treats[0..2], length 3. Answer 3.",
+      "ko": "모든 간식을 넣었고, 가장 긴 구간은 마지막 구간 treats[0..2], 길이 3입니다. 답은 3입니다."
+     },
+     "views": {
+      "treats": {
+       "values": [
+        9,
+        9,
+        9
+       ],
+       "spans": {
+        "best": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "best = 3",
+          "ko": "best (최장 길이) = 3"
+         },
+         "mark": "path",
+         "below": true
+        }
+       },
+       "unread": [],
+       "pointers": {
+        "left": null,
+        "right": null
+       },
+       "marks": {
+        "path": [
+         0,
+         1,
+         2
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": 9,
+         "value": 3
+        }
+       ],
+       "slots": 2,
+       "struck": [],
+       "marks": {
+        "dim": [
+         9
+        ]
+       }
+      }
+     },
+     "answer": "3"
+    }
+   ],
+   "sampleInput": "[9,9,9]"
+  },
+  {
+   "label": {
+    "en": "Example 3",
+    "ko": "예시 3"
+   },
+   "input": "treats = [1,5,1,5,1,5]",
+   "expected": "6",
+   "frames": [
+    {
+     "caption": {
+      "en": "6 treats, and the stretch may hold at most 2 flavors, one per slot. It starts empty; treats join from the left.",
+      "ko": "간식 6개, 구간에는 맛이 최대 2가지, 한 칸에 하나씩 들어갑니다. 빈 구간에서 시작해 왼쪽부터 간식을 넣습니다."
+     },
+     "views": {
+      "treats": {
+       "values": [
+        1,
+        5,
+        1,
+        5,
+        1,
+        5
+       ],
+       "spans": {},
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+       ],
+       "pointers": {
+        "left": null,
+        "right": null
+       },
+       "marks": {}
+      },
+      "window": {
+       "entries": [],
+       "slots": 2,
+       "struck": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "treats[0] = 1 joins: 1 flavor, within 2. Stretch length 1: a new best, 1.",
+      "ko": "treats[0] = 1 추가: 맛 1가지로 2가지 이내입니다. 구간 길이 1, best = 1로 갱신."
+     },
+     "views": {
+      "treats": {
+       "values": [
+        1,
+        5,
+        1,
+        5,
+        1,
+        5
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "stretch 1",
+          "ko": "구간 1"
+         },
+         "mark": "lit",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "best = 1",
+          "ko": "best (최장 길이) = 1"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "unread": [
+        1,
+        2,
+        3,
+        4,
+        5
+       ],
+       "pointers": {
+        "left": 0,
+        "right": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": 1,
+         "value": 1
+        }
+       ],
+       "slots": 2,
+       "struck": [],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "treats",
+        "at": 0
+       },
+       "to": {
+        "view": "window",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "treats[1] = 5 joins: 2 flavors, within 2. Stretch length 2: a new best, 2.",
+      "ko": "treats[1] = 5 추가: 맛 2가지로 2가지 이내입니다. 구간 길이 2, best = 2로 갱신."
+     },
+     "views": {
+      "treats": {
+       "values": [
+        1,
+        5,
+        1,
+        5,
+        1,
+        5
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "stretch 2",
+          "ko": "구간 2"
+         },
+         "mark": "lit",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "best = 2",
+          "ko": "best (최장 길이) = 2"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "unread": [
+        2,
+        3,
+        4,
+        5
+       ],
+       "pointers": {
+        "left": 0,
+        "right": 1
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": 1,
+         "value": 1
+        },
+        {
+         "key": 5,
+         "value": 1
+        }
+       ],
+       "slots": 2,
+       "struck": [],
+       "marks": {
+        "good": [
+         5
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "treats",
+        "at": 1
+       },
+       "to": {
+        "view": "window",
+        "at": 5
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "treats[2] = 1 joins: 2 flavors, within 2. Stretch length 3: a new best, 3.",
+      "ko": "treats[2] = 1 추가: 맛 2가지로 2가지 이내입니다. 구간 길이 3, best = 3으로 갱신."
+     },
+     "views": {
+      "treats": {
+       "values": [
+        1,
+        5,
+        1,
+        5,
+        1,
+        5
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "stretch 3",
+          "ko": "구간 3"
+         },
+         "mark": "lit",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "best = 3",
+          "ko": "best (최장 길이) = 3"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "unread": [
+        3,
+        4,
+        5
+       ],
+       "pointers": {
+        "left": 0,
+        "right": 2
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": 1,
+         "value": 2
+        },
+        {
+         "key": 5,
+         "value": 1
+        }
+       ],
+       "slots": 2,
+       "struck": [],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "treats",
+        "at": 2
+       },
+       "to": {
+        "view": "window",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "treats[3] = 5 joins: 2 flavors, within 2. Stretch length 4: a new best, 4.",
+      "ko": "treats[3] = 5 추가: 맛 2가지로 2가지 이내입니다. 구간 길이 4, best = 4로 갱신."
+     },
+     "views": {
+      "treats": {
+       "values": [
+        1,
+        5,
+        1,
+        5,
+        1,
+        5
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 3,
+         "label": {
+          "en": "stretch 4",
+          "ko": "구간 4"
+         },
+         "mark": "lit",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 3,
+         "label": {
+          "en": "best = 4",
+          "ko": "best (최장 길이) = 4"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "unread": [
+        4,
+        5
+       ],
+       "pointers": {
+        "left": 0,
+        "right": 3
+       },
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": 1,
+         "value": 2
+        },
+        {
+         "key": 5,
+         "value": 2
+        }
+       ],
+       "slots": 2,
+       "struck": [],
+       "marks": {
+        "good": [
+         5
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "treats",
+        "at": 3
+       },
+       "to": {
+        "view": "window",
+        "at": 5
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "treats[4] = 1 joins: 2 flavors, within 2. Stretch length 5: a new best, 5.",
+      "ko": "treats[4] = 1 추가: 맛 2가지로 2가지 이내입니다. 구간 길이 5, best = 5로 갱신."
+     },
+     "views": {
+      "treats": {
+       "values": [
+        1,
+        5,
+        1,
+        5,
+        1,
+        5
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 4,
+         "label": {
+          "en": "stretch 5",
+          "ko": "구간 5"
+         },
+         "mark": "lit",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 4,
+         "label": {
+          "en": "best = 5",
+          "ko": "best (최장 길이) = 5"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "unread": [
+        5
+       ],
+       "pointers": {
+        "left": 0,
+        "right": 4
+       },
+       "marks": {
+        "lit": [
+         4
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": 1,
+         "value": 3
+        },
+        {
+         "key": 5,
+         "value": 2
+        }
+       ],
+       "slots": 2,
+       "struck": [],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "treats",
+        "at": 4
+       },
+       "to": {
+        "view": "window",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "treats[5] = 5 joins: 2 flavors, within 2. Stretch length 6: a new best, 6.",
+      "ko": "treats[5] = 5 추가: 맛 2가지로 2가지 이내입니다. 구간 길이 6, best = 6으로 갱신."
+     },
+     "views": {
+      "treats": {
+       "values": [
+        1,
+        5,
+        1,
+        5,
+        1,
+        5
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 5,
+         "label": {
+          "en": "stretch 6",
+          "ko": "구간 6"
+         },
+         "mark": "lit",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 5,
+         "label": {
+          "en": "best = 6",
+          "ko": "best (최장 길이) = 6"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "unread": [],
+       "pointers": {
+        "left": 0,
+        "right": 5
+       },
+       "marks": {
+        "lit": [
+         5
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": 1,
+         "value": 3
+        },
+        {
+         "key": 5,
+         "value": 3
+        }
+       ],
+       "slots": 2,
+       "struck": [],
+       "marks": {
+        "good": [
+         5
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "treats",
+        "at": 5
+       },
+       "to": {
+        "view": "window",
+        "at": 5
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every treat is in, and the longest stretch was the last one, treats[0..5], length 6. Answer 6.",
+      "ko": "모든 간식을 넣었고, 가장 긴 구간은 마지막 구간 treats[0..5], 길이 6입니다. 답은 6입니다."
+     },
+     "views": {
+      "treats": {
+       "values": [
+        1,
+        5,
+        1,
+        5,
+        1,
+        5
+       ],
+       "spans": {
+        "best": {
+         "from": 0,
+         "to": 5,
+         "label": {
+          "en": "best = 6",
+          "ko": "best (최장 길이) = 6"
+         },
+         "mark": "path",
+         "below": true
+        }
+       },
+       "unread": [],
+       "pointers": {
+        "left": null,
+        "right": null
+       },
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": 1,
+         "value": 3
+        },
+        {
+         "key": 5,
+         "value": 3
+        }
+       ],
+       "slots": 2,
+       "struck": [],
+       "marks": {
+        "dim": [
+         1,
+         5
+        ]
+       }
+      }
+     },
+     "answer": "6"
+    }
+   ],
+   "sampleInput": "[1,5,1,5,1,5]"
+  }
+ ]
+}
