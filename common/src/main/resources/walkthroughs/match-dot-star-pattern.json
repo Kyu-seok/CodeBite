@@ -1,0 +1,7720 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Match Dot-Star Pattern",
+  "ko": "점·별 패턴 매칭"
+ },
+ "approach": {
+  "en": "matches(i, j) asks whether the rest of the pattern matches the rest of s. A piece followed by * either matches nothing (skip it) or takes one letter and stays; any other piece must take exactly one letter. Each answer is kept in a table, so no call is worked out twice.",
+  "ko": "matches(i, j)는 패턴의 나머지가 s의 나머지 전체와 맞는지 묻습니다. *가 붙은 조각은 아무것도 맞추지 않고 건너뛰거나, 한 글자를 먹고 그대로 남습니다. 다른 조각은 정확히 한 글자를 맞춰야 합니다. 답은 표에 저장해 같은 호출을 두 번 계산하지 않습니다."
+ },
+ "views": [
+  {
+   "id": "calls",
+   "type": "tree",
+   "title": {
+    "en": "calls: rest of s ~ rest of p",
+    "ko": "호출: s의 나머지 ~ p의 나머지"
+   }
+  },
+  {
+   "id": "memo",
+   "type": "grid",
+   "title": {
+    "en": "memo: matches(i, j), s position (rows) × p position (columns)",
+    "ko": "메모: matches(i, j), s 위치(행) × p 위치(열)"
+   },
+   "values": {
+    "a": {
+     "tone": "a"
+    },
+    "b": {
+     "tone": "a"
+    },
+    "c": {
+     "tone": "a"
+    },
+    "d": {
+     "tone": "a"
+    },
+    "e": {
+     "tone": "a"
+    },
+    "f": {
+     "tone": "a"
+    },
+    "g": {
+     "tone": "a"
+    },
+    "h": {
+     "tone": "a"
+    },
+    "i": {
+     "tone": "a"
+    },
+    "j": {
+     "tone": "a"
+    },
+    "k": {
+     "tone": "a"
+    },
+    "l": {
+     "tone": "a"
+    },
+    "m": {
+     "tone": "a"
+    },
+    "n": {
+     "tone": "a"
+    },
+    "o": {
+     "tone": "a"
+    },
+    "p": {
+     "tone": "a"
+    },
+    "q": {
+     "tone": "a"
+    },
+    "r": {
+     "tone": "a"
+    },
+    "s": {
+     "tone": "a"
+    },
+    "t": {
+     "tone": "a"
+    },
+    "u": {
+     "tone": "a"
+    },
+    "v": {
+     "tone": "a"
+    },
+    "w": {
+     "tone": "a"
+    },
+    "x": {
+     "tone": "a"
+    },
+    "y": {
+     "tone": "a"
+    },
+    "z": {
+     "tone": "a"
+    },
+    ".": {
+     "tone": "a"
+    },
+    "*": {
+     "tone": "a"
+    },
+    "∅": {
+     "tone": "a"
+    },
+    "T": {
+     "glyph": "✓",
+     "tone": "c"
+    },
+    "F": {
+     "glyph": "✗",
+     "tone": "plain"
+    },
+    "": {
+     "glyph": "",
+     "tone": "plain"
+    },
+    " ": {
+     "glyph": "",
+     "tone": "empty"
+    }
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "s = \"bbbc\", p = \"b*c\"",
+   "expected": "true",
+   "frames": [
+    {
+     "caption": {
+      "en": "Match s = \"bbbc\" against p = \"b*c\", starting from matches(0, 0), the whole of both. The memo is empty.",
+      "ko": "s = \"bbbc\", p = \"b*c\": 둘 전체를 보는 matches(0, 0)부터 시작합니다. 메모는 비어 있습니다."
+     },
+     "views": {
+      "calls": {
+       "nodes": [],
+       "edges": [],
+       "nodeMarks": {},
+       "shade": [],
+       "tags": []
+      },
+      "memo": {
+       "cells": [
+        [
+         "",
+         "b",
+         "*",
+         "c",
+         "∅"
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "c",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "∅",
+         " ",
+         " ",
+         " ",
+         " "
+        ]
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "matches(0, 0): \"bbbc\" against \"b*c\". 'b*' may match nothing, so first try skipping it.",
+      "ko": "matches(0, 0): \"bbbc\" 대 \"b*c\". 'b*' 조각은 아무것도 맞추지 않을 수 있으므로 먼저 건너뛰어 봅니다."
+     },
+     "views": {
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "bbbc ~ b*c"
+        }
+       ],
+       "edges": [],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ],
+       "tags": []
+      },
+      "memo": {
+       "cells": [
+        [
+         "",
+         "b",
+         "*",
+         "c",
+         "∅"
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "c",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "∅",
+         " ",
+         " ",
+         " ",
+         " "
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          1,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          0,
+          2
+         ]
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "calls",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "matches(0, 2): 'c' must take exactly one letter, but it can't match 'b': ✗.",
+      "ko": "matches(0, 2): 'c' 조각은 정확히 한 글자를 맞춰야 하는데 글자 'b'에 맞지 않습니다: ✗."
+     },
+     "views": {
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "bbbc ~ b*c"
+        },
+        {
+         "id": 1,
+         "value": "bbbc ~ c"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "b* → ∅"
+        }
+       ],
+       "nodeMarks": {
+        "bad": [
+         1
+        ],
+        "lit": [
+         1
+        ]
+       },
+       "shade": [
+        0,
+        1
+       ],
+       "tags": [
+        [
+         1,
+         "✗"
+        ]
+       ]
+      },
+      "memo": {
+       "cells": [
+        [
+         "",
+         "b",
+         "*",
+         "c",
+         "∅"
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         "F",
+         " "
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "c",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "∅",
+         " ",
+         " ",
+         " ",
+         " "
+        ]
+       ],
+       "marks": {
+        "bad": [
+         [
+          1,
+          3
+         ]
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": 0
+       },
+       "to": {
+        "view": "calls",
+        "at": 1
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 1
+       },
+       "to": {
+        "view": "memo",
+        "at": [
+         1,
+         3
+        ]
+       },
+       "value": "✗"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "matches(0, 0): skipping failed, but 'b*' can take 'b' and stay for the next letter.",
+      "ko": "matches(0, 0): 건너뛰기는 실패했지만 'b*' 조각은 글자 'b' 하나를 먹고 그대로 남을 수 있습니다."
+     },
+     "views": {
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "bbbc ~ b*c"
+        },
+        {
+         "id": 1,
+         "value": "bbbc ~ c"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "b* → ∅"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ],
+       "tags": [
+        [
+         1,
+         "✗"
+        ]
+       ]
+      },
+      "memo": {
+       "cells": [
+        [
+         "",
+         "b",
+         "*",
+         "c",
+         "∅"
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         "F",
+         " "
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "c",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "∅",
+         " ",
+         " ",
+         " ",
+         " "
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          1,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "matches(1, 0): \"bbc\" against \"b*c\". 'b*' may match nothing, so first try skipping it.",
+      "ko": "matches(1, 0): \"bbc\" 대 \"b*c\". 'b*' 조각은 아무것도 맞추지 않을 수 있으므로 먼저 건너뛰어 봅니다."
+     },
+     "views": {
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "bbbc ~ b*c"
+        },
+        {
+         "id": 1,
+         "value": "bbbc ~ c"
+        },
+        {
+         "id": 2,
+         "value": "bbc ~ b*c"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "b* → ∅"
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "label": "b* → b"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         2
+        ]
+       },
+       "shade": [
+        0,
+        2
+       ],
+       "tags": [
+        [
+         1,
+         "✗"
+        ]
+       ]
+      },
+      "memo": {
+       "cells": [
+        [
+         "",
+         "b",
+         "*",
+         "c",
+         "∅"
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         "F",
+         " "
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "c",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "∅",
+         " ",
+         " ",
+         " ",
+         " "
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          2,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          0,
+          2
+         ]
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": 0
+       },
+       "to": {
+        "view": "calls",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "matches(1, 2): 'c' must take exactly one letter, but it can't match 'b': ✗.",
+      "ko": "matches(1, 2): 'c' 조각은 정확히 한 글자를 맞춰야 하는데 글자 'b'에 맞지 않습니다: ✗."
+     },
+     "views": {
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "bbbc ~ b*c"
+        },
+        {
+         "id": 1,
+         "value": "bbbc ~ c"
+        },
+        {
+         "id": 2,
+         "value": "bbc ~ b*c"
+        },
+        {
+         "id": 3,
+         "value": "bbc ~ c"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "b* → ∅"
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "label": "b* → b"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "b* → ∅"
+        }
+       ],
+       "nodeMarks": {
+        "bad": [
+         3
+        ],
+        "lit": [
+         3
+        ]
+       },
+       "shade": [
+        0,
+        2,
+        3
+       ],
+       "tags": [
+        [
+         1,
+         "✗"
+        ],
+        [
+         3,
+         "✗"
+        ]
+       ]
+      },
+      "memo": {
+       "cells": [
+        [
+         "",
+         "b",
+         "*",
+         "c",
+         "∅"
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         "F",
+         " "
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         "F",
+         " "
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "c",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "∅",
+         " ",
+         " ",
+         " ",
+         " "
+        ]
+       ],
+       "marks": {
+        "bad": [
+         [
+          2,
+          3
+         ]
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": 2
+       },
+       "to": {
+        "view": "calls",
+        "at": 3
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 3
+       },
+       "to": {
+        "view": "memo",
+        "at": [
+         2,
+         3
+        ]
+       },
+       "value": "✗"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "matches(1, 0): skipping failed, but 'b*' can take 'b' and stay for the next letter.",
+      "ko": "matches(1, 0): 건너뛰기는 실패했지만 'b*' 조각은 글자 'b' 하나를 먹고 그대로 남을 수 있습니다."
+     },
+     "views": {
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "bbbc ~ b*c"
+        },
+        {
+         "id": 1,
+         "value": "bbbc ~ c"
+        },
+        {
+         "id": 2,
+         "value": "bbc ~ b*c"
+        },
+        {
+         "id": 3,
+         "value": "bbc ~ c"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "b* → ∅"
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "label": "b* → b"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "b* → ∅"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         2
+        ]
+       },
+       "shade": [
+        0,
+        2
+       ],
+       "tags": [
+        [
+         1,
+         "✗"
+        ],
+        [
+         3,
+         "✗"
+        ]
+       ]
+      },
+      "memo": {
+       "cells": [
+        [
+         "",
+         "b",
+         "*",
+         "c",
+         "∅"
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         "F",
+         " "
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         "F",
+         " "
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "c",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "∅",
+         " ",
+         " ",
+         " ",
+         " "
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          2,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "matches(2, 0): \"bc\" against \"b*c\". 'b*' may match nothing, so first try skipping it.",
+      "ko": "matches(2, 0): \"bc\" 대 \"b*c\". 'b*' 조각은 아무것도 맞추지 않을 수 있으므로 먼저 건너뛰어 봅니다."
+     },
+     "views": {
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "bbbc ~ b*c"
+        },
+        {
+         "id": 1,
+         "value": "bbbc ~ c"
+        },
+        {
+         "id": 2,
+         "value": "bbc ~ b*c"
+        },
+        {
+         "id": 3,
+         "value": "bbc ~ c"
+        },
+        {
+         "id": 4,
+         "value": "bc ~ b*c"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "b* → ∅"
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "label": "b* → b"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "b* → ∅"
+        },
+        {
+         "from": 2,
+         "to": 4,
+         "label": "b* → b"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         4
+        ]
+       },
+       "shade": [
+        0,
+        2,
+        4
+       ],
+       "tags": [
+        [
+         1,
+         "✗"
+        ],
+        [
+         3,
+         "✗"
+        ]
+       ]
+      },
+      "memo": {
+       "cells": [
+        [
+         "",
+         "b",
+         "*",
+         "c",
+         "∅"
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         "F",
+         " "
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         "F",
+         " "
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "c",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "∅",
+         " ",
+         " ",
+         " ",
+         " "
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          0,
+          2
+         ]
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": 2
+       },
+       "to": {
+        "view": "calls",
+        "at": 4
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "matches(2, 2): 'c' must take exactly one letter, but it can't match 'b': ✗.",
+      "ko": "matches(2, 2): 'c' 조각은 정확히 한 글자를 맞춰야 하는데 글자 'b'에 맞지 않습니다: ✗."
+     },
+     "views": {
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "bbbc ~ b*c"
+        },
+        {
+         "id": 1,
+         "value": "bbbc ~ c"
+        },
+        {
+         "id": 2,
+         "value": "bbc ~ b*c"
+        },
+        {
+         "id": 3,
+         "value": "bbc ~ c"
+        },
+        {
+         "id": 4,
+         "value": "bc ~ b*c"
+        },
+        {
+         "id": 5,
+         "value": "bc ~ c"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "b* → ∅"
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "label": "b* → b"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "b* → ∅"
+        },
+        {
+         "from": 2,
+         "to": 4,
+         "label": "b* → b"
+        },
+        {
+         "from": 4,
+         "to": 5,
+         "label": "b* → ∅"
+        }
+       ],
+       "nodeMarks": {
+        "bad": [
+         5
+        ],
+        "lit": [
+         5
+        ]
+       },
+       "shade": [
+        0,
+        2,
+        4,
+        5
+       ],
+       "tags": [
+        [
+         1,
+         "✗"
+        ],
+        [
+         3,
+         "✗"
+        ],
+        [
+         5,
+         "✗"
+        ]
+       ]
+      },
+      "memo": {
+       "cells": [
+        [
+         "",
+         "b",
+         "*",
+         "c",
+         "∅"
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         "F",
+         " "
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         "F",
+         " "
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         "F",
+         " "
+        ],
+        [
+         "c",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "∅",
+         " ",
+         " ",
+         " ",
+         " "
+        ]
+       ],
+       "marks": {
+        "bad": [
+         [
+          3,
+          3
+         ]
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": 4
+       },
+       "to": {
+        "view": "calls",
+        "at": 5
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 5
+       },
+       "to": {
+        "view": "memo",
+        "at": [
+         3,
+         3
+        ]
+       },
+       "value": "✗"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "matches(2, 0): skipping failed, but 'b*' can take 'b' and stay for the next letter.",
+      "ko": "matches(2, 0): 건너뛰기는 실패했지만 'b*' 조각은 글자 'b' 하나를 먹고 그대로 남을 수 있습니다."
+     },
+     "views": {
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "bbbc ~ b*c"
+        },
+        {
+         "id": 1,
+         "value": "bbbc ~ c"
+        },
+        {
+         "id": 2,
+         "value": "bbc ~ b*c"
+        },
+        {
+         "id": 3,
+         "value": "bbc ~ c"
+        },
+        {
+         "id": 4,
+         "value": "bc ~ b*c"
+        },
+        {
+         "id": 5,
+         "value": "bc ~ c"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "b* → ∅"
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "label": "b* → b"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "b* → ∅"
+        },
+        {
+         "from": 2,
+         "to": 4,
+         "label": "b* → b"
+        },
+        {
+         "from": 4,
+         "to": 5,
+         "label": "b* → ∅"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         4
+        ]
+       },
+       "shade": [
+        0,
+        2,
+        4
+       ],
+       "tags": [
+        [
+         1,
+         "✗"
+        ],
+        [
+         3,
+         "✗"
+        ],
+        [
+         5,
+         "✗"
+        ]
+       ]
+      },
+      "memo": {
+       "cells": [
+        [
+         "",
+         "b",
+         "*",
+         "c",
+         "∅"
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         "F",
+         " "
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         "F",
+         " "
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         "F",
+         " "
+        ],
+        [
+         "c",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "∅",
+         " ",
+         " ",
+         " ",
+         " "
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "matches(3, 0): \"c\" against \"b*c\". 'b*' may match nothing, so first try skipping it.",
+      "ko": "matches(3, 0): \"c\" 대 \"b*c\". 'b*' 조각은 아무것도 맞추지 않을 수 있으므로 먼저 건너뛰어 봅니다."
+     },
+     "views": {
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "bbbc ~ b*c"
+        },
+        {
+         "id": 1,
+         "value": "bbbc ~ c"
+        },
+        {
+         "id": 2,
+         "value": "bbc ~ b*c"
+        },
+        {
+         "id": 3,
+         "value": "bbc ~ c"
+        },
+        {
+         "id": 4,
+         "value": "bc ~ b*c"
+        },
+        {
+         "id": 5,
+         "value": "bc ~ c"
+        },
+        {
+         "id": 6,
+         "value": "c ~ b*c"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "b* → ∅"
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "label": "b* → b"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "b* → ∅"
+        },
+        {
+         "from": 2,
+         "to": 4,
+         "label": "b* → b"
+        },
+        {
+         "from": 4,
+         "to": 5,
+         "label": "b* → ∅"
+        },
+        {
+         "from": 4,
+         "to": 6,
+         "label": "b* → b"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         6
+        ]
+       },
+       "shade": [
+        0,
+        2,
+        4,
+        6
+       ],
+       "tags": [
+        [
+         1,
+         "✗"
+        ],
+        [
+         3,
+         "✗"
+        ],
+        [
+         5,
+         "✗"
+        ]
+       ]
+      },
+      "memo": {
+       "cells": [
+        [
+         "",
+         "b",
+         "*",
+         "c",
+         "∅"
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         "F",
+         " "
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         "F",
+         " "
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         "F",
+         " "
+        ],
+        [
+         "c",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "∅",
+         " ",
+         " ",
+         " ",
+         " "
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          4,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          0,
+          2
+         ]
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": 4
+       },
+       "to": {
+        "view": "calls",
+        "at": 6
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "matches(3, 2): 'c' matches 'c', so move on in both.",
+      "ko": "matches(3, 2): 'c' 조각이 글자 'c'에 맞으므로 둘 다 한 칸씩 나아갑니다."
+     },
+     "views": {
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "bbbc ~ b*c"
+        },
+        {
+         "id": 1,
+         "value": "bbbc ~ c"
+        },
+        {
+         "id": 2,
+         "value": "bbc ~ b*c"
+        },
+        {
+         "id": 3,
+         "value": "bbc ~ c"
+        },
+        {
+         "id": 4,
+         "value": "bc ~ b*c"
+        },
+        {
+         "id": 5,
+         "value": "bc ~ c"
+        },
+        {
+         "id": 6,
+         "value": "c ~ b*c"
+        },
+        {
+         "id": 7,
+         "value": "c ~ c"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "b* → ∅"
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "label": "b* → b"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "b* → ∅"
+        },
+        {
+         "from": 2,
+         "to": 4,
+         "label": "b* → b"
+        },
+        {
+         "from": 4,
+         "to": 5,
+         "label": "b* → ∅"
+        },
+        {
+         "from": 4,
+         "to": 6,
+         "label": "b* → b"
+        },
+        {
+         "from": 6,
+         "to": 7,
+         "label": "b* → ∅"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         7
+        ]
+       },
+       "shade": [
+        0,
+        2,
+        4,
+        6,
+        7
+       ],
+       "tags": [
+        [
+         1,
+         "✗"
+        ],
+        [
+         3,
+         "✗"
+        ],
+        [
+         5,
+         "✗"
+        ]
+       ]
+      },
+      "memo": {
+       "cells": [
+        [
+         "",
+         "b",
+         "*",
+         "c",
+         "∅"
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         "F",
+         " "
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         "F",
+         " "
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         "F",
+         " "
+        ],
+        [
+         "c",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "∅",
+         " ",
+         " ",
+         " ",
+         " "
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          4,
+          0
+         ],
+         [
+          0,
+          3
+         ]
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": 6
+       },
+       "to": {
+        "view": "calls",
+        "at": 7
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "matches(4, 3): the pattern and s are both used up, so they match: ✓.",
+      "ko": "matches(4, 3): 패턴과 s를 모두 다 썼으므로 맞습니다: ✓."
+     },
+     "views": {
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "bbbc ~ b*c"
+        },
+        {
+         "id": 1,
+         "value": "bbbc ~ c"
+        },
+        {
+         "id": 2,
+         "value": "bbc ~ b*c"
+        },
+        {
+         "id": 3,
+         "value": "bbc ~ c"
+        },
+        {
+         "id": 4,
+         "value": "bc ~ b*c"
+        },
+        {
+         "id": 5,
+         "value": "bc ~ c"
+        },
+        {
+         "id": 6,
+         "value": "c ~ b*c"
+        },
+        {
+         "id": 7,
+         "value": "c ~ c"
+        },
+        {
+         "id": 8,
+         "value": "∅ ~ ∅"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "b* → ∅"
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "label": "b* → b"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "b* → ∅"
+        },
+        {
+         "from": 2,
+         "to": 4,
+         "label": "b* → b"
+        },
+        {
+         "from": 4,
+         "to": 5,
+         "label": "b* → ∅"
+        },
+        {
+         "from": 4,
+         "to": 6,
+         "label": "b* → b"
+        },
+        {
+         "from": 6,
+         "to": 7,
+         "label": "b* → ∅"
+        },
+        {
+         "from": 7,
+         "to": 8,
+         "label": "c → c"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         8
+        ],
+        "lit": [
+         8
+        ]
+       },
+       "shade": [
+        0,
+        2,
+        4,
+        6,
+        7,
+        8
+       ],
+       "tags": [
+        [
+         1,
+         "✗"
+        ],
+        [
+         3,
+         "✗"
+        ],
+        [
+         5,
+         "✗"
+        ],
+        [
+         8,
+         "✓"
+        ]
+       ]
+      },
+      "memo": {
+       "cells": [
+        [
+         "",
+         "b",
+         "*",
+         "c",
+         "∅"
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         "F",
+         " "
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         "F",
+         " "
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         "F",
+         " "
+        ],
+        [
+         "c",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "∅",
+         " ",
+         " ",
+         " ",
+         "T"
+        ]
+       ],
+       "marks": {
+        "good": [
+         [
+          5,
+          4
+         ]
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": 7
+       },
+       "to": {
+        "view": "calls",
+        "at": 8
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 8
+       },
+       "to": {
+        "view": "memo",
+        "at": [
+         5,
+         4
+        ]
+       },
+       "value": "✓"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "matches(3, 2) passes on what the rest returned: ✓.",
+      "ko": "matches(3, 2): 나머지의 결과를 그대로 돌려줍니다: ✓."
+     },
+     "views": {
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "bbbc ~ b*c"
+        },
+        {
+         "id": 1,
+         "value": "bbbc ~ c"
+        },
+        {
+         "id": 2,
+         "value": "bbc ~ b*c"
+        },
+        {
+         "id": 3,
+         "value": "bbc ~ c"
+        },
+        {
+         "id": 4,
+         "value": "bc ~ b*c"
+        },
+        {
+         "id": 5,
+         "value": "bc ~ c"
+        },
+        {
+         "id": 6,
+         "value": "c ~ b*c"
+        },
+        {
+         "id": 7,
+         "value": "c ~ c"
+        },
+        {
+         "id": 8,
+         "value": "∅ ~ ∅"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "b* → ∅"
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "label": "b* → b"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "b* → ∅"
+        },
+        {
+         "from": 2,
+         "to": 4,
+         "label": "b* → b"
+        },
+        {
+         "from": 4,
+         "to": 5,
+         "label": "b* → ∅"
+        },
+        {
+         "from": 4,
+         "to": 6,
+         "label": "b* → b"
+        },
+        {
+         "from": 6,
+         "to": 7,
+         "label": "b* → ∅"
+        },
+        {
+         "from": 7,
+         "to": 8,
+         "label": "c → c"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         7
+        ],
+        "lit": [
+         7
+        ]
+       },
+       "shade": [
+        0,
+        2,
+        4,
+        6,
+        7
+       ],
+       "tags": [
+        [
+         1,
+         "✗"
+        ],
+        [
+         3,
+         "✗"
+        ],
+        [
+         5,
+         "✗"
+        ],
+        [
+         8,
+         "✓"
+        ],
+        [
+         7,
+         "✓"
+        ]
+       ]
+      },
+      "memo": {
+       "cells": [
+        [
+         "",
+         "b",
+         "*",
+         "c",
+         "∅"
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         "F",
+         " "
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         "F",
+         " "
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         "F",
+         " "
+        ],
+        [
+         "c",
+         " ",
+         " ",
+         "T",
+         " "
+        ],
+        [
+         "∅",
+         " ",
+         " ",
+         " ",
+         "T"
+        ]
+       ],
+       "marks": {
+        "good": [
+         [
+          4,
+          3
+         ]
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": 8
+       },
+       "to": {
+        "view": "calls",
+        "at": 7
+       },
+       "value": "✓"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 7
+       },
+       "to": {
+        "view": "memo",
+        "at": [
+         4,
+         3
+        ]
+       },
+       "value": "✓"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "matches(3, 0): skipping 'b*' worked: ✓.",
+      "ko": "matches(3, 0): 'b*' 조각을 건너뛰니 맞았습니다: ✓."
+     },
+     "views": {
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "bbbc ~ b*c"
+        },
+        {
+         "id": 1,
+         "value": "bbbc ~ c"
+        },
+        {
+         "id": 2,
+         "value": "bbc ~ b*c"
+        },
+        {
+         "id": 3,
+         "value": "bbc ~ c"
+        },
+        {
+         "id": 4,
+         "value": "bc ~ b*c"
+        },
+        {
+         "id": 5,
+         "value": "bc ~ c"
+        },
+        {
+         "id": 6,
+         "value": "c ~ b*c"
+        },
+        {
+         "id": 7,
+         "value": "c ~ c"
+        },
+        {
+         "id": 8,
+         "value": "∅ ~ ∅"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "b* → ∅"
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "label": "b* → b"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "b* → ∅"
+        },
+        {
+         "from": 2,
+         "to": 4,
+         "label": "b* → b"
+        },
+        {
+         "from": 4,
+         "to": 5,
+         "label": "b* → ∅"
+        },
+        {
+         "from": 4,
+         "to": 6,
+         "label": "b* → b"
+        },
+        {
+         "from": 6,
+         "to": 7,
+         "label": "b* → ∅"
+        },
+        {
+         "from": 7,
+         "to": 8,
+         "label": "c → c"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         6
+        ],
+        "lit": [
+         6
+        ]
+       },
+       "shade": [
+        0,
+        2,
+        4,
+        6
+       ],
+       "tags": [
+        [
+         1,
+         "✗"
+        ],
+        [
+         3,
+         "✗"
+        ],
+        [
+         5,
+         "✗"
+        ],
+        [
+         8,
+         "✓"
+        ],
+        [
+         7,
+         "✓"
+        ],
+        [
+         6,
+         "✓"
+        ]
+       ]
+      },
+      "memo": {
+       "cells": [
+        [
+         "",
+         "b",
+         "*",
+         "c",
+         "∅"
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         "F",
+         " "
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         "F",
+         " "
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         "F",
+         " "
+        ],
+        [
+         "c",
+         "T",
+         " ",
+         "T",
+         " "
+        ],
+        [
+         "∅",
+         " ",
+         " ",
+         " ",
+         "T"
+        ]
+       ],
+       "marks": {
+        "good": [
+         [
+          4,
+          1
+         ]
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": 7
+       },
+       "to": {
+        "view": "calls",
+        "at": 6
+       },
+       "value": "✓"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 6
+       },
+       "to": {
+        "view": "memo",
+        "at": [
+         4,
+         1
+        ]
+       },
+       "value": "✓"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "matches(2, 0) takes its answer from 'b*' taking 'b': ✓.",
+      "ko": "matches(2, 0)의 답은 'b*' 조각이 글자 'b' 하나를 먹은 결과입니다: ✓."
+     },
+     "views": {
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "bbbc ~ b*c"
+        },
+        {
+         "id": 1,
+         "value": "bbbc ~ c"
+        },
+        {
+         "id": 2,
+         "value": "bbc ~ b*c"
+        },
+        {
+         "id": 3,
+         "value": "bbc ~ c"
+        },
+        {
+         "id": 4,
+         "value": "bc ~ b*c"
+        },
+        {
+         "id": 5,
+         "value": "bc ~ c"
+        },
+        {
+         "id": 6,
+         "value": "c ~ b*c"
+        },
+        {
+         "id": 7,
+         "value": "c ~ c"
+        },
+        {
+         "id": 8,
+         "value": "∅ ~ ∅"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "b* → ∅"
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "label": "b* → b"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "b* → ∅"
+        },
+        {
+         "from": 2,
+         "to": 4,
+         "label": "b* → b"
+        },
+        {
+         "from": 4,
+         "to": 5,
+         "label": "b* → ∅"
+        },
+        {
+         "from": 4,
+         "to": 6,
+         "label": "b* → b"
+        },
+        {
+         "from": 6,
+         "to": 7,
+         "label": "b* → ∅"
+        },
+        {
+         "from": 7,
+         "to": 8,
+         "label": "c → c"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         4
+        ],
+        "lit": [
+         4
+        ]
+       },
+       "shade": [
+        0,
+        2,
+        4
+       ],
+       "tags": [
+        [
+         1,
+         "✗"
+        ],
+        [
+         3,
+         "✗"
+        ],
+        [
+         5,
+         "✗"
+        ],
+        [
+         8,
+         "✓"
+        ],
+        [
+         7,
+         "✓"
+        ],
+        [
+         6,
+         "✓"
+        ],
+        [
+         4,
+         "✓"
+        ]
+       ]
+      },
+      "memo": {
+       "cells": [
+        [
+         "",
+         "b",
+         "*",
+         "c",
+         "∅"
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         "F",
+         " "
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         "F",
+         " "
+        ],
+        [
+         "b",
+         "T",
+         " ",
+         "F",
+         " "
+        ],
+        [
+         "c",
+         "T",
+         " ",
+         "T",
+         " "
+        ],
+        [
+         "∅",
+         " ",
+         " ",
+         " ",
+         "T"
+        ]
+       ],
+       "marks": {
+        "good": [
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": 6
+       },
+       "to": {
+        "view": "calls",
+        "at": 4
+       },
+       "value": "✓"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 4
+       },
+       "to": {
+        "view": "memo",
+        "at": [
+         3,
+         1
+        ]
+       },
+       "value": "✓"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "matches(1, 0) takes its answer from 'b*' taking 'b': ✓.",
+      "ko": "matches(1, 0)의 답은 'b*' 조각이 글자 'b' 하나를 먹은 결과입니다: ✓."
+     },
+     "views": {
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "bbbc ~ b*c"
+        },
+        {
+         "id": 1,
+         "value": "bbbc ~ c"
+        },
+        {
+         "id": 2,
+         "value": "bbc ~ b*c"
+        },
+        {
+         "id": 3,
+         "value": "bbc ~ c"
+        },
+        {
+         "id": 4,
+         "value": "bc ~ b*c"
+        },
+        {
+         "id": 5,
+         "value": "bc ~ c"
+        },
+        {
+         "id": 6,
+         "value": "c ~ b*c"
+        },
+        {
+         "id": 7,
+         "value": "c ~ c"
+        },
+        {
+         "id": 8,
+         "value": "∅ ~ ∅"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "b* → ∅"
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "label": "b* → b"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "b* → ∅"
+        },
+        {
+         "from": 2,
+         "to": 4,
+         "label": "b* → b"
+        },
+        {
+         "from": 4,
+         "to": 5,
+         "label": "b* → ∅"
+        },
+        {
+         "from": 4,
+         "to": 6,
+         "label": "b* → b"
+        },
+        {
+         "from": 6,
+         "to": 7,
+         "label": "b* → ∅"
+        },
+        {
+         "from": 7,
+         "to": 8,
+         "label": "c → c"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         2
+        ],
+        "lit": [
+         2
+        ]
+       },
+       "shade": [
+        0,
+        2
+       ],
+       "tags": [
+        [
+         1,
+         "✗"
+        ],
+        [
+         3,
+         "✗"
+        ],
+        [
+         5,
+         "✗"
+        ],
+        [
+         8,
+         "✓"
+        ],
+        [
+         7,
+         "✓"
+        ],
+        [
+         6,
+         "✓"
+        ],
+        [
+         4,
+         "✓"
+        ],
+        [
+         2,
+         "✓"
+        ]
+       ]
+      },
+      "memo": {
+       "cells": [
+        [
+         "",
+         "b",
+         "*",
+         "c",
+         "∅"
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         "F",
+         " "
+        ],
+        [
+         "b",
+         "T",
+         " ",
+         "F",
+         " "
+        ],
+        [
+         "b",
+         "T",
+         " ",
+         "F",
+         " "
+        ],
+        [
+         "c",
+         "T",
+         " ",
+         "T",
+         " "
+        ],
+        [
+         "∅",
+         " ",
+         " ",
+         " ",
+         "T"
+        ]
+       ],
+       "marks": {
+        "good": [
+         [
+          2,
+          1
+         ]
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": 4
+       },
+       "to": {
+        "view": "calls",
+        "at": 2
+       },
+       "value": "✓"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 2
+       },
+       "to": {
+        "view": "memo",
+        "at": [
+         2,
+         1
+        ]
+       },
+       "value": "✓"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "matches(0, 0) takes its answer from 'b*' taking 'b': ✓.",
+      "ko": "matches(0, 0)의 답은 'b*' 조각이 글자 'b' 하나를 먹은 결과입니다: ✓."
+     },
+     "views": {
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "bbbc ~ b*c"
+        },
+        {
+         "id": 1,
+         "value": "bbbc ~ c"
+        },
+        {
+         "id": 2,
+         "value": "bbc ~ b*c"
+        },
+        {
+         "id": 3,
+         "value": "bbc ~ c"
+        },
+        {
+         "id": 4,
+         "value": "bc ~ b*c"
+        },
+        {
+         "id": 5,
+         "value": "bc ~ c"
+        },
+        {
+         "id": 6,
+         "value": "c ~ b*c"
+        },
+        {
+         "id": 7,
+         "value": "c ~ c"
+        },
+        {
+         "id": 8,
+         "value": "∅ ~ ∅"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "b* → ∅"
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "label": "b* → b"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "b* → ∅"
+        },
+        {
+         "from": 2,
+         "to": 4,
+         "label": "b* → b"
+        },
+        {
+         "from": 4,
+         "to": 5,
+         "label": "b* → ∅"
+        },
+        {
+         "from": 4,
+         "to": 6,
+         "label": "b* → b"
+        },
+        {
+         "from": 6,
+         "to": 7,
+         "label": "b* → ∅"
+        },
+        {
+         "from": 7,
+         "to": 8,
+         "label": "c → c"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ],
+        "lit": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ],
+       "tags": [
+        [
+         1,
+         "✗"
+        ],
+        [
+         3,
+         "✗"
+        ],
+        [
+         5,
+         "✗"
+        ],
+        [
+         8,
+         "✓"
+        ],
+        [
+         7,
+         "✓"
+        ],
+        [
+         6,
+         "✓"
+        ],
+        [
+         4,
+         "✓"
+        ],
+        [
+         2,
+         "✓"
+        ],
+        [
+         0,
+         "✓"
+        ]
+       ]
+      },
+      "memo": {
+       "cells": [
+        [
+         "",
+         "b",
+         "*",
+         "c",
+         "∅"
+        ],
+        [
+         "b",
+         "T",
+         " ",
+         "F",
+         " "
+        ],
+        [
+         "b",
+         "T",
+         " ",
+         "F",
+         " "
+        ],
+        [
+         "b",
+         "T",
+         " ",
+         "F",
+         " "
+        ],
+        [
+         "c",
+         "T",
+         " ",
+         "T",
+         " "
+        ],
+        [
+         "∅",
+         " ",
+         " ",
+         " ",
+         "T"
+        ]
+       ],
+       "marks": {
+        "good": [
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": 2
+       },
+       "to": {
+        "view": "calls",
+        "at": 0
+       },
+       "value": "✓"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 0
+       },
+       "to": {
+        "view": "memo",
+        "at": [
+         1,
+         1
+        ]
+       },
+       "value": "✓"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "matches(0, 0) is ✓: the pattern matches all of s. Answer: true.",
+      "ko": "matches(0, 0)의 결과가 ✓이므로 패턴이 s 전체와 맞습니다. 답은 true입니다."
+     },
+     "views": {
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "bbbc ~ b*c"
+        },
+        {
+         "id": 1,
+         "value": "bbbc ~ c"
+        },
+        {
+         "id": 2,
+         "value": "bbc ~ b*c"
+        },
+        {
+         "id": 3,
+         "value": "bbc ~ c"
+        },
+        {
+         "id": 4,
+         "value": "bc ~ b*c"
+        },
+        {
+         "id": 5,
+         "value": "bc ~ c"
+        },
+        {
+         "id": 6,
+         "value": "c ~ b*c"
+        },
+        {
+         "id": 7,
+         "value": "c ~ c"
+        },
+        {
+         "id": 8,
+         "value": "∅ ~ ∅"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "b* → ∅"
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "label": "b* → b"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "b* → ∅"
+        },
+        {
+         "from": 2,
+         "to": 4,
+         "label": "b* → b"
+        },
+        {
+         "from": 4,
+         "to": 5,
+         "label": "b* → ∅"
+        },
+        {
+         "from": 4,
+         "to": 6,
+         "label": "b* → b"
+        },
+        {
+         "from": 6,
+         "to": 7,
+         "label": "b* → ∅"
+        },
+        {
+         "from": 7,
+         "to": 8,
+         "label": "c → c"
+        }
+       ],
+       "nodeMarks": {
+        "path": [
+         0,
+         2,
+         4,
+         6,
+         7,
+         8
+        ]
+       },
+       "shade": [],
+       "tags": [
+        [
+         1,
+         "✗"
+        ],
+        [
+         3,
+         "✗"
+        ],
+        [
+         5,
+         "✗"
+        ],
+        [
+         8,
+         "✓"
+        ],
+        [
+         7,
+         "✓"
+        ],
+        [
+         6,
+         "✓"
+        ],
+        [
+         4,
+         "✓"
+        ],
+        [
+         2,
+         "✓"
+        ],
+        [
+         0,
+         "✓"
+        ]
+       ]
+      },
+      "memo": {
+       "cells": [
+        [
+         "",
+         "b",
+         "*",
+         "c",
+         "∅"
+        ],
+        [
+         "b",
+         "T",
+         " ",
+         "F",
+         " "
+        ],
+        [
+         "b",
+         "T",
+         " ",
+         "F",
+         " "
+        ],
+        [
+         "b",
+         "T",
+         " ",
+         "F",
+         " "
+        ],
+        [
+         "c",
+         "T",
+         " ",
+         "T",
+         " "
+        ],
+        [
+         "∅",
+         " ",
+         " ",
+         " ",
+         "T"
+        ]
+       ],
+       "marks": {
+        "path": [
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          1
+         ],
+         [
+          4,
+          3
+         ],
+         [
+          5,
+          4
+         ]
+        ]
+       }
+      }
+     },
+     "answer": "true"
+    }
+   ],
+   "sampleInput": "bbbc\nb*c"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "s = \"xyzw\", p = \"x.y\"",
+   "expected": "false",
+   "frames": [
+    {
+     "caption": {
+      "en": "Match s = \"xyzw\" against p = \"x.y\", starting from matches(0, 0), the whole of both. The memo is empty.",
+      "ko": "s = \"xyzw\", p = \"x.y\": 둘 전체를 보는 matches(0, 0)부터 시작합니다. 메모는 비어 있습니다."
+     },
+     "views": {
+      "calls": {
+       "nodes": [],
+       "edges": [],
+       "nodeMarks": {},
+       "shade": [],
+       "tags": []
+      },
+      "memo": {
+       "cells": [
+        [
+         "",
+         "x",
+         ".",
+         "y",
+         "∅"
+        ],
+        [
+         "x",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "y",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "z",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "w",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "∅",
+         " ",
+         " ",
+         " ",
+         " "
+        ]
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "matches(0, 0): 'x' matches 'x', so move on in both.",
+      "ko": "matches(0, 0): 'x' 조각이 글자 'x'에 맞으므로 둘 다 한 칸씩 나아갑니다."
+     },
+     "views": {
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "xyzw ~ x.y"
+        }
+       ],
+       "edges": [],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ],
+       "tags": []
+      },
+      "memo": {
+       "cells": [
+        [
+         "",
+         "x",
+         ".",
+         "y",
+         "∅"
+        ],
+        [
+         "x",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "y",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "z",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "w",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "∅",
+         " ",
+         " ",
+         " ",
+         " "
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          1,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "calls",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "matches(1, 1): '.' matches 'y', so move on in both.",
+      "ko": "matches(1, 1): '.' 조각이 글자 'y'에 맞으므로 둘 다 한 칸씩 나아갑니다."
+     },
+     "views": {
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "xyzw ~ x.y"
+        },
+        {
+         "id": 1,
+         "value": "yzw ~ .y"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "x → x"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         1
+        ]
+       },
+       "shade": [
+        0,
+        1
+       ],
+       "tags": []
+      },
+      "memo": {
+       "cells": [
+        [
+         "",
+         "x",
+         ".",
+         "y",
+         "∅"
+        ],
+        [
+         "x",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "y",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "z",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "w",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "∅",
+         " ",
+         " ",
+         " ",
+         " "
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          2,
+          0
+         ],
+         [
+          0,
+          2
+         ]
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": 0
+       },
+       "to": {
+        "view": "calls",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "matches(2, 2): 'y' must take exactly one letter, but it can't match 'z': ✗.",
+      "ko": "matches(2, 2): 'y' 조각은 정확히 한 글자를 맞춰야 하는데 글자 'z'에 맞지 않습니다: ✗."
+     },
+     "views": {
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "xyzw ~ x.y"
+        },
+        {
+         "id": 1,
+         "value": "yzw ~ .y"
+        },
+        {
+         "id": 2,
+         "value": "zw ~ y"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "x → x"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": ". → y"
+        }
+       ],
+       "nodeMarks": {
+        "bad": [
+         2
+        ],
+        "lit": [
+         2
+        ]
+       },
+       "shade": [
+        0,
+        1,
+        2
+       ],
+       "tags": [
+        [
+         2,
+         "✗"
+        ]
+       ]
+      },
+      "memo": {
+       "cells": [
+        [
+         "",
+         "x",
+         ".",
+         "y",
+         "∅"
+        ],
+        [
+         "x",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "y",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "z",
+         " ",
+         " ",
+         "F",
+         " "
+        ],
+        [
+         "w",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "∅",
+         " ",
+         " ",
+         " ",
+         " "
+        ]
+       ],
+       "marks": {
+        "bad": [
+         [
+          3,
+          3
+         ]
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": 1
+       },
+       "to": {
+        "view": "calls",
+        "at": 2
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 2
+       },
+       "to": {
+        "view": "memo",
+        "at": [
+         3,
+         3
+        ]
+       },
+       "value": "✗"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "matches(1, 1) passes on what the rest returned: ✗.",
+      "ko": "matches(1, 1): 나머지의 결과를 그대로 돌려줍니다: ✗."
+     },
+     "views": {
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "xyzw ~ x.y"
+        },
+        {
+         "id": 1,
+         "value": "yzw ~ .y"
+        },
+        {
+         "id": 2,
+         "value": "zw ~ y"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "x → x"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": ". → y"
+        }
+       ],
+       "nodeMarks": {
+        "bad": [
+         1
+        ],
+        "lit": [
+         1
+        ]
+       },
+       "shade": [
+        0,
+        1
+       ],
+       "tags": [
+        [
+         2,
+         "✗"
+        ],
+        [
+         1,
+         "✗"
+        ]
+       ]
+      },
+      "memo": {
+       "cells": [
+        [
+         "",
+         "x",
+         ".",
+         "y",
+         "∅"
+        ],
+        [
+         "x",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "y",
+         " ",
+         "F",
+         " ",
+         " "
+        ],
+        [
+         "z",
+         " ",
+         " ",
+         "F",
+         " "
+        ],
+        [
+         "w",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "∅",
+         " ",
+         " ",
+         " ",
+         " "
+        ]
+       ],
+       "marks": {
+        "bad": [
+         [
+          2,
+          2
+         ]
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": 2
+       },
+       "to": {
+        "view": "calls",
+        "at": 1
+       },
+       "value": "✗"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 1
+       },
+       "to": {
+        "view": "memo",
+        "at": [
+         2,
+         2
+        ]
+       },
+       "value": "✗"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "matches(0, 0) passes on what the rest returned: ✗.",
+      "ko": "matches(0, 0): 나머지의 결과를 그대로 돌려줍니다: ✗."
+     },
+     "views": {
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "xyzw ~ x.y"
+        },
+        {
+         "id": 1,
+         "value": "yzw ~ .y"
+        },
+        {
+         "id": 2,
+         "value": "zw ~ y"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "x → x"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": ". → y"
+        }
+       ],
+       "nodeMarks": {
+        "bad": [
+         0
+        ],
+        "lit": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ],
+       "tags": [
+        [
+         2,
+         "✗"
+        ],
+        [
+         1,
+         "✗"
+        ],
+        [
+         0,
+         "✗"
+        ]
+       ]
+      },
+      "memo": {
+       "cells": [
+        [
+         "",
+         "x",
+         ".",
+         "y",
+         "∅"
+        ],
+        [
+         "x",
+         "F",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "y",
+         " ",
+         "F",
+         " ",
+         " "
+        ],
+        [
+         "z",
+         " ",
+         " ",
+         "F",
+         " "
+        ],
+        [
+         "w",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "∅",
+         " ",
+         " ",
+         " ",
+         " "
+        ]
+       ],
+       "marks": {
+        "bad": [
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": 1
+       },
+       "to": {
+        "view": "calls",
+        "at": 0
+       },
+       "value": "✗"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 0
+       },
+       "to": {
+        "view": "memo",
+        "at": [
+         1,
+         1
+        ]
+       },
+       "value": "✗"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "matches(0, 0) is ✗: the pattern does not match all of s. Answer: false.",
+      "ko": "matches(0, 0)의 결과가 ✗이므로 패턴이 s 전체와 맞지 않습니다. 답은 false입니다."
+     },
+     "views": {
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "xyzw ~ x.y"
+        },
+        {
+         "id": 1,
+         "value": "yzw ~ .y"
+        },
+        {
+         "id": 2,
+         "value": "zw ~ y"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "x → x"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": ". → y"
+        }
+       ],
+       "nodeMarks": {
+        "path": [
+         0,
+         1,
+         2
+        ]
+       },
+       "shade": [],
+       "tags": [
+        [
+         2,
+         "✗"
+        ],
+        [
+         1,
+         "✗"
+        ],
+        [
+         0,
+         "✗"
+        ]
+       ]
+      },
+      "memo": {
+       "cells": [
+        [
+         "",
+         "x",
+         ".",
+         "y",
+         "∅"
+        ],
+        [
+         "x",
+         "F",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "y",
+         " ",
+         "F",
+         " ",
+         " "
+        ],
+        [
+         "z",
+         " ",
+         " ",
+         "F",
+         " "
+        ],
+        [
+         "w",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "∅",
+         " ",
+         " ",
+         " ",
+         " "
+        ]
+       ],
+       "marks": {
+        "path": [
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          2
+         ],
+         [
+          3,
+          3
+         ]
+        ]
+       }
+      }
+     },
+     "answer": "false"
+    }
+   ],
+   "sampleInput": "xyzw\nx.y"
+  },
+  {
+   "label": {
+    "en": "Case 3",
+    "ko": "케이스 3"
+   },
+   "input": "s = \"aaab\", p = \"a*ab\"",
+   "expected": "true",
+   "frames": [
+    {
+     "caption": {
+      "en": "Match s = \"aaab\" against p = \"a*ab\", starting from matches(0, 0), the whole of both. The memo is empty.",
+      "ko": "s = \"aaab\", p = \"a*ab\": 둘 전체를 보는 matches(0, 0)부터 시작합니다. 메모는 비어 있습니다."
+     },
+     "views": {
+      "calls": {
+       "nodes": [],
+       "edges": [],
+       "nodeMarks": {},
+       "shade": [],
+       "tags": []
+      },
+      "memo": {
+       "cells": [
+        [
+         "",
+         "a",
+         "*",
+         "a",
+         "b",
+         "∅"
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "∅",
+         " ",
+         " ",
+         " ",
+         " ",
+         " "
+        ]
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "matches(0, 0): \"aaab\" against \"a*ab\". 'a*' may match nothing, so first try skipping it.",
+      "ko": "matches(0, 0): \"aaab\" 대 \"a*ab\". 'a*' 조각은 아무것도 맞추지 않을 수 있으므로 먼저 건너뛰어 봅니다."
+     },
+     "views": {
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "aaab ~ a*ab"
+        }
+       ],
+       "edges": [],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ],
+       "tags": []
+      },
+      "memo": {
+       "cells": [
+        [
+         "",
+         "a",
+         "*",
+         "a",
+         "b",
+         "∅"
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "∅",
+         " ",
+         " ",
+         " ",
+         " ",
+         " "
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          1,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          0,
+          2
+         ]
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "calls",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "matches(0, 2): 'a' matches 'a', so move on in both.",
+      "ko": "matches(0, 2): 'a' 조각이 글자 'a'에 맞으므로 둘 다 한 칸씩 나아갑니다."
+     },
+     "views": {
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "aaab ~ a*ab"
+        },
+        {
+         "id": 1,
+         "value": "aaab ~ ab"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "a* → ∅"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         1
+        ]
+       },
+       "shade": [
+        0,
+        1
+       ],
+       "tags": []
+      },
+      "memo": {
+       "cells": [
+        [
+         "",
+         "a",
+         "*",
+         "a",
+         "b",
+         "∅"
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "∅",
+         " ",
+         " ",
+         " ",
+         " ",
+         " "
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          1,
+          0
+         ],
+         [
+          0,
+          3
+         ]
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": 0
+       },
+       "to": {
+        "view": "calls",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "matches(1, 3): 'b' must take exactly one letter, but it can't match 'a': ✗.",
+      "ko": "matches(1, 3): 'b' 조각은 정확히 한 글자를 맞춰야 하는데 글자 'a'에 맞지 않습니다: ✗."
+     },
+     "views": {
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "aaab ~ a*ab"
+        },
+        {
+         "id": 1,
+         "value": "aaab ~ ab"
+        },
+        {
+         "id": 2,
+         "value": "aab ~ b"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "a* → ∅"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "a → a"
+        }
+       ],
+       "nodeMarks": {
+        "bad": [
+         2
+        ],
+        "lit": [
+         2
+        ]
+       },
+       "shade": [
+        0,
+        1,
+        2
+       ],
+       "tags": [
+        [
+         2,
+         "✗"
+        ]
+       ]
+      },
+      "memo": {
+       "cells": [
+        [
+         "",
+         "a",
+         "*",
+         "a",
+         "b",
+         "∅"
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         " ",
+         "F",
+         " "
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "∅",
+         " ",
+         " ",
+         " ",
+         " ",
+         " "
+        ]
+       ],
+       "marks": {
+        "bad": [
+         [
+          2,
+          4
+         ]
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": 1
+       },
+       "to": {
+        "view": "calls",
+        "at": 2
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 2
+       },
+       "to": {
+        "view": "memo",
+        "at": [
+         2,
+         4
+        ]
+       },
+       "value": "✗"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "matches(0, 2) passes on what the rest returned: ✗.",
+      "ko": "matches(0, 2): 나머지의 결과를 그대로 돌려줍니다: ✗."
+     },
+     "views": {
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "aaab ~ a*ab"
+        },
+        {
+         "id": 1,
+         "value": "aaab ~ ab"
+        },
+        {
+         "id": 2,
+         "value": "aab ~ b"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "a* → ∅"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "a → a"
+        }
+       ],
+       "nodeMarks": {
+        "bad": [
+         1
+        ],
+        "lit": [
+         1
+        ]
+       },
+       "shade": [
+        0,
+        1
+       ],
+       "tags": [
+        [
+         2,
+         "✗"
+        ],
+        [
+         1,
+         "✗"
+        ]
+       ]
+      },
+      "memo": {
+       "cells": [
+        [
+         "",
+         "a",
+         "*",
+         "a",
+         "b",
+         "∅"
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         "F",
+         " ",
+         " "
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         " ",
+         "F",
+         " "
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "∅",
+         " ",
+         " ",
+         " ",
+         " ",
+         " "
+        ]
+       ],
+       "marks": {
+        "bad": [
+         [
+          1,
+          3
+         ]
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": 2
+       },
+       "to": {
+        "view": "calls",
+        "at": 1
+       },
+       "value": "✗"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 1
+       },
+       "to": {
+        "view": "memo",
+        "at": [
+         1,
+         3
+        ]
+       },
+       "value": "✗"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "matches(0, 0): skipping failed, but 'a*' can take 'a' and stay for the next letter.",
+      "ko": "matches(0, 0): 건너뛰기는 실패했지만 'a*' 조각은 글자 'a' 하나를 먹고 그대로 남을 수 있습니다."
+     },
+     "views": {
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "aaab ~ a*ab"
+        },
+        {
+         "id": 1,
+         "value": "aaab ~ ab"
+        },
+        {
+         "id": 2,
+         "value": "aab ~ b"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "a* → ∅"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "a → a"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ],
+       "tags": [
+        [
+         2,
+         "✗"
+        ],
+        [
+         1,
+         "✗"
+        ]
+       ]
+      },
+      "memo": {
+       "cells": [
+        [
+         "",
+         "a",
+         "*",
+         "a",
+         "b",
+         "∅"
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         "F",
+         " ",
+         " "
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         " ",
+         "F",
+         " "
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "∅",
+         " ",
+         " ",
+         " ",
+         " ",
+         " "
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          1,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "matches(1, 0): \"aab\" against \"a*ab\". 'a*' may match nothing, so first try skipping it.",
+      "ko": "matches(1, 0): \"aab\" 대 \"a*ab\". 'a*' 조각은 아무것도 맞추지 않을 수 있으므로 먼저 건너뛰어 봅니다."
+     },
+     "views": {
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "aaab ~ a*ab"
+        },
+        {
+         "id": 1,
+         "value": "aaab ~ ab"
+        },
+        {
+         "id": 2,
+         "value": "aab ~ b"
+        },
+        {
+         "id": 3,
+         "value": "aab ~ a*ab"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "a* → ∅"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "a → a"
+        },
+        {
+         "from": 0,
+         "to": 3,
+         "label": "a* → a"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         3
+        ]
+       },
+       "shade": [
+        0,
+        3
+       ],
+       "tags": [
+        [
+         2,
+         "✗"
+        ],
+        [
+         1,
+         "✗"
+        ]
+       ]
+      },
+      "memo": {
+       "cells": [
+        [
+         "",
+         "a",
+         "*",
+         "a",
+         "b",
+         "∅"
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         "F",
+         " ",
+         " "
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         " ",
+         "F",
+         " "
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "∅",
+         " ",
+         " ",
+         " ",
+         " ",
+         " "
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          2,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          0,
+          2
+         ]
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": 0
+       },
+       "to": {
+        "view": "calls",
+        "at": 3
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "matches(1, 2): 'a' matches 'a', so move on in both.",
+      "ko": "matches(1, 2): 'a' 조각이 글자 'a'에 맞으므로 둘 다 한 칸씩 나아갑니다."
+     },
+     "views": {
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "aaab ~ a*ab"
+        },
+        {
+         "id": 1,
+         "value": "aaab ~ ab"
+        },
+        {
+         "id": 2,
+         "value": "aab ~ b"
+        },
+        {
+         "id": 3,
+         "value": "aab ~ a*ab"
+        },
+        {
+         "id": 4,
+         "value": "aab ~ ab"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "a* → ∅"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "a → a"
+        },
+        {
+         "from": 0,
+         "to": 3,
+         "label": "a* → a"
+        },
+        {
+         "from": 3,
+         "to": 4,
+         "label": "a* → ∅"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         4
+        ]
+       },
+       "shade": [
+        0,
+        3,
+        4
+       ],
+       "tags": [
+        [
+         2,
+         "✗"
+        ],
+        [
+         1,
+         "✗"
+        ]
+       ]
+      },
+      "memo": {
+       "cells": [
+        [
+         "",
+         "a",
+         "*",
+         "a",
+         "b",
+         "∅"
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         "F",
+         " ",
+         " "
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         " ",
+         "F",
+         " "
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "∅",
+         " ",
+         " ",
+         " ",
+         " ",
+         " "
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          2,
+          0
+         ],
+         [
+          0,
+          3
+         ]
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": 3
+       },
+       "to": {
+        "view": "calls",
+        "at": 4
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "matches(2, 3): 'b' must take exactly one letter, but it can't match 'a': ✗.",
+      "ko": "matches(2, 3): 'b' 조각은 정확히 한 글자를 맞춰야 하는데 글자 'a'에 맞지 않습니다: ✗."
+     },
+     "views": {
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "aaab ~ a*ab"
+        },
+        {
+         "id": 1,
+         "value": "aaab ~ ab"
+        },
+        {
+         "id": 2,
+         "value": "aab ~ b"
+        },
+        {
+         "id": 3,
+         "value": "aab ~ a*ab"
+        },
+        {
+         "id": 4,
+         "value": "aab ~ ab"
+        },
+        {
+         "id": 5,
+         "value": "ab ~ b"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "a* → ∅"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "a → a"
+        },
+        {
+         "from": 0,
+         "to": 3,
+         "label": "a* → a"
+        },
+        {
+         "from": 3,
+         "to": 4,
+         "label": "a* → ∅"
+        },
+        {
+         "from": 4,
+         "to": 5,
+         "label": "a → a"
+        }
+       ],
+       "nodeMarks": {
+        "bad": [
+         5
+        ],
+        "lit": [
+         5
+        ]
+       },
+       "shade": [
+        0,
+        3,
+        4,
+        5
+       ],
+       "tags": [
+        [
+         2,
+         "✗"
+        ],
+        [
+         1,
+         "✗"
+        ],
+        [
+         5,
+         "✗"
+        ]
+       ]
+      },
+      "memo": {
+       "cells": [
+        [
+         "",
+         "a",
+         "*",
+         "a",
+         "b",
+         "∅"
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         "F",
+         " ",
+         " "
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         " ",
+         "F",
+         " "
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         " ",
+         "F",
+         " "
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "∅",
+         " ",
+         " ",
+         " ",
+         " ",
+         " "
+        ]
+       ],
+       "marks": {
+        "bad": [
+         [
+          3,
+          4
+         ]
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": 4
+       },
+       "to": {
+        "view": "calls",
+        "at": 5
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 5
+       },
+       "to": {
+        "view": "memo",
+        "at": [
+         3,
+         4
+        ]
+       },
+       "value": "✗"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "matches(1, 2) passes on what the rest returned: ✗.",
+      "ko": "matches(1, 2): 나머지의 결과를 그대로 돌려줍니다: ✗."
+     },
+     "views": {
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "aaab ~ a*ab"
+        },
+        {
+         "id": 1,
+         "value": "aaab ~ ab"
+        },
+        {
+         "id": 2,
+         "value": "aab ~ b"
+        },
+        {
+         "id": 3,
+         "value": "aab ~ a*ab"
+        },
+        {
+         "id": 4,
+         "value": "aab ~ ab"
+        },
+        {
+         "id": 5,
+         "value": "ab ~ b"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "a* → ∅"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "a → a"
+        },
+        {
+         "from": 0,
+         "to": 3,
+         "label": "a* → a"
+        },
+        {
+         "from": 3,
+         "to": 4,
+         "label": "a* → ∅"
+        },
+        {
+         "from": 4,
+         "to": 5,
+         "label": "a → a"
+        }
+       ],
+       "nodeMarks": {
+        "bad": [
+         4
+        ],
+        "lit": [
+         4
+        ]
+       },
+       "shade": [
+        0,
+        3,
+        4
+       ],
+       "tags": [
+        [
+         2,
+         "✗"
+        ],
+        [
+         1,
+         "✗"
+        ],
+        [
+         5,
+         "✗"
+        ],
+        [
+         4,
+         "✗"
+        ]
+       ]
+      },
+      "memo": {
+       "cells": [
+        [
+         "",
+         "a",
+         "*",
+         "a",
+         "b",
+         "∅"
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         "F",
+         " ",
+         " "
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         "F",
+         "F",
+         " "
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         " ",
+         "F",
+         " "
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "∅",
+         " ",
+         " ",
+         " ",
+         " ",
+         " "
+        ]
+       ],
+       "marks": {
+        "bad": [
+         [
+          2,
+          3
+         ]
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": 5
+       },
+       "to": {
+        "view": "calls",
+        "at": 4
+       },
+       "value": "✗"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 4
+       },
+       "to": {
+        "view": "memo",
+        "at": [
+         2,
+         3
+        ]
+       },
+       "value": "✗"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "matches(1, 0): skipping failed, but 'a*' can take 'a' and stay for the next letter.",
+      "ko": "matches(1, 0): 건너뛰기는 실패했지만 'a*' 조각은 글자 'a' 하나를 먹고 그대로 남을 수 있습니다."
+     },
+     "views": {
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "aaab ~ a*ab"
+        },
+        {
+         "id": 1,
+         "value": "aaab ~ ab"
+        },
+        {
+         "id": 2,
+         "value": "aab ~ b"
+        },
+        {
+         "id": 3,
+         "value": "aab ~ a*ab"
+        },
+        {
+         "id": 4,
+         "value": "aab ~ ab"
+        },
+        {
+         "id": 5,
+         "value": "ab ~ b"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "a* → ∅"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "a → a"
+        },
+        {
+         "from": 0,
+         "to": 3,
+         "label": "a* → a"
+        },
+        {
+         "from": 3,
+         "to": 4,
+         "label": "a* → ∅"
+        },
+        {
+         "from": 4,
+         "to": 5,
+         "label": "a → a"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         3
+        ]
+       },
+       "shade": [
+        0,
+        3
+       ],
+       "tags": [
+        [
+         2,
+         "✗"
+        ],
+        [
+         1,
+         "✗"
+        ],
+        [
+         5,
+         "✗"
+        ],
+        [
+         4,
+         "✗"
+        ]
+       ]
+      },
+      "memo": {
+       "cells": [
+        [
+         "",
+         "a",
+         "*",
+         "a",
+         "b",
+         "∅"
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         "F",
+         " ",
+         " "
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         "F",
+         "F",
+         " "
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         " ",
+         "F",
+         " "
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "∅",
+         " ",
+         " ",
+         " ",
+         " ",
+         " "
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          2,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "matches(2, 0): \"ab\" against \"a*ab\". 'a*' may match nothing, so first try skipping it.",
+      "ko": "matches(2, 0): \"ab\" 대 \"a*ab\". 'a*' 조각은 아무것도 맞추지 않을 수 있으므로 먼저 건너뛰어 봅니다."
+     },
+     "views": {
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "aaab ~ a*ab"
+        },
+        {
+         "id": 1,
+         "value": "aaab ~ ab"
+        },
+        {
+         "id": 2,
+         "value": "aab ~ b"
+        },
+        {
+         "id": 3,
+         "value": "aab ~ a*ab"
+        },
+        {
+         "id": 4,
+         "value": "aab ~ ab"
+        },
+        {
+         "id": 5,
+         "value": "ab ~ b"
+        },
+        {
+         "id": 6,
+         "value": "ab ~ a*ab"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "a* → ∅"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "a → a"
+        },
+        {
+         "from": 0,
+         "to": 3,
+         "label": "a* → a"
+        },
+        {
+         "from": 3,
+         "to": 4,
+         "label": "a* → ∅"
+        },
+        {
+         "from": 4,
+         "to": 5,
+         "label": "a → a"
+        },
+        {
+         "from": 3,
+         "to": 6,
+         "label": "a* → a"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         6
+        ]
+       },
+       "shade": [
+        0,
+        3,
+        6
+       ],
+       "tags": [
+        [
+         2,
+         "✗"
+        ],
+        [
+         1,
+         "✗"
+        ],
+        [
+         5,
+         "✗"
+        ],
+        [
+         4,
+         "✗"
+        ]
+       ]
+      },
+      "memo": {
+       "cells": [
+        [
+         "",
+         "a",
+         "*",
+         "a",
+         "b",
+         "∅"
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         "F",
+         " ",
+         " "
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         "F",
+         "F",
+         " "
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         " ",
+         "F",
+         " "
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "∅",
+         " ",
+         " ",
+         " ",
+         " ",
+         " "
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          0,
+          2
+         ]
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": 3
+       },
+       "to": {
+        "view": "calls",
+        "at": 6
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "matches(2, 2): 'a' matches 'a', so move on in both.",
+      "ko": "matches(2, 2): 'a' 조각이 글자 'a'에 맞으므로 둘 다 한 칸씩 나아갑니다."
+     },
+     "views": {
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "aaab ~ a*ab"
+        },
+        {
+         "id": 1,
+         "value": "aaab ~ ab"
+        },
+        {
+         "id": 2,
+         "value": "aab ~ b"
+        },
+        {
+         "id": 3,
+         "value": "aab ~ a*ab"
+        },
+        {
+         "id": 4,
+         "value": "aab ~ ab"
+        },
+        {
+         "id": 5,
+         "value": "ab ~ b"
+        },
+        {
+         "id": 6,
+         "value": "ab ~ a*ab"
+        },
+        {
+         "id": 7,
+         "value": "ab ~ ab"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "a* → ∅"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "a → a"
+        },
+        {
+         "from": 0,
+         "to": 3,
+         "label": "a* → a"
+        },
+        {
+         "from": 3,
+         "to": 4,
+         "label": "a* → ∅"
+        },
+        {
+         "from": 4,
+         "to": 5,
+         "label": "a → a"
+        },
+        {
+         "from": 3,
+         "to": 6,
+         "label": "a* → a"
+        },
+        {
+         "from": 6,
+         "to": 7,
+         "label": "a* → ∅"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         7
+        ]
+       },
+       "shade": [
+        0,
+        3,
+        6,
+        7
+       ],
+       "tags": [
+        [
+         2,
+         "✗"
+        ],
+        [
+         1,
+         "✗"
+        ],
+        [
+         5,
+         "✗"
+        ],
+        [
+         4,
+         "✗"
+        ]
+       ]
+      },
+      "memo": {
+       "cells": [
+        [
+         "",
+         "a",
+         "*",
+         "a",
+         "b",
+         "∅"
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         "F",
+         " ",
+         " "
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         "F",
+         "F",
+         " "
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         " ",
+         "F",
+         " "
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "∅",
+         " ",
+         " ",
+         " ",
+         " ",
+         " "
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          0,
+          3
+         ]
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": 6
+       },
+       "to": {
+        "view": "calls",
+        "at": 7
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "matches(3, 3): 'b' matches 'b', so move on in both.",
+      "ko": "matches(3, 3): 'b' 조각이 글자 'b'에 맞으므로 둘 다 한 칸씩 나아갑니다."
+     },
+     "views": {
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "aaab ~ a*ab"
+        },
+        {
+         "id": 1,
+         "value": "aaab ~ ab"
+        },
+        {
+         "id": 2,
+         "value": "aab ~ b"
+        },
+        {
+         "id": 3,
+         "value": "aab ~ a*ab"
+        },
+        {
+         "id": 4,
+         "value": "aab ~ ab"
+        },
+        {
+         "id": 5,
+         "value": "ab ~ b"
+        },
+        {
+         "id": 6,
+         "value": "ab ~ a*ab"
+        },
+        {
+         "id": 7,
+         "value": "ab ~ ab"
+        },
+        {
+         "id": 8,
+         "value": "b ~ b"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "a* → ∅"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "a → a"
+        },
+        {
+         "from": 0,
+         "to": 3,
+         "label": "a* → a"
+        },
+        {
+         "from": 3,
+         "to": 4,
+         "label": "a* → ∅"
+        },
+        {
+         "from": 4,
+         "to": 5,
+         "label": "a → a"
+        },
+        {
+         "from": 3,
+         "to": 6,
+         "label": "a* → a"
+        },
+        {
+         "from": 6,
+         "to": 7,
+         "label": "a* → ∅"
+        },
+        {
+         "from": 7,
+         "to": 8,
+         "label": "a → a"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         8
+        ]
+       },
+       "shade": [
+        0,
+        3,
+        6,
+        7,
+        8
+       ],
+       "tags": [
+        [
+         2,
+         "✗"
+        ],
+        [
+         1,
+         "✗"
+        ],
+        [
+         5,
+         "✗"
+        ],
+        [
+         4,
+         "✗"
+        ]
+       ]
+      },
+      "memo": {
+       "cells": [
+        [
+         "",
+         "a",
+         "*",
+         "a",
+         "b",
+         "∅"
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         "F",
+         " ",
+         " "
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         "F",
+         "F",
+         " "
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         " ",
+         "F",
+         " "
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "∅",
+         " ",
+         " ",
+         " ",
+         " ",
+         " "
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          4,
+          0
+         ],
+         [
+          0,
+          4
+         ]
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": 7
+       },
+       "to": {
+        "view": "calls",
+        "at": 8
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "matches(4, 4): the pattern and s are both used up, so they match: ✓.",
+      "ko": "matches(4, 4): 패턴과 s를 모두 다 썼으므로 맞습니다: ✓."
+     },
+     "views": {
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "aaab ~ a*ab"
+        },
+        {
+         "id": 1,
+         "value": "aaab ~ ab"
+        },
+        {
+         "id": 2,
+         "value": "aab ~ b"
+        },
+        {
+         "id": 3,
+         "value": "aab ~ a*ab"
+        },
+        {
+         "id": 4,
+         "value": "aab ~ ab"
+        },
+        {
+         "id": 5,
+         "value": "ab ~ b"
+        },
+        {
+         "id": 6,
+         "value": "ab ~ a*ab"
+        },
+        {
+         "id": 7,
+         "value": "ab ~ ab"
+        },
+        {
+         "id": 8,
+         "value": "b ~ b"
+        },
+        {
+         "id": 9,
+         "value": "∅ ~ ∅"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "a* → ∅"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "a → a"
+        },
+        {
+         "from": 0,
+         "to": 3,
+         "label": "a* → a"
+        },
+        {
+         "from": 3,
+         "to": 4,
+         "label": "a* → ∅"
+        },
+        {
+         "from": 4,
+         "to": 5,
+         "label": "a → a"
+        },
+        {
+         "from": 3,
+         "to": 6,
+         "label": "a* → a"
+        },
+        {
+         "from": 6,
+         "to": 7,
+         "label": "a* → ∅"
+        },
+        {
+         "from": 7,
+         "to": 8,
+         "label": "a → a"
+        },
+        {
+         "from": 8,
+         "to": 9,
+         "label": "b → b"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         9
+        ],
+        "lit": [
+         9
+        ]
+       },
+       "shade": [
+        0,
+        3,
+        6,
+        7,
+        8,
+        9
+       ],
+       "tags": [
+        [
+         2,
+         "✗"
+        ],
+        [
+         1,
+         "✗"
+        ],
+        [
+         5,
+         "✗"
+        ],
+        [
+         4,
+         "✗"
+        ],
+        [
+         9,
+         "✓"
+        ]
+       ]
+      },
+      "memo": {
+       "cells": [
+        [
+         "",
+         "a",
+         "*",
+         "a",
+         "b",
+         "∅"
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         "F",
+         " ",
+         " "
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         "F",
+         "F",
+         " "
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         " ",
+         "F",
+         " "
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "∅",
+         " ",
+         " ",
+         " ",
+         " ",
+         "T"
+        ]
+       ],
+       "marks": {
+        "good": [
+         [
+          5,
+          5
+         ]
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": 8
+       },
+       "to": {
+        "view": "calls",
+        "at": 9
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 9
+       },
+       "to": {
+        "view": "memo",
+        "at": [
+         5,
+         5
+        ]
+       },
+       "value": "✓"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "matches(3, 3) passes on what the rest returned: ✓.",
+      "ko": "matches(3, 3): 나머지의 결과를 그대로 돌려줍니다: ✓."
+     },
+     "views": {
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "aaab ~ a*ab"
+        },
+        {
+         "id": 1,
+         "value": "aaab ~ ab"
+        },
+        {
+         "id": 2,
+         "value": "aab ~ b"
+        },
+        {
+         "id": 3,
+         "value": "aab ~ a*ab"
+        },
+        {
+         "id": 4,
+         "value": "aab ~ ab"
+        },
+        {
+         "id": 5,
+         "value": "ab ~ b"
+        },
+        {
+         "id": 6,
+         "value": "ab ~ a*ab"
+        },
+        {
+         "id": 7,
+         "value": "ab ~ ab"
+        },
+        {
+         "id": 8,
+         "value": "b ~ b"
+        },
+        {
+         "id": 9,
+         "value": "∅ ~ ∅"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "a* → ∅"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "a → a"
+        },
+        {
+         "from": 0,
+         "to": 3,
+         "label": "a* → a"
+        },
+        {
+         "from": 3,
+         "to": 4,
+         "label": "a* → ∅"
+        },
+        {
+         "from": 4,
+         "to": 5,
+         "label": "a → a"
+        },
+        {
+         "from": 3,
+         "to": 6,
+         "label": "a* → a"
+        },
+        {
+         "from": 6,
+         "to": 7,
+         "label": "a* → ∅"
+        },
+        {
+         "from": 7,
+         "to": 8,
+         "label": "a → a"
+        },
+        {
+         "from": 8,
+         "to": 9,
+         "label": "b → b"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         8
+        ],
+        "lit": [
+         8
+        ]
+       },
+       "shade": [
+        0,
+        3,
+        6,
+        7,
+        8
+       ],
+       "tags": [
+        [
+         2,
+         "✗"
+        ],
+        [
+         1,
+         "✗"
+        ],
+        [
+         5,
+         "✗"
+        ],
+        [
+         4,
+         "✗"
+        ],
+        [
+         9,
+         "✓"
+        ],
+        [
+         8,
+         "✓"
+        ]
+       ]
+      },
+      "memo": {
+       "cells": [
+        [
+         "",
+         "a",
+         "*",
+         "a",
+         "b",
+         "∅"
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         "F",
+         " ",
+         " "
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         "F",
+         "F",
+         " "
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         " ",
+         "F",
+         " "
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         " ",
+         "T",
+         " "
+        ],
+        [
+         "∅",
+         " ",
+         " ",
+         " ",
+         " ",
+         "T"
+        ]
+       ],
+       "marks": {
+        "good": [
+         [
+          4,
+          4
+         ]
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": 9
+       },
+       "to": {
+        "view": "calls",
+        "at": 8
+       },
+       "value": "✓"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 8
+       },
+       "to": {
+        "view": "memo",
+        "at": [
+         4,
+         4
+        ]
+       },
+       "value": "✓"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "matches(2, 2) passes on what the rest returned: ✓.",
+      "ko": "matches(2, 2): 나머지의 결과를 그대로 돌려줍니다: ✓."
+     },
+     "views": {
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "aaab ~ a*ab"
+        },
+        {
+         "id": 1,
+         "value": "aaab ~ ab"
+        },
+        {
+         "id": 2,
+         "value": "aab ~ b"
+        },
+        {
+         "id": 3,
+         "value": "aab ~ a*ab"
+        },
+        {
+         "id": 4,
+         "value": "aab ~ ab"
+        },
+        {
+         "id": 5,
+         "value": "ab ~ b"
+        },
+        {
+         "id": 6,
+         "value": "ab ~ a*ab"
+        },
+        {
+         "id": 7,
+         "value": "ab ~ ab"
+        },
+        {
+         "id": 8,
+         "value": "b ~ b"
+        },
+        {
+         "id": 9,
+         "value": "∅ ~ ∅"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "a* → ∅"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "a → a"
+        },
+        {
+         "from": 0,
+         "to": 3,
+         "label": "a* → a"
+        },
+        {
+         "from": 3,
+         "to": 4,
+         "label": "a* → ∅"
+        },
+        {
+         "from": 4,
+         "to": 5,
+         "label": "a → a"
+        },
+        {
+         "from": 3,
+         "to": 6,
+         "label": "a* → a"
+        },
+        {
+         "from": 6,
+         "to": 7,
+         "label": "a* → ∅"
+        },
+        {
+         "from": 7,
+         "to": 8,
+         "label": "a → a"
+        },
+        {
+         "from": 8,
+         "to": 9,
+         "label": "b → b"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         7
+        ],
+        "lit": [
+         7
+        ]
+       },
+       "shade": [
+        0,
+        3,
+        6,
+        7
+       ],
+       "tags": [
+        [
+         2,
+         "✗"
+        ],
+        [
+         1,
+         "✗"
+        ],
+        [
+         5,
+         "✗"
+        ],
+        [
+         4,
+         "✗"
+        ],
+        [
+         9,
+         "✓"
+        ],
+        [
+         8,
+         "✓"
+        ],
+        [
+         7,
+         "✓"
+        ]
+       ]
+      },
+      "memo": {
+       "cells": [
+        [
+         "",
+         "a",
+         "*",
+         "a",
+         "b",
+         "∅"
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         "F",
+         " ",
+         " "
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         "F",
+         "F",
+         " "
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         "T",
+         "F",
+         " "
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         " ",
+         "T",
+         " "
+        ],
+        [
+         "∅",
+         " ",
+         " ",
+         " ",
+         " ",
+         "T"
+        ]
+       ],
+       "marks": {
+        "good": [
+         [
+          3,
+          3
+         ]
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": 8
+       },
+       "to": {
+        "view": "calls",
+        "at": 7
+       },
+       "value": "✓"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 7
+       },
+       "to": {
+        "view": "memo",
+        "at": [
+         3,
+         3
+        ]
+       },
+       "value": "✓"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "matches(2, 0): skipping 'a*' worked: ✓.",
+      "ko": "matches(2, 0): 'a*' 조각을 건너뛰니 맞았습니다: ✓."
+     },
+     "views": {
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "aaab ~ a*ab"
+        },
+        {
+         "id": 1,
+         "value": "aaab ~ ab"
+        },
+        {
+         "id": 2,
+         "value": "aab ~ b"
+        },
+        {
+         "id": 3,
+         "value": "aab ~ a*ab"
+        },
+        {
+         "id": 4,
+         "value": "aab ~ ab"
+        },
+        {
+         "id": 5,
+         "value": "ab ~ b"
+        },
+        {
+         "id": 6,
+         "value": "ab ~ a*ab"
+        },
+        {
+         "id": 7,
+         "value": "ab ~ ab"
+        },
+        {
+         "id": 8,
+         "value": "b ~ b"
+        },
+        {
+         "id": 9,
+         "value": "∅ ~ ∅"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "a* → ∅"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "a → a"
+        },
+        {
+         "from": 0,
+         "to": 3,
+         "label": "a* → a"
+        },
+        {
+         "from": 3,
+         "to": 4,
+         "label": "a* → ∅"
+        },
+        {
+         "from": 4,
+         "to": 5,
+         "label": "a → a"
+        },
+        {
+         "from": 3,
+         "to": 6,
+         "label": "a* → a"
+        },
+        {
+         "from": 6,
+         "to": 7,
+         "label": "a* → ∅"
+        },
+        {
+         "from": 7,
+         "to": 8,
+         "label": "a → a"
+        },
+        {
+         "from": 8,
+         "to": 9,
+         "label": "b → b"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         6
+        ],
+        "lit": [
+         6
+        ]
+       },
+       "shade": [
+        0,
+        3,
+        6
+       ],
+       "tags": [
+        [
+         2,
+         "✗"
+        ],
+        [
+         1,
+         "✗"
+        ],
+        [
+         5,
+         "✗"
+        ],
+        [
+         4,
+         "✗"
+        ],
+        [
+         9,
+         "✓"
+        ],
+        [
+         8,
+         "✓"
+        ],
+        [
+         7,
+         "✓"
+        ],
+        [
+         6,
+         "✓"
+        ]
+       ]
+      },
+      "memo": {
+       "cells": [
+        [
+         "",
+         "a",
+         "*",
+         "a",
+         "b",
+         "∅"
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         "F",
+         " ",
+         " "
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         "F",
+         "F",
+         " "
+        ],
+        [
+         "a",
+         "T",
+         " ",
+         "T",
+         "F",
+         " "
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         " ",
+         "T",
+         " "
+        ],
+        [
+         "∅",
+         " ",
+         " ",
+         " ",
+         " ",
+         "T"
+        ]
+       ],
+       "marks": {
+        "good": [
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": 7
+       },
+       "to": {
+        "view": "calls",
+        "at": 6
+       },
+       "value": "✓"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 6
+       },
+       "to": {
+        "view": "memo",
+        "at": [
+         3,
+         1
+        ]
+       },
+       "value": "✓"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "matches(1, 0) takes its answer from 'a*' taking 'a': ✓.",
+      "ko": "matches(1, 0)의 답은 'a*' 조각이 글자 'a' 하나를 먹은 결과입니다: ✓."
+     },
+     "views": {
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "aaab ~ a*ab"
+        },
+        {
+         "id": 1,
+         "value": "aaab ~ ab"
+        },
+        {
+         "id": 2,
+         "value": "aab ~ b"
+        },
+        {
+         "id": 3,
+         "value": "aab ~ a*ab"
+        },
+        {
+         "id": 4,
+         "value": "aab ~ ab"
+        },
+        {
+         "id": 5,
+         "value": "ab ~ b"
+        },
+        {
+         "id": 6,
+         "value": "ab ~ a*ab"
+        },
+        {
+         "id": 7,
+         "value": "ab ~ ab"
+        },
+        {
+         "id": 8,
+         "value": "b ~ b"
+        },
+        {
+         "id": 9,
+         "value": "∅ ~ ∅"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "a* → ∅"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "a → a"
+        },
+        {
+         "from": 0,
+         "to": 3,
+         "label": "a* → a"
+        },
+        {
+         "from": 3,
+         "to": 4,
+         "label": "a* → ∅"
+        },
+        {
+         "from": 4,
+         "to": 5,
+         "label": "a → a"
+        },
+        {
+         "from": 3,
+         "to": 6,
+         "label": "a* → a"
+        },
+        {
+         "from": 6,
+         "to": 7,
+         "label": "a* → ∅"
+        },
+        {
+         "from": 7,
+         "to": 8,
+         "label": "a → a"
+        },
+        {
+         "from": 8,
+         "to": 9,
+         "label": "b → b"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         3
+        ],
+        "lit": [
+         3
+        ]
+       },
+       "shade": [
+        0,
+        3
+       ],
+       "tags": [
+        [
+         2,
+         "✗"
+        ],
+        [
+         1,
+         "✗"
+        ],
+        [
+         5,
+         "✗"
+        ],
+        [
+         4,
+         "✗"
+        ],
+        [
+         9,
+         "✓"
+        ],
+        [
+         8,
+         "✓"
+        ],
+        [
+         7,
+         "✓"
+        ],
+        [
+         6,
+         "✓"
+        ],
+        [
+         3,
+         "✓"
+        ]
+       ]
+      },
+      "memo": {
+       "cells": [
+        [
+         "",
+         "a",
+         "*",
+         "a",
+         "b",
+         "∅"
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         "F",
+         " ",
+         " "
+        ],
+        [
+         "a",
+         "T",
+         " ",
+         "F",
+         "F",
+         " "
+        ],
+        [
+         "a",
+         "T",
+         " ",
+         "T",
+         "F",
+         " "
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         " ",
+         "T",
+         " "
+        ],
+        [
+         "∅",
+         " ",
+         " ",
+         " ",
+         " ",
+         "T"
+        ]
+       ],
+       "marks": {
+        "good": [
+         [
+          2,
+          1
+         ]
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": 6
+       },
+       "to": {
+        "view": "calls",
+        "at": 3
+       },
+       "value": "✓"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 3
+       },
+       "to": {
+        "view": "memo",
+        "at": [
+         2,
+         1
+        ]
+       },
+       "value": "✓"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "matches(0, 0) takes its answer from 'a*' taking 'a': ✓.",
+      "ko": "matches(0, 0)의 답은 'a*' 조각이 글자 'a' 하나를 먹은 결과입니다: ✓."
+     },
+     "views": {
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "aaab ~ a*ab"
+        },
+        {
+         "id": 1,
+         "value": "aaab ~ ab"
+        },
+        {
+         "id": 2,
+         "value": "aab ~ b"
+        },
+        {
+         "id": 3,
+         "value": "aab ~ a*ab"
+        },
+        {
+         "id": 4,
+         "value": "aab ~ ab"
+        },
+        {
+         "id": 5,
+         "value": "ab ~ b"
+        },
+        {
+         "id": 6,
+         "value": "ab ~ a*ab"
+        },
+        {
+         "id": 7,
+         "value": "ab ~ ab"
+        },
+        {
+         "id": 8,
+         "value": "b ~ b"
+        },
+        {
+         "id": 9,
+         "value": "∅ ~ ∅"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "a* → ∅"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "a → a"
+        },
+        {
+         "from": 0,
+         "to": 3,
+         "label": "a* → a"
+        },
+        {
+         "from": 3,
+         "to": 4,
+         "label": "a* → ∅"
+        },
+        {
+         "from": 4,
+         "to": 5,
+         "label": "a → a"
+        },
+        {
+         "from": 3,
+         "to": 6,
+         "label": "a* → a"
+        },
+        {
+         "from": 6,
+         "to": 7,
+         "label": "a* → ∅"
+        },
+        {
+         "from": 7,
+         "to": 8,
+         "label": "a → a"
+        },
+        {
+         "from": 8,
+         "to": 9,
+         "label": "b → b"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ],
+        "lit": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ],
+       "tags": [
+        [
+         2,
+         "✗"
+        ],
+        [
+         1,
+         "✗"
+        ],
+        [
+         5,
+         "✗"
+        ],
+        [
+         4,
+         "✗"
+        ],
+        [
+         9,
+         "✓"
+        ],
+        [
+         8,
+         "✓"
+        ],
+        [
+         7,
+         "✓"
+        ],
+        [
+         6,
+         "✓"
+        ],
+        [
+         3,
+         "✓"
+        ],
+        [
+         0,
+         "✓"
+        ]
+       ]
+      },
+      "memo": {
+       "cells": [
+        [
+         "",
+         "a",
+         "*",
+         "a",
+         "b",
+         "∅"
+        ],
+        [
+         "a",
+         "T",
+         " ",
+         "F",
+         " ",
+         " "
+        ],
+        [
+         "a",
+         "T",
+         " ",
+         "F",
+         "F",
+         " "
+        ],
+        [
+         "a",
+         "T",
+         " ",
+         "T",
+         "F",
+         " "
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         " ",
+         "T",
+         " "
+        ],
+        [
+         "∅",
+         " ",
+         " ",
+         " ",
+         " ",
+         "T"
+        ]
+       ],
+       "marks": {
+        "good": [
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": 3
+       },
+       "to": {
+        "view": "calls",
+        "at": 0
+       },
+       "value": "✓"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 0
+       },
+       "to": {
+        "view": "memo",
+        "at": [
+         1,
+         1
+        ]
+       },
+       "value": "✓"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "matches(0, 0) is ✓: the pattern matches all of s. Answer: true.",
+      "ko": "matches(0, 0)의 결과가 ✓이므로 패턴이 s 전체와 맞습니다. 답은 true입니다."
+     },
+     "views": {
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "aaab ~ a*ab"
+        },
+        {
+         "id": 1,
+         "value": "aaab ~ ab"
+        },
+        {
+         "id": 2,
+         "value": "aab ~ b"
+        },
+        {
+         "id": 3,
+         "value": "aab ~ a*ab"
+        },
+        {
+         "id": 4,
+         "value": "aab ~ ab"
+        },
+        {
+         "id": 5,
+         "value": "ab ~ b"
+        },
+        {
+         "id": 6,
+         "value": "ab ~ a*ab"
+        },
+        {
+         "id": 7,
+         "value": "ab ~ ab"
+        },
+        {
+         "id": 8,
+         "value": "b ~ b"
+        },
+        {
+         "id": 9,
+         "value": "∅ ~ ∅"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "a* → ∅"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "a → a"
+        },
+        {
+         "from": 0,
+         "to": 3,
+         "label": "a* → a"
+        },
+        {
+         "from": 3,
+         "to": 4,
+         "label": "a* → ∅"
+        },
+        {
+         "from": 4,
+         "to": 5,
+         "label": "a → a"
+        },
+        {
+         "from": 3,
+         "to": 6,
+         "label": "a* → a"
+        },
+        {
+         "from": 6,
+         "to": 7,
+         "label": "a* → ∅"
+        },
+        {
+         "from": 7,
+         "to": 8,
+         "label": "a → a"
+        },
+        {
+         "from": 8,
+         "to": 9,
+         "label": "b → b"
+        }
+       ],
+       "nodeMarks": {
+        "path": [
+         0,
+         3,
+         6,
+         7,
+         8,
+         9
+        ]
+       },
+       "shade": [],
+       "tags": [
+        [
+         2,
+         "✗"
+        ],
+        [
+         1,
+         "✗"
+        ],
+        [
+         5,
+         "✗"
+        ],
+        [
+         4,
+         "✗"
+        ],
+        [
+         9,
+         "✓"
+        ],
+        [
+         8,
+         "✓"
+        ],
+        [
+         7,
+         "✓"
+        ],
+        [
+         6,
+         "✓"
+        ],
+        [
+         3,
+         "✓"
+        ],
+        [
+         0,
+         "✓"
+        ]
+       ]
+      },
+      "memo": {
+       "cells": [
+        [
+         "",
+         "a",
+         "*",
+         "a",
+         "b",
+         "∅"
+        ],
+        [
+         "a",
+         "T",
+         " ",
+         "F",
+         " ",
+         " "
+        ],
+        [
+         "a",
+         "T",
+         " ",
+         "F",
+         "F",
+         " "
+        ],
+        [
+         "a",
+         "T",
+         " ",
+         "T",
+         "F",
+         " "
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         " ",
+         "T",
+         " "
+        ],
+        [
+         "∅",
+         " ",
+         " ",
+         " ",
+         " ",
+         "T"
+        ]
+       ],
+       "marks": {
+        "path": [
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          3,
+          3
+         ],
+         [
+          4,
+          4
+         ],
+         [
+          5,
+          5
+         ]
+        ]
+       }
+      }
+     },
+     "answer": "true"
+    }
+   ],
+   "sampleInput": "aaab\na*ab"
+  }
+ ]
+}
