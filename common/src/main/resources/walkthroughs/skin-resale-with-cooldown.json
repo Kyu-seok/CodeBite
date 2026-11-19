@@ -1,0 +1,1775 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Skin Resale With Cooldown",
+  "ko": "쿨다운이 있는 스킨 되팔기"
+ },
+ "approach": {
+  "en": "Carry three best profits through the days: hold (a copy in hand), sold (sold today) and rest (free to buy). Hold keeps its copy or buys from rest; sold sells the copy held; rest comes from yesterday's rest or sale, so the day after a sale can't buy: the cooldown.",
+  "ko": "날마다 세 가지 최대 이익을 이어 갑니다: hold(스킨을 들고 있음), sold(오늘 팖), rest(쉬는 중이라 살 수 있음). hold는 그대로 들거나 rest에서 사고, sold는 들고 있던 것을 팔며, rest는 어제의 rest나 sold에서 오므로 판 다음 날은 살 수 없습니다(쿨다운)."
+ },
+ "views": [
+  {
+   "id": "table",
+   "type": "grid",
+   "title": {
+    "en": "best profit by state (rows) after each day (columns, price on top)",
+    "ko": "상태별(행) 최대 이익, 날짜별(열, 위는 가격)"
+   },
+   "values": {
+    "hold": {
+     "tone": "a"
+    },
+    "sold": {
+     "tone": "a"
+    },
+    "rest": {
+     "tone": "a"
+    },
+    "$1": {
+     "tone": "b",
+     "glyph": "1"
+    },
+    "$2": {
+     "tone": "b",
+     "glyph": "2"
+    },
+    "$3": {
+     "tone": "b",
+     "glyph": "3"
+    },
+    "$4": {
+     "tone": "b",
+     "glyph": "4"
+    },
+    "$5": {
+     "tone": "b",
+     "glyph": "5"
+    },
+    "$6": {
+     "tone": "b",
+     "glyph": "6"
+    },
+    "$8": {
+     "tone": "b",
+     "glyph": "8"
+    },
+    "$9": {
+     "tone": "b",
+     "glyph": "9"
+    },
+    "start": {
+     "tone": "a"
+    },
+    "": {
+     "glyph": "",
+     "tone": "plain"
+    },
+    " ": {
+     "glyph": "",
+     "tone": "empty"
+    }
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "prices = [3,8,5,1,6]",
+   "expected": "10",
+   "frames": [
+    {
+     "caption": {
+      "en": "Before day 0: no copy can be held yet (hold −∞), and nothing is sold, so sold and rest are 0.",
+      "ko": "0일 전: 아직 스킨을 들 수 없으므로 hold는 −∞, 판 것도 없으므로 sold와 rest는 0입니다."
+     },
+     "views": {
+      "table": {
+       "cells": [
+        [
+         "",
+         "start",
+         "$3",
+         "$8",
+         "$5",
+         "$1",
+         "$6"
+        ],
+        [
+         "hold",
+         "−∞",
+         " ",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "sold",
+         0,
+         " ",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "rest",
+         0,
+         " ",
+         " ",
+         " ",
+         " ",
+         " "
+        ]
+       ],
+       "marks": {
+        "good": [
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Day 0, price 3: hold = max(−∞, 0 − 3) = -3 (buy at 3); sold = −∞ + 3 = −∞; rest = max(0, 0) = 0.",
+      "ko": "0일, 가격 3: hold = max(−∞, 0 − 3) = -3(3에 사기), sold = −∞ + 3 = −∞, rest = max(0, 0) = 0입니다."
+     },
+     "views": {
+      "table": {
+       "cells": [
+        [
+         "",
+         "start",
+         "$3",
+         "$8",
+         "$5",
+         "$1",
+         "$6"
+        ],
+        [
+         "hold",
+         "−∞",
+         -3,
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "sold",
+         0,
+         "−∞",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "rest",
+         0,
+         0,
+         " ",
+         " ",
+         " ",
+         " "
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          0,
+          2
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          1
+         ]
+        ],
+        "good": [
+         [
+          1,
+          2
+         ],
+         [
+          2,
+          2
+         ],
+         [
+          3,
+          2
+         ]
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "table",
+        "at": [
+         3,
+         1
+        ]
+       },
+       "to": {
+        "view": "table",
+        "at": [
+         1,
+         2
+        ]
+       },
+       "value": "0−3"
+      },
+      {
+       "from": {
+        "view": "table",
+        "at": [
+         1,
+         1
+        ]
+       },
+       "to": {
+        "view": "table",
+        "at": [
+         2,
+         2
+        ]
+       },
+       "value": "−∞+3"
+      },
+      {
+       "from": {
+        "view": "table",
+        "at": [
+         3,
+         1
+        ]
+       },
+       "to": {
+        "view": "table",
+        "at": [
+         3,
+         2
+        ]
+       },
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Day 1, price 8: hold = max(-3, 0 − 8) = -3 (keep holding); sold = -3 + 8 = 5; rest = max(0, −∞) = 0.",
+      "ko": "1일, 가격 8: hold = max(-3, 0 − 8) = -3(계속 들기), sold = -3 + 8 = 5, rest = max(0, −∞) = 0입니다."
+     },
+     "views": {
+      "table": {
+       "cells": [
+        [
+         "",
+         "start",
+         "$3",
+         "$8",
+         "$5",
+         "$1",
+         "$6"
+        ],
+        [
+         "hold",
+         "−∞",
+         -3,
+         -3,
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "sold",
+         0,
+         "−∞",
+         5,
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "rest",
+         0,
+         0,
+         0,
+         " ",
+         " ",
+         " "
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          0,
+          3
+         ],
+         [
+          1,
+          2
+         ],
+         [
+          2,
+          2
+         ],
+         [
+          3,
+          2
+         ]
+        ],
+        "good": [
+         [
+          1,
+          3
+         ],
+         [
+          2,
+          3
+         ],
+         [
+          3,
+          3
+         ]
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "table",
+        "at": [
+         1,
+         2
+        ]
+       },
+       "to": {
+        "view": "table",
+        "at": [
+         1,
+         3
+        ]
+       },
+       "value": "-3"
+      },
+      {
+       "from": {
+        "view": "table",
+        "at": [
+         1,
+         2
+        ]
+       },
+       "to": {
+        "view": "table",
+        "at": [
+         2,
+         3
+        ]
+       },
+       "value": "-3+8"
+      },
+      {
+       "from": {
+        "view": "table",
+        "at": [
+         3,
+         2
+        ]
+       },
+       "to": {
+        "view": "table",
+        "at": [
+         3,
+         3
+        ]
+       },
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Day 2, price 5: hold = max(-3, 0 − 5) = -3 (keep holding); sold = -3 + 5 = 2; rest = max(0, 5) = 5.",
+      "ko": "2일, 가격 5: hold = max(-3, 0 − 5) = -3(계속 들기), sold = -3 + 5 = 2, rest = max(0, 5) = 5입니다."
+     },
+     "views": {
+      "table": {
+       "cells": [
+        [
+         "",
+         "start",
+         "$3",
+         "$8",
+         "$5",
+         "$1",
+         "$6"
+        ],
+        [
+         "hold",
+         "−∞",
+         -3,
+         -3,
+         -3,
+         " ",
+         " "
+        ],
+        [
+         "sold",
+         0,
+         "−∞",
+         5,
+         2,
+         " ",
+         " "
+        ],
+        [
+         "rest",
+         0,
+         0,
+         0,
+         5,
+         " ",
+         " "
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          0,
+          4
+         ],
+         [
+          1,
+          3
+         ],
+         [
+          2,
+          3
+         ],
+         [
+          3,
+          3
+         ]
+        ],
+        "good": [
+         [
+          1,
+          4
+         ],
+         [
+          2,
+          4
+         ],
+         [
+          3,
+          4
+         ]
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "table",
+        "at": [
+         1,
+         3
+        ]
+       },
+       "to": {
+        "view": "table",
+        "at": [
+         1,
+         4
+        ]
+       },
+       "value": "-3"
+      },
+      {
+       "from": {
+        "view": "table",
+        "at": [
+         1,
+         3
+        ]
+       },
+       "to": {
+        "view": "table",
+        "at": [
+         2,
+         4
+        ]
+       },
+       "value": "-3+5"
+      },
+      {
+       "from": {
+        "view": "table",
+        "at": [
+         2,
+         3
+        ]
+       },
+       "to": {
+        "view": "table",
+        "at": [
+         3,
+         4
+        ]
+       },
+       "value": "5"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Day 3, price 1: hold = max(-3, 5 − 1) = 4 (buy at 1); sold = -3 + 1 = -2; rest = max(5, 2) = 5.",
+      "ko": "3일, 가격 1: hold = max(-3, 5 − 1) = 4(1에 사기), sold = -3 + 1 = -2, rest = max(5, 2) = 5입니다."
+     },
+     "views": {
+      "table": {
+       "cells": [
+        [
+         "",
+         "start",
+         "$3",
+         "$8",
+         "$5",
+         "$1",
+         "$6"
+        ],
+        [
+         "hold",
+         "−∞",
+         -3,
+         -3,
+         -3,
+         4,
+         " "
+        ],
+        [
+         "sold",
+         0,
+         "−∞",
+         5,
+         2,
+         -2,
+         " "
+        ],
+        [
+         "rest",
+         0,
+         0,
+         0,
+         5,
+         5,
+         " "
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          0,
+          5
+         ],
+         [
+          1,
+          4
+         ],
+         [
+          2,
+          4
+         ],
+         [
+          3,
+          4
+         ]
+        ],
+        "good": [
+         [
+          1,
+          5
+         ],
+         [
+          2,
+          5
+         ],
+         [
+          3,
+          5
+         ]
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "table",
+        "at": [
+         3,
+         4
+        ]
+       },
+       "to": {
+        "view": "table",
+        "at": [
+         1,
+         5
+        ]
+       },
+       "value": "5−1"
+      },
+      {
+       "from": {
+        "view": "table",
+        "at": [
+         1,
+         4
+        ]
+       },
+       "to": {
+        "view": "table",
+        "at": [
+         2,
+         5
+        ]
+       },
+       "value": "-3+1"
+      },
+      {
+       "from": {
+        "view": "table",
+        "at": [
+         3,
+         4
+        ]
+       },
+       "to": {
+        "view": "table",
+        "at": [
+         3,
+         5
+        ]
+       },
+       "value": "5"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Day 4, price 6: hold = max(4, 5 − 6) = 4 (keep holding); sold = 4 + 6 = 10; rest = max(5, -2) = 5.",
+      "ko": "4일, 가격 6: hold = max(4, 5 − 6) = 4(계속 들기), sold = 4 + 6 = 10, rest = max(5, -2) = 5입니다."
+     },
+     "views": {
+      "table": {
+       "cells": [
+        [
+         "",
+         "start",
+         "$3",
+         "$8",
+         "$5",
+         "$1",
+         "$6"
+        ],
+        [
+         "hold",
+         "−∞",
+         -3,
+         -3,
+         -3,
+         4,
+         4
+        ],
+        [
+         "sold",
+         0,
+         "−∞",
+         5,
+         2,
+         -2,
+         10
+        ],
+        [
+         "rest",
+         0,
+         0,
+         0,
+         5,
+         5,
+         5
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          0,
+          6
+         ],
+         [
+          1,
+          5
+         ],
+         [
+          2,
+          5
+         ],
+         [
+          3,
+          5
+         ]
+        ],
+        "good": [
+         [
+          1,
+          6
+         ],
+         [
+          2,
+          6
+         ],
+         [
+          3,
+          6
+         ]
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "table",
+        "at": [
+         1,
+         5
+        ]
+       },
+       "to": {
+        "view": "table",
+        "at": [
+         1,
+         6
+        ]
+       },
+       "value": "4"
+      },
+      {
+       "from": {
+        "view": "table",
+        "at": [
+         1,
+         5
+        ]
+       },
+       "to": {
+        "view": "table",
+        "at": [
+         2,
+         6
+        ]
+       },
+       "value": "4+6"
+      },
+      {
+       "from": {
+        "view": "table",
+        "at": [
+         3,
+         5
+        ]
+       },
+       "to": {
+        "view": "table",
+        "at": [
+         3,
+         6
+        ]
+       },
+       "value": "5"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The answer is the best last-day profit, max(sold 10, rest 5) = 10. Walking back: buy on day 0 at 3, sell on day 1 at 8, buy on day 3 at 1, sell on day 4 at 6.",
+      "ko": "마지막 날 최대 이익은 max(sold 10, rest 5) = 10입니다. 거슬러 가면 0일 3에 사기, 1일 8에 팔기, 3일 1에 사기, 4일 6에 팔기이고, 답은 10입니다."
+     },
+     "views": {
+      "table": {
+       "cells": [
+        [
+         "",
+         "start",
+         "$3",
+         "$8",
+         "$5",
+         "$1",
+         "$6"
+        ],
+        [
+         "hold",
+         "−∞",
+         -3,
+         -3,
+         -3,
+         4,
+         4
+        ],
+        [
+         "sold",
+         0,
+         "−∞",
+         5,
+         2,
+         -2,
+         10
+        ],
+        [
+         "rest",
+         0,
+         0,
+         0,
+         5,
+         5,
+         5
+        ]
+       ],
+       "marks": {
+        "path": [
+         [
+          2,
+          6
+         ],
+         [
+          1,
+          5
+         ],
+         [
+          3,
+          4
+         ],
+         [
+          2,
+          3
+         ],
+         [
+          1,
+          2
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      }
+     },
+     "answer": "10"
+    }
+   ],
+   "sampleInput": "[3,8,5,1,6]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "prices = [9,2,5]",
+   "expected": "3",
+   "frames": [
+    {
+     "caption": {
+      "en": "Before day 0: no copy can be held yet (hold −∞), and nothing is sold, so sold and rest are 0.",
+      "ko": "0일 전: 아직 스킨을 들 수 없으므로 hold는 −∞, 판 것도 없으므로 sold와 rest는 0입니다."
+     },
+     "views": {
+      "table": {
+       "cells": [
+        [
+         "",
+         "start",
+         "$9",
+         "$2",
+         "$5"
+        ],
+        [
+         "hold",
+         "−∞",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "sold",
+         0,
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "rest",
+         0,
+         " ",
+         " ",
+         " "
+        ]
+       ],
+       "marks": {
+        "good": [
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Day 0, price 9: hold = max(−∞, 0 − 9) = -9 (buy at 9); sold = −∞ + 9 = −∞; rest = max(0, 0) = 0.",
+      "ko": "0일, 가격 9: hold = max(−∞, 0 − 9) = -9(9에 사기), sold = −∞ + 9 = −∞, rest = max(0, 0) = 0입니다."
+     },
+     "views": {
+      "table": {
+       "cells": [
+        [
+         "",
+         "start",
+         "$9",
+         "$2",
+         "$5"
+        ],
+        [
+         "hold",
+         "−∞",
+         -9,
+         " ",
+         " "
+        ],
+        [
+         "sold",
+         0,
+         "−∞",
+         " ",
+         " "
+        ],
+        [
+         "rest",
+         0,
+         0,
+         " ",
+         " "
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          0,
+          2
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          1
+         ]
+        ],
+        "good": [
+         [
+          1,
+          2
+         ],
+         [
+          2,
+          2
+         ],
+         [
+          3,
+          2
+         ]
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "table",
+        "at": [
+         3,
+         1
+        ]
+       },
+       "to": {
+        "view": "table",
+        "at": [
+         1,
+         2
+        ]
+       },
+       "value": "0−9"
+      },
+      {
+       "from": {
+        "view": "table",
+        "at": [
+         1,
+         1
+        ]
+       },
+       "to": {
+        "view": "table",
+        "at": [
+         2,
+         2
+        ]
+       },
+       "value": "−∞+9"
+      },
+      {
+       "from": {
+        "view": "table",
+        "at": [
+         3,
+         1
+        ]
+       },
+       "to": {
+        "view": "table",
+        "at": [
+         3,
+         2
+        ]
+       },
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Day 1, price 2: hold = max(-9, 0 − 2) = -2 (buy at 2); sold = -9 + 2 = -7; rest = max(0, −∞) = 0.",
+      "ko": "1일, 가격 2: hold = max(-9, 0 − 2) = -2(2에 사기), sold = -9 + 2 = -7, rest = max(0, −∞) = 0입니다."
+     },
+     "views": {
+      "table": {
+       "cells": [
+        [
+         "",
+         "start",
+         "$9",
+         "$2",
+         "$5"
+        ],
+        [
+         "hold",
+         "−∞",
+         -9,
+         -2,
+         " "
+        ],
+        [
+         "sold",
+         0,
+         "−∞",
+         -7,
+         " "
+        ],
+        [
+         "rest",
+         0,
+         0,
+         0,
+         " "
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          0,
+          3
+         ],
+         [
+          1,
+          2
+         ],
+         [
+          2,
+          2
+         ],
+         [
+          3,
+          2
+         ]
+        ],
+        "good": [
+         [
+          1,
+          3
+         ],
+         [
+          2,
+          3
+         ],
+         [
+          3,
+          3
+         ]
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "table",
+        "at": [
+         3,
+         2
+        ]
+       },
+       "to": {
+        "view": "table",
+        "at": [
+         1,
+         3
+        ]
+       },
+       "value": "0−2"
+      },
+      {
+       "from": {
+        "view": "table",
+        "at": [
+         1,
+         2
+        ]
+       },
+       "to": {
+        "view": "table",
+        "at": [
+         2,
+         3
+        ]
+       },
+       "value": "-9+2"
+      },
+      {
+       "from": {
+        "view": "table",
+        "at": [
+         3,
+         2
+        ]
+       },
+       "to": {
+        "view": "table",
+        "at": [
+         3,
+         3
+        ]
+       },
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Day 2, price 5: hold = max(-2, 0 − 5) = -2 (keep holding); sold = -2 + 5 = 3; rest = max(0, -7) = 0.",
+      "ko": "2일, 가격 5: hold = max(-2, 0 − 5) = -2(계속 들기), sold = -2 + 5 = 3, rest = max(0, -7) = 0입니다."
+     },
+     "views": {
+      "table": {
+       "cells": [
+        [
+         "",
+         "start",
+         "$9",
+         "$2",
+         "$5"
+        ],
+        [
+         "hold",
+         "−∞",
+         -9,
+         -2,
+         -2
+        ],
+        [
+         "sold",
+         0,
+         "−∞",
+         -7,
+         3
+        ],
+        [
+         "rest",
+         0,
+         0,
+         0,
+         0
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          0,
+          4
+         ],
+         [
+          1,
+          3
+         ],
+         [
+          2,
+          3
+         ],
+         [
+          3,
+          3
+         ]
+        ],
+        "good": [
+         [
+          1,
+          4
+         ],
+         [
+          2,
+          4
+         ],
+         [
+          3,
+          4
+         ]
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "table",
+        "at": [
+         1,
+         3
+        ]
+       },
+       "to": {
+        "view": "table",
+        "at": [
+         1,
+         4
+        ]
+       },
+       "value": "-2"
+      },
+      {
+       "from": {
+        "view": "table",
+        "at": [
+         1,
+         3
+        ]
+       },
+       "to": {
+        "view": "table",
+        "at": [
+         2,
+         4
+        ]
+       },
+       "value": "-2+5"
+      },
+      {
+       "from": {
+        "view": "table",
+        "at": [
+         3,
+         3
+        ]
+       },
+       "to": {
+        "view": "table",
+        "at": [
+         3,
+         4
+        ]
+       },
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The answer is the best last-day profit, max(sold 3, rest 0) = 3. Walking back: buy on day 1 at 2, sell on day 2 at 5.",
+      "ko": "마지막 날 최대 이익은 max(sold 3, rest 0) = 3입니다. 거슬러 가면 1일 2에 사기, 2일 5에 팔기이고, 답은 3입니다."
+     },
+     "views": {
+      "table": {
+       "cells": [
+        [
+         "",
+         "start",
+         "$9",
+         "$2",
+         "$5"
+        ],
+        [
+         "hold",
+         "−∞",
+         -9,
+         -2,
+         -2
+        ],
+        [
+         "sold",
+         0,
+         "−∞",
+         -7,
+         3
+        ],
+        [
+         "rest",
+         0,
+         0,
+         0,
+         0
+        ]
+       ],
+       "marks": {
+        "path": [
+         [
+          2,
+          4
+         ],
+         [
+          1,
+          3
+         ],
+         [
+          3,
+          2
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      }
+     },
+     "answer": "3"
+    }
+   ],
+   "sampleInput": "[9,2,5]"
+  },
+  {
+   "label": {
+    "en": "Case 3",
+    "ko": "케이스 3"
+   },
+   "input": "prices = [4,4]",
+   "expected": "0",
+   "frames": [
+    {
+     "caption": {
+      "en": "Before day 0: no copy can be held yet (hold −∞), and nothing is sold, so sold and rest are 0.",
+      "ko": "0일 전: 아직 스킨을 들 수 없으므로 hold는 −∞, 판 것도 없으므로 sold와 rest는 0입니다."
+     },
+     "views": {
+      "table": {
+       "cells": [
+        [
+         "",
+         "start",
+         "$4",
+         "$4"
+        ],
+        [
+         "hold",
+         "−∞",
+         " ",
+         " "
+        ],
+        [
+         "sold",
+         0,
+         " ",
+         " "
+        ],
+        [
+         "rest",
+         0,
+         " ",
+         " "
+        ]
+       ],
+       "marks": {
+        "good": [
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Day 0, price 4: hold = max(−∞, 0 − 4) = -4 (buy at 4); sold = −∞ + 4 = −∞; rest = max(0, 0) = 0.",
+      "ko": "0일, 가격 4: hold = max(−∞, 0 − 4) = -4(4에 사기), sold = −∞ + 4 = −∞, rest = max(0, 0) = 0입니다."
+     },
+     "views": {
+      "table": {
+       "cells": [
+        [
+         "",
+         "start",
+         "$4",
+         "$4"
+        ],
+        [
+         "hold",
+         "−∞",
+         -4,
+         " "
+        ],
+        [
+         "sold",
+         0,
+         "−∞",
+         " "
+        ],
+        [
+         "rest",
+         0,
+         0,
+         " "
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          0,
+          2
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          1
+         ]
+        ],
+        "good": [
+         [
+          1,
+          2
+         ],
+         [
+          2,
+          2
+         ],
+         [
+          3,
+          2
+         ]
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "table",
+        "at": [
+         3,
+         1
+        ]
+       },
+       "to": {
+        "view": "table",
+        "at": [
+         1,
+         2
+        ]
+       },
+       "value": "0−4"
+      },
+      {
+       "from": {
+        "view": "table",
+        "at": [
+         1,
+         1
+        ]
+       },
+       "to": {
+        "view": "table",
+        "at": [
+         2,
+         2
+        ]
+       },
+       "value": "−∞+4"
+      },
+      {
+       "from": {
+        "view": "table",
+        "at": [
+         3,
+         1
+        ]
+       },
+       "to": {
+        "view": "table",
+        "at": [
+         3,
+         2
+        ]
+       },
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Day 1, price 4: hold = max(-4, 0 − 4) = -4 (keep holding); sold = -4 + 4 = 0; rest = max(0, −∞) = 0.",
+      "ko": "1일, 가격 4: hold = max(-4, 0 − 4) = -4(계속 들기), sold = -4 + 4 = 0, rest = max(0, −∞) = 0입니다."
+     },
+     "views": {
+      "table": {
+       "cells": [
+        [
+         "",
+         "start",
+         "$4",
+         "$4"
+        ],
+        [
+         "hold",
+         "−∞",
+         -4,
+         -4
+        ],
+        [
+         "sold",
+         0,
+         "−∞",
+         0
+        ],
+        [
+         "rest",
+         0,
+         0,
+         0
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          0,
+          3
+         ],
+         [
+          1,
+          2
+         ],
+         [
+          2,
+          2
+         ],
+         [
+          3,
+          2
+         ]
+        ],
+        "good": [
+         [
+          1,
+          3
+         ],
+         [
+          2,
+          3
+         ],
+         [
+          3,
+          3
+         ]
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "table",
+        "at": [
+         1,
+         2
+        ]
+       },
+       "to": {
+        "view": "table",
+        "at": [
+         1,
+         3
+        ]
+       },
+       "value": "-4"
+      },
+      {
+       "from": {
+        "view": "table",
+        "at": [
+         1,
+         2
+        ]
+       },
+       "to": {
+        "view": "table",
+        "at": [
+         2,
+         3
+        ]
+       },
+       "value": "-4+4"
+      },
+      {
+       "from": {
+        "view": "table",
+        "at": [
+         3,
+         2
+        ]
+       },
+       "to": {
+        "view": "table",
+        "at": [
+         3,
+         3
+        ]
+       },
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The best last-day profit is max(sold 0, rest 0) = 0: no trade makes money, so never buy. Answer: 0.",
+      "ko": "마지막 날 최대 이익은 max(sold 0, rest 0) = 0이고, 이익이 나는 거래가 없으니 사지 않습니다. 답은 0입니다."
+     },
+     "views": {
+      "table": {
+       "cells": [
+        [
+         "",
+         "start",
+         "$4",
+         "$4"
+        ],
+        [
+         "hold",
+         "−∞",
+         -4,
+         -4
+        ],
+        [
+         "sold",
+         0,
+         "−∞",
+         0
+        ],
+        [
+         "rest",
+         0,
+         0,
+         0
+        ]
+       ],
+       "marks": {
+        "path": [
+         [
+          3,
+          3
+         ],
+         [
+          3,
+          2
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      }
+     },
+     "answer": "0"
+    }
+   ],
+   "sampleInput": "[4,4]"
+  }
+ ]
+}

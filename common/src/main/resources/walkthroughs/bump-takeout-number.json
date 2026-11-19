@@ -1,0 +1,716 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Bump Takeout Number",
+  "ko": "포장 번호 하나 올리기"
+ },
+ "approach": {
+  "en": "Add 1 to the last digit. A digit below 9 takes it and the number is done; a 9 becomes 0 and passes the 1 one place left. If the 1 passes the first digit, it becomes a new leading 1.",
+  "ko": "마지막 자릿수에 1을 더합니다. 9보다 작은 자릿수는 1을 받고 끝나고, 9는 0이 되며 1을 한 자리 왼쪽으로 넘깁니다. 1이 첫 자릿수를 넘어가면 맨 앞에 새로 1이 붙습니다."
+ },
+ "views": [
+  {
+   "id": "digits",
+   "type": "array",
+   "title": {
+    "en": "result (tag: place)",
+    "ko": "result (결과, 태그: 자리)"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "digits = [4,5,6]",
+   "expected": "[4,5,7]",
+   "frames": [
+    {
+     "caption": {
+      "en": "result starts as a copy of [4,5,6], the number 456. The 1 goes into the last digit first.",
+      "ko": "result는 [4,5,6]의 복사본, 곧 456에서 시작합니다. 1은 먼저 마지막 자릿수에 더합니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        4,
+        5,
+        6
+       ],
+       "pointers": {
+        "i": null
+       },
+       "tags": [
+        [
+         2,
+         "10⁰"
+        ],
+        [
+         1,
+         "10¹"
+        ],
+        [
+         0,
+         "10²"
+        ]
+       ],
+       "marks": {
+        "good": [],
+        "lit": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "result[2] = 6 is below 9, so it becomes 7 and the number is done.",
+      "ko": "result[2] = 6: 9보다 작으니 7이 되고 끝납니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        4,
+        5,
+        7
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "tags": [
+        [
+         2,
+         "10⁰"
+        ],
+        [
+         1,
+         "10¹"
+        ],
+        [
+         0,
+         "10²"
+        ]
+       ],
+       "marks": {
+        "good": [
+         2
+        ],
+        "lit": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "digits",
+        "at": 2
+       },
+       "value": "+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "456 + 1 = 457: answer [4,5,7].",
+      "ko": "456 + 1 = 457, 답은 [4,5,7]입니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        4,
+        5,
+        7
+       ],
+       "pointers": {
+        "i": null
+       },
+       "tags": [
+        [
+         2,
+         "10⁰"
+        ],
+        [
+         1,
+         "10¹"
+        ],
+        [
+         0,
+         "10²"
+        ]
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2
+        ]
+       }
+      }
+     },
+     "answer": "[4,5,7]"
+    }
+   ],
+   "sampleInput": "[4,5,6]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "digits = [2,9,9]",
+   "expected": "[3,0,0]",
+   "frames": [
+    {
+     "caption": {
+      "en": "result starts as a copy of [2,9,9], the number 299. The 1 goes into the last digit first.",
+      "ko": "result는 [2,9,9]의 복사본, 곧 299에서 시작합니다. 1은 먼저 마지막 자릿수에 더합니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        2,
+        9,
+        9
+       ],
+       "pointers": {
+        "i": null
+       },
+       "tags": [
+        [
+         2,
+         "10⁰"
+        ],
+        [
+         1,
+         "10¹"
+        ],
+        [
+         0,
+         "10²"
+        ]
+       ],
+       "marks": {
+        "good": [],
+        "lit": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "result[2] is 9: 9 + 1 = 10, so it becomes 0 and the 1 passes one place left.",
+      "ko": "result[2] = 9: 9 + 1 = 10이므로 0이 되고 1을 한 자리 왼쪽으로 넘깁니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        2,
+        9,
+        0
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "tags": [
+        [
+         2,
+         "10⁰"
+        ],
+        [
+         1,
+         "10¹"
+        ],
+        [
+         0,
+         "10²"
+        ]
+       ],
+       "marks": {
+        "good": [
+         2
+        ],
+        "lit": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "digits",
+        "at": 2
+       },
+       "value": "+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The 1 passed on reaches it. result[1] is 9: 9 + 1 = 10, so it becomes 0 and the 1 passes one place left.",
+      "ko": "넘어온 1이 이 자리에 닿습니다. result[1] = 9: 9 + 1 = 10이므로 0이 되고 1을 한 자리 왼쪽으로 넘깁니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        2,
+        0,
+        0
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "tags": [
+        [
+         2,
+         "10⁰"
+        ],
+        [
+         1,
+         "10¹"
+        ],
+        [
+         0,
+         "10²"
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ],
+        "lit": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 2
+       },
+       "to": {
+        "view": "digits",
+        "at": 1
+       },
+       "value": "+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The 1 passed on reaches it. result[0] = 2 is below 9, so it becomes 3 and the number is done.",
+      "ko": "넘어온 1이 이 자리에 닿습니다. result[0] = 2: 9보다 작으니 3이 되고 끝납니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        3,
+        0,
+        0
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "tags": [
+        [
+         2,
+         "10⁰"
+        ],
+        [
+         1,
+         "10¹"
+        ],
+        [
+         0,
+         "10²"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ],
+        "lit": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 1
+       },
+       "to": {
+        "view": "digits",
+        "at": 0
+       },
+       "value": "+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "299 + 1 = 300: answer [3,0,0].",
+      "ko": "299 + 1 = 300, 답은 [3,0,0]입니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        3,
+        0,
+        0
+       ],
+       "pointers": {
+        "i": null
+       },
+       "tags": [
+        [
+         2,
+         "10⁰"
+        ],
+        [
+         1,
+         "10¹"
+        ],
+        [
+         0,
+         "10²"
+        ]
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2
+        ]
+       }
+      }
+     },
+     "answer": "[3,0,0]"
+    }
+   ],
+   "sampleInput": "[2,9,9]"
+  },
+  {
+   "label": {
+    "en": "Case 3",
+    "ko": "케이스 3"
+   },
+   "input": "digits = [0]",
+   "expected": "[1]",
+   "frames": [
+    {
+     "caption": {
+      "en": "result starts as a copy of [0], the number 0. The 1 goes into the last digit first.",
+      "ko": "result는 [0]의 복사본, 곧 0에서 시작합니다. 1은 먼저 마지막 자릿수에 더합니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        0
+       ],
+       "pointers": {
+        "i": null
+       },
+       "tags": [
+        [
+         0,
+         "10⁰"
+        ]
+       ],
+       "marks": {
+        "good": [],
+        "lit": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "result[0] = 0 is below 9, so it becomes 1 and the number is done.",
+      "ko": "result[0] = 0: 9보다 작으니 1이 되고 끝납니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        1
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "tags": [
+        [
+         0,
+         "10⁰"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ],
+        "lit": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "digits",
+        "at": 0
+       },
+       "value": "+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "0 + 1 = 1: answer [1].",
+      "ko": "0 + 1 = 1, 답은 [1]입니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        1
+       ],
+       "pointers": {
+        "i": null
+       },
+       "tags": [
+        [
+         0,
+         "10⁰"
+        ]
+       ],
+       "marks": {
+        "path": [
+         0
+        ]
+       }
+      }
+     },
+     "answer": "[1]"
+    }
+   ],
+   "sampleInput": "[0]"
+  },
+  {
+   "label": {
+    "en": "Extra: every digit carries",
+    "ko": "추가: 모든 자리에서 올림"
+   },
+   "input": "digits = [9,9]",
+   "expected": "[1,0,0]",
+   "frames": [
+    {
+     "caption": {
+      "en": "result starts as a copy of [9,9], the number 99. The 1 goes into the last digit first.",
+      "ko": "result는 [9,9]의 복사본, 곧 99에서 시작합니다. 1은 먼저 마지막 자릿수에 더합니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        9,
+        9
+       ],
+       "pointers": {
+        "i": null
+       },
+       "tags": [
+        [
+         1,
+         "10⁰"
+        ],
+        [
+         0,
+         "10¹"
+        ]
+       ],
+       "marks": {
+        "good": [],
+        "lit": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "result[1] is 9: 9 + 1 = 10, so it becomes 0 and the 1 passes one place left.",
+      "ko": "result[1] = 9: 9 + 1 = 10이므로 0이 되고 1을 한 자리 왼쪽으로 넘깁니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        9,
+        0
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "tags": [
+        [
+         1,
+         "10⁰"
+        ],
+        [
+         0,
+         "10¹"
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ],
+        "lit": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "digits",
+        "at": 1
+       },
+       "value": "+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The 1 passed on reaches it. result[0] is 9: 9 + 1 = 10, so it becomes 0 and the 1 passes one place left.",
+      "ko": "넘어온 1이 이 자리에 닿습니다. result[0] = 9: 9 + 1 = 10이므로 0이 되고 1을 한 자리 왼쪽으로 넘깁니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        0,
+        0
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "tags": [
+        [
+         1,
+         "10⁰"
+        ],
+        [
+         0,
+         "10¹"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ],
+        "lit": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 1
+       },
+       "to": {
+        "view": "digits",
+        "at": 0
+       },
+       "value": "+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The 1 passed the first digit, so it becomes a new leading 1.",
+      "ko": "1이 첫 자릿수를 넘어갔으므로 맨 앞에 새로 1이 붙습니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        1,
+        0,
+        0
+       ],
+       "pointers": {
+        "i": null
+       },
+       "tags": [
+        [
+         2,
+         "10⁰"
+        ],
+        [
+         1,
+         "10¹"
+        ],
+        [
+         0,
+         "10²"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ],
+        "lit": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 1
+       },
+       "to": {
+        "view": "digits",
+        "at": 0
+       },
+       "value": "+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "99 + 1 = 100: answer [1,0,0].",
+      "ko": "99 + 1 = 100, 답은 [1,0,0]입니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        1,
+        0,
+        0
+       ],
+       "pointers": {
+        "i": null
+       },
+       "tags": [
+        [
+         2,
+         "10⁰"
+        ],
+        [
+         1,
+         "10¹"
+        ],
+        [
+         0,
+         "10²"
+        ]
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2
+        ]
+       }
+      }
+     },
+     "answer": "[1,0,0]"
+    }
+   ],
+   "extra": true
+  }
+ ]
+}

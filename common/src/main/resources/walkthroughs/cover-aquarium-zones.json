@@ -1,0 +1,1716 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Cover Aquarium Zones",
+  "ko": "수조 구역 덮기"
+ },
+ "approach": {
+  "en": "Sort the zones by end. The zone ending first needs a pellet somewhere inside it, and its end is the spot that also reaches the most zones after it: drop one there, and skip every zone that pellet already feeds.",
+  "ko": "구간을 끝 순으로 정렬합니다. 가장 먼저 끝나는 구간에는 반드시 알갱이가 하나 필요하고, 그 끝 위치가 뒤 구간까지 가장 많이 덮습니다. 거기에 알갱이를 두고, 그 알갱이가 이미 덮는 구간은 건너뜁니다."
+ },
+ "views": [
+  {
+   "id": "line",
+   "type": "intervals",
+   "empty": {
+    "en": "none yet",
+    "ko": "아직 없음"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "zones = [[5,11],[3,9],[8,14],[12,18],[20,25]]",
+   "expected": "3",
+   "frames": [
+    {
+     "caption": {
+      "en": "Sort the 5 zones by end: [3,9], [5,11], [8,14], [12,18], [20,25]. No pellet is dropped yet.",
+      "ko": "구간 5개를 끝 순으로 정렬합니다: [3,9], [5,11], [8,14], [12,18], [20,25]. 아직 알갱이가 없습니다."
+     },
+     "views": {
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "zones, by end",
+          "ko": "끝 순으로 정렬한 구간"
+         },
+         "intervals": [
+          [
+           3,
+           9
+          ],
+          [
+           5,
+           11
+          ],
+          [
+           8,
+           14
+          ],
+          [
+           12,
+           18
+          ],
+          [
+           20,
+           25
+          ]
+         ],
+         "marks": {
+          "dim": []
+         }
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "[3,9]: no pellet is down yet. Drop pellet 1 at its end, 9, as late as it can go.",
+      "ko": "[3,9] 구간: 아직 알갱이가 없으므로 가장 늦게 둘 수 있는 자리인 끝 위치 9에 알갱이 1을 둡니다."
+     },
+     "views": {
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "zones, by end",
+          "ko": "끝 순으로 정렬한 구간"
+         },
+         "intervals": [
+          [
+           3,
+           9
+          ],
+          [
+           5,
+           11
+          ],
+          [
+           8,
+           14
+          ],
+          [
+           12,
+           18
+          ],
+          [
+           20,
+           25
+          ]
+         ],
+         "marks": {
+          "dim": [],
+          "lit": [
+           0
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "pellet 1 at 9",
+          "ko": "알갱이 1: 위치 9"
+         },
+         "intervals": [
+          [
+           3,
+           9
+          ]
+         ],
+         "marks": {
+          "good": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 9,
+         "label": {
+          "en": "last pellet",
+          "ko": "마지막 알갱이"
+         },
+         "mark": "lit"
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "line",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "to": {
+        "view": "line",
+        "at": [
+         1,
+         0
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "[5,11] starts at 5 ≤ the last pellet at 9, and ends at 11 ≥ it, since the zones are sorted by end: pellet 1 already feeds it.",
+      "ko": "[5,11] 구간은 5에서 시작해 마지막 알갱이 위치 9 이하이고, 끝 순으로 정렬했으니 끝 11도 그 이상입니다. 알갱이 1이 이미 덮습니다."
+     },
+     "views": {
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "zones, by end",
+          "ko": "끝 순으로 정렬한 구간"
+         },
+         "intervals": [
+          [
+           3,
+           9
+          ],
+          [
+           5,
+           11
+          ],
+          [
+           8,
+           14
+          ],
+          [
+           12,
+           18
+          ],
+          [
+           20,
+           25
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0
+          ],
+          "lit": [
+           1
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "pellet 1 at 9",
+          "ko": "알갱이 1: 위치 9"
+         },
+         "intervals": [
+          [
+           3,
+           9
+          ],
+          [
+           5,
+           11
+          ]
+         ],
+         "marks": {
+          "good": [
+           1
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 9,
+         "label": {
+          "en": "last pellet",
+          "ko": "마지막 알갱이"
+         },
+         "mark": "lit"
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "line",
+        "at": [
+         0,
+         1
+        ]
+       },
+       "to": {
+        "view": "line",
+        "at": [
+         1,
+         1
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "[8,14] starts at 8 ≤ the last pellet at 9, and ends at 14 ≥ it, since the zones are sorted by end: pellet 1 already feeds it.",
+      "ko": "[8,14] 구간은 8에서 시작해 마지막 알갱이 위치 9 이하이고, 끝 순으로 정렬했으니 끝 14도 그 이상입니다. 알갱이 1이 이미 덮습니다."
+     },
+     "views": {
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "zones, by end",
+          "ko": "끝 순으로 정렬한 구간"
+         },
+         "intervals": [
+          [
+           3,
+           9
+          ],
+          [
+           5,
+           11
+          ],
+          [
+           8,
+           14
+          ],
+          [
+           12,
+           18
+          ],
+          [
+           20,
+           25
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1
+          ],
+          "lit": [
+           2
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "pellet 1 at 9",
+          "ko": "알갱이 1: 위치 9"
+         },
+         "intervals": [
+          [
+           3,
+           9
+          ],
+          [
+           5,
+           11
+          ],
+          [
+           8,
+           14
+          ]
+         ],
+         "marks": {
+          "good": [
+           2
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 9,
+         "label": {
+          "en": "last pellet",
+          "ko": "마지막 알갱이"
+         },
+         "mark": "lit"
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "line",
+        "at": [
+         0,
+         2
+        ]
+       },
+       "to": {
+        "view": "line",
+        "at": [
+         1,
+         2
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "[12,18]: it starts at 12, past the last pellet at 9, so nothing feeds it. Drop pellet 2 at its end, 18, as late as it can go.",
+      "ko": "[12,18] 구간: 12에서 시작해 마지막 알갱이 위치 9보다 뒤라 먹이를 못 받으므로 가장 늦게 둘 수 있는 자리인 끝 위치 18에 알갱이 2를 둡니다."
+     },
+     "views": {
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "zones, by end",
+          "ko": "끝 순으로 정렬한 구간"
+         },
+         "intervals": [
+          [
+           3,
+           9
+          ],
+          [
+           5,
+           11
+          ],
+          [
+           8,
+           14
+          ],
+          [
+           12,
+           18
+          ],
+          [
+           20,
+           25
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1,
+           2
+          ],
+          "lit": [
+           3
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "pellet 1 at 9",
+          "ko": "알갱이 1: 위치 9"
+         },
+         "intervals": [
+          [
+           3,
+           9
+          ],
+          [
+           5,
+           11
+          ],
+          [
+           8,
+           14
+          ]
+         ],
+         "marks": {}
+        },
+        {
+         "label": {
+          "en": "pellet 2 at 18",
+          "ko": "알갱이 2: 위치 18"
+         },
+         "intervals": [
+          [
+           12,
+           18
+          ]
+         ],
+         "marks": {
+          "good": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 18,
+         "label": {
+          "en": "last pellet",
+          "ko": "마지막 알갱이"
+         },
+         "mark": "lit"
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "line",
+        "at": [
+         0,
+         3
+        ]
+       },
+       "to": {
+        "view": "line",
+        "at": [
+         2,
+         0
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "[20,25]: it starts at 20, past the last pellet at 18, so nothing feeds it. Drop pellet 3 at its end, 25, as late as it can go.",
+      "ko": "[20,25] 구간: 20에서 시작해 마지막 알갱이 위치 18보다 뒤라 먹이를 못 받으므로 가장 늦게 둘 수 있는 자리인 끝 위치 25에 알갱이 3을 둡니다."
+     },
+     "views": {
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "zones, by end",
+          "ko": "끝 순으로 정렬한 구간"
+         },
+         "intervals": [
+          [
+           3,
+           9
+          ],
+          [
+           5,
+           11
+          ],
+          [
+           8,
+           14
+          ],
+          [
+           12,
+           18
+          ],
+          [
+           20,
+           25
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1,
+           2,
+           3
+          ],
+          "lit": [
+           4
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "pellet 1 at 9",
+          "ko": "알갱이 1: 위치 9"
+         },
+         "intervals": [
+          [
+           3,
+           9
+          ],
+          [
+           5,
+           11
+          ],
+          [
+           8,
+           14
+          ]
+         ],
+         "marks": {}
+        },
+        {
+         "label": {
+          "en": "pellet 2 at 18",
+          "ko": "알갱이 2: 위치 18"
+         },
+         "intervals": [
+          [
+           12,
+           18
+          ]
+         ],
+         "marks": {}
+        },
+        {
+         "label": {
+          "en": "pellet 3 at 25",
+          "ko": "알갱이 3: 위치 25"
+         },
+         "intervals": [
+          [
+           20,
+           25
+          ]
+         ],
+         "marks": {
+          "good": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 25,
+         "label": {
+          "en": "last pellet",
+          "ko": "마지막 알갱이"
+         },
+         "mark": "lit"
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "line",
+        "at": [
+         0,
+         4
+        ]
+       },
+       "to": {
+        "view": "line",
+        "at": [
+         3,
+         0
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every zone is fed by 3 pellets, at 9, 18, 25. Answer: 3.",
+      "ko": "알갱이 3개(9, 18, 25)로 모든 구간이 먹이를 받습니다. 답은 3입니다."
+     },
+     "views": {
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "zones, by end",
+          "ko": "끝 순으로 정렬한 구간"
+         },
+         "intervals": [
+          [
+           3,
+           9
+          ],
+          [
+           5,
+           11
+          ],
+          [
+           8,
+           14
+          ],
+          [
+           12,
+           18
+          ],
+          [
+           20,
+           25
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1,
+           2,
+           3,
+           4
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "pellet 1 at 9",
+          "ko": "알갱이 1: 위치 9"
+         },
+         "intervals": [
+          [
+           3,
+           9
+          ],
+          [
+           5,
+           11
+          ],
+          [
+           8,
+           14
+          ]
+         ],
+         "marks": {
+          "path": [
+           0,
+           1,
+           2
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "pellet 2 at 18",
+          "ko": "알갱이 2: 위치 18"
+         },
+         "intervals": [
+          [
+           12,
+           18
+          ]
+         ],
+         "marks": {
+          "path": [
+           0
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "pellet 3 at 25",
+          "ko": "알갱이 3: 위치 25"
+         },
+         "intervals": [
+          [
+           20,
+           25
+          ]
+         ],
+         "marks": {
+          "path": [
+           0
+          ]
+         }
+        }
+       ]
+      }
+     },
+     "answer": "3"
+    }
+   ],
+   "setup": {
+    "line": {
+     "domain": [
+      3,
+      25
+     ]
+    }
+   },
+   "sampleInput": "[[5,11],[3,9],[8,14],[12,18],[20,25]]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "zones = [[1,5],[6,10],[11,15]]",
+   "expected": "3",
+   "frames": [
+    {
+     "caption": {
+      "en": "Sort the 3 zones by end: [1,5], [6,10], [11,15]. No pellet is dropped yet.",
+      "ko": "구간 3개를 끝 순으로 정렬합니다: [1,5], [6,10], [11,15]. 아직 알갱이가 없습니다."
+     },
+     "views": {
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "zones, by end",
+          "ko": "끝 순으로 정렬한 구간"
+         },
+         "intervals": [
+          [
+           1,
+           5
+          ],
+          [
+           6,
+           10
+          ],
+          [
+           11,
+           15
+          ]
+         ],
+         "marks": {
+          "dim": []
+         }
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "[1,5]: no pellet is down yet. Drop pellet 1 at its end, 5, as late as it can go.",
+      "ko": "[1,5] 구간: 아직 알갱이가 없으므로 가장 늦게 둘 수 있는 자리인 끝 위치 5에 알갱이 1을 둡니다."
+     },
+     "views": {
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "zones, by end",
+          "ko": "끝 순으로 정렬한 구간"
+         },
+         "intervals": [
+          [
+           1,
+           5
+          ],
+          [
+           6,
+           10
+          ],
+          [
+           11,
+           15
+          ]
+         ],
+         "marks": {
+          "dim": [],
+          "lit": [
+           0
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "pellet 1 at 5",
+          "ko": "알갱이 1: 위치 5"
+         },
+         "intervals": [
+          [
+           1,
+           5
+          ]
+         ],
+         "marks": {
+          "good": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 5,
+         "label": {
+          "en": "last pellet",
+          "ko": "마지막 알갱이"
+         },
+         "mark": "lit"
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "line",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "to": {
+        "view": "line",
+        "at": [
+         1,
+         0
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "[6,10]: it starts at 6, past the last pellet at 5, so nothing feeds it. Drop pellet 2 at its end, 10, as late as it can go.",
+      "ko": "[6,10] 구간: 6에서 시작해 마지막 알갱이 위치 5보다 뒤라 먹이를 못 받으므로 가장 늦게 둘 수 있는 자리인 끝 위치 10에 알갱이 2를 둡니다."
+     },
+     "views": {
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "zones, by end",
+          "ko": "끝 순으로 정렬한 구간"
+         },
+         "intervals": [
+          [
+           1,
+           5
+          ],
+          [
+           6,
+           10
+          ],
+          [
+           11,
+           15
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0
+          ],
+          "lit": [
+           1
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "pellet 1 at 5",
+          "ko": "알갱이 1: 위치 5"
+         },
+         "intervals": [
+          [
+           1,
+           5
+          ]
+         ],
+         "marks": {}
+        },
+        {
+         "label": {
+          "en": "pellet 2 at 10",
+          "ko": "알갱이 2: 위치 10"
+         },
+         "intervals": [
+          [
+           6,
+           10
+          ]
+         ],
+         "marks": {
+          "good": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 10,
+         "label": {
+          "en": "last pellet",
+          "ko": "마지막 알갱이"
+         },
+         "mark": "lit"
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "line",
+        "at": [
+         0,
+         1
+        ]
+       },
+       "to": {
+        "view": "line",
+        "at": [
+         2,
+         0
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "[11,15]: it starts at 11, past the last pellet at 10, so nothing feeds it. Drop pellet 3 at its end, 15, as late as it can go.",
+      "ko": "[11,15] 구간: 11에서 시작해 마지막 알갱이 위치 10보다 뒤라 먹이를 못 받으므로 가장 늦게 둘 수 있는 자리인 끝 위치 15에 알갱이 3을 둡니다."
+     },
+     "views": {
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "zones, by end",
+          "ko": "끝 순으로 정렬한 구간"
+         },
+         "intervals": [
+          [
+           1,
+           5
+          ],
+          [
+           6,
+           10
+          ],
+          [
+           11,
+           15
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1
+          ],
+          "lit": [
+           2
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "pellet 1 at 5",
+          "ko": "알갱이 1: 위치 5"
+         },
+         "intervals": [
+          [
+           1,
+           5
+          ]
+         ],
+         "marks": {}
+        },
+        {
+         "label": {
+          "en": "pellet 2 at 10",
+          "ko": "알갱이 2: 위치 10"
+         },
+         "intervals": [
+          [
+           6,
+           10
+          ]
+         ],
+         "marks": {}
+        },
+        {
+         "label": {
+          "en": "pellet 3 at 15",
+          "ko": "알갱이 3: 위치 15"
+         },
+         "intervals": [
+          [
+           11,
+           15
+          ]
+         ],
+         "marks": {
+          "good": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 15,
+         "label": {
+          "en": "last pellet",
+          "ko": "마지막 알갱이"
+         },
+         "mark": "lit"
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "line",
+        "at": [
+         0,
+         2
+        ]
+       },
+       "to": {
+        "view": "line",
+        "at": [
+         3,
+         0
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every zone is fed by 3 pellets, at 5, 10, 15. Answer: 3.",
+      "ko": "알갱이 3개(5, 10, 15)로 모든 구간이 먹이를 받습니다. 답은 3입니다."
+     },
+     "views": {
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "zones, by end",
+          "ko": "끝 순으로 정렬한 구간"
+         },
+         "intervals": [
+          [
+           1,
+           5
+          ],
+          [
+           6,
+           10
+          ],
+          [
+           11,
+           15
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1,
+           2
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "pellet 1 at 5",
+          "ko": "알갱이 1: 위치 5"
+         },
+         "intervals": [
+          [
+           1,
+           5
+          ]
+         ],
+         "marks": {
+          "path": [
+           0
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "pellet 2 at 10",
+          "ko": "알갱이 2: 위치 10"
+         },
+         "intervals": [
+          [
+           6,
+           10
+          ]
+         ],
+         "marks": {
+          "path": [
+           0
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "pellet 3 at 15",
+          "ko": "알갱이 3: 위치 15"
+         },
+         "intervals": [
+          [
+           11,
+           15
+          ]
+         ],
+         "marks": {
+          "path": [
+           0
+          ]
+         }
+        }
+       ]
+      }
+     },
+     "answer": "3"
+    }
+   ],
+   "setup": {
+    "line": {
+     "domain": [
+      1,
+      15
+     ]
+    }
+   },
+   "sampleInput": "[[1,5],[6,10],[11,15]]"
+  },
+  {
+   "label": {
+    "en": "Case 3",
+    "ko": "케이스 3"
+   },
+   "input": "zones = [[1,2],[2,3],[3,4],[4,5]]",
+   "expected": "2",
+   "frames": [
+    {
+     "caption": {
+      "en": "Sort the 4 zones by end: [1,2], [2,3], [3,4], [4,5]. No pellet is dropped yet.",
+      "ko": "구간 4개를 끝 순으로 정렬합니다: [1,2], [2,3], [3,4], [4,5]. 아직 알갱이가 없습니다."
+     },
+     "views": {
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "zones, by end",
+          "ko": "끝 순으로 정렬한 구간"
+         },
+         "intervals": [
+          [
+           1,
+           2
+          ],
+          [
+           2,
+           3
+          ],
+          [
+           3,
+           4
+          ],
+          [
+           4,
+           5
+          ]
+         ],
+         "marks": {
+          "dim": []
+         }
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "[1,2]: no pellet is down yet. Drop pellet 1 at its end, 2, as late as it can go.",
+      "ko": "[1,2] 구간: 아직 알갱이가 없으므로 가장 늦게 둘 수 있는 자리인 끝 위치 2에 알갱이 1을 둡니다."
+     },
+     "views": {
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "zones, by end",
+          "ko": "끝 순으로 정렬한 구간"
+         },
+         "intervals": [
+          [
+           1,
+           2
+          ],
+          [
+           2,
+           3
+          ],
+          [
+           3,
+           4
+          ],
+          [
+           4,
+           5
+          ]
+         ],
+         "marks": {
+          "dim": [],
+          "lit": [
+           0
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "pellet 1 at 2",
+          "ko": "알갱이 1: 위치 2"
+         },
+         "intervals": [
+          [
+           1,
+           2
+          ]
+         ],
+         "marks": {
+          "good": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 2,
+         "label": {
+          "en": "last pellet",
+          "ko": "마지막 알갱이"
+         },
+         "mark": "lit"
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "line",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "to": {
+        "view": "line",
+        "at": [
+         1,
+         0
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "[2,3] starts at 2 ≤ the last pellet at 2, and ends at 3 ≥ it, since the zones are sorted by end: pellet 1 already feeds it.",
+      "ko": "[2,3] 구간은 2에서 시작해 마지막 알갱이 위치 2 이하이고, 끝 순으로 정렬했으니 끝 3도 그 이상입니다. 알갱이 1이 이미 덮습니다."
+     },
+     "views": {
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "zones, by end",
+          "ko": "끝 순으로 정렬한 구간"
+         },
+         "intervals": [
+          [
+           1,
+           2
+          ],
+          [
+           2,
+           3
+          ],
+          [
+           3,
+           4
+          ],
+          [
+           4,
+           5
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0
+          ],
+          "lit": [
+           1
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "pellet 1 at 2",
+          "ko": "알갱이 1: 위치 2"
+         },
+         "intervals": [
+          [
+           1,
+           2
+          ],
+          [
+           2,
+           3
+          ]
+         ],
+         "marks": {
+          "good": [
+           1
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 2,
+         "label": {
+          "en": "last pellet",
+          "ko": "마지막 알갱이"
+         },
+         "mark": "lit"
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "line",
+        "at": [
+         0,
+         1
+        ]
+       },
+       "to": {
+        "view": "line",
+        "at": [
+         1,
+         1
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "[3,4]: it starts at 3, past the last pellet at 2, so nothing feeds it. Drop pellet 2 at its end, 4, as late as it can go.",
+      "ko": "[3,4] 구간: 3에서 시작해 마지막 알갱이 위치 2보다 뒤라 먹이를 못 받으므로 가장 늦게 둘 수 있는 자리인 끝 위치 4에 알갱이 2를 둡니다."
+     },
+     "views": {
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "zones, by end",
+          "ko": "끝 순으로 정렬한 구간"
+         },
+         "intervals": [
+          [
+           1,
+           2
+          ],
+          [
+           2,
+           3
+          ],
+          [
+           3,
+           4
+          ],
+          [
+           4,
+           5
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1
+          ],
+          "lit": [
+           2
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "pellet 1 at 2",
+          "ko": "알갱이 1: 위치 2"
+         },
+         "intervals": [
+          [
+           1,
+           2
+          ],
+          [
+           2,
+           3
+          ]
+         ],
+         "marks": {}
+        },
+        {
+         "label": {
+          "en": "pellet 2 at 4",
+          "ko": "알갱이 2: 위치 4"
+         },
+         "intervals": [
+          [
+           3,
+           4
+          ]
+         ],
+         "marks": {
+          "good": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 4,
+         "label": {
+          "en": "last pellet",
+          "ko": "마지막 알갱이"
+         },
+         "mark": "lit"
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "line",
+        "at": [
+         0,
+         2
+        ]
+       },
+       "to": {
+        "view": "line",
+        "at": [
+         2,
+         0
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "[4,5] starts at 4 ≤ the last pellet at 4, and ends at 5 ≥ it, since the zones are sorted by end: pellet 2 already feeds it.",
+      "ko": "[4,5] 구간은 4에서 시작해 마지막 알갱이 위치 4 이하이고, 끝 순으로 정렬했으니 끝 5도 그 이상입니다. 알갱이 2가 이미 덮습니다."
+     },
+     "views": {
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "zones, by end",
+          "ko": "끝 순으로 정렬한 구간"
+         },
+         "intervals": [
+          [
+           1,
+           2
+          ],
+          [
+           2,
+           3
+          ],
+          [
+           3,
+           4
+          ],
+          [
+           4,
+           5
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1,
+           2
+          ],
+          "lit": [
+           3
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "pellet 1 at 2",
+          "ko": "알갱이 1: 위치 2"
+         },
+         "intervals": [
+          [
+           1,
+           2
+          ],
+          [
+           2,
+           3
+          ]
+         ],
+         "marks": {}
+        },
+        {
+         "label": {
+          "en": "pellet 2 at 4",
+          "ko": "알갱이 2: 위치 4"
+         },
+         "intervals": [
+          [
+           3,
+           4
+          ],
+          [
+           4,
+           5
+          ]
+         ],
+         "marks": {
+          "good": [
+           1
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 4,
+         "label": {
+          "en": "last pellet",
+          "ko": "마지막 알갱이"
+         },
+         "mark": "lit"
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "line",
+        "at": [
+         0,
+         3
+        ]
+       },
+       "to": {
+        "view": "line",
+        "at": [
+         2,
+         1
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every zone is fed by 2 pellets, at 2, 4. Answer: 2.",
+      "ko": "알갱이 2개(2, 4)로 모든 구간이 먹이를 받습니다. 답은 2입니다."
+     },
+     "views": {
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "zones, by end",
+          "ko": "끝 순으로 정렬한 구간"
+         },
+         "intervals": [
+          [
+           1,
+           2
+          ],
+          [
+           2,
+           3
+          ],
+          [
+           3,
+           4
+          ],
+          [
+           4,
+           5
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1,
+           2,
+           3
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "pellet 1 at 2",
+          "ko": "알갱이 1: 위치 2"
+         },
+         "intervals": [
+          [
+           1,
+           2
+          ],
+          [
+           2,
+           3
+          ]
+         ],
+         "marks": {
+          "path": [
+           0,
+           1
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "pellet 2 at 4",
+          "ko": "알갱이 2: 위치 4"
+         },
+         "intervals": [
+          [
+           3,
+           4
+          ],
+          [
+           4,
+           5
+          ]
+         ],
+         "marks": {
+          "path": [
+           0,
+           1
+          ]
+         }
+        }
+       ]
+      }
+     },
+     "answer": "2"
+    }
+   ],
+   "setup": {
+    "line": {
+     "domain": [
+      1,
+      5
+     ]
+    }
+   },
+   "sampleInput": "[[1,2],[2,3],[3,4],[4,5]]"
+  }
+ ]
+}
