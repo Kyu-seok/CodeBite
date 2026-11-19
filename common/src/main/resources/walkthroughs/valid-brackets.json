@@ -1,0 +1,1034 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Valid Brackets",
+  "ko": "괄호 중첩 검사하기"
+ },
+ "approach": {
+  "en": "Keep the openers still open on a stack: each closer pops the top, the most recent opener, and the two must be the same type. At the end the stack must be empty.",
+  "ko": "아직 열린 여는 괄호를 스택에 쌓습니다. 닫는 괄호는 맨 위의 가장 최근 여는 괄호를 꺼내고, 둘의 종류가 같아야 합니다. 끝까지 읽었을 때 스택은 비어 있어야 합니다."
+ },
+ "views": [
+  {
+   "id": "brackets",
+   "type": "array",
+   "title": {
+    "en": "brackets",
+    "ko": "brackets (괄호)"
+   }
+  },
+  {
+   "id": "open",
+   "type": "stack",
+   "title": {
+    "en": "open brackets",
+    "ko": "열린 괄호"
+   },
+   "empty": {
+    "en": "empty",
+    "ko": "비어 있음"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "brackets = \"{[()]}\"",
+   "expected": "true",
+   "frames": [
+    {
+     "caption": {
+      "en": "6 brackets to read, left to right. The stack of open brackets starts empty.",
+      "ko": "괄호 6개를 왼쪽부터 읽습니다. 열린 괄호의 스택은 비어 있습니다."
+     },
+     "views": {
+      "brackets": {
+       "values": [
+        "{",
+        "[",
+        "(",
+        ")",
+        "]",
+        "}"
+       ],
+       "pointers": {
+        "i": null
+       },
+       "unread": [],
+       "marks": {
+        "dim": [],
+        "path": [],
+        "good": [],
+        "bad": [],
+        "lit": []
+       }
+      },
+      "open": {
+       "values": [],
+       "tags": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "brackets[0] = { is an opener: push it on top, as the most recent open bracket.",
+      "ko": "brackets[0] = {: 여는 괄호이므로 가장 최근에 열린 괄호로 스택 맨 위에 넣습니다."
+     },
+     "views": {
+      "brackets": {
+       "values": [
+        "{",
+        "[",
+        "(",
+        ")",
+        "]",
+        "}"
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "unread": [
+        1,
+        2,
+        3,
+        4,
+        5
+       ],
+       "marks": {
+        "dim": [],
+        "path": [],
+        "good": [],
+        "bad": [],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "open": {
+       "values": [
+        "{"
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "brackets",
+        "at": 0
+       },
+       "to": {
+        "view": "open",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "brackets[1] = [ is an opener: push it on top, as the most recent open bracket.",
+      "ko": "brackets[1] = [: 여는 괄호이므로 가장 최근에 열린 괄호로 스택 맨 위에 넣습니다."
+     },
+     "views": {
+      "brackets": {
+       "values": [
+        "{",
+        "[",
+        "(",
+        ")",
+        "]",
+        "}"
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "unread": [
+        2,
+        3,
+        4,
+        5
+       ],
+       "marks": {
+        "dim": [],
+        "path": [],
+        "good": [],
+        "bad": [],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "open": {
+       "values": [
+        "{",
+        "["
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "brackets",
+        "at": 1
+       },
+       "to": {
+        "view": "open",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "brackets[2] = ( is an opener: push it on top, as the most recent open bracket.",
+      "ko": "brackets[2] = (: 여는 괄호이므로 가장 최근에 열린 괄호로 스택 맨 위에 넣습니다."
+     },
+     "views": {
+      "brackets": {
+       "values": [
+        "{",
+        "[",
+        "(",
+        ")",
+        "]",
+        "}"
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "unread": [
+        3,
+        4,
+        5
+       ],
+       "marks": {
+        "dim": [],
+        "path": [],
+        "good": [],
+        "bad": [],
+        "lit": [
+         2
+        ]
+       }
+      },
+      "open": {
+       "values": [
+        "{",
+        "[",
+        "("
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ],
+        [
+         2,
+         "[2]"
+        ]
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "brackets",
+        "at": 2
+       },
+       "to": {
+        "view": "open",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "brackets[3] = ) pops the top, ( from index 2: the same type, so the pair closes.",
+      "ko": "brackets[3] = ): 맨 위에서 꺼낸 괄호는 2번 칸의 ( 괄호입니다. 종류가 같으므로 한 쌍으로 닫힙니다."
+     },
+     "views": {
+      "brackets": {
+       "values": [
+        "{",
+        "[",
+        "(",
+        ")",
+        "]",
+        "}"
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "unread": [
+        4,
+        5
+       ],
+       "marks": {
+        "dim": [
+         2,
+         3
+        ],
+        "path": [],
+        "good": [
+         3,
+         2
+        ],
+        "bad": [],
+        "lit": []
+       }
+      },
+      "open": {
+       "values": [
+        "{",
+        "[",
+        "("
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ],
+        [
+         2,
+         "[2]"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "open",
+        "at": 2
+       },
+       "to": {
+        "view": "brackets",
+        "at": 3
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "brackets[4] = ] pops the top, [ from index 1: the same type, so the pair closes.",
+      "ko": "brackets[4] = ]: 맨 위에서 꺼낸 괄호는 1번 칸의 [ 괄호입니다. 종류가 같으므로 한 쌍으로 닫힙니다."
+     },
+     "views": {
+      "brackets": {
+       "values": [
+        "{",
+        "[",
+        "(",
+        ")",
+        "]",
+        "}"
+       ],
+       "pointers": {
+        "i": 4
+       },
+       "unread": [
+        5
+       ],
+       "marks": {
+        "dim": [
+         2,
+         3,
+         1,
+         4
+        ],
+        "path": [],
+        "good": [
+         4,
+         1
+        ],
+        "bad": [],
+        "lit": []
+       }
+      },
+      "open": {
+       "values": [
+        "{",
+        "["
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "open",
+        "at": 1
+       },
+       "to": {
+        "view": "brackets",
+        "at": 4
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "brackets[5] = } pops the top, { from index 0: the same type, so the pair closes.",
+      "ko": "brackets[5] = }: 맨 위에서 꺼낸 괄호는 0번 칸의 { 괄호입니다. 종류가 같으므로 한 쌍으로 닫힙니다."
+     },
+     "views": {
+      "brackets": {
+       "values": [
+        "{",
+        "[",
+        "(",
+        ")",
+        "]",
+        "}"
+       ],
+       "pointers": {
+        "i": 5
+       },
+       "unread": [],
+       "marks": {
+        "dim": [
+         2,
+         3,
+         1,
+         4,
+         0,
+         5
+        ],
+        "path": [],
+        "good": [
+         5,
+         0
+        ],
+        "bad": [],
+        "lit": []
+       }
+      },
+      "open": {
+       "values": [
+        "{"
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "open",
+        "at": 0
+       },
+       "to": {
+        "view": "brackets",
+        "at": 5
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every bracket is read and the stack is empty: every closer matched the most recent opener, so the answer is true.",
+      "ko": "모든 괄호를 읽었고 스택이 비었습니다. 모든 닫는 괄호가 가장 최근에 열린 괄호와 짝이 맞았으므로 답은 true입니다."
+     },
+     "views": {
+      "brackets": {
+       "values": [
+        "{",
+        "[",
+        "(",
+        ")",
+        "]",
+        "}"
+       ],
+       "pointers": {
+        "i": null
+       },
+       "unread": [],
+       "marks": {
+        "dim": [
+         2,
+         3,
+         1,
+         4,
+         0,
+         5
+        ],
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ],
+        "good": [],
+        "bad": [],
+        "lit": []
+       }
+      },
+      "open": {
+       "values": [],
+       "tags": [],
+       "marks": {}
+      }
+     },
+     "answer": "true"
+    }
+   ],
+   "sampleInput": "{[()]}"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "brackets = \"{[(])}\"",
+   "expected": "false",
+   "frames": [
+    {
+     "caption": {
+      "en": "6 brackets to read, left to right. The stack of open brackets starts empty.",
+      "ko": "괄호 6개를 왼쪽부터 읽습니다. 열린 괄호의 스택은 비어 있습니다."
+     },
+     "views": {
+      "brackets": {
+       "values": [
+        "{",
+        "[",
+        "(",
+        "]",
+        ")",
+        "}"
+       ],
+       "pointers": {
+        "i": null
+       },
+       "unread": [],
+       "marks": {
+        "dim": [],
+        "path": [],
+        "good": [],
+        "bad": [],
+        "lit": []
+       }
+      },
+      "open": {
+       "values": [],
+       "tags": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "brackets[0] = { is an opener: push it on top, as the most recent open bracket.",
+      "ko": "brackets[0] = {: 여는 괄호이므로 가장 최근에 열린 괄호로 스택 맨 위에 넣습니다."
+     },
+     "views": {
+      "brackets": {
+       "values": [
+        "{",
+        "[",
+        "(",
+        "]",
+        ")",
+        "}"
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "unread": [
+        1,
+        2,
+        3,
+        4,
+        5
+       ],
+       "marks": {
+        "dim": [],
+        "path": [],
+        "good": [],
+        "bad": [],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "open": {
+       "values": [
+        "{"
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "brackets",
+        "at": 0
+       },
+       "to": {
+        "view": "open",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "brackets[1] = [ is an opener: push it on top, as the most recent open bracket.",
+      "ko": "brackets[1] = [: 여는 괄호이므로 가장 최근에 열린 괄호로 스택 맨 위에 넣습니다."
+     },
+     "views": {
+      "brackets": {
+       "values": [
+        "{",
+        "[",
+        "(",
+        "]",
+        ")",
+        "}"
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "unread": [
+        2,
+        3,
+        4,
+        5
+       ],
+       "marks": {
+        "dim": [],
+        "path": [],
+        "good": [],
+        "bad": [],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "open": {
+       "values": [
+        "{",
+        "["
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "brackets",
+        "at": 1
+       },
+       "to": {
+        "view": "open",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "brackets[2] = ( is an opener: push it on top, as the most recent open bracket.",
+      "ko": "brackets[2] = (: 여는 괄호이므로 가장 최근에 열린 괄호로 스택 맨 위에 넣습니다."
+     },
+     "views": {
+      "brackets": {
+       "values": [
+        "{",
+        "[",
+        "(",
+        "]",
+        ")",
+        "}"
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "unread": [
+        3,
+        4,
+        5
+       ],
+       "marks": {
+        "dim": [],
+        "path": [],
+        "good": [],
+        "bad": [],
+        "lit": [
+         2
+        ]
+       }
+      },
+      "open": {
+       "values": [
+        "{",
+        "[",
+        "("
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ],
+        [
+         2,
+         "[2]"
+        ]
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "brackets",
+        "at": 2
+       },
+       "to": {
+        "view": "open",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "brackets[3] = ] pops the top, ( from index 2: a ] can't close a (, so the answer is false.",
+      "ko": "brackets[3] = ]: 맨 위에서 꺼낸 괄호는 2번 칸의 ( 괄호입니다. ] 괄호로는 ( 괄호를 닫을 수 없으므로 답은 false입니다."
+     },
+     "views": {
+      "brackets": {
+       "values": [
+        "{",
+        "[",
+        "(",
+        "]",
+        ")",
+        "}"
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "unread": [
+        4,
+        5
+       ],
+       "marks": {
+        "dim": [],
+        "path": [],
+        "good": [],
+        "bad": [
+         3,
+         2
+        ],
+        "lit": []
+       }
+      },
+      "open": {
+       "values": [
+        "{",
+        "[",
+        "("
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ],
+        [
+         2,
+         "[2]"
+        ]
+       ],
+       "marks": {
+        "bad": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "open",
+        "at": 2
+       },
+       "to": {
+        "view": "brackets",
+        "at": 3
+       },
+       "mark": "bad"
+      }
+     ],
+     "answer": "false"
+    }
+   ],
+   "sampleInput": "{[(])}"
+  },
+  {
+   "label": {
+    "en": "Example 3",
+    "ko": "예시 3"
+   },
+   "input": "brackets = \"(]\"",
+   "expected": "false",
+   "frames": [
+    {
+     "caption": {
+      "en": "2 brackets to read, left to right. The stack of open brackets starts empty.",
+      "ko": "괄호 2개를 왼쪽부터 읽습니다. 열린 괄호의 스택은 비어 있습니다."
+     },
+     "views": {
+      "brackets": {
+       "values": [
+        "(",
+        "]"
+       ],
+       "pointers": {
+        "i": null
+       },
+       "unread": [],
+       "marks": {
+        "dim": [],
+        "path": [],
+        "good": [],
+        "bad": [],
+        "lit": []
+       }
+      },
+      "open": {
+       "values": [],
+       "tags": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "brackets[0] = ( is an opener: push it on top, as the most recent open bracket.",
+      "ko": "brackets[0] = (: 여는 괄호이므로 가장 최근에 열린 괄호로 스택 맨 위에 넣습니다."
+     },
+     "views": {
+      "brackets": {
+       "values": [
+        "(",
+        "]"
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "unread": [
+        1
+       ],
+       "marks": {
+        "dim": [],
+        "path": [],
+        "good": [],
+        "bad": [],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "open": {
+       "values": [
+        "("
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "brackets",
+        "at": 0
+       },
+       "to": {
+        "view": "open",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "brackets[1] = ] pops the top, ( from index 0: a ] can't close a (, so the answer is false.",
+      "ko": "brackets[1] = ]: 맨 위에서 꺼낸 괄호는 0번 칸의 ( 괄호입니다. ] 괄호로는 ( 괄호를 닫을 수 없으므로 답은 false입니다."
+     },
+     "views": {
+      "brackets": {
+       "values": [
+        "(",
+        "]"
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "unread": [],
+       "marks": {
+        "dim": [],
+        "path": [],
+        "good": [],
+        "bad": [
+         1,
+         0
+        ],
+        "lit": []
+       }
+      },
+      "open": {
+       "values": [
+        "("
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "marks": {
+        "bad": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "open",
+        "at": 0
+       },
+       "to": {
+        "view": "brackets",
+        "at": 1
+       },
+       "mark": "bad"
+      }
+     ],
+     "answer": "false"
+    }
+   ],
+   "sampleInput": "(]"
+  }
+ ]
+}

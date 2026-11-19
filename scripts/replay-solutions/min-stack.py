@@ -1,16 +1,19 @@
 class LowTrackStack:
     def __init__(self) -> None:
-        self.entries: list[tuple[int, int]] = []
+        self.values: list[int] = []
+        self.lows: list[int] = []  # lows[i] is the smallest of values[0..i]
 
     def push(self, val: int) -> None:
-        low = min(val, self.entries[-1][1]) if self.entries else val
-        self.entries.append((val, low))
+        low = min(val, self.lows[-1]) if self.lows else val
+        self.values.append(val)
+        self.lows.append(low)
 
     def pop(self) -> None:
-        self.entries.pop()
+        self.values.pop()
+        self.lows.pop()
 
     def top(self) -> int:
-        return self.entries[-1][0]
+        return self.values[-1]
 
     def getMin(self) -> int:
-        return self.entries[-1][1]
+        return self.lows[-1]
