@@ -1,0 +1,2006 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Decode Roman Floor",
+  "ko": "로마 숫자 층 해독"
+ },
+ "approach": {
+  "en": "Add each symbol's value, except that a symbol smaller than the one right after it is subtracted (the I of IV, the C of CM).",
+  "ko": "기호마다 값을 더하되, 바로 다음 기호보다 작은 기호는 뺍니다(IV의 I, CM의 C)."
+ },
+ "views": [
+  {
+   "id": "numeral",
+   "type": "array",
+   "title": {
+    "en": "numeral (tag: value, under: added)",
+    "ko": "numeral (태그: 값, 아래: 더한 값)"
+   }
+  },
+  {
+   "id": "total",
+   "type": "output",
+   "title": "total"
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "numeral = \"XIV\"",
+   "expected": "14",
+   "frames": [
+    {
+     "caption": {
+      "en": "numeral = \"XIV\": 3 symbols, read left to right. total starts at 0.",
+      "ko": "numeral = \"XIV\": 기호 3개를 왼쪽부터 읽습니다. total은 0에서 시작합니다."
+     },
+     "views": {
+      "numeral": {
+       "values": [
+        "X",
+        "I",
+        "V"
+       ],
+       "tags": [
+        [
+         0,
+         "10"
+        ],
+        [
+         1,
+         "1"
+        ],
+        [
+         2,
+         "5"
+        ]
+       ],
+       "under": [],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "lit": [],
+        "good": []
+       }
+      },
+      "total": {
+       "values": [
+        0
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "X = 10 is not smaller than the next symbol, I = 1, so it is added: total = 0 + 10 = 10.",
+      "ko": "X = 10은 다음 기호 I = 1보다 작지 않으므로 더합니다. total = 0 + 10 = 10이 됩니다."
+     },
+     "views": {
+      "numeral": {
+       "values": [
+        "X",
+        "I",
+        "V"
+       ],
+       "tags": [
+        [
+         0,
+         "10"
+        ],
+        [
+         1,
+         "1"
+        ],
+        [
+         2,
+         "5"
+        ]
+       ],
+       "under": [
+        [
+         0,
+         "+10"
+        ]
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "marks": {
+        "lit": [
+         0,
+         1
+        ],
+        "good": [
+         0
+        ]
+       }
+      },
+      "total": {
+       "values": [
+        10
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "numeral",
+        "at": 0
+       },
+       "to": {
+        "view": "total",
+        "at": 0
+       },
+       "value": "+10",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "I = 1 is smaller than the next symbol, V = 5, so it is subtracted: total = 10 − 1 = 9.",
+      "ko": "I = 1은 다음 기호 V = 5보다 작으므로 뺍니다. total = 10 − 1 = 9가 됩니다."
+     },
+     "views": {
+      "numeral": {
+       "values": [
+        "X",
+        "I",
+        "V"
+       ],
+       "tags": [
+        [
+         0,
+         "10"
+        ],
+        [
+         1,
+         "1"
+        ],
+        [
+         2,
+         "5"
+        ]
+       ],
+       "under": [
+        [
+         0,
+         "+10"
+        ],
+        [
+         1,
+         "−1"
+        ]
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "marks": {
+        "lit": [
+         1,
+         2
+        ],
+        "good": [
+         1
+        ]
+       }
+      },
+      "total": {
+       "values": [
+        9
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "numeral",
+        "at": 1
+       },
+       "to": {
+        "view": "total",
+        "at": 0
+       },
+       "value": "−1",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "V = 5 is the last symbol, so it is added: total = 9 + 5 = 14.",
+      "ko": "V = 5는 마지막 기호이므로 더합니다. total = 9 + 5 = 14가 됩니다."
+     },
+     "views": {
+      "numeral": {
+       "values": [
+        "X",
+        "I",
+        "V"
+       ],
+       "tags": [
+        [
+         0,
+         "10"
+        ],
+        [
+         1,
+         "1"
+        ],
+        [
+         2,
+         "5"
+        ]
+       ],
+       "under": [
+        [
+         0,
+         "+10"
+        ],
+        [
+         1,
+         "−1"
+        ],
+        [
+         2,
+         "+5"
+        ]
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "marks": {
+        "lit": [
+         2
+        ],
+        "good": [
+         2
+        ]
+       }
+      },
+      "total": {
+       "values": [
+        14
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "numeral",
+        "at": 2
+       },
+       "to": {
+        "view": "total",
+        "at": 0
+       },
+       "value": "+5",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every symbol is read: \"XIV\" = 14, answer 14.",
+      "ko": "모든 기호를 읽었습니다. \"XIV\" = 14, 답은 14입니다."
+     },
+     "views": {
+      "numeral": {
+       "values": [
+        "X",
+        "I",
+        "V"
+       ],
+       "tags": [
+        [
+         0,
+         "10"
+        ],
+        [
+         1,
+         "1"
+        ],
+        [
+         2,
+         "5"
+        ]
+       ],
+       "under": [
+        [
+         0,
+         "+10"
+        ],
+        [
+         1,
+         "−1"
+        ],
+        [
+         2,
+         "+5"
+        ]
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "path": [
+         0,
+         1,
+         2
+        ]
+       }
+      },
+      "total": {
+       "values": [
+        14
+       ],
+       "marks": {
+        "path": [
+         0
+        ]
+       }
+      }
+     },
+     "answer": "14"
+    }
+   ],
+   "sampleInput": "XIV"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "numeral = \"CDXLII\"",
+   "expected": "442",
+   "frames": [
+    {
+     "caption": {
+      "en": "numeral = \"CDXLII\": 6 symbols, read left to right. total starts at 0.",
+      "ko": "numeral = \"CDXLII\": 기호 6개를 왼쪽부터 읽습니다. total은 0에서 시작합니다."
+     },
+     "views": {
+      "numeral": {
+       "values": [
+        "C",
+        "D",
+        "X",
+        "L",
+        "I",
+        "I"
+       ],
+       "tags": [
+        [
+         0,
+         "100"
+        ],
+        [
+         1,
+         "500"
+        ],
+        [
+         2,
+         "10"
+        ],
+        [
+         3,
+         "50"
+        ],
+        [
+         4,
+         "1"
+        ],
+        [
+         5,
+         "1"
+        ]
+       ],
+       "under": [],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "lit": [],
+        "good": []
+       }
+      },
+      "total": {
+       "values": [
+        0
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "C = 100 is smaller than the next symbol, D = 500, so it is subtracted: total = 0 − 100 = -100.",
+      "ko": "C = 100은 다음 기호 D = 500보다 작으므로 뺍니다. total = 0 − 100 = -100이 됩니다."
+     },
+     "views": {
+      "numeral": {
+       "values": [
+        "C",
+        "D",
+        "X",
+        "L",
+        "I",
+        "I"
+       ],
+       "tags": [
+        [
+         0,
+         "100"
+        ],
+        [
+         1,
+         "500"
+        ],
+        [
+         2,
+         "10"
+        ],
+        [
+         3,
+         "50"
+        ],
+        [
+         4,
+         "1"
+        ],
+        [
+         5,
+         "1"
+        ]
+       ],
+       "under": [
+        [
+         0,
+         "−100"
+        ]
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "marks": {
+        "lit": [
+         0,
+         1
+        ],
+        "good": [
+         0
+        ]
+       }
+      },
+      "total": {
+       "values": [
+        -100
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "numeral",
+        "at": 0
+       },
+       "to": {
+        "view": "total",
+        "at": 0
+       },
+       "value": "−100",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "D = 500 is not smaller than the next symbol, X = 10, so it is added: total = -100 + 500 = 400.",
+      "ko": "D = 500은 다음 기호 X = 10보다 작지 않으므로 더합니다. total = -100 + 500 = 400이 됩니다."
+     },
+     "views": {
+      "numeral": {
+       "values": [
+        "C",
+        "D",
+        "X",
+        "L",
+        "I",
+        "I"
+       ],
+       "tags": [
+        [
+         0,
+         "100"
+        ],
+        [
+         1,
+         "500"
+        ],
+        [
+         2,
+         "10"
+        ],
+        [
+         3,
+         "50"
+        ],
+        [
+         4,
+         "1"
+        ],
+        [
+         5,
+         "1"
+        ]
+       ],
+       "under": [
+        [
+         0,
+         "−100"
+        ],
+        [
+         1,
+         "+500"
+        ]
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "marks": {
+        "lit": [
+         1,
+         2
+        ],
+        "good": [
+         1
+        ]
+       }
+      },
+      "total": {
+       "values": [
+        400
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "numeral",
+        "at": 1
+       },
+       "to": {
+        "view": "total",
+        "at": 0
+       },
+       "value": "+500",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "X = 10 is smaller than the next symbol, L = 50, so it is subtracted: total = 400 − 10 = 390.",
+      "ko": "X = 10은 다음 기호 L = 50보다 작으므로 뺍니다. total = 400 − 10 = 390이 됩니다."
+     },
+     "views": {
+      "numeral": {
+       "values": [
+        "C",
+        "D",
+        "X",
+        "L",
+        "I",
+        "I"
+       ],
+       "tags": [
+        [
+         0,
+         "100"
+        ],
+        [
+         1,
+         "500"
+        ],
+        [
+         2,
+         "10"
+        ],
+        [
+         3,
+         "50"
+        ],
+        [
+         4,
+         "1"
+        ],
+        [
+         5,
+         "1"
+        ]
+       ],
+       "under": [
+        [
+         0,
+         "−100"
+        ],
+        [
+         1,
+         "+500"
+        ],
+        [
+         2,
+         "−10"
+        ]
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "marks": {
+        "lit": [
+         2,
+         3
+        ],
+        "good": [
+         2
+        ]
+       }
+      },
+      "total": {
+       "values": [
+        390
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "numeral",
+        "at": 2
+       },
+       "to": {
+        "view": "total",
+        "at": 0
+       },
+       "value": "−10",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "L = 50 is not smaller than the next symbol, I = 1, so it is added: total = 390 + 50 = 440.",
+      "ko": "L = 50은 다음 기호 I = 1보다 작지 않으므로 더합니다. total = 390 + 50 = 440이 됩니다."
+     },
+     "views": {
+      "numeral": {
+       "values": [
+        "C",
+        "D",
+        "X",
+        "L",
+        "I",
+        "I"
+       ],
+       "tags": [
+        [
+         0,
+         "100"
+        ],
+        [
+         1,
+         "500"
+        ],
+        [
+         2,
+         "10"
+        ],
+        [
+         3,
+         "50"
+        ],
+        [
+         4,
+         "1"
+        ],
+        [
+         5,
+         "1"
+        ]
+       ],
+       "under": [
+        [
+         0,
+         "−100"
+        ],
+        [
+         1,
+         "+500"
+        ],
+        [
+         2,
+         "−10"
+        ],
+        [
+         3,
+         "+50"
+        ]
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "marks": {
+        "lit": [
+         3,
+         4
+        ],
+        "good": [
+         3
+        ]
+       }
+      },
+      "total": {
+       "values": [
+        440
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "numeral",
+        "at": 3
+       },
+       "to": {
+        "view": "total",
+        "at": 0
+       },
+       "value": "+50",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "I = 1 is not smaller than the next symbol, I = 1, so it is added: total = 440 + 1 = 441.",
+      "ko": "I = 1은 다음 기호 I = 1보다 작지 않으므로 더합니다. total = 440 + 1 = 441이 됩니다."
+     },
+     "views": {
+      "numeral": {
+       "values": [
+        "C",
+        "D",
+        "X",
+        "L",
+        "I",
+        "I"
+       ],
+       "tags": [
+        [
+         0,
+         "100"
+        ],
+        [
+         1,
+         "500"
+        ],
+        [
+         2,
+         "10"
+        ],
+        [
+         3,
+         "50"
+        ],
+        [
+         4,
+         "1"
+        ],
+        [
+         5,
+         "1"
+        ]
+       ],
+       "under": [
+        [
+         0,
+         "−100"
+        ],
+        [
+         1,
+         "+500"
+        ],
+        [
+         2,
+         "−10"
+        ],
+        [
+         3,
+         "+50"
+        ],
+        [
+         4,
+         "+1"
+        ]
+       ],
+       "pointers": {
+        "i": 4
+       },
+       "marks": {
+        "lit": [
+         4,
+         5
+        ],
+        "good": [
+         4
+        ]
+       }
+      },
+      "total": {
+       "values": [
+        441
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "numeral",
+        "at": 4
+       },
+       "to": {
+        "view": "total",
+        "at": 0
+       },
+       "value": "+1",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "I = 1 is the last symbol, so it is added: total = 441 + 1 = 442.",
+      "ko": "I = 1은 마지막 기호이므로 더합니다. total = 441 + 1 = 442가 됩니다."
+     },
+     "views": {
+      "numeral": {
+       "values": [
+        "C",
+        "D",
+        "X",
+        "L",
+        "I",
+        "I"
+       ],
+       "tags": [
+        [
+         0,
+         "100"
+        ],
+        [
+         1,
+         "500"
+        ],
+        [
+         2,
+         "10"
+        ],
+        [
+         3,
+         "50"
+        ],
+        [
+         4,
+         "1"
+        ],
+        [
+         5,
+         "1"
+        ]
+       ],
+       "under": [
+        [
+         0,
+         "−100"
+        ],
+        [
+         1,
+         "+500"
+        ],
+        [
+         2,
+         "−10"
+        ],
+        [
+         3,
+         "+50"
+        ],
+        [
+         4,
+         "+1"
+        ],
+        [
+         5,
+         "+1"
+        ]
+       ],
+       "pointers": {
+        "i": 5
+       },
+       "marks": {
+        "lit": [
+         5
+        ],
+        "good": [
+         5
+        ]
+       }
+      },
+      "total": {
+       "values": [
+        442
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "numeral",
+        "at": 5
+       },
+       "to": {
+        "view": "total",
+        "at": 0
+       },
+       "value": "+1",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every symbol is read: \"CDXLII\" = 442, answer 442.",
+      "ko": "모든 기호를 읽었습니다. \"CDXLII\" = 442, 답은 442입니다."
+     },
+     "views": {
+      "numeral": {
+       "values": [
+        "C",
+        "D",
+        "X",
+        "L",
+        "I",
+        "I"
+       ],
+       "tags": [
+        [
+         0,
+         "100"
+        ],
+        [
+         1,
+         "500"
+        ],
+        [
+         2,
+         "10"
+        ],
+        [
+         3,
+         "50"
+        ],
+        [
+         4,
+         "1"
+        ],
+        [
+         5,
+         "1"
+        ]
+       ],
+       "under": [
+        [
+         0,
+         "−100"
+        ],
+        [
+         1,
+         "+500"
+        ],
+        [
+         2,
+         "−10"
+        ],
+        [
+         3,
+         "+50"
+        ],
+        [
+         4,
+         "+1"
+        ],
+        [
+         5,
+         "+1"
+        ]
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "total": {
+       "values": [
+        442
+       ],
+       "marks": {
+        "path": [
+         0
+        ]
+       }
+      }
+     },
+     "answer": "442"
+    }
+   ],
+   "sampleInput": "CDXLII"
+  },
+  {
+   "label": {
+    "en": "Case 3",
+    "ko": "케이스 3"
+   },
+   "input": "numeral = \"MCMXCIV\"",
+   "expected": "1994",
+   "frames": [
+    {
+     "caption": {
+      "en": "numeral = \"MCMXCIV\": 7 symbols, read left to right. total starts at 0.",
+      "ko": "numeral = \"MCMXCIV\": 기호 7개를 왼쪽부터 읽습니다. total은 0에서 시작합니다."
+     },
+     "views": {
+      "numeral": {
+       "values": [
+        "M",
+        "C",
+        "M",
+        "X",
+        "C",
+        "I",
+        "V"
+       ],
+       "tags": [
+        [
+         0,
+         "1000"
+        ],
+        [
+         1,
+         "100"
+        ],
+        [
+         2,
+         "1000"
+        ],
+        [
+         3,
+         "10"
+        ],
+        [
+         4,
+         "100"
+        ],
+        [
+         5,
+         "1"
+        ],
+        [
+         6,
+         "5"
+        ]
+       ],
+       "under": [],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "lit": [],
+        "good": []
+       }
+      },
+      "total": {
+       "values": [
+        0
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "M = 1000 is not smaller than the next symbol, C = 100, so it is added: total = 0 + 1000 = 1000.",
+      "ko": "M = 1000은 다음 기호 C = 100보다 작지 않으므로 더합니다. total = 0 + 1000 = 1000이 됩니다."
+     },
+     "views": {
+      "numeral": {
+       "values": [
+        "M",
+        "C",
+        "M",
+        "X",
+        "C",
+        "I",
+        "V"
+       ],
+       "tags": [
+        [
+         0,
+         "1000"
+        ],
+        [
+         1,
+         "100"
+        ],
+        [
+         2,
+         "1000"
+        ],
+        [
+         3,
+         "10"
+        ],
+        [
+         4,
+         "100"
+        ],
+        [
+         5,
+         "1"
+        ],
+        [
+         6,
+         "5"
+        ]
+       ],
+       "under": [
+        [
+         0,
+         "+1000"
+        ]
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "marks": {
+        "lit": [
+         0,
+         1
+        ],
+        "good": [
+         0
+        ]
+       }
+      },
+      "total": {
+       "values": [
+        1000
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "numeral",
+        "at": 0
+       },
+       "to": {
+        "view": "total",
+        "at": 0
+       },
+       "value": "+1000",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "C = 100 is smaller than the next symbol, M = 1000, so it is subtracted: total = 1000 − 100 = 900.",
+      "ko": "C = 100은 다음 기호 M = 1000보다 작으므로 뺍니다. total = 1000 − 100 = 900이 됩니다."
+     },
+     "views": {
+      "numeral": {
+       "values": [
+        "M",
+        "C",
+        "M",
+        "X",
+        "C",
+        "I",
+        "V"
+       ],
+       "tags": [
+        [
+         0,
+         "1000"
+        ],
+        [
+         1,
+         "100"
+        ],
+        [
+         2,
+         "1000"
+        ],
+        [
+         3,
+         "10"
+        ],
+        [
+         4,
+         "100"
+        ],
+        [
+         5,
+         "1"
+        ],
+        [
+         6,
+         "5"
+        ]
+       ],
+       "under": [
+        [
+         0,
+         "+1000"
+        ],
+        [
+         1,
+         "−100"
+        ]
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "marks": {
+        "lit": [
+         1,
+         2
+        ],
+        "good": [
+         1
+        ]
+       }
+      },
+      "total": {
+       "values": [
+        900
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "numeral",
+        "at": 1
+       },
+       "to": {
+        "view": "total",
+        "at": 0
+       },
+       "value": "−100",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "M = 1000 is not smaller than the next symbol, X = 10, so it is added: total = 900 + 1000 = 1900.",
+      "ko": "M = 1000은 다음 기호 X = 10보다 작지 않으므로 더합니다. total = 900 + 1000 = 1900이 됩니다."
+     },
+     "views": {
+      "numeral": {
+       "values": [
+        "M",
+        "C",
+        "M",
+        "X",
+        "C",
+        "I",
+        "V"
+       ],
+       "tags": [
+        [
+         0,
+         "1000"
+        ],
+        [
+         1,
+         "100"
+        ],
+        [
+         2,
+         "1000"
+        ],
+        [
+         3,
+         "10"
+        ],
+        [
+         4,
+         "100"
+        ],
+        [
+         5,
+         "1"
+        ],
+        [
+         6,
+         "5"
+        ]
+       ],
+       "under": [
+        [
+         0,
+         "+1000"
+        ],
+        [
+         1,
+         "−100"
+        ],
+        [
+         2,
+         "+1000"
+        ]
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "marks": {
+        "lit": [
+         2,
+         3
+        ],
+        "good": [
+         2
+        ]
+       }
+      },
+      "total": {
+       "values": [
+        1900
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "numeral",
+        "at": 2
+       },
+       "to": {
+        "view": "total",
+        "at": 0
+       },
+       "value": "+1000",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "X = 10 is smaller than the next symbol, C = 100, so it is subtracted: total = 1900 − 10 = 1890.",
+      "ko": "X = 10은 다음 기호 C = 100보다 작으므로 뺍니다. total = 1900 − 10 = 1890이 됩니다."
+     },
+     "views": {
+      "numeral": {
+       "values": [
+        "M",
+        "C",
+        "M",
+        "X",
+        "C",
+        "I",
+        "V"
+       ],
+       "tags": [
+        [
+         0,
+         "1000"
+        ],
+        [
+         1,
+         "100"
+        ],
+        [
+         2,
+         "1000"
+        ],
+        [
+         3,
+         "10"
+        ],
+        [
+         4,
+         "100"
+        ],
+        [
+         5,
+         "1"
+        ],
+        [
+         6,
+         "5"
+        ]
+       ],
+       "under": [
+        [
+         0,
+         "+1000"
+        ],
+        [
+         1,
+         "−100"
+        ],
+        [
+         2,
+         "+1000"
+        ],
+        [
+         3,
+         "−10"
+        ]
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "marks": {
+        "lit": [
+         3,
+         4
+        ],
+        "good": [
+         3
+        ]
+       }
+      },
+      "total": {
+       "values": [
+        1890
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "numeral",
+        "at": 3
+       },
+       "to": {
+        "view": "total",
+        "at": 0
+       },
+       "value": "−10",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "C = 100 is not smaller than the next symbol, I = 1, so it is added: total = 1890 + 100 = 1990.",
+      "ko": "C = 100은 다음 기호 I = 1보다 작지 않으므로 더합니다. total = 1890 + 100 = 1990이 됩니다."
+     },
+     "views": {
+      "numeral": {
+       "values": [
+        "M",
+        "C",
+        "M",
+        "X",
+        "C",
+        "I",
+        "V"
+       ],
+       "tags": [
+        [
+         0,
+         "1000"
+        ],
+        [
+         1,
+         "100"
+        ],
+        [
+         2,
+         "1000"
+        ],
+        [
+         3,
+         "10"
+        ],
+        [
+         4,
+         "100"
+        ],
+        [
+         5,
+         "1"
+        ],
+        [
+         6,
+         "5"
+        ]
+       ],
+       "under": [
+        [
+         0,
+         "+1000"
+        ],
+        [
+         1,
+         "−100"
+        ],
+        [
+         2,
+         "+1000"
+        ],
+        [
+         3,
+         "−10"
+        ],
+        [
+         4,
+         "+100"
+        ]
+       ],
+       "pointers": {
+        "i": 4
+       },
+       "marks": {
+        "lit": [
+         4,
+         5
+        ],
+        "good": [
+         4
+        ]
+       }
+      },
+      "total": {
+       "values": [
+        1990
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "numeral",
+        "at": 4
+       },
+       "to": {
+        "view": "total",
+        "at": 0
+       },
+       "value": "+100",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "I = 1 is smaller than the next symbol, V = 5, so it is subtracted: total = 1990 − 1 = 1989.",
+      "ko": "I = 1은 다음 기호 V = 5보다 작으므로 뺍니다. total = 1990 − 1 = 1989가 됩니다."
+     },
+     "views": {
+      "numeral": {
+       "values": [
+        "M",
+        "C",
+        "M",
+        "X",
+        "C",
+        "I",
+        "V"
+       ],
+       "tags": [
+        [
+         0,
+         "1000"
+        ],
+        [
+         1,
+         "100"
+        ],
+        [
+         2,
+         "1000"
+        ],
+        [
+         3,
+         "10"
+        ],
+        [
+         4,
+         "100"
+        ],
+        [
+         5,
+         "1"
+        ],
+        [
+         6,
+         "5"
+        ]
+       ],
+       "under": [
+        [
+         0,
+         "+1000"
+        ],
+        [
+         1,
+         "−100"
+        ],
+        [
+         2,
+         "+1000"
+        ],
+        [
+         3,
+         "−10"
+        ],
+        [
+         4,
+         "+100"
+        ],
+        [
+         5,
+         "−1"
+        ]
+       ],
+       "pointers": {
+        "i": 5
+       },
+       "marks": {
+        "lit": [
+         5,
+         6
+        ],
+        "good": [
+         5
+        ]
+       }
+      },
+      "total": {
+       "values": [
+        1989
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "numeral",
+        "at": 5
+       },
+       "to": {
+        "view": "total",
+        "at": 0
+       },
+       "value": "−1",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "V = 5 is the last symbol, so it is added: total = 1989 + 5 = 1994.",
+      "ko": "V = 5는 마지막 기호이므로 더합니다. total = 1989 + 5 = 1994가 됩니다."
+     },
+     "views": {
+      "numeral": {
+       "values": [
+        "M",
+        "C",
+        "M",
+        "X",
+        "C",
+        "I",
+        "V"
+       ],
+       "tags": [
+        [
+         0,
+         "1000"
+        ],
+        [
+         1,
+         "100"
+        ],
+        [
+         2,
+         "1000"
+        ],
+        [
+         3,
+         "10"
+        ],
+        [
+         4,
+         "100"
+        ],
+        [
+         5,
+         "1"
+        ],
+        [
+         6,
+         "5"
+        ]
+       ],
+       "under": [
+        [
+         0,
+         "+1000"
+        ],
+        [
+         1,
+         "−100"
+        ],
+        [
+         2,
+         "+1000"
+        ],
+        [
+         3,
+         "−10"
+        ],
+        [
+         4,
+         "+100"
+        ],
+        [
+         5,
+         "−1"
+        ],
+        [
+         6,
+         "+5"
+        ]
+       ],
+       "pointers": {
+        "i": 6
+       },
+       "marks": {
+        "lit": [
+         6
+        ],
+        "good": [
+         6
+        ]
+       }
+      },
+      "total": {
+       "values": [
+        1994
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "numeral",
+        "at": 6
+       },
+       "to": {
+        "view": "total",
+        "at": 0
+       },
+       "value": "+5",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every symbol is read: \"MCMXCIV\" = 1994, answer 1994.",
+      "ko": "모든 기호를 읽었습니다. \"MCMXCIV\" = 1994, 답은 1994입니다."
+     },
+     "views": {
+      "numeral": {
+       "values": [
+        "M",
+        "C",
+        "M",
+        "X",
+        "C",
+        "I",
+        "V"
+       ],
+       "tags": [
+        [
+         0,
+         "1000"
+        ],
+        [
+         1,
+         "100"
+        ],
+        [
+         2,
+         "1000"
+        ],
+        [
+         3,
+         "10"
+        ],
+        [
+         4,
+         "100"
+        ],
+        [
+         5,
+         "1"
+        ],
+        [
+         6,
+         "5"
+        ]
+       ],
+       "under": [
+        [
+         0,
+         "+1000"
+        ],
+        [
+         1,
+         "−100"
+        ],
+        [
+         2,
+         "+1000"
+        ],
+        [
+         3,
+         "−10"
+        ],
+        [
+         4,
+         "+100"
+        ],
+        [
+         5,
+         "−1"
+        ],
+        [
+         6,
+         "+5"
+        ]
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5,
+         6
+        ]
+       }
+      },
+      "total": {
+       "values": [
+        1994
+       ],
+       "marks": {
+        "path": [
+         0
+        ]
+       }
+      }
+     },
+     "answer": "1994"
+    }
+   ],
+   "sampleInput": "MCMXCIV"
+  }
+ ]
+}

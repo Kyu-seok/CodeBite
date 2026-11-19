@@ -1,0 +1,2354 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Fizz Buzz",
+  "ko": "피즈 버즈"
+ },
+ "approach": {
+  "en": "For each i from 1 to n, test i % 3 and i % 5: both 0 is \"FizzBuzz\", only 3 is \"Fizz\", only 5 is \"Buzz\", and neither is i written out.",
+  "ko": "1부터 n까지 i마다 i % 3과 i % 5를 봅니다. 둘 다 0이면 \"FizzBuzz\", 3만이면 \"Fizz\", 5만이면 \"Buzz\", 둘 다 아니면 i를 그대로 씁니다."
+ },
+ "views": [
+  {
+   "id": "nums",
+   "type": "array",
+   "title": {
+    "en": "i (tag: divisible by)",
+    "ko": "i (태그: 나누어떨어지는 수)"
+   }
+  },
+  {
+   "id": "result",
+   "type": "output",
+   "title": {
+    "en": "answer",
+    "ko": "answer (답)"
+   },
+   "empty": {
+    "en": "empty",
+    "ko": "비어 있음"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "n = 4",
+   "expected": "[\"1\",\"2\",\"Fizz\",\"4\"]",
+   "frames": [
+    {
+     "caption": {
+      "en": "n = 4: one entry for each i from 1 to 4.",
+      "ko": "n = 4: 1부터 4까지 i마다 하나씩 씁니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        1,
+        2,
+        3,
+        4
+       ],
+       "tags": [],
+       "pointers": {
+        "i": null
+       },
+       "unread": [
+        0,
+        1,
+        2,
+        3
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "1 is divisible by neither 3 nor 5, so it is written as \"1\".",
+      "ko": "1: 3으로도 5로도 나누어떨어지지 않으므로 \"1\" 문자열을 씁니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        1,
+        2,
+        3,
+        4
+       ],
+       "tags": [],
+       "pointers": {
+        "i": 0
+       },
+       "unread": [
+        1,
+        2,
+        3
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nums",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       },
+       "value": "1",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "2 is divisible by neither 3 nor 5, so it is written as \"2\".",
+      "ko": "2: 3으로도 5로도 나누어떨어지지 않으므로 \"2\" 문자열을 씁니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        1,
+        2,
+        3,
+        4
+       ],
+       "tags": [],
+       "pointers": {
+        "i": 1
+       },
+       "unread": [
+        2,
+        3
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1",
+        "2"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nums",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       },
+       "value": "2",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "3 is divisible by 3 but not 5: \"Fizz\".",
+      "ko": "3: 3으로는 나누어떨어지고 5로는 아니므로 \"Fizz\"입니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        1,
+        2,
+        3,
+        4
+       ],
+       "tags": [
+        [
+         2,
+         "÷3"
+        ]
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "unread": [
+        3
+       ],
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1",
+        "2",
+        "Fizz"
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nums",
+        "at": 2
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       },
+       "value": "Fizz",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "4 is divisible by neither 3 nor 5, so it is written as \"4\".",
+      "ko": "4: 3으로도 5로도 나누어떨어지지 않으므로 \"4\" 문자열을 씁니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        1,
+        2,
+        3,
+        4
+       ],
+       "tags": [
+        [
+         2,
+         "÷3"
+        ]
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "unread": [],
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1",
+        "2",
+        "Fizz",
+        "4"
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nums",
+        "at": 3
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       },
+       "value": "4",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every i from 1 to 4 has its entry: answer [\"1\",\"2\",\"Fizz\",\"4\"].",
+      "ko": "1부터 4까지 모두 썼습니다. 답은 [\"1\",\"2\",\"Fizz\",\"4\"]입니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        1,
+        2,
+        3,
+        4
+       ],
+       "tags": [
+        [
+         2,
+         "÷3"
+        ]
+       ],
+       "pointers": {
+        "i": null
+       },
+       "unread": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "1",
+        "2",
+        "Fizz",
+        "4"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3
+        ]
+       }
+      }
+     },
+     "answer": "[\"1\",\"2\",\"Fizz\",\"4\"]"
+    }
+   ],
+   "sampleInput": "4"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "n = 6",
+   "expected": "[\"1\",\"2\",\"Fizz\",\"4\",\"Buzz\",\"Fizz\"]",
+   "frames": [
+    {
+     "caption": {
+      "en": "n = 6: one entry for each i from 1 to 6.",
+      "ko": "n = 6: 1부터 6까지 i마다 하나씩 씁니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+       ],
+       "tags": [],
+       "pointers": {
+        "i": null
+       },
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "1 is divisible by neither 3 nor 5, so it is written as \"1\".",
+      "ko": "1: 3으로도 5로도 나누어떨어지지 않으므로 \"1\" 문자열을 씁니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+       ],
+       "tags": [],
+       "pointers": {
+        "i": 0
+       },
+       "unread": [
+        1,
+        2,
+        3,
+        4,
+        5
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nums",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       },
+       "value": "1",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "2 is divisible by neither 3 nor 5, so it is written as \"2\".",
+      "ko": "2: 3으로도 5로도 나누어떨어지지 않으므로 \"2\" 문자열을 씁니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+       ],
+       "tags": [],
+       "pointers": {
+        "i": 1
+       },
+       "unread": [
+        2,
+        3,
+        4,
+        5
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1",
+        "2"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nums",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       },
+       "value": "2",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "3 is divisible by 3 but not 5: \"Fizz\".",
+      "ko": "3: 3으로는 나누어떨어지고 5로는 아니므로 \"Fizz\"입니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+       ],
+       "tags": [
+        [
+         2,
+         "÷3"
+        ]
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "unread": [
+        3,
+        4,
+        5
+       ],
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1",
+        "2",
+        "Fizz"
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nums",
+        "at": 2
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       },
+       "value": "Fizz",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "4 is divisible by neither 3 nor 5, so it is written as \"4\".",
+      "ko": "4: 3으로도 5로도 나누어떨어지지 않으므로 \"4\" 문자열을 씁니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+       ],
+       "tags": [
+        [
+         2,
+         "÷3"
+        ]
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "unread": [
+        4,
+        5
+       ],
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1",
+        "2",
+        "Fizz",
+        "4"
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nums",
+        "at": 3
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       },
+       "value": "4",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "5 is divisible by 5 but not 3: \"Buzz\".",
+      "ko": "5: 5로는 나누어떨어지고 3으로는 아니므로 \"Buzz\"입니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+       ],
+       "tags": [
+        [
+         2,
+         "÷3"
+        ],
+        [
+         4,
+         "÷5"
+        ]
+       ],
+       "pointers": {
+        "i": 4
+       },
+       "unread": [
+        5
+       ],
+       "marks": {
+        "lit": [
+         4
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1",
+        "2",
+        "Fizz",
+        "4",
+        "Buzz"
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nums",
+        "at": 4
+       },
+       "to": {
+        "view": "result",
+        "at": 4
+       },
+       "value": "Buzz",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "6 is divisible by 3 but not 5: \"Fizz\".",
+      "ko": "6: 3으로는 나누어떨어지고 5로는 아니므로 \"Fizz\"입니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+       ],
+       "tags": [
+        [
+         2,
+         "÷3"
+        ],
+        [
+         4,
+         "÷5"
+        ],
+        [
+         5,
+         "÷3"
+        ]
+       ],
+       "pointers": {
+        "i": 5
+       },
+       "unread": [],
+       "marks": {
+        "lit": [
+         5
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1",
+        "2",
+        "Fizz",
+        "4",
+        "Buzz",
+        "Fizz"
+       ],
+       "marks": {
+        "good": [
+         5
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nums",
+        "at": 5
+       },
+       "to": {
+        "view": "result",
+        "at": 5
+       },
+       "value": "Fizz",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every i from 1 to 6 has its entry: answer [\"1\",\"2\",\"Fizz\",\"4\",\"Buzz\",\"Fizz\"].",
+      "ko": "1부터 6까지 모두 썼습니다. 답은 [\"1\",\"2\",\"Fizz\",\"4\",\"Buzz\",\"Fizz\"]입니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+       ],
+       "tags": [
+        [
+         2,
+         "÷3"
+        ],
+        [
+         4,
+         "÷5"
+        ],
+        [
+         5,
+         "÷3"
+        ]
+       ],
+       "pointers": {
+        "i": null
+       },
+       "unread": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "1",
+        "2",
+        "Fizz",
+        "4",
+        "Buzz",
+        "Fizz"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      }
+     },
+     "answer": "[\"1\",\"2\",\"Fizz\",\"4\",\"Buzz\",\"Fizz\"]"
+    }
+   ],
+   "sampleInput": "6"
+  },
+  {
+   "label": {
+    "en": "Example 3",
+    "ko": "예시 3"
+   },
+   "input": "n = 15",
+   "expected": "[\"1\",\"2\",\"Fizz\",\"4\",\"Buzz\",\"Fizz\",\"7\",\"8\",\"Fizz\",\"Buzz\",\"11\",\"Fizz\",\"13\",\"14\",\"FizzBuzz\"]",
+   "frames": [
+    {
+     "caption": {
+      "en": "n = 15: one entry for each i from 1 to 15.",
+      "ko": "n = 15: 1부터 15까지 i마다 하나씩 씁니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+       ],
+       "tags": [],
+       "pointers": {
+        "i": null
+       },
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "1 is divisible by neither 3 nor 5, so it is written as \"1\".",
+      "ko": "1: 3으로도 5로도 나누어떨어지지 않으므로 \"1\" 문자열을 씁니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+       ],
+       "tags": [],
+       "pointers": {
+        "i": 0
+       },
+       "unread": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nums",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       },
+       "value": "1",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "2 is divisible by neither 3 nor 5, so it is written as \"2\".",
+      "ko": "2: 3으로도 5로도 나누어떨어지지 않으므로 \"2\" 문자열을 씁니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+       ],
+       "tags": [],
+       "pointers": {
+        "i": 1
+       },
+       "unread": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1",
+        "2"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nums",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       },
+       "value": "2",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "3 is divisible by 3 but not 5: \"Fizz\".",
+      "ko": "3: 3으로는 나누어떨어지고 5로는 아니므로 \"Fizz\"입니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+       ],
+       "tags": [
+        [
+         2,
+         "÷3"
+        ]
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "unread": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14
+       ],
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1",
+        "2",
+        "Fizz"
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nums",
+        "at": 2
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       },
+       "value": "Fizz",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "4 is divisible by neither 3 nor 5, so it is written as \"4\".",
+      "ko": "4: 3으로도 5로도 나누어떨어지지 않으므로 \"4\" 문자열을 씁니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+       ],
+       "tags": [
+        [
+         2,
+         "÷3"
+        ]
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "unread": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14
+       ],
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1",
+        "2",
+        "Fizz",
+        "4"
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nums",
+        "at": 3
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       },
+       "value": "4",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "5 is divisible by 5 but not 3: \"Buzz\".",
+      "ko": "5: 5로는 나누어떨어지고 3으로는 아니므로 \"Buzz\"입니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+       ],
+       "tags": [
+        [
+         2,
+         "÷3"
+        ],
+        [
+         4,
+         "÷5"
+        ]
+       ],
+       "pointers": {
+        "i": 4
+       },
+       "unread": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14
+       ],
+       "marks": {
+        "lit": [
+         4
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1",
+        "2",
+        "Fizz",
+        "4",
+        "Buzz"
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nums",
+        "at": 4
+       },
+       "to": {
+        "view": "result",
+        "at": 4
+       },
+       "value": "Buzz",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "6 is divisible by 3 but not 5: \"Fizz\".",
+      "ko": "6: 3으로는 나누어떨어지고 5로는 아니므로 \"Fizz\"입니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+       ],
+       "tags": [
+        [
+         2,
+         "÷3"
+        ],
+        [
+         4,
+         "÷5"
+        ],
+        [
+         5,
+         "÷3"
+        ]
+       ],
+       "pointers": {
+        "i": 5
+       },
+       "unread": [
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14
+       ],
+       "marks": {
+        "lit": [
+         5
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1",
+        "2",
+        "Fizz",
+        "4",
+        "Buzz",
+        "Fizz"
+       ],
+       "marks": {
+        "good": [
+         5
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nums",
+        "at": 5
+       },
+       "to": {
+        "view": "result",
+        "at": 5
+       },
+       "value": "Fizz",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "7 is divisible by neither 3 nor 5, so it is written as \"7\".",
+      "ko": "7: 3으로도 5로도 나누어떨어지지 않으므로 \"7\" 문자열을 씁니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+       ],
+       "tags": [
+        [
+         2,
+         "÷3"
+        ],
+        [
+         4,
+         "÷5"
+        ],
+        [
+         5,
+         "÷3"
+        ]
+       ],
+       "pointers": {
+        "i": 6
+       },
+       "unread": [
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14
+       ],
+       "marks": {
+        "lit": [
+         6
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1",
+        "2",
+        "Fizz",
+        "4",
+        "Buzz",
+        "Fizz",
+        "7"
+       ],
+       "marks": {
+        "good": [
+         6
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nums",
+        "at": 6
+       },
+       "to": {
+        "view": "result",
+        "at": 6
+       },
+       "value": "7",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "8 is divisible by neither 3 nor 5, so it is written as \"8\".",
+      "ko": "8: 3으로도 5로도 나누어떨어지지 않으므로 \"8\" 문자열을 씁니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+       ],
+       "tags": [
+        [
+         2,
+         "÷3"
+        ],
+        [
+         4,
+         "÷5"
+        ],
+        [
+         5,
+         "÷3"
+        ]
+       ],
+       "pointers": {
+        "i": 7
+       },
+       "unread": [
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14
+       ],
+       "marks": {
+        "lit": [
+         7
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1",
+        "2",
+        "Fizz",
+        "4",
+        "Buzz",
+        "Fizz",
+        "7",
+        "8"
+       ],
+       "marks": {
+        "good": [
+         7
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nums",
+        "at": 7
+       },
+       "to": {
+        "view": "result",
+        "at": 7
+       },
+       "value": "8",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "9 is divisible by 3 but not 5: \"Fizz\".",
+      "ko": "9: 3으로는 나누어떨어지고 5로는 아니므로 \"Fizz\"입니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+       ],
+       "tags": [
+        [
+         2,
+         "÷3"
+        ],
+        [
+         4,
+         "÷5"
+        ],
+        [
+         5,
+         "÷3"
+        ],
+        [
+         8,
+         "÷3"
+        ]
+       ],
+       "pointers": {
+        "i": 8
+       },
+       "unread": [
+        9,
+        10,
+        11,
+        12,
+        13,
+        14
+       ],
+       "marks": {
+        "lit": [
+         8
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1",
+        "2",
+        "Fizz",
+        "4",
+        "Buzz",
+        "Fizz",
+        "7",
+        "8",
+        "Fizz"
+       ],
+       "marks": {
+        "good": [
+         8
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nums",
+        "at": 8
+       },
+       "to": {
+        "view": "result",
+        "at": 8
+       },
+       "value": "Fizz",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "10 is divisible by 5 but not 3: \"Buzz\".",
+      "ko": "10: 5로는 나누어떨어지고 3으로는 아니므로 \"Buzz\"입니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+       ],
+       "tags": [
+        [
+         2,
+         "÷3"
+        ],
+        [
+         4,
+         "÷5"
+        ],
+        [
+         5,
+         "÷3"
+        ],
+        [
+         8,
+         "÷3"
+        ],
+        [
+         9,
+         "÷5"
+        ]
+       ],
+       "pointers": {
+        "i": 9
+       },
+       "unread": [
+        10,
+        11,
+        12,
+        13,
+        14
+       ],
+       "marks": {
+        "lit": [
+         9
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1",
+        "2",
+        "Fizz",
+        "4",
+        "Buzz",
+        "Fizz",
+        "7",
+        "8",
+        "Fizz",
+        "Buzz"
+       ],
+       "marks": {
+        "good": [
+         9
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nums",
+        "at": 9
+       },
+       "to": {
+        "view": "result",
+        "at": 9
+       },
+       "value": "Buzz",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "11 is divisible by neither 3 nor 5, so it is written as \"11\".",
+      "ko": "11: 3으로도 5로도 나누어떨어지지 않으므로 \"11\" 문자열을 씁니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+       ],
+       "tags": [
+        [
+         2,
+         "÷3"
+        ],
+        [
+         4,
+         "÷5"
+        ],
+        [
+         5,
+         "÷3"
+        ],
+        [
+         8,
+         "÷3"
+        ],
+        [
+         9,
+         "÷5"
+        ]
+       ],
+       "pointers": {
+        "i": 10
+       },
+       "unread": [
+        11,
+        12,
+        13,
+        14
+       ],
+       "marks": {
+        "lit": [
+         10
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1",
+        "2",
+        "Fizz",
+        "4",
+        "Buzz",
+        "Fizz",
+        "7",
+        "8",
+        "Fizz",
+        "Buzz",
+        "11"
+       ],
+       "marks": {
+        "good": [
+         10
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nums",
+        "at": 10
+       },
+       "to": {
+        "view": "result",
+        "at": 10
+       },
+       "value": "11",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "12 is divisible by 3 but not 5: \"Fizz\".",
+      "ko": "12: 3으로는 나누어떨어지고 5로는 아니므로 \"Fizz\"입니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+       ],
+       "tags": [
+        [
+         2,
+         "÷3"
+        ],
+        [
+         4,
+         "÷5"
+        ],
+        [
+         5,
+         "÷3"
+        ],
+        [
+         8,
+         "÷3"
+        ],
+        [
+         9,
+         "÷5"
+        ],
+        [
+         11,
+         "÷3"
+        ]
+       ],
+       "pointers": {
+        "i": 11
+       },
+       "unread": [
+        12,
+        13,
+        14
+       ],
+       "marks": {
+        "lit": [
+         11
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1",
+        "2",
+        "Fizz",
+        "4",
+        "Buzz",
+        "Fizz",
+        "7",
+        "8",
+        "Fizz",
+        "Buzz",
+        "11",
+        "Fizz"
+       ],
+       "marks": {
+        "good": [
+         11
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nums",
+        "at": 11
+       },
+       "to": {
+        "view": "result",
+        "at": 11
+       },
+       "value": "Fizz",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "13 is divisible by neither 3 nor 5, so it is written as \"13\".",
+      "ko": "13: 3으로도 5로도 나누어떨어지지 않으므로 \"13\" 문자열을 씁니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+       ],
+       "tags": [
+        [
+         2,
+         "÷3"
+        ],
+        [
+         4,
+         "÷5"
+        ],
+        [
+         5,
+         "÷3"
+        ],
+        [
+         8,
+         "÷3"
+        ],
+        [
+         9,
+         "÷5"
+        ],
+        [
+         11,
+         "÷3"
+        ]
+       ],
+       "pointers": {
+        "i": 12
+       },
+       "unread": [
+        13,
+        14
+       ],
+       "marks": {
+        "lit": [
+         12
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1",
+        "2",
+        "Fizz",
+        "4",
+        "Buzz",
+        "Fizz",
+        "7",
+        "8",
+        "Fizz",
+        "Buzz",
+        "11",
+        "Fizz",
+        "13"
+       ],
+       "marks": {
+        "good": [
+         12
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nums",
+        "at": 12
+       },
+       "to": {
+        "view": "result",
+        "at": 12
+       },
+       "value": "13",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "14 is divisible by neither 3 nor 5, so it is written as \"14\".",
+      "ko": "14: 3으로도 5로도 나누어떨어지지 않으므로 \"14\" 문자열을 씁니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+       ],
+       "tags": [
+        [
+         2,
+         "÷3"
+        ],
+        [
+         4,
+         "÷5"
+        ],
+        [
+         5,
+         "÷3"
+        ],
+        [
+         8,
+         "÷3"
+        ],
+        [
+         9,
+         "÷5"
+        ],
+        [
+         11,
+         "÷3"
+        ]
+       ],
+       "pointers": {
+        "i": 13
+       },
+       "unread": [
+        14
+       ],
+       "marks": {
+        "lit": [
+         13
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1",
+        "2",
+        "Fizz",
+        "4",
+        "Buzz",
+        "Fizz",
+        "7",
+        "8",
+        "Fizz",
+        "Buzz",
+        "11",
+        "Fizz",
+        "13",
+        "14"
+       ],
+       "marks": {
+        "good": [
+         13
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nums",
+        "at": 13
+       },
+       "to": {
+        "view": "result",
+        "at": 13
+       },
+       "value": "14",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "15 is divisible by both 3 and 5: \"FizzBuzz\".",
+      "ko": "15: 3과 5 모두로 나누어떨어지므로 \"FizzBuzz\"입니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+       ],
+       "tags": [
+        [
+         2,
+         "÷3"
+        ],
+        [
+         4,
+         "÷5"
+        ],
+        [
+         5,
+         "÷3"
+        ],
+        [
+         8,
+         "÷3"
+        ],
+        [
+         9,
+         "÷5"
+        ],
+        [
+         11,
+         "÷3"
+        ],
+        [
+         14,
+         "÷3,5"
+        ]
+       ],
+       "pointers": {
+        "i": 14
+       },
+       "unread": [],
+       "marks": {
+        "lit": [
+         14
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1",
+        "2",
+        "Fizz",
+        "4",
+        "Buzz",
+        "Fizz",
+        "7",
+        "8",
+        "Fizz",
+        "Buzz",
+        "11",
+        "Fizz",
+        "13",
+        "14",
+        "FizzBuzz"
+       ],
+       "marks": {
+        "good": [
+         14
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nums",
+        "at": 14
+       },
+       "to": {
+        "view": "result",
+        "at": 14
+       },
+       "value": "FizzBuzz",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every i from 1 to 15 has its entry: the answer is the 15 entries in the box, in order.",
+      "ko": "1부터 15까지 모두 썼습니다. 답은 상자에 담긴 15개 항목을 순서대로 담은 배열입니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+       ],
+       "tags": [
+        [
+         2,
+         "÷3"
+        ],
+        [
+         4,
+         "÷5"
+        ],
+        [
+         5,
+         "÷3"
+        ],
+        [
+         8,
+         "÷3"
+        ],
+        [
+         9,
+         "÷5"
+        ],
+        [
+         11,
+         "÷3"
+        ],
+        [
+         14,
+         "÷3,5"
+        ]
+       ],
+       "pointers": {
+        "i": null
+       },
+       "unread": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "1",
+        "2",
+        "Fizz",
+        "4",
+        "Buzz",
+        "Fizz",
+        "7",
+        "8",
+        "Fizz",
+        "Buzz",
+        "11",
+        "Fizz",
+        "13",
+        "14",
+        "FizzBuzz"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5,
+         6,
+         7,
+         8,
+         9,
+         10,
+         11,
+         12,
+         13,
+         14
+        ]
+       }
+      }
+     },
+     "answer": "[\"1\",\"2\",\"Fizz\",\"4\",\"Buzz\",\"Fizz\",\"7\",\"8\",\"Fizz\",\"Buzz\",\"11\",\"Fizz\",\"13\",\"14\",\"FizzBuzz\"]"
+    }
+   ],
+   "sampleInput": "15"
+  }
+ ]
+}

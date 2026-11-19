@@ -1,0 +1,642 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Palindrome Episode Number",
+  "ko": "회문 에피소드 번호"
+ },
+ "approach": {
+  "en": "Write the number as text, reverse it, and compare the two position by position: a palindrome reads the same both ways.",
+  "ko": "수를 문자열로 쓰고 뒤집은 다음, 두 문자열을 자리마다 비교합니다. 회문은 어느 쪽에서 읽어도 같습니다."
+ },
+ "views": [
+  {
+   "id": "text",
+   "type": "array",
+   "title": {
+    "en": "text = str(episode)",
+    "ko": "text = str(episode)"
+   }
+  },
+  {
+   "id": "rev",
+   "type": "array",
+   "title": "text[::-1]"
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "episode = 929",
+   "expected": "true",
+   "frames": [
+    {
+     "caption": {
+      "en": "episode = 929 as text: 3 characters, \"929\".",
+      "ko": "episode = 929: 문자열로 쓰면 3글자짜리 \"929\"입니다."
+     },
+     "views": {
+      "text": {
+       "values": [
+        "9",
+        "2",
+        "9"
+       ],
+       "pointers": {
+        "k": null
+       },
+       "marks": {
+        "lit": [],
+        "bad": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "text[::-1] copies each character to its mirror place: \"929\".",
+      "ko": "text[::-1] 슬라이스는 각 글자를 거울 위치로 옮겨 적습니다: \"929\"."
+     },
+     "views": {
+      "text": {
+       "values": [
+        "9",
+        "2",
+        "9"
+       ],
+       "pointers": {
+        "k": null
+       },
+       "marks": {
+        "lit": [],
+        "bad": []
+       }
+      },
+      "rev": {
+       "values": [
+        "9",
+        "2",
+        "9"
+       ],
+       "pointers": {
+        "k": null
+       },
+       "marks": {
+        "good": [
+         0,
+         1,
+         2
+        ],
+        "lit": [],
+        "bad": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "text",
+        "at": 0
+       },
+       "to": {
+        "view": "rev",
+        "at": 2
+       }
+      },
+      {
+       "from": {
+        "view": "text",
+        "at": 1
+       },
+       "to": {
+        "view": "rev",
+        "at": 1
+       }
+      },
+      {
+       "from": {
+        "view": "text",
+        "at": 2
+       },
+       "to": {
+        "view": "rev",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Position 0: '9' and '9' match.",
+      "ko": "0번 자리: 양쪽 모두 '9', 같습니다."
+     },
+     "views": {
+      "text": {
+       "values": [
+        "9",
+        "2",
+        "9"
+       ],
+       "pointers": {
+        "k": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ],
+        "bad": []
+       }
+      },
+      "rev": {
+       "values": [
+        "9",
+        "2",
+        "9"
+       ],
+       "pointers": {
+        "k": 0
+       },
+       "marks": {
+        "good": [],
+        "lit": [
+         0
+        ],
+        "bad": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Position 1: '2' and '2' match.",
+      "ko": "1번 자리: 양쪽 모두 '2', 같습니다."
+     },
+     "views": {
+      "text": {
+       "values": [
+        "9",
+        "2",
+        "9"
+       ],
+       "pointers": {
+        "k": 1
+       },
+       "marks": {
+        "lit": [
+         1
+        ],
+        "bad": []
+       }
+      },
+      "rev": {
+       "values": [
+        "9",
+        "2",
+        "9"
+       ],
+       "pointers": {
+        "k": 1
+       },
+       "marks": {
+        "good": [],
+        "lit": [
+         1
+        ],
+        "bad": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Position 2: '9' and '9' match.",
+      "ko": "2번 자리: 양쪽 모두 '9', 같습니다."
+     },
+     "views": {
+      "text": {
+       "values": [
+        "9",
+        "2",
+        "9"
+       ],
+       "pointers": {
+        "k": 2
+       },
+       "marks": {
+        "lit": [
+         2
+        ],
+        "bad": []
+       }
+      },
+      "rev": {
+       "values": [
+        "9",
+        "2",
+        "9"
+       ],
+       "pointers": {
+        "k": 2
+       },
+       "marks": {
+        "good": [],
+        "lit": [
+         2
+        ],
+        "bad": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Every position matches, so \"929\" reads the same backwards: answer true.",
+      "ko": "모든 자리가 같으므로 \"929\" 문자열은 거꾸로 읽어도 같습니다. 답은 true입니다."
+     },
+     "views": {
+      "text": {
+       "values": [
+        "9",
+        "2",
+        "9"
+       ],
+       "pointers": {
+        "k": null
+       },
+       "marks": {
+        "path": [
+         0,
+         1,
+         2
+        ]
+       }
+      },
+      "rev": {
+       "values": [
+        "9",
+        "2",
+        "9"
+       ],
+       "pointers": {
+        "k": null
+       },
+       "marks": {
+        "path": [
+         0,
+         1,
+         2
+        ]
+       }
+      }
+     },
+     "answer": "true"
+    }
+   ],
+   "sampleInput": "929"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "episode = 20",
+   "expected": "false",
+   "frames": [
+    {
+     "caption": {
+      "en": "episode = 20 as text: 2 characters, \"20\".",
+      "ko": "episode = 20: 문자열로 쓰면 2글자짜리 \"20\"입니다."
+     },
+     "views": {
+      "text": {
+       "values": [
+        "2",
+        "0"
+       ],
+       "pointers": {
+        "k": null
+       },
+       "marks": {
+        "lit": [],
+        "bad": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "text[::-1] copies each character to its mirror place: \"02\".",
+      "ko": "text[::-1] 슬라이스는 각 글자를 거울 위치로 옮겨 적습니다: \"02\"."
+     },
+     "views": {
+      "text": {
+       "values": [
+        "2",
+        "0"
+       ],
+       "pointers": {
+        "k": null
+       },
+       "marks": {
+        "lit": [],
+        "bad": []
+       }
+      },
+      "rev": {
+       "values": [
+        "0",
+        "2"
+       ],
+       "pointers": {
+        "k": null
+       },
+       "marks": {
+        "good": [
+         0,
+         1
+        ],
+        "lit": [],
+        "bad": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "text",
+        "at": 0
+       },
+       "to": {
+        "view": "rev",
+        "at": 1
+       }
+      },
+      {
+       "from": {
+        "view": "text",
+        "at": 1
+       },
+       "to": {
+        "view": "rev",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Position 0: '2' and '0' differ, so the text does not read the same backwards.",
+      "ko": "0번 자리: text는 '2', 뒤집은 쪽은 '0'. 서로 다르니 거꾸로 읽으면 같지 않습니다."
+     },
+     "views": {
+      "text": {
+       "values": [
+        "2",
+        "0"
+       ],
+       "pointers": {
+        "k": 0
+       },
+       "marks": {
+        "lit": [],
+        "bad": [
+         0
+        ]
+       }
+      },
+      "rev": {
+       "values": [
+        "0",
+        "2"
+       ],
+       "pointers": {
+        "k": 0
+       },
+       "marks": {
+        "good": [],
+        "lit": [],
+        "bad": [
+         0
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "\"20\" != \"02\", so 20 is not a palindrome: answer false.",
+      "ko": "\"20\" != \"02\", 곧 20번은 회문이 아닙니다. 답은 false입니다."
+     },
+     "views": {
+      "text": {
+       "values": [
+        "2",
+        "0"
+       ],
+       "pointers": {
+        "k": null
+       },
+       "marks": {
+        "lit": [],
+        "bad": [
+         0
+        ]
+       }
+      },
+      "rev": {
+       "values": [
+        "0",
+        "2"
+       ],
+       "pointers": {
+        "k": null
+       },
+       "marks": {
+        "good": [],
+        "lit": [],
+        "bad": [
+         0
+        ]
+       }
+      }
+     },
+     "answer": "false"
+    }
+   ],
+   "sampleInput": "20"
+  },
+  {
+   "label": {
+    "en": "Case 3",
+    "ko": "케이스 3"
+   },
+   "input": "episode = 10",
+   "expected": "false",
+   "frames": [
+    {
+     "caption": {
+      "en": "episode = 10 as text: 2 characters, \"10\".",
+      "ko": "episode = 10: 문자열로 쓰면 2글자짜리 \"10\"입니다."
+     },
+     "views": {
+      "text": {
+       "values": [
+        "1",
+        "0"
+       ],
+       "pointers": {
+        "k": null
+       },
+       "marks": {
+        "lit": [],
+        "bad": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "text[::-1] copies each character to its mirror place: \"01\".",
+      "ko": "text[::-1] 슬라이스는 각 글자를 거울 위치로 옮겨 적습니다: \"01\"."
+     },
+     "views": {
+      "text": {
+       "values": [
+        "1",
+        "0"
+       ],
+       "pointers": {
+        "k": null
+       },
+       "marks": {
+        "lit": [],
+        "bad": []
+       }
+      },
+      "rev": {
+       "values": [
+        "0",
+        "1"
+       ],
+       "pointers": {
+        "k": null
+       },
+       "marks": {
+        "good": [
+         0,
+         1
+        ],
+        "lit": [],
+        "bad": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "text",
+        "at": 0
+       },
+       "to": {
+        "view": "rev",
+        "at": 1
+       }
+      },
+      {
+       "from": {
+        "view": "text",
+        "at": 1
+       },
+       "to": {
+        "view": "rev",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Position 0: '1' and '0' differ, so the text does not read the same backwards.",
+      "ko": "0번 자리: text는 '1', 뒤집은 쪽은 '0'. 서로 다르니 거꾸로 읽으면 같지 않습니다."
+     },
+     "views": {
+      "text": {
+       "values": [
+        "1",
+        "0"
+       ],
+       "pointers": {
+        "k": 0
+       },
+       "marks": {
+        "lit": [],
+        "bad": [
+         0
+        ]
+       }
+      },
+      "rev": {
+       "values": [
+        "0",
+        "1"
+       ],
+       "pointers": {
+        "k": 0
+       },
+       "marks": {
+        "good": [],
+        "lit": [],
+        "bad": [
+         0
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "\"10\" != \"01\", so 10 is not a palindrome: answer false.",
+      "ko": "\"10\" != \"01\", 곧 10번은 회문이 아닙니다. 답은 false입니다."
+     },
+     "views": {
+      "text": {
+       "values": [
+        "1",
+        "0"
+       ],
+       "pointers": {
+        "k": null
+       },
+       "marks": {
+        "lit": [],
+        "bad": [
+         0
+        ]
+       }
+      },
+      "rev": {
+       "values": [
+        "0",
+        "1"
+       ],
+       "pointers": {
+        "k": null
+       },
+       "marks": {
+        "good": [],
+        "lit": [],
+        "bad": [
+         0
+        ]
+       }
+      }
+     },
+     "answer": "false"
+    }
+   ],
+   "sampleInput": "10"
+  }
+ ]
+}
