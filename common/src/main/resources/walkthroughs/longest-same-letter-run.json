@@ -1,0 +1,1669 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Longest Same-Letter Run",
+  "ko": "같은 글자 최장 구간"
+ },
+ "approach": {
+  "en": "Grow a window to the right; it is one letter repeated once the letters other than its most common one, length − top, are changed. While that needs more than k changes, letters leave from the left.",
+  "ko": "구간을 오른쪽으로 늘립니다. 가장 많은 글자 말고 나머지(길이 − top)를 바꾸면 한 글자만 남습니다. 바꿀 글자가 k개보다 많으면 왼쪽에서 글자를 뺍니다."
+ },
+ "views": [
+  {
+   "id": "s",
+   "type": "array",
+   "title": "s"
+  },
+  {
+   "id": "counts",
+   "type": "map",
+   "title": {
+    "en": "counts (letter → count)",
+    "ko": "counts (글자 → 개수)"
+   },
+   "empty": {
+    "en": "empty",
+    "ko": "비어 있음"
+   }
+  },
+  {
+   "id": "state",
+   "type": "vars"
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "s = \"PQPQ\", k = 2",
+   "expected": "4",
+   "frames": [
+    {
+     "caption": {
+      "en": "s has 4 letters and k = 2 of them may change. The window starts empty and grows from the left; top is the highest count any letter has reached.",
+      "ko": "s는 글자 4개이고 그중 k = 2개까지 바꿀 수 있습니다. 빈 구간에서 시작해 왼쪽부터 늘려 가며, top은 지금까지 한 글자가 도달한 가장 큰 개수입니다."
+     },
+     "views": {
+      "s": {
+       "values": [
+        "P",
+        "Q",
+        "P",
+        "Q"
+       ],
+       "spans": {},
+       "unread": [
+        0,
+        1,
+        2,
+        3
+       ],
+       "pointers": {},
+       "marks": {}
+      },
+      "counts": {
+       "entries": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 2
+        },
+        {
+         "label": {
+          "en": "top",
+          "ko": "top (최다 개수)"
+         },
+         "value": 0,
+         "mark": null,
+         "why": "top is the highest count any letter has reached so far, and it never goes down: after letters leave, no card may hold it any more, so it can't be drawn on a card"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "s[0] = 'P' joins: its count is 1, the new top. Window 1 needs 1 − 1 = 0 changes, within k = 2: a new best, 1.",
+      "ko": "s[0] = 'P' 추가: 개수 1, 새 top. 구간 1에서 바꿀 글자는 1 − 1 = 0개로 k = 2 이내이고, best = 1로 갱신."
+     },
+     "views": {
+      "s": {
+       "values": [
+        "P",
+        "Q",
+        "P",
+        "Q"
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "window 1 − top 1 = 0",
+          "ko": "구간 1 − top 1 = 0"
+         },
+         "mark": "lit",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "best = 1",
+          "ko": "최장 1"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "unread": [
+        1,
+        2,
+        3
+       ],
+       "pointers": {
+        "start": 0,
+        "end": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "P",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "good": [
+         "P"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 2
+        },
+        {
+         "label": {
+          "en": "top",
+          "ko": "top (최다 개수)"
+         },
+         "value": 1,
+         "mark": "good",
+         "why": "top is the highest count any letter has reached so far, and it never goes down: after letters leave, no card may hold it any more, so it can't be drawn on a card"
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "s",
+        "at": 0
+       },
+       "to": {
+        "view": "counts",
+        "at": "P"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "s[1] = 'Q' joins: its count is 1. Window 2 needs 2 − 1 = 1 change, within k = 2: a new best, 2.",
+      "ko": "s[1] = 'Q' 추가: 개수 1. 구간 2에서 바꿀 글자는 2 − 1 = 1개로 k = 2 이내이고, best = 2로 갱신."
+     },
+     "views": {
+      "s": {
+       "values": [
+        "P",
+        "Q",
+        "P",
+        "Q"
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "window 2 − top 1 = 1",
+          "ko": "구간 2 − top 1 = 1"
+         },
+         "mark": "lit",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "best = 2",
+          "ko": "최장 2"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "unread": [
+        2,
+        3
+       ],
+       "pointers": {
+        "start": 0,
+        "end": 1
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "P",
+         "value": 1
+        },
+        {
+         "key": "Q",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "good": [
+         "Q"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 2
+        },
+        {
+         "label": {
+          "en": "top",
+          "ko": "top (최다 개수)"
+         },
+         "value": 1,
+         "mark": null,
+         "why": "top is the highest count any letter has reached so far, and it never goes down: after letters leave, no card may hold it any more, so it can't be drawn on a card"
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "s",
+        "at": 1
+       },
+       "to": {
+        "view": "counts",
+        "at": "Q"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "s[2] = 'P' joins: its count is 2, the new top. Window 3 needs 3 − 2 = 1 change, within k = 2: a new best, 3.",
+      "ko": "s[2] = 'P' 추가: 개수 2, 새 top. 구간 3에서 바꿀 글자는 3 − 2 = 1개로 k = 2 이내이고, best = 3으로 갱신."
+     },
+     "views": {
+      "s": {
+       "values": [
+        "P",
+        "Q",
+        "P",
+        "Q"
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "window 3 − top 2 = 1",
+          "ko": "구간 3 − top 2 = 1"
+         },
+         "mark": "lit",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "best = 3",
+          "ko": "최장 3"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "unread": [
+        3
+       ],
+       "pointers": {
+        "start": 0,
+        "end": 2
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "P",
+         "value": 2
+        },
+        {
+         "key": "Q",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "good": [
+         "P"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 2
+        },
+        {
+         "label": {
+          "en": "top",
+          "ko": "top (최다 개수)"
+         },
+         "value": 2,
+         "mark": "good",
+         "why": "top is the highest count any letter has reached so far, and it never goes down: after letters leave, no card may hold it any more, so it can't be drawn on a card"
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "s",
+        "at": 2
+       },
+       "to": {
+        "view": "counts",
+        "at": "P"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "s[3] = 'Q' joins: its count is 2. Window 4 needs 4 − 2 = 2 changes, within k = 2: a new best, 4.",
+      "ko": "s[3] = 'Q' 추가: 개수 2. 구간 4에서 바꿀 글자는 4 − 2 = 2개로 k = 2 이내이고, best = 4로 갱신."
+     },
+     "views": {
+      "s": {
+       "values": [
+        "P",
+        "Q",
+        "P",
+        "Q"
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 3,
+         "label": {
+          "en": "window 4 − top 2 = 2",
+          "ko": "구간 4 − top 2 = 2"
+         },
+         "mark": "lit",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 3,
+         "label": {
+          "en": "best = 4",
+          "ko": "최장 4"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "unread": [],
+       "pointers": {
+        "start": 0,
+        "end": 3
+       },
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "P",
+         "value": 2
+        },
+        {
+         "key": "Q",
+         "value": 2
+        }
+       ],
+       "marks": {
+        "good": [
+         "Q"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 2
+        },
+        {
+         "label": {
+          "en": "top",
+          "ko": "top (최다 개수)"
+         },
+         "value": 2,
+         "mark": null,
+         "why": "top is the highest count any letter has reached so far, and it never goes down: after letters leave, no card may hold it any more, so it can't be drawn on a card"
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "s",
+        "at": 3
+       },
+       "to": {
+        "view": "counts",
+        "at": "Q"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every letter is in, and the longest window was the last one, s[0..3], length 4. Answer 4.",
+      "ko": "모든 글자를 넣었고, 가장 긴 구간은 마지막 구간 s[0..3], 길이 4입니다. 답은 4입니다."
+     },
+     "views": {
+      "s": {
+       "values": [
+        "P",
+        "Q",
+        "P",
+        "Q"
+       ],
+       "spans": {
+        "best": {
+         "from": 0,
+         "to": 3,
+         "label": {
+          "en": "best = 4",
+          "ko": "최장 4"
+         },
+         "mark": "path",
+         "below": true
+        }
+       },
+       "unread": [],
+       "pointers": {},
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "P",
+         "value": 2
+        },
+        {
+         "key": "Q",
+         "value": 2
+        }
+       ],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 2
+        },
+        {
+         "label": {
+          "en": "top",
+          "ko": "top (최다 개수)"
+         },
+         "value": 2,
+         "mark": null,
+         "why": "top is the highest count any letter has reached so far, and it never goes down: after letters leave, no card may hold it any more, so it can't be drawn on a card"
+        }
+       ]
+      }
+     },
+     "answer": "4"
+    }
+   ],
+   "sampleInput": "PQPQ\n2"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "s = \"XXYXYYX\", k = 1",
+   "expected": "4",
+   "frames": [
+    {
+     "caption": {
+      "en": "s has 7 letters and k = 1 of them may change. The window starts empty and grows from the left; top is the highest count any letter has reached.",
+      "ko": "s는 글자 7개이고 그중 k = 1개까지 바꿀 수 있습니다. 빈 구간에서 시작해 왼쪽부터 늘려 가며, top은 지금까지 한 글자가 도달한 가장 큰 개수입니다."
+     },
+     "views": {
+      "s": {
+       "values": [
+        "X",
+        "X",
+        "Y",
+        "X",
+        "Y",
+        "Y",
+        "X"
+       ],
+       "spans": {},
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+       ],
+       "pointers": {},
+       "marks": {}
+      },
+      "counts": {
+       "entries": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        },
+        {
+         "label": {
+          "en": "top",
+          "ko": "top (최다 개수)"
+         },
+         "value": 0,
+         "mark": null,
+         "why": "top is the highest count any letter has reached so far, and it never goes down: after letters leave, no card may hold it any more, so it can't be drawn on a card"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "s[0] = 'X' joins: its count is 1, the new top. Window 1 needs 1 − 1 = 0 changes, within k = 1: a new best, 1.",
+      "ko": "s[0] = 'X' 추가: 개수 1, 새 top. 구간 1에서 바꿀 글자는 1 − 1 = 0개로 k = 1 이내이고, best = 1로 갱신."
+     },
+     "views": {
+      "s": {
+       "values": [
+        "X",
+        "X",
+        "Y",
+        "X",
+        "Y",
+        "Y",
+        "X"
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "window 1 − top 1 = 0",
+          "ko": "구간 1 − top 1 = 0"
+         },
+         "mark": "lit",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "best = 1",
+          "ko": "최장 1"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "unread": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+       ],
+       "pointers": {
+        "start": 0,
+        "end": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "X",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "good": [
+         "X"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        },
+        {
+         "label": {
+          "en": "top",
+          "ko": "top (최다 개수)"
+         },
+         "value": 1,
+         "mark": "good",
+         "why": "top is the highest count any letter has reached so far, and it never goes down: after letters leave, no card may hold it any more, so it can't be drawn on a card"
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "s",
+        "at": 0
+       },
+       "to": {
+        "view": "counts",
+        "at": "X"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "s[1] = 'X' joins: its count is 2, the new top. Window 2 needs 2 − 2 = 0 changes, within k = 1: a new best, 2.",
+      "ko": "s[1] = 'X' 추가: 개수 2, 새 top. 구간 2에서 바꿀 글자는 2 − 2 = 0개로 k = 1 이내이고, best = 2로 갱신."
+     },
+     "views": {
+      "s": {
+       "values": [
+        "X",
+        "X",
+        "Y",
+        "X",
+        "Y",
+        "Y",
+        "X"
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "window 2 − top 2 = 0",
+          "ko": "구간 2 − top 2 = 0"
+         },
+         "mark": "lit",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "best = 2",
+          "ko": "최장 2"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "unread": [
+        2,
+        3,
+        4,
+        5,
+        6
+       ],
+       "pointers": {
+        "start": 0,
+        "end": 1
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "X",
+         "value": 2
+        }
+       ],
+       "marks": {
+        "good": [
+         "X"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        },
+        {
+         "label": {
+          "en": "top",
+          "ko": "top (최다 개수)"
+         },
+         "value": 2,
+         "mark": "good",
+         "why": "top is the highest count any letter has reached so far, and it never goes down: after letters leave, no card may hold it any more, so it can't be drawn on a card"
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "s",
+        "at": 1
+       },
+       "to": {
+        "view": "counts",
+        "at": "X"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "s[2] = 'Y' joins: its count is 1. Window 3 needs 3 − 2 = 1 change, within k = 1: a new best, 3.",
+      "ko": "s[2] = 'Y' 추가: 개수 1. 구간 3에서 바꿀 글자는 3 − 2 = 1개로 k = 1 이내이고, best = 3으로 갱신."
+     },
+     "views": {
+      "s": {
+       "values": [
+        "X",
+        "X",
+        "Y",
+        "X",
+        "Y",
+        "Y",
+        "X"
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "window 3 − top 2 = 1",
+          "ko": "구간 3 − top 2 = 1"
+         },
+         "mark": "lit",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "best = 3",
+          "ko": "최장 3"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "unread": [
+        3,
+        4,
+        5,
+        6
+       ],
+       "pointers": {
+        "start": 0,
+        "end": 2
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "X",
+         "value": 2
+        },
+        {
+         "key": "Y",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "good": [
+         "Y"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        },
+        {
+         "label": {
+          "en": "top",
+          "ko": "top (최다 개수)"
+         },
+         "value": 2,
+         "mark": null,
+         "why": "top is the highest count any letter has reached so far, and it never goes down: after letters leave, no card may hold it any more, so it can't be drawn on a card"
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "s",
+        "at": 2
+       },
+       "to": {
+        "view": "counts",
+        "at": "Y"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "s[3] = 'X' joins: its count is 3, the new top. Window 4 needs 4 − 3 = 1 change, within k = 1: a new best, 4.",
+      "ko": "s[3] = 'X' 추가: 개수 3, 새 top. 구간 4에서 바꿀 글자는 4 − 3 = 1개로 k = 1 이내이고, best = 4로 갱신."
+     },
+     "views": {
+      "s": {
+       "values": [
+        "X",
+        "X",
+        "Y",
+        "X",
+        "Y",
+        "Y",
+        "X"
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 3,
+         "label": {
+          "en": "window 4 − top 3 = 1",
+          "ko": "구간 4 − top 3 = 1"
+         },
+         "mark": "lit",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 3,
+         "label": {
+          "en": "best = 4",
+          "ko": "최장 4"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "unread": [
+        4,
+        5,
+        6
+       ],
+       "pointers": {
+        "start": 0,
+        "end": 3
+       },
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "X",
+         "value": 3
+        },
+        {
+         "key": "Y",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "good": [
+         "X"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        },
+        {
+         "label": {
+          "en": "top",
+          "ko": "top (최다 개수)"
+         },
+         "value": 3,
+         "mark": "good",
+         "why": "top is the highest count any letter has reached so far, and it never goes down: after letters leave, no card may hold it any more, so it can't be drawn on a card"
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "s",
+        "at": 3
+       },
+       "to": {
+        "view": "counts",
+        "at": "X"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "s[4] = 'Y' joins: its count is 2. Window 5 needs 5 − 3 = 2 changes, more than k = 1, so a letter leaves from the left.",
+      "ko": "s[4] = 'Y' 추가: 개수 2. 구간 5에서 바꿀 글자가 5 − 3 = 2개로 k = 1보다 많아, 왼쪽에서 글자를 뺍니다."
+     },
+     "views": {
+      "s": {
+       "values": [
+        "X",
+        "X",
+        "Y",
+        "X",
+        "Y",
+        "Y",
+        "X"
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 4,
+         "label": {
+          "en": "window 5 − top 3 = 2",
+          "ko": "구간 5 − top 3 = 2"
+         },
+         "mark": "bad",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 3,
+         "label": {
+          "en": "best = 4",
+          "ko": "최장 4"
+         },
+         "below": true
+        }
+       },
+       "unread": [
+        5,
+        6
+       ],
+       "pointers": {
+        "start": 0,
+        "end": 4
+       },
+       "marks": {
+        "lit": [
+         4
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "X",
+         "value": 3
+        },
+        {
+         "key": "Y",
+         "value": 2
+        }
+       ],
+       "marks": {
+        "bad": [
+         "Y"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        },
+        {
+         "label": {
+          "en": "top",
+          "ko": "top (최다 개수)"
+         },
+         "value": 3,
+         "mark": null,
+         "why": "top is the highest count any letter has reached so far, and it never goes down: after letters leave, no card may hold it any more, so it can't be drawn on a card"
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "s",
+        "at": 4
+       },
+       "to": {
+        "view": "counts",
+        "at": "Y"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "s[0] = 'X' leaves: its count goes 3 → 2. No letter has 3 now, but top stays 3: a window only beats best = 4 with a letter more than 3 times, so the old top is still the right bar.",
+      "ko": "s[0] = 'X' 제거: 개수 3 → 2, 이제 개수가 3인 글자는 없지만 top은 그대로 3입니다. 어느 글자가 3개를 넘어야만 best = 4를 넘을 수 있어 옛 top으로 충분합니다."
+     },
+     "views": {
+      "s": {
+       "values": [
+        "X",
+        "X",
+        "Y",
+        "X",
+        "Y",
+        "Y",
+        "X"
+       ],
+       "spans": {
+        "window": {
+         "from": 1,
+         "to": 4,
+         "label": {
+          "en": "window 4 − top 3 = 1",
+          "ko": "구간 4 − top 3 = 1"
+         },
+         "mark": "lit",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 3,
+         "label": {
+          "en": "best = 4",
+          "ko": "최장 4"
+         },
+         "below": true
+        }
+       },
+       "unread": [
+        5,
+        6
+       ],
+       "pointers": {
+        "start": 1,
+        "end": 4
+       },
+       "marks": {
+        "lit": [
+         4
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "X",
+         "value": 2
+        },
+        {
+         "key": "Y",
+         "value": 2
+        }
+       ],
+       "marks": {
+        "bad": [
+         "X"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        },
+        {
+         "label": {
+          "en": "top",
+          "ko": "top (최다 개수)"
+         },
+         "value": 3,
+         "mark": null,
+         "why": "top is the highest count any letter has reached so far, and it never goes down: after letters leave, no card may hold it any more, so it can't be drawn on a card"
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "counts",
+        "at": "X"
+       },
+       "to": {
+        "view": "s",
+        "at": 0
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "s[5] = 'Y' joins: its count is 3. Window 5 needs 5 − 3 = 2 changes, more than k = 1, so a letter leaves from the left.",
+      "ko": "s[5] = 'Y' 추가: 개수 3. 구간 5에서 바꿀 글자가 5 − 3 = 2개로 k = 1보다 많아, 왼쪽에서 글자를 뺍니다."
+     },
+     "views": {
+      "s": {
+       "values": [
+        "X",
+        "X",
+        "Y",
+        "X",
+        "Y",
+        "Y",
+        "X"
+       ],
+       "spans": {
+        "window": {
+         "from": 1,
+         "to": 5,
+         "label": {
+          "en": "window 5 − top 3 = 2",
+          "ko": "구간 5 − top 3 = 2"
+         },
+         "mark": "bad",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 3,
+         "label": {
+          "en": "best = 4",
+          "ko": "최장 4"
+         },
+         "below": true
+        }
+       },
+       "unread": [
+        6
+       ],
+       "pointers": {
+        "start": 1,
+        "end": 5
+       },
+       "marks": {
+        "lit": [
+         5
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "X",
+         "value": 2
+        },
+        {
+         "key": "Y",
+         "value": 3
+        }
+       ],
+       "marks": {
+        "bad": [
+         "Y"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        },
+        {
+         "label": {
+          "en": "top",
+          "ko": "top (최다 개수)"
+         },
+         "value": 3,
+         "mark": null,
+         "why": "top is the highest count any letter has reached so far, and it never goes down: after letters leave, no card may hold it any more, so it can't be drawn on a card"
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "s",
+        "at": 5
+       },
+       "to": {
+        "view": "counts",
+        "at": "Y"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "s[1] = 'X' leaves: its count goes 2 → 1. Window 4 needs 4 − 3 = 1, within k = 1; best stays 4.",
+      "ko": "s[1] = 'X' 제거: 개수 2 → 1. 구간 4에서 바꿀 글자는 1개로 k = 1 이내, best = 4 그대로."
+     },
+     "views": {
+      "s": {
+       "values": [
+        "X",
+        "X",
+        "Y",
+        "X",
+        "Y",
+        "Y",
+        "X"
+       ],
+       "spans": {
+        "window": {
+         "from": 2,
+         "to": 5,
+         "label": {
+          "en": "window 4 − top 3 = 1",
+          "ko": "구간 4 − top 3 = 1"
+         },
+         "mark": "lit",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 3,
+         "label": {
+          "en": "best = 4",
+          "ko": "최장 4"
+         },
+         "below": true
+        }
+       },
+       "unread": [
+        6
+       ],
+       "pointers": {
+        "start": 2,
+        "end": 5
+       },
+       "marks": {
+        "lit": [
+         5
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "X",
+         "value": 1
+        },
+        {
+         "key": "Y",
+         "value": 3
+        }
+       ],
+       "marks": {
+        "bad": [
+         "X"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        },
+        {
+         "label": {
+          "en": "top",
+          "ko": "top (최다 개수)"
+         },
+         "value": 3,
+         "mark": null,
+         "why": "top is the highest count any letter has reached so far, and it never goes down: after letters leave, no card may hold it any more, so it can't be drawn on a card"
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "counts",
+        "at": "X"
+       },
+       "to": {
+        "view": "s",
+        "at": 1
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "s[6] = 'X' joins: its count is 2. Window 5 needs 5 − 3 = 2 changes, more than k = 1, so a letter leaves from the left.",
+      "ko": "s[6] = 'X' 추가: 개수 2. 구간 5에서 바꿀 글자가 5 − 3 = 2개로 k = 1보다 많아, 왼쪽에서 글자를 뺍니다."
+     },
+     "views": {
+      "s": {
+       "values": [
+        "X",
+        "X",
+        "Y",
+        "X",
+        "Y",
+        "Y",
+        "X"
+       ],
+       "spans": {
+        "window": {
+         "from": 2,
+         "to": 6,
+         "label": {
+          "en": "window 5 − top 3 = 2",
+          "ko": "구간 5 − top 3 = 2"
+         },
+         "mark": "bad",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 3,
+         "label": {
+          "en": "best = 4",
+          "ko": "최장 4"
+         },
+         "below": true
+        }
+       },
+       "unread": [],
+       "pointers": {
+        "start": 2,
+        "end": 6
+       },
+       "marks": {
+        "lit": [
+         6
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "X",
+         "value": 2
+        },
+        {
+         "key": "Y",
+         "value": 3
+        }
+       ],
+       "marks": {
+        "bad": [
+         "X"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        },
+        {
+         "label": {
+          "en": "top",
+          "ko": "top (최다 개수)"
+         },
+         "value": 3,
+         "mark": null,
+         "why": "top is the highest count any letter has reached so far, and it never goes down: after letters leave, no card may hold it any more, so it can't be drawn on a card"
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "s",
+        "at": 6
+       },
+       "to": {
+        "view": "counts",
+        "at": "X"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "s[2] = 'Y' leaves: its count goes 3 → 2. No letter has 3 now, but top stays 3: a window only beats best = 4 with a letter more than 3 times, so the old top is still the right bar.",
+      "ko": "s[2] = 'Y' 제거: 개수 3 → 2, 이제 개수가 3인 글자는 없지만 top은 그대로 3입니다. 어느 글자가 3개를 넘어야만 best = 4를 넘을 수 있어 옛 top으로 충분합니다."
+     },
+     "views": {
+      "s": {
+       "values": [
+        "X",
+        "X",
+        "Y",
+        "X",
+        "Y",
+        "Y",
+        "X"
+       ],
+       "spans": {
+        "window": {
+         "from": 3,
+         "to": 6,
+         "label": {
+          "en": "window 4 − top 3 = 1",
+          "ko": "구간 4 − top 3 = 1"
+         },
+         "mark": "lit",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 3,
+         "label": {
+          "en": "best = 4",
+          "ko": "최장 4"
+         },
+         "below": true
+        }
+       },
+       "unread": [],
+       "pointers": {
+        "start": 3,
+        "end": 6
+       },
+       "marks": {
+        "lit": [
+         6
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "X",
+         "value": 2
+        },
+        {
+         "key": "Y",
+         "value": 2
+        }
+       ],
+       "marks": {
+        "bad": [
+         "Y"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        },
+        {
+         "label": {
+          "en": "top",
+          "ko": "top (최다 개수)"
+         },
+         "value": 3,
+         "mark": null,
+         "why": "top is the highest count any letter has reached so far, and it never goes down: after letters leave, no card may hold it any more, so it can't be drawn on a card"
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "counts",
+        "at": "Y"
+       },
+       "to": {
+        "view": "s",
+        "at": 2
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every letter is in: the run ended on s[3..6], but the best window was s[0..3], length 4. Answer 4.",
+      "ko": "모든 글자를 넣었습니다. 실행은 s[3..6]에서 끝났지만 가장 긴 구간은 s[0..3], 길이 4이고, 답은 4입니다."
+     },
+     "views": {
+      "s": {
+       "values": [
+        "X",
+        "X",
+        "Y",
+        "X",
+        "Y",
+        "Y",
+        "X"
+       ],
+       "spans": {
+        "best": {
+         "from": 0,
+         "to": 3,
+         "label": {
+          "en": "best = 4",
+          "ko": "최장 4"
+         },
+         "mark": "path",
+         "below": true
+        }
+       },
+       "unread": [],
+       "pointers": {},
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "X",
+         "value": 2
+        },
+        {
+         "key": "Y",
+         "value": 2
+        }
+       ],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        },
+        {
+         "label": {
+          "en": "top",
+          "ko": "top (최다 개수)"
+         },
+         "value": 3,
+         "mark": null,
+         "why": "top is the highest count any letter has reached so far, and it never goes down: after letters leave, no card may hold it any more, so it can't be drawn on a card"
+        }
+       ]
+      }
+     },
+     "answer": "4"
+    }
+   ],
+   "sampleInput": "XXYXYYX\n1"
+  }
+ ]
+}
