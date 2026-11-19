@@ -99,10 +99,11 @@ def solve(ratios, values, queries, run):
 
     for j, (c, d) in enumerate(queries):
         current = j
-        clear = [move(at("prices", v), mark="bad") for v in reached if v != c]
+        missing = [v for v in dict.fromkeys((c, d)) if v not in adj]
+        # the last search's values leave, except c's, which a search starting there writes over with 1
+        clear = [move(at("prices", v), mark="bad") for v in reached if v != c or missing]
         reached.clear()
         todo.clear()
-        missing = [v for v in dict.fromkeys((c, d)) if v not in adj]
         if missing:
             answers.append(f"{-1.0:.5f}")
             frame({"en": f"Query {j + 1}, {c} / {d}: {' and '.join(missing)} never "

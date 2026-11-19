@@ -5931,6 +5931,13 @@
       },
       {
        "from": {
+        "view": "prices",
+        "at": "x"
+       },
+       "mark": "bad"
+      },
+      {
+       "from": {
         "view": "queries",
         "at": [
          2,
