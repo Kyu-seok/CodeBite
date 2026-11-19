@@ -74,7 +74,7 @@
     {
      "caption": {
       "en": "Push 8: it waits until everything left of it is counted. Go left to 4.",
-      "ko": "8을 스택에 넣습니다. 왼쪽이 모두 세어질 때까지 기다립니다. 왼쪽의 4로 갑니다."
+      "ko": "8을 스택에 넣고 왼쪽이 모두 세어질 때까지 기다립니다. 왼쪽의 4로 갑니다."
      },
      "views": {
       "tree": {
@@ -124,7 +124,7 @@
     {
      "caption": {
       "en": "Push 4: it waits until everything left of it is counted. Go left to 2.",
-      "ko": "4를 스택에 넣습니다. 왼쪽이 모두 세어질 때까지 기다립니다. 왼쪽의 2로 갑니다."
+      "ko": "4를 스택에 넣고 왼쪽이 모두 세어질 때까지 기다립니다. 왼쪽의 2로 갑니다."
      },
      "views": {
       "tree": {
@@ -176,7 +176,7 @@
     {
      "caption": {
       "en": "Push 2: it waits until everything left of it is counted. It has no left child, so stop going left.",
-      "ko": "2를 스택에 넣습니다. 왼쪽이 모두 세어질 때까지 기다립니다. 왼쪽 자식이 없으므로 더 내려가지 않습니다."
+      "ko": "2를 스택에 넣고 왼쪽이 모두 세어질 때까지 기다립니다. 왼쪽 자식이 없으므로 더 내려가지 않습니다."
      },
      "views": {
       "tree": {
@@ -230,7 +230,7 @@
     {
      "caption": {
       "en": "Pop 2: nothing lower is left, so it is the 1st lowest. It has no right child, so the next node waiting comes off the stack.",
-      "ko": "2를 꺼냅니다. 더 낮은 점수가 남지 않았으므로 1번째로 낮은 점수입니다. 오른쪽 자식이 없으므로 다음은 스택에서 기다리는 노드입니다."
+      "ko": "2를 꺼냅니다. 더 낮은 점수가 남지 않았으므로 1번째로 낮은 점수이며, 오른쪽 자식이 없으므로 다음은 스택에서 기다리는 노드입니다."
      },
      "views": {
       "tree": {
@@ -295,7 +295,7 @@
     {
      "caption": {
       "en": "Pop 4: nothing lower is left, so it is the 2nd lowest. Next, its right child 6.",
-      "ko": "4를 꺼냅니다. 더 낮은 점수가 남지 않았으므로 2번째로 낮은 점수입니다. 다음은 오른쪽 자식 6입니다."
+      "ko": "4를 꺼냅니다. 더 낮은 점수가 남지 않았으므로 2번째로 낮은 점수이며, 다음은 오른쪽 자식 6입니다."
      },
      "views": {
       "tree": {
@@ -366,7 +366,7 @@
     {
      "caption": {
       "en": "Push 6: it waits until everything left of it is counted. It has no left child, so stop going left.",
-      "ko": "6을 스택에 넣습니다. 왼쪽이 모두 세어질 때까지 기다립니다. 왼쪽 자식이 없으므로 더 내려가지 않습니다."
+      "ko": "6을 스택에 넣고 왼쪽이 모두 세어질 때까지 기다립니다. 왼쪽 자식이 없으므로 더 내려가지 않습니다."
      },
      "views": {
       "tree": {
@@ -436,7 +436,7 @@
     {
      "caption": {
       "en": "Pop 6: nothing lower is left, so it is the 3rd lowest. It has no right child, so the next node waiting comes off the stack.",
-      "ko": "6을 꺼냅니다. 더 낮은 점수가 남지 않았으므로 3번째로 낮은 점수입니다. 오른쪽 자식이 없으므로 다음은 스택에서 기다리는 노드입니다."
+      "ko": "6을 꺼냅니다. 더 낮은 점수가 남지 않았으므로 3번째로 낮은 점수이며, 오른쪽 자식이 없으므로 다음은 스택에서 기다리는 노드입니다."
      },
      "views": {
       "tree": {
@@ -768,7 +768,7 @@
     {
      "caption": {
       "en": "Push 20: it waits until everything left of it is counted. Go left to 10.",
-      "ko": "20을 스택에 넣습니다. 왼쪽이 모두 세어질 때까지 기다립니다. 왼쪽의 10으로 갑니다."
+      "ko": "20을 스택에 넣고 왼쪽이 모두 세어질 때까지 기다립니다. 왼쪽의 10으로 갑니다."
      },
      "views": {
       "tree": {
@@ -818,7 +818,7 @@
     {
      "caption": {
       "en": "Push 10: it waits until everything left of it is counted. Go left to 5.",
-      "ko": "10을 스택에 넣습니다. 왼쪽이 모두 세어질 때까지 기다립니다. 왼쪽의 5로 갑니다."
+      "ko": "10을 스택에 넣고 왼쪽이 모두 세어질 때까지 기다립니다. 왼쪽의 5로 갑니다."
      },
      "views": {
       "tree": {
@@ -870,7 +870,7 @@
     {
      "caption": {
       "en": "Push 5: it waits until everything left of it is counted. It has no left child, so stop going left.",
-      "ko": "5를 스택에 넣습니다. 왼쪽이 모두 세어질 때까지 기다립니다. 왼쪽 자식이 없으므로 더 내려가지 않습니다."
+      "ko": "5를 스택에 넣고 왼쪽이 모두 세어질 때까지 기다립니다. 왼쪽 자식이 없으므로 더 내려가지 않습니다."
      },
      "views": {
       "tree": {
@@ -924,7 +924,7 @@
     {
      "caption": {
       "en": "Pop 5: nothing lower is left, so it is the 1st lowest. Next, its right child 7.",
-      "ko": "5를 꺼냅니다. 더 낮은 점수가 남지 않았으므로 1번째로 낮은 점수입니다. 다음은 오른쪽 자식 7입니다."
+      "ko": "5를 꺼냅니다. 더 낮은 점수가 남지 않았으므로 1번째로 낮은 점수이며, 다음은 오른쪽 자식 7입니다."
      },
      "views": {
       "tree": {
@@ -989,7 +989,7 @@
     {
      "caption": {
       "en": "Push 7: it waits until everything left of it is counted. It has no left child, so stop going left.",
-      "ko": "7을 스택에 넣습니다. 왼쪽이 모두 세어질 때까지 기다립니다. 왼쪽 자식이 없으므로 더 내려가지 않습니다."
+      "ko": "7을 스택에 넣고 왼쪽이 모두 세어질 때까지 기다립니다. 왼쪽 자식이 없으므로 더 내려가지 않습니다."
      },
      "views": {
       "tree": {

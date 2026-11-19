@@ -58,7 +58,7 @@ def solve(values, run):
     n = len(tree["nodes"])
     frame({"en": f"A tree of {n} {plural(n, 'node', 'nodes')} with root {root.val}. Mirror it from the root down: "
                  f"each node's right side becomes its copy's left side.",
-           "ko": f"root가 {root.val}인 노드 {n}개짜리 트리입니다. root부터 내려가며 뒤집습니다. 각 노드의 오른쪽이 "
+           "ko": f"root가 {root.val}인 노드 {n}개짜리 트리를 root부터 내려가며 뒤집습니다. 각 노드의 오른쪽이 "
                  f"복사본의 왼쪽이 됩니다."})
 
     def mirror(node, parent=None, slot=None, side=None):
@@ -82,7 +82,7 @@ def solve(values, run):
                     "ko": f" 하나뿐인 자식 {josa(node.left.val, '이가')} 왼쪽에 있으므로 오른쪽으로 갑니다."}
         if parent is None:
             head = {"en": f"Copy the root {node.val}: it stays the root.",
-                    "ko": f"root {josa(node.val, '을를')} 복사합니다. root는 그대로 root입니다."}
+                    "ko": f"root {josa(node.val, '을를')} 복사하며, root는 그대로 root입니다."}
         else:
             was, now = ("right", "left") if side == "right" else ("left", "right")
             ko_was, ko_now = ("오른쪽", "왼쪽") if side == "right" else ("왼쪽", "오른쪽")

@@ -69,7 +69,7 @@ def solve(values, run):
     n = len(tree["nodes"])
     frame({"en": f"A skill tree of {n} {plural(n, 'node', 'nodes')}. Each call returns its node's gain; best starts "
                  f"at -∞, since a path may be a single negative node.",
-           "ko": f"노드 {n}개짜리 스킬 트리입니다. 각 호출은 자기 노드의 gain을 돌려줍니다. 경로가 음수 노드 하나일 수도 "
+           "ko": f"노드 {n}개짜리 스킬 트리이며, 각 호출은 자기 노드의 gain을 돌려줍니다. 경로가 음수 노드 하나일 수도 "
                  f"있으므로 best는 -∞에서 시작합니다."})
 
     def kept(kid):

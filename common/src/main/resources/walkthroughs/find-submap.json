@@ -50,7 +50,7 @@
     {
      "caption": {
       "en": "root has 5 nodes, subRoot 3. Write each as its preorder walk (node, left side, right side) with # for a missing child, subRoot first.",
-      "ko": "root는 노드 5개, subRoot는 3개입니다. 각각을 전위 순회(노드, 왼쪽, 오른쪽)로 적되 없는 자식은 # 표시로 적습니다. subRoot부터 적습니다."
+      "ko": "root는 노드 5개, subRoot는 3개이며, 각각을 전위 순회(노드, 왼쪽, 오른쪽)로 적되 없는 자식은 # 표시로 적습니다. subRoot부터 적습니다."
      },
      "views": {
       "root": {
@@ -1820,7 +1820,7 @@
     {
      "caption": {
       "en": "root has 4 nodes, subRoot 2. Write each as its preorder walk (node, left side, right side) with # for a missing child, subRoot first.",
-      "ko": "root는 노드 4개, subRoot는 2개입니다. 각각을 전위 순회(노드, 왼쪽, 오른쪽)로 적되 없는 자식은 # 표시로 적습니다. subRoot부터 적습니다."
+      "ko": "root는 노드 4개, subRoot는 2개이며, 각각을 전위 순회(노드, 왼쪽, 오른쪽)로 적되 없는 자식은 # 표시로 적습니다. subRoot부터 적습니다."
      },
      "views": {
       "root": {

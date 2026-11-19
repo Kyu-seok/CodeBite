@@ -48,7 +48,7 @@
     {
      "caption": {
       "en": "A tree of 7 nodes with root 5. Mirror it from the root down: each node's right side becomes its copy's left side.",
-      "ko": "root가 5인 노드 7개짜리 트리입니다. root부터 내려가며 뒤집습니다. 각 노드의 오른쪽이 복사본의 왼쪽이 됩니다."
+      "ko": "root가 5인 노드 7개짜리 트리를 root부터 내려가며 뒤집습니다. 각 노드의 오른쪽이 복사본의 왼쪽이 됩니다."
      },
      "views": {
       "tree": {
@@ -67,7 +67,7 @@
     {
      "caption": {
       "en": "Copy the root 5: it stays the root. Next, mirror its right child 8 onto the left.",
-      "ko": "root 5를 복사합니다. root는 그대로 root입니다. 다음으로 오른쪽 자식 8을 뒤집어 왼쪽에 답니다."
+      "ko": "root 5를 복사하며, root는 그대로 root입니다. 다음으로 오른쪽 자식 8을 뒤집어 왼쪽에 답니다."
      },
      "views": {
       "tree": {
@@ -777,7 +777,7 @@
     {
      "caption": {
       "en": "A tree of 3 nodes with root 6. Mirror it from the root down: each node's right side becomes its copy's left side.",
-      "ko": "root가 6인 노드 3개짜리 트리입니다. root부터 내려가며 뒤집습니다. 각 노드의 오른쪽이 복사본의 왼쪽이 됩니다."
+      "ko": "root가 6인 노드 3개짜리 트리를 root부터 내려가며 뒤집습니다. 각 노드의 오른쪽이 복사본의 왼쪽이 됩니다."
      },
      "views": {
       "tree": {
@@ -796,7 +796,7 @@
     {
      "caption": {
       "en": "Copy the root 6: it stays the root. Next, mirror its right child 11 onto the left.",
-      "ko": "root 6을 복사합니다. root는 그대로 root입니다. 다음으로 오른쪽 자식 11을 뒤집어 왼쪽에 답니다."
+      "ko": "root 6을 복사하며, root는 그대로 root입니다. 다음으로 오른쪽 자식 11을 뒤집어 왼쪽에 답니다."
      },
      "views": {
       "tree": {
@@ -1059,7 +1059,7 @@
     {
      "caption": {
       "en": "A tree of 1 node with root 5. Mirror it from the root down: each node's right side becomes its copy's left side.",
-      "ko": "root가 5인 노드 1개짜리 트리입니다. root부터 내려가며 뒤집습니다. 각 노드의 오른쪽이 복사본의 왼쪽이 됩니다."
+      "ko": "root가 5인 노드 1개짜리 트리를 root부터 내려가며 뒤집습니다. 각 노드의 오른쪽이 복사본의 왼쪽이 됩니다."
      },
      "views": {
       "tree": {
@@ -1078,7 +1078,7 @@
     {
      "caption": {
       "en": "Copy the root 5: it stays the root. It has no children, so its mirror is just itself.",
-      "ko": "root 5를 복사합니다. root는 그대로 root입니다. 자식이 없으므로 그대로 끝납니다."
+      "ko": "root 5를 복사하며, root는 그대로 root입니다. 자식이 없으므로 그대로 끝납니다."
      },
      "views": {
       "tree": {

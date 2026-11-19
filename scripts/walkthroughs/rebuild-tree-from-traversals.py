@@ -94,15 +94,15 @@ def solve(preorder, inorder, run):
         middle = int(position[value][2:])
         left, right = part(low, middle - 1), part(middle + 1, high)
         if parent is None:
-            where = {"en": f"The next preorder value, {value}, is the root.",
-                     "ko": f"preorder의 다음 값 {josa(value, '이가')} 루트입니다."}
+            where = {"en": f"The next preorder value, {value}, is the root",
+                     "ko": f"preorder의 다음 값 {josa(value, '이가')} 루트이며"}
         else:
             side = ("left", "왼쪽") if slot == 0 else ("right", "오른쪽")
             pv = preorder[parent]
-            where = {"en": f"The next preorder value, {value}, is the root of {pv}'s {side[0]} subtree.",
-                     "ko": f"preorder의 다음 값 {josa(value, '은는')} {pv}의 {side[1]} 서브트리 루트입니다."}
+            where = {"en": f"The next preorder value, {value}, is the root of {pv}'s {side[0]} subtree",
+                     "ko": f"preorder의 다음 값 {josa(value, '은는')} {pv}의 {side[1]} 서브트리 루트이며"}
         stack.append(k)
-        frame({"en": where["en"] + f" Inorder has it at index {middle}. Left part: {left['en']}, right part: "
+        frame({"en": where["en"] + f", at index {middle} in inorder. Left part: {left['en']}, right part: "
                                    f"{right['en']}.",
                "ko": where["ko"] + f" inorder의 {middle}번 칸에 있습니다. 왼쪽 부분: {left['ko']}, 오른쪽 부분: "
                                    f"{right['ko']}."},

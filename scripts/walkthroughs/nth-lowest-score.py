@@ -71,10 +71,10 @@ def solve(values, k, run):
             waiting.append(node)
             nxt = node.left
             then = ({"en": f" Go left to {nxt.val}.", "ko": f" 왼쪽의 {josa(nxt.val, '(으)로')} 갑니다."} if nxt else
-                    {"en": f" It has no left child, so stop going left.",
-                     "ko": f" 왼쪽 자식이 없으므로 더 내려가지 않습니다."})
+                    {"en": " It has no left child, so stop going left.",
+                     "ko": " 왼쪽 자식이 없으므로 더 내려가지 않습니다."})
             frame({"en": f"Push {node.val}: it waits until everything left of it is counted." + then["en"],
-                   "ko": f"{josa(node.val, '을를')} 스택에 넣습니다. 왼쪽이 모두 세어질 때까지 기다립니다." + then["ko"]},
+                   "ko": f"{josa(node.val, '을를')} 스택에 넣고 왼쪽이 모두 세어질 때까지 기다립니다." + then["ko"]},
                   nodes={"lit": [node.id]}, s_marks={"good": [len(waiting) - 1]},
                   moves=[move(at("tree", node.id), at("waiting", len(waiting) - 1))])
             node = nxt
@@ -99,7 +99,7 @@ def solve(values, k, run):
                 {"en": " It has no right child, so the next node waiting comes off the stack.",
                  "ko": " 오른쪽 자식이 없으므로 다음은 스택에서 기다리는 노드입니다."})
         frame({"en": f"Pop {node.val}: nothing lower is left, so it is the {ordinal(count)} lowest." + then["en"],
-               "ko": f"{josa(node.val, '을를')} 꺼냅니다. 더 낮은 점수가 남지 않았으므로 {count}번째로 낮은 점수입니다."
+               "ko": f"{josa(node.val, '을를')} 꺼냅니다. 더 낮은 점수가 남지 않았으므로 {count}번째로 낮은 점수이며,"
                      + then["ko"]},
               nodes={"good": [node.id]}, shown=shown, s_marks={"lit": [len(shown) - 1]}, moves=moves)
         node = right

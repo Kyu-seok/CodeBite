@@ -243,8 +243,8 @@
     },
     {
      "caption": {
-      "en": "The next preorder value, 10, is the root. Inorder has it at index 3. Left part: [3,5,7], right part: [15,20].",
-      "ko": "preorder의 다음 값 10이 루트입니다. inorder의 3번 칸에 있습니다. 왼쪽 부분: [3,5,7], 오른쪽 부분: [15,20]."
+      "en": "The next preorder value, 10, is the root, at index 3 in inorder. Left part: [3,5,7], right part: [15,20].",
+      "ko": "preorder의 다음 값 10이 루트이며 inorder의 3번 칸에 있습니다. 왼쪽 부분: [3,5,7], 오른쪽 부분: [15,20]."
      },
      "views": {
       "preorder": {
@@ -378,8 +378,8 @@
     },
     {
      "caption": {
-      "en": "The next preorder value, 5, is the root of 10's left subtree. Inorder has it at index 1. Left part: [3], right part: [7].",
-      "ko": "preorder의 다음 값 5는 10의 왼쪽 서브트리 루트입니다. inorder의 1번 칸에 있습니다. 왼쪽 부분: [3], 오른쪽 부분: [7]."
+      "en": "The next preorder value, 5, is the root of 10's left subtree, at index 1 in inorder. Left part: [3], right part: [7].",
+      "ko": "preorder의 다음 값 5는 10의 왼쪽 서브트리 루트이며 inorder의 1번 칸에 있습니다. 왼쪽 부분: [3], 오른쪽 부분: [7]."
      },
      "views": {
       "preorder": {
@@ -526,8 +526,8 @@
     },
     {
      "caption": {
-      "en": "The next preorder value, 3, is the root of 5's left subtree. Inorder has it at index 0. Left part: none, right part: none.",
-      "ko": "preorder의 다음 값 3은 5의 왼쪽 서브트리 루트입니다. inorder의 0번 칸에 있습니다. 왼쪽 부분: 없음, 오른쪽 부분: 없음."
+      "en": "The next preorder value, 3, is the root of 5's left subtree, at index 0 in inorder. Left part: none, right part: none.",
+      "ko": "preorder의 다음 값 3은 5의 왼쪽 서브트리 루트이며 inorder의 0번 칸에 있습니다. 왼쪽 부분: 없음, 오른쪽 부분: 없음."
      },
      "views": {
       "preorder": {
@@ -667,8 +667,8 @@
     },
     {
      "caption": {
-      "en": "The next preorder value, 7, is the root of 5's right subtree. Inorder has it at index 2. Left part: none, right part: none.",
-      "ko": "preorder의 다음 값 7은 5의 오른쪽 서브트리 루트입니다. inorder의 2번 칸에 있습니다. 왼쪽 부분: 없음, 오른쪽 부분: 없음."
+      "en": "The next preorder value, 7, is the root of 5's right subtree, at index 2 in inorder. Left part: none, right part: none.",
+      "ko": "preorder의 다음 값 7은 5의 오른쪽 서브트리 루트이며 inorder의 2번 칸에 있습니다. 왼쪽 부분: 없음, 오른쪽 부분: 없음."
      },
      "views": {
       "preorder": {
@@ -818,8 +818,8 @@
     },
     {
      "caption": {
-      "en": "The next preorder value, 20, is the root of 10's right subtree. Inorder has it at index 5. Left part: [15], right part: none.",
-      "ko": "preorder의 다음 값 20은 10의 오른쪽 서브트리 루트입니다. inorder의 5번 칸에 있습니다. 왼쪽 부분: [15], 오른쪽 부분: 없음."
+      "en": "The next preorder value, 20, is the root of 10's right subtree, at index 5 in inorder. Left part: [15], right part: none.",
+      "ko": "preorder의 다음 값 20은 10의 오른쪽 서브트리 루트이며 inorder의 5번 칸에 있습니다. 왼쪽 부분: [15], 오른쪽 부분: 없음."
      },
      "views": {
       "preorder": {
@@ -987,8 +987,8 @@
     },
     {
      "caption": {
-      "en": "The next preorder value, 15, is the root of 20's left subtree. Inorder has it at index 4. Left part: none, right part: none.",
-      "ko": "preorder의 다음 값 15는 20의 왼쪽 서브트리 루트입니다. inorder의 4번 칸에 있습니다. 왼쪽 부분: 없음, 오른쪽 부분: 없음."
+      "en": "The next preorder value, 15, is the root of 20's left subtree, at index 4 in inorder. Left part: none, right part: none.",
+      "ko": "preorder의 다음 값 15는 20의 왼쪽 서브트리 루트이며 inorder의 4번 칸에 있습니다. 왼쪽 부분: 없음, 오른쪽 부분: 없음."
      },
      "views": {
       "preorder": {
@@ -1390,8 +1390,8 @@
     },
     {
      "caption": {
-      "en": "The next preorder value, 42, is the root. Inorder has it at index 0. Left part: none, right part: none.",
-      "ko": "preorder의 다음 값 42가 루트입니다. inorder의 0번 칸에 있습니다. 왼쪽 부분: 없음, 오른쪽 부분: 없음."
+      "en": "The next preorder value, 42, is the root, at index 0 in inorder. Left part: none, right part: none.",
+      "ko": "preorder의 다음 값 42가 루트이며 inorder의 0번 칸에 있습니다. 왼쪽 부분: 없음, 오른쪽 부분: 없음."
      },
      "views": {
       "preorder": {

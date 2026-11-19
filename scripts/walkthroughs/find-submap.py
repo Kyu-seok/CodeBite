@@ -72,7 +72,7 @@ def solve(root_values, sub_values, run):
     nr, ns = len(trees["root"][0]["nodes"]), len(trees["sub"][0]["nodes"])
     frame({"en": f"root has {nr} {plural(nr, 'node', 'nodes')}, subRoot {ns}. Write each as its preorder walk (node, "
                  f"left side, right side) with # for a missing child, subRoot first.",
-           "ko": f"root는 노드 {nr}개, subRoot는 {ns}개입니다. 각각을 전위 순회(노드, 왼쪽, 오른쪽)로 적되 없는 자식은 "
+           "ko": f"root는 노드 {nr}개, subRoot는 {ns}개이며, 각각을 전위 순회(노드, 왼쪽, 오른쪽)로 적되 없는 자식은 "
                  f"# 표시로 적습니다. subRoot부터 적습니다."})
 
     def walk(t):
