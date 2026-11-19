@@ -1,0 +1,2940 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Cafe Stop Orders",
+  "ko": "카페 투어 순서 짜기"
+ },
+ "approach": {
+  "en": "Build each order one stop at a time: a call adds each cafe the order doesn't hold yet, calls itself for the next stop, then takes that cafe back off to try the next. Every full order is one answer: n! of them.",
+  "ko": "방문 순서를 한 곳씩 만듭니다. 호출마다 아직 순서에 없는 카페를 하나 붙이고 다음 곳을 위해 자신을 호출한 뒤, 그 카페를 다시 빼고 다음 카페를 시도합니다. 다 찬 순서가 답 하나이며, 모두 n!개입니다."
+ },
+ "views": [
+  {
+   "id": "stops",
+   "type": "array",
+   "title": {
+    "en": "stops",
+    "ko": "stops (카페 ID)"
+   }
+  },
+  {
+   "id": "calls",
+   "type": "tree",
+   "title": {
+    "en": "calls (the order so far)",
+    "ko": "호출 (지금까지의 순서)"
+   }
+  },
+  {
+   "id": "result",
+   "type": "output",
+   "title": {
+    "en": "visit orders",
+    "ko": "방문 순서"
+   },
+   "empty": {
+    "en": "none yet",
+    "ko": "아직 없음"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "stops = [4,7,2]",
+   "expected": "[[2,4,7],[2,7,4],[4,2,7],[4,7,2],[7,2,4],[7,4,2]]",
+   "frames": [
+    {
+     "caption": {
+      "en": "The first call starts with an empty order; it will try cafes 4, 7, 2 in turn for the next stop.",
+      "ko": "첫 호출은 빈 순서에서 시작합니다. 다음 곳으로 4, 7, 2번 카페를 차례로 붙여 봅니다."
+     },
+     "views": {
+      "stops": {
+       "values": [
+        4,
+        7,
+        2
+       ],
+       "marks": {
+        "dim": []
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        }
+       ],
+       "edges": [],
+       "nodeMarks": {
+        "good": [],
+        "lit": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ]
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "calls",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Add cafe 4: the order is [4]; it will try cafes 7, 2 in turn for the next stop.",
+      "ko": "4번 카페를 붙입니다(순서 [4]). 다음 곳으로 7, 2번 카페를 차례로 붙여 봅니다."
+     },
+     "views": {
+      "stops": {
+       "values": [
+        4,
+        7,
+        2
+       ],
+       "marks": {
+        "dim": [
+         0
+        ]
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[4]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "4"
+        }
+       ],
+       "nodeMarks": {
+        "good": [],
+        "lit": [
+         1
+        ]
+       },
+       "shade": [
+        0,
+        1
+       ]
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "stops",
+        "at": 0
+       },
+       "to": {
+        "view": "calls",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Add cafe 7: the order is [4,7]; only cafe 2 is left, so it adds that.",
+      "ko": "7번 카페를 붙입니다(순서 [4,7]). 남은 카페는 2번뿐이니 그 카페를 붙입니다."
+     },
+     "views": {
+      "stops": {
+       "values": [
+        4,
+        7,
+        2
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1
+        ]
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[4]"
+        },
+        {
+         "id": 2,
+         "value": "[4,7]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "4"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "7"
+        }
+       ],
+       "nodeMarks": {
+        "good": [],
+        "lit": [
+         2
+        ]
+       },
+       "shade": [
+        0,
+        1,
+        2
+       ]
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "stops",
+        "at": 1
+       },
+       "to": {
+        "view": "calls",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Add cafe 2: the order is [4,7,2], every cafe is in it, so it is a full visit order and goes into the answer.",
+      "ko": "2번 카페를 붙입니다(순서 [4,7,2]). 모든 카페가 들어 있는 완성된 순서이므로 답에 넣습니다."
+     },
+     "views": {
+      "stops": {
+       "values": [
+        4,
+        7,
+        2
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2
+        ]
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[4]"
+        },
+        {
+         "id": 2,
+         "value": "[4,7]"
+        },
+        {
+         "id": 3,
+         "value": "[4,7,2]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "4"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "7"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "2"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         3
+        ],
+        "lit": [
+         3
+        ]
+       },
+       "shade": [
+        0,
+        1,
+        2,
+        3
+       ]
+      },
+      "result": {
+       "values": [
+        "[4,7,2]"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "stops",
+        "at": 2
+       },
+       "to": {
+        "view": "calls",
+        "at": 3
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 3
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Add cafe 2: the order is [4,2]; only cafe 7 is left, so it adds that.",
+      "ko": "2번 카페를 붙입니다(순서 [4,2]). 남은 카페는 7번뿐이니 그 카페를 붙입니다."
+     },
+     "views": {
+      "stops": {
+       "values": [
+        4,
+        7,
+        2
+       ],
+       "marks": {
+        "dim": [
+         0,
+         2
+        ]
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[4]"
+        },
+        {
+         "id": 2,
+         "value": "[4,7]"
+        },
+        {
+         "id": 3,
+         "value": "[4,7,2]"
+        },
+        {
+         "id": 4,
+         "value": "[4,2]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "4"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "7"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "2"
+        },
+        {
+         "from": 1,
+         "to": 4,
+         "label": "2"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         3
+        ],
+        "lit": [
+         4
+        ]
+       },
+       "shade": [
+        0,
+        1,
+        4
+       ]
+      },
+      "result": {
+       "values": [
+        "[4,7,2]"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "stops",
+        "at": 2
+       },
+       "to": {
+        "view": "calls",
+        "at": 4
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Add cafe 7: the order is [4,2,7], every cafe is in it, so it is a full visit order and goes into the answer.",
+      "ko": "7번 카페를 붙입니다(순서 [4,2,7]). 모든 카페가 들어 있는 완성된 순서이므로 답에 넣습니다."
+     },
+     "views": {
+      "stops": {
+       "values": [
+        4,
+        7,
+        2
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2
+        ]
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[4]"
+        },
+        {
+         "id": 2,
+         "value": "[4,7]"
+        },
+        {
+         "id": 3,
+         "value": "[4,7,2]"
+        },
+        {
+         "id": 4,
+         "value": "[4,2]"
+        },
+        {
+         "id": 5,
+         "value": "[4,2,7]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "4"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "7"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "2"
+        },
+        {
+         "from": 1,
+         "to": 4,
+         "label": "2"
+        },
+        {
+         "from": 4,
+         "to": 5,
+         "label": "7"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         3,
+         5
+        ],
+        "lit": [
+         5
+        ]
+       },
+       "shade": [
+        0,
+        1,
+        4,
+        5
+       ]
+      },
+      "result": {
+       "values": [
+        "[4,7,2]",
+        "[4,2,7]"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "stops",
+        "at": 1
+       },
+       "to": {
+        "view": "calls",
+        "at": 5
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 5
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Add cafe 7: the order is [7]; it will try cafes 4, 2 in turn for the next stop.",
+      "ko": "7번 카페를 붙입니다(순서 [7]). 다음 곳으로 4, 2번 카페를 차례로 붙여 봅니다."
+     },
+     "views": {
+      "stops": {
+       "values": [
+        4,
+        7,
+        2
+       ],
+       "marks": {
+        "dim": [
+         1
+        ]
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[4]"
+        },
+        {
+         "id": 2,
+         "value": "[4,7]"
+        },
+        {
+         "id": 3,
+         "value": "[4,7,2]"
+        },
+        {
+         "id": 4,
+         "value": "[4,2]"
+        },
+        {
+         "id": 5,
+         "value": "[4,2,7]"
+        },
+        {
+         "id": 6,
+         "value": "[7]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "4"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "7"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "2"
+        },
+        {
+         "from": 1,
+         "to": 4,
+         "label": "2"
+        },
+        {
+         "from": 4,
+         "to": 5,
+         "label": "7"
+        },
+        {
+         "from": 0,
+         "to": 6,
+         "label": "7"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         3,
+         5
+        ],
+        "lit": [
+         6
+        ]
+       },
+       "shade": [
+        0,
+        6
+       ]
+      },
+      "result": {
+       "values": [
+        "[4,7,2]",
+        "[4,2,7]"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "stops",
+        "at": 1
+       },
+       "to": {
+        "view": "calls",
+        "at": 6
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Add cafe 4: the order is [7,4]; only cafe 2 is left, so it adds that.",
+      "ko": "4번 카페를 붙입니다(순서 [7,4]). 남은 카페는 2번뿐이니 그 카페를 붙입니다."
+     },
+     "views": {
+      "stops": {
+       "values": [
+        4,
+        7,
+        2
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1
+        ]
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[4]"
+        },
+        {
+         "id": 2,
+         "value": "[4,7]"
+        },
+        {
+         "id": 3,
+         "value": "[4,7,2]"
+        },
+        {
+         "id": 4,
+         "value": "[4,2]"
+        },
+        {
+         "id": 5,
+         "value": "[4,2,7]"
+        },
+        {
+         "id": 6,
+         "value": "[7]"
+        },
+        {
+         "id": 7,
+         "value": "[7,4]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "4"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "7"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "2"
+        },
+        {
+         "from": 1,
+         "to": 4,
+         "label": "2"
+        },
+        {
+         "from": 4,
+         "to": 5,
+         "label": "7"
+        },
+        {
+         "from": 0,
+         "to": 6,
+         "label": "7"
+        },
+        {
+         "from": 6,
+         "to": 7,
+         "label": "4"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         3,
+         5
+        ],
+        "lit": [
+         7
+        ]
+       },
+       "shade": [
+        0,
+        6,
+        7
+       ]
+      },
+      "result": {
+       "values": [
+        "[4,7,2]",
+        "[4,2,7]"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "stops",
+        "at": 0
+       },
+       "to": {
+        "view": "calls",
+        "at": 7
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Add cafe 2: the order is [7,4,2], every cafe is in it, so it is a full visit order and goes into the answer.",
+      "ko": "2번 카페를 붙입니다(순서 [7,4,2]). 모든 카페가 들어 있는 완성된 순서이므로 답에 넣습니다."
+     },
+     "views": {
+      "stops": {
+       "values": [
+        4,
+        7,
+        2
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2
+        ]
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[4]"
+        },
+        {
+         "id": 2,
+         "value": "[4,7]"
+        },
+        {
+         "id": 3,
+         "value": "[4,7,2]"
+        },
+        {
+         "id": 4,
+         "value": "[4,2]"
+        },
+        {
+         "id": 5,
+         "value": "[4,2,7]"
+        },
+        {
+         "id": 6,
+         "value": "[7]"
+        },
+        {
+         "id": 7,
+         "value": "[7,4]"
+        },
+        {
+         "id": 8,
+         "value": "[7,4,2]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "4"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "7"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "2"
+        },
+        {
+         "from": 1,
+         "to": 4,
+         "label": "2"
+        },
+        {
+         "from": 4,
+         "to": 5,
+         "label": "7"
+        },
+        {
+         "from": 0,
+         "to": 6,
+         "label": "7"
+        },
+        {
+         "from": 6,
+         "to": 7,
+         "label": "4"
+        },
+        {
+         "from": 7,
+         "to": 8,
+         "label": "2"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         3,
+         5,
+         8
+        ],
+        "lit": [
+         8
+        ]
+       },
+       "shade": [
+        0,
+        6,
+        7,
+        8
+       ]
+      },
+      "result": {
+       "values": [
+        "[4,7,2]",
+        "[4,2,7]",
+        "[7,4,2]"
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "stops",
+        "at": 2
+       },
+       "to": {
+        "view": "calls",
+        "at": 8
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 8
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Add cafe 2: the order is [7,2]; only cafe 4 is left, so it adds that.",
+      "ko": "2번 카페를 붙입니다(순서 [7,2]). 남은 카페는 4번뿐이니 그 카페를 붙입니다."
+     },
+     "views": {
+      "stops": {
+       "values": [
+        4,
+        7,
+        2
+       ],
+       "marks": {
+        "dim": [
+         1,
+         2
+        ]
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[4]"
+        },
+        {
+         "id": 2,
+         "value": "[4,7]"
+        },
+        {
+         "id": 3,
+         "value": "[4,7,2]"
+        },
+        {
+         "id": 4,
+         "value": "[4,2]"
+        },
+        {
+         "id": 5,
+         "value": "[4,2,7]"
+        },
+        {
+         "id": 6,
+         "value": "[7]"
+        },
+        {
+         "id": 7,
+         "value": "[7,4]"
+        },
+        {
+         "id": 8,
+         "value": "[7,4,2]"
+        },
+        {
+         "id": 9,
+         "value": "[7,2]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "4"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "7"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "2"
+        },
+        {
+         "from": 1,
+         "to": 4,
+         "label": "2"
+        },
+        {
+         "from": 4,
+         "to": 5,
+         "label": "7"
+        },
+        {
+         "from": 0,
+         "to": 6,
+         "label": "7"
+        },
+        {
+         "from": 6,
+         "to": 7,
+         "label": "4"
+        },
+        {
+         "from": 7,
+         "to": 8,
+         "label": "2"
+        },
+        {
+         "from": 6,
+         "to": 9,
+         "label": "2"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         3,
+         5,
+         8
+        ],
+        "lit": [
+         9
+        ]
+       },
+       "shade": [
+        0,
+        6,
+        9
+       ]
+      },
+      "result": {
+       "values": [
+        "[4,7,2]",
+        "[4,2,7]",
+        "[7,4,2]"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "stops",
+        "at": 2
+       },
+       "to": {
+        "view": "calls",
+        "at": 9
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Add cafe 4: the order is [7,2,4], every cafe is in it, so it is a full visit order and goes into the answer.",
+      "ko": "4번 카페를 붙입니다(순서 [7,2,4]). 모든 카페가 들어 있는 완성된 순서이므로 답에 넣습니다."
+     },
+     "views": {
+      "stops": {
+       "values": [
+        4,
+        7,
+        2
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2
+        ]
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[4]"
+        },
+        {
+         "id": 2,
+         "value": "[4,7]"
+        },
+        {
+         "id": 3,
+         "value": "[4,7,2]"
+        },
+        {
+         "id": 4,
+         "value": "[4,2]"
+        },
+        {
+         "id": 5,
+         "value": "[4,2,7]"
+        },
+        {
+         "id": 6,
+         "value": "[7]"
+        },
+        {
+         "id": 7,
+         "value": "[7,4]"
+        },
+        {
+         "id": 8,
+         "value": "[7,4,2]"
+        },
+        {
+         "id": 9,
+         "value": "[7,2]"
+        },
+        {
+         "id": 10,
+         "value": "[7,2,4]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "4"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "7"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "2"
+        },
+        {
+         "from": 1,
+         "to": 4,
+         "label": "2"
+        },
+        {
+         "from": 4,
+         "to": 5,
+         "label": "7"
+        },
+        {
+         "from": 0,
+         "to": 6,
+         "label": "7"
+        },
+        {
+         "from": 6,
+         "to": 7,
+         "label": "4"
+        },
+        {
+         "from": 7,
+         "to": 8,
+         "label": "2"
+        },
+        {
+         "from": 6,
+         "to": 9,
+         "label": "2"
+        },
+        {
+         "from": 9,
+         "to": 10,
+         "label": "4"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         3,
+         5,
+         8,
+         10
+        ],
+        "lit": [
+         10
+        ]
+       },
+       "shade": [
+        0,
+        6,
+        9,
+        10
+       ]
+      },
+      "result": {
+       "values": [
+        "[4,7,2]",
+        "[4,2,7]",
+        "[7,4,2]",
+        "[7,2,4]"
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "stops",
+        "at": 0
+       },
+       "to": {
+        "view": "calls",
+        "at": 10
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 10
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Add cafe 2: the order is [2]; it will try cafes 4, 7 in turn for the next stop.",
+      "ko": "2번 카페를 붙입니다(순서 [2]). 다음 곳으로 4, 7번 카페를 차례로 붙여 봅니다."
+     },
+     "views": {
+      "stops": {
+       "values": [
+        4,
+        7,
+        2
+       ],
+       "marks": {
+        "dim": [
+         2
+        ]
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[4]"
+        },
+        {
+         "id": 2,
+         "value": "[4,7]"
+        },
+        {
+         "id": 3,
+         "value": "[4,7,2]"
+        },
+        {
+         "id": 4,
+         "value": "[4,2]"
+        },
+        {
+         "id": 5,
+         "value": "[4,2,7]"
+        },
+        {
+         "id": 6,
+         "value": "[7]"
+        },
+        {
+         "id": 7,
+         "value": "[7,4]"
+        },
+        {
+         "id": 8,
+         "value": "[7,4,2]"
+        },
+        {
+         "id": 9,
+         "value": "[7,2]"
+        },
+        {
+         "id": 10,
+         "value": "[7,2,4]"
+        },
+        {
+         "id": 11,
+         "value": "[2]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "4"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "7"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "2"
+        },
+        {
+         "from": 1,
+         "to": 4,
+         "label": "2"
+        },
+        {
+         "from": 4,
+         "to": 5,
+         "label": "7"
+        },
+        {
+         "from": 0,
+         "to": 6,
+         "label": "7"
+        },
+        {
+         "from": 6,
+         "to": 7,
+         "label": "4"
+        },
+        {
+         "from": 7,
+         "to": 8,
+         "label": "2"
+        },
+        {
+         "from": 6,
+         "to": 9,
+         "label": "2"
+        },
+        {
+         "from": 9,
+         "to": 10,
+         "label": "4"
+        },
+        {
+         "from": 0,
+         "to": 11,
+         "label": "2"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         3,
+         5,
+         8,
+         10
+        ],
+        "lit": [
+         11
+        ]
+       },
+       "shade": [
+        0,
+        11
+       ]
+      },
+      "result": {
+       "values": [
+        "[4,7,2]",
+        "[4,2,7]",
+        "[7,4,2]",
+        "[7,2,4]"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "stops",
+        "at": 2
+       },
+       "to": {
+        "view": "calls",
+        "at": 11
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Add cafe 4: the order is [2,4]; only cafe 7 is left, so it adds that.",
+      "ko": "4번 카페를 붙입니다(순서 [2,4]). 남은 카페는 7번뿐이니 그 카페를 붙입니다."
+     },
+     "views": {
+      "stops": {
+       "values": [
+        4,
+        7,
+        2
+       ],
+       "marks": {
+        "dim": [
+         0,
+         2
+        ]
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[4]"
+        },
+        {
+         "id": 2,
+         "value": "[4,7]"
+        },
+        {
+         "id": 3,
+         "value": "[4,7,2]"
+        },
+        {
+         "id": 4,
+         "value": "[4,2]"
+        },
+        {
+         "id": 5,
+         "value": "[4,2,7]"
+        },
+        {
+         "id": 6,
+         "value": "[7]"
+        },
+        {
+         "id": 7,
+         "value": "[7,4]"
+        },
+        {
+         "id": 8,
+         "value": "[7,4,2]"
+        },
+        {
+         "id": 9,
+         "value": "[7,2]"
+        },
+        {
+         "id": 10,
+         "value": "[7,2,4]"
+        },
+        {
+         "id": 11,
+         "value": "[2]"
+        },
+        {
+         "id": 12,
+         "value": "[2,4]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "4"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "7"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "2"
+        },
+        {
+         "from": 1,
+         "to": 4,
+         "label": "2"
+        },
+        {
+         "from": 4,
+         "to": 5,
+         "label": "7"
+        },
+        {
+         "from": 0,
+         "to": 6,
+         "label": "7"
+        },
+        {
+         "from": 6,
+         "to": 7,
+         "label": "4"
+        },
+        {
+         "from": 7,
+         "to": 8,
+         "label": "2"
+        },
+        {
+         "from": 6,
+         "to": 9,
+         "label": "2"
+        },
+        {
+         "from": 9,
+         "to": 10,
+         "label": "4"
+        },
+        {
+         "from": 0,
+         "to": 11,
+         "label": "2"
+        },
+        {
+         "from": 11,
+         "to": 12,
+         "label": "4"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         3,
+         5,
+         8,
+         10
+        ],
+        "lit": [
+         12
+        ]
+       },
+       "shade": [
+        0,
+        11,
+        12
+       ]
+      },
+      "result": {
+       "values": [
+        "[4,7,2]",
+        "[4,2,7]",
+        "[7,4,2]",
+        "[7,2,4]"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "stops",
+        "at": 0
+       },
+       "to": {
+        "view": "calls",
+        "at": 12
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Add cafe 7: the order is [2,4,7], every cafe is in it, so it is a full visit order and goes into the answer.",
+      "ko": "7번 카페를 붙입니다(순서 [2,4,7]). 모든 카페가 들어 있는 완성된 순서이므로 답에 넣습니다."
+     },
+     "views": {
+      "stops": {
+       "values": [
+        4,
+        7,
+        2
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2
+        ]
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[4]"
+        },
+        {
+         "id": 2,
+         "value": "[4,7]"
+        },
+        {
+         "id": 3,
+         "value": "[4,7,2]"
+        },
+        {
+         "id": 4,
+         "value": "[4,2]"
+        },
+        {
+         "id": 5,
+         "value": "[4,2,7]"
+        },
+        {
+         "id": 6,
+         "value": "[7]"
+        },
+        {
+         "id": 7,
+         "value": "[7,4]"
+        },
+        {
+         "id": 8,
+         "value": "[7,4,2]"
+        },
+        {
+         "id": 9,
+         "value": "[7,2]"
+        },
+        {
+         "id": 10,
+         "value": "[7,2,4]"
+        },
+        {
+         "id": 11,
+         "value": "[2]"
+        },
+        {
+         "id": 12,
+         "value": "[2,4]"
+        },
+        {
+         "id": 13,
+         "value": "[2,4,7]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "4"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "7"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "2"
+        },
+        {
+         "from": 1,
+         "to": 4,
+         "label": "2"
+        },
+        {
+         "from": 4,
+         "to": 5,
+         "label": "7"
+        },
+        {
+         "from": 0,
+         "to": 6,
+         "label": "7"
+        },
+        {
+         "from": 6,
+         "to": 7,
+         "label": "4"
+        },
+        {
+         "from": 7,
+         "to": 8,
+         "label": "2"
+        },
+        {
+         "from": 6,
+         "to": 9,
+         "label": "2"
+        },
+        {
+         "from": 9,
+         "to": 10,
+         "label": "4"
+        },
+        {
+         "from": 0,
+         "to": 11,
+         "label": "2"
+        },
+        {
+         "from": 11,
+         "to": 12,
+         "label": "4"
+        },
+        {
+         "from": 12,
+         "to": 13,
+         "label": "7"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         3,
+         5,
+         8,
+         10,
+         13
+        ],
+        "lit": [
+         13
+        ]
+       },
+       "shade": [
+        0,
+        11,
+        12,
+        13
+       ]
+      },
+      "result": {
+       "values": [
+        "[4,7,2]",
+        "[4,2,7]",
+        "[7,4,2]",
+        "[7,2,4]",
+        "[2,4,7]"
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "stops",
+        "at": 1
+       },
+       "to": {
+        "view": "calls",
+        "at": 13
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 13
+       },
+       "to": {
+        "view": "result",
+        "at": 4
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Add cafe 7: the order is [2,7]; only cafe 4 is left, so it adds that.",
+      "ko": "7번 카페를 붙입니다(순서 [2,7]). 남은 카페는 4번뿐이니 그 카페를 붙입니다."
+     },
+     "views": {
+      "stops": {
+       "values": [
+        4,
+        7,
+        2
+       ],
+       "marks": {
+        "dim": [
+         1,
+         2
+        ]
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[4]"
+        },
+        {
+         "id": 2,
+         "value": "[4,7]"
+        },
+        {
+         "id": 3,
+         "value": "[4,7,2]"
+        },
+        {
+         "id": 4,
+         "value": "[4,2]"
+        },
+        {
+         "id": 5,
+         "value": "[4,2,7]"
+        },
+        {
+         "id": 6,
+         "value": "[7]"
+        },
+        {
+         "id": 7,
+         "value": "[7,4]"
+        },
+        {
+         "id": 8,
+         "value": "[7,4,2]"
+        },
+        {
+         "id": 9,
+         "value": "[7,2]"
+        },
+        {
+         "id": 10,
+         "value": "[7,2,4]"
+        },
+        {
+         "id": 11,
+         "value": "[2]"
+        },
+        {
+         "id": 12,
+         "value": "[2,4]"
+        },
+        {
+         "id": 13,
+         "value": "[2,4,7]"
+        },
+        {
+         "id": 14,
+         "value": "[2,7]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "4"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "7"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "2"
+        },
+        {
+         "from": 1,
+         "to": 4,
+         "label": "2"
+        },
+        {
+         "from": 4,
+         "to": 5,
+         "label": "7"
+        },
+        {
+         "from": 0,
+         "to": 6,
+         "label": "7"
+        },
+        {
+         "from": 6,
+         "to": 7,
+         "label": "4"
+        },
+        {
+         "from": 7,
+         "to": 8,
+         "label": "2"
+        },
+        {
+         "from": 6,
+         "to": 9,
+         "label": "2"
+        },
+        {
+         "from": 9,
+         "to": 10,
+         "label": "4"
+        },
+        {
+         "from": 0,
+         "to": 11,
+         "label": "2"
+        },
+        {
+         "from": 11,
+         "to": 12,
+         "label": "4"
+        },
+        {
+         "from": 12,
+         "to": 13,
+         "label": "7"
+        },
+        {
+         "from": 11,
+         "to": 14,
+         "label": "7"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         3,
+         5,
+         8,
+         10,
+         13
+        ],
+        "lit": [
+         14
+        ]
+       },
+       "shade": [
+        0,
+        11,
+        14
+       ]
+      },
+      "result": {
+       "values": [
+        "[4,7,2]",
+        "[4,2,7]",
+        "[7,4,2]",
+        "[7,2,4]",
+        "[2,4,7]"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "stops",
+        "at": 1
+       },
+       "to": {
+        "view": "calls",
+        "at": 14
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Add cafe 4: the order is [2,7,4], every cafe is in it, so it is a full visit order and goes into the answer.",
+      "ko": "4번 카페를 붙입니다(순서 [2,7,4]). 모든 카페가 들어 있는 완성된 순서이므로 답에 넣습니다."
+     },
+     "views": {
+      "stops": {
+       "values": [
+        4,
+        7,
+        2
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2
+        ]
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[4]"
+        },
+        {
+         "id": 2,
+         "value": "[4,7]"
+        },
+        {
+         "id": 3,
+         "value": "[4,7,2]"
+        },
+        {
+         "id": 4,
+         "value": "[4,2]"
+        },
+        {
+         "id": 5,
+         "value": "[4,2,7]"
+        },
+        {
+         "id": 6,
+         "value": "[7]"
+        },
+        {
+         "id": 7,
+         "value": "[7,4]"
+        },
+        {
+         "id": 8,
+         "value": "[7,4,2]"
+        },
+        {
+         "id": 9,
+         "value": "[7,2]"
+        },
+        {
+         "id": 10,
+         "value": "[7,2,4]"
+        },
+        {
+         "id": 11,
+         "value": "[2]"
+        },
+        {
+         "id": 12,
+         "value": "[2,4]"
+        },
+        {
+         "id": 13,
+         "value": "[2,4,7]"
+        },
+        {
+         "id": 14,
+         "value": "[2,7]"
+        },
+        {
+         "id": 15,
+         "value": "[2,7,4]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "4"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "7"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "2"
+        },
+        {
+         "from": 1,
+         "to": 4,
+         "label": "2"
+        },
+        {
+         "from": 4,
+         "to": 5,
+         "label": "7"
+        },
+        {
+         "from": 0,
+         "to": 6,
+         "label": "7"
+        },
+        {
+         "from": 6,
+         "to": 7,
+         "label": "4"
+        },
+        {
+         "from": 7,
+         "to": 8,
+         "label": "2"
+        },
+        {
+         "from": 6,
+         "to": 9,
+         "label": "2"
+        },
+        {
+         "from": 9,
+         "to": 10,
+         "label": "4"
+        },
+        {
+         "from": 0,
+         "to": 11,
+         "label": "2"
+        },
+        {
+         "from": 11,
+         "to": 12,
+         "label": "4"
+        },
+        {
+         "from": 12,
+         "to": 13,
+         "label": "7"
+        },
+        {
+         "from": 11,
+         "to": 14,
+         "label": "7"
+        },
+        {
+         "from": 14,
+         "to": 15,
+         "label": "4"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         3,
+         5,
+         8,
+         10,
+         13,
+         15
+        ],
+        "lit": [
+         15
+        ]
+       },
+       "shade": [
+        0,
+        11,
+        14,
+        15
+       ]
+      },
+      "result": {
+       "values": [
+        "[4,7,2]",
+        "[4,2,7]",
+        "[7,4,2]",
+        "[7,2,4]",
+        "[2,4,7]",
+        "[2,7,4]"
+       ],
+       "marks": {
+        "good": [
+         5
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "stops",
+        "at": 0
+       },
+       "to": {
+        "view": "calls",
+        "at": 15
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 15
+       },
+       "to": {
+        "view": "result",
+        "at": 5
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every call has returned: 6 orders of 3 cafes, 3! = 6, one per leaf of the tree.",
+      "ko": "모든 호출이 끝났습니다. 카페 3곳의 방문 순서는 3! = 6가지로, 트리의 잎 하나가 순서 하나입니다."
+     },
+     "views": {
+      "stops": {
+       "values": [
+        4,
+        7,
+        2
+       ],
+       "marks": {}
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[4]"
+        },
+        {
+         "id": 2,
+         "value": "[4,7]"
+        },
+        {
+         "id": 3,
+         "value": "[4,7,2]"
+        },
+        {
+         "id": 4,
+         "value": "[4,2]"
+        },
+        {
+         "id": 5,
+         "value": "[4,2,7]"
+        },
+        {
+         "id": 6,
+         "value": "[7]"
+        },
+        {
+         "id": 7,
+         "value": "[7,4]"
+        },
+        {
+         "id": 8,
+         "value": "[7,4,2]"
+        },
+        {
+         "id": 9,
+         "value": "[7,2]"
+        },
+        {
+         "id": 10,
+         "value": "[7,2,4]"
+        },
+        {
+         "id": 11,
+         "value": "[2]"
+        },
+        {
+         "id": 12,
+         "value": "[2,4]"
+        },
+        {
+         "id": 13,
+         "value": "[2,4,7]"
+        },
+        {
+         "id": 14,
+         "value": "[2,7]"
+        },
+        {
+         "id": 15,
+         "value": "[2,7,4]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "4"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "7"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "2"
+        },
+        {
+         "from": 1,
+         "to": 4,
+         "label": "2"
+        },
+        {
+         "from": 4,
+         "to": 5,
+         "label": "7"
+        },
+        {
+         "from": 0,
+         "to": 6,
+         "label": "7"
+        },
+        {
+         "from": 6,
+         "to": 7,
+         "label": "4"
+        },
+        {
+         "from": 7,
+         "to": 8,
+         "label": "2"
+        },
+        {
+         "from": 6,
+         "to": 9,
+         "label": "2"
+        },
+        {
+         "from": 9,
+         "to": 10,
+         "label": "4"
+        },
+        {
+         "from": 0,
+         "to": 11,
+         "label": "2"
+        },
+        {
+         "from": 11,
+         "to": 12,
+         "label": "4"
+        },
+        {
+         "from": 12,
+         "to": 13,
+         "label": "7"
+        },
+        {
+         "from": 11,
+         "to": 14,
+         "label": "7"
+        },
+        {
+         "from": 14,
+         "to": 15,
+         "label": "4"
+        }
+       ],
+       "nodeMarks": {
+        "path": [
+         3,
+         5,
+         8,
+         10,
+         13,
+         15
+        ]
+       },
+       "shade": []
+      },
+      "result": {
+       "values": [
+        "[4,7,2]",
+        "[4,2,7]",
+        "[7,4,2]",
+        "[7,2,4]",
+        "[2,4,7]",
+        "[2,7,4]"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      }
+     },
+     "answer": "[[2,4,7],[2,7,4],[4,2,7],[4,7,2],[7,2,4],[7,4,2]]"
+    }
+   ],
+   "sampleInput": "[4,7,2]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "stops = [5,9]",
+   "expected": "[[5,9],[9,5]]",
+   "frames": [
+    {
+     "caption": {
+      "en": "The first call starts with an empty order; it will try cafes 5, 9 in turn for the next stop.",
+      "ko": "첫 호출은 빈 순서에서 시작합니다. 다음 곳으로 5, 9번 카페를 차례로 붙여 봅니다."
+     },
+     "views": {
+      "stops": {
+       "values": [
+        5,
+        9
+       ],
+       "marks": {
+        "dim": []
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        }
+       ],
+       "edges": [],
+       "nodeMarks": {
+        "good": [],
+        "lit": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ]
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "calls",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Add cafe 5: the order is [5]; only cafe 9 is left, so it adds that.",
+      "ko": "5번 카페를 붙입니다(순서 [5]). 남은 카페는 9번뿐이니 그 카페를 붙입니다."
+     },
+     "views": {
+      "stops": {
+       "values": [
+        5,
+        9
+       ],
+       "marks": {
+        "dim": [
+         0
+        ]
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[5]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "5"
+        }
+       ],
+       "nodeMarks": {
+        "good": [],
+        "lit": [
+         1
+        ]
+       },
+       "shade": [
+        0,
+        1
+       ]
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "stops",
+        "at": 0
+       },
+       "to": {
+        "view": "calls",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Add cafe 9: the order is [5,9], every cafe is in it, so it is a full visit order and goes into the answer.",
+      "ko": "9번 카페를 붙입니다(순서 [5,9]). 모든 카페가 들어 있는 완성된 순서이므로 답에 넣습니다."
+     },
+     "views": {
+      "stops": {
+       "values": [
+        5,
+        9
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1
+        ]
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[5]"
+        },
+        {
+         "id": 2,
+         "value": "[5,9]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "5"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "9"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         2
+        ],
+        "lit": [
+         2
+        ]
+       },
+       "shade": [
+        0,
+        1,
+        2
+       ]
+      },
+      "result": {
+       "values": [
+        "[5,9]"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "stops",
+        "at": 1
+       },
+       "to": {
+        "view": "calls",
+        "at": 2
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 2
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Add cafe 9: the order is [9]; only cafe 5 is left, so it adds that.",
+      "ko": "9번 카페를 붙입니다(순서 [9]). 남은 카페는 5번뿐이니 그 카페를 붙입니다."
+     },
+     "views": {
+      "stops": {
+       "values": [
+        5,
+        9
+       ],
+       "marks": {
+        "dim": [
+         1
+        ]
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[5]"
+        },
+        {
+         "id": 2,
+         "value": "[5,9]"
+        },
+        {
+         "id": 3,
+         "value": "[9]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "5"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "9"
+        },
+        {
+         "from": 0,
+         "to": 3,
+         "label": "9"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         2
+        ],
+        "lit": [
+         3
+        ]
+       },
+       "shade": [
+        0,
+        3
+       ]
+      },
+      "result": {
+       "values": [
+        "[5,9]"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "stops",
+        "at": 1
+       },
+       "to": {
+        "view": "calls",
+        "at": 3
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Add cafe 5: the order is [9,5], every cafe is in it, so it is a full visit order and goes into the answer.",
+      "ko": "5번 카페를 붙입니다(순서 [9,5]). 모든 카페가 들어 있는 완성된 순서이므로 답에 넣습니다."
+     },
+     "views": {
+      "stops": {
+       "values": [
+        5,
+        9
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1
+        ]
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[5]"
+        },
+        {
+         "id": 2,
+         "value": "[5,9]"
+        },
+        {
+         "id": 3,
+         "value": "[9]"
+        },
+        {
+         "id": 4,
+         "value": "[9,5]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "5"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "9"
+        },
+        {
+         "from": 0,
+         "to": 3,
+         "label": "9"
+        },
+        {
+         "from": 3,
+         "to": 4,
+         "label": "5"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         2,
+         4
+        ],
+        "lit": [
+         4
+        ]
+       },
+       "shade": [
+        0,
+        3,
+        4
+       ]
+      },
+      "result": {
+       "values": [
+        "[5,9]",
+        "[9,5]"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "stops",
+        "at": 0
+       },
+       "to": {
+        "view": "calls",
+        "at": 4
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 4
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every call has returned: 2 orders of 2 cafes, 2! = 2, one per leaf of the tree.",
+      "ko": "모든 호출이 끝났습니다. 카페 2곳의 방문 순서는 2! = 2가지로, 트리의 잎 하나가 순서 하나입니다."
+     },
+     "views": {
+      "stops": {
+       "values": [
+        5,
+        9
+       ],
+       "marks": {}
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[5]"
+        },
+        {
+         "id": 2,
+         "value": "[5,9]"
+        },
+        {
+         "id": 3,
+         "value": "[9]"
+        },
+        {
+         "id": 4,
+         "value": "[9,5]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "5"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "9"
+        },
+        {
+         "from": 0,
+         "to": 3,
+         "label": "9"
+        },
+        {
+         "from": 3,
+         "to": 4,
+         "label": "5"
+        }
+       ],
+       "nodeMarks": {
+        "path": [
+         2,
+         4
+        ]
+       },
+       "shade": []
+      },
+      "result": {
+       "values": [
+        "[5,9]",
+        "[9,5]"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1
+        ]
+       }
+      }
+     },
+     "answer": "[[5,9],[9,5]]"
+    }
+   ],
+   "sampleInput": "[5,9]"
+  }
+ ]
+}
