@@ -1,0 +1,7301 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Task Cooldown Planner",
+  "ko": "작업 쿨다운 플래너"
+ },
+ "approach": {
+  "en": "Fill the slots one at a time: print the label with the most jobs left among those not cooling down (a max-heap of counts), and park it in a queue until n slots have passed. A slot with nothing ready sits idle; the slots used are the answer.",
+  "ko": "슬롯을 하나씩 채웁니다. 쿨다운 중이 아닌 라벨 중 남은 작업이 가장 많은 라벨(개수의 최대 힙)을 인쇄하고, n 슬롯이 지날 때까지 큐에 세워 둡니다. 준비된 라벨이 없는 슬롯은 비워 두고, 쓴 슬롯 수가 답입니다."
+ },
+ "views": [
+  {
+   "id": "jobs",
+   "type": "array",
+   "title": {
+    "en": "jobs",
+    "ko": "jobs (작업)"
+   }
+  },
+  {
+   "id": "counts",
+   "type": "map",
+   "title": {
+    "en": "jobs per label",
+    "ko": "라벨별 작업 수"
+   },
+   "empty": {
+    "en": "empty",
+    "ko": "비어 있음"
+   }
+  },
+  {
+   "id": "heap",
+   "type": "tree",
+   "arity": 2,
+   "title": {
+    "en": "max-heap: most jobs left on top (label:count)",
+    "ko": "최대 힙: 남은 작업이 가장 많은 라벨이 맨 위 (라벨:개수)"
+   },
+   "empty": {
+    "en": "empty",
+    "ko": "비어 있음"
+   }
+  },
+  {
+   "id": "cooldown",
+   "type": "queue",
+   "title": {
+    "en": "cooling down (tag: slot it may print again)",
+    "ko": "쿨다운 중 (태그: 다시 인쇄할 수 있는 슬롯)"
+   },
+   "empty": {
+    "en": "empty",
+    "ko": "비어 있음"
+   }
+  },
+  {
+   "id": "schedule",
+   "type": "output",
+   "title": {
+    "en": "slots so far (– idle)",
+    "ko": "지금까지의 슬롯 (– 빈칸)"
+   },
+   "empty": {
+    "en": "none yet",
+    "ko": "아직 없음"
+   }
+  },
+  {
+   "id": "result",
+   "type": "output",
+   "title": {
+    "en": "answer",
+    "ko": "답"
+   },
+   "empty": {
+    "en": "not yet",
+    "ko": "아직 없음"
+   }
+  },
+  {
+   "id": "state",
+   "type": "vars"
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "jobs = [\"P\",\"P\",\"P\",\"P\",\"Q\",\"Q\"], n = 3",
+   "expected": "13",
+   "frames": [
+    {
+     "caption": {
+      "en": "6 jobs, n = 3: two jobs with the same label need at least 3 slots between them. First count each label's jobs.",
+      "ko": "작업 6개, n = 3: 라벨이 같은 두 작업 사이에는 슬롯이 3개 이상 있어야 합니다. 먼저 라벨마다 작업 수를 셉니다."
+     },
+     "views": {
+      "jobs": {
+       "values": [
+        "P",
+        "P",
+        "P",
+        "P",
+        "Q",
+        "Q"
+       ],
+       "marks": {}
+      },
+      "counts": {
+       "entries": [],
+       "marks": {}
+      },
+      "heap": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      },
+      "cooldown": {
+       "values": [],
+       "tags": [],
+       "marks": {}
+      },
+      "schedule": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 3
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Counter(jobs): each job moves into its label's card. P has 4, Q has 2.",
+      "ko": "Counter(jobs): 작업마다 자기 라벨 카드로 들어갑니다. P 4개, Q 2개."
+     },
+     "views": {
+      "jobs": {
+       "values": [
+        "P",
+        "P",
+        "P",
+        "P",
+        "Q",
+        "Q"
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "P",
+         "value": 4
+        },
+        {
+         "key": "Q",
+         "value": 2
+        }
+       ],
+       "marks": {
+        "good": [
+         "P",
+         "Q"
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      },
+      "cooldown": {
+       "values": [],
+       "tags": [],
+       "marks": {}
+      },
+      "schedule": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 3
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "jobs",
+        "at": 0
+       },
+       "to": {
+        "view": "counts",
+        "at": "P"
+       }
+      },
+      {
+       "from": {
+        "view": "jobs",
+        "at": 1
+       },
+       "to": {
+        "view": "counts",
+        "at": "P"
+       }
+      },
+      {
+       "from": {
+        "view": "jobs",
+        "at": 2
+       },
+       "to": {
+        "view": "counts",
+        "at": "P"
+       }
+      },
+      {
+       "from": {
+        "view": "jobs",
+        "at": 3
+       },
+       "to": {
+        "view": "counts",
+        "at": "P"
+       }
+      },
+      {
+       "from": {
+        "view": "jobs",
+        "at": 4
+       },
+       "to": {
+        "view": "counts",
+        "at": "Q"
+       }
+      },
+      {
+       "from": {
+        "view": "jobs",
+        "at": 5
+       },
+       "to": {
+        "view": "counts",
+        "at": "Q"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Each label goes into the heap list with its count, in the map's order; heapify then sifts each parent down, so the label with the most jobs is on top.",
+      "ko": "라벨마다 작업 수와 함께 맵의 순서대로 힙 리스트에 넣습니다. 이어서 heapify가 부모를 차례로 아래로 내려, 작업이 가장 많은 라벨이 맨 위에 옵니다."
+     },
+     "views": {
+      "jobs": {
+       "values": [
+        "P",
+        "P",
+        "P",
+        "P",
+        "Q",
+        "Q"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "P",
+         "value": 4
+        },
+        {
+         "key": "Q",
+         "value": 2
+        }
+       ],
+       "marks": {}
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "P:4"
+        },
+        {
+         "id": 1,
+         "value": "Q:2"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0,
+         1
+        ]
+       }
+      },
+      "cooldown": {
+       "values": [],
+       "tags": [],
+       "marks": {}
+      },
+      "schedule": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 3
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "counts",
+        "at": "P"
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       },
+       "value": "P:4"
+      },
+      {
+       "from": {
+        "view": "counts",
+        "at": "Q"
+       },
+       "to": {
+        "view": "heap",
+        "at": 1
+       },
+       "value": "Q:2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Slot 0: the heap's top is P:4, the most jobs left among labels ready, so P prints. 3 left, so it waits in the queue until slot 4; the last node Q:2 fills the root.",
+      "ko": "0번 슬롯: 힙의 맨 위 P:4가 준비된 라벨 중 남은 작업이 가장 많으므로 P 작업을 인쇄합니다. 3개가 남아 4번 슬롯까지 큐에서 기다리고, 마지막 노드 Q:2가 루트를 채웁니다."
+     },
+     "views": {
+      "jobs": {
+       "values": [
+        "P",
+        "P",
+        "P",
+        "P",
+        "Q",
+        "Q"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "P",
+         "value": 4
+        },
+        {
+         "key": "Q",
+         "value": 2
+        }
+       ],
+       "marks": {
+        "dim": [
+         "P",
+         "Q"
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "Q:2"
+        },
+        {
+         "id": 1,
+         "value": "Q:2"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "cooldown": {
+       "values": [
+        "P:3"
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "slot 4",
+          "ko": "4번 슬롯"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "schedule": {
+       "values": [
+        "P"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 3
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "schedule",
+        "at": 0
+       },
+       "value": "P"
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "cooldown",
+        "at": 0
+       },
+       "value": "P:3"
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 1
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Slot 1: the heap's top is Q:2, the most jobs left among labels ready, so Q prints. 1 left, so it waits in the queue until slot 5.",
+      "ko": "1번 슬롯: 힙의 맨 위 Q:2가 준비된 라벨 중 남은 작업이 가장 많으므로 Q 작업을 인쇄합니다. 1개가 남아 5번 슬롯까지 큐에서 기다립니다."
+     },
+     "views": {
+      "jobs": {
+       "values": [
+        "P",
+        "P",
+        "P",
+        "P",
+        "Q",
+        "Q"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "P",
+         "value": 4
+        },
+        {
+         "key": "Q",
+         "value": 2
+        }
+       ],
+       "marks": {
+        "dim": [
+         "P",
+         "Q"
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "Q:2"
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "cooldown": {
+       "values": [
+        "P:3",
+        "Q:1"
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "slot 4",
+          "ko": "4번 슬롯"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "slot 5",
+          "ko": "5번 슬롯"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "schedule": {
+       "values": [
+        "P",
+        "Q"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 3
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "schedule",
+        "at": 1
+       },
+       "value": "Q"
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "cooldown",
+        "at": 1
+       },
+       "value": "Q:1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Slot 2: the heap is empty, since every label left is cooling down (the next is P, at slot 4), so the slot sits idle.",
+      "ko": "2번 슬롯: 남은 라벨이 모두 쿨다운 중이라 힙이 비었으므로(다음은 4번 슬롯의 P) 슬롯을 비워 둡니다."
+     },
+     "views": {
+      "jobs": {
+       "values": [
+        "P",
+        "P",
+        "P",
+        "P",
+        "Q",
+        "Q"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "P",
+         "value": 4
+        },
+        {
+         "key": "Q",
+         "value": 2
+        }
+       ],
+       "marks": {
+        "dim": [
+         "P",
+         "Q"
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      },
+      "cooldown": {
+       "values": [
+        "P:3",
+        "Q:1"
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "slot 4",
+          "ko": "4번 슬롯"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "slot 5",
+          "ko": "5번 슬롯"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "schedule": {
+       "values": [
+        "P",
+        "Q",
+        "–"
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 3
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "schedule",
+        "at": 2
+       },
+       "value": "–"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Slot 3: the heap is empty, since every label left is cooling down (the next is P, at slot 4), so the slot sits idle.",
+      "ko": "3번 슬롯: 남은 라벨이 모두 쿨다운 중이라 힙이 비었으므로(다음은 4번 슬롯의 P) 슬롯을 비워 둡니다."
+     },
+     "views": {
+      "jobs": {
+       "values": [
+        "P",
+        "P",
+        "P",
+        "P",
+        "Q",
+        "Q"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "P",
+         "value": 4
+        },
+        {
+         "key": "Q",
+         "value": 2
+        }
+       ],
+       "marks": {
+        "dim": [
+         "P",
+         "Q"
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      },
+      "cooldown": {
+       "values": [
+        "P:3",
+        "Q:1"
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "slot 4",
+          "ko": "4번 슬롯"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "slot 5",
+          "ko": "5번 슬롯"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "schedule": {
+       "values": [
+        "P",
+        "Q",
+        "–",
+        "–"
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 3
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "schedule",
+        "at": 3
+       },
+       "value": "–"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Slot 4: P has cooled down, so P:3 leaves the queue's front and goes in at the heap's end, [0].",
+      "ko": "4번 슬롯: P의 쿨다운이 끝났으므로 P:3이 큐 맨 앞에서 나와 힙의 맨 끝 [0]에 들어갑니다."
+     },
+     "views": {
+      "jobs": {
+       "values": [
+        "P",
+        "P",
+        "P",
+        "P",
+        "Q",
+        "Q"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "P",
+         "value": 4
+        },
+        {
+         "key": "Q",
+         "value": 2
+        }
+       ],
+       "marks": {
+        "dim": [
+         "P",
+         "Q"
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "P:3"
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "cooldown": {
+       "values": [
+        "P:3",
+        "Q:1"
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "slot 4",
+          "ko": "4번 슬롯"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "slot 5",
+          "ko": "5번 슬롯"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "schedule": {
+       "values": [
+        "P",
+        "Q",
+        "–",
+        "–"
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 3
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "cooldown",
+        "at": 0
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Slot 4: the heap's top is P:3, the most jobs left among labels ready, so P prints. 2 left, so it waits in the queue until slot 8.",
+      "ko": "4번 슬롯: 힙의 맨 위 P:3이 준비된 라벨 중 남은 작업이 가장 많으므로 P 작업을 인쇄합니다. 2개가 남아 8번 슬롯까지 큐에서 기다립니다."
+     },
+     "views": {
+      "jobs": {
+       "values": [
+        "P",
+        "P",
+        "P",
+        "P",
+        "Q",
+        "Q"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "P",
+         "value": 4
+        },
+        {
+         "key": "Q",
+         "value": 2
+        }
+       ],
+       "marks": {
+        "dim": [
+         "P",
+         "Q"
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "P:3"
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "cooldown": {
+       "values": [
+        "Q:1",
+        "P:2"
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "slot 5",
+          "ko": "5번 슬롯"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "slot 8",
+          "ko": "8번 슬롯"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "schedule": {
+       "values": [
+        "P",
+        "Q",
+        "–",
+        "–",
+        "P"
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 3
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "schedule",
+        "at": 4
+       },
+       "value": "P"
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "cooldown",
+        "at": 1
+       },
+       "value": "P:2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Slot 5: Q has cooled down, so Q:1 leaves the queue's front and goes in at the heap's end, [0].",
+      "ko": "5번 슬롯: Q의 쿨다운이 끝났으므로 Q:1이 큐 맨 앞에서 나와 힙의 맨 끝 [0]에 들어갑니다."
+     },
+     "views": {
+      "jobs": {
+       "values": [
+        "P",
+        "P",
+        "P",
+        "P",
+        "Q",
+        "Q"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "P",
+         "value": 4
+        },
+        {
+         "key": "Q",
+         "value": 2
+        }
+       ],
+       "marks": {
+        "dim": [
+         "P",
+         "Q"
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "Q:1"
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "cooldown": {
+       "values": [
+        "Q:1",
+        "P:2"
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "slot 5",
+          "ko": "5번 슬롯"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "slot 8",
+          "ko": "8번 슬롯"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "schedule": {
+       "values": [
+        "P",
+        "Q",
+        "–",
+        "–",
+        "P"
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 3
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "cooldown",
+        "at": 0
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Slot 5: the heap's top is Q:1, the most jobs left among labels ready, so Q prints. That was Q's last job.",
+      "ko": "5번 슬롯: 힙의 맨 위 Q:1이 준비된 라벨 중 남은 작업이 가장 많으므로 Q 작업을 인쇄합니다. Q의 마지막 작업이었습니다."
+     },
+     "views": {
+      "jobs": {
+       "values": [
+        "P",
+        "P",
+        "P",
+        "P",
+        "Q",
+        "Q"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "P",
+         "value": 4
+        },
+        {
+         "key": "Q",
+         "value": 2
+        }
+       ],
+       "marks": {
+        "dim": [
+         "P",
+         "Q"
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "Q:1"
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "cooldown": {
+       "values": [
+        "P:2"
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "slot 8",
+          "ko": "8번 슬롯"
+         }
+        ]
+       ],
+       "marks": {}
+      },
+      "schedule": {
+       "values": [
+        "P",
+        "Q",
+        "–",
+        "–",
+        "P",
+        "Q"
+       ],
+       "marks": {
+        "good": [
+         5
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 3
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "schedule",
+        "at": 5
+       },
+       "value": "Q"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Slot 6: the heap is empty, since every label left is cooling down (the next is P, at slot 8), so the slot sits idle.",
+      "ko": "6번 슬롯: 남은 라벨이 모두 쿨다운 중이라 힙이 비었으므로(다음은 8번 슬롯의 P) 슬롯을 비워 둡니다."
+     },
+     "views": {
+      "jobs": {
+       "values": [
+        "P",
+        "P",
+        "P",
+        "P",
+        "Q",
+        "Q"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "P",
+         "value": 4
+        },
+        {
+         "key": "Q",
+         "value": 2
+        }
+       ],
+       "marks": {
+        "dim": [
+         "P",
+         "Q"
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      },
+      "cooldown": {
+       "values": [
+        "P:2"
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "slot 8",
+          "ko": "8번 슬롯"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "schedule": {
+       "values": [
+        "P",
+        "Q",
+        "–",
+        "–",
+        "P",
+        "Q",
+        "–"
+       ],
+       "marks": {
+        "good": [
+         6
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 3
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "schedule",
+        "at": 6
+       },
+       "value": "–"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Slot 7: the heap is empty, since every label left is cooling down (the next is P, at slot 8), so the slot sits idle.",
+      "ko": "7번 슬롯: 남은 라벨이 모두 쿨다운 중이라 힙이 비었으므로(다음은 8번 슬롯의 P) 슬롯을 비워 둡니다."
+     },
+     "views": {
+      "jobs": {
+       "values": [
+        "P",
+        "P",
+        "P",
+        "P",
+        "Q",
+        "Q"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "P",
+         "value": 4
+        },
+        {
+         "key": "Q",
+         "value": 2
+        }
+       ],
+       "marks": {
+        "dim": [
+         "P",
+         "Q"
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      },
+      "cooldown": {
+       "values": [
+        "P:2"
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "slot 8",
+          "ko": "8번 슬롯"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "schedule": {
+       "values": [
+        "P",
+        "Q",
+        "–",
+        "–",
+        "P",
+        "Q",
+        "–",
+        "–"
+       ],
+       "marks": {
+        "good": [
+         7
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 3
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "schedule",
+        "at": 7
+       },
+       "value": "–"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Slot 8: P has cooled down, so P:2 leaves the queue's front and goes in at the heap's end, [0].",
+      "ko": "8번 슬롯: P의 쿨다운이 끝났으므로 P:2가 큐 맨 앞에서 나와 힙의 맨 끝 [0]에 들어갑니다."
+     },
+     "views": {
+      "jobs": {
+       "values": [
+        "P",
+        "P",
+        "P",
+        "P",
+        "Q",
+        "Q"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "P",
+         "value": 4
+        },
+        {
+         "key": "Q",
+         "value": 2
+        }
+       ],
+       "marks": {
+        "dim": [
+         "P",
+         "Q"
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "P:2"
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "cooldown": {
+       "values": [
+        "P:2"
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "slot 8",
+          "ko": "8번 슬롯"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "schedule": {
+       "values": [
+        "P",
+        "Q",
+        "–",
+        "–",
+        "P",
+        "Q",
+        "–",
+        "–"
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 3
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "cooldown",
+        "at": 0
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Slot 8: the heap's top is P:2, the most jobs left among labels ready, so P prints. 1 left, so it waits in the queue until slot 12.",
+      "ko": "8번 슬롯: 힙의 맨 위 P:2가 준비된 라벨 중 남은 작업이 가장 많으므로 P 작업을 인쇄합니다. 1개가 남아 12번 슬롯까지 큐에서 기다립니다."
+     },
+     "views": {
+      "jobs": {
+       "values": [
+        "P",
+        "P",
+        "P",
+        "P",
+        "Q",
+        "Q"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "P",
+         "value": 4
+        },
+        {
+         "key": "Q",
+         "value": 2
+        }
+       ],
+       "marks": {
+        "dim": [
+         "P",
+         "Q"
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "P:2"
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "cooldown": {
+       "values": [
+        "P:1"
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "slot 12",
+          "ko": "12번 슬롯"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "schedule": {
+       "values": [
+        "P",
+        "Q",
+        "–",
+        "–",
+        "P",
+        "Q",
+        "–",
+        "–",
+        "P"
+       ],
+       "marks": {
+        "good": [
+         8
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 3
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "schedule",
+        "at": 8
+       },
+       "value": "P"
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "cooldown",
+        "at": 0
+       },
+       "value": "P:1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Slot 9: the heap is empty, since every label left is cooling down (the next is P, at slot 12), so the slot sits idle.",
+      "ko": "9번 슬롯: 남은 라벨이 모두 쿨다운 중이라 힙이 비었으므로(다음은 12번 슬롯의 P) 슬롯을 비워 둡니다."
+     },
+     "views": {
+      "jobs": {
+       "values": [
+        "P",
+        "P",
+        "P",
+        "P",
+        "Q",
+        "Q"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "P",
+         "value": 4
+        },
+        {
+         "key": "Q",
+         "value": 2
+        }
+       ],
+       "marks": {
+        "dim": [
+         "P",
+         "Q"
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      },
+      "cooldown": {
+       "values": [
+        "P:1"
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "slot 12",
+          "ko": "12번 슬롯"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "schedule": {
+       "values": [
+        "P",
+        "Q",
+        "–",
+        "–",
+        "P",
+        "Q",
+        "–",
+        "–",
+        "P",
+        "–"
+       ],
+       "marks": {
+        "good": [
+         9
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 3
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "schedule",
+        "at": 9
+       },
+       "value": "–"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Slot 10: the heap is empty, since every label left is cooling down (the next is P, at slot 12), so the slot sits idle.",
+      "ko": "10번 슬롯: 남은 라벨이 모두 쿨다운 중이라 힙이 비었으므로(다음은 12번 슬롯의 P) 슬롯을 비워 둡니다."
+     },
+     "views": {
+      "jobs": {
+       "values": [
+        "P",
+        "P",
+        "P",
+        "P",
+        "Q",
+        "Q"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "P",
+         "value": 4
+        },
+        {
+         "key": "Q",
+         "value": 2
+        }
+       ],
+       "marks": {
+        "dim": [
+         "P",
+         "Q"
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      },
+      "cooldown": {
+       "values": [
+        "P:1"
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "slot 12",
+          "ko": "12번 슬롯"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "schedule": {
+       "values": [
+        "P",
+        "Q",
+        "–",
+        "–",
+        "P",
+        "Q",
+        "–",
+        "–",
+        "P",
+        "–",
+        "–"
+       ],
+       "marks": {
+        "good": [
+         10
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 3
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "schedule",
+        "at": 10
+       },
+       "value": "–"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Slot 11: the heap is empty, since every label left is cooling down (the next is P, at slot 12), so the slot sits idle.",
+      "ko": "11번 슬롯: 남은 라벨이 모두 쿨다운 중이라 힙이 비었으므로(다음은 12번 슬롯의 P) 슬롯을 비워 둡니다."
+     },
+     "views": {
+      "jobs": {
+       "values": [
+        "P",
+        "P",
+        "P",
+        "P",
+        "Q",
+        "Q"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "P",
+         "value": 4
+        },
+        {
+         "key": "Q",
+         "value": 2
+        }
+       ],
+       "marks": {
+        "dim": [
+         "P",
+         "Q"
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      },
+      "cooldown": {
+       "values": [
+        "P:1"
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "slot 12",
+          "ko": "12번 슬롯"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "schedule": {
+       "values": [
+        "P",
+        "Q",
+        "–",
+        "–",
+        "P",
+        "Q",
+        "–",
+        "–",
+        "P",
+        "–",
+        "–",
+        "–"
+       ],
+       "marks": {
+        "good": [
+         11
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 3
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "schedule",
+        "at": 11
+       },
+       "value": "–"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Slot 12: P has cooled down, so P:1 leaves the queue's front and goes in at the heap's end, [0].",
+      "ko": "12번 슬롯: P의 쿨다운이 끝났으므로 P:1이 큐 맨 앞에서 나와 힙의 맨 끝 [0]에 들어갑니다."
+     },
+     "views": {
+      "jobs": {
+       "values": [
+        "P",
+        "P",
+        "P",
+        "P",
+        "Q",
+        "Q"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "P",
+         "value": 4
+        },
+        {
+         "key": "Q",
+         "value": 2
+        }
+       ],
+       "marks": {
+        "dim": [
+         "P",
+         "Q"
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "P:1"
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "cooldown": {
+       "values": [
+        "P:1"
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "slot 12",
+          "ko": "12번 슬롯"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "schedule": {
+       "values": [
+        "P",
+        "Q",
+        "–",
+        "–",
+        "P",
+        "Q",
+        "–",
+        "–",
+        "P",
+        "–",
+        "–",
+        "–"
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 3
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "cooldown",
+        "at": 0
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Slot 12: the heap's top is P:1, the most jobs left among labels ready, so P prints. That was P's last job.",
+      "ko": "12번 슬롯: 힙의 맨 위 P:1이 준비된 라벨 중 남은 작업이 가장 많으므로 P 작업을 인쇄합니다. P의 마지막 작업이었습니다."
+     },
+     "views": {
+      "jobs": {
+       "values": [
+        "P",
+        "P",
+        "P",
+        "P",
+        "Q",
+        "Q"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "P",
+         "value": 4
+        },
+        {
+         "key": "Q",
+         "value": 2
+        }
+       ],
+       "marks": {
+        "dim": [
+         "P",
+         "Q"
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "P:1"
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "cooldown": {
+       "values": [],
+       "tags": [],
+       "marks": {}
+      },
+      "schedule": {
+       "values": [
+        "P",
+        "Q",
+        "–",
+        "–",
+        "P",
+        "Q",
+        "–",
+        "–",
+        "P",
+        "–",
+        "–",
+        "–",
+        "P"
+       ],
+       "marks": {
+        "good": [
+         12
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 3
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "schedule",
+        "at": 12
+       },
+       "value": "P"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The heap and the queue are both empty: every job is printed. The schedule used 13 slots (6 jobs and 7 idle), so the answer is 13.",
+      "ko": "힙과 큐가 모두 비어 모든 작업을 인쇄했습니다. 슬롯 13개(작업 6개, 빈칸 7개)를 썼으므로 답은 13입니다."
+     },
+     "views": {
+      "jobs": {
+       "values": [
+        "P",
+        "P",
+        "P",
+        "P",
+        "Q",
+        "Q"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "P",
+         "value": 4
+        },
+        {
+         "key": "Q",
+         "value": 2
+        }
+       ],
+       "marks": {
+        "dim": [
+         "P",
+         "Q"
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      },
+      "cooldown": {
+       "values": [],
+       "tags": [],
+       "marks": {}
+      },
+      "schedule": {
+       "values": [
+        "P",
+        "Q",
+        "–",
+        "–",
+        "P",
+        "Q",
+        "–",
+        "–",
+        "P",
+        "–",
+        "–",
+        "–",
+        "P"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5,
+         6,
+         7,
+         8,
+         9,
+         10,
+         11,
+         12
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "13"
+       ],
+       "marks": {
+        "path": [
+         0
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 3
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "schedule",
+        "at": 12
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       },
+       "value": "13"
+      }
+     ],
+     "answer": "13"
+    }
+   ],
+   "sampleInput": "[\"P\",\"P\",\"P\",\"P\",\"Q\",\"Q\"]\n3"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "jobs = [\"A\",\"B\",\"C\",\"A\",\"B\",\"D\"], n = 1",
+   "expected": "6",
+   "frames": [
+    {
+     "caption": {
+      "en": "6 jobs, n = 1: two jobs with the same label need at least 1 slot between them. First count each label's jobs.",
+      "ko": "작업 6개, n = 1: 라벨이 같은 두 작업 사이에는 슬롯이 1개 이상 있어야 합니다. 먼저 라벨마다 작업 수를 셉니다."
+     },
+     "views": {
+      "jobs": {
+       "values": [
+        "A",
+        "B",
+        "C",
+        "A",
+        "B",
+        "D"
+       ],
+       "marks": {}
+      },
+      "counts": {
+       "entries": [],
+       "marks": {}
+      },
+      "heap": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      },
+      "cooldown": {
+       "values": [],
+       "tags": [],
+       "marks": {}
+      },
+      "schedule": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 1
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Counter(jobs): each job moves into its label's card. A has 2, B has 2, C has 1, D has 1.",
+      "ko": "Counter(jobs): 작업마다 자기 라벨 카드로 들어갑니다. A 2개, B 2개, C 1개, D 1개."
+     },
+     "views": {
+      "jobs": {
+       "values": [
+        "A",
+        "B",
+        "C",
+        "A",
+        "B",
+        "D"
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "A",
+         "value": 2
+        },
+        {
+         "key": "B",
+         "value": 2
+        },
+        {
+         "key": "C",
+         "value": 1
+        },
+        {
+         "key": "D",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "good": [
+         "A",
+         "B",
+         "C",
+         "D"
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      },
+      "cooldown": {
+       "values": [],
+       "tags": [],
+       "marks": {}
+      },
+      "schedule": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 1
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "jobs",
+        "at": 0
+       },
+       "to": {
+        "view": "counts",
+        "at": "A"
+       }
+      },
+      {
+       "from": {
+        "view": "jobs",
+        "at": 1
+       },
+       "to": {
+        "view": "counts",
+        "at": "B"
+       }
+      },
+      {
+       "from": {
+        "view": "jobs",
+        "at": 2
+       },
+       "to": {
+        "view": "counts",
+        "at": "C"
+       }
+      },
+      {
+       "from": {
+        "view": "jobs",
+        "at": 3
+       },
+       "to": {
+        "view": "counts",
+        "at": "A"
+       }
+      },
+      {
+       "from": {
+        "view": "jobs",
+        "at": 4
+       },
+       "to": {
+        "view": "counts",
+        "at": "B"
+       }
+      },
+      {
+       "from": {
+        "view": "jobs",
+        "at": 5
+       },
+       "to": {
+        "view": "counts",
+        "at": "D"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Each label goes into the heap list with its count, in the map's order; heapify then sifts each parent down, so the label with the most jobs is on top.",
+      "ko": "라벨마다 작업 수와 함께 맵의 순서대로 힙 리스트에 넣습니다. 이어서 heapify가 부모를 차례로 아래로 내려, 작업이 가장 많은 라벨이 맨 위에 옵니다."
+     },
+     "views": {
+      "jobs": {
+       "values": [
+        "A",
+        "B",
+        "C",
+        "A",
+        "B",
+        "D"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "A",
+         "value": 2
+        },
+        {
+         "key": "B",
+         "value": 2
+        },
+        {
+         "key": "C",
+         "value": 1
+        },
+        {
+         "key": "D",
+         "value": 1
+        }
+       ],
+       "marks": {}
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "A:2"
+        },
+        {
+         "id": 1,
+         "value": "B:2"
+        },
+        {
+         "id": 2,
+         "value": "C:1"
+        },
+        {
+         "id": 3,
+         "value": "D:1"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        },
+        {
+         "from": 1,
+         "to": 3,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ],
+        [
+         2,
+         "[2]"
+        ],
+        [
+         3,
+         "[3]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0,
+         1,
+         2,
+         3
+        ]
+       }
+      },
+      "cooldown": {
+       "values": [],
+       "tags": [],
+       "marks": {}
+      },
+      "schedule": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 1
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "counts",
+        "at": "A"
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       },
+       "value": "A:2"
+      },
+      {
+       "from": {
+        "view": "counts",
+        "at": "B"
+       },
+       "to": {
+        "view": "heap",
+        "at": 1
+       },
+       "value": "B:2"
+      },
+      {
+       "from": {
+        "view": "counts",
+        "at": "C"
+       },
+       "to": {
+        "view": "heap",
+        "at": 2
+       },
+       "value": "C:1"
+      },
+      {
+       "from": {
+        "view": "counts",
+        "at": "D"
+       },
+       "to": {
+        "view": "heap",
+        "at": 3
+       },
+       "value": "D:1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Slot 0: the heap's top is A:2, the most jobs left among labels ready, so A prints. 1 left, so it waits in the queue until slot 2; the last node D:1 fills the root.",
+      "ko": "0번 슬롯: 힙의 맨 위 A:2가 준비된 라벨 중 남은 작업이 가장 많으므로 A 작업을 인쇄합니다. 1개가 남아 2번 슬롯까지 큐에서 기다리고, 마지막 노드 D:1이 루트를 채웁니다."
+     },
+     "views": {
+      "jobs": {
+       "values": [
+        "A",
+        "B",
+        "C",
+        "A",
+        "B",
+        "D"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "A",
+         "value": 2
+        },
+        {
+         "key": "B",
+         "value": 2
+        },
+        {
+         "key": "C",
+         "value": 1
+        },
+        {
+         "key": "D",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "dim": [
+         "A",
+         "B",
+         "C",
+         "D"
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "D:1"
+        },
+        {
+         "id": 1,
+         "value": "B:2"
+        },
+        {
+         "id": 2,
+         "value": "C:1"
+        },
+        {
+         "id": 3,
+         "value": "D:1"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        },
+        {
+         "from": 1,
+         "to": 3,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ],
+        [
+         2,
+         "[2]"
+        ],
+        [
+         3,
+         "[3]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "cooldown": {
+       "values": [
+        "A:1"
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "slot 2",
+          "ko": "2번 슬롯"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "schedule": {
+       "values": [
+        "A"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 1
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "schedule",
+        "at": 0
+       },
+       "value": "A"
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "cooldown",
+        "at": 0
+       },
+       "value": "A:1"
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 3
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Sift down: its child B:2 at [1] has more jobs left than D:1 at [0], so they swap.",
+      "ko": "아래로 내리기: 자식 [1]의 B:2가 [0]의 D:1보다 남은 작업이 더 많으므로 자리를 바꿉니다."
+     },
+     "views": {
+      "jobs": {
+       "values": [
+        "A",
+        "B",
+        "C",
+        "A",
+        "B",
+        "D"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "A",
+         "value": 2
+        },
+        {
+         "key": "B",
+         "value": 2
+        },
+        {
+         "key": "C",
+         "value": 1
+        },
+        {
+         "key": "D",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "dim": [
+         "A",
+         "B",
+         "C",
+         "D"
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "B:2"
+        },
+        {
+         "id": 1,
+         "value": "D:1"
+        },
+        {
+         "id": 2,
+         "value": "C:1"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ],
+        [
+         2,
+         "[2]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "cooldown": {
+       "values": [
+        "A:1"
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "slot 2",
+          "ko": "2번 슬롯"
+         }
+        ]
+       ],
+       "marks": {}
+      },
+      "schedule": {
+       "values": [
+        "A"
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 1
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "heap",
+        "at": 1
+       },
+       "value": "D:1"
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 1
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       },
+       "value": "B:2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Slot 1: the heap's top is B:2, the most jobs left among labels ready, so B prints. 1 left, so it waits in the queue until slot 3; the last node C:1 fills the root.",
+      "ko": "1번 슬롯: 힙의 맨 위 B:2가 준비된 라벨 중 남은 작업이 가장 많으므로 B 작업을 인쇄합니다. 1개가 남아 3번 슬롯까지 큐에서 기다리고, 마지막 노드 C:1이 루트를 채웁니다."
+     },
+     "views": {
+      "jobs": {
+       "values": [
+        "A",
+        "B",
+        "C",
+        "A",
+        "B",
+        "D"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "A",
+         "value": 2
+        },
+        {
+         "key": "B",
+         "value": 2
+        },
+        {
+         "key": "C",
+         "value": 1
+        },
+        {
+         "key": "D",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "dim": [
+         "A",
+         "B",
+         "C",
+         "D"
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "C:1"
+        },
+        {
+         "id": 1,
+         "value": "D:1"
+        },
+        {
+         "id": 2,
+         "value": "C:1"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ],
+        [
+         2,
+         "[2]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "cooldown": {
+       "values": [
+        "A:1",
+        "B:1"
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "slot 2",
+          "ko": "2번 슬롯"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "slot 3",
+          "ko": "3번 슬롯"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "schedule": {
+       "values": [
+        "A",
+        "B"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 1
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "schedule",
+        "at": 1
+       },
+       "value": "B"
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "cooldown",
+        "at": 1
+       },
+       "value": "B:1"
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 2
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Slot 2: A has cooled down, so A:1 leaves the queue's front and goes in at the heap's end, [2].",
+      "ko": "2번 슬롯: A의 쿨다운이 끝났으므로 A:1이 큐 맨 앞에서 나와 힙의 맨 끝 [2]에 들어갑니다."
+     },
+     "views": {
+      "jobs": {
+       "values": [
+        "A",
+        "B",
+        "C",
+        "A",
+        "B",
+        "D"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "A",
+         "value": 2
+        },
+        {
+         "key": "B",
+         "value": 2
+        },
+        {
+         "key": "C",
+         "value": 1
+        },
+        {
+         "key": "D",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "dim": [
+         "A",
+         "B",
+         "C",
+         "D"
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "C:1"
+        },
+        {
+         "id": 1,
+         "value": "D:1"
+        },
+        {
+         "id": 2,
+         "value": "A:1"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ],
+        [
+         2,
+         "[2]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         2
+        ]
+       }
+      },
+      "cooldown": {
+       "values": [
+        "A:1",
+        "B:1"
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "slot 2",
+          "ko": "2번 슬롯"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "slot 3",
+          "ko": "3번 슬롯"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "schedule": {
+       "values": [
+        "A",
+        "B"
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 1
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "cooldown",
+        "at": 0
+       },
+       "to": {
+        "view": "heap",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Sift up: A:1 at [2] ties with, and comes before, its parent C:1 at [0], so they swap.",
+      "ko": "위로 올리기: [2]의 A:1은 부모 [0]의 C:1과 개수가 같고 알파벳이 앞서므로 자리를 바꿉니다."
+     },
+     "views": {
+      "jobs": {
+       "values": [
+        "A",
+        "B",
+        "C",
+        "A",
+        "B",
+        "D"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "A",
+         "value": 2
+        },
+        {
+         "key": "B",
+         "value": 2
+        },
+        {
+         "key": "C",
+         "value": 1
+        },
+        {
+         "key": "D",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "dim": [
+         "A",
+         "B",
+         "C",
+         "D"
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "A:1"
+        },
+        {
+         "id": 1,
+         "value": "D:1"
+        },
+        {
+         "id": 2,
+         "value": "C:1"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ],
+        [
+         2,
+         "[2]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ],
+        "lit": [
+         2
+        ]
+       }
+      },
+      "cooldown": {
+       "values": [
+        "B:1"
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "slot 3",
+          "ko": "3번 슬롯"
+         }
+        ]
+       ],
+       "marks": {}
+      },
+      "schedule": {
+       "values": [
+        "A",
+        "B"
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 1
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 2
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       },
+       "value": "A:1"
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "heap",
+        "at": 2
+       },
+       "value": "C:1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Slot 2: the heap's top is A:1, the most jobs left among labels ready, so A prints. That was A's last job; the last node C:1 fills the root.",
+      "ko": "2번 슬롯: 힙의 맨 위 A:1이 준비된 라벨 중 남은 작업이 가장 많으므로 A 작업을 인쇄합니다. A의 마지막 작업이었고, 마지막 노드 C:1이 루트를 채웁니다."
+     },
+     "views": {
+      "jobs": {
+       "values": [
+        "A",
+        "B",
+        "C",
+        "A",
+        "B",
+        "D"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "A",
+         "value": 2
+        },
+        {
+         "key": "B",
+         "value": 2
+        },
+        {
+         "key": "C",
+         "value": 1
+        },
+        {
+         "key": "D",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "dim": [
+         "A",
+         "B",
+         "C",
+         "D"
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "C:1"
+        },
+        {
+         "id": 1,
+         "value": "D:1"
+        },
+        {
+         "id": 2,
+         "value": "C:1"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ],
+        [
+         2,
+         "[2]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "cooldown": {
+       "values": [
+        "B:1"
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "slot 3",
+          "ko": "3번 슬롯"
+         }
+        ]
+       ],
+       "marks": {}
+      },
+      "schedule": {
+       "values": [
+        "A",
+        "B",
+        "A"
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 1
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "schedule",
+        "at": 2
+       },
+       "value": "A"
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 2
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Slot 3: B has cooled down, so B:1 leaves the queue's front and goes in at the heap's end, [2].",
+      "ko": "3번 슬롯: B의 쿨다운이 끝났으므로 B:1이 큐 맨 앞에서 나와 힙의 맨 끝 [2]에 들어갑니다."
+     },
+     "views": {
+      "jobs": {
+       "values": [
+        "A",
+        "B",
+        "C",
+        "A",
+        "B",
+        "D"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "A",
+         "value": 2
+        },
+        {
+         "key": "B",
+         "value": 2
+        },
+        {
+         "key": "C",
+         "value": 1
+        },
+        {
+         "key": "D",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "dim": [
+         "A",
+         "B",
+         "C",
+         "D"
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "C:1"
+        },
+        {
+         "id": 1,
+         "value": "D:1"
+        },
+        {
+         "id": 2,
+         "value": "B:1"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ],
+        [
+         2,
+         "[2]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         2
+        ]
+       }
+      },
+      "cooldown": {
+       "values": [
+        "B:1"
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "slot 3",
+          "ko": "3번 슬롯"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "schedule": {
+       "values": [
+        "A",
+        "B",
+        "A"
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 1
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "cooldown",
+        "at": 0
+       },
+       "to": {
+        "view": "heap",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Sift up: B:1 at [2] ties with, and comes before, its parent C:1 at [0], so they swap.",
+      "ko": "위로 올리기: [2]의 B:1은 부모 [0]의 C:1과 개수가 같고 알파벳이 앞서므로 자리를 바꿉니다."
+     },
+     "views": {
+      "jobs": {
+       "values": [
+        "A",
+        "B",
+        "C",
+        "A",
+        "B",
+        "D"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "A",
+         "value": 2
+        },
+        {
+         "key": "B",
+         "value": 2
+        },
+        {
+         "key": "C",
+         "value": 1
+        },
+        {
+         "key": "D",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "dim": [
+         "A",
+         "B",
+         "C",
+         "D"
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "B:1"
+        },
+        {
+         "id": 1,
+         "value": "D:1"
+        },
+        {
+         "id": 2,
+         "value": "C:1"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ],
+        [
+         2,
+         "[2]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ],
+        "lit": [
+         2
+        ]
+       }
+      },
+      "cooldown": {
+       "values": [],
+       "tags": [],
+       "marks": {}
+      },
+      "schedule": {
+       "values": [
+        "A",
+        "B",
+        "A"
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 1
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 2
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       },
+       "value": "B:1"
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "heap",
+        "at": 2
+       },
+       "value": "C:1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Slot 3: the heap's top is B:1, the most jobs left among labels ready, so B prints. That was B's last job; the last node C:1 fills the root.",
+      "ko": "3번 슬롯: 힙의 맨 위 B:1이 준비된 라벨 중 남은 작업이 가장 많으므로 B 작업을 인쇄합니다. B의 마지막 작업이었고, 마지막 노드 C:1이 루트를 채웁니다."
+     },
+     "views": {
+      "jobs": {
+       "values": [
+        "A",
+        "B",
+        "C",
+        "A",
+        "B",
+        "D"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "A",
+         "value": 2
+        },
+        {
+         "key": "B",
+         "value": 2
+        },
+        {
+         "key": "C",
+         "value": 1
+        },
+        {
+         "key": "D",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "dim": [
+         "A",
+         "B",
+         "C",
+         "D"
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "C:1"
+        },
+        {
+         "id": 1,
+         "value": "D:1"
+        },
+        {
+         "id": 2,
+         "value": "C:1"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ],
+        [
+         2,
+         "[2]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "cooldown": {
+       "values": [],
+       "tags": [],
+       "marks": {}
+      },
+      "schedule": {
+       "values": [
+        "A",
+        "B",
+        "A",
+        "B"
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 1
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "schedule",
+        "at": 3
+       },
+       "value": "B"
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 2
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Slot 4: the heap's top is C:1, the most jobs left among labels ready, so C prints. That was C's last job; the last node D:1 fills the root.",
+      "ko": "4번 슬롯: 힙의 맨 위 C:1이 준비된 라벨 중 남은 작업이 가장 많으므로 C 작업을 인쇄합니다. C의 마지막 작업이었고, 마지막 노드 D:1이 루트를 채웁니다."
+     },
+     "views": {
+      "jobs": {
+       "values": [
+        "A",
+        "B",
+        "C",
+        "A",
+        "B",
+        "D"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "A",
+         "value": 2
+        },
+        {
+         "key": "B",
+         "value": 2
+        },
+        {
+         "key": "C",
+         "value": 1
+        },
+        {
+         "key": "D",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "dim": [
+         "A",
+         "B",
+         "C",
+         "D"
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "D:1"
+        },
+        {
+         "id": 1,
+         "value": "D:1"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "cooldown": {
+       "values": [],
+       "tags": [],
+       "marks": {}
+      },
+      "schedule": {
+       "values": [
+        "A",
+        "B",
+        "A",
+        "B",
+        "C"
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 1
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "schedule",
+        "at": 4
+       },
+       "value": "C"
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 1
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Slot 5: the heap's top is D:1, the most jobs left among labels ready, so D prints. That was D's last job.",
+      "ko": "5번 슬롯: 힙의 맨 위 D:1이 준비된 라벨 중 남은 작업이 가장 많으므로 D 작업을 인쇄합니다. D의 마지막 작업이었습니다."
+     },
+     "views": {
+      "jobs": {
+       "values": [
+        "A",
+        "B",
+        "C",
+        "A",
+        "B",
+        "D"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "A",
+         "value": 2
+        },
+        {
+         "key": "B",
+         "value": 2
+        },
+        {
+         "key": "C",
+         "value": 1
+        },
+        {
+         "key": "D",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "dim": [
+         "A",
+         "B",
+         "C",
+         "D"
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "D:1"
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "cooldown": {
+       "values": [],
+       "tags": [],
+       "marks": {}
+      },
+      "schedule": {
+       "values": [
+        "A",
+        "B",
+        "A",
+        "B",
+        "C",
+        "D"
+       ],
+       "marks": {
+        "good": [
+         5
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 1
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "schedule",
+        "at": 5
+       },
+       "value": "D"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The heap and the queue are both empty: every job is printed. The schedule used 6 slots (6 jobs and 0 idle), so the answer is 6.",
+      "ko": "힙과 큐가 모두 비어 모든 작업을 인쇄했습니다. 슬롯 6개(작업 6개, 빈칸 0개)를 썼으므로 답은 6입니다."
+     },
+     "views": {
+      "jobs": {
+       "values": [
+        "A",
+        "B",
+        "C",
+        "A",
+        "B",
+        "D"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "A",
+         "value": 2
+        },
+        {
+         "key": "B",
+         "value": 2
+        },
+        {
+         "key": "C",
+         "value": 1
+        },
+        {
+         "key": "D",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "dim": [
+         "A",
+         "B",
+         "C",
+         "D"
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      },
+      "cooldown": {
+       "values": [],
+       "tags": [],
+       "marks": {}
+      },
+      "schedule": {
+       "values": [
+        "A",
+        "B",
+        "A",
+        "B",
+        "C",
+        "D"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "6"
+       ],
+       "marks": {
+        "path": [
+         0
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 1
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "schedule",
+        "at": 5
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       },
+       "value": "6"
+      }
+     ],
+     "answer": "6"
+    }
+   ],
+   "sampleInput": "[\"A\",\"B\",\"C\",\"A\",\"B\",\"D\"]\n1"
+  },
+  {
+   "label": {
+    "en": "Example 3",
+    "ko": "예시 3"
+   },
+   "input": "jobs = [\"R\",\"R\",\"S\",\"S\",\"T\",\"T\"], n = 0",
+   "expected": "6",
+   "frames": [
+    {
+     "caption": {
+      "en": "6 jobs, n = 0: two jobs with the same label need at least 0 slots between them. First count each label's jobs.",
+      "ko": "작업 6개, n = 0: 라벨이 같은 두 작업 사이에는 슬롯이 0개 이상 있어야 합니다. 먼저 라벨마다 작업 수를 셉니다."
+     },
+     "views": {
+      "jobs": {
+       "values": [
+        "R",
+        "R",
+        "S",
+        "S",
+        "T",
+        "T"
+       ],
+       "marks": {}
+      },
+      "counts": {
+       "entries": [],
+       "marks": {}
+      },
+      "heap": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      },
+      "cooldown": {
+       "values": [],
+       "tags": [],
+       "marks": {}
+      },
+      "schedule": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 0
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Counter(jobs): each job moves into its label's card. R has 2, S has 2, T has 2.",
+      "ko": "Counter(jobs): 작업마다 자기 라벨 카드로 들어갑니다. R 2개, S 2개, T 2개."
+     },
+     "views": {
+      "jobs": {
+       "values": [
+        "R",
+        "R",
+        "S",
+        "S",
+        "T",
+        "T"
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "R",
+         "value": 2
+        },
+        {
+         "key": "S",
+         "value": 2
+        },
+        {
+         "key": "T",
+         "value": 2
+        }
+       ],
+       "marks": {
+        "good": [
+         "R",
+         "S",
+         "T"
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      },
+      "cooldown": {
+       "values": [],
+       "tags": [],
+       "marks": {}
+      },
+      "schedule": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 0
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "jobs",
+        "at": 0
+       },
+       "to": {
+        "view": "counts",
+        "at": "R"
+       }
+      },
+      {
+       "from": {
+        "view": "jobs",
+        "at": 1
+       },
+       "to": {
+        "view": "counts",
+        "at": "R"
+       }
+      },
+      {
+       "from": {
+        "view": "jobs",
+        "at": 2
+       },
+       "to": {
+        "view": "counts",
+        "at": "S"
+       }
+      },
+      {
+       "from": {
+        "view": "jobs",
+        "at": 3
+       },
+       "to": {
+        "view": "counts",
+        "at": "S"
+       }
+      },
+      {
+       "from": {
+        "view": "jobs",
+        "at": 4
+       },
+       "to": {
+        "view": "counts",
+        "at": "T"
+       }
+      },
+      {
+       "from": {
+        "view": "jobs",
+        "at": 5
+       },
+       "to": {
+        "view": "counts",
+        "at": "T"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Each label goes into the heap list with its count, in the map's order; heapify then sifts each parent down, so the label with the most jobs is on top.",
+      "ko": "라벨마다 작업 수와 함께 맵의 순서대로 힙 리스트에 넣습니다. 이어서 heapify가 부모를 차례로 아래로 내려, 작업이 가장 많은 라벨이 맨 위에 옵니다."
+     },
+     "views": {
+      "jobs": {
+       "values": [
+        "R",
+        "R",
+        "S",
+        "S",
+        "T",
+        "T"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "R",
+         "value": 2
+        },
+        {
+         "key": "S",
+         "value": 2
+        },
+        {
+         "key": "T",
+         "value": 2
+        }
+       ],
+       "marks": {}
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "R:2"
+        },
+        {
+         "id": 1,
+         "value": "S:2"
+        },
+        {
+         "id": 2,
+         "value": "T:2"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ],
+        [
+         2,
+         "[2]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0,
+         1,
+         2
+        ]
+       }
+      },
+      "cooldown": {
+       "values": [],
+       "tags": [],
+       "marks": {}
+      },
+      "schedule": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 0
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "counts",
+        "at": "R"
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       },
+       "value": "R:2"
+      },
+      {
+       "from": {
+        "view": "counts",
+        "at": "S"
+       },
+       "to": {
+        "view": "heap",
+        "at": 1
+       },
+       "value": "S:2"
+      },
+      {
+       "from": {
+        "view": "counts",
+        "at": "T"
+       },
+       "to": {
+        "view": "heap",
+        "at": 2
+       },
+       "value": "T:2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Slot 0: the heap's top is R:2, the most jobs left among labels ready, so R prints. 1 left, so it waits in the queue until slot 1; the last node T:2 fills the root.",
+      "ko": "0번 슬롯: 힙의 맨 위 R:2가 준비된 라벨 중 남은 작업이 가장 많으므로 R 작업을 인쇄합니다. 1개가 남아 1번 슬롯까지 큐에서 기다리고, 마지막 노드 T:2가 루트를 채웁니다."
+     },
+     "views": {
+      "jobs": {
+       "values": [
+        "R",
+        "R",
+        "S",
+        "S",
+        "T",
+        "T"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "R",
+         "value": 2
+        },
+        {
+         "key": "S",
+         "value": 2
+        },
+        {
+         "key": "T",
+         "value": 2
+        }
+       ],
+       "marks": {
+        "dim": [
+         "R",
+         "S",
+         "T"
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "T:2"
+        },
+        {
+         "id": 1,
+         "value": "S:2"
+        },
+        {
+         "id": 2,
+         "value": "T:2"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ],
+        [
+         2,
+         "[2]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "cooldown": {
+       "values": [
+        "R:1"
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "slot 1",
+          "ko": "1번 슬롯"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "schedule": {
+       "values": [
+        "R"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 0
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "schedule",
+        "at": 0
+       },
+       "value": "R"
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "cooldown",
+        "at": 0
+       },
+       "value": "R:1"
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 2
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Sift down: its child S:2 at [1] ties with, and comes before, T:2 at [0], so they swap.",
+      "ko": "아래로 내리기: 자식 [1]의 S:2는 [0]의 T:2와 개수가 같고 알파벳이 앞서므로 자리를 바꿉니다."
+     },
+     "views": {
+      "jobs": {
+       "values": [
+        "R",
+        "R",
+        "S",
+        "S",
+        "T",
+        "T"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "R",
+         "value": 2
+        },
+        {
+         "key": "S",
+         "value": 2
+        },
+        {
+         "key": "T",
+         "value": 2
+        }
+       ],
+       "marks": {
+        "dim": [
+         "R",
+         "S",
+         "T"
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "S:2"
+        },
+        {
+         "id": 1,
+         "value": "T:2"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "cooldown": {
+       "values": [
+        "R:1"
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "slot 1",
+          "ko": "1번 슬롯"
+         }
+        ]
+       ],
+       "marks": {}
+      },
+      "schedule": {
+       "values": [
+        "R"
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 0
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "heap",
+        "at": 1
+       },
+       "value": "T:2"
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 1
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       },
+       "value": "S:2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Slot 1: R has cooled down, so R:1 leaves the queue's front and goes in at the heap's end, [2].",
+      "ko": "1번 슬롯: R의 쿨다운이 끝났으므로 R:1이 큐 맨 앞에서 나와 힙의 맨 끝 [2]에 들어갑니다."
+     },
+     "views": {
+      "jobs": {
+       "values": [
+        "R",
+        "R",
+        "S",
+        "S",
+        "T",
+        "T"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "R",
+         "value": 2
+        },
+        {
+         "key": "S",
+         "value": 2
+        },
+        {
+         "key": "T",
+         "value": 2
+        }
+       ],
+       "marks": {
+        "dim": [
+         "R",
+         "S",
+         "T"
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "S:2"
+        },
+        {
+         "id": 1,
+         "value": "T:2"
+        },
+        {
+         "id": 2,
+         "value": "R:1"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ],
+        [
+         2,
+         "[2]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         2
+        ]
+       }
+      },
+      "cooldown": {
+       "values": [
+        "R:1"
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "slot 1",
+          "ko": "1번 슬롯"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "schedule": {
+       "values": [
+        "R"
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 0
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "cooldown",
+        "at": 0
+       },
+       "to": {
+        "view": "heap",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Slot 1: the heap's top is S:2, the most jobs left among labels ready, so S prints. 1 left, so it waits in the queue until slot 2; the last node R:1 fills the root.",
+      "ko": "1번 슬롯: 힙의 맨 위 S:2가 준비된 라벨 중 남은 작업이 가장 많으므로 S 작업을 인쇄합니다. 1개가 남아 2번 슬롯까지 큐에서 기다리고, 마지막 노드 R:1이 루트를 채웁니다."
+     },
+     "views": {
+      "jobs": {
+       "values": [
+        "R",
+        "R",
+        "S",
+        "S",
+        "T",
+        "T"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "R",
+         "value": 2
+        },
+        {
+         "key": "S",
+         "value": 2
+        },
+        {
+         "key": "T",
+         "value": 2
+        }
+       ],
+       "marks": {
+        "dim": [
+         "R",
+         "S",
+         "T"
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "R:1"
+        },
+        {
+         "id": 1,
+         "value": "T:2"
+        },
+        {
+         "id": 2,
+         "value": "R:1"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ],
+        [
+         2,
+         "[2]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "cooldown": {
+       "values": [
+        "S:1"
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "slot 2",
+          "ko": "2번 슬롯"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "schedule": {
+       "values": [
+        "R",
+        "S"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 0
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "schedule",
+        "at": 1
+       },
+       "value": "S"
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "cooldown",
+        "at": 0
+       },
+       "value": "S:1"
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 2
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Sift down: its child T:2 at [1] has more jobs left than R:1 at [0], so they swap.",
+      "ko": "아래로 내리기: 자식 [1]의 T:2가 [0]의 R:1보다 남은 작업이 더 많으므로 자리를 바꿉니다."
+     },
+     "views": {
+      "jobs": {
+       "values": [
+        "R",
+        "R",
+        "S",
+        "S",
+        "T",
+        "T"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "R",
+         "value": 2
+        },
+        {
+         "key": "S",
+         "value": 2
+        },
+        {
+         "key": "T",
+         "value": 2
+        }
+       ],
+       "marks": {
+        "dim": [
+         "R",
+         "S",
+         "T"
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "T:2"
+        },
+        {
+         "id": 1,
+         "value": "R:1"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "cooldown": {
+       "values": [
+        "S:1"
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "slot 2",
+          "ko": "2번 슬롯"
+         }
+        ]
+       ],
+       "marks": {}
+      },
+      "schedule": {
+       "values": [
+        "R",
+        "S"
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 0
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "heap",
+        "at": 1
+       },
+       "value": "R:1"
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 1
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       },
+       "value": "T:2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Slot 2: S has cooled down, so S:1 leaves the queue's front and goes in at the heap's end, [2].",
+      "ko": "2번 슬롯: S의 쿨다운이 끝났으므로 S:1이 큐 맨 앞에서 나와 힙의 맨 끝 [2]에 들어갑니다."
+     },
+     "views": {
+      "jobs": {
+       "values": [
+        "R",
+        "R",
+        "S",
+        "S",
+        "T",
+        "T"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "R",
+         "value": 2
+        },
+        {
+         "key": "S",
+         "value": 2
+        },
+        {
+         "key": "T",
+         "value": 2
+        }
+       ],
+       "marks": {
+        "dim": [
+         "R",
+         "S",
+         "T"
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "T:2"
+        },
+        {
+         "id": 1,
+         "value": "R:1"
+        },
+        {
+         "id": 2,
+         "value": "S:1"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ],
+        [
+         2,
+         "[2]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         2
+        ]
+       }
+      },
+      "cooldown": {
+       "values": [
+        "S:1"
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "slot 2",
+          "ko": "2번 슬롯"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "schedule": {
+       "values": [
+        "R",
+        "S"
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 0
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "cooldown",
+        "at": 0
+       },
+       "to": {
+        "view": "heap",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Slot 2: the heap's top is T:2, the most jobs left among labels ready, so T prints. 1 left, so it waits in the queue until slot 3; the last node S:1 fills the root.",
+      "ko": "2번 슬롯: 힙의 맨 위 T:2가 준비된 라벨 중 남은 작업이 가장 많으므로 T 작업을 인쇄합니다. 1개가 남아 3번 슬롯까지 큐에서 기다리고, 마지막 노드 S:1이 루트를 채웁니다."
+     },
+     "views": {
+      "jobs": {
+       "values": [
+        "R",
+        "R",
+        "S",
+        "S",
+        "T",
+        "T"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "R",
+         "value": 2
+        },
+        {
+         "key": "S",
+         "value": 2
+        },
+        {
+         "key": "T",
+         "value": 2
+        }
+       ],
+       "marks": {
+        "dim": [
+         "R",
+         "S",
+         "T"
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "S:1"
+        },
+        {
+         "id": 1,
+         "value": "R:1"
+        },
+        {
+         "id": 2,
+         "value": "S:1"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ],
+        [
+         2,
+         "[2]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "cooldown": {
+       "values": [
+        "T:1"
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "slot 3",
+          "ko": "3번 슬롯"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "schedule": {
+       "values": [
+        "R",
+        "S",
+        "T"
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 0
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "schedule",
+        "at": 2
+       },
+       "value": "T"
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "cooldown",
+        "at": 0
+       },
+       "value": "T:1"
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 2
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Sift down: its child R:1 at [1] ties with, and comes before, S:1 at [0], so they swap.",
+      "ko": "아래로 내리기: 자식 [1]의 R:1은 [0]의 S:1과 개수가 같고 알파벳이 앞서므로 자리를 바꿉니다."
+     },
+     "views": {
+      "jobs": {
+       "values": [
+        "R",
+        "R",
+        "S",
+        "S",
+        "T",
+        "T"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "R",
+         "value": 2
+        },
+        {
+         "key": "S",
+         "value": 2
+        },
+        {
+         "key": "T",
+         "value": 2
+        }
+       ],
+       "marks": {
+        "dim": [
+         "R",
+         "S",
+         "T"
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "R:1"
+        },
+        {
+         "id": 1,
+         "value": "S:1"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "cooldown": {
+       "values": [
+        "T:1"
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "slot 3",
+          "ko": "3번 슬롯"
+         }
+        ]
+       ],
+       "marks": {}
+      },
+      "schedule": {
+       "values": [
+        "R",
+        "S",
+        "T"
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 0
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "heap",
+        "at": 1
+       },
+       "value": "S:1"
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 1
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       },
+       "value": "R:1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Slot 3: T has cooled down, so T:1 leaves the queue's front and goes in at the heap's end, [2].",
+      "ko": "3번 슬롯: T의 쿨다운이 끝났으므로 T:1이 큐 맨 앞에서 나와 힙의 맨 끝 [2]에 들어갑니다."
+     },
+     "views": {
+      "jobs": {
+       "values": [
+        "R",
+        "R",
+        "S",
+        "S",
+        "T",
+        "T"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "R",
+         "value": 2
+        },
+        {
+         "key": "S",
+         "value": 2
+        },
+        {
+         "key": "T",
+         "value": 2
+        }
+       ],
+       "marks": {
+        "dim": [
+         "R",
+         "S",
+         "T"
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "R:1"
+        },
+        {
+         "id": 1,
+         "value": "S:1"
+        },
+        {
+         "id": 2,
+         "value": "T:1"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ],
+        [
+         2,
+         "[2]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         2
+        ]
+       }
+      },
+      "cooldown": {
+       "values": [
+        "T:1"
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "slot 3",
+          "ko": "3번 슬롯"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "schedule": {
+       "values": [
+        "R",
+        "S",
+        "T"
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 0
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "cooldown",
+        "at": 0
+       },
+       "to": {
+        "view": "heap",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Slot 3: the heap's top is R:1, the most jobs left among labels ready, so R prints. That was R's last job; the last node T:1 fills the root.",
+      "ko": "3번 슬롯: 힙의 맨 위 R:1이 준비된 라벨 중 남은 작업이 가장 많으므로 R 작업을 인쇄합니다. R의 마지막 작업이었고, 마지막 노드 T:1이 루트를 채웁니다."
+     },
+     "views": {
+      "jobs": {
+       "values": [
+        "R",
+        "R",
+        "S",
+        "S",
+        "T",
+        "T"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "R",
+         "value": 2
+        },
+        {
+         "key": "S",
+         "value": 2
+        },
+        {
+         "key": "T",
+         "value": 2
+        }
+       ],
+       "marks": {
+        "dim": [
+         "R",
+         "S",
+         "T"
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "T:1"
+        },
+        {
+         "id": 1,
+         "value": "S:1"
+        },
+        {
+         "id": 2,
+         "value": "T:1"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ],
+        [
+         2,
+         "[2]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "cooldown": {
+       "values": [],
+       "tags": [],
+       "marks": {}
+      },
+      "schedule": {
+       "values": [
+        "R",
+        "S",
+        "T",
+        "R"
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 0
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "schedule",
+        "at": 3
+       },
+       "value": "R"
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 2
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Sift down: its child S:1 at [1] ties with, and comes before, T:1 at [0], so they swap.",
+      "ko": "아래로 내리기: 자식 [1]의 S:1은 [0]의 T:1과 개수가 같고 알파벳이 앞서므로 자리를 바꿉니다."
+     },
+     "views": {
+      "jobs": {
+       "values": [
+        "R",
+        "R",
+        "S",
+        "S",
+        "T",
+        "T"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "R",
+         "value": 2
+        },
+        {
+         "key": "S",
+         "value": 2
+        },
+        {
+         "key": "T",
+         "value": 2
+        }
+       ],
+       "marks": {
+        "dim": [
+         "R",
+         "S",
+         "T"
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "S:1"
+        },
+        {
+         "id": 1,
+         "value": "T:1"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "cooldown": {
+       "values": [],
+       "tags": [],
+       "marks": {}
+      },
+      "schedule": {
+       "values": [
+        "R",
+        "S",
+        "T",
+        "R"
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 0
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "heap",
+        "at": 1
+       },
+       "value": "T:1"
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 1
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       },
+       "value": "S:1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Slot 4: the heap's top is S:1, the most jobs left among labels ready, so S prints. That was S's last job; the last node T:1 fills the root.",
+      "ko": "4번 슬롯: 힙의 맨 위 S:1이 준비된 라벨 중 남은 작업이 가장 많으므로 S 작업을 인쇄합니다. S의 마지막 작업이었고, 마지막 노드 T:1이 루트를 채웁니다."
+     },
+     "views": {
+      "jobs": {
+       "values": [
+        "R",
+        "R",
+        "S",
+        "S",
+        "T",
+        "T"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "R",
+         "value": 2
+        },
+        {
+         "key": "S",
+         "value": 2
+        },
+        {
+         "key": "T",
+         "value": 2
+        }
+       ],
+       "marks": {
+        "dim": [
+         "R",
+         "S",
+         "T"
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "T:1"
+        },
+        {
+         "id": 1,
+         "value": "T:1"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "cooldown": {
+       "values": [],
+       "tags": [],
+       "marks": {}
+      },
+      "schedule": {
+       "values": [
+        "R",
+        "S",
+        "T",
+        "R",
+        "S"
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 0
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "schedule",
+        "at": 4
+       },
+       "value": "S"
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 1
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Slot 5: the heap's top is T:1, the most jobs left among labels ready, so T prints. That was T's last job.",
+      "ko": "5번 슬롯: 힙의 맨 위 T:1이 준비된 라벨 중 남은 작업이 가장 많으므로 T 작업을 인쇄합니다. T의 마지막 작업이었습니다."
+     },
+     "views": {
+      "jobs": {
+       "values": [
+        "R",
+        "R",
+        "S",
+        "S",
+        "T",
+        "T"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "R",
+         "value": 2
+        },
+        {
+         "key": "S",
+         "value": 2
+        },
+        {
+         "key": "T",
+         "value": 2
+        }
+       ],
+       "marks": {
+        "dim": [
+         "R",
+         "S",
+         "T"
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "T:1"
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "cooldown": {
+       "values": [],
+       "tags": [],
+       "marks": {}
+      },
+      "schedule": {
+       "values": [
+        "R",
+        "S",
+        "T",
+        "R",
+        "S",
+        "T"
+       ],
+       "marks": {
+        "good": [
+         5
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 0
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "schedule",
+        "at": 5
+       },
+       "value": "T"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The heap and the queue are both empty: every job is printed. The schedule used 6 slots (6 jobs and 0 idle), so the answer is 6.",
+      "ko": "힙과 큐가 모두 비어 모든 작업을 인쇄했습니다. 슬롯 6개(작업 6개, 빈칸 0개)를 썼으므로 답은 6입니다."
+     },
+     "views": {
+      "jobs": {
+       "values": [
+        "R",
+        "R",
+        "S",
+        "S",
+        "T",
+        "T"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "R",
+         "value": 2
+        },
+        {
+         "key": "S",
+         "value": 2
+        },
+        {
+         "key": "T",
+         "value": 2
+        }
+       ],
+       "marks": {
+        "dim": [
+         "R",
+         "S",
+         "T"
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      },
+      "cooldown": {
+       "values": [],
+       "tags": [],
+       "marks": {}
+      },
+      "schedule": {
+       "values": [
+        "R",
+        "S",
+        "T",
+        "R",
+        "S",
+        "T"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "6"
+       ],
+       "marks": {
+        "path": [
+         0
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "n",
+         "value": 0
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "schedule",
+        "at": 5
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       },
+       "value": "6"
+      }
+     ],
+     "answer": "6"
+    }
+   ],
+   "sampleInput": "[\"R\",\"R\",\"S\",\"S\",\"T\",\"T\"]\n0"
+  }
+ ]
+}
