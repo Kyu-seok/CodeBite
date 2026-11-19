@@ -12,6 +12,9 @@ export type View =
   | { id: string; type: 'queue'; title?: Text; empty?: Text; deque?: boolean }
   | { id: string; type: 'intervals'; title?: Text; empty?: Text }
   | { id: string; type: 'graph'; title?: Text; directed?: boolean }
+  | { id: string; type: 'tree'; title?: Text; empty?: Text; /** children take fixed slots (2: a binary tree's left and right) */ arity?: number }
+  | { id: string; type: 'linkedlist'; title?: Text; empty?: Text }
+  | { id: string; type: 'callstack'; title?: Text; empty?: Text }
   | { id: string; type: 'table'; title?: Text }
   | { id: string; type: 'vars'; title?: Text };
 
@@ -59,11 +62,33 @@ export interface GraphState {
   edges: { from: string | number; to: string | number; label?: Text }[];
   values?: Record<string, unknown>; nodeMarks?: Marks<string | number>; edgeMarks?: Marks<number>;
 }
+/** A tree: nodes as pills, each edge from a parent to a child, upright or on its side when too wide. With the view's
+ *  `arity`, an edge's `slot` (default: its place among its parent's edges) fixes the child's side, so a missing child
+ *  leaves a gap. Address: a node id, or an edge as [from, to]. */
+export interface TreeState {
+  nodes: { id: Key; value?: unknown }[];
+  /** `label` is written on the edge, as a trie's letter or a recursion tree's choice */
+  edges: { from: Key; to: Key; label?: Text; slot?: number }[];
+  nodeMarks?: Marks<Key>; edgeMarks?: Marks<[Key, Key]>;
+  /** a short label under a node: its bounds, a count, a heap index */ tags?: [Key, Text][];
+  /** the nodes on the current path (the calls still open), drawn on a soft band under any mark */ shade?: Key[];
+}
+/** A linked list: nodes in a row in `nodes` order, each `next` an arrow (`null`: to ∅; missing: none). `pointers`
+ *  name nodes under them (`null` hides one); `linkMarks` mark the arrow out of a node; `cut` draws an arrow this step
+ *  removed, faded. Address: a node id. */
+export interface LinkedListState {
+  nodes: { id: Key; value: unknown }[]; next: Record<string, Key | null>;
+  pointers?: Record<string, Key | null>; marks?: Marks<Key>; linkMarks?: Marks<Key>; cut?: Record<string, Key>;
+}
+/** A call stack: one card per open call, bottom first, drawn top first. Address: a position from the bottom. */
+export interface CallStackState {
+  calls: { name: Text; args?: Record<string, unknown>; note?: Text }[]; marks?: Marks<number>;
+}
 export interface TableState { columns?: Text[]; rows: { label: Text; cells: unknown[] }[]; marks?: Marks<[number, number]> }
 /** `why` is never drawn: the reason an item stays in vars though the drawing shows the same value (references/format.md). */
 export interface VarsState { items: { label: Text; value: unknown; mark?: Mark | null; empty?: Text; why?: string }[] }
 
-/** A place in a view: an array or output index, a map key, a set member, a queue position from the front, a grid [row, col], a table [row, col], an intervals [group, index], a graph node id or [from, to] edge. Each view type that holds values defines its `at`. */
+/** A place in a view: an array or output index, a map key, a set member, a queue position from the front, a grid [row, col], a table [row, col], an intervals [group, index], a graph or tree node id or [from, to] edge, a linked-list node id, a call-stack position from the bottom. Each view type that holds values defines its `at`. */
 export interface Address { view: string; at: number | string | [number, number] | [string | number, string | number] }
 /** A value going from one place to another. No `from`: created at `to`; no `to`: dropped from `from`.
  *  `value` is the chip's text (default: the source's); `mark` overrides the colour (default: path into an output, bad when dropped, else good). */
@@ -89,6 +114,12 @@ export function edgeAt(edges: GraphState['edges'], at: [string | number, string 
 export function layoutGraph(nodes: GraphState['nodes']): { pos: Map<string, { x: number; y: number }>; radius: number };
 /** The centre of a w × h label chip beside the middle of an edge, clear of it, on the side away from 0,0 (or `side`). */
 export function edgeLabelAt(x1: number, y1: number, x2: number, y2: number, w: number, h: number, side?: number): { x: number; y: number };
+/** A tidy tree: each node's pill centre, one level per depth, upright or `sideways` (the root at the left). */
+export function layoutTree(nodes: TreeState['nodes'], edges: TreeState['edges'], opts?: {
+  arity?: number; sideways?: boolean; size?: (id: string) => { w: number; h: number }; label?: (id: string) => number;
+}): { pos: Map<string, { x: number; y: number }>; width: number; height: number };
+/** Whether a tree too wide upright for `room` goes on its side. */
+export function treeSideways(upright: { width: number }, side: { width: number }, room: number): boolean;
 export function axisTicks(min: number, max: number): number[];
 export function textOf(text: Text | null | undefined, lang: string): string;
 export const MARKS: Mark[];

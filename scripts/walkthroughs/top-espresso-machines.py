@@ -84,10 +84,10 @@ def solve(check_ins, k, run):
             ko = f"{j + 1}위는 머신 {machine}(사용 횟수 {counts[machine]}회)이므로 화이트보드에 적습니다."
         elif board == sorted(board):
             en = f"#{j + 1} is machine {machine} with {uses}, the last of the top {k}. The whiteboard reads {answer}: the answer."
-            ko = f"{j + 1}위는 머신 {machine}(사용 횟수 {counts[machine]}회)으로 상위 {k}개의 마지막입니다. 답은 {answer}입니다."
+            ko = f"{j + 1}위는 머신 {machine}(사용 횟수 {counts[machine]}회)이고 상위 {k}개의 마지막입니다. 답은 {answer}입니다."
         else:
             en = f"#{j + 1} is machine {machine} with {uses}, the last of the top {k}. Listed smallest id first, the answer is {answer}."
-            ko = f"{j + 1}위는 머신 {machine}(사용 횟수 {counts[machine]}회)으로 상위 {k}개의 마지막입니다. 작은 번호부터 적으면 답은 {answer}입니다."
+            ko = f"{j + 1}위는 머신 {machine}(사용 횟수 {counts[machine]}회)이고 상위 {k}개의 마지막입니다. 작은 번호부터 적으면 답은 {answer}입니다."
         frame({"en": en, "ko": ko}, marks={"path": top, "dim": rest},
               moves=[move(at("uses", machine), at("board", j))],
               **({"answer": answer} if last else {}))

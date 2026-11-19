@@ -1,3 +1,4 @@
+import sys
 from typing import Optional
 
 
@@ -10,12 +11,15 @@ class TreeNode:
 
 class Solution:
     def isValidBST(self, root: Optional[TreeNode]) -> bool:
-        stack = [(root, float("-inf"), float("inf"))]
-        while stack:
-            node, low, high = stack.pop()
+        # A tree may be one path 2 * 10^5 deep; Python 3.12 recurses that far once the limit allows it.
+        sys.setrecursionlimit(max(sys.getrecursionlimit(), 400_000))
+
+        def valid(node, low, high):
+            # Every node must fall inside the open range (low, high) its ancestors leave it.
             if node is None:
-                continue
-            if not low < node.val < high:
+                return True
+            if (low is not None and node.val <= low) or (high is not None and node.val >= high):
                 return False
-            stack += [(node.left, low, node.val), (node.right, node.val, high)]
-        return True
+            return valid(node.left, low, node.val) and valid(node.right, node.val, high)
+
+        return valid(root, None, None)

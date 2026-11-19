@@ -1,0 +1,1913 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Fewest Candy Bags",
+  "ko": "최소 사탕 봉지 수"
+ },
+ "approach": {
+  "en": "Fill a table of the fewest bags for every amount from 0 up to the quota: an amount's last bag is one of the sizes, so it is one more than the best of the amounts one bag size back.",
+  "ko": "0부터 quota까지 모든 개수에 대해 최소 봉지 수 표를 채웁니다. 마지막 봉지는 크기 중 하나이므로, 봉지 크기만큼 앞선 개수들 중 최솟값에 1을 더한 값이 됩니다."
+ },
+ "views": [
+  {
+   "id": "sizes",
+   "type": "array",
+   "title": {
+    "en": "bag sizes",
+    "ko": "bagSizes (봉지 크기)"
+   }
+  },
+  {
+   "id": "fewest",
+   "type": "array",
+   "title": {
+    "en": "fewest bags for each amount",
+    "ko": "사탕 개수별 최소 봉지 수"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "bagSizes = [2,4,7], quota = 15",
+   "expected": "3",
+   "frames": [
+    {
+     "caption": {
+      "en": "Amount 0 needs 0 bags. Every other amount up to 15 starts as ∞, not packed yet.",
+      "ko": "사탕 0개에는 봉지가 0개 필요합니다. 15까지의 나머지 개수는 아직 담을 수 없는 ∞로 시작합니다."
+     },
+     "views": {
+      "sizes": {
+       "values": [
+        2,
+        4,
+        7
+       ],
+       "marks": {}
+      },
+      "fewest": {
+       "values": [
+        0,
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞"
+       ],
+       "pointers": {
+        "total": null
+       },
+       "marks": {
+        "good": [
+         0
+        ]
+       },
+       "tags": [],
+       "unread": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Amount 1: every bag is bigger than 1, so it can't be packed. It stays ∞.",
+      "ko": "사탕 1개: 모든 봉지가 1보다 커서 담을 수 없습니다. ∞ 그대로입니다."
+     },
+     "views": {
+      "sizes": {
+       "values": [
+        2,
+        4,
+        7
+       ],
+       "marks": {
+        "lit": [],
+        "dim": [
+         0,
+         1,
+         2
+        ]
+       }
+      },
+      "fewest": {
+       "values": [
+        0,
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞"
+       ],
+       "pointers": {
+        "total": 1
+       },
+       "marks": {},
+       "tags": [],
+       "unread": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Amount 2 is one bag added to amount 0 (0 + 1). The fewest is amount 0's 0 bags plus a bag of 2: 1.",
+      "ko": "사탕 2개는 사탕 0개(0 + 1)에 봉지 하나를 더한 것입니다. 가장 적은 것은 사탕 0개의 0개에 크기 2 봉지를 더한 1개입니다."
+     },
+     "views": {
+      "sizes": {
+       "values": [
+        2,
+        4,
+        7
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "dim": [
+         1,
+         2
+        ]
+       }
+      },
+      "fewest": {
+       "values": [
+        0,
+        "∞",
+        1,
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞"
+       ],
+       "pointers": {
+        "total": 2
+       },
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": [
+         2
+        ]
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "bag 2",
+          "ko": "봉지 2"
+         }
+        ]
+       ],
+       "unread": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "fewest",
+        "at": 0
+       },
+       "to": {
+        "view": "fewest",
+        "at": 2
+       },
+       "value": "0+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Amount 3 is one bag added to amount 1 (∞), which is ∞. It can't be packed either, so it stays ∞.",
+      "ko": "사탕 3개는 사탕 1개(∞)에 봉지 하나를 더한 것인데, ∞입니다. 이 개수도 담을 수 없어 ∞ 그대로입니다."
+     },
+     "views": {
+      "sizes": {
+       "values": [
+        2,
+        4,
+        7
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "dim": [
+         1,
+         2
+        ]
+       }
+      },
+      "fewest": {
+       "values": [
+        0,
+        "∞",
+        1,
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞"
+       ],
+       "pointers": {
+        "total": 3
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       },
+       "tags": [
+        [
+         1,
+         {
+          "en": "bag 2",
+          "ko": "봉지 2"
+         }
+        ]
+       ],
+       "unread": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Amount 4 is one bag added to amount 2 (1 + 1) or 0 (0 + 1). The fewest is amount 0's 0 bags plus a bag of 4: 1.",
+      "ko": "사탕 4개는 사탕 2개(1 + 1) 또는 0개(0 + 1)에 봉지 하나를 더한 것입니다. 가장 적은 것은 사탕 0개의 0개에 크기 4 봉지를 더한 1개입니다."
+     },
+     "views": {
+      "sizes": {
+       "values": [
+        2,
+        4,
+        7
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1
+        ],
+        "dim": [
+         2
+        ]
+       }
+      },
+      "fewest": {
+       "values": [
+        0,
+        "∞",
+        1,
+        "∞",
+        1,
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞"
+       ],
+       "pointers": {
+        "total": 4
+       },
+       "marks": {
+        "lit": [
+         2,
+         0
+        ],
+        "good": [
+         4
+        ]
+       },
+       "tags": [
+        [
+         2,
+         {
+          "en": "bag 2",
+          "ko": "봉지 2"
+         }
+        ],
+        [
+         0,
+         {
+          "en": "bag 4",
+          "ko": "봉지 4"
+         }
+        ]
+       ],
+       "unread": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "fewest",
+        "at": 0
+       },
+       "to": {
+        "view": "fewest",
+        "at": 4
+       },
+       "value": "0+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Amount 5 is one bag added to amount 3 (∞) or 1 (∞), all ∞. It can't be packed either, so it stays ∞.",
+      "ko": "사탕 5개는 사탕 3개(∞) 또는 1개(∞)에 봉지 하나를 더한 것인데, 모두 ∞입니다. 이 개수도 담을 수 없어 ∞ 그대로입니다."
+     },
+     "views": {
+      "sizes": {
+       "values": [
+        2,
+        4,
+        7
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1
+        ],
+        "dim": [
+         2
+        ]
+       }
+      },
+      "fewest": {
+       "values": [
+        0,
+        "∞",
+        1,
+        "∞",
+        1,
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞"
+       ],
+       "pointers": {
+        "total": 5
+       },
+       "marks": {
+        "lit": [
+         3,
+         1
+        ]
+       },
+       "tags": [
+        [
+         3,
+         {
+          "en": "bag 2",
+          "ko": "봉지 2"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "bag 4",
+          "ko": "봉지 4"
+         }
+        ]
+       ],
+       "unread": [
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Amount 6 is one bag added to amount 4 (1 + 1) or 2 (1 + 1). The fewest is amount 4's 1 bag plus a bag of 2: 2.",
+      "ko": "사탕 6개는 사탕 4개(1 + 1) 또는 2개(1 + 1)에 봉지 하나를 더한 것입니다. 가장 적은 것은 사탕 4개의 1개에 크기 2 봉지를 더한 2개입니다."
+     },
+     "views": {
+      "sizes": {
+       "values": [
+        2,
+        4,
+        7
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1
+        ],
+        "dim": [
+         2
+        ]
+       }
+      },
+      "fewest": {
+       "values": [
+        0,
+        "∞",
+        1,
+        "∞",
+        1,
+        "∞",
+        2,
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞"
+       ],
+       "pointers": {
+        "total": 6
+       },
+       "marks": {
+        "lit": [
+         4,
+         2
+        ],
+        "good": [
+         6
+        ]
+       },
+       "tags": [
+        [
+         4,
+         {
+          "en": "bag 2",
+          "ko": "봉지 2"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "bag 4",
+          "ko": "봉지 4"
+         }
+        ]
+       ],
+       "unread": [
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "fewest",
+        "at": 4
+       },
+       "to": {
+        "view": "fewest",
+        "at": 6
+       },
+       "value": "1+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Amount 7 is one bag added to amount 5 (∞), 3 (∞) or 0 (0 + 1). The fewest is amount 0's 0 bags plus a bag of 7: 1.",
+      "ko": "사탕 7개는 사탕 5개(∞), 3개(∞) 또는 0개(0 + 1)에 봉지 하나를 더한 것입니다. 가장 적은 것은 사탕 0개의 0개에 크기 7 봉지를 더한 1개입니다."
+     },
+     "views": {
+      "sizes": {
+       "values": [
+        2,
+        4,
+        7
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1,
+         2
+        ],
+        "dim": []
+       }
+      },
+      "fewest": {
+       "values": [
+        0,
+        "∞",
+        1,
+        "∞",
+        1,
+        "∞",
+        2,
+        1,
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞"
+       ],
+       "pointers": {
+        "total": 7
+       },
+       "marks": {
+        "lit": [
+         5,
+         3,
+         0
+        ],
+        "good": [
+         7
+        ]
+       },
+       "tags": [
+        [
+         5,
+         {
+          "en": "bag 2",
+          "ko": "봉지 2"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "bag 4",
+          "ko": "봉지 4"
+         }
+        ],
+        [
+         0,
+         {
+          "en": "bag 7",
+          "ko": "봉지 7"
+         }
+        ]
+       ],
+       "unread": [
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "fewest",
+        "at": 0
+       },
+       "to": {
+        "view": "fewest",
+        "at": 7
+       },
+       "value": "0+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Amount 8 is one bag added to amount 6 (2 + 1), 4 (1 + 1) or 1 (∞). The fewest is amount 4's 1 bag plus a bag of 4: 2.",
+      "ko": "사탕 8개는 사탕 6개(2 + 1), 4개(1 + 1) 또는 1개(∞)에 봉지 하나를 더한 것입니다. 가장 적은 것은 사탕 4개의 1개에 크기 4 봉지를 더한 2개입니다."
+     },
+     "views": {
+      "sizes": {
+       "values": [
+        2,
+        4,
+        7
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1,
+         2
+        ],
+        "dim": []
+       }
+      },
+      "fewest": {
+       "values": [
+        0,
+        "∞",
+        1,
+        "∞",
+        1,
+        "∞",
+        2,
+        1,
+        2,
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞"
+       ],
+       "pointers": {
+        "total": 8
+       },
+       "marks": {
+        "lit": [
+         6,
+         4,
+         1
+        ],
+        "good": [
+         8
+        ]
+       },
+       "tags": [
+        [
+         6,
+         {
+          "en": "bag 2",
+          "ko": "봉지 2"
+         }
+        ],
+        [
+         4,
+         {
+          "en": "bag 4",
+          "ko": "봉지 4"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "bag 7",
+          "ko": "봉지 7"
+         }
+        ]
+       ],
+       "unread": [
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "fewest",
+        "at": 4
+       },
+       "to": {
+        "view": "fewest",
+        "at": 8
+       },
+       "value": "1+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Amount 9 is one bag added to amount 7 (1 + 1), 5 (∞) or 2 (1 + 1). The fewest is amount 7's 1 bag plus a bag of 2: 2.",
+      "ko": "사탕 9개는 사탕 7개(1 + 1), 5개(∞) 또는 2개(1 + 1)에 봉지 하나를 더한 것입니다. 가장 적은 것은 사탕 7개의 1개에 크기 2 봉지를 더한 2개입니다."
+     },
+     "views": {
+      "sizes": {
+       "values": [
+        2,
+        4,
+        7
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1,
+         2
+        ],
+        "dim": []
+       }
+      },
+      "fewest": {
+       "values": [
+        0,
+        "∞",
+        1,
+        "∞",
+        1,
+        "∞",
+        2,
+        1,
+        2,
+        2,
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞"
+       ],
+       "pointers": {
+        "total": 9
+       },
+       "marks": {
+        "lit": [
+         7,
+         5,
+         2
+        ],
+        "good": [
+         9
+        ]
+       },
+       "tags": [
+        [
+         7,
+         {
+          "en": "bag 2",
+          "ko": "봉지 2"
+         }
+        ],
+        [
+         5,
+         {
+          "en": "bag 4",
+          "ko": "봉지 4"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "bag 7",
+          "ko": "봉지 7"
+         }
+        ]
+       ],
+       "unread": [
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "fewest",
+        "at": 7
+       },
+       "to": {
+        "view": "fewest",
+        "at": 9
+       },
+       "value": "1+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Amount 10 is one bag added to amount 8 (2 + 1), 6 (2 + 1) or 3 (∞). The fewest is amount 8's 2 bags plus a bag of 2: 3.",
+      "ko": "사탕 10개는 사탕 8개(2 + 1), 6개(2 + 1) 또는 3개(∞)에 봉지 하나를 더한 것입니다. 가장 적은 것은 사탕 8개의 2개에 크기 2 봉지를 더한 3개입니다."
+     },
+     "views": {
+      "sizes": {
+       "values": [
+        2,
+        4,
+        7
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1,
+         2
+        ],
+        "dim": []
+       }
+      },
+      "fewest": {
+       "values": [
+        0,
+        "∞",
+        1,
+        "∞",
+        1,
+        "∞",
+        2,
+        1,
+        2,
+        2,
+        3,
+        "∞",
+        "∞",
+        "∞",
+        "∞",
+        "∞"
+       ],
+       "pointers": {
+        "total": 10
+       },
+       "marks": {
+        "lit": [
+         8,
+         6,
+         3
+        ],
+        "good": [
+         10
+        ]
+       },
+       "tags": [
+        [
+         8,
+         {
+          "en": "bag 2",
+          "ko": "봉지 2"
+         }
+        ],
+        [
+         6,
+         {
+          "en": "bag 4",
+          "ko": "봉지 4"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "bag 7",
+          "ko": "봉지 7"
+         }
+        ]
+       ],
+       "unread": [
+        11,
+        12,
+        13,
+        14,
+        15
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "fewest",
+        "at": 8
+       },
+       "to": {
+        "view": "fewest",
+        "at": 10
+       },
+       "value": "2+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Amount 11 is one bag added to amount 9 (2 + 1), 7 (1 + 1) or 4 (1 + 1). The fewest is amount 7's 1 bag plus a bag of 4: 2.",
+      "ko": "사탕 11개는 사탕 9개(2 + 1), 7개(1 + 1) 또는 4개(1 + 1)에 봉지 하나를 더한 것입니다. 가장 적은 것은 사탕 7개의 1개에 크기 4 봉지를 더한 2개입니다."
+     },
+     "views": {
+      "sizes": {
+       "values": [
+        2,
+        4,
+        7
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1,
+         2
+        ],
+        "dim": []
+       }
+      },
+      "fewest": {
+       "values": [
+        0,
+        "∞",
+        1,
+        "∞",
+        1,
+        "∞",
+        2,
+        1,
+        2,
+        2,
+        3,
+        2,
+        "∞",
+        "∞",
+        "∞",
+        "∞"
+       ],
+       "pointers": {
+        "total": 11
+       },
+       "marks": {
+        "lit": [
+         9,
+         7,
+         4
+        ],
+        "good": [
+         11
+        ]
+       },
+       "tags": [
+        [
+         9,
+         {
+          "en": "bag 2",
+          "ko": "봉지 2"
+         }
+        ],
+        [
+         7,
+         {
+          "en": "bag 4",
+          "ko": "봉지 4"
+         }
+        ],
+        [
+         4,
+         {
+          "en": "bag 7",
+          "ko": "봉지 7"
+         }
+        ]
+       ],
+       "unread": [
+        12,
+        13,
+        14,
+        15
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "fewest",
+        "at": 7
+       },
+       "to": {
+        "view": "fewest",
+        "at": 11
+       },
+       "value": "1+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Amount 12 is one bag added to amount 10 (3 + 1), 8 (2 + 1) or 5 (∞). The fewest is amount 8's 2 bags plus a bag of 4: 3.",
+      "ko": "사탕 12개는 사탕 10개(3 + 1), 8개(2 + 1) 또는 5개(∞)에 봉지 하나를 더한 것입니다. 가장 적은 것은 사탕 8개의 2개에 크기 4 봉지를 더한 3개입니다."
+     },
+     "views": {
+      "sizes": {
+       "values": [
+        2,
+        4,
+        7
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1,
+         2
+        ],
+        "dim": []
+       }
+      },
+      "fewest": {
+       "values": [
+        0,
+        "∞",
+        1,
+        "∞",
+        1,
+        "∞",
+        2,
+        1,
+        2,
+        2,
+        3,
+        2,
+        3,
+        "∞",
+        "∞",
+        "∞"
+       ],
+       "pointers": {
+        "total": 12
+       },
+       "marks": {
+        "lit": [
+         10,
+         8,
+         5
+        ],
+        "good": [
+         12
+        ]
+       },
+       "tags": [
+        [
+         10,
+         {
+          "en": "bag 2",
+          "ko": "봉지 2"
+         }
+        ],
+        [
+         8,
+         {
+          "en": "bag 4",
+          "ko": "봉지 4"
+         }
+        ],
+        [
+         5,
+         {
+          "en": "bag 7",
+          "ko": "봉지 7"
+         }
+        ]
+       ],
+       "unread": [
+        13,
+        14,
+        15
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "fewest",
+        "at": 8
+       },
+       "to": {
+        "view": "fewest",
+        "at": 12
+       },
+       "value": "2+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Amount 13 is one bag added to amount 11 (2 + 1), 9 (2 + 1) or 6 (2 + 1). The fewest is amount 11's 2 bags plus a bag of 2: 3.",
+      "ko": "사탕 13개는 사탕 11개(2 + 1), 9개(2 + 1) 또는 6개(2 + 1)에 봉지 하나를 더한 것입니다. 가장 적은 것은 사탕 11개의 2개에 크기 2 봉지를 더한 3개입니다."
+     },
+     "views": {
+      "sizes": {
+       "values": [
+        2,
+        4,
+        7
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1,
+         2
+        ],
+        "dim": []
+       }
+      },
+      "fewest": {
+       "values": [
+        0,
+        "∞",
+        1,
+        "∞",
+        1,
+        "∞",
+        2,
+        1,
+        2,
+        2,
+        3,
+        2,
+        3,
+        3,
+        "∞",
+        "∞"
+       ],
+       "pointers": {
+        "total": 13
+       },
+       "marks": {
+        "lit": [
+         11,
+         9,
+         6
+        ],
+        "good": [
+         13
+        ]
+       },
+       "tags": [
+        [
+         11,
+         {
+          "en": "bag 2",
+          "ko": "봉지 2"
+         }
+        ],
+        [
+         9,
+         {
+          "en": "bag 4",
+          "ko": "봉지 4"
+         }
+        ],
+        [
+         6,
+         {
+          "en": "bag 7",
+          "ko": "봉지 7"
+         }
+        ]
+       ],
+       "unread": [
+        14,
+        15
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "fewest",
+        "at": 11
+       },
+       "to": {
+        "view": "fewest",
+        "at": 13
+       },
+       "value": "2+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Amount 14 is one bag added to amount 12 (3 + 1), 10 (3 + 1) or 7 (1 + 1). The fewest is amount 7's 1 bag plus a bag of 7: 2.",
+      "ko": "사탕 14개는 사탕 12개(3 + 1), 10개(3 + 1) 또는 7개(1 + 1)에 봉지 하나를 더한 것입니다. 가장 적은 것은 사탕 7개의 1개에 크기 7 봉지를 더한 2개입니다."
+     },
+     "views": {
+      "sizes": {
+       "values": [
+        2,
+        4,
+        7
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1,
+         2
+        ],
+        "dim": []
+       }
+      },
+      "fewest": {
+       "values": [
+        0,
+        "∞",
+        1,
+        "∞",
+        1,
+        "∞",
+        2,
+        1,
+        2,
+        2,
+        3,
+        2,
+        3,
+        3,
+        2,
+        "∞"
+       ],
+       "pointers": {
+        "total": 14
+       },
+       "marks": {
+        "lit": [
+         12,
+         10,
+         7
+        ],
+        "good": [
+         14
+        ]
+       },
+       "tags": [
+        [
+         12,
+         {
+          "en": "bag 2",
+          "ko": "봉지 2"
+         }
+        ],
+        [
+         10,
+         {
+          "en": "bag 4",
+          "ko": "봉지 4"
+         }
+        ],
+        [
+         7,
+         {
+          "en": "bag 7",
+          "ko": "봉지 7"
+         }
+        ]
+       ],
+       "unread": [
+        15
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "fewest",
+        "at": 7
+       },
+       "to": {
+        "view": "fewest",
+        "at": 14
+       },
+       "value": "1+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Amount 15 is one bag added to amount 13 (3 + 1), 11 (2 + 1) or 8 (2 + 1). The fewest is amount 11's 2 bags plus a bag of 4: 3.",
+      "ko": "사탕 15개는 사탕 13개(3 + 1), 11개(2 + 1) 또는 8개(2 + 1)에 봉지 하나를 더한 것입니다. 가장 적은 것은 사탕 11개의 2개에 크기 4 봉지를 더한 3개입니다."
+     },
+     "views": {
+      "sizes": {
+       "values": [
+        2,
+        4,
+        7
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1,
+         2
+        ],
+        "dim": []
+       }
+      },
+      "fewest": {
+       "values": [
+        0,
+        "∞",
+        1,
+        "∞",
+        1,
+        "∞",
+        2,
+        1,
+        2,
+        2,
+        3,
+        2,
+        3,
+        3,
+        2,
+        3
+       ],
+       "pointers": {
+        "total": 15
+       },
+       "marks": {
+        "lit": [
+         13,
+         11,
+         8
+        ],
+        "good": [
+         15
+        ]
+       },
+       "tags": [
+        [
+         13,
+         {
+          "en": "bag 2",
+          "ko": "봉지 2"
+         }
+        ],
+        [
+         11,
+         {
+          "en": "bag 4",
+          "ko": "봉지 4"
+         }
+        ],
+        [
+         8,
+         {
+          "en": "bag 7",
+          "ko": "봉지 7"
+         }
+        ]
+       ],
+       "unread": []
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "fewest",
+        "at": 11
+       },
+       "to": {
+        "view": "fewest",
+        "at": 15
+       },
+       "value": "2+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Amount 15 needs 3 bags. Following each cell back to the one it came from: 4 + 4 + 7 = 15.",
+      "ko": "사탕 15개에는 봉지가 3개 필요합니다. 각 칸이 온 칸을 거슬러 가면 4 + 4 + 7 = 15입니다."
+     },
+     "views": {
+      "sizes": {
+       "values": [
+        2,
+        4,
+        7
+       ],
+       "marks": {}
+      },
+      "fewest": {
+       "values": [
+        0,
+        "∞",
+        1,
+        "∞",
+        1,
+        "∞",
+        2,
+        1,
+        2,
+        2,
+        3,
+        2,
+        3,
+        3,
+        2,
+        3
+       ],
+       "pointers": {
+        "total": null
+       },
+       "marks": {
+        "path": [
+         15,
+         11,
+         7,
+         0
+        ]
+       },
+       "tags": [
+        [
+         11,
+         {
+          "en": "bag 4",
+          "ko": "봉지 4"
+         }
+        ],
+        [
+         7,
+         {
+          "en": "bag 4",
+          "ko": "봉지 4"
+         }
+        ],
+        [
+         0,
+         {
+          "en": "bag 7",
+          "ko": "봉지 7"
+         }
+        ]
+       ],
+       "unread": []
+      }
+     },
+     "answer": "3"
+    }
+   ],
+   "sampleInput": "[2,4,7]\n15"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "bagSizes = [3,5], quota = 4",
+   "expected": "-1",
+   "frames": [
+    {
+     "caption": {
+      "en": "Amount 0 needs 0 bags. Every other amount up to 4 starts as ∞, not packed yet.",
+      "ko": "사탕 0개에는 봉지가 0개 필요합니다. 4까지의 나머지 개수는 아직 담을 수 없는 ∞로 시작합니다."
+     },
+     "views": {
+      "sizes": {
+       "values": [
+        3,
+        5
+       ],
+       "marks": {}
+      },
+      "fewest": {
+       "values": [
+        0,
+        "∞",
+        "∞",
+        "∞",
+        "∞"
+       ],
+       "pointers": {
+        "total": null
+       },
+       "marks": {
+        "good": [
+         0
+        ]
+       },
+       "tags": [],
+       "unread": [
+        1,
+        2,
+        3,
+        4
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Amount 1: every bag is bigger than 1, so it can't be packed. It stays ∞.",
+      "ko": "사탕 1개: 모든 봉지가 1보다 커서 담을 수 없습니다. ∞ 그대로입니다."
+     },
+     "views": {
+      "sizes": {
+       "values": [
+        3,
+        5
+       ],
+       "marks": {
+        "lit": [],
+        "dim": [
+         0,
+         1
+        ]
+       }
+      },
+      "fewest": {
+       "values": [
+        0,
+        "∞",
+        "∞",
+        "∞",
+        "∞"
+       ],
+       "pointers": {
+        "total": 1
+       },
+       "marks": {},
+       "tags": [],
+       "unread": [
+        2,
+        3,
+        4
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Amount 2: every bag is bigger than 2, so it can't be packed. It stays ∞.",
+      "ko": "사탕 2개: 모든 봉지가 2보다 커서 담을 수 없습니다. ∞ 그대로입니다."
+     },
+     "views": {
+      "sizes": {
+       "values": [
+        3,
+        5
+       ],
+       "marks": {
+        "lit": [],
+        "dim": [
+         0,
+         1
+        ]
+       }
+      },
+      "fewest": {
+       "values": [
+        0,
+        "∞",
+        "∞",
+        "∞",
+        "∞"
+       ],
+       "pointers": {
+        "total": 2
+       },
+       "marks": {},
+       "tags": [],
+       "unread": [
+        3,
+        4
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Amount 3 is one bag added to amount 0 (0 + 1). The fewest is amount 0's 0 bags plus a bag of 3: 1.",
+      "ko": "사탕 3개는 사탕 0개(0 + 1)에 봉지 하나를 더한 것입니다. 가장 적은 것은 사탕 0개의 0개에 크기 3 봉지를 더한 1개입니다."
+     },
+     "views": {
+      "sizes": {
+       "values": [
+        3,
+        5
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "dim": [
+         1
+        ]
+       }
+      },
+      "fewest": {
+       "values": [
+        0,
+        "∞",
+        "∞",
+        1,
+        "∞"
+       ],
+       "pointers": {
+        "total": 3
+       },
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": [
+         3
+        ]
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "bag 3",
+          "ko": "봉지 3"
+         }
+        ]
+       ],
+       "unread": [
+        4
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "fewest",
+        "at": 0
+       },
+       "to": {
+        "view": "fewest",
+        "at": 3
+       },
+       "value": "0+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Amount 4 is one bag added to amount 1 (∞), which is ∞. It can't be packed either, so it stays ∞.",
+      "ko": "사탕 4개는 사탕 1개(∞)에 봉지 하나를 더한 것인데, ∞입니다. 이 개수도 담을 수 없어 ∞ 그대로입니다."
+     },
+     "views": {
+      "sizes": {
+       "values": [
+        3,
+        5
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "dim": [
+         1
+        ]
+       }
+      },
+      "fewest": {
+       "values": [
+        0,
+        "∞",
+        "∞",
+        1,
+        "∞"
+       ],
+       "pointers": {
+        "total": 4
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       },
+       "tags": [
+        [
+         1,
+         {
+          "en": "bag 3",
+          "ko": "봉지 3"
+         }
+        ]
+       ],
+       "unread": []
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Amount 4 is still ∞: no mix of bag sizes sums to exactly 4. Answer: -1.",
+      "ko": "사탕 4개는 여전히 ∞입니다. 어떤 봉지 조합으로도 합이 정확히 4가 되지 않으므로 답은 -1입니다."
+     },
+     "views": {
+      "sizes": {
+       "values": [
+        3,
+        5
+       ],
+       "marks": {}
+      },
+      "fewest": {
+       "values": [
+        0,
+        "∞",
+        "∞",
+        1,
+        "∞"
+       ],
+       "pointers": {
+        "total": null
+       },
+       "marks": {
+        "bad": [
+         4
+        ]
+       },
+       "tags": [],
+       "unread": []
+      }
+     },
+     "answer": "-1"
+    }
+   ],
+   "sampleInput": "[3,5]\n4"
+  },
+  {
+   "label": {
+    "en": "Example 3",
+    "ko": "예시 3"
+   },
+   "input": "bagSizes = [1], quota = 0",
+   "expected": "0",
+   "frames": [
+    {
+     "caption": {
+      "en": "The quota is 0: the table is just amount 0, which needs 0 bags.",
+      "ko": "quota가 0이므로 표에는 개수 0 하나뿐이고, 봉지가 0개 필요합니다."
+     },
+     "views": {
+      "sizes": {
+       "values": [
+        1
+       ],
+       "marks": {}
+      },
+      "fewest": {
+       "values": [
+        0
+       ],
+       "pointers": {
+        "total": null
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       },
+       "tags": [],
+       "unread": []
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Answer: 0 bags.",
+      "ko": "답은 봉지 0개입니다."
+     },
+     "views": {
+      "sizes": {
+       "values": [
+        1
+       ],
+       "marks": {}
+      },
+      "fewest": {
+       "values": [
+        0
+       ],
+       "pointers": {
+        "total": null
+       },
+       "marks": {
+        "path": [
+         0
+        ]
+       },
+       "tags": [],
+       "unread": []
+      }
+     },
+     "answer": "0"
+    }
+   ],
+   "sampleInput": "[1]\n0"
+  }
+ ]
+}

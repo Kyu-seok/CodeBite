@@ -1,0 +1,906 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Peak Table Demand",
+  "ko": "피크 시간 테이블 수요"
+ },
+ "approach": {
+  "en": "Seat the groups in order of arrival, keeping the minute each table in use frees up: a group takes the table that frees up first if it is free by then, and opens a new table otherwise.",
+  "ko": "도착 순으로 팀을 앉히며 사용 중인 테이블마다 비는 시각을 기억합니다. 가장 먼저 비는 테이블이 도착 시각까지 비면 그 자리에 앉히고, 아니면 테이블을 하나 더 씁니다."
+ },
+ "views": [
+  {
+   "id": "line",
+   "type": "intervals",
+   "empty": {
+    "en": "none yet",
+    "ko": "아직 없음"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "visits = [[60,180],[90,150],[120,240],[200,300]]",
+   "expected": "3",
+   "frames": [
+    {
+     "caption": {
+      "en": "Sort the 4 visits by arrival: [60,180], [90,150], [120,240], [200,300]. No table is in use yet.",
+      "ko": "방문 4개를 도착 시각 순으로 정렬합니다: [60,180], [90,150], [120,240], [200,300]. 아직 사용 중인 테이블이 없습니다."
+     },
+     "views": {
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "visits, by arrival",
+          "ko": "도착 순으로 정렬한 방문"
+         },
+         "intervals": [
+          [
+           60,
+           180
+          ],
+          [
+           90,
+           150
+          ],
+          [
+           120,
+           240
+          ],
+          [
+           200,
+           300
+          ]
+         ],
+         "marks": {
+          "dim": []
+         }
+        }
+       ],
+       "points": []
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "[60,180] arrives at 60. No table is in use yet, so it opens table 1.",
+      "ko": "[60,180] 팀이 60분에 도착합니다. 아직 사용 중인 테이블이 없으므로 테이블 1을 새로 씁니다."
+     },
+     "views": {
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "visits, by arrival",
+          "ko": "도착 순으로 정렬한 방문"
+         },
+         "intervals": [
+          [
+           60,
+           180
+          ],
+          [
+           90,
+           150
+          ],
+          [
+           120,
+           240
+          ],
+          [
+           200,
+           300
+          ]
+         ],
+         "marks": {
+          "dim": [],
+          "lit": [
+           0
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "table 1",
+          "ko": "테이블 1"
+         },
+         "intervals": [
+          [
+           60,
+           180
+          ]
+         ],
+         "marks": {
+          "good": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 60,
+         "label": {
+          "en": "arrive",
+          "ko": "도착"
+         },
+         "mark": "lit"
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "line",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "to": {
+        "view": "line",
+        "at": [
+         1,
+         0
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "[90,150] arrives at 90. Even the first table to free up is busy until 180 > 90, so it opens table 2.",
+      "ko": "[90,150] 팀이 90분에 도착합니다. 가장 먼저 비는 테이블도 180분까지 차 있어 90분보다 늦으므로 테이블 2를 새로 씁니다."
+     },
+     "views": {
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "visits, by arrival",
+          "ko": "도착 순으로 정렬한 방문"
+         },
+         "intervals": [
+          [
+           60,
+           180
+          ],
+          [
+           90,
+           150
+          ],
+          [
+           120,
+           240
+          ],
+          [
+           200,
+           300
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0
+          ],
+          "lit": [
+           1
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "table 1",
+          "ko": "테이블 1"
+         },
+         "intervals": [
+          [
+           60,
+           180
+          ]
+         ],
+         "marks": {
+          "bad": [
+           0
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "table 2",
+          "ko": "테이블 2"
+         },
+         "intervals": [
+          [
+           90,
+           150
+          ]
+         ],
+         "marks": {
+          "good": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 90,
+         "label": {
+          "en": "arrive",
+          "ko": "도착"
+         },
+         "mark": "lit"
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "line",
+        "at": [
+         0,
+         1
+        ]
+       },
+       "to": {
+        "view": "line",
+        "at": [
+         2,
+         0
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "[120,240] arrives at 120. Even the first table to free up is busy until 150 > 120, so it opens table 3.",
+      "ko": "[120,240] 팀이 120분에 도착합니다. 가장 먼저 비는 테이블도 150분까지 차 있어 120분보다 늦으므로 테이블 3을 새로 씁니다."
+     },
+     "views": {
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "visits, by arrival",
+          "ko": "도착 순으로 정렬한 방문"
+         },
+         "intervals": [
+          [
+           60,
+           180
+          ],
+          [
+           90,
+           150
+          ],
+          [
+           120,
+           240
+          ],
+          [
+           200,
+           300
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1
+          ],
+          "lit": [
+           2
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "table 1",
+          "ko": "테이블 1"
+         },
+         "intervals": [
+          [
+           60,
+           180
+          ]
+         ],
+         "marks": {}
+        },
+        {
+         "label": {
+          "en": "table 2",
+          "ko": "테이블 2"
+         },
+         "intervals": [
+          [
+           90,
+           150
+          ]
+         ],
+         "marks": {
+          "bad": [
+           0
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "table 3",
+          "ko": "테이블 3"
+         },
+         "intervals": [
+          [
+           120,
+           240
+          ]
+         ],
+         "marks": {
+          "good": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 120,
+         "label": {
+          "en": "arrive",
+          "ko": "도착"
+         },
+         "mark": "lit"
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "line",
+        "at": [
+         0,
+         2
+        ]
+       },
+       "to": {
+        "view": "line",
+        "at": [
+         3,
+         0
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "[200,300] arrives at 200. The first table to free up, table 2, is free from 150 ≤ 200, so the group takes it.",
+      "ko": "[200,300] 팀이 200분에 도착합니다. 가장 먼저 비는 테이블 2가 150분에 비어 200분 이전이므로 그 자리에 앉습니다."
+     },
+     "views": {
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "visits, by arrival",
+          "ko": "도착 순으로 정렬한 방문"
+         },
+         "intervals": [
+          [
+           60,
+           180
+          ],
+          [
+           90,
+           150
+          ],
+          [
+           120,
+           240
+          ],
+          [
+           200,
+           300
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1,
+           2
+          ],
+          "lit": [
+           3
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "table 1",
+          "ko": "테이블 1"
+         },
+         "intervals": [
+          [
+           60,
+           180
+          ]
+         ],
+         "marks": {}
+        },
+        {
+         "label": {
+          "en": "table 2",
+          "ko": "테이블 2"
+         },
+         "intervals": [
+          [
+           90,
+           150
+          ],
+          [
+           200,
+           300
+          ]
+         ],
+         "marks": {
+          "lit": [
+           0
+          ],
+          "good": [
+           1
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "table 3",
+          "ko": "테이블 3"
+         },
+         "intervals": [
+          [
+           120,
+           240
+          ]
+         ],
+         "marks": {}
+        }
+       ],
+       "points": [
+        {
+         "at": 200,
+         "label": {
+          "en": "arrive",
+          "ko": "도착"
+         },
+         "mark": "lit"
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "line",
+        "at": [
+         0,
+         3
+        ]
+       },
+       "to": {
+        "view": "line",
+        "at": [
+         2,
+         1
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every group is seated, at 3 tables: from minute 120, all of them were in use at once. Answer: 3.",
+      "ko": "모든 팀이 테이블 3개에 앉았고, 120분부터는 3개 모두 동시에 쓰였습니다. 답은 3입니다."
+     },
+     "views": {
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "visits, by arrival",
+          "ko": "도착 순으로 정렬한 방문"
+         },
+         "intervals": [
+          [
+           60,
+           180
+          ],
+          [
+           90,
+           150
+          ],
+          [
+           120,
+           240
+          ],
+          [
+           200,
+           300
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1,
+           2,
+           3
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "table 1",
+          "ko": "테이블 1"
+         },
+         "intervals": [
+          [
+           60,
+           180
+          ]
+         ],
+         "marks": {
+          "path": [
+           0
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "table 2",
+          "ko": "테이블 2"
+         },
+         "intervals": [
+          [
+           90,
+           150
+          ],
+          [
+           200,
+           300
+          ]
+         ],
+         "marks": {
+          "path": [
+           0,
+           1
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "table 3",
+          "ko": "테이블 3"
+         },
+         "intervals": [
+          [
+           120,
+           240
+          ]
+         ],
+         "marks": {
+          "path": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 120,
+         "label": {
+          "en": "3 at once",
+          "ko": "동시에 3개"
+         },
+         "mark": "path"
+        }
+       ]
+      }
+     },
+     "answer": "3"
+    }
+   ],
+   "setup": {
+    "line": {
+     "domain": [
+      60,
+      300
+     ]
+    }
+   },
+   "sampleInput": "[[60,180],[90,150],[120,240],[200,300]]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "visits = [[500,600],[100,200]]",
+   "expected": "1",
+   "frames": [
+    {
+     "caption": {
+      "en": "Sort the 2 visits by arrival: [100,200], [500,600]. No table is in use yet.",
+      "ko": "방문 2개를 도착 시각 순으로 정렬합니다: [100,200], [500,600]. 아직 사용 중인 테이블이 없습니다."
+     },
+     "views": {
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "visits, by arrival",
+          "ko": "도착 순으로 정렬한 방문"
+         },
+         "intervals": [
+          [
+           100,
+           200
+          ],
+          [
+           500,
+           600
+          ]
+         ],
+         "marks": {
+          "dim": []
+         }
+        }
+       ],
+       "points": []
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "[100,200] arrives at 100. No table is in use yet, so it opens table 1.",
+      "ko": "[100,200] 팀이 100분에 도착합니다. 아직 사용 중인 테이블이 없으므로 테이블 1을 새로 씁니다."
+     },
+     "views": {
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "visits, by arrival",
+          "ko": "도착 순으로 정렬한 방문"
+         },
+         "intervals": [
+          [
+           100,
+           200
+          ],
+          [
+           500,
+           600
+          ]
+         ],
+         "marks": {
+          "dim": [],
+          "lit": [
+           0
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "table 1",
+          "ko": "테이블 1"
+         },
+         "intervals": [
+          [
+           100,
+           200
+          ]
+         ],
+         "marks": {
+          "good": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 100,
+         "label": {
+          "en": "arrive",
+          "ko": "도착"
+         },
+         "mark": "lit"
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "line",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "to": {
+        "view": "line",
+        "at": [
+         1,
+         0
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "[500,600] arrives at 500. The first table to free up, table 1, is free from 200 ≤ 500, so the group takes it.",
+      "ko": "[500,600] 팀이 500분에 도착합니다. 가장 먼저 비는 테이블 1이 200분에 비어 500분 이전이므로 그 자리에 앉습니다."
+     },
+     "views": {
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "visits, by arrival",
+          "ko": "도착 순으로 정렬한 방문"
+         },
+         "intervals": [
+          [
+           100,
+           200
+          ],
+          [
+           500,
+           600
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0
+          ],
+          "lit": [
+           1
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "table 1",
+          "ko": "테이블 1"
+         },
+         "intervals": [
+          [
+           100,
+           200
+          ],
+          [
+           500,
+           600
+          ]
+         ],
+         "marks": {
+          "lit": [
+           0
+          ],
+          "good": [
+           1
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 500,
+         "label": {
+          "en": "arrive",
+          "ko": "도착"
+         },
+         "mark": "lit"
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "line",
+        "at": [
+         0,
+         1
+        ]
+       },
+       "to": {
+        "view": "line",
+        "at": [
+         1,
+         1
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every group is seated at table 1, since each one arrived after the one before had left. Answer: 1.",
+      "ko": "앞 팀이 떠난 뒤에 다음 팀이 왔으므로 모든 팀이 테이블 1에 앉았습니다. 답은 1입니다."
+     },
+     "views": {
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "visits, by arrival",
+          "ko": "도착 순으로 정렬한 방문"
+         },
+         "intervals": [
+          [
+           100,
+           200
+          ],
+          [
+           500,
+           600
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "table 1",
+          "ko": "테이블 1"
+         },
+         "intervals": [
+          [
+           100,
+           200
+          ],
+          [
+           500,
+           600
+          ]
+         ],
+         "marks": {
+          "path": [
+           0,
+           1
+          ]
+         }
+        }
+       ],
+       "points": []
+      }
+     },
+     "answer": "1"
+    }
+   ],
+   "setup": {
+    "line": {
+     "domain": [
+      100,
+      600
+     ]
+    }
+   },
+   "sampleInput": "[[500,600],[100,200]]"
+  }
+ ]
+}

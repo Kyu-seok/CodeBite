@@ -1,0 +1,1008 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Move Voided Scans",
+  "ko": "취소 주문 뒤로 밀기"
+ },
+ "approach": {
+  "en": "Two pointers in the same direction, in place: read walks every scan and write marks the next slot of the kept front, so each real price moves forward to slot write in order; then every slot from write on becomes a 0.",
+  "ko": "같은 방향으로 가는 두 포인터로 제자리에서 바꿉니다. read는 모든 주문을 읽고 write는 남길 앞쪽의 다음 자리를 가리켜, 실제 가격은 순서대로 write 자리로 당겨집니다. 그다음 write부터 끝까지를 0으로 채웁니다."
+ },
+ "views": [
+  {
+   "id": "scans",
+   "type": "array",
+   "title": {
+    "en": "scans",
+    "ko": "scans (주문 가격)"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "scans = [4,0,0,2,9,0,7]",
+   "expected": "[4,2,9,7,0,0,0]",
+   "frames": [
+    {
+     "caption": {
+      "en": "7 scans, 3 of them voided (0). write starts at slot 0: the next slot of the kept front.",
+      "ko": "주문 7개 중 3개가 취소(0)입니다. write는 0번 자리에서 시작하며, 남길 앞쪽의 다음 자리를 가리킵니다."
+     },
+     "views": {
+      "scans": {
+       "values": [
+        4,
+        0,
+        0,
+        2,
+        9,
+        0,
+        7
+       ],
+       "pointers": {
+        "write": 0,
+        "read": null,
+        "i": null
+       },
+       "spans": {
+        "kept": null
+       },
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+       ],
+       "marks": {
+        "dim": [],
+        "path": [],
+        "good": [],
+        "lit": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "scans[0] = 4 is a real price and already sits in slot write = 0. Keep it; write moves on to 1.",
+      "ko": "scans[0] = 4: 실제 가격이고 이미 write = 0 자리에 있습니다. 그대로 두고 write는 1로 갑니다."
+     },
+     "views": {
+      "scans": {
+       "values": [
+        4,
+        0,
+        0,
+        2,
+        9,
+        0,
+        7
+       ],
+       "pointers": {
+        "write": 1,
+        "read": 0,
+        "i": null
+       },
+       "spans": {
+        "kept": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "kept 1",
+          "ko": "남긴 가격 1개"
+         },
+         "mark": "good"
+        }
+       },
+       "unread": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+       ],
+       "marks": {
+        "dim": [],
+        "path": [],
+        "good": [
+         0
+        ],
+        "lit": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "scans[1] = 0 is a void: skip it. write stays at 1, so the next real price lands over it.",
+      "ko": "scans[1] = 0: 취소 주문이므로 건너뜁니다. write는 1에 머물러, 다음 실제 가격이 그 자리를 덮어씁니다."
+     },
+     "views": {
+      "scans": {
+       "values": [
+        4,
+        0,
+        0,
+        2,
+        9,
+        0,
+        7
+       ],
+       "pointers": {
+        "write": 1,
+        "read": 1,
+        "i": null
+       },
+       "spans": {
+        "kept": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "kept 1",
+          "ko": "남긴 가격 1개"
+         }
+        }
+       },
+       "unread": [
+        2,
+        3,
+        4,
+        5,
+        6
+       ],
+       "marks": {
+        "dim": [],
+        "path": [],
+        "good": [],
+        "lit": [
+         1
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "scans[2] = 0 is a void: skip it. write stays at 1, so the next real price lands over it.",
+      "ko": "scans[2] = 0: 취소 주문이므로 건너뜁니다. write는 1에 머물러, 다음 실제 가격이 그 자리를 덮어씁니다."
+     },
+     "views": {
+      "scans": {
+       "values": [
+        4,
+        0,
+        0,
+        2,
+        9,
+        0,
+        7
+       ],
+       "pointers": {
+        "write": 1,
+        "read": 2,
+        "i": null
+       },
+       "spans": {
+        "kept": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "kept 1",
+          "ko": "남긴 가격 1개"
+         }
+        }
+       },
+       "unread": [
+        3,
+        4,
+        5,
+        6
+       ],
+       "marks": {
+        "dim": [],
+        "path": [],
+        "good": [],
+        "lit": [
+         2
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "scans[3] = 2 is a real price: copy it forward into slot 1, right after the last kept one, and write moves on to 2.",
+      "ko": "scans[3] = 2: 실제 가격이므로 마지막으로 남긴 가격 바로 뒤인 1번 자리로 당겨 쓰고, write는 2로 갑니다."
+     },
+     "views": {
+      "scans": {
+       "values": [
+        4,
+        2,
+        0,
+        2,
+        9,
+        0,
+        7
+       ],
+       "pointers": {
+        "write": 2,
+        "read": 3,
+        "i": null
+       },
+       "spans": {
+        "kept": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "kept 2",
+          "ko": "남긴 가격 2개"
+         },
+         "mark": "good"
+        }
+       },
+       "unread": [
+        4,
+        5,
+        6
+       ],
+       "marks": {
+        "dim": [],
+        "path": [],
+        "good": [
+         1
+        ],
+        "lit": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "scans",
+        "at": 3
+       },
+       "to": {
+        "view": "scans",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "scans[4] = 9 is a real price: copy it forward into slot 2, right after the last kept one, and write moves on to 3.",
+      "ko": "scans[4] = 9: 실제 가격이므로 마지막으로 남긴 가격 바로 뒤인 2번 자리로 당겨 쓰고, write는 3으로 갑니다."
+     },
+     "views": {
+      "scans": {
+       "values": [
+        4,
+        2,
+        9,
+        2,
+        9,
+        0,
+        7
+       ],
+       "pointers": {
+        "write": 3,
+        "read": 4,
+        "i": null
+       },
+       "spans": {
+        "kept": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "kept 3",
+          "ko": "남긴 가격 3개"
+         },
+         "mark": "good"
+        }
+       },
+       "unread": [
+        5,
+        6
+       ],
+       "marks": {
+        "dim": [],
+        "path": [],
+        "good": [
+         2
+        ],
+        "lit": [
+         4
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "scans",
+        "at": 4
+       },
+       "to": {
+        "view": "scans",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "scans[5] = 0 is a void: skip it. write stays at 3, so the next real price lands over it.",
+      "ko": "scans[5] = 0: 취소 주문이므로 건너뜁니다. write는 3에 머물러, 다음 실제 가격이 그 자리를 덮어씁니다."
+     },
+     "views": {
+      "scans": {
+       "values": [
+        4,
+        2,
+        9,
+        2,
+        9,
+        0,
+        7
+       ],
+       "pointers": {
+        "write": 3,
+        "read": 5,
+        "i": null
+       },
+       "spans": {
+        "kept": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "kept 3",
+          "ko": "남긴 가격 3개"
+         }
+        }
+       },
+       "unread": [
+        6
+       ],
+       "marks": {
+        "dim": [],
+        "path": [],
+        "good": [],
+        "lit": [
+         5
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "scans[6] = 7 is a real price: copy it forward into slot 3, right after the last kept one, and write moves on to 4.",
+      "ko": "scans[6] = 7: 실제 가격이므로 마지막으로 남긴 가격 바로 뒤인 3번 자리로 당겨 쓰고, write는 4로 갑니다."
+     },
+     "views": {
+      "scans": {
+       "values": [
+        4,
+        2,
+        9,
+        7,
+        9,
+        0,
+        7
+       ],
+       "pointers": {
+        "write": 4,
+        "read": 6,
+        "i": null
+       },
+       "spans": {
+        "kept": {
+         "from": 0,
+         "to": 3,
+         "label": {
+          "en": "kept 4",
+          "ko": "남긴 가격 4개"
+         },
+         "mark": "good"
+        }
+       },
+       "unread": [],
+       "marks": {
+        "dim": [],
+        "path": [],
+        "good": [
+         3
+        ],
+        "lit": [
+         6
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "scans",
+        "at": 6
+       },
+       "to": {
+        "view": "scans",
+        "at": 3
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every price is kept in slots 0..3, so i walks the slots from write = 4 on, writing 0s. Slot 4 still holds a stale 9: write a 0 over it.",
+      "ko": "모든 가격이 0..3번 자리에 남았으니 i가 write = 4부터 끝까지 가며 0을 씁니다. 4번 자리에는 옛 값 9가 남아 있어 0으로 덮어씁니다."
+     },
+     "views": {
+      "scans": {
+       "values": [
+        4,
+        2,
+        9,
+        7,
+        0,
+        0,
+        7
+       ],
+       "pointers": {
+        "write": 4,
+        "read": null,
+        "i": 4
+       },
+       "spans": {
+        "kept": {
+         "from": 0,
+         "to": 3,
+         "label": {
+          "en": "kept 4",
+          "ko": "남긴 가격 4개"
+         }
+        },
+        "voids": {
+         "from": 4,
+         "to": 4,
+         "label": {
+          "en": "voids 1",
+          "ko": "취소 1개"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "unread": [],
+       "marks": {
+        "dim": [],
+        "path": [],
+        "good": [
+         4
+        ],
+        "lit": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "scans",
+        "at": 4
+       },
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "i = 5: Slot 5 gets a 0; it already held one.",
+      "ko": "i = 5: 5번 자리에 0을 씁니다(이미 0이었음)."
+     },
+     "views": {
+      "scans": {
+       "values": [
+        4,
+        2,
+        9,
+        7,
+        0,
+        0,
+        7
+       ],
+       "pointers": {
+        "write": 4,
+        "read": null,
+        "i": 5
+       },
+       "spans": {
+        "kept": {
+         "from": 0,
+         "to": 3,
+         "label": {
+          "en": "kept 4",
+          "ko": "남긴 가격 4개"
+         }
+        },
+        "voids": {
+         "from": 4,
+         "to": 5,
+         "label": {
+          "en": "voids 2",
+          "ko": "취소 2개"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "unread": [],
+       "marks": {
+        "dim": [],
+        "path": [],
+        "good": [
+         5
+        ],
+        "lit": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "i = 6: Slot 6 still holds a stale 7: write a 0 over it.",
+      "ko": "i = 6: 6번 자리에는 옛 값 7이 남아 있어 0으로 덮어씁니다."
+     },
+     "views": {
+      "scans": {
+       "values": [
+        4,
+        2,
+        9,
+        7,
+        0,
+        0,
+        0
+       ],
+       "pointers": {
+        "write": 4,
+        "read": null,
+        "i": 6
+       },
+       "spans": {
+        "kept": {
+         "from": 0,
+         "to": 3,
+         "label": {
+          "en": "kept 4",
+          "ko": "남긴 가격 4개"
+         }
+        },
+        "voids": {
+         "from": 4,
+         "to": 6,
+         "label": {
+          "en": "voids 3",
+          "ko": "취소 3개"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "unread": [],
+       "marks": {
+        "dim": [],
+        "path": [],
+        "good": [
+         6
+        ],
+        "lit": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "scans",
+        "at": 6
+       },
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The 4 real prices keep their order at the front and the 3 voids sit at the end: [4,2,9,7,0,0,0].",
+      "ko": "실제 가격 4개가 순서대로 앞에, 취소 주문 3개가 끝에 놓였습니다: [4,2,9,7,0,0,0]."
+     },
+     "views": {
+      "scans": {
+       "values": [
+        4,
+        2,
+        9,
+        7,
+        0,
+        0,
+        0
+       ],
+       "pointers": {},
+       "spans": {
+        "kept": {
+         "from": 0,
+         "to": 3,
+         "label": {
+          "en": "kept 4",
+          "ko": "남긴 가격 4개"
+         },
+         "mark": "path"
+        },
+        "voids": {
+         "from": 4,
+         "to": 6,
+         "label": {
+          "en": "voids 3",
+          "ko": "취소 3개"
+         },
+         "mark": "path",
+         "below": true
+        }
+       },
+       "unread": [],
+       "marks": {
+        "dim": [],
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5,
+         6
+        ],
+        "good": [],
+        "lit": []
+       }
+      }
+     },
+     "answer": "[4,2,9,7,0,0,0]"
+    }
+   ],
+   "sampleInput": "[4,0,0,2,9,0,7]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "scans = [0,0,5]",
+   "expected": "[5,0,0]",
+   "frames": [
+    {
+     "caption": {
+      "en": "3 scans, 2 of them voided (0). write starts at slot 0: the next slot of the kept front.",
+      "ko": "주문 3개 중 2개가 취소(0)입니다. write는 0번 자리에서 시작하며, 남길 앞쪽의 다음 자리를 가리킵니다."
+     },
+     "views": {
+      "scans": {
+       "values": [
+        0,
+        0,
+        5
+       ],
+       "pointers": {
+        "write": 0,
+        "read": null,
+        "i": null
+       },
+       "spans": {
+        "kept": null
+       },
+       "unread": [
+        0,
+        1,
+        2
+       ],
+       "marks": {
+        "dim": [],
+        "path": [],
+        "good": [],
+        "lit": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "scans[0] = 0 is a void: skip it. write stays at 0, so the next real price lands over it.",
+      "ko": "scans[0] = 0: 취소 주문이므로 건너뜁니다. write는 0에 머물러, 다음 실제 가격이 그 자리를 덮어씁니다."
+     },
+     "views": {
+      "scans": {
+       "values": [
+        0,
+        0,
+        5
+       ],
+       "pointers": {
+        "write": 0,
+        "read": 0,
+        "i": null
+       },
+       "spans": {
+        "kept": null
+       },
+       "unread": [
+        1,
+        2
+       ],
+       "marks": {
+        "dim": [],
+        "path": [],
+        "good": [],
+        "lit": [
+         0
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "scans[1] = 0 is a void: skip it. write stays at 0, so the next real price lands over it.",
+      "ko": "scans[1] = 0: 취소 주문이므로 건너뜁니다. write는 0에 머물러, 다음 실제 가격이 그 자리를 덮어씁니다."
+     },
+     "views": {
+      "scans": {
+       "values": [
+        0,
+        0,
+        5
+       ],
+       "pointers": {
+        "write": 0,
+        "read": 1,
+        "i": null
+       },
+       "spans": {
+        "kept": null
+       },
+       "unread": [
+        2
+       ],
+       "marks": {
+        "dim": [],
+        "path": [],
+        "good": [],
+        "lit": [
+         1
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "scans[2] = 5 is a real price: copy it forward into slot 0, right after the last kept one, and write moves on to 1.",
+      "ko": "scans[2] = 5: 실제 가격이므로 마지막으로 남긴 가격 바로 뒤인 0번 자리로 당겨 쓰고, write는 1로 갑니다."
+     },
+     "views": {
+      "scans": {
+       "values": [
+        5,
+        0,
+        5
+       ],
+       "pointers": {
+        "write": 1,
+        "read": 2,
+        "i": null
+       },
+       "spans": {
+        "kept": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "kept 1",
+          "ko": "남긴 가격 1개"
+         },
+         "mark": "good"
+        }
+       },
+       "unread": [],
+       "marks": {
+        "dim": [],
+        "path": [],
+        "good": [
+         0
+        ],
+        "lit": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "scans",
+        "at": 2
+       },
+       "to": {
+        "view": "scans",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every price is kept in slot 0, so i walks the slots from write = 1 on, writing 0s. Slot 1 gets a 0; it already held one.",
+      "ko": "모든 가격이 0번 자리에 남았으니 i가 write = 1부터 끝까지 가며 0을 씁니다. 1번 자리에 0을 씁니다(이미 0이었음)."
+     },
+     "views": {
+      "scans": {
+       "values": [
+        5,
+        0,
+        5
+       ],
+       "pointers": {
+        "write": 1,
+        "read": null,
+        "i": 1
+       },
+       "spans": {
+        "kept": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "kept 1",
+          "ko": "남긴 가격 1개"
+         }
+        },
+        "voids": {
+         "from": 1,
+         "to": 1,
+         "label": {
+          "en": "voids 1",
+          "ko": "취소 1개"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "unread": [],
+       "marks": {
+        "dim": [],
+        "path": [],
+        "good": [
+         1
+        ],
+        "lit": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "i = 2: Slot 2 still holds a stale 5: write a 0 over it.",
+      "ko": "i = 2: 2번 자리에는 옛 값 5가 남아 있어 0으로 덮어씁니다."
+     },
+     "views": {
+      "scans": {
+       "values": [
+        5,
+        0,
+        0
+       ],
+       "pointers": {
+        "write": 1,
+        "read": null,
+        "i": 2
+       },
+       "spans": {
+        "kept": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "kept 1",
+          "ko": "남긴 가격 1개"
+         }
+        },
+        "voids": {
+         "from": 1,
+         "to": 2,
+         "label": {
+          "en": "voids 2",
+          "ko": "취소 2개"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "unread": [],
+       "marks": {
+        "dim": [],
+        "path": [],
+        "good": [
+         2
+        ],
+        "lit": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "scans",
+        "at": 2
+       },
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The 1 real price keeps its order at the front and the 2 voids sit at the end: [5,0,0].",
+      "ko": "실제 가격 1개가 순서대로 앞에, 취소 주문 2개가 끝에 놓였습니다: [5,0,0]."
+     },
+     "views": {
+      "scans": {
+       "values": [
+        5,
+        0,
+        0
+       ],
+       "pointers": {},
+       "spans": {
+        "kept": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "kept 1",
+          "ko": "남긴 가격 1개"
+         },
+         "mark": "path"
+        },
+        "voids": {
+         "from": 1,
+         "to": 2,
+         "label": {
+          "en": "voids 2",
+          "ko": "취소 2개"
+         },
+         "mark": "path",
+         "below": true
+        }
+       },
+       "unread": [],
+       "marks": {
+        "dim": [],
+        "path": [
+         0,
+         1,
+         2
+        ],
+        "good": [],
+        "lit": []
+       }
+      }
+     },
+     "answer": "[5,0,0]"
+    }
+   ],
+   "sampleInput": "[0,0,5]"
+  }
+ ]
+}

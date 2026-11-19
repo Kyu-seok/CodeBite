@@ -13,8 +13,8 @@
     wt.write("walkthrough.json")                  # fails if a run's answer is not its expected output
 
 A value going from one place to another is a move, by address (an array or output index, a map key, a set member,
-a queue position from the front, a grid or table [row, col], an intervals [group, index], a graph node id or
-[from, to] edge):
+a queue position from the front, a grid or table [row, col], an intervals [group, index], a graph or tree node id or
+[from, to] edge, a linked-list node id, a call-stack position from the bottom):
 
     from walkthrough_trace import at, move, map_entries, probe, span
     run.frame("4 goes into the map.", xs={"values": nums}, uses={"entries": map_entries(counts)},
@@ -103,6 +103,92 @@ def probe(value, hit=None, label=None):
     if label is not None:
         p["label"] = label
     return p
+
+
+def level_order_tree(values):
+    """A binary tree given as a Level-Order Array (None where a child is missing) as a `tree` view's nodes and edges,
+    for a view with `"arity": 2`. A node's id is its index in the array, so a heap's ids are its array indexes; each
+    edge's slot is 0 for a left child and 1 for a right one, so a missing left child leaves a gap."""
+    nodes, edges = [], []
+    if not values or values[0] is None:
+        return {"nodes": nodes, "edges": edges}
+    nodes.append({"id": 0, "value": values[0]})
+    queue, i = [0], 1
+    while queue and i < len(values):
+        parent = queue.pop(0)
+        for slot in (0, 1):
+            if i < len(values) and values[i] is not None:
+                nodes.append({"id": i, "value": values[i]})
+                edges.append({"from": parent, "to": i, "slot": slot})
+                queue.append(i)
+            i += 1
+    return {"nodes": nodes, "edges": edges}
+
+
+def linked_list(order):
+    """A `linkedlist` view's state from the solution's own nodes: `order` lists every node in the order to draw them
+    (keep it fixed for the run, so a reversal redraws arrows, not nodes). A node's id is its place in `order` and its
+    `next` the id of the node its `next` reaches (None at the end), found by identity, so a loop back is drawn too."""
+    def value(n):
+        return n.val if hasattr(n, "val") else n.value
+    return {"nodes": [{"id": i, "value": value(n)} for i, n in enumerate(order)],
+            "next": {i: node_id(order, n.next) for i, n in enumerate(order)}}
+
+
+def node_id(order, node):
+    """The id `linked_list(order)` gives `node` (None for None): a pointer's value, `"pointers": {"slow": node_id(order, slow)}`."""
+    if node is None:
+        return None
+    for i, n in enumerate(order):
+        if n is node:
+            return i
+    raise ValueError("that node is not in the drawing order")
+
+
+class Tree:
+    """A `tree` view's nodes and edges, grown one node at a time (a recursion tree's calls, a trie's letters).
+    `add(value, parent=None, label=None, slot=None)` returns the new node's id; `label` is written on the edge into
+    it ("take 5", a trie's letter) and `slot` places it among its parent's children in a view with an `arity`.
+    `state()` is the tree so far, to pass as the view's state: `run.frame(..., calls={**t.state(), "nodeMarks": ...})`."""
+
+    def __init__(self):
+        self.nodes, self.edges = [], []
+
+    def add(self, value, parent=None, label=None, slot=None, id=None):
+        node_id = len(self.nodes) if id is None else id
+        if parent is not None and not any(n["id"] == parent for n in self.nodes):
+            raise ValueError(f"no node {parent} to add a child to")
+        self.nodes.append({"id": node_id, "value": value})
+        if parent is not None:
+            edge = {"from": parent, "to": node_id}
+            if label is not None:
+                edge["label"] = label
+            if slot is not None:
+                edge["slot"] = slot
+            self.edges.append(edge)
+        return node_id
+
+    def set(self, node_id, value):
+        """A node's value changes (a trie node becoming the end of a word, a heap's sift)."""
+        for n in self.nodes:
+            if n["id"] == node_id:
+                n["value"] = value
+                return
+        raise ValueError(f"no node {node_id}")
+
+    def state(self):
+        return {"nodes": [dict(n) for n in self.nodes], "edges": [dict(e) for e in self.edges]}
+
+
+def call(name, note=None, **args):
+    """One card of a `callstack` view: the function's `name`, its arguments in order (`call("place", row=2)`) and an
+    optional `note` (Text) under them, such as the column it is trying. Calls are listed bottom first."""
+    c = {"name": name}
+    if args:
+        c["args"] = args
+    if note is not None:
+        c["note"] = note
+    return c
 
 
 def map_entries(mapping):

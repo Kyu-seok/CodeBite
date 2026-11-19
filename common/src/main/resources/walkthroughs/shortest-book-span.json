@@ -1,0 +1,5325 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Shortest Book Span",
+  "ko": "가장 짧은 책 구간"
+ },
+ "approach": {
+  "en": "Grow the window on the right until it covers every needed tag, then shrink it from the left for as long as it still covers them: each covering window is measured, and the shortest one is the answer.",
+  "ko": "필요한 태그를 모두 담을 때까지 창을 오른쪽으로 늘리고, 그다음 계속 다 담는 동안 왼쪽에서 줄입니다. 다 담는 창마다 길이를 재고, 가장 짧은 창이 답입니다."
+ },
+ "views": [
+  {
+   "id": "needed",
+   "type": "array",
+   "title": {
+    "en": "needed",
+    "ko": "needed (필요한 태그)"
+   }
+  },
+  {
+   "id": "shelf",
+   "type": "array",
+   "title": {
+    "en": "shelf",
+    "ko": "shelf (책꽂이)"
+   }
+  },
+  {
+   "id": "missing",
+   "type": "map",
+   "title": {
+    "en": "missing (still needed per tag)",
+    "ko": "missing (태그별 아직 필요한 수)"
+   }
+  },
+  {
+   "id": "state",
+   "type": "vars"
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "shelf = \"FINDTHEBOOKSNOW\", needed = \"BOK\"",
+   "expected": "BOOK",
+   "frames": [
+    {
+     "caption": {
+      "en": "needed = \"BOK\": missing starts with the count of each tag needed, and to_cover = 3 volumes are still lacking.",
+      "ko": "needed = \"BOK\": missing에는 태그마다 필요한 수가 들어가고, 아직 모자란 권수는 to_cover = 3입니다."
+     },
+     "views": {
+      "needed": {
+       "values": [
+        "B",
+        "O",
+        "K"
+       ]
+      },
+      "shelf": {
+       "values": [
+        "F",
+        "I",
+        "N",
+        "D",
+        "T",
+        "H",
+        "E",
+        "B",
+        "O",
+        "O",
+        "K",
+        "S",
+        "N",
+        "O",
+        "W"
+       ],
+       "spans": {},
+       "pointers": {
+        "start": null,
+        "end": null
+       },
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "missing": {
+       "entries": [
+        {
+         "key": "B",
+         "value": 1
+        },
+        {
+         "key": "O",
+         "value": 1
+        },
+        {
+         "key": "K",
+         "value": 1
+        }
+       ],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "to_cover",
+          "ko": "to_cover (아직 모자란 권수)"
+         },
+         "value": 3,
+         "why": "to_cover is how many needed volumes the window still lacks, summed over the cards; it is no one card's value, only equal to one by chance",
+         "mark": null
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "needed",
+        "at": 0
+       },
+       "to": {
+        "view": "missing",
+        "at": "B"
+       }
+      },
+      {
+       "from": {
+        "view": "needed",
+        "at": 1
+       },
+       "to": {
+        "view": "missing",
+        "at": "O"
+       }
+      },
+      {
+       "from": {
+        "view": "needed",
+        "at": 2
+       },
+       "to": {
+        "view": "missing",
+        "at": "K"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "shelf[0] = 'F' isn't needed any more, so its count just goes to -1 (a spare) and to_cover stays 3.",
+      "ko": "shelf[0] = 'F' 태그는 더 필요하지 않아 개수만 -1이 되고(남는 책) to_cover는 3 그대로입니다."
+     },
+     "views": {
+      "needed": {
+       "values": [
+        "B",
+        "O",
+        "K"
+       ]
+      },
+      "shelf": {
+       "values": [
+        "F",
+        "I",
+        "N",
+        "D",
+        "T",
+        "H",
+        "E",
+        "B",
+        "O",
+        "O",
+        "K",
+        "S",
+        "N",
+        "O",
+        "W"
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "window 1",
+          "ko": "창 1"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "start": 0,
+        "end": 0
+       },
+       "unread": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "missing": {
+       "entries": [
+        {
+         "key": "B",
+         "value": 1
+        },
+        {
+         "key": "O",
+         "value": 1
+        },
+        {
+         "key": "K",
+         "value": 1
+        },
+        {
+         "key": "F",
+         "value": -1
+        }
+       ],
+       "marks": {
+        "good": [
+         "F"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "to_cover",
+          "ko": "to_cover (아직 모자란 권수)"
+         },
+         "value": 3,
+         "why": "to_cover is how many needed volumes the window still lacks, summed over the cards; it is no one card's value, only equal to one by chance",
+         "mark": null
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "shelf",
+        "at": 0
+       },
+       "to": {
+        "view": "missing",
+        "at": "F"
+       },
+       "value": "−1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "shelf[1] = 'I' isn't needed any more, so its count just goes to -1 (a spare) and to_cover stays 3.",
+      "ko": "shelf[1] = 'I' 태그는 더 필요하지 않아 개수만 -1이 되고(남는 책) to_cover는 3 그대로입니다."
+     },
+     "views": {
+      "needed": {
+       "values": [
+        "B",
+        "O",
+        "K"
+       ]
+      },
+      "shelf": {
+       "values": [
+        "F",
+        "I",
+        "N",
+        "D",
+        "T",
+        "H",
+        "E",
+        "B",
+        "O",
+        "O",
+        "K",
+        "S",
+        "N",
+        "O",
+        "W"
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "window 2",
+          "ko": "창 2"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "start": 0,
+        "end": 1
+       },
+       "unread": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "missing": {
+       "entries": [
+        {
+         "key": "B",
+         "value": 1
+        },
+        {
+         "key": "O",
+         "value": 1
+        },
+        {
+         "key": "K",
+         "value": 1
+        },
+        {
+         "key": "F",
+         "value": -1
+        },
+        {
+         "key": "I",
+         "value": -1
+        }
+       ],
+       "marks": {
+        "good": [
+         "I"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "to_cover",
+          "ko": "to_cover (아직 모자란 권수)"
+         },
+         "value": 3,
+         "why": "to_cover is how many needed volumes the window still lacks, summed over the cards; it is no one card's value, only equal to one by chance",
+         "mark": null
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "shelf",
+        "at": 1
+       },
+       "to": {
+        "view": "missing",
+        "at": "I"
+       },
+       "value": "−1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "shelf[2] = 'N' isn't needed any more, so its count just goes to -1 (a spare) and to_cover stays 3.",
+      "ko": "shelf[2] = 'N' 태그는 더 필요하지 않아 개수만 -1이 되고(남는 책) to_cover는 3 그대로입니다."
+     },
+     "views": {
+      "needed": {
+       "values": [
+        "B",
+        "O",
+        "K"
+       ]
+      },
+      "shelf": {
+       "values": [
+        "F",
+        "I",
+        "N",
+        "D",
+        "T",
+        "H",
+        "E",
+        "B",
+        "O",
+        "O",
+        "K",
+        "S",
+        "N",
+        "O",
+        "W"
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "window 3",
+          "ko": "창 3"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "start": 0,
+        "end": 2
+       },
+       "unread": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "missing": {
+       "entries": [
+        {
+         "key": "B",
+         "value": 1
+        },
+        {
+         "key": "O",
+         "value": 1
+        },
+        {
+         "key": "K",
+         "value": 1
+        },
+        {
+         "key": "F",
+         "value": -1
+        },
+        {
+         "key": "I",
+         "value": -1
+        },
+        {
+         "key": "N",
+         "value": -1
+        }
+       ],
+       "marks": {
+        "good": [
+         "N"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "to_cover",
+          "ko": "to_cover (아직 모자란 권수)"
+         },
+         "value": 3,
+         "why": "to_cover is how many needed volumes the window still lacks, summed over the cards; it is no one card's value, only equal to one by chance",
+         "mark": null
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "shelf",
+        "at": 2
+       },
+       "to": {
+        "view": "missing",
+        "at": "N"
+       },
+       "value": "−1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "shelf[3] = 'D' isn't needed any more, so its count just goes to -1 (a spare) and to_cover stays 3.",
+      "ko": "shelf[3] = 'D' 태그는 더 필요하지 않아 개수만 -1이 되고(남는 책) to_cover는 3 그대로입니다."
+     },
+     "views": {
+      "needed": {
+       "values": [
+        "B",
+        "O",
+        "K"
+       ]
+      },
+      "shelf": {
+       "values": [
+        "F",
+        "I",
+        "N",
+        "D",
+        "T",
+        "H",
+        "E",
+        "B",
+        "O",
+        "O",
+        "K",
+        "S",
+        "N",
+        "O",
+        "W"
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 3,
+         "label": {
+          "en": "window 4",
+          "ko": "창 4"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "start": 0,
+        "end": 3
+       },
+       "unread": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "missing": {
+       "entries": [
+        {
+         "key": "B",
+         "value": 1
+        },
+        {
+         "key": "O",
+         "value": 1
+        },
+        {
+         "key": "K",
+         "value": 1
+        },
+        {
+         "key": "F",
+         "value": -1
+        },
+        {
+         "key": "I",
+         "value": -1
+        },
+        {
+         "key": "N",
+         "value": -1
+        },
+        {
+         "key": "D",
+         "value": -1
+        }
+       ],
+       "marks": {
+        "good": [
+         "D"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "to_cover",
+          "ko": "to_cover (아직 모자란 권수)"
+         },
+         "value": 3,
+         "why": "to_cover is how many needed volumes the window still lacks, summed over the cards; it is no one card's value, only equal to one by chance",
+         "mark": null
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "shelf",
+        "at": 3
+       },
+       "to": {
+        "view": "missing",
+        "at": "D"
+       },
+       "value": "−1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "shelf[4] = 'T' isn't needed any more, so its count just goes to -1 (a spare) and to_cover stays 3.",
+      "ko": "shelf[4] = 'T' 태그는 더 필요하지 않아 개수만 -1이 되고(남는 책) to_cover는 3 그대로입니다."
+     },
+     "views": {
+      "needed": {
+       "values": [
+        "B",
+        "O",
+        "K"
+       ]
+      },
+      "shelf": {
+       "values": [
+        "F",
+        "I",
+        "N",
+        "D",
+        "T",
+        "H",
+        "E",
+        "B",
+        "O",
+        "O",
+        "K",
+        "S",
+        "N",
+        "O",
+        "W"
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 4,
+         "label": {
+          "en": "window 5",
+          "ko": "창 5"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "start": 0,
+        "end": 4
+       },
+       "unread": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "missing": {
+       "entries": [
+        {
+         "key": "B",
+         "value": 1
+        },
+        {
+         "key": "O",
+         "value": 1
+        },
+        {
+         "key": "K",
+         "value": 1
+        },
+        {
+         "key": "F",
+         "value": -1
+        },
+        {
+         "key": "I",
+         "value": -1
+        },
+        {
+         "key": "N",
+         "value": -1
+        },
+        {
+         "key": "D",
+         "value": -1
+        },
+        {
+         "key": "T",
+         "value": -1
+        }
+       ],
+       "marks": {
+        "good": [
+         "T"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "to_cover",
+          "ko": "to_cover (아직 모자란 권수)"
+         },
+         "value": 3,
+         "why": "to_cover is how many needed volumes the window still lacks, summed over the cards; it is no one card's value, only equal to one by chance",
+         "mark": null
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "shelf",
+        "at": 4
+       },
+       "to": {
+        "view": "missing",
+        "at": "T"
+       },
+       "value": "−1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "shelf[5] = 'H' isn't needed any more, so its count just goes to -1 (a spare) and to_cover stays 3.",
+      "ko": "shelf[5] = 'H' 태그는 더 필요하지 않아 개수만 -1이 되고(남는 책) to_cover는 3 그대로입니다."
+     },
+     "views": {
+      "needed": {
+       "values": [
+        "B",
+        "O",
+        "K"
+       ]
+      },
+      "shelf": {
+       "values": [
+        "F",
+        "I",
+        "N",
+        "D",
+        "T",
+        "H",
+        "E",
+        "B",
+        "O",
+        "O",
+        "K",
+        "S",
+        "N",
+        "O",
+        "W"
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 5,
+         "label": {
+          "en": "window 6",
+          "ko": "창 6"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "start": 0,
+        "end": 5
+       },
+       "unread": [
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "missing": {
+       "entries": [
+        {
+         "key": "B",
+         "value": 1
+        },
+        {
+         "key": "O",
+         "value": 1
+        },
+        {
+         "key": "K",
+         "value": 1
+        },
+        {
+         "key": "F",
+         "value": -1
+        },
+        {
+         "key": "I",
+         "value": -1
+        },
+        {
+         "key": "N",
+         "value": -1
+        },
+        {
+         "key": "D",
+         "value": -1
+        },
+        {
+         "key": "T",
+         "value": -1
+        },
+        {
+         "key": "H",
+         "value": -1
+        }
+       ],
+       "marks": {
+        "good": [
+         "H"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "to_cover",
+          "ko": "to_cover (아직 모자란 권수)"
+         },
+         "value": 3,
+         "why": "to_cover is how many needed volumes the window still lacks, summed over the cards; it is no one card's value, only equal to one by chance",
+         "mark": null
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "shelf",
+        "at": 5
+       },
+       "to": {
+        "view": "missing",
+        "at": "H"
+       },
+       "value": "−1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "shelf[6] = 'E' isn't needed any more, so its count just goes to -1 (a spare) and to_cover stays 3.",
+      "ko": "shelf[6] = 'E' 태그는 더 필요하지 않아 개수만 -1이 되고(남는 책) to_cover는 3 그대로입니다."
+     },
+     "views": {
+      "needed": {
+       "values": [
+        "B",
+        "O",
+        "K"
+       ]
+      },
+      "shelf": {
+       "values": [
+        "F",
+        "I",
+        "N",
+        "D",
+        "T",
+        "H",
+        "E",
+        "B",
+        "O",
+        "O",
+        "K",
+        "S",
+        "N",
+        "O",
+        "W"
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 6,
+         "label": {
+          "en": "window 7",
+          "ko": "창 7"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "start": 0,
+        "end": 6
+       },
+       "unread": [
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "missing": {
+       "entries": [
+        {
+         "key": "B",
+         "value": 1
+        },
+        {
+         "key": "O",
+         "value": 1
+        },
+        {
+         "key": "K",
+         "value": 1
+        },
+        {
+         "key": "F",
+         "value": -1
+        },
+        {
+         "key": "I",
+         "value": -1
+        },
+        {
+         "key": "N",
+         "value": -1
+        },
+        {
+         "key": "D",
+         "value": -1
+        },
+        {
+         "key": "T",
+         "value": -1
+        },
+        {
+         "key": "H",
+         "value": -1
+        },
+        {
+         "key": "E",
+         "value": -1
+        }
+       ],
+       "marks": {
+        "good": [
+         "E"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "to_cover",
+          "ko": "to_cover (아직 모자란 권수)"
+         },
+         "value": 3,
+         "why": "to_cover is how many needed volumes the window still lacks, summed over the cards; it is no one card's value, only equal to one by chance",
+         "mark": null
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "shelf",
+        "at": 6
+       },
+       "to": {
+        "view": "missing",
+        "at": "E"
+       },
+       "value": "−1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "shelf[7] = 'B' was still needed, so to_cover drops to 2.",
+      "ko": "shelf[7] = 'B' 태그는 아직 필요했으므로 to_cover가 2로 줄어듭니다."
+     },
+     "views": {
+      "needed": {
+       "values": [
+        "B",
+        "O",
+        "K"
+       ]
+      },
+      "shelf": {
+       "values": [
+        "F",
+        "I",
+        "N",
+        "D",
+        "T",
+        "H",
+        "E",
+        "B",
+        "O",
+        "O",
+        "K",
+        "S",
+        "N",
+        "O",
+        "W"
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 7,
+         "label": {
+          "en": "window 8",
+          "ko": "창 8"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "start": 0,
+        "end": 7
+       },
+       "unread": [
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "missing": {
+       "entries": [
+        {
+         "key": "B",
+         "value": 0
+        },
+        {
+         "key": "O",
+         "value": 1
+        },
+        {
+         "key": "K",
+         "value": 1
+        },
+        {
+         "key": "F",
+         "value": -1
+        },
+        {
+         "key": "I",
+         "value": -1
+        },
+        {
+         "key": "N",
+         "value": -1
+        },
+        {
+         "key": "D",
+         "value": -1
+        },
+        {
+         "key": "T",
+         "value": -1
+        },
+        {
+         "key": "H",
+         "value": -1
+        },
+        {
+         "key": "E",
+         "value": -1
+        }
+       ],
+       "marks": {
+        "good": [
+         "B"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "to_cover",
+          "ko": "to_cover (아직 모자란 권수)"
+         },
+         "value": 2,
+         "why": "to_cover is how many needed volumes the window still lacks, summed over the cards; it is no one card's value, only equal to one by chance",
+         "mark": null
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "shelf",
+        "at": 7
+       },
+       "to": {
+        "view": "missing",
+        "at": "B"
+       },
+       "value": "−1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "shelf[8] = 'O' was still needed, so to_cover drops to 1.",
+      "ko": "shelf[8] = 'O' 태그는 아직 필요했으므로 to_cover가 1로 줄어듭니다."
+     },
+     "views": {
+      "needed": {
+       "values": [
+        "B",
+        "O",
+        "K"
+       ]
+      },
+      "shelf": {
+       "values": [
+        "F",
+        "I",
+        "N",
+        "D",
+        "T",
+        "H",
+        "E",
+        "B",
+        "O",
+        "O",
+        "K",
+        "S",
+        "N",
+        "O",
+        "W"
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 8,
+         "label": {
+          "en": "window 9",
+          "ko": "창 9"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "start": 0,
+        "end": 8
+       },
+       "unread": [
+        9,
+        10,
+        11,
+        12,
+        13,
+        14
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "missing": {
+       "entries": [
+        {
+         "key": "B",
+         "value": 0
+        },
+        {
+         "key": "O",
+         "value": 0
+        },
+        {
+         "key": "K",
+         "value": 1
+        },
+        {
+         "key": "F",
+         "value": -1
+        },
+        {
+         "key": "I",
+         "value": -1
+        },
+        {
+         "key": "N",
+         "value": -1
+        },
+        {
+         "key": "D",
+         "value": -1
+        },
+        {
+         "key": "T",
+         "value": -1
+        },
+        {
+         "key": "H",
+         "value": -1
+        },
+        {
+         "key": "E",
+         "value": -1
+        }
+       ],
+       "marks": {
+        "good": [
+         "O"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "to_cover",
+          "ko": "to_cover (아직 모자란 권수)"
+         },
+         "value": 1,
+         "why": "to_cover is how many needed volumes the window still lacks, summed over the cards; it is no one card's value, only equal to one by chance",
+         "mark": null
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "shelf",
+        "at": 8
+       },
+       "to": {
+        "view": "missing",
+        "at": "O"
+       },
+       "value": "−1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "shelf[9] = 'O' isn't needed any more, so its count just goes to -1 (a spare) and to_cover stays 1.",
+      "ko": "shelf[9] = 'O' 태그는 더 필요하지 않아 개수만 -1이 되고(남는 책) to_cover는 1 그대로입니다."
+     },
+     "views": {
+      "needed": {
+       "values": [
+        "B",
+        "O",
+        "K"
+       ]
+      },
+      "shelf": {
+       "values": [
+        "F",
+        "I",
+        "N",
+        "D",
+        "T",
+        "H",
+        "E",
+        "B",
+        "O",
+        "O",
+        "K",
+        "S",
+        "N",
+        "O",
+        "W"
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 9,
+         "label": {
+          "en": "window 10",
+          "ko": "창 10"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "start": 0,
+        "end": 9
+       },
+       "unread": [
+        10,
+        11,
+        12,
+        13,
+        14
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "missing": {
+       "entries": [
+        {
+         "key": "B",
+         "value": 0
+        },
+        {
+         "key": "O",
+         "value": -1
+        },
+        {
+         "key": "K",
+         "value": 1
+        },
+        {
+         "key": "F",
+         "value": -1
+        },
+        {
+         "key": "I",
+         "value": -1
+        },
+        {
+         "key": "N",
+         "value": -1
+        },
+        {
+         "key": "D",
+         "value": -1
+        },
+        {
+         "key": "T",
+         "value": -1
+        },
+        {
+         "key": "H",
+         "value": -1
+        },
+        {
+         "key": "E",
+         "value": -1
+        }
+       ],
+       "marks": {
+        "good": [
+         "O"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "to_cover",
+          "ko": "to_cover (아직 모자란 권수)"
+         },
+         "value": 1,
+         "why": "to_cover is how many needed volumes the window still lacks, summed over the cards; it is no one card's value, only equal to one by chance",
+         "mark": null
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "shelf",
+        "at": 9
+       },
+       "to": {
+        "view": "missing",
+        "at": "O"
+       },
+       "value": "−1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "shelf[10] = 'K' was still needed, so to_cover drops to 0.",
+      "ko": "shelf[10] = 'K' 태그는 아직 필요했으므로 to_cover가 0으로 줄어듭니다."
+     },
+     "views": {
+      "needed": {
+       "values": [
+        "B",
+        "O",
+        "K"
+       ]
+      },
+      "shelf": {
+       "values": [
+        "F",
+        "I",
+        "N",
+        "D",
+        "T",
+        "H",
+        "E",
+        "B",
+        "O",
+        "O",
+        "K",
+        "S",
+        "N",
+        "O",
+        "W"
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 10,
+         "label": {
+          "en": "window 11",
+          "ko": "창 11"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "start": 0,
+        "end": 10
+       },
+       "unread": [
+        11,
+        12,
+        13,
+        14
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "missing": {
+       "entries": [
+        {
+         "key": "B",
+         "value": 0
+        },
+        {
+         "key": "O",
+         "value": -1
+        },
+        {
+         "key": "K",
+         "value": 0
+        },
+        {
+         "key": "F",
+         "value": -1
+        },
+        {
+         "key": "I",
+         "value": -1
+        },
+        {
+         "key": "N",
+         "value": -1
+        },
+        {
+         "key": "D",
+         "value": -1
+        },
+        {
+         "key": "T",
+         "value": -1
+        },
+        {
+         "key": "H",
+         "value": -1
+        },
+        {
+         "key": "E",
+         "value": -1
+        }
+       ],
+       "marks": {
+        "good": [
+         "K"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "to_cover",
+          "ko": "to_cover (아직 모자란 권수)"
+         },
+         "value": 0,
+         "why": "to_cover is how many needed volumes the window still lacks, summed over the cards; it is no one card's value, only equal to one by chance",
+         "mark": "good"
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "shelf",
+        "at": 10
+       },
+       "to": {
+        "view": "missing",
+        "at": "K"
+       },
+       "value": "−1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "to_cover = 0: shelf[0..10] = \"FINDTHEBOOK\" covers every needed tag. Its length 11 is the first covering window, so it is the best now.",
+      "ko": "to_cover = 0: shelf[0..10] = \"FINDTHEBOOK\" 구간이 필요한 태그를 모두 담습니다. 길이 11: 처음으로 다 담은 창이므로 이제 best입니다."
+     },
+     "views": {
+      "needed": {
+       "values": [
+        "B",
+        "O",
+        "K"
+       ]
+      },
+      "shelf": {
+       "values": [
+        "F",
+        "I",
+        "N",
+        "D",
+        "T",
+        "H",
+        "E",
+        "B",
+        "O",
+        "O",
+        "K",
+        "S",
+        "N",
+        "O",
+        "W"
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 10,
+         "label": {
+          "en": "window 11",
+          "ko": "창 11"
+         },
+         "mark": "good",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 10,
+         "label": {
+          "en": "best 11",
+          "ko": "best (최단) 11"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "pointers": {
+        "start": 0,
+        "end": 10
+       },
+       "unread": [
+        11,
+        12,
+        13,
+        14
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "missing": {
+       "entries": [
+        {
+         "key": "B",
+         "value": 0
+        },
+        {
+         "key": "O",
+         "value": -1
+        },
+        {
+         "key": "K",
+         "value": 0
+        },
+        {
+         "key": "F",
+         "value": -1
+        },
+        {
+         "key": "I",
+         "value": -1
+        },
+        {
+         "key": "N",
+         "value": -1
+        },
+        {
+         "key": "D",
+         "value": -1
+        },
+        {
+         "key": "T",
+         "value": -1
+        },
+        {
+         "key": "H",
+         "value": -1
+        },
+        {
+         "key": "E",
+         "value": -1
+        }
+       ],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "to_cover",
+          "ko": "to_cover (아직 모자란 권수)"
+         },
+         "value": 0,
+         "why": "to_cover is how many needed volumes the window still lacks, summed over the cards; it is no one card's value, only equal to one by chance",
+         "mark": "good"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Shrink from the left: shelf[0] = 'F' leaves, but it was a spare (count back to 0), so the window still covers everything.",
+      "ko": "왼쪽에서 줄입니다: shelf[0] = 'F' 태그가 빠지지만 남는 책이었으므로(개수 0) 창은 여전히 모두 담습니다."
+     },
+     "views": {
+      "needed": {
+       "values": [
+        "B",
+        "O",
+        "K"
+       ]
+      },
+      "shelf": {
+       "values": [
+        "F",
+        "I",
+        "N",
+        "D",
+        "T",
+        "H",
+        "E",
+        "B",
+        "O",
+        "O",
+        "K",
+        "S",
+        "N",
+        "O",
+        "W"
+       ],
+       "spans": {
+        "window": {
+         "from": 1,
+         "to": 10,
+         "label": {
+          "en": "window 10",
+          "ko": "창 10"
+         },
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 10,
+         "label": {
+          "en": "best 11",
+          "ko": "best (최단) 11"
+         },
+         "below": true
+        }
+       },
+       "pointers": {
+        "start": 1,
+        "end": 10
+       },
+       "unread": [
+        11,
+        12,
+        13,
+        14
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "missing": {
+       "entries": [
+        {
+         "key": "B",
+         "value": 0
+        },
+        {
+         "key": "O",
+         "value": -1
+        },
+        {
+         "key": "K",
+         "value": 0
+        },
+        {
+         "key": "F",
+         "value": 0
+        },
+        {
+         "key": "I",
+         "value": -1
+        },
+        {
+         "key": "N",
+         "value": -1
+        },
+        {
+         "key": "D",
+         "value": -1
+        },
+        {
+         "key": "T",
+         "value": -1
+        },
+        {
+         "key": "H",
+         "value": -1
+        },
+        {
+         "key": "E",
+         "value": -1
+        }
+       ],
+       "marks": {
+        "good": [
+         "F"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "to_cover",
+          "ko": "to_cover (아직 모자란 권수)"
+         },
+         "value": 0,
+         "why": "to_cover is how many needed volumes the window still lacks, summed over the cards; it is no one card's value, only equal to one by chance",
+         "mark": "good"
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "shelf",
+        "at": 0
+       },
+       "to": {
+        "view": "missing",
+        "at": "F"
+       },
+       "value": "+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "to_cover = 0: shelf[1..10] = \"INDTHEBOOK\" covers every needed tag. Its length 10 is shorter than the best 11, so it is the best now.",
+      "ko": "to_cover = 0: shelf[1..10] = \"INDTHEBOOK\" 구간이 필요한 태그를 모두 담습니다. 길이 10: 지금까지 최단 11보다 짧으므로 이제 best입니다."
+     },
+     "views": {
+      "needed": {
+       "values": [
+        "B",
+        "O",
+        "K"
+       ]
+      },
+      "shelf": {
+       "values": [
+        "F",
+        "I",
+        "N",
+        "D",
+        "T",
+        "H",
+        "E",
+        "B",
+        "O",
+        "O",
+        "K",
+        "S",
+        "N",
+        "O",
+        "W"
+       ],
+       "spans": {
+        "window": {
+         "from": 1,
+         "to": 10,
+         "label": {
+          "en": "window 10",
+          "ko": "창 10"
+         },
+         "mark": "good",
+         "fade": true
+        },
+        "best": {
+         "from": 1,
+         "to": 10,
+         "label": {
+          "en": "best 10",
+          "ko": "best (최단) 10"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "pointers": {
+        "start": 1,
+        "end": 10
+       },
+       "unread": [
+        11,
+        12,
+        13,
+        14
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "missing": {
+       "entries": [
+        {
+         "key": "B",
+         "value": 0
+        },
+        {
+         "key": "O",
+         "value": -1
+        },
+        {
+         "key": "K",
+         "value": 0
+        },
+        {
+         "key": "F",
+         "value": 0
+        },
+        {
+         "key": "I",
+         "value": -1
+        },
+        {
+         "key": "N",
+         "value": -1
+        },
+        {
+         "key": "D",
+         "value": -1
+        },
+        {
+         "key": "T",
+         "value": -1
+        },
+        {
+         "key": "H",
+         "value": -1
+        },
+        {
+         "key": "E",
+         "value": -1
+        }
+       ],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "to_cover",
+          "ko": "to_cover (아직 모자란 권수)"
+         },
+         "value": 0,
+         "why": "to_cover is how many needed volumes the window still lacks, summed over the cards; it is no one card's value, only equal to one by chance",
+         "mark": "good"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Shrink from the left: shelf[1] = 'I' leaves, but it was a spare (count back to 0), so the window still covers everything.",
+      "ko": "왼쪽에서 줄입니다: shelf[1] = 'I' 태그가 빠지지만 남는 책이었으므로(개수 0) 창은 여전히 모두 담습니다."
+     },
+     "views": {
+      "needed": {
+       "values": [
+        "B",
+        "O",
+        "K"
+       ]
+      },
+      "shelf": {
+       "values": [
+        "F",
+        "I",
+        "N",
+        "D",
+        "T",
+        "H",
+        "E",
+        "B",
+        "O",
+        "O",
+        "K",
+        "S",
+        "N",
+        "O",
+        "W"
+       ],
+       "spans": {
+        "window": {
+         "from": 2,
+         "to": 10,
+         "label": {
+          "en": "window 9",
+          "ko": "창 9"
+         },
+         "fade": true
+        },
+        "best": {
+         "from": 1,
+         "to": 10,
+         "label": {
+          "en": "best 10",
+          "ko": "best (최단) 10"
+         },
+         "below": true
+        }
+       },
+       "pointers": {
+        "start": 2,
+        "end": 10
+       },
+       "unread": [
+        11,
+        12,
+        13,
+        14
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "missing": {
+       "entries": [
+        {
+         "key": "B",
+         "value": 0
+        },
+        {
+         "key": "O",
+         "value": -1
+        },
+        {
+         "key": "K",
+         "value": 0
+        },
+        {
+         "key": "F",
+         "value": 0
+        },
+        {
+         "key": "I",
+         "value": 0
+        },
+        {
+         "key": "N",
+         "value": -1
+        },
+        {
+         "key": "D",
+         "value": -1
+        },
+        {
+         "key": "T",
+         "value": -1
+        },
+        {
+         "key": "H",
+         "value": -1
+        },
+        {
+         "key": "E",
+         "value": -1
+        }
+       ],
+       "marks": {
+        "good": [
+         "I"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "to_cover",
+          "ko": "to_cover (아직 모자란 권수)"
+         },
+         "value": 0,
+         "why": "to_cover is how many needed volumes the window still lacks, summed over the cards; it is no one card's value, only equal to one by chance",
+         "mark": "good"
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "shelf",
+        "at": 1
+       },
+       "to": {
+        "view": "missing",
+        "at": "I"
+       },
+       "value": "+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "to_cover = 0: shelf[2..10] = \"NDTHEBOOK\" covers every needed tag. Its length 9 is shorter than the best 10, so it is the best now.",
+      "ko": "to_cover = 0: shelf[2..10] = \"NDTHEBOOK\" 구간이 필요한 태그를 모두 담습니다. 길이 9: 지금까지 최단 10보다 짧으므로 이제 best입니다."
+     },
+     "views": {
+      "needed": {
+       "values": [
+        "B",
+        "O",
+        "K"
+       ]
+      },
+      "shelf": {
+       "values": [
+        "F",
+        "I",
+        "N",
+        "D",
+        "T",
+        "H",
+        "E",
+        "B",
+        "O",
+        "O",
+        "K",
+        "S",
+        "N",
+        "O",
+        "W"
+       ],
+       "spans": {
+        "window": {
+         "from": 2,
+         "to": 10,
+         "label": {
+          "en": "window 9",
+          "ko": "창 9"
+         },
+         "mark": "good",
+         "fade": true
+        },
+        "best": {
+         "from": 2,
+         "to": 10,
+         "label": {
+          "en": "best 9",
+          "ko": "best (최단) 9"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "pointers": {
+        "start": 2,
+        "end": 10
+       },
+       "unread": [
+        11,
+        12,
+        13,
+        14
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "missing": {
+       "entries": [
+        {
+         "key": "B",
+         "value": 0
+        },
+        {
+         "key": "O",
+         "value": -1
+        },
+        {
+         "key": "K",
+         "value": 0
+        },
+        {
+         "key": "F",
+         "value": 0
+        },
+        {
+         "key": "I",
+         "value": 0
+        },
+        {
+         "key": "N",
+         "value": -1
+        },
+        {
+         "key": "D",
+         "value": -1
+        },
+        {
+         "key": "T",
+         "value": -1
+        },
+        {
+         "key": "H",
+         "value": -1
+        },
+        {
+         "key": "E",
+         "value": -1
+        }
+       ],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "to_cover",
+          "ko": "to_cover (아직 모자란 권수)"
+         },
+         "value": 0,
+         "why": "to_cover is how many needed volumes the window still lacks, summed over the cards; it is no one card's value, only equal to one by chance",
+         "mark": "good"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Shrink from the left: shelf[2] = 'N' leaves, but it was a spare (count back to 0), so the window still covers everything.",
+      "ko": "왼쪽에서 줄입니다: shelf[2] = 'N' 태그가 빠지지만 남는 책이었으므로(개수 0) 창은 여전히 모두 담습니다."
+     },
+     "views": {
+      "needed": {
+       "values": [
+        "B",
+        "O",
+        "K"
+       ]
+      },
+      "shelf": {
+       "values": [
+        "F",
+        "I",
+        "N",
+        "D",
+        "T",
+        "H",
+        "E",
+        "B",
+        "O",
+        "O",
+        "K",
+        "S",
+        "N",
+        "O",
+        "W"
+       ],
+       "spans": {
+        "window": {
+         "from": 3,
+         "to": 10,
+         "label": {
+          "en": "window 8",
+          "ko": "창 8"
+         },
+         "fade": true
+        },
+        "best": {
+         "from": 2,
+         "to": 10,
+         "label": {
+          "en": "best 9",
+          "ko": "best (최단) 9"
+         },
+         "below": true
+        }
+       },
+       "pointers": {
+        "start": 3,
+        "end": 10
+       },
+       "unread": [
+        11,
+        12,
+        13,
+        14
+       ],
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "missing": {
+       "entries": [
+        {
+         "key": "B",
+         "value": 0
+        },
+        {
+         "key": "O",
+         "value": -1
+        },
+        {
+         "key": "K",
+         "value": 0
+        },
+        {
+         "key": "F",
+         "value": 0
+        },
+        {
+         "key": "I",
+         "value": 0
+        },
+        {
+         "key": "N",
+         "value": 0
+        },
+        {
+         "key": "D",
+         "value": -1
+        },
+        {
+         "key": "T",
+         "value": -1
+        },
+        {
+         "key": "H",
+         "value": -1
+        },
+        {
+         "key": "E",
+         "value": -1
+        }
+       ],
+       "marks": {
+        "good": [
+         "N"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "to_cover",
+          "ko": "to_cover (아직 모자란 권수)"
+         },
+         "value": 0,
+         "why": "to_cover is how many needed volumes the window still lacks, summed over the cards; it is no one card's value, only equal to one by chance",
+         "mark": "good"
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "shelf",
+        "at": 2
+       },
+       "to": {
+        "view": "missing",
+        "at": "N"
+       },
+       "value": "+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "to_cover = 0: shelf[3..10] = \"DTHEBOOK\" covers every needed tag. Its length 8 is shorter than the best 9, so it is the best now.",
+      "ko": "to_cover = 0: shelf[3..10] = \"DTHEBOOK\" 구간이 필요한 태그를 모두 담습니다. 길이 8: 지금까지 최단 9보다 짧으므로 이제 best입니다."
+     },
+     "views": {
+      "needed": {
+       "values": [
+        "B",
+        "O",
+        "K"
+       ]
+      },
+      "shelf": {
+       "values": [
+        "F",
+        "I",
+        "N",
+        "D",
+        "T",
+        "H",
+        "E",
+        "B",
+        "O",
+        "O",
+        "K",
+        "S",
+        "N",
+        "O",
+        "W"
+       ],
+       "spans": {
+        "window": {
+         "from": 3,
+         "to": 10,
+         "label": {
+          "en": "window 8",
+          "ko": "창 8"
+         },
+         "mark": "good",
+         "fade": true
+        },
+        "best": {
+         "from": 3,
+         "to": 10,
+         "label": {
+          "en": "best 8",
+          "ko": "best (최단) 8"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "pointers": {
+        "start": 3,
+        "end": 10
+       },
+       "unread": [
+        11,
+        12,
+        13,
+        14
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "missing": {
+       "entries": [
+        {
+         "key": "B",
+         "value": 0
+        },
+        {
+         "key": "O",
+         "value": -1
+        },
+        {
+         "key": "K",
+         "value": 0
+        },
+        {
+         "key": "F",
+         "value": 0
+        },
+        {
+         "key": "I",
+         "value": 0
+        },
+        {
+         "key": "N",
+         "value": 0
+        },
+        {
+         "key": "D",
+         "value": -1
+        },
+        {
+         "key": "T",
+         "value": -1
+        },
+        {
+         "key": "H",
+         "value": -1
+        },
+        {
+         "key": "E",
+         "value": -1
+        }
+       ],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "to_cover",
+          "ko": "to_cover (아직 모자란 권수)"
+         },
+         "value": 0,
+         "why": "to_cover is how many needed volumes the window still lacks, summed over the cards; it is no one card's value, only equal to one by chance",
+         "mark": "good"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Shrink from the left: shelf[3] = 'D' leaves, but it was a spare (count back to 0), so the window still covers everything.",
+      "ko": "왼쪽에서 줄입니다: shelf[3] = 'D' 태그가 빠지지만 남는 책이었으므로(개수 0) 창은 여전히 모두 담습니다."
+     },
+     "views": {
+      "needed": {
+       "values": [
+        "B",
+        "O",
+        "K"
+       ]
+      },
+      "shelf": {
+       "values": [
+        "F",
+        "I",
+        "N",
+        "D",
+        "T",
+        "H",
+        "E",
+        "B",
+        "O",
+        "O",
+        "K",
+        "S",
+        "N",
+        "O",
+        "W"
+       ],
+       "spans": {
+        "window": {
+         "from": 4,
+         "to": 10,
+         "label": {
+          "en": "window 7",
+          "ko": "창 7"
+         },
+         "fade": true
+        },
+        "best": {
+         "from": 3,
+         "to": 10,
+         "label": {
+          "en": "best 8",
+          "ko": "best (최단) 8"
+         },
+         "below": true
+        }
+       },
+       "pointers": {
+        "start": 4,
+        "end": 10
+       },
+       "unread": [
+        11,
+        12,
+        13,
+        14
+       ],
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "missing": {
+       "entries": [
+        {
+         "key": "B",
+         "value": 0
+        },
+        {
+         "key": "O",
+         "value": -1
+        },
+        {
+         "key": "K",
+         "value": 0
+        },
+        {
+         "key": "F",
+         "value": 0
+        },
+        {
+         "key": "I",
+         "value": 0
+        },
+        {
+         "key": "N",
+         "value": 0
+        },
+        {
+         "key": "D",
+         "value": 0
+        },
+        {
+         "key": "T",
+         "value": -1
+        },
+        {
+         "key": "H",
+         "value": -1
+        },
+        {
+         "key": "E",
+         "value": -1
+        }
+       ],
+       "marks": {
+        "good": [
+         "D"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "to_cover",
+          "ko": "to_cover (아직 모자란 권수)"
+         },
+         "value": 0,
+         "why": "to_cover is how many needed volumes the window still lacks, summed over the cards; it is no one card's value, only equal to one by chance",
+         "mark": "good"
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "shelf",
+        "at": 3
+       },
+       "to": {
+        "view": "missing",
+        "at": "D"
+       },
+       "value": "+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "to_cover = 0: shelf[4..10] = \"THEBOOK\" covers every needed tag. Its length 7 is shorter than the best 8, so it is the best now.",
+      "ko": "to_cover = 0: shelf[4..10] = \"THEBOOK\" 구간이 필요한 태그를 모두 담습니다. 길이 7: 지금까지 최단 8보다 짧으므로 이제 best입니다."
+     },
+     "views": {
+      "needed": {
+       "values": [
+        "B",
+        "O",
+        "K"
+       ]
+      },
+      "shelf": {
+       "values": [
+        "F",
+        "I",
+        "N",
+        "D",
+        "T",
+        "H",
+        "E",
+        "B",
+        "O",
+        "O",
+        "K",
+        "S",
+        "N",
+        "O",
+        "W"
+       ],
+       "spans": {
+        "window": {
+         "from": 4,
+         "to": 10,
+         "label": {
+          "en": "window 7",
+          "ko": "창 7"
+         },
+         "mark": "good",
+         "fade": true
+        },
+        "best": {
+         "from": 4,
+         "to": 10,
+         "label": {
+          "en": "best 7",
+          "ko": "best (최단) 7"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "pointers": {
+        "start": 4,
+        "end": 10
+       },
+       "unread": [
+        11,
+        12,
+        13,
+        14
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "missing": {
+       "entries": [
+        {
+         "key": "B",
+         "value": 0
+        },
+        {
+         "key": "O",
+         "value": -1
+        },
+        {
+         "key": "K",
+         "value": 0
+        },
+        {
+         "key": "F",
+         "value": 0
+        },
+        {
+         "key": "I",
+         "value": 0
+        },
+        {
+         "key": "N",
+         "value": 0
+        },
+        {
+         "key": "D",
+         "value": 0
+        },
+        {
+         "key": "T",
+         "value": -1
+        },
+        {
+         "key": "H",
+         "value": -1
+        },
+        {
+         "key": "E",
+         "value": -1
+        }
+       ],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "to_cover",
+          "ko": "to_cover (아직 모자란 권수)"
+         },
+         "value": 0,
+         "why": "to_cover is how many needed volumes the window still lacks, summed over the cards; it is no one card's value, only equal to one by chance",
+         "mark": "good"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Shrink from the left: shelf[4] = 'T' leaves, but it was a spare (count back to 0), so the window still covers everything.",
+      "ko": "왼쪽에서 줄입니다: shelf[4] = 'T' 태그가 빠지지만 남는 책이었으므로(개수 0) 창은 여전히 모두 담습니다."
+     },
+     "views": {
+      "needed": {
+       "values": [
+        "B",
+        "O",
+        "K"
+       ]
+      },
+      "shelf": {
+       "values": [
+        "F",
+        "I",
+        "N",
+        "D",
+        "T",
+        "H",
+        "E",
+        "B",
+        "O",
+        "O",
+        "K",
+        "S",
+        "N",
+        "O",
+        "W"
+       ],
+       "spans": {
+        "window": {
+         "from": 5,
+         "to": 10,
+         "label": {
+          "en": "window 6",
+          "ko": "창 6"
+         },
+         "fade": true
+        },
+        "best": {
+         "from": 4,
+         "to": 10,
+         "label": {
+          "en": "best 7",
+          "ko": "best (최단) 7"
+         },
+         "below": true
+        }
+       },
+       "pointers": {
+        "start": 5,
+        "end": 10
+       },
+       "unread": [
+        11,
+        12,
+        13,
+        14
+       ],
+       "marks": {
+        "lit": [
+         4
+        ]
+       }
+      },
+      "missing": {
+       "entries": [
+        {
+         "key": "B",
+         "value": 0
+        },
+        {
+         "key": "O",
+         "value": -1
+        },
+        {
+         "key": "K",
+         "value": 0
+        },
+        {
+         "key": "F",
+         "value": 0
+        },
+        {
+         "key": "I",
+         "value": 0
+        },
+        {
+         "key": "N",
+         "value": 0
+        },
+        {
+         "key": "D",
+         "value": 0
+        },
+        {
+         "key": "T",
+         "value": 0
+        },
+        {
+         "key": "H",
+         "value": -1
+        },
+        {
+         "key": "E",
+         "value": -1
+        }
+       ],
+       "marks": {
+        "good": [
+         "T"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "to_cover",
+          "ko": "to_cover (아직 모자란 권수)"
+         },
+         "value": 0,
+         "why": "to_cover is how many needed volumes the window still lacks, summed over the cards; it is no one card's value, only equal to one by chance",
+         "mark": "good"
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "shelf",
+        "at": 4
+       },
+       "to": {
+        "view": "missing",
+        "at": "T"
+       },
+       "value": "+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "to_cover = 0: shelf[5..10] = \"HEBOOK\" covers every needed tag. Its length 6 is shorter than the best 7, so it is the best now.",
+      "ko": "to_cover = 0: shelf[5..10] = \"HEBOOK\" 구간이 필요한 태그를 모두 담습니다. 길이 6: 지금까지 최단 7보다 짧으므로 이제 best입니다."
+     },
+     "views": {
+      "needed": {
+       "values": [
+        "B",
+        "O",
+        "K"
+       ]
+      },
+      "shelf": {
+       "values": [
+        "F",
+        "I",
+        "N",
+        "D",
+        "T",
+        "H",
+        "E",
+        "B",
+        "O",
+        "O",
+        "K",
+        "S",
+        "N",
+        "O",
+        "W"
+       ],
+       "spans": {
+        "window": {
+         "from": 5,
+         "to": 10,
+         "label": {
+          "en": "window 6",
+          "ko": "창 6"
+         },
+         "mark": "good",
+         "fade": true
+        },
+        "best": {
+         "from": 5,
+         "to": 10,
+         "label": {
+          "en": "best 6",
+          "ko": "best (최단) 6"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "pointers": {
+        "start": 5,
+        "end": 10
+       },
+       "unread": [
+        11,
+        12,
+        13,
+        14
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "missing": {
+       "entries": [
+        {
+         "key": "B",
+         "value": 0
+        },
+        {
+         "key": "O",
+         "value": -1
+        },
+        {
+         "key": "K",
+         "value": 0
+        },
+        {
+         "key": "F",
+         "value": 0
+        },
+        {
+         "key": "I",
+         "value": 0
+        },
+        {
+         "key": "N",
+         "value": 0
+        },
+        {
+         "key": "D",
+         "value": 0
+        },
+        {
+         "key": "T",
+         "value": 0
+        },
+        {
+         "key": "H",
+         "value": -1
+        },
+        {
+         "key": "E",
+         "value": -1
+        }
+       ],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "to_cover",
+          "ko": "to_cover (아직 모자란 권수)"
+         },
+         "value": 0,
+         "why": "to_cover is how many needed volumes the window still lacks, summed over the cards; it is no one card's value, only equal to one by chance",
+         "mark": "good"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Shrink from the left: shelf[5] = 'H' leaves, but it was a spare (count back to 0), so the window still covers everything.",
+      "ko": "왼쪽에서 줄입니다: shelf[5] = 'H' 태그가 빠지지만 남는 책이었으므로(개수 0) 창은 여전히 모두 담습니다."
+     },
+     "views": {
+      "needed": {
+       "values": [
+        "B",
+        "O",
+        "K"
+       ]
+      },
+      "shelf": {
+       "values": [
+        "F",
+        "I",
+        "N",
+        "D",
+        "T",
+        "H",
+        "E",
+        "B",
+        "O",
+        "O",
+        "K",
+        "S",
+        "N",
+        "O",
+        "W"
+       ],
+       "spans": {
+        "window": {
+         "from": 6,
+         "to": 10,
+         "label": {
+          "en": "window 5",
+          "ko": "창 5"
+         },
+         "fade": true
+        },
+        "best": {
+         "from": 5,
+         "to": 10,
+         "label": {
+          "en": "best 6",
+          "ko": "best (최단) 6"
+         },
+         "below": true
+        }
+       },
+       "pointers": {
+        "start": 6,
+        "end": 10
+       },
+       "unread": [
+        11,
+        12,
+        13,
+        14
+       ],
+       "marks": {
+        "lit": [
+         5
+        ]
+       }
+      },
+      "missing": {
+       "entries": [
+        {
+         "key": "B",
+         "value": 0
+        },
+        {
+         "key": "O",
+         "value": -1
+        },
+        {
+         "key": "K",
+         "value": 0
+        },
+        {
+         "key": "F",
+         "value": 0
+        },
+        {
+         "key": "I",
+         "value": 0
+        },
+        {
+         "key": "N",
+         "value": 0
+        },
+        {
+         "key": "D",
+         "value": 0
+        },
+        {
+         "key": "T",
+         "value": 0
+        },
+        {
+         "key": "H",
+         "value": 0
+        },
+        {
+         "key": "E",
+         "value": -1
+        }
+       ],
+       "marks": {
+        "good": [
+         "H"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "to_cover",
+          "ko": "to_cover (아직 모자란 권수)"
+         },
+         "value": 0,
+         "why": "to_cover is how many needed volumes the window still lacks, summed over the cards; it is no one card's value, only equal to one by chance",
+         "mark": "good"
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "shelf",
+        "at": 5
+       },
+       "to": {
+        "view": "missing",
+        "at": "H"
+       },
+       "value": "+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "to_cover = 0: shelf[6..10] = \"EBOOK\" covers every needed tag. Its length 5 is shorter than the best 6, so it is the best now.",
+      "ko": "to_cover = 0: shelf[6..10] = \"EBOOK\" 구간이 필요한 태그를 모두 담습니다. 길이 5: 지금까지 최단 6보다 짧으므로 이제 best입니다."
+     },
+     "views": {
+      "needed": {
+       "values": [
+        "B",
+        "O",
+        "K"
+       ]
+      },
+      "shelf": {
+       "values": [
+        "F",
+        "I",
+        "N",
+        "D",
+        "T",
+        "H",
+        "E",
+        "B",
+        "O",
+        "O",
+        "K",
+        "S",
+        "N",
+        "O",
+        "W"
+       ],
+       "spans": {
+        "window": {
+         "from": 6,
+         "to": 10,
+         "label": {
+          "en": "window 5",
+          "ko": "창 5"
+         },
+         "mark": "good",
+         "fade": true
+        },
+        "best": {
+         "from": 6,
+         "to": 10,
+         "label": {
+          "en": "best 5",
+          "ko": "best (최단) 5"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "pointers": {
+        "start": 6,
+        "end": 10
+       },
+       "unread": [
+        11,
+        12,
+        13,
+        14
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "missing": {
+       "entries": [
+        {
+         "key": "B",
+         "value": 0
+        },
+        {
+         "key": "O",
+         "value": -1
+        },
+        {
+         "key": "K",
+         "value": 0
+        },
+        {
+         "key": "F",
+         "value": 0
+        },
+        {
+         "key": "I",
+         "value": 0
+        },
+        {
+         "key": "N",
+         "value": 0
+        },
+        {
+         "key": "D",
+         "value": 0
+        },
+        {
+         "key": "T",
+         "value": 0
+        },
+        {
+         "key": "H",
+         "value": 0
+        },
+        {
+         "key": "E",
+         "value": -1
+        }
+       ],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "to_cover",
+          "ko": "to_cover (아직 모자란 권수)"
+         },
+         "value": 0,
+         "why": "to_cover is how many needed volumes the window still lacks, summed over the cards; it is no one card's value, only equal to one by chance",
+         "mark": "good"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Shrink from the left: shelf[6] = 'E' leaves, but it was a spare (count back to 0), so the window still covers everything.",
+      "ko": "왼쪽에서 줄입니다: shelf[6] = 'E' 태그가 빠지지만 남는 책이었으므로(개수 0) 창은 여전히 모두 담습니다."
+     },
+     "views": {
+      "needed": {
+       "values": [
+        "B",
+        "O",
+        "K"
+       ]
+      },
+      "shelf": {
+       "values": [
+        "F",
+        "I",
+        "N",
+        "D",
+        "T",
+        "H",
+        "E",
+        "B",
+        "O",
+        "O",
+        "K",
+        "S",
+        "N",
+        "O",
+        "W"
+       ],
+       "spans": {
+        "window": {
+         "from": 7,
+         "to": 10,
+         "label": {
+          "en": "window 4",
+          "ko": "창 4"
+         },
+         "fade": true
+        },
+        "best": {
+         "from": 6,
+         "to": 10,
+         "label": {
+          "en": "best 5",
+          "ko": "best (최단) 5"
+         },
+         "below": true
+        }
+       },
+       "pointers": {
+        "start": 7,
+        "end": 10
+       },
+       "unread": [
+        11,
+        12,
+        13,
+        14
+       ],
+       "marks": {
+        "lit": [
+         6
+        ]
+       }
+      },
+      "missing": {
+       "entries": [
+        {
+         "key": "B",
+         "value": 0
+        },
+        {
+         "key": "O",
+         "value": -1
+        },
+        {
+         "key": "K",
+         "value": 0
+        },
+        {
+         "key": "F",
+         "value": 0
+        },
+        {
+         "key": "I",
+         "value": 0
+        },
+        {
+         "key": "N",
+         "value": 0
+        },
+        {
+         "key": "D",
+         "value": 0
+        },
+        {
+         "key": "T",
+         "value": 0
+        },
+        {
+         "key": "H",
+         "value": 0
+        },
+        {
+         "key": "E",
+         "value": 0
+        }
+       ],
+       "marks": {
+        "good": [
+         "E"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "to_cover",
+          "ko": "to_cover (아직 모자란 권수)"
+         },
+         "value": 0,
+         "why": "to_cover is how many needed volumes the window still lacks, summed over the cards; it is no one card's value, only equal to one by chance",
+         "mark": "good"
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "shelf",
+        "at": 6
+       },
+       "to": {
+        "view": "missing",
+        "at": "E"
+       },
+       "value": "+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "to_cover = 0: shelf[7..10] = \"BOOK\" covers every needed tag. Its length 4 is shorter than the best 5, so it is the best now.",
+      "ko": "to_cover = 0: shelf[7..10] = \"BOOK\" 구간이 필요한 태그를 모두 담습니다. 길이 4: 지금까지 최단 5보다 짧으므로 이제 best입니다."
+     },
+     "views": {
+      "needed": {
+       "values": [
+        "B",
+        "O",
+        "K"
+       ]
+      },
+      "shelf": {
+       "values": [
+        "F",
+        "I",
+        "N",
+        "D",
+        "T",
+        "H",
+        "E",
+        "B",
+        "O",
+        "O",
+        "K",
+        "S",
+        "N",
+        "O",
+        "W"
+       ],
+       "spans": {
+        "window": {
+         "from": 7,
+         "to": 10,
+         "label": {
+          "en": "window 4",
+          "ko": "창 4"
+         },
+         "mark": "good",
+         "fade": true
+        },
+        "best": {
+         "from": 7,
+         "to": 10,
+         "label": {
+          "en": "best 4",
+          "ko": "best (최단) 4"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "pointers": {
+        "start": 7,
+        "end": 10
+       },
+       "unread": [
+        11,
+        12,
+        13,
+        14
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "missing": {
+       "entries": [
+        {
+         "key": "B",
+         "value": 0
+        },
+        {
+         "key": "O",
+         "value": -1
+        },
+        {
+         "key": "K",
+         "value": 0
+        },
+        {
+         "key": "F",
+         "value": 0
+        },
+        {
+         "key": "I",
+         "value": 0
+        },
+        {
+         "key": "N",
+         "value": 0
+        },
+        {
+         "key": "D",
+         "value": 0
+        },
+        {
+         "key": "T",
+         "value": 0
+        },
+        {
+         "key": "H",
+         "value": 0
+        },
+        {
+         "key": "E",
+         "value": 0
+        }
+       ],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "to_cover",
+          "ko": "to_cover (아직 모자란 권수)"
+         },
+         "value": 0,
+         "why": "to_cover is how many needed volumes the window still lacks, summed over the cards; it is no one card's value, only equal to one by chance",
+         "mark": "good"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Shrink from the left: shelf[7] = 'B' leaves, and it was needed, so 'B' is missing again and to_cover rises to 1. Grow on the right.",
+      "ko": "왼쪽에서 줄입니다: shelf[7] = 'B' 태그가 빠지는데 필요한 책이었으므로 다시 모자라 to_cover가 1이 됩니다. 오른쪽으로 다시 늘립니다."
+     },
+     "views": {
+      "needed": {
+       "values": [
+        "B",
+        "O",
+        "K"
+       ]
+      },
+      "shelf": {
+       "values": [
+        "F",
+        "I",
+        "N",
+        "D",
+        "T",
+        "H",
+        "E",
+        "B",
+        "O",
+        "O",
+        "K",
+        "S",
+        "N",
+        "O",
+        "W"
+       ],
+       "spans": {
+        "window": {
+         "from": 8,
+         "to": 10,
+         "label": {
+          "en": "window 3",
+          "ko": "창 3"
+         },
+         "fade": true
+        },
+        "best": {
+         "from": 7,
+         "to": 10,
+         "label": {
+          "en": "best 4",
+          "ko": "best (최단) 4"
+         },
+         "below": true
+        }
+       },
+       "pointers": {
+        "start": 8,
+        "end": 10
+       },
+       "unread": [
+        11,
+        12,
+        13,
+        14
+       ],
+       "marks": {
+        "lit": [
+         7
+        ]
+       }
+      },
+      "missing": {
+       "entries": [
+        {
+         "key": "B",
+         "value": 1
+        },
+        {
+         "key": "O",
+         "value": -1
+        },
+        {
+         "key": "K",
+         "value": 0
+        },
+        {
+         "key": "F",
+         "value": 0
+        },
+        {
+         "key": "I",
+         "value": 0
+        },
+        {
+         "key": "N",
+         "value": 0
+        },
+        {
+         "key": "D",
+         "value": 0
+        },
+        {
+         "key": "T",
+         "value": 0
+        },
+        {
+         "key": "H",
+         "value": 0
+        },
+        {
+         "key": "E",
+         "value": 0
+        }
+       ],
+       "marks": {
+        "bad": [
+         "B"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "to_cover",
+          "ko": "to_cover (아직 모자란 권수)"
+         },
+         "value": 1,
+         "why": "to_cover is how many needed volumes the window still lacks, summed over the cards; it is no one card's value, only equal to one by chance",
+         "mark": null
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "shelf",
+        "at": 7
+       },
+       "to": {
+        "view": "missing",
+        "at": "B"
+       },
+       "value": "+1",
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "shelf[11] = 'S' isn't needed any more, so its count just goes to -1 (a spare) and to_cover stays 1.",
+      "ko": "shelf[11] = 'S' 태그는 더 필요하지 않아 개수만 -1이 되고(남는 책) to_cover는 1 그대로입니다."
+     },
+     "views": {
+      "needed": {
+       "values": [
+        "B",
+        "O",
+        "K"
+       ]
+      },
+      "shelf": {
+       "values": [
+        "F",
+        "I",
+        "N",
+        "D",
+        "T",
+        "H",
+        "E",
+        "B",
+        "O",
+        "O",
+        "K",
+        "S",
+        "N",
+        "O",
+        "W"
+       ],
+       "spans": {
+        "window": {
+         "from": 8,
+         "to": 11,
+         "label": {
+          "en": "window 4",
+          "ko": "창 4"
+         },
+         "fade": true
+        },
+        "best": {
+         "from": 7,
+         "to": 10,
+         "label": {
+          "en": "best 4",
+          "ko": "best (최단) 4"
+         },
+         "below": true
+        }
+       },
+       "pointers": {
+        "start": 8,
+        "end": 11
+       },
+       "unread": [
+        12,
+        13,
+        14
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "missing": {
+       "entries": [
+        {
+         "key": "B",
+         "value": 1
+        },
+        {
+         "key": "O",
+         "value": -1
+        },
+        {
+         "key": "K",
+         "value": 0
+        },
+        {
+         "key": "F",
+         "value": 0
+        },
+        {
+         "key": "I",
+         "value": 0
+        },
+        {
+         "key": "N",
+         "value": 0
+        },
+        {
+         "key": "D",
+         "value": 0
+        },
+        {
+         "key": "T",
+         "value": 0
+        },
+        {
+         "key": "H",
+         "value": 0
+        },
+        {
+         "key": "E",
+         "value": 0
+        },
+        {
+         "key": "S",
+         "value": -1
+        }
+       ],
+       "marks": {
+        "good": [
+         "S"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "to_cover",
+          "ko": "to_cover (아직 모자란 권수)"
+         },
+         "value": 1,
+         "why": "to_cover is how many needed volumes the window still lacks, summed over the cards; it is no one card's value, only equal to one by chance",
+         "mark": null
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "shelf",
+        "at": 11
+       },
+       "to": {
+        "view": "missing",
+        "at": "S"
+       },
+       "value": "−1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "shelf[12] = 'N' isn't needed any more, so its count just goes to -1 (a spare) and to_cover stays 1.",
+      "ko": "shelf[12] = 'N' 태그는 더 필요하지 않아 개수만 -1이 되고(남는 책) to_cover는 1 그대로입니다."
+     },
+     "views": {
+      "needed": {
+       "values": [
+        "B",
+        "O",
+        "K"
+       ]
+      },
+      "shelf": {
+       "values": [
+        "F",
+        "I",
+        "N",
+        "D",
+        "T",
+        "H",
+        "E",
+        "B",
+        "O",
+        "O",
+        "K",
+        "S",
+        "N",
+        "O",
+        "W"
+       ],
+       "spans": {
+        "window": {
+         "from": 8,
+         "to": 12,
+         "label": {
+          "en": "window 5",
+          "ko": "창 5"
+         },
+         "fade": true
+        },
+        "best": {
+         "from": 7,
+         "to": 10,
+         "label": {
+          "en": "best 4",
+          "ko": "best (최단) 4"
+         },
+         "below": true
+        }
+       },
+       "pointers": {
+        "start": 8,
+        "end": 12
+       },
+       "unread": [
+        13,
+        14
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "missing": {
+       "entries": [
+        {
+         "key": "B",
+         "value": 1
+        },
+        {
+         "key": "O",
+         "value": -1
+        },
+        {
+         "key": "K",
+         "value": 0
+        },
+        {
+         "key": "F",
+         "value": 0
+        },
+        {
+         "key": "I",
+         "value": 0
+        },
+        {
+         "key": "N",
+         "value": -1
+        },
+        {
+         "key": "D",
+         "value": 0
+        },
+        {
+         "key": "T",
+         "value": 0
+        },
+        {
+         "key": "H",
+         "value": 0
+        },
+        {
+         "key": "E",
+         "value": 0
+        },
+        {
+         "key": "S",
+         "value": -1
+        }
+       ],
+       "marks": {
+        "good": [
+         "N"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "to_cover",
+          "ko": "to_cover (아직 모자란 권수)"
+         },
+         "value": 1,
+         "why": "to_cover is how many needed volumes the window still lacks, summed over the cards; it is no one card's value, only equal to one by chance",
+         "mark": null
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "shelf",
+        "at": 12
+       },
+       "to": {
+        "view": "missing",
+        "at": "N"
+       },
+       "value": "−1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "shelf[13] = 'O' isn't needed any more, so its count just goes to -2 (a spare) and to_cover stays 1.",
+      "ko": "shelf[13] = 'O' 태그는 더 필요하지 않아 개수만 -2가 되고(남는 책) to_cover는 1 그대로입니다."
+     },
+     "views": {
+      "needed": {
+       "values": [
+        "B",
+        "O",
+        "K"
+       ]
+      },
+      "shelf": {
+       "values": [
+        "F",
+        "I",
+        "N",
+        "D",
+        "T",
+        "H",
+        "E",
+        "B",
+        "O",
+        "O",
+        "K",
+        "S",
+        "N",
+        "O",
+        "W"
+       ],
+       "spans": {
+        "window": {
+         "from": 8,
+         "to": 13,
+         "label": {
+          "en": "window 6",
+          "ko": "창 6"
+         },
+         "fade": true
+        },
+        "best": {
+         "from": 7,
+         "to": 10,
+         "label": {
+          "en": "best 4",
+          "ko": "best (최단) 4"
+         },
+         "below": true
+        }
+       },
+       "pointers": {
+        "start": 8,
+        "end": 13
+       },
+       "unread": [
+        14
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "missing": {
+       "entries": [
+        {
+         "key": "B",
+         "value": 1
+        },
+        {
+         "key": "O",
+         "value": -2
+        },
+        {
+         "key": "K",
+         "value": 0
+        },
+        {
+         "key": "F",
+         "value": 0
+        },
+        {
+         "key": "I",
+         "value": 0
+        },
+        {
+         "key": "N",
+         "value": -1
+        },
+        {
+         "key": "D",
+         "value": 0
+        },
+        {
+         "key": "T",
+         "value": 0
+        },
+        {
+         "key": "H",
+         "value": 0
+        },
+        {
+         "key": "E",
+         "value": 0
+        },
+        {
+         "key": "S",
+         "value": -1
+        }
+       ],
+       "marks": {
+        "good": [
+         "O"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "to_cover",
+          "ko": "to_cover (아직 모자란 권수)"
+         },
+         "value": 1,
+         "why": "to_cover is how many needed volumes the window still lacks, summed over the cards; it is no one card's value, only equal to one by chance",
+         "mark": null
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "shelf",
+        "at": 13
+       },
+       "to": {
+        "view": "missing",
+        "at": "O"
+       },
+       "value": "−1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "shelf[14] = 'W' isn't needed any more, so its count just goes to -1 (a spare) and to_cover stays 1.",
+      "ko": "shelf[14] = 'W' 태그는 더 필요하지 않아 개수만 -1이 되고(남는 책) to_cover는 1 그대로입니다."
+     },
+     "views": {
+      "needed": {
+       "values": [
+        "B",
+        "O",
+        "K"
+       ]
+      },
+      "shelf": {
+       "values": [
+        "F",
+        "I",
+        "N",
+        "D",
+        "T",
+        "H",
+        "E",
+        "B",
+        "O",
+        "O",
+        "K",
+        "S",
+        "N",
+        "O",
+        "W"
+       ],
+       "spans": {
+        "window": {
+         "from": 8,
+         "to": 14,
+         "label": {
+          "en": "window 7",
+          "ko": "창 7"
+         },
+         "fade": true
+        },
+        "best": {
+         "from": 7,
+         "to": 10,
+         "label": {
+          "en": "best 4",
+          "ko": "best (최단) 4"
+         },
+         "below": true
+        }
+       },
+       "pointers": {
+        "start": 8,
+        "end": 14
+       },
+       "unread": [],
+       "marks": {
+        "lit": []
+       }
+      },
+      "missing": {
+       "entries": [
+        {
+         "key": "B",
+         "value": 1
+        },
+        {
+         "key": "O",
+         "value": -2
+        },
+        {
+         "key": "K",
+         "value": 0
+        },
+        {
+         "key": "F",
+         "value": 0
+        },
+        {
+         "key": "I",
+         "value": 0
+        },
+        {
+         "key": "N",
+         "value": -1
+        },
+        {
+         "key": "D",
+         "value": 0
+        },
+        {
+         "key": "T",
+         "value": 0
+        },
+        {
+         "key": "H",
+         "value": 0
+        },
+        {
+         "key": "E",
+         "value": 0
+        },
+        {
+         "key": "S",
+         "value": -1
+        },
+        {
+         "key": "W",
+         "value": -1
+        }
+       ],
+       "marks": {
+        "good": [
+         "W"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "to_cover",
+          "ko": "to_cover (아직 모자란 권수)"
+         },
+         "value": 1,
+         "why": "to_cover is how many needed volumes the window still lacks, summed over the cards; it is no one card's value, only equal to one by chance",
+         "mark": null
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "shelf",
+        "at": 14
+       },
+       "to": {
+        "view": "missing",
+        "at": "W"
+       },
+       "value": "−1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The window reached the end of the shelf. The shortest covering window was shelf[7..10] = \"BOOK\", length 4.",
+      "ko": "창이 책꽂이 끝에 닿았습니다. 필요한 태그를 모두 담은 가장 짧은 창은 shelf[7..10] = \"BOOK\", 길이 4입니다."
+     },
+     "views": {
+      "needed": {
+       "values": [
+        "B",
+        "O",
+        "K"
+       ]
+      },
+      "shelf": {
+       "values": [
+        "F",
+        "I",
+        "N",
+        "D",
+        "T",
+        "H",
+        "E",
+        "B",
+        "O",
+        "O",
+        "K",
+        "S",
+        "N",
+        "O",
+        "W"
+       ],
+       "spans": {
+        "best": {
+         "from": 7,
+         "to": 10,
+         "label": {
+          "en": "best 4",
+          "ko": "best (최단) 4"
+         },
+         "mark": "path",
+         "below": true
+        }
+       },
+       "pointers": {},
+       "unread": [],
+       "marks": {
+        "lit": [],
+        "path": [
+         7,
+         8,
+         9,
+         10
+        ]
+       }
+      },
+      "missing": {
+       "entries": [
+        {
+         "key": "B",
+         "value": 1
+        },
+        {
+         "key": "O",
+         "value": -2
+        },
+        {
+         "key": "K",
+         "value": 0
+        },
+        {
+         "key": "F",
+         "value": 0
+        },
+        {
+         "key": "I",
+         "value": 0
+        },
+        {
+         "key": "N",
+         "value": -1
+        },
+        {
+         "key": "D",
+         "value": 0
+        },
+        {
+         "key": "T",
+         "value": 0
+        },
+        {
+         "key": "H",
+         "value": 0
+        },
+        {
+         "key": "E",
+         "value": 0
+        },
+        {
+         "key": "S",
+         "value": -1
+        },
+        {
+         "key": "W",
+         "value": -1
+        }
+       ],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "to_cover",
+          "ko": "to_cover (아직 모자란 권수)"
+         },
+         "value": 1,
+         "why": "to_cover is how many needed volumes the window still lacks, summed over the cards; it is no one card's value, only equal to one by chance",
+         "mark": null
+        }
+       ]
+      }
+     },
+     "answer": "BOOK"
+    }
+   ],
+   "sampleInput": "FINDTHEBOOKSNOW\nBOK"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "shelf = \"XY\", needed = \"Y\"",
+   "expected": "Y",
+   "frames": [
+    {
+     "caption": {
+      "en": "needed = \"Y\": missing starts with the count of each tag needed, and to_cover = 1 volumes are still lacking.",
+      "ko": "needed = \"Y\": missing에는 태그마다 필요한 수가 들어가고, 아직 모자란 권수는 to_cover = 1입니다."
+     },
+     "views": {
+      "needed": {
+       "values": [
+        "Y"
+       ]
+      },
+      "shelf": {
+       "values": [
+        "X",
+        "Y"
+       ],
+       "spans": {},
+       "pointers": {
+        "start": null,
+        "end": null
+       },
+       "unread": [
+        0,
+        1
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "missing": {
+       "entries": [
+        {
+         "key": "Y",
+         "value": 1
+        }
+       ],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "to_cover",
+          "ko": "to_cover (아직 모자란 권수)"
+         },
+         "value": 1,
+         "why": "to_cover is how many needed volumes the window still lacks, summed over the cards; it is no one card's value, only equal to one by chance",
+         "mark": null
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "needed",
+        "at": 0
+       },
+       "to": {
+        "view": "missing",
+        "at": "Y"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "shelf[0] = 'X' isn't needed any more, so its count just goes to -1 (a spare) and to_cover stays 1.",
+      "ko": "shelf[0] = 'X' 태그는 더 필요하지 않아 개수만 -1이 되고(남는 책) to_cover는 1 그대로입니다."
+     },
+     "views": {
+      "needed": {
+       "values": [
+        "Y"
+       ]
+      },
+      "shelf": {
+       "values": [
+        "X",
+        "Y"
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "window 1",
+          "ko": "창 1"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "start": 0,
+        "end": 0
+       },
+       "unread": [
+        1
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "missing": {
+       "entries": [
+        {
+         "key": "Y",
+         "value": 1
+        },
+        {
+         "key": "X",
+         "value": -1
+        }
+       ],
+       "marks": {
+        "good": [
+         "X"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "to_cover",
+          "ko": "to_cover (아직 모자란 권수)"
+         },
+         "value": 1,
+         "why": "to_cover is how many needed volumes the window still lacks, summed over the cards; it is no one card's value, only equal to one by chance",
+         "mark": null
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "shelf",
+        "at": 0
+       },
+       "to": {
+        "view": "missing",
+        "at": "X"
+       },
+       "value": "−1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "shelf[1] = 'Y' was still needed, so to_cover drops to 0.",
+      "ko": "shelf[1] = 'Y' 태그는 아직 필요했으므로 to_cover가 0으로 줄어듭니다."
+     },
+     "views": {
+      "needed": {
+       "values": [
+        "Y"
+       ]
+      },
+      "shelf": {
+       "values": [
+        "X",
+        "Y"
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "window 2",
+          "ko": "창 2"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "start": 0,
+        "end": 1
+       },
+       "unread": [],
+       "marks": {
+        "lit": []
+       }
+      },
+      "missing": {
+       "entries": [
+        {
+         "key": "Y",
+         "value": 0
+        },
+        {
+         "key": "X",
+         "value": -1
+        }
+       ],
+       "marks": {
+        "good": [
+         "Y"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "to_cover",
+          "ko": "to_cover (아직 모자란 권수)"
+         },
+         "value": 0,
+         "why": "to_cover is how many needed volumes the window still lacks, summed over the cards; it is no one card's value, only equal to one by chance",
+         "mark": "good"
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "shelf",
+        "at": 1
+       },
+       "to": {
+        "view": "missing",
+        "at": "Y"
+       },
+       "value": "−1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "to_cover = 0: shelf[0..1] = \"XY\" covers every needed tag. Its length 2 is the first covering window, so it is the best now.",
+      "ko": "to_cover = 0: shelf[0..1] = \"XY\" 구간이 필요한 태그를 모두 담습니다. 길이 2: 처음으로 다 담은 창이므로 이제 best입니다."
+     },
+     "views": {
+      "needed": {
+       "values": [
+        "Y"
+       ]
+      },
+      "shelf": {
+       "values": [
+        "X",
+        "Y"
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "window 2",
+          "ko": "창 2"
+         },
+         "mark": "good",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "best 2",
+          "ko": "best (최단) 2"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "pointers": {
+        "start": 0,
+        "end": 1
+       },
+       "unread": [],
+       "marks": {
+        "lit": []
+       }
+      },
+      "missing": {
+       "entries": [
+        {
+         "key": "Y",
+         "value": 0
+        },
+        {
+         "key": "X",
+         "value": -1
+        }
+       ],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "to_cover",
+          "ko": "to_cover (아직 모자란 권수)"
+         },
+         "value": 0,
+         "why": "to_cover is how many needed volumes the window still lacks, summed over the cards; it is no one card's value, only equal to one by chance",
+         "mark": "good"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Shrink from the left: shelf[0] = 'X' leaves, but it was a spare (count back to 0), so the window still covers everything.",
+      "ko": "왼쪽에서 줄입니다: shelf[0] = 'X' 태그가 빠지지만 남는 책이었으므로(개수 0) 창은 여전히 모두 담습니다."
+     },
+     "views": {
+      "needed": {
+       "values": [
+        "Y"
+       ]
+      },
+      "shelf": {
+       "values": [
+        "X",
+        "Y"
+       ],
+       "spans": {
+        "window": {
+         "from": 1,
+         "to": 1,
+         "label": {
+          "en": "window 1",
+          "ko": "창 1"
+         },
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "best 2",
+          "ko": "best (최단) 2"
+         },
+         "below": true
+        }
+       },
+       "pointers": {
+        "start": 1,
+        "end": 1
+       },
+       "unread": [],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "missing": {
+       "entries": [
+        {
+         "key": "Y",
+         "value": 0
+        },
+        {
+         "key": "X",
+         "value": 0
+        }
+       ],
+       "marks": {
+        "good": [
+         "X"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "to_cover",
+          "ko": "to_cover (아직 모자란 권수)"
+         },
+         "value": 0,
+         "why": "to_cover is how many needed volumes the window still lacks, summed over the cards; it is no one card's value, only equal to one by chance",
+         "mark": "good"
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "shelf",
+        "at": 0
+       },
+       "to": {
+        "view": "missing",
+        "at": "X"
+       },
+       "value": "+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "to_cover = 0: shelf[1..1] = \"Y\" covers every needed tag. Its length 1 is shorter than the best 2, so it is the best now.",
+      "ko": "to_cover = 0: shelf[1..1] = \"Y\" 구간이 필요한 태그를 모두 담습니다. 길이 1: 지금까지 최단 2보다 짧으므로 이제 best입니다."
+     },
+     "views": {
+      "needed": {
+       "values": [
+        "Y"
+       ]
+      },
+      "shelf": {
+       "values": [
+        "X",
+        "Y"
+       ],
+       "spans": {
+        "window": {
+         "from": 1,
+         "to": 1,
+         "label": {
+          "en": "window 1",
+          "ko": "창 1"
+         },
+         "mark": "good",
+         "fade": true
+        },
+        "best": {
+         "from": 1,
+         "to": 1,
+         "label": {
+          "en": "best 1",
+          "ko": "best (최단) 1"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "pointers": {
+        "start": 1,
+        "end": 1
+       },
+       "unread": [],
+       "marks": {
+        "lit": []
+       }
+      },
+      "missing": {
+       "entries": [
+        {
+         "key": "Y",
+         "value": 0
+        },
+        {
+         "key": "X",
+         "value": 0
+        }
+       ],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "to_cover",
+          "ko": "to_cover (아직 모자란 권수)"
+         },
+         "value": 0,
+         "why": "to_cover is how many needed volumes the window still lacks, summed over the cards; it is no one card's value, only equal to one by chance",
+         "mark": "good"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Shrink from the left: shelf[1] = 'Y' leaves, and it was needed, so 'Y' is missing again and to_cover rises to 1. Grow on the right.",
+      "ko": "왼쪽에서 줄입니다: shelf[1] = 'Y' 태그가 빠지는데 필요한 책이었으므로 다시 모자라 to_cover가 1이 됩니다. 오른쪽으로 다시 늘립니다."
+     },
+     "views": {
+      "needed": {
+       "values": [
+        "Y"
+       ]
+      },
+      "shelf": {
+       "values": [
+        "X",
+        "Y"
+       ],
+       "spans": {
+        "best": {
+         "from": 1,
+         "to": 1,
+         "label": {
+          "en": "best 1",
+          "ko": "best (최단) 1"
+         },
+         "below": true
+        }
+       },
+       "pointers": {
+        "start": null,
+        "end": 1
+       },
+       "unread": [],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "missing": {
+       "entries": [
+        {
+         "key": "Y",
+         "value": 1
+        },
+        {
+         "key": "X",
+         "value": 0
+        }
+       ],
+       "marks": {
+        "bad": [
+         "Y"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "to_cover",
+          "ko": "to_cover (아직 모자란 권수)"
+         },
+         "value": 1,
+         "why": "to_cover is how many needed volumes the window still lacks, summed over the cards; it is no one card's value, only equal to one by chance",
+         "mark": null
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "shelf",
+        "at": 1
+       },
+       "to": {
+        "view": "missing",
+        "at": "Y"
+       },
+       "value": "+1",
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The window reached the end of the shelf. The shortest covering window was shelf[1..1] = \"Y\", length 1.",
+      "ko": "창이 책꽂이 끝에 닿았습니다. 필요한 태그를 모두 담은 가장 짧은 창은 shelf[1..1] = \"Y\", 길이 1입니다."
+     },
+     "views": {
+      "needed": {
+       "values": [
+        "Y"
+       ]
+      },
+      "shelf": {
+       "values": [
+        "X",
+        "Y"
+       ],
+       "spans": {
+        "best": {
+         "from": 1,
+         "to": 1,
+         "label": {
+          "en": "best 1",
+          "ko": "best (최단) 1"
+         },
+         "mark": "path",
+         "below": true
+        }
+       },
+       "pointers": {},
+       "unread": [],
+       "marks": {
+        "lit": [],
+        "path": [
+         1
+        ]
+       }
+      },
+      "missing": {
+       "entries": [
+        {
+         "key": "Y",
+         "value": 1
+        },
+        {
+         "key": "X",
+         "value": 0
+        }
+       ],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "to_cover",
+          "ko": "to_cover (아직 모자란 권수)"
+         },
+         "value": 1,
+         "why": "to_cover is how many needed volumes the window still lacks, summed over the cards; it is no one card's value, only equal to one by chance",
+         "mark": null
+        }
+       ]
+      }
+     },
+     "answer": "Y"
+    }
+   ],
+   "sampleInput": "XY\nY"
+  },
+  {
+   "label": {
+    "en": "Example 3",
+    "ko": "예시 3"
+   },
+   "input": "shelf = \"Q\", needed = \"QQ\"",
+   "expected": "",
+   "frames": [
+    {
+     "caption": {
+      "en": "needed = \"QQ\": missing starts with the count of each tag needed, and to_cover = 2 volumes are still lacking.",
+      "ko": "needed = \"QQ\": missing에는 태그마다 필요한 수가 들어가고, 아직 모자란 권수는 to_cover = 2입니다."
+     },
+     "views": {
+      "needed": {
+       "values": [
+        "Q",
+        "Q"
+       ]
+      },
+      "shelf": {
+       "values": [
+        "Q"
+       ],
+       "spans": {},
+       "pointers": {
+        "start": null,
+        "end": null
+       },
+       "unread": [
+        0
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "missing": {
+       "entries": [
+        {
+         "key": "Q",
+         "value": 2
+        }
+       ],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "to_cover",
+          "ko": "to_cover (아직 모자란 권수)"
+         },
+         "value": 2,
+         "why": "to_cover is how many needed volumes the window still lacks, summed over the cards; it is no one card's value, only equal to one by chance",
+         "mark": null
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "needed",
+        "at": 0
+       },
+       "to": {
+        "view": "missing",
+        "at": "Q"
+       }
+      },
+      {
+       "from": {
+        "view": "needed",
+        "at": 1
+       },
+       "to": {
+        "view": "missing",
+        "at": "Q"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "shelf[0] = 'Q' was still needed, so to_cover drops to 1.",
+      "ko": "shelf[0] = 'Q' 태그는 아직 필요했으므로 to_cover가 1로 줄어듭니다."
+     },
+     "views": {
+      "needed": {
+       "values": [
+        "Q",
+        "Q"
+       ]
+      },
+      "shelf": {
+       "values": [
+        "Q"
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "window 1",
+          "ko": "창 1"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "start": 0,
+        "end": 0
+       },
+       "unread": [],
+       "marks": {
+        "lit": []
+       }
+      },
+      "missing": {
+       "entries": [
+        {
+         "key": "Q",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "good": [
+         "Q"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "to_cover",
+          "ko": "to_cover (아직 모자란 권수)"
+         },
+         "value": 1,
+         "why": "to_cover is how many needed volumes the window still lacks, summed over the cards; it is no one card's value, only equal to one by chance",
+         "mark": null
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "shelf",
+        "at": 0
+       },
+       "to": {
+        "view": "missing",
+        "at": "Q"
+       },
+       "value": "−1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The window reached the end of the shelf with to_cover = 1 still above 0: no window covers \"QQ\", so the answer is the empty string \"\".",
+      "ko": "창이 책꽂이 끝에 닿았지만 to_cover는 1에 머물러 0이 되지 못했습니다. \"QQ\"의 태그를 모두 담는 창이 없으니 답은 빈 문자열 \"\"입니다."
+     },
+     "views": {
+      "needed": {
+       "values": [
+        "Q",
+        "Q"
+       ]
+      },
+      "shelf": {
+       "values": [
+        "Q"
+       ],
+       "spans": {},
+       "pointers": {},
+       "unread": [],
+       "marks": {
+        "lit": []
+       }
+      },
+      "missing": {
+       "entries": [
+        {
+         "key": "Q",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "bad": [
+         "Q"
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "to_cover",
+          "ko": "to_cover (아직 모자란 권수)"
+         },
+         "value": 1,
+         "why": "to_cover is how many needed volumes the window still lacks, summed over the cards; it is no one card's value, only equal to one by chance",
+         "mark": null
+        }
+       ]
+      }
+     },
+     "answer": ""
+    }
+   ],
+   "sampleInput": "Q\nQQ"
+  }
+ ]
+}

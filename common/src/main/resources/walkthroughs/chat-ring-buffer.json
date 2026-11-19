@@ -1,0 +1,4314 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Chat Ring Buffer",
+  "ko": "채팅 링 버퍼"
+ },
+ "approach": {
+  "en": "k slots used in a circle: head is the front, size counts the messages, and a push writes at (head + size) % k, so the rear wraps around to the slots a pull freed.",
+  "ko": "k개의 칸을 원형으로 씁니다. head가 맨 앞이고 size가 메시지 수이며, push는 (head + size) % k에 쓰므로 뒤쪽이 한 바퀴 돌아 pull로 비운 칸을 다시 씁니다."
+ },
+ "views": [
+  {
+   "id": "calls",
+   "type": "table",
+   "title": {
+    "en": "calls",
+    "ko": "호출"
+   }
+  },
+  {
+   "id": "slots",
+   "type": "array",
+   "title": {
+    "en": "slots (faded: not in the queue)",
+    "ko": "slots (흐린 칸: 큐 밖)"
+   }
+  },
+  {
+   "id": "state",
+   "type": "vars"
+  },
+  {
+   "id": "result",
+   "type": "output",
+   "title": {
+    "en": "returned",
+    "ko": "반환값"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "[\"FixedRing\",\"push\",\"push\",\"push\",\"push\",\"rear\",\"isFull\",\"pull\",\"push\",\"rear\"]\n[[3],[1],[2],[3],[4],[],[],[],[4],[]]",
+   "expected": "[null,true,true,true,false,3,true,true,true,4]",
+   "frames": [
+    {
+     "caption": {
+      "en": "FixedRing(3) makes 3 slots, all 0, with head = 0 and size = 0: an empty queue. It returns null.",
+      "ko": "FixedRing(3): 0으로 채운 칸 3개를 만들고 head = 0, size = 0인 빈 큐로 시작합니다. null을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "FixedRing",
+          "3"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "push",
+          "3"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "push",
+          "4"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "rear",
+          ""
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "isFull",
+          ""
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "pull",
+          ""
+         ]
+        },
+        {
+         "label": "8",
+         "cells": [
+          "push",
+          "4"
+         ]
+        },
+        {
+         "label": "9",
+         "cells": [
+          "rear",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ]
+       }
+      },
+      "slots": {
+       "values": [
+        0,
+        0,
+        0
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2
+        ]
+       },
+       "pointers": {
+        "head": 0,
+        "rear": null
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "size",
+         "value": 0,
+         "why": "size is the field FixedRing keeps; it counts the slots not faded, which can wrap past the end, so no span can draw it"
+        }
+       ]
+      },
+      "result": {
+       "values": [
+        "null"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "push(1): it goes into slot (0 + 0) % 3 = 0; size becomes 1, and push returns true.",
+      "ko": "push(1): (0 + 0) % 3 = 0번 칸에 넣습니다. size는 1이 되고 true를 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "FixedRing",
+          "3"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "push",
+          "3"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "push",
+          "4"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "rear",
+          ""
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "isFull",
+          ""
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "pull",
+          ""
+         ]
+        },
+        {
+         "label": "8",
+         "cells": [
+          "push",
+          "4"
+         ]
+        },
+        {
+         "label": "9",
+         "cells": [
+          "rear",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "slots": {
+       "values": [
+        1,
+        0,
+        0
+       ],
+       "marks": {
+        "dim": [
+         1,
+         2
+        ],
+        "good": [
+         0
+        ]
+       },
+       "pointers": {
+        "head": 0,
+        "rear": 0
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "size",
+         "value": 1,
+         "why": "size is the field FixedRing keeps; it counts the slots not faded, which can wrap past the end, so no span can draw it"
+        }
+       ]
+      },
+      "result": {
+       "values": [
+        "null",
+        "true"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         1,
+         1
+        ]
+       },
+       "to": {
+        "view": "slots",
+        "at": 0
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       },
+       "value": "true"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "push(2): it goes into slot (0 + 1) % 3 = 1; size becomes 2, and push returns true.",
+      "ko": "push(2): (0 + 1) % 3 = 1번 칸에 넣습니다. size는 2가 되고 true를 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "FixedRing",
+          "3"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "push",
+          "3"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "push",
+          "4"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "rear",
+          ""
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "isFull",
+          ""
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "pull",
+          ""
+         ]
+        },
+        {
+         "label": "8",
+         "cells": [
+          "push",
+          "4"
+         ]
+        },
+        {
+         "label": "9",
+         "cells": [
+          "rear",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ]
+       }
+      },
+      "slots": {
+       "values": [
+        1,
+        2,
+        0
+       ],
+       "marks": {
+        "dim": [
+         2
+        ],
+        "good": [
+         1
+        ]
+       },
+       "pointers": {
+        "head": 0,
+        "rear": 1
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "size",
+         "value": 2,
+         "why": "size is the field FixedRing keeps; it counts the slots not faded, which can wrap past the end, so no span can draw it"
+        }
+       ]
+      },
+      "result": {
+       "values": [
+        "null",
+        "true",
+        "true"
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         2,
+         1
+        ]
+       },
+       "to": {
+        "view": "slots",
+        "at": 1
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         2,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       },
+       "value": "true"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "push(3): it goes into slot (0 + 2) % 3 = 2; size becomes 3, and push returns true.",
+      "ko": "push(3): (0 + 2) % 3 = 2번 칸에 넣습니다. size는 3이 되고 true를 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "FixedRing",
+          "3"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "push",
+          "3"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "push",
+          "4"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "rear",
+          ""
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "isFull",
+          ""
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "pull",
+          ""
+         ]
+        },
+        {
+         "label": "8",
+         "cells": [
+          "push",
+          "4"
+         ]
+        },
+        {
+         "label": "9",
+         "cells": [
+          "rear",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      },
+      "slots": {
+       "values": [
+        1,
+        2,
+        3
+       ],
+       "marks": {
+        "dim": [],
+        "good": [
+         2
+        ]
+       },
+       "pointers": {
+        "head": 0,
+        "rear": 2
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "size",
+         "value": 3,
+         "why": "size is the field FixedRing keeps; it counts the slots not faded, which can wrap past the end, so no span can draw it"
+        }
+       ]
+      },
+      "result": {
+       "values": [
+        "null",
+        "true",
+        "true",
+        "true"
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         3,
+         1
+        ]
+       },
+       "to": {
+        "view": "slots",
+        "at": 2
+       },
+       "value": "3"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         3,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       },
+       "value": "true"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "push(4): size = 3 = k, so the queue is full; nothing is overwritten, and push returns false.",
+      "ko": "push(4): size = 3 = k라 큐가 가득 찼습니다. 아무것도 덮어쓰지 않고 false를 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "FixedRing",
+          "3"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "push",
+          "3"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "push",
+          "4"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "rear",
+          ""
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "isFull",
+          ""
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "pull",
+          ""
+         ]
+        },
+        {
+         "label": "8",
+         "cells": [
+          "push",
+          "4"
+         ]
+        },
+        {
+         "label": "9",
+         "cells": [
+          "rear",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ]
+       }
+      },
+      "slots": {
+       "values": [
+        1,
+        2,
+        3
+       ],
+       "marks": {
+        "dim": [],
+        "bad": [
+         0,
+         1,
+         2
+        ]
+       },
+       "pointers": {
+        "head": 0,
+        "rear": 2
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "size",
+         "value": 3,
+         "why": "size is the field FixedRing keeps; it counts the slots not faded, which can wrap past the end, so no span can draw it"
+        }
+       ]
+      },
+      "result": {
+       "values": [
+        "null",
+        "true",
+        "true",
+        "true",
+        "false"
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         4,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 4
+       },
+       "value": "false"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "rear(): the rear message is 3, in slot 2; it returns 3 and stays.",
+      "ko": "rear(): 맨 뒤 메시지는 2번 칸의 3입니다. 3을 반환하고 그대로 둡니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "FixedRing",
+          "3"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "push",
+          "3"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "push",
+          "4"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "rear",
+          ""
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "isFull",
+          ""
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "pull",
+          ""
+         ]
+        },
+        {
+         "label": "8",
+         "cells": [
+          "push",
+          "4"
+         ]
+        },
+        {
+         "label": "9",
+         "cells": [
+          "rear",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ]
+        ]
+       }
+      },
+      "slots": {
+       "values": [
+        1,
+        2,
+        3
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         2
+        ]
+       },
+       "pointers": {
+        "head": 0,
+        "rear": 2
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "size",
+         "value": 3,
+         "why": "size is the field FixedRing keeps; it counts the slots not faded, which can wrap past the end, so no span can draw it"
+        }
+       ]
+      },
+      "result": {
+       "values": [
+        "null",
+        "true",
+        "true",
+        "true",
+        "false",
+        "3"
+       ],
+       "marks": {
+        "good": [
+         5
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "slots",
+        "at": 2
+       },
+       "to": {
+        "view": "result",
+        "at": 5
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "isFull(): size = 3, k = 3, so it returns true.",
+      "ko": "isFull(): size = 3, k = 3이므로 true 값을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "FixedRing",
+          "3"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "push",
+          "3"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "push",
+          "4"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "rear",
+          ""
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "isFull",
+          ""
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "pull",
+          ""
+         ]
+        },
+        {
+         "label": "8",
+         "cells": [
+          "push",
+          "4"
+         ]
+        },
+        {
+         "label": "9",
+         "cells": [
+          "rear",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ],
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          6,
+          0
+         ],
+         [
+          6,
+          1
+         ]
+        ]
+       }
+      },
+      "slots": {
+       "values": [
+        1,
+        2,
+        3
+       ],
+       "marks": {
+        "dim": []
+       },
+       "pointers": {
+        "head": 0,
+        "rear": 2
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "size",
+         "value": 3,
+         "why": "size is the field FixedRing keeps; it counts the slots not faded, which can wrap past the end, so no span can draw it"
+        }
+       ]
+      },
+      "result": {
+       "values": [
+        "null",
+        "true",
+        "true",
+        "true",
+        "false",
+        "3",
+        "true"
+       ],
+       "marks": {
+        "good": [
+         6
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         6,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 6
+       },
+       "value": "true"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "pull(): the front message, 1 in slot 0, leaves; head moves to 1 and size drops to 2. The slot keeps its value until a push writes over it; pull returns true.",
+      "ko": "pull(): 0번 칸의 맨 앞 메시지 1이 빠지고 head는 1로, size는 2로 줄어듭니다. 칸의 값은 push가 덮어쓸 때까지 남고, true를 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "FixedRing",
+          "3"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "push",
+          "3"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "push",
+          "4"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "rear",
+          ""
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "isFull",
+          ""
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "pull",
+          ""
+         ]
+        },
+        {
+         "label": "8",
+         "cells": [
+          "push",
+          "4"
+         ]
+        },
+        {
+         "label": "9",
+         "cells": [
+          "rear",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ],
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ],
+         [
+          6,
+          0
+         ],
+         [
+          6,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          7,
+          0
+         ],
+         [
+          7,
+          1
+         ]
+        ]
+       }
+      },
+      "slots": {
+       "values": [
+        1,
+        2,
+        3
+       ],
+       "marks": {
+        "dim": [
+         0
+        ],
+        "lit": [
+         0
+        ]
+       },
+       "pointers": {
+        "head": 1,
+        "rear": 2
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "size",
+         "value": 2,
+         "why": "size is the field FixedRing keeps; it counts the slots not faded, which can wrap past the end, so no span can draw it"
+        }
+       ]
+      },
+      "result": {
+       "values": [
+        "null",
+        "true",
+        "true",
+        "true",
+        "false",
+        "3",
+        "true",
+        "true"
+       ],
+       "marks": {
+        "good": [
+         7
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         7,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 7
+       },
+       "value": "true"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "push(4): it goes into slot (1 + 2) % 3 = 0, wrapping around; size becomes 3, and push returns true.",
+      "ko": "push(4): (1 + 2) % 3 = 0번 칸에 넣습니다 (한 바퀴 돌아옴). size는 3이 되고 true를 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "FixedRing",
+          "3"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "push",
+          "3"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "push",
+          "4"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "rear",
+          ""
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "isFull",
+          ""
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "pull",
+          ""
+         ]
+        },
+        {
+         "label": "8",
+         "cells": [
+          "push",
+          "4"
+         ]
+        },
+        {
+         "label": "9",
+         "cells": [
+          "rear",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ],
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ],
+         [
+          6,
+          0
+         ],
+         [
+          6,
+          1
+         ],
+         [
+          7,
+          0
+         ],
+         [
+          7,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          8,
+          0
+         ],
+         [
+          8,
+          1
+         ]
+        ]
+       }
+      },
+      "slots": {
+       "values": [
+        4,
+        2,
+        3
+       ],
+       "marks": {
+        "dim": [],
+        "good": [
+         0
+        ]
+       },
+       "pointers": {
+        "head": 1,
+        "rear": 0
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "size",
+         "value": 3,
+         "why": "size is the field FixedRing keeps; it counts the slots not faded, which can wrap past the end, so no span can draw it"
+        }
+       ]
+      },
+      "result": {
+       "values": [
+        "null",
+        "true",
+        "true",
+        "true",
+        "false",
+        "3",
+        "true",
+        "true",
+        "true"
+       ],
+       "marks": {
+        "good": [
+         8
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         8,
+         1
+        ]
+       },
+       "to": {
+        "view": "slots",
+        "at": 0
+       },
+       "value": "4"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         8,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 8
+       },
+       "value": "true"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "rear(): the rear message is 4, in slot 0; it returns 4 and stays.",
+      "ko": "rear(): 맨 뒤 메시지는 0번 칸의 4입니다. 4를 반환하고 그대로 둡니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "FixedRing",
+          "3"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "push",
+          "3"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "push",
+          "4"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "rear",
+          ""
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "isFull",
+          ""
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "pull",
+          ""
+         ]
+        },
+        {
+         "label": "8",
+         "cells": [
+          "push",
+          "4"
+         ]
+        },
+        {
+         "label": "9",
+         "cells": [
+          "rear",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ],
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ],
+         [
+          6,
+          0
+         ],
+         [
+          6,
+          1
+         ],
+         [
+          7,
+          0
+         ],
+         [
+          7,
+          1
+         ],
+         [
+          8,
+          0
+         ],
+         [
+          8,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          9,
+          0
+         ],
+         [
+          9,
+          1
+         ]
+        ]
+       }
+      },
+      "slots": {
+       "values": [
+        4,
+        2,
+        3
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         0
+        ]
+       },
+       "pointers": {
+        "head": 1,
+        "rear": 0
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "size",
+         "value": 3,
+         "why": "size is the field FixedRing keeps; it counts the slots not faded, which can wrap past the end, so no span can draw it"
+        }
+       ]
+      },
+      "result": {
+       "values": [
+        "null",
+        "true",
+        "true",
+        "true",
+        "false",
+        "3",
+        "true",
+        "true",
+        "true",
+        "4"
+       ],
+       "marks": {
+        "good": [
+         9
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "slots",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 9
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every call is answered, in order: answer [null,true,true,true,false,3,true,true,true,4].",
+      "ko": "모든 호출의 반환값을 차례로 모았습니다. 답은 [null,true,true,true,false,3,true,true,true,4]입니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "FixedRing",
+          "3"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "push",
+          "3"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "push",
+          "4"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "rear",
+          ""
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "isFull",
+          ""
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "pull",
+          ""
+         ]
+        },
+        {
+         "label": "8",
+         "cells": [
+          "push",
+          "4"
+         ]
+        },
+        {
+         "label": "9",
+         "cells": [
+          "rear",
+          ""
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "slots": {
+       "values": [
+        4,
+        2,
+        3
+       ],
+       "marks": {
+        "dim": []
+       },
+       "pointers": {
+        "head": 1,
+        "rear": 0
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "size",
+         "value": 3,
+         "why": "size is the field FixedRing keeps; it counts the slots not faded, which can wrap past the end, so no span can draw it"
+        }
+       ]
+      },
+      "result": {
+       "values": [
+        "null",
+        "true",
+        "true",
+        "true",
+        "false",
+        "3",
+        "true",
+        "true",
+        "true",
+        "4"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5,
+         6,
+         7,
+         8,
+         9
+        ]
+       }
+      }
+     },
+     "answer": "[null,true,true,true,false,3,true,true,true,4]"
+    }
+   ],
+   "sampleInput": "[\"FixedRing\",\"push\",\"push\",\"push\",\"push\",\"rear\",\"isFull\",\"pull\",\"push\",\"rear\"]\n[[3],[1],[2],[3],[4],[],[],[],[4],[]]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "[\"FixedRing\",\"push\",\"pull\",\"front\",\"pull\"]\n[[2],[5],[],[],[]]",
+   "expected": "[null,true,true,-1,false]",
+   "frames": [
+    {
+     "caption": {
+      "en": "FixedRing(2) makes 2 slots, all 0, with head = 0 and size = 0: an empty queue. It returns null.",
+      "ko": "FixedRing(2): 0으로 채운 칸 2개를 만들고 head = 0, size = 0인 빈 큐로 시작합니다. null을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "FixedRing",
+          "2"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "5"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "pull",
+          ""
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "front",
+          ""
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "pull",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ]
+       }
+      },
+      "slots": {
+       "values": [
+        0,
+        0
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1
+        ]
+       },
+       "pointers": {
+        "head": 0,
+        "rear": null
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "size",
+         "value": 0,
+         "why": "size is the field FixedRing keeps; it counts the slots not faded, which can wrap past the end, so no span can draw it"
+        }
+       ]
+      },
+      "result": {
+       "values": [
+        "null"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "push(5): it goes into slot (0 + 0) % 2 = 0; size becomes 1, and push returns true.",
+      "ko": "push(5): (0 + 0) % 2 = 0번 칸에 넣습니다. size는 1이 되고 true를 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "FixedRing",
+          "2"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "5"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "pull",
+          ""
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "front",
+          ""
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "pull",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "slots": {
+       "values": [
+        5,
+        0
+       ],
+       "marks": {
+        "dim": [
+         1
+        ],
+        "good": [
+         0
+        ]
+       },
+       "pointers": {
+        "head": 0,
+        "rear": 0
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "size",
+         "value": 1,
+         "why": "size is the field FixedRing keeps; it counts the slots not faded, which can wrap past the end, so no span can draw it"
+        }
+       ]
+      },
+      "result": {
+       "values": [
+        "null",
+        "true"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         1,
+         1
+        ]
+       },
+       "to": {
+        "view": "slots",
+        "at": 0
+       },
+       "value": "5"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       },
+       "value": "true"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "pull(): the front message, 5 in slot 0, leaves; head moves to 1 and size drops to 0. The slot keeps its value until a push writes over it; pull returns true.",
+      "ko": "pull(): 0번 칸의 맨 앞 메시지 5가 빠지고 head는 1로, size는 0으로 줄어듭니다. 칸의 값은 push가 덮어쓸 때까지 남고, true를 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "FixedRing",
+          "2"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "5"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "pull",
+          ""
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "front",
+          ""
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "pull",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ]
+       }
+      },
+      "slots": {
+       "values": [
+        5,
+        0
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1
+        ],
+        "lit": [
+         0
+        ]
+       },
+       "pointers": {
+        "head": 1,
+        "rear": null
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "size",
+         "value": 0,
+         "why": "size is the field FixedRing keeps; it counts the slots not faded, which can wrap past the end, so no span can draw it"
+        }
+       ]
+      },
+      "result": {
+       "values": [
+        "null",
+        "true",
+        "true"
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         2,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       },
+       "value": "true"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "front(): the queue is empty, so it returns -1.",
+      "ko": "front(): 큐가 비어 있으므로 -1을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "FixedRing",
+          "2"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "5"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "pull",
+          ""
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "front",
+          ""
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "pull",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      },
+      "slots": {
+       "values": [
+        5,
+        0
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1
+        ]
+       },
+       "pointers": {
+        "head": 1,
+        "rear": null
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "size",
+         "value": 0,
+         "why": "size is the field FixedRing keeps; it counts the slots not faded, which can wrap past the end, so no span can draw it"
+        }
+       ]
+      },
+      "result": {
+       "values": [
+        "null",
+        "true",
+        "true",
+        "-1"
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         3,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       },
+       "value": "-1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "pull(): size = 0, so the queue is empty and pull returns false.",
+      "ko": "pull(): size = 0이라 큐가 비어 있으므로 false를 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "FixedRing",
+          "2"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "5"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "pull",
+          ""
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "front",
+          ""
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "pull",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ]
+       }
+      },
+      "slots": {
+       "values": [
+        5,
+        0
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1
+        ]
+       },
+       "pointers": {
+        "head": 1,
+        "rear": null
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "size",
+         "value": 0,
+         "why": "size is the field FixedRing keeps; it counts the slots not faded, which can wrap past the end, so no span can draw it"
+        }
+       ]
+      },
+      "result": {
+       "values": [
+        "null",
+        "true",
+        "true",
+        "-1",
+        "false"
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         4,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 4
+       },
+       "value": "false"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every call is answered, in order: answer [null,true,true,-1,false].",
+      "ko": "모든 호출의 반환값을 차례로 모았습니다. 답은 [null,true,true,-1,false]입니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "FixedRing",
+          "2"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "5"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "pull",
+          ""
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "front",
+          ""
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "pull",
+          ""
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "slots": {
+       "values": [
+        5,
+        0
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1
+        ]
+       },
+       "pointers": {
+        "head": 1,
+        "rear": null
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "size",
+         "value": 0,
+         "why": "size is the field FixedRing keeps; it counts the slots not faded, which can wrap past the end, so no span can draw it"
+        }
+       ]
+      },
+      "result": {
+       "values": [
+        "null",
+        "true",
+        "true",
+        "-1",
+        "false"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      }
+     },
+     "answer": "[null,true,true,-1,false]"
+    }
+   ],
+   "sampleInput": "[\"FixedRing\",\"push\",\"pull\",\"front\",\"pull\"]\n[[2],[5],[],[],[]]"
+  },
+  {
+   "label": {
+    "en": "Case 3",
+    "ko": "케이스 3"
+   },
+   "input": "[\"FixedRing\",\"isEmpty\",\"push\",\"isEmpty\",\"isFull\",\"push\",\"isFull\"]\n[[2],[],[1],[],[],[2],[]]",
+   "expected": "[null,true,true,false,false,true,true]",
+   "frames": [
+    {
+     "caption": {
+      "en": "FixedRing(2) makes 2 slots, all 0, with head = 0 and size = 0: an empty queue. It returns null.",
+      "ko": "FixedRing(2): 0으로 채운 칸 2개를 만들고 head = 0, size = 0인 빈 큐로 시작합니다. null을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "FixedRing",
+          "2"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "isEmpty",
+          ""
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "1"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "isEmpty",
+          ""
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "isFull",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "push",
+          "2"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "isFull",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ]
+       }
+      },
+      "slots": {
+       "values": [
+        0,
+        0
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1
+        ]
+       },
+       "pointers": {
+        "head": 0,
+        "rear": null
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "size",
+         "value": 0,
+         "why": "size is the field FixedRing keeps; it counts the slots not faded, which can wrap past the end, so no span can draw it"
+        }
+       ]
+      },
+      "result": {
+       "values": [
+        "null"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "isEmpty(): size = 0, so it returns true.",
+      "ko": "isEmpty(): size = 0이므로 true 값을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "FixedRing",
+          "2"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "isEmpty",
+          ""
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "1"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "isEmpty",
+          ""
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "isFull",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "push",
+          "2"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "isFull",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "slots": {
+       "values": [
+        0,
+        0
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1
+        ]
+       },
+       "pointers": {
+        "head": 0,
+        "rear": null
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "size",
+         "value": 0,
+         "why": "size is the field FixedRing keeps; it counts the slots not faded, which can wrap past the end, so no span can draw it"
+        }
+       ]
+      },
+      "result": {
+       "values": [
+        "null",
+        "true"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       },
+       "value": "true"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "push(1): it goes into slot (0 + 0) % 2 = 0; size becomes 1, and push returns true.",
+      "ko": "push(1): (0 + 0) % 2 = 0번 칸에 넣습니다. size는 1이 되고 true를 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "FixedRing",
+          "2"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "isEmpty",
+          ""
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "1"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "isEmpty",
+          ""
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "isFull",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "push",
+          "2"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "isFull",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ]
+       }
+      },
+      "slots": {
+       "values": [
+        1,
+        0
+       ],
+       "marks": {
+        "dim": [
+         1
+        ],
+        "good": [
+         0
+        ]
+       },
+       "pointers": {
+        "head": 0,
+        "rear": 0
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "size",
+         "value": 1,
+         "why": "size is the field FixedRing keeps; it counts the slots not faded, which can wrap past the end, so no span can draw it"
+        }
+       ]
+      },
+      "result": {
+       "values": [
+        "null",
+        "true",
+        "true"
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         2,
+         1
+        ]
+       },
+       "to": {
+        "view": "slots",
+        "at": 0
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         2,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       },
+       "value": "true"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "isEmpty(): size = 1, so it returns false.",
+      "ko": "isEmpty(): size = 1이므로 false 값을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "FixedRing",
+          "2"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "isEmpty",
+          ""
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "1"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "isEmpty",
+          ""
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "isFull",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "push",
+          "2"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "isFull",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      },
+      "slots": {
+       "values": [
+        1,
+        0
+       ],
+       "marks": {
+        "dim": [
+         1
+        ]
+       },
+       "pointers": {
+        "head": 0,
+        "rear": 0
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "size",
+         "value": 1,
+         "why": "size is the field FixedRing keeps; it counts the slots not faded, which can wrap past the end, so no span can draw it"
+        }
+       ]
+      },
+      "result": {
+       "values": [
+        "null",
+        "true",
+        "true",
+        "false"
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         3,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       },
+       "value": "false"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "isFull(): size = 1, k = 2, so it returns false.",
+      "ko": "isFull(): size = 1, k = 2이므로 false 값을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "FixedRing",
+          "2"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "isEmpty",
+          ""
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "1"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "isEmpty",
+          ""
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "isFull",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "push",
+          "2"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "isFull",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ]
+       }
+      },
+      "slots": {
+       "values": [
+        1,
+        0
+       ],
+       "marks": {
+        "dim": [
+         1
+        ]
+       },
+       "pointers": {
+        "head": 0,
+        "rear": 0
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "size",
+         "value": 1,
+         "why": "size is the field FixedRing keeps; it counts the slots not faded, which can wrap past the end, so no span can draw it"
+        }
+       ]
+      },
+      "result": {
+       "values": [
+        "null",
+        "true",
+        "true",
+        "false",
+        "false"
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         4,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 4
+       },
+       "value": "false"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "push(2): it goes into slot (0 + 1) % 2 = 1; size becomes 2, and push returns true.",
+      "ko": "push(2): (0 + 1) % 2 = 1번 칸에 넣습니다. size는 2가 되고 true를 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "FixedRing",
+          "2"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "isEmpty",
+          ""
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "1"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "isEmpty",
+          ""
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "isFull",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "push",
+          "2"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "isFull",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ]
+        ]
+       }
+      },
+      "slots": {
+       "values": [
+        1,
+        2
+       ],
+       "marks": {
+        "dim": [],
+        "good": [
+         1
+        ]
+       },
+       "pointers": {
+        "head": 0,
+        "rear": 1
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "size",
+         "value": 2,
+         "why": "size is the field FixedRing keeps; it counts the slots not faded, which can wrap past the end, so no span can draw it"
+        }
+       ]
+      },
+      "result": {
+       "values": [
+        "null",
+        "true",
+        "true",
+        "false",
+        "false",
+        "true"
+       ],
+       "marks": {
+        "good": [
+         5
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         5,
+         1
+        ]
+       },
+       "to": {
+        "view": "slots",
+        "at": 1
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         5,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 5
+       },
+       "value": "true"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "isFull(): size = 2, k = 2, so it returns true.",
+      "ko": "isFull(): size = 2, k = 2이므로 true 값을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "FixedRing",
+          "2"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "isEmpty",
+          ""
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "1"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "isEmpty",
+          ""
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "isFull",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "push",
+          "2"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "isFull",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ],
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          6,
+          0
+         ],
+         [
+          6,
+          1
+         ]
+        ]
+       }
+      },
+      "slots": {
+       "values": [
+        1,
+        2
+       ],
+       "marks": {
+        "dim": []
+       },
+       "pointers": {
+        "head": 0,
+        "rear": 1
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "size",
+         "value": 2,
+         "why": "size is the field FixedRing keeps; it counts the slots not faded, which can wrap past the end, so no span can draw it"
+        }
+       ]
+      },
+      "result": {
+       "values": [
+        "null",
+        "true",
+        "true",
+        "false",
+        "false",
+        "true",
+        "true"
+       ],
+       "marks": {
+        "good": [
+         6
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         6,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 6
+       },
+       "value": "true"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every call is answered, in order: answer [null,true,true,false,false,true,true].",
+      "ko": "모든 호출의 반환값을 차례로 모았습니다. 답은 [null,true,true,false,false,true,true]입니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "FixedRing",
+          "2"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "isEmpty",
+          ""
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "1"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "isEmpty",
+          ""
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "isFull",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "push",
+          "2"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "isFull",
+          ""
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "slots": {
+       "values": [
+        1,
+        2
+       ],
+       "marks": {
+        "dim": []
+       },
+       "pointers": {
+        "head": 0,
+        "rear": 1
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "size",
+         "value": 2,
+         "why": "size is the field FixedRing keeps; it counts the slots not faded, which can wrap past the end, so no span can draw it"
+        }
+       ]
+      },
+      "result": {
+       "values": [
+        "null",
+        "true",
+        "true",
+        "false",
+        "false",
+        "true",
+        "true"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5,
+         6
+        ]
+       }
+      }
+     },
+     "answer": "[null,true,true,false,false,true,true]"
+    }
+   ],
+   "sampleInput": "[\"FixedRing\",\"isEmpty\",\"push\",\"isEmpty\",\"isFull\",\"push\",\"isFull\"]\n[[2],[],[1],[],[],[2],[]]"
+  }
+ ]
+}

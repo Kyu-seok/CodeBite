@@ -1,0 +1,3167 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Find Name Anagram",
+  "ko": "애너그램 부분 문자열"
+ },
+ "approach": {
+  "en": "A window exactly as long as pattern slides over log, one letter in on the right and one out on the left; it is a reordering of pattern exactly when its letter counts equal pattern's.",
+  "ko": "pattern과 길이가 같은 창을 log 위로 밀며, 오른쪽에서 한 글자를 넣고 왼쪽에서 한 글자를 뺍니다. 창의 글자 수가 pattern의 글자 수와 같을 때가 바로 pattern을 재배열한 부분 문자열입니다."
+ },
+ "views": [
+  {
+   "id": "pattern",
+   "type": "array",
+   "title": {
+    "en": "pattern",
+    "ko": "pattern (이름)"
+   }
+  },
+  {
+   "id": "log",
+   "type": "array",
+   "title": {
+    "en": "log",
+    "ko": "log (메모)"
+   }
+  },
+  {
+   "id": "need",
+   "type": "map",
+   "title": {
+    "en": "need (pattern's counts)",
+    "ko": "need (pattern의 글자 수)"
+   }
+  },
+  {
+   "id": "window",
+   "type": "map",
+   "title": {
+    "en": "window's counts",
+    "ko": "창의 글자 수"
+   },
+   "empty": {
+    "en": "empty",
+    "ko": "비어 있음"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "pattern = \"ab\", log = \"ccbazz\"",
+   "expected": "true",
+   "frames": [
+    {
+     "caption": {
+      "en": "pattern \"ab\" has 2 letters, so every window over log \"ccbazz\" is 2 long; need holds pattern's letter counts.",
+      "ko": "pattern \"ab\"의 길이가 2글자이므로 log \"ccbazz\" 위의 창은 모두 2글자입니다. need에는 pattern의 글자 수를 셉니다."
+     },
+     "views": {
+      "pattern": {
+       "values": [
+        "a",
+        "b"
+       ]
+      },
+      "log": {
+       "values": [
+        "c",
+        "c",
+        "b",
+        "a",
+        "z",
+        "z"
+       ],
+       "spans": {
+        "window": null
+       },
+       "pointers": {
+        "left": null,
+        "right": null
+       },
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+       ],
+       "marks": {
+        "lit": [],
+        "path": []
+       }
+      },
+      "need": {
+       "entries": [
+        {
+         "key": "a",
+         "value": 1
+        },
+        {
+         "key": "b",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "bad": []
+       }
+      },
+      "window": {
+       "entries": [],
+       "struck": [],
+       "marks": {
+        "bad": [],
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "pattern",
+        "at": 0
+       },
+       "to": {
+        "view": "need",
+        "at": "a"
+       }
+      },
+      {
+       "from": {
+        "view": "pattern",
+        "at": 1
+       },
+       "to": {
+        "view": "need",
+        "at": "b"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Fill the first window: log[0] = 'c' goes into its card.",
+      "ko": "첫 창을 채웁니다: log[0] = 'c' 글자를 그 카드에 넣습니다."
+     },
+     "views": {
+      "pattern": {
+       "values": [
+        "a",
+        "b"
+       ]
+      },
+      "log": {
+       "values": [
+        "c",
+        "c",
+        "b",
+        "a",
+        "z",
+        "z"
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "window 1",
+          "ko": "창 1"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "left": 0,
+        "right": 0
+       },
+       "unread": [
+        1,
+        2,
+        3,
+        4,
+        5
+       ],
+       "marks": {
+        "lit": [],
+        "path": []
+       }
+      },
+      "need": {
+       "entries": [
+        {
+         "key": "a",
+         "value": 1
+        },
+        {
+         "key": "b",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "bad": []
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": "c",
+         "value": 1
+        }
+       ],
+       "struck": [],
+       "marks": {
+        "bad": [],
+        "good": [
+         "c"
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "log",
+        "at": 0
+       },
+       "to": {
+        "view": "window",
+        "at": "c"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "log[1] = 'c' goes in, completing the first window. Compare: the window \"cc\" differs from need at 'a', 'b', 'c'.",
+      "ko": "log[1] = 'c' 글자를 넣어 첫 창이 찼습니다. 비교: 창 \"cc\"의 글자 수가 need와 다른 글자: 'a', 'b', 'c'."
+     },
+     "views": {
+      "pattern": {
+       "values": [
+        "a",
+        "b"
+       ]
+      },
+      "log": {
+       "values": [
+        "c",
+        "c",
+        "b",
+        "a",
+        "z",
+        "z"
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "window 2",
+          "ko": "창 2"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "left": 0,
+        "right": 1
+       },
+       "unread": [
+        2,
+        3,
+        4,
+        5
+       ],
+       "marks": {
+        "lit": [],
+        "path": []
+       }
+      },
+      "need": {
+       "entries": [
+        {
+         "key": "a",
+         "value": 1
+        },
+        {
+         "key": "b",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "bad": [
+         "a",
+         "b"
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": "c",
+         "value": 2
+        }
+       ],
+       "struck": [],
+       "marks": {
+        "bad": [
+         "c"
+        ],
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "log",
+        "at": 1
+       },
+       "to": {
+        "view": "window",
+        "at": "c"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Slide right: log[2] = 'b' comes in, so the window is 3 long, one too many.",
+      "ko": "오른쪽으로 밉니다: log[2] = 'b' 글자가 들어와 창이 3글자로 하나 넘칩니다."
+     },
+     "views": {
+      "pattern": {
+       "values": [
+        "a",
+        "b"
+       ]
+      },
+      "log": {
+       "values": [
+        "c",
+        "c",
+        "b",
+        "a",
+        "z",
+        "z"
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "window 3",
+          "ko": "창 3"
+         },
+         "mark": "bad",
+         "fade": true
+        }
+       },
+       "pointers": {
+        "left": 0,
+        "right": 2
+       },
+       "unread": [
+        3,
+        4,
+        5
+       ],
+       "marks": {
+        "lit": [],
+        "path": []
+       }
+      },
+      "need": {
+       "entries": [
+        {
+         "key": "a",
+         "value": 1
+        },
+        {
+         "key": "b",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "bad": []
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": "c",
+         "value": 2
+        },
+        {
+         "key": "b",
+         "value": 1
+        }
+       ],
+       "struck": [],
+       "marks": {
+        "bad": [],
+        "good": [
+         "b"
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "log",
+        "at": 2
+       },
+       "to": {
+        "view": "window",
+        "at": "b"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "log[0] = 'c' leaves on the left. the window \"cb\" differs from need at 'a', 'c'.",
+      "ko": "왼쪽의 log[0] = 'c' 글자가 빠집니다. 창 \"cb\"의 글자 수가 need와 다른 글자: 'a', 'c'."
+     },
+     "views": {
+      "pattern": {
+       "values": [
+        "a",
+        "b"
+       ]
+      },
+      "log": {
+       "values": [
+        "c",
+        "c",
+        "b",
+        "a",
+        "z",
+        "z"
+       ],
+       "spans": {
+        "window": {
+         "from": 1,
+         "to": 2,
+         "label": {
+          "en": "window 2",
+          "ko": "창 2"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "left": 1,
+        "right": 2
+       },
+       "unread": [
+        3,
+        4,
+        5
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "path": []
+       }
+      },
+      "need": {
+       "entries": [
+        {
+         "key": "a",
+         "value": 1
+        },
+        {
+         "key": "b",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "bad": [
+         "a"
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": "c",
+         "value": 1
+        },
+        {
+         "key": "b",
+         "value": 1
+        }
+       ],
+       "struck": [],
+       "marks": {
+        "bad": [
+         "c"
+        ],
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "window",
+        "at": "c"
+       },
+       "to": {
+        "view": "log",
+        "at": 0
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Slide right: log[3] = 'a' comes in, so the window is 3 long, one too many.",
+      "ko": "오른쪽으로 밉니다: log[3] = 'a' 글자가 들어와 창이 3글자로 하나 넘칩니다."
+     },
+     "views": {
+      "pattern": {
+       "values": [
+        "a",
+        "b"
+       ]
+      },
+      "log": {
+       "values": [
+        "c",
+        "c",
+        "b",
+        "a",
+        "z",
+        "z"
+       ],
+       "spans": {
+        "window": {
+         "from": 1,
+         "to": 3,
+         "label": {
+          "en": "window 3",
+          "ko": "창 3"
+         },
+         "mark": "bad",
+         "fade": true
+        }
+       },
+       "pointers": {
+        "left": 1,
+        "right": 3
+       },
+       "unread": [
+        4,
+        5
+       ],
+       "marks": {
+        "lit": [],
+        "path": []
+       }
+      },
+      "need": {
+       "entries": [
+        {
+         "key": "a",
+         "value": 1
+        },
+        {
+         "key": "b",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "bad": []
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": "c",
+         "value": 1
+        },
+        {
+         "key": "b",
+         "value": 1
+        },
+        {
+         "key": "a",
+         "value": 1
+        }
+       ],
+       "struck": [],
+       "marks": {
+        "bad": [],
+        "good": [
+         "a"
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "log",
+        "at": 3
+       },
+       "to": {
+        "view": "window",
+        "at": "a"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "log[1] = 'c' leaves on the left. the window \"ba\" has the same counts as need: a match.",
+      "ko": "왼쪽의 log[1] = 'c' 글자가 빠집니다. 창 \"ba\"의 글자 수가 pattern과 같습니다: 찾았습니다."
+     },
+     "views": {
+      "pattern": {
+       "values": [
+        "a",
+        "b"
+       ]
+      },
+      "log": {
+       "values": [
+        "c",
+        "c",
+        "b",
+        "a",
+        "z",
+        "z"
+       ],
+       "spans": {
+        "window": {
+         "from": 2,
+         "to": 3,
+         "label": {
+          "en": "window 2",
+          "ko": "창 2"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "left": 2,
+        "right": 3
+       },
+       "unread": [
+        4,
+        5
+       ],
+       "marks": {
+        "lit": [
+         1
+        ],
+        "path": []
+       }
+      },
+      "need": {
+       "entries": [
+        {
+         "key": "a",
+         "value": 1
+        },
+        {
+         "key": "b",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "bad": []
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": "c",
+         "value": 0
+        },
+        {
+         "key": "b",
+         "value": 1
+        },
+        {
+         "key": "a",
+         "value": 1
+        }
+       ],
+       "struck": [
+        "c"
+       ],
+       "marks": {
+        "bad": [],
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "window",
+        "at": "c"
+       },
+       "to": {
+        "view": "log",
+        "at": 1
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Window \"ba\" at log[2..3] is a reordering of \"ab\": true, and the slide stops here.",
+      "ko": "log[2..3]의 창 \"ba\": pattern \"ab\"의 재배열이므로 답은 true이고, 여기서 멈춥니다."
+     },
+     "views": {
+      "pattern": {
+       "values": [
+        "a",
+        "b"
+       ]
+      },
+      "log": {
+       "values": [
+        "c",
+        "c",
+        "b",
+        "a",
+        "z",
+        "z"
+       ],
+       "spans": {
+        "window": {
+         "from": 2,
+         "to": 3,
+         "label": {
+          "en": "window 2",
+          "ko": "창 2"
+         },
+         "mark": "path",
+         "fade": true
+        }
+       },
+       "pointers": {},
+       "unread": [
+        4,
+        5
+       ],
+       "marks": {
+        "lit": [],
+        "path": [
+         2,
+         3
+        ]
+       }
+      },
+      "need": {
+       "entries": [
+        {
+         "key": "a",
+         "value": 1
+        },
+        {
+         "key": "b",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "path": [
+         "a",
+         "b"
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": "b",
+         "value": 1
+        },
+        {
+         "key": "a",
+         "value": 1
+        }
+       ],
+       "struck": [],
+       "marks": {
+        "path": [
+         "b",
+         "a"
+        ]
+       }
+      }
+     },
+     "answer": "true"
+    }
+   ],
+   "sampleInput": "ab\nccbazz"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "pattern = \"rp\", log = \"mailpirzone\"",
+   "expected": "false",
+   "frames": [
+    {
+     "caption": {
+      "en": "pattern \"rp\" has 2 letters, so every window over log \"mailpirzone\" is 2 long; need holds pattern's letter counts.",
+      "ko": "pattern \"rp\"의 길이가 2글자이므로 log \"mailpirzone\" 위의 창은 모두 2글자입니다. need에는 pattern의 글자 수를 셉니다."
+     },
+     "views": {
+      "pattern": {
+       "values": [
+        "r",
+        "p"
+       ]
+      },
+      "log": {
+       "values": [
+        "m",
+        "a",
+        "i",
+        "l",
+        "p",
+        "i",
+        "r",
+        "z",
+        "o",
+        "n",
+        "e"
+       ],
+       "spans": {
+        "window": null
+       },
+       "pointers": {
+        "left": null,
+        "right": null
+       },
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+       ],
+       "marks": {
+        "lit": [],
+        "path": []
+       }
+      },
+      "need": {
+       "entries": [
+        {
+         "key": "r",
+         "value": 1
+        },
+        {
+         "key": "p",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "bad": []
+       }
+      },
+      "window": {
+       "entries": [],
+       "struck": [],
+       "marks": {
+        "bad": [],
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "pattern",
+        "at": 0
+       },
+       "to": {
+        "view": "need",
+        "at": "r"
+       }
+      },
+      {
+       "from": {
+        "view": "pattern",
+        "at": 1
+       },
+       "to": {
+        "view": "need",
+        "at": "p"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Fill the first window: log[0] = 'm' goes into its card.",
+      "ko": "첫 창을 채웁니다: log[0] = 'm' 글자를 그 카드에 넣습니다."
+     },
+     "views": {
+      "pattern": {
+       "values": [
+        "r",
+        "p"
+       ]
+      },
+      "log": {
+       "values": [
+        "m",
+        "a",
+        "i",
+        "l",
+        "p",
+        "i",
+        "r",
+        "z",
+        "o",
+        "n",
+        "e"
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "window 1",
+          "ko": "창 1"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "left": 0,
+        "right": 0
+       },
+       "unread": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+       ],
+       "marks": {
+        "lit": [],
+        "path": []
+       }
+      },
+      "need": {
+       "entries": [
+        {
+         "key": "r",
+         "value": 1
+        },
+        {
+         "key": "p",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "bad": []
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": "m",
+         "value": 1
+        }
+       ],
+       "struck": [],
+       "marks": {
+        "bad": [],
+        "good": [
+         "m"
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "log",
+        "at": 0
+       },
+       "to": {
+        "view": "window",
+        "at": "m"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "log[1] = 'a' goes in, completing the first window. Compare: the window \"ma\" differs from need at 'a', 'm', 'p', 'r'.",
+      "ko": "log[1] = 'a' 글자를 넣어 첫 창이 찼습니다. 비교: 창 \"ma\"의 글자 수가 need와 다른 글자: 'a', 'm', 'p', 'r'."
+     },
+     "views": {
+      "pattern": {
+       "values": [
+        "r",
+        "p"
+       ]
+      },
+      "log": {
+       "values": [
+        "m",
+        "a",
+        "i",
+        "l",
+        "p",
+        "i",
+        "r",
+        "z",
+        "o",
+        "n",
+        "e"
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "window 2",
+          "ko": "창 2"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "left": 0,
+        "right": 1
+       },
+       "unread": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+       ],
+       "marks": {
+        "lit": [],
+        "path": []
+       }
+      },
+      "need": {
+       "entries": [
+        {
+         "key": "r",
+         "value": 1
+        },
+        {
+         "key": "p",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "bad": [
+         "p",
+         "r"
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": "m",
+         "value": 1
+        },
+        {
+         "key": "a",
+         "value": 1
+        }
+       ],
+       "struck": [],
+       "marks": {
+        "bad": [
+         "a",
+         "m"
+        ],
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "log",
+        "at": 1
+       },
+       "to": {
+        "view": "window",
+        "at": "a"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Slide right: log[2] = 'i' comes in, so the window is 3 long, one too many.",
+      "ko": "오른쪽으로 밉니다: log[2] = 'i' 글자가 들어와 창이 3글자로 하나 넘칩니다."
+     },
+     "views": {
+      "pattern": {
+       "values": [
+        "r",
+        "p"
+       ]
+      },
+      "log": {
+       "values": [
+        "m",
+        "a",
+        "i",
+        "l",
+        "p",
+        "i",
+        "r",
+        "z",
+        "o",
+        "n",
+        "e"
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "window 3",
+          "ko": "창 3"
+         },
+         "mark": "bad",
+         "fade": true
+        }
+       },
+       "pointers": {
+        "left": 0,
+        "right": 2
+       },
+       "unread": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+       ],
+       "marks": {
+        "lit": [],
+        "path": []
+       }
+      },
+      "need": {
+       "entries": [
+        {
+         "key": "r",
+         "value": 1
+        },
+        {
+         "key": "p",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "bad": []
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": "m",
+         "value": 1
+        },
+        {
+         "key": "a",
+         "value": 1
+        },
+        {
+         "key": "i",
+         "value": 1
+        }
+       ],
+       "struck": [],
+       "marks": {
+        "bad": [],
+        "good": [
+         "i"
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "log",
+        "at": 2
+       },
+       "to": {
+        "view": "window",
+        "at": "i"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "log[0] = 'm' leaves on the left. the window \"ai\" differs from need at 'a', 'i', 'p', 'r'.",
+      "ko": "왼쪽의 log[0] = 'm' 글자가 빠집니다. 창 \"ai\"의 글자 수가 need와 다른 글자: 'a', 'i', 'p', 'r'."
+     },
+     "views": {
+      "pattern": {
+       "values": [
+        "r",
+        "p"
+       ]
+      },
+      "log": {
+       "values": [
+        "m",
+        "a",
+        "i",
+        "l",
+        "p",
+        "i",
+        "r",
+        "z",
+        "o",
+        "n",
+        "e"
+       ],
+       "spans": {
+        "window": {
+         "from": 1,
+         "to": 2,
+         "label": {
+          "en": "window 2",
+          "ko": "창 2"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "left": 1,
+        "right": 2
+       },
+       "unread": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "path": []
+       }
+      },
+      "need": {
+       "entries": [
+        {
+         "key": "r",
+         "value": 1
+        },
+        {
+         "key": "p",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "bad": [
+         "p",
+         "r"
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": "m",
+         "value": 0
+        },
+        {
+         "key": "a",
+         "value": 1
+        },
+        {
+         "key": "i",
+         "value": 1
+        }
+       ],
+       "struck": [
+        "m"
+       ],
+       "marks": {
+        "bad": [
+         "a",
+         "i"
+        ],
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "window",
+        "at": "m"
+       },
+       "to": {
+        "view": "log",
+        "at": 0
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Slide right: log[3] = 'l' comes in, so the window is 3 long, one too many.",
+      "ko": "오른쪽으로 밉니다: log[3] = 'l' 글자가 들어와 창이 3글자로 하나 넘칩니다."
+     },
+     "views": {
+      "pattern": {
+       "values": [
+        "r",
+        "p"
+       ]
+      },
+      "log": {
+       "values": [
+        "m",
+        "a",
+        "i",
+        "l",
+        "p",
+        "i",
+        "r",
+        "z",
+        "o",
+        "n",
+        "e"
+       ],
+       "spans": {
+        "window": {
+         "from": 1,
+         "to": 3,
+         "label": {
+          "en": "window 3",
+          "ko": "창 3"
+         },
+         "mark": "bad",
+         "fade": true
+        }
+       },
+       "pointers": {
+        "left": 1,
+        "right": 3
+       },
+       "unread": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+       ],
+       "marks": {
+        "lit": [],
+        "path": []
+       }
+      },
+      "need": {
+       "entries": [
+        {
+         "key": "r",
+         "value": 1
+        },
+        {
+         "key": "p",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "bad": []
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": "a",
+         "value": 1
+        },
+        {
+         "key": "i",
+         "value": 1
+        },
+        {
+         "key": "l",
+         "value": 1
+        }
+       ],
+       "struck": [],
+       "marks": {
+        "bad": [],
+        "good": [
+         "l"
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "log",
+        "at": 3
+       },
+       "to": {
+        "view": "window",
+        "at": "l"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "log[1] = 'a' leaves on the left. the window \"il\" differs from need at 'i', 'l', 'p', 'r'.",
+      "ko": "왼쪽의 log[1] = 'a' 글자가 빠집니다. 창 \"il\"의 글자 수가 need와 다른 글자: 'i', 'l', 'p', 'r'."
+     },
+     "views": {
+      "pattern": {
+       "values": [
+        "r",
+        "p"
+       ]
+      },
+      "log": {
+       "values": [
+        "m",
+        "a",
+        "i",
+        "l",
+        "p",
+        "i",
+        "r",
+        "z",
+        "o",
+        "n",
+        "e"
+       ],
+       "spans": {
+        "window": {
+         "from": 2,
+         "to": 3,
+         "label": {
+          "en": "window 2",
+          "ko": "창 2"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "left": 2,
+        "right": 3
+       },
+       "unread": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+       ],
+       "marks": {
+        "lit": [
+         1
+        ],
+        "path": []
+       }
+      },
+      "need": {
+       "entries": [
+        {
+         "key": "r",
+         "value": 1
+        },
+        {
+         "key": "p",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "bad": [
+         "p",
+         "r"
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": "a",
+         "value": 0
+        },
+        {
+         "key": "i",
+         "value": 1
+        },
+        {
+         "key": "l",
+         "value": 1
+        }
+       ],
+       "struck": [
+        "a"
+       ],
+       "marks": {
+        "bad": [
+         "i",
+         "l"
+        ],
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "window",
+        "at": "a"
+       },
+       "to": {
+        "view": "log",
+        "at": 1
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Slide right: log[4] = 'p' comes in, so the window is 3 long, one too many.",
+      "ko": "오른쪽으로 밉니다: log[4] = 'p' 글자가 들어와 창이 3글자로 하나 넘칩니다."
+     },
+     "views": {
+      "pattern": {
+       "values": [
+        "r",
+        "p"
+       ]
+      },
+      "log": {
+       "values": [
+        "m",
+        "a",
+        "i",
+        "l",
+        "p",
+        "i",
+        "r",
+        "z",
+        "o",
+        "n",
+        "e"
+       ],
+       "spans": {
+        "window": {
+         "from": 2,
+         "to": 4,
+         "label": {
+          "en": "window 3",
+          "ko": "창 3"
+         },
+         "mark": "bad",
+         "fade": true
+        }
+       },
+       "pointers": {
+        "left": 2,
+        "right": 4
+       },
+       "unread": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+       ],
+       "marks": {
+        "lit": [],
+        "path": []
+       }
+      },
+      "need": {
+       "entries": [
+        {
+         "key": "r",
+         "value": 1
+        },
+        {
+         "key": "p",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "bad": []
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": "i",
+         "value": 1
+        },
+        {
+         "key": "l",
+         "value": 1
+        },
+        {
+         "key": "p",
+         "value": 1
+        }
+       ],
+       "struck": [],
+       "marks": {
+        "bad": [],
+        "good": [
+         "p"
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "log",
+        "at": 4
+       },
+       "to": {
+        "view": "window",
+        "at": "p"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "log[2] = 'i' leaves on the left. the window \"lp\" differs from need at 'l', 'r'.",
+      "ko": "왼쪽의 log[2] = 'i' 글자가 빠집니다. 창 \"lp\"의 글자 수가 need와 다른 글자: 'l', 'r'."
+     },
+     "views": {
+      "pattern": {
+       "values": [
+        "r",
+        "p"
+       ]
+      },
+      "log": {
+       "values": [
+        "m",
+        "a",
+        "i",
+        "l",
+        "p",
+        "i",
+        "r",
+        "z",
+        "o",
+        "n",
+        "e"
+       ],
+       "spans": {
+        "window": {
+         "from": 3,
+         "to": 4,
+         "label": {
+          "en": "window 2",
+          "ko": "창 2"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "left": 3,
+        "right": 4
+       },
+       "unread": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+       ],
+       "marks": {
+        "lit": [
+         2
+        ],
+        "path": []
+       }
+      },
+      "need": {
+       "entries": [
+        {
+         "key": "r",
+         "value": 1
+        },
+        {
+         "key": "p",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "bad": [
+         "r"
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": "i",
+         "value": 0
+        },
+        {
+         "key": "l",
+         "value": 1
+        },
+        {
+         "key": "p",
+         "value": 1
+        }
+       ],
+       "struck": [
+        "i"
+       ],
+       "marks": {
+        "bad": [
+         "l"
+        ],
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "window",
+        "at": "i"
+       },
+       "to": {
+        "view": "log",
+        "at": 2
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Slide right: log[5] = 'i' comes in, so the window is 3 long, one too many.",
+      "ko": "오른쪽으로 밉니다: log[5] = 'i' 글자가 들어와 창이 3글자로 하나 넘칩니다."
+     },
+     "views": {
+      "pattern": {
+       "values": [
+        "r",
+        "p"
+       ]
+      },
+      "log": {
+       "values": [
+        "m",
+        "a",
+        "i",
+        "l",
+        "p",
+        "i",
+        "r",
+        "z",
+        "o",
+        "n",
+        "e"
+       ],
+       "spans": {
+        "window": {
+         "from": 3,
+         "to": 5,
+         "label": {
+          "en": "window 3",
+          "ko": "창 3"
+         },
+         "mark": "bad",
+         "fade": true
+        }
+       },
+       "pointers": {
+        "left": 3,
+        "right": 5
+       },
+       "unread": [
+        6,
+        7,
+        8,
+        9,
+        10
+       ],
+       "marks": {
+        "lit": [],
+        "path": []
+       }
+      },
+      "need": {
+       "entries": [
+        {
+         "key": "r",
+         "value": 1
+        },
+        {
+         "key": "p",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "bad": []
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": "l",
+         "value": 1
+        },
+        {
+         "key": "p",
+         "value": 1
+        },
+        {
+         "key": "i",
+         "value": 1
+        }
+       ],
+       "struck": [],
+       "marks": {
+        "bad": [],
+        "good": [
+         "i"
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "log",
+        "at": 5
+       },
+       "to": {
+        "view": "window",
+        "at": "i"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "log[3] = 'l' leaves on the left. the window \"pi\" differs from need at 'i', 'r'.",
+      "ko": "왼쪽의 log[3] = 'l' 글자가 빠집니다. 창 \"pi\"의 글자 수가 need와 다른 글자: 'i', 'r'."
+     },
+     "views": {
+      "pattern": {
+       "values": [
+        "r",
+        "p"
+       ]
+      },
+      "log": {
+       "values": [
+        "m",
+        "a",
+        "i",
+        "l",
+        "p",
+        "i",
+        "r",
+        "z",
+        "o",
+        "n",
+        "e"
+       ],
+       "spans": {
+        "window": {
+         "from": 4,
+         "to": 5,
+         "label": {
+          "en": "window 2",
+          "ko": "창 2"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "left": 4,
+        "right": 5
+       },
+       "unread": [
+        6,
+        7,
+        8,
+        9,
+        10
+       ],
+       "marks": {
+        "lit": [
+         3
+        ],
+        "path": []
+       }
+      },
+      "need": {
+       "entries": [
+        {
+         "key": "r",
+         "value": 1
+        },
+        {
+         "key": "p",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "bad": [
+         "r"
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": "l",
+         "value": 0
+        },
+        {
+         "key": "p",
+         "value": 1
+        },
+        {
+         "key": "i",
+         "value": 1
+        }
+       ],
+       "struck": [
+        "l"
+       ],
+       "marks": {
+        "bad": [
+         "i"
+        ],
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "window",
+        "at": "l"
+       },
+       "to": {
+        "view": "log",
+        "at": 3
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Slide right: log[6] = 'r' comes in, so the window is 3 long, one too many.",
+      "ko": "오른쪽으로 밉니다: log[6] = 'r' 글자가 들어와 창이 3글자로 하나 넘칩니다."
+     },
+     "views": {
+      "pattern": {
+       "values": [
+        "r",
+        "p"
+       ]
+      },
+      "log": {
+       "values": [
+        "m",
+        "a",
+        "i",
+        "l",
+        "p",
+        "i",
+        "r",
+        "z",
+        "o",
+        "n",
+        "e"
+       ],
+       "spans": {
+        "window": {
+         "from": 4,
+         "to": 6,
+         "label": {
+          "en": "window 3",
+          "ko": "창 3"
+         },
+         "mark": "bad",
+         "fade": true
+        }
+       },
+       "pointers": {
+        "left": 4,
+        "right": 6
+       },
+       "unread": [
+        7,
+        8,
+        9,
+        10
+       ],
+       "marks": {
+        "lit": [],
+        "path": []
+       }
+      },
+      "need": {
+       "entries": [
+        {
+         "key": "r",
+         "value": 1
+        },
+        {
+         "key": "p",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "bad": []
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": "p",
+         "value": 1
+        },
+        {
+         "key": "i",
+         "value": 1
+        },
+        {
+         "key": "r",
+         "value": 1
+        }
+       ],
+       "struck": [],
+       "marks": {
+        "bad": [],
+        "good": [
+         "r"
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "log",
+        "at": 6
+       },
+       "to": {
+        "view": "window",
+        "at": "r"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "log[4] = 'p' leaves on the left. the window \"ir\" differs from need at 'i', 'p'.",
+      "ko": "왼쪽의 log[4] = 'p' 글자가 빠집니다. 창 \"ir\"의 글자 수가 need와 다른 글자: 'i', 'p'."
+     },
+     "views": {
+      "pattern": {
+       "values": [
+        "r",
+        "p"
+       ]
+      },
+      "log": {
+       "values": [
+        "m",
+        "a",
+        "i",
+        "l",
+        "p",
+        "i",
+        "r",
+        "z",
+        "o",
+        "n",
+        "e"
+       ],
+       "spans": {
+        "window": {
+         "from": 5,
+         "to": 6,
+         "label": {
+          "en": "window 2",
+          "ko": "창 2"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "left": 5,
+        "right": 6
+       },
+       "unread": [
+        7,
+        8,
+        9,
+        10
+       ],
+       "marks": {
+        "lit": [
+         4
+        ],
+        "path": []
+       }
+      },
+      "need": {
+       "entries": [
+        {
+         "key": "r",
+         "value": 1
+        },
+        {
+         "key": "p",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "bad": [
+         "p"
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": "p",
+         "value": 0
+        },
+        {
+         "key": "i",
+         "value": 1
+        },
+        {
+         "key": "r",
+         "value": 1
+        }
+       ],
+       "struck": [
+        "p"
+       ],
+       "marks": {
+        "bad": [
+         "i",
+         "p"
+        ],
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "window",
+        "at": "p"
+       },
+       "to": {
+        "view": "log",
+        "at": 4
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Slide right: log[7] = 'z' comes in, so the window is 3 long, one too many.",
+      "ko": "오른쪽으로 밉니다: log[7] = 'z' 글자가 들어와 창이 3글자로 하나 넘칩니다."
+     },
+     "views": {
+      "pattern": {
+       "values": [
+        "r",
+        "p"
+       ]
+      },
+      "log": {
+       "values": [
+        "m",
+        "a",
+        "i",
+        "l",
+        "p",
+        "i",
+        "r",
+        "z",
+        "o",
+        "n",
+        "e"
+       ],
+       "spans": {
+        "window": {
+         "from": 5,
+         "to": 7,
+         "label": {
+          "en": "window 3",
+          "ko": "창 3"
+         },
+         "mark": "bad",
+         "fade": true
+        }
+       },
+       "pointers": {
+        "left": 5,
+        "right": 7
+       },
+       "unread": [
+        8,
+        9,
+        10
+       ],
+       "marks": {
+        "lit": [],
+        "path": []
+       }
+      },
+      "need": {
+       "entries": [
+        {
+         "key": "r",
+         "value": 1
+        },
+        {
+         "key": "p",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "bad": []
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": "i",
+         "value": 1
+        },
+        {
+         "key": "r",
+         "value": 1
+        },
+        {
+         "key": "z",
+         "value": 1
+        }
+       ],
+       "struck": [],
+       "marks": {
+        "bad": [],
+        "good": [
+         "z"
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "log",
+        "at": 7
+       },
+       "to": {
+        "view": "window",
+        "at": "z"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "log[5] = 'i' leaves on the left. the window \"rz\" differs from need at 'p', 'z'.",
+      "ko": "왼쪽의 log[5] = 'i' 글자가 빠집니다. 창 \"rz\"의 글자 수가 need와 다른 글자: 'p', 'z'."
+     },
+     "views": {
+      "pattern": {
+       "values": [
+        "r",
+        "p"
+       ]
+      },
+      "log": {
+       "values": [
+        "m",
+        "a",
+        "i",
+        "l",
+        "p",
+        "i",
+        "r",
+        "z",
+        "o",
+        "n",
+        "e"
+       ],
+       "spans": {
+        "window": {
+         "from": 6,
+         "to": 7,
+         "label": {
+          "en": "window 2",
+          "ko": "창 2"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "left": 6,
+        "right": 7
+       },
+       "unread": [
+        8,
+        9,
+        10
+       ],
+       "marks": {
+        "lit": [
+         5
+        ],
+        "path": []
+       }
+      },
+      "need": {
+       "entries": [
+        {
+         "key": "r",
+         "value": 1
+        },
+        {
+         "key": "p",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "bad": [
+         "p"
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": "i",
+         "value": 0
+        },
+        {
+         "key": "r",
+         "value": 1
+        },
+        {
+         "key": "z",
+         "value": 1
+        }
+       ],
+       "struck": [
+        "i"
+       ],
+       "marks": {
+        "bad": [
+         "z"
+        ],
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "window",
+        "at": "i"
+       },
+       "to": {
+        "view": "log",
+        "at": 5
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Slide right: log[8] = 'o' comes in, so the window is 3 long, one too many.",
+      "ko": "오른쪽으로 밉니다: log[8] = 'o' 글자가 들어와 창이 3글자로 하나 넘칩니다."
+     },
+     "views": {
+      "pattern": {
+       "values": [
+        "r",
+        "p"
+       ]
+      },
+      "log": {
+       "values": [
+        "m",
+        "a",
+        "i",
+        "l",
+        "p",
+        "i",
+        "r",
+        "z",
+        "o",
+        "n",
+        "e"
+       ],
+       "spans": {
+        "window": {
+         "from": 6,
+         "to": 8,
+         "label": {
+          "en": "window 3",
+          "ko": "창 3"
+         },
+         "mark": "bad",
+         "fade": true
+        }
+       },
+       "pointers": {
+        "left": 6,
+        "right": 8
+       },
+       "unread": [
+        9,
+        10
+       ],
+       "marks": {
+        "lit": [],
+        "path": []
+       }
+      },
+      "need": {
+       "entries": [
+        {
+         "key": "r",
+         "value": 1
+        },
+        {
+         "key": "p",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "bad": []
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": "r",
+         "value": 1
+        },
+        {
+         "key": "z",
+         "value": 1
+        },
+        {
+         "key": "o",
+         "value": 1
+        }
+       ],
+       "struck": [],
+       "marks": {
+        "bad": [],
+        "good": [
+         "o"
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "log",
+        "at": 8
+       },
+       "to": {
+        "view": "window",
+        "at": "o"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "log[6] = 'r' leaves on the left. the window \"zo\" differs from need at 'o', 'p', 'r', 'z'.",
+      "ko": "왼쪽의 log[6] = 'r' 글자가 빠집니다. 창 \"zo\"의 글자 수가 need와 다른 글자: 'o', 'p', 'r', 'z'."
+     },
+     "views": {
+      "pattern": {
+       "values": [
+        "r",
+        "p"
+       ]
+      },
+      "log": {
+       "values": [
+        "m",
+        "a",
+        "i",
+        "l",
+        "p",
+        "i",
+        "r",
+        "z",
+        "o",
+        "n",
+        "e"
+       ],
+       "spans": {
+        "window": {
+         "from": 7,
+         "to": 8,
+         "label": {
+          "en": "window 2",
+          "ko": "창 2"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "left": 7,
+        "right": 8
+       },
+       "unread": [
+        9,
+        10
+       ],
+       "marks": {
+        "lit": [
+         6
+        ],
+        "path": []
+       }
+      },
+      "need": {
+       "entries": [
+        {
+         "key": "r",
+         "value": 1
+        },
+        {
+         "key": "p",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "bad": [
+         "p",
+         "r"
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": "r",
+         "value": 0
+        },
+        {
+         "key": "z",
+         "value": 1
+        },
+        {
+         "key": "o",
+         "value": 1
+        }
+       ],
+       "struck": [
+        "r"
+       ],
+       "marks": {
+        "bad": [
+         "o",
+         "r",
+         "z"
+        ],
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "window",
+        "at": "r"
+       },
+       "to": {
+        "view": "log",
+        "at": 6
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Slide right: log[9] = 'n' comes in, so the window is 3 long, one too many.",
+      "ko": "오른쪽으로 밉니다: log[9] = 'n' 글자가 들어와 창이 3글자로 하나 넘칩니다."
+     },
+     "views": {
+      "pattern": {
+       "values": [
+        "r",
+        "p"
+       ]
+      },
+      "log": {
+       "values": [
+        "m",
+        "a",
+        "i",
+        "l",
+        "p",
+        "i",
+        "r",
+        "z",
+        "o",
+        "n",
+        "e"
+       ],
+       "spans": {
+        "window": {
+         "from": 7,
+         "to": 9,
+         "label": {
+          "en": "window 3",
+          "ko": "창 3"
+         },
+         "mark": "bad",
+         "fade": true
+        }
+       },
+       "pointers": {
+        "left": 7,
+        "right": 9
+       },
+       "unread": [
+        10
+       ],
+       "marks": {
+        "lit": [],
+        "path": []
+       }
+      },
+      "need": {
+       "entries": [
+        {
+         "key": "r",
+         "value": 1
+        },
+        {
+         "key": "p",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "bad": []
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": "z",
+         "value": 1
+        },
+        {
+         "key": "o",
+         "value": 1
+        },
+        {
+         "key": "n",
+         "value": 1
+        }
+       ],
+       "struck": [],
+       "marks": {
+        "bad": [],
+        "good": [
+         "n"
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "log",
+        "at": 9
+       },
+       "to": {
+        "view": "window",
+        "at": "n"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "log[7] = 'z' leaves on the left. the window \"on\" differs from need at 'n', 'o', 'p', 'r'.",
+      "ko": "왼쪽의 log[7] = 'z' 글자가 빠집니다. 창 \"on\"의 글자 수가 need와 다른 글자: 'n', 'o', 'p', 'r'."
+     },
+     "views": {
+      "pattern": {
+       "values": [
+        "r",
+        "p"
+       ]
+      },
+      "log": {
+       "values": [
+        "m",
+        "a",
+        "i",
+        "l",
+        "p",
+        "i",
+        "r",
+        "z",
+        "o",
+        "n",
+        "e"
+       ],
+       "spans": {
+        "window": {
+         "from": 8,
+         "to": 9,
+         "label": {
+          "en": "window 2",
+          "ko": "창 2"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "left": 8,
+        "right": 9
+       },
+       "unread": [
+        10
+       ],
+       "marks": {
+        "lit": [
+         7
+        ],
+        "path": []
+       }
+      },
+      "need": {
+       "entries": [
+        {
+         "key": "r",
+         "value": 1
+        },
+        {
+         "key": "p",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "bad": [
+         "p",
+         "r"
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": "z",
+         "value": 0
+        },
+        {
+         "key": "o",
+         "value": 1
+        },
+        {
+         "key": "n",
+         "value": 1
+        }
+       ],
+       "struck": [
+        "z"
+       ],
+       "marks": {
+        "bad": [
+         "n",
+         "o"
+        ],
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "window",
+        "at": "z"
+       },
+       "to": {
+        "view": "log",
+        "at": 7
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Slide right: log[10] = 'e' comes in, so the window is 3 long, one too many.",
+      "ko": "오른쪽으로 밉니다: log[10] = 'e' 글자가 들어와 창이 3글자로 하나 넘칩니다."
+     },
+     "views": {
+      "pattern": {
+       "values": [
+        "r",
+        "p"
+       ]
+      },
+      "log": {
+       "values": [
+        "m",
+        "a",
+        "i",
+        "l",
+        "p",
+        "i",
+        "r",
+        "z",
+        "o",
+        "n",
+        "e"
+       ],
+       "spans": {
+        "window": {
+         "from": 8,
+         "to": 10,
+         "label": {
+          "en": "window 3",
+          "ko": "창 3"
+         },
+         "mark": "bad",
+         "fade": true
+        }
+       },
+       "pointers": {
+        "left": 8,
+        "right": 10
+       },
+       "unread": [],
+       "marks": {
+        "lit": [],
+        "path": []
+       }
+      },
+      "need": {
+       "entries": [
+        {
+         "key": "r",
+         "value": 1
+        },
+        {
+         "key": "p",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "bad": []
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": "o",
+         "value": 1
+        },
+        {
+         "key": "n",
+         "value": 1
+        },
+        {
+         "key": "e",
+         "value": 1
+        }
+       ],
+       "struck": [],
+       "marks": {
+        "bad": [],
+        "good": [
+         "e"
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "log",
+        "at": 10
+       },
+       "to": {
+        "view": "window",
+        "at": "e"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "log[8] = 'o' leaves on the left. the window \"ne\" differs from need at 'e', 'n', 'p', 'r'.",
+      "ko": "왼쪽의 log[8] = 'o' 글자가 빠집니다. 창 \"ne\"의 글자 수가 need와 다른 글자: 'e', 'n', 'p', 'r'."
+     },
+     "views": {
+      "pattern": {
+       "values": [
+        "r",
+        "p"
+       ]
+      },
+      "log": {
+       "values": [
+        "m",
+        "a",
+        "i",
+        "l",
+        "p",
+        "i",
+        "r",
+        "z",
+        "o",
+        "n",
+        "e"
+       ],
+       "spans": {
+        "window": {
+         "from": 9,
+         "to": 10,
+         "label": {
+          "en": "window 2",
+          "ko": "창 2"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "left": 9,
+        "right": 10
+       },
+       "unread": [],
+       "marks": {
+        "lit": [
+         8
+        ],
+        "path": []
+       }
+      },
+      "need": {
+       "entries": [
+        {
+         "key": "r",
+         "value": 1
+        },
+        {
+         "key": "p",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "bad": [
+         "p",
+         "r"
+        ]
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": "o",
+         "value": 0
+        },
+        {
+         "key": "n",
+         "value": 1
+        },
+        {
+         "key": "e",
+         "value": 1
+        }
+       ],
+       "struck": [
+        "o"
+       ],
+       "marks": {
+        "bad": [
+         "e",
+         "n"
+        ],
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "window",
+        "at": "o"
+       },
+       "to": {
+        "view": "log",
+        "at": 8
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The window reached the end of log after 10 positions, and none matched pattern's counts: false.",
+      "ko": "창이 10곳을 지나 log 끝에 닿았지만, pattern과 글자 수가 같은 창은 없었습니다: false."
+     },
+     "views": {
+      "pattern": {
+       "values": [
+        "r",
+        "p"
+       ]
+      },
+      "log": {
+       "values": [
+        "m",
+        "a",
+        "i",
+        "l",
+        "p",
+        "i",
+        "r",
+        "z",
+        "o",
+        "n",
+        "e"
+       ],
+       "spans": {
+        "window": {
+         "from": 9,
+         "to": 10,
+         "label": {
+          "en": "window 2",
+          "ko": "창 2"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {},
+       "unread": [],
+       "marks": {
+        "lit": [],
+        "path": []
+       }
+      },
+      "need": {
+       "entries": [
+        {
+         "key": "r",
+         "value": 1
+        },
+        {
+         "key": "p",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "bad": []
+       }
+      },
+      "window": {
+       "entries": [
+        {
+         "key": "n",
+         "value": 1
+        },
+        {
+         "key": "e",
+         "value": 1
+        }
+       ],
+       "struck": [],
+       "marks": {
+        "bad": [],
+        "good": []
+       }
+      }
+     },
+     "answer": "false"
+    }
+   ],
+   "sampleInput": "rp\nmailpirzone"
+  }
+ ]
+}
