@@ -10,10 +10,11 @@ class TreeNode:
 
 class Solution:
     def mirrorTree(self, root: Optional[TreeNode]) -> Optional[TreeNode]:
-        stack = [root]
-        while stack:
-            node = stack.pop()
-            if node:
-                node.left, node.right = node.right, node.left
-                stack += [node.left, node.right]
-        return root
+        # The mirror of a tree is its root with the mirror of its right subtree on the left
+        # and the mirror of its left subtree on the right.
+        if root is None:
+            return None
+        mirror = TreeNode(root.val)
+        mirror.left = self.mirrorTree(root.right)
+        mirror.right = self.mirrorTree(root.left)
+        return mirror
