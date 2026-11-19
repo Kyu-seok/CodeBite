@@ -1,0 +1,594 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Non-Decreasing With One Change",
+  "ko": "한 번 바꿔 비감소 만들기"
+ },
+ "approach": {
+  "en": "Walk the neighbouring pairs. The first drop spends the one change: lower the earlier element to the later one, unless that would put it below the element before it; then raise the later one instead. A second drop means false.",
+  "ko": "이웃한 두 원소를 차례로 비교합니다. 처음 줄어드는 곳에서 한 번의 변경을 씁니다. 앞 원소를 뒤 원소로 낮추되, 그러면 그 앞 원소보다 작아질 때는 대신 뒤 원소를 높입니다. 두 번째로 줄어드는 곳이 나오면 false입니다."
+ },
+ "views": [
+  {
+   "id": "nums",
+   "type": "array",
+   "title": {
+    "en": "nums",
+    "ko": "nums"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "nums = [3,1,4,5]",
+   "expected": "true",
+   "frames": [
+    {
+     "caption": {
+      "en": "4 numbers, and one change to spend. Compare each number with the one before it.",
+      "ko": "숫자가 4개이고, 바꿀 수 있는 기회는 한 번입니다. 각 숫자를 바로 앞 숫자와 비교합니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        3,
+        1,
+        4,
+        5
+       ],
+       "pointers": {
+        "i": null
+       },
+       "tags": [],
+       "marks": {
+        "path": [],
+        "bad": [],
+        "good": [],
+        "lit": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "3 > 1: the first drop, so spend the one change here.",
+      "ko": "3 > 1: 처음 줄어드는 곳이므로 여기서 한 번의 변경을 씁니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        3,
+        1,
+        4,
+        5
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "tags": [],
+       "marks": {
+        "path": [],
+        "bad": [
+         0,
+         1
+        ],
+        "good": [],
+        "lit": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Lower 3 to 1: nothing comes before it, so order behind it holds, and later numbers only have to beat 1.",
+      "ko": "그 앞에 아무것도 없으므로 3을 1로 낮춥니다. 이러면 뒤의 숫자는 1 이상이기만 하면 됩니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        1,
+        1,
+        4,
+        5
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "changed",
+          "ko": "바꿈"
+         }
+        ]
+       ],
+       "marks": {
+        "path": [],
+        "bad": [],
+        "good": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nums",
+        "at": 1
+       },
+       "to": {
+        "view": "nums",
+        "at": 0
+       },
+       "value": 1
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "1 ≤ 4: in order.",
+      "ko": "1 ≤ 4: 순서가 맞습니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        1,
+        1,
+        4,
+        5
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "changed",
+          "ko": "바꿈"
+         }
+        ]
+       ],
+       "marks": {
+        "path": [],
+        "bad": [],
+        "good": [],
+        "lit": [
+         1,
+         2
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "4 ≤ 5: in order.",
+      "ko": "4 ≤ 5: 순서가 맞습니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        1,
+        1,
+        4,
+        5
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "changed",
+          "ko": "바꿈"
+         }
+        ]
+       ],
+       "marks": {
+        "path": [],
+        "bad": [],
+        "good": [],
+        "lit": [
+         2,
+         3
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Every pair is in order after one change: [1,1,4,5]. Answer: true.",
+      "ko": "한 번 바꾼 뒤 모든 쌍의 순서가 맞습니다: [1,1,4,5]. 답은 true입니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        1,
+        1,
+        4,
+        5
+       ],
+       "pointers": {
+        "i": null
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "changed",
+          "ko": "바꿈"
+         }
+        ]
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3
+        ],
+        "bad": [],
+        "good": [],
+        "lit": []
+       }
+      }
+     },
+     "answer": "true"
+    }
+   ],
+   "sampleInput": "[3,1,4,5]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "nums = [6,4,2,3]",
+   "expected": "false",
+   "frames": [
+    {
+     "caption": {
+      "en": "4 numbers, and one change to spend. Compare each number with the one before it.",
+      "ko": "숫자가 4개이고, 바꿀 수 있는 기회는 한 번입니다. 각 숫자를 바로 앞 숫자와 비교합니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        6,
+        4,
+        2,
+        3
+       ],
+       "pointers": {
+        "i": null
+       },
+       "tags": [],
+       "marks": {
+        "path": [],
+        "bad": [],
+        "good": [],
+        "lit": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "6 > 4: the first drop, so spend the one change here.",
+      "ko": "6 > 4: 처음 줄어드는 곳이므로 여기서 한 번의 변경을 씁니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        6,
+        4,
+        2,
+        3
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "tags": [],
+       "marks": {
+        "path": [],
+        "bad": [
+         0,
+         1
+        ],
+        "good": [],
+        "lit": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Lower 6 to 4: nothing comes before it, so order behind it holds, and later numbers only have to beat 4.",
+      "ko": "그 앞에 아무것도 없으므로 6을 4로 낮춥니다. 이러면 뒤의 숫자는 4 이상이기만 하면 됩니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        4,
+        4,
+        2,
+        3
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "changed",
+          "ko": "바꿈"
+         }
+        ]
+       ],
+       "marks": {
+        "path": [],
+        "bad": [],
+        "good": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nums",
+        "at": 1
+       },
+       "to": {
+        "view": "nums",
+        "at": 0
+       },
+       "value": 4
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "4 > 2: a second drop, and the one change is already spent. Answer: false.",
+      "ko": "4 > 2: 두 번째로 줄어드는 곳인데 변경은 이미 썼습니다. 답은 false입니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        4,
+        4,
+        2,
+        3
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "changed",
+          "ko": "바꿈"
+         }
+        ]
+       ],
+       "marks": {
+        "path": [],
+        "bad": [
+         1,
+         2
+        ],
+        "good": [],
+        "lit": []
+       }
+      }
+     },
+     "answer": "false"
+    }
+   ],
+   "sampleInput": "[6,4,2,3]"
+  },
+  {
+   "label": {
+    "en": "Case 3",
+    "ko": "케이스 3"
+   },
+   "input": "nums = [3,4,2,3]",
+   "expected": "false",
+   "frames": [
+    {
+     "caption": {
+      "en": "4 numbers, and one change to spend. Compare each number with the one before it.",
+      "ko": "숫자가 4개이고, 바꿀 수 있는 기회는 한 번입니다. 각 숫자를 바로 앞 숫자와 비교합니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        3,
+        4,
+        2,
+        3
+       ],
+       "pointers": {
+        "i": null
+       },
+       "tags": [],
+       "marks": {
+        "path": [],
+        "bad": [],
+        "good": [],
+        "lit": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "3 ≤ 4: in order.",
+      "ko": "3 ≤ 4: 순서가 맞습니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        3,
+        4,
+        2,
+        3
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "tags": [],
+       "marks": {
+        "path": [],
+        "bad": [],
+        "good": [],
+        "lit": [
+         0,
+         1
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "4 > 2: the first drop, so spend the one change here.",
+      "ko": "4 > 2: 처음 줄어드는 곳이므로 여기서 한 번의 변경을 씁니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        3,
+        4,
+        2,
+        3
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "tags": [],
+       "marks": {
+        "path": [],
+        "bad": [
+         1,
+         2
+        ],
+        "good": [],
+        "lit": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Lowering 4 to 2 would put it below 3 before it, so raise 2 to 4 instead.",
+      "ko": "4를 2로 낮추면 그 앞의 3보다 작아지므로, 대신 2를 4로 높입니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        3,
+        4,
+        4,
+        3
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "tags": [
+        [
+         2,
+         {
+          "en": "changed",
+          "ko": "바꿈"
+         }
+        ]
+       ],
+       "marks": {
+        "path": [],
+        "bad": [],
+        "good": [
+         2
+        ],
+        "lit": [
+         0,
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nums",
+        "at": 1
+       },
+       "to": {
+        "view": "nums",
+        "at": 2
+       },
+       "value": 4
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "4 > 3: a second drop, and the one change is already spent. Answer: false.",
+      "ko": "4 > 3: 두 번째로 줄어드는 곳인데 변경은 이미 썼습니다. 답은 false입니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        3,
+        4,
+        4,
+        3
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "tags": [
+        [
+         2,
+         {
+          "en": "changed",
+          "ko": "바꿈"
+         }
+        ]
+       ],
+       "marks": {
+        "path": [],
+        "bad": [
+         2,
+         3
+        ],
+        "good": [],
+        "lit": []
+       }
+      }
+     },
+     "answer": "false"
+    }
+   ],
+   "sampleInput": "[3,4,2,3]"
+  }
+ ]
+}
