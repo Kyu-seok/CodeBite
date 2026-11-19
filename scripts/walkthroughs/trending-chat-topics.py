@@ -70,10 +70,10 @@ def solve(topics, k, run):
     ranked = sorted(counts, key=lambda t: (-counts[t], t))
     top, rest = ranked[:k], ranked[k:]
     order = ", ".join(f"{t} ({counts[t]})" for t in ranked)
-    frame({"en": f"Every mention is counted. Ranked by count, most first, and alphabetically on a tie: {order}. "
-                 f"The first {k} {plural(k, 'is', 'are')} the answer.",
-           "ko": f"언급을 모두 세었습니다. 횟수가 많은 순, 같으면 알파벳 순으로 놓으면 {order}입니다. 앞의 "
-                 f"{josa(k, '이가')} 답입니다."},
+    frame({"en": f"Every mention is counted. Ranked by count, most first, and alphabetically on a tie: {order}; "
+                 f"the first {k} {plural(k, 'is', 'are')} the answer.",
+           "ko": f"언급을 모두 세었습니다. 횟수가 많은 순, 같으면 알파벳 순으로 놓으면 {order}이고, 앞의 "
+                 f"{k}개가 답입니다."},
           marks={"path": top, "dim": rest})
     answer = driver_list(top)
     for j, topic in enumerate(top):

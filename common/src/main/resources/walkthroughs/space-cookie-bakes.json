@@ -73,8 +73,8 @@
    "frames": [
     {
      "caption": {
-      "en": "5 batches: \"bread\". No kind may have more than (n + 1) // 2 = 3 batches, or two of it must touch. First count each kind.",
-      "ko": "쿠키 5판: \"bread\". 어떤 종류도 (n + 1) // 2 = 3판보다 많으면 같은 종류 두 판이 반드시 붙습니다. 먼저 종류마다 판 수를 셉니다."
+      "en": "5 batches, \"bread\": no kind may have more than (n + 1) // 2 = 3 batches, or two of it must touch. First count each kind.",
+      "ko": "쿠키 5판 \"bread\": 어떤 종류도 (n + 1) // 2 = 3판보다 많으면 같은 종류 두 판이 반드시 붙습니다. 먼저 종류마다 판 수를 셉니다."
      },
      "views": {
       "cookies": {
@@ -1228,8 +1228,8 @@
    "frames": [
     {
      "caption": {
-      "en": "5 batches: \"aaaab\". No kind may have more than (n + 1) // 2 = 3 batches, or two of it must touch. First count each kind.",
-      "ko": "쿠키 5판: \"aaaab\". 어떤 종류도 (n + 1) // 2 = 3판보다 많으면 같은 종류 두 판이 반드시 붙습니다. 먼저 종류마다 판 수를 셉니다."
+      "en": "5 batches, \"aaaab\": no kind may have more than (n + 1) // 2 = 3 batches, or two of it must touch. First count each kind.",
+      "ko": "쿠키 5판 \"aaaab\": 어떤 종류도 (n + 1) // 2 = 3판보다 많으면 같은 종류 두 판이 반드시 붙습니다. 먼저 종류마다 판 수를 셉니다."
      },
      "views": {
       "cookies": {
@@ -1528,8 +1528,8 @@
    "frames": [
     {
      "caption": {
-      "en": "5 batches: \"flour\". No kind may have more than (n + 1) // 2 = 3 batches, or two of it must touch. First count each kind.",
-      "ko": "쿠키 5판: \"flour\". 어떤 종류도 (n + 1) // 2 = 3판보다 많으면 같은 종류 두 판이 반드시 붙습니다. 먼저 종류마다 판 수를 셉니다."
+      "en": "5 batches, \"flour\": no kind may have more than (n + 1) // 2 = 3 batches, or two of it must touch. First count each kind.",
+      "ko": "쿠키 5판 \"flour\": 어떤 종류도 (n + 1) // 2 = 3판보다 많으면 같은 종류 두 판이 반드시 붙습니다. 먼저 종류마다 판 수를 셉니다."
      },
      "views": {
       "cookies": {

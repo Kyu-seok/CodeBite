@@ -400,8 +400,8 @@
     },
     {
      "caption": {
-      "en": "Slot 0: the heap's top is P:4, the most jobs left among labels ready, so P prints. 3 left, so it waits in the queue until slot 4. The last node Q:2 fills the root.",
-      "ko": "0번 슬롯: 힙의 맨 위 P:4가 준비된 라벨 중 남은 작업이 가장 많으므로 P 작업을 인쇄합니다. 3개가 남아 4번 슬롯까지 큐에서 기다립니다. 마지막 노드 Q:2가 루트를 채웁니다."
+      "en": "Slot 0: the heap's top is P:4, the most jobs left among labels ready, so P prints. 3 left, so it waits in the queue until slot 4; the last node Q:2 fills the root.",
+      "ko": "0번 슬롯: 힙의 맨 위 P:4가 준비된 라벨 중 남은 작업이 가장 많으므로 P 작업을 인쇄합니다. 3개가 남아 4번 슬롯까지 큐에서 기다리고, 마지막 노드 Q:2가 루트를 채웁니다."
      },
      "views": {
       "jobs": {
@@ -3003,8 +3003,8 @@
     },
     {
      "caption": {
-      "en": "Slot 0: the heap's top is A:2, the most jobs left among labels ready, so A prints. 1 left, so it waits in the queue until slot 2. The last node D:1 fills the root.",
-      "ko": "0번 슬롯: 힙의 맨 위 A:2가 준비된 라벨 중 남은 작업이 가장 많으므로 A 작업을 인쇄합니다. 1개가 남아 2번 슬롯까지 큐에서 기다립니다. 마지막 노드 D:1이 루트를 채웁니다."
+      "en": "Slot 0: the heap's top is A:2, the most jobs left among labels ready, so A prints. 1 left, so it waits in the queue until slot 2; the last node D:1 fills the root.",
+      "ko": "0번 슬롯: 힙의 맨 위 A:2가 준비된 라벨 중 남은 작업이 가장 많으므로 A 작업을 인쇄합니다. 1개가 남아 2번 슬롯까지 큐에서 기다리고, 마지막 노드 D:1이 루트를 채웁니다."
      },
      "views": {
       "jobs": {
@@ -3357,8 +3357,8 @@
     },
     {
      "caption": {
-      "en": "Slot 1: the heap's top is B:2, the most jobs left among labels ready, so B prints. 1 left, so it waits in the queue until slot 3. The last node C:1 fills the root.",
-      "ko": "1번 슬롯: 힙의 맨 위 B:2가 준비된 라벨 중 남은 작업이 가장 많으므로 B 작업을 인쇄합니다. 1개가 남아 3번 슬롯까지 큐에서 기다립니다. 마지막 노드 C:1이 루트를 채웁니다."
+      "en": "Slot 1: the heap's top is B:2, the most jobs left among labels ready, so B prints. 1 left, so it waits in the queue until slot 3; the last node C:1 fills the root.",
+      "ko": "1번 슬롯: 힙의 맨 위 B:2가 준비된 라벨 중 남은 작업이 가장 많으므로 B 작업을 인쇄합니다. 1개가 남아 3번 슬롯까지 큐에서 기다리고, 마지막 노드 C:1이 루트를 채웁니다."
      },
      "views": {
       "jobs": {
@@ -3706,7 +3706,7 @@
     {
      "caption": {
       "en": "Sift up: A:1 at [2] ties with, and comes before, its parent C:1 at [0], so they swap.",
-      "ko": "위로 올리기: [2]의 A:1이 부모 [0]의 C:1보다 개수가 같고 알파벳이 앞서므로 자리를 바꿉니다."
+      "ko": "위로 올리기: [2]의 A:1은 부모 [0]의 C:1과 개수가 같고 알파벳이 앞서므로 자리를 바꿉니다."
      },
      "views": {
       "jobs": {
@@ -3869,8 +3869,8 @@
     },
     {
      "caption": {
-      "en": "Slot 2: the heap's top is A:1, the most jobs left among labels ready, so A prints. That was A's last job. The last node C:1 fills the root.",
-      "ko": "2번 슬롯: 힙의 맨 위 A:1이 준비된 라벨 중 남은 작업이 가장 많으므로 A 작업을 인쇄합니다. A의 마지막 작업이었습니다. 마지막 노드 C:1이 루트를 채웁니다."
+      "en": "Slot 2: the heap's top is A:1, the most jobs left among labels ready, so A prints. That was A's last job; the last node C:1 fills the root.",
+      "ko": "2번 슬롯: 힙의 맨 위 A:1이 준비된 라벨 중 남은 작업이 가장 많으므로 A 작업을 인쇄합니다. A의 마지막 작업이었고, 마지막 노드 C:1이 루트를 채웁니다."
      },
      "views": {
       "jobs": {
@@ -4189,7 +4189,7 @@
     {
      "caption": {
       "en": "Sift up: B:1 at [2] ties with, and comes before, its parent C:1 at [0], so they swap.",
-      "ko": "위로 올리기: [2]의 B:1이 부모 [0]의 C:1보다 개수가 같고 알파벳이 앞서므로 자리를 바꿉니다."
+      "ko": "위로 올리기: [2]의 B:1은 부모 [0]의 C:1과 개수가 같고 알파벳이 앞서므로 자리를 바꿉니다."
      },
      "views": {
       "jobs": {
@@ -4343,8 +4343,8 @@
     },
     {
      "caption": {
-      "en": "Slot 3: the heap's top is B:1, the most jobs left among labels ready, so B prints. That was B's last job. The last node C:1 fills the root.",
-      "ko": "3번 슬롯: 힙의 맨 위 B:1이 준비된 라벨 중 남은 작업이 가장 많으므로 B 작업을 인쇄합니다. B의 마지막 작업이었습니다. 마지막 노드 C:1이 루트를 채웁니다."
+      "en": "Slot 3: the heap's top is B:1, the most jobs left among labels ready, so B prints. That was B's last job; the last node C:1 fills the root.",
+      "ko": "3번 슬롯: 힙의 맨 위 B:1이 준비된 라벨 중 남은 작업이 가장 많으므로 B 작업을 인쇄합니다. B의 마지막 작업이었고, 마지막 노드 C:1이 루트를 채웁니다."
      },
      "views": {
       "jobs": {
@@ -4499,8 +4499,8 @@
     },
     {
      "caption": {
-      "en": "Slot 4: the heap's top is C:1, the most jobs left among labels ready, so C prints. That was C's last job. The last node D:1 fills the root.",
-      "ko": "4번 슬롯: 힙의 맨 위 C:1이 준비된 라벨 중 남은 작업이 가장 많으므로 C 작업을 인쇄합니다. C의 마지막 작업이었습니다. 마지막 노드 D:1이 루트를 채웁니다."
+      "en": "Slot 4: the heap's top is C:1, the most jobs left among labels ready, so C prints. That was C's last job; the last node D:1 fills the root.",
+      "ko": "4번 슬롯: 힙의 맨 위 C:1이 준비된 라벨 중 남은 작업이 가장 많으므로 C 작업을 인쇄합니다. C의 마지막 작업이었고, 마지막 노드 D:1이 루트를 채웁니다."
      },
      "views": {
       "jobs": {
@@ -5234,8 +5234,8 @@
     },
     {
      "caption": {
-      "en": "Slot 0: the heap's top is R:2, the most jobs left among labels ready, so R prints. 1 left, so it waits in the queue until slot 1. The last node T:2 fills the root.",
-      "ko": "0번 슬롯: 힙의 맨 위 R:2가 준비된 라벨 중 남은 작업이 가장 많으므로 R 작업을 인쇄합니다. 1개가 남아 1번 슬롯까지 큐에서 기다립니다. 마지막 노드 T:2가 루트를 채웁니다."
+      "en": "Slot 0: the heap's top is R:2, the most jobs left among labels ready, so R prints. 1 left, so it waits in the queue until slot 1; the last node T:2 fills the root.",
+      "ko": "0번 슬롯: 힙의 맨 위 R:2가 준비된 라벨 중 남은 작업이 가장 많으므로 R 작업을 인쇄합니다. 1개가 남아 1번 슬롯까지 큐에서 기다리고, 마지막 노드 T:2가 루트를 채웁니다."
      },
      "views": {
       "jobs": {
@@ -5408,7 +5408,7 @@
     {
      "caption": {
       "en": "Sift down: its child S:2 at [1] ties with, and comes before, T:2 at [0], so they swap.",
-      "ko": "아래로 내리기: 자식 [1]의 S:2가 [0]의 T:2보다 개수가 같고 알파벳이 앞서므로 자리를 바꿉니다."
+      "ko": "아래로 내리기: 자식 [1]의 S:2는 [0]의 T:2와 개수가 같고 알파벳이 앞서므로 자리를 바꿉니다."
      },
      "views": {
       "jobs": {
@@ -5699,8 +5699,8 @@
     },
     {
      "caption": {
-      "en": "Slot 1: the heap's top is S:2, the most jobs left among labels ready, so S prints. 1 left, so it waits in the queue until slot 2. The last node R:1 fills the root.",
-      "ko": "1번 슬롯: 힙의 맨 위 S:2가 준비된 라벨 중 남은 작업이 가장 많으므로 S 작업을 인쇄합니다. 1개가 남아 2번 슬롯까지 큐에서 기다립니다. 마지막 노드 R:1이 루트를 채웁니다."
+      "en": "Slot 1: the heap's top is S:2, the most jobs left among labels ready, so S prints. 1 left, so it waits in the queue until slot 2; the last node R:1 fills the root.",
+      "ko": "1번 슬롯: 힙의 맨 위 S:2가 준비된 라벨 중 남은 작업이 가장 많으므로 S 작업을 인쇄합니다. 1개가 남아 2번 슬롯까지 큐에서 기다리고, 마지막 노드 R:1이 루트를 채웁니다."
      },
      "views": {
       "jobs": {
@@ -6167,8 +6167,8 @@
     },
     {
      "caption": {
-      "en": "Slot 2: the heap's top is T:2, the most jobs left among labels ready, so T prints. 1 left, so it waits in the queue until slot 3. The last node S:1 fills the root.",
-      "ko": "2번 슬롯: 힙의 맨 위 T:2가 준비된 라벨 중 남은 작업이 가장 많으므로 T 작업을 인쇄합니다. 1개가 남아 3번 슬롯까지 큐에서 기다립니다. 마지막 노드 S:1이 루트를 채웁니다."
+      "en": "Slot 2: the heap's top is T:2, the most jobs left among labels ready, so T prints. 1 left, so it waits in the queue until slot 3; the last node S:1 fills the root.",
+      "ko": "2번 슬롯: 힙의 맨 위 T:2가 준비된 라벨 중 남은 작업이 가장 많으므로 T 작업을 인쇄합니다. 1개가 남아 3번 슬롯까지 큐에서 기다리고, 마지막 노드 S:1이 루트를 채웁니다."
      },
      "views": {
       "jobs": {
@@ -6343,7 +6343,7 @@
     {
      "caption": {
       "en": "Sift down: its child R:1 at [1] ties with, and comes before, S:1 at [0], so they swap.",
-      "ko": "아래로 내리기: 자식 [1]의 R:1이 [0]의 S:1보다 개수가 같고 알파벳이 앞서므로 자리를 바꿉니다."
+      "ko": "아래로 내리기: 자식 [1]의 R:1은 [0]의 S:1과 개수가 같고 알파벳이 앞서므로 자리를 바꿉니다."
      },
      "views": {
       "jobs": {
@@ -6638,8 +6638,8 @@
     },
     {
      "caption": {
-      "en": "Slot 3: the heap's top is R:1, the most jobs left among labels ready, so R prints. That was R's last job. The last node T:1 fills the root.",
-      "ko": "3번 슬롯: 힙의 맨 위 R:1이 준비된 라벨 중 남은 작업이 가장 많으므로 R 작업을 인쇄합니다. R의 마지막 작업이었습니다. 마지막 노드 T:1이 루트를 채웁니다."
+      "en": "Slot 3: the heap's top is R:1, the most jobs left among labels ready, so R prints. That was R's last job; the last node T:1 fills the root.",
+      "ko": "3번 슬롯: 힙의 맨 위 R:1이 준비된 라벨 중 남은 작업이 가장 많으므로 R 작업을 인쇄합니다. R의 마지막 작업이었고, 마지막 노드 T:1이 루트를 채웁니다."
      },
      "views": {
       "jobs": {
@@ -6790,7 +6790,7 @@
     {
      "caption": {
       "en": "Sift down: its child S:1 at [1] ties with, and comes before, T:1 at [0], so they swap.",
-      "ko": "아래로 내리기: 자식 [1]의 S:1이 [0]의 T:1보다 개수가 같고 알파벳이 앞서므로 자리를 바꿉니다."
+      "ko": "아래로 내리기: 자식 [1]의 S:1은 [0]의 T:1과 개수가 같고 알파벳이 앞서므로 자리를 바꿉니다."
      },
      "views": {
       "jobs": {
@@ -6927,8 +6927,8 @@
     },
     {
      "caption": {
-      "en": "Slot 4: the heap's top is S:1, the most jobs left among labels ready, so S prints. That was S's last job. The last node T:1 fills the root.",
-      "ko": "4번 슬롯: 힙의 맨 위 S:1이 준비된 라벨 중 남은 작업이 가장 많으므로 S 작업을 인쇄합니다. S의 마지막 작업이었습니다. 마지막 노드 T:1이 루트를 채웁니다."
+      "en": "Slot 4: the heap's top is S:1, the most jobs left among labels ready, so S prints. That was S's last job; the last node T:1 fills the root.",
+      "ko": "4번 슬롯: 힙의 맨 위 S:1이 준비된 라벨 중 남은 작업이 가장 많으므로 S 작업을 인쇄합니다. S의 마지막 작업이었고, 마지막 노드 T:1이 루트를 채웁니다."
      },
      "views": {
       "jobs": {

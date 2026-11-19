@@ -995,8 +995,8 @@
     },
     {
      "caption": {
-      "en": "Every mention is counted. Ranked by count, most first, and alphabetically on a tie: climate (3), market (2), sports (1), weather (1). The first 2 are the answer.",
-      "ko": "언급을 모두 세었습니다. 횟수가 많은 순, 같으면 알파벳 순으로 놓으면 climate (3), market (2), sports (1), weather (1)입니다. 앞의 2가 답입니다."
+      "en": "Every mention is counted. Ranked by count, most first, and alphabetically on a tie: climate (3), market (2), sports (1), weather (1); the first 2 are the answer.",
+      "ko": "언급을 모두 세었습니다. 횟수가 많은 순, 같으면 알파벳 순으로 놓으면 climate (3), market (2), sports (1), weather (1)이고, 앞의 2개가 답입니다."
      },
      "views": {
       "topics": {
@@ -2387,8 +2387,8 @@
     },
     {
      "caption": {
-      "en": "Every mention is counted. Ranked by count, most first, and alphabetically on a tie: film (2), music (2), tech (2), books (1). The first 3 are the answer.",
-      "ko": "언급을 모두 세었습니다. 횟수가 많은 순, 같으면 알파벳 순으로 놓으면 film (2), music (2), tech (2), books (1)입니다. 앞의 3이 답입니다."
+      "en": "Every mention is counted. Ranked by count, most first, and alphabetically on a tie: film (2), music (2), tech (2), books (1); the first 3 are the answer.",
+      "ko": "언급을 모두 세었습니다. 횟수가 많은 순, 같으면 알파벳 순으로 놓으면 film (2), music (2), tech (2), books (1)이고, 앞의 3개가 답입니다."
      },
      "views": {
       "topics": {
@@ -3311,8 +3311,8 @@
     },
     {
      "caption": {
-      "en": "Every mention is counted. Ranked by count, most first, and alphabetically on a tie: update (2), news (1). The first 1 is the answer.",
-      "ko": "언급을 모두 세었습니다. 횟수가 많은 순, 같으면 알파벳 순으로 놓으면 update (2), news (1)입니다. 앞의 1이 답입니다."
+      "en": "Every mention is counted. Ranked by count, most first, and alphabetically on a tie: update (2), news (1); the first 1 is the answer.",
+      "ko": "언급을 모두 세었습니다. 횟수가 많은 순, 같으면 알파벳 순으로 놓으면 update (2), news (1)이고, 앞의 1개가 답입니다."
      },
      "views": {
       "topics": {

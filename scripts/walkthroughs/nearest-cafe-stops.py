@@ -148,7 +148,7 @@ def solve(stops, k, run):
                     {"en": " No child is farther, so it stays.", "ko": " 더 먼 자식이 없으므로 그대로 둡니다."})
             frame({"en": f"Stop {i} {pt(x, y)}: {calc}, nearer than the root {old[0]}, the farthest kept: "
                          f"{pt(old[1], old[2])} leaves and {pt(x, y)} takes the root.{rest['en']}",
-                   "ko": f"배달지 {i} {pt(x, y)}: {calc}. 남겨 둔 것 중 가장 먼 루트 {old[0]}보다 가까우므로 "
+                   "ko": f"배달지 {i} {pt(x, y)}: {calc}, 남겨 둔 것 중 가장 먼 루트 {old[0]}보다 가까우므로 "
                          f"{pt(old[1], old[2])} 배달지가 빠지고 {pt(x, y)} 배달지가 루트에 들어갑니다.{rest['ko']}"},
                   marks={"good": [0]},
                   moves=[written, move(at("heap", 0), at("stops", [old[3], 2]), value=str(old[0]), mark="bad"),

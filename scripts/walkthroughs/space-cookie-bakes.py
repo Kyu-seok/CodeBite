@@ -60,9 +60,9 @@ def solve(cookies, run):
                           "pointers": {"slot": st["ptr"]} if st["ptr"] is not None else {}}
         run.frame(caption, moves=moves, **views, **answer)
 
-    frame({"en": f"{n} batches: \"{cookies}\". No kind may have more than (n + 1) // 2 = {limit} batches, or two "
+    frame({"en": f"{n} batches, \"{cookies}\": no kind may have more than (n + 1) // 2 = {limit} batches, or two "
                  f"of it must touch. First count each kind.",
-           "ko": f"쿠키 {n}판: \"{cookies}\". 어떤 종류도 (n + 1) // 2 = {limit}판보다 많으면 같은 종류 두 판이 반드시 "
+           "ko": f"쿠키 {n}판 \"{cookies}\": 어떤 종류도 (n + 1) // 2 = {limit}판보다 많으면 같은 종류 두 판이 반드시 "
                  f"붙습니다. 먼저 종류마다 판 수를 셉니다."})
     for c in cookies:
         counts[c] = counts.get(c, 0) + 1

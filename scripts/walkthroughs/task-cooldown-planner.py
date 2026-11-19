@@ -103,8 +103,10 @@ def solve(jobs, n, run):
             why = ({"en": "has more jobs left than", "ko": "남은 작업이 더 많으므로"} if a[0] != b[0] else
                    {"en": "ties with, and comes before,", "ko": "개수가 같고 알파벳이 앞서므로"})
             frame({"en": f"Sift down: its child {name(b)} at [{best}] {why['en']} {name(a)} at [{j}], so they swap.",
-                   "ko": f"아래로 내리기: 자식 [{best}]의 {kname(b, '이가')} [{j}]의 {name(a)}보다 {why['ko']} 자리를 "
-                         f"바꿉니다."},
+                   "ko": (f"아래로 내리기: 자식 [{best}]의 {kname(b, '이가')} [{j}]의 {name(a)}보다 {why['ko']} 자리를 "
+                          f"바꿉니다." if a[0] != b[0] else
+                          f"아래로 내리기: 자식 [{best}]의 {kname(b, '은는')} [{j}]의 {kname(a, '과와')} 개수가 같고 "
+                          f"알파벳이 앞서므로 자리를 바꿉니다.")},
                   marks={"good": [j], "lit": [best]}, moves=swap("heap", j, best, name(a), name(b)))
             j = best
 
@@ -118,7 +120,10 @@ def solve(jobs, n, run):
             why = ({"en": "has more jobs left than", "ko": "남은 작업이 더 많으므로"} if a[0] != b[0] else
                    {"en": "ties with, and comes before,", "ko": "개수가 같고 알파벳이 앞서므로"})
             frame({"en": f"Sift up: {name(a)} at [{j}] {why['en']} its parent {name(b)} at [{p}], so they swap.",
-                   "ko": f"위로 올리기: [{j}]의 {kname(a, '이가')} 부모 [{p}]의 {name(b)}보다 {why['ko']} 자리를 바꿉니다."},
+                   "ko": (f"위로 올리기: [{j}]의 {kname(a, '이가')} 부모 [{p}]의 {name(b)}보다 {why['ko']} 자리를 바꿉니다."
+                          if a[0] != b[0] else
+                          f"위로 올리기: [{j}]의 {kname(a, '은는')} 부모 [{p}]의 {kname(b, '과와')} 개수가 같고 알파벳이 "
+                          f"앞서므로 자리를 바꿉니다.")},
                   marks={"good": [p], "lit": [j]}, moves=swap("heap", j, p, name(a), name(b)))
             j = p
 
@@ -173,27 +178,29 @@ def solve(jobs, n, run):
             if c - 1 > 0:
                 waiting.append((slot + n + 1, c - 1, label))
                 moves.append(move(at("heap", 0), at("cooldown", len(waiting) - 1), value=f"{label}:{c - 1}"))
-                then = {"en": f" {c - 1} left, so it waits in the queue until slot {slot + n + 1}.",
-                        "ko": f" {c - 1}개가 남아 {slot + n + 1}번 슬롯까지 큐에서 기다립니다."}
+                then = {"en": f" {c - 1} left, so it waits in the queue until slot {slot + n + 1}",
+                        "ko": f" {c - 1}개가 남아 {slot + n + 1}번 슬롯까지 큐에서 기다립니다",
+                        "ko_and": f" {c - 1}개가 남아 {slot + n + 1}번 슬롯까지 큐에서 기다리고"}
             else:
-                then = {"en": f" That was {label}'s last job.", "ko": f" {label}의 마지막 작업이었습니다."}
+                then = {"en": f" That was {label}'s last job", "ko": f" {label}의 마지막 작업이었습니다",
+                        "ko_and": f" {label}의 마지막 작업이었고"}
             last = heap.pop()
             if heap:
                 k = len(heap)
                 heap[0] = last
                 st["draw"] = heap + [last]
                 moves.append(move(at("heap", k), at("heap", 0)))
-                fill = {"en": f" The last node {name(last)} fills the root.",
-                        "ko": f" 마지막 노드 {kname(last, '이가')} 루트를 채웁니다."}
+                fill = {"en": f"; the last node {name(last)} fills the root.",
+                        "ko": f", 마지막 노드 {kname(last, '이가')} 루트를 채웁니다."}
                 marks = {"good": [0]}
             else:
                 st["draw"] = [top]
-                fill = {"en": "", "ko": ""}
+                fill = {"en": ".", "ko": "."}
                 marks = {"lit": [0]}
             frame({"en": f"Slot {slot}: the heap's top is {name(top)}, the most jobs left among labels ready, so "
                          f"{label} prints.{then['en']}{fill['en']}",
                    "ko": f"{slot}번 슬롯: 힙의 맨 위 {kname(top, '이가')} 준비된 라벨 중 남은 작업이 가장 많으므로 {label} 작업을 "
-                         f"인쇄합니다.{then['ko']}{fill['ko']}"},
+                         f"인쇄합니다.{then['ko_and'] if heap else then['ko']}{fill['ko']}"},
                   marks=marks, qmarks={"good": [len(waiting) - 1]} if c - 1 > 0 else {}, moves=moves)
             st["draw"] = None
             sift_down(0)
