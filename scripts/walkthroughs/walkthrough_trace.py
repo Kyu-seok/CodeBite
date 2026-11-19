@@ -125,6 +125,14 @@ def level_order_tree(values):
     return {"nodes": nodes, "edges": edges}
 
 
+def tree_links(nodes, link):
+    """A `tree` view's second link from the solution's own nodes: `nodes` are every node drawn, each carrying its
+    view id as `id` (as `level_order_tree`'s index), and `link` the attribute each holds (`"next"`); a node's link is
+    the id of the node it reaches, None when unset. Returns {"links": {link: {id: id or None}}}, to spread into the
+    view's state; leave out the nodes whose link the drawing doesn't show yet."""
+    return {"links": {link: {n.id: (None if getattr(n, link) is None else getattr(n, link).id) for n in nodes}}}
+
+
 def linked_list(order, link=None):
     """A `linkedlist` view's state from the solution's own nodes: `order` lists every node in the order to draw them
     (keep it fixed for the run, so a reversal redraws arrows, not nodes). A node's id is its place in `order` and its

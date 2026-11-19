@@ -1,0 +1,1917 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Pick Charging Start",
+  "ko": "출발 휴게소 고르기"
+ },
+ "approach": {
+  "en": "If the charges cover the drives in all, some start works. Drive from stop 0; whenever the battery would go below 0, no stop up to here can be the start, so start again from the next stop with an empty battery.",
+  "ko": "충전량의 합이 운전에 드는 양의 합 이상이면 출발할 수 있는 휴게소가 있습니다. 휴게소 0부터 달리다가 배터리가 0 미만이 되면 여기까지의 어느 휴게소도 출발점이 될 수 없으므로, 다음 휴게소에서 빈 배터리로 다시 출발합니다."
+ },
+ "views": [
+  {
+   "id": "energy",
+   "type": "array",
+   "title": {
+    "en": "energy (charge at each stop)",
+    "ko": "energy (휴게소별 충전량)"
+   }
+  },
+  {
+   "id": "drain",
+   "type": "array",
+   "title": {
+    "en": "drain (drive to the next stop)",
+    "ko": "drain (다음 휴게소까지 소모량)"
+   }
+  },
+  {
+   "id": "tank",
+   "type": "array",
+   "title": {
+    "en": "battery after the drive",
+    "ko": "운전 후 배터리"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "energy = [4,6,1,3,5], drain = [3,5,2,2,6]",
+   "expected": "0",
+   "frames": [
+    {
+     "caption": {
+      "en": "5 stops on the loop. The battery starts empty at the stop you pick.",
+      "ko": "순환 도로에 휴게소가 5개 있습니다. 고른 휴게소에서 빈 배터리로 출발합니다."
+     },
+     "views": {
+      "energy": {
+       "values": [
+        4,
+        6,
+        1,
+        3,
+        5
+       ],
+       "pointers": {
+        "i": null
+       },
+       "spans": {},
+       "marks": {
+        "lit": [],
+        "path": []
+       }
+      },
+      "drain": {
+       "values": [
+        3,
+        5,
+        2,
+        2,
+        6
+       ],
+       "spans": {},
+       "marks": {
+        "lit": []
+       }
+      },
+      "tank": {
+       "values": [
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       "pointers": {
+        "start": 0
+       },
+       "spans": {},
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "marks": {
+        "dim": [],
+        "path": [],
+        "bad": [],
+        "good": [],
+        "lit": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "The stops charge 19 in all and the drives use 18, no more, so some start works. Try stop 0 first.",
+      "ko": "충전량은 모두 합쳐 19이고 운전에는 18만큼 들어 충전량이 모자라지 않으므로, 출발할 수 있는 휴게소가 있습니다. 먼저 휴게소 0부터 달려 봅니다."
+     },
+     "views": {
+      "energy": {
+       "values": [
+        4,
+        6,
+        1,
+        3,
+        5
+       ],
+       "pointers": {
+        "i": null
+       },
+       "spans": {
+        "total": {
+         "from": 0,
+         "to": 4,
+         "label": {
+          "en": "total 19",
+          "ko": "합 19"
+         },
+         "mark": "good"
+        }
+       },
+       "marks": {
+        "lit": [],
+        "path": []
+       }
+      },
+      "drain": {
+       "values": [
+        3,
+        5,
+        2,
+        2,
+        6
+       ],
+       "spans": {
+        "total": {
+         "from": 0,
+         "to": 4,
+         "label": {
+          "en": "total 18",
+          "ko": "합 18"
+         },
+         "mark": "good"
+        }
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "tank": {
+       "values": [
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       "pointers": {
+        "start": 0
+       },
+       "spans": {},
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "marks": {
+        "dim": [],
+        "path": [],
+        "bad": [],
+        "good": [],
+        "lit": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Stop 0: 0 + 4 − 3 = 1, not below 0, so the drive from stop 0 goes on.",
+      "ko": "휴게소 0: 0 + 4 − 3 = 1로 0 미만이 아니므로 휴게소 0에서 출발한 운전이 이어집니다."
+     },
+     "views": {
+      "energy": {
+       "values": [
+        4,
+        6,
+        1,
+        3,
+        5
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "spans": {},
+       "marks": {
+        "lit": [
+         0
+        ],
+        "path": []
+       }
+      },
+      "drain": {
+       "values": [
+        3,
+        5,
+        2,
+        2,
+        6
+       ],
+       "spans": {},
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "tank": {
+       "values": [
+        1,
+        "",
+        "",
+        "",
+        ""
+       ],
+       "pointers": {
+        "start": 0
+       },
+       "spans": {
+        "drive": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "from stop 0",
+          "ko": "휴게소 0부터"
+         }
+        }
+       },
+       "unread": [
+        1,
+        2,
+        3,
+        4
+       ],
+       "marks": {
+        "dim": [],
+        "path": [],
+        "bad": [],
+        "good": [
+         0
+        ],
+        "lit": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "energy",
+        "at": 0
+       },
+       "to": {
+        "view": "tank",
+        "at": 0
+       },
+       "value": "+4"
+      },
+      {
+       "from": {
+        "view": "drain",
+        "at": 0
+       },
+       "to": {
+        "view": "tank",
+        "at": 0
+       },
+       "value": "−3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Stop 1: 1 + 6 − 5 = 2, not below 0, so the drive from stop 0 goes on.",
+      "ko": "휴게소 1: 1 + 6 − 5 = 2로 0 미만이 아니므로 휴게소 0에서 출발한 운전이 이어집니다."
+     },
+     "views": {
+      "energy": {
+       "values": [
+        4,
+        6,
+        1,
+        3,
+        5
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "spans": {},
+       "marks": {
+        "lit": [
+         1
+        ],
+        "path": []
+       }
+      },
+      "drain": {
+       "values": [
+        3,
+        5,
+        2,
+        2,
+        6
+       ],
+       "spans": {},
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "tank": {
+       "values": [
+        1,
+        2,
+        "",
+        "",
+        ""
+       ],
+       "pointers": {
+        "start": 0
+       },
+       "spans": {
+        "drive": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "from stop 0",
+          "ko": "휴게소 0부터"
+         }
+        }
+       },
+       "unread": [
+        2,
+        3,
+        4
+       ],
+       "marks": {
+        "dim": [],
+        "path": [],
+        "bad": [],
+        "good": [
+         1
+        ],
+        "lit": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tank",
+        "at": 0
+       },
+       "to": {
+        "view": "tank",
+        "at": 1
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "energy",
+        "at": 1
+       },
+       "to": {
+        "view": "tank",
+        "at": 1
+       },
+       "value": "+6"
+      },
+      {
+       "from": {
+        "view": "drain",
+        "at": 1
+       },
+       "to": {
+        "view": "tank",
+        "at": 1
+       },
+       "value": "−5"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Stop 2: 2 + 1 − 2 = 1, not below 0, so the drive from stop 0 goes on.",
+      "ko": "휴게소 2: 2 + 1 − 2 = 1로 0 미만이 아니므로 휴게소 0에서 출발한 운전이 이어집니다."
+     },
+     "views": {
+      "energy": {
+       "values": [
+        4,
+        6,
+        1,
+        3,
+        5
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "spans": {},
+       "marks": {
+        "lit": [
+         2
+        ],
+        "path": []
+       }
+      },
+      "drain": {
+       "values": [
+        3,
+        5,
+        2,
+        2,
+        6
+       ],
+       "spans": {},
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "tank": {
+       "values": [
+        1,
+        2,
+        1,
+        "",
+        ""
+       ],
+       "pointers": {
+        "start": 0
+       },
+       "spans": {
+        "drive": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "from stop 0",
+          "ko": "휴게소 0부터"
+         }
+        }
+       },
+       "unread": [
+        3,
+        4
+       ],
+       "marks": {
+        "dim": [],
+        "path": [],
+        "bad": [],
+        "good": [
+         2
+        ],
+        "lit": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tank",
+        "at": 1
+       },
+       "to": {
+        "view": "tank",
+        "at": 2
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "energy",
+        "at": 2
+       },
+       "to": {
+        "view": "tank",
+        "at": 2
+       },
+       "value": "+1"
+      },
+      {
+       "from": {
+        "view": "drain",
+        "at": 2
+       },
+       "to": {
+        "view": "tank",
+        "at": 2
+       },
+       "value": "−2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Stop 3: 1 + 3 − 2 = 2, not below 0, so the drive from stop 0 goes on.",
+      "ko": "휴게소 3: 1 + 3 − 2 = 2로 0 미만이 아니므로 휴게소 0에서 출발한 운전이 이어집니다."
+     },
+     "views": {
+      "energy": {
+       "values": [
+        4,
+        6,
+        1,
+        3,
+        5
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "spans": {},
+       "marks": {
+        "lit": [
+         3
+        ],
+        "path": []
+       }
+      },
+      "drain": {
+       "values": [
+        3,
+        5,
+        2,
+        2,
+        6
+       ],
+       "spans": {},
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "tank": {
+       "values": [
+        1,
+        2,
+        1,
+        2,
+        ""
+       ],
+       "pointers": {
+        "start": 0
+       },
+       "spans": {
+        "drive": {
+         "from": 0,
+         "to": 3,
+         "label": {
+          "en": "from stop 0",
+          "ko": "휴게소 0부터"
+         }
+        }
+       },
+       "unread": [
+        4
+       ],
+       "marks": {
+        "dim": [],
+        "path": [],
+        "bad": [],
+        "good": [
+         3
+        ],
+        "lit": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tank",
+        "at": 2
+       },
+       "to": {
+        "view": "tank",
+        "at": 3
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "energy",
+        "at": 3
+       },
+       "to": {
+        "view": "tank",
+        "at": 3
+       },
+       "value": "+3"
+      },
+      {
+       "from": {
+        "view": "drain",
+        "at": 3
+       },
+       "to": {
+        "view": "tank",
+        "at": 3
+       },
+       "value": "−2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Stop 4: 2 + 5 − 6 = 1, not below 0, so the drive from stop 0 goes on.",
+      "ko": "휴게소 4: 2 + 5 − 6 = 1로 0 미만이 아니므로 휴게소 0에서 출발한 운전이 이어집니다."
+     },
+     "views": {
+      "energy": {
+       "values": [
+        4,
+        6,
+        1,
+        3,
+        5
+       ],
+       "pointers": {
+        "i": 4
+       },
+       "spans": {},
+       "marks": {
+        "lit": [
+         4
+        ],
+        "path": []
+       }
+      },
+      "drain": {
+       "values": [
+        3,
+        5,
+        2,
+        2,
+        6
+       ],
+       "spans": {},
+       "marks": {
+        "lit": [
+         4
+        ]
+       }
+      },
+      "tank": {
+       "values": [
+        1,
+        2,
+        1,
+        2,
+        1
+       ],
+       "pointers": {
+        "start": 0
+       },
+       "spans": {
+        "drive": {
+         "from": 0,
+         "to": 4,
+         "label": {
+          "en": "from stop 0",
+          "ko": "휴게소 0부터"
+         }
+        }
+       },
+       "unread": [],
+       "marks": {
+        "dim": [],
+        "path": [],
+        "bad": [],
+        "good": [
+         4
+        ],
+        "lit": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tank",
+        "at": 3
+       },
+       "to": {
+        "view": "tank",
+        "at": 4
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "energy",
+        "at": 4
+       },
+       "to": {
+        "view": "tank",
+        "at": 4
+       },
+       "value": "+5"
+      },
+      {
+       "from": {
+        "view": "drain",
+        "at": 4
+       },
+       "to": {
+        "view": "tank",
+        "at": 4
+       },
+       "value": "−6"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "From stop 0 the battery never went below 0 around the whole loop. Answer: 0.",
+      "ko": "휴게소 0에서 출발해 한 바퀴를 도는 동안 배터리가 0 미만이 된 적이 없습니다. 답은 0입니다."
+     },
+     "views": {
+      "energy": {
+       "values": [
+        4,
+        6,
+        1,
+        3,
+        5
+       ],
+       "pointers": {
+        "i": null
+       },
+       "spans": {},
+       "marks": {
+        "lit": [],
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      },
+      "drain": {
+       "values": [
+        3,
+        5,
+        2,
+        2,
+        6
+       ],
+       "spans": {},
+       "marks": {
+        "lit": []
+       }
+      },
+      "tank": {
+       "values": [
+        1,
+        2,
+        1,
+        2,
+        1
+       ],
+       "pointers": {
+        "start": 0
+       },
+       "spans": {
+        "drive": {
+         "from": 0,
+         "to": 4,
+         "label": {
+          "en": "from stop 0",
+          "ko": "휴게소 0부터"
+         },
+         "mark": "path"
+        }
+       },
+       "unread": [],
+       "marks": {
+        "dim": [],
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ],
+        "bad": [],
+        "good": [],
+        "lit": []
+       }
+      }
+     },
+     "answer": "0"
+    }
+   ],
+   "sampleInput": "[4,6,1,3,5]\n[3,5,2,2,6]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "energy = [5,2,8], drain = [6,4,7]",
+   "expected": "-1",
+   "frames": [
+    {
+     "caption": {
+      "en": "3 stops on the loop. The battery starts empty at the stop you pick.",
+      "ko": "순환 도로에 휴게소가 3개 있습니다. 고른 휴게소에서 빈 배터리로 출발합니다."
+     },
+     "views": {
+      "energy": {
+       "values": [
+        5,
+        2,
+        8
+       ],
+       "pointers": {
+        "i": null
+       },
+       "spans": {},
+       "marks": {
+        "lit": [],
+        "path": []
+       }
+      },
+      "drain": {
+       "values": [
+        6,
+        4,
+        7
+       ],
+       "spans": {},
+       "marks": {
+        "lit": []
+       }
+      },
+      "tank": {
+       "values": [
+        "",
+        "",
+        ""
+       ],
+       "pointers": {
+        "start": 0
+       },
+       "spans": {},
+       "unread": [
+        0,
+        1,
+        2
+       ],
+       "marks": {
+        "dim": [],
+        "path": [],
+        "bad": [],
+        "good": [],
+        "lit": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "The stops charge 15 in all, but the drives use 17: whichever stop you start from, the battery goes below 0 before the loop ends. Answer: -1.",
+      "ko": "충전량은 모두 합쳐 15인데 운전에 17만큼 듭니다. 어느 휴게소에서 출발해도 한 바퀴를 돌기 전에 배터리가 0 미만이 되므로 답은 -1입니다."
+     },
+     "views": {
+      "energy": {
+       "values": [
+        5,
+        2,
+        8
+       ],
+       "pointers": {
+        "i": null
+       },
+       "spans": {
+        "total": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "total 15",
+          "ko": "합 15"
+         },
+         "mark": "bad"
+        }
+       },
+       "marks": {
+        "lit": [],
+        "path": []
+       }
+      },
+      "drain": {
+       "values": [
+        6,
+        4,
+        7
+       ],
+       "spans": {
+        "total": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "total 17",
+          "ko": "합 17"
+         },
+         "mark": "bad"
+        }
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "tank": {
+       "values": [
+        "",
+        "",
+        ""
+       ],
+       "pointers": {
+        "start": 0
+       },
+       "spans": {},
+       "unread": [
+        0,
+        1,
+        2
+       ],
+       "marks": {
+        "dim": [],
+        "path": [],
+        "bad": [],
+        "good": [],
+        "lit": []
+       }
+      }
+     },
+     "answer": "-1"
+    }
+   ],
+   "sampleInput": "[5,2,8]\n[6,4,7]"
+  },
+  {
+   "label": {
+    "en": "Extra: the start moves",
+    "ko": "추가: 출발점이 바뀜"
+   },
+   "input": "energy = [2,3,1,6,4], drain = [3,1,4,2,3]",
+   "expected": "3",
+   "frames": [
+    {
+     "caption": {
+      "en": "5 stops on the loop. The battery starts empty at the stop you pick.",
+      "ko": "순환 도로에 휴게소가 5개 있습니다. 고른 휴게소에서 빈 배터리로 출발합니다."
+     },
+     "views": {
+      "energy": {
+       "values": [
+        2,
+        3,
+        1,
+        6,
+        4
+       ],
+       "pointers": {
+        "i": null
+       },
+       "spans": {},
+       "marks": {
+        "lit": [],
+        "path": []
+       }
+      },
+      "drain": {
+       "values": [
+        3,
+        1,
+        4,
+        2,
+        3
+       ],
+       "spans": {},
+       "marks": {
+        "lit": []
+       }
+      },
+      "tank": {
+       "values": [
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       "pointers": {
+        "start": 0
+       },
+       "spans": {},
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "marks": {
+        "dim": [],
+        "path": [],
+        "bad": [],
+        "good": [],
+        "lit": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "The stops charge 16 in all and the drives use 13, no more, so some start works. Try stop 0 first.",
+      "ko": "충전량은 모두 합쳐 16이고 운전에는 13만큼 들어 충전량이 모자라지 않으므로, 출발할 수 있는 휴게소가 있습니다. 먼저 휴게소 0부터 달려 봅니다."
+     },
+     "views": {
+      "energy": {
+       "values": [
+        2,
+        3,
+        1,
+        6,
+        4
+       ],
+       "pointers": {
+        "i": null
+       },
+       "spans": {
+        "total": {
+         "from": 0,
+         "to": 4,
+         "label": {
+          "en": "total 16",
+          "ko": "합 16"
+         },
+         "mark": "good"
+        }
+       },
+       "marks": {
+        "lit": [],
+        "path": []
+       }
+      },
+      "drain": {
+       "values": [
+        3,
+        1,
+        4,
+        2,
+        3
+       ],
+       "spans": {
+        "total": {
+         "from": 0,
+         "to": 4,
+         "label": {
+          "en": "total 13",
+          "ko": "합 13"
+         },
+         "mark": "good"
+        }
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "tank": {
+       "values": [
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       "pointers": {
+        "start": 0
+       },
+       "spans": {},
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "marks": {
+        "dim": [],
+        "path": [],
+        "bad": [],
+        "good": [],
+        "lit": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Stop 0: 0 + 2 − 3 = -1, below 0. The drive from stop 0 fails here.",
+      "ko": "휴게소 0: 0 + 2 − 3 = -1로 0 미만입니다. 휴게소 0에서 출발하면 여기서 멈춥니다."
+     },
+     "views": {
+      "energy": {
+       "values": [
+        2,
+        3,
+        1,
+        6,
+        4
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "spans": {},
+       "marks": {
+        "lit": [
+         0
+        ],
+        "path": []
+       }
+      },
+      "drain": {
+       "values": [
+        3,
+        1,
+        4,
+        2,
+        3
+       ],
+       "spans": {},
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "tank": {
+       "values": [
+        -1,
+        "",
+        "",
+        "",
+        ""
+       ],
+       "pointers": {
+        "start": 0
+       },
+       "spans": {
+        "drive": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "from stop 0",
+          "ko": "휴게소 0부터"
+         },
+         "mark": "bad"
+        }
+       },
+       "unread": [
+        1,
+        2,
+        3,
+        4
+       ],
+       "marks": {
+        "dim": [],
+        "path": [],
+        "bad": [
+         0
+        ],
+        "good": [],
+        "lit": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "energy",
+        "at": 0
+       },
+       "to": {
+        "view": "tank",
+        "at": 0
+       },
+       "value": "+2"
+      },
+      {
+       "from": {
+        "view": "drain",
+        "at": 0
+       },
+       "to": {
+        "view": "tank",
+        "at": 0
+       },
+       "value": "−3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Stop 0 can't even reach the next stop on its own: start again from stop 1 with an empty battery.",
+      "ko": "휴게소 0은 혼자서도 다음 휴게소까지 갈 수 없으니 휴게소 1에서 빈 배터리로 다시 출발합니다."
+     },
+     "views": {
+      "energy": {
+       "values": [
+        2,
+        3,
+        1,
+        6,
+        4
+       ],
+       "pointers": {
+        "i": null
+       },
+       "spans": {},
+       "marks": {
+        "lit": [],
+        "path": []
+       }
+      },
+      "drain": {
+       "values": [
+        3,
+        1,
+        4,
+        2,
+        3
+       ],
+       "spans": {},
+       "marks": {
+        "lit": []
+       }
+      },
+      "tank": {
+       "values": [
+        -1,
+        "",
+        "",
+        "",
+        ""
+       ],
+       "pointers": {
+        "start": 1
+       },
+       "spans": {},
+       "unread": [
+        1,
+        2,
+        3,
+        4
+       ],
+       "marks": {
+        "dim": [
+         0
+        ],
+        "path": [],
+        "bad": [],
+        "good": [],
+        "lit": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tank",
+        "at": 0
+       },
+       "to": {
+        "view": "tank",
+        "at": 1
+       },
+       "value": "0",
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Stop 1: 0 + 3 − 1 = 2, not below 0, so the drive from stop 1 goes on.",
+      "ko": "휴게소 1: 0 + 3 − 1 = 2로 0 미만이 아니므로 휴게소 1에서 출발한 운전이 이어집니다."
+     },
+     "views": {
+      "energy": {
+       "values": [
+        2,
+        3,
+        1,
+        6,
+        4
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "spans": {},
+       "marks": {
+        "lit": [
+         1
+        ],
+        "path": []
+       }
+      },
+      "drain": {
+       "values": [
+        3,
+        1,
+        4,
+        2,
+        3
+       ],
+       "spans": {},
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "tank": {
+       "values": [
+        -1,
+        2,
+        "",
+        "",
+        ""
+       ],
+       "pointers": {
+        "start": 1
+       },
+       "spans": {
+        "drive": {
+         "from": 1,
+         "to": 1,
+         "label": {
+          "en": "from stop 1",
+          "ko": "휴게소 1부터"
+         }
+        }
+       },
+       "unread": [
+        2,
+        3,
+        4
+       ],
+       "marks": {
+        "dim": [
+         0
+        ],
+        "path": [],
+        "bad": [],
+        "good": [
+         1
+        ],
+        "lit": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "energy",
+        "at": 1
+       },
+       "to": {
+        "view": "tank",
+        "at": 1
+       },
+       "value": "+3"
+      },
+      {
+       "from": {
+        "view": "drain",
+        "at": 1
+       },
+       "to": {
+        "view": "tank",
+        "at": 1
+       },
+       "value": "−1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Stop 2: 2 + 1 − 4 = -1, below 0. The drive from stop 1 fails here.",
+      "ko": "휴게소 2: 2 + 1 − 4 = -1로 0 미만입니다. 휴게소 1에서 출발하면 여기서 멈춥니다."
+     },
+     "views": {
+      "energy": {
+       "values": [
+        2,
+        3,
+        1,
+        6,
+        4
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "spans": {},
+       "marks": {
+        "lit": [
+         2
+        ],
+        "path": []
+       }
+      },
+      "drain": {
+       "values": [
+        3,
+        1,
+        4,
+        2,
+        3
+       ],
+       "spans": {},
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "tank": {
+       "values": [
+        -1,
+        2,
+        -1,
+        "",
+        ""
+       ],
+       "pointers": {
+        "start": 1
+       },
+       "spans": {
+        "drive": {
+         "from": 1,
+         "to": 2,
+         "label": {
+          "en": "from stop 1",
+          "ko": "휴게소 1부터"
+         },
+         "mark": "bad"
+        }
+       },
+       "unread": [
+        3,
+        4
+       ],
+       "marks": {
+        "dim": [
+         0
+        ],
+        "path": [],
+        "bad": [
+         2
+        ],
+        "good": [],
+        "lit": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tank",
+        "at": 1
+       },
+       "to": {
+        "view": "tank",
+        "at": 2
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "energy",
+        "at": 2
+       },
+       "to": {
+        "view": "tank",
+        "at": 2
+       },
+       "value": "+1"
+      },
+      {
+       "from": {
+        "view": "drain",
+        "at": 2
+       },
+       "to": {
+        "view": "tank",
+        "at": 2
+       },
+       "value": "−4"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Stop 2 was reached with a battery of 0 or more, so starting there empty is no better: start again from stop 3 with an empty battery.",
+      "ko": "휴게소 2는 0 이상의 배터리를 들고 도착했으므로, 거기서 빈 배터리로 출발해도 나을 게 없으니 휴게소 3에서 빈 배터리로 다시 출발합니다."
+     },
+     "views": {
+      "energy": {
+       "values": [
+        2,
+        3,
+        1,
+        6,
+        4
+       ],
+       "pointers": {
+        "i": null
+       },
+       "spans": {},
+       "marks": {
+        "lit": [],
+        "path": []
+       }
+      },
+      "drain": {
+       "values": [
+        3,
+        1,
+        4,
+        2,
+        3
+       ],
+       "spans": {},
+       "marks": {
+        "lit": []
+       }
+      },
+      "tank": {
+       "values": [
+        -1,
+        2,
+        -1,
+        "",
+        ""
+       ],
+       "pointers": {
+        "start": 3
+       },
+       "spans": {},
+       "unread": [
+        3,
+        4
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2
+        ],
+        "path": [],
+        "bad": [],
+        "good": [],
+        "lit": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tank",
+        "at": 2
+       },
+       "to": {
+        "view": "tank",
+        "at": 3
+       },
+       "value": "0",
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Stop 3: 0 + 6 − 2 = 4, not below 0, so the drive from stop 3 goes on.",
+      "ko": "휴게소 3: 0 + 6 − 2 = 4로 0 미만이 아니므로 휴게소 3에서 출발한 운전이 이어집니다."
+     },
+     "views": {
+      "energy": {
+       "values": [
+        2,
+        3,
+        1,
+        6,
+        4
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "spans": {},
+       "marks": {
+        "lit": [
+         3
+        ],
+        "path": []
+       }
+      },
+      "drain": {
+       "values": [
+        3,
+        1,
+        4,
+        2,
+        3
+       ],
+       "spans": {},
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "tank": {
+       "values": [
+        -1,
+        2,
+        -1,
+        4,
+        ""
+       ],
+       "pointers": {
+        "start": 3
+       },
+       "spans": {
+        "drive": {
+         "from": 3,
+         "to": 3,
+         "label": {
+          "en": "from stop 3",
+          "ko": "휴게소 3부터"
+         }
+        }
+       },
+       "unread": [
+        4
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2
+        ],
+        "path": [],
+        "bad": [],
+        "good": [
+         3
+        ],
+        "lit": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "energy",
+        "at": 3
+       },
+       "to": {
+        "view": "tank",
+        "at": 3
+       },
+       "value": "+6"
+      },
+      {
+       "from": {
+        "view": "drain",
+        "at": 3
+       },
+       "to": {
+        "view": "tank",
+        "at": 3
+       },
+       "value": "−2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Stop 4: 4 + 4 − 3 = 5, not below 0, so the drive from stop 3 goes on.",
+      "ko": "휴게소 4: 4 + 4 − 3 = 5로 0 미만이 아니므로 휴게소 3에서 출발한 운전이 이어집니다."
+     },
+     "views": {
+      "energy": {
+       "values": [
+        2,
+        3,
+        1,
+        6,
+        4
+       ],
+       "pointers": {
+        "i": 4
+       },
+       "spans": {},
+       "marks": {
+        "lit": [
+         4
+        ],
+        "path": []
+       }
+      },
+      "drain": {
+       "values": [
+        3,
+        1,
+        4,
+        2,
+        3
+       ],
+       "spans": {},
+       "marks": {
+        "lit": [
+         4
+        ]
+       }
+      },
+      "tank": {
+       "values": [
+        -1,
+        2,
+        -1,
+        4,
+        5
+       ],
+       "pointers": {
+        "start": 3
+       },
+       "spans": {
+        "drive": {
+         "from": 3,
+         "to": 4,
+         "label": {
+          "en": "from stop 3",
+          "ko": "휴게소 3부터"
+         }
+        }
+       },
+       "unread": [],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2
+        ],
+        "path": [],
+        "bad": [],
+        "good": [
+         4
+        ],
+        "lit": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tank",
+        "at": 3
+       },
+       "to": {
+        "view": "tank",
+        "at": 4
+       },
+       "value": "4"
+      },
+      {
+       "from": {
+        "view": "energy",
+        "at": 4
+       },
+       "to": {
+        "view": "tank",
+        "at": 4
+       },
+       "value": "+4"
+      },
+      {
+       "from": {
+        "view": "drain",
+        "at": 4
+       },
+       "to": {
+        "view": "tank",
+        "at": 4
+       },
+       "value": "−3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "From stop 3 the battery never went below 0 to the end of the road, and the 5 left there covers the 2 the stops before it run short (the totals said it would). Answer: 3.",
+      "ko": "휴게소 3부터 도로 끝까지 배터리가 0 미만이 된 적이 없고, 끝에 남은 5가 앞 휴게소들에서 모자란 2를 메웁니다(전체 합이 보장합니다). 답은 3입니다."
+     },
+     "views": {
+      "energy": {
+       "values": [
+        2,
+        3,
+        1,
+        6,
+        4
+       ],
+       "pointers": {
+        "i": null
+       },
+       "spans": {},
+       "marks": {
+        "lit": [],
+        "path": [
+         3,
+         4
+        ]
+       }
+      },
+      "drain": {
+       "values": [
+        3,
+        1,
+        4,
+        2,
+        3
+       ],
+       "spans": {},
+       "marks": {
+        "lit": []
+       }
+      },
+      "tank": {
+       "values": [
+        -1,
+        2,
+        -1,
+        4,
+        5
+       ],
+       "pointers": {
+        "start": 3
+       },
+       "spans": {
+        "drive": {
+         "from": 3,
+         "to": 4,
+         "label": {
+          "en": "from stop 3",
+          "ko": "휴게소 3부터"
+         },
+         "mark": "path"
+        }
+       },
+       "unread": [],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2
+        ],
+        "path": [
+         3,
+         4
+        ],
+        "bad": [],
+        "good": [],
+        "lit": []
+       }
+      }
+     },
+     "answer": "3"
+    }
+   ],
+   "extra": true
+  }
+ ]
+}

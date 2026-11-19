@@ -65,7 +65,9 @@ export interface GraphState {
 }
 /** A tree: nodes as pills, each edge from a parent to a child, upright or on its side when too wide. With the view's
  *  `arity`, an edge's `slot` (default: its place among its parent's edges) fixes the child's side, so a missing child
- *  leaves a gap. Address: a node id, or an edge as [from, to]. */
+ *  leaves a gap. `links` holds one second link per node by its name besides its edges (`{ next: { 1: 2, 2: null } }`),
+ *  drawn pill to pill along a level, and `linkMarks` marks one as [link, node id]. Address: a node id, or an edge as
+ *  [from, to]. */
 export interface TreeState {
   nodes: { id: Key; value?: unknown }[];
   /** `label` is written on the edge, as a trie's letter or a recursion tree's choice */
@@ -73,6 +75,7 @@ export interface TreeState {
   nodeMarks?: Marks<Key>; edgeMarks?: Marks<[Key, Key]>;
   /** a short label under a node: its bounds, a count, a heap index */ tags?: [Key, Text][];
   /** the nodes on the current path (the calls still open), drawn on a soft band under any mark */ shade?: Key[];
+  links?: Record<string, Record<string, Key | null>>; linkMarks?: Marks<[string, Key]>;
 }
 /** A linked list: nodes in a row in `nodes` order, each `next` an arrow (`null`: to ∅; missing: none). `pointers`
  *  name nodes under them (`null` hides one); `linkMarks` mark the arrow out of a node (a node id: its next; a
@@ -127,6 +130,9 @@ export function layoutTree(nodes: TreeState['nodes'], edges: TreeState['edges'],
   arity?: number; sideways?: boolean; size?: (id: string) => { w: number; h: number }; label?: (id: string) => number;
 }): { pos: Map<string, { x: number; y: number }>; width: number; height: number };
 /** Whether a tree too wide upright for `room` goes on its side. */
+/** How a tree's second link is drawn: pill edge to pill edge, a pair each way in two lanes, null to ∅ past the pill. */
+export function treeLinks(to: Record<string, Key | null>, box: (id: string) => { x: number; y: number; w: number; h: number } | null | undefined,
+  opts?: { sideways?: boolean }): { from: string; to: string | null; x1: number; y1: number; x2: number; y2: number; nil?: [number, number] }[];
 export function treeSideways(upright: { width: number }, side: { width: number }, room: number): boolean;
 export function axisTicks(min: number, max: number): number[];
 export function textOf(text: Text | null | undefined, lang: string): string;

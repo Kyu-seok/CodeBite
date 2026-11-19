@@ -196,6 +196,16 @@
 .wt-tree .wt-ttagg.wt-good .wt-ttag { fill: var(--wt-good); }
 .wt-tree .wt-ttagg.wt-bad .wt-ttag { fill: var(--wt-bad); }
 .wt-tree .wt-tempty { font: italic 13px var(--wt-sans); fill: var(--wt-lo); }
+/* tree: a second link (next along a level) is dashed in a colour of its own, a null one hooking out to ∅ */
+.wt-tlinkpath { fill: none; stroke: var(--wt-tone-c); stroke-width: 1.8; stroke-dasharray: 6 3; }
+.wt-tree .wt-tnil { font: 600 15px var(--wt-mono); fill: var(--wt-tone-c); }
+.wt-tlink.wt-lit .wt-tlinkpath, .wt-tlink.wt-path .wt-tlinkpath { stroke: var(--wt-accent); stroke-width: 2.6; }
+.wt-tlink.wt-good .wt-tlinkpath { stroke: var(--wt-good); stroke-width: 2.6; }
+.wt-tlink.wt-bad .wt-tlinkpath { stroke: var(--wt-bad); stroke-width: 2.6; }
+.wt-tree .wt-tlink.wt-lit .wt-tnil, .wt-tree .wt-tlink.wt-path .wt-tnil { fill: var(--wt-accent); }
+.wt-tree .wt-tlink.wt-good .wt-tnil { fill: var(--wt-good); }
+.wt-tree .wt-tlink.wt-bad .wt-tnil { fill: var(--wt-bad); }
+.wt-tlink.wt-dim { opacity: .3; }
 
 /* linkedlist: boxes in a row, each next an arrow; a cut arrow is the one this step removed */
 .wt-llbox { fill: var(--wt-bg); stroke: var(--wt-ink); stroke-width: 2; transition: fill .3s, stroke .3s; }
