@@ -1,0 +1,1169 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Mirror the Menu Tree",
+  "ko": "메뉴 트리 뒤집기"
+ },
+ "approach": {
+  "en": "The mirror of a tree is its root with the mirror of its right subtree on the left and the mirror of its left subtree on the right: copy each node, then build its two sides from the opposite sides, recursively.",
+  "ko": "트리를 뒤집은 결과는 루트 아래 왼쪽에 오른쪽 서브트리를 뒤집은 것, 오른쪽에 왼쪽 서브트리를 뒤집은 것을 단 트리입니다. 노드를 하나씩 옮기며 양쪽을 반대편에서 재귀적으로 만듭니다."
+ },
+ "views": [
+  {
+   "id": "tree",
+   "type": "tree",
+   "arity": 2,
+   "title": {
+    "en": "root",
+    "ko": "root (원래 트리)"
+   },
+   "empty": {
+    "en": "empty tree",
+    "ko": "빈 트리"
+   }
+  },
+  {
+   "id": "mirror",
+   "type": "tree",
+   "arity": 2,
+   "title": {
+    "en": "mirrored tree",
+    "ko": "뒤집은 트리"
+   },
+   "empty": {
+    "en": "nothing yet",
+    "ko": "아직 없음"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "root = [5,3,8,2,4,7,9]",
+   "expected": "[5,8,3,9,7,4,2]",
+   "frames": [
+    {
+     "caption": {
+      "en": "A tree of 7 nodes with root 5. Mirror it from the root down: each node's right side becomes its copy's left side.",
+      "ko": "root가 5인 노드 7개짜리 트리를 root부터 내려가며 뒤집습니다. 각 노드의 오른쪽이 복사본의 왼쪽이 됩니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": []
+       },
+       "shade": []
+      },
+      "mirror": {
+       "nodes": [],
+       "edges": [],
+       "nodeMarks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Copy the root 5: it stays the root. Next, mirror its right child 8 onto the left.",
+      "ko": "root 5를 복사하며, root는 그대로 root입니다. 다음으로 오른쪽 자식 8을 뒤집어 왼쪽에 답니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ]
+      },
+      "mirror": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 5
+        }
+       ],
+       "edges": [],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 0
+       },
+       "to": {
+        "view": "mirror",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "8 was 5's right child, so its copy becomes the left child of 5's copy. Next, mirror its right child 9 onto the left.",
+      "ko": "8은 5의 오른쪽 자식이었으므로 복사본은 5의 왼쪽 자식이 됩니다. 다음으로 오른쪽 자식 9를 뒤집어 왼쪽에 답니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [
+         2
+        ]
+       },
+       "shade": [
+        0,
+        2
+       ]
+      },
+      "mirror": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 5
+        },
+        {
+         "id": 2,
+         "value": 8
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 0
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 2
+       },
+       "to": {
+        "view": "mirror",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "9 was 8's right child, so its copy becomes the left child of 8's copy. It has no children, so its mirror is just itself.",
+      "ko": "9는 8의 오른쪽 자식이었으므로 복사본은 8의 왼쪽 자식이 됩니다. 자식이 없으므로 그대로 끝납니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [
+         6
+        ]
+       },
+       "shade": [
+        0,
+        2,
+        6
+       ]
+      },
+      "mirror": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 5
+        },
+        {
+         "id": 2,
+         "value": 8
+        },
+        {
+         "id": 6,
+         "value": 9
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 0
+        },
+        {
+         "from": 2,
+         "to": 6,
+         "slot": 0
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         6
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 6
+       },
+       "to": {
+        "view": "mirror",
+        "at": 6
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "7 was 8's left child, so its copy becomes the right child of 8's copy. It has no children, so its mirror is just itself.",
+      "ko": "7은 8의 왼쪽 자식이었으므로 복사본은 8의 오른쪽 자식이 됩니다. 자식이 없으므로 그대로 끝납니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         6
+        ],
+        "lit": [
+         5
+        ]
+       },
+       "shade": [
+        0,
+        2,
+        5
+       ]
+      },
+      "mirror": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 5
+        },
+        {
+         "id": 2,
+         "value": 8
+        },
+        {
+         "id": 6,
+         "value": 9
+        },
+        {
+         "id": 5,
+         "value": 7
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 0
+        },
+        {
+         "from": 2,
+         "to": 6,
+         "slot": 0
+        },
+        {
+         "from": 2,
+         "to": 5,
+         "slot": 1
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         5
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 5
+       },
+       "to": {
+        "view": "mirror",
+        "at": 5
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "3 was 5's left child, so its copy becomes the right child of 5's copy. Next, mirror its right child 4 onto the left.",
+      "ko": "3은 5의 왼쪽 자식이었으므로 복사본은 5의 오른쪽 자식이 됩니다. 다음으로 오른쪽 자식 4를 뒤집어 왼쪽에 답니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         6,
+         5,
+         2
+        ],
+        "lit": [
+         1
+        ]
+       },
+       "shade": [
+        0,
+        1
+       ]
+      },
+      "mirror": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 5
+        },
+        {
+         "id": 2,
+         "value": 8
+        },
+        {
+         "id": 6,
+         "value": 9
+        },
+        {
+         "id": 5,
+         "value": 7
+        },
+        {
+         "id": 1,
+         "value": 3
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 0
+        },
+        {
+         "from": 2,
+         "to": 6,
+         "slot": 0
+        },
+        {
+         "from": 2,
+         "to": 5,
+         "slot": 1
+        },
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 1
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 1
+       },
+       "to": {
+        "view": "mirror",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "4 was 3's right child, so its copy becomes the left child of 3's copy. It has no children, so its mirror is just itself.",
+      "ko": "4는 3의 오른쪽 자식이었으므로 복사본은 3의 왼쪽 자식이 됩니다. 자식이 없으므로 그대로 끝납니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         6,
+         5,
+         2
+        ],
+        "lit": [
+         4
+        ]
+       },
+       "shade": [
+        0,
+        1,
+        4
+       ]
+      },
+      "mirror": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 5
+        },
+        {
+         "id": 2,
+         "value": 8
+        },
+        {
+         "id": 6,
+         "value": 9
+        },
+        {
+         "id": 5,
+         "value": 7
+        },
+        {
+         "id": 1,
+         "value": 3
+        },
+        {
+         "id": 4,
+         "value": 4
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 0
+        },
+        {
+         "from": 2,
+         "to": 6,
+         "slot": 0
+        },
+        {
+         "from": 2,
+         "to": 5,
+         "slot": 1
+        },
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 1
+        },
+        {
+         "from": 1,
+         "to": 4,
+         "slot": 0
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         4
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 4
+       },
+       "to": {
+        "view": "mirror",
+        "at": 4
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "2 was 3's left child, so its copy becomes the right child of 3's copy. It has no children, so its mirror is just itself.",
+      "ko": "2는 3의 왼쪽 자식이었으므로 복사본은 3의 오른쪽 자식이 됩니다. 자식이 없으므로 그대로 끝납니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         6,
+         5,
+         2,
+         4
+        ],
+        "lit": [
+         3
+        ]
+       },
+       "shade": [
+        0,
+        1,
+        3
+       ]
+      },
+      "mirror": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 5
+        },
+        {
+         "id": 2,
+         "value": 8
+        },
+        {
+         "id": 6,
+         "value": 9
+        },
+        {
+         "id": 5,
+         "value": 7
+        },
+        {
+         "id": 1,
+         "value": 3
+        },
+        {
+         "id": 4,
+         "value": 4
+        },
+        {
+         "id": 3,
+         "value": 2
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 0
+        },
+        {
+         "from": 2,
+         "to": 6,
+         "slot": 0
+        },
+        {
+         "from": 2,
+         "to": 5,
+         "slot": 1
+        },
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 1
+        },
+        {
+         "from": 1,
+         "to": 4,
+         "slot": 0
+        },
+        {
+         "from": 1,
+         "to": 3,
+         "slot": 1
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 3
+       },
+       "to": {
+        "view": "mirror",
+        "at": 3
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every node is copied with its sides swapped, so each level reads right to left: [5,8,3,9,7,4,2].",
+      "ko": "모든 노드를 좌우를 바꿔 옮겼으므로 각 층을 오른쪽에서 왼쪽으로 읽은 순서가 됩니다. 답은 [5,8,3,9,7,4,2]입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         6,
+         5,
+         2,
+         4,
+         3,
+         1,
+         0
+        ]
+       },
+       "shade": []
+      },
+      "mirror": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 5
+        },
+        {
+         "id": 2,
+         "value": 8
+        },
+        {
+         "id": 6,
+         "value": 9
+        },
+        {
+         "id": 5,
+         "value": 7
+        },
+        {
+         "id": 1,
+         "value": 3
+        },
+        {
+         "id": 4,
+         "value": 4
+        },
+        {
+         "id": 3,
+         "value": 2
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 0
+        },
+        {
+         "from": 2,
+         "to": 6,
+         "slot": 0
+        },
+        {
+         "from": 2,
+         "to": 5,
+         "slot": 1
+        },
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 1
+        },
+        {
+         "from": 1,
+         "to": 4,
+         "slot": 0
+        },
+        {
+         "from": 1,
+         "to": 3,
+         "slot": 1
+        }
+       ],
+       "nodeMarks": {
+        "path": [
+         0,
+         2,
+         6,
+         5,
+         1,
+         4,
+         3
+        ]
+       }
+      }
+     },
+     "answer": "[5,8,3,9,7,4,2]"
+    }
+   ],
+   "setup": {
+    "tree": {
+     "nodes": [
+      {
+       "id": 0,
+       "value": 5
+      },
+      {
+       "id": 1,
+       "value": 3
+      },
+      {
+       "id": 2,
+       "value": 8
+      },
+      {
+       "id": 3,
+       "value": 2
+      },
+      {
+       "id": 4,
+       "value": 4
+      },
+      {
+       "id": 5,
+       "value": 7
+      },
+      {
+       "id": 6,
+       "value": 9
+      }
+     ],
+     "edges": [
+      {
+       "from": 0,
+       "to": 1,
+       "slot": 0
+      },
+      {
+       "from": 0,
+       "to": 2,
+       "slot": 1
+      },
+      {
+       "from": 1,
+       "to": 3,
+       "slot": 0
+      },
+      {
+       "from": 1,
+       "to": 4,
+       "slot": 1
+      },
+      {
+       "from": 2,
+       "to": 5,
+       "slot": 0
+      },
+      {
+       "from": 2,
+       "to": 6,
+       "slot": 1
+      }
+     ]
+    }
+   },
+   "sampleInput": "[5,3,8,2,4,7,9]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "root = [6,4,11]",
+   "expected": "[6,11,4]",
+   "frames": [
+    {
+     "caption": {
+      "en": "A tree of 3 nodes with root 6. Mirror it from the root down: each node's right side becomes its copy's left side.",
+      "ko": "root가 6인 노드 3개짜리 트리를 root부터 내려가며 뒤집습니다. 각 노드의 오른쪽이 복사본의 왼쪽이 됩니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": []
+       },
+       "shade": []
+      },
+      "mirror": {
+       "nodes": [],
+       "edges": [],
+       "nodeMarks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Copy the root 6: it stays the root. Next, mirror its right child 11 onto the left.",
+      "ko": "root 6을 복사하며, root는 그대로 root입니다. 다음으로 오른쪽 자식 11을 뒤집어 왼쪽에 답니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ]
+      },
+      "mirror": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 6
+        }
+       ],
+       "edges": [],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 0
+       },
+       "to": {
+        "view": "mirror",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "11 was 6's right child, so its copy becomes the left child of 6's copy. It has no children, so its mirror is just itself.",
+      "ko": "11은 6의 오른쪽 자식이었으므로 복사본은 6의 왼쪽 자식이 됩니다. 자식이 없으므로 그대로 끝납니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [
+         2
+        ]
+       },
+       "shade": [
+        0,
+        2
+       ]
+      },
+      "mirror": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 6
+        },
+        {
+         "id": 2,
+         "value": 11
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 0
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 2
+       },
+       "to": {
+        "view": "mirror",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "4 was 6's left child, so its copy becomes the right child of 6's copy. It has no children, so its mirror is just itself.",
+      "ko": "4는 6의 왼쪽 자식이었으므로 복사본은 6의 오른쪽 자식이 됩니다. 자식이 없으므로 그대로 끝납니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         2
+        ],
+        "lit": [
+         1
+        ]
+       },
+       "shade": [
+        0,
+        1
+       ]
+      },
+      "mirror": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 6
+        },
+        {
+         "id": 2,
+         "value": 11
+        },
+        {
+         "id": 1,
+         "value": 4
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 1
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 1
+       },
+       "to": {
+        "view": "mirror",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every node is copied with its sides swapped, so each level reads right to left: [6,11,4].",
+      "ko": "모든 노드를 좌우를 바꿔 옮겼으므로 각 층을 오른쪽에서 왼쪽으로 읽은 순서가 됩니다. 답은 [6,11,4]입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         2,
+         1,
+         0
+        ]
+       },
+       "shade": []
+      },
+      "mirror": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 6
+        },
+        {
+         "id": 2,
+         "value": 11
+        },
+        {
+         "id": 1,
+         "value": 4
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 1
+        }
+       ],
+       "nodeMarks": {
+        "path": [
+         0,
+         2,
+         1
+        ]
+       }
+      }
+     },
+     "answer": "[6,11,4]"
+    }
+   ],
+   "setup": {
+    "tree": {
+     "nodes": [
+      {
+       "id": 0,
+       "value": 6
+      },
+      {
+       "id": 1,
+       "value": 4
+      },
+      {
+       "id": 2,
+       "value": 11
+      }
+     ],
+     "edges": [
+      {
+       "from": 0,
+       "to": 1,
+       "slot": 0
+      },
+      {
+       "from": 0,
+       "to": 2,
+       "slot": 1
+      }
+     ]
+    }
+   },
+   "sampleInput": "[6,4,11]"
+  },
+  {
+   "label": {
+    "en": "Example 3",
+    "ko": "예시 3"
+   },
+   "input": "root = [5]",
+   "expected": "[5]",
+   "frames": [
+    {
+     "caption": {
+      "en": "A tree of 1 node with root 5. Mirror it from the root down: each node's right side becomes its copy's left side.",
+      "ko": "root가 5인 노드 1개짜리 트리를 root부터 내려가며 뒤집습니다. 각 노드의 오른쪽이 복사본의 왼쪽이 됩니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": []
+       },
+       "shade": []
+      },
+      "mirror": {
+       "nodes": [],
+       "edges": [],
+       "nodeMarks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Copy the root 5: it stays the root. It has no children, so its mirror is just itself.",
+      "ko": "root 5를 복사하며, root는 그대로 root입니다. 자식이 없으므로 그대로 끝납니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ]
+      },
+      "mirror": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 5
+        }
+       ],
+       "edges": [],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 0
+       },
+       "to": {
+        "view": "mirror",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every node is copied with its sides swapped, so each level reads right to left: [5].",
+      "ko": "모든 노드를 좌우를 바꿔 옮겼으므로 각 층을 오른쪽에서 왼쪽으로 읽은 순서가 됩니다. 답은 [5]입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         0
+        ]
+       },
+       "shade": []
+      },
+      "mirror": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 5
+        }
+       ],
+       "edges": [],
+       "nodeMarks": {
+        "path": [
+         0
+        ]
+       }
+      }
+     },
+     "answer": "[5]"
+    }
+   ],
+   "setup": {
+    "tree": {
+     "nodes": [
+      {
+       "id": 0,
+       "value": 5
+      }
+     ],
+     "edges": []
+    }
+   },
+   "sampleInput": "[5]"
+  }
+ ]
+}

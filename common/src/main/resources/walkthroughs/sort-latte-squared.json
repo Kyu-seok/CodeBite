@@ -1,0 +1,1359 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Sort Latte Squared",
+  "ko": "라떼 온도 편차 정렬"
+ },
+ "approach": {
+  "en": "In a sorted array the biggest square sits at one of the two ends, the one further from 0. So fill result from the back: each step the larger end's square takes the last free slot, and that end moves in.",
+  "ko": "정렬된 배열에서 가장 큰 제곱은 양 끝 중 0에서 더 먼 쪽에 있습니다. 그래서 result를 뒤에서부터 채웁니다. 매번 더 큰 쪽 끝의 제곱이 남은 마지막 칸에 들어가고, 그쪽 포인터가 안으로 옵니다."
+ },
+ "views": [
+  {
+   "id": "drifts",
+   "type": "array",
+   "title": {
+    "en": "drifts",
+    "ko": "drifts (온도 차)"
+   }
+  },
+  {
+   "id": "result",
+   "type": "array",
+   "title": {
+    "en": "result",
+    "ko": "result (결과)"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "drifts = [-5,-2,0,4,9]",
+   "expected": "[0,4,16,25,81]",
+   "frames": [
+    {
+     "caption": {
+      "en": "5 drifts, sorted. result has 5 empty slots, filled from the back; left and right start at the two ends of drifts.",
+      "ko": "정렬된 drifts 5개입니다. result의 빈칸 5개를 뒤에서부터 채우며, left와 right는 drifts의 양 끝에서 시작합니다."
+     },
+     "views": {
+      "drifts": {
+       "values": [
+        -5,
+        -2,
+        0,
+        4,
+        9
+       ],
+       "spans": {
+        "left": {
+         "from": 0,
+         "to": 4,
+         "label": {
+          "en": "to place",
+          "ko": "남은 값"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "left": 0,
+        "right": 4
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "result": {
+       "values": [
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "pointers": {},
+       "marks": {
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "|9| ≥ |-5|, so the right end is further from 0: 9² = 81 is the biggest square left and takes slot 4. right moves in.",
+      "ko": "|9| ≥ |-5|, right 쪽이 0에서 더 멉니다. 9² = 81이 남은 제곱 중 가장 커서 4번 칸에 들어가고, right 포인터가 안으로 옵니다."
+     },
+     "views": {
+      "drifts": {
+       "values": [
+        -5,
+        -2,
+        0,
+        4,
+        9
+       ],
+       "spans": {
+        "left": {
+         "from": 0,
+         "to": 4,
+         "label": {
+          "en": "to place",
+          "ko": "남은 값"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "left": 0,
+        "right": 4
+       },
+       "marks": {
+        "lit": [
+         0,
+         4
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "",
+        "",
+        "",
+        "",
+        81
+       ],
+       "unread": [
+        0,
+        1,
+        2,
+        3
+       ],
+       "pointers": {
+        "slot": 4
+       },
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "drifts",
+        "at": 4
+       },
+       "to": {
+        "view": "result",
+        "at": 4
+       },
+       "value": "81"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "|-5| > |4|, so the left end is further from 0: (-5)² = 25 is the biggest square left and takes slot 3. left moves in.",
+      "ko": "|-5| > |4|, left 쪽이 0에서 더 멉니다. (-5)² = 25가 남은 제곱 중 가장 커서 3번 칸에 들어가고, left 포인터가 안으로 옵니다."
+     },
+     "views": {
+      "drifts": {
+       "values": [
+        -5,
+        -2,
+        0,
+        4,
+        9
+       ],
+       "spans": {
+        "left": {
+         "from": 0,
+         "to": 3,
+         "label": {
+          "en": "to place",
+          "ko": "남은 값"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "left": 0,
+        "right": 3
+       },
+       "marks": {
+        "lit": [
+         0,
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "",
+        "",
+        "",
+        25,
+        81
+       ],
+       "unread": [
+        0,
+        1,
+        2
+       ],
+       "pointers": {
+        "slot": 3
+       },
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "drifts",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       },
+       "value": "25"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "|4| ≥ |-2|, so the right end is further from 0: 4² = 16 is the biggest square left and takes slot 2. right moves in.",
+      "ko": "|4| ≥ |-2|, right 쪽이 0에서 더 멉니다. 4² = 16이 남은 제곱 중 가장 커서 2번 칸에 들어가고, right 포인터가 안으로 옵니다."
+     },
+     "views": {
+      "drifts": {
+       "values": [
+        -5,
+        -2,
+        0,
+        4,
+        9
+       ],
+       "spans": {
+        "left": {
+         "from": 1,
+         "to": 3,
+         "label": {
+          "en": "to place",
+          "ko": "남은 값"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "left": 1,
+        "right": 3
+       },
+       "marks": {
+        "lit": [
+         1,
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "",
+        "",
+        16,
+        25,
+        81
+       ],
+       "unread": [
+        0,
+        1
+       ],
+       "pointers": {
+        "slot": 2
+       },
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "drifts",
+        "at": 3
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       },
+       "value": "16"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "|-2| > |0|, so the left end is further from 0: (-2)² = 4 is the biggest square left and takes slot 1. left moves in.",
+      "ko": "|-2| > |0|, left 쪽이 0에서 더 멉니다. (-2)² = 4가 남은 제곱 중 가장 커서 1번 칸에 들어가고, left 포인터가 안으로 옵니다."
+     },
+     "views": {
+      "drifts": {
+       "values": [
+        -5,
+        -2,
+        0,
+        4,
+        9
+       ],
+       "spans": {
+        "left": {
+         "from": 1,
+         "to": 2,
+         "label": {
+          "en": "to place",
+          "ko": "남은 값"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "left": 1,
+        "right": 2
+       },
+       "marks": {
+        "lit": [
+         1,
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "",
+        4,
+        16,
+        25,
+        81
+       ],
+       "unread": [
+        0
+       ],
+       "pointers": {
+        "slot": 1
+       },
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "drifts",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       },
+       "value": "4"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Only drifts[2] = 0 is left: 0² = 0 takes the first slot.",
+      "ko": "drifts[2] = 0 하나만 남았습니다. 0² = 0이 첫 칸에 들어갑니다."
+     },
+     "views": {
+      "drifts": {
+       "values": [
+        -5,
+        -2,
+        0,
+        4,
+        9
+       ],
+       "spans": {
+        "left": {
+         "from": 2,
+         "to": 2,
+         "label": {
+          "en": "to place",
+          "ko": "남은 값"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "left": 2,
+        "right": null
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        0,
+        4,
+        16,
+        25,
+        81
+       ],
+       "unread": [],
+       "pointers": {
+        "slot": 0
+       },
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "drifts",
+        "at": 2
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       },
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every slot is filled, smallest square first: [0,4,16,25,81].",
+      "ko": "모든 칸이 채워져 제곱이 작은 것부터 놓였습니다: [0,4,16,25,81]."
+     },
+     "views": {
+      "drifts": {
+       "values": [
+        -5,
+        -2,
+        0,
+        4,
+        9
+       ],
+       "spans": {
+        "left": null
+       },
+       "pointers": {
+        "left": null,
+        "right": null
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "result": {
+       "values": [
+        0,
+        4,
+        16,
+        25,
+        81
+       ],
+       "unread": [],
+       "pointers": {},
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      }
+     },
+     "answer": "[0,4,16,25,81]"
+    }
+   ],
+   "sampleInput": "[-5,-2,0,4,9]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "drifts = [-6,-4,1,3,8]",
+   "expected": "[1,9,16,36,64]",
+   "frames": [
+    {
+     "caption": {
+      "en": "5 drifts, sorted. result has 5 empty slots, filled from the back; left and right start at the two ends of drifts.",
+      "ko": "정렬된 drifts 5개입니다. result의 빈칸 5개를 뒤에서부터 채우며, left와 right는 drifts의 양 끝에서 시작합니다."
+     },
+     "views": {
+      "drifts": {
+       "values": [
+        -6,
+        -4,
+        1,
+        3,
+        8
+       ],
+       "spans": {
+        "left": {
+         "from": 0,
+         "to": 4,
+         "label": {
+          "en": "to place",
+          "ko": "남은 값"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "left": 0,
+        "right": 4
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "result": {
+       "values": [
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "pointers": {},
+       "marks": {
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "|8| ≥ |-6|, so the right end is further from 0: 8² = 64 is the biggest square left and takes slot 4. right moves in.",
+      "ko": "|8| ≥ |-6|, right 쪽이 0에서 더 멉니다. 8² = 64가 남은 제곱 중 가장 커서 4번 칸에 들어가고, right 포인터가 안으로 옵니다."
+     },
+     "views": {
+      "drifts": {
+       "values": [
+        -6,
+        -4,
+        1,
+        3,
+        8
+       ],
+       "spans": {
+        "left": {
+         "from": 0,
+         "to": 4,
+         "label": {
+          "en": "to place",
+          "ko": "남은 값"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "left": 0,
+        "right": 4
+       },
+       "marks": {
+        "lit": [
+         0,
+         4
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "",
+        "",
+        "",
+        "",
+        64
+       ],
+       "unread": [
+        0,
+        1,
+        2,
+        3
+       ],
+       "pointers": {
+        "slot": 4
+       },
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "drifts",
+        "at": 4
+       },
+       "to": {
+        "view": "result",
+        "at": 4
+       },
+       "value": "64"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "|-6| > |3|, so the left end is further from 0: (-6)² = 36 is the biggest square left and takes slot 3. left moves in.",
+      "ko": "|-6| > |3|, left 쪽이 0에서 더 멉니다. (-6)² = 36이 남은 제곱 중 가장 커서 3번 칸에 들어가고, left 포인터가 안으로 옵니다."
+     },
+     "views": {
+      "drifts": {
+       "values": [
+        -6,
+        -4,
+        1,
+        3,
+        8
+       ],
+       "spans": {
+        "left": {
+         "from": 0,
+         "to": 3,
+         "label": {
+          "en": "to place",
+          "ko": "남은 값"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "left": 0,
+        "right": 3
+       },
+       "marks": {
+        "lit": [
+         0,
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "",
+        "",
+        "",
+        36,
+        64
+       ],
+       "unread": [
+        0,
+        1,
+        2
+       ],
+       "pointers": {
+        "slot": 3
+       },
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "drifts",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       },
+       "value": "36"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "|-4| > |3|, so the left end is further from 0: (-4)² = 16 is the biggest square left and takes slot 2. left moves in.",
+      "ko": "|-4| > |3|, left 쪽이 0에서 더 멉니다. (-4)² = 16이 남은 제곱 중 가장 커서 2번 칸에 들어가고, left 포인터가 안으로 옵니다."
+     },
+     "views": {
+      "drifts": {
+       "values": [
+        -6,
+        -4,
+        1,
+        3,
+        8
+       ],
+       "spans": {
+        "left": {
+         "from": 1,
+         "to": 3,
+         "label": {
+          "en": "to place",
+          "ko": "남은 값"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "left": 1,
+        "right": 3
+       },
+       "marks": {
+        "lit": [
+         1,
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "",
+        "",
+        16,
+        36,
+        64
+       ],
+       "unread": [
+        0,
+        1
+       ],
+       "pointers": {
+        "slot": 2
+       },
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "drifts",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       },
+       "value": "16"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "|3| ≥ |1|, so the right end is further from 0: 3² = 9 is the biggest square left and takes slot 1. right moves in.",
+      "ko": "|3| ≥ |1|, right 쪽이 0에서 더 멉니다. 3² = 9가 남은 제곱 중 가장 커서 1번 칸에 들어가고, right 포인터가 안으로 옵니다."
+     },
+     "views": {
+      "drifts": {
+       "values": [
+        -6,
+        -4,
+        1,
+        3,
+        8
+       ],
+       "spans": {
+        "left": {
+         "from": 2,
+         "to": 3,
+         "label": {
+          "en": "to place",
+          "ko": "남은 값"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "left": 2,
+        "right": 3
+       },
+       "marks": {
+        "lit": [
+         2,
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "",
+        9,
+        16,
+        36,
+        64
+       ],
+       "unread": [
+        0
+       ],
+       "pointers": {
+        "slot": 1
+       },
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "drifts",
+        "at": 3
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       },
+       "value": "9"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Only drifts[2] = 1 is left: 1² = 1 takes the first slot.",
+      "ko": "drifts[2] = 1 하나만 남았습니다. 1² = 1이 첫 칸에 들어갑니다."
+     },
+     "views": {
+      "drifts": {
+       "values": [
+        -6,
+        -4,
+        1,
+        3,
+        8
+       ],
+       "spans": {
+        "left": {
+         "from": 2,
+         "to": 2,
+         "label": {
+          "en": "to place",
+          "ko": "남은 값"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "left": 2,
+        "right": null
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        1,
+        9,
+        16,
+        36,
+        64
+       ],
+       "unread": [],
+       "pointers": {
+        "slot": 0
+       },
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "drifts",
+        "at": 2
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every slot is filled, smallest square first: [1,9,16,36,64].",
+      "ko": "모든 칸이 채워져 제곱이 작은 것부터 놓였습니다: [1,9,16,36,64]."
+     },
+     "views": {
+      "drifts": {
+       "values": [
+        -6,
+        -4,
+        1,
+        3,
+        8
+       ],
+       "spans": {
+        "left": null
+       },
+       "pointers": {
+        "left": null,
+        "right": null
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "result": {
+       "values": [
+        1,
+        9,
+        16,
+        36,
+        64
+       ],
+       "unread": [],
+       "pointers": {},
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      }
+     },
+     "answer": "[1,9,16,36,64]"
+    }
+   ],
+   "sampleInput": "[-6,-4,1,3,8]"
+  },
+  {
+   "label": {
+    "en": "Example 3",
+    "ko": "예시 3"
+   },
+   "input": "drifts = [2,3,5,7]",
+   "expected": "[4,9,25,49]",
+   "frames": [
+    {
+     "caption": {
+      "en": "4 drifts, sorted. result has 4 empty slots, filled from the back; left and right start at the two ends of drifts.",
+      "ko": "정렬된 drifts 4개입니다. result의 빈칸 4개를 뒤에서부터 채우며, left와 right는 drifts의 양 끝에서 시작합니다."
+     },
+     "views": {
+      "drifts": {
+       "values": [
+        2,
+        3,
+        5,
+        7
+       ],
+       "spans": {
+        "left": {
+         "from": 0,
+         "to": 3,
+         "label": {
+          "en": "to place",
+          "ko": "남은 값"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "left": 0,
+        "right": 3
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "result": {
+       "values": [
+        "",
+        "",
+        "",
+        ""
+       ],
+       "unread": [
+        0,
+        1,
+        2,
+        3
+       ],
+       "pointers": {},
+       "marks": {
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "|7| ≥ |2|, so the right end is further from 0: 7² = 49 is the biggest square left and takes slot 3. right moves in.",
+      "ko": "|7| ≥ |2|, right 쪽이 0에서 더 멉니다. 7² = 49가 남은 제곱 중 가장 커서 3번 칸에 들어가고, right 포인터가 안으로 옵니다."
+     },
+     "views": {
+      "drifts": {
+       "values": [
+        2,
+        3,
+        5,
+        7
+       ],
+       "spans": {
+        "left": {
+         "from": 0,
+         "to": 3,
+         "label": {
+          "en": "to place",
+          "ko": "남은 값"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "left": 0,
+        "right": 3
+       },
+       "marks": {
+        "lit": [
+         0,
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "",
+        "",
+        "",
+        49
+       ],
+       "unread": [
+        0,
+        1,
+        2
+       ],
+       "pointers": {
+        "slot": 3
+       },
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "drifts",
+        "at": 3
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       },
+       "value": "49"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "|5| ≥ |2|, so the right end is further from 0: 5² = 25 is the biggest square left and takes slot 2. right moves in.",
+      "ko": "|5| ≥ |2|, right 쪽이 0에서 더 멉니다. 5² = 25가 남은 제곱 중 가장 커서 2번 칸에 들어가고, right 포인터가 안으로 옵니다."
+     },
+     "views": {
+      "drifts": {
+       "values": [
+        2,
+        3,
+        5,
+        7
+       ],
+       "spans": {
+        "left": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "to place",
+          "ko": "남은 값"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "left": 0,
+        "right": 2
+       },
+       "marks": {
+        "lit": [
+         0,
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "",
+        "",
+        25,
+        49
+       ],
+       "unread": [
+        0,
+        1
+       ],
+       "pointers": {
+        "slot": 2
+       },
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "drifts",
+        "at": 2
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       },
+       "value": "25"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "|3| ≥ |2|, so the right end is further from 0: 3² = 9 is the biggest square left and takes slot 1. right moves in.",
+      "ko": "|3| ≥ |2|, right 쪽이 0에서 더 멉니다. 3² = 9가 남은 제곱 중 가장 커서 1번 칸에 들어가고, right 포인터가 안으로 옵니다."
+     },
+     "views": {
+      "drifts": {
+       "values": [
+        2,
+        3,
+        5,
+        7
+       ],
+       "spans": {
+        "left": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "to place",
+          "ko": "남은 값"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "left": 0,
+        "right": 1
+       },
+       "marks": {
+        "lit": [
+         0,
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "",
+        9,
+        25,
+        49
+       ],
+       "unread": [
+        0
+       ],
+       "pointers": {
+        "slot": 1
+       },
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "drifts",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       },
+       "value": "9"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Only drifts[0] = 2 is left: 2² = 4 takes the first slot.",
+      "ko": "drifts[0] = 2 하나만 남았습니다. 2² = 4가 첫 칸에 들어갑니다."
+     },
+     "views": {
+      "drifts": {
+       "values": [
+        2,
+        3,
+        5,
+        7
+       ],
+       "spans": {
+        "left": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "to place",
+          "ko": "남은 값"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "left": 0,
+        "right": null
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        4,
+        9,
+        25,
+        49
+       ],
+       "unread": [],
+       "pointers": {
+        "slot": 0
+       },
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "drifts",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       },
+       "value": "4"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every slot is filled, smallest square first: [4,9,25,49].",
+      "ko": "모든 칸이 채워져 제곱이 작은 것부터 놓였습니다: [4,9,25,49]."
+     },
+     "views": {
+      "drifts": {
+       "values": [
+        2,
+        3,
+        5,
+        7
+       ],
+       "spans": {
+        "left": null
+       },
+       "pointers": {
+        "left": null,
+        "right": null
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "result": {
+       "values": [
+        4,
+        9,
+        25,
+        49
+       ],
+       "unread": [],
+       "pointers": {},
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3
+        ]
+       }
+      }
+     },
+     "answer": "[4,9,25,49]"
+    }
+   ],
+   "sampleInput": "[2,3,5,7]"
+  }
+ ]
+}

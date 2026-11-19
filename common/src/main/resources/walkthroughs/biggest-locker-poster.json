@@ -1,0 +1,662 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Biggest Locker Poster",
+  "ko": "가장 큰 사물함 포스터"
+ },
+ "approach": {
+  "en": "Start with the widest poster, the two end lockers, and always move the shorter one inward: any other poster on the shorter locker would be narrower and no taller, so it can never win.",
+  "ko": "가장 넓은 포스터인 양 끝 사물함에서 시작해, 항상 더 낮은 쪽을 안으로 옮깁니다. 낮은 사물함으로 만들 수 있는 다른 포스터는 모두 더 좁고 더 높지도 않아 절대 더 커질 수 없습니다."
+ },
+ "views": [
+  {
+   "id": "lockers",
+   "type": "array",
+   "display": "bars",
+   "title": {
+    "en": "lockers (heights)",
+    "ko": "lockers (사물함 높이)"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "lockers = [2,6,4,1,5,3,6,2,8]",
+   "expected": "42",
+   "frames": [
+    {
+     "caption": {
+      "en": "9 lockers. left starts at locker 0 and right at locker 8: the widest poster there is.",
+      "ko": "사물함 9개입니다. left는 0번, right는 8번 사물함에서 시작하며, 가장 넓은 포스터입니다."
+     },
+     "views": {
+      "lockers": {
+       "values": [
+        2,
+        6,
+        4,
+        1,
+        5,
+        3,
+        6,
+        2,
+        8
+       ],
+       "spans": {},
+       "pointers": {
+        "left": 0,
+        "right": 8
+       },
+       "marks": {
+        "path": [],
+        "bad": [],
+        "lit": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Lockers 0 and 8: height min(2, 8) = 2, width 8, area 16, a new best, 16. Locker 0 is the limit, and a nearer partner can't make it taller, so left moves in.",
+      "ko": "0번과 8번 사물함: 높이 min(2, 8) = 2, 너비 8, 넓이 16, best = 16으로 갱신. 0번 사물함이 높이를 막고, 더 가까운 짝으로는 높아지지 않으니 left 포인터를 안으로 옮깁니다."
+     },
+     "views": {
+      "lockers": {
+       "values": [
+        2,
+        6,
+        4,
+        1,
+        5,
+        3,
+        6,
+        2,
+        8
+       ],
+       "spans": {
+        "poster": {
+         "from": 0,
+         "to": 8,
+         "label": {
+          "en": "2 × 8 = 16",
+          "ko": "2 × 8 = 16"
+         },
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 8,
+         "label": {
+          "en": "best = 16",
+          "ko": "최대 16"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "pointers": {
+        "left": 0,
+        "right": 8
+       },
+       "marks": {
+        "path": [],
+        "bad": [
+         0
+        ],
+        "lit": [
+         8
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Lockers 1 and 8: height min(6, 8) = 6, width 7, area 42, a new best, 42. Locker 1 is the limit, and a nearer partner can't make it taller, so left moves in.",
+      "ko": "1번과 8번 사물함: 높이 min(6, 8) = 6, 너비 7, 넓이 42, best = 42로 갱신. 1번 사물함이 높이를 막고, 더 가까운 짝으로는 높아지지 않으니 left 포인터를 안으로 옮깁니다."
+     },
+     "views": {
+      "lockers": {
+       "values": [
+        2,
+        6,
+        4,
+        1,
+        5,
+        3,
+        6,
+        2,
+        8
+       ],
+       "spans": {
+        "poster": {
+         "from": 1,
+         "to": 8,
+         "label": {
+          "en": "6 × 7 = 42",
+          "ko": "6 × 7 = 42"
+         },
+         "fade": true
+        },
+        "best": {
+         "from": 1,
+         "to": 8,
+         "label": {
+          "en": "best = 42",
+          "ko": "최대 42"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "pointers": {
+        "left": 1,
+        "right": 8
+       },
+       "marks": {
+        "path": [],
+        "bad": [
+         1
+        ],
+        "lit": [
+         8
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Lockers 2 and 8: height min(4, 8) = 4, width 6, area 24, best stays 42. Locker 2 is the limit, and a nearer partner can't make it taller, so left moves in.",
+      "ko": "2번과 8번 사물함: 높이 min(4, 8) = 4, 너비 6, 넓이 24, best = 42 그대로. 2번 사물함이 높이를 막고, 더 가까운 짝으로는 높아지지 않으니 left 포인터를 안으로 옮깁니다."
+     },
+     "views": {
+      "lockers": {
+       "values": [
+        2,
+        6,
+        4,
+        1,
+        5,
+        3,
+        6,
+        2,
+        8
+       ],
+       "spans": {
+        "poster": {
+         "from": 2,
+         "to": 8,
+         "label": {
+          "en": "4 × 6 = 24",
+          "ko": "4 × 6 = 24"
+         },
+         "fade": true
+        },
+        "best": {
+         "from": 1,
+         "to": 8,
+         "label": {
+          "en": "best = 42",
+          "ko": "최대 42"
+         },
+         "below": true
+        }
+       },
+       "pointers": {
+        "left": 2,
+        "right": 8
+       },
+       "marks": {
+        "path": [],
+        "bad": [
+         2
+        ],
+        "lit": [
+         8
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Lockers 3 and 8: height min(1, 8) = 1, width 5, area 5, best stays 42. Locker 3 is the limit, and a nearer partner can't make it taller, so left moves in.",
+      "ko": "3번과 8번 사물함: 높이 min(1, 8) = 1, 너비 5, 넓이 5, best = 42 그대로. 3번 사물함이 높이를 막고, 더 가까운 짝으로는 높아지지 않으니 left 포인터를 안으로 옮깁니다."
+     },
+     "views": {
+      "lockers": {
+       "values": [
+        2,
+        6,
+        4,
+        1,
+        5,
+        3,
+        6,
+        2,
+        8
+       ],
+       "spans": {
+        "poster": {
+         "from": 3,
+         "to": 8,
+         "label": {
+          "en": "1 × 5 = 5",
+          "ko": "1 × 5 = 5"
+         },
+         "fade": true
+        },
+        "best": {
+         "from": 1,
+         "to": 8,
+         "label": {
+          "en": "best = 42",
+          "ko": "최대 42"
+         },
+         "below": true
+        }
+       },
+       "pointers": {
+        "left": 3,
+        "right": 8
+       },
+       "marks": {
+        "path": [],
+        "bad": [
+         3
+        ],
+        "lit": [
+         8
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Lockers 4 and 8: height min(5, 8) = 5, width 4, area 20, best stays 42. Locker 4 is the limit, and a nearer partner can't make it taller, so left moves in.",
+      "ko": "4번과 8번 사물함: 높이 min(5, 8) = 5, 너비 4, 넓이 20, best = 42 그대로. 4번 사물함이 높이를 막고, 더 가까운 짝으로는 높아지지 않으니 left 포인터를 안으로 옮깁니다."
+     },
+     "views": {
+      "lockers": {
+       "values": [
+        2,
+        6,
+        4,
+        1,
+        5,
+        3,
+        6,
+        2,
+        8
+       ],
+       "spans": {
+        "poster": {
+         "from": 4,
+         "to": 8,
+         "label": {
+          "en": "5 × 4 = 20",
+          "ko": "5 × 4 = 20"
+         },
+         "fade": true
+        },
+        "best": {
+         "from": 1,
+         "to": 8,
+         "label": {
+          "en": "best = 42",
+          "ko": "최대 42"
+         },
+         "below": true
+        }
+       },
+       "pointers": {
+        "left": 4,
+        "right": 8
+       },
+       "marks": {
+        "path": [],
+        "bad": [
+         4
+        ],
+        "lit": [
+         8
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Lockers 5 and 8: height min(3, 8) = 3, width 3, area 9, best stays 42. Locker 5 is the limit, and a nearer partner can't make it taller, so left moves in.",
+      "ko": "5번과 8번 사물함: 높이 min(3, 8) = 3, 너비 3, 넓이 9, best = 42 그대로. 5번 사물함이 높이를 막고, 더 가까운 짝으로는 높아지지 않으니 left 포인터를 안으로 옮깁니다."
+     },
+     "views": {
+      "lockers": {
+       "values": [
+        2,
+        6,
+        4,
+        1,
+        5,
+        3,
+        6,
+        2,
+        8
+       ],
+       "spans": {
+        "poster": {
+         "from": 5,
+         "to": 8,
+         "label": {
+          "en": "3 × 3 = 9",
+          "ko": "3 × 3 = 9"
+         },
+         "fade": true
+        },
+        "best": {
+         "from": 1,
+         "to": 8,
+         "label": {
+          "en": "best = 42",
+          "ko": "최대 42"
+         },
+         "below": true
+        }
+       },
+       "pointers": {
+        "left": 5,
+        "right": 8
+       },
+       "marks": {
+        "path": [],
+        "bad": [
+         5
+        ],
+        "lit": [
+         8
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Lockers 6 and 8: height min(6, 8) = 6, width 2, area 12, best stays 42. Locker 6 is the limit, and a nearer partner can't make it taller, so left moves in.",
+      "ko": "6번과 8번 사물함: 높이 min(6, 8) = 6, 너비 2, 넓이 12, best = 42 그대로. 6번 사물함이 높이를 막고, 더 가까운 짝으로는 높아지지 않으니 left 포인터를 안으로 옮깁니다."
+     },
+     "views": {
+      "lockers": {
+       "values": [
+        2,
+        6,
+        4,
+        1,
+        5,
+        3,
+        6,
+        2,
+        8
+       ],
+       "spans": {
+        "poster": {
+         "from": 6,
+         "to": 8,
+         "label": {
+          "en": "6 × 2 = 12",
+          "ko": "6 × 2 = 12"
+         },
+         "fade": true
+        },
+        "best": {
+         "from": 1,
+         "to": 8,
+         "label": {
+          "en": "best = 42",
+          "ko": "최대 42"
+         },
+         "below": true
+        }
+       },
+       "pointers": {
+        "left": 6,
+        "right": 8
+       },
+       "marks": {
+        "path": [],
+        "bad": [
+         6
+        ],
+        "lit": [
+         8
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Lockers 7 and 8: height min(2, 8) = 2, width 1, area 2, best stays 42. Locker 7 is the limit, and a nearer partner can't make it taller, so left moves in.",
+      "ko": "7번과 8번 사물함: 높이 min(2, 8) = 2, 너비 1, 넓이 2, best = 42 그대로. 7번 사물함이 높이를 막고, 더 가까운 짝으로는 높아지지 않으니 left 포인터를 안으로 옮깁니다."
+     },
+     "views": {
+      "lockers": {
+       "values": [
+        2,
+        6,
+        4,
+        1,
+        5,
+        3,
+        6,
+        2,
+        8
+       ],
+       "spans": {
+        "poster": {
+         "from": 7,
+         "to": 8,
+         "label": {
+          "en": "2 × 1 = 2",
+          "ko": "2 × 1 = 2"
+         },
+         "fade": true
+        },
+        "best": {
+         "from": 1,
+         "to": 8,
+         "label": {
+          "en": "best = 42",
+          "ko": "최대 42"
+         },
+         "below": true
+        }
+       },
+       "pointers": {
+        "left": 7,
+        "right": 8
+       },
+       "marks": {
+        "path": [],
+        "bad": [
+         7
+        ],
+        "lit": [
+         8
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "left and right met. The biggest poster hangs between lockers 1 and 8: height 6, width 7, area 42.",
+      "ko": "left와 right가 만났습니다. 가장 큰 포스터는 1번과 8번 사물함 사이로, 높이 6, 너비 7, 넓이 42입니다."
+     },
+     "views": {
+      "lockers": {
+       "values": [
+        2,
+        6,
+        4,
+        1,
+        5,
+        3,
+        6,
+        2,
+        8
+       ],
+       "spans": {
+        "best": {
+         "from": 1,
+         "to": 8,
+         "label": {
+          "en": "best = 42",
+          "ko": "최대 42"
+         },
+         "mark": "path",
+         "below": true
+        }
+       },
+       "pointers": {},
+       "marks": {
+        "path": [
+         1,
+         8
+        ],
+        "bad": [],
+        "lit": []
+       }
+      }
+     },
+     "answer": "42"
+    }
+   ],
+   "sampleInput": "[2,6,4,1,5,3,6,2,8]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "lockers = [2,3]",
+   "expected": "2",
+   "frames": [
+    {
+     "caption": {
+      "en": "2 lockers. left starts at locker 0 and right at locker 1: the widest poster there is.",
+      "ko": "사물함 2개입니다. left는 0번, right는 1번 사물함에서 시작하며, 가장 넓은 포스터입니다."
+     },
+     "views": {
+      "lockers": {
+       "values": [
+        2,
+        3
+       ],
+       "spans": {},
+       "pointers": {
+        "left": 0,
+        "right": 1
+       },
+       "marks": {
+        "path": [],
+        "bad": [],
+        "lit": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Lockers 0 and 1: height min(2, 3) = 2, width 1, area 2, a new best, 2. Locker 0 is the limit, and a nearer partner can't make it taller, so left moves in.",
+      "ko": "0번과 1번 사물함: 높이 min(2, 3) = 2, 너비 1, 넓이 2, best = 2로 갱신. 0번 사물함이 높이를 막고, 더 가까운 짝으로는 높아지지 않으니 left 포인터를 안으로 옮깁니다."
+     },
+     "views": {
+      "lockers": {
+       "values": [
+        2,
+        3
+       ],
+       "spans": {
+        "poster": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "2 × 1 = 2",
+          "ko": "2 × 1 = 2"
+         },
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "best = 2",
+          "ko": "최대 2"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "pointers": {
+        "left": 0,
+        "right": 1
+       },
+       "marks": {
+        "path": [],
+        "bad": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "left and right met. The biggest poster hangs between lockers 0 and 1: height 2, width 1, area 2.",
+      "ko": "left와 right가 만났습니다. 가장 큰 포스터는 0번과 1번 사물함 사이로, 높이 2, 너비 1, 넓이 2입니다."
+     },
+     "views": {
+      "lockers": {
+       "values": [
+        2,
+        3
+       ],
+       "spans": {
+        "best": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "best = 2",
+          "ko": "최대 2"
+         },
+         "mark": "path",
+         "below": true
+        }
+       },
+       "pointers": {},
+       "marks": {
+        "path": [
+         0,
+         1
+        ],
+        "bad": [],
+        "lit": []
+       }
+      }
+     },
+     "answer": "2"
+    }
+   ],
+   "sampleInput": "[2,3]"
+  }
+ ]
+}

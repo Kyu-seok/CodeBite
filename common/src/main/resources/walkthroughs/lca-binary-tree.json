@@ -1,0 +1,1950 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Lowest Common Ancestor of a Binary Tree",
+  "ko": "이진 트리의 최소 공통 조상"
+ },
+ "approach": {
+  "en": "Each call reports up what its subtree holds: p or q itself, or nothing. The first node whose two sides both report something is the lowest node with p and q below it, and it reports itself from then on; a node that is p or q reports itself at once, since the other may be below it.",
+  "ko": "각 호출은 자기 서브트리에 있는 것, 즉 p나 q 자신 또는 없음을 위로 알립니다. 두 쪽 모두에서 무언가를 받은 첫 노드가 p와 q를 아래에 둔 가장 낮은 노드이고, 그 뒤로는 자기 자신을 알립니다. p나 q인 노드는 다른 하나가 그 아래에 있을 수 있으므로 바로 자기 자신을 알립니다."
+ },
+ "views": [
+  {
+   "id": "tree",
+   "type": "tree",
+   "arity": 2,
+   "title": {
+    "en": "root (under each node: what its call returns)",
+    "ko": "root (노드 아래: 호출이 돌려주는 값)"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "root = [12,7,20,4,9,16,25,null,null,8,11], p = 4, q = 11",
+   "expected": "7",
+   "frames": [
+    {
+     "caption": {
+      "en": "A tree of 9 nodes; p = 4 and q = 11. Ask the root 12 what its subtree holds.",
+      "ko": "노드 9개짜리 트리이고 p = 4, q = 11입니다. root 12 노드에게 서브트리에 무엇이 있는지 묻습니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": []
+       },
+       "shade": [],
+       "edgeMarks": {},
+       "tags": [
+        [
+         3,
+         "p"
+        ],
+        [
+         10,
+         "q"
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "12 is neither p nor q, so it asks its children, 7 first.",
+      "ko": "12 노드는 p도 q도 아니므로 자식들에게 묻습니다. 먼저 7 노드입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ],
+       "edgeMarks": {},
+       "tags": [
+        [
+         3,
+         "p"
+        ],
+        [
+         10,
+         "q"
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "7 is neither p nor q, so it asks its children, 4 first.",
+      "ko": "7 노드는 p도 q도 아니므로 자식들에게 묻습니다. 먼저 4 노드입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [
+         1
+        ]
+       },
+       "shade": [
+        0,
+        1
+       ],
+       "edgeMarks": {},
+       "tags": [
+        [
+         3,
+         "p"
+        ],
+        [
+         10,
+         "q"
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "4 is p, so it returns itself without looking below: the other target may be under it, and then 4 would be the answer anyway.",
+      "ko": "4 노드는 p이므로 아래를 보지 않고 자기 자신을 돌려줍니다. 다른 하나가 그 아래에 있다면 어차피 4 노드가 답이기 때문입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "good": [
+         3
+        ]
+       },
+       "shade": [
+        0,
+        1,
+        3
+       ],
+       "edgeMarks": {},
+       "tags": [
+        [
+         3,
+         {
+          "en": "p → 4",
+          "ko": "p → 4"
+         }
+        ],
+        [
+         10,
+         "q"
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "9 is neither p nor q, so it asks its children, 8 first.",
+      "ko": "9 노드는 p도 q도 아니므로 자식들에게 묻습니다. 먼저 8 노드입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         3
+        ],
+        "lit": [
+         4
+        ]
+       },
+       "shade": [
+        0,
+        1,
+        4
+       ],
+       "edgeMarks": {},
+       "tags": [
+        [
+         3,
+         {
+          "en": "p → 4",
+          "ko": "p → 4"
+         }
+        ],
+        [
+         10,
+         "q"
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "8 is a leaf and neither p nor q: it returns none.",
+      "ko": "8 노드는 p도 q도 아닌 리프이므로 없음을 돌려줍니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         3
+        ],
+        "lit": [
+         9
+        ]
+       },
+       "shade": [
+        0,
+        1,
+        4,
+        9
+       ],
+       "edgeMarks": {},
+       "tags": [
+        [
+         3,
+         {
+          "en": "p → 4",
+          "ko": "p → 4"
+         }
+        ],
+        [
+         9,
+         {
+          "en": "→ none",
+          "ko": "→ 없음"
+         }
+        ],
+        [
+         10,
+         "q"
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "11 is q, so it returns itself without looking below: the other target may be under it, and then 11 would be the answer anyway.",
+      "ko": "11 노드는 q이므로 아래를 보지 않고 자기 자신을 돌려줍니다. 다른 하나가 그 아래에 있다면 어차피 11 노드가 답이기 때문입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         3,
+         9
+        ],
+        "good": [
+         10
+        ]
+       },
+       "shade": [
+        0,
+        1,
+        4,
+        10
+       ],
+       "edgeMarks": {},
+       "tags": [
+        [
+         3,
+         {
+          "en": "p → 4",
+          "ko": "p → 4"
+         }
+        ],
+        [
+         9,
+         {
+          "en": "→ none",
+          "ko": "→ 없음"
+         }
+        ],
+        [
+         10,
+         {
+          "en": "q → 11",
+          "ko": "q → 11"
+         }
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "9 gets none from the left and 11 from the right, so it passes 11 up.",
+      "ko": "9 노드는 왼쪽에서 없음, 오른쪽에서 11 값을 받았으므로 11 값을 위로 넘깁니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         3,
+         9,
+         10
+        ],
+        "lit": [
+         4
+        ]
+       },
+       "shade": [
+        0,
+        1,
+        4
+       ],
+       "edgeMarks": {},
+       "tags": [
+        [
+         3,
+         {
+          "en": "p → 4",
+          "ko": "p → 4"
+         }
+        ],
+        [
+         4,
+         {
+          "en": "→ 11",
+          "ko": "→ 11"
+         }
+        ],
+        [
+         9,
+         {
+          "en": "→ none",
+          "ko": "→ 없음"
+         }
+        ],
+        [
+         10,
+         {
+          "en": "q → 11",
+          "ko": "q → 11"
+         }
+        ]
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 9
+       },
+       "to": {
+        "view": "tree",
+        "at": 4
+       },
+       "value": "none"
+      },
+      {
+       "from": {
+        "view": "tree",
+        "at": 10
+       },
+       "to": {
+        "view": "tree",
+        "at": 4
+       },
+       "value": "11"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "7 gets 4 from the left and 11 from the right: p and q are on different sides, so 7 is their lowest common ancestor and returns itself.",
+      "ko": "7 노드는 왼쪽에서 4, 오른쪽에서 11 값을 받았습니다. p와 q가 서로 다른 쪽에 있으므로 7 노드가 최소 공통 조상이며 자기 자신을 돌려줍니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         3,
+         9,
+         10,
+         4
+        ],
+        "good": [
+         1
+        ]
+       },
+       "shade": [
+        0,
+        1
+       ],
+       "edgeMarks": {},
+       "tags": [
+        [
+         1,
+         {
+          "en": "→ 7",
+          "ko": "→ 7"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "p → 4",
+          "ko": "p → 4"
+         }
+        ],
+        [
+         4,
+         {
+          "en": "→ 11",
+          "ko": "→ 11"
+         }
+        ],
+        [
+         9,
+         {
+          "en": "→ none",
+          "ko": "→ 없음"
+         }
+        ],
+        [
+         10,
+         {
+          "en": "q → 11",
+          "ko": "q → 11"
+         }
+        ]
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 3
+       },
+       "to": {
+        "view": "tree",
+        "at": 1
+       },
+       "value": "4"
+      },
+      {
+       "from": {
+        "view": "tree",
+        "at": 4
+       },
+       "to": {
+        "view": "tree",
+        "at": 1
+       },
+       "value": "11"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "20 is neither p nor q, so it asks its children, 16 first.",
+      "ko": "20 노드는 p도 q도 아니므로 자식들에게 묻습니다. 먼저 16 노드입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         3,
+         9,
+         10,
+         4,
+         1
+        ],
+        "lit": [
+         2
+        ]
+       },
+       "shade": [
+        0,
+        2
+       ],
+       "edgeMarks": {},
+       "tags": [
+        [
+         1,
+         {
+          "en": "→ 7",
+          "ko": "→ 7"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "p → 4",
+          "ko": "p → 4"
+         }
+        ],
+        [
+         4,
+         {
+          "en": "→ 11",
+          "ko": "→ 11"
+         }
+        ],
+        [
+         9,
+         {
+          "en": "→ none",
+          "ko": "→ 없음"
+         }
+        ],
+        [
+         10,
+         {
+          "en": "q → 11",
+          "ko": "q → 11"
+         }
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "16 is a leaf and neither p nor q: it returns none.",
+      "ko": "16 노드는 p도 q도 아닌 리프이므로 없음을 돌려줍니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         3,
+         9,
+         10,
+         4,
+         1
+        ],
+        "lit": [
+         5
+        ]
+       },
+       "shade": [
+        0,
+        2,
+        5
+       ],
+       "edgeMarks": {},
+       "tags": [
+        [
+         1,
+         {
+          "en": "→ 7",
+          "ko": "→ 7"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "p → 4",
+          "ko": "p → 4"
+         }
+        ],
+        [
+         4,
+         {
+          "en": "→ 11",
+          "ko": "→ 11"
+         }
+        ],
+        [
+         5,
+         {
+          "en": "→ none",
+          "ko": "→ 없음"
+         }
+        ],
+        [
+         9,
+         {
+          "en": "→ none",
+          "ko": "→ 없음"
+         }
+        ],
+        [
+         10,
+         {
+          "en": "q → 11",
+          "ko": "q → 11"
+         }
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "25 is a leaf and neither p nor q: it returns none.",
+      "ko": "25 노드는 p도 q도 아닌 리프이므로 없음을 돌려줍니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         3,
+         9,
+         10,
+         4,
+         1,
+         5
+        ],
+        "lit": [
+         6
+        ]
+       },
+       "shade": [
+        0,
+        2,
+        6
+       ],
+       "edgeMarks": {},
+       "tags": [
+        [
+         1,
+         {
+          "en": "→ 7",
+          "ko": "→ 7"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "p → 4",
+          "ko": "p → 4"
+         }
+        ],
+        [
+         4,
+         {
+          "en": "→ 11",
+          "ko": "→ 11"
+         }
+        ],
+        [
+         5,
+         {
+          "en": "→ none",
+          "ko": "→ 없음"
+         }
+        ],
+        [
+         6,
+         {
+          "en": "→ none",
+          "ko": "→ 없음"
+         }
+        ],
+        [
+         9,
+         {
+          "en": "→ none",
+          "ko": "→ 없음"
+         }
+        ],
+        [
+         10,
+         {
+          "en": "q → 11",
+          "ko": "q → 11"
+         }
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Neither side of 20 holds p or q, so it returns none.",
+      "ko": "20 노드의 양쪽 어디에도 p나 q가 없으므로 없음을 돌려줍니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         3,
+         9,
+         10,
+         4,
+         1,
+         5,
+         6
+        ],
+        "lit": [
+         2
+        ]
+       },
+       "shade": [
+        0,
+        2
+       ],
+       "edgeMarks": {},
+       "tags": [
+        [
+         1,
+         {
+          "en": "→ 7",
+          "ko": "→ 7"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "→ none",
+          "ko": "→ 없음"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "p → 4",
+          "ko": "p → 4"
+         }
+        ],
+        [
+         4,
+         {
+          "en": "→ 11",
+          "ko": "→ 11"
+         }
+        ],
+        [
+         5,
+         {
+          "en": "→ none",
+          "ko": "→ 없음"
+         }
+        ],
+        [
+         6,
+         {
+          "en": "→ none",
+          "ko": "→ 없음"
+         }
+        ],
+        [
+         9,
+         {
+          "en": "→ none",
+          "ko": "→ 없음"
+         }
+        ],
+        [
+         10,
+         {
+          "en": "q → 11",
+          "ko": "q → 11"
+         }
+        ]
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 5
+       },
+       "to": {
+        "view": "tree",
+        "at": 2
+       },
+       "value": "none"
+      },
+      {
+       "from": {
+        "view": "tree",
+        "at": 6
+       },
+       "to": {
+        "view": "tree",
+        "at": 2
+       },
+       "value": "none"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "12 gets 7 from the left and none from the right, so it passes 7 up.",
+      "ko": "12 노드는 왼쪽에서 7, 오른쪽에서 없음 값을 받았으므로 7 값을 위로 넘깁니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         3,
+         9,
+         10,
+         4,
+         1,
+         5,
+         6,
+         2
+        ],
+        "lit": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ],
+       "edgeMarks": {},
+       "tags": [
+        [
+         0,
+         {
+          "en": "→ 7",
+          "ko": "→ 7"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "→ 7",
+          "ko": "→ 7"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "→ none",
+          "ko": "→ 없음"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "p → 4",
+          "ko": "p → 4"
+         }
+        ],
+        [
+         4,
+         {
+          "en": "→ 11",
+          "ko": "→ 11"
+         }
+        ],
+        [
+         5,
+         {
+          "en": "→ none",
+          "ko": "→ 없음"
+         }
+        ],
+        [
+         6,
+         {
+          "en": "→ none",
+          "ko": "→ 없음"
+         }
+        ],
+        [
+         9,
+         {
+          "en": "→ none",
+          "ko": "→ 없음"
+         }
+        ],
+        [
+         10,
+         {
+          "en": "q → 11",
+          "ko": "q → 11"
+         }
+        ]
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 1
+       },
+       "to": {
+        "view": "tree",
+        "at": 0
+       },
+       "value": "7"
+      },
+      {
+       "from": {
+        "view": "tree",
+        "at": 2
+       },
+       "to": {
+        "view": "tree",
+        "at": 0
+       },
+       "value": "none"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The root returns 7: the lowest node with both p = 4 and q = 11 in its subtree is 7.",
+      "ko": "root가 7 노드를 돌려줍니다. p = 4, q = 11 두 노드를 모두 서브트리에 둔 가장 낮은 노드는 7 노드입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "path": [
+         1,
+         3,
+         4,
+         10
+        ],
+        "dim": [
+         0,
+         2,
+         5,
+         6,
+         9
+        ]
+       },
+       "shade": [],
+       "edgeMarks": {
+        "path": [
+         [
+          1,
+          3
+         ],
+         [
+          1,
+          4
+         ],
+         [
+          4,
+          10
+         ]
+        ]
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "→ 7",
+          "ko": "→ 7"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "→ 7",
+          "ko": "→ 7"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "→ none",
+          "ko": "→ 없음"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "p → 4",
+          "ko": "p → 4"
+         }
+        ],
+        [
+         4,
+         {
+          "en": "→ 11",
+          "ko": "→ 11"
+         }
+        ],
+        [
+         5,
+         {
+          "en": "→ none",
+          "ko": "→ 없음"
+         }
+        ],
+        [
+         6,
+         {
+          "en": "→ none",
+          "ko": "→ 없음"
+         }
+        ],
+        [
+         9,
+         {
+          "en": "→ none",
+          "ko": "→ 없음"
+         }
+        ],
+        [
+         10,
+         {
+          "en": "q → 11",
+          "ko": "q → 11"
+         }
+        ]
+       ]
+      }
+     },
+     "answer": "7"
+    }
+   ],
+   "setup": {
+    "tree": {
+     "nodes": [
+      {
+       "id": 0,
+       "value": 12
+      },
+      {
+       "id": 1,
+       "value": 7
+      },
+      {
+       "id": 2,
+       "value": 20
+      },
+      {
+       "id": 3,
+       "value": 4
+      },
+      {
+       "id": 4,
+       "value": 9
+      },
+      {
+       "id": 5,
+       "value": 16
+      },
+      {
+       "id": 6,
+       "value": 25
+      },
+      {
+       "id": 9,
+       "value": 8
+      },
+      {
+       "id": 10,
+       "value": 11
+      }
+     ],
+     "edges": [
+      {
+       "from": 0,
+       "to": 1,
+       "slot": 0
+      },
+      {
+       "from": 0,
+       "to": 2,
+       "slot": 1
+      },
+      {
+       "from": 1,
+       "to": 3,
+       "slot": 0
+      },
+      {
+       "from": 1,
+       "to": 4,
+       "slot": 1
+      },
+      {
+       "from": 2,
+       "to": 5,
+       "slot": 0
+      },
+      {
+       "from": 2,
+       "to": 6,
+       "slot": 1
+      },
+      {
+       "from": 4,
+       "to": 9,
+       "slot": 0
+      },
+      {
+       "from": 4,
+       "to": 10,
+       "slot": 1
+      }
+     ]
+    }
+   },
+   "sampleInput": "[12,7,20,4,9,16,25,null,null,8,11]\n4\n11"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "root = [12,7,20,4,9,16,25,null,null,8,11], p = 9, q = 7",
+   "expected": "7",
+   "frames": [
+    {
+     "caption": {
+      "en": "A tree of 9 nodes; p = 9 and q = 7. Ask the root 12 what its subtree holds.",
+      "ko": "노드 9개짜리 트리이고 p = 9, q = 7입니다. root 12 노드에게 서브트리에 무엇이 있는지 묻습니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": []
+       },
+       "shade": [],
+       "edgeMarks": {},
+       "tags": [
+        [
+         1,
+         "q"
+        ],
+        [
+         4,
+         "p"
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "12 is neither p nor q, so it asks its children, 7 first.",
+      "ko": "12 노드는 p도 q도 아니므로 자식들에게 묻습니다. 먼저 7 노드입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ],
+       "edgeMarks": {},
+       "tags": [
+        [
+         1,
+         "q"
+        ],
+        [
+         4,
+         "p"
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "7 is q, so it returns itself without looking below: the other target may be under it, and then 7 would be the answer anyway.",
+      "ko": "7 노드는 q이므로 아래를 보지 않고 자기 자신을 돌려줍니다. 다른 하나가 그 아래에 있다면 어차피 7 노드가 답이기 때문입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "good": [
+         1
+        ]
+       },
+       "shade": [
+        0,
+        1
+       ],
+       "edgeMarks": {},
+       "tags": [
+        [
+         1,
+         {
+          "en": "q → 7",
+          "ko": "q → 7"
+         }
+        ],
+        [
+         4,
+         "p"
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "20 is neither p nor q, so it asks its children, 16 first.",
+      "ko": "20 노드는 p도 q도 아니므로 자식들에게 묻습니다. 먼저 16 노드입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         1
+        ],
+        "lit": [
+         2
+        ]
+       },
+       "shade": [
+        0,
+        2
+       ],
+       "edgeMarks": {},
+       "tags": [
+        [
+         1,
+         {
+          "en": "q → 7",
+          "ko": "q → 7"
+         }
+        ],
+        [
+         4,
+         "p"
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "16 is a leaf and neither p nor q: it returns none.",
+      "ko": "16 노드는 p도 q도 아닌 리프이므로 없음을 돌려줍니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         1
+        ],
+        "lit": [
+         5
+        ]
+       },
+       "shade": [
+        0,
+        2,
+        5
+       ],
+       "edgeMarks": {},
+       "tags": [
+        [
+         1,
+         {
+          "en": "q → 7",
+          "ko": "q → 7"
+         }
+        ],
+        [
+         4,
+         "p"
+        ],
+        [
+         5,
+         {
+          "en": "→ none",
+          "ko": "→ 없음"
+         }
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "25 is a leaf and neither p nor q: it returns none.",
+      "ko": "25 노드는 p도 q도 아닌 리프이므로 없음을 돌려줍니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         1,
+         5
+        ],
+        "lit": [
+         6
+        ]
+       },
+       "shade": [
+        0,
+        2,
+        6
+       ],
+       "edgeMarks": {},
+       "tags": [
+        [
+         1,
+         {
+          "en": "q → 7",
+          "ko": "q → 7"
+         }
+        ],
+        [
+         4,
+         "p"
+        ],
+        [
+         5,
+         {
+          "en": "→ none",
+          "ko": "→ 없음"
+         }
+        ],
+        [
+         6,
+         {
+          "en": "→ none",
+          "ko": "→ 없음"
+         }
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Neither side of 20 holds p or q, so it returns none.",
+      "ko": "20 노드의 양쪽 어디에도 p나 q가 없으므로 없음을 돌려줍니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         1,
+         5,
+         6
+        ],
+        "lit": [
+         2
+        ]
+       },
+       "shade": [
+        0,
+        2
+       ],
+       "edgeMarks": {},
+       "tags": [
+        [
+         1,
+         {
+          "en": "q → 7",
+          "ko": "q → 7"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "→ none",
+          "ko": "→ 없음"
+         }
+        ],
+        [
+         4,
+         "p"
+        ],
+        [
+         5,
+         {
+          "en": "→ none",
+          "ko": "→ 없음"
+         }
+        ],
+        [
+         6,
+         {
+          "en": "→ none",
+          "ko": "→ 없음"
+         }
+        ]
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 5
+       },
+       "to": {
+        "view": "tree",
+        "at": 2
+       },
+       "value": "none"
+      },
+      {
+       "from": {
+        "view": "tree",
+        "at": 6
+       },
+       "to": {
+        "view": "tree",
+        "at": 2
+       },
+       "value": "none"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "12 gets 7 from the left and none from the right, so it passes 7 up.",
+      "ko": "12 노드는 왼쪽에서 7, 오른쪽에서 없음 값을 받았으므로 7 값을 위로 넘깁니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         1,
+         5,
+         6,
+         2
+        ],
+        "lit": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ],
+       "edgeMarks": {},
+       "tags": [
+        [
+         0,
+         {
+          "en": "→ 7",
+          "ko": "→ 7"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "q → 7",
+          "ko": "q → 7"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "→ none",
+          "ko": "→ 없음"
+         }
+        ],
+        [
+         4,
+         "p"
+        ],
+        [
+         5,
+         {
+          "en": "→ none",
+          "ko": "→ 없음"
+         }
+        ],
+        [
+         6,
+         {
+          "en": "→ none",
+          "ko": "→ 없음"
+         }
+        ]
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 1
+       },
+       "to": {
+        "view": "tree",
+        "at": 0
+       },
+       "value": "7"
+      },
+      {
+       "from": {
+        "view": "tree",
+        "at": 2
+       },
+       "to": {
+        "view": "tree",
+        "at": 0
+       },
+       "value": "none"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The root returns 7: the lowest node with both p = 9 and q = 7 in its subtree is 7.",
+      "ko": "root가 7 노드를 돌려줍니다. p = 9, q = 7 두 노드를 모두 서브트리에 둔 가장 낮은 노드는 7 노드입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "path": [
+         1,
+         4
+        ],
+        "dim": [
+         0,
+         2,
+         3,
+         5,
+         6,
+         9,
+         10
+        ]
+       },
+       "shade": [],
+       "edgeMarks": {
+        "path": [
+         [
+          1,
+          4
+         ]
+        ]
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "→ 7",
+          "ko": "→ 7"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "q → 7",
+          "ko": "q → 7"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "→ none",
+          "ko": "→ 없음"
+         }
+        ],
+        [
+         4,
+         "p"
+        ],
+        [
+         5,
+         {
+          "en": "→ none",
+          "ko": "→ 없음"
+         }
+        ],
+        [
+         6,
+         {
+          "en": "→ none",
+          "ko": "→ 없음"
+         }
+        ]
+       ]
+      }
+     },
+     "answer": "7"
+    }
+   ],
+   "setup": {
+    "tree": {
+     "nodes": [
+      {
+       "id": 0,
+       "value": 12
+      },
+      {
+       "id": 1,
+       "value": 7
+      },
+      {
+       "id": 2,
+       "value": 20
+      },
+      {
+       "id": 3,
+       "value": 4
+      },
+      {
+       "id": 4,
+       "value": 9
+      },
+      {
+       "id": 5,
+       "value": 16
+      },
+      {
+       "id": 6,
+       "value": 25
+      },
+      {
+       "id": 9,
+       "value": 8
+      },
+      {
+       "id": 10,
+       "value": 11
+      }
+     ],
+     "edges": [
+      {
+       "from": 0,
+       "to": 1,
+       "slot": 0
+      },
+      {
+       "from": 0,
+       "to": 2,
+       "slot": 1
+      },
+      {
+       "from": 1,
+       "to": 3,
+       "slot": 0
+      },
+      {
+       "from": 1,
+       "to": 4,
+       "slot": 1
+      },
+      {
+       "from": 2,
+       "to": 5,
+       "slot": 0
+      },
+      {
+       "from": 2,
+       "to": 6,
+       "slot": 1
+      },
+      {
+       "from": 4,
+       "to": 9,
+       "slot": 0
+      },
+      {
+       "from": 4,
+       "to": 10,
+       "slot": 1
+      }
+     ]
+    }
+   },
+   "sampleInput": "[12,7,20,4,9,16,25,null,null,8,11]\n9\n7"
+  },
+  {
+   "label": {
+    "en": "Case 3",
+    "ko": "케이스 3"
+   },
+   "input": "root = [5,2,6], p = 2, q = 6",
+   "expected": "5",
+   "frames": [
+    {
+     "caption": {
+      "en": "A tree of 3 nodes; p = 2 and q = 6. Ask the root 5 what its subtree holds.",
+      "ko": "노드 3개짜리 트리이고 p = 2, q = 6입니다. root 5 노드에게 서브트리에 무엇이 있는지 묻습니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": []
+       },
+       "shade": [],
+       "edgeMarks": {},
+       "tags": [
+        [
+         1,
+         "p"
+        ],
+        [
+         2,
+         "q"
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "5 is neither p nor q, so it asks its children, 2 first.",
+      "ko": "5 노드는 p도 q도 아니므로 자식들에게 묻습니다. 먼저 2 노드입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ],
+       "edgeMarks": {},
+       "tags": [
+        [
+         1,
+         "p"
+        ],
+        [
+         2,
+         "q"
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "2 is p, so it returns itself without looking below: the other target may be under it, and then 2 would be the answer anyway.",
+      "ko": "2 노드는 p이므로 아래를 보지 않고 자기 자신을 돌려줍니다. 다른 하나가 그 아래에 있다면 어차피 2 노드가 답이기 때문입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "good": [
+         1
+        ]
+       },
+       "shade": [
+        0,
+        1
+       ],
+       "edgeMarks": {},
+       "tags": [
+        [
+         1,
+         {
+          "en": "p → 2",
+          "ko": "p → 2"
+         }
+        ],
+        [
+         2,
+         "q"
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "6 is q, so it returns itself without looking below: the other target may be under it, and then 6 would be the answer anyway.",
+      "ko": "6 노드는 q이므로 아래를 보지 않고 자기 자신을 돌려줍니다. 다른 하나가 그 아래에 있다면 어차피 6 노드가 답이기 때문입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         1
+        ],
+        "good": [
+         2
+        ]
+       },
+       "shade": [
+        0,
+        2
+       ],
+       "edgeMarks": {},
+       "tags": [
+        [
+         1,
+         {
+          "en": "p → 2",
+          "ko": "p → 2"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "q → 6",
+          "ko": "q → 6"
+         }
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "5 gets 2 from the left and 6 from the right: p and q are on different sides, so 5 is their lowest common ancestor and returns itself.",
+      "ko": "5 노드는 왼쪽에서 2, 오른쪽에서 6 값을 받았습니다. p와 q가 서로 다른 쪽에 있으므로 5 노드가 최소 공통 조상이며 자기 자신을 돌려줍니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         1,
+         2
+        ],
+        "good": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ],
+       "edgeMarks": {},
+       "tags": [
+        [
+         0,
+         {
+          "en": "→ 5",
+          "ko": "→ 5"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "p → 2",
+          "ko": "p → 2"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "q → 6",
+          "ko": "q → 6"
+         }
+        ]
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 1
+       },
+       "to": {
+        "view": "tree",
+        "at": 0
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "tree",
+        "at": 2
+       },
+       "to": {
+        "view": "tree",
+        "at": 0
+       },
+       "value": "6"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The root returns 5: the lowest node with both p = 2 and q = 6 in its subtree is 5.",
+      "ko": "root가 5 노드를 돌려줍니다. p = 2, q = 6 두 노드를 모두 서브트리에 둔 가장 낮은 노드는 5 노드입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "path": [
+         0,
+         1,
+         2
+        ],
+        "dim": []
+       },
+       "shade": [],
+       "edgeMarks": {
+        "path": [
+         [
+          0,
+          1
+         ],
+         [
+          0,
+          2
+         ]
+        ]
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "→ 5",
+          "ko": "→ 5"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "p → 2",
+          "ko": "p → 2"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "q → 6",
+          "ko": "q → 6"
+         }
+        ]
+       ]
+      }
+     },
+     "answer": "5"
+    }
+   ],
+   "setup": {
+    "tree": {
+     "nodes": [
+      {
+       "id": 0,
+       "value": 5
+      },
+      {
+       "id": 1,
+       "value": 2
+      },
+      {
+       "id": 2,
+       "value": 6
+      }
+     ],
+     "edges": [
+      {
+       "from": 0,
+       "to": 1,
+       "slot": 0
+      },
+      {
+       "from": 0,
+       "to": 2,
+       "slot": 1
+      }
+     ]
+    }
+   },
+   "sampleInput": "[5,2,6]\n2\n6"
+  }
+ ]
+}

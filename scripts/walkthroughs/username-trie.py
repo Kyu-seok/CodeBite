@@ -69,7 +69,7 @@ def solve(cmds, args, run):
         if cmd == "PrefixIndex":
             ids[id(root)] = tree.add(None)
             frame({"en": "PrefixIndex() makes an empty trie, just the root, and returns null.",
-                   "ko": "PrefixIndex()는 루트만 있는 빈 트라이를 만들고 null을 반환합니다."},
+                   "ko": "생성자 PrefixIndex() 호출은 루트만 있는 빈 트라이를 만들고 null을 반환합니다."},
                   lit=[ids[id(root)]], moves=[answer(None)])
             continue
         word = arg[0]

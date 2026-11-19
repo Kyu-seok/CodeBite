@@ -1,0 +1,3818 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Min Daily Brew Capacity",
+  "ko": "최소 일일 추출 용량"
+ },
+ "approach": {
+  "en": "Binary search over the answer: a bigger capacity never needs more days, so for any capacity one pass over the queue says whether it is enough, and each try halves the range of capacities still possible.",
+  "ko": "답 위에서 하는 이분 탐색입니다. 용량이 클수록 필요한 날은 늘지 않으므로, 용량마다 대기열을 한 번 훑으면 충분한지 알 수 있고, 시도할 때마다 가능한 용량의 범위가 절반으로 줄어듭니다."
+ },
+ "views": [
+  {
+   "id": "volumes",
+   "type": "array",
+   "title": {
+    "en": "volumes (each day a span at capacity c)",
+    "ko": "volumes (음료 양, 용량 c일 때 하루씩 묶음)"
+   }
+  },
+  {
+   "id": "caps",
+   "type": "intervals",
+   "title": {
+    "en": "capacities still possible",
+    "ko": "아직 가능한 용량"
+   }
+  },
+  {
+   "id": "needed",
+   "type": "output",
+   "title": {
+    "en": "days needed at c",
+    "ko": "c일 때 필요한 날 수"
+   }
+  },
+  {
+   "id": "state",
+   "type": "vars"
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "volumes = [2,4,5,7,9,11,13,16,18,20], days = 5",
+   "expected": "27",
+   "frames": [
+    {
+     "caption": {
+      "en": "The capacity must hold the largest drink, 20, and 105, the whole queue, does it in one day, so the answer is in [20, 105].",
+      "ko": "용량은 가장 큰 음료 20을 담아야 하고, 대기열 전체 합 105는 하루에 다 담기므로 답은 [20, 105] 범위에 있습니다."
+     },
+     "views": {
+      "volumes": {
+       "values": [
+        2,
+        4,
+        5,
+        7,
+        9,
+        11,
+        13,
+        16,
+        18,
+        20
+       ],
+       "spans": {}
+      },
+      "caps": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           20,
+           105
+          ]
+         ],
+         "marks": {}
+        }
+       ],
+       "points": []
+      },
+      "needed": {
+       "values": []
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "days (limit)",
+          "ko": "days (제한 일수)"
+         },
+         "value": 5
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Try the middle capacity c = (20 + 105) // 2 = 62: brewing the queue in order, each day takes drinks until the next would pass 62, which takes 2 days.",
+      "ko": "가운데 용량 c = (20 + 105) // 2 = 62를 시도합니다. 대기열 순서대로 하루 합이 62를 넘기 전까지 추출하면 2일이 걸립니다."
+     },
+     "views": {
+      "volumes": {
+       "values": [
+        2,
+        4,
+        5,
+        7,
+        9,
+        11,
+        13,
+        16,
+        18,
+        20
+       ],
+       "spans": {
+        "day1": {
+         "from": 0,
+         "to": 6,
+         "label": {
+          "en": "day 1",
+          "ko": "1일"
+         }
+        },
+        "day2": {
+         "from": 7,
+         "to": 9,
+         "label": {
+          "en": "day 2",
+          "ko": "2일"
+         }
+        }
+       }
+      },
+      "caps": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           20,
+           105
+          ]
+         ],
+         "marks": {}
+        }
+       ],
+       "points": [
+        {
+         "at": 62,
+         "label": "c",
+         "mark": "lit"
+        }
+       ]
+      },
+      "needed": {
+       "values": [
+        2
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "days (limit)",
+          "ko": "days (제한 일수)"
+         },
+         "value": 5
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "volumes",
+        "at": 9
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "2 ≤ 5 days, so c = 62 is enough and so is any bigger capacity: keep 62 as the top of the range, [20, 62].",
+      "ko": "2 ≤ 5일이므로 c = 62는 충분하고, 더 큰 용량도 마찬가지입니다. 62를 범위의 위 끝으로 두어 [20, 62]입니다."
+     },
+     "views": {
+      "volumes": {
+       "values": [
+        2,
+        4,
+        5,
+        7,
+        9,
+        11,
+        13,
+        16,
+        18,
+        20
+       ],
+       "spans": {
+        "day1": {
+         "from": 0,
+         "to": 6,
+         "label": {
+          "en": "day 1",
+          "ko": "1일"
+         }
+        },
+        "day2": {
+         "from": 7,
+         "to": 9,
+         "label": {
+          "en": "day 2",
+          "ko": "2일"
+         }
+        }
+       }
+      },
+      "caps": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           20,
+           62
+          ]
+         ],
+         "marks": {
+          "good": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 62,
+         "label": "c",
+         "mark": "lit"
+        }
+       ]
+      },
+      "needed": {
+       "values": [
+        2
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "days (limit)",
+          "ko": "days (제한 일수)"
+         },
+         "value": 5
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "needed",
+        "at": 0
+       },
+       "to": {
+        "view": "caps",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "value": "2 ≤ 5"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Try the middle capacity c = (20 + 62) // 2 = 41: brewing the queue in order, each day takes drinks until the next would pass 41, which takes 3 days.",
+      "ko": "가운데 용량 c = (20 + 62) // 2 = 41을 시도합니다. 대기열 순서대로 하루 합이 41을 넘기 전까지 추출하면 3일이 걸립니다."
+     },
+     "views": {
+      "volumes": {
+       "values": [
+        2,
+        4,
+        5,
+        7,
+        9,
+        11,
+        13,
+        16,
+        18,
+        20
+       ],
+       "spans": {
+        "day1": {
+         "from": 0,
+         "to": 5,
+         "label": {
+          "en": "day 1",
+          "ko": "1일"
+         }
+        },
+        "day2": {
+         "from": 6,
+         "to": 7,
+         "label": {
+          "en": "day 2",
+          "ko": "2일"
+         }
+        },
+        "day3": {
+         "from": 8,
+         "to": 9,
+         "label": {
+          "en": "day 3",
+          "ko": "3일"
+         }
+        }
+       }
+      },
+      "caps": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           20,
+           62
+          ]
+         ],
+         "marks": {}
+        }
+       ],
+       "points": [
+        {
+         "at": 41,
+         "label": "c",
+         "mark": "lit"
+        }
+       ]
+      },
+      "needed": {
+       "values": [
+        3
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "days (limit)",
+          "ko": "days (제한 일수)"
+         },
+         "value": 5
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "volumes",
+        "at": 9
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "3 ≤ 5 days, so c = 41 is enough and so is any bigger capacity: keep 41 as the top of the range, [20, 41].",
+      "ko": "3 ≤ 5일이므로 c = 41은 충분하고, 더 큰 용량도 마찬가지입니다. 41을 범위의 위 끝으로 두어 [20, 41]입니다."
+     },
+     "views": {
+      "volumes": {
+       "values": [
+        2,
+        4,
+        5,
+        7,
+        9,
+        11,
+        13,
+        16,
+        18,
+        20
+       ],
+       "spans": {
+        "day1": {
+         "from": 0,
+         "to": 5,
+         "label": {
+          "en": "day 1",
+          "ko": "1일"
+         }
+        },
+        "day2": {
+         "from": 6,
+         "to": 7,
+         "label": {
+          "en": "day 2",
+          "ko": "2일"
+         }
+        },
+        "day3": {
+         "from": 8,
+         "to": 9,
+         "label": {
+          "en": "day 3",
+          "ko": "3일"
+         }
+        }
+       }
+      },
+      "caps": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           20,
+           41
+          ]
+         ],
+         "marks": {
+          "good": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 41,
+         "label": "c",
+         "mark": "lit"
+        }
+       ]
+      },
+      "needed": {
+       "values": [
+        3
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "days (limit)",
+          "ko": "days (제한 일수)"
+         },
+         "value": 5
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "needed",
+        "at": 0
+       },
+       "to": {
+        "view": "caps",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "value": "3 ≤ 5"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Try the middle capacity c = (20 + 41) // 2 = 30: brewing the queue in order, each day takes drinks until the next would pass 30, which takes 5 days.",
+      "ko": "가운데 용량 c = (20 + 41) // 2 = 30을 시도합니다. 대기열 순서대로 하루 합이 30을 넘기 전까지 추출하면 5일이 걸립니다."
+     },
+     "views": {
+      "volumes": {
+       "values": [
+        2,
+        4,
+        5,
+        7,
+        9,
+        11,
+        13,
+        16,
+        18,
+        20
+       ],
+       "spans": {
+        "day1": {
+         "from": 0,
+         "to": 4,
+         "label": {
+          "en": "day 1",
+          "ko": "1일"
+         }
+        },
+        "day2": {
+         "from": 5,
+         "to": 6,
+         "label": {
+          "en": "day 2",
+          "ko": "2일"
+         }
+        },
+        "day3": {
+         "from": 7,
+         "to": 7,
+         "label": {
+          "en": "day 3",
+          "ko": "3일"
+         }
+        },
+        "day4": {
+         "from": 8,
+         "to": 8,
+         "label": {
+          "en": "day 4",
+          "ko": "4일"
+         }
+        },
+        "day5": {
+         "from": 9,
+         "to": 9,
+         "label": {
+          "en": "day 5",
+          "ko": "5일"
+         }
+        }
+       }
+      },
+      "caps": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           20,
+           41
+          ]
+         ],
+         "marks": {}
+        }
+       ],
+       "points": [
+        {
+         "at": 30,
+         "label": "c",
+         "mark": "lit"
+        }
+       ]
+      },
+      "needed": {
+       "values": [
+        5
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "days (limit)",
+          "ko": "days (제한 일수)"
+         },
+         "value": 5
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "volumes",
+        "at": 9
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "5"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "5 ≤ 5 days, so c = 30 is enough and so is any bigger capacity: keep 30 as the top of the range, [20, 30].",
+      "ko": "5 ≤ 5일이므로 c = 30은 충분하고, 더 큰 용량도 마찬가지입니다. 30을 범위의 위 끝으로 두어 [20, 30]입니다."
+     },
+     "views": {
+      "volumes": {
+       "values": [
+        2,
+        4,
+        5,
+        7,
+        9,
+        11,
+        13,
+        16,
+        18,
+        20
+       ],
+       "spans": {
+        "day1": {
+         "from": 0,
+         "to": 4,
+         "label": {
+          "en": "day 1",
+          "ko": "1일"
+         }
+        },
+        "day2": {
+         "from": 5,
+         "to": 6,
+         "label": {
+          "en": "day 2",
+          "ko": "2일"
+         }
+        },
+        "day3": {
+         "from": 7,
+         "to": 7,
+         "label": {
+          "en": "day 3",
+          "ko": "3일"
+         }
+        },
+        "day4": {
+         "from": 8,
+         "to": 8,
+         "label": {
+          "en": "day 4",
+          "ko": "4일"
+         }
+        },
+        "day5": {
+         "from": 9,
+         "to": 9,
+         "label": {
+          "en": "day 5",
+          "ko": "5일"
+         }
+        }
+       }
+      },
+      "caps": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           20,
+           30
+          ]
+         ],
+         "marks": {
+          "good": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 30,
+         "label": "c",
+         "mark": "lit"
+        }
+       ]
+      },
+      "needed": {
+       "values": [
+        5
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "days (limit)",
+          "ko": "days (제한 일수)"
+         },
+         "value": 5
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "needed",
+        "at": 0
+       },
+       "to": {
+        "view": "caps",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "value": "5 ≤ 5"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Try the middle capacity c = (20 + 30) // 2 = 25: brewing the queue in order, each day takes drinks until the next would pass 25, which takes 6 days.",
+      "ko": "가운데 용량 c = (20 + 30) // 2 = 25를 시도합니다. 대기열 순서대로 하루 합이 25를 넘기 전까지 추출하면 6일이 걸립니다."
+     },
+     "views": {
+      "volumes": {
+       "values": [
+        2,
+        4,
+        5,
+        7,
+        9,
+        11,
+        13,
+        16,
+        18,
+        20
+       ],
+       "spans": {
+        "day1": {
+         "from": 0,
+         "to": 3,
+         "label": {
+          "en": "day 1",
+          "ko": "1일"
+         }
+        },
+        "day2": {
+         "from": 4,
+         "to": 5,
+         "label": {
+          "en": "day 2",
+          "ko": "2일"
+         }
+        },
+        "day3": {
+         "from": 6,
+         "to": 6,
+         "label": {
+          "en": "day 3",
+          "ko": "3일"
+         }
+        },
+        "day4": {
+         "from": 7,
+         "to": 7,
+         "label": {
+          "en": "day 4",
+          "ko": "4일"
+         }
+        },
+        "day5": {
+         "from": 8,
+         "to": 8,
+         "label": {
+          "en": "day 5",
+          "ko": "5일"
+         }
+        },
+        "day6": {
+         "from": 9,
+         "to": 9,
+         "label": {
+          "en": "day 6",
+          "ko": "6일"
+         }
+        }
+       }
+      },
+      "caps": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           20,
+           30
+          ]
+         ],
+         "marks": {}
+        }
+       ],
+       "points": [
+        {
+         "at": 25,
+         "label": "c",
+         "mark": "lit"
+        }
+       ]
+      },
+      "needed": {
+       "values": [
+        6
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "days (limit)",
+          "ko": "days (제한 일수)"
+         },
+         "value": 5
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "volumes",
+        "at": 9
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "6"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "6 > 5 days, so c = 25 is too small and so is any smaller capacity: the range starts above it, [26, 30].",
+      "ko": "6 > 5일이므로 c = 25는 너무 작고, 더 작은 용량도 마찬가지입니다. 범위는 그 위부터인 [26, 30]입니다."
+     },
+     "views": {
+      "volumes": {
+       "values": [
+        2,
+        4,
+        5,
+        7,
+        9,
+        11,
+        13,
+        16,
+        18,
+        20
+       ],
+       "spans": {
+        "day1": {
+         "from": 0,
+         "to": 3,
+         "label": {
+          "en": "day 1",
+          "ko": "1일"
+         }
+        },
+        "day2": {
+         "from": 4,
+         "to": 5,
+         "label": {
+          "en": "day 2",
+          "ko": "2일"
+         }
+        },
+        "day3": {
+         "from": 6,
+         "to": 6,
+         "label": {
+          "en": "day 3",
+          "ko": "3일"
+         }
+        },
+        "day4": {
+         "from": 7,
+         "to": 7,
+         "label": {
+          "en": "day 4",
+          "ko": "4일"
+         }
+        },
+        "day5": {
+         "from": 8,
+         "to": 8,
+         "label": {
+          "en": "day 5",
+          "ko": "5일"
+         }
+        },
+        "day6": {
+         "from": 9,
+         "to": 9,
+         "label": {
+          "en": "day 6",
+          "ko": "6일"
+         }
+        }
+       }
+      },
+      "caps": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           26,
+           30
+          ]
+         ],
+         "marks": {
+          "good": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 25,
+         "label": "c",
+         "mark": "lit"
+        }
+       ]
+      },
+      "needed": {
+       "values": [
+        6
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "days (limit)",
+          "ko": "days (제한 일수)"
+         },
+         "value": 5
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "needed",
+        "at": 0
+       },
+       "to": {
+        "view": "caps",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "value": "6 > 5"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Try the middle capacity c = (26 + 30) // 2 = 28: brewing the queue in order, each day takes drinks until the next would pass 28, which takes 5 days.",
+      "ko": "가운데 용량 c = (26 + 30) // 2 = 28을 시도합니다. 대기열 순서대로 하루 합이 28을 넘기 전까지 추출하면 5일이 걸립니다."
+     },
+     "views": {
+      "volumes": {
+       "values": [
+        2,
+        4,
+        5,
+        7,
+        9,
+        11,
+        13,
+        16,
+        18,
+        20
+       ],
+       "spans": {
+        "day1": {
+         "from": 0,
+         "to": 4,
+         "label": {
+          "en": "day 1",
+          "ko": "1일"
+         }
+        },
+        "day2": {
+         "from": 5,
+         "to": 6,
+         "label": {
+          "en": "day 2",
+          "ko": "2일"
+         }
+        },
+        "day3": {
+         "from": 7,
+         "to": 7,
+         "label": {
+          "en": "day 3",
+          "ko": "3일"
+         }
+        },
+        "day4": {
+         "from": 8,
+         "to": 8,
+         "label": {
+          "en": "day 4",
+          "ko": "4일"
+         }
+        },
+        "day5": {
+         "from": 9,
+         "to": 9,
+         "label": {
+          "en": "day 5",
+          "ko": "5일"
+         }
+        },
+        "day6": null
+       }
+      },
+      "caps": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           26,
+           30
+          ]
+         ],
+         "marks": {}
+        }
+       ],
+       "points": [
+        {
+         "at": 28,
+         "label": "c",
+         "mark": "lit"
+        }
+       ]
+      },
+      "needed": {
+       "values": [
+        5
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "days (limit)",
+          "ko": "days (제한 일수)"
+         },
+         "value": 5
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "volumes",
+        "at": 9
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "5"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "5 ≤ 5 days, so c = 28 is enough and so is any bigger capacity: keep 28 as the top of the range, [26, 28].",
+      "ko": "5 ≤ 5일이므로 c = 28은 충분하고, 더 큰 용량도 마찬가지입니다. 28을 범위의 위 끝으로 두어 [26, 28]입니다."
+     },
+     "views": {
+      "volumes": {
+       "values": [
+        2,
+        4,
+        5,
+        7,
+        9,
+        11,
+        13,
+        16,
+        18,
+        20
+       ],
+       "spans": {
+        "day1": {
+         "from": 0,
+         "to": 4,
+         "label": {
+          "en": "day 1",
+          "ko": "1일"
+         }
+        },
+        "day2": {
+         "from": 5,
+         "to": 6,
+         "label": {
+          "en": "day 2",
+          "ko": "2일"
+         }
+        },
+        "day3": {
+         "from": 7,
+         "to": 7,
+         "label": {
+          "en": "day 3",
+          "ko": "3일"
+         }
+        },
+        "day4": {
+         "from": 8,
+         "to": 8,
+         "label": {
+          "en": "day 4",
+          "ko": "4일"
+         }
+        },
+        "day5": {
+         "from": 9,
+         "to": 9,
+         "label": {
+          "en": "day 5",
+          "ko": "5일"
+         }
+        },
+        "day6": null
+       }
+      },
+      "caps": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           26,
+           28
+          ]
+         ],
+         "marks": {
+          "good": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 28,
+         "label": "c",
+         "mark": "lit"
+        }
+       ]
+      },
+      "needed": {
+       "values": [
+        5
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "days (limit)",
+          "ko": "days (제한 일수)"
+         },
+         "value": 5
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "needed",
+        "at": 0
+       },
+       "to": {
+        "view": "caps",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "value": "5 ≤ 5"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Try the middle capacity c = (26 + 28) // 2 = 27: brewing the queue in order, each day takes drinks until the next would pass 27, which takes 5 days.",
+      "ko": "가운데 용량 c = (26 + 28) // 2 = 27을 시도합니다. 대기열 순서대로 하루 합이 27을 넘기 전까지 추출하면 5일이 걸립니다."
+     },
+     "views": {
+      "volumes": {
+       "values": [
+        2,
+        4,
+        5,
+        7,
+        9,
+        11,
+        13,
+        16,
+        18,
+        20
+       ],
+       "spans": {
+        "day1": {
+         "from": 0,
+         "to": 4,
+         "label": {
+          "en": "day 1",
+          "ko": "1일"
+         }
+        },
+        "day2": {
+         "from": 5,
+         "to": 6,
+         "label": {
+          "en": "day 2",
+          "ko": "2일"
+         }
+        },
+        "day3": {
+         "from": 7,
+         "to": 7,
+         "label": {
+          "en": "day 3",
+          "ko": "3일"
+         }
+        },
+        "day4": {
+         "from": 8,
+         "to": 8,
+         "label": {
+          "en": "day 4",
+          "ko": "4일"
+         }
+        },
+        "day5": {
+         "from": 9,
+         "to": 9,
+         "label": {
+          "en": "day 5",
+          "ko": "5일"
+         }
+        },
+        "day6": null
+       }
+      },
+      "caps": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           26,
+           28
+          ]
+         ],
+         "marks": {}
+        }
+       ],
+       "points": [
+        {
+         "at": 27,
+         "label": "c",
+         "mark": "lit"
+        }
+       ]
+      },
+      "needed": {
+       "values": [
+        5
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "days (limit)",
+          "ko": "days (제한 일수)"
+         },
+         "value": 5
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "volumes",
+        "at": 9
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "5"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "5 ≤ 5 days, so c = 27 is enough and so is any bigger capacity: keep 27 as the top of the range, [26, 27].",
+      "ko": "5 ≤ 5일이므로 c = 27은 충분하고, 더 큰 용량도 마찬가지입니다. 27을 범위의 위 끝으로 두어 [26, 27]입니다."
+     },
+     "views": {
+      "volumes": {
+       "values": [
+        2,
+        4,
+        5,
+        7,
+        9,
+        11,
+        13,
+        16,
+        18,
+        20
+       ],
+       "spans": {
+        "day1": {
+         "from": 0,
+         "to": 4,
+         "label": {
+          "en": "day 1",
+          "ko": "1일"
+         }
+        },
+        "day2": {
+         "from": 5,
+         "to": 6,
+         "label": {
+          "en": "day 2",
+          "ko": "2일"
+         }
+        },
+        "day3": {
+         "from": 7,
+         "to": 7,
+         "label": {
+          "en": "day 3",
+          "ko": "3일"
+         }
+        },
+        "day4": {
+         "from": 8,
+         "to": 8,
+         "label": {
+          "en": "day 4",
+          "ko": "4일"
+         }
+        },
+        "day5": {
+         "from": 9,
+         "to": 9,
+         "label": {
+          "en": "day 5",
+          "ko": "5일"
+         }
+        },
+        "day6": null
+       }
+      },
+      "caps": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           26,
+           27
+          ]
+         ],
+         "marks": {
+          "good": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 27,
+         "label": "c",
+         "mark": "lit"
+        }
+       ]
+      },
+      "needed": {
+       "values": [
+        5
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "days (limit)",
+          "ko": "days (제한 일수)"
+         },
+         "value": 5
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "needed",
+        "at": 0
+       },
+       "to": {
+        "view": "caps",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "value": "5 ≤ 5"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Try the middle capacity c = (26 + 27) // 2 = 26: brewing the queue in order, each day takes drinks until the next would pass 26, which takes 6 days.",
+      "ko": "가운데 용량 c = (26 + 27) // 2 = 26을 시도합니다. 대기열 순서대로 하루 합이 26을 넘기 전까지 추출하면 6일이 걸립니다."
+     },
+     "views": {
+      "volumes": {
+       "values": [
+        2,
+        4,
+        5,
+        7,
+        9,
+        11,
+        13,
+        16,
+        18,
+        20
+       ],
+       "spans": {
+        "day1": {
+         "from": 0,
+         "to": 3,
+         "label": {
+          "en": "day 1",
+          "ko": "1일"
+         }
+        },
+        "day2": {
+         "from": 4,
+         "to": 5,
+         "label": {
+          "en": "day 2",
+          "ko": "2일"
+         }
+        },
+        "day3": {
+         "from": 6,
+         "to": 6,
+         "label": {
+          "en": "day 3",
+          "ko": "3일"
+         }
+        },
+        "day4": {
+         "from": 7,
+         "to": 7,
+         "label": {
+          "en": "day 4",
+          "ko": "4일"
+         }
+        },
+        "day5": {
+         "from": 8,
+         "to": 8,
+         "label": {
+          "en": "day 5",
+          "ko": "5일"
+         }
+        },
+        "day6": {
+         "from": 9,
+         "to": 9,
+         "label": {
+          "en": "day 6",
+          "ko": "6일"
+         }
+        }
+       }
+      },
+      "caps": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           26,
+           27
+          ]
+         ],
+         "marks": {}
+        }
+       ],
+       "points": [
+        {
+         "at": 26,
+         "label": "c",
+         "mark": "lit"
+        }
+       ]
+      },
+      "needed": {
+       "values": [
+        6
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "days (limit)",
+          "ko": "days (제한 일수)"
+         },
+         "value": 5
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "volumes",
+        "at": 9
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "6"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "6 > 5 days, so c = 26 is too small and so is any smaller capacity: the range starts above it, [27, 27].",
+      "ko": "6 > 5일이므로 c = 26은 너무 작고, 더 작은 용량도 마찬가지입니다. 범위는 그 위부터인 [27, 27]입니다."
+     },
+     "views": {
+      "volumes": {
+       "values": [
+        2,
+        4,
+        5,
+        7,
+        9,
+        11,
+        13,
+        16,
+        18,
+        20
+       ],
+       "spans": {
+        "day1": {
+         "from": 0,
+         "to": 3,
+         "label": {
+          "en": "day 1",
+          "ko": "1일"
+         }
+        },
+        "day2": {
+         "from": 4,
+         "to": 5,
+         "label": {
+          "en": "day 2",
+          "ko": "2일"
+         }
+        },
+        "day3": {
+         "from": 6,
+         "to": 6,
+         "label": {
+          "en": "day 3",
+          "ko": "3일"
+         }
+        },
+        "day4": {
+         "from": 7,
+         "to": 7,
+         "label": {
+          "en": "day 4",
+          "ko": "4일"
+         }
+        },
+        "day5": {
+         "from": 8,
+         "to": 8,
+         "label": {
+          "en": "day 5",
+          "ko": "5일"
+         }
+        },
+        "day6": {
+         "from": 9,
+         "to": 9,
+         "label": {
+          "en": "day 6",
+          "ko": "6일"
+         }
+        }
+       }
+      },
+      "caps": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           27,
+           27
+          ]
+         ],
+         "marks": {
+          "good": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 26,
+         "label": "c",
+         "mark": "lit"
+        }
+       ]
+      },
+      "needed": {
+       "values": [
+        6
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "days (limit)",
+          "ko": "days (제한 일수)"
+         },
+         "value": 5
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "needed",
+        "at": 0
+       },
+       "to": {
+        "view": "caps",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "value": "6 > 5"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The range closed on one capacity, [27, 27]: c = 27 is the smallest that brews every drink within 5 days (it takes 5).",
+      "ko": "범위가 [27, 27] 구간으로 좁혀져 용량이 하나만 남았습니다. 5일 안에 모두 추출하는 가장 작은 용량은 c = 27입니다(5일 걸림)."
+     },
+     "views": {
+      "volumes": {
+       "values": [
+        2,
+        4,
+        5,
+        7,
+        9,
+        11,
+        13,
+        16,
+        18,
+        20
+       ],
+       "spans": {
+        "day1": {
+         "from": 0,
+         "to": 4,
+         "label": {
+          "en": "day 1",
+          "ko": "1일"
+         }
+        },
+        "day2": {
+         "from": 5,
+         "to": 6,
+         "label": {
+          "en": "day 2",
+          "ko": "2일"
+         }
+        },
+        "day3": {
+         "from": 7,
+         "to": 7,
+         "label": {
+          "en": "day 3",
+          "ko": "3일"
+         }
+        },
+        "day4": {
+         "from": 8,
+         "to": 8,
+         "label": {
+          "en": "day 4",
+          "ko": "4일"
+         }
+        },
+        "day5": {
+         "from": 9,
+         "to": 9,
+         "label": {
+          "en": "day 5",
+          "ko": "5일"
+         }
+        },
+        "day6": null
+       }
+      },
+      "caps": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           27,
+           27
+          ]
+         ],
+         "marks": {
+          "path": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": []
+      },
+      "needed": {
+       "values": [
+        5
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "days (limit)",
+          "ko": "days (제한 일수)"
+         },
+         "value": 5
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "volumes",
+        "at": 9
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "5"
+      }
+     ],
+     "answer": "27"
+    }
+   ],
+   "setup": {
+    "caps": {
+     "domain": [
+      20,
+      105
+     ]
+    }
+   },
+   "sampleInput": "[2,4,5,7,9,11,13,16,18,20]\n5"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "volumes = [4,3,3,5,2,5], days = 3",
+   "expected": "8",
+   "frames": [
+    {
+     "caption": {
+      "en": "The capacity must hold the largest drink, 5, and 22, the whole queue, does it in one day, so the answer is in [5, 22].",
+      "ko": "용량은 가장 큰 음료 5를 담아야 하고, 대기열 전체 합 22는 하루에 다 담기므로 답은 [5, 22] 범위에 있습니다."
+     },
+     "views": {
+      "volumes": {
+       "values": [
+        4,
+        3,
+        3,
+        5,
+        2,
+        5
+       ],
+       "spans": {}
+      },
+      "caps": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           5,
+           22
+          ]
+         ],
+         "marks": {}
+        }
+       ],
+       "points": []
+      },
+      "needed": {
+       "values": []
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "days (limit)",
+          "ko": "days (제한 일수)"
+         },
+         "value": 3
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Try the middle capacity c = (5 + 22) // 2 = 13: brewing the queue in order, each day takes drinks until the next would pass 13, which takes 2 days.",
+      "ko": "가운데 용량 c = (5 + 22) // 2 = 13을 시도합니다. 대기열 순서대로 하루 합이 13을 넘기 전까지 추출하면 2일이 걸립니다."
+     },
+     "views": {
+      "volumes": {
+       "values": [
+        4,
+        3,
+        3,
+        5,
+        2,
+        5
+       ],
+       "spans": {
+        "day1": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "day 1",
+          "ko": "1일"
+         }
+        },
+        "day2": {
+         "from": 3,
+         "to": 5,
+         "label": {
+          "en": "day 2",
+          "ko": "2일"
+         }
+        }
+       }
+      },
+      "caps": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           5,
+           22
+          ]
+         ],
+         "marks": {}
+        }
+       ],
+       "points": [
+        {
+         "at": 13,
+         "label": "c",
+         "mark": "lit"
+        }
+       ]
+      },
+      "needed": {
+       "values": [
+        2
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "days (limit)",
+          "ko": "days (제한 일수)"
+         },
+         "value": 3
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "volumes",
+        "at": 5
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "2 ≤ 3 days, so c = 13 is enough and so is any bigger capacity: keep 13 as the top of the range, [5, 13].",
+      "ko": "2 ≤ 3일이므로 c = 13은 충분하고, 더 큰 용량도 마찬가지입니다. 13을 범위의 위 끝으로 두어 [5, 13]입니다."
+     },
+     "views": {
+      "volumes": {
+       "values": [
+        4,
+        3,
+        3,
+        5,
+        2,
+        5
+       ],
+       "spans": {
+        "day1": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "day 1",
+          "ko": "1일"
+         }
+        },
+        "day2": {
+         "from": 3,
+         "to": 5,
+         "label": {
+          "en": "day 2",
+          "ko": "2일"
+         }
+        }
+       }
+      },
+      "caps": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           5,
+           13
+          ]
+         ],
+         "marks": {
+          "good": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 13,
+         "label": "c",
+         "mark": "lit"
+        }
+       ]
+      },
+      "needed": {
+       "values": [
+        2
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "days (limit)",
+          "ko": "days (제한 일수)"
+         },
+         "value": 3
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "needed",
+        "at": 0
+       },
+       "to": {
+        "view": "caps",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "value": "2 ≤ 3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Try the middle capacity c = (5 + 13) // 2 = 9: brewing the queue in order, each day takes drinks until the next would pass 9, which takes 3 days.",
+      "ko": "가운데 용량 c = (5 + 13) // 2 = 9를 시도합니다. 대기열 순서대로 하루 합이 9를 넘기 전까지 추출하면 3일이 걸립니다."
+     },
+     "views": {
+      "volumes": {
+       "values": [
+        4,
+        3,
+        3,
+        5,
+        2,
+        5
+       ],
+       "spans": {
+        "day1": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "day 1",
+          "ko": "1일"
+         }
+        },
+        "day2": {
+         "from": 2,
+         "to": 3,
+         "label": {
+          "en": "day 2",
+          "ko": "2일"
+         }
+        },
+        "day3": {
+         "from": 4,
+         "to": 5,
+         "label": {
+          "en": "day 3",
+          "ko": "3일"
+         }
+        }
+       }
+      },
+      "caps": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           5,
+           13
+          ]
+         ],
+         "marks": {}
+        }
+       ],
+       "points": [
+        {
+         "at": 9,
+         "label": "c",
+         "mark": "lit"
+        }
+       ]
+      },
+      "needed": {
+       "values": [
+        3
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "days (limit)",
+          "ko": "days (제한 일수)"
+         },
+         "value": 3
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "volumes",
+        "at": 5
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "3 ≤ 3 days, so c = 9 is enough and so is any bigger capacity: keep 9 as the top of the range, [5, 9].",
+      "ko": "3 ≤ 3일이므로 c = 9는 충분하고, 더 큰 용량도 마찬가지입니다. 9를 범위의 위 끝으로 두어 [5, 9]입니다."
+     },
+     "views": {
+      "volumes": {
+       "values": [
+        4,
+        3,
+        3,
+        5,
+        2,
+        5
+       ],
+       "spans": {
+        "day1": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "day 1",
+          "ko": "1일"
+         }
+        },
+        "day2": {
+         "from": 2,
+         "to": 3,
+         "label": {
+          "en": "day 2",
+          "ko": "2일"
+         }
+        },
+        "day3": {
+         "from": 4,
+         "to": 5,
+         "label": {
+          "en": "day 3",
+          "ko": "3일"
+         }
+        }
+       }
+      },
+      "caps": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           5,
+           9
+          ]
+         ],
+         "marks": {
+          "good": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 9,
+         "label": "c",
+         "mark": "lit"
+        }
+       ]
+      },
+      "needed": {
+       "values": [
+        3
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "days (limit)",
+          "ko": "days (제한 일수)"
+         },
+         "value": 3
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "needed",
+        "at": 0
+       },
+       "to": {
+        "view": "caps",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "value": "3 ≤ 3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Try the middle capacity c = (5 + 9) // 2 = 7: brewing the queue in order, each day takes drinks until the next would pass 7, which takes 4 days.",
+      "ko": "가운데 용량 c = (5 + 9) // 2 = 7을 시도합니다. 대기열 순서대로 하루 합이 7을 넘기 전까지 추출하면 4일이 걸립니다."
+     },
+     "views": {
+      "volumes": {
+       "values": [
+        4,
+        3,
+        3,
+        5,
+        2,
+        5
+       ],
+       "spans": {
+        "day1": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "day 1",
+          "ko": "1일"
+         }
+        },
+        "day2": {
+         "from": 2,
+         "to": 2,
+         "label": {
+          "en": "day 2",
+          "ko": "2일"
+         }
+        },
+        "day3": {
+         "from": 3,
+         "to": 4,
+         "label": {
+          "en": "day 3",
+          "ko": "3일"
+         }
+        },
+        "day4": {
+         "from": 5,
+         "to": 5,
+         "label": {
+          "en": "day 4",
+          "ko": "4일"
+         }
+        }
+       }
+      },
+      "caps": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           5,
+           9
+          ]
+         ],
+         "marks": {}
+        }
+       ],
+       "points": [
+        {
+         "at": 7,
+         "label": "c",
+         "mark": "lit"
+        }
+       ]
+      },
+      "needed": {
+       "values": [
+        4
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "days (limit)",
+          "ko": "days (제한 일수)"
+         },
+         "value": 3
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "volumes",
+        "at": 5
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "4"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "4 > 3 days, so c = 7 is too small and so is any smaller capacity: the range starts above it, [8, 9].",
+      "ko": "4 > 3일이므로 c = 7은 너무 작고, 더 작은 용량도 마찬가지입니다. 범위는 그 위부터인 [8, 9]입니다."
+     },
+     "views": {
+      "volumes": {
+       "values": [
+        4,
+        3,
+        3,
+        5,
+        2,
+        5
+       ],
+       "spans": {
+        "day1": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "day 1",
+          "ko": "1일"
+         }
+        },
+        "day2": {
+         "from": 2,
+         "to": 2,
+         "label": {
+          "en": "day 2",
+          "ko": "2일"
+         }
+        },
+        "day3": {
+         "from": 3,
+         "to": 4,
+         "label": {
+          "en": "day 3",
+          "ko": "3일"
+         }
+        },
+        "day4": {
+         "from": 5,
+         "to": 5,
+         "label": {
+          "en": "day 4",
+          "ko": "4일"
+         }
+        }
+       }
+      },
+      "caps": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           8,
+           9
+          ]
+         ],
+         "marks": {
+          "good": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 7,
+         "label": "c",
+         "mark": "lit"
+        }
+       ]
+      },
+      "needed": {
+       "values": [
+        4
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "days (limit)",
+          "ko": "days (제한 일수)"
+         },
+         "value": 3
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "needed",
+        "at": 0
+       },
+       "to": {
+        "view": "caps",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "value": "4 > 3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Try the middle capacity c = (8 + 9) // 2 = 8: brewing the queue in order, each day takes drinks until the next would pass 8, which takes 3 days.",
+      "ko": "가운데 용량 c = (8 + 9) // 2 = 8을 시도합니다. 대기열 순서대로 하루 합이 8을 넘기 전까지 추출하면 3일이 걸립니다."
+     },
+     "views": {
+      "volumes": {
+       "values": [
+        4,
+        3,
+        3,
+        5,
+        2,
+        5
+       ],
+       "spans": {
+        "day1": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "day 1",
+          "ko": "1일"
+         }
+        },
+        "day2": {
+         "from": 2,
+         "to": 3,
+         "label": {
+          "en": "day 2",
+          "ko": "2일"
+         }
+        },
+        "day3": {
+         "from": 4,
+         "to": 5,
+         "label": {
+          "en": "day 3",
+          "ko": "3일"
+         }
+        },
+        "day4": null
+       }
+      },
+      "caps": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           8,
+           9
+          ]
+         ],
+         "marks": {}
+        }
+       ],
+       "points": [
+        {
+         "at": 8,
+         "label": "c",
+         "mark": "lit"
+        }
+       ]
+      },
+      "needed": {
+       "values": [
+        3
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "days (limit)",
+          "ko": "days (제한 일수)"
+         },
+         "value": 3
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "volumes",
+        "at": 5
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "3 ≤ 3 days, so c = 8 is enough and so is any bigger capacity: keep 8 as the top of the range, [8, 8].",
+      "ko": "3 ≤ 3일이므로 c = 8은 충분하고, 더 큰 용량도 마찬가지입니다. 8을 범위의 위 끝으로 두어 [8, 8]입니다."
+     },
+     "views": {
+      "volumes": {
+       "values": [
+        4,
+        3,
+        3,
+        5,
+        2,
+        5
+       ],
+       "spans": {
+        "day1": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "day 1",
+          "ko": "1일"
+         }
+        },
+        "day2": {
+         "from": 2,
+         "to": 3,
+         "label": {
+          "en": "day 2",
+          "ko": "2일"
+         }
+        },
+        "day3": {
+         "from": 4,
+         "to": 5,
+         "label": {
+          "en": "day 3",
+          "ko": "3일"
+         }
+        },
+        "day4": null
+       }
+      },
+      "caps": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           8,
+           8
+          ]
+         ],
+         "marks": {
+          "good": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 8,
+         "label": "c",
+         "mark": "lit"
+        }
+       ]
+      },
+      "needed": {
+       "values": [
+        3
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "days (limit)",
+          "ko": "days (제한 일수)"
+         },
+         "value": 3
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "needed",
+        "at": 0
+       },
+       "to": {
+        "view": "caps",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "value": "3 ≤ 3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The range closed on one capacity, [8, 8]: c = 8 is the smallest that brews every drink within 3 days (it takes 3).",
+      "ko": "범위가 [8, 8] 구간으로 좁혀져 용량이 하나만 남았습니다. 3일 안에 모두 추출하는 가장 작은 용량은 c = 8입니다(3일 걸림)."
+     },
+     "views": {
+      "volumes": {
+       "values": [
+        4,
+        3,
+        3,
+        5,
+        2,
+        5
+       ],
+       "spans": {
+        "day1": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "day 1",
+          "ko": "1일"
+         }
+        },
+        "day2": {
+         "from": 2,
+         "to": 3,
+         "label": {
+          "en": "day 2",
+          "ko": "2일"
+         }
+        },
+        "day3": {
+         "from": 4,
+         "to": 5,
+         "label": {
+          "en": "day 3",
+          "ko": "3일"
+         }
+        },
+        "day4": null
+       }
+      },
+      "caps": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           8,
+           8
+          ]
+         ],
+         "marks": {
+          "path": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": []
+      },
+      "needed": {
+       "values": [
+        3
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "days (limit)",
+          "ko": "days (제한 일수)"
+         },
+         "value": 3
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "volumes",
+        "at": 5
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "3"
+      }
+     ],
+     "answer": "8"
+    }
+   ],
+   "setup": {
+    "caps": {
+     "domain": [
+      5,
+      22
+     ]
+    }
+   },
+   "sampleInput": "[4,3,3,5,2,5]\n3"
+  },
+  {
+   "label": {
+    "en": "Example 3",
+    "ko": "예시 3"
+   },
+   "input": "volumes = [2,3,4,2,2], days = 4",
+   "expected": "4",
+   "frames": [
+    {
+     "caption": {
+      "en": "The capacity must hold the largest drink, 4, and 13, the whole queue, does it in one day, so the answer is in [4, 13].",
+      "ko": "용량은 가장 큰 음료 4를 담아야 하고, 대기열 전체 합 13은 하루에 다 담기므로 답은 [4, 13] 범위에 있습니다."
+     },
+     "views": {
+      "volumes": {
+       "values": [
+        2,
+        3,
+        4,
+        2,
+        2
+       ],
+       "spans": {}
+      },
+      "caps": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           4,
+           13
+          ]
+         ],
+         "marks": {}
+        }
+       ],
+       "points": []
+      },
+      "needed": {
+       "values": []
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "days (limit)",
+          "ko": "days (제한 일수)"
+         },
+         "value": 4
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Try the middle capacity c = (4 + 13) // 2 = 8: brewing the queue in order, each day takes drinks until the next would pass 8, which takes 2 days.",
+      "ko": "가운데 용량 c = (4 + 13) // 2 = 8을 시도합니다. 대기열 순서대로 하루 합이 8을 넘기 전까지 추출하면 2일이 걸립니다."
+     },
+     "views": {
+      "volumes": {
+       "values": [
+        2,
+        3,
+        4,
+        2,
+        2
+       ],
+       "spans": {
+        "day1": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "day 1",
+          "ko": "1일"
+         }
+        },
+        "day2": {
+         "from": 2,
+         "to": 4,
+         "label": {
+          "en": "day 2",
+          "ko": "2일"
+         }
+        }
+       }
+      },
+      "caps": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           4,
+           13
+          ]
+         ],
+         "marks": {}
+        }
+       ],
+       "points": [
+        {
+         "at": 8,
+         "label": "c",
+         "mark": "lit"
+        }
+       ]
+      },
+      "needed": {
+       "values": [
+        2
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "days (limit)",
+          "ko": "days (제한 일수)"
+         },
+         "value": 4
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "volumes",
+        "at": 4
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "2 ≤ 4 days, so c = 8 is enough and so is any bigger capacity: keep 8 as the top of the range, [4, 8].",
+      "ko": "2 ≤ 4일이므로 c = 8은 충분하고, 더 큰 용량도 마찬가지입니다. 8을 범위의 위 끝으로 두어 [4, 8]입니다."
+     },
+     "views": {
+      "volumes": {
+       "values": [
+        2,
+        3,
+        4,
+        2,
+        2
+       ],
+       "spans": {
+        "day1": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "day 1",
+          "ko": "1일"
+         }
+        },
+        "day2": {
+         "from": 2,
+         "to": 4,
+         "label": {
+          "en": "day 2",
+          "ko": "2일"
+         }
+        }
+       }
+      },
+      "caps": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           4,
+           8
+          ]
+         ],
+         "marks": {
+          "good": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 8,
+         "label": "c",
+         "mark": "lit"
+        }
+       ]
+      },
+      "needed": {
+       "values": [
+        2
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "days (limit)",
+          "ko": "days (제한 일수)"
+         },
+         "value": 4
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "needed",
+        "at": 0
+       },
+       "to": {
+        "view": "caps",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "value": "2 ≤ 4"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Try the middle capacity c = (4 + 8) // 2 = 6: brewing the queue in order, each day takes drinks until the next would pass 6, which takes 3 days.",
+      "ko": "가운데 용량 c = (4 + 8) // 2 = 6을 시도합니다. 대기열 순서대로 하루 합이 6을 넘기 전까지 추출하면 3일이 걸립니다."
+     },
+     "views": {
+      "volumes": {
+       "values": [
+        2,
+        3,
+        4,
+        2,
+        2
+       ],
+       "spans": {
+        "day1": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "day 1",
+          "ko": "1일"
+         }
+        },
+        "day2": {
+         "from": 2,
+         "to": 3,
+         "label": {
+          "en": "day 2",
+          "ko": "2일"
+         }
+        },
+        "day3": {
+         "from": 4,
+         "to": 4,
+         "label": {
+          "en": "day 3",
+          "ko": "3일"
+         }
+        }
+       }
+      },
+      "caps": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           4,
+           8
+          ]
+         ],
+         "marks": {}
+        }
+       ],
+       "points": [
+        {
+         "at": 6,
+         "label": "c",
+         "mark": "lit"
+        }
+       ]
+      },
+      "needed": {
+       "values": [
+        3
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "days (limit)",
+          "ko": "days (제한 일수)"
+         },
+         "value": 4
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "volumes",
+        "at": 4
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "3 ≤ 4 days, so c = 6 is enough and so is any bigger capacity: keep 6 as the top of the range, [4, 6].",
+      "ko": "3 ≤ 4일이므로 c = 6은 충분하고, 더 큰 용량도 마찬가지입니다. 6을 범위의 위 끝으로 두어 [4, 6]입니다."
+     },
+     "views": {
+      "volumes": {
+       "values": [
+        2,
+        3,
+        4,
+        2,
+        2
+       ],
+       "spans": {
+        "day1": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "day 1",
+          "ko": "1일"
+         }
+        },
+        "day2": {
+         "from": 2,
+         "to": 3,
+         "label": {
+          "en": "day 2",
+          "ko": "2일"
+         }
+        },
+        "day3": {
+         "from": 4,
+         "to": 4,
+         "label": {
+          "en": "day 3",
+          "ko": "3일"
+         }
+        }
+       }
+      },
+      "caps": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           4,
+           6
+          ]
+         ],
+         "marks": {
+          "good": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 6,
+         "label": "c",
+         "mark": "lit"
+        }
+       ]
+      },
+      "needed": {
+       "values": [
+        3
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "days (limit)",
+          "ko": "days (제한 일수)"
+         },
+         "value": 4
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "needed",
+        "at": 0
+       },
+       "to": {
+        "view": "caps",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "value": "3 ≤ 4"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Try the middle capacity c = (4 + 6) // 2 = 5: brewing the queue in order, each day takes drinks until the next would pass 5, which takes 3 days.",
+      "ko": "가운데 용량 c = (4 + 6) // 2 = 5를 시도합니다. 대기열 순서대로 하루 합이 5를 넘기 전까지 추출하면 3일이 걸립니다."
+     },
+     "views": {
+      "volumes": {
+       "values": [
+        2,
+        3,
+        4,
+        2,
+        2
+       ],
+       "spans": {
+        "day1": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "day 1",
+          "ko": "1일"
+         }
+        },
+        "day2": {
+         "from": 2,
+         "to": 2,
+         "label": {
+          "en": "day 2",
+          "ko": "2일"
+         }
+        },
+        "day3": {
+         "from": 3,
+         "to": 4,
+         "label": {
+          "en": "day 3",
+          "ko": "3일"
+         }
+        }
+       }
+      },
+      "caps": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           4,
+           6
+          ]
+         ],
+         "marks": {}
+        }
+       ],
+       "points": [
+        {
+         "at": 5,
+         "label": "c",
+         "mark": "lit"
+        }
+       ]
+      },
+      "needed": {
+       "values": [
+        3
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "days (limit)",
+          "ko": "days (제한 일수)"
+         },
+         "value": 4
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "volumes",
+        "at": 4
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "3 ≤ 4 days, so c = 5 is enough and so is any bigger capacity: keep 5 as the top of the range, [4, 5].",
+      "ko": "3 ≤ 4일이므로 c = 5는 충분하고, 더 큰 용량도 마찬가지입니다. 5를 범위의 위 끝으로 두어 [4, 5]입니다."
+     },
+     "views": {
+      "volumes": {
+       "values": [
+        2,
+        3,
+        4,
+        2,
+        2
+       ],
+       "spans": {
+        "day1": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "day 1",
+          "ko": "1일"
+         }
+        },
+        "day2": {
+         "from": 2,
+         "to": 2,
+         "label": {
+          "en": "day 2",
+          "ko": "2일"
+         }
+        },
+        "day3": {
+         "from": 3,
+         "to": 4,
+         "label": {
+          "en": "day 3",
+          "ko": "3일"
+         }
+        }
+       }
+      },
+      "caps": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           4,
+           5
+          ]
+         ],
+         "marks": {
+          "good": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 5,
+         "label": "c",
+         "mark": "lit"
+        }
+       ]
+      },
+      "needed": {
+       "values": [
+        3
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "days (limit)",
+          "ko": "days (제한 일수)"
+         },
+         "value": 4
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "needed",
+        "at": 0
+       },
+       "to": {
+        "view": "caps",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "value": "3 ≤ 4"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Try the middle capacity c = (4 + 5) // 2 = 4: brewing the queue in order, each day takes drinks until the next would pass 4, which takes 4 days.",
+      "ko": "가운데 용량 c = (4 + 5) // 2 = 4를 시도합니다. 대기열 순서대로 하루 합이 4를 넘기 전까지 추출하면 4일이 걸립니다."
+     },
+     "views": {
+      "volumes": {
+       "values": [
+        2,
+        3,
+        4,
+        2,
+        2
+       ],
+       "spans": {
+        "day1": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "day 1",
+          "ko": "1일"
+         }
+        },
+        "day2": {
+         "from": 1,
+         "to": 1,
+         "label": {
+          "en": "day 2",
+          "ko": "2일"
+         }
+        },
+        "day3": {
+         "from": 2,
+         "to": 2,
+         "label": {
+          "en": "day 3",
+          "ko": "3일"
+         }
+        },
+        "day4": {
+         "from": 3,
+         "to": 4,
+         "label": {
+          "en": "day 4",
+          "ko": "4일"
+         }
+        }
+       }
+      },
+      "caps": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           4,
+           5
+          ]
+         ],
+         "marks": {}
+        }
+       ],
+       "points": [
+        {
+         "at": 4,
+         "label": "c",
+         "mark": "lit"
+        }
+       ]
+      },
+      "needed": {
+       "values": [
+        4
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "days (limit)",
+          "ko": "days (제한 일수)"
+         },
+         "value": 4
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "volumes",
+        "at": 4
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "4"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "4 ≤ 4 days, so c = 4 is enough and so is any bigger capacity: keep 4 as the top of the range, [4, 4].",
+      "ko": "4 ≤ 4일이므로 c = 4는 충분하고, 더 큰 용량도 마찬가지입니다. 4를 범위의 위 끝으로 두어 [4, 4]입니다."
+     },
+     "views": {
+      "volumes": {
+       "values": [
+        2,
+        3,
+        4,
+        2,
+        2
+       ],
+       "spans": {
+        "day1": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "day 1",
+          "ko": "1일"
+         }
+        },
+        "day2": {
+         "from": 1,
+         "to": 1,
+         "label": {
+          "en": "day 2",
+          "ko": "2일"
+         }
+        },
+        "day3": {
+         "from": 2,
+         "to": 2,
+         "label": {
+          "en": "day 3",
+          "ko": "3일"
+         }
+        },
+        "day4": {
+         "from": 3,
+         "to": 4,
+         "label": {
+          "en": "day 4",
+          "ko": "4일"
+         }
+        }
+       }
+      },
+      "caps": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           4,
+           4
+          ]
+         ],
+         "marks": {
+          "good": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 4,
+         "label": "c",
+         "mark": "lit"
+        }
+       ]
+      },
+      "needed": {
+       "values": [
+        4
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "days (limit)",
+          "ko": "days (제한 일수)"
+         },
+         "value": 4
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "needed",
+        "at": 0
+       },
+       "to": {
+        "view": "caps",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "value": "4 ≤ 4"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The range closed on one capacity, [4, 4]: c = 4 is the smallest that brews every drink within 4 days (it takes 4).",
+      "ko": "범위가 [4, 4] 구간으로 좁혀져 용량이 하나만 남았습니다. 4일 안에 모두 추출하는 가장 작은 용량은 c = 4입니다(4일 걸림)."
+     },
+     "views": {
+      "volumes": {
+       "values": [
+        2,
+        3,
+        4,
+        2,
+        2
+       ],
+       "spans": {
+        "day1": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "day 1",
+          "ko": "1일"
+         }
+        },
+        "day2": {
+         "from": 1,
+         "to": 1,
+         "label": {
+          "en": "day 2",
+          "ko": "2일"
+         }
+        },
+        "day3": {
+         "from": 2,
+         "to": 2,
+         "label": {
+          "en": "day 3",
+          "ko": "3일"
+         }
+        },
+        "day4": {
+         "from": 3,
+         "to": 4,
+         "label": {
+          "en": "day 4",
+          "ko": "4일"
+         }
+        }
+       }
+      },
+      "caps": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           4,
+           4
+          ]
+         ],
+         "marks": {
+          "path": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": []
+      },
+      "needed": {
+       "values": [
+        4
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "days (limit)",
+          "ko": "days (제한 일수)"
+         },
+         "value": 4
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "volumes",
+        "at": 4
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "4"
+      }
+     ],
+     "answer": "4"
+    }
+   ],
+   "setup": {
+    "caps": {
+     "domain": [
+      4,
+      13
+     ]
+    }
+   },
+   "sampleInput": "[2,3,4,2,2]\n4"
+  }
+ ]
+}

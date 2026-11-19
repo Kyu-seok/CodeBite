@@ -36,7 +36,10 @@
   {
    "id": "carry",
    "type": "array",
-   "title": "carry"
+   "title": {
+    "en": "carry",
+    "ko": "carry (올림)"
+   }
   }
  ],
  "runs": [

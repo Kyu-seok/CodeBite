@@ -27,7 +27,7 @@ wt = Walkthrough(
      "ko": "애너그램은 글자 구성이 같아서 글자를 정렬하면 모두 같은 키가 됩니다: 키에서 그룹으로 가는 해시 맵이 "
            "한 번 훑으며 그룹을 모읍니다."},
     views=[
-        {"id": "words", "type": "table", "title": "strs"},
+        {"id": "words", "type": "table", "title": {"en": "strs", "ko": "strs (단어들)"}},
         {"id": "groups", "type": "map", "title": {"en": "groups: key → words", "ko": "groups: 키 → 단어"},
          "empty": {"en": "empty", "ko": "비어 있음"}},
         {"id": "result", "type": "output", "title": {"en": "answer", "ko": "답"}, "empty": {"en": "empty", "ko": "비어 있음"}},

@@ -1,0 +1,3347 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Pick Circular Donuts",
+  "ko": "원형 도넛 고르기"
+ },
+ "approach": {
+  "en": "The first and last donuts can't both be taken, so leave one of them out: that turns the circle into a line, solved with two rolling totals (last donut skipped, last donut taken). Do it both ways and keep the larger.",
+  "ko": "첫 도넛과 마지막 도넛은 함께 고를 수 없으니 둘 중 하나를 뺍니다. 그러면 원이 한 줄이 되고, 직전 도넛을 건너뛴 합과 고른 합 두 값으로 풉니다. 두 가지로 모두 풀어 큰 쪽을 답으로 합니다."
+ },
+ "views": [
+  {
+   "id": "tray",
+   "type": "array",
+   "title": {
+    "en": "tastiness",
+    "ko": "tastiness (도넛별 맛 점수)"
+   }
+  },
+  {
+   "id": "best",
+   "type": "array",
+   "title": {
+    "en": "best total in this line so far",
+    "ko": "이 줄의 지금까지 최대 합"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "tastiness = [4,1,5,6,2]",
+   "expected": "10",
+   "frames": [
+    {
+     "caption": {
+      "en": "5 donuts in a circle, so donuts 0 and 4 are neighbors. First leave out donut 0 and solve donuts 1 to 4 as a line; skip and take start at 0.",
+      "ko": "도넛 5개가 원형으로 놓여 0번과 4번 도넛이 이웃입니다. 먼저 0번 도넛을 빼고 1번부터 4번까지를 한 줄로 풀고, 건너뜀과 고름은 0에서 시작합니다."
+     },
+     "views": {
+      "tray": {
+       "values": [
+        4,
+        1,
+        5,
+        6,
+        2
+       ],
+       "pointers": {
+        "i": null
+       },
+       "spans": {
+        "line": {
+         "from": 1,
+         "to": 4,
+         "label": {
+          "en": "without donut 0",
+          "ko": "0번 도넛 제외"
+         },
+         "fade": true
+        }
+       },
+       "marks": {
+        "bad": [
+         0
+        ]
+       }
+      },
+      "best": {
+       "values": [
+        0,
+        0
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "take",
+          "ko": "고름"
+         }
+        ]
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Donut 1 has 1: skipping it keeps 0, and taking it gives 0 + 1 = 1.",
+      "ko": "1번 도넛은 1점입니다. 건너뛰면 0, 고르면 0 + 1 = 1입니다."
+     },
+     "views": {
+      "tray": {
+       "values": [
+        4,
+        1,
+        5,
+        6,
+        2
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "spans": {
+        "line": {
+         "from": 1,
+         "to": 4,
+         "label": {
+          "en": "without donut 0",
+          "ko": "0번 도넛 제외"
+         },
+         "fade": true
+        }
+       },
+       "marks": {
+        "lit": [
+         1
+        ],
+        "bad": [
+         0
+        ]
+       }
+      },
+      "best": {
+       "values": [
+        0,
+        1
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "take",
+          "ko": "고름"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tray",
+        "at": 1
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "best",
+        "at": 0
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Donut 2 has 5: skipping it keeps the larger of 0 and 1, 1. Taking it adds 5 to the skipped total: 0 + 5 = 5.",
+      "ko": "2번 도넛은 5점입니다. 건너뛰면 0과 1 중 큰 값 1, 고르면 건너뛴 합에 더해 0 + 5 = 5입니다."
+     },
+     "views": {
+      "tray": {
+       "values": [
+        4,
+        1,
+        5,
+        6,
+        2
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "spans": {
+        "line": {
+         "from": 1,
+         "to": 4,
+         "label": {
+          "en": "without donut 0",
+          "ko": "0번 도넛 제외"
+         },
+         "fade": true
+        }
+       },
+       "marks": {
+        "lit": [
+         2
+        ],
+        "bad": [
+         0
+        ]
+       }
+      },
+      "best": {
+       "values": [
+        1,
+        5
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "take",
+          "ko": "고름"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         0,
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "best",
+        "at": 1
+       },
+       "to": {
+        "view": "best",
+        "at": 0
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "tray",
+        "at": 2
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "5"
+      },
+      {
+       "from": {
+        "view": "best",
+        "at": 0
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Donut 3 has 6: skipping it keeps the larger of 1 and 5, 5. Taking it adds 6 to the skipped total: 1 + 6 = 7.",
+      "ko": "3번 도넛은 6점입니다. 건너뛰면 1과 5 중 큰 값 5, 고르면 건너뛴 합에 더해 1 + 6 = 7입니다."
+     },
+     "views": {
+      "tray": {
+       "values": [
+        4,
+        1,
+        5,
+        6,
+        2
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "spans": {
+        "line": {
+         "from": 1,
+         "to": 4,
+         "label": {
+          "en": "without donut 0",
+          "ko": "0번 도넛 제외"
+         },
+         "fade": true
+        }
+       },
+       "marks": {
+        "lit": [
+         3
+        ],
+        "bad": [
+         0
+        ]
+       }
+      },
+      "best": {
+       "values": [
+        5,
+        7
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "take",
+          "ko": "고름"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         0,
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "best",
+        "at": 1
+       },
+       "to": {
+        "view": "best",
+        "at": 0
+       },
+       "value": "5"
+      },
+      {
+       "from": {
+        "view": "tray",
+        "at": 3
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "6"
+      },
+      {
+       "from": {
+        "view": "best",
+        "at": 0
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Donut 4 has 2: skipping it keeps the larger of 5 and 7, 7. Taking it adds 2 to the skipped total: 5 + 2 = 7.",
+      "ko": "4번 도넛은 2점입니다. 건너뛰면 5와 7 중 큰 값 7, 고르면 건너뛴 합에 더해 5 + 2 = 7입니다."
+     },
+     "views": {
+      "tray": {
+       "values": [
+        4,
+        1,
+        5,
+        6,
+        2
+       ],
+       "pointers": {
+        "i": 4
+       },
+       "spans": {
+        "line": {
+         "from": 1,
+         "to": 4,
+         "label": {
+          "en": "without donut 0",
+          "ko": "0번 도넛 제외"
+         },
+         "fade": true
+        }
+       },
+       "marks": {
+        "lit": [
+         4
+        ],
+        "bad": [
+         0
+        ]
+       }
+      },
+      "best": {
+       "values": [
+        7,
+        7
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "take",
+          "ko": "고름"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "best",
+        "at": 1
+       },
+       "to": {
+        "view": "best",
+        "at": 0
+       },
+       "value": "7"
+      },
+      {
+       "from": {
+        "view": "tray",
+        "at": 4
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "best",
+        "at": 0
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "5"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Without donut 0 the best is the larger of skip and take: 7, from donuts 2, 4 (5 + 2).",
+      "ko": "0번 도넛을 뺀 줄의 최댓값은 건너뜀과 고름 중 큰 값 7이며, 2, 4번 도넛(5 + 2)에서 나옵니다."
+     },
+     "views": {
+      "tray": {
+       "values": [
+        4,
+        1,
+        5,
+        6,
+        2
+       ],
+       "pointers": {
+        "i": null
+       },
+       "spans": {
+        "done0": {
+         "from": 1,
+         "to": 4,
+         "label": {
+          "en": "without 0: 7",
+          "ko": "0번 제외: 7"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "marks": {
+        "good": [
+         2,
+         4
+        ]
+       }
+      },
+      "best": {
+       "values": [
+        7,
+        7
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "take",
+          "ko": "고름"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Now leave out donut 4 instead and solve donuts 0 to 3; skip and take start over at 0.",
+      "ko": "이번에는 4번 도넛을 빼고 0번부터 3번까지를 풉니다. 건너뜀과 고름은 다시 0에서 시작합니다."
+     },
+     "views": {
+      "tray": {
+       "values": [
+        4,
+        1,
+        5,
+        6,
+        2
+       ],
+       "pointers": {
+        "i": null
+       },
+       "spans": {
+        "done0": {
+         "from": 1,
+         "to": 4,
+         "label": {
+          "en": "without 0: 7",
+          "ko": "0번 제외: 7"
+         },
+         "mark": "good",
+         "below": true
+        },
+        "line": {
+         "from": 0,
+         "to": 3,
+         "label": {
+          "en": "without donut 4",
+          "ko": "4번 도넛 제외"
+         },
+         "fade": true
+        }
+       },
+       "marks": {
+        "bad": [
+         4
+        ]
+       }
+      },
+      "best": {
+       "values": [
+        0,
+        0
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "take",
+          "ko": "고름"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         0,
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "best",
+        "at": 0
+       },
+       "value": "0"
+      },
+      {
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Donut 0 has 4: skipping it keeps 0, and taking it gives 0 + 4 = 4.",
+      "ko": "0번 도넛은 4점입니다. 건너뛰면 0, 고르면 0 + 4 = 4입니다."
+     },
+     "views": {
+      "tray": {
+       "values": [
+        4,
+        1,
+        5,
+        6,
+        2
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "spans": {
+        "done0": {
+         "from": 1,
+         "to": 4,
+         "label": {
+          "en": "without 0: 7",
+          "ko": "0번 제외: 7"
+         },
+         "mark": "good",
+         "below": true
+        },
+        "line": {
+         "from": 0,
+         "to": 3,
+         "label": {
+          "en": "without donut 4",
+          "ko": "4번 도넛 제외"
+         },
+         "fade": true
+        }
+       },
+       "marks": {
+        "lit": [
+         0
+        ],
+        "bad": [
+         4
+        ]
+       }
+      },
+      "best": {
+       "values": [
+        0,
+        4
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "take",
+          "ko": "고름"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tray",
+        "at": 0
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "4"
+      },
+      {
+       "from": {
+        "view": "best",
+        "at": 0
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Donut 1 has 1: skipping it keeps the larger of 0 and 4, 4. Taking it adds 1 to the skipped total: 0 + 1 = 1.",
+      "ko": "1번 도넛은 1점입니다. 건너뛰면 0과 4 중 큰 값 4, 고르면 건너뛴 합에 더해 0 + 1 = 1입니다."
+     },
+     "views": {
+      "tray": {
+       "values": [
+        4,
+        1,
+        5,
+        6,
+        2
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "spans": {
+        "done0": {
+         "from": 1,
+         "to": 4,
+         "label": {
+          "en": "without 0: 7",
+          "ko": "0번 제외: 7"
+         },
+         "mark": "good",
+         "below": true
+        },
+        "line": {
+         "from": 0,
+         "to": 3,
+         "label": {
+          "en": "without donut 4",
+          "ko": "4번 도넛 제외"
+         },
+         "fade": true
+        }
+       },
+       "marks": {
+        "lit": [
+         1
+        ],
+        "bad": [
+         4
+        ]
+       }
+      },
+      "best": {
+       "values": [
+        4,
+        1
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "take",
+          "ko": "고름"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         0,
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "best",
+        "at": 1
+       },
+       "to": {
+        "view": "best",
+        "at": 0
+       },
+       "value": "4"
+      },
+      {
+       "from": {
+        "view": "tray",
+        "at": 1
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "best",
+        "at": 0
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Donut 2 has 5: skipping it keeps the larger of 4 and 1, 4. Taking it adds 5 to the skipped total: 4 + 5 = 9.",
+      "ko": "2번 도넛은 5점입니다. 건너뛰면 4와 1 중 큰 값 4, 고르면 건너뛴 합에 더해 4 + 5 = 9입니다."
+     },
+     "views": {
+      "tray": {
+       "values": [
+        4,
+        1,
+        5,
+        6,
+        2
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "spans": {
+        "done0": {
+         "from": 1,
+         "to": 4,
+         "label": {
+          "en": "without 0: 7",
+          "ko": "0번 제외: 7"
+         },
+         "mark": "good",
+         "below": true
+        },
+        "line": {
+         "from": 0,
+         "to": 3,
+         "label": {
+          "en": "without donut 4",
+          "ko": "4번 도넛 제외"
+         },
+         "fade": true
+        }
+       },
+       "marks": {
+        "lit": [
+         2
+        ],
+        "bad": [
+         4
+        ]
+       }
+      },
+      "best": {
+       "values": [
+        4,
+        9
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "take",
+          "ko": "고름"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tray",
+        "at": 2
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "5"
+      },
+      {
+       "from": {
+        "view": "best",
+        "at": 0
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "4"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Donut 3 has 6: skipping it keeps the larger of 4 and 9, 9. Taking it adds 6 to the skipped total: 4 + 6 = 10.",
+      "ko": "3번 도넛은 6점입니다. 건너뛰면 4와 9 중 큰 값 9, 고르면 건너뛴 합에 더해 4 + 6 = 10입니다."
+     },
+     "views": {
+      "tray": {
+       "values": [
+        4,
+        1,
+        5,
+        6,
+        2
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "spans": {
+        "done0": {
+         "from": 1,
+         "to": 4,
+         "label": {
+          "en": "without 0: 7",
+          "ko": "0번 제외: 7"
+         },
+         "mark": "good",
+         "below": true
+        },
+        "line": {
+         "from": 0,
+         "to": 3,
+         "label": {
+          "en": "without donut 4",
+          "ko": "4번 도넛 제외"
+         },
+         "fade": true
+        }
+       },
+       "marks": {
+        "lit": [
+         3
+        ],
+        "bad": [
+         4
+        ]
+       }
+      },
+      "best": {
+       "values": [
+        9,
+        10
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "take",
+          "ko": "고름"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         0,
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "best",
+        "at": 1
+       },
+       "to": {
+        "view": "best",
+        "at": 0
+       },
+       "value": "9"
+      },
+      {
+       "from": {
+        "view": "tray",
+        "at": 3
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "6"
+      },
+      {
+       "from": {
+        "view": "best",
+        "at": 0
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "4"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Without donut 4 the best is 10, and without donut 0 it was 7. The answer is the larger, without donut 4: donuts 0, 3, 4 + 6 = 10.",
+      "ko": "4번 도넛을 뺀 줄의 최댓값은 10, 0번 도넛을 뺀 줄의 최댓값은 7입니다. 답은 더 큰 쪽인 4번 제외 줄의 0, 3번 도넛으로, 4 + 6 = 10입니다."
+     },
+     "views": {
+      "tray": {
+       "values": [
+        4,
+        1,
+        5,
+        6,
+        2
+       ],
+       "pointers": {
+        "i": null
+       },
+       "spans": {
+        "done1": {
+         "from": 0,
+         "to": 3,
+         "label": {
+          "en": "without 4: 10",
+          "ko": "4번 제외: 10"
+         },
+         "mark": "path",
+         "below": true
+        }
+       },
+       "marks": {
+        "path": [
+         0,
+         3
+        ],
+        "dim": [
+         1,
+         2,
+         4
+        ]
+       }
+      },
+      "best": {
+       "values": [
+        9,
+        10
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "take",
+          "ko": "고름"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      }
+     },
+     "answer": "10"
+    }
+   ],
+   "sampleInput": "[4,1,5,6,2]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "tastiness = [3,8,2,7,1,9]",
+   "expected": "24",
+   "frames": [
+    {
+     "caption": {
+      "en": "6 donuts in a circle, so donuts 0 and 5 are neighbors. First leave out donut 0 and solve donuts 1 to 5 as a line; skip and take start at 0.",
+      "ko": "도넛 6개가 원형으로 놓여 0번과 5번 도넛이 이웃입니다. 먼저 0번 도넛을 빼고 1번부터 5번까지를 한 줄로 풀고, 건너뜀과 고름은 0에서 시작합니다."
+     },
+     "views": {
+      "tray": {
+       "values": [
+        3,
+        8,
+        2,
+        7,
+        1,
+        9
+       ],
+       "pointers": {
+        "i": null
+       },
+       "spans": {
+        "line": {
+         "from": 1,
+         "to": 5,
+         "label": {
+          "en": "without donut 0",
+          "ko": "0번 도넛 제외"
+         },
+         "fade": true
+        }
+       },
+       "marks": {
+        "bad": [
+         0
+        ]
+       }
+      },
+      "best": {
+       "values": [
+        0,
+        0
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "take",
+          "ko": "고름"
+         }
+        ]
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Donut 1 has 8: skipping it keeps 0, and taking it gives 0 + 8 = 8.",
+      "ko": "1번 도넛은 8점입니다. 건너뛰면 0, 고르면 0 + 8 = 8입니다."
+     },
+     "views": {
+      "tray": {
+       "values": [
+        3,
+        8,
+        2,
+        7,
+        1,
+        9
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "spans": {
+        "line": {
+         "from": 1,
+         "to": 5,
+         "label": {
+          "en": "without donut 0",
+          "ko": "0번 도넛 제외"
+         },
+         "fade": true
+        }
+       },
+       "marks": {
+        "lit": [
+         1
+        ],
+        "bad": [
+         0
+        ]
+       }
+      },
+      "best": {
+       "values": [
+        0,
+        8
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "take",
+          "ko": "고름"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tray",
+        "at": 1
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "8"
+      },
+      {
+       "from": {
+        "view": "best",
+        "at": 0
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Donut 2 has 2: skipping it keeps the larger of 0 and 8, 8. Taking it adds 2 to the skipped total: 0 + 2 = 2.",
+      "ko": "2번 도넛은 2점입니다. 건너뛰면 0과 8 중 큰 값 8, 고르면 건너뛴 합에 더해 0 + 2 = 2입니다."
+     },
+     "views": {
+      "tray": {
+       "values": [
+        3,
+        8,
+        2,
+        7,
+        1,
+        9
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "spans": {
+        "line": {
+         "from": 1,
+         "to": 5,
+         "label": {
+          "en": "without donut 0",
+          "ko": "0번 도넛 제외"
+         },
+         "fade": true
+        }
+       },
+       "marks": {
+        "lit": [
+         2
+        ],
+        "bad": [
+         0
+        ]
+       }
+      },
+      "best": {
+       "values": [
+        8,
+        2
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "take",
+          "ko": "고름"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         0,
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "best",
+        "at": 1
+       },
+       "to": {
+        "view": "best",
+        "at": 0
+       },
+       "value": "8"
+      },
+      {
+       "from": {
+        "view": "tray",
+        "at": 2
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "best",
+        "at": 0
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Donut 3 has 7: skipping it keeps the larger of 8 and 2, 8. Taking it adds 7 to the skipped total: 8 + 7 = 15.",
+      "ko": "3번 도넛은 7점입니다. 건너뛰면 8과 2 중 큰 값 8, 고르면 건너뛴 합에 더해 8 + 7 = 15입니다."
+     },
+     "views": {
+      "tray": {
+       "values": [
+        3,
+        8,
+        2,
+        7,
+        1,
+        9
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "spans": {
+        "line": {
+         "from": 1,
+         "to": 5,
+         "label": {
+          "en": "without donut 0",
+          "ko": "0번 도넛 제외"
+         },
+         "fade": true
+        }
+       },
+       "marks": {
+        "lit": [
+         3
+        ],
+        "bad": [
+         0
+        ]
+       }
+      },
+      "best": {
+       "values": [
+        8,
+        15
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "take",
+          "ko": "고름"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tray",
+        "at": 3
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "7"
+      },
+      {
+       "from": {
+        "view": "best",
+        "at": 0
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "8"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Donut 4 has 1: skipping it keeps the larger of 8 and 15, 15. Taking it adds 1 to the skipped total: 8 + 1 = 9.",
+      "ko": "4번 도넛은 1점입니다. 건너뛰면 8과 15 중 큰 값 15, 고르면 건너뛴 합에 더해 8 + 1 = 9입니다."
+     },
+     "views": {
+      "tray": {
+       "values": [
+        3,
+        8,
+        2,
+        7,
+        1,
+        9
+       ],
+       "pointers": {
+        "i": 4
+       },
+       "spans": {
+        "line": {
+         "from": 1,
+         "to": 5,
+         "label": {
+          "en": "without donut 0",
+          "ko": "0번 도넛 제외"
+         },
+         "fade": true
+        }
+       },
+       "marks": {
+        "lit": [
+         4
+        ],
+        "bad": [
+         0
+        ]
+       }
+      },
+      "best": {
+       "values": [
+        15,
+        9
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "take",
+          "ko": "고름"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         0,
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "best",
+        "at": 1
+       },
+       "to": {
+        "view": "best",
+        "at": 0
+       },
+       "value": "15"
+      },
+      {
+       "from": {
+        "view": "tray",
+        "at": 4
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "best",
+        "at": 0
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "8"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Donut 5 has 9: skipping it keeps the larger of 15 and 9, 15. Taking it adds 9 to the skipped total: 15 + 9 = 24.",
+      "ko": "5번 도넛은 9점입니다. 건너뛰면 15와 9 중 큰 값 15, 고르면 건너뛴 합에 더해 15 + 9 = 24입니다."
+     },
+     "views": {
+      "tray": {
+       "values": [
+        3,
+        8,
+        2,
+        7,
+        1,
+        9
+       ],
+       "pointers": {
+        "i": 5
+       },
+       "spans": {
+        "line": {
+         "from": 1,
+         "to": 5,
+         "label": {
+          "en": "without donut 0",
+          "ko": "0번 도넛 제외"
+         },
+         "fade": true
+        }
+       },
+       "marks": {
+        "lit": [
+         5
+        ],
+        "bad": [
+         0
+        ]
+       }
+      },
+      "best": {
+       "values": [
+        15,
+        24
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "take",
+          "ko": "고름"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tray",
+        "at": 5
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "9"
+      },
+      {
+       "from": {
+        "view": "best",
+        "at": 0
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "15"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Without donut 0 the best is the larger of skip and take: 24, from donuts 1, 3, 5 (8 + 7 + 9).",
+      "ko": "0번 도넛을 뺀 줄의 최댓값은 건너뜀과 고름 중 큰 값 24이며, 1, 3, 5번 도넛(8 + 7 + 9)에서 나옵니다."
+     },
+     "views": {
+      "tray": {
+       "values": [
+        3,
+        8,
+        2,
+        7,
+        1,
+        9
+       ],
+       "pointers": {
+        "i": null
+       },
+       "spans": {
+        "done0": {
+         "from": 1,
+         "to": 5,
+         "label": {
+          "en": "without 0: 24",
+          "ko": "0번 제외: 24"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "marks": {
+        "good": [
+         1,
+         3,
+         5
+        ]
+       }
+      },
+      "best": {
+       "values": [
+        15,
+        24
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "take",
+          "ko": "고름"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Now leave out donut 5 instead and solve donuts 0 to 4; skip and take start over at 0.",
+      "ko": "이번에는 5번 도넛을 빼고 0번부터 4번까지를 풉니다. 건너뜀과 고름은 다시 0에서 시작합니다."
+     },
+     "views": {
+      "tray": {
+       "values": [
+        3,
+        8,
+        2,
+        7,
+        1,
+        9
+       ],
+       "pointers": {
+        "i": null
+       },
+       "spans": {
+        "done0": {
+         "from": 1,
+         "to": 5,
+         "label": {
+          "en": "without 0: 24",
+          "ko": "0번 제외: 24"
+         },
+         "mark": "good",
+         "below": true
+        },
+        "line": {
+         "from": 0,
+         "to": 4,
+         "label": {
+          "en": "without donut 5",
+          "ko": "5번 도넛 제외"
+         },
+         "fade": true
+        }
+       },
+       "marks": {
+        "bad": [
+         5
+        ]
+       }
+      },
+      "best": {
+       "values": [
+        0,
+        0
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "take",
+          "ko": "고름"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         0,
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "best",
+        "at": 0
+       },
+       "value": "0"
+      },
+      {
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Donut 0 has 3: skipping it keeps 0, and taking it gives 0 + 3 = 3.",
+      "ko": "0번 도넛은 3점입니다. 건너뛰면 0, 고르면 0 + 3 = 3입니다."
+     },
+     "views": {
+      "tray": {
+       "values": [
+        3,
+        8,
+        2,
+        7,
+        1,
+        9
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "spans": {
+        "done0": {
+         "from": 1,
+         "to": 5,
+         "label": {
+          "en": "without 0: 24",
+          "ko": "0번 제외: 24"
+         },
+         "mark": "good",
+         "below": true
+        },
+        "line": {
+         "from": 0,
+         "to": 4,
+         "label": {
+          "en": "without donut 5",
+          "ko": "5번 도넛 제외"
+         },
+         "fade": true
+        }
+       },
+       "marks": {
+        "lit": [
+         0
+        ],
+        "bad": [
+         5
+        ]
+       }
+      },
+      "best": {
+       "values": [
+        0,
+        3
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "take",
+          "ko": "고름"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tray",
+        "at": 0
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "3"
+      },
+      {
+       "from": {
+        "view": "best",
+        "at": 0
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Donut 1 has 8: skipping it keeps the larger of 0 and 3, 3. Taking it adds 8 to the skipped total: 0 + 8 = 8.",
+      "ko": "1번 도넛은 8점입니다. 건너뛰면 0과 3 중 큰 값 3, 고르면 건너뛴 합에 더해 0 + 8 = 8입니다."
+     },
+     "views": {
+      "tray": {
+       "values": [
+        3,
+        8,
+        2,
+        7,
+        1,
+        9
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "spans": {
+        "done0": {
+         "from": 1,
+         "to": 5,
+         "label": {
+          "en": "without 0: 24",
+          "ko": "0번 제외: 24"
+         },
+         "mark": "good",
+         "below": true
+        },
+        "line": {
+         "from": 0,
+         "to": 4,
+         "label": {
+          "en": "without donut 5",
+          "ko": "5번 도넛 제외"
+         },
+         "fade": true
+        }
+       },
+       "marks": {
+        "lit": [
+         1
+        ],
+        "bad": [
+         5
+        ]
+       }
+      },
+      "best": {
+       "values": [
+        3,
+        8
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "take",
+          "ko": "고름"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         0,
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "best",
+        "at": 1
+       },
+       "to": {
+        "view": "best",
+        "at": 0
+       },
+       "value": "3"
+      },
+      {
+       "from": {
+        "view": "tray",
+        "at": 1
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "8"
+      },
+      {
+       "from": {
+        "view": "best",
+        "at": 0
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Donut 2 has 2: skipping it keeps the larger of 3 and 8, 8. Taking it adds 2 to the skipped total: 3 + 2 = 5.",
+      "ko": "2번 도넛은 2점입니다. 건너뛰면 3과 8 중 큰 값 8, 고르면 건너뛴 합에 더해 3 + 2 = 5입니다."
+     },
+     "views": {
+      "tray": {
+       "values": [
+        3,
+        8,
+        2,
+        7,
+        1,
+        9
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "spans": {
+        "done0": {
+         "from": 1,
+         "to": 5,
+         "label": {
+          "en": "without 0: 24",
+          "ko": "0번 제외: 24"
+         },
+         "mark": "good",
+         "below": true
+        },
+        "line": {
+         "from": 0,
+         "to": 4,
+         "label": {
+          "en": "without donut 5",
+          "ko": "5번 도넛 제외"
+         },
+         "fade": true
+        }
+       },
+       "marks": {
+        "lit": [
+         2
+        ],
+        "bad": [
+         5
+        ]
+       }
+      },
+      "best": {
+       "values": [
+        8,
+        5
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "take",
+          "ko": "고름"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         0,
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "best",
+        "at": 1
+       },
+       "to": {
+        "view": "best",
+        "at": 0
+       },
+       "value": "8"
+      },
+      {
+       "from": {
+        "view": "tray",
+        "at": 2
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "best",
+        "at": 0
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Donut 3 has 7: skipping it keeps the larger of 8 and 5, 8. Taking it adds 7 to the skipped total: 8 + 7 = 15.",
+      "ko": "3번 도넛은 7점입니다. 건너뛰면 8과 5 중 큰 값 8, 고르면 건너뛴 합에 더해 8 + 7 = 15입니다."
+     },
+     "views": {
+      "tray": {
+       "values": [
+        3,
+        8,
+        2,
+        7,
+        1,
+        9
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "spans": {
+        "done0": {
+         "from": 1,
+         "to": 5,
+         "label": {
+          "en": "without 0: 24",
+          "ko": "0번 제외: 24"
+         },
+         "mark": "good",
+         "below": true
+        },
+        "line": {
+         "from": 0,
+         "to": 4,
+         "label": {
+          "en": "without donut 5",
+          "ko": "5번 도넛 제외"
+         },
+         "fade": true
+        }
+       },
+       "marks": {
+        "lit": [
+         3
+        ],
+        "bad": [
+         5
+        ]
+       }
+      },
+      "best": {
+       "values": [
+        8,
+        15
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "take",
+          "ko": "고름"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tray",
+        "at": 3
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "7"
+      },
+      {
+       "from": {
+        "view": "best",
+        "at": 0
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "8"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Donut 4 has 1: skipping it keeps the larger of 8 and 15, 15. Taking it adds 1 to the skipped total: 8 + 1 = 9.",
+      "ko": "4번 도넛은 1점입니다. 건너뛰면 8과 15 중 큰 값 15, 고르면 건너뛴 합에 더해 8 + 1 = 9입니다."
+     },
+     "views": {
+      "tray": {
+       "values": [
+        3,
+        8,
+        2,
+        7,
+        1,
+        9
+       ],
+       "pointers": {
+        "i": 4
+       },
+       "spans": {
+        "done0": {
+         "from": 1,
+         "to": 5,
+         "label": {
+          "en": "without 0: 24",
+          "ko": "0번 제외: 24"
+         },
+         "mark": "good",
+         "below": true
+        },
+        "line": {
+         "from": 0,
+         "to": 4,
+         "label": {
+          "en": "without donut 5",
+          "ko": "5번 도넛 제외"
+         },
+         "fade": true
+        }
+       },
+       "marks": {
+        "lit": [
+         4
+        ],
+        "bad": [
+         5
+        ]
+       }
+      },
+      "best": {
+       "values": [
+        15,
+        9
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "take",
+          "ko": "고름"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         0,
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "best",
+        "at": 1
+       },
+       "to": {
+        "view": "best",
+        "at": 0
+       },
+       "value": "15"
+      },
+      {
+       "from": {
+        "view": "tray",
+        "at": 4
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "best",
+        "at": 0
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "8"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Without donut 5 the best is 15, and without donut 0 it was 24. The answer is the larger, without donut 0: donuts 1, 3, 5, 8 + 7 + 9 = 24.",
+      "ko": "5번 도넛을 뺀 줄의 최댓값은 15, 0번 도넛을 뺀 줄의 최댓값은 24입니다. 답은 더 큰 쪽인 0번 제외 줄의 1, 3, 5번 도넛으로, 8 + 7 + 9 = 24입니다."
+     },
+     "views": {
+      "tray": {
+       "values": [
+        3,
+        8,
+        2,
+        7,
+        1,
+        9
+       ],
+       "pointers": {
+        "i": null
+       },
+       "spans": {
+        "done0": {
+         "from": 1,
+         "to": 5,
+         "label": {
+          "en": "without 0: 24",
+          "ko": "0번 제외: 24"
+         },
+         "mark": "path",
+         "below": true
+        }
+       },
+       "marks": {
+        "path": [
+         1,
+         3,
+         5
+        ],
+        "dim": [
+         0,
+         2,
+         4
+        ]
+       }
+      },
+      "best": {
+       "values": [
+        15,
+        9
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "take",
+          "ko": "고름"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      }
+     },
+     "answer": "24"
+    }
+   ],
+   "sampleInput": "[3,8,2,7,1,9]"
+  },
+  {
+   "label": {
+    "en": "Case 3",
+    "ko": "케이스 3"
+   },
+   "input": "tastiness = [7,3,1,5]",
+   "expected": "8",
+   "frames": [
+    {
+     "caption": {
+      "en": "4 donuts in a circle, so donuts 0 and 3 are neighbors. First leave out donut 0 and solve donuts 1 to 3 as a line; skip and take start at 0.",
+      "ko": "도넛 4개가 원형으로 놓여 0번과 3번 도넛이 이웃입니다. 먼저 0번 도넛을 빼고 1번부터 3번까지를 한 줄로 풀고, 건너뜀과 고름은 0에서 시작합니다."
+     },
+     "views": {
+      "tray": {
+       "values": [
+        7,
+        3,
+        1,
+        5
+       ],
+       "pointers": {
+        "i": null
+       },
+       "spans": {
+        "line": {
+         "from": 1,
+         "to": 3,
+         "label": {
+          "en": "without donut 0",
+          "ko": "0번 도넛 제외"
+         },
+         "fade": true
+        }
+       },
+       "marks": {
+        "bad": [
+         0
+        ]
+       }
+      },
+      "best": {
+       "values": [
+        0,
+        0
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "take",
+          "ko": "고름"
+         }
+        ]
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Donut 1 has 3: skipping it keeps 0, and taking it gives 0 + 3 = 3.",
+      "ko": "1번 도넛은 3점입니다. 건너뛰면 0, 고르면 0 + 3 = 3입니다."
+     },
+     "views": {
+      "tray": {
+       "values": [
+        7,
+        3,
+        1,
+        5
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "spans": {
+        "line": {
+         "from": 1,
+         "to": 3,
+         "label": {
+          "en": "without donut 0",
+          "ko": "0번 도넛 제외"
+         },
+         "fade": true
+        }
+       },
+       "marks": {
+        "lit": [
+         1
+        ],
+        "bad": [
+         0
+        ]
+       }
+      },
+      "best": {
+       "values": [
+        0,
+        3
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "take",
+          "ko": "고름"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tray",
+        "at": 1
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "3"
+      },
+      {
+       "from": {
+        "view": "best",
+        "at": 0
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Donut 2 has 1: skipping it keeps the larger of 0 and 3, 3. Taking it adds 1 to the skipped total: 0 + 1 = 1.",
+      "ko": "2번 도넛은 1점입니다. 건너뛰면 0과 3 중 큰 값 3, 고르면 건너뛴 합에 더해 0 + 1 = 1입니다."
+     },
+     "views": {
+      "tray": {
+       "values": [
+        7,
+        3,
+        1,
+        5
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "spans": {
+        "line": {
+         "from": 1,
+         "to": 3,
+         "label": {
+          "en": "without donut 0",
+          "ko": "0번 도넛 제외"
+         },
+         "fade": true
+        }
+       },
+       "marks": {
+        "lit": [
+         2
+        ],
+        "bad": [
+         0
+        ]
+       }
+      },
+      "best": {
+       "values": [
+        3,
+        1
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "take",
+          "ko": "고름"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         0,
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "best",
+        "at": 1
+       },
+       "to": {
+        "view": "best",
+        "at": 0
+       },
+       "value": "3"
+      },
+      {
+       "from": {
+        "view": "tray",
+        "at": 2
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "best",
+        "at": 0
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Donut 3 has 5: skipping it keeps the larger of 3 and 1, 3. Taking it adds 5 to the skipped total: 3 + 5 = 8.",
+      "ko": "3번 도넛은 5점입니다. 건너뛰면 3과 1 중 큰 값 3, 고르면 건너뛴 합에 더해 3 + 5 = 8입니다."
+     },
+     "views": {
+      "tray": {
+       "values": [
+        7,
+        3,
+        1,
+        5
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "spans": {
+        "line": {
+         "from": 1,
+         "to": 3,
+         "label": {
+          "en": "without donut 0",
+          "ko": "0번 도넛 제외"
+         },
+         "fade": true
+        }
+       },
+       "marks": {
+        "lit": [
+         3
+        ],
+        "bad": [
+         0
+        ]
+       }
+      },
+      "best": {
+       "values": [
+        3,
+        8
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "take",
+          "ko": "고름"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tray",
+        "at": 3
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "5"
+      },
+      {
+       "from": {
+        "view": "best",
+        "at": 0
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Without donut 0 the best is the larger of skip and take: 8, from donuts 1, 3 (3 + 5).",
+      "ko": "0번 도넛을 뺀 줄의 최댓값은 건너뜀과 고름 중 큰 값 8이며, 1, 3번 도넛(3 + 5)에서 나옵니다."
+     },
+     "views": {
+      "tray": {
+       "values": [
+        7,
+        3,
+        1,
+        5
+       ],
+       "pointers": {
+        "i": null
+       },
+       "spans": {
+        "done0": {
+         "from": 1,
+         "to": 3,
+         "label": {
+          "en": "without 0: 8",
+          "ko": "0번 제외: 8"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "marks": {
+        "good": [
+         1,
+         3
+        ]
+       }
+      },
+      "best": {
+       "values": [
+        3,
+        8
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "take",
+          "ko": "고름"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Now leave out donut 3 instead and solve donuts 0 to 2; skip and take start over at 0.",
+      "ko": "이번에는 3번 도넛을 빼고 0번부터 2번까지를 풉니다. 건너뜀과 고름은 다시 0에서 시작합니다."
+     },
+     "views": {
+      "tray": {
+       "values": [
+        7,
+        3,
+        1,
+        5
+       ],
+       "pointers": {
+        "i": null
+       },
+       "spans": {
+        "done0": {
+         "from": 1,
+         "to": 3,
+         "label": {
+          "en": "without 0: 8",
+          "ko": "0번 제외: 8"
+         },
+         "mark": "good",
+         "below": true
+        },
+        "line": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "without donut 3",
+          "ko": "3번 도넛 제외"
+         },
+         "fade": true
+        }
+       },
+       "marks": {
+        "bad": [
+         3
+        ]
+       }
+      },
+      "best": {
+       "values": [
+        0,
+        0
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "take",
+          "ko": "고름"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         0,
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "best",
+        "at": 0
+       },
+       "value": "0"
+      },
+      {
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Donut 0 has 7: skipping it keeps 0, and taking it gives 0 + 7 = 7.",
+      "ko": "0번 도넛은 7점입니다. 건너뛰면 0, 고르면 0 + 7 = 7입니다."
+     },
+     "views": {
+      "tray": {
+       "values": [
+        7,
+        3,
+        1,
+        5
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "spans": {
+        "done0": {
+         "from": 1,
+         "to": 3,
+         "label": {
+          "en": "without 0: 8",
+          "ko": "0번 제외: 8"
+         },
+         "mark": "good",
+         "below": true
+        },
+        "line": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "without donut 3",
+          "ko": "3번 도넛 제외"
+         },
+         "fade": true
+        }
+       },
+       "marks": {
+        "lit": [
+         0
+        ],
+        "bad": [
+         3
+        ]
+       }
+      },
+      "best": {
+       "values": [
+        0,
+        7
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "take",
+          "ko": "고름"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tray",
+        "at": 0
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "7"
+      },
+      {
+       "from": {
+        "view": "best",
+        "at": 0
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Donut 1 has 3: skipping it keeps the larger of 0 and 7, 7. Taking it adds 3 to the skipped total: 0 + 3 = 3.",
+      "ko": "1번 도넛은 3점입니다. 건너뛰면 0과 7 중 큰 값 7, 고르면 건너뛴 합에 더해 0 + 3 = 3입니다."
+     },
+     "views": {
+      "tray": {
+       "values": [
+        7,
+        3,
+        1,
+        5
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "spans": {
+        "done0": {
+         "from": 1,
+         "to": 3,
+         "label": {
+          "en": "without 0: 8",
+          "ko": "0번 제외: 8"
+         },
+         "mark": "good",
+         "below": true
+        },
+        "line": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "without donut 3",
+          "ko": "3번 도넛 제외"
+         },
+         "fade": true
+        }
+       },
+       "marks": {
+        "lit": [
+         1
+        ],
+        "bad": [
+         3
+        ]
+       }
+      },
+      "best": {
+       "values": [
+        7,
+        3
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "take",
+          "ko": "고름"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         0,
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "best",
+        "at": 1
+       },
+       "to": {
+        "view": "best",
+        "at": 0
+       },
+       "value": "7"
+      },
+      {
+       "from": {
+        "view": "tray",
+        "at": 1
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "3"
+      },
+      {
+       "from": {
+        "view": "best",
+        "at": 0
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Donut 2 has 1: skipping it keeps the larger of 7 and 3, 7. Taking it adds 1 to the skipped total: 7 + 1 = 8.",
+      "ko": "2번 도넛은 1점입니다. 건너뛰면 7과 3 중 큰 값 7, 고르면 건너뛴 합에 더해 7 + 1 = 8입니다."
+     },
+     "views": {
+      "tray": {
+       "values": [
+        7,
+        3,
+        1,
+        5
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "spans": {
+        "done0": {
+         "from": 1,
+         "to": 3,
+         "label": {
+          "en": "without 0: 8",
+          "ko": "0번 제외: 8"
+         },
+         "mark": "good",
+         "below": true
+        },
+        "line": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "without donut 3",
+          "ko": "3번 도넛 제외"
+         },
+         "fade": true
+        }
+       },
+       "marks": {
+        "lit": [
+         2
+        ],
+        "bad": [
+         3
+        ]
+       }
+      },
+      "best": {
+       "values": [
+        7,
+        8
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "take",
+          "ko": "고름"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tray",
+        "at": 2
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "best",
+        "at": 0
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "7"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Without donut 3 the best is 8, and without donut 0 it was 8. The answer is the larger, without donut 0: donuts 1, 3, 3 + 5 = 8.",
+      "ko": "3번 도넛을 뺀 줄의 최댓값은 8, 0번 도넛을 뺀 줄의 최댓값은 8입니다. 답은 더 큰 쪽인 0번 제외 줄의 1, 3번 도넛으로, 3 + 5 = 8입니다."
+     },
+     "views": {
+      "tray": {
+       "values": [
+        7,
+        3,
+        1,
+        5
+       ],
+       "pointers": {
+        "i": null
+       },
+       "spans": {
+        "done0": {
+         "from": 1,
+         "to": 3,
+         "label": {
+          "en": "without 0: 8",
+          "ko": "0번 제외: 8"
+         },
+         "mark": "path",
+         "below": true
+        }
+       },
+       "marks": {
+        "path": [
+         1,
+         3
+        ],
+        "dim": [
+         0,
+         2
+        ]
+       }
+      },
+      "best": {
+       "values": [
+        7,
+        8
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "take",
+          "ko": "고름"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      }
+     },
+     "answer": "8"
+    }
+   ],
+   "sampleInput": "[7,3,1,5]"
+  }
+ ]
+}

@@ -1,0 +1,828 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Peak Temperature Jump",
+  "ko": "최대 온도 변동"
+ },
+ "approach": {
+  "en": "The best swing ending at a reading starts at the lowest reading before it, so one pass keeps the lowest so far and measures each reading against it.",
+  "ko": "어떤 측정값에서 끝나는 가장 큰 변동은 그 앞의 가장 낮은 값에서 시작합니다. 그래서 한 번 훑으며 지금까지의 최저값을 기억하고, 측정값마다 그 최저값과의 차이를 잽니다."
+ },
+ "views": [
+  {
+   "id": "readings",
+   "type": "array",
+   "title": {
+    "en": "readings",
+    "ko": "readings (측정값)"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "readings = [14,9,11,8,12,15,10]",
+   "expected": "7",
+   "frames": [
+    {
+     "caption": {
+      "en": "7 readings. Read them left to right, keeping low, the lowest reading so far: a swing ending at reading j is largest when it starts at low.",
+      "ko": "측정값 7개를 왼쪽부터 읽으며 지금까지의 최저값 위치를 low로 기억합니다. j번 측정값에서 끝나는 변동은 low에서 시작할 때 가장 큽니다."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        14,
+        9,
+        11,
+        8,
+        12,
+        15,
+        10
+       ],
+       "spans": {},
+       "pointers": {},
+       "under": [],
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "readings[0] = 14 is the first reading, so it is the lowest so far: low = 0.",
+      "ko": "readings[0] = 14는 첫 측정값이므로 지금까지의 최저값입니다: low = 0."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        14,
+        9,
+        11,
+        8,
+        12,
+        15,
+        10
+       ],
+       "spans": {},
+       "pointers": {
+        "low": 0,
+        "j": 0
+       },
+       "under": [
+        [
+         0,
+         "0"
+        ]
+       ],
+       "unread": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "readings[1] = 9 is below the lowest 14, so low moves to 1. A swing ending here is 0.",
+      "ko": "readings[1] = 9는 최저값 14보다 낮으므로 low가 1로 옮겨 갑니다. 여기서 끝나는 변동은 0입니다."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        14,
+        9,
+        11,
+        8,
+        12,
+        15,
+        10
+       ],
+       "spans": {},
+       "pointers": {
+        "low": 1,
+        "j": 1
+       },
+       "under": [
+        [
+         0,
+         "0"
+        ],
+        [
+         1,
+         "0"
+        ]
+       ],
+       "unread": [
+        2,
+        3,
+        4,
+        5,
+        6
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "readings[2] = 11: the swing from low is 11 − 9 = 2, more than the best 0, so it is the best now.",
+      "ko": "readings[2] = 11: low에서의 변동은 11 − 9 = 2로 지금까지의 best 0보다 커서 새 best가 됩니다."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        14,
+        9,
+        11,
+        8,
+        12,
+        15,
+        10
+       ],
+       "spans": {
+        "window": {
+         "from": 1,
+         "to": 2,
+         "label": {
+          "en": "11 − 9 = 2",
+          "ko": "11 − 9 = 2"
+         },
+         "mark": "good"
+        },
+        "best": {
+         "from": 1,
+         "to": 2,
+         "label": {
+          "en": "best = 2",
+          "ko": "best (최대 변동) = 2"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "pointers": {
+        "low": 1,
+        "j": 2
+       },
+       "under": [
+        [
+         0,
+         "0"
+        ],
+        [
+         1,
+         "0"
+        ],
+        [
+         2,
+         "+2"
+        ]
+       ],
+       "unread": [
+        3,
+        4,
+        5,
+        6
+       ],
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "readings[3] = 8 is below the lowest 9, so low moves to 3. A swing ending here is 0.",
+      "ko": "readings[3] = 8은 최저값 9보다 낮으므로 low가 3으로 옮겨 갑니다. 여기서 끝나는 변동은 0입니다."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        14,
+        9,
+        11,
+        8,
+        12,
+        15,
+        10
+       ],
+       "spans": {
+        "best": {
+         "from": 1,
+         "to": 2,
+         "label": {
+          "en": "best = 2",
+          "ko": "best (최대 변동) = 2"
+         },
+         "below": true
+        }
+       },
+       "pointers": {
+        "low": 3,
+        "j": 3
+       },
+       "under": [
+        [
+         0,
+         "0"
+        ],
+        [
+         1,
+         "0"
+        ],
+        [
+         2,
+         "+2"
+        ],
+        [
+         3,
+         "0"
+        ]
+       ],
+       "unread": [
+        4,
+        5,
+        6
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "readings[4] = 12: the swing from low is 12 − 8 = 4, more than the best 2, so it is the best now.",
+      "ko": "readings[4] = 12: low에서의 변동은 12 − 8 = 4로 지금까지의 best 2보다 커서 새 best가 됩니다."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        14,
+        9,
+        11,
+        8,
+        12,
+        15,
+        10
+       ],
+       "spans": {
+        "window": {
+         "from": 3,
+         "to": 4,
+         "label": {
+          "en": "12 − 8 = 4",
+          "ko": "12 − 8 = 4"
+         },
+         "mark": "good"
+        },
+        "best": {
+         "from": 3,
+         "to": 4,
+         "label": {
+          "en": "best = 4",
+          "ko": "best (최대 변동) = 4"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "pointers": {
+        "low": 3,
+        "j": 4
+       },
+       "under": [
+        [
+         0,
+         "0"
+        ],
+        [
+         1,
+         "0"
+        ],
+        [
+         2,
+         "+2"
+        ],
+        [
+         3,
+         "0"
+        ],
+        [
+         4,
+         "+4"
+        ]
+       ],
+       "unread": [
+        5,
+        6
+       ],
+       "marks": {
+        "lit": [
+         4
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "readings[5] = 15: the swing from low is 15 − 8 = 7, more than the best 4, so it is the best now.",
+      "ko": "readings[5] = 15: low에서의 변동은 15 − 8 = 7로 지금까지의 best 4보다 커서 새 best가 됩니다."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        14,
+        9,
+        11,
+        8,
+        12,
+        15,
+        10
+       ],
+       "spans": {
+        "window": {
+         "from": 3,
+         "to": 5,
+         "label": {
+          "en": "15 − 8 = 7",
+          "ko": "15 − 8 = 7"
+         },
+         "mark": "good"
+        },
+        "best": {
+         "from": 3,
+         "to": 5,
+         "label": {
+          "en": "best = 7",
+          "ko": "best (최대 변동) = 7"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "pointers": {
+        "low": 3,
+        "j": 5
+       },
+       "under": [
+        [
+         0,
+         "0"
+        ],
+        [
+         1,
+         "0"
+        ],
+        [
+         2,
+         "+2"
+        ],
+        [
+         3,
+         "0"
+        ],
+        [
+         4,
+         "+4"
+        ],
+        [
+         5,
+         "+7"
+        ]
+       ],
+       "unread": [
+        6
+       ],
+       "marks": {
+        "lit": [
+         5
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "readings[6] = 10: the swing from low is 10 − 8 = 2, not more than the best 7.",
+      "ko": "readings[6] = 10: low에서의 변동은 10 − 8 = 2로 best 7보다 크지 않습니다."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        14,
+        9,
+        11,
+        8,
+        12,
+        15,
+        10
+       ],
+       "spans": {
+        "window": {
+         "from": 3,
+         "to": 6,
+         "label": {
+          "en": "10 − 8 = 2",
+          "ko": "10 − 8 = 2"
+         }
+        },
+        "best": {
+         "from": 3,
+         "to": 5,
+         "label": {
+          "en": "best = 7",
+          "ko": "best (최대 변동) = 7"
+         },
+         "below": true
+        }
+       },
+       "pointers": {
+        "low": 3,
+        "j": 6
+       },
+       "under": [
+        [
+         0,
+         "0"
+        ],
+        [
+         1,
+         "0"
+        ],
+        [
+         2,
+         "+2"
+        ],
+        [
+         3,
+         "0"
+        ],
+        [
+         4,
+         "+4"
+        ],
+        [
+         5,
+         "+7"
+        ],
+        [
+         6,
+         "+2"
+        ]
+       ],
+       "unread": [],
+       "marks": {
+        "lit": [
+         6
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Every reading is read. The largest swing went from readings[3] = 8 up to readings[5] = 15: 15 − 8 = 7.",
+      "ko": "모든 측정값을 읽었습니다. 가장 큰 변동은 readings[3] = 8에서 readings[5] = 15까지 오른 15 − 8 = 7입니다."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        14,
+        9,
+        11,
+        8,
+        12,
+        15,
+        10
+       ],
+       "spans": {
+        "best": {
+         "from": 3,
+         "to": 5,
+         "label": {
+          "en": "best = 7",
+          "ko": "best (최대 변동) = 7"
+         },
+         "mark": "path",
+         "below": true
+        }
+       },
+       "pointers": {},
+       "under": [
+        [
+         0,
+         "0"
+        ],
+        [
+         1,
+         "0"
+        ],
+        [
+         2,
+         "+2"
+        ],
+        [
+         3,
+         "0"
+        ],
+        [
+         4,
+         "+4"
+        ],
+        [
+         5,
+         "+7"
+        ],
+        [
+         6,
+         "+2"
+        ]
+       ],
+       "unread": [],
+       "marks": {
+        "path": [
+         3,
+         5
+        ]
+       }
+      }
+     },
+     "answer": "7"
+    }
+   ],
+   "sampleInput": "[14,9,11,8,12,15,10]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "readings = [20,18,15,11]",
+   "expected": "0",
+   "frames": [
+    {
+     "caption": {
+      "en": "4 readings. Read them left to right, keeping low, the lowest reading so far: a swing ending at reading j is largest when it starts at low.",
+      "ko": "측정값 4개를 왼쪽부터 읽으며 지금까지의 최저값 위치를 low로 기억합니다. j번 측정값에서 끝나는 변동은 low에서 시작할 때 가장 큽니다."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        20,
+        18,
+        15,
+        11
+       ],
+       "spans": {},
+       "pointers": {},
+       "under": [],
+       "unread": [
+        0,
+        1,
+        2,
+        3
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "readings[0] = 20 is the first reading, so it is the lowest so far: low = 0.",
+      "ko": "readings[0] = 20은 첫 측정값이므로 지금까지의 최저값입니다: low = 0."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        20,
+        18,
+        15,
+        11
+       ],
+       "spans": {},
+       "pointers": {
+        "low": 0,
+        "j": 0
+       },
+       "under": [
+        [
+         0,
+         "0"
+        ]
+       ],
+       "unread": [
+        1,
+        2,
+        3
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "readings[1] = 18 is below the lowest 20, so low moves to 1. A swing ending here is 0.",
+      "ko": "readings[1] = 18은 최저값 20보다 낮으므로 low가 1로 옮겨 갑니다. 여기서 끝나는 변동은 0입니다."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        20,
+        18,
+        15,
+        11
+       ],
+       "spans": {},
+       "pointers": {
+        "low": 1,
+        "j": 1
+       },
+       "under": [
+        [
+         0,
+         "0"
+        ],
+        [
+         1,
+         "0"
+        ]
+       ],
+       "unread": [
+        2,
+        3
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "readings[2] = 15 is below the lowest 18, so low moves to 2. A swing ending here is 0.",
+      "ko": "readings[2] = 15는 최저값 18보다 낮으므로 low가 2로 옮겨 갑니다. 여기서 끝나는 변동은 0입니다."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        20,
+        18,
+        15,
+        11
+       ],
+       "spans": {},
+       "pointers": {
+        "low": 2,
+        "j": 2
+       },
+       "under": [
+        [
+         0,
+         "0"
+        ],
+        [
+         1,
+         "0"
+        ],
+        [
+         2,
+         "0"
+        ]
+       ],
+       "unread": [
+        3
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "readings[3] = 11 is below the lowest 15, so low moves to 3. A swing ending here is 0.",
+      "ko": "readings[3] = 11은 최저값 15보다 낮으므로 low가 3으로 옮겨 갑니다. 여기서 끝나는 변동은 0입니다."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        20,
+        18,
+        15,
+        11
+       ],
+       "spans": {},
+       "pointers": {
+        "low": 3,
+        "j": 3
+       },
+       "under": [
+        [
+         0,
+         "0"
+        ],
+        [
+         1,
+         "0"
+        ],
+        [
+         2,
+         "0"
+        ],
+        [
+         3,
+         "0"
+        ]
+       ],
+       "unread": [],
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Every reading is read, and each one was a new low: the temperature never rose, so the answer is 0.",
+      "ko": "모든 측정값을 읽었는데 매번 새 최저값이었습니다. 온도가 한 번도 오르지 않았으므로 답은 0입니다."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        20,
+        18,
+        15,
+        11
+       ],
+       "spans": {},
+       "pointers": {},
+       "under": [
+        [
+         0,
+         "0"
+        ],
+        [
+         1,
+         "0"
+        ],
+        [
+         2,
+         "0"
+        ],
+        [
+         3,
+         "0"
+        ]
+       ],
+       "unread": [],
+       "marks": {}
+      }
+     },
+     "answer": "0"
+    }
+   ],
+   "sampleInput": "[20,18,15,11]"
+  }
+ ]
+}

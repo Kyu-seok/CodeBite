@@ -52,7 +52,7 @@ class WalkthroughsMatchSamplesTest {
     private static final WalkthroughAddresses ADDRESSES = WalkthroughAddresses.kit();
 
     private static final List<String> VIEW_TYPES = List.of("grid", "array", "map", "set", "output", "queue", "intervals", "graph", "tree", "linkedlist",
-            "callstack", "table", "vars");
+            "callstack", "stack", "table", "vars");
     private static final List<String> MARKS = List.of("lit", "good", "bad", "path", "dim");
 
     /**
@@ -549,15 +549,17 @@ class WalkthroughsMatchSamplesTest {
     }
 
     /**
-     * One run of a tree {@code t} (0 with children 1 and 2), a linked list {@code l} (1 → 2) with a pointer {@code p}
-     * and a call stack {@code s} of two calls, read twice with nothing changed.
+     * One run of a tree {@code t} (0 with children 1 and 2, 1's next reaching 2 and 2's null), a linked list {@code l} (1 → 2, each related reaching 2,
+     * the one out of 1 just re-pointed from 1) with a pointer {@code p} and a call stack {@code s} of two calls, read twice with nothing changed.
      */
     private static ObjectNode recursionFixture() throws Exception {
         String state = """
                 {'t': {'nodes': [{'id': 0, 'value': 5}, {'id': 1, 'value': 3}, {'id': 2, 'value': 8}],
-                       'edges': [{'from': 0, 'to': 1}, {'from': 0, 'to': 2}], 'edgeMarks': {'lit': [[0, 1]]}},
+                       'edges': [{'from': 0, 'to': 1}, {'from': 0, 'to': 2}], 'edgeMarks': {'lit': [[0, 1]]},
+                       'links': {'next': {'1': 2, '2': null}}, 'linkMarks': {'good': [['next', 1]]}},
                  'l': {'nodes': [{'id': 1, 'value': 1}, {'id': 2, 'value': 2}], 'next': {'1': 2, '2': null},
-                       'pointers': {'p': 1}},
+                       'links': {'related': {'1': 2, '2': 2}}, 'pointers': {'p': 1}, 'linkMarks': {'good': [1, ['related', 2]]},
+                       'linkCuts': {'related': {'1': 1}}},
                  's': {'calls': [{'name': 'f', 'args': {'n': 2}}, {'name': 'f', 'args': {'n': 1}}], 'marks': {'lit': [1]}}}""";
         return walkthrough("[{'id': 't', 'type': 'tree'}, {'id': 'l', 'type': 'linkedlist'}, {'id': 's', 'type': 'callstack'}]",
                 "[{'views': " + state + "}, {'views': " + state + "}]");
@@ -568,9 +570,19 @@ class WalkthroughsMatchSamplesTest {
             "tree node with a second parent       | view \"t\": edge 2 {\"from\":1,\"to\":2}: node 2 already has a parent",
             "tree edge naming no node             | view \"t\": edge 1 {\"from\":0,\"to\":9} names a node that doesn't exist",
             "tree edgeMarks naming no edge        | view \"t\": mark \"lit\" names [0,9], not a [from, to] edge",
+            "tree link naming no node             | view \"t\": next of 1 is 9, not a node id",
+            "tree link from no node               | view \"t\": next names 9, not a node id",
+            "a second kind of tree link           | view \"t\": links holds 2 kinds: a node draws one link besides its edges",
+            "tree link mark naming no link        | view \"t\": mark \"good\" names [\"next\",0], not a [link, node] with that link",
             "linked list next not a node id       | view \"l\": next of 2 is 9, not a node id",
             "linked list pointer naming no node   | view \"l\": pointer p = 9 is not a node id",
             "linked list cut naming no node       | view \"l\": cut 1 → 9 names a node that doesn't exist",
+            "second link naming no node           | view \"l\": related of 1 is 9, not a node id",
+            "second link from no node             | view \"l\": related names 9, not a node id",
+            "a third kind of link                 | view \"l\": links holds 2 kinds: a node draws one link besides next",
+            "second link mark naming no arrow     | view \"l\": mark \"good\" names [\"prev\",1], not a node with a next or a [link, node] with that link",
+            "second link cut naming no link       | view \"l\": linkCuts names prev, not a link in links",
+            "second link cut naming no node       | view \"l\": linkCuts related 1 → 9 names a node that doesn't exist",
             "callstack calls not a list           | view \"s\": calls must be a list",
             "call with no name                    | view \"s\": call 1 has no name",
             "callstack mark out of range          | view \"s\": mark \"lit\" names 2, not a call position",
@@ -583,9 +595,19 @@ class WalkthroughsMatchSamplesTest {
             case "tree node with a second parent" -> ((ArrayNode) tree.get("edges")).addObject().put("from", 1).put("to", 2);
             case "tree edge naming no node" -> ((ObjectNode) tree.get("edges").get(1)).put("to", 9);
             case "tree edgeMarks naming no edge" -> ((ObjectNode) tree.get("edgeMarks")).putArray("lit").addArray().add(0).add(9);
+            case "tree link naming no node" -> ((ObjectNode) tree.get("links").get("next")).put("1", 9);
+            case "tree link from no node" -> ((ObjectNode) tree.get("links").get("next")).put("9", 1);
+            case "a second kind of tree link" -> ((ObjectNode) tree.get("links")).putObject("prev").put("2", 1);
+            case "tree link mark naming no link" -> ((ArrayNode) tree.get("linkMarks").get("good")).addArray().add("next").add(0);
             case "linked list next not a node id" -> ((ObjectNode) list.get("next")).put("2", 9);
             case "linked list pointer naming no node" -> ((ObjectNode) list.get("pointers")).put("p", 9);
             case "linked list cut naming no node" -> list.putObject("cut").put("1", 9);
+            case "second link naming no node" -> ((ObjectNode) list.get("links").get("related")).put("1", 9);
+            case "second link from no node" -> ((ObjectNode) list.get("links").get("related")).put("9", 1);
+            case "a third kind of link" -> ((ObjectNode) list.get("links")).putObject("prev").put("2", 1);
+            case "second link mark naming no arrow" -> ((ArrayNode) list.get("linkMarks").get("good")).addArray().add("prev").add(1);
+            case "second link cut naming no link" -> ((ObjectNode) list.get("linkCuts")).putObject("prev").put("2", 1);
+            case "second link cut naming no node" -> ((ObjectNode) list.get("linkCuts").get("related")).put("1", 9);
             case "callstack calls not a list" -> stack.put("calls", "f(2)");
             case "call with no name" -> ((ObjectNode) stack.get("calls").get(1)).remove("name");
             case "callstack mark out of range" -> ((ObjectNode) stack.get("marks")).putArray("lit").add(2);
@@ -594,8 +616,47 @@ class WalkthroughsMatchSamplesTest {
         assertCaught(walkthrough, samples(1), breakage, expected);
     }
 
+    /**
+     * One run of readings {@code xs} [3, 1, 4] and a stack {@code s} of readings tagged with their day: day 0's 3 is on
+     * the stack, and day 1's 1 moves from its cell onto the top.
+     */
+    private static ObjectNode stackFixture() throws Exception {
+        return walkthrough("[{'id': 'xs', 'type': 'array'}, {'id': 's', 'type': 'stack'}]", """
+                [{'views': {'xs': {'values': [3, 1, 4]}, 's': {'values': [3], 'tags': [[0, 'day 0']]}}},
+                 {'views': {'xs': {'values': [3, 1, 4]},
+                            's': {'values': [3, 1], 'tags': [[0, 'day 0'], [1, {'en': 'day 1', 'ko': '1일차'}]], 'marks': {'good': [1]}}},
+                  'moves': [{'from': {'view': 'xs', 'at': 1}, 'to': {'view': 's', 'at': 1}}]}]""");
+    }
+
     @ParameterizedTest(name = "{0}")
-    @ValueSource(strings = {"samples", "moves", "table", "intervals", "set", "board", "graph", "span", "recursion"})
+    @CsvSource(delimiter = '|', quoteCharacter = '`', value = {
+            "stack values not a list        | view \"s\": values must be a list, bottom first",
+            "stack tag past the top         | view \"s\": tag [2,\"day 2\"] is outside the stack",
+            "stack tag that is not text     | view \"s\": tag [1,5] is not Text",
+            "stack mark past the top        | view \"s\": mark \"lit\" names 2, not a position from the bottom",
+            "push to a place past the top   | is not a position from the bottom of stack \"s\"",
+    })
+    void aBrokenStackIsCaught(String breakage, String expected) throws Exception {
+        ObjectNode walkthrough = stackFixture();
+        ObjectNode frame = (ObjectNode) walkthrough.get("runs").get(0).get("frames").get(1);
+        ObjectNode stack = (ObjectNode) frame.get("views").get("s");
+        switch (breakage) {
+            case "stack values not a list" -> stack.put("values", "3 1");
+            case "stack tag past the top" -> ((ArrayNode) stack.get("tags")).addArray().add(2).add("day 2");
+            case "stack tag that is not text" -> {
+                ArrayNode tag = (ArrayNode) stack.get("tags").get(1);
+                tag.remove(1);
+                tag.add(5);
+            }
+            case "stack mark past the top" -> ((ObjectNode) stack.get("marks")).putArray("lit").add(2);
+            case "push to a place past the top" -> ((ObjectNode) frame.get("moves").get(0).get("to")).put("at", 2);
+            default -> throw new IllegalArgumentException(breakage);
+        }
+        assertCaught(walkthrough, samples(1), breakage, expected);
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @ValueSource(strings = {"samples", "moves", "table", "intervals", "set", "board", "graph", "span", "recursion", "stack"})
     void aFixtureUnbrokenPasses(String fixture) throws Exception {
         ObjectNode walkthrough = switch (fixture) {
             case "samples" -> samplesFixture();
@@ -607,6 +668,7 @@ class WalkthroughsMatchSamplesTest {
             case "graph" -> graphFixture();
             case "span" -> spanFixture();
             case "recursion" -> recursionFixture();
+            case "stack" -> stackFixture();
             default -> throw new IllegalArgumentException(fixture);
         };
         assertEquals(List.of(), mismatches("fixture", walkthrough, samples(walkthrough.get("runs").size())));
@@ -665,9 +727,10 @@ class WalkthroughsMatchSamplesTest {
      *   <li>a move out of a place reaches the places the address table says it carries its value on to (an edge's
      *       far end), as a relaxation draws a graph node's new cost.</li>
      * </ul>
-     * A list by index (an array, an output, a queue) is compared both in place and as a sequence whose values shift
-     * (a queue's front leaving, a value joining an end), whichever changes fewer places; a view hidden in a frame is
-     * empty there, so everything it shows when it comes back is new.
+     * A list by index (an array, an output, a queue) is compared in place, as a sequence whose values shift (a queue's
+     * front leaving, a value joining an end) and as one whose front and back both hold (a value inserted in the
+     * middle), whichever changes fewest places; a view hidden in a frame is empty there, so everything it shows when
+     * it comes back is new.
      */
     @Test
     void everyPlaceThatChangesHasAMoveIntoIt() throws Exception {
@@ -697,6 +760,10 @@ class WalkthroughsMatchSamplesTest {
             "tree child added, only its edge moved into | tree    | {'nodes': [{'id': 0, 'value': 'a'}], 'edges': []} | {'nodes': [{'id': 0, 'value': 'a'}, {'id': 1, 'value': 'b'}], 'edges': [{'from': 0, 'to': 1}]} | [{'from': {'view': 'v', 'at': 0}, 'to': {'view': 'v', 'at': [0, 1]}}] | tree \"v\" at 1 now holds \"b\"",
             "tree edge relabelled, a move into its child only | tree | {'nodes': [{'id': 0, 'value': 'a'}, {'id': 1, 'value': 'b'}], 'edges': [{'from': 0, 'to': 1, 'label': 'x'}]} | {'nodes': [{'id': 0, 'value': 'a'}, {'id': 1, 'value': 'b'}], 'edges': [{'from': 0, 'to': 1, 'label': 'y'}]} | [{'from': {'view': 'v', 'at': 0}, 'to': {'view': 'v', 'at': 1}}] | tree \"v\" at [0,1] now holds \"y\"",
             "call pushed with no move                 | callstack | {'calls': [{'name': 'f', 'args': {'n': 2}}]} | {'calls': [{'name': 'f', 'args': {'n': 2}}, {'name': 'f', 'args': {'n': 1}}]} | [] | callstack \"v\" at 1 now holds {\"n\":1}",
+            "value pushed with no move                | stack     | {'values': [3]}               | {'values': [3, 1]}                        | []                                 | stack \"v\" at 1 now holds 1",
+            "top replaced with no move                | stack     | {'values': [3, 1]}            | {'values': [3, 4]}                        | []                                 | stack \"v\" at 1 now holds 4",
+            "value inserted in the middle, no move    | array     | {'values': [1, 5, 6]}         | {'values': [1, 2, 5, 6]}                  | []                                 | array \"v\" at 1 now holds 2",
+            "middle cell replaced, not inserted       | array     | {'values': [1, 5, 6]}         | {'values': [1, 2, 6]}                     | []                                 | array \"v\" at 1 now holds 2",
             "graph node value changed                 | graph     | {'nodes': [{'id': 'a'}, {'id': 'b'}], 'edges': [{'from': 'a', 'to': 'b'}]} | {'nodes': [{'id': 'a'}, {'id': 'b'}], 'edges': [{'from': 'a', 'to': 'b'}], 'values': {'b': 7}} | [] | graph \"v\" at b now holds 7",
     })
     void aChangeWithNoMoveIsCaught(String breakage, String type, String before, String after, String moves, String expected)
@@ -716,7 +783,9 @@ class WalkthroughsMatchSamplesTest {
             "tree child added by a move into it       | tree  | {'nodes': [{'id': 0, 'value': 'a'}], 'edges': []} | {'nodes': [{'id': 0, 'value': 'a'}, {'id': 1, 'value': 'b'}], 'edges': [{'from': 0, 'to': 1, 'label': 'x'}]} | [{'from': {'view': 'v', 'at': 0}, 'to': {'view': 'v', 'at': 1}}]",
             "linked list arrow turned                 | linkedlist | {'nodes': [{'id': 1, 'value': 1}, {'id': 2, 'value': 2}], 'next': {'1': 2, '2': null}} | {'nodes': [{'id': 1, 'value': 1}, {'id': 2, 'value': 2}], 'next': {'1': null, '2': 1}} | []",
             "call popped                              | callstack | {'calls': [{'name': 'f', 'args': {'n': 2}}, {'name': 'f', 'args': {'n': 1}}]} | {'calls': [{'name': 'f', 'args': {'n': 2}}]} | []",
+            "value popped                             | stack | {'values': [3, 1]}              | {'values': [3]}                | []",
             "only read                                | array | {'values': [1, 2]}              | {'values': [1, 2], 'marks': {'lit': [0]}} | []",
+            "value inserted in the middle             | array | {'values': [1, 5, 6]}           | {'values': [1, 2, 5, 6]}       | [{'to': {'view': 'v', 'at': 1}}]",
     })
     void aChangeTheRuleAllowsPasses(String allowed, String type, String before, String after, String moves) throws Exception {
         assertEquals(List.of(), changesWithoutMoves("fixture", step(type, before, after, moves)), allowed);
@@ -772,8 +841,8 @@ class WalkthroughsMatchSamplesTest {
 
     /**
      * The addresses of {@code now} that are new or hold a new value since {@code before}. A list by index is compared
-     * in place and as a shifted sequence (its longest run of values in common with before kept, the rest new),
-     * whichever finds fewer.
+     * in place, as a shifted sequence (its longest run of values in common with before kept, the rest new) and as an
+     * insert or removal in the middle (its common front and back kept, the rest new), whichever finds fewest.
      */
     private static List<String> changed(String type, Map<String, JsonNode> before, Map<String, JsonNode> now) {
         List<String> inPlace = new ArrayList<>();
@@ -795,7 +864,14 @@ class WalkthroughsMatchSamplesTest {
         }
         List<String> shifted = new ArrayList<>();
         for (int j = 0; j < a.size(); j++) if (j < start || j >= start + length) shifted.add(String.valueOf(j));
-        return shifted.size() < inPlace.size() ? shifted : inPlace;
+        int front = 0, back = 0;
+        while (front < b.size() && front < a.size() && b.get(front).equals(a.get(front))) front++;
+        while (back < b.size() - front && back < a.size() - front
+                && b.get(b.size() - 1 - back).equals(a.get(a.size() - 1 - back))) back++;
+        List<String> middle = new ArrayList<>();
+        for (int j = front; j < a.size() - back; j++) middle.add(String.valueOf(j));
+        List<String> fewest = shifted.size() < inPlace.size() ? shifted : inPlace;
+        return middle.size() < fewest.size() ? middle : fewest;
     }
 
     /**
@@ -1587,6 +1663,11 @@ class WalkthroughsMatchSamplesTest {
                         && parentOf(parent, k.get(1).asText()).equals(k.get(0).asText()), "[from, to] edge"));
                 for (JsonNode id : s.path("shade")) if (!ids.contains(id.asText())) p.add("shade names " + id + ", not a node id");
                 for (JsonNode tag : s.path("tags")) if (!ids.contains(tag.path(0).asText())) p.add("tag " + tag + " names no node");
+                // a second link per node besides its edges (next to the node on its right in its level): one kind
+                Predicate<JsonNode> node = k -> k != null && (k.isTextual() || k.isNumber()) && ids.contains(k.asText());
+                JsonNode links = s.path("links");
+                p.addAll(linkProblems(links, ids, node, "its edges"));
+                p.addAll(marks(s.get("linkMarks"), k -> isLinkKey(links, k, node), "[link, node] with that link"));
                 yield p;
             }
             case "linkedlist" -> {
@@ -1606,8 +1687,18 @@ class WalkthroughsMatchSamplesTest {
                 s.path("cut").fields().forEachRemaining(e -> {
                     if (!ids.contains(e.getKey()) || !node.test(e.getValue())) p.add("cut " + e.getKey() + " → " + e.getValue() + " names a node that doesn't exist");
                 });
+                // a second link per node (a copy's related, a doubly linked list's prev): one kind besides next
+                JsonNode links = s.path("links");
+                p.addAll(linkProblems(links, ids, node, "next"));
+                s.path("linkCuts").fields().forEachRemaining(cut -> {
+                    if (!links.has(cut.getKey())) p.add("linkCuts names " + cut.getKey() + ", not a link in links");
+                    else cut.getValue().fields().forEachRemaining(e -> {
+                        if (!ids.contains(e.getKey()) || !node.test(e.getValue())) p.add("linkCuts " + cut.getKey() + " " + e.getKey() + " → " + e.getValue() + " names a node that doesn't exist");
+                    });
+                });
                 p.addAll(marks(s.get("marks"), node, "node id"));
-                p.addAll(marks(s.get("linkMarks"), k -> node.test(k) && s.path("next").has(k.asText()), "node with a next"));
+                p.addAll(marks(s.get("linkMarks"), k -> k.isArray() ? isLinkKey(links, k, node)
+                        : node.test(k) && s.path("next").has(k.asText()), "node with a next or a [link, node] with that link"));
                 yield p;
             }
             case "callstack" -> {
@@ -1621,6 +1712,18 @@ class WalkthroughsMatchSamplesTest {
                     if (c.has("note") && !isText(c.get("note"))) p.add("call " + i + ": note is not Text");
                 }
                 p.addAll(marks(s.get("marks"), k -> k.isInt() && k.asInt() >= 0 && k.asInt() < calls.size(), "call position"));
+                yield p;
+            }
+            case "stack" -> {
+                JsonNode values = s.get("values");
+                if (values == null || !values.isArray()) yield List.of("values must be a list, bottom first");
+                Predicate<JsonNode> inside = i -> i != null && i.isInt() && i.asInt() >= 0 && i.asInt() < values.size();
+                List<String> p = new ArrayList<>();
+                for (JsonNode tag : s.path("tags")) {
+                    if (!tag.isArray() || !inside.test(tag.get(0))) p.add("tag " + tag + " is outside the stack");
+                    else if (!isText(tag.get(1))) p.add("tag " + tag + " is not Text");
+                }
+                p.addAll(marks(s.get("marks"), inside, "position from the bottom"));
                 yield p;
             }
             case "table" -> {
@@ -1722,6 +1825,26 @@ class WalkthroughsMatchSamplesTest {
             }
         }
         return p;
+    }
+
+    /**
+     * What is wrong with a tree's or linked list's second link per node, {@code links} ({@code {kind: {id: id or null}}}):
+     * more than one kind (a node draws one link besides {@code besides}), or a link from or to no node.
+     */
+    private static List<String> linkProblems(JsonNode links, Set<String> ids, Predicate<JsonNode> node, String besides) {
+        List<String> p = new ArrayList<>();
+        if (links.size() > 1) p.add("links holds " + links.size() + " kinds: a node draws one link besides " + besides);
+        links.fields().forEachRemaining(link -> link.getValue().fields().forEachRemaining(e -> {
+            if (!ids.contains(e.getKey())) p.add(link.getKey() + " names " + e.getKey() + ", not a node id");
+            else if (!e.getValue().isNull() && !node.test(e.getValue())) p.add(link.getKey() + " of " + e.getKey() + " is " + e.getValue() + ", not a node id");
+        }));
+        return p;
+    }
+
+    /** Whether {@code k} is a {@code [link, node]} key naming a node that has that link in {@code links}. */
+    private static boolean isLinkKey(JsonNode links, JsonNode k, Predicate<JsonNode> node) {
+        return k.isArray() && k.size() == 2 && k.get(0).isTextual() && links.path(k.get(0).asText()).has(k.get(1).asText())
+                && node.test(k.get(1));
     }
 
     private static boolean allRows(JsonNode cells) {

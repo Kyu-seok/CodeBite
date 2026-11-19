@@ -14,7 +14,7 @@
 
 A value going from one place to another is a move, by address (an array or output index, a map key, a set member,
 a queue position from the front, a grid or table [row, col], an intervals [group, index], a graph or tree node id or
-[from, to] edge, a linked-list node id, a call-stack position from the bottom):
+[from, to] edge, a linked-list node id, a call-stack or stack position from the bottom):
 
     from walkthrough_trace import at, move, map_entries, probe, span
     run.frame("4 goes into the map.", xs={"values": nums}, uses={"entries": map_entries(counts)},
@@ -125,14 +125,26 @@ def level_order_tree(values):
     return {"nodes": nodes, "edges": edges}
 
 
-def linked_list(order):
+def tree_links(nodes, link):
+    """A `tree` view's second link from the solution's own nodes: `nodes` are every node drawn, each carrying its
+    view id as `id` (as `level_order_tree`'s index), and `link` the attribute each holds (`"next"`); a node's link is
+    the id of the node it reaches, None when unset. Returns {"links": {link: {id: id or None}}}, to spread into the
+    view's state; leave out the nodes whose link the drawing doesn't show yet."""
+    return {"links": {link: {n.id: (None if getattr(n, link) is None else getattr(n, link).id) for n in nodes}}}
+
+
+def linked_list(order, link=None):
     """A `linkedlist` view's state from the solution's own nodes: `order` lists every node in the order to draw them
     (keep it fixed for the run, so a reversal redraws arrows, not nodes). A node's id is its place in `order` and its
-    `next` the id of the node its `next` reaches (None at the end), found by identity, so a loop back is drawn too."""
+    `next` the id of the node its `next` reaches (None at the end), found by identity, so a loop back is drawn too.
+    `link` names a second pointer each node holds (`"random"`, `"prev"`), drawn under the row as `links`."""
     def value(n):
         return n.val if hasattr(n, "val") else n.value
-    return {"nodes": [{"id": i, "value": value(n)} for i, n in enumerate(order)],
-            "next": {i: node_id(order, n.next) for i, n in enumerate(order)}}
+    state = {"nodes": [{"id": i, "value": value(n)} for i, n in enumerate(order)],
+             "next": {i: node_id(order, n.next) for i, n in enumerate(order)}}
+    if link:
+        state["links"] = {link: {i: node_id(order, getattr(n, link)) for i, n in enumerate(order)}}
+    return state
 
 
 def node_id(order, node):
@@ -189,6 +201,16 @@ def call(name, note=None, **args):
     if note is not None:
         c["note"] = note
     return c
+
+
+def stack(items, value=None, tag=None):
+    """A `stack` view's state from the solution's own list, bottom first: each item's `value(item)` (the item itself
+    by default) and, with `tag`, `tag(item)` (Text) on its cell, such as the day a reading belongs to when the stack
+    holds days: `"pending": stack(pending, value=lambda d: temps[d], tag=lambda d: f"day {d}")`. Add `marks` to it."""
+    state = {"values": [item if value is None else value(item) for item in items]}
+    if tag is not None:
+        state["tags"] = [[i, tag(item)] for i, item in enumerate(items)]
+    return state
 
 
 def map_entries(mapping):

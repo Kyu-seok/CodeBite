@@ -1,0 +1,1169 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Merged Price Median",
+  "ko": "합친 가격 목록의 중앙값"
+ },
+ "approach": {
+  "en": "Binary search over the cut: take i values from the shorter list a and half − i from b as the left half of the merged list; the cut is right when each list's left edge is at most the other's right edge, and which check fails says whether i must grow or shrink.",
+  "ko": "자르는 위치 위의 이분 탐색입니다. 짧은 목록 a에서 i개, b에서 half − i개를 합친 목록의 왼쪽 절반으로 삼습니다. 각 목록의 왼쪽 끝 값이 다른 목록의 오른쪽 첫 값 이하이면 맞게 자른 것이고, 어느 비교가 틀리는지가 i를 늘릴지 줄일지 알려 줍니다."
+ },
+ "views": [
+  {
+   "id": "a",
+   "type": "array",
+   "title": {
+    "en": "a (the shorter list)",
+    "ko": "a (짧은 목록)"
+   }
+  },
+  {
+   "id": "b",
+   "type": "array",
+   "title": {
+    "en": "b",
+    "ko": "b (긴 목록)"
+   }
+  },
+  {
+   "id": "cuts",
+   "type": "intervals",
+   "title": {
+    "en": "cuts i still possible",
+    "ko": "아직 가능한 자르는 위치 i"
+   }
+  },
+  {
+   "id": "state",
+   "type": "vars"
+  },
+  {
+   "id": "result",
+   "type": "output",
+   "title": {
+    "en": "median",
+    "ko": "중앙값"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "pricesA = [2,5], pricesB = [4]",
+   "expected": "4.0",
+   "frames": [
+    {
+     "caption": {
+      "en": "a = pricesB, the shorter list, and b = pricesA. The left half of all 3 values holds half = (3 + 1) // 2 = 2, and a gives i of them for some i in [0, 1].",
+      "ko": "a는 짧은 목록 pricesB, b는 pricesA입니다. 값 3개의 왼쪽 절반은 half = (3 + 1) // 2 = 2개이고, 그중 a에서 i개를 가져오며 i는 [0, 1] 범위입니다."
+     },
+     "views": {
+      "a": {
+       "values": [
+        4
+       ],
+       "marks": {}
+      },
+      "b": {
+       "values": [
+        2,
+        5
+       ],
+       "marks": {}
+      },
+      "cuts": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           0,
+           1
+          ]
+         ],
+         "marks": {}
+        }
+       ],
+       "points": []
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "half (left size)",
+          "ko": "half (왼쪽 크기)"
+         },
+         "value": 2
+        }
+       ]
+      },
+      "result": {
+       "values": []
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Try i = (0 + 1) // 2 = 0, so j = 2 − 0 = 2: the left half takes 0 from a and 2 from b. The edges are a: −∞ | 4 and b: 5 | ∞.",
+      "ko": "i = (0 + 1) // 2 = 0을 시도하면 j = 2 − 0 = 2: 왼쪽 절반은 a에서 0개, b에서 2개입니다. 경계는 a: −∞ | 4, b: 5 | ∞입니다."
+     },
+     "views": {
+      "a": {
+       "values": [
+        4
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       },
+       "spans": {
+        "left": null
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "right",
+          "ko": "오른쪽"
+         }
+        ]
+       ]
+      },
+      "b": {
+       "values": [
+        2,
+        5
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       },
+       "spans": {
+        "left": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "left 2",
+          "ko": "왼쪽 2"
+         }
+        }
+       },
+       "tags": [
+        [
+         1,
+         {
+          "en": "left",
+          "ko": "왼쪽"
+         }
+        ]
+       ]
+      },
+      "cuts": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           0,
+           1
+          ]
+         ],
+         "marks": {}
+        }
+       ],
+       "points": [
+        {
+         "at": 0,
+         "label": "i",
+         "mark": "lit"
+        }
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "half (left size)",
+          "ko": "half (왼쪽 크기)"
+         },
+         "value": 2
+        }
+       ]
+      },
+      "result": {
+       "values": []
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "5 > 4: b's left edge is bigger than a's right edge, so a gives too few; every cut up to i fails too: low = 1.",
+      "ko": "5 > 4: b의 왼쪽 끝이 a의 오른쪽 첫 값보다 커서 a에서 너무 적게 가져왔습니다. i 이하는 모두 안 되므로 low = 1."
+     },
+     "views": {
+      "a": {
+       "values": [
+        4
+       ],
+       "marks": {
+        "bad": [
+         0
+        ]
+       },
+       "spans": {
+        "left": null
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "right",
+          "ko": "오른쪽"
+         }
+        ]
+       ]
+      },
+      "b": {
+       "values": [
+        2,
+        5
+       ],
+       "marks": {
+        "bad": [
+         1
+        ]
+       },
+       "spans": {
+        "left": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "left 2",
+          "ko": "왼쪽 2"
+         }
+        }
+       },
+       "tags": [
+        [
+         1,
+         {
+          "en": "left",
+          "ko": "왼쪽"
+         }
+        ]
+       ]
+      },
+      "cuts": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           1,
+           1
+          ]
+         ],
+         "marks": {
+          "good": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 0,
+         "label": "i",
+         "mark": "lit"
+        }
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "half (left size)",
+          "ko": "half (왼쪽 크기)"
+         },
+         "value": 2
+        }
+       ]
+      },
+      "result": {
+       "values": []
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "b",
+        "at": 1
+       },
+       "to": {
+        "view": "cuts",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "value": "5 > 4"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Try i = (1 + 1) // 2 = 1, so j = 2 − 1 = 1: the left half takes 1 from a and 1 from b. The edges are a: 4 | ∞ and b: 2 | 5.",
+      "ko": "i = (1 + 1) // 2 = 1을 시도하면 j = 2 − 1 = 1: 왼쪽 절반은 a에서 1개, b에서 1개입니다. 경계는 a: 4 | ∞, b: 2 | 5입니다."
+     },
+     "views": {
+      "a": {
+       "values": [
+        4
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       },
+       "spans": {
+        "left": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "left 1",
+          "ko": "왼쪽 1"
+         }
+        }
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "left",
+          "ko": "왼쪽"
+         }
+        ]
+       ]
+      },
+      "b": {
+       "values": [
+        2,
+        5
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1
+        ]
+       },
+       "spans": {
+        "left": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "left 1",
+          "ko": "왼쪽 1"
+         }
+        }
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "left",
+          "ko": "왼쪽"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "right",
+          "ko": "오른쪽"
+         }
+        ]
+       ]
+      },
+      "cuts": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           1,
+           1
+          ]
+         ],
+         "marks": {}
+        }
+       ],
+       "points": [
+        {
+         "at": 1,
+         "label": "i",
+         "mark": "lit"
+        }
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "half (left size)",
+          "ko": "half (왼쪽 크기)"
+         },
+         "value": 2
+        }
+       ]
+      },
+      "result": {
+       "values": []
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "4 ≤ 5 and 2 ≤ ∞, so the cut is right. 3 is odd: the median is the larger left edge, max(4, 2) = 4.0.",
+      "ko": "4 ≤ 5, 2 ≤ ∞: 맞게 잘랐습니다. 개수 3이 홀수라 중앙값은 왼쪽 끝 중 큰 값, max(4, 2) = 4.0입니다."
+     },
+     "views": {
+      "a": {
+       "values": [
+        4
+       ],
+       "marks": {
+        "path": [
+         0
+        ]
+       },
+       "spans": {
+        "left": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "left 1",
+          "ko": "왼쪽 1"
+         }
+        }
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "left",
+          "ko": "왼쪽"
+         }
+        ]
+       ]
+      },
+      "b": {
+       "values": [
+        2,
+        5
+       ],
+       "marks": {
+        "path": []
+       },
+       "spans": {
+        "left": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "left 1",
+          "ko": "왼쪽 1"
+         }
+        }
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "left",
+          "ko": "왼쪽"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "right",
+          "ko": "오른쪽"
+         }
+        ]
+       ]
+      },
+      "cuts": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           1,
+           1
+          ]
+         ],
+         "marks": {
+          "path": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": []
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "half (left size)",
+          "ko": "half (왼쪽 크기)"
+         },
+         "value": 2
+        }
+       ]
+      },
+      "result": {
+       "values": [
+        "4.0"
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "a",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       },
+       "value": "4"
+      }
+     ],
+     "answer": "4.0"
+    }
+   ],
+   "setup": {
+    "cuts": {
+     "domain": [
+      0,
+      1
+     ]
+    }
+   },
+   "sampleInput": "[2,5]\n[4]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "pricesA = [3,8], pricesB = [5,11]",
+   "expected": "6.5",
+   "frames": [
+    {
+     "caption": {
+      "en": "a = pricesA, the shorter list, and b = pricesB. The left half of all 4 values holds half = (4 + 1) // 2 = 2, and a gives i of them for some i in [0, 2].",
+      "ko": "a는 짧은 목록 pricesA, b는 pricesB입니다. 값 4개의 왼쪽 절반은 half = (4 + 1) // 2 = 2개이고, 그중 a에서 i개를 가져오며 i는 [0, 2] 범위입니다."
+     },
+     "views": {
+      "a": {
+       "values": [
+        3,
+        8
+       ],
+       "marks": {}
+      },
+      "b": {
+       "values": [
+        5,
+        11
+       ],
+       "marks": {}
+      },
+      "cuts": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           0,
+           2
+          ]
+         ],
+         "marks": {}
+        }
+       ],
+       "points": []
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "half (left size)",
+          "ko": "half (왼쪽 크기)"
+         },
+         "value": 2
+        }
+       ]
+      },
+      "result": {
+       "values": []
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Try i = (0 + 2) // 2 = 1, so j = 2 − 1 = 1: the left half takes 1 from a and 1 from b. The edges are a: 3 | 8 and b: 5 | 11.",
+      "ko": "i = (0 + 2) // 2 = 1을 시도하면 j = 2 − 1 = 1: 왼쪽 절반은 a에서 1개, b에서 1개입니다. 경계는 a: 3 | 8, b: 5 | 11입니다."
+     },
+     "views": {
+      "a": {
+       "values": [
+        3,
+        8
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1
+        ]
+       },
+       "spans": {
+        "left": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "left 1",
+          "ko": "왼쪽 1"
+         }
+        }
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "left",
+          "ko": "왼쪽"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "right",
+          "ko": "오른쪽"
+         }
+        ]
+       ]
+      },
+      "b": {
+       "values": [
+        5,
+        11
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1
+        ]
+       },
+       "spans": {
+        "left": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "left 1",
+          "ko": "왼쪽 1"
+         }
+        }
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "left",
+          "ko": "왼쪽"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "right",
+          "ko": "오른쪽"
+         }
+        ]
+       ]
+      },
+      "cuts": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           0,
+           2
+          ]
+         ],
+         "marks": {}
+        }
+       ],
+       "points": [
+        {
+         "at": 1,
+         "label": "i",
+         "mark": "lit"
+        }
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "half (left size)",
+          "ko": "half (왼쪽 크기)"
+         },
+         "value": 2
+        }
+       ]
+      },
+      "result": {
+       "values": []
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "3 ≤ 11 and 5 ≤ 8, so the cut is right. 4 is even: the median is (max(3, 5) + min(8, 11)) / 2 = (5 + 8) / 2 = 6.5.",
+      "ko": "3 ≤ 11, 5 ≤ 8: 맞게 잘랐습니다. 개수 4가 짝수라 중앙값은 (max(3, 5) + min(8, 11)) / 2 = (5 + 8) / 2 = 6.5입니다."
+     },
+     "views": {
+      "a": {
+       "values": [
+        3,
+        8
+       ],
+       "marks": {
+        "path": [
+         1
+        ]
+       },
+       "spans": {
+        "left": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "left 1",
+          "ko": "왼쪽 1"
+         }
+        }
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "left",
+          "ko": "왼쪽"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "right",
+          "ko": "오른쪽"
+         }
+        ]
+       ]
+      },
+      "b": {
+       "values": [
+        5,
+        11
+       ],
+       "marks": {
+        "path": [
+         0
+        ]
+       },
+       "spans": {
+        "left": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "left 1",
+          "ko": "왼쪽 1"
+         }
+        }
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "left",
+          "ko": "왼쪽"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "right",
+          "ko": "오른쪽"
+         }
+        ]
+       ]
+      },
+      "cuts": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           0,
+           2
+          ]
+         ],
+         "marks": {
+          "path": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": []
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "half (left size)",
+          "ko": "half (왼쪽 크기)"
+         },
+         "value": 2
+        }
+       ]
+      },
+      "result": {
+       "values": [
+        "6.5"
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "b",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       },
+       "value": "5"
+      },
+      {
+       "from": {
+        "view": "a",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       },
+       "value": "8"
+      }
+     ],
+     "answer": "6.5"
+    }
+   ],
+   "setup": {
+    "cuts": {
+     "domain": [
+      0,
+      2
+     ]
+    }
+   },
+   "sampleInput": "[3,8]\n[5,11]"
+  },
+  {
+   "label": {
+    "en": "Example 3",
+    "ko": "예시 3"
+   },
+   "input": "pricesA = [], pricesB = [12]",
+   "expected": "12.0",
+   "frames": [
+    {
+     "caption": {
+      "en": "a = pricesA, the shorter list, and b = pricesB. The left half of all 1 values holds half = (1 + 1) // 2 = 1, and a gives i of them for some i in [0, 0] (a is empty, so only i = 0).",
+      "ko": "a는 짧은 목록 pricesA, b는 pricesB입니다. 값 1개의 왼쪽 절반은 half = (1 + 1) // 2 = 1개이고, 그중 a에서 i개를 가져오며 i는 [0, 0] 범위입니다(a가 비어 있어 i = 0뿐)."
+     },
+     "views": {
+      "a": {
+       "values": [],
+       "marks": {}
+      },
+      "b": {
+       "values": [
+        12
+       ],
+       "marks": {}
+      },
+      "cuts": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           0,
+           0
+          ]
+         ],
+         "marks": {}
+        }
+       ],
+       "points": []
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "half (left size)",
+          "ko": "half (왼쪽 크기)"
+         },
+         "value": 1
+        }
+       ]
+      },
+      "result": {
+       "values": []
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Try i = (0 + 0) // 2 = 0, so j = 1 − 0 = 1: the left half takes 0 from a and 1 from b. The edges are a: −∞ | ∞ and b: 12 | ∞.",
+      "ko": "i = (0 + 0) // 2 = 0을 시도하면 j = 1 − 0 = 1: 왼쪽 절반은 a에서 0개, b에서 1개입니다. 경계는 a: −∞ | ∞, b: 12 | ∞입니다."
+     },
+     "views": {
+      "a": {
+       "values": [],
+       "marks": {
+        "lit": []
+       },
+       "spans": {
+        "left": null
+       },
+       "tags": []
+      },
+      "b": {
+       "values": [
+        12
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       },
+       "spans": {
+        "left": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "left 1",
+          "ko": "왼쪽 1"
+         }
+        }
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "left",
+          "ko": "왼쪽"
+         }
+        ]
+       ]
+      },
+      "cuts": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           0,
+           0
+          ]
+         ],
+         "marks": {}
+        }
+       ],
+       "points": [
+        {
+         "at": 0,
+         "label": "i",
+         "mark": "lit"
+        }
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "half (left size)",
+          "ko": "half (왼쪽 크기)"
+         },
+         "value": 1
+        }
+       ]
+      },
+      "result": {
+       "values": []
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "−∞ ≤ ∞ and 12 ≤ ∞, so the cut is right. 1 is odd: the median is the larger left edge, max(−∞, 12) = 12.0.",
+      "ko": "−∞ ≤ ∞, 12 ≤ ∞: 맞게 잘랐습니다. 개수 1이 홀수라 중앙값은 왼쪽 끝 중 큰 값, max(−∞, 12) = 12.0입니다."
+     },
+     "views": {
+      "a": {
+       "values": [],
+       "marks": {
+        "path": []
+       },
+       "spans": {
+        "left": null
+       },
+       "tags": []
+      },
+      "b": {
+       "values": [
+        12
+       ],
+       "marks": {
+        "path": [
+         0
+        ]
+       },
+       "spans": {
+        "left": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "left 1",
+          "ko": "왼쪽 1"
+         }
+        }
+       },
+       "tags": [
+        [
+         0,
+         {
+          "en": "left",
+          "ko": "왼쪽"
+         }
+        ]
+       ]
+      },
+      "cuts": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           0,
+           0
+          ]
+         ],
+         "marks": {
+          "path": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": []
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "half (left size)",
+          "ko": "half (왼쪽 크기)"
+         },
+         "value": 1
+        }
+       ]
+      },
+      "result": {
+       "values": [
+        "12.0"
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "b",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       },
+       "value": "12"
+      }
+     ],
+     "answer": "12.0"
+    }
+   ],
+   "setup": {
+    "cuts": {
+     "domain": [
+      0,
+      1
+     ]
+    }
+   },
+   "sampleInput": "[]\n[12]"
+  }
+ ]
+}

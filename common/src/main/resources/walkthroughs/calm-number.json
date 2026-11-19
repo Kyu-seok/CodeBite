@@ -1,0 +1,3000 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Calm Number",
+  "ko": "차분한 수"
+ },
+ "approach": {
+  "en": "Replace the number with the sum of its digits' squares until it is 1 (calm) or repeats one already seen (a loop that never reaches 1); a set of the numbers seen catches the repeat.",
+  "ko": "수를 각 자릿수 제곱의 합으로 바꾸기를 1이 되거나(차분함) 이미 본 수가 다시 나올 때까지(1에 닿지 않는 고리) 반복합니다. 본 수를 담은 집합이 반복을 잡아냅니다."
+ },
+ "views": [
+  {
+   "id": "reading",
+   "type": "array",
+   "title": {
+    "en": "reading",
+    "ko": "reading (지금 수)"
+   }
+  },
+  {
+   "id": "digits",
+   "type": "array",
+   "title": {
+    "en": "digits (under: square)",
+    "ko": "자릿수 (아래: 제곱)"
+   },
+   "empty": {
+    "en": "not split yet",
+    "ko": "아직 나누지 않음"
+   }
+  },
+  {
+   "id": "seen",
+   "type": "set",
+   "title": {
+    "en": "seen",
+    "ko": "seen (본 수)"
+   },
+   "empty": {
+    "en": "nothing yet",
+    "ko": "아직 없음"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "reading = 7",
+   "expected": "true",
+   "frames": [
+    {
+     "caption": {
+      "en": "Start from reading = 7 with seen empty.",
+      "ko": "reading = 7에서 시작하고, seen은 비어 있습니다."
+     },
+     "views": {
+      "reading": {
+       "values": [
+        7
+       ],
+       "marks": {}
+      },
+      "digits": {
+       "values": [],
+       "under": [],
+       "marks": {}
+      },
+      "seen": {
+       "members": [],
+       "probes": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "7 is not 1 and not in seen, so add it to seen and go on.",
+      "ko": "7은 1이 아니고 seen에도 없으므로 seen에 넣고 계속합니다."
+     },
+     "views": {
+      "reading": {
+       "values": [
+        7
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "digits": {
+       "values": [],
+       "under": [],
+       "marks": {}
+      },
+      "seen": {
+       "members": [
+        7
+       ],
+       "probes": [
+        {
+         "value": 7,
+         "hit": false
+        }
+       ],
+       "marks": {
+        "good": [
+         7
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "reading",
+        "at": 0
+       },
+       "to": {
+        "view": "seen",
+        "at": 7
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Split 7 into its digits and square each: 7².",
+      "ko": "7을 자릿수로 나누어 각각 제곱합니다: 7²."
+     },
+     "views": {
+      "reading": {
+       "values": [
+        7
+       ],
+       "marks": {}
+      },
+      "digits": {
+       "values": [
+        7
+       ],
+       "under": [
+        [
+         0,
+         "49"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "seen": {
+       "members": [
+        7
+       ],
+       "probes": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "reading",
+        "at": 0
+       },
+       "to": {
+        "view": "digits",
+        "at": 0
+       },
+       "value": "7"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "reading = 7² = 49, the next number after 7.",
+      "ko": "reading = 7² = 49, 7 다음 수입니다."
+     },
+     "views": {
+      "reading": {
+       "values": [
+        49
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "digits": {
+       "values": [
+        7
+       ],
+       "under": [
+        [
+         0,
+         "49"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "seen": {
+       "members": [
+        7
+       ],
+       "probes": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 0
+       },
+       "to": {
+        "view": "reading",
+        "at": 0
+       },
+       "value": "+49"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "49 is not 1 and not in seen, so add it to seen and go on.",
+      "ko": "49는 1이 아니고 seen에도 없으므로 seen에 넣고 계속합니다."
+     },
+     "views": {
+      "reading": {
+       "values": [
+        49
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "digits": {
+       "values": [
+        7
+       ],
+       "under": [
+        [
+         0,
+         "49"
+        ]
+       ],
+       "marks": {}
+      },
+      "seen": {
+       "members": [
+        7,
+        49
+       ],
+       "probes": [
+        {
+         "value": 49,
+         "hit": false
+        }
+       ],
+       "marks": {
+        "good": [
+         49
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "reading",
+        "at": 0
+       },
+       "to": {
+        "view": "seen",
+        "at": 49
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Split 49 into its digits and square each: 4² + 9².",
+      "ko": "49를 자릿수로 나누어 각각 제곱합니다: 4² + 9²."
+     },
+     "views": {
+      "reading": {
+       "values": [
+        49
+       ],
+       "marks": {}
+      },
+      "digits": {
+       "values": [
+        4,
+        9
+       ],
+       "under": [
+        [
+         0,
+         "16"
+        ],
+        [
+         1,
+         "81"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0,
+         1
+        ]
+       }
+      },
+      "seen": {
+       "members": [
+        7,
+        49
+       ],
+       "probes": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "reading",
+        "at": 0
+       },
+       "to": {
+        "view": "digits",
+        "at": 0
+       },
+       "value": "4"
+      },
+      {
+       "from": {
+        "view": "reading",
+        "at": 0
+       },
+       "to": {
+        "view": "digits",
+        "at": 1
+       },
+       "value": "9"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "reading = 16 + 81 = 97, the next number after 49.",
+      "ko": "reading = 16 + 81 = 97, 49 다음 수입니다."
+     },
+     "views": {
+      "reading": {
+       "values": [
+        97
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "digits": {
+       "values": [
+        4,
+        9
+       ],
+       "under": [
+        [
+         0,
+         "16"
+        ],
+        [
+         1,
+         "81"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1
+        ]
+       }
+      },
+      "seen": {
+       "members": [
+        7,
+        49
+       ],
+       "probes": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 0
+       },
+       "to": {
+        "view": "reading",
+        "at": 0
+       },
+       "value": "+16"
+      },
+      {
+       "from": {
+        "view": "digits",
+        "at": 1
+       },
+       "to": {
+        "view": "reading",
+        "at": 0
+       },
+       "value": "+81"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "97 is not 1 and not in seen, so add it to seen and go on.",
+      "ko": "97은 1이 아니고 seen에도 없으므로 seen에 넣고 계속합니다."
+     },
+     "views": {
+      "reading": {
+       "values": [
+        97
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "digits": {
+       "values": [
+        4,
+        9
+       ],
+       "under": [
+        [
+         0,
+         "16"
+        ],
+        [
+         1,
+         "81"
+        ]
+       ],
+       "marks": {}
+      },
+      "seen": {
+       "members": [
+        7,
+        49,
+        97
+       ],
+       "probes": [
+        {
+         "value": 97,
+         "hit": false
+        }
+       ],
+       "marks": {
+        "good": [
+         97
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "reading",
+        "at": 0
+       },
+       "to": {
+        "view": "seen",
+        "at": 97
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Split 97 into its digits and square each: 9² + 7².",
+      "ko": "97을 자릿수로 나누어 각각 제곱합니다: 9² + 7²."
+     },
+     "views": {
+      "reading": {
+       "values": [
+        97
+       ],
+       "marks": {}
+      },
+      "digits": {
+       "values": [
+        9,
+        7
+       ],
+       "under": [
+        [
+         0,
+         "81"
+        ],
+        [
+         1,
+         "49"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0,
+         1
+        ]
+       }
+      },
+      "seen": {
+       "members": [
+        7,
+        49,
+        97
+       ],
+       "probes": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "reading",
+        "at": 0
+       },
+       "to": {
+        "view": "digits",
+        "at": 0
+       },
+       "value": "9"
+      },
+      {
+       "from": {
+        "view": "reading",
+        "at": 0
+       },
+       "to": {
+        "view": "digits",
+        "at": 1
+       },
+       "value": "7"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "reading = 81 + 49 = 130, the next number after 97.",
+      "ko": "reading = 81 + 49 = 130, 97 다음 수입니다."
+     },
+     "views": {
+      "reading": {
+       "values": [
+        130
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "digits": {
+       "values": [
+        9,
+        7
+       ],
+       "under": [
+        [
+         0,
+         "81"
+        ],
+        [
+         1,
+         "49"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1
+        ]
+       }
+      },
+      "seen": {
+       "members": [
+        7,
+        49,
+        97
+       ],
+       "probes": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 0
+       },
+       "to": {
+        "view": "reading",
+        "at": 0
+       },
+       "value": "+81"
+      },
+      {
+       "from": {
+        "view": "digits",
+        "at": 1
+       },
+       "to": {
+        "view": "reading",
+        "at": 0
+       },
+       "value": "+49"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "130 is not 1 and not in seen, so add it to seen and go on.",
+      "ko": "130은 1이 아니고 seen에도 없으므로 seen에 넣고 계속합니다."
+     },
+     "views": {
+      "reading": {
+       "values": [
+        130
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "digits": {
+       "values": [
+        9,
+        7
+       ],
+       "under": [
+        [
+         0,
+         "81"
+        ],
+        [
+         1,
+         "49"
+        ]
+       ],
+       "marks": {}
+      },
+      "seen": {
+       "members": [
+        7,
+        49,
+        97,
+        130
+       ],
+       "probes": [
+        {
+         "value": 130,
+         "hit": false
+        }
+       ],
+       "marks": {
+        "good": [
+         130
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "reading",
+        "at": 0
+       },
+       "to": {
+        "view": "seen",
+        "at": 130
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Split 130 into its digits and square each: 1² + 3² + 0².",
+      "ko": "130을 자릿수로 나누어 각각 제곱합니다: 1² + 3² + 0²."
+     },
+     "views": {
+      "reading": {
+       "values": [
+        130
+       ],
+       "marks": {}
+      },
+      "digits": {
+       "values": [
+        1,
+        3,
+        0
+       ],
+       "under": [
+        [
+         0,
+         "1"
+        ],
+        [
+         1,
+         "9"
+        ],
+        [
+         2,
+         "0"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0,
+         1,
+         2
+        ]
+       }
+      },
+      "seen": {
+       "members": [
+        7,
+        49,
+        97,
+        130
+       ],
+       "probes": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "reading",
+        "at": 0
+       },
+       "to": {
+        "view": "digits",
+        "at": 0
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "reading",
+        "at": 0
+       },
+       "to": {
+        "view": "digits",
+        "at": 1
+       },
+       "value": "3"
+      },
+      {
+       "from": {
+        "view": "reading",
+        "at": 0
+       },
+       "to": {
+        "view": "digits",
+        "at": 2
+       },
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "reading = 1 + 9 + 0 = 10, the next number after 130.",
+      "ko": "reading = 1 + 9 + 0 = 10, 130 다음 수입니다."
+     },
+     "views": {
+      "reading": {
+       "values": [
+        10
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "digits": {
+       "values": [
+        1,
+        3,
+        0
+       ],
+       "under": [
+        [
+         0,
+         "1"
+        ],
+        [
+         1,
+         "9"
+        ],
+        [
+         2,
+         "0"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1,
+         2
+        ]
+       }
+      },
+      "seen": {
+       "members": [
+        7,
+        49,
+        97,
+        130
+       ],
+       "probes": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 0
+       },
+       "to": {
+        "view": "reading",
+        "at": 0
+       },
+       "value": "+1"
+      },
+      {
+       "from": {
+        "view": "digits",
+        "at": 1
+       },
+       "to": {
+        "view": "reading",
+        "at": 0
+       },
+       "value": "+9"
+      },
+      {
+       "from": {
+        "view": "digits",
+        "at": 2
+       },
+       "to": {
+        "view": "reading",
+        "at": 0
+       },
+       "value": "+0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "10 is not 1 and not in seen, so add it to seen and go on.",
+      "ko": "10은 1이 아니고 seen에도 없으므로 seen에 넣고 계속합니다."
+     },
+     "views": {
+      "reading": {
+       "values": [
+        10
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "digits": {
+       "values": [
+        1,
+        3,
+        0
+       ],
+       "under": [
+        [
+         0,
+         "1"
+        ],
+        [
+         1,
+         "9"
+        ],
+        [
+         2,
+         "0"
+        ]
+       ],
+       "marks": {}
+      },
+      "seen": {
+       "members": [
+        7,
+        49,
+        97,
+        130,
+        10
+       ],
+       "probes": [
+        {
+         "value": 10,
+         "hit": false
+        }
+       ],
+       "marks": {
+        "good": [
+         10
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "reading",
+        "at": 0
+       },
+       "to": {
+        "view": "seen",
+        "at": 10
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Split 10 into its digits and square each: 1² + 0².",
+      "ko": "10을 자릿수로 나누어 각각 제곱합니다: 1² + 0²."
+     },
+     "views": {
+      "reading": {
+       "values": [
+        10
+       ],
+       "marks": {}
+      },
+      "digits": {
+       "values": [
+        1,
+        0
+       ],
+       "under": [
+        [
+         0,
+         "1"
+        ],
+        [
+         1,
+         "0"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0,
+         1
+        ]
+       }
+      },
+      "seen": {
+       "members": [
+        7,
+        49,
+        97,
+        130,
+        10
+       ],
+       "probes": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "reading",
+        "at": 0
+       },
+       "to": {
+        "view": "digits",
+        "at": 0
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "reading",
+        "at": 0
+       },
+       "to": {
+        "view": "digits",
+        "at": 1
+       },
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "reading = 1 + 0 = 1, the next number after 10.",
+      "ko": "reading = 1 + 0 = 1, 10 다음 수입니다."
+     },
+     "views": {
+      "reading": {
+       "values": [
+        1
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "digits": {
+       "values": [
+        1,
+        0
+       ],
+       "under": [
+        [
+         0,
+         "1"
+        ],
+        [
+         1,
+         "0"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1
+        ]
+       }
+      },
+      "seen": {
+       "members": [
+        7,
+        49,
+        97,
+        130,
+        10
+       ],
+       "probes": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 0
+       },
+       "to": {
+        "view": "reading",
+        "at": 0
+       },
+       "value": "+1"
+      },
+      {
+       "from": {
+        "view": "digits",
+        "at": 1
+       },
+       "to": {
+        "view": "reading",
+        "at": 0
+       },
+       "value": "+0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "reading is 1, so the chain 7 → 49 → 97 → 130 → 10 → 1 reached 1: answer true.",
+      "ko": "reading이 1이므로 7 → 49 → 97 → 130 → 10 → 1 순서로 1에 닿았습니다. 답은 true입니다."
+     },
+     "views": {
+      "reading": {
+       "values": [
+        1
+       ],
+       "marks": {
+        "path": [
+         0
+        ]
+       }
+      },
+      "digits": {
+       "values": [
+        1,
+        0
+       ],
+       "under": [
+        [
+         0,
+         "1"
+        ],
+        [
+         1,
+         "0"
+        ]
+       ],
+       "marks": {}
+      },
+      "seen": {
+       "members": [
+        7,
+        49,
+        97,
+        130,
+        10
+       ],
+       "probes": [],
+       "marks": {
+        "path": [
+         7,
+         49,
+         97,
+         130,
+         10
+        ]
+       }
+      }
+     },
+     "answer": "true"
+    }
+   ],
+   "sampleInput": "7"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "reading = 4",
+   "expected": "false",
+   "frames": [
+    {
+     "caption": {
+      "en": "Start from reading = 4 with seen empty.",
+      "ko": "reading = 4에서 시작하고, seen은 비어 있습니다."
+     },
+     "views": {
+      "reading": {
+       "values": [
+        4
+       ],
+       "marks": {}
+      },
+      "digits": {
+       "values": [],
+       "under": [],
+       "marks": {}
+      },
+      "seen": {
+       "members": [],
+       "probes": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "4 is not 1 and not in seen, so add it to seen and go on.",
+      "ko": "4는 1이 아니고 seen에도 없으므로 seen에 넣고 계속합니다."
+     },
+     "views": {
+      "reading": {
+       "values": [
+        4
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "digits": {
+       "values": [],
+       "under": [],
+       "marks": {}
+      },
+      "seen": {
+       "members": [
+        4
+       ],
+       "probes": [
+        {
+         "value": 4,
+         "hit": false
+        }
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "reading",
+        "at": 0
+       },
+       "to": {
+        "view": "seen",
+        "at": 4
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Split 4 into its digits and square each: 4².",
+      "ko": "4를 자릿수로 나누어 각각 제곱합니다: 4²."
+     },
+     "views": {
+      "reading": {
+       "values": [
+        4
+       ],
+       "marks": {}
+      },
+      "digits": {
+       "values": [
+        4
+       ],
+       "under": [
+        [
+         0,
+         "16"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "seen": {
+       "members": [
+        4
+       ],
+       "probes": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "reading",
+        "at": 0
+       },
+       "to": {
+        "view": "digits",
+        "at": 0
+       },
+       "value": "4"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "reading = 4² = 16, the next number after 4.",
+      "ko": "reading = 4² = 16, 4 다음 수입니다."
+     },
+     "views": {
+      "reading": {
+       "values": [
+        16
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "digits": {
+       "values": [
+        4
+       ],
+       "under": [
+        [
+         0,
+         "16"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "seen": {
+       "members": [
+        4
+       ],
+       "probes": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 0
+       },
+       "to": {
+        "view": "reading",
+        "at": 0
+       },
+       "value": "+16"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "16 is not 1 and not in seen, so add it to seen and go on.",
+      "ko": "16은 1이 아니고 seen에도 없으므로 seen에 넣고 계속합니다."
+     },
+     "views": {
+      "reading": {
+       "values": [
+        16
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "digits": {
+       "values": [
+        4
+       ],
+       "under": [
+        [
+         0,
+         "16"
+        ]
+       ],
+       "marks": {}
+      },
+      "seen": {
+       "members": [
+        4,
+        16
+       ],
+       "probes": [
+        {
+         "value": 16,
+         "hit": false
+        }
+       ],
+       "marks": {
+        "good": [
+         16
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "reading",
+        "at": 0
+       },
+       "to": {
+        "view": "seen",
+        "at": 16
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Split 16 into its digits and square each: 1² + 6².",
+      "ko": "16을 자릿수로 나누어 각각 제곱합니다: 1² + 6²."
+     },
+     "views": {
+      "reading": {
+       "values": [
+        16
+       ],
+       "marks": {}
+      },
+      "digits": {
+       "values": [
+        1,
+        6
+       ],
+       "under": [
+        [
+         0,
+         "1"
+        ],
+        [
+         1,
+         "36"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0,
+         1
+        ]
+       }
+      },
+      "seen": {
+       "members": [
+        4,
+        16
+       ],
+       "probes": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "reading",
+        "at": 0
+       },
+       "to": {
+        "view": "digits",
+        "at": 0
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "reading",
+        "at": 0
+       },
+       "to": {
+        "view": "digits",
+        "at": 1
+       },
+       "value": "6"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "reading = 1 + 36 = 37, the next number after 16.",
+      "ko": "reading = 1 + 36 = 37, 16 다음 수입니다."
+     },
+     "views": {
+      "reading": {
+       "values": [
+        37
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "digits": {
+       "values": [
+        1,
+        6
+       ],
+       "under": [
+        [
+         0,
+         "1"
+        ],
+        [
+         1,
+         "36"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1
+        ]
+       }
+      },
+      "seen": {
+       "members": [
+        4,
+        16
+       ],
+       "probes": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 0
+       },
+       "to": {
+        "view": "reading",
+        "at": 0
+       },
+       "value": "+1"
+      },
+      {
+       "from": {
+        "view": "digits",
+        "at": 1
+       },
+       "to": {
+        "view": "reading",
+        "at": 0
+       },
+       "value": "+36"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "37 is not 1 and not in seen, so add it to seen and go on.",
+      "ko": "37은 1이 아니고 seen에도 없으므로 seen에 넣고 계속합니다."
+     },
+     "views": {
+      "reading": {
+       "values": [
+        37
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "digits": {
+       "values": [
+        1,
+        6
+       ],
+       "under": [
+        [
+         0,
+         "1"
+        ],
+        [
+         1,
+         "36"
+        ]
+       ],
+       "marks": {}
+      },
+      "seen": {
+       "members": [
+        4,
+        16,
+        37
+       ],
+       "probes": [
+        {
+         "value": 37,
+         "hit": false
+        }
+       ],
+       "marks": {
+        "good": [
+         37
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "reading",
+        "at": 0
+       },
+       "to": {
+        "view": "seen",
+        "at": 37
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Split 37 into its digits and square each: 3² + 7².",
+      "ko": "37을 자릿수로 나누어 각각 제곱합니다: 3² + 7²."
+     },
+     "views": {
+      "reading": {
+       "values": [
+        37
+       ],
+       "marks": {}
+      },
+      "digits": {
+       "values": [
+        3,
+        7
+       ],
+       "under": [
+        [
+         0,
+         "9"
+        ],
+        [
+         1,
+         "49"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0,
+         1
+        ]
+       }
+      },
+      "seen": {
+       "members": [
+        4,
+        16,
+        37
+       ],
+       "probes": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "reading",
+        "at": 0
+       },
+       "to": {
+        "view": "digits",
+        "at": 0
+       },
+       "value": "3"
+      },
+      {
+       "from": {
+        "view": "reading",
+        "at": 0
+       },
+       "to": {
+        "view": "digits",
+        "at": 1
+       },
+       "value": "7"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "reading = 9 + 49 = 58, the next number after 37.",
+      "ko": "reading = 9 + 49 = 58, 37 다음 수입니다."
+     },
+     "views": {
+      "reading": {
+       "values": [
+        58
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "digits": {
+       "values": [
+        3,
+        7
+       ],
+       "under": [
+        [
+         0,
+         "9"
+        ],
+        [
+         1,
+         "49"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1
+        ]
+       }
+      },
+      "seen": {
+       "members": [
+        4,
+        16,
+        37
+       ],
+       "probes": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 0
+       },
+       "to": {
+        "view": "reading",
+        "at": 0
+       },
+       "value": "+9"
+      },
+      {
+       "from": {
+        "view": "digits",
+        "at": 1
+       },
+       "to": {
+        "view": "reading",
+        "at": 0
+       },
+       "value": "+49"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "58 is not 1 and not in seen, so add it to seen and go on.",
+      "ko": "58은 1이 아니고 seen에도 없으므로 seen에 넣고 계속합니다."
+     },
+     "views": {
+      "reading": {
+       "values": [
+        58
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "digits": {
+       "values": [
+        3,
+        7
+       ],
+       "under": [
+        [
+         0,
+         "9"
+        ],
+        [
+         1,
+         "49"
+        ]
+       ],
+       "marks": {}
+      },
+      "seen": {
+       "members": [
+        4,
+        16,
+        37,
+        58
+       ],
+       "probes": [
+        {
+         "value": 58,
+         "hit": false
+        }
+       ],
+       "marks": {
+        "good": [
+         58
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "reading",
+        "at": 0
+       },
+       "to": {
+        "view": "seen",
+        "at": 58
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Split 58 into its digits and square each: 5² + 8².",
+      "ko": "58을 자릿수로 나누어 각각 제곱합니다: 5² + 8²."
+     },
+     "views": {
+      "reading": {
+       "values": [
+        58
+       ],
+       "marks": {}
+      },
+      "digits": {
+       "values": [
+        5,
+        8
+       ],
+       "under": [
+        [
+         0,
+         "25"
+        ],
+        [
+         1,
+         "64"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0,
+         1
+        ]
+       }
+      },
+      "seen": {
+       "members": [
+        4,
+        16,
+        37,
+        58
+       ],
+       "probes": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "reading",
+        "at": 0
+       },
+       "to": {
+        "view": "digits",
+        "at": 0
+       },
+       "value": "5"
+      },
+      {
+       "from": {
+        "view": "reading",
+        "at": 0
+       },
+       "to": {
+        "view": "digits",
+        "at": 1
+       },
+       "value": "8"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "reading = 25 + 64 = 89, the next number after 58.",
+      "ko": "reading = 25 + 64 = 89, 58 다음 수입니다."
+     },
+     "views": {
+      "reading": {
+       "values": [
+        89
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "digits": {
+       "values": [
+        5,
+        8
+       ],
+       "under": [
+        [
+         0,
+         "25"
+        ],
+        [
+         1,
+         "64"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1
+        ]
+       }
+      },
+      "seen": {
+       "members": [
+        4,
+        16,
+        37,
+        58
+       ],
+       "probes": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 0
+       },
+       "to": {
+        "view": "reading",
+        "at": 0
+       },
+       "value": "+25"
+      },
+      {
+       "from": {
+        "view": "digits",
+        "at": 1
+       },
+       "to": {
+        "view": "reading",
+        "at": 0
+       },
+       "value": "+64"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "89 is not 1 and not in seen, so add it to seen and go on.",
+      "ko": "89는 1이 아니고 seen에도 없으므로 seen에 넣고 계속합니다."
+     },
+     "views": {
+      "reading": {
+       "values": [
+        89
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "digits": {
+       "values": [
+        5,
+        8
+       ],
+       "under": [
+        [
+         0,
+         "25"
+        ],
+        [
+         1,
+         "64"
+        ]
+       ],
+       "marks": {}
+      },
+      "seen": {
+       "members": [
+        4,
+        16,
+        37,
+        58,
+        89
+       ],
+       "probes": [
+        {
+         "value": 89,
+         "hit": false
+        }
+       ],
+       "marks": {
+        "good": [
+         89
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "reading",
+        "at": 0
+       },
+       "to": {
+        "view": "seen",
+        "at": 89
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Split 89 into its digits and square each: 8² + 9².",
+      "ko": "89를 자릿수로 나누어 각각 제곱합니다: 8² + 9²."
+     },
+     "views": {
+      "reading": {
+       "values": [
+        89
+       ],
+       "marks": {}
+      },
+      "digits": {
+       "values": [
+        8,
+        9
+       ],
+       "under": [
+        [
+         0,
+         "64"
+        ],
+        [
+         1,
+         "81"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0,
+         1
+        ]
+       }
+      },
+      "seen": {
+       "members": [
+        4,
+        16,
+        37,
+        58,
+        89
+       ],
+       "probes": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "reading",
+        "at": 0
+       },
+       "to": {
+        "view": "digits",
+        "at": 0
+       },
+       "value": "8"
+      },
+      {
+       "from": {
+        "view": "reading",
+        "at": 0
+       },
+       "to": {
+        "view": "digits",
+        "at": 1
+       },
+       "value": "9"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "reading = 64 + 81 = 145, the next number after 89.",
+      "ko": "reading = 64 + 81 = 145, 89 다음 수입니다."
+     },
+     "views": {
+      "reading": {
+       "values": [
+        145
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "digits": {
+       "values": [
+        8,
+        9
+       ],
+       "under": [
+        [
+         0,
+         "64"
+        ],
+        [
+         1,
+         "81"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1
+        ]
+       }
+      },
+      "seen": {
+       "members": [
+        4,
+        16,
+        37,
+        58,
+        89
+       ],
+       "probes": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 0
+       },
+       "to": {
+        "view": "reading",
+        "at": 0
+       },
+       "value": "+64"
+      },
+      {
+       "from": {
+        "view": "digits",
+        "at": 1
+       },
+       "to": {
+        "view": "reading",
+        "at": 0
+       },
+       "value": "+81"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "145 is not 1 and not in seen, so add it to seen and go on.",
+      "ko": "145는 1이 아니고 seen에도 없으므로 seen에 넣고 계속합니다."
+     },
+     "views": {
+      "reading": {
+       "values": [
+        145
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "digits": {
+       "values": [
+        8,
+        9
+       ],
+       "under": [
+        [
+         0,
+         "64"
+        ],
+        [
+         1,
+         "81"
+        ]
+       ],
+       "marks": {}
+      },
+      "seen": {
+       "members": [
+        4,
+        16,
+        37,
+        58,
+        89,
+        145
+       ],
+       "probes": [
+        {
+         "value": 145,
+         "hit": false
+        }
+       ],
+       "marks": {
+        "good": [
+         145
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "reading",
+        "at": 0
+       },
+       "to": {
+        "view": "seen",
+        "at": 145
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Split 145 into its digits and square each: 1² + 4² + 5².",
+      "ko": "145를 자릿수로 나누어 각각 제곱합니다: 1² + 4² + 5²."
+     },
+     "views": {
+      "reading": {
+       "values": [
+        145
+       ],
+       "marks": {}
+      },
+      "digits": {
+       "values": [
+        1,
+        4,
+        5
+       ],
+       "under": [
+        [
+         0,
+         "1"
+        ],
+        [
+         1,
+         "16"
+        ],
+        [
+         2,
+         "25"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0,
+         1,
+         2
+        ]
+       }
+      },
+      "seen": {
+       "members": [
+        4,
+        16,
+        37,
+        58,
+        89,
+        145
+       ],
+       "probes": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "reading",
+        "at": 0
+       },
+       "to": {
+        "view": "digits",
+        "at": 0
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "reading",
+        "at": 0
+       },
+       "to": {
+        "view": "digits",
+        "at": 1
+       },
+       "value": "4"
+      },
+      {
+       "from": {
+        "view": "reading",
+        "at": 0
+       },
+       "to": {
+        "view": "digits",
+        "at": 2
+       },
+       "value": "5"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "reading = 1 + 16 + 25 = 42, the next number after 145.",
+      "ko": "reading = 1 + 16 + 25 = 42, 145 다음 수입니다."
+     },
+     "views": {
+      "reading": {
+       "values": [
+        42
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "digits": {
+       "values": [
+        1,
+        4,
+        5
+       ],
+       "under": [
+        [
+         0,
+         "1"
+        ],
+        [
+         1,
+         "16"
+        ],
+        [
+         2,
+         "25"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1,
+         2
+        ]
+       }
+      },
+      "seen": {
+       "members": [
+        4,
+        16,
+        37,
+        58,
+        89,
+        145
+       ],
+       "probes": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 0
+       },
+       "to": {
+        "view": "reading",
+        "at": 0
+       },
+       "value": "+1"
+      },
+      {
+       "from": {
+        "view": "digits",
+        "at": 1
+       },
+       "to": {
+        "view": "reading",
+        "at": 0
+       },
+       "value": "+16"
+      },
+      {
+       "from": {
+        "view": "digits",
+        "at": 2
+       },
+       "to": {
+        "view": "reading",
+        "at": 0
+       },
+       "value": "+25"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "42 is not 1 and not in seen, so add it to seen and go on.",
+      "ko": "42는 1이 아니고 seen에도 없으므로 seen에 넣고 계속합니다."
+     },
+     "views": {
+      "reading": {
+       "values": [
+        42
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "digits": {
+       "values": [
+        1,
+        4,
+        5
+       ],
+       "under": [
+        [
+         0,
+         "1"
+        ],
+        [
+         1,
+         "16"
+        ],
+        [
+         2,
+         "25"
+        ]
+       ],
+       "marks": {}
+      },
+      "seen": {
+       "members": [
+        4,
+        16,
+        37,
+        58,
+        89,
+        145,
+        42
+       ],
+       "probes": [
+        {
+         "value": 42,
+         "hit": false
+        }
+       ],
+       "marks": {
+        "good": [
+         42
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "reading",
+        "at": 0
+       },
+       "to": {
+        "view": "seen",
+        "at": 42
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Split 42 into its digits and square each: 4² + 2².",
+      "ko": "42를 자릿수로 나누어 각각 제곱합니다: 4² + 2²."
+     },
+     "views": {
+      "reading": {
+       "values": [
+        42
+       ],
+       "marks": {}
+      },
+      "digits": {
+       "values": [
+        4,
+        2
+       ],
+       "under": [
+        [
+         0,
+         "16"
+        ],
+        [
+         1,
+         "4"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0,
+         1
+        ]
+       }
+      },
+      "seen": {
+       "members": [
+        4,
+        16,
+        37,
+        58,
+        89,
+        145,
+        42
+       ],
+       "probes": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "reading",
+        "at": 0
+       },
+       "to": {
+        "view": "digits",
+        "at": 0
+       },
+       "value": "4"
+      },
+      {
+       "from": {
+        "view": "reading",
+        "at": 0
+       },
+       "to": {
+        "view": "digits",
+        "at": 1
+       },
+       "value": "2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "reading = 16 + 4 = 20, the next number after 42.",
+      "ko": "reading = 16 + 4 = 20, 42 다음 수입니다."
+     },
+     "views": {
+      "reading": {
+       "values": [
+        20
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "digits": {
+       "values": [
+        4,
+        2
+       ],
+       "under": [
+        [
+         0,
+         "16"
+        ],
+        [
+         1,
+         "4"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1
+        ]
+       }
+      },
+      "seen": {
+       "members": [
+        4,
+        16,
+        37,
+        58,
+        89,
+        145,
+        42
+       ],
+       "probes": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 0
+       },
+       "to": {
+        "view": "reading",
+        "at": 0
+       },
+       "value": "+16"
+      },
+      {
+       "from": {
+        "view": "digits",
+        "at": 1
+       },
+       "to": {
+        "view": "reading",
+        "at": 0
+       },
+       "value": "+4"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "20 is not 1 and not in seen, so add it to seen and go on.",
+      "ko": "20은 1이 아니고 seen에도 없으므로 seen에 넣고 계속합니다."
+     },
+     "views": {
+      "reading": {
+       "values": [
+        20
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "digits": {
+       "values": [
+        4,
+        2
+       ],
+       "under": [
+        [
+         0,
+         "16"
+        ],
+        [
+         1,
+         "4"
+        ]
+       ],
+       "marks": {}
+      },
+      "seen": {
+       "members": [
+        4,
+        16,
+        37,
+        58,
+        89,
+        145,
+        42,
+        20
+       ],
+       "probes": [
+        {
+         "value": 20,
+         "hit": false
+        }
+       ],
+       "marks": {
+        "good": [
+         20
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "reading",
+        "at": 0
+       },
+       "to": {
+        "view": "seen",
+        "at": 20
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Split 20 into its digits and square each: 2² + 0².",
+      "ko": "20을 자릿수로 나누어 각각 제곱합니다: 2² + 0²."
+     },
+     "views": {
+      "reading": {
+       "values": [
+        20
+       ],
+       "marks": {}
+      },
+      "digits": {
+       "values": [
+        2,
+        0
+       ],
+       "under": [
+        [
+         0,
+         "4"
+        ],
+        [
+         1,
+         "0"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0,
+         1
+        ]
+       }
+      },
+      "seen": {
+       "members": [
+        4,
+        16,
+        37,
+        58,
+        89,
+        145,
+        42,
+        20
+       ],
+       "probes": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "reading",
+        "at": 0
+       },
+       "to": {
+        "view": "digits",
+        "at": 0
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "reading",
+        "at": 0
+       },
+       "to": {
+        "view": "digits",
+        "at": 1
+       },
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "reading = 4 + 0 = 4, the next number after 20.",
+      "ko": "reading = 4 + 0 = 4, 20 다음 수입니다."
+     },
+     "views": {
+      "reading": {
+       "values": [
+        4
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "digits": {
+       "values": [
+        2,
+        0
+       ],
+       "under": [
+        [
+         0,
+         "4"
+        ],
+        [
+         1,
+         "0"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1
+        ]
+       }
+      },
+      "seen": {
+       "members": [
+        4,
+        16,
+        37,
+        58,
+        89,
+        145,
+        42,
+        20
+       ],
+       "probes": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 0
+       },
+       "to": {
+        "view": "reading",
+        "at": 0
+       },
+       "value": "+4"
+      },
+      {
+       "from": {
+        "view": "digits",
+        "at": 1
+       },
+       "to": {
+        "view": "reading",
+        "at": 0
+       },
+       "value": "+0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "4 is already in seen: the chain 4 → 16 → 37 → 58 → 89 → 145 → 42 → 20 → 4 has looped without reaching 1, and it would go round forever. Answer false.",
+      "ko": "4는 이미 seen에 있으므로, 4 → 16 → 37 → 58 → 89 → 145 → 42 → 20 → 4 순서는 1에 닿지 못하고 끝없이 도는 고리입니다. 답은 false입니다."
+     },
+     "views": {
+      "reading": {
+       "values": [
+        4
+       ],
+       "marks": {
+        "bad": [
+         0
+        ]
+       }
+      },
+      "digits": {
+       "values": [
+        2,
+        0
+       ],
+       "under": [
+        [
+         0,
+         "4"
+        ],
+        [
+         1,
+         "0"
+        ]
+       ],
+       "marks": {}
+      },
+      "seen": {
+       "members": [
+        4,
+        16,
+        37,
+        58,
+        89,
+        145,
+        42,
+        20
+       ],
+       "probes": [
+        {
+         "value": 4,
+         "hit": true
+        }
+       ],
+       "marks": {
+        "bad": [
+         4
+        ]
+       }
+      }
+     },
+     "answer": "false"
+    }
+   ],
+   "sampleInput": "4"
+  },
+  {
+   "label": {
+    "en": "Case 3",
+    "ko": "케이스 3"
+   },
+   "input": "reading = 1",
+   "expected": "true",
+   "frames": [
+    {
+     "caption": {
+      "en": "Start from reading = 1 with seen empty.",
+      "ko": "reading = 1에서 시작하고, seen은 비어 있습니다."
+     },
+     "views": {
+      "reading": {
+       "values": [
+        1
+       ],
+       "marks": {}
+      },
+      "digits": {
+       "values": [],
+       "under": [],
+       "marks": {}
+      },
+      "seen": {
+       "members": [],
+       "probes": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "reading is already 1: answer true.",
+      "ko": "reading이 처음부터 1입니다. 답은 true입니다."
+     },
+     "views": {
+      "reading": {
+       "values": [
+        1
+       ],
+       "marks": {
+        "path": [
+         0
+        ]
+       }
+      },
+      "digits": {
+       "values": [],
+       "under": [],
+       "marks": {}
+      },
+      "seen": {
+       "members": [],
+       "probes": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "answer": "true"
+    }
+   ],
+   "sampleInput": "1"
+  }
+ ]
+}

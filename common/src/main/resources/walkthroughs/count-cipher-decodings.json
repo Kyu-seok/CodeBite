@@ -1,0 +1,814 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Count Cipher Decodings",
+  "ko": "암호 해독 방법 세기"
+ },
+ "approach": {
+  "en": "A split's last part is the last digit alone (if it isn't 0) or the last two digits (if they make 10 to 26), so the ways for a prefix are the ways one digit shorter plus the ways two digits shorter, each counted only when its part is allowed.",
+  "ko": "분할의 마지막 조각은 0이 아닌 마지막 숫자 하나이거나 10에서 26 사이가 되는 마지막 두 숫자입니다. 그래서 앞부분의 방법 수는 한 자리 짧은 앞부분의 수와 두 자리 짧은 앞부분의 수를, 그 조각이 허용될 때만 더한 값입니다."
+ },
+ "views": [
+  {
+   "id": "digits",
+   "type": "array",
+   "title": {
+    "en": "digits",
+    "ko": "digits (숫자 문자열)"
+   }
+  },
+  {
+   "id": "ways",
+   "type": "array",
+   "title": {
+    "en": "ways to split the first k digits",
+    "ko": "앞 k자리를 나누는 방법 수"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "digits = \"1234\"",
+   "expected": "3",
+   "frames": [
+    {
+     "caption": {
+      "en": "4 digits. The empty prefix has 1 way, splitting nothing, and the first digit 1 is not 0, so it is a part on its own: 1 way.",
+      "ko": "숫자가 4개입니다. 빈 앞부분은 아무것도 나누지 않는 1가지이고, 첫 숫자 1은 0이 아니라 혼자 한 조각이 되므로 1가지입니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "2",
+        "3",
+        "4"
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "spans": {},
+       "marks": {
+        "lit": [
+         0
+        ]
+       },
+       "unread": [
+        1,
+        2,
+        3
+       ]
+      },
+      "ways": {
+       "values": [
+        1,
+        1,
+        "?",
+        "?",
+        "?"
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "before",
+          "ko": "이전"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "current",
+          "ko": "현재"
+         }
+        ]
+       ],
+       "marks": {
+        "dim": [],
+        "good": [
+         0,
+         1
+        ]
+       },
+       "unread": [
+        2,
+        3,
+        4
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Digit 1 is 2: 2 alone ends a split of the first digit (1), and 12 is 10 to 26, so it ends a split of the empty prefix (1). The first 2 digits split 1 + 1 = 2 ways.",
+      "ko": "1번 숫자 2: 2 혼자 앞 1자리의 분할 뒤에 붙고(1가지), 12는 10~26이라 빈 앞부분의 분할 뒤에 붙습니다(1가지). 앞 2자리를 나누는 방법은 1 + 1 = 2가지입니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "2",
+        "3",
+        "4"
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "spans": {
+        "pair": {
+         "from": 0,
+         "to": 1,
+         "label": "12",
+         "mark": "good"
+        }
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       },
+       "unread": [
+        2,
+        3
+       ]
+      },
+      "ways": {
+       "values": [
+        1,
+        1,
+        2,
+        "?",
+        "?"
+       ],
+       "tags": [
+        [
+         1,
+         {
+          "en": "before",
+          "ko": "이전"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "current",
+          "ko": "현재"
+         }
+        ]
+       ],
+       "marks": {
+        "dim": [
+         0
+        ],
+        "lit": [
+         1,
+         0
+        ],
+        "good": [
+         2
+        ]
+       },
+       "unread": [
+        3,
+        4
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "ways",
+        "at": 1
+       },
+       "to": {
+        "view": "ways",
+        "at": 2
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "ways",
+        "at": 0
+       },
+       "to": {
+        "view": "ways",
+        "at": 2
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Digit 2 is 3: 3 alone ends a split of the first 2 digits (2), and 23 is 10 to 26, so it ends a split of the first digit (1). The first 3 digits split 2 + 1 = 3 ways.",
+      "ko": "2번 숫자 3: 3 혼자 앞 2자리의 분할 뒤에 붙고(2가지), 23은 10~26이라 앞 1자리의 분할 뒤에 붙습니다(1가지). 앞 3자리를 나누는 방법은 2 + 1 = 3가지입니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "2",
+        "3",
+        "4"
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "spans": {
+        "pair": {
+         "from": 1,
+         "to": 2,
+         "label": "23",
+         "mark": "good"
+        }
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       },
+       "unread": [
+        3
+       ]
+      },
+      "ways": {
+       "values": [
+        1,
+        1,
+        2,
+        3,
+        "?"
+       ],
+       "tags": [
+        [
+         2,
+         {
+          "en": "before",
+          "ko": "이전"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "current",
+          "ko": "현재"
+         }
+        ]
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1
+        ],
+        "lit": [
+         2,
+         1
+        ],
+        "good": [
+         3
+        ]
+       },
+       "unread": [
+        4
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "ways",
+        "at": 2
+       },
+       "to": {
+        "view": "ways",
+        "at": 3
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "ways",
+        "at": 1
+       },
+       "to": {
+        "view": "ways",
+        "at": 3
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Digit 3 is 4: 4 alone ends a split of the first 3 digits (3), and 34 is not 10 to 26. The first 4 digits split 3 ways.",
+      "ko": "3번 숫자 4: 4 혼자 앞 3자리의 분할 뒤에 붙고(3가지), 34는 10~26이 아닙니다. 앞 4자리를 나누는 방법은 3가지입니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "2",
+        "3",
+        "4"
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "spans": {
+        "pair": {
+         "from": 2,
+         "to": 3,
+         "label": "34",
+         "mark": "bad"
+        }
+       },
+       "marks": {
+        "lit": [
+         3
+        ]
+       },
+       "unread": []
+      },
+      "ways": {
+       "values": [
+        1,
+        1,
+        2,
+        3,
+        3
+       ],
+       "tags": [
+        [
+         3,
+         {
+          "en": "before",
+          "ko": "이전"
+         }
+        ],
+        [
+         4,
+         {
+          "en": "current",
+          "ko": "현재"
+         }
+        ]
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2
+        ],
+        "lit": [
+         3
+        ],
+        "good": [
+         4
+        ]
+       },
+       "unread": []
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "ways",
+        "at": 3
+       },
+       "to": {
+        "view": "ways",
+        "at": 4
+       },
+       "value": "3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every digit read: the whole string of 4 digits splits 3 ways. Answer: 3.",
+      "ko": "모든 숫자를 읽었고, 4자리 전체를 나누는 방법은 3가지입니다. 답은 3입니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "2",
+        "3",
+        "4"
+       ],
+       "pointers": {
+        "i": null
+       },
+       "spans": {},
+       "marks": {},
+       "unread": []
+      },
+      "ways": {
+       "values": [
+        1,
+        1,
+        2,
+        3,
+        3
+       ],
+       "tags": [
+        [
+         3,
+         {
+          "en": "before",
+          "ko": "이전"
+         }
+        ],
+        [
+         4,
+         {
+          "en": "current",
+          "ko": "현재"
+         }
+        ]
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2
+        ],
+        "path": [
+         4
+        ]
+       },
+       "unread": []
+      }
+     },
+     "answer": "3"
+    }
+   ],
+   "sampleInput": "1234"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "digits = \"100\"",
+   "expected": "0",
+   "frames": [
+    {
+     "caption": {
+      "en": "3 digits. The empty prefix has 1 way, splitting nothing, and the first digit 1 is not 0, so it is a part on its own: 1 way.",
+      "ko": "숫자가 3개입니다. 빈 앞부분은 아무것도 나누지 않는 1가지이고, 첫 숫자 1은 0이 아니라 혼자 한 조각이 되므로 1가지입니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "0",
+        "0"
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "spans": {},
+       "marks": {
+        "lit": [
+         0
+        ]
+       },
+       "unread": [
+        1,
+        2
+       ]
+      },
+      "ways": {
+       "values": [
+        1,
+        1,
+        "?",
+        "?"
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "before",
+          "ko": "이전"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "current",
+          "ko": "현재"
+         }
+        ]
+       ],
+       "marks": {
+        "dim": [],
+        "good": [
+         0,
+         1
+        ]
+       },
+       "unread": [
+        2,
+        3
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Digit 1 is 0: 0 can't be a part alone, and 10 is 10 to 26, so it ends a split of the empty prefix (1). The first 2 digits split 1 way.",
+      "ko": "1번 숫자 0: 0은 혼자 조각이 될 수 없고, 10은 10~26이라 빈 앞부분의 분할 뒤에 붙습니다(1가지). 앞 2자리를 나누는 방법은 1가지입니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "0",
+        "0"
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "spans": {
+        "pair": {
+         "from": 0,
+         "to": 1,
+         "label": "10",
+         "mark": "good"
+        }
+       },
+       "marks": {
+        "bad": [
+         1
+        ]
+       },
+       "unread": [
+        2
+       ]
+      },
+      "ways": {
+       "values": [
+        1,
+        1,
+        1,
+        "?"
+       ],
+       "tags": [
+        [
+         1,
+         {
+          "en": "before",
+          "ko": "이전"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "current",
+          "ko": "현재"
+         }
+        ]
+       ],
+       "marks": {
+        "dim": [
+         0
+        ],
+        "lit": [
+         0
+        ],
+        "good": [
+         2
+        ]
+       },
+       "unread": [
+        3
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "ways",
+        "at": 0
+       },
+       "to": {
+        "view": "ways",
+        "at": 2
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Digit 2 is 0: 0 can't be a part alone, and 00 starts with 0. The first 3 digits split 0 ways.",
+      "ko": "2번 숫자 0: 0은 혼자 조각이 될 수 없고, 00은 0으로 시작합니다. 앞 3자리를 나누는 방법은 0가지입니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "0",
+        "0"
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "spans": {
+        "pair": {
+         "from": 1,
+         "to": 2,
+         "label": "00",
+         "mark": "bad"
+        }
+       },
+       "marks": {
+        "bad": [
+         2
+        ]
+       },
+       "unread": []
+      },
+      "ways": {
+       "values": [
+        1,
+        1,
+        1,
+        0
+       ],
+       "tags": [
+        [
+         2,
+         {
+          "en": "before",
+          "ko": "이전"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "current",
+          "ko": "현재"
+         }
+        ]
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1
+        ],
+        "lit": [],
+        "bad": [
+         3
+        ]
+       },
+       "unread": []
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "ways",
+        "at": 3
+       },
+       "value": "0",
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every digit read: the whole string of 3 digits splits 0 ways. Answer: 0.",
+      "ko": "모든 숫자를 읽었고, 3자리 전체를 나누는 방법은 0가지입니다. 답은 0입니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "0",
+        "0"
+       ],
+       "pointers": {
+        "i": null
+       },
+       "spans": {},
+       "marks": {},
+       "unread": []
+      },
+      "ways": {
+       "values": [
+        1,
+        1,
+        1,
+        0
+       ],
+       "tags": [
+        [
+         2,
+         {
+          "en": "before",
+          "ko": "이전"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "current",
+          "ko": "현재"
+         }
+        ]
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1
+        ],
+        "bad": [
+         3
+        ]
+       },
+       "unread": []
+      }
+     },
+     "answer": "0"
+    }
+   ],
+   "sampleInput": "100"
+  },
+  {
+   "label": {
+    "en": "Case 3",
+    "ko": "케이스 3"
+   },
+   "input": "digits = \"06\"",
+   "expected": "0",
+   "frames": [
+    {
+     "caption": {
+      "en": "The first digit is 0, and no part may start with 0, so no split works. Answer: 0.",
+      "ko": "첫 숫자가 0인데 어떤 조각도 0으로 시작할 수 없으므로 가능한 분할이 없습니다. 답은 0입니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "0",
+        "6"
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "spans": {},
+       "marks": {
+        "bad": [
+         0
+        ]
+       },
+       "unread": []
+      },
+      "ways": {
+       "values": [
+        1,
+        0,
+        "?"
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "before",
+          "ko": "이전"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "current",
+          "ko": "현재"
+         }
+        ]
+       ],
+       "marks": {
+        "dim": [],
+        "bad": [
+         1
+        ]
+       },
+       "unread": [
+        2
+       ]
+      }
+     },
+     "answer": "0"
+    }
+   ],
+   "sampleInput": "06"
+  }
+ ]
+}

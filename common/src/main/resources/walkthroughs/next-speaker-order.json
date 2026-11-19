@@ -12,7 +12,10 @@
   {
    "id": "order",
    "type": "array",
-   "title": "lineup"
+   "title": {
+    "en": "lineup",
+    "ko": "lineup (발표 순서)"
+   }
   }
  ],
  "runs": [

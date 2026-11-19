@@ -1,0 +1,1793 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Compare Loadout Bits",
+  "ko": "로드아웃 비트 비교"
+ },
+ "approach": {
+  "en": "leftFlags ^ rightFlags has a 1 exactly where the two differ; count its 1 bits by clearing the lowest one (diff &= diff − 1) until it is 0.",
+  "ko": "leftFlags ^ rightFlags는 두 값이 다른 자리만 1입니다. 가장 낮은 1을 끄는 diff &= diff − 1을 0이 될 때까지 반복하며 1 비트를 셉니다."
+ },
+ "views": [
+  {
+   "id": "left",
+   "type": "array",
+   "title": {
+    "en": "leftFlags (tag: place value)",
+    "ko": "leftFlags (태그: 자릿값)"
+   }
+  },
+  {
+   "id": "right",
+   "type": "array",
+   "title": {
+    "en": "rightFlags",
+    "ko": "rightFlags (오른쪽 팀원)"
+   }
+  },
+  {
+   "id": "diff",
+   "type": "array",
+   "title": {
+    "en": "diff = leftFlags ^ rightFlags",
+    "ko": "diff (엇갈린 비트) = leftFlags ^ rightFlags"
+   }
+  },
+  {
+   "id": "count",
+   "type": "output",
+   "title": {
+    "en": "count",
+    "ko": "count (다른 자리 수)"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "leftFlags = 10, rightFlags = 5",
+   "expected": "4",
+   "frames": [
+    {
+     "caption": {
+      "en": "leftFlags = 10 and rightFlags = 5, drawn in 4 bits. count starts at 0.",
+      "ko": "leftFlags = 10, rightFlags = 5를 4비트로 그렸습니다. count는 0에서 시작합니다."
+     },
+     "views": {
+      "left": {
+       "values": [
+        1,
+        0,
+        1,
+        0
+       ],
+       "tags": [
+        [
+         0,
+         "8"
+        ],
+        [
+         1,
+         "4"
+        ],
+        [
+         2,
+         "2"
+        ],
+        [
+         3,
+         "1"
+        ]
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 3,
+         "label": "leftFlags = 10"
+        }
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "right": {
+       "values": [
+        0,
+        1,
+        0,
+        1
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 3,
+         "label": "rightFlags = 5"
+        }
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "count": {
+       "values": [
+        0
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "diff = 10 ^ 5 = 15: a 1 in each place where the two differ (8, 4, 2, 1).",
+      "ko": "diff = 10 ^ 5 = 15가 됩니다. 두 값이 다른 자리(8, 4, 2, 1)마다 1입니다."
+     },
+     "views": {
+      "left": {
+       "values": [
+        1,
+        0,
+        1,
+        0
+       ],
+       "tags": [
+        [
+         0,
+         "8"
+        ],
+        [
+         1,
+         "4"
+        ],
+        [
+         2,
+         "2"
+        ],
+        [
+         3,
+         "1"
+        ]
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 3,
+         "label": "leftFlags = 10"
+        }
+       },
+       "marks": {
+        "lit": [
+         0,
+         1,
+         2,
+         3
+        ]
+       }
+      },
+      "right": {
+       "values": [
+        0,
+        1,
+        0,
+        1
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 3,
+         "label": "rightFlags = 5"
+        }
+       },
+       "marks": {
+        "lit": [
+         0,
+         1,
+         2,
+         3
+        ]
+       }
+      },
+      "count": {
+       "values": [
+        0
+       ],
+       "marks": {}
+      },
+      "diff": {
+       "values": [
+        1,
+        1,
+        1,
+        1
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 3,
+         "label": "diff = 15"
+        }
+       },
+       "marks": {
+        "good": [
+         0,
+         1,
+         2,
+         3
+        ],
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "right",
+        "at": 0
+       },
+       "to": {
+        "view": "diff",
+        "at": 0
+       },
+       "value": "1^0"
+      },
+      {
+       "from": {
+        "view": "right",
+        "at": 1
+       },
+       "to": {
+        "view": "diff",
+        "at": 1
+       },
+       "value": "0^1"
+      },
+      {
+       "from": {
+        "view": "right",
+        "at": 2
+       },
+       "to": {
+        "view": "diff",
+        "at": 2
+       },
+       "value": "1^0"
+      },
+      {
+       "from": {
+        "view": "right",
+        "at": 3
+       },
+       "to": {
+        "view": "diff",
+        "at": 3
+       },
+       "value": "0^1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The lowest 1 is in place 1, which diff − 1 turns into 0, so diff &= diff − 1 clears it: count = 1, diff = 14.",
+      "ko": "가장 낮은 1이 자릿값 1 자리에 있고 diff − 1이 그 비트를 0으로 바꾸므로 diff &= diff − 1이 그 자리를 끕니다. count = 1, diff = 14가 됩니다."
+     },
+     "views": {
+      "left": {
+       "values": [
+        1,
+        0,
+        1,
+        0
+       ],
+       "tags": [
+        [
+         0,
+         "8"
+        ],
+        [
+         1,
+         "4"
+        ],
+        [
+         2,
+         "2"
+        ],
+        [
+         3,
+         "1"
+        ]
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 3,
+         "label": "leftFlags = 10"
+        }
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "right": {
+       "values": [
+        0,
+        1,
+        0,
+        1
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 3,
+         "label": "rightFlags = 5"
+        }
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "count": {
+       "values": [
+        1
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "diff": {
+       "values": [
+        1,
+        1,
+        1,
+        0
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 3,
+         "label": "diff = 14"
+        }
+       },
+       "marks": {
+        "good": [
+         3
+        ],
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "diff",
+        "at": 3
+       },
+       "to": {
+        "view": "count",
+        "at": 0
+       },
+       "value": "+1",
+       "mark": "good"
+      },
+      {
+       "to": {
+        "view": "diff",
+        "at": 3
+       },
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "diff − 1 turns the lowest 1 (place 2) into 0 and the 0s below it into 1s, so diff &= diff − 1 clears only that place: count = 2, diff = 12.",
+      "ko": "diff − 1은 가장 낮은 1(자릿값 2)을 0으로, 그 아래 0들을 1로 바꾸므로 diff &= diff − 1은 그 자리만 끕니다. count = 2, diff = 12가 됩니다."
+     },
+     "views": {
+      "left": {
+       "values": [
+        1,
+        0,
+        1,
+        0
+       ],
+       "tags": [
+        [
+         0,
+         "8"
+        ],
+        [
+         1,
+         "4"
+        ],
+        [
+         2,
+         "2"
+        ],
+        [
+         3,
+         "1"
+        ]
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 3,
+         "label": "leftFlags = 10"
+        }
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "right": {
+       "values": [
+        0,
+        1,
+        0,
+        1
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 3,
+         "label": "rightFlags = 5"
+        }
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "count": {
+       "values": [
+        2
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "diff": {
+       "values": [
+        1,
+        1,
+        0,
+        0
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 3,
+         "label": "diff = 12"
+        }
+       },
+       "marks": {
+        "good": [
+         2
+        ],
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "diff",
+        "at": 2
+       },
+       "to": {
+        "view": "count",
+        "at": 0
+       },
+       "value": "+1",
+       "mark": "good"
+      },
+      {
+       "to": {
+        "view": "diff",
+        "at": 2
+       },
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "diff − 1 turns the lowest 1 (place 4) into 0 and the 0s below it into 1s, so diff &= diff − 1 clears only that place: count = 3, diff = 8.",
+      "ko": "diff − 1은 가장 낮은 1(자릿값 4)을 0으로, 그 아래 0들을 1로 바꾸므로 diff &= diff − 1은 그 자리만 끕니다. count = 3, diff = 8이 됩니다."
+     },
+     "views": {
+      "left": {
+       "values": [
+        1,
+        0,
+        1,
+        0
+       ],
+       "tags": [
+        [
+         0,
+         "8"
+        ],
+        [
+         1,
+         "4"
+        ],
+        [
+         2,
+         "2"
+        ],
+        [
+         3,
+         "1"
+        ]
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 3,
+         "label": "leftFlags = 10"
+        }
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "right": {
+       "values": [
+        0,
+        1,
+        0,
+        1
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 3,
+         "label": "rightFlags = 5"
+        }
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "count": {
+       "values": [
+        3
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "diff": {
+       "values": [
+        1,
+        0,
+        0,
+        0
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 3,
+         "label": "diff = 8"
+        }
+       },
+       "marks": {
+        "good": [
+         1
+        ],
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "diff",
+        "at": 1
+       },
+       "to": {
+        "view": "count",
+        "at": 0
+       },
+       "value": "+1",
+       "mark": "good"
+      },
+      {
+       "to": {
+        "view": "diff",
+        "at": 1
+       },
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "diff − 1 turns the lowest 1 (place 8) into 0 and the 0s below it into 1s, so diff &= diff − 1 clears only that place: count = 4, diff = 0.",
+      "ko": "diff − 1은 가장 낮은 1(자릿값 8)을 0으로, 그 아래 0들을 1로 바꾸므로 diff &= diff − 1은 그 자리만 끕니다. count = 4, diff = 0이 됩니다."
+     },
+     "views": {
+      "left": {
+       "values": [
+        1,
+        0,
+        1,
+        0
+       ],
+       "tags": [
+        [
+         0,
+         "8"
+        ],
+        [
+         1,
+         "4"
+        ],
+        [
+         2,
+         "2"
+        ],
+        [
+         3,
+         "1"
+        ]
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 3,
+         "label": "leftFlags = 10"
+        }
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "right": {
+       "values": [
+        0,
+        1,
+        0,
+        1
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 3,
+         "label": "rightFlags = 5"
+        }
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "count": {
+       "values": [
+        4
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "diff": {
+       "values": [
+        0,
+        0,
+        0,
+        0
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 3,
+         "label": "diff = 0"
+        }
+       },
+       "marks": {
+        "good": [
+         0
+        ],
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "diff",
+        "at": 0
+       },
+       "to": {
+        "view": "count",
+        "at": 0
+       },
+       "value": "+1",
+       "mark": "good"
+      },
+      {
+       "to": {
+        "view": "diff",
+        "at": 0
+       },
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "diff is 0: every place the two differ was counted once. Answer 4.",
+      "ko": "diff가 0이 되었으니 다른 자리를 한 번씩 모두 셌습니다. 답은 4입니다."
+     },
+     "views": {
+      "left": {
+       "values": [
+        1,
+        0,
+        1,
+        0
+       ],
+       "tags": [
+        [
+         0,
+         "8"
+        ],
+        [
+         1,
+         "4"
+        ],
+        [
+         2,
+         "2"
+        ],
+        [
+         3,
+         "1"
+        ]
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 3,
+         "label": "leftFlags = 10"
+        }
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "right": {
+       "values": [
+        0,
+        1,
+        0,
+        1
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 3,
+         "label": "rightFlags = 5"
+        }
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "count": {
+       "values": [
+        4
+       ],
+       "marks": {
+        "path": [
+         0
+        ]
+       }
+      },
+      "diff": {
+       "values": [
+        0,
+        0,
+        0,
+        0
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 3,
+         "label": "diff = 0"
+        }
+       },
+       "marks": {
+        "good": [],
+        "path": [
+         0,
+         1,
+         2,
+         3
+        ]
+       }
+      }
+     },
+     "answer": "4"
+    }
+   ],
+   "sampleInput": "10\n5"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "leftFlags = 14, rightFlags = 9",
+   "expected": "3",
+   "frames": [
+    {
+     "caption": {
+      "en": "leftFlags = 14 and rightFlags = 9, drawn in 4 bits. count starts at 0.",
+      "ko": "leftFlags = 14, rightFlags = 9를 4비트로 그렸습니다. count는 0에서 시작합니다."
+     },
+     "views": {
+      "left": {
+       "values": [
+        1,
+        1,
+        1,
+        0
+       ],
+       "tags": [
+        [
+         0,
+         "8"
+        ],
+        [
+         1,
+         "4"
+        ],
+        [
+         2,
+         "2"
+        ],
+        [
+         3,
+         "1"
+        ]
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 3,
+         "label": "leftFlags = 14"
+        }
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "right": {
+       "values": [
+        1,
+        0,
+        0,
+        1
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 3,
+         "label": "rightFlags = 9"
+        }
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "count": {
+       "values": [
+        0
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "diff = 14 ^ 9 = 7: a 1 in each place where the two differ (4, 2, 1).",
+      "ko": "diff = 14 ^ 9 = 7이 됩니다. 두 값이 다른 자리(4, 2, 1)마다 1입니다."
+     },
+     "views": {
+      "left": {
+       "values": [
+        1,
+        1,
+        1,
+        0
+       ],
+       "tags": [
+        [
+         0,
+         "8"
+        ],
+        [
+         1,
+         "4"
+        ],
+        [
+         2,
+         "2"
+        ],
+        [
+         3,
+         "1"
+        ]
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 3,
+         "label": "leftFlags = 14"
+        }
+       },
+       "marks": {
+        "lit": [
+         1,
+         2,
+         3
+        ]
+       }
+      },
+      "right": {
+       "values": [
+        1,
+        0,
+        0,
+        1
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 3,
+         "label": "rightFlags = 9"
+        }
+       },
+       "marks": {
+        "lit": [
+         1,
+         2,
+         3
+        ]
+       }
+      },
+      "count": {
+       "values": [
+        0
+       ],
+       "marks": {}
+      },
+      "diff": {
+       "values": [
+        0,
+        1,
+        1,
+        1
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 3,
+         "label": "diff = 7"
+        }
+       },
+       "marks": {
+        "good": [
+         1,
+         2,
+         3
+        ],
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "right",
+        "at": 0
+       },
+       "to": {
+        "view": "diff",
+        "at": 0
+       },
+       "value": "1^1"
+      },
+      {
+       "from": {
+        "view": "right",
+        "at": 1
+       },
+       "to": {
+        "view": "diff",
+        "at": 1
+       },
+       "value": "1^0"
+      },
+      {
+       "from": {
+        "view": "right",
+        "at": 2
+       },
+       "to": {
+        "view": "diff",
+        "at": 2
+       },
+       "value": "1^0"
+      },
+      {
+       "from": {
+        "view": "right",
+        "at": 3
+       },
+       "to": {
+        "view": "diff",
+        "at": 3
+       },
+       "value": "0^1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The lowest 1 is in place 1, which diff − 1 turns into 0, so diff &= diff − 1 clears it: count = 1, diff = 6.",
+      "ko": "가장 낮은 1이 자릿값 1 자리에 있고 diff − 1이 그 비트를 0으로 바꾸므로 diff &= diff − 1이 그 자리를 끕니다. count = 1, diff = 6이 됩니다."
+     },
+     "views": {
+      "left": {
+       "values": [
+        1,
+        1,
+        1,
+        0
+       ],
+       "tags": [
+        [
+         0,
+         "8"
+        ],
+        [
+         1,
+         "4"
+        ],
+        [
+         2,
+         "2"
+        ],
+        [
+         3,
+         "1"
+        ]
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 3,
+         "label": "leftFlags = 14"
+        }
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "right": {
+       "values": [
+        1,
+        0,
+        0,
+        1
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 3,
+         "label": "rightFlags = 9"
+        }
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "count": {
+       "values": [
+        1
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "diff": {
+       "values": [
+        0,
+        1,
+        1,
+        0
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 3,
+         "label": "diff = 6"
+        }
+       },
+       "marks": {
+        "good": [
+         3
+        ],
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "diff",
+        "at": 3
+       },
+       "to": {
+        "view": "count",
+        "at": 0
+       },
+       "value": "+1",
+       "mark": "good"
+      },
+      {
+       "to": {
+        "view": "diff",
+        "at": 3
+       },
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "diff − 1 turns the lowest 1 (place 2) into 0 and the 0s below it into 1s, so diff &= diff − 1 clears only that place: count = 2, diff = 4.",
+      "ko": "diff − 1은 가장 낮은 1(자릿값 2)을 0으로, 그 아래 0들을 1로 바꾸므로 diff &= diff − 1은 그 자리만 끕니다. count = 2, diff = 4가 됩니다."
+     },
+     "views": {
+      "left": {
+       "values": [
+        1,
+        1,
+        1,
+        0
+       ],
+       "tags": [
+        [
+         0,
+         "8"
+        ],
+        [
+         1,
+         "4"
+        ],
+        [
+         2,
+         "2"
+        ],
+        [
+         3,
+         "1"
+        ]
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 3,
+         "label": "leftFlags = 14"
+        }
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "right": {
+       "values": [
+        1,
+        0,
+        0,
+        1
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 3,
+         "label": "rightFlags = 9"
+        }
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "count": {
+       "values": [
+        2
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "diff": {
+       "values": [
+        0,
+        1,
+        0,
+        0
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 3,
+         "label": "diff = 4"
+        }
+       },
+       "marks": {
+        "good": [
+         2
+        ],
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "diff",
+        "at": 2
+       },
+       "to": {
+        "view": "count",
+        "at": 0
+       },
+       "value": "+1",
+       "mark": "good"
+      },
+      {
+       "to": {
+        "view": "diff",
+        "at": 2
+       },
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "diff − 1 turns the lowest 1 (place 4) into 0 and the 0s below it into 1s, so diff &= diff − 1 clears only that place: count = 3, diff = 0.",
+      "ko": "diff − 1은 가장 낮은 1(자릿값 4)을 0으로, 그 아래 0들을 1로 바꾸므로 diff &= diff − 1은 그 자리만 끕니다. count = 3, diff = 0이 됩니다."
+     },
+     "views": {
+      "left": {
+       "values": [
+        1,
+        1,
+        1,
+        0
+       ],
+       "tags": [
+        [
+         0,
+         "8"
+        ],
+        [
+         1,
+         "4"
+        ],
+        [
+         2,
+         "2"
+        ],
+        [
+         3,
+         "1"
+        ]
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 3,
+         "label": "leftFlags = 14"
+        }
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "right": {
+       "values": [
+        1,
+        0,
+        0,
+        1
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 3,
+         "label": "rightFlags = 9"
+        }
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "count": {
+       "values": [
+        3
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "diff": {
+       "values": [
+        0,
+        0,
+        0,
+        0
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 3,
+         "label": "diff = 0"
+        }
+       },
+       "marks": {
+        "good": [
+         1
+        ],
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "diff",
+        "at": 1
+       },
+       "to": {
+        "view": "count",
+        "at": 0
+       },
+       "value": "+1",
+       "mark": "good"
+      },
+      {
+       "to": {
+        "view": "diff",
+        "at": 1
+       },
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "diff is 0: every place the two differ was counted once. Answer 3.",
+      "ko": "diff가 0이 되었으니 다른 자리를 한 번씩 모두 셌습니다. 답은 3입니다."
+     },
+     "views": {
+      "left": {
+       "values": [
+        1,
+        1,
+        1,
+        0
+       ],
+       "tags": [
+        [
+         0,
+         "8"
+        ],
+        [
+         1,
+         "4"
+        ],
+        [
+         2,
+         "2"
+        ],
+        [
+         3,
+         "1"
+        ]
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 3,
+         "label": "leftFlags = 14"
+        }
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "right": {
+       "values": [
+        1,
+        0,
+        0,
+        1
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 3,
+         "label": "rightFlags = 9"
+        }
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "count": {
+       "values": [
+        3
+       ],
+       "marks": {
+        "path": [
+         0
+        ]
+       }
+      },
+      "diff": {
+       "values": [
+        0,
+        0,
+        0,
+        0
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 3,
+         "label": "diff = 0"
+        }
+       },
+       "marks": {
+        "good": [],
+        "path": [
+         1,
+         2,
+         3
+        ]
+       }
+      }
+     },
+     "answer": "3"
+    }
+   ],
+   "sampleInput": "14\n9"
+  },
+  {
+   "label": {
+    "en": "Case 3",
+    "ko": "케이스 3"
+   },
+   "input": "leftFlags = 0, rightFlags = 0",
+   "expected": "0",
+   "frames": [
+    {
+     "caption": {
+      "en": "leftFlags = 0 and rightFlags = 0, drawn in 4 bits. count starts at 0.",
+      "ko": "leftFlags = 0, rightFlags = 0을 4비트로 그렸습니다. count는 0에서 시작합니다."
+     },
+     "views": {
+      "left": {
+       "values": [
+        0,
+        0,
+        0,
+        0
+       ],
+       "tags": [
+        [
+         0,
+         "8"
+        ],
+        [
+         1,
+         "4"
+        ],
+        [
+         2,
+         "2"
+        ],
+        [
+         3,
+         "1"
+        ]
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 3,
+         "label": "leftFlags = 0"
+        }
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "right": {
+       "values": [
+        0,
+        0,
+        0,
+        0
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 3,
+         "label": "rightFlags = 0"
+        }
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "count": {
+       "values": [
+        0
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "diff = 0 ^ 0 = 0: the two agree in every place.",
+      "ko": "diff = 0 ^ 0 = 0입니다. 두 값이 모든 자리에서 같습니다."
+     },
+     "views": {
+      "left": {
+       "values": [
+        0,
+        0,
+        0,
+        0
+       ],
+       "tags": [
+        [
+         0,
+         "8"
+        ],
+        [
+         1,
+         "4"
+        ],
+        [
+         2,
+         "2"
+        ],
+        [
+         3,
+         "1"
+        ]
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 3,
+         "label": "leftFlags = 0"
+        }
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "right": {
+       "values": [
+        0,
+        0,
+        0,
+        0
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 3,
+         "label": "rightFlags = 0"
+        }
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "count": {
+       "values": [
+        0
+       ],
+       "marks": {}
+      },
+      "diff": {
+       "values": [
+        0,
+        0,
+        0,
+        0
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 3,
+         "label": "diff = 0"
+        }
+       },
+       "marks": {
+        "good": [],
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "right",
+        "at": 0
+       },
+       "to": {
+        "view": "diff",
+        "at": 0
+       },
+       "value": "0^0"
+      },
+      {
+       "from": {
+        "view": "right",
+        "at": 1
+       },
+       "to": {
+        "view": "diff",
+        "at": 1
+       },
+       "value": "0^0"
+      },
+      {
+       "from": {
+        "view": "right",
+        "at": 2
+       },
+       "to": {
+        "view": "diff",
+        "at": 2
+       },
+       "value": "0^0"
+      },
+      {
+       "from": {
+        "view": "right",
+        "at": 3
+       },
+       "to": {
+        "view": "diff",
+        "at": 3
+       },
+       "value": "0^0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "diff is 0 from the start: no place differs. Answer 0.",
+      "ko": "diff가 처음부터 0이라 다른 자리가 없습니다. 답은 0입니다."
+     },
+     "views": {
+      "left": {
+       "values": [
+        0,
+        0,
+        0,
+        0
+       ],
+       "tags": [
+        [
+         0,
+         "8"
+        ],
+        [
+         1,
+         "4"
+        ],
+        [
+         2,
+         "2"
+        ],
+        [
+         3,
+         "1"
+        ]
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 3,
+         "label": "leftFlags = 0"
+        }
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "right": {
+       "values": [
+        0,
+        0,
+        0,
+        0
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 3,
+         "label": "rightFlags = 0"
+        }
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "count": {
+       "values": [
+        0
+       ],
+       "marks": {
+        "path": [
+         0
+        ]
+       }
+      },
+      "diff": {
+       "values": [
+        0,
+        0,
+        0,
+        0
+       ],
+       "spans": {
+        "value": {
+         "from": 0,
+         "to": 3,
+         "label": "diff = 0"
+        }
+       },
+       "marks": {
+        "good": [],
+        "path": []
+       }
+      }
+     },
+     "answer": "0"
+    }
+   ],
+   "sampleInput": "0\n0"
+  }
+ ]
+}

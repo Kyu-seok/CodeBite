@@ -1,0 +1,1524 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Two Menu Sum",
+  "ko": "예산 맞춰 두 메뉴 고르기"
+ },
+ "approach": {
+  "en": "The menu is sorted, so one pointer at each end can steer the sum: too small, and only moving left right can raise it; too big, and only moving right left can lower it. Each move rules out one price for good.",
+  "ko": "메뉴가 정렬되어 있어 양 끝의 두 포인터로 합을 조절할 수 있습니다. 합이 작으면 left를 오른쪽으로, 크면 right를 왼쪽으로 옮기는 것만이 방법이고, 한 번 옮길 때마다 가격 하나가 후보에서 완전히 빠집니다."
+ },
+ "views": [
+  {
+   "id": "menu",
+   "type": "array",
+   "title": {
+    "en": "menuPrice (tag: menu number)",
+    "ko": "menuPrice (태그: 메뉴 번호)"
+   }
+  },
+  {
+   "id": "sum",
+   "type": "output",
+   "title": {
+    "en": "left + right vs budget",
+    "ko": "left + right (합) vs 예산"
+   },
+   "empty": {
+    "en": "nothing added yet",
+    "ko": "아직 없음"
+   }
+  },
+  {
+   "id": "result",
+   "type": "output",
+   "title": {
+    "en": "answer",
+    "ko": "답"
+   },
+   "empty": {
+    "en": "empty",
+    "ko": "비어 있음"
+   }
+  },
+  {
+   "id": "state",
+   "type": "vars"
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "menuPrice = [12,30,45,58,70,85], budget = 100",
+   "expected": "[2,5]",
+   "frames": [
+    {
+     "caption": {
+      "en": "6 prices, sorted from cheapest. left starts at the cheapest (#1) and right at the dearest (#6); the two must add up to the budget, 100.",
+      "ko": "가격 6개가 싼 것부터 정렬되어 있습니다. left는 가장 싼 #1, right는 가장 비싼 #6에서 시작하며, 두 가격의 합이 예산 100과 같아야 합니다."
+     },
+     "views": {
+      "menu": {
+       "values": [
+        12,
+        30,
+        45,
+        58,
+        70,
+        85
+       ],
+       "tags": [
+        [
+         0,
+         "#1"
+        ],
+        [
+         1,
+         "#2"
+        ],
+        [
+         2,
+         "#3"
+        ],
+        [
+         3,
+         "#4"
+        ],
+        [
+         4,
+         "#5"
+        ],
+        [
+         5,
+         "#6"
+        ]
+       ],
+       "spans": {
+        "live": {
+         "from": 0,
+         "to": 5,
+         "label": {
+          "en": "still in play",
+          "ko": "남은 후보"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "left": 0,
+        "right": 5
+       },
+       "marks": {
+        "path": [],
+        "lit": []
+       }
+      },
+      "sum": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "budget",
+          "ko": "budget (예산)"
+         },
+         "value": 100
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "#1 + #6: 12 + 85 = 97 < 100. Too small: even the dearest price left can't lift 12 enough, so 12 is out and left steps right.",
+      "ko": "#1 + #6: 12 + 85 = 97 < 100, 너무 작습니다. 12에 남은 가장 비싼 가격을 더해도 모자라므로 12는 빠지고 left가 오른쪽으로 갑니다."
+     },
+     "views": {
+      "menu": {
+       "values": [
+        12,
+        30,
+        45,
+        58,
+        70,
+        85
+       ],
+       "tags": [
+        [
+         0,
+         "#1"
+        ],
+        [
+         1,
+         "#2"
+        ],
+        [
+         2,
+         "#3"
+        ],
+        [
+         3,
+         "#4"
+        ],
+        [
+         4,
+         "#5"
+        ],
+        [
+         5,
+         "#6"
+        ]
+       ],
+       "spans": {
+        "live": {
+         "from": 0,
+         "to": 5,
+         "label": {
+          "en": "still in play",
+          "ko": "남은 후보"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "left": 0,
+        "right": 5
+       },
+       "marks": {
+        "path": [],
+        "lit": [
+         0,
+         5
+        ]
+       }
+      },
+      "sum": {
+       "values": [
+        "97 < 100"
+       ],
+       "marks": {
+        "bad": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "budget",
+          "ko": "budget (예산)"
+         },
+         "value": 100
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "menu",
+        "at": 0
+       },
+       "to": {
+        "view": "sum",
+        "at": 0
+       },
+       "value": 12,
+       "mark": "good"
+      },
+      {
+       "from": {
+        "view": "menu",
+        "at": 5
+       },
+       "to": {
+        "view": "sum",
+        "at": 0
+       },
+       "value": 85,
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "#2 + #6: 30 + 85 = 115 > 100. Too big: even the cheapest price left is too much with 85, so 85 is out and right steps left.",
+      "ko": "#2 + #6: 30 + 85 = 115 > 100, 너무 큽니다. 85에 남은 가장 싼 가격을 더해도 넘치므로 85는 빠지고 right가 왼쪽으로 갑니다."
+     },
+     "views": {
+      "menu": {
+       "values": [
+        12,
+        30,
+        45,
+        58,
+        70,
+        85
+       ],
+       "tags": [
+        [
+         0,
+         "#1"
+        ],
+        [
+         1,
+         "#2"
+        ],
+        [
+         2,
+         "#3"
+        ],
+        [
+         3,
+         "#4"
+        ],
+        [
+         4,
+         "#5"
+        ],
+        [
+         5,
+         "#6"
+        ]
+       ],
+       "spans": {
+        "live": {
+         "from": 1,
+         "to": 5,
+         "label": {
+          "en": "still in play",
+          "ko": "남은 후보"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "left": 1,
+        "right": 5
+       },
+       "marks": {
+        "path": [],
+        "lit": [
+         1,
+         5
+        ]
+       }
+      },
+      "sum": {
+       "values": [
+        "115 > 100"
+       ],
+       "marks": {
+        "bad": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "budget",
+          "ko": "budget (예산)"
+         },
+         "value": 100
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "menu",
+        "at": 1
+       },
+       "to": {
+        "view": "sum",
+        "at": 0
+       },
+       "value": 30,
+       "mark": "good"
+      },
+      {
+       "from": {
+        "view": "menu",
+        "at": 5
+       },
+       "to": {
+        "view": "sum",
+        "at": 0
+       },
+       "value": 85,
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "#2 + #5: 30 + 70 = 100, exactly the budget.",
+      "ko": "#2 + #5: 30 + 70 = 100, 예산과 정확히 같습니다."
+     },
+     "views": {
+      "menu": {
+       "values": [
+        12,
+        30,
+        45,
+        58,
+        70,
+        85
+       ],
+       "tags": [
+        [
+         0,
+         "#1"
+        ],
+        [
+         1,
+         "#2"
+        ],
+        [
+         2,
+         "#3"
+        ],
+        [
+         3,
+         "#4"
+        ],
+        [
+         4,
+         "#5"
+        ],
+        [
+         5,
+         "#6"
+        ]
+       ],
+       "spans": {
+        "live": {
+         "from": 1,
+         "to": 4,
+         "label": {
+          "en": "still in play",
+          "ko": "남은 후보"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "left": 1,
+        "right": 4
+       },
+       "marks": {
+        "path": [],
+        "lit": [
+         1,
+         4
+        ]
+       }
+      },
+      "sum": {
+       "values": [
+        "100 = 100"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "budget",
+          "ko": "budget (예산)"
+         },
+         "value": 100
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "menu",
+        "at": 1
+       },
+       "to": {
+        "view": "sum",
+        "at": 0
+       },
+       "value": 30,
+       "mark": "good"
+      },
+      {
+       "from": {
+        "view": "menu",
+        "at": 4
+       },
+       "to": {
+        "view": "sum",
+        "at": 0
+       },
+       "value": 70,
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The pair is menu numbers 2 and 5 (1-indexed), so the answer is [2,5].",
+      "ko": "짝은 메뉴 번호 2번과 5번(1부터 셈)이고, 답은 [2,5]입니다."
+     },
+     "views": {
+      "menu": {
+       "values": [
+        12,
+        30,
+        45,
+        58,
+        70,
+        85
+       ],
+       "tags": [
+        [
+         0,
+         "#1"
+        ],
+        [
+         1,
+         "#2"
+        ],
+        [
+         2,
+         "#3"
+        ],
+        [
+         3,
+         "#4"
+        ],
+        [
+         4,
+         "#5"
+        ],
+        [
+         5,
+         "#6"
+        ]
+       ],
+       "spans": {
+        "live": null
+       },
+       "pointers": {
+        "left": null,
+        "right": null
+       },
+       "marks": {
+        "path": [
+         1,
+         4
+        ],
+        "lit": []
+       }
+      },
+      "sum": {
+       "values": [
+        "100 = 100"
+       ],
+       "marks": {
+        "path": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        2,
+        5
+       ],
+       "marks": {
+        "path": [
+         0,
+         1
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "budget",
+          "ko": "budget (예산)"
+         },
+         "value": 100
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "menu",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       },
+       "value": 2
+      },
+      {
+       "from": {
+        "view": "menu",
+        "at": 4
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       },
+       "value": 5
+      }
+     ],
+     "answer": "[2,5]"
+    }
+   ],
+   "sampleInput": "[12,30,45,58,70,85]\n100"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "menuPrice = [5,14,22,40], budget = 54",
+   "expected": "[2,4]",
+   "frames": [
+    {
+     "caption": {
+      "en": "4 prices, sorted from cheapest. left starts at the cheapest (#1) and right at the dearest (#4); the two must add up to the budget, 54.",
+      "ko": "가격 4개가 싼 것부터 정렬되어 있습니다. left는 가장 싼 #1, right는 가장 비싼 #4에서 시작하며, 두 가격의 합이 예산 54와 같아야 합니다."
+     },
+     "views": {
+      "menu": {
+       "values": [
+        5,
+        14,
+        22,
+        40
+       ],
+       "tags": [
+        [
+         0,
+         "#1"
+        ],
+        [
+         1,
+         "#2"
+        ],
+        [
+         2,
+         "#3"
+        ],
+        [
+         3,
+         "#4"
+        ]
+       ],
+       "spans": {
+        "live": {
+         "from": 0,
+         "to": 3,
+         "label": {
+          "en": "still in play",
+          "ko": "남은 후보"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "left": 0,
+        "right": 3
+       },
+       "marks": {
+        "path": [],
+        "lit": []
+       }
+      },
+      "sum": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "budget",
+          "ko": "budget (예산)"
+         },
+         "value": 54
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "#1 + #4: 5 + 40 = 45 < 54. Too small: even the dearest price left can't lift 5 enough, so 5 is out and left steps right.",
+      "ko": "#1 + #4: 5 + 40 = 45 < 54, 너무 작습니다. 5에 남은 가장 비싼 가격을 더해도 모자라므로 5는 빠지고 left가 오른쪽으로 갑니다."
+     },
+     "views": {
+      "menu": {
+       "values": [
+        5,
+        14,
+        22,
+        40
+       ],
+       "tags": [
+        [
+         0,
+         "#1"
+        ],
+        [
+         1,
+         "#2"
+        ],
+        [
+         2,
+         "#3"
+        ],
+        [
+         3,
+         "#4"
+        ]
+       ],
+       "spans": {
+        "live": {
+         "from": 0,
+         "to": 3,
+         "label": {
+          "en": "still in play",
+          "ko": "남은 후보"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "left": 0,
+        "right": 3
+       },
+       "marks": {
+        "path": [],
+        "lit": [
+         0,
+         3
+        ]
+       }
+      },
+      "sum": {
+       "values": [
+        "45 < 54"
+       ],
+       "marks": {
+        "bad": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "budget",
+          "ko": "budget (예산)"
+         },
+         "value": 54
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "menu",
+        "at": 0
+       },
+       "to": {
+        "view": "sum",
+        "at": 0
+       },
+       "value": 5,
+       "mark": "good"
+      },
+      {
+       "from": {
+        "view": "menu",
+        "at": 3
+       },
+       "to": {
+        "view": "sum",
+        "at": 0
+       },
+       "value": 40,
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "#2 + #4: 14 + 40 = 54, exactly the budget.",
+      "ko": "#2 + #4: 14 + 40 = 54, 예산과 정확히 같습니다."
+     },
+     "views": {
+      "menu": {
+       "values": [
+        5,
+        14,
+        22,
+        40
+       ],
+       "tags": [
+        [
+         0,
+         "#1"
+        ],
+        [
+         1,
+         "#2"
+        ],
+        [
+         2,
+         "#3"
+        ],
+        [
+         3,
+         "#4"
+        ]
+       ],
+       "spans": {
+        "live": {
+         "from": 1,
+         "to": 3,
+         "label": {
+          "en": "still in play",
+          "ko": "남은 후보"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "left": 1,
+        "right": 3
+       },
+       "marks": {
+        "path": [],
+        "lit": [
+         1,
+         3
+        ]
+       }
+      },
+      "sum": {
+       "values": [
+        "54 = 54"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "budget",
+          "ko": "budget (예산)"
+         },
+         "value": 54
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "menu",
+        "at": 1
+       },
+       "to": {
+        "view": "sum",
+        "at": 0
+       },
+       "value": 14,
+       "mark": "good"
+      },
+      {
+       "from": {
+        "view": "menu",
+        "at": 3
+       },
+       "to": {
+        "view": "sum",
+        "at": 0
+       },
+       "value": 40,
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The pair is menu numbers 2 and 4 (1-indexed), so the answer is [2,4].",
+      "ko": "짝은 메뉴 번호 2번과 4번(1부터 셈)이고, 답은 [2,4]입니다."
+     },
+     "views": {
+      "menu": {
+       "values": [
+        5,
+        14,
+        22,
+        40
+       ],
+       "tags": [
+        [
+         0,
+         "#1"
+        ],
+        [
+         1,
+         "#2"
+        ],
+        [
+         2,
+         "#3"
+        ],
+        [
+         3,
+         "#4"
+        ]
+       ],
+       "spans": {
+        "live": null
+       },
+       "pointers": {
+        "left": null,
+        "right": null
+       },
+       "marks": {
+        "path": [
+         1,
+         3
+        ],
+        "lit": []
+       }
+      },
+      "sum": {
+       "values": [
+        "54 = 54"
+       ],
+       "marks": {
+        "path": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        2,
+        4
+       ],
+       "marks": {
+        "path": [
+         0,
+         1
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "budget",
+          "ko": "budget (예산)"
+         },
+         "value": 54
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "menu",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       },
+       "value": 2
+      },
+      {
+       "from": {
+        "view": "menu",
+        "at": 3
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       },
+       "value": 4
+      }
+     ],
+     "answer": "[2,4]"
+    }
+   ],
+   "sampleInput": "[5,14,22,40]\n54"
+  },
+  {
+   "label": {
+    "en": "Case 3",
+    "ko": "케이스 3"
+   },
+   "input": "menuPrice = [-8,-3,2,5], budget = -1",
+   "expected": "[2,3]",
+   "frames": [
+    {
+     "caption": {
+      "en": "4 prices, sorted from cheapest. left starts at the cheapest (#1) and right at the dearest (#4); the two must add up to the budget, -1.",
+      "ko": "가격 4개가 싼 것부터 정렬되어 있습니다. left는 가장 싼 #1, right는 가장 비싼 #4에서 시작하며, 두 가격의 합이 예산 -1과 같아야 합니다."
+     },
+     "views": {
+      "menu": {
+       "values": [
+        -8,
+        -3,
+        2,
+        5
+       ],
+       "tags": [
+        [
+         0,
+         "#1"
+        ],
+        [
+         1,
+         "#2"
+        ],
+        [
+         2,
+         "#3"
+        ],
+        [
+         3,
+         "#4"
+        ]
+       ],
+       "spans": {
+        "live": {
+         "from": 0,
+         "to": 3,
+         "label": {
+          "en": "still in play",
+          "ko": "남은 후보"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "left": 0,
+        "right": 3
+       },
+       "marks": {
+        "path": [],
+        "lit": []
+       }
+      },
+      "sum": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "budget",
+          "ko": "budget (예산)"
+         },
+         "value": -1
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "#1 + #4: -8 + 5 = -3 < -1. Too small: even the dearest price left can't lift -8 enough, so -8 is out and left steps right.",
+      "ko": "#1 + #4: -8 + 5 = -3 < -1, 너무 작습니다. -8에 남은 가장 비싼 가격을 더해도 모자라므로 -8은 빠지고 left가 오른쪽으로 갑니다."
+     },
+     "views": {
+      "menu": {
+       "values": [
+        -8,
+        -3,
+        2,
+        5
+       ],
+       "tags": [
+        [
+         0,
+         "#1"
+        ],
+        [
+         1,
+         "#2"
+        ],
+        [
+         2,
+         "#3"
+        ],
+        [
+         3,
+         "#4"
+        ]
+       ],
+       "spans": {
+        "live": {
+         "from": 0,
+         "to": 3,
+         "label": {
+          "en": "still in play",
+          "ko": "남은 후보"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "left": 0,
+        "right": 3
+       },
+       "marks": {
+        "path": [],
+        "lit": [
+         0,
+         3
+        ]
+       }
+      },
+      "sum": {
+       "values": [
+        "-3 < -1"
+       ],
+       "marks": {
+        "bad": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "budget",
+          "ko": "budget (예산)"
+         },
+         "value": -1
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "menu",
+        "at": 0
+       },
+       "to": {
+        "view": "sum",
+        "at": 0
+       },
+       "value": -8,
+       "mark": "good"
+      },
+      {
+       "from": {
+        "view": "menu",
+        "at": 3
+       },
+       "to": {
+        "view": "sum",
+        "at": 0
+       },
+       "value": 5,
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "#2 + #4: -3 + 5 = 2 > -1. Too big: even the cheapest price left is too much with 5, so 5 is out and right steps left.",
+      "ko": "#2 + #4: -3 + 5 = 2 > -1, 너무 큽니다. 5에 남은 가장 싼 가격을 더해도 넘치므로 5는 빠지고 right가 왼쪽으로 갑니다."
+     },
+     "views": {
+      "menu": {
+       "values": [
+        -8,
+        -3,
+        2,
+        5
+       ],
+       "tags": [
+        [
+         0,
+         "#1"
+        ],
+        [
+         1,
+         "#2"
+        ],
+        [
+         2,
+         "#3"
+        ],
+        [
+         3,
+         "#4"
+        ]
+       ],
+       "spans": {
+        "live": {
+         "from": 1,
+         "to": 3,
+         "label": {
+          "en": "still in play",
+          "ko": "남은 후보"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "left": 1,
+        "right": 3
+       },
+       "marks": {
+        "path": [],
+        "lit": [
+         1,
+         3
+        ]
+       }
+      },
+      "sum": {
+       "values": [
+        "2 > -1"
+       ],
+       "marks": {
+        "bad": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "budget",
+          "ko": "budget (예산)"
+         },
+         "value": -1
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "menu",
+        "at": 1
+       },
+       "to": {
+        "view": "sum",
+        "at": 0
+       },
+       "value": -3,
+       "mark": "good"
+      },
+      {
+       "from": {
+        "view": "menu",
+        "at": 3
+       },
+       "to": {
+        "view": "sum",
+        "at": 0
+       },
+       "value": 5,
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "#2 + #3: -3 + 2 = -1, exactly the budget.",
+      "ko": "#2 + #3: -3 + 2 = -1, 예산과 정확히 같습니다."
+     },
+     "views": {
+      "menu": {
+       "values": [
+        -8,
+        -3,
+        2,
+        5
+       ],
+       "tags": [
+        [
+         0,
+         "#1"
+        ],
+        [
+         1,
+         "#2"
+        ],
+        [
+         2,
+         "#3"
+        ],
+        [
+         3,
+         "#4"
+        ]
+       ],
+       "spans": {
+        "live": {
+         "from": 1,
+         "to": 2,
+         "label": {
+          "en": "still in play",
+          "ko": "남은 후보"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "left": 1,
+        "right": 2
+       },
+       "marks": {
+        "path": [],
+        "lit": [
+         1,
+         2
+        ]
+       }
+      },
+      "sum": {
+       "values": [
+        "-1 = -1"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "budget",
+          "ko": "budget (예산)"
+         },
+         "value": -1
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "menu",
+        "at": 1
+       },
+       "to": {
+        "view": "sum",
+        "at": 0
+       },
+       "value": -3,
+       "mark": "good"
+      },
+      {
+       "from": {
+        "view": "menu",
+        "at": 2
+       },
+       "to": {
+        "view": "sum",
+        "at": 0
+       },
+       "value": 2,
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The pair is menu numbers 2 and 3 (1-indexed), so the answer is [2,3].",
+      "ko": "짝은 메뉴 번호 2번과 3번(1부터 셈)이고, 답은 [2,3]입니다."
+     },
+     "views": {
+      "menu": {
+       "values": [
+        -8,
+        -3,
+        2,
+        5
+       ],
+       "tags": [
+        [
+         0,
+         "#1"
+        ],
+        [
+         1,
+         "#2"
+        ],
+        [
+         2,
+         "#3"
+        ],
+        [
+         3,
+         "#4"
+        ]
+       ],
+       "spans": {
+        "live": null
+       },
+       "pointers": {
+        "left": null,
+        "right": null
+       },
+       "marks": {
+        "path": [
+         1,
+         2
+        ],
+        "lit": []
+       }
+      },
+      "sum": {
+       "values": [
+        "-1 = -1"
+       ],
+       "marks": {
+        "path": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        2,
+        3
+       ],
+       "marks": {
+        "path": [
+         0,
+         1
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "budget",
+          "ko": "budget (예산)"
+         },
+         "value": -1
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "menu",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       },
+       "value": 2
+      },
+      {
+       "from": {
+        "view": "menu",
+        "at": 2
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       },
+       "value": 3
+      }
+     ],
+     "answer": "[2,3]"
+    }
+   ],
+   "sampleInput": "[-8,-3,2,5]\n-1"
+  }
+ ]
+}

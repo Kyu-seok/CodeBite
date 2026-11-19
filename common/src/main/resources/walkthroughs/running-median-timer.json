@@ -68,7 +68,7 @@
     {
      "caption": {
       "en": "StreamMedian() starts with both halves empty and returns null.",
-      "ko": "StreamMedian()은 두 절반이 모두 빈 채로 시작하고 null을 반환합니다."
+      "ko": "생성자 StreamMedian() 호출은 두 절반이 모두 빈 채로 시작하고 null을 반환합니다."
      },
      "views": {
       "calls": {
@@ -633,7 +633,7 @@
     {
      "caption": {
       "en": "record(1) returns null. low holds 1 and high 0, and every number in low is at most every number in high.",
-      "ko": "record(1)는 null을 반환합니다. low에 1개, high에 0개가 있고, low의 모든 수는 high의 어떤 수보다 크지 않습니다."
+      "ko": "record(1) 호출은 null을 반환합니다. low에 1개, high에 0개가 있고, low의 모든 수는 high의 어떤 수보다 크지 않습니다."
      },
      "views": {
       "calls": {
@@ -1645,7 +1645,7 @@
     {
      "caption": {
       "en": "record(2) returns null. low holds 1 and high 1, and every number in low is at most every number in high.",
-      "ko": "record(2)는 null을 반환합니다. low에 1개, high에 1개가 있고, low의 모든 수는 high의 어떤 수보다 크지 않습니다."
+      "ko": "record(2) 호출은 null을 반환합니다. low에 1개, high에 1개가 있고, low의 모든 수는 high의 어떤 수보다 크지 않습니다."
      },
      "views": {
       "calls": {
@@ -3485,7 +3485,7 @@
     {
      "caption": {
       "en": "record(3) returns null. low holds 2 and high 1, and every number in low is at most every number in high.",
-      "ko": "record(3)는 null을 반환합니다. low에 2개, high에 1개가 있고, low의 모든 수는 high의 어떤 수보다 크지 않습니다."
+      "ko": "record(3) 호출은 null을 반환합니다. low에 2개, high에 1개가 있고, low의 모든 수는 high의 어떤 수보다 크지 않습니다."
      },
      "views": {
       "calls": {
@@ -4058,7 +4058,7 @@
     {
      "caption": {
       "en": "StreamMedian() starts with both halves empty and returns null.",
-      "ko": "StreamMedian()은 두 절반이 모두 빈 채로 시작하고 null을 반환합니다."
+      "ko": "생성자 StreamMedian() 호출은 두 절반이 모두 빈 채로 시작하고 null을 반환합니다."
      },
      "views": {
       "calls": {
@@ -4595,7 +4595,7 @@
     {
      "caption": {
       "en": "record(4) returns null. low holds 1 and high 0, and every number in low is at most every number in high.",
-      "ko": "record(4)는 null을 반환합니다. low에 1개, high에 0개가 있고, low의 모든 수는 high의 어떤 수보다 크지 않습니다."
+      "ko": "record(4) 호출은 null을 반환합니다. low에 1개, high에 0개가 있고, low의 모든 수는 high의 어떤 수보다 크지 않습니다."
      },
      "views": {
       "calls": {
@@ -5217,7 +5217,7 @@
     {
      "caption": {
       "en": "record(2) returns null. low holds 1 and high 1, and every number in low is at most every number in high.",
-      "ko": "record(2)는 null을 반환합니다. low에 1개, high에 1개가 있고, low의 모든 수는 high의 어떤 수보다 크지 않습니다."
+      "ko": "record(2) 호출은 null을 반환합니다. low에 1개, high에 1개가 있고, low의 모든 수는 high의 어떤 수보다 크지 않습니다."
      },
      "views": {
       "calls": {
@@ -6673,7 +6673,7 @@
     {
      "caption": {
       "en": "record(5) returns null. low holds 2 and high 1, and every number in low is at most every number in high.",
-      "ko": "record(5)는 null을 반환합니다. low에 2개, high에 1개가 있고, low의 모든 수는 high의 어떤 수보다 크지 않습니다."
+      "ko": "record(5) 호출은 null을 반환합니다. low에 2개, high에 1개가 있고, low의 모든 수는 high의 어떤 수보다 크지 않습니다."
      },
      "views": {
       "calls": {
@@ -7678,7 +7678,7 @@
     {
      "caption": {
       "en": "record(3) returns null. low holds 2 and high 2, and every number in low is at most every number in high.",
-      "ko": "record(3)는 null을 반환합니다. low에 2개, high에 2개가 있고, low의 모든 수는 high의 어떤 수보다 크지 않습니다."
+      "ko": "record(3) 호출은 null을 반환합니다. low에 2개, high에 2개가 있고, low의 모든 수는 high의 어떤 수보다 크지 않습니다."
      },
      "views": {
       "calls": {
@@ -8266,7 +8266,7 @@
     {
      "caption": {
       "en": "StreamMedian() starts with both halves empty and returns null.",
-      "ko": "StreamMedian()은 두 절반이 모두 빈 채로 시작하고 null을 반환합니다."
+      "ko": "생성자 StreamMedian() 호출은 두 절반이 모두 빈 채로 시작하고 null을 반환합니다."
      },
      "views": {
       "calls": {
@@ -8775,7 +8775,7 @@
     {
      "caption": {
       "en": "record(7) returns null. low holds 1 and high 0, and every number in low is at most every number in high.",
-      "ko": "record(7)는 null을 반환합니다. low에 1개, high에 0개가 있고, low의 모든 수는 high의 어떤 수보다 크지 않습니다."
+      "ko": "record(7) 호출은 null을 반환합니다. low에 1개, high에 0개가 있고, low의 모든 수는 high의 어떤 수보다 크지 않습니다."
      },
      "views": {
       "calls": {
@@ -9533,7 +9533,7 @@
     {
      "caption": {
       "en": "record(3) returns null. low holds 1 and high 1, and every number in low is at most every number in high.",
-      "ko": "record(3)는 null을 반환합니다. low에 1개, high에 1개가 있고, low의 모든 수는 high의 어떤 수보다 크지 않습니다."
+      "ko": "record(3) 호출은 null을 반환합니다. low에 1개, high에 1개가 있고, low의 모든 수는 high의 어떤 수보다 크지 않습니다."
      },
      "views": {
       "calls": {

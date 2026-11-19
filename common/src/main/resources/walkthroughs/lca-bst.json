@@ -1,0 +1,748 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Lowest Common Ancestor of a BST",
+  "ko": "이진 검색 트리의 최소 공통 조상"
+ },
+ "approach": {
+  "en": "In a BST everything left of a node is smaller and everything right is larger: walk down from the root, going left while p and q are both smaller and right while both are larger. The first node that sends them different ways, or is one of them, is their lowest common ancestor.",
+  "ko": "BST에서는 노드의 왼쪽이 모두 작고 오른쪽이 모두 큽니다. root에서 내려가며 p와 q가 둘 다 작으면 왼쪽, 둘 다 크면 오른쪽으로 갑니다. 두 값이 처음으로 서로 다른 쪽으로 갈리는 노드, 또는 둘 중 하나인 노드가 최소 공통 조상입니다."
+ },
+ "views": [
+  {
+   "id": "tree",
+   "type": "tree",
+   "arity": 2,
+   "title": {
+    "en": "root",
+    "ko": "root (트리)"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "root = [20,10,30,5,15,25,40,null,8,12,18], p = 8, q = 12",
+   "expected": "10",
+   "frames": [
+    {
+     "caption": {
+      "en": "p = 8 and q = 12, so low = 8 and high = 12. Start at the root 20.",
+      "ko": "p = 8, q = 12이므로 low = 8, high = 12입니다. root 20에서 시작합니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "lit": [
+         8,
+         9
+        ]
+       },
+       "shade": [],
+       "edgeMarks": {},
+       "tags": [
+        [
+         8,
+         "p"
+        ],
+        [
+         9,
+         "q"
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "8 and 12 are both smaller than 20, so both are in its left subtree: go left.",
+      "ko": "8, 12 모두 20보다 작으므로 둘 다 왼쪽 서브트리에 있습니다. 왼쪽으로 갑니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ],
+       "edgeMarks": {},
+       "tags": [
+        [
+         8,
+         "p"
+        ],
+        [
+         9,
+         "q"
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "8 < 10 < 12: p and q split here, one on each side.",
+      "ko": "8 < 10 < 12이므로 p와 q가 여기서 양쪽으로 갈립니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "lit": [
+         1,
+         8,
+         9
+        ]
+       },
+       "shade": [
+        0,
+        1
+       ],
+       "edgeMarks": {
+        "lit": [
+         [
+          0,
+          1
+         ]
+        ]
+       },
+       "tags": [
+        [
+         8,
+         "p"
+        ],
+        [
+         9,
+         "q"
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "So 10 is the deepest node with both 8 and 12 at or below it: the answer is 10.",
+      "ko": "따라서 8, 12 둘 다를 자기 자신 또는 아래에 둔 가장 깊은 노드는 10입니다. 답은 10입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "path": [
+         1
+        ],
+        "lit": [
+         8,
+         9
+        ]
+       },
+       "shade": [
+        0,
+        1
+       ],
+       "edgeMarks": {
+        "path": [
+         [
+          0,
+          1
+         ]
+        ]
+       },
+       "tags": [
+        [
+         8,
+         "p"
+        ],
+        [
+         9,
+         "q"
+        ]
+       ]
+      }
+     },
+     "answer": "10"
+    }
+   ],
+   "setup": {
+    "tree": {
+     "nodes": [
+      {
+       "id": 0,
+       "value": 20
+      },
+      {
+       "id": 1,
+       "value": 10
+      },
+      {
+       "id": 2,
+       "value": 30
+      },
+      {
+       "id": 3,
+       "value": 5
+      },
+      {
+       "id": 4,
+       "value": 15
+      },
+      {
+       "id": 5,
+       "value": 25
+      },
+      {
+       "id": 6,
+       "value": 40
+      },
+      {
+       "id": 8,
+       "value": 8
+      },
+      {
+       "id": 9,
+       "value": 12
+      },
+      {
+       "id": 10,
+       "value": 18
+      }
+     ],
+     "edges": [
+      {
+       "from": 0,
+       "to": 1,
+       "slot": 0
+      },
+      {
+       "from": 0,
+       "to": 2,
+       "slot": 1
+      },
+      {
+       "from": 1,
+       "to": 3,
+       "slot": 0
+      },
+      {
+       "from": 1,
+       "to": 4,
+       "slot": 1
+      },
+      {
+       "from": 2,
+       "to": 5,
+       "slot": 0
+      },
+      {
+       "from": 2,
+       "to": 6,
+       "slot": 1
+      },
+      {
+       "from": 3,
+       "to": 8,
+       "slot": 1
+      },
+      {
+       "from": 4,
+       "to": 9,
+       "slot": 0
+      },
+      {
+       "from": 4,
+       "to": 10,
+       "slot": 1
+      }
+     ]
+    }
+   },
+   "sampleInput": "[20,10,30,5,15,25,40,null,8,12,18]\n8\n12"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "root = [20,10,30,5,15,25,40,null,8,12,18], p = 25, q = 40",
+   "expected": "30",
+   "frames": [
+    {
+     "caption": {
+      "en": "p = 25 and q = 40, so low = 25 and high = 40. Start at the root 20.",
+      "ko": "p = 25, q = 40이므로 low = 25, high = 40입니다. root 20에서 시작합니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "lit": [
+         5,
+         6
+        ]
+       },
+       "shade": [],
+       "edgeMarks": {},
+       "tags": [
+        [
+         5,
+         "p"
+        ],
+        [
+         6,
+         "q"
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "25 and 40 are both larger than 20, so both are in its right subtree: go right.",
+      "ko": "25, 40 모두 20보다 크므로 둘 다 오른쪽 서브트리에 있습니다. 오른쪽으로 갑니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ],
+       "edgeMarks": {},
+       "tags": [
+        [
+         5,
+         "p"
+        ],
+        [
+         6,
+         "q"
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "25 < 30 < 40: p and q split here, one on each side.",
+      "ko": "25 < 30 < 40이므로 p와 q가 여기서 양쪽으로 갈립니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "lit": [
+         2,
+         5,
+         6
+        ]
+       },
+       "shade": [
+        0,
+        2
+       ],
+       "edgeMarks": {
+        "lit": [
+         [
+          0,
+          2
+         ]
+        ]
+       },
+       "tags": [
+        [
+         5,
+         "p"
+        ],
+        [
+         6,
+         "q"
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "So 30 is the deepest node with both 25 and 40 at or below it: the answer is 30.",
+      "ko": "따라서 25, 40 둘 다를 자기 자신 또는 아래에 둔 가장 깊은 노드는 30입니다. 답은 30입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "path": [
+         2
+        ],
+        "lit": [
+         5,
+         6
+        ]
+       },
+       "shade": [
+        0,
+        2
+       ],
+       "edgeMarks": {
+        "path": [
+         [
+          0,
+          2
+         ]
+        ]
+       },
+       "tags": [
+        [
+         5,
+         "p"
+        ],
+        [
+         6,
+         "q"
+        ]
+       ]
+      }
+     },
+     "answer": "30"
+    }
+   ],
+   "setup": {
+    "tree": {
+     "nodes": [
+      {
+       "id": 0,
+       "value": 20
+      },
+      {
+       "id": 1,
+       "value": 10
+      },
+      {
+       "id": 2,
+       "value": 30
+      },
+      {
+       "id": 3,
+       "value": 5
+      },
+      {
+       "id": 4,
+       "value": 15
+      },
+      {
+       "id": 5,
+       "value": 25
+      },
+      {
+       "id": 6,
+       "value": 40
+      },
+      {
+       "id": 8,
+       "value": 8
+      },
+      {
+       "id": 9,
+       "value": 12
+      },
+      {
+       "id": 10,
+       "value": 18
+      }
+     ],
+     "edges": [
+      {
+       "from": 0,
+       "to": 1,
+       "slot": 0
+      },
+      {
+       "from": 0,
+       "to": 2,
+       "slot": 1
+      },
+      {
+       "from": 1,
+       "to": 3,
+       "slot": 0
+      },
+      {
+       "from": 1,
+       "to": 4,
+       "slot": 1
+      },
+      {
+       "from": 2,
+       "to": 5,
+       "slot": 0
+      },
+      {
+       "from": 2,
+       "to": 6,
+       "slot": 1
+      },
+      {
+       "from": 3,
+       "to": 8,
+       "slot": 1
+      },
+      {
+       "from": 4,
+       "to": 9,
+       "slot": 0
+      },
+      {
+       "from": 4,
+       "to": 10,
+       "slot": 1
+      }
+     ]
+    }
+   },
+   "sampleInput": "[20,10,30,5,15,25,40,null,8,12,18]\n25\n40"
+  },
+  {
+   "label": {
+    "en": "Example 3",
+    "ko": "예시 3"
+   },
+   "input": "root = [20,10,30,5,15,25,40,null,8,12,18], p = 10, q = 15",
+   "expected": "10",
+   "frames": [
+    {
+     "caption": {
+      "en": "p = 10 and q = 15, so low = 10 and high = 15. Start at the root 20.",
+      "ko": "p = 10, q = 15이므로 low = 10, high = 15입니다. root 20에서 시작합니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "lit": [
+         1,
+         4
+        ]
+       },
+       "shade": [],
+       "edgeMarks": {},
+       "tags": [
+        [
+         1,
+         "p"
+        ],
+        [
+         4,
+         "q"
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "10 and 15 are both smaller than 20, so both are in its left subtree: go left.",
+      "ko": "10, 15 모두 20보다 작으므로 둘 다 왼쪽 서브트리에 있습니다. 왼쪽으로 갑니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ],
+       "edgeMarks": {},
+       "tags": [
+        [
+         1,
+         "p"
+        ],
+        [
+         4,
+         "q"
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "10 is p itself, and the other is below it: a node counts as its own descendant.",
+      "ko": "10은 p 자신이고 다른 하나는 그 아래에 있습니다. 노드는 자기 자신의 자손으로 칩니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "lit": [
+         1,
+         4
+        ]
+       },
+       "shade": [
+        0,
+        1
+       ],
+       "edgeMarks": {
+        "lit": [
+         [
+          0,
+          1
+         ]
+        ]
+       },
+       "tags": [
+        [
+         1,
+         "p"
+        ],
+        [
+         4,
+         "q"
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "So 10 is the deepest node with both 10 and 15 at or below it: the answer is 10.",
+      "ko": "따라서 10, 15 둘 다를 자기 자신 또는 아래에 둔 가장 깊은 노드는 10입니다. 답은 10입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "path": [
+         1
+        ],
+        "lit": [
+         4
+        ]
+       },
+       "shade": [
+        0,
+        1
+       ],
+       "edgeMarks": {
+        "path": [
+         [
+          0,
+          1
+         ]
+        ]
+       },
+       "tags": [
+        [
+         1,
+         "p"
+        ],
+        [
+         4,
+         "q"
+        ]
+       ]
+      }
+     },
+     "answer": "10"
+    }
+   ],
+   "setup": {
+    "tree": {
+     "nodes": [
+      {
+       "id": 0,
+       "value": 20
+      },
+      {
+       "id": 1,
+       "value": 10
+      },
+      {
+       "id": 2,
+       "value": 30
+      },
+      {
+       "id": 3,
+       "value": 5
+      },
+      {
+       "id": 4,
+       "value": 15
+      },
+      {
+       "id": 5,
+       "value": 25
+      },
+      {
+       "id": 6,
+       "value": 40
+      },
+      {
+       "id": 8,
+       "value": 8
+      },
+      {
+       "id": 9,
+       "value": 12
+      },
+      {
+       "id": 10,
+       "value": 18
+      }
+     ],
+     "edges": [
+      {
+       "from": 0,
+       "to": 1,
+       "slot": 0
+      },
+      {
+       "from": 0,
+       "to": 2,
+       "slot": 1
+      },
+      {
+       "from": 1,
+       "to": 3,
+       "slot": 0
+      },
+      {
+       "from": 1,
+       "to": 4,
+       "slot": 1
+      },
+      {
+       "from": 2,
+       "to": 5,
+       "slot": 0
+      },
+      {
+       "from": 2,
+       "to": 6,
+       "slot": 1
+      },
+      {
+       "from": 3,
+       "to": 8,
+       "slot": 1
+      },
+      {
+       "from": 4,
+       "to": 9,
+       "slot": 0
+      },
+      {
+       "from": 4,
+       "to": 10,
+       "slot": 1
+      }
+     ]
+    }
+   },
+   "sampleInput": "[20,10,30,5,15,25,40,null,8,12,18]\n10\n15"
+  }
+ ]
+}

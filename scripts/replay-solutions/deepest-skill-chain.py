@@ -10,9 +10,7 @@ class TreeNode:
 
 class Solution:
     def maxSkillDepth(self, root: Optional[TreeNode]) -> int:
-        depth = 0
-        level = [root] if root else []
-        while level:
-            depth += 1
-            level = [child for node in level for child in (node.left, node.right) if child]
-        return depth
+        # A tree's depth is one (its root) more than the deeper of its two subtrees'.
+        if root is None:
+            return 0
+        return 1 + max(self.maxSkillDepth(root.left), self.maxSkillDepth(root.right))

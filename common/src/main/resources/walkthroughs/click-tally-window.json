@@ -1,0 +1,2951 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Click Tally Window",
+  "ko": "클릭 윈도 카운터"
+ },
+ "approach": {
+  "en": "Timestamps only grow, so the clicks sit in a queue oldest first: countSince drops from the front every click at or before timestamp − 300, and what is left is the count.",
+  "ko": "시각은 줄지 않으므로 클릭을 오래된 순으로 큐에 둡니다. countSince는 timestamp − 300 이하인 클릭을 앞에서부터 빼고, 남은 개수가 답입니다."
+ },
+ "views": [
+  {
+   "id": "calls",
+   "type": "table",
+   "title": {
+    "en": "calls",
+    "ko": "호출"
+   }
+  },
+  {
+   "id": "clicks",
+   "type": "queue",
+   "title": {
+    "en": "clicks (timestamps, oldest at the front)",
+    "ko": "clicks (클릭 시각, 오래된 것이 앞)"
+   },
+   "empty": {
+    "en": "empty",
+    "ko": "비어 있음"
+   }
+  },
+  {
+   "id": "result",
+   "type": "output",
+   "title": {
+    "en": "returned",
+    "ko": "반환값"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "[\"ClickTally\",\"record\",\"record\",\"record\",\"countSince\",\"record\",\"countSince\",\"countSince\"]\n[[],[1],[2],[3],[4],[300],[300],[301]]",
+   "expected": "[null,null,null,null,3,null,4,3]",
+   "frames": [
+    {
+     "caption": {
+      "en": "ClickTally() starts with an empty queue of clicks. It returns null.",
+      "ko": "ClickTally(): 빈 클릭 큐로 시작합니다. null을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "timestamp",
+         "ko": "timestamp"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "ClickTally",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "record",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "countSince",
+          "4"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "record",
+          "300"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "countSince",
+          "300"
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "countSince",
+          "301"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ]
+       }
+      },
+      "clicks": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "record(1): the click joins the back of the queue; times never go down, so the queue stays oldest first. It returns null.",
+      "ko": "record(1): 클릭을 큐 뒤에 넣고 null을 반환합니다. 시각은 줄지 않으므로 큐는 계속 오래된 순입니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "timestamp",
+         "ko": "timestamp"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "ClickTally",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "record",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "countSince",
+          "4"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "record",
+          "300"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "countSince",
+          "300"
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "countSince",
+          "301"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "clicks": {
+       "values": [
+        1
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         1,
+         1
+        ]
+       },
+       "to": {
+        "view": "clicks",
+        "at": 0
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       },
+       "value": "null"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "record(2): the click joins the back of the queue; times never go down, so the queue stays oldest first. It returns null.",
+      "ko": "record(2): 클릭을 큐 뒤에 넣고 null을 반환합니다. 시각은 줄지 않으므로 큐는 계속 오래된 순입니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "timestamp",
+         "ko": "timestamp"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "ClickTally",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "record",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "countSince",
+          "4"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "record",
+          "300"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "countSince",
+          "300"
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "countSince",
+          "301"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ]
+       }
+      },
+      "clicks": {
+       "values": [
+        1,
+        2
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         2,
+         1
+        ]
+       },
+       "to": {
+        "view": "clicks",
+        "at": 1
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         2,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       },
+       "value": "null"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "record(3): the click joins the back of the queue; times never go down, so the queue stays oldest first. It returns null.",
+      "ko": "record(3): 클릭을 큐 뒤에 넣고 null을 반환합니다. 시각은 줄지 않으므로 큐는 계속 오래된 순입니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "timestamp",
+         "ko": "timestamp"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "ClickTally",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "record",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "countSince",
+          "4"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "record",
+          "300"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "countSince",
+          "300"
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "countSince",
+          "301"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      },
+      "clicks": {
+       "values": [
+        1,
+        2,
+        3
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         3,
+         1
+        ]
+       },
+       "to": {
+        "view": "clicks",
+        "at": 2
+       },
+       "value": "3"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         3,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       },
+       "value": "null"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "countSince(4): the front click, 1, is after -296, so every click left is inside [-295, 4]. It returns the queue's length, 3.",
+      "ko": "countSince(4): 맨 앞 클릭 시각 1이 -296보다 뒤이므로 남은 클릭은 모두 [-295, 4] 구간 안에 있습니다. 큐의 길이 3을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "timestamp",
+         "ko": "timestamp"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "ClickTally",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "record",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "countSince",
+          "4"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "record",
+          "300"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "countSince",
+          "300"
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "countSince",
+          "301"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ]
+       }
+      },
+      "clicks": {
+       "values": [
+        1,
+        2,
+        3
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1,
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "null",
+        "3"
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         4,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 4
+       },
+       "value": "3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "record(300): the click joins the back of the queue; times never go down, so the queue stays oldest first. It returns null.",
+      "ko": "record(300): 클릭을 큐 뒤에 넣고 null을 반환합니다. 시각은 줄지 않으므로 큐는 계속 오래된 순입니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "timestamp",
+         "ko": "timestamp"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "ClickTally",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "record",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "countSince",
+          "4"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "record",
+          "300"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "countSince",
+          "300"
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "countSince",
+          "301"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ]
+        ]
+       }
+      },
+      "clicks": {
+       "values": [
+        1,
+        2,
+        3,
+        300
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "null",
+        "3",
+        "null"
+       ],
+       "marks": {
+        "good": [
+         5
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         5,
+         1
+        ]
+       },
+       "to": {
+        "view": "clicks",
+        "at": 3
+       },
+       "value": "300"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         5,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 5
+       },
+       "value": "null"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "countSince(300): the front click, 1, is after 0, so every click left is inside [1, 300]. It returns the queue's length, 4.",
+      "ko": "countSince(300): 맨 앞 클릭 시각 1이 0보다 뒤이므로 남은 클릭은 모두 [1, 300] 구간 안에 있습니다. 큐의 길이 4를 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "timestamp",
+         "ko": "timestamp"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "ClickTally",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "record",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "countSince",
+          "4"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "record",
+          "300"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "countSince",
+          "300"
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "countSince",
+          "301"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ],
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          6,
+          0
+         ],
+         [
+          6,
+          1
+         ]
+        ]
+       }
+      },
+      "clicks": {
+       "values": [
+        1,
+        2,
+        3,
+        300
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1,
+         2,
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "null",
+        "3",
+        "null",
+        "4"
+       ],
+       "marks": {
+        "good": [
+         6
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         6,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 6
+       },
+       "value": "4"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "countSince(301): the window is [2, 301]. The front click, 1, is at or before 301 − 300 = 1, so it leaves.",
+      "ko": "countSince(301): 윈도는 [2, 301] 구간입니다. 맨 앞 클릭 시각 1: 301 − 300 = 1 이하이므로 큐에서 뺍니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "timestamp",
+         "ko": "timestamp"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "ClickTally",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "record",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "countSince",
+          "4"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "record",
+          "300"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "countSince",
+          "300"
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "countSince",
+          "301"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ],
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ],
+         [
+          6,
+          0
+         ],
+         [
+          6,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          7,
+          0
+         ],
+         [
+          7,
+          1
+         ]
+        ]
+       }
+      },
+      "clicks": {
+       "values": [
+        1,
+        2,
+        3,
+        300
+       ],
+       "marks": {
+        "bad": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "null",
+        "3",
+        "null",
+        "4"
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "clicks",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "countSince(301): the front click, 2, is after 1, so every click left is inside [2, 301]. It returns the queue's length, 3.",
+      "ko": "countSince(301): 맨 앞 클릭 시각 2가 1보다 뒤이므로 남은 클릭은 모두 [2, 301] 구간 안에 있습니다. 큐의 길이 3을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "timestamp",
+         "ko": "timestamp"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "ClickTally",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "record",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "countSince",
+          "4"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "record",
+          "300"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "countSince",
+          "300"
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "countSince",
+          "301"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ],
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ],
+         [
+          6,
+          0
+         ],
+         [
+          6,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          7,
+          0
+         ],
+         [
+          7,
+          1
+         ]
+        ]
+       }
+      },
+      "clicks": {
+       "values": [
+        2,
+        3,
+        300
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1,
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "null",
+        "3",
+        "null",
+        "4",
+        "3"
+       ],
+       "marks": {
+        "good": [
+         7
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         7,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 7
+       },
+       "value": "3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every call is answered, in order: answer [null,null,null,null,3,null,4,3].",
+      "ko": "모든 호출의 반환값을 차례로 모았습니다. 답은 [null,null,null,null,3,null,4,3]입니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "timestamp",
+         "ko": "timestamp"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "ClickTally",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "record",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "countSince",
+          "4"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "record",
+          "300"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "countSince",
+          "300"
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "countSince",
+          "301"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "clicks": {
+       "values": [
+        2,
+        3,
+        300
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "null",
+        "3",
+        "null",
+        "4",
+        "3"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5,
+         6,
+         7
+        ]
+       }
+      }
+     },
+     "answer": "[null,null,null,null,3,null,4,3]"
+    }
+   ],
+   "sampleInput": "[\"ClickTally\",\"record\",\"record\",\"record\",\"countSince\",\"record\",\"countSince\",\"countSince\"]\n[[],[1],[2],[3],[4],[300],[300],[301]]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "[\"ClickTally\",\"record\",\"record\",\"record\",\"countSince\"]\n[[],[100],[100],[100],[100]]",
+   "expected": "[null,null,null,null,3]",
+   "frames": [
+    {
+     "caption": {
+      "en": "ClickTally() starts with an empty queue of clicks. It returns null.",
+      "ko": "ClickTally(): 빈 클릭 큐로 시작합니다. null을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "timestamp",
+         "ko": "timestamp"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "ClickTally",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "100"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "record",
+          "100"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "100"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "countSince",
+          "100"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ]
+       }
+      },
+      "clicks": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "record(100): the click joins the back of the queue; times never go down, so the queue stays oldest first. It returns null.",
+      "ko": "record(100): 클릭을 큐 뒤에 넣고 null을 반환합니다. 시각은 줄지 않으므로 큐는 계속 오래된 순입니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "timestamp",
+         "ko": "timestamp"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "ClickTally",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "100"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "record",
+          "100"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "100"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "countSince",
+          "100"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "clicks": {
+       "values": [
+        100
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         1,
+         1
+        ]
+       },
+       "to": {
+        "view": "clicks",
+        "at": 0
+       },
+       "value": "100"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       },
+       "value": "null"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "record(100): the click joins the back of the queue; times never go down, so the queue stays oldest first. It returns null.",
+      "ko": "record(100): 클릭을 큐 뒤에 넣고 null을 반환합니다. 시각은 줄지 않으므로 큐는 계속 오래된 순입니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "timestamp",
+         "ko": "timestamp"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "ClickTally",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "100"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "record",
+          "100"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "100"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "countSince",
+          "100"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ]
+       }
+      },
+      "clicks": {
+       "values": [
+        100,
+        100
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         2,
+         1
+        ]
+       },
+       "to": {
+        "view": "clicks",
+        "at": 1
+       },
+       "value": "100"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         2,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       },
+       "value": "null"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "record(100): the click joins the back of the queue; times never go down, so the queue stays oldest first. It returns null.",
+      "ko": "record(100): 클릭을 큐 뒤에 넣고 null을 반환합니다. 시각은 줄지 않으므로 큐는 계속 오래된 순입니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "timestamp",
+         "ko": "timestamp"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "ClickTally",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "100"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "record",
+          "100"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "100"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "countSince",
+          "100"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      },
+      "clicks": {
+       "values": [
+        100,
+        100,
+        100
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         3,
+         1
+        ]
+       },
+       "to": {
+        "view": "clicks",
+        "at": 2
+       },
+       "value": "100"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         3,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       },
+       "value": "null"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "countSince(100): the front click, 100, is after -200, so every click left is inside [-199, 100]. It returns the queue's length, 3.",
+      "ko": "countSince(100): 맨 앞 클릭 시각 100이 -200보다 뒤이므로 남은 클릭은 모두 [-199, 100] 구간 안에 있습니다. 큐의 길이 3을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "timestamp",
+         "ko": "timestamp"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "ClickTally",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "100"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "record",
+          "100"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "100"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "countSince",
+          "100"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ]
+       }
+      },
+      "clicks": {
+       "values": [
+        100,
+        100,
+        100
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1,
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "null",
+        "3"
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         4,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 4
+       },
+       "value": "3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every call is answered, in order: answer [null,null,null,null,3].",
+      "ko": "모든 호출의 반환값을 차례로 모았습니다. 답은 [null,null,null,null,3]입니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "timestamp",
+         "ko": "timestamp"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "ClickTally",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "100"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "record",
+          "100"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "100"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "countSince",
+          "100"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "clicks": {
+       "values": [
+        100,
+        100,
+        100
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "null",
+        "3"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      }
+     },
+     "answer": "[null,null,null,null,3]"
+    }
+   ],
+   "sampleInput": "[\"ClickTally\",\"record\",\"record\",\"record\",\"countSince\"]\n[[],[100],[100],[100],[100]]"
+  },
+  {
+   "label": {
+    "en": "Example 3",
+    "ko": "예시 3"
+   },
+   "input": "[\"ClickTally\",\"countSince\",\"record\",\"countSince\"]\n[[],[1],[2],[300]]",
+   "expected": "[null,0,null,1]",
+   "frames": [
+    {
+     "caption": {
+      "en": "ClickTally() starts with an empty queue of clicks. It returns null.",
+      "ko": "ClickTally(): 빈 클릭 큐로 시작합니다. null을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "timestamp",
+         "ko": "timestamp"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "ClickTally",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "countSince",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "record",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "countSince",
+          "300"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ]
+       }
+      },
+      "clicks": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "countSince(1): the queue is empty. It returns the queue's length, 0.",
+      "ko": "countSince(1): 큐가 비어 있습니다. 큐의 길이 0을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "timestamp",
+         "ko": "timestamp"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "ClickTally",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "countSince",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "record",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "countSince",
+          "300"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "clicks": {
+       "values": [],
+       "marks": {
+        "lit": []
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "0"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       },
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "record(2): the click joins the back of the queue; times never go down, so the queue stays oldest first. It returns null.",
+      "ko": "record(2): 클릭을 큐 뒤에 넣고 null을 반환합니다. 시각은 줄지 않으므로 큐는 계속 오래된 순입니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "timestamp",
+         "ko": "timestamp"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "ClickTally",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "countSince",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "record",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "countSince",
+          "300"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ]
+       }
+      },
+      "clicks": {
+       "values": [
+        2
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "0",
+        "null"
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         2,
+         1
+        ]
+       },
+       "to": {
+        "view": "clicks",
+        "at": 0
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         2,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       },
+       "value": "null"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "countSince(300): the front click, 2, is after 0, so every click left is inside [1, 300]. It returns the queue's length, 1.",
+      "ko": "countSince(300): 맨 앞 클릭 시각 2가 0보다 뒤이므로 남은 클릭은 모두 [1, 300] 구간 안에 있습니다. 큐의 길이 1을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "timestamp",
+         "ko": "timestamp"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "ClickTally",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "countSince",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "record",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "countSince",
+          "300"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      },
+      "clicks": {
+       "values": [
+        2
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "0",
+        "null",
+        "1"
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         3,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every call is answered, in order: answer [null,0,null,1].",
+      "ko": "모든 호출의 반환값을 차례로 모았습니다. 답은 [null,0,null,1]입니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "timestamp",
+         "ko": "timestamp"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "ClickTally",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "countSince",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "record",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "countSince",
+          "300"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "clicks": {
+       "values": [
+        2
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null",
+        "0",
+        "null",
+        "1"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3
+        ]
+       }
+      }
+     },
+     "answer": "[null,0,null,1]"
+    }
+   ],
+   "sampleInput": "[\"ClickTally\",\"countSince\",\"record\",\"countSince\"]\n[[],[1],[2],[300]]"
+  }
+ ]
+}

@@ -1,0 +1,1606 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "K-th Top Score Stream",
+  "ko": "실시간 K번째 최고 점수"
+ },
+ "approach": {
+  "en": "Keep only the k highest scores in a min-heap: its root is the lowest of them, the k-th highest. A new score that beats the root replaces it; one that doesn't can't be among the k highest, so the root stays.",
+  "ko": "가장 높은 점수 k개만 최소 힙에 둡니다. 루트가 그중 가장 낮은 점수, 곧 k번째로 높은 점수입니다. 새 점수가 루트보다 높으면 루트를 밀어내고, 아니면 높은 k개에 들 수 없으므로 루트가 그대로입니다."
+ },
+ "views": [
+  {
+   "id": "calls",
+   "type": "table",
+   "title": {
+    "en": "calls",
+    "ko": "호출"
+   }
+  },
+  {
+   "id": "heap",
+   "type": "tree",
+   "arity": 2,
+   "title": {
+    "en": "min-heap of the k highest ([i]: array index)",
+    "ko": "높은 점수 k개의 최소 힙 ([i]: 배열 인덱스)"
+   },
+   "empty": {
+    "en": "empty",
+    "ko": "비어 있음"
+   }
+  },
+  {
+   "id": "result",
+   "type": "output",
+   "title": {
+    "en": "returned",
+    "ko": "반환값"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "[\"TopKStream\",\"record\",\"record\",\"record\"]\n[[2,[100,50]],[75],[120],[60]]",
+   "expected": "[null,75,100,100]",
+   "frames": [
+    {
+     "caption": {
+      "en": "TopKStream(2, [100,50]): k = 2, so the heap will keep the 2 highest scores, and its root, the lowest of them, is the k-th highest.",
+      "ko": "TopKStream(2, [100,50]): k = 2이므로 힙에 가장 높은 점수 2개를 두고, 그중 가장 낮은 루트가 2번째로 높은 점수입니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "TopKStream",
+          "2, [100,50]"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "75"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "record",
+          "120"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "60"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "self.heap = list(scores): the 2 starting scores go into the heap list in their order; heapify will put the lowest on top.",
+      "ko": "self.heap = list(scores): 처음 점수 2개를 순서대로 힙 리스트에 넣습니다. heapify가 가장 낮은 점수를 맨 위로 올립니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "TopKStream",
+          "2, [100,50]"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "75"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "record",
+          "120"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "60"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 100
+        },
+        {
+         "id": 1,
+         "value": 50
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0,
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         0,
+         1
+        ]
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       },
+       "value": "100"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         0,
+         1
+        ]
+       },
+       "to": {
+        "view": "heap",
+        "at": 1
+       },
+       "value": "50"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Sift down: 100 at [0] is higher than its lower child 50 at [1], so they swap.",
+      "ko": "아래로 내리기: [0]의 100은 더 낮은 자식 [1]의 50보다 높으므로 자리를 바꿉니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "TopKStream",
+          "2, [100,50]"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "75"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "record",
+          "120"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "60"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 50
+        },
+        {
+         "id": 1,
+         "value": 100
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "heap",
+        "at": 1
+       },
+       "value": 100
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 1
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       },
+       "value": 50
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The heap holds the 2 highest starting scores; the constructor returns null.",
+      "ko": "힙에 처음 점수 중 가장 높은 2개가 있습니다. 생성자는 null을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "TopKStream",
+          "2, [100,50]"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "75"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "record",
+          "120"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "60"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 50
+        },
+        {
+         "id": 1,
+         "value": 100
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {}
+      },
+      "result": {
+       "values": [
+        "null"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       },
+       "value": "null"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "record(75): 75 beats the root 50, so 50 leaves and 75 takes the root. No child is lower, so it stays.",
+      "ko": "record(75): 75가 루트 50보다 높으므로 50은 빠지고 75가 루트에 들어갑니다. 더 낮은 자식이 없으므로 그대로 둡니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "TopKStream",
+          "2, [100,50]"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "75"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "record",
+          "120"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "60"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 75
+        },
+        {
+         "id": 1,
+         "value": 100
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null"
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "value": "50",
+       "mark": "bad"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         1,
+         1
+        ]
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "record(75) returns the root, 75: the k-th highest score so far.",
+      "ko": "record(75) 호출은 루트 75를 반환합니다. 지금까지 2번째로 높은 점수입니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "TopKStream",
+          "2, [100,50]"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "75"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "record",
+          "120"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "60"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 75
+        },
+        {
+         "id": 1,
+         "value": 100
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "75"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "record(120): 120 beats the root 75, so 75 leaves and 120 takes the root. It is higher than its lower child 100, so it sifts down.",
+      "ko": "record(120): 120이 루트 75보다 높으므로 75는 빠지고 120이 루트에 들어갑니다. 더 낮은 자식 100보다 높으므로 아래로 내립니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "TopKStream",
+          "2, [100,50]"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "75"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "record",
+          "120"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "60"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 120
+        },
+        {
+         "id": 1,
+         "value": 100
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "75"
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "value": "75",
+       "mark": "bad"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         2,
+         1
+        ]
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Sift down: 120 at [0] is higher than its lower child 100 at [1], so they swap.",
+      "ko": "아래로 내리기: [0]의 120은 더 낮은 자식 [1]의 100보다 높으므로 자리를 바꿉니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "TopKStream",
+          "2, [100,50]"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "75"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "record",
+          "120"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "60"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 100
+        },
+        {
+         "id": 1,
+         "value": 120
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "75"
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "heap",
+        "at": 1
+       },
+       "value": 120
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 1
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       },
+       "value": 100
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "record(120) returns the root, 100: the k-th highest score so far.",
+      "ko": "record(120) 호출은 루트 100을 반환합니다. 지금까지 2번째로 높은 점수입니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "TopKStream",
+          "2, [100,50]"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "75"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "record",
+          "120"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "60"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 100
+        },
+        {
+         "id": 1,
+         "value": 120
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "75",
+        "100"
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "record(60): 60 is not higher than the root 100, and the heap already holds 2 scores at least 100, so 60 can't be among them: skip it.",
+      "ko": "record(60): 60은 루트 100보다 높지 않고, 힙에는 이미 100 이상인 점수가 2개 있으므로 건너뜁니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "TopKStream",
+          "2, [100,50]"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "75"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "record",
+          "120"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "60"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 100
+        },
+        {
+         "id": 1,
+         "value": 120
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "75",
+        "100"
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         3,
+         1
+        ]
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "record(60) returns the root, 100: the k-th highest score so far.",
+      "ko": "record(60) 호출은 루트 100을 반환합니다. 지금까지 2번째로 높은 점수입니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "TopKStream",
+          "2, [100,50]"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "75"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "record",
+          "120"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "60"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 100
+        },
+        {
+         "id": 1,
+         "value": 120
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "75",
+        "100",
+        "100"
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every call has run; the returned values, one per call, are [null,75,100,100].",
+      "ko": "모든 호출이 끝났습니다. 호출마다 하나씩 반환한 값은 [null,75,100,100]입니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "TopKStream",
+          "2, [100,50]"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "75"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "record",
+          "120"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "60"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 100
+        },
+        {
+         "id": 1,
+         "value": 120
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {
+        "path": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "75",
+        "100",
+        "100"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3
+        ]
+       }
+      }
+     },
+     "answer": "[null,75,100,100]"
+    }
+   ],
+   "sampleInput": "[\"TopKStream\",\"record\",\"record\",\"record\"]\n[[2,[100,50]],[75],[120],[60]]"
+  }
+ ]
+}

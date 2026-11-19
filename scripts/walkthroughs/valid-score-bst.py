@@ -25,7 +25,7 @@ wt = Walkthrough(
     {"en": "A score must fall inside the range all its ancestors leave it, not just beside its parent: pass the open "
            "range down, narrowing it to (low, score) going left and (score, high) going right.",
      "ko": "점수는 부모와만 비교해서는 안 되고, 모든 조상이 남긴 범위 안에 있어야 합니다. 열린 범위를 내려보내며 왼쪽으로 "
-           "갈 때는 (low, 점수), 오른쪽으로 갈 때는 (점수, high)로 좁힙니다."},
+           "갈 때는 (low, 점수), 오른쪽으로 갈 때는 (점수, high) 범위로 좁힙니다."},
     views=[{"id": "tree", "type": "tree", "arity": 2,
             "title": {"en": "root (under each node: its range)", "ko": "root (노드 아래: 허용 범위)"}}],
 )

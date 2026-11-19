@@ -157,7 +157,7 @@ for number, sample in enumerate(sample_cases(SLUG), start=1):
     solve(messages, run)
 extra = ["7#x", "#"]
 extra_input = driver_list(extra)
-solve(extra, wt.run({"en": "Markers inside", "ko": "메시지 안의 구분자"}, input=f"messages = {extra_input}",
+solve(extra, wt.run({"en": "Extra: markers inside", "ko": "추가: 메시지 안의 구분자"}, input=f"messages = {extra_input}",
                     expected=extra_input, extra=True))
 wt.write(walkthrough_path(SLUG))
 print(walkthrough_path(SLUG))

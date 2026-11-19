@@ -1,0 +1,1118 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Right-Side Skill View",
+  "ko": "오른쪽에서 본 스킬 트리"
+ },
+ "approach": {
+  "en": "Read the tree one level at a time, each level listed left to right: its last node is the one seen from the right, whichever branch it hangs on. Then replace the level with its nodes' children, in order.",
+  "ko": "트리를 한 층씩, 각 층을 왼쪽에서 오른쪽 순서로 나열해 읽습니다. 그 마지막 노드가 어느 가지에 달려 있든 오른쪽에서 보이는 노드입니다. 그다음 층을 그 노드들의 자식으로 순서대로 바꿉니다."
+ },
+ "views": [
+  {
+   "id": "tree",
+   "type": "tree",
+   "arity": 2,
+   "title": {
+    "en": "root",
+    "ko": "root (트리)"
+   },
+   "empty": {
+    "en": "empty tree",
+    "ko": "빈 트리"
+   }
+  },
+  {
+   "id": "level",
+   "type": "array",
+   "title": {
+    "en": "level, left to right",
+    "ko": "level (현재 층, 왼쪽부터)"
+   }
+  },
+  {
+   "id": "result",
+   "type": "output",
+   "title": {
+    "en": "seen from the right",
+    "ko": "오른쪽에서 보이는 값"
+   },
+   "empty": {
+    "en": "none yet",
+    "ko": "아직 없음"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "root = [7,8,9,null,6,null,3]",
+   "expected": "[7,9,3]",
+   "frames": [
+    {
+     "caption": {
+      "en": "A tree of 5 nodes. Level 0 is just the root 7.",
+      "ko": "노드 5개짜리 트리입니다. 0층은 root 7뿐입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "good": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ]
+      },
+      "level": {
+       "values": [
+        7
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 0
+       },
+       "to": {
+        "view": "level",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Level 0 holds only 7, so it is seen from the right.",
+      "ko": "0층에는 7만 있으므로 오른쪽에서 보입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ]
+      },
+      "level": {
+       "values": [
+        7
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "7"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "level",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Level 1 is their children, left to right: 8, 9.",
+      "ko": "1층은 그 자식들을 왼쪽부터 나열한 8, 9입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         0
+        ],
+        "good": [
+         1,
+         2
+        ]
+       },
+       "shade": [
+        1,
+        2
+       ]
+      },
+      "level": {
+       "values": [
+        8,
+        9
+       ],
+       "marks": {
+        "good": [
+         0,
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "7"
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 1
+       },
+       "to": {
+        "view": "level",
+        "at": 0
+       }
+      },
+      {
+       "from": {
+        "view": "tree",
+        "at": 2
+       },
+       "to": {
+        "view": "level",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Level 1 is 8, 9: the last, 9, hides 8 from the right.",
+      "ko": "1층은 8, 9입니다. 마지막 9가 오른쪽에서 8 값을 가립니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         0
+        ],
+        "lit": [
+         2
+        ]
+       },
+       "shade": [
+        1,
+        2
+       ]
+      },
+      "level": {
+       "values": [
+        8,
+        9
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "7",
+        "9"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "level",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Level 2 is their children, left to right: 6, 3.",
+      "ko": "2층은 그 자식들을 왼쪽부터 나열한 6, 3입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         0,
+         1,
+         2
+        ],
+        "good": [
+         4,
+         6
+        ]
+       },
+       "shade": [
+        4,
+        6
+       ]
+      },
+      "level": {
+       "values": [
+        6,
+        3
+       ],
+       "marks": {
+        "good": [
+         0,
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "7",
+        "9"
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 4
+       },
+       "to": {
+        "view": "level",
+        "at": 0
+       }
+      },
+      {
+       "from": {
+        "view": "tree",
+        "at": 6
+       },
+       "to": {
+        "view": "level",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Level 2 is 6, 3: the last, 3, hides 6 from the right.",
+      "ko": "2층은 6, 3입니다. 마지막 3이 오른쪽에서 6 값을 가립니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         0,
+         1,
+         2
+        ],
+        "lit": [
+         6
+        ]
+       },
+       "shade": [
+        4,
+        6
+       ]
+      },
+      "level": {
+       "values": [
+        6,
+        3
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "7",
+        "9",
+        "3"
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "level",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "No node on level 2 has children, so the next level is empty and the walk stops.",
+      "ko": "2층의 노드에 자식이 없으므로 다음 층이 비어 순회를 마칩니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         0,
+         1,
+         2,
+         4,
+         6
+        ]
+       },
+       "shade": []
+      },
+      "level": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "7",
+        "9",
+        "3"
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Every level gave its last node: seen from the right, the tree shows [7,9,3].",
+      "ko": "모든 층에서 마지막 노드를 골랐습니다. 오른쪽에서 보면 [7,9,3]입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "path": [
+         0,
+         2,
+         6
+        ],
+        "dim": [
+         1,
+         4
+        ]
+       },
+       "shade": []
+      },
+      "level": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "7",
+        "9",
+        "3"
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     },
+     "answer": "[7,9,3]"
+    }
+   ],
+   "setup": {
+    "tree": {
+     "nodes": [
+      {
+       "id": 0,
+       "value": 7
+      },
+      {
+       "id": 1,
+       "value": 8
+      },
+      {
+       "id": 2,
+       "value": 9
+      },
+      {
+       "id": 4,
+       "value": 6
+      },
+      {
+       "id": 6,
+       "value": 3
+      }
+     ],
+     "edges": [
+      {
+       "from": 0,
+       "to": 1,
+       "slot": 0
+      },
+      {
+       "from": 0,
+       "to": 2,
+       "slot": 1
+      },
+      {
+       "from": 1,
+       "to": 4,
+       "slot": 1
+      },
+      {
+       "from": 2,
+       "to": 6,
+       "slot": 1
+      }
+     ]
+    }
+   },
+   "sampleInput": "[7,8,9,null,6,null,3]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "root = [2,null,5]",
+   "expected": "[2,5]",
+   "frames": [
+    {
+     "caption": {
+      "en": "A tree of 2 nodes. Level 0 is just the root 2.",
+      "ko": "노드 2개짜리 트리입니다. 0층은 root 2뿐입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "good": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ]
+      },
+      "level": {
+       "values": [
+        2
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 0
+       },
+       "to": {
+        "view": "level",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Level 0 holds only 2, so it is seen from the right.",
+      "ko": "0층에는 2만 있으므로 오른쪽에서 보입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ]
+      },
+      "level": {
+       "values": [
+        2
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "2"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "level",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Level 1 is their children, left to right: 5.",
+      "ko": "1층은 그 자식들을 왼쪽부터 나열한 5입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         0
+        ],
+        "good": [
+         2
+        ]
+       },
+       "shade": [
+        2
+       ]
+      },
+      "level": {
+       "values": [
+        5
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "2"
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 2
+       },
+       "to": {
+        "view": "level",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Level 1 holds only 5, so it is seen from the right.",
+      "ko": "1층에는 5만 있으므로 오른쪽에서 보입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         0
+        ],
+        "lit": [
+         2
+        ]
+       },
+       "shade": [
+        2
+       ]
+      },
+      "level": {
+       "values": [
+        5
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "2",
+        "5"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "level",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "No node on level 1 has children, so the next level is empty and the walk stops.",
+      "ko": "1층의 노드에 자식이 없으므로 다음 층이 비어 순회를 마칩니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         0,
+         2
+        ]
+       },
+       "shade": []
+      },
+      "level": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "2",
+        "5"
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Every level gave its last node: seen from the right, the tree shows [2,5].",
+      "ko": "모든 층에서 마지막 노드를 골랐습니다. 오른쪽에서 보면 [2,5]입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "path": [
+         0,
+         2
+        ],
+        "dim": []
+       },
+       "shade": []
+      },
+      "level": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "2",
+        "5"
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     },
+     "answer": "[2,5]"
+    }
+   ],
+   "setup": {
+    "tree": {
+     "nodes": [
+      {
+       "id": 0,
+       "value": 2
+      },
+      {
+       "id": 2,
+       "value": 5
+      }
+     ],
+     "edges": [
+      {
+       "from": 0,
+       "to": 2,
+       "slot": 1
+      }
+     ]
+    }
+   },
+   "sampleInput": "[2,null,5]"
+  },
+  {
+   "label": {
+    "en": "Case 3",
+    "ko": "케이스 3"
+   },
+   "input": "root = [1,null,2]",
+   "expected": "[1,2]",
+   "frames": [
+    {
+     "caption": {
+      "en": "A tree of 2 nodes. Level 0 is just the root 1.",
+      "ko": "노드 2개짜리 트리입니다. 0층은 root 1뿐입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "good": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ]
+      },
+      "level": {
+       "values": [
+        1
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 0
+       },
+       "to": {
+        "view": "level",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Level 0 holds only 1, so it is seen from the right.",
+      "ko": "0층에는 1만 있으므로 오른쪽에서 보입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ]
+      },
+      "level": {
+       "values": [
+        1
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "level",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Level 1 is their children, left to right: 2.",
+      "ko": "1층은 그 자식들을 왼쪽부터 나열한 2입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         0
+        ],
+        "good": [
+         2
+        ]
+       },
+       "shade": [
+        2
+       ]
+      },
+      "level": {
+       "values": [
+        2
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1"
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 2
+       },
+       "to": {
+        "view": "level",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Level 1 holds only 2, so it is seen from the right.",
+      "ko": "1층에는 2만 있으므로 오른쪽에서 보입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         0
+        ],
+        "lit": [
+         2
+        ]
+       },
+       "shade": [
+        2
+       ]
+      },
+      "level": {
+       "values": [
+        2
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1",
+        "2"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "level",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "No node on level 1 has children, so the next level is empty and the walk stops.",
+      "ko": "1층의 노드에 자식이 없으므로 다음 층이 비어 순회를 마칩니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         0,
+         2
+        ]
+       },
+       "shade": []
+      },
+      "level": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "1",
+        "2"
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Every level gave its last node: seen from the right, the tree shows [1,2].",
+      "ko": "모든 층에서 마지막 노드를 골랐습니다. 오른쪽에서 보면 [1,2]입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "path": [
+         0,
+         2
+        ],
+        "dim": []
+       },
+       "shade": []
+      },
+      "level": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "1",
+        "2"
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     },
+     "answer": "[1,2]"
+    }
+   ],
+   "setup": {
+    "tree": {
+     "nodes": [
+      {
+       "id": 0,
+       "value": 1
+      },
+      {
+       "id": 2,
+       "value": 2
+      }
+     ],
+     "edges": [
+      {
+       "from": 0,
+       "to": 2,
+       "slot": 1
+      }
+     ]
+    }
+   },
+   "sampleInput": "[1,null,2]"
+  }
+ ]
+}

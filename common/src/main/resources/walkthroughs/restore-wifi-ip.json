@@ -1,0 +1,8753 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Restore Wi-Fi IP",
+  "ko": "Wi-Fi IP 복원하기"
+ },
+ "approach": {
+  "en": "Place one segment per call: try the next 1, 2 or 3 digits, stop at a leading zero or a number over 255, and skip a length that leaves the digits unable to fill the segments still to come. Four segments that use every digit are an address.",
+  "ko": "호출마다 조각 하나를 놓습니다. 다음 숫자 1, 2, 3개를 차례로 시도하고, 앞자리가 0이거나 255를 넘으면 멈추며, 남은 숫자로 남은 조각을 채울 수 없는 길이는 건너뜁니다. 모든 숫자를 쓴 네 조각이 주소 하나입니다."
+ },
+ "views": [
+  {
+   "id": "digits",
+   "type": "array",
+   "title": {
+    "en": "digits (a span per segment)",
+    "ko": "digits (조각마다 구간)"
+   }
+  },
+  {
+   "id": "calls",
+   "type": "callstack",
+   "title": {
+    "en": "call stack",
+    "ko": "호출 스택"
+   }
+  },
+  {
+   "id": "result",
+   "type": "output",
+   "title": {
+    "en": "addresses",
+    "ko": "주소"
+   },
+   "empty": {
+    "en": "none yet",
+    "ko": "아직 없음"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "digits = \"19216811\"",
+   "expected": "[\"1.92.168.11\",\"19.2.168.11\",\"19.21.68.11\",\"19.216.8.11\",\"19.216.81.1\",\"192.1.68.11\",\"192.16.8.11\",\"192.16.81.1\",\"192.168.1.1\"]",
+   "frames": [
+    {
+     "caption": {
+      "en": "\"19216811\" has 8 digits. The first call, place(start=0), will try the first 1, 2 and 3 digits as segment 1.",
+      "ko": "\"19216811\" 문자열은 숫자 8개입니다. 첫 호출 place(start=0)에서 앞의 숫자 1, 2, 3개를 1번째 조각으로 시도합니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "9",
+        "2",
+        "1",
+        "6",
+        "8",
+        "1",
+        "1"
+       ],
+       "spans": {},
+       "marks": {}
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        }
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "calls",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Take \"1\" as segment 1 and call place(start=1) for segment 2.",
+      "ko": "\"1\" 조각을 1번째 조각으로 놓고, 2번째 조각을 위해 place(start=1) 호출에 넘깁니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "9",
+        "2",
+        "1",
+        "6",
+        "8",
+        "1",
+        "1"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 0,
+         "label": "1"
+        }
+       },
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 1
+         },
+         "note": "1"
+        }
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 0
+       },
+       "to": {
+        "view": "calls",
+        "at": 1
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Take \"9\" as segment 2 and call place(start=2) for segment 3.",
+      "ko": "\"9\" 조각을 2번째 조각으로 놓고, 3번째 조각을 위해 place(start=2) 호출에 넘깁니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "9",
+        "2",
+        "1",
+        "6",
+        "8",
+        "1",
+        "1"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 0,
+         "label": "1"
+        },
+        "s2": {
+         "from": 1,
+         "to": 1,
+         "label": "9"
+        }
+       },
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 1
+         },
+         "note": "1"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 2
+         },
+         "note": "1.9"
+        }
+       ],
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 1
+       },
+       "to": {
+        "view": "calls",
+        "at": 2
+       },
+       "value": "9"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "\"2\" leaves 5 digits, too many for 1 segment; \"21\" leaves 4 digits, too many for 1 segment; take \"216\" as segment 3 and call place(start=5) for segment 4.",
+      "ko": "\"2\" 조각 뒤로 숫자 5개가 남아 조각 1개에 너무 많음, \"21\" 조각 뒤로 숫자 4개가 남아 조각 1개에 너무 많음. \"216\" 조각을 3번째 조각으로 놓고, 4번째 조각을 위해 place(start=5) 호출에 넘깁니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "9",
+        "2",
+        "1",
+        "6",
+        "8",
+        "1",
+        "1"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 0,
+         "label": "1"
+        },
+        "s2": {
+         "from": 1,
+         "to": 1,
+         "label": "9"
+        },
+        "s3": {
+         "from": 2,
+         "to": 4,
+         "label": "216"
+        }
+       },
+       "marks": {
+        "good": [
+         2,
+         3,
+         4
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 1
+         },
+         "note": "1"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 2
+         },
+         "note": "1.9"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 5
+         },
+         "note": "1.9.216"
+        }
+       ],
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 2
+       },
+       "to": {
+        "view": "calls",
+        "at": 3
+       },
+       "value": "216"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "place(start=5), place(start=2) return, each taking its segment back off; back in place(start=1), which tries a longer segment. place(start=5) ran out of lengths: \"8\" would leave 2 digits after segment 4, \"81\" would leave 1 digit after segment 4, \"811\" is over 255.",
+      "ko": "place(start=5), place(start=2) 호출이 조각을 다시 떼고 끝나며, place(start=1) 호출로 돌아와 더 긴 조각을 시도합니다. 더 시도할 길이가 없는 호출: place(start=5)(\"8\" 조각은 4번째 조각 뒤로 숫자 2개를 남김, \"81\" 조각은 4번째 조각 뒤로 숫자 1개를 남김, \"811\" 조각은 255 초과)."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "9",
+        "2",
+        "1",
+        "6",
+        "8",
+        "1",
+        "1"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 0,
+         "label": "1"
+        },
+        "s2": {
+         "from": 1,
+         "to": 1,
+         "label": "9"
+        },
+        "s3": {
+         "from": 2,
+         "to": 4,
+         "label": "216"
+        }
+       },
+       "marks": {
+        "bad": [
+         1,
+         2,
+         3,
+         4,
+         5,
+         6,
+         7
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 1
+         },
+         "note": "1"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 2
+         },
+         "note": "1.9"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 5
+         },
+         "note": "1.9.216"
+        }
+       ],
+       "marks": {
+        "dim": [
+         2,
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": 3
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Take \"92\" as segment 2 and call place(start=3) for segment 3.",
+      "ko": "\"92\" 조각을 2번째 조각으로 놓고, 3번째 조각을 위해 place(start=3) 호출에 넘깁니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "9",
+        "2",
+        "1",
+        "6",
+        "8",
+        "1",
+        "1"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 0,
+         "label": "1"
+        },
+        "s2": {
+         "from": 1,
+         "to": 2,
+         "label": "92"
+        }
+       },
+       "marks": {
+        "good": [
+         1,
+         2
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 1
+         },
+         "note": "1"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 3
+         },
+         "note": "1.92"
+        }
+       ],
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 1
+       },
+       "to": {
+        "view": "calls",
+        "at": 2
+       },
+       "value": "92"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "\"1\" leaves 4 digits, too many for 1 segment; take \"16\" as segment 3 and call place(start=5) for segment 4.",
+      "ko": "\"1\" 조각 뒤로 숫자 4개가 남아 조각 1개에 너무 많음. \"16\" 조각을 3번째 조각으로 놓고, 4번째 조각을 위해 place(start=5) 호출에 넘깁니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "9",
+        "2",
+        "1",
+        "6",
+        "8",
+        "1",
+        "1"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 0,
+         "label": "1"
+        },
+        "s2": {
+         "from": 1,
+         "to": 2,
+         "label": "92"
+        },
+        "s3": {
+         "from": 3,
+         "to": 4,
+         "label": "16"
+        }
+       },
+       "marks": {
+        "good": [
+         3,
+         4
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 1
+         },
+         "note": "1"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 3
+         },
+         "note": "1.92"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 5
+         },
+         "note": "1.92.16"
+        }
+       ],
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 3
+       },
+       "to": {
+        "view": "calls",
+        "at": 3
+       },
+       "value": "16"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "place(start=5) returns, taking its segment back off; back in place(start=3), which tries a longer segment. place(start=5) ran out of lengths: \"8\" would leave 2 digits after segment 4, \"81\" would leave 1 digit after segment 4, \"811\" is over 255.",
+      "ko": "place(start=5) 호출이 조각을 다시 떼고 끝나며, place(start=3) 호출로 돌아와 더 긴 조각을 시도합니다. 더 시도할 길이가 없는 호출: place(start=5)(\"8\" 조각은 4번째 조각 뒤로 숫자 2개를 남김, \"81\" 조각은 4번째 조각 뒤로 숫자 1개를 남김, \"811\" 조각은 255 초과)."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "9",
+        "2",
+        "1",
+        "6",
+        "8",
+        "1",
+        "1"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 0,
+         "label": "1"
+        },
+        "s2": {
+         "from": 1,
+         "to": 2,
+         "label": "92"
+        },
+        "s3": {
+         "from": 3,
+         "to": 4,
+         "label": "16"
+        }
+       },
+       "marks": {
+        "bad": [
+         3,
+         4,
+         5,
+         6,
+         7
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 1
+         },
+         "note": "1"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 3
+         },
+         "note": "1.92"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 5
+         },
+         "note": "1.92.16"
+        }
+       ],
+       "marks": {
+        "dim": [
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": 3
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Take \"168\" as segment 3 and call place(start=6) for segment 4.",
+      "ko": "\"168\" 조각을 3번째 조각으로 놓고, 4번째 조각을 위해 place(start=6) 호출에 넘깁니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "9",
+        "2",
+        "1",
+        "6",
+        "8",
+        "1",
+        "1"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 0,
+         "label": "1"
+        },
+        "s2": {
+         "from": 1,
+         "to": 2,
+         "label": "92"
+        },
+        "s3": {
+         "from": 3,
+         "to": 5,
+         "label": "168"
+        }
+       },
+       "marks": {
+        "good": [
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 1
+         },
+         "note": "1"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 3
+         },
+         "note": "1.92"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 6
+         },
+         "note": "1.92.168"
+        }
+       ],
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 3
+       },
+       "to": {
+        "view": "calls",
+        "at": 3
+       },
+       "value": "168"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "\"1\" would leave 1 digit after segment 4; \"11\" is segment 4 and uses the last digit, so 1.92.168.11 is an address: it goes into the answer.",
+      "ko": "\"1\" 조각은 4번째 조각 뒤로 숫자 1개를 남김. \"11\" 조각이 4번째 조각으로 마지막 숫자까지 쓰므로 주소 1.92.168.11 완성, 답에 넣습니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "9",
+        "2",
+        "1",
+        "6",
+        "8",
+        "1",
+        "1"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 0,
+         "label": "1"
+        },
+        "s2": {
+         "from": 1,
+         "to": 2,
+         "label": "92"
+        },
+        "s3": {
+         "from": 3,
+         "to": 5,
+         "label": "168"
+        },
+        "s4": {
+         "from": 6,
+         "to": 7,
+         "label": "11"
+        }
+       },
+       "marks": {
+        "good": [
+         6,
+         7
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 1
+         },
+         "note": "1"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 3
+         },
+         "note": "1.92"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 6
+         },
+         "note": "1.92.168"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 8
+         },
+         "note": "1.92.168.11"
+        }
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1.92.168.11"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 6
+       },
+       "to": {
+        "view": "calls",
+        "at": 4
+       },
+       "value": "11"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 4
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       },
+       "value": "1.92.168.11"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "place(start=8), place(start=6), place(start=3), place(start=1) return, each taking its segment back off; back in place(start=0), which tries a longer segment. place(start=1) ran out of lengths: \"921\" is over 255.",
+      "ko": "place(start=8), place(start=6), place(start=3), place(start=1) 호출이 조각을 다시 떼고 끝나며, place(start=0) 호출로 돌아와 더 긴 조각을 시도합니다. 더 시도할 길이가 없는 호출: place(start=1)(\"921\" 조각은 255 초과)."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "9",
+        "2",
+        "1",
+        "6",
+        "8",
+        "1",
+        "1"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 0,
+         "label": "1"
+        },
+        "s2": {
+         "from": 1,
+         "to": 2,
+         "label": "92"
+        },
+        "s3": {
+         "from": 3,
+         "to": 5,
+         "label": "168"
+        },
+        "s4": {
+         "from": 6,
+         "to": 7,
+         "label": "11"
+        }
+       },
+       "marks": {
+        "bad": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5,
+         6,
+         7
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 1
+         },
+         "note": "1"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 3
+         },
+         "note": "1.92"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 6
+         },
+         "note": "1.92.168"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 8
+         },
+         "note": "1.92.168.11"
+        }
+       ],
+       "marks": {
+        "dim": [
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1.92.168.11"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": 4
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 3
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 2
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Take \"19\" as segment 1 and call place(start=2) for segment 2.",
+      "ko": "\"19\" 조각을 1번째 조각으로 놓고, 2번째 조각을 위해 place(start=2) 호출에 넘깁니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "9",
+        "2",
+        "1",
+        "6",
+        "8",
+        "1",
+        "1"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 1,
+         "label": "19"
+        }
+       },
+       "marks": {
+        "good": [
+         0,
+         1
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 2
+         },
+         "note": "19"
+        }
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1.92.168.11"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 0
+       },
+       "to": {
+        "view": "calls",
+        "at": 1
+       },
+       "value": "19"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Take \"2\" as segment 2 and call place(start=3) for segment 3.",
+      "ko": "\"2\" 조각을 2번째 조각으로 놓고, 3번째 조각을 위해 place(start=3) 호출에 넘깁니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "9",
+        "2",
+        "1",
+        "6",
+        "8",
+        "1",
+        "1"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 1,
+         "label": "19"
+        },
+        "s2": {
+         "from": 2,
+         "to": 2,
+         "label": "2"
+        }
+       },
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 2
+         },
+         "note": "19"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 3
+         },
+         "note": "19.2"
+        }
+       ],
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1.92.168.11"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 2
+       },
+       "to": {
+        "view": "calls",
+        "at": 2
+       },
+       "value": "2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "\"1\" leaves 4 digits, too many for 1 segment; take \"16\" as segment 3 and call place(start=5) for segment 4.",
+      "ko": "\"1\" 조각 뒤로 숫자 4개가 남아 조각 1개에 너무 많음. \"16\" 조각을 3번째 조각으로 놓고, 4번째 조각을 위해 place(start=5) 호출에 넘깁니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "9",
+        "2",
+        "1",
+        "6",
+        "8",
+        "1",
+        "1"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 1,
+         "label": "19"
+        },
+        "s2": {
+         "from": 2,
+         "to": 2,
+         "label": "2"
+        },
+        "s3": {
+         "from": 3,
+         "to": 4,
+         "label": "16"
+        }
+       },
+       "marks": {
+        "good": [
+         3,
+         4
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 2
+         },
+         "note": "19"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 3
+         },
+         "note": "19.2"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 5
+         },
+         "note": "19.2.16"
+        }
+       ],
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1.92.168.11"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 3
+       },
+       "to": {
+        "view": "calls",
+        "at": 3
+       },
+       "value": "16"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "place(start=5) returns, taking its segment back off; back in place(start=3), which tries a longer segment. place(start=5) ran out of lengths: \"8\" would leave 2 digits after segment 4, \"81\" would leave 1 digit after segment 4, \"811\" is over 255.",
+      "ko": "place(start=5) 호출이 조각을 다시 떼고 끝나며, place(start=3) 호출로 돌아와 더 긴 조각을 시도합니다. 더 시도할 길이가 없는 호출: place(start=5)(\"8\" 조각은 4번째 조각 뒤로 숫자 2개를 남김, \"81\" 조각은 4번째 조각 뒤로 숫자 1개를 남김, \"811\" 조각은 255 초과)."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "9",
+        "2",
+        "1",
+        "6",
+        "8",
+        "1",
+        "1"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 1,
+         "label": "19"
+        },
+        "s2": {
+         "from": 2,
+         "to": 2,
+         "label": "2"
+        },
+        "s3": {
+         "from": 3,
+         "to": 4,
+         "label": "16"
+        }
+       },
+       "marks": {
+        "bad": [
+         3,
+         4,
+         5,
+         6,
+         7
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 2
+         },
+         "note": "19"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 3
+         },
+         "note": "19.2"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 5
+         },
+         "note": "19.2.16"
+        }
+       ],
+       "marks": {
+        "dim": [
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1.92.168.11"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": 3
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Take \"168\" as segment 3 and call place(start=6) for segment 4.",
+      "ko": "\"168\" 조각을 3번째 조각으로 놓고, 4번째 조각을 위해 place(start=6) 호출에 넘깁니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "9",
+        "2",
+        "1",
+        "6",
+        "8",
+        "1",
+        "1"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 1,
+         "label": "19"
+        },
+        "s2": {
+         "from": 2,
+         "to": 2,
+         "label": "2"
+        },
+        "s3": {
+         "from": 3,
+         "to": 5,
+         "label": "168"
+        }
+       },
+       "marks": {
+        "good": [
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 2
+         },
+         "note": "19"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 3
+         },
+         "note": "19.2"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 6
+         },
+         "note": "19.2.168"
+        }
+       ],
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1.92.168.11"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 3
+       },
+       "to": {
+        "view": "calls",
+        "at": 3
+       },
+       "value": "168"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "\"1\" would leave 1 digit after segment 4; \"11\" is segment 4 and uses the last digit, so 19.2.168.11 is an address: it goes into the answer.",
+      "ko": "\"1\" 조각은 4번째 조각 뒤로 숫자 1개를 남김. \"11\" 조각이 4번째 조각으로 마지막 숫자까지 쓰므로 주소 19.2.168.11 완성, 답에 넣습니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "9",
+        "2",
+        "1",
+        "6",
+        "8",
+        "1",
+        "1"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 1,
+         "label": "19"
+        },
+        "s2": {
+         "from": 2,
+         "to": 2,
+         "label": "2"
+        },
+        "s3": {
+         "from": 3,
+         "to": 5,
+         "label": "168"
+        },
+        "s4": {
+         "from": 6,
+         "to": 7,
+         "label": "11"
+        }
+       },
+       "marks": {
+        "good": [
+         6,
+         7
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 2
+         },
+         "note": "19"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 3
+         },
+         "note": "19.2"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 6
+         },
+         "note": "19.2.168"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 8
+         },
+         "note": "19.2.168.11"
+        }
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1.92.168.11",
+        "19.2.168.11"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 6
+       },
+       "to": {
+        "view": "calls",
+        "at": 4
+       },
+       "value": "11"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 4
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       },
+       "value": "19.2.168.11"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "place(start=8), place(start=6), place(start=3) return, each taking its segment back off; back in place(start=2), which tries a longer segment.",
+      "ko": "place(start=8), place(start=6), place(start=3) 호출이 조각을 다시 떼고 끝나며, place(start=2) 호출로 돌아와 더 긴 조각을 시도합니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "9",
+        "2",
+        "1",
+        "6",
+        "8",
+        "1",
+        "1"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 1,
+         "label": "19"
+        },
+        "s2": {
+         "from": 2,
+         "to": 2,
+         "label": "2"
+        },
+        "s3": {
+         "from": 3,
+         "to": 5,
+         "label": "168"
+        },
+        "s4": {
+         "from": 6,
+         "to": 7,
+         "label": "11"
+        }
+       },
+       "marks": {
+        "bad": [
+         2,
+         3,
+         4,
+         5,
+         6,
+         7
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 2
+         },
+         "note": "19"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 3
+         },
+         "note": "19.2"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 6
+         },
+         "note": "19.2.168"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 8
+         },
+         "note": "19.2.168.11"
+        }
+       ],
+       "marks": {
+        "dim": [
+         2,
+         3,
+         4
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1.92.168.11",
+        "19.2.168.11"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": 4
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 3
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Take \"21\" as segment 2 and call place(start=4) for segment 3.",
+      "ko": "\"21\" 조각을 2번째 조각으로 놓고, 3번째 조각을 위해 place(start=4) 호출에 넘깁니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "9",
+        "2",
+        "1",
+        "6",
+        "8",
+        "1",
+        "1"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 1,
+         "label": "19"
+        },
+        "s2": {
+         "from": 2,
+         "to": 3,
+         "label": "21"
+        }
+       },
+       "marks": {
+        "good": [
+         2,
+         3
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 2
+         },
+         "note": "19"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 4
+         },
+         "note": "19.21"
+        }
+       ],
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1.92.168.11",
+        "19.2.168.11"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 2
+       },
+       "to": {
+        "view": "calls",
+        "at": 2
+       },
+       "value": "21"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Take \"6\" as segment 3 and call place(start=5) for segment 4.",
+      "ko": "\"6\" 조각을 3번째 조각으로 놓고, 4번째 조각을 위해 place(start=5) 호출에 넘깁니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "9",
+        "2",
+        "1",
+        "6",
+        "8",
+        "1",
+        "1"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 1,
+         "label": "19"
+        },
+        "s2": {
+         "from": 2,
+         "to": 3,
+         "label": "21"
+        },
+        "s3": {
+         "from": 4,
+         "to": 4,
+         "label": "6"
+        }
+       },
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 2
+         },
+         "note": "19"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 4
+         },
+         "note": "19.21"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 5
+         },
+         "note": "19.21.6"
+        }
+       ],
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1.92.168.11",
+        "19.2.168.11"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 4
+       },
+       "to": {
+        "view": "calls",
+        "at": 3
+       },
+       "value": "6"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "place(start=5) returns, taking its segment back off; back in place(start=4), which tries a longer segment. place(start=5) ran out of lengths: \"8\" would leave 2 digits after segment 4, \"81\" would leave 1 digit after segment 4, \"811\" is over 255.",
+      "ko": "place(start=5) 호출이 조각을 다시 떼고 끝나며, place(start=4) 호출로 돌아와 더 긴 조각을 시도합니다. 더 시도할 길이가 없는 호출: place(start=5)(\"8\" 조각은 4번째 조각 뒤로 숫자 2개를 남김, \"81\" 조각은 4번째 조각 뒤로 숫자 1개를 남김, \"811\" 조각은 255 초과)."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "9",
+        "2",
+        "1",
+        "6",
+        "8",
+        "1",
+        "1"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 1,
+         "label": "19"
+        },
+        "s2": {
+         "from": 2,
+         "to": 3,
+         "label": "21"
+        },
+        "s3": {
+         "from": 4,
+         "to": 4,
+         "label": "6"
+        }
+       },
+       "marks": {
+        "bad": [
+         4,
+         5,
+         6,
+         7
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 2
+         },
+         "note": "19"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 4
+         },
+         "note": "19.21"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 5
+         },
+         "note": "19.21.6"
+        }
+       ],
+       "marks": {
+        "dim": [
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1.92.168.11",
+        "19.2.168.11"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": 3
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Take \"68\" as segment 3 and call place(start=6) for segment 4.",
+      "ko": "\"68\" 조각을 3번째 조각으로 놓고, 4번째 조각을 위해 place(start=6) 호출에 넘깁니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "9",
+        "2",
+        "1",
+        "6",
+        "8",
+        "1",
+        "1"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 1,
+         "label": "19"
+        },
+        "s2": {
+         "from": 2,
+         "to": 3,
+         "label": "21"
+        },
+        "s3": {
+         "from": 4,
+         "to": 5,
+         "label": "68"
+        }
+       },
+       "marks": {
+        "good": [
+         4,
+         5
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 2
+         },
+         "note": "19"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 4
+         },
+         "note": "19.21"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 6
+         },
+         "note": "19.21.68"
+        }
+       ],
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1.92.168.11",
+        "19.2.168.11"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 4
+       },
+       "to": {
+        "view": "calls",
+        "at": 3
+       },
+       "value": "68"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "\"1\" would leave 1 digit after segment 4; \"11\" is segment 4 and uses the last digit, so 19.21.68.11 is an address: it goes into the answer.",
+      "ko": "\"1\" 조각은 4번째 조각 뒤로 숫자 1개를 남김. \"11\" 조각이 4번째 조각으로 마지막 숫자까지 쓰므로 주소 19.21.68.11 완성, 답에 넣습니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "9",
+        "2",
+        "1",
+        "6",
+        "8",
+        "1",
+        "1"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 1,
+         "label": "19"
+        },
+        "s2": {
+         "from": 2,
+         "to": 3,
+         "label": "21"
+        },
+        "s3": {
+         "from": 4,
+         "to": 5,
+         "label": "68"
+        },
+        "s4": {
+         "from": 6,
+         "to": 7,
+         "label": "11"
+        }
+       },
+       "marks": {
+        "good": [
+         6,
+         7
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 2
+         },
+         "note": "19"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 4
+         },
+         "note": "19.21"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 6
+         },
+         "note": "19.21.68"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 8
+         },
+         "note": "19.21.68.11"
+        }
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1.92.168.11",
+        "19.2.168.11",
+        "19.21.68.11"
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 6
+       },
+       "to": {
+        "view": "calls",
+        "at": 4
+       },
+       "value": "11"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 4
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       },
+       "value": "19.21.68.11"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "place(start=8), place(start=6), place(start=4) return, each taking its segment back off; back in place(start=2), which tries a longer segment. place(start=4) ran out of lengths: \"681\" is over 255.",
+      "ko": "place(start=8), place(start=6), place(start=4) 호출이 조각을 다시 떼고 끝나며, place(start=2) 호출로 돌아와 더 긴 조각을 시도합니다. 더 시도할 길이가 없는 호출: place(start=4)(\"681\" 조각은 255 초과)."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "9",
+        "2",
+        "1",
+        "6",
+        "8",
+        "1",
+        "1"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 1,
+         "label": "19"
+        },
+        "s2": {
+         "from": 2,
+         "to": 3,
+         "label": "21"
+        },
+        "s3": {
+         "from": 4,
+         "to": 5,
+         "label": "68"
+        },
+        "s4": {
+         "from": 6,
+         "to": 7,
+         "label": "11"
+        }
+       },
+       "marks": {
+        "bad": [
+         2,
+         3,
+         4,
+         5,
+         6,
+         7
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 2
+         },
+         "note": "19"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 4
+         },
+         "note": "19.21"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 6
+         },
+         "note": "19.21.68"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 8
+         },
+         "note": "19.21.68.11"
+        }
+       ],
+       "marks": {
+        "dim": [
+         2,
+         3,
+         4
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1.92.168.11",
+        "19.2.168.11",
+        "19.21.68.11"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": 4
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 3
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Take \"216\" as segment 2 and call place(start=5) for segment 3.",
+      "ko": "\"216\" 조각을 2번째 조각으로 놓고, 3번째 조각을 위해 place(start=5) 호출에 넘깁니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "9",
+        "2",
+        "1",
+        "6",
+        "8",
+        "1",
+        "1"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 1,
+         "label": "19"
+        },
+        "s2": {
+         "from": 2,
+         "to": 4,
+         "label": "216"
+        }
+       },
+       "marks": {
+        "good": [
+         2,
+         3,
+         4
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 2
+         },
+         "note": "19"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 5
+         },
+         "note": "19.216"
+        }
+       ],
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1.92.168.11",
+        "19.2.168.11",
+        "19.21.68.11"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 2
+       },
+       "to": {
+        "view": "calls",
+        "at": 2
+       },
+       "value": "216"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Take \"8\" as segment 3 and call place(start=6) for segment 4.",
+      "ko": "\"8\" 조각을 3번째 조각으로 놓고, 4번째 조각을 위해 place(start=6) 호출에 넘깁니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "9",
+        "2",
+        "1",
+        "6",
+        "8",
+        "1",
+        "1"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 1,
+         "label": "19"
+        },
+        "s2": {
+         "from": 2,
+         "to": 4,
+         "label": "216"
+        },
+        "s3": {
+         "from": 5,
+         "to": 5,
+         "label": "8"
+        }
+       },
+       "marks": {
+        "good": [
+         5
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 2
+         },
+         "note": "19"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 5
+         },
+         "note": "19.216"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 6
+         },
+         "note": "19.216.8"
+        }
+       ],
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1.92.168.11",
+        "19.2.168.11",
+        "19.21.68.11"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 5
+       },
+       "to": {
+        "view": "calls",
+        "at": 3
+       },
+       "value": "8"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "\"1\" would leave 1 digit after segment 4; \"11\" is segment 4 and uses the last digit, so 19.216.8.11 is an address: it goes into the answer.",
+      "ko": "\"1\" 조각은 4번째 조각 뒤로 숫자 1개를 남김. \"11\" 조각이 4번째 조각으로 마지막 숫자까지 쓰므로 주소 19.216.8.11 완성, 답에 넣습니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "9",
+        "2",
+        "1",
+        "6",
+        "8",
+        "1",
+        "1"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 1,
+         "label": "19"
+        },
+        "s2": {
+         "from": 2,
+         "to": 4,
+         "label": "216"
+        },
+        "s3": {
+         "from": 5,
+         "to": 5,
+         "label": "8"
+        },
+        "s4": {
+         "from": 6,
+         "to": 7,
+         "label": "11"
+        }
+       },
+       "marks": {
+        "good": [
+         6,
+         7
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 2
+         },
+         "note": "19"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 5
+         },
+         "note": "19.216"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 6
+         },
+         "note": "19.216.8"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 8
+         },
+         "note": "19.216.8.11"
+        }
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1.92.168.11",
+        "19.2.168.11",
+        "19.21.68.11",
+        "19.216.8.11"
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 6
+       },
+       "to": {
+        "view": "calls",
+        "at": 4
+       },
+       "value": "11"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 4
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       },
+       "value": "19.216.8.11"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "place(start=8), place(start=6) return, each taking its segment back off; back in place(start=5), which tries a longer segment.",
+      "ko": "place(start=8), place(start=6) 호출이 조각을 다시 떼고 끝나며, place(start=5) 호출로 돌아와 더 긴 조각을 시도합니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "9",
+        "2",
+        "1",
+        "6",
+        "8",
+        "1",
+        "1"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 1,
+         "label": "19"
+        },
+        "s2": {
+         "from": 2,
+         "to": 4,
+         "label": "216"
+        },
+        "s3": {
+         "from": 5,
+         "to": 5,
+         "label": "8"
+        },
+        "s4": {
+         "from": 6,
+         "to": 7,
+         "label": "11"
+        }
+       },
+       "marks": {
+        "bad": [
+         5,
+         6,
+         7
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 2
+         },
+         "note": "19"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 5
+         },
+         "note": "19.216"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 6
+         },
+         "note": "19.216.8"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 8
+         },
+         "note": "19.216.8.11"
+        }
+       ],
+       "marks": {
+        "dim": [
+         3,
+         4
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1.92.168.11",
+        "19.2.168.11",
+        "19.21.68.11",
+        "19.216.8.11"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": 4
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 3
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Take \"81\" as segment 3 and call place(start=7) for segment 4.",
+      "ko": "\"81\" 조각을 3번째 조각으로 놓고, 4번째 조각을 위해 place(start=7) 호출에 넘깁니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "9",
+        "2",
+        "1",
+        "6",
+        "8",
+        "1",
+        "1"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 1,
+         "label": "19"
+        },
+        "s2": {
+         "from": 2,
+         "to": 4,
+         "label": "216"
+        },
+        "s3": {
+         "from": 5,
+         "to": 6,
+         "label": "81"
+        }
+       },
+       "marks": {
+        "good": [
+         5,
+         6
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 2
+         },
+         "note": "19"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 5
+         },
+         "note": "19.216"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 7
+         },
+         "note": "19.216.81"
+        }
+       ],
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1.92.168.11",
+        "19.2.168.11",
+        "19.21.68.11",
+        "19.216.8.11"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 5
+       },
+       "to": {
+        "view": "calls",
+        "at": 3
+       },
+       "value": "81"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "\"1\" is segment 4 and uses the last digit, so 19.216.81.1 is an address: it goes into the answer.",
+      "ko": "\"1\" 조각이 4번째 조각으로 마지막 숫자까지 쓰므로 주소 19.216.81.1 완성, 답에 넣습니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "9",
+        "2",
+        "1",
+        "6",
+        "8",
+        "1",
+        "1"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 1,
+         "label": "19"
+        },
+        "s2": {
+         "from": 2,
+         "to": 4,
+         "label": "216"
+        },
+        "s3": {
+         "from": 5,
+         "to": 6,
+         "label": "81"
+        },
+        "s4": {
+         "from": 7,
+         "to": 7,
+         "label": "1"
+        }
+       },
+       "marks": {
+        "good": [
+         7
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 2
+         },
+         "note": "19"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 5
+         },
+         "note": "19.216"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 7
+         },
+         "note": "19.216.81"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 8
+         },
+         "note": "19.216.81.1"
+        }
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1.92.168.11",
+        "19.2.168.11",
+        "19.21.68.11",
+        "19.216.8.11",
+        "19.216.81.1"
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 7
+       },
+       "to": {
+        "view": "calls",
+        "at": 4
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 4
+       },
+       "to": {
+        "view": "result",
+        "at": 4
+       },
+       "value": "19.216.81.1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "place(start=8), place(start=7), place(start=5), place(start=2) return, each taking its segment back off; back in place(start=0), which tries a longer segment. place(start=5) ran out of lengths: \"811\" is over 255.",
+      "ko": "place(start=8), place(start=7), place(start=5), place(start=2) 호출이 조각을 다시 떼고 끝나며, place(start=0) 호출로 돌아와 더 긴 조각을 시도합니다. 더 시도할 길이가 없는 호출: place(start=5)(\"811\" 조각은 255 초과)."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "9",
+        "2",
+        "1",
+        "6",
+        "8",
+        "1",
+        "1"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 1,
+         "label": "19"
+        },
+        "s2": {
+         "from": 2,
+         "to": 4,
+         "label": "216"
+        },
+        "s3": {
+         "from": 5,
+         "to": 6,
+         "label": "81"
+        },
+        "s4": {
+         "from": 7,
+         "to": 7,
+         "label": "1"
+        }
+       },
+       "marks": {
+        "bad": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5,
+         6,
+         7
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 2
+         },
+         "note": "19"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 5
+         },
+         "note": "19.216"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 7
+         },
+         "note": "19.216.81"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 8
+         },
+         "note": "19.216.81.1"
+        }
+       ],
+       "marks": {
+        "dim": [
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1.92.168.11",
+        "19.2.168.11",
+        "19.21.68.11",
+        "19.216.8.11",
+        "19.216.81.1"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": 4
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 3
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 2
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Take \"192\" as segment 1 and call place(start=3) for segment 2.",
+      "ko": "\"192\" 조각을 1번째 조각으로 놓고, 2번째 조각을 위해 place(start=3) 호출에 넘깁니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "9",
+        "2",
+        "1",
+        "6",
+        "8",
+        "1",
+        "1"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 2,
+         "label": "192"
+        }
+       },
+       "marks": {
+        "good": [
+         0,
+         1,
+         2
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 3
+         },
+         "note": "192"
+        }
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1.92.168.11",
+        "19.2.168.11",
+        "19.21.68.11",
+        "19.216.8.11",
+        "19.216.81.1"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 0
+       },
+       "to": {
+        "view": "calls",
+        "at": 1
+       },
+       "value": "192"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Take \"1\" as segment 2 and call place(start=4) for segment 3.",
+      "ko": "\"1\" 조각을 2번째 조각으로 놓고, 3번째 조각을 위해 place(start=4) 호출에 넘깁니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "9",
+        "2",
+        "1",
+        "6",
+        "8",
+        "1",
+        "1"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 2,
+         "label": "192"
+        },
+        "s2": {
+         "from": 3,
+         "to": 3,
+         "label": "1"
+        }
+       },
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 3
+         },
+         "note": "192"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 4
+         },
+         "note": "192.1"
+        }
+       ],
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1.92.168.11",
+        "19.2.168.11",
+        "19.21.68.11",
+        "19.216.8.11",
+        "19.216.81.1"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 3
+       },
+       "to": {
+        "view": "calls",
+        "at": 2
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Take \"6\" as segment 3 and call place(start=5) for segment 4.",
+      "ko": "\"6\" 조각을 3번째 조각으로 놓고, 4번째 조각을 위해 place(start=5) 호출에 넘깁니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "9",
+        "2",
+        "1",
+        "6",
+        "8",
+        "1",
+        "1"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 2,
+         "label": "192"
+        },
+        "s2": {
+         "from": 3,
+         "to": 3,
+         "label": "1"
+        },
+        "s3": {
+         "from": 4,
+         "to": 4,
+         "label": "6"
+        }
+       },
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 3
+         },
+         "note": "192"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 4
+         },
+         "note": "192.1"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 5
+         },
+         "note": "192.1.6"
+        }
+       ],
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1.92.168.11",
+        "19.2.168.11",
+        "19.21.68.11",
+        "19.216.8.11",
+        "19.216.81.1"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 4
+       },
+       "to": {
+        "view": "calls",
+        "at": 3
+       },
+       "value": "6"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "place(start=5) returns, taking its segment back off; back in place(start=4), which tries a longer segment. place(start=5) ran out of lengths: \"8\" would leave 2 digits after segment 4, \"81\" would leave 1 digit after segment 4, \"811\" is over 255.",
+      "ko": "place(start=5) 호출이 조각을 다시 떼고 끝나며, place(start=4) 호출로 돌아와 더 긴 조각을 시도합니다. 더 시도할 길이가 없는 호출: place(start=5)(\"8\" 조각은 4번째 조각 뒤로 숫자 2개를 남김, \"81\" 조각은 4번째 조각 뒤로 숫자 1개를 남김, \"811\" 조각은 255 초과)."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "9",
+        "2",
+        "1",
+        "6",
+        "8",
+        "1",
+        "1"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 2,
+         "label": "192"
+        },
+        "s2": {
+         "from": 3,
+         "to": 3,
+         "label": "1"
+        },
+        "s3": {
+         "from": 4,
+         "to": 4,
+         "label": "6"
+        }
+       },
+       "marks": {
+        "bad": [
+         4,
+         5,
+         6,
+         7
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 3
+         },
+         "note": "192"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 4
+         },
+         "note": "192.1"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 5
+         },
+         "note": "192.1.6"
+        }
+       ],
+       "marks": {
+        "dim": [
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1.92.168.11",
+        "19.2.168.11",
+        "19.21.68.11",
+        "19.216.8.11",
+        "19.216.81.1"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": 3
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Take \"68\" as segment 3 and call place(start=6) for segment 4.",
+      "ko": "\"68\" 조각을 3번째 조각으로 놓고, 4번째 조각을 위해 place(start=6) 호출에 넘깁니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "9",
+        "2",
+        "1",
+        "6",
+        "8",
+        "1",
+        "1"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 2,
+         "label": "192"
+        },
+        "s2": {
+         "from": 3,
+         "to": 3,
+         "label": "1"
+        },
+        "s3": {
+         "from": 4,
+         "to": 5,
+         "label": "68"
+        }
+       },
+       "marks": {
+        "good": [
+         4,
+         5
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 3
+         },
+         "note": "192"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 4
+         },
+         "note": "192.1"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 6
+         },
+         "note": "192.1.68"
+        }
+       ],
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1.92.168.11",
+        "19.2.168.11",
+        "19.21.68.11",
+        "19.216.8.11",
+        "19.216.81.1"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 4
+       },
+       "to": {
+        "view": "calls",
+        "at": 3
+       },
+       "value": "68"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "\"1\" would leave 1 digit after segment 4; \"11\" is segment 4 and uses the last digit, so 192.1.68.11 is an address: it goes into the answer.",
+      "ko": "\"1\" 조각은 4번째 조각 뒤로 숫자 1개를 남김. \"11\" 조각이 4번째 조각으로 마지막 숫자까지 쓰므로 주소 192.1.68.11 완성, 답에 넣습니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "9",
+        "2",
+        "1",
+        "6",
+        "8",
+        "1",
+        "1"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 2,
+         "label": "192"
+        },
+        "s2": {
+         "from": 3,
+         "to": 3,
+         "label": "1"
+        },
+        "s3": {
+         "from": 4,
+         "to": 5,
+         "label": "68"
+        },
+        "s4": {
+         "from": 6,
+         "to": 7,
+         "label": "11"
+        }
+       },
+       "marks": {
+        "good": [
+         6,
+         7
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 3
+         },
+         "note": "192"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 4
+         },
+         "note": "192.1"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 6
+         },
+         "note": "192.1.68"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 8
+         },
+         "note": "192.1.68.11"
+        }
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1.92.168.11",
+        "19.2.168.11",
+        "19.21.68.11",
+        "19.216.8.11",
+        "19.216.81.1",
+        "192.1.68.11"
+       ],
+       "marks": {
+        "good": [
+         5
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 6
+       },
+       "to": {
+        "view": "calls",
+        "at": 4
+       },
+       "value": "11"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 4
+       },
+       "to": {
+        "view": "result",
+        "at": 5
+       },
+       "value": "192.1.68.11"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "place(start=8), place(start=6), place(start=4) return, each taking its segment back off; back in place(start=3), which tries a longer segment. place(start=4) ran out of lengths: \"681\" is over 255.",
+      "ko": "place(start=8), place(start=6), place(start=4) 호출이 조각을 다시 떼고 끝나며, place(start=3) 호출로 돌아와 더 긴 조각을 시도합니다. 더 시도할 길이가 없는 호출: place(start=4)(\"681\" 조각은 255 초과)."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "9",
+        "2",
+        "1",
+        "6",
+        "8",
+        "1",
+        "1"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 2,
+         "label": "192"
+        },
+        "s2": {
+         "from": 3,
+         "to": 3,
+         "label": "1"
+        },
+        "s3": {
+         "from": 4,
+         "to": 5,
+         "label": "68"
+        },
+        "s4": {
+         "from": 6,
+         "to": 7,
+         "label": "11"
+        }
+       },
+       "marks": {
+        "bad": [
+         3,
+         4,
+         5,
+         6,
+         7
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 3
+         },
+         "note": "192"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 4
+         },
+         "note": "192.1"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 6
+         },
+         "note": "192.1.68"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 8
+         },
+         "note": "192.1.68.11"
+        }
+       ],
+       "marks": {
+        "dim": [
+         2,
+         3,
+         4
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1.92.168.11",
+        "19.2.168.11",
+        "19.21.68.11",
+        "19.216.8.11",
+        "19.216.81.1",
+        "192.1.68.11"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": 4
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 3
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Take \"16\" as segment 2 and call place(start=5) for segment 3.",
+      "ko": "\"16\" 조각을 2번째 조각으로 놓고, 3번째 조각을 위해 place(start=5) 호출에 넘깁니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "9",
+        "2",
+        "1",
+        "6",
+        "8",
+        "1",
+        "1"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 2,
+         "label": "192"
+        },
+        "s2": {
+         "from": 3,
+         "to": 4,
+         "label": "16"
+        }
+       },
+       "marks": {
+        "good": [
+         3,
+         4
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 3
+         },
+         "note": "192"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 5
+         },
+         "note": "192.16"
+        }
+       ],
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1.92.168.11",
+        "19.2.168.11",
+        "19.21.68.11",
+        "19.216.8.11",
+        "19.216.81.1",
+        "192.1.68.11"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 3
+       },
+       "to": {
+        "view": "calls",
+        "at": 2
+       },
+       "value": "16"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Take \"8\" as segment 3 and call place(start=6) for segment 4.",
+      "ko": "\"8\" 조각을 3번째 조각으로 놓고, 4번째 조각을 위해 place(start=6) 호출에 넘깁니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "9",
+        "2",
+        "1",
+        "6",
+        "8",
+        "1",
+        "1"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 2,
+         "label": "192"
+        },
+        "s2": {
+         "from": 3,
+         "to": 4,
+         "label": "16"
+        },
+        "s3": {
+         "from": 5,
+         "to": 5,
+         "label": "8"
+        }
+       },
+       "marks": {
+        "good": [
+         5
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 3
+         },
+         "note": "192"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 5
+         },
+         "note": "192.16"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 6
+         },
+         "note": "192.16.8"
+        }
+       ],
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1.92.168.11",
+        "19.2.168.11",
+        "19.21.68.11",
+        "19.216.8.11",
+        "19.216.81.1",
+        "192.1.68.11"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 5
+       },
+       "to": {
+        "view": "calls",
+        "at": 3
+       },
+       "value": "8"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "\"1\" would leave 1 digit after segment 4; \"11\" is segment 4 and uses the last digit, so 192.16.8.11 is an address: it goes into the answer.",
+      "ko": "\"1\" 조각은 4번째 조각 뒤로 숫자 1개를 남김. \"11\" 조각이 4번째 조각으로 마지막 숫자까지 쓰므로 주소 192.16.8.11 완성, 답에 넣습니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "9",
+        "2",
+        "1",
+        "6",
+        "8",
+        "1",
+        "1"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 2,
+         "label": "192"
+        },
+        "s2": {
+         "from": 3,
+         "to": 4,
+         "label": "16"
+        },
+        "s3": {
+         "from": 5,
+         "to": 5,
+         "label": "8"
+        },
+        "s4": {
+         "from": 6,
+         "to": 7,
+         "label": "11"
+        }
+       },
+       "marks": {
+        "good": [
+         6,
+         7
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 3
+         },
+         "note": "192"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 5
+         },
+         "note": "192.16"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 6
+         },
+         "note": "192.16.8"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 8
+         },
+         "note": "192.16.8.11"
+        }
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1.92.168.11",
+        "19.2.168.11",
+        "19.21.68.11",
+        "19.216.8.11",
+        "19.216.81.1",
+        "192.1.68.11",
+        "192.16.8.11"
+       ],
+       "marks": {
+        "good": [
+         6
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 6
+       },
+       "to": {
+        "view": "calls",
+        "at": 4
+       },
+       "value": "11"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 4
+       },
+       "to": {
+        "view": "result",
+        "at": 6
+       },
+       "value": "192.16.8.11"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "place(start=8), place(start=6) return, each taking its segment back off; back in place(start=5), which tries a longer segment.",
+      "ko": "place(start=8), place(start=6) 호출이 조각을 다시 떼고 끝나며, place(start=5) 호출로 돌아와 더 긴 조각을 시도합니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "9",
+        "2",
+        "1",
+        "6",
+        "8",
+        "1",
+        "1"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 2,
+         "label": "192"
+        },
+        "s2": {
+         "from": 3,
+         "to": 4,
+         "label": "16"
+        },
+        "s3": {
+         "from": 5,
+         "to": 5,
+         "label": "8"
+        },
+        "s4": {
+         "from": 6,
+         "to": 7,
+         "label": "11"
+        }
+       },
+       "marks": {
+        "bad": [
+         5,
+         6,
+         7
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 3
+         },
+         "note": "192"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 5
+         },
+         "note": "192.16"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 6
+         },
+         "note": "192.16.8"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 8
+         },
+         "note": "192.16.8.11"
+        }
+       ],
+       "marks": {
+        "dim": [
+         3,
+         4
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1.92.168.11",
+        "19.2.168.11",
+        "19.21.68.11",
+        "19.216.8.11",
+        "19.216.81.1",
+        "192.1.68.11",
+        "192.16.8.11"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": 4
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 3
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Take \"81\" as segment 3 and call place(start=7) for segment 4.",
+      "ko": "\"81\" 조각을 3번째 조각으로 놓고, 4번째 조각을 위해 place(start=7) 호출에 넘깁니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "9",
+        "2",
+        "1",
+        "6",
+        "8",
+        "1",
+        "1"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 2,
+         "label": "192"
+        },
+        "s2": {
+         "from": 3,
+         "to": 4,
+         "label": "16"
+        },
+        "s3": {
+         "from": 5,
+         "to": 6,
+         "label": "81"
+        }
+       },
+       "marks": {
+        "good": [
+         5,
+         6
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 3
+         },
+         "note": "192"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 5
+         },
+         "note": "192.16"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 7
+         },
+         "note": "192.16.81"
+        }
+       ],
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1.92.168.11",
+        "19.2.168.11",
+        "19.21.68.11",
+        "19.216.8.11",
+        "19.216.81.1",
+        "192.1.68.11",
+        "192.16.8.11"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 5
+       },
+       "to": {
+        "view": "calls",
+        "at": 3
+       },
+       "value": "81"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "\"1\" is segment 4 and uses the last digit, so 192.16.81.1 is an address: it goes into the answer.",
+      "ko": "\"1\" 조각이 4번째 조각으로 마지막 숫자까지 쓰므로 주소 192.16.81.1 완성, 답에 넣습니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "9",
+        "2",
+        "1",
+        "6",
+        "8",
+        "1",
+        "1"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 2,
+         "label": "192"
+        },
+        "s2": {
+         "from": 3,
+         "to": 4,
+         "label": "16"
+        },
+        "s3": {
+         "from": 5,
+         "to": 6,
+         "label": "81"
+        },
+        "s4": {
+         "from": 7,
+         "to": 7,
+         "label": "1"
+        }
+       },
+       "marks": {
+        "good": [
+         7
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 3
+         },
+         "note": "192"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 5
+         },
+         "note": "192.16"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 7
+         },
+         "note": "192.16.81"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 8
+         },
+         "note": "192.16.81.1"
+        }
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1.92.168.11",
+        "19.2.168.11",
+        "19.21.68.11",
+        "19.216.8.11",
+        "19.216.81.1",
+        "192.1.68.11",
+        "192.16.8.11",
+        "192.16.81.1"
+       ],
+       "marks": {
+        "good": [
+         7
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 7
+       },
+       "to": {
+        "view": "calls",
+        "at": 4
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 4
+       },
+       "to": {
+        "view": "result",
+        "at": 7
+       },
+       "value": "192.16.81.1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "place(start=8), place(start=7), place(start=5) return, each taking its segment back off; back in place(start=3), which tries a longer segment. place(start=5) ran out of lengths: \"811\" is over 255.",
+      "ko": "place(start=8), place(start=7), place(start=5) 호출이 조각을 다시 떼고 끝나며, place(start=3) 호출로 돌아와 더 긴 조각을 시도합니다. 더 시도할 길이가 없는 호출: place(start=5)(\"811\" 조각은 255 초과)."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "9",
+        "2",
+        "1",
+        "6",
+        "8",
+        "1",
+        "1"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 2,
+         "label": "192"
+        },
+        "s2": {
+         "from": 3,
+         "to": 4,
+         "label": "16"
+        },
+        "s3": {
+         "from": 5,
+         "to": 6,
+         "label": "81"
+        },
+        "s4": {
+         "from": 7,
+         "to": 7,
+         "label": "1"
+        }
+       },
+       "marks": {
+        "bad": [
+         3,
+         4,
+         5,
+         6,
+         7
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 3
+         },
+         "note": "192"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 5
+         },
+         "note": "192.16"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 7
+         },
+         "note": "192.16.81"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 8
+         },
+         "note": "192.16.81.1"
+        }
+       ],
+       "marks": {
+        "dim": [
+         2,
+         3,
+         4
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1.92.168.11",
+        "19.2.168.11",
+        "19.21.68.11",
+        "19.216.8.11",
+        "19.216.81.1",
+        "192.1.68.11",
+        "192.16.8.11",
+        "192.16.81.1"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": 4
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 3
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Take \"168\" as segment 2 and call place(start=6) for segment 3.",
+      "ko": "\"168\" 조각을 2번째 조각으로 놓고, 3번째 조각을 위해 place(start=6) 호출에 넘깁니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "9",
+        "2",
+        "1",
+        "6",
+        "8",
+        "1",
+        "1"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 2,
+         "label": "192"
+        },
+        "s2": {
+         "from": 3,
+         "to": 5,
+         "label": "168"
+        }
+       },
+       "marks": {
+        "good": [
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 3
+         },
+         "note": "192"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 6
+         },
+         "note": "192.168"
+        }
+       ],
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1.92.168.11",
+        "19.2.168.11",
+        "19.21.68.11",
+        "19.216.8.11",
+        "19.216.81.1",
+        "192.1.68.11",
+        "192.16.8.11",
+        "192.16.81.1"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 3
+       },
+       "to": {
+        "view": "calls",
+        "at": 2
+       },
+       "value": "168"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Take \"1\" as segment 3 and call place(start=7) for segment 4.",
+      "ko": "\"1\" 조각을 3번째 조각으로 놓고, 4번째 조각을 위해 place(start=7) 호출에 넘깁니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "9",
+        "2",
+        "1",
+        "6",
+        "8",
+        "1",
+        "1"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 2,
+         "label": "192"
+        },
+        "s2": {
+         "from": 3,
+         "to": 5,
+         "label": "168"
+        },
+        "s3": {
+         "from": 6,
+         "to": 6,
+         "label": "1"
+        }
+       },
+       "marks": {
+        "good": [
+         6
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 3
+         },
+         "note": "192"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 6
+         },
+         "note": "192.168"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 7
+         },
+         "note": "192.168.1"
+        }
+       ],
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1.92.168.11",
+        "19.2.168.11",
+        "19.21.68.11",
+        "19.216.8.11",
+        "19.216.81.1",
+        "192.1.68.11",
+        "192.16.8.11",
+        "192.16.81.1"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 6
+       },
+       "to": {
+        "view": "calls",
+        "at": 3
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "\"1\" is segment 4 and uses the last digit, so 192.168.1.1 is an address: it goes into the answer.",
+      "ko": "\"1\" 조각이 4번째 조각으로 마지막 숫자까지 쓰므로 주소 192.168.1.1 완성, 답에 넣습니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "9",
+        "2",
+        "1",
+        "6",
+        "8",
+        "1",
+        "1"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 2,
+         "label": "192"
+        },
+        "s2": {
+         "from": 3,
+         "to": 5,
+         "label": "168"
+        },
+        "s3": {
+         "from": 6,
+         "to": 6,
+         "label": "1"
+        },
+        "s4": {
+         "from": 7,
+         "to": 7,
+         "label": "1"
+        }
+       },
+       "marks": {
+        "good": [
+         7
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 3
+         },
+         "note": "192"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 6
+         },
+         "note": "192.168"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 7
+         },
+         "note": "192.168.1"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 8
+         },
+         "note": "192.168.1.1"
+        }
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1.92.168.11",
+        "19.2.168.11",
+        "19.21.68.11",
+        "19.216.8.11",
+        "19.216.81.1",
+        "192.1.68.11",
+        "192.16.8.11",
+        "192.16.81.1",
+        "192.168.1.1"
+       ],
+       "marks": {
+        "good": [
+         8
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 7
+       },
+       "to": {
+        "view": "calls",
+        "at": 4
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 4
+       },
+       "to": {
+        "view": "result",
+        "at": 8
+       },
+       "value": "192.168.1.1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "place(start=8), place(start=7), place(start=6), place(start=3), place(start=0) return, each taking its segment back off; the search is over. place(start=6) ran out of lengths: \"11\" leaves 0 digits for 1 segment.",
+      "ko": "place(start=8), place(start=7), place(start=6), place(start=3), place(start=0) 호출이 조각을 다시 떼고 끝나며, 탐색이 끝납니다. 더 시도할 길이가 없는 호출: place(start=6)(\"11\" 조각 뒤로 숫자 0개가 남아 조각 1개를 못 채움)."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "9",
+        "2",
+        "1",
+        "6",
+        "8",
+        "1",
+        "1"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 2,
+         "label": "192"
+        },
+        "s2": {
+         "from": 3,
+         "to": 5,
+         "label": "168"
+        },
+        "s3": {
+         "from": 6,
+         "to": 6,
+         "label": "1"
+        },
+        "s4": {
+         "from": 7,
+         "to": 7,
+         "label": "1"
+        }
+       },
+       "marks": {
+        "bad": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5,
+         6,
+         7
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 3
+         },
+         "note": "192"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 6
+         },
+         "note": "192.168"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 7
+         },
+         "note": "192.168.1"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 8
+         },
+         "note": "192.168.1.1"
+        }
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1.92.168.11",
+        "19.2.168.11",
+        "19.21.68.11",
+        "19.216.8.11",
+        "19.216.81.1",
+        "192.1.68.11",
+        "192.16.8.11",
+        "192.16.81.1",
+        "192.168.1.1"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": 4
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 3
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 2
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 1
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every call has returned: 9 valid addresses, listed sorted.",
+      "ko": "모든 호출이 끝났습니다. 유효한 주소는 9개이고, 정렬해서 답으로 냅니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "9",
+        "2",
+        "1",
+        "6",
+        "8",
+        "1",
+        "1"
+       ],
+       "spans": {},
+       "marks": {}
+      },
+      "calls": {
+       "calls": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "1.92.168.11",
+        "19.2.168.11",
+        "19.21.68.11",
+        "19.216.8.11",
+        "19.216.81.1",
+        "192.1.68.11",
+        "192.16.8.11",
+        "192.16.81.1",
+        "192.168.1.1"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5,
+         6,
+         7,
+         8
+        ]
+       }
+      }
+     },
+     "answer": "[\"1.92.168.11\",\"19.2.168.11\",\"19.21.68.11\",\"19.216.8.11\",\"19.216.81.1\",\"192.1.68.11\",\"192.16.8.11\",\"192.16.81.1\",\"192.168.1.1\"]"
+    }
+   ],
+   "sampleInput": "19216811"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "digits = \"0202\"",
+   "expected": "[\"0.2.0.2\"]",
+   "frames": [
+    {
+     "caption": {
+      "en": "\"0202\" has 4 digits. The first call, place(start=0), will try the first 1, 2 and 3 digits as segment 1.",
+      "ko": "\"0202\" 문자열은 숫자 4개입니다. 첫 호출 place(start=0)에서 앞의 숫자 1, 2, 3개를 1번째 조각으로 시도합니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "0",
+        "2",
+        "0",
+        "2"
+       ],
+       "spans": {},
+       "marks": {}
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        }
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "calls",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Take \"0\" as segment 1 and call place(start=1) for segment 2.",
+      "ko": "\"0\" 조각을 1번째 조각으로 놓고, 2번째 조각을 위해 place(start=1) 호출에 넘깁니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "0",
+        "2",
+        "0",
+        "2"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 0,
+         "label": "0"
+        }
+       },
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 1
+         },
+         "note": "0"
+        }
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 0
+       },
+       "to": {
+        "view": "calls",
+        "at": 1
+       },
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Take \"2\" as segment 2 and call place(start=2) for segment 3.",
+      "ko": "\"2\" 조각을 2번째 조각으로 놓고, 3번째 조각을 위해 place(start=2) 호출에 넘깁니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "0",
+        "2",
+        "0",
+        "2"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 0,
+         "label": "0"
+        },
+        "s2": {
+         "from": 1,
+         "to": 1,
+         "label": "2"
+        }
+       },
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 1
+         },
+         "note": "0"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 2
+         },
+         "note": "0.2"
+        }
+       ],
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 1
+       },
+       "to": {
+        "view": "calls",
+        "at": 2
+       },
+       "value": "2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Take \"0\" as segment 3 and call place(start=3) for segment 4.",
+      "ko": "\"0\" 조각을 3번째 조각으로 놓고, 4번째 조각을 위해 place(start=3) 호출에 넘깁니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "0",
+        "2",
+        "0",
+        "2"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 0,
+         "label": "0"
+        },
+        "s2": {
+         "from": 1,
+         "to": 1,
+         "label": "2"
+        },
+        "s3": {
+         "from": 2,
+         "to": 2,
+         "label": "0"
+        }
+       },
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 1
+         },
+         "note": "0"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 2
+         },
+         "note": "0.2"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 3
+         },
+         "note": "0.2.0"
+        }
+       ],
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 2
+       },
+       "to": {
+        "view": "calls",
+        "at": 3
+       },
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "\"2\" is segment 4 and uses the last digit, so 0.2.0.2 is an address: it goes into the answer.",
+      "ko": "\"2\" 조각이 4번째 조각으로 마지막 숫자까지 쓰므로 주소 0.2.0.2 완성, 답에 넣습니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "0",
+        "2",
+        "0",
+        "2"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 0,
+         "label": "0"
+        },
+        "s2": {
+         "from": 1,
+         "to": 1,
+         "label": "2"
+        },
+        "s3": {
+         "from": 2,
+         "to": 2,
+         "label": "0"
+        },
+        "s4": {
+         "from": 3,
+         "to": 3,
+         "label": "2"
+        }
+       },
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 1
+         },
+         "note": "0"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 2
+         },
+         "note": "0.2"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 3
+         },
+         "note": "0.2.0"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 4
+         },
+         "note": "0.2.0.2"
+        }
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "0.2.0.2"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 3
+       },
+       "to": {
+        "view": "calls",
+        "at": 4
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 4
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       },
+       "value": "0.2.0.2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "place(start=4), place(start=3), place(start=2), place(start=1), place(start=0) return, each taking its segment back off; the search is over. place(start=2) ran out of lengths: \"02\" has a leading zero; place(start=1) ran out of lengths: \"20\" leaves 1 digit for 2 segments, \"202\" leaves 0 digits for 2 segments; place(start=0) ran out of lengths: \"02\" has a leading zero.",
+      "ko": "place(start=4), place(start=3), place(start=2), place(start=1), place(start=0) 호출이 조각을 다시 떼고 끝나며, 탐색이 끝납니다. 더 시도할 길이가 없는 호출: place(start=2)(\"02\" 조각은 앞자리가 0), place(start=1)(\"20\" 조각 뒤로 숫자 1개가 남아 조각 2개를 못 채움, \"202\" 조각 뒤로 숫자 0개가 남아 조각 2개를 못 채움), place(start=0)(\"02\" 조각은 앞자리가 0)."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "0",
+        "2",
+        "0",
+        "2"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 0,
+         "label": "0"
+        },
+        "s2": {
+         "from": 1,
+         "to": 1,
+         "label": "2"
+        },
+        "s3": {
+         "from": 2,
+         "to": 2,
+         "label": "0"
+        },
+        "s4": {
+         "from": 3,
+         "to": 3,
+         "label": "2"
+        }
+       },
+       "marks": {
+        "bad": [
+         0,
+         1,
+         2,
+         3
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 1
+         },
+         "note": "0"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 2
+         },
+         "note": "0.2"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 3
+         },
+         "note": "0.2.0"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 4
+         },
+         "note": "0.2.0.2"
+        }
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "0.2.0.2"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": 4
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 3
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 2
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 1
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every call has returned: 1 valid address, listed sorted.",
+      "ko": "모든 호출이 끝났습니다. 유효한 주소는 1개이고, 정렬해서 답으로 냅니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "0",
+        "2",
+        "0",
+        "2"
+       ],
+       "spans": {},
+       "marks": {}
+      },
+      "calls": {
+       "calls": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "0.2.0.2"
+       ],
+       "marks": {
+        "path": [
+         0
+        ]
+       }
+      }
+     },
+     "answer": "[\"0.2.0.2\"]"
+    }
+   ],
+   "sampleInput": "0202"
+  },
+  {
+   "label": {
+    "en": "Case 3",
+    "ko": "케이스 3"
+   },
+   "input": "digits = \"101023\"",
+   "expected": "[\"1.0.10.23\",\"1.0.102.3\",\"10.1.0.23\",\"10.10.2.3\",\"101.0.2.3\"]",
+   "frames": [
+    {
+     "caption": {
+      "en": "\"101023\" has 6 digits. The first call, place(start=0), will try the first 1, 2 and 3 digits as segment 1.",
+      "ko": "\"101023\" 문자열은 숫자 6개입니다. 첫 호출 place(start=0)에서 앞의 숫자 1, 2, 3개를 1번째 조각으로 시도합니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "0",
+        "1",
+        "0",
+        "2",
+        "3"
+       ],
+       "spans": {},
+       "marks": {}
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        }
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "calls",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Take \"1\" as segment 1 and call place(start=1) for segment 2.",
+      "ko": "\"1\" 조각을 1번째 조각으로 놓고, 2번째 조각을 위해 place(start=1) 호출에 넘깁니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "0",
+        "1",
+        "0",
+        "2",
+        "3"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 0,
+         "label": "1"
+        }
+       },
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 1
+         },
+         "note": "1"
+        }
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 0
+       },
+       "to": {
+        "view": "calls",
+        "at": 1
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Take \"0\" as segment 2 and call place(start=2) for segment 3.",
+      "ko": "\"0\" 조각을 2번째 조각으로 놓고, 3번째 조각을 위해 place(start=2) 호출에 넘깁니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "0",
+        "1",
+        "0",
+        "2",
+        "3"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 0,
+         "label": "1"
+        },
+        "s2": {
+         "from": 1,
+         "to": 1,
+         "label": "0"
+        }
+       },
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 1
+         },
+         "note": "1"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 2
+         },
+         "note": "1.0"
+        }
+       ],
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 1
+       },
+       "to": {
+        "view": "calls",
+        "at": 2
+       },
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Take \"1\" as segment 3 and call place(start=3) for segment 4.",
+      "ko": "\"1\" 조각을 3번째 조각으로 놓고, 4번째 조각을 위해 place(start=3) 호출에 넘깁니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "0",
+        "1",
+        "0",
+        "2",
+        "3"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 0,
+         "label": "1"
+        },
+        "s2": {
+         "from": 1,
+         "to": 1,
+         "label": "0"
+        },
+        "s3": {
+         "from": 2,
+         "to": 2,
+         "label": "1"
+        }
+       },
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 1
+         },
+         "note": "1"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 2
+         },
+         "note": "1.0"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 3
+         },
+         "note": "1.0.1"
+        }
+       ],
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 2
+       },
+       "to": {
+        "view": "calls",
+        "at": 3
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "place(start=3) returns, taking its segment back off; back in place(start=2), which tries a longer segment. place(start=3) ran out of lengths: \"0\" would leave 2 digits after segment 4, \"02\" has a leading zero.",
+      "ko": "place(start=3) 호출이 조각을 다시 떼고 끝나며, place(start=2) 호출로 돌아와 더 긴 조각을 시도합니다. 더 시도할 길이가 없는 호출: place(start=3)(\"0\" 조각은 4번째 조각 뒤로 숫자 2개를 남김, \"02\" 조각은 앞자리가 0)."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "0",
+        "1",
+        "0",
+        "2",
+        "3"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 0,
+         "label": "1"
+        },
+        "s2": {
+         "from": 1,
+         "to": 1,
+         "label": "0"
+        },
+        "s3": {
+         "from": 2,
+         "to": 2,
+         "label": "1"
+        }
+       },
+       "marks": {
+        "bad": [
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 1
+         },
+         "note": "1"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 2
+         },
+         "note": "1.0"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 3
+         },
+         "note": "1.0.1"
+        }
+       ],
+       "marks": {
+        "dim": [
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": 3
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Take \"10\" as segment 3 and call place(start=4) for segment 4.",
+      "ko": "\"10\" 조각을 3번째 조각으로 놓고, 4번째 조각을 위해 place(start=4) 호출에 넘깁니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "0",
+        "1",
+        "0",
+        "2",
+        "3"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 0,
+         "label": "1"
+        },
+        "s2": {
+         "from": 1,
+         "to": 1,
+         "label": "0"
+        },
+        "s3": {
+         "from": 2,
+         "to": 3,
+         "label": "10"
+        }
+       },
+       "marks": {
+        "good": [
+         2,
+         3
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 1
+         },
+         "note": "1"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 2
+         },
+         "note": "1.0"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 4
+         },
+         "note": "1.0.10"
+        }
+       ],
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 2
+       },
+       "to": {
+        "view": "calls",
+        "at": 3
+       },
+       "value": "10"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "\"2\" would leave 1 digit after segment 4; \"23\" is segment 4 and uses the last digit, so 1.0.10.23 is an address: it goes into the answer.",
+      "ko": "\"2\" 조각은 4번째 조각 뒤로 숫자 1개를 남김. \"23\" 조각이 4번째 조각으로 마지막 숫자까지 쓰므로 주소 1.0.10.23 완성, 답에 넣습니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "0",
+        "1",
+        "0",
+        "2",
+        "3"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 0,
+         "label": "1"
+        },
+        "s2": {
+         "from": 1,
+         "to": 1,
+         "label": "0"
+        },
+        "s3": {
+         "from": 2,
+         "to": 3,
+         "label": "10"
+        },
+        "s4": {
+         "from": 4,
+         "to": 5,
+         "label": "23"
+        }
+       },
+       "marks": {
+        "good": [
+         4,
+         5
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 1
+         },
+         "note": "1"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 2
+         },
+         "note": "1.0"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 4
+         },
+         "note": "1.0.10"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 6
+         },
+         "note": "1.0.10.23"
+        }
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1.0.10.23"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 4
+       },
+       "to": {
+        "view": "calls",
+        "at": 4
+       },
+       "value": "23"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 4
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       },
+       "value": "1.0.10.23"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "place(start=6), place(start=4) return, each taking its segment back off; back in place(start=2), which tries a longer segment.",
+      "ko": "place(start=6), place(start=4) 호출이 조각을 다시 떼고 끝나며, place(start=2) 호출로 돌아와 더 긴 조각을 시도합니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "0",
+        "1",
+        "0",
+        "2",
+        "3"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 0,
+         "label": "1"
+        },
+        "s2": {
+         "from": 1,
+         "to": 1,
+         "label": "0"
+        },
+        "s3": {
+         "from": 2,
+         "to": 3,
+         "label": "10"
+        },
+        "s4": {
+         "from": 4,
+         "to": 5,
+         "label": "23"
+        }
+       },
+       "marks": {
+        "bad": [
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 1
+         },
+         "note": "1"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 2
+         },
+         "note": "1.0"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 4
+         },
+         "note": "1.0.10"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 6
+         },
+         "note": "1.0.10.23"
+        }
+       ],
+       "marks": {
+        "dim": [
+         3,
+         4
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1.0.10.23"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": 4
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 3
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Take \"102\" as segment 3 and call place(start=5) for segment 4.",
+      "ko": "\"102\" 조각을 3번째 조각으로 놓고, 4번째 조각을 위해 place(start=5) 호출에 넘깁니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "0",
+        "1",
+        "0",
+        "2",
+        "3"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 0,
+         "label": "1"
+        },
+        "s2": {
+         "from": 1,
+         "to": 1,
+         "label": "0"
+        },
+        "s3": {
+         "from": 2,
+         "to": 4,
+         "label": "102"
+        }
+       },
+       "marks": {
+        "good": [
+         2,
+         3,
+         4
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 1
+         },
+         "note": "1"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 2
+         },
+         "note": "1.0"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 5
+         },
+         "note": "1.0.102"
+        }
+       ],
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1.0.10.23"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 2
+       },
+       "to": {
+        "view": "calls",
+        "at": 3
+       },
+       "value": "102"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "\"3\" is segment 4 and uses the last digit, so 1.0.102.3 is an address: it goes into the answer.",
+      "ko": "\"3\" 조각이 4번째 조각으로 마지막 숫자까지 쓰므로 주소 1.0.102.3 완성, 답에 넣습니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "0",
+        "1",
+        "0",
+        "2",
+        "3"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 0,
+         "label": "1"
+        },
+        "s2": {
+         "from": 1,
+         "to": 1,
+         "label": "0"
+        },
+        "s3": {
+         "from": 2,
+         "to": 4,
+         "label": "102"
+        },
+        "s4": {
+         "from": 5,
+         "to": 5,
+         "label": "3"
+        }
+       },
+       "marks": {
+        "good": [
+         5
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 1
+         },
+         "note": "1"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 2
+         },
+         "note": "1.0"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 5
+         },
+         "note": "1.0.102"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 6
+         },
+         "note": "1.0.102.3"
+        }
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1.0.10.23",
+        "1.0.102.3"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 5
+       },
+       "to": {
+        "view": "calls",
+        "at": 4
+       },
+       "value": "3"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 4
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       },
+       "value": "1.0.102.3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "place(start=6), place(start=5), place(start=2), place(start=1) return, each taking its segment back off; back in place(start=0), which tries a longer segment. place(start=1) ran out of lengths: \"01\" has a leading zero.",
+      "ko": "place(start=6), place(start=5), place(start=2), place(start=1) 호출이 조각을 다시 떼고 끝나며, place(start=0) 호출로 돌아와 더 긴 조각을 시도합니다. 더 시도할 길이가 없는 호출: place(start=1)(\"01\" 조각은 앞자리가 0)."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "0",
+        "1",
+        "0",
+        "2",
+        "3"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 0,
+         "label": "1"
+        },
+        "s2": {
+         "from": 1,
+         "to": 1,
+         "label": "0"
+        },
+        "s3": {
+         "from": 2,
+         "to": 4,
+         "label": "102"
+        },
+        "s4": {
+         "from": 5,
+         "to": 5,
+         "label": "3"
+        }
+       },
+       "marks": {
+        "bad": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 1
+         },
+         "note": "1"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 2
+         },
+         "note": "1.0"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 5
+         },
+         "note": "1.0.102"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 6
+         },
+         "note": "1.0.102.3"
+        }
+       ],
+       "marks": {
+        "dim": [
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1.0.10.23",
+        "1.0.102.3"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": 4
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 3
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 2
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Take \"10\" as segment 1 and call place(start=2) for segment 2.",
+      "ko": "\"10\" 조각을 1번째 조각으로 놓고, 2번째 조각을 위해 place(start=2) 호출에 넘깁니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "0",
+        "1",
+        "0",
+        "2",
+        "3"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 1,
+         "label": "10"
+        }
+       },
+       "marks": {
+        "good": [
+         0,
+         1
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 2
+         },
+         "note": "10"
+        }
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1.0.10.23",
+        "1.0.102.3"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 0
+       },
+       "to": {
+        "view": "calls",
+        "at": 1
+       },
+       "value": "10"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Take \"1\" as segment 2 and call place(start=3) for segment 3.",
+      "ko": "\"1\" 조각을 2번째 조각으로 놓고, 3번째 조각을 위해 place(start=3) 호출에 넘깁니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "0",
+        "1",
+        "0",
+        "2",
+        "3"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 1,
+         "label": "10"
+        },
+        "s2": {
+         "from": 2,
+         "to": 2,
+         "label": "1"
+        }
+       },
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 2
+         },
+         "note": "10"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 3
+         },
+         "note": "10.1"
+        }
+       ],
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1.0.10.23",
+        "1.0.102.3"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 2
+       },
+       "to": {
+        "view": "calls",
+        "at": 2
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Take \"0\" as segment 3 and call place(start=4) for segment 4.",
+      "ko": "\"0\" 조각을 3번째 조각으로 놓고, 4번째 조각을 위해 place(start=4) 호출에 넘깁니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "0",
+        "1",
+        "0",
+        "2",
+        "3"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 1,
+         "label": "10"
+        },
+        "s2": {
+         "from": 2,
+         "to": 2,
+         "label": "1"
+        },
+        "s3": {
+         "from": 3,
+         "to": 3,
+         "label": "0"
+        }
+       },
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 2
+         },
+         "note": "10"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 3
+         },
+         "note": "10.1"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 4
+         },
+         "note": "10.1.0"
+        }
+       ],
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1.0.10.23",
+        "1.0.102.3"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 3
+       },
+       "to": {
+        "view": "calls",
+        "at": 3
+       },
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "\"2\" would leave 1 digit after segment 4; \"23\" is segment 4 and uses the last digit, so 10.1.0.23 is an address: it goes into the answer.",
+      "ko": "\"2\" 조각은 4번째 조각 뒤로 숫자 1개를 남김. \"23\" 조각이 4번째 조각으로 마지막 숫자까지 쓰므로 주소 10.1.0.23 완성, 답에 넣습니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "0",
+        "1",
+        "0",
+        "2",
+        "3"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 1,
+         "label": "10"
+        },
+        "s2": {
+         "from": 2,
+         "to": 2,
+         "label": "1"
+        },
+        "s3": {
+         "from": 3,
+         "to": 3,
+         "label": "0"
+        },
+        "s4": {
+         "from": 4,
+         "to": 5,
+         "label": "23"
+        }
+       },
+       "marks": {
+        "good": [
+         4,
+         5
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 2
+         },
+         "note": "10"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 3
+         },
+         "note": "10.1"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 4
+         },
+         "note": "10.1.0"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 6
+         },
+         "note": "10.1.0.23"
+        }
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1.0.10.23",
+        "1.0.102.3",
+        "10.1.0.23"
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 4
+       },
+       "to": {
+        "view": "calls",
+        "at": 4
+       },
+       "value": "23"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 4
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       },
+       "value": "10.1.0.23"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "place(start=6), place(start=4), place(start=3) return, each taking its segment back off; back in place(start=2), which tries a longer segment. place(start=3) ran out of lengths: \"02\" has a leading zero.",
+      "ko": "place(start=6), place(start=4), place(start=3) 호출이 조각을 다시 떼고 끝나며, place(start=2) 호출로 돌아와 더 긴 조각을 시도합니다. 더 시도할 길이가 없는 호출: place(start=3)(\"02\" 조각은 앞자리가 0)."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "0",
+        "1",
+        "0",
+        "2",
+        "3"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 1,
+         "label": "10"
+        },
+        "s2": {
+         "from": 2,
+         "to": 2,
+         "label": "1"
+        },
+        "s3": {
+         "from": 3,
+         "to": 3,
+         "label": "0"
+        },
+        "s4": {
+         "from": 4,
+         "to": 5,
+         "label": "23"
+        }
+       },
+       "marks": {
+        "bad": [
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 2
+         },
+         "note": "10"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 3
+         },
+         "note": "10.1"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 4
+         },
+         "note": "10.1.0"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 6
+         },
+         "note": "10.1.0.23"
+        }
+       ],
+       "marks": {
+        "dim": [
+         2,
+         3,
+         4
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1.0.10.23",
+        "1.0.102.3",
+        "10.1.0.23"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": 4
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 3
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Take \"10\" as segment 2 and call place(start=4) for segment 3.",
+      "ko": "\"10\" 조각을 2번째 조각으로 놓고, 3번째 조각을 위해 place(start=4) 호출에 넘깁니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "0",
+        "1",
+        "0",
+        "2",
+        "3"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 1,
+         "label": "10"
+        },
+        "s2": {
+         "from": 2,
+         "to": 3,
+         "label": "10"
+        }
+       },
+       "marks": {
+        "good": [
+         2,
+         3
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 2
+         },
+         "note": "10"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 4
+         },
+         "note": "10.10"
+        }
+       ],
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1.0.10.23",
+        "1.0.102.3",
+        "10.1.0.23"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 2
+       },
+       "to": {
+        "view": "calls",
+        "at": 2
+       },
+       "value": "10"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Take \"2\" as segment 3 and call place(start=5) for segment 4.",
+      "ko": "\"2\" 조각을 3번째 조각으로 놓고, 4번째 조각을 위해 place(start=5) 호출에 넘깁니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "0",
+        "1",
+        "0",
+        "2",
+        "3"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 1,
+         "label": "10"
+        },
+        "s2": {
+         "from": 2,
+         "to": 3,
+         "label": "10"
+        },
+        "s3": {
+         "from": 4,
+         "to": 4,
+         "label": "2"
+        }
+       },
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 2
+         },
+         "note": "10"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 4
+         },
+         "note": "10.10"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 5
+         },
+         "note": "10.10.2"
+        }
+       ],
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1.0.10.23",
+        "1.0.102.3",
+        "10.1.0.23"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 4
+       },
+       "to": {
+        "view": "calls",
+        "at": 3
+       },
+       "value": "2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "\"3\" is segment 4 and uses the last digit, so 10.10.2.3 is an address: it goes into the answer.",
+      "ko": "\"3\" 조각이 4번째 조각으로 마지막 숫자까지 쓰므로 주소 10.10.2.3 완성, 답에 넣습니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "0",
+        "1",
+        "0",
+        "2",
+        "3"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 1,
+         "label": "10"
+        },
+        "s2": {
+         "from": 2,
+         "to": 3,
+         "label": "10"
+        },
+        "s3": {
+         "from": 4,
+         "to": 4,
+         "label": "2"
+        },
+        "s4": {
+         "from": 5,
+         "to": 5,
+         "label": "3"
+        }
+       },
+       "marks": {
+        "good": [
+         5
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 2
+         },
+         "note": "10"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 4
+         },
+         "note": "10.10"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 5
+         },
+         "note": "10.10.2"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 6
+         },
+         "note": "10.10.2.3"
+        }
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1.0.10.23",
+        "1.0.102.3",
+        "10.1.0.23",
+        "10.10.2.3"
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 5
+       },
+       "to": {
+        "view": "calls",
+        "at": 4
+       },
+       "value": "3"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 4
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       },
+       "value": "10.10.2.3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "place(start=6), place(start=5), place(start=4), place(start=2) return, each taking its segment back off; back in place(start=0), which tries a longer segment. place(start=4) ran out of lengths: \"23\" leaves 0 digits for 1 segment; place(start=2) ran out of lengths: \"102\" leaves 1 digit for 2 segments.",
+      "ko": "place(start=6), place(start=5), place(start=4), place(start=2) 호출이 조각을 다시 떼고 끝나며, place(start=0) 호출로 돌아와 더 긴 조각을 시도합니다. 더 시도할 길이가 없는 호출: place(start=4)(\"23\" 조각 뒤로 숫자 0개가 남아 조각 1개를 못 채움), place(start=2)(\"102\" 조각 뒤로 숫자 1개가 남아 조각 2개를 못 채움)."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "0",
+        "1",
+        "0",
+        "2",
+        "3"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 1,
+         "label": "10"
+        },
+        "s2": {
+         "from": 2,
+         "to": 3,
+         "label": "10"
+        },
+        "s3": {
+         "from": 4,
+         "to": 4,
+         "label": "2"
+        },
+        "s4": {
+         "from": 5,
+         "to": 5,
+         "label": "3"
+        }
+       },
+       "marks": {
+        "bad": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 2
+         },
+         "note": "10"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 4
+         },
+         "note": "10.10"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 5
+         },
+         "note": "10.10.2"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 6
+         },
+         "note": "10.10.2.3"
+        }
+       ],
+       "marks": {
+        "dim": [
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1.0.10.23",
+        "1.0.102.3",
+        "10.1.0.23",
+        "10.10.2.3"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": 4
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 3
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 2
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Take \"101\" as segment 1 and call place(start=3) for segment 2.",
+      "ko": "\"101\" 조각을 1번째 조각으로 놓고, 2번째 조각을 위해 place(start=3) 호출에 넘깁니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "0",
+        "1",
+        "0",
+        "2",
+        "3"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 2,
+         "label": "101"
+        }
+       },
+       "marks": {
+        "good": [
+         0,
+         1,
+         2
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 3
+         },
+         "note": "101"
+        }
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1.0.10.23",
+        "1.0.102.3",
+        "10.1.0.23",
+        "10.10.2.3"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 0
+       },
+       "to": {
+        "view": "calls",
+        "at": 1
+       },
+       "value": "101"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Take \"0\" as segment 2 and call place(start=4) for segment 3.",
+      "ko": "\"0\" 조각을 2번째 조각으로 놓고, 3번째 조각을 위해 place(start=4) 호출에 넘깁니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "0",
+        "1",
+        "0",
+        "2",
+        "3"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 2,
+         "label": "101"
+        },
+        "s2": {
+         "from": 3,
+         "to": 3,
+         "label": "0"
+        }
+       },
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 3
+         },
+         "note": "101"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 4
+         },
+         "note": "101.0"
+        }
+       ],
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1.0.10.23",
+        "1.0.102.3",
+        "10.1.0.23",
+        "10.10.2.3"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 3
+       },
+       "to": {
+        "view": "calls",
+        "at": 2
+       },
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Take \"2\" as segment 3 and call place(start=5) for segment 4.",
+      "ko": "\"2\" 조각을 3번째 조각으로 놓고, 4번째 조각을 위해 place(start=5) 호출에 넘깁니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "0",
+        "1",
+        "0",
+        "2",
+        "3"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 2,
+         "label": "101"
+        },
+        "s2": {
+         "from": 3,
+         "to": 3,
+         "label": "0"
+        },
+        "s3": {
+         "from": 4,
+         "to": 4,
+         "label": "2"
+        }
+       },
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 3
+         },
+         "note": "101"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 4
+         },
+         "note": "101.0"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 5
+         },
+         "note": "101.0.2"
+        }
+       ],
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1.0.10.23",
+        "1.0.102.3",
+        "10.1.0.23",
+        "10.10.2.3"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 4
+       },
+       "to": {
+        "view": "calls",
+        "at": 3
+       },
+       "value": "2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "\"3\" is segment 4 and uses the last digit, so 101.0.2.3 is an address: it goes into the answer.",
+      "ko": "\"3\" 조각이 4번째 조각으로 마지막 숫자까지 쓰므로 주소 101.0.2.3 완성, 답에 넣습니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "0",
+        "1",
+        "0",
+        "2",
+        "3"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 2,
+         "label": "101"
+        },
+        "s2": {
+         "from": 3,
+         "to": 3,
+         "label": "0"
+        },
+        "s3": {
+         "from": 4,
+         "to": 4,
+         "label": "2"
+        },
+        "s4": {
+         "from": 5,
+         "to": 5,
+         "label": "3"
+        }
+       },
+       "marks": {
+        "good": [
+         5
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 3
+         },
+         "note": "101"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 4
+         },
+         "note": "101.0"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 5
+         },
+         "note": "101.0.2"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 6
+         },
+         "note": "101.0.2.3"
+        }
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1.0.10.23",
+        "1.0.102.3",
+        "10.1.0.23",
+        "10.10.2.3",
+        "101.0.2.3"
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 5
+       },
+       "to": {
+        "view": "calls",
+        "at": 4
+       },
+       "value": "3"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 4
+       },
+       "to": {
+        "view": "result",
+        "at": 4
+       },
+       "value": "101.0.2.3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "place(start=6), place(start=5), place(start=4), place(start=3), place(start=0) return, each taking its segment back off; the search is over. place(start=4) ran out of lengths: \"23\" leaves 0 digits for 1 segment; place(start=3) ran out of lengths: \"02\" has a leading zero.",
+      "ko": "place(start=6), place(start=5), place(start=4), place(start=3), place(start=0) 호출이 조각을 다시 떼고 끝나며, 탐색이 끝납니다. 더 시도할 길이가 없는 호출: place(start=4)(\"23\" 조각 뒤로 숫자 0개가 남아 조각 1개를 못 채움), place(start=3)(\"02\" 조각은 앞자리가 0)."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "0",
+        "1",
+        "0",
+        "2",
+        "3"
+       ],
+       "spans": {
+        "s1": {
+         "from": 0,
+         "to": 2,
+         "label": "101"
+        },
+        "s2": {
+         "from": 3,
+         "to": 3,
+         "label": "0"
+        },
+        "s3": {
+         "from": 4,
+         "to": 4,
+         "label": "2"
+        },
+        "s4": {
+         "from": 5,
+         "to": 5,
+         "label": "3"
+        }
+       },
+       "marks": {
+        "bad": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "calls": {
+       "calls": [
+        {
+         "name": "place",
+         "args": {
+          "start": 0
+         },
+         "note": {
+          "en": "no segment yet",
+          "ko": "아직 조각 없음"
+         }
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 3
+         },
+         "note": "101"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 4
+         },
+         "note": "101.0"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 5
+         },
+         "note": "101.0.2"
+        },
+        {
+         "name": "place",
+         "args": {
+          "start": 6
+         },
+         "note": "101.0.2.3"
+        }
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1.0.10.23",
+        "1.0.102.3",
+        "10.1.0.23",
+        "10.10.2.3",
+        "101.0.2.3"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": 4
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 3
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 2
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 1
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every call has returned: 5 valid addresses, listed sorted.",
+      "ko": "모든 호출이 끝났습니다. 유효한 주소는 5개이고, 정렬해서 답으로 냅니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "1",
+        "0",
+        "1",
+        "0",
+        "2",
+        "3"
+       ],
+       "spans": {},
+       "marks": {}
+      },
+      "calls": {
+       "calls": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "1.0.10.23",
+        "1.0.102.3",
+        "10.1.0.23",
+        "10.10.2.3",
+        "101.0.2.3"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      }
+     },
+     "answer": "[\"1.0.10.23\",\"1.0.102.3\",\"10.1.0.23\",\"10.10.2.3\",\"101.0.2.3\"]"
+    }
+   ],
+   "sampleInput": "101023"
+  }
+ ]
+}

@@ -1,0 +1,852 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Capture Enclosed Tiles",
+  "ko": "갇힌 영역 점령"
+ },
+ "approach": {
+  "en": "Work from the border in: every 'O' on the border is safe, and so is every 'O' a safe tile touches. Mark them 'S' with a stack, then every 'O' left is captured and the 'S' tiles turn back into 'O'.",
+  "ko": "테두리에서 안쪽으로 찾습니다. 테두리의 'O' 타일은 살아남고, 살아남은 타일에 맞닿은 'O' 타일도 살아남습니다. 스택으로 그런 타일에 'S' 표시를 하고 나면, 남은 'O' 타일은 모두 점령되고 'S' 타일은 다시 'O' 타일이 됩니다."
+ },
+ "views": [
+  {
+   "id": "board",
+   "type": "grid",
+   "title": {
+    "en": "board",
+    "ko": "board (보드)"
+   },
+   "values": {
+    "X": {
+     "label": {
+      "en": "your tile",
+      "ko": "내 타일"
+     },
+     "tone": "plain"
+    },
+    "O": {
+     "label": {
+      "en": "enemy tile",
+      "ko": "적 타일"
+     },
+     "tone": "b"
+    },
+    "S": {
+     "label": {
+      "en": "safe: reaches the border",
+      "ko": "안전: 테두리에 닿음"
+     },
+     "tone": "c"
+    }
+   }
+  },
+  {
+   "id": "stack",
+   "type": "stack",
+   "title": {
+    "en": "stack: safe tiles to spread from",
+    "ko": "스택: 퍼져 나갈 안전한 타일"
+   },
+   "empty": {
+    "en": "empty",
+    "ko": "비어 있음"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "board = [[\"X\",\"X\",\"X\",\"X\"],[\"X\",\"O\",\"X\",\"X\"],[\"X\",\"X\",\"O\",\"X\"],[\"X\",\"X\",\"X\",\"O\"]]",
+   "expected": "[[\"X\",\"X\",\"X\",\"X\"],[\"X\",\"X\",\"X\",\"X\"],[\"X\",\"X\",\"X\",\"X\"],[\"X\",\"X\",\"X\",\"O\"]]",
+   "frames": [
+    {
+     "caption": {
+      "en": "A 4×4 board with 3 enemy tiles. An 'O' survives only if 'O' tiles link it to the border, so start from the border.",
+      "ko": "4×4 보드에 적 타일이 3개 있습니다. 'O' 타일을 따라 테두리에 이어진 'O'만 살아남으므로 테두리에서 시작합니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         "X",
+         "X",
+         "X",
+         "X"
+        ],
+        [
+         "X",
+         "O",
+         "X",
+         "X"
+        ],
+        [
+         "X",
+         "X",
+         "O",
+         "X"
+        ],
+        [
+         "X",
+         "X",
+         "X",
+         "O"
+        ]
+       ],
+       "marks": {
+        "path": [],
+        "bad": [],
+        "good": [],
+        "lit": []
+       }
+      },
+      "stack": {
+       "values": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "1 border tile is 'O': (3,3). Mark it safe ('S') and push it onto the stack.",
+      "ko": "테두리의 'O' 타일 1개, (3,3) 칸을 안전('S')으로 표시하고 스택에 넣습니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         "X",
+         "X",
+         "X",
+         "X"
+        ],
+        [
+         "X",
+         "O",
+         "X",
+         "X"
+        ],
+        [
+         "X",
+         "X",
+         "O",
+         "X"
+        ],
+        [
+         "X",
+         "X",
+         "X",
+         "S"
+        ]
+       ],
+       "marks": {
+        "path": [],
+        "bad": [],
+        "good": [
+         [
+          3,
+          3
+         ]
+        ],
+        "lit": []
+       }
+      },
+      "stack": {
+       "values": [
+        "3,3"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "board",
+        "at": [
+         3,
+         3
+        ]
+       },
+       "value": "S"
+      },
+      {
+       "from": {
+        "view": "board",
+        "at": [
+         3,
+         3
+        ]
+       },
+       "to": {
+        "view": "stack",
+        "at": 0
+       },
+       "value": "3,3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Pop (3,3): no neighbour is an 'O' still unmarked, so it saves nothing. The stack is empty.",
+      "ko": "(3,3) 칸을 꺼내지만, 아직 표시하지 않은 'O' 이웃이 없어 살릴 타일이 없습니다. 스택이 비었습니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         "X",
+         "X",
+         "X",
+         "X"
+        ],
+        [
+         "X",
+         "O",
+         "X",
+         "X"
+        ],
+        [
+         "X",
+         "X",
+         "O",
+         "X"
+        ],
+        [
+         "X",
+         "X",
+         "X",
+         "S"
+        ]
+       ],
+       "marks": {
+        "path": [],
+        "bad": [],
+        "good": [],
+        "lit": [
+         [
+          3,
+          3
+         ]
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        "3,3"
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "stack",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Now sweep the board. The 'O' still unmarked, (1,1), (2,2), cannot reach the border: they are captured and become 'X'.",
+      "ko": "이제 보드를 훑습니다. 표시되지 않은 'O' 타일 (1,1), (2,2) 칸은 테두리에 닿을 수 없어 점령되어 'X' 타일이 됩니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         "X",
+         "X",
+         "X",
+         "X"
+        ],
+        [
+         "X",
+         "X",
+         "X",
+         "X"
+        ],
+        [
+         "X",
+         "X",
+         "X",
+         "X"
+        ],
+        [
+         "X",
+         "X",
+         "X",
+         "S"
+        ]
+       ],
+       "marks": {
+        "path": [],
+        "bad": [
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          2
+         ]
+        ],
+        "good": [],
+        "lit": []
+       }
+      },
+      "stack": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "board",
+        "at": [
+         1,
+         1
+        ]
+       },
+       "value": "X",
+       "mark": "bad"
+      },
+      {
+       "to": {
+        "view": "board",
+        "at": [
+         2,
+         2
+        ]
+       },
+       "value": "X",
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The safe tiles turn back into 'O'. Answer: [[\"X\",\"X\",\"X\",\"X\"],[\"X\",\"X\",\"X\",\"X\"],[\"X\",\"X\",\"X\",\"X\"],[\"X\",\"X\",\"X\",\"O\"]].",
+      "ko": "안전한 'S' 타일은 다시 'O' 타일이 됩니다. 답은 [[\"X\",\"X\",\"X\",\"X\"],[\"X\",\"X\",\"X\",\"X\"],[\"X\",\"X\",\"X\",\"X\"],[\"X\",\"X\",\"X\",\"O\"]]입니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         "X",
+         "X",
+         "X",
+         "X"
+        ],
+        [
+         "X",
+         "X",
+         "X",
+         "X"
+        ],
+        [
+         "X",
+         "X",
+         "X",
+         "X"
+        ],
+        [
+         "X",
+         "X",
+         "X",
+         "O"
+        ]
+       ],
+       "marks": {
+        "path": [
+         [
+          3,
+          3
+         ]
+        ],
+        "bad": [],
+        "good": [],
+        "lit": []
+       }
+      },
+      "stack": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "board",
+        "at": [
+         3,
+         3
+        ]
+       },
+       "value": "O"
+      }
+     ],
+     "answer": "[[\"X\",\"X\",\"X\",\"X\"],[\"X\",\"X\",\"X\",\"X\"],[\"X\",\"X\",\"X\",\"X\"],[\"X\",\"X\",\"X\",\"O\"]]"
+    }
+   ],
+   "sampleInput": "[[\"X\",\"X\",\"X\",\"X\"],[\"X\",\"O\",\"X\",\"X\"],[\"X\",\"X\",\"O\",\"X\"],[\"X\",\"X\",\"X\",\"O\"]]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "board = [[\"O\"]]",
+   "expected": "[[\"O\"]]",
+   "frames": [
+    {
+     "caption": {
+      "en": "A 1×1 board with 1 enemy tile. An 'O' survives only if 'O' tiles link it to the border, so start from the border.",
+      "ko": "1×1 보드에 적 타일이 1개 있습니다. 'O' 타일을 따라 테두리에 이어진 'O'만 살아남으므로 테두리에서 시작합니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         "O"
+        ]
+       ],
+       "marks": {
+        "path": [],
+        "bad": [],
+        "good": [],
+        "lit": []
+       }
+      },
+      "stack": {
+       "values": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "1 border tile is 'O': (0,0). Mark it safe ('S') and push it onto the stack.",
+      "ko": "테두리의 'O' 타일 1개, (0,0) 칸을 안전('S')으로 표시하고 스택에 넣습니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         "S"
+        ]
+       ],
+       "marks": {
+        "path": [],
+        "bad": [],
+        "good": [
+         [
+          0,
+          0
+         ]
+        ],
+        "lit": []
+       }
+      },
+      "stack": {
+       "values": [
+        "0,0"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "board",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "value": "S"
+      },
+      {
+       "from": {
+        "view": "board",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "to": {
+        "view": "stack",
+        "at": 0
+       },
+       "value": "0,0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Pop (0,0): no neighbour is an 'O' still unmarked, so it saves nothing. The stack is empty.",
+      "ko": "(0,0) 칸을 꺼내지만, 아직 표시하지 않은 'O' 이웃이 없어 살릴 타일이 없습니다. 스택이 비었습니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         "S"
+        ]
+       ],
+       "marks": {
+        "path": [],
+        "bad": [],
+        "good": [],
+        "lit": [
+         [
+          0,
+          0
+         ]
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        "0,0"
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "stack",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "No 'O' was captured, and the safe tiles turn back into 'O'. Answer: [[\"O\"]].",
+      "ko": "점령된 'O' 타일은 없고, 안전한 'S' 타일은 다시 'O' 타일이 됩니다. 답은 [[\"O\"]]입니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         "O"
+        ]
+       ],
+       "marks": {
+        "path": [
+         [
+          0,
+          0
+         ]
+        ],
+        "bad": [],
+        "good": [],
+        "lit": []
+       }
+      },
+      "stack": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "board",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "value": "O"
+      }
+     ],
+     "answer": "[[\"O\"]]"
+    }
+   ],
+   "sampleInput": "[[\"O\"]]"
+  },
+  {
+   "label": {
+    "en": "Example 3",
+    "ko": "예시 3"
+   },
+   "input": "board = [[\"O\",\"X\"],[\"O\",\"X\"]]",
+   "expected": "[[\"O\",\"X\"],[\"O\",\"X\"]]",
+   "frames": [
+    {
+     "caption": {
+      "en": "A 2×2 board with 2 enemy tiles. An 'O' survives only if 'O' tiles link it to the border, so start from the border.",
+      "ko": "2×2 보드에 적 타일이 2개 있습니다. 'O' 타일을 따라 테두리에 이어진 'O'만 살아남으므로 테두리에서 시작합니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         "O",
+         "X"
+        ],
+        [
+         "O",
+         "X"
+        ]
+       ],
+       "marks": {
+        "path": [],
+        "bad": [],
+        "good": [],
+        "lit": []
+       }
+      },
+      "stack": {
+       "values": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "2 border tiles are 'O': (0,0), (1,0). Mark each safe ('S') and push them onto the stack.",
+      "ko": "테두리의 'O' 타일 2개, (0,0), (1,0) 칸을 안전('S')으로 표시하고 스택에 넣습니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         "S",
+         "X"
+        ],
+        [
+         "S",
+         "X"
+        ]
+       ],
+       "marks": {
+        "path": [],
+        "bad": [],
+        "good": [
+         [
+          0,
+          0
+         ],
+         [
+          1,
+          0
+         ]
+        ],
+        "lit": []
+       }
+      },
+      "stack": {
+       "values": [
+        "0,0",
+        "1,0"
+       ],
+       "marks": {
+        "good": [
+         0,
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "board",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "value": "S"
+      },
+      {
+       "from": {
+        "view": "board",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "to": {
+        "view": "stack",
+        "at": 0
+       },
+       "value": "0,0"
+      },
+      {
+       "to": {
+        "view": "board",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "value": "S"
+      },
+      {
+       "from": {
+        "view": "board",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "to": {
+        "view": "stack",
+        "at": 1
+       },
+       "value": "1,0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Pop (1,0), (0,0): no neighbour is an 'O' still unmarked, so they save nothing. The stack is empty.",
+      "ko": "(1,0), (0,0) 칸을 꺼내지만, 아직 표시하지 않은 'O' 이웃이 없어 살릴 타일이 없습니다. 스택이 비었습니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         "S",
+         "X"
+        ],
+        [
+         "S",
+         "X"
+        ]
+       ],
+       "marks": {
+        "path": [],
+        "bad": [],
+        "good": [],
+        "lit": [
+         [
+          1,
+          0
+         ],
+         [
+          0,
+          0
+         ]
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        "0,0",
+        "1,0"
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "stack",
+        "at": 0
+       }
+      },
+      {
+       "from": {
+        "view": "stack",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "No 'O' was captured, and the safe tiles turn back into 'O'. Answer: [[\"O\",\"X\"],[\"O\",\"X\"]].",
+      "ko": "점령된 'O' 타일은 없고, 안전한 'S' 타일은 다시 'O' 타일이 됩니다. 답은 [[\"O\",\"X\"],[\"O\",\"X\"]]입니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         "O",
+         "X"
+        ],
+        [
+         "O",
+         "X"
+        ]
+       ],
+       "marks": {
+        "path": [
+         [
+          0,
+          0
+         ],
+         [
+          1,
+          0
+         ]
+        ],
+        "bad": [],
+        "good": [],
+        "lit": []
+       }
+      },
+      "stack": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "board",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "value": "O"
+      },
+      {
+       "to": {
+        "view": "board",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "value": "O"
+      }
+     ],
+     "answer": "[[\"O\",\"X\"],[\"O\",\"X\"]]"
+    }
+   ],
+   "sampleInput": "[[\"O\",\"X\"],[\"O\",\"X\"]]"
+  }
+ ]
+}

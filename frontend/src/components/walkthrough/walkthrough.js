@@ -207,6 +207,7 @@ VIEWS.array = (host, config, ctx) => {
     update(s) {
       const vals = s.values || [], fills = s.fill || [];
       const max = bars ? Math.max(1, ...vals.map((v, i) => (+v || 0) + (+fills[i] || 0)), config.max || 0) : 0;
+      if (!vals.length) { host.innerHTML = ''; built = null; html('span', 'wt-empty', host, config.empty != null ? textOf(config.empty, ctx.lang) : ctx.ui.empty); return; }
       const need = arrayNeeds(s);
       const grow = Object.keys(need).some(k => need[k] && !room[k]);
       for (const k in need) room[k] = room[k] || need[k];
@@ -586,7 +587,7 @@ VIEWS.graph = (host, config, ctx) => {
 // right child sits right of its parent. `size(id)` is a node's { w, h } (h holds its tag under it), `label(id)` the
 // width of the label on the edge into it: upright, a child's span keeps that label clear of its siblings'.
 // Returns { pos: Map(id -> pill centre), width, height }.
-const TREE = { PH: 28, GAP: 12, GHOST: 30, LEVEL: 40, SIDE_GAP: 8, SIDE_GHOST: 16, SIDE_LEVEL: 30, AT: 0.7, PAD: 6 };
+const TREE = { LINK_GAP: 30, SIDE_LINK_GAP: 24, PH: 28, GAP: 12, GHOST: 30, LEVEL: 40, SIDE_GAP: 8, SIDE_GHOST: 16, SIDE_LEVEL: 30, AT: 0.7, PAD: 6 };
 export function layoutTree(nodes, edges, opts = {}) {
   const { arity = 0, sideways = false } = opts;
   const size = opts.size || (() => ({ w: 32, h: TREE.PH })), label = opts.label || (() => 0);
@@ -603,7 +604,7 @@ export function layoutTree(nodes, edges, opts = {}) {
     const slot = e.slot ?? i;
     if (slot >= 0 && slot < arity && list[slot] == null) list[slot] = b;
   }
-  const gap = sideways ? TREE.SIDE_GAP : TREE.GAP, ghost = sideways ? TREE.SIDE_GHOST : TREE.GHOST;
+  const gap = opts.gap ?? (sideways ? TREE.SIDE_GAP : TREE.GAP), ghost = sideways ? TREE.SIDE_GHOST : TREE.GHOST;
   const across = id => (sideways ? size(id).h : size(id).w);
   const need = id => Math.max(across(id), sideways ? 0 : label(id) / TREE.AT) + gap;
   const span = new Map();
@@ -647,6 +648,36 @@ export function layoutTree(nodes, edges, opts = {}) {
   return { pos, width: sideways ? deep : wide, height: sideways ? wide : deep };
 }
 
+// How a tree's second link (`links`: next to the node on its right) is drawn: a straight arrow from one pill's edge to
+// the other's, so a link along a level runs level through the gap between the pills; a pair each way between two
+// nodes takes a lane each, 5px to either side. `null` hooks out to ∅ just past the pill: on its right upright, under
+// it on its side, where a level runs down the column. `box(id)` is a pill's { x, y, w, h } (centre and size), or
+// nothing for a node not drawn. Returns [{ from, to, x1, y1, x2, y2, nil? }], ids as text, nil the ∅'s centre.
+const TREE_NIL = 16;
+export function treeLinks(to, box, opts = {}) {
+  const arrows = [];
+  for (const [k, t] of Object.entries(to)) {
+    const a = box(k);
+    if (!a) continue;
+    if (t == null) {
+      const [x, y] = opts.sideways ? [a.x, a.y + a.h / 2 + TREE_NIL] : [a.x + a.w / 2 + TREE_NIL, a.y];
+      arrows.push({ from: k, to: null, x1: opts.sideways ? a.x : a.x + a.w / 2, y1: opts.sideways ? a.y + a.h / 2 : a.y, x2: x, y2: y, nil: [x, y] });
+      continue;
+    }
+    const b = box(keyOf(t));
+    if (!b || keyOf(t) === k) continue;
+    const dx = b.x - a.x, dy = b.y - a.y;
+    const clip = p => Math.min(dx ? p.w / 2 / Math.abs(dx) : Infinity, dy ? p.h / 2 / Math.abs(dy) : Infinity);
+    const ta = clip(a), tb = clip(b);
+    // a pair each way: the link to the right (or down) takes the lane before it, the one back the lane after
+    const back = to[keyOf(t)] != null && keyOf(to[keyOf(t)]) === k, len = Math.hypot(dx, dy);
+    const lane = back ? (dx > 0 || (!dx && dy > 0) ? -5 : 5) * Math.sign(dx || dy) : 0;
+    const ox = (-dy / len) * lane, oy = (dx / len) * lane;
+    arrows.push({ from: k, to: keyOf(t), x1: a.x + dx * ta + ox, y1: a.y + dy * ta + oy, x2: b.x - dx * tb + ox, y2: b.y - dy * tb + oy });
+  }
+  return arrows;
+}
+
 // Whether a tree goes on its side: only when it is wider upright than the room it has (`room`, 0 when unknown) and
 // narrower on its side, where it grows down instead of across.
 export const treeSideways = (upright, side, room) => room > 0 && upright.width > room && side.width < upright.width;
@@ -659,7 +690,7 @@ export const treeSideways = (upright, side, room) => room > 0 && upright.width >
 VIEWS.tree = (host, config, ctx) => {
   const PH = TREE.PH, arity = Number.isInteger(config.arity) ? config.arity : 0;
   const width = (t, px) => [...t].reduce((w, ch) => w + (ch.codePointAt(0) > 0x2e80 ? px : px * 0.6), 0);
-  let whole = null, built = null, tagged = false;
+  let whole = null, built = null, tagged = false, linked = false, nils = new Set();
   // every frame's nodes and edges as one tree, or null when a node changes parent (then each frame is laid out alone)
   function unite(states) {
     const nodes = new Map(), edges = new Map(), parent = new Map();
@@ -691,11 +722,26 @@ VIEWS.tree = (host, config, ctx) => {
     const pill = new Map(tree.nodes.map(n => [keyOf(n.id), Math.max(PH, ...n.texts.map(t => width(t, 13) + 18))]));
     const into = new Map(tree.edges.map(e => [keyOf(e.to), Math.max(0, ...e.labels.map(t => (t ? width(t, 11) + 10 : 0)))]));
     const size = id => ({ w: Math.max(pill.get(id), (tree.tags.get(id) || 0) + 8), h: PH + (tagged ? 18 : 0) });
+    // a second link runs through the gap between pills on a level, so the gaps widen to hold an arrow
     const opts = { arity, size, label: id => into.get(id) || 0 };
-    const upright = layoutTree(tree.nodes, tree.edges, opts), side = layoutTree(tree.nodes, tree.edges, { ...opts, sideways: true });
+    const upright = layoutTree(tree.nodes, tree.edges, { ...opts, gap: linked ? TREE.LINK_GAP : undefined });
+    const side = layoutTree(tree.nodes, tree.edges, { ...opts, sideways: true, gap: linked ? TREE.SIDE_LINK_GAP : undefined });
     const sideways = treeSideways(upright, side, space), L = sideways ? side : upright;
-    const root = svg('svg', { viewBox: `0 0 ${L.width} ${L.height}`, width: L.width, class: 'wt-svg wt-tree' + (sideways ? ' wt-tside' : '') }, host);
-    const eg = svg('g', {}, root), lg = svg('g', {}, root), ng = svg('g', {}, root), tg = svg('g', {}, root);
+    let W = L.width, Hh = L.height; // room for each ∅ a null link hangs past its pill
+    for (const id of nils) {
+      const p = L.pos.get(id);
+      if (!p) continue;
+      if (sideways) Hh = Math.max(Hh, p.y + PH / 2 + TREE_NIL + 10); else W = Math.max(W, p.x + pill.get(id) / 2 + TREE_NIL + 10);
+    }
+    const root = svg('svg', { viewBox: `0 0 ${W} ${Hh}`, width: W, class: 'wt-svg wt-tree' + (sideways ? ' wt-tside' : '') }, host);
+    if (linked) {
+      const defs = svg('defs', {}, root);
+      for (const m of ['side', ...MARKS]) {
+        const mk = svg('marker', { id: `${ctx.uid}-tl-${m}`, viewBox: '0 0 10 10', refX: 9, refY: 5, markerWidth: 8, markerHeight: 8, markerUnits: 'userSpaceOnUse', orient: 'auto-start-reverse' }, defs);
+        svg('path', { d: 'M0,0 L10,5 L0,10 z', class: 'wt-ah wt-ah-' + m }, mk);
+      }
+    }
+    const eg = svg('g', {}, root), lg = svg('g', {}, root), kg = svg('g', {}, root), ng = svg('g', {}, root), tg = svg('g', {}, root);
     const edgeEls = new Map();
     for (const e of tree.edges) {
       const a = L.pos.get(keyOf(e.from)), b = L.pos.get(keyOf(e.to));
@@ -724,7 +770,7 @@ VIEWS.tree = (host, config, ctx) => {
       nodeEls.set(k, { g, box, val, tag, tagbg, tagText });
     }
     const empty = svg('text', { x: TREE.PAD, y: PH / 2 + 5, class: 'wt-tempty' }, root);
-    return { tree, nodeEls, edgeEls, sideways, space, empty };
+    return { tree, nodeEls, edgeEls, sideways, space, empty, kg, pos: L.pos, pill };
   }
   const shown = (el, on) => { el.style.display = on ? '' : 'none'; };
   return {
@@ -739,6 +785,8 @@ VIEWS.tree = (host, config, ctx) => {
     },
     prepare(states) {
       tagged = states.some(st => (st.tags || []).length);
+      linked = states.some(st => Object.keys(st.links || {}).length);
+      nils = new Set(states.flatMap(st => Object.values(st.links || {}).flatMap(to => Object.keys(to).filter(k => to[k] == null))));
       whole = unite(states);
       built = null;
     },
@@ -773,6 +821,18 @@ VIEWS.tree = (host, config, ctx) => {
         const w = width(label, 11) + 10;
         el.bg.setAttribute('x', el.lx - w / 2); el.bg.setAttribute('width', w);
         el.bg.dataset.token = label;
+      }
+      // the second link, one kind: an arrow from pill to pill, or a hook to ∅
+      built.kg.replaceChildren();
+      const name = Object.keys(s.links || {})[0], lm = markMap(s.linkMarks);
+      const box = k => (nodes.has(k) && built.pos.get(k) ? { ...built.pos.get(k), w: built.pill.get(k), h: PH } : null);
+      for (const a of name ? treeLinks(s.links[name], box, { sideways: built.sideways }) : []) {
+        const mark = lm.get(keyOf([name, a.from])), g = svg('g', { class: 'wt-tlink' + (mark ? ' wt-' + mark : '') }, built.kg);
+        if (a.nil) {
+          const [x, y] = a.nil, d = built.sideways ? `M${a.x1},${a.y1} L${x},${y - 8}` : `M${a.x1},${a.y1} L${x - 8},${y}`;
+          svg('path', { d, class: 'wt-tlinkpath' }, g);
+          svg('text', { x, y: y + 5, 'text-anchor': 'middle', class: 'wt-tnil' }, g).textContent = '∅';
+        } else svg('path', { d: `M${a.x1},${a.y1} L${a.x2},${a.y2}`, class: 'wt-tlinkpath', 'marker-end': `url(#${ctx.uid}-tl-${mark || 'side'})` }, g);
       }
       built.empty.textContent = nodes.size ? '' : config.empty != null ? textOf(config.empty, ctx.lang) : ctx.ui.empty;
     },
@@ -818,16 +878,35 @@ export function linkArrows(ids, next) {
   return arrows;
 }
 
+// How each node's second link (`links`: a copy's random, a doubly linked list's prev) is drawn: always under the row,
+// so it never shares the gap with next. `arc` reaches a node, `level` deep: its distance in nodes, half a step more
+// going back (or to itself), so two arcs over one stretch, one each way, nest instead of crossing; capped at 4.5.
+// `null` hooks out to ∅ just under the gap on the node's right. A node missing from `to` has no arrow. Returns [{ from, to, kind, level }].
+export function sideArrows(ids, to) {
+  const at = new Map(ids.map((id, i) => [keyOf(id), i])), arrows = [];
+  ids.map(keyOf).forEach((k, i) => {
+    if (!(k in to)) return;
+    if (to[k] == null) { arrows.push({ from: k, to: null, kind: 'null', level: 0 }); return; }
+    const j = at.get(keyOf(to[k]));
+    if (j === undefined) return;
+    arrows.push({ from: k, to: keyOf(to[k]), kind: 'arc', level: Math.min(4, Math.abs(j - i)) + (j <= i ? 0.5 : 0) });
+  });
+  return arrows;
+}
+
 // A linked list: nodes as boxes in a row, in `nodes` order for the whole run, each next an arrow (linkArrows), so a
 // reversal redraws the arrows and never moves a node. `pointers` stand above their node; `cut` draws an arrow this
-// step removed, faded and dashed. Room for every arc, ∅ and pointer the run draws is kept from its first frame.
-// Address: a node id.
+// step removed, faded and dashed. A second link per node (`links`, one kind) runs under the row (sideArrows), dashed in
+// a colour of its own, with `linkCuts` its removed arrows. Room for every arc, ∅ and pointer the run draws is kept from
+// its first frame. Address: a node id.
 VIEWS.linkedlist = (host, config, ctx) => {
-  const H = 36, GAP = 36, END = 30, ARC = 24, LINE = 14, P = 6;
+  const H = 36, GAP = 36, END = 30, ARC = 24, LINE = 14, P = 6, NIL = 9;
   let built = null, room = null;
   const ids = st => (st.nodes || []).map(n => keyOf(n.id));
+  const kind = st => Object.keys(st.links || {})[0];
+  const sideDepth = level => 12 + 12 * level; // a side arc's control points; the curve reaches 3/4 of it
   function need(states) {
-    const r = { box: 40, left: false, right: false, over: false, under: false, ptrs: 0 };
+    const r = { box: 40, left: false, right: false, over: false, under: false, ptrs: 0, side: 0 };
     for (const st of states) {
       for (const n of st.nodes || []) r.box = Math.max(r.box, labelWidth(fmt(n.value)) * 15 / 11 + 18);
       for (const a of [...linkArrows(ids(st), st.next || {}), ...linkArrows(ids(st), st.cut || {})]) {
@@ -835,6 +914,11 @@ VIEWS.linkedlist = (host, config, ctx) => {
         if (a.kind === 'null-right' && keyOf(a.from) === ids(st).at(-1)) r.right = true;
         if (a.kind === 'over') r.over = true;
         if (a.kind === 'under') r.under = true;
+      }
+      const name = kind(st);
+      for (const a of name ? [...sideArrows(ids(st), st.links[name]), ...sideArrows(ids(st), (st.linkCuts || {})[name] || {})] : []) {
+        r.side = Math.max(r.side, a.kind === 'null' ? NIL + 10 : sideDepth(a.level) * 0.75 + 6);
+        if (a.kind === 'null' && a.from === ids(st).at(-1)) r.right = true;
       }
       const per = new Map();
       for (const at of Object.values(st.pointers || {})) if (at != null) per.set(keyOf(at), (per.get(keyOf(at)) || 0) + 1);
@@ -846,10 +930,10 @@ VIEWS.linkedlist = (host, config, ctx) => {
     host.innerHTML = '';
     const B = room.box, x0 = P + (room.left ? END : 0);
     const ptrTop = P + (room.over ? ARC : 0), top = ptrTop + room.ptrs * LINE + (room.ptrs ? 8 : 0);
-    const W = x0 + keys.length * (B + GAP) - GAP + (room.right ? END : 0) + P, Hh = top + H + (room.under ? ARC + 6 : 0) + P;
+    const W = x0 + keys.length * (B + GAP) - GAP + (room.right ? END : 0) + P, Hh = top + H + Math.max(room.under ? ARC + 6 : 0, room.side) + P;
     const root = svg('svg', { viewBox: `0 0 ${W} ${Hh}`, width: W, class: 'wt-svg wt-linkedlist' }, host);
     const defs = svg('defs', {}, root);
-    for (const m of ['plain', ...MARKS]) {
+    for (const m of ['plain', 'side', ...MARKS]) {
       const mk = svg('marker', { id: `${ctx.uid}-ll-${m}`, viewBox: '0 0 10 10', refX: 9, refY: 5, markerWidth: 9, markerHeight: 9, markerUnits: 'userSpaceOnUse', orient: 'auto-start-reverse' }, defs);
       svg('path', { d: 'M0,0 L10,5 L0,10 z', class: 'wt-ah wt-ah-' + m }, mk);
     }
@@ -867,8 +951,14 @@ VIEWS.linkedlist = (host, config, ctx) => {
   }
   // one arrow's path and where its ∅ goes, from the node's box to its target's
   function route(a) {
-    const { cx, top, B } = built, mid = top + H / 2, x = cx.get(a.from), dy = a.lane * 7;
+    const { cx, top, B } = built, mid = top + H / 2, x = cx.get(a.from), dy = a.lane * 7, bot = top + H;
     switch (a.kind) {
+      case 'arc': { // a second link: out of the box's right half, into the target's left half
+        const x2 = cx.get(a.to) - 8, y = bot + sideDepth(a.level);
+        return { d: `M${x + 8},${bot} C${x + 8},${y} ${x2},${y} ${x2},${bot + 1}` };
+      }
+      case 'null': // a hook out to ∅ in the gap on its right, under next's arrows and over the arcs passing below
+        return { d: `M${x + 8},${bot} Q${x + 8},${bot + NIL} ${x + B / 2 + 3},${bot + NIL}`, nil: [x + B / 2 + 11, bot + NIL] };
       case 'right': return { d: `M${x + B / 2},${mid + dy} L${cx.get(a.to) - B / 2 - 1},${mid + dy}` };
       case 'left': return { d: `M${x - B / 2},${mid + dy} L${cx.get(a.to) + B / 2 + 1},${mid + dy}` };
       case 'null-right': return { d: `M${x + B / 2},${mid + dy} L${x + B / 2 + GAP - 16},${mid + dy}`, nil: [x + B / 2 + GAP - 8, mid + dy] };
@@ -903,13 +993,18 @@ VIEWS.linkedlist = (host, config, ctx) => {
         names.forEach((name, i) => { svg('tspan', { x: 0, dy: i ? LINE : -(names.length - 1) * LINE }, el.ptr).textContent = name + (i === names.length - 1 ? ' ↓' : ''); });
       }
       built.arrows.replaceChildren();
-      const draw = (a, cls, mark) => {
+      const draw = (a, cls, mark, plain = 'plain') => {
         const r = route(a), g = svg('g', { class: cls + (mark ? ' wt-' + mark : '') }, built.arrows);
-        svg('path', { d: r.d, class: 'wt-lllink', 'marker-end': r.nil ? null : `url(#${ctx.uid}-ll-${mark || 'plain'})` }, g);
+        svg('path', { d: r.d, class: 'wt-lllink', 'marker-end': r.nil ? null : `url(#${ctx.uid}-ll-${mark || plain})` }, g);
         if (r.nil) svg('text', { x: r.nil[0], y: r.nil[1] + 5, 'text-anchor': 'middle', class: 'wt-llnil' }, g).textContent = '∅';
       };
       for (const a of linkArrows(keys, s.cut || {})) draw({ ...a, lane: a.lane || 1 }, 'wt-llarrow wt-llcut', 'bad'); // below the live arrow in its gap
       for (const a of linkArrows(keys, s.next || {})) draw(a, 'wt-llarrow', lm.get(a.from));
+      const name = kind(s);
+      if (name) {
+        for (const a of sideArrows(keys, (s.linkCuts || {})[name] || {})) draw(a, 'wt-llarrow wt-llside wt-llcut', 'bad');
+        for (const a of sideArrows(keys, s.links[name])) draw(a, 'wt-llarrow wt-llside', lm.get(keyOf([name, a.from])), 'side');
+      }
     },
   };
 };
@@ -937,6 +1032,45 @@ VIEWS.callstack = (host, config, ctx) => {
       });
       if (!calls.length) html('span', 'wt-empty', box, config.empty != null ? textOf(config.empty, ctx.lang) : ctx.ui.empty);
       for (let i = Math.max(calls.length, 1); i < deepest; i++) html('div', 'wt-cscall wt-csspace', box, '\u00a0');
+    },
+  };
+};
+
+// A stack of values, drawn upright as a solver pictures one: cells piled on a fixed base, the top at the top with a
+// "top" marker beside it, so a push appears on top and a pop leaves from it. The column keeps room for the run's
+// tallest stack, so the base never moves. `tags` label cells (the day a reading belongs to, an index) inside the cell,
+// above its value. Address: a position from the bottom (0 is the bottom).
+VIEWS.stack = (host, config, ctx) => {
+  host.innerHTML = '';
+  const box = html('div', 'wt-stack', host);
+  let cells = [], tallest = 0, tagged = false;
+  const cell = (cls, tag, value) => {
+    const c = html('div', 'wt-stackitem' + cls, box);
+    if (tagged) html('span', 'wt-stacktag', c, tag || ' ');
+    html('span', 'wt-stackval', c, value);
+    return c;
+  };
+  return {
+    locate: at => (Number.isInteger(at) && cells[at]) || null,
+    prepare(states) {
+      tallest = Math.max(1, ...states.map(st => (st.values || []).length));
+      tagged = states.some(st => (st.tags || []).length);
+    },
+    update(s) {
+      const m = markMap(s.marks), values = s.values || [];
+      const tags = new Map((s.tags || []).map(([i, t]) => [i, t]));
+      box.innerHTML = '';
+      // drawn top first: the room kept for later pushes, then the cells from the top down to the base
+      for (let i = tallest - 1; i >= Math.max(values.length, 1); i--) cell(' wt-stackspace', '', ' ');
+      // an empty stack says so on its bottom cell's room, so the base holds still when the first value lands
+      if (!values.length) cell(' wt-stackempty', '', config.empty != null ? textOf(config.empty, ctx.lang) : ctx.ui.empty);
+      cells = [];
+      for (let i = values.length - 1; i >= 0; i--) {
+        const c = cell(markClass(m, i), textOf(tags.get(i), ctx.lang), fmt(values[i]));
+        c.dataset.token = fmt(values[i]);
+        if (i === values.length - 1) html('span', 'wt-stacktop', c, ctx.ui.top);
+        cells[i] = c;
+      }
     },
   };
 };
@@ -1083,8 +1217,8 @@ function createMoves(layer, stage, ctx, viewById) {
 
 // ---------- the player ----------
 const UI = {
-  en: { front: 'front', back: 'back', empty: 'empty', expected: 'expected', extra: 'extra input', step: 'Step', first: 'First step', prev: 'Previous step', next: 'Next step', play: 'Play', pause: 'Pause', hint: '← → step · space plays' },
-  ko: { front: '앞', back: '뒤', empty: '비어 있음', expected: '기대값', extra: '추가 입력', step: '단계', first: '처음', prev: '이전 단계', next: '다음 단계', play: '재생', pause: '일시정지', hint: '← → 단계 이동 · 스페이스 재생' },
+  en: { front: 'front', back: 'back', top: '← top', empty: 'empty', expected: 'expected', extra: 'extra input', step: 'Step', first: 'First step', prev: 'Previous step', next: 'Next step', play: 'Play', pause: 'Pause', hint: '← → step · space plays' },
+  ko: { front: '앞', back: '뒤', top: '← 맨 위', empty: '비어 있음', expected: '기대값', extra: '추가 입력', step: '단계', first: '처음', prev: '이전 단계', next: '다음 단계', play: '재생', pause: '일시정지', hint: '← → 단계 이동 · 스페이스 재생' },
 };
 let uidSeq = 0;
 

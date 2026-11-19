@@ -1,0 +1,904 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Can Attend All Bookings",
+  "ko": "테이블 예약 충돌 검사"
+ },
+ "approach": {
+  "en": "Sort the bookings by start. Then a booking can only collide with the one right before it, so check each neighbouring pair: the earlier one must end by the time the later one starts.",
+  "ko": "예약을 시작 시각 순으로 정렬합니다. 그러면 각 예약은 바로 앞 예약하고만 겹칠 수 있으므로, 이웃한 두 예약마다 앞 예약이 뒤 예약의 시작 시각까지 끝나는지 확인합니다."
+ },
+ "views": [
+  {
+   "id": "line",
+   "type": "intervals",
+   "empty": {
+    "en": "not sorted yet",
+    "ko": "아직 정렬 전"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "bookings = [[18,20],[19,21],[22,23]]",
+   "expected": "false",
+   "frames": [
+    {
+     "caption": {
+      "en": "3 bookings for the one window table, in the order given.",
+      "ko": "창가 테이블 하나의 예약 3개가 주어진 순서대로 있습니다."
+     },
+     "views": {
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "bookings",
+          "ko": "bookings (예약)"
+         },
+         "intervals": [
+          [
+           18,
+           20
+          ],
+          [
+           19,
+           21
+          ],
+          [
+           22,
+           23
+          ]
+         ],
+         "marks": {
+          "lit": [
+           0,
+           1,
+           2
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "sorted by start",
+          "ko": "시작 순으로 정렬"
+         },
+         "intervals": [],
+         "marks": {}
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Sort them by start: they are already in order, so each one keeps its place.",
+      "ko": "시작 시각 순으로 정렬합니다. 이미 정렬되어 있어 순서가 그대로입니다."
+     },
+     "views": {
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "bookings",
+          "ko": "bookings (예약)"
+         },
+         "intervals": [
+          [
+           18,
+           20
+          ],
+          [
+           19,
+           21
+          ],
+          [
+           22,
+           23
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1,
+           2
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "sorted by start",
+          "ko": "시작 순으로 정렬"
+         },
+         "intervals": [
+          [
+           18,
+           20
+          ],
+          [
+           19,
+           21
+          ],
+          [
+           22,
+           23
+          ]
+         ],
+         "marks": {
+          "good": [
+           0,
+           1,
+           2
+          ]
+         }
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "line",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "to": {
+        "view": "line",
+        "at": [
+         1,
+         0
+        ]
+       }
+      },
+      {
+       "from": {
+        "view": "line",
+        "at": [
+         0,
+         1
+        ]
+       },
+       "to": {
+        "view": "line",
+        "at": [
+         1,
+         1
+        ]
+       }
+      },
+      {
+       "from": {
+        "view": "line",
+        "at": [
+         0,
+         2
+        ]
+       },
+       "to": {
+        "view": "line",
+        "at": [
+         1,
+         2
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "[19,21] starts at 19, before [18,20] ends at 20: the two parties collide, so not every booking fits. Answer: false.",
+      "ko": "[19,21] 예약이 19분에 시작하는데 [18,20] 예약은 20분에야 끝나므로 두 팀이 충돌합니다. 모든 예약을 받을 수 없으니 답은 false입니다."
+     },
+     "views": {
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "bookings",
+          "ko": "bookings (예약)"
+         },
+         "intervals": [
+          [
+           18,
+           20
+          ],
+          [
+           19,
+           21
+          ],
+          [
+           22,
+           23
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1,
+           2
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "sorted by start",
+          "ko": "시작 순으로 정렬"
+         },
+         "intervals": [
+          [
+           18,
+           20
+          ],
+          [
+           19,
+           21
+          ],
+          [
+           22,
+           23
+          ]
+         ],
+         "marks": {
+          "bad": [
+           0,
+           1
+          ],
+          "dim": []
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 20,
+         "label": {
+          "en": "end",
+          "ko": "끝"
+         },
+         "mark": "bad"
+        }
+       ]
+      }
+     },
+     "answer": "false"
+    }
+   ],
+   "setup": {
+    "line": {
+     "domain": [
+      18,
+      23
+     ]
+    }
+   },
+   "sampleInput": "[[18,20],[19,21],[22,23]]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "bookings = [[18,20],[20,22],[22,23]]",
+   "expected": "true",
+   "frames": [
+    {
+     "caption": {
+      "en": "3 bookings for the one window table, in the order given.",
+      "ko": "창가 테이블 하나의 예약 3개가 주어진 순서대로 있습니다."
+     },
+     "views": {
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "bookings",
+          "ko": "bookings (예약)"
+         },
+         "intervals": [
+          [
+           18,
+           20
+          ],
+          [
+           20,
+           22
+          ],
+          [
+           22,
+           23
+          ]
+         ],
+         "marks": {
+          "lit": [
+           0,
+           1,
+           2
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "sorted by start",
+          "ko": "시작 순으로 정렬"
+         },
+         "intervals": [],
+         "marks": {}
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Sort them by start: they are already in order, so each one keeps its place.",
+      "ko": "시작 시각 순으로 정렬합니다. 이미 정렬되어 있어 순서가 그대로입니다."
+     },
+     "views": {
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "bookings",
+          "ko": "bookings (예약)"
+         },
+         "intervals": [
+          [
+           18,
+           20
+          ],
+          [
+           20,
+           22
+          ],
+          [
+           22,
+           23
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1,
+           2
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "sorted by start",
+          "ko": "시작 순으로 정렬"
+         },
+         "intervals": [
+          [
+           18,
+           20
+          ],
+          [
+           20,
+           22
+          ],
+          [
+           22,
+           23
+          ]
+         ],
+         "marks": {
+          "good": [
+           0,
+           1,
+           2
+          ]
+         }
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "line",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "to": {
+        "view": "line",
+        "at": [
+         1,
+         0
+        ]
+       }
+      },
+      {
+       "from": {
+        "view": "line",
+        "at": [
+         0,
+         1
+        ]
+       },
+       "to": {
+        "view": "line",
+        "at": [
+         1,
+         1
+        ]
+       }
+      },
+      {
+       "from": {
+        "view": "line",
+        "at": [
+         0,
+         2
+        ]
+       },
+       "to": {
+        "view": "line",
+        "at": [
+         1,
+         2
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "[18,20] ends at 20 and [20,22] starts at 20: 20 ≤ 20, so the table is free in time.",
+      "ko": "[18,20] 예약은 20분에 끝나고 [20,22] 예약은 20분에 시작합니다. 20 ≤ 20이므로 테이블이 제때 빕니다."
+     },
+     "views": {
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "bookings",
+          "ko": "bookings (예약)"
+         },
+         "intervals": [
+          [
+           18,
+           20
+          ],
+          [
+           20,
+           22
+          ],
+          [
+           22,
+           23
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1,
+           2
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "sorted by start",
+          "ko": "시작 순으로 정렬"
+         },
+         "intervals": [
+          [
+           18,
+           20
+          ],
+          [
+           20,
+           22
+          ],
+          [
+           22,
+           23
+          ]
+         ],
+         "marks": {
+          "lit": [
+           0,
+           1
+          ],
+          "dim": []
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 20,
+         "label": {
+          "en": "end",
+          "ko": "끝"
+         },
+         "mark": "lit"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "[20,22] ends at 22 and [22,23] starts at 22: 22 ≤ 22, so the table is free in time.",
+      "ko": "[20,22] 예약은 22분에 끝나고 [22,23] 예약은 22분에 시작합니다. 22 ≤ 22이므로 테이블이 제때 빕니다."
+     },
+     "views": {
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "bookings",
+          "ko": "bookings (예약)"
+         },
+         "intervals": [
+          [
+           18,
+           20
+          ],
+          [
+           20,
+           22
+          ],
+          [
+           22,
+           23
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1,
+           2
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "sorted by start",
+          "ko": "시작 순으로 정렬"
+         },
+         "intervals": [
+          [
+           18,
+           20
+          ],
+          [
+           20,
+           22
+          ],
+          [
+           22,
+           23
+          ]
+         ],
+         "marks": {
+          "lit": [
+           1,
+           2
+          ],
+          "dim": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 22,
+         "label": {
+          "en": "end",
+          "ko": "끝"
+         },
+         "mark": "lit"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Every booking ends by the time the next one starts, so the table can host them all. Answer: true.",
+      "ko": "모든 예약이 다음 예약이 시작하기 전에 끝나므로 테이블이 모든 예약을 받을 수 있습니다. 답은 true입니다."
+     },
+     "views": {
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "bookings",
+          "ko": "bookings (예약)"
+         },
+         "intervals": [
+          [
+           18,
+           20
+          ],
+          [
+           20,
+           22
+          ],
+          [
+           22,
+           23
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1,
+           2
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "sorted by start",
+          "ko": "시작 순으로 정렬"
+         },
+         "intervals": [
+          [
+           18,
+           20
+          ],
+          [
+           20,
+           22
+          ],
+          [
+           22,
+           23
+          ]
+         ],
+         "marks": {
+          "path": [
+           0,
+           1,
+           2
+          ]
+         }
+        }
+       ]
+      }
+     },
+     "answer": "true"
+    }
+   ],
+   "setup": {
+    "line": {
+     "domain": [
+      18,
+      23
+     ]
+    }
+   },
+   "sampleInput": "[[18,20],[20,22],[22,23]]"
+  },
+  {
+   "label": {
+    "en": "Example 3",
+    "ko": "예시 3"
+   },
+   "input": "bookings = [[45,90],[30,60]]",
+   "expected": "false",
+   "frames": [
+    {
+     "caption": {
+      "en": "2 bookings for the one window table, in the order given.",
+      "ko": "창가 테이블 하나의 예약 2개가 주어진 순서대로 있습니다."
+     },
+     "views": {
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "bookings",
+          "ko": "bookings (예약)"
+         },
+         "intervals": [
+          [
+           45,
+           90
+          ],
+          [
+           30,
+           60
+          ]
+         ],
+         "marks": {
+          "lit": [
+           0,
+           1
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "sorted by start",
+          "ko": "시작 순으로 정렬"
+         },
+         "intervals": [],
+         "marks": {}
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Sort them by start: [30,60], [45,90].",
+      "ko": "시작 시각 순으로 정렬합니다. [30,60], [45,90] 순서가 됩니다."
+     },
+     "views": {
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "bookings",
+          "ko": "bookings (예약)"
+         },
+         "intervals": [
+          [
+           45,
+           90
+          ],
+          [
+           30,
+           60
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "sorted by start",
+          "ko": "시작 순으로 정렬"
+         },
+         "intervals": [
+          [
+           30,
+           60
+          ],
+          [
+           45,
+           90
+          ]
+         ],
+         "marks": {
+          "good": [
+           0,
+           1
+          ]
+         }
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "line",
+        "at": [
+         0,
+         1
+        ]
+       },
+       "to": {
+        "view": "line",
+        "at": [
+         1,
+         0
+        ]
+       }
+      },
+      {
+       "from": {
+        "view": "line",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "to": {
+        "view": "line",
+        "at": [
+         1,
+         1
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "[45,90] starts at 45, before [30,60] ends at 60: the two parties collide, so not every booking fits. Answer: false.",
+      "ko": "[45,90] 예약이 45분에 시작하는데 [30,60] 예약은 60분에야 끝나므로 두 팀이 충돌합니다. 모든 예약을 받을 수 없으니 답은 false입니다."
+     },
+     "views": {
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "bookings",
+          "ko": "bookings (예약)"
+         },
+         "intervals": [
+          [
+           45,
+           90
+          ],
+          [
+           30,
+           60
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "sorted by start",
+          "ko": "시작 순으로 정렬"
+         },
+         "intervals": [
+          [
+           30,
+           60
+          ],
+          [
+           45,
+           90
+          ]
+         ],
+         "marks": {
+          "bad": [
+           0,
+           1
+          ],
+          "dim": []
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 60,
+         "label": {
+          "en": "end",
+          "ko": "끝"
+         },
+         "mark": "bad"
+        }
+       ]
+      }
+     },
+     "answer": "false"
+    }
+   ],
+   "setup": {
+    "line": {
+     "domain": [
+      30,
+      90
+     ]
+    }
+   },
+   "sampleInput": "[[45,90],[30,60]]"
+  }
+ ]
+}

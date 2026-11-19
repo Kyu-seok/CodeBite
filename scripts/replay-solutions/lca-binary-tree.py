@@ -10,18 +10,11 @@ class TreeNode:
 
 class Solution:
     def lowestCommonAncestor(self, root: Optional[TreeNode], p: Optional[TreeNode], q: Optional[TreeNode]) -> Optional[TreeNode]:
-        parent: dict[TreeNode, TreeNode | None] = {root: None}
-        stack = [root]
-        while p not in parent or q not in parent:
-            node = stack.pop()
-            for child in (node.left, node.right):
-                if child:
-                    parent[child] = node
-                    stack.append(child)
-        ancestors = set()
-        while p:
-            ancestors.add(p)
-            p = parent[p]
-        while q not in ancestors:
-            q = parent[q]
-        return q
+        # Each call returns p or q if its subtree holds one, or the LCA once some node finds one on each side.
+        if root is None or root is p or root is q:
+            return root
+        left = self.lowestCommonAncestor(root.left, p, q)
+        right = self.lowestCommonAncestor(root.right, p, q)
+        if left and right:
+            return root
+        return left or right

@@ -54,7 +54,7 @@ def solve(catalog, target, run):
         run.frame(caption,
                   catalog={"values": catalog, "pointers": pointers, "spans": spans,
                            "marks": {"path": list(path), "lit": list(lit), "dim": list(range(n)) if done and not path else []}},
-                  state={"items": [{"label": "target", "value": target}]},
+                  state={"items": [{"label": {"en": "target", "ko": "target (목표)"}, "value": target}]},
                   **answer)
 
     frame({"en": f"Look for target = {target} in {n} {plural(n, 'entry', 'entries')}: the range starts as the whole "
