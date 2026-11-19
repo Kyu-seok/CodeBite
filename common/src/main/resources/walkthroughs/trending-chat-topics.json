@@ -1,0 +1,3501 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Trending Chat Topics",
+  "ko": "단톡방 유행 주제"
+ },
+ "approach": {
+  "en": "Count every topic's mentions in a hash map in one pass, then rank the topics by count, most first, and alphabetically on a tie; the first k are the answer.",
+  "ko": "한 번 훑으며 주제마다 언급 횟수를 해시 맵에 세고, 횟수가 많은 순, 같으면 알파벳 순으로 순위를 매깁니다. 앞의 k개가 답입니다."
+ },
+ "views": [
+  {
+   "id": "topics",
+   "type": "table",
+   "title": {
+    "en": "topics",
+    "ko": "topics (주제)"
+   }
+  },
+  {
+   "id": "counts",
+   "type": "map",
+   "title": {
+    "en": "mentions per topic (hash map)",
+    "ko": "주제별 언급 횟수 (해시 맵)"
+   },
+   "empty": {
+    "en": "empty",
+    "ko": "비어 있음"
+   }
+  },
+  {
+   "id": "result",
+   "type": "output",
+   "title": {
+    "en": "answer",
+    "ko": "답"
+   },
+   "empty": {
+    "en": "empty",
+    "ko": "비어 있음"
+   }
+  },
+  {
+   "id": "state",
+   "type": "vars"
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "topics = [\"climate\",\"climate\",\"market\",\"sports\",\"market\",\"climate\",\"weather\"], k = 2",
+   "expected": "[\"climate\",\"market\"]",
+   "frames": [
+    {
+     "caption": {
+      "en": "Walk the 7 mentions once and count each topic in a hash map; then rank the topics and take the first 2.",
+      "ko": "언급 7개를 한 번 훑으며 주제마다 횟수를 해시 맵에 셉니다. 그다음 순위를 매겨 앞의 2개를 고릅니다."
+     },
+     "views": {
+      "topics": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "climate"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "climate"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "market"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "sports"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "market"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "climate"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "weather"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "counts": {
+       "entries": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 2
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "topics[0] is \"climate\", not in the map yet: it goes in with count 1.",
+      "ko": "topics[0] = \"climate\": 아직 맵에 없는 주제이므로 횟수 1로 들어갑니다."
+     },
+     "views": {
+      "topics": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "climate"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "climate"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "market"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "sports"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "market"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "climate"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "weather"
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         [
+          0,
+          0
+         ]
+        ],
+        "dim": []
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "climate",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "good": [
+         "climate"
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 2
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "topics",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "to": {
+        "view": "counts",
+        "at": "climate"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "topics[1] is \"climate\", already in the map: its count goes 1 → 2.",
+      "ko": "topics[1] = \"climate\": 이미 맵에 있는 주제이므로 횟수를 1 늘립니다 (1 → 2)."
+     },
+     "views": {
+      "topics": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "climate"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "climate"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "market"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "sports"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "market"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "climate"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "weather"
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         [
+          1,
+          0
+         ]
+        ],
+        "dim": [
+         [
+          0,
+          0
+         ]
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "climate",
+         "value": 2
+        }
+       ],
+       "marks": {
+        "good": [
+         "climate"
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 2
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "topics",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "to": {
+        "view": "counts",
+        "at": "climate"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "topics[2] is \"market\", not in the map yet: it goes in with count 1.",
+      "ko": "topics[2] = \"market\": 아직 맵에 없는 주제이므로 횟수 1로 들어갑니다."
+     },
+     "views": {
+      "topics": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "climate"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "climate"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "market"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "sports"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "market"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "climate"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "weather"
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         [
+          2,
+          0
+         ]
+        ],
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          1,
+          0
+         ]
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "climate",
+         "value": 2
+        },
+        {
+         "key": "market",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "good": [
+         "market"
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 2
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "topics",
+        "at": [
+         2,
+         0
+        ]
+       },
+       "to": {
+        "view": "counts",
+        "at": "market"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "topics[3] is \"sports\", not in the map yet: it goes in with count 1.",
+      "ko": "topics[3] = \"sports\": 아직 맵에 없는 주제이므로 횟수 1로 들어갑니다."
+     },
+     "views": {
+      "topics": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "climate"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "climate"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "market"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "sports"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "market"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "climate"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "weather"
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         [
+          3,
+          0
+         ]
+        ],
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          2,
+          0
+         ]
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "climate",
+         "value": 2
+        },
+        {
+         "key": "market",
+         "value": 1
+        },
+        {
+         "key": "sports",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "good": [
+         "sports"
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 2
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "topics",
+        "at": [
+         3,
+         0
+        ]
+       },
+       "to": {
+        "view": "counts",
+        "at": "sports"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "topics[4] is \"market\", already in the map: its count goes 1 → 2.",
+      "ko": "topics[4] = \"market\": 이미 맵에 있는 주제이므로 횟수를 1 늘립니다 (1 → 2)."
+     },
+     "views": {
+      "topics": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "climate"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "climate"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "market"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "sports"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "market"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "climate"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "weather"
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         [
+          4,
+          0
+         ]
+        ],
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          3,
+          0
+         ]
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "climate",
+         "value": 2
+        },
+        {
+         "key": "market",
+         "value": 2
+        },
+        {
+         "key": "sports",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "good": [
+         "market"
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 2
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "topics",
+        "at": [
+         4,
+         0
+        ]
+       },
+       "to": {
+        "view": "counts",
+        "at": "market"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "topics[5] is \"climate\", already in the map: its count goes 2 → 3.",
+      "ko": "topics[5] = \"climate\": 이미 맵에 있는 주제이므로 횟수를 1 늘립니다 (2 → 3)."
+     },
+     "views": {
+      "topics": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "climate"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "climate"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "market"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "sports"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "market"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "climate"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "weather"
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         [
+          5,
+          0
+         ]
+        ],
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          4,
+          0
+         ]
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "climate",
+         "value": 3
+        },
+        {
+         "key": "market",
+         "value": 2
+        },
+        {
+         "key": "sports",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "good": [
+         "climate"
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 2
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "topics",
+        "at": [
+         5,
+         0
+        ]
+       },
+       "to": {
+        "view": "counts",
+        "at": "climate"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "topics[6] is \"weather\", not in the map yet: it goes in with count 1.",
+      "ko": "topics[6] = \"weather\": 아직 맵에 없는 주제이므로 횟수 1로 들어갑니다."
+     },
+     "views": {
+      "topics": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "climate"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "climate"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "market"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "sports"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "market"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "climate"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "weather"
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         [
+          6,
+          0
+         ]
+        ],
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          5,
+          0
+         ]
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "climate",
+         "value": 3
+        },
+        {
+         "key": "market",
+         "value": 2
+        },
+        {
+         "key": "sports",
+         "value": 1
+        },
+        {
+         "key": "weather",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "good": [
+         "weather"
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 2
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "topics",
+        "at": [
+         6,
+         0
+        ]
+       },
+       "to": {
+        "view": "counts",
+        "at": "weather"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every mention is counted. Ranked by count, most first, and alphabetically on a tie: climate (3), market (2), sports (1), weather (1). The first 2 are the answer.",
+      "ko": "언급을 모두 세었습니다. 횟수가 많은 순, 같으면 알파벳 순으로 놓으면 climate (3), market (2), sports (1), weather (1)입니다. 앞의 2가 답입니다."
+     },
+     "views": {
+      "topics": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "climate"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "climate"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "market"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "sports"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "market"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "climate"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "weather"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          5,
+          0
+         ],
+         [
+          6,
+          0
+         ]
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "climate",
+         "value": 3
+        },
+        {
+         "key": "market",
+         "value": 2
+        },
+        {
+         "key": "sports",
+         "value": 1
+        },
+        {
+         "key": "weather",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "path": [
+         "climate",
+         "market"
+        ],
+        "dim": [
+         "sports",
+         "weather"
+        ]
+       },
+       "ranks": [
+        "climate",
+        "market",
+        "sports",
+        "weather"
+       ]
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 2
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "#1 is \"climate\" with 3 mentions.",
+      "ko": "1위는 \"climate\"(언급 3회)입니다."
+     },
+     "views": {
+      "topics": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "climate"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "climate"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "market"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "sports"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "market"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "climate"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "weather"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          5,
+          0
+         ],
+         [
+          6,
+          0
+         ]
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "climate",
+         "value": 3
+        },
+        {
+         "key": "market",
+         "value": 2
+        },
+        {
+         "key": "sports",
+         "value": 1
+        },
+        {
+         "key": "weather",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "path": [
+         "climate",
+         "market"
+        ],
+        "dim": [
+         "sports",
+         "weather"
+        ]
+       },
+       "ranks": [
+        "climate",
+        "market",
+        "sports",
+        "weather"
+       ]
+      },
+      "result": {
+       "values": [
+        "climate"
+       ],
+       "marks": {
+        "path": [
+         0
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 2
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "counts",
+        "at": "climate"
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "#2 is \"market\" with 2 mentions. The answer is [\"climate\",\"market\"].",
+      "ko": "2위는 \"market\"(언급 2회)입니다. 답은 [\"climate\",\"market\"]입니다."
+     },
+     "views": {
+      "topics": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "climate"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "climate"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "market"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "sports"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "market"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "climate"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "weather"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          5,
+          0
+         ],
+         [
+          6,
+          0
+         ]
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "climate",
+         "value": 3
+        },
+        {
+         "key": "market",
+         "value": 2
+        },
+        {
+         "key": "sports",
+         "value": 1
+        },
+        {
+         "key": "weather",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "path": [
+         "climate",
+         "market"
+        ],
+        "dim": [
+         "sports",
+         "weather"
+        ]
+       },
+       "ranks": [
+        "climate",
+        "market",
+        "sports",
+        "weather"
+       ]
+      },
+      "result": {
+       "values": [
+        "climate",
+        "market"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 2
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "counts",
+        "at": "market"
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       }
+      }
+     ],
+     "answer": "[\"climate\",\"market\"]"
+    }
+   ],
+   "sampleInput": "[\"climate\",\"climate\",\"market\",\"sports\",\"market\",\"climate\",\"weather\"]\n2"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "topics = [\"tech\",\"tech\",\"film\",\"film\",\"music\",\"books\",\"music\"], k = 3",
+   "expected": "[\"film\",\"music\",\"tech\"]",
+   "frames": [
+    {
+     "caption": {
+      "en": "Walk the 7 mentions once and count each topic in a hash map; then rank the topics and take the first 3.",
+      "ko": "언급 7개를 한 번 훑으며 주제마다 횟수를 해시 맵에 셉니다. 그다음 순위를 매겨 앞의 3개를 고릅니다."
+     },
+     "views": {
+      "topics": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "tech"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "tech"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "film"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "film"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "music"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "books"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "music"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "counts": {
+       "entries": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 3
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "topics[0] is \"tech\", not in the map yet: it goes in with count 1.",
+      "ko": "topics[0] = \"tech\": 아직 맵에 없는 주제이므로 횟수 1로 들어갑니다."
+     },
+     "views": {
+      "topics": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "tech"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "tech"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "film"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "film"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "music"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "books"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "music"
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         [
+          0,
+          0
+         ]
+        ],
+        "dim": []
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "tech",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "good": [
+         "tech"
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 3
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "topics",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "to": {
+        "view": "counts",
+        "at": "tech"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "topics[1] is \"tech\", already in the map: its count goes 1 → 2.",
+      "ko": "topics[1] = \"tech\": 이미 맵에 있는 주제이므로 횟수를 1 늘립니다 (1 → 2)."
+     },
+     "views": {
+      "topics": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "tech"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "tech"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "film"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "film"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "music"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "books"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "music"
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         [
+          1,
+          0
+         ]
+        ],
+        "dim": [
+         [
+          0,
+          0
+         ]
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "tech",
+         "value": 2
+        }
+       ],
+       "marks": {
+        "good": [
+         "tech"
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 3
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "topics",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "to": {
+        "view": "counts",
+        "at": "tech"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "topics[2] is \"film\", not in the map yet: it goes in with count 1.",
+      "ko": "topics[2] = \"film\": 아직 맵에 없는 주제이므로 횟수 1로 들어갑니다."
+     },
+     "views": {
+      "topics": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "tech"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "tech"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "film"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "film"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "music"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "books"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "music"
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         [
+          2,
+          0
+         ]
+        ],
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          1,
+          0
+         ]
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "tech",
+         "value": 2
+        },
+        {
+         "key": "film",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "good": [
+         "film"
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 3
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "topics",
+        "at": [
+         2,
+         0
+        ]
+       },
+       "to": {
+        "view": "counts",
+        "at": "film"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "topics[3] is \"film\", already in the map: its count goes 1 → 2.",
+      "ko": "topics[3] = \"film\": 이미 맵에 있는 주제이므로 횟수를 1 늘립니다 (1 → 2)."
+     },
+     "views": {
+      "topics": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "tech"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "tech"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "film"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "film"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "music"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "books"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "music"
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         [
+          3,
+          0
+         ]
+        ],
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          2,
+          0
+         ]
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "tech",
+         "value": 2
+        },
+        {
+         "key": "film",
+         "value": 2
+        }
+       ],
+       "marks": {
+        "good": [
+         "film"
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 3
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "topics",
+        "at": [
+         3,
+         0
+        ]
+       },
+       "to": {
+        "view": "counts",
+        "at": "film"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "topics[4] is \"music\", not in the map yet: it goes in with count 1.",
+      "ko": "topics[4] = \"music\": 아직 맵에 없는 주제이므로 횟수 1로 들어갑니다."
+     },
+     "views": {
+      "topics": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "tech"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "tech"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "film"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "film"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "music"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "books"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "music"
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         [
+          4,
+          0
+         ]
+        ],
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          3,
+          0
+         ]
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "tech",
+         "value": 2
+        },
+        {
+         "key": "film",
+         "value": 2
+        },
+        {
+         "key": "music",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "good": [
+         "music"
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 3
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "topics",
+        "at": [
+         4,
+         0
+        ]
+       },
+       "to": {
+        "view": "counts",
+        "at": "music"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "topics[5] is \"books\", not in the map yet: it goes in with count 1.",
+      "ko": "topics[5] = \"books\": 아직 맵에 없는 주제이므로 횟수 1로 들어갑니다."
+     },
+     "views": {
+      "topics": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "tech"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "tech"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "film"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "film"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "music"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "books"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "music"
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         [
+          5,
+          0
+         ]
+        ],
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          4,
+          0
+         ]
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "tech",
+         "value": 2
+        },
+        {
+         "key": "film",
+         "value": 2
+        },
+        {
+         "key": "music",
+         "value": 1
+        },
+        {
+         "key": "books",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "good": [
+         "books"
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 3
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "topics",
+        "at": [
+         5,
+         0
+        ]
+       },
+       "to": {
+        "view": "counts",
+        "at": "books"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "topics[6] is \"music\", already in the map: its count goes 1 → 2.",
+      "ko": "topics[6] = \"music\": 이미 맵에 있는 주제이므로 횟수를 1 늘립니다 (1 → 2)."
+     },
+     "views": {
+      "topics": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "tech"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "tech"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "film"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "film"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "music"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "books"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "music"
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         [
+          6,
+          0
+         ]
+        ],
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          5,
+          0
+         ]
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "tech",
+         "value": 2
+        },
+        {
+         "key": "film",
+         "value": 2
+        },
+        {
+         "key": "music",
+         "value": 2
+        },
+        {
+         "key": "books",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "good": [
+         "music"
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 3
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "topics",
+        "at": [
+         6,
+         0
+        ]
+       },
+       "to": {
+        "view": "counts",
+        "at": "music"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every mention is counted. Ranked by count, most first, and alphabetically on a tie: film (2), music (2), tech (2), books (1). The first 3 are the answer.",
+      "ko": "언급을 모두 세었습니다. 횟수가 많은 순, 같으면 알파벳 순으로 놓으면 film (2), music (2), tech (2), books (1)입니다. 앞의 3이 답입니다."
+     },
+     "views": {
+      "topics": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "tech"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "tech"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "film"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "film"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "music"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "books"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "music"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          5,
+          0
+         ],
+         [
+          6,
+          0
+         ]
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "tech",
+         "value": 2
+        },
+        {
+         "key": "film",
+         "value": 2
+        },
+        {
+         "key": "music",
+         "value": 2
+        },
+        {
+         "key": "books",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "path": [
+         "film",
+         "music",
+         "tech"
+        ],
+        "dim": [
+         "books"
+        ]
+       },
+       "ranks": [
+        "film",
+        "music",
+        "tech",
+        "books"
+       ]
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 3
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "#1 is \"film\" with 2 mentions, tied with music, tech: on a tie the earlier label ranks first.",
+      "ko": "1위는 \"film\"(언급 2회)이고, music, tech 주제와 횟수가 같아 알파벳 순으로 순위를 정합니다."
+     },
+     "views": {
+      "topics": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "tech"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "tech"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "film"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "film"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "music"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "books"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "music"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          5,
+          0
+         ],
+         [
+          6,
+          0
+         ]
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "tech",
+         "value": 2
+        },
+        {
+         "key": "film",
+         "value": 2
+        },
+        {
+         "key": "music",
+         "value": 2
+        },
+        {
+         "key": "books",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "path": [
+         "film",
+         "music",
+         "tech"
+        ],
+        "dim": [
+         "books"
+        ]
+       },
+       "ranks": [
+        "film",
+        "music",
+        "tech",
+        "books"
+       ]
+      },
+      "result": {
+       "values": [
+        "film"
+       ],
+       "marks": {
+        "path": [
+         0
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 3
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "counts",
+        "at": "film"
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "#2 is \"music\" with 2 mentions, tied with film, tech: on a tie the earlier label ranks first.",
+      "ko": "2위는 \"music\"(언급 2회)이고, film, tech 주제와 횟수가 같아 알파벳 순으로 순위를 정합니다."
+     },
+     "views": {
+      "topics": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "tech"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "tech"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "film"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "film"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "music"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "books"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "music"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          5,
+          0
+         ],
+         [
+          6,
+          0
+         ]
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "tech",
+         "value": 2
+        },
+        {
+         "key": "film",
+         "value": 2
+        },
+        {
+         "key": "music",
+         "value": 2
+        },
+        {
+         "key": "books",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "path": [
+         "film",
+         "music",
+         "tech"
+        ],
+        "dim": [
+         "books"
+        ]
+       },
+       "ranks": [
+        "film",
+        "music",
+        "tech",
+        "books"
+       ]
+      },
+      "result": {
+       "values": [
+        "film",
+        "music"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 3
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "counts",
+        "at": "music"
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "#3 is \"tech\" with 2 mentions, tied with film, music: on a tie the earlier label ranks first. The answer is [\"film\",\"music\",\"tech\"].",
+      "ko": "3위는 \"tech\"(언급 2회)이고, film, music 주제와 횟수가 같아 알파벳 순으로 순위를 정합니다. 답은 [\"film\",\"music\",\"tech\"]입니다."
+     },
+     "views": {
+      "topics": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "tech"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "tech"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "film"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "film"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "music"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "books"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "music"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          5,
+          0
+         ],
+         [
+          6,
+          0
+         ]
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "tech",
+         "value": 2
+        },
+        {
+         "key": "film",
+         "value": 2
+        },
+        {
+         "key": "music",
+         "value": 2
+        },
+        {
+         "key": "books",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "path": [
+         "film",
+         "music",
+         "tech"
+        ],
+        "dim": [
+         "books"
+        ]
+       },
+       "ranks": [
+        "film",
+        "music",
+        "tech",
+        "books"
+       ]
+      },
+      "result": {
+       "values": [
+        "film",
+        "music",
+        "tech"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 3
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "counts",
+        "at": "tech"
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       }
+      }
+     ],
+     "answer": "[\"film\",\"music\",\"tech\"]"
+    }
+   ],
+   "sampleInput": "[\"tech\",\"tech\",\"film\",\"film\",\"music\",\"books\",\"music\"]\n3"
+  },
+  {
+   "label": {
+    "en": "Case 3",
+    "ko": "케이스 3"
+   },
+   "input": "topics = [\"update\",\"news\",\"update\"], k = 1",
+   "expected": "[\"update\"]",
+   "frames": [
+    {
+     "caption": {
+      "en": "Walk the 3 mentions once and count each topic in a hash map; then rank the topics and take the first 1.",
+      "ko": "언급 3개를 한 번 훑으며 주제마다 횟수를 해시 맵에 셉니다. 그다음 순위를 매겨 앞의 1개를 고릅니다."
+     },
+     "views": {
+      "topics": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "update"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "news"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "update"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "counts": {
+       "entries": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "topics[0] is \"update\", not in the map yet: it goes in with count 1.",
+      "ko": "topics[0] = \"update\": 아직 맵에 없는 주제이므로 횟수 1로 들어갑니다."
+     },
+     "views": {
+      "topics": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "update"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "news"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "update"
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         [
+          0,
+          0
+         ]
+        ],
+        "dim": []
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "update",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "good": [
+         "update"
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "topics",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "to": {
+        "view": "counts",
+        "at": "update"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "topics[1] is \"news\", not in the map yet: it goes in with count 1.",
+      "ko": "topics[1] = \"news\": 아직 맵에 없는 주제이므로 횟수 1로 들어갑니다."
+     },
+     "views": {
+      "topics": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "update"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "news"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "update"
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         [
+          1,
+          0
+         ]
+        ],
+        "dim": [
+         [
+          0,
+          0
+         ]
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "update",
+         "value": 1
+        },
+        {
+         "key": "news",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "good": [
+         "news"
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "topics",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "to": {
+        "view": "counts",
+        "at": "news"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "topics[2] is \"update\", already in the map: its count goes 1 → 2.",
+      "ko": "topics[2] = \"update\": 이미 맵에 있는 주제이므로 횟수를 1 늘립니다 (1 → 2)."
+     },
+     "views": {
+      "topics": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "update"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "news"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "update"
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         [
+          2,
+          0
+         ]
+        ],
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          1,
+          0
+         ]
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "update",
+         "value": 2
+        },
+        {
+         "key": "news",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "good": [
+         "update"
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "topics",
+        "at": [
+         2,
+         0
+        ]
+       },
+       "to": {
+        "view": "counts",
+        "at": "update"
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every mention is counted. Ranked by count, most first, and alphabetically on a tie: update (2), news (1). The first 1 is the answer.",
+      "ko": "언급을 모두 세었습니다. 횟수가 많은 순, 같으면 알파벳 순으로 놓으면 update (2), news (1)입니다. 앞의 1이 답입니다."
+     },
+     "views": {
+      "topics": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "update"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "news"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "update"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          2,
+          0
+         ]
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "update",
+         "value": 2
+        },
+        {
+         "key": "news",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "path": [
+         "update"
+        ],
+        "dim": [
+         "news"
+        ]
+       },
+       "ranks": [
+        "update",
+        "news"
+       ]
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "#1 is \"update\" with 2 mentions. The answer is [\"update\"].",
+      "ko": "1위는 \"update\"(언급 2회)입니다. 답은 [\"update\"]입니다."
+     },
+     "views": {
+      "topics": {
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "update"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "news"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "update"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          2,
+          0
+         ]
+        ]
+       }
+      },
+      "counts": {
+       "entries": [
+        {
+         "key": "update",
+         "value": 2
+        },
+        {
+         "key": "news",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "path": [
+         "update"
+        ],
+        "dim": [
+         "news"
+        ]
+       },
+       "ranks": [
+        "update",
+        "news"
+       ]
+      },
+      "result": {
+       "values": [
+        "update"
+       ],
+       "marks": {
+        "path": [
+         0
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "counts",
+        "at": "update"
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       }
+      }
+     ],
+     "answer": "[\"update\"]"
+    }
+   ],
+   "sampleInput": "[\"update\",\"news\",\"update\"]\n1"
+  }
+ ]
+}
