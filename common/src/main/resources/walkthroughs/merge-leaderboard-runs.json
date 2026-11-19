@@ -1,0 +1,1414 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Merge Leaderboard Runs",
+  "ko": "리더보드 기록 합치기"
+ },
+ "approach": {
+  "en": "tail is the last node of the merged list, starting at a dummy node. Each step points tail's arrow at the smaller of the two front times and moves tail there; when one run is used up, tail's arrow takes the rest of the other as it is.",
+  "ko": "tail은 합친 리스트의 마지막 노드이고 dummy 노드에서 시작합니다. 매 단계 tail의 화살표를 두 리스트의 맨 앞 기록 중 작은 쪽으로 돌리고 tail을 그리로 옮깁니다. 한쪽이 바닥나면 tail의 화살표가 다른 쪽의 나머지를 그대로 가리킵니다."
+ },
+ "views": [
+  {
+   "id": "runs",
+   "type": "linkedlist",
+   "title": {
+    "en": "dummy, then runA's nodes, then runB's",
+    "ko": "dummy, runA의 노드, runB의 노드"
+   },
+   "empty": {
+    "en": "no nodes",
+    "ko": "노드 없음"
+   }
+  },
+  {
+   "id": "result",
+   "type": "output",
+   "title": {
+    "en": "answer",
+    "ko": "답"
+   },
+   "empty": {
+    "en": "not read yet",
+    "ko": "아직 없음"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "runA = [2,5,9], runB = [3,4,7]",
+   "expected": "[2,3,4,5,7,9]",
+   "frames": [
+    {
+     "caption": {
+      "en": "runA holds [2,5,9] and runB holds [3,4,7]. tail starts at a new dummy node, whose arrow is null.",
+      "ko": "runA = [2,5,9], runB = [3,4,7]입니다. tail은 화살표가 null인 새 dummy 노드에서 시작합니다."
+     },
+     "views": {
+      "runs": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 9
+        },
+        {
+         "id": 4,
+         "value": 3
+        },
+        {
+         "id": 5,
+         "value": 4
+        },
+        {
+         "id": 6,
+         "value": 7
+        }
+       ],
+       "next": {
+        "0": null,
+        "1": 2,
+        "2": 3,
+        "3": null,
+        "4": 5,
+        "5": 6,
+        "6": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 0,
+        "runA": 1,
+        "runB": 4
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "2 ≤ 3, so 2 from runA is next: tail.next = 2, and runA steps to 5.",
+      "ko": "2 ≤ 3이므로 runA의 2가 다음입니다. tail.next = 2이고, runA는 5로 갑니다."
+     },
+     "views": {
+      "runs": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 9
+        },
+        {
+         "id": 4,
+         "value": 3
+        },
+        {
+         "id": 5,
+         "value": 4
+        },
+        {
+         "id": 6,
+         "value": 7
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": null,
+        "4": 5,
+        "5": 6,
+        "6": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 0,
+        "runA": 2,
+        "runB": 4
+       },
+       "marks": {
+        "lit": [
+         1,
+         4
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "tail = tail.next: tail moves to 2, the end of the merged list so far.",
+      "ko": "tail = tail.next: tail이 지금까지 합친 리스트의 끝인 2로 옮깁니다."
+     },
+     "views": {
+      "runs": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 9
+        },
+        {
+         "id": 4,
+         "value": 3
+        },
+        {
+         "id": 5,
+         "value": 4
+        },
+        {
+         "id": 6,
+         "value": 7
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": null,
+        "4": 5,
+        "5": 6,
+        "6": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 1,
+        "runA": 2,
+        "runB": 4
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "5 > 3, so 3 from runB is next: tail.next = 3, and runB steps to 4.",
+      "ko": "5 > 3이므로 runB의 3이 다음입니다. tail.next = 3이고, runB는 4로 갑니다."
+     },
+     "views": {
+      "runs": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 9
+        },
+        {
+         "id": 4,
+         "value": 3
+        },
+        {
+         "id": 5,
+         "value": 4
+        },
+        {
+         "id": 6,
+         "value": 7
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 4,
+        "2": 3,
+        "3": null,
+        "4": 5,
+        "5": 6,
+        "6": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 1,
+        "runA": 2,
+        "runB": 5
+       },
+       "marks": {
+        "lit": [
+         4,
+         2
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         1
+        ]
+       },
+       "cut": {
+        "1": 2
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "tail = tail.next: tail moves to 3, the end of the merged list so far.",
+      "ko": "tail = tail.next: tail이 지금까지 합친 리스트의 끝인 3으로 옮깁니다."
+     },
+     "views": {
+      "runs": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 9
+        },
+        {
+         "id": 4,
+         "value": 3
+        },
+        {
+         "id": 5,
+         "value": 4
+        },
+        {
+         "id": 6,
+         "value": 7
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 4,
+        "2": 3,
+        "3": null,
+        "4": 5,
+        "5": 6,
+        "6": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 4,
+        "runA": 2,
+        "runB": 5
+       },
+       "marks": {
+        "lit": [
+         4
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "5 > 4, so 4 from runB is next: tail.next = 4, and runB steps to 7.",
+      "ko": "5 > 4이므로 runB의 4가 다음입니다. tail.next = 4이고, runB는 7로 갑니다."
+     },
+     "views": {
+      "runs": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 9
+        },
+        {
+         "id": 4,
+         "value": 3
+        },
+        {
+         "id": 5,
+         "value": 4
+        },
+        {
+         "id": 6,
+         "value": 7
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 4,
+        "2": 3,
+        "3": null,
+        "4": 5,
+        "5": 6,
+        "6": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 4,
+        "runA": 2,
+        "runB": 6
+       },
+       "marks": {
+        "lit": [
+         5,
+         2
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         4
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "tail = tail.next: tail moves to 4, the end of the merged list so far.",
+      "ko": "tail = tail.next: tail이 지금까지 합친 리스트의 끝인 4로 옮깁니다."
+     },
+     "views": {
+      "runs": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 9
+        },
+        {
+         "id": 4,
+         "value": 3
+        },
+        {
+         "id": 5,
+         "value": 4
+        },
+        {
+         "id": 6,
+         "value": 7
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 4,
+        "2": 3,
+        "3": null,
+        "4": 5,
+        "5": 6,
+        "6": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 5,
+        "runA": 2,
+        "runB": 6
+       },
+       "marks": {
+        "lit": [
+         5
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "5 ≤ 7, so 5 from runA is next: tail.next = 5, and runA steps to 9.",
+      "ko": "5 ≤ 7이므로 runA의 5가 다음입니다. tail.next = 5이고, runA는 9로 갑니다."
+     },
+     "views": {
+      "runs": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 9
+        },
+        {
+         "id": 4,
+         "value": 3
+        },
+        {
+         "id": 5,
+         "value": 4
+        },
+        {
+         "id": 6,
+         "value": 7
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 4,
+        "2": 3,
+        "3": null,
+        "4": 5,
+        "5": 2,
+        "6": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 5,
+        "runA": 3,
+        "runB": 6
+       },
+       "marks": {
+        "lit": [
+         2,
+         6
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         5
+        ]
+       },
+       "cut": {
+        "5": 6
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "tail = tail.next: tail moves to 5, the end of the merged list so far.",
+      "ko": "tail = tail.next: tail이 지금까지 합친 리스트의 끝인 5로 옮깁니다."
+     },
+     "views": {
+      "runs": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 9
+        },
+        {
+         "id": 4,
+         "value": 3
+        },
+        {
+         "id": 5,
+         "value": 4
+        },
+        {
+         "id": 6,
+         "value": 7
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 4,
+        "2": 3,
+        "3": null,
+        "4": 5,
+        "5": 2,
+        "6": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 2,
+        "runA": 3,
+        "runB": 6
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "9 > 7, so 7 from runB is next: tail.next = 7, and runB steps off its end to null.",
+      "ko": "9 > 7이므로 runB의 7이 다음입니다. tail.next = 7이고, runB는 끝을 지나 null이 됩니다."
+     },
+     "views": {
+      "runs": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 9
+        },
+        {
+         "id": 4,
+         "value": 3
+        },
+        {
+         "id": 5,
+         "value": 4
+        },
+        {
+         "id": 6,
+         "value": 7
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 4,
+        "2": 6,
+        "3": null,
+        "4": 5,
+        "5": 2,
+        "6": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 2,
+        "runA": 3,
+        "runB": null
+       },
+       "marks": {
+        "lit": [
+         6,
+         3
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         2
+        ]
+       },
+       "cut": {
+        "2": 3
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "tail = tail.next: tail moves to 7, the end of the merged list so far.",
+      "ko": "tail = tail.next: tail이 지금까지 합친 리스트의 끝인 7로 옮깁니다."
+     },
+     "views": {
+      "runs": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 9
+        },
+        {
+         "id": 4,
+         "value": 3
+        },
+        {
+         "id": 5,
+         "value": 4
+        },
+        {
+         "id": 6,
+         "value": 7
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 4,
+        "2": 6,
+        "3": null,
+        "4": 5,
+        "5": 2,
+        "6": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 6,
+        "runA": 3,
+        "runB": null
+       },
+       "marks": {
+        "lit": [
+         6
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "runB is null, so tail.next = runA: 7 now points to 9, and the rest of runA follows as it is.",
+      "ko": "runB가 null이므로 tail.next = runA입니다. 이제 7의 화살표가 9를 가리키고, runA의 나머지가 그대로 이어집니다."
+     },
+     "views": {
+      "runs": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 9
+        },
+        {
+         "id": 4,
+         "value": 3
+        },
+        {
+         "id": 5,
+         "value": 4
+        },
+        {
+         "id": 6,
+         "value": 7
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 4,
+        "2": 6,
+        "3": null,
+        "4": 5,
+        "5": 2,
+        "6": 3
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 6,
+        "runA": 3,
+        "runB": null
+       },
+       "marks": {
+        "lit": [
+         6,
+         3
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         6
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Reading from dummy.next gives the merged list [2,3,4,5,7,9].",
+      "ko": "dummy.next부터 읽으면 합친 리스트 [2,3,4,5,7,9]입니다."
+     },
+     "views": {
+      "runs": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 9
+        },
+        {
+         "id": 4,
+         "value": 3
+        },
+        {
+         "id": 5,
+         "value": 4
+        },
+        {
+         "id": 6,
+         "value": 7
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 4,
+        "2": 6,
+        "3": null,
+        "4": 5,
+        "5": 2,
+        "6": 3
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": null,
+        "runA": null,
+        "runB": null
+       },
+       "marks": {
+        "path": [
+         1,
+         4,
+         5,
+         2,
+         6,
+         3
+        ],
+        "dim": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        2,
+        3,
+        4,
+        5,
+        7,
+        9
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "runs",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       }
+      },
+      {
+       "from": {
+        "view": "runs",
+        "at": 4
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       }
+      },
+      {
+       "from": {
+        "view": "runs",
+        "at": 5
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       }
+      },
+      {
+       "from": {
+        "view": "runs",
+        "at": 2
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       }
+      },
+      {
+       "from": {
+        "view": "runs",
+        "at": 6
+       },
+       "to": {
+        "view": "result",
+        "at": 4
+       }
+      },
+      {
+       "from": {
+        "view": "runs",
+        "at": 3
+       },
+       "to": {
+        "view": "result",
+        "at": 5
+       }
+      }
+     ],
+     "answer": "[2,3,4,5,7,9]"
+    }
+   ],
+   "sampleInput": "[2,5,9]\n[3,4,7]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "runA = [], runB = [2,4,6]",
+   "expected": "[2,4,6]",
+   "frames": [
+    {
+     "caption": {
+      "en": "runA is empty (null) and runB holds [2,4,6]. tail starts at a new dummy node, whose arrow is null.",
+      "ko": "runA는 비어 있고(null) runB = [2,4,6]입니다. tail은 화살표가 null인 새 dummy 노드에서 시작합니다."
+     },
+     "views": {
+      "runs": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 4
+        },
+        {
+         "id": 3,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": null,
+        "1": 2,
+        "2": 3,
+        "3": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 0,
+        "runA": null,
+        "runB": 1
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "runA is null, so tail.next = runB: dummy now points to 2, and the rest of runB follows as it is.",
+      "ko": "runA가 null이므로 tail.next = runB입니다. 이제 dummy의 화살표가 2를 가리키고, runB의 나머지가 그대로 이어집니다."
+     },
+     "views": {
+      "runs": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 4
+        },
+        {
+         "id": 3,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 0,
+        "runA": null,
+        "runB": 1
+       },
+       "marks": {
+        "lit": [
+         0,
+         1
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Reading from dummy.next gives the merged list [2,4,6].",
+      "ko": "dummy.next부터 읽으면 합친 리스트 [2,4,6]입니다."
+     },
+     "views": {
+      "runs": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 4
+        },
+        {
+         "id": 3,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": null,
+        "runA": null,
+        "runB": null
+       },
+       "marks": {
+        "path": [
+         1,
+         2,
+         3
+        ],
+        "dim": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        2,
+        4,
+        6
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "runs",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       }
+      },
+      {
+       "from": {
+        "view": "runs",
+        "at": 2
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       }
+      },
+      {
+       "from": {
+        "view": "runs",
+        "at": 3
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       }
+      }
+     ],
+     "answer": "[2,4,6]"
+    }
+   ],
+   "sampleInput": "[]\n[2,4,6]"
+  },
+  {
+   "label": {
+    "en": "Example 3",
+    "ko": "예시 3"
+   },
+   "input": "runA = [], runB = [3]",
+   "expected": "[3]",
+   "frames": [
+    {
+     "caption": {
+      "en": "runA is empty (null) and runB holds [3]. tail starts at a new dummy node, whose arrow is null.",
+      "ko": "runA는 비어 있고(null) runB = [3]입니다. tail은 화살표가 null인 새 dummy 노드에서 시작합니다."
+     },
+     "views": {
+      "runs": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 3
+        }
+       ],
+       "next": {
+        "0": null,
+        "1": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 0,
+        "runA": null,
+        "runB": 1
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "runA is null, so tail.next = runB: dummy now points to 3, and the rest of runB follows as it is.",
+      "ko": "runA가 null이므로 tail.next = runB입니다. 이제 dummy의 화살표가 3을 가리키고, runB의 나머지가 그대로 이어집니다."
+     },
+     "views": {
+      "runs": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 3
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 0,
+        "runA": null,
+        "runB": 1
+       },
+       "marks": {
+        "lit": [
+         0,
+         1
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Reading from dummy.next gives the merged list [3].",
+      "ko": "dummy.next부터 읽으면 합친 리스트 [3]입니다."
+     },
+     "views": {
+      "runs": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 3
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": null,
+        "runA": null,
+        "runB": null
+       },
+       "marks": {
+        "path": [
+         1
+        ],
+        "dim": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        3
+       ],
+       "marks": {
+        "path": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "runs",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       }
+      }
+     ],
+     "answer": "[3]"
+    }
+   ],
+   "sampleInput": "[]\n[3]"
+  }
+ ]
+}

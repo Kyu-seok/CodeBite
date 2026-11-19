@@ -1,0 +1,3245 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Interleave Clip Chain",
+  "ko": "클립 체인 교차하기"
+ },
+ "approach": {
+  "en": "Three passes over the arrows: slow and fast find the middle, the second half is cut off and reversed so it runs from the last clip back, and then the two halves are woven, one clip from each in turn.",
+  "ko": "화살표를 세 번 다룹니다. slow와 fast로 가운데를 찾고, 뒤쪽 절반을 잘라 마지막 클립부터 거꾸로 이어지게 뒤집은 다음, 두 절반에서 클립을 하나씩 번갈아 엮습니다."
+ },
+ "views": [
+  {
+   "id": "clips",
+   "type": "linkedlist",
+   "title": {
+    "en": "clips from head",
+    "ko": "head부터의 클립"
+   },
+   "empty": {
+    "en": "no clips",
+    "ko": "클립 없음"
+   }
+  },
+  {
+   "id": "result",
+   "type": "output",
+   "title": {
+    "en": "answer",
+    "ko": "답"
+   },
+   "empty": {
+    "en": "not read yet",
+    "ko": "아직 없음"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "head = [10,20,30,40,50,60]",
+   "expected": "[10,60,20,50,30,40]",
+   "frames": [
+    {
+     "caption": {
+      "en": "6 clips from 10 to 60. To find the middle, slow and fast both start at the head 10.",
+      "ko": "클립 6개가 10부터 60까지 이어집니다. 가운데를 찾기 위해 slow와 fast 모두 head 10에서 시작합니다."
+     },
+     "views": {
+      "clips": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 10
+        },
+        {
+         "id": 1,
+         "value": 20
+        },
+        {
+         "id": 2,
+         "value": 30
+        },
+        {
+         "id": 3,
+         "value": 40
+        },
+        {
+         "id": 4,
+         "value": 50
+        },
+        {
+         "id": 5,
+         "value": 60
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": 4,
+        "4": 5,
+        "5": null
+       },
+       "pointers": {
+        "head": 0,
+        "slow": 0,
+        "fast": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "slow steps to 20 and fast jumps two to 30; fast can jump two more.",
+      "ko": "slow는 20으로 한 칸, fast는 30으로 두 칸 갑니다. fast가 두 칸 더 갈 수 있습니다."
+     },
+     "views": {
+      "clips": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 10
+        },
+        {
+         "id": 1,
+         "value": 20
+        },
+        {
+         "id": 2,
+         "value": 30
+        },
+        {
+         "id": 3,
+         "value": 40
+        },
+        {
+         "id": 4,
+         "value": 50
+        },
+        {
+         "id": 5,
+         "value": 60
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": 4,
+        "4": 5,
+        "5": null
+       },
+       "pointers": {
+        "head": 0,
+        "slow": 1,
+        "fast": 2
+       },
+       "marks": {
+        "lit": [
+         1,
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "slow steps to 30 and fast jumps two to 50; fast can't jump two more, so slow (30) ends the first half.",
+      "ko": "slow는 30으로 한 칸, fast는 50으로 두 칸 갑니다. fast가 더는 두 칸을 갈 수 없으므로 slow가 선 30이 앞쪽 절반의 끝입니다."
+     },
+     "views": {
+      "clips": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 10
+        },
+        {
+         "id": 1,
+         "value": 20
+        },
+        {
+         "id": 2,
+         "value": 30
+        },
+        {
+         "id": 3,
+         "value": 40
+        },
+        {
+         "id": 4,
+         "value": 50
+        },
+        {
+         "id": 5,
+         "value": 60
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": 4,
+        "4": 5,
+        "5": null
+       },
+       "pointers": {
+        "head": 0,
+        "slow": 2,
+        "fast": 4
+       },
+       "marks": {
+        "lit": [
+         2,
+         4
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "The second half starts at slow.next: curr = 40, and prev = null.",
+      "ko": "뒤쪽 절반은 slow.next에서 시작합니다. curr = 40, prev = null입니다."
+     },
+     "views": {
+      "clips": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 10
+        },
+        {
+         "id": 1,
+         "value": 20
+        },
+        {
+         "id": 2,
+         "value": 30
+        },
+        {
+         "id": 3,
+         "value": 40
+        },
+        {
+         "id": 4,
+         "value": 50
+        },
+        {
+         "id": 5,
+         "value": 60
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": 4,
+        "4": 5,
+        "5": null
+       },
+       "pointers": {
+        "head": 0,
+        "slow": 2,
+        "curr": 3
+       },
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "slow.next = null: the arrow from 30 to 40 is cut, so the first half ends at 30.",
+      "ko": "slow.next = null: 30의 화살표를 끊어 앞쪽 절반이 30에서 끝납니다."
+     },
+     "views": {
+      "clips": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 10
+        },
+        {
+         "id": 1,
+         "value": 20
+        },
+        {
+         "id": 2,
+         "value": 30
+        },
+        {
+         "id": 3,
+         "value": 40
+        },
+        {
+         "id": 4,
+         "value": 50
+        },
+        {
+         "id": 5,
+         "value": 60
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": null,
+        "3": 4,
+        "4": 5,
+        "5": null
+       },
+       "pointers": {
+        "head": 0,
+        "slow": 2,
+        "curr": 3
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         2
+        ]
+       },
+       "cut": {
+        "2": 3
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Save nxt = 50, then turn 40's arrow to prev, which is null.",
+      "ko": "nxt = 50을 기억해 두고 40의 화살표를 prev(null) 쪽으로 돌립니다."
+     },
+     "views": {
+      "clips": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 10
+        },
+        {
+         "id": 1,
+         "value": 20
+        },
+        {
+         "id": 2,
+         "value": 30
+        },
+        {
+         "id": 3,
+         "value": 40
+        },
+        {
+         "id": 4,
+         "value": 50
+        },
+        {
+         "id": 5,
+         "value": 60
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": null,
+        "3": null,
+        "4": 5,
+        "5": null
+       },
+       "pointers": {
+        "head": 0,
+        "slow": 2,
+        "prev": null,
+        "curr": 3,
+        "nxt": 4
+       },
+       "marks": {
+        "lit": [
+         3
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         3
+        ]
+       },
+       "cut": {
+        "3": 4
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Step forward: prev = 40, curr = 50.",
+      "ko": "한 칸 나아가 prev = 40, curr = 50이 됩니다."
+     },
+     "views": {
+      "clips": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 10
+        },
+        {
+         "id": 1,
+         "value": 20
+        },
+        {
+         "id": 2,
+         "value": 30
+        },
+        {
+         "id": 3,
+         "value": 40
+        },
+        {
+         "id": 4,
+         "value": 50
+        },
+        {
+         "id": 5,
+         "value": 60
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": null,
+        "3": null,
+        "4": 5,
+        "5": null
+       },
+       "pointers": {
+        "head": 0,
+        "slow": 2,
+        "prev": 3,
+        "curr": 4
+       },
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Save nxt = 60, then turn 50's arrow back to prev (40).",
+      "ko": "nxt = 60을 기억해 두고 50의 화살표를 prev(40) 쪽으로 돌립니다."
+     },
+     "views": {
+      "clips": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 10
+        },
+        {
+         "id": 1,
+         "value": 20
+        },
+        {
+         "id": 2,
+         "value": 30
+        },
+        {
+         "id": 3,
+         "value": 40
+        },
+        {
+         "id": 4,
+         "value": 50
+        },
+        {
+         "id": 5,
+         "value": 60
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": null,
+        "3": null,
+        "4": 3,
+        "5": null
+       },
+       "pointers": {
+        "head": 0,
+        "slow": 2,
+        "prev": 3,
+        "curr": 4,
+        "nxt": 5
+       },
+       "marks": {
+        "lit": [
+         4
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         4
+        ]
+       },
+       "cut": {
+        "4": 5
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Step forward: prev = 50, curr = 60.",
+      "ko": "한 칸 나아가 prev = 50, curr = 60이 됩니다."
+     },
+     "views": {
+      "clips": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 10
+        },
+        {
+         "id": 1,
+         "value": 20
+        },
+        {
+         "id": 2,
+         "value": 30
+        },
+        {
+         "id": 3,
+         "value": 40
+        },
+        {
+         "id": 4,
+         "value": 50
+        },
+        {
+         "id": 5,
+         "value": 60
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": null,
+        "3": null,
+        "4": 3,
+        "5": null
+       },
+       "pointers": {
+        "head": 0,
+        "slow": 2,
+        "prev": 4,
+        "curr": 5
+       },
+       "marks": {
+        "lit": [
+         4
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Save nxt = null (the last clip), then turn 60's arrow back to prev (50).",
+      "ko": "nxt = null을 기억해 두고 60의 화살표를 prev(50) 쪽으로 돌립니다."
+     },
+     "views": {
+      "clips": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 10
+        },
+        {
+         "id": 1,
+         "value": 20
+        },
+        {
+         "id": 2,
+         "value": 30
+        },
+        {
+         "id": 3,
+         "value": 40
+        },
+        {
+         "id": 4,
+         "value": 50
+        },
+        {
+         "id": 5,
+         "value": 60
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": null,
+        "3": null,
+        "4": 3,
+        "5": 4
+       },
+       "pointers": {
+        "head": 0,
+        "slow": 2,
+        "prev": 4,
+        "curr": 5,
+        "nxt": null
+       },
+       "marks": {
+        "lit": [
+         5
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         5
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Step forward: prev = 60 and curr is null, so the second half is reversed and starts at 60.",
+      "ko": "한 칸 나아가 prev = 60, curr = null이 되어, 뒤쪽 절반이 60부터 거꾸로 이어집니다."
+     },
+     "views": {
+      "clips": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 10
+        },
+        {
+         "id": 1,
+         "value": 20
+        },
+        {
+         "id": 2,
+         "value": 30
+        },
+        {
+         "id": 3,
+         "value": 40
+        },
+        {
+         "id": 4,
+         "value": 50
+        },
+        {
+         "id": 5,
+         "value": 60
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": null,
+        "3": null,
+        "4": 3,
+        "5": 4
+       },
+       "pointers": {
+        "head": 0,
+        "slow": 2,
+        "prev": 5,
+        "curr": null
+       },
+       "marks": {
+        "lit": [
+         5
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Now weave: first = head (10) runs down the first half and second = prev (60) down the reversed second half.",
+      "ko": "이제 엮습니다. first는 head(10)에서 앞쪽 절반을, second는 prev(60)에서 뒤집힌 뒤쪽 절반을 따라갑니다."
+     },
+     "views": {
+      "clips": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 10
+        },
+        {
+         "id": 1,
+         "value": 20
+        },
+        {
+         "id": 2,
+         "value": 30
+        },
+        {
+         "id": 3,
+         "value": 40
+        },
+        {
+         "id": 4,
+         "value": 50
+        },
+        {
+         "id": 5,
+         "value": 60
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": null,
+        "3": null,
+        "4": 3,
+        "5": 4
+       },
+       "pointers": {
+        "head": 0,
+        "first": 0,
+        "second": 5
+       },
+       "marks": {
+        "lit": [
+         0,
+         5
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Save next1 = 20 and next2 = 50, then first.next = second: 10 now points to 60.",
+      "ko": "next1 = 20, next2 = 50으로 기억해 두고, first.next = second로 10의 화살표가 60을 가리킵니다."
+     },
+     "views": {
+      "clips": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 10
+        },
+        {
+         "id": 1,
+         "value": 20
+        },
+        {
+         "id": 2,
+         "value": 30
+        },
+        {
+         "id": 3,
+         "value": 40
+        },
+        {
+         "id": 4,
+         "value": 50
+        },
+        {
+         "id": 5,
+         "value": 60
+        }
+       ],
+       "next": {
+        "0": 5,
+        "1": 2,
+        "2": null,
+        "3": null,
+        "4": 3,
+        "5": 4
+       },
+       "pointers": {
+        "head": 0,
+        "first": 0,
+        "second": 5,
+        "next1": 1,
+        "next2": 4
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         0
+        ]
+       },
+       "cut": {
+        "0": 1
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "second.next = next1: 60 now points to 20.",
+      "ko": "second.next = next1: 60의 화살표가 20을 가리킵니다."
+     },
+     "views": {
+      "clips": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 10
+        },
+        {
+         "id": 1,
+         "value": 20
+        },
+        {
+         "id": 2,
+         "value": 30
+        },
+        {
+         "id": 3,
+         "value": 40
+        },
+        {
+         "id": 4,
+         "value": 50
+        },
+        {
+         "id": 5,
+         "value": 60
+        }
+       ],
+       "next": {
+        "0": 5,
+        "1": 2,
+        "2": null,
+        "3": null,
+        "4": 3,
+        "5": 1
+       },
+       "pointers": {
+        "head": 0,
+        "first": 0,
+        "second": 5,
+        "next1": 1,
+        "next2": 4
+       },
+       "marks": {
+        "lit": [
+         5
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         5
+        ]
+       },
+       "cut": {
+        "5": 4
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "first = next1 (20), second = next2 (50).",
+      "ko": "first는 next1(20), second는 next2(50) 자리로 옮깁니다."
+     },
+     "views": {
+      "clips": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 10
+        },
+        {
+         "id": 1,
+         "value": 20
+        },
+        {
+         "id": 2,
+         "value": 30
+        },
+        {
+         "id": 3,
+         "value": 40
+        },
+        {
+         "id": 4,
+         "value": 50
+        },
+        {
+         "id": 5,
+         "value": 60
+        }
+       ],
+       "next": {
+        "0": 5,
+        "1": 2,
+        "2": null,
+        "3": null,
+        "4": 3,
+        "5": 1
+       },
+       "pointers": {
+        "head": 0,
+        "first": 1,
+        "second": 4
+       },
+       "marks": {
+        "lit": [
+         1,
+         4
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Save next1 = 30 and next2 = 40, then first.next = second: 20 now points to 50.",
+      "ko": "next1 = 30, next2 = 40으로 기억해 두고, first.next = second로 20의 화살표가 50을 가리킵니다."
+     },
+     "views": {
+      "clips": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 10
+        },
+        {
+         "id": 1,
+         "value": 20
+        },
+        {
+         "id": 2,
+         "value": 30
+        },
+        {
+         "id": 3,
+         "value": 40
+        },
+        {
+         "id": 4,
+         "value": 50
+        },
+        {
+         "id": 5,
+         "value": 60
+        }
+       ],
+       "next": {
+        "0": 5,
+        "1": 4,
+        "2": null,
+        "3": null,
+        "4": 3,
+        "5": 1
+       },
+       "pointers": {
+        "head": 0,
+        "first": 1,
+        "second": 4,
+        "next1": 2,
+        "next2": 3
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         1
+        ]
+       },
+       "cut": {
+        "1": 2
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "second.next = next1: 50 now points to 30.",
+      "ko": "second.next = next1: 50의 화살표가 30을 가리킵니다."
+     },
+     "views": {
+      "clips": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 10
+        },
+        {
+         "id": 1,
+         "value": 20
+        },
+        {
+         "id": 2,
+         "value": 30
+        },
+        {
+         "id": 3,
+         "value": 40
+        },
+        {
+         "id": 4,
+         "value": 50
+        },
+        {
+         "id": 5,
+         "value": 60
+        }
+       ],
+       "next": {
+        "0": 5,
+        "1": 4,
+        "2": null,
+        "3": null,
+        "4": 2,
+        "5": 1
+       },
+       "pointers": {
+        "head": 0,
+        "first": 1,
+        "second": 4,
+        "next1": 2,
+        "next2": 3
+       },
+       "marks": {
+        "lit": [
+         4
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         4
+        ]
+       },
+       "cut": {
+        "4": 3
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "first = next1 (30), second = next2 (40).",
+      "ko": "first는 next1(30), second는 next2(40) 자리로 옮깁니다."
+     },
+     "views": {
+      "clips": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 10
+        },
+        {
+         "id": 1,
+         "value": 20
+        },
+        {
+         "id": 2,
+         "value": 30
+        },
+        {
+         "id": 3,
+         "value": 40
+        },
+        {
+         "id": 4,
+         "value": 50
+        },
+        {
+         "id": 5,
+         "value": 60
+        }
+       ],
+       "next": {
+        "0": 5,
+        "1": 4,
+        "2": null,
+        "3": null,
+        "4": 2,
+        "5": 1
+       },
+       "pointers": {
+        "head": 0,
+        "first": 2,
+        "second": 3
+       },
+       "marks": {
+        "lit": [
+         2,
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Save next1 = null and next2 = null, then first.next = second: 30 now points to 40.",
+      "ko": "next1 = null, next2 = null로 기억해 두고, first.next = second로 30의 화살표가 40을 가리킵니다."
+     },
+     "views": {
+      "clips": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 10
+        },
+        {
+         "id": 1,
+         "value": 20
+        },
+        {
+         "id": 2,
+         "value": 30
+        },
+        {
+         "id": 3,
+         "value": 40
+        },
+        {
+         "id": 4,
+         "value": 50
+        },
+        {
+         "id": 5,
+         "value": 60
+        }
+       ],
+       "next": {
+        "0": 5,
+        "1": 4,
+        "2": 3,
+        "3": null,
+        "4": 2,
+        "5": 1
+       },
+       "pointers": {
+        "head": 0,
+        "first": 2,
+        "second": 3,
+        "next1": null,
+        "next2": null
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "second.next = next1: 40 now points to null.",
+      "ko": "second.next = next1: 40의 화살표가 null을 가리킵니다."
+     },
+     "views": {
+      "clips": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 10
+        },
+        {
+         "id": 1,
+         "value": 20
+        },
+        {
+         "id": 2,
+         "value": 30
+        },
+        {
+         "id": 3,
+         "value": 40
+        },
+        {
+         "id": 4,
+         "value": 50
+        },
+        {
+         "id": 5,
+         "value": 60
+        }
+       ],
+       "next": {
+        "0": 5,
+        "1": 4,
+        "2": 3,
+        "3": null,
+        "4": 2,
+        "5": 1
+       },
+       "pointers": {
+        "head": 0,
+        "first": 2,
+        "second": 3,
+        "next1": null,
+        "next2": null
+       },
+       "marks": {
+        "lit": [
+         3
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "first = next1 (null), second = next2, which is null: the weave is done.",
+      "ko": "first = next1(null), second = next2인데 null이므로 엮기가 끝났습니다."
+     },
+     "views": {
+      "clips": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 10
+        },
+        {
+         "id": 1,
+         "value": 20
+        },
+        {
+         "id": 2,
+         "value": 30
+        },
+        {
+         "id": 3,
+         "value": 40
+        },
+        {
+         "id": 4,
+         "value": 50
+        },
+        {
+         "id": 5,
+         "value": 60
+        }
+       ],
+       "next": {
+        "0": 5,
+        "1": 4,
+        "2": 3,
+        "3": null,
+        "4": 2,
+        "5": 1
+       },
+       "pointers": {
+        "head": 0,
+        "first": null,
+        "second": null
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "The method returns, and reading from head gives [10,60,20,50,30,40].",
+      "ko": "메서드가 끝나고, head부터 읽으면 [10,60,20,50,30,40]입니다."
+     },
+     "views": {
+      "clips": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 10
+        },
+        {
+         "id": 1,
+         "value": 20
+        },
+        {
+         "id": 2,
+         "value": 30
+        },
+        {
+         "id": 3,
+         "value": 40
+        },
+        {
+         "id": 4,
+         "value": 50
+        },
+        {
+         "id": 5,
+         "value": 60
+        }
+       ],
+       "next": {
+        "0": 5,
+        "1": 4,
+        "2": 3,
+        "3": null,
+        "4": 2,
+        "5": 1
+       },
+       "pointers": {
+        "head": 0
+       },
+       "marks": {
+        "path": [
+         0,
+         5,
+         1,
+         4,
+         2,
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        10,
+        60,
+        20,
+        50,
+        30,
+        40
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "clips",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       }
+      },
+      {
+       "from": {
+        "view": "clips",
+        "at": 5
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       }
+      },
+      {
+       "from": {
+        "view": "clips",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       }
+      },
+      {
+       "from": {
+        "view": "clips",
+        "at": 4
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       }
+      },
+      {
+       "from": {
+        "view": "clips",
+        "at": 2
+       },
+       "to": {
+        "view": "result",
+        "at": 4
+       }
+      },
+      {
+       "from": {
+        "view": "clips",
+        "at": 3
+       },
+       "to": {
+        "view": "result",
+        "at": 5
+       }
+      }
+     ],
+     "answer": "[10,60,20,50,30,40]"
+    }
+   ],
+   "sampleInput": "[10,20,30,40,50,60]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "head = [1,3,5,7,9,11,13]",
+   "expected": "[1,13,3,11,5,9,7]",
+   "frames": [
+    {
+     "caption": {
+      "en": "7 clips from 1 to 13. To find the middle, slow and fast both start at the head 1.",
+      "ko": "클립 7개가 1부터 13까지 이어집니다. 가운데를 찾기 위해 slow와 fast 모두 head 1에서 시작합니다."
+     },
+     "views": {
+      "clips": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 1
+        },
+        {
+         "id": 1,
+         "value": 3
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 7
+        },
+        {
+         "id": 4,
+         "value": 9
+        },
+        {
+         "id": 5,
+         "value": 11
+        },
+        {
+         "id": 6,
+         "value": 13
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": 4,
+        "4": 5,
+        "5": 6,
+        "6": null
+       },
+       "pointers": {
+        "head": 0,
+        "slow": 0,
+        "fast": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "slow steps to 3 and fast jumps two to 5; fast can jump two more.",
+      "ko": "slow는 3으로 한 칸, fast는 5로 두 칸 갑니다. fast가 두 칸 더 갈 수 있습니다."
+     },
+     "views": {
+      "clips": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 1
+        },
+        {
+         "id": 1,
+         "value": 3
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 7
+        },
+        {
+         "id": 4,
+         "value": 9
+        },
+        {
+         "id": 5,
+         "value": 11
+        },
+        {
+         "id": 6,
+         "value": 13
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": 4,
+        "4": 5,
+        "5": 6,
+        "6": null
+       },
+       "pointers": {
+        "head": 0,
+        "slow": 1,
+        "fast": 2
+       },
+       "marks": {
+        "lit": [
+         1,
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "slow steps to 5 and fast jumps two to 9; fast can jump two more.",
+      "ko": "slow는 5로 한 칸, fast는 9로 두 칸 갑니다. fast가 두 칸 더 갈 수 있습니다."
+     },
+     "views": {
+      "clips": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 1
+        },
+        {
+         "id": 1,
+         "value": 3
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 7
+        },
+        {
+         "id": 4,
+         "value": 9
+        },
+        {
+         "id": 5,
+         "value": 11
+        },
+        {
+         "id": 6,
+         "value": 13
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": 4,
+        "4": 5,
+        "5": 6,
+        "6": null
+       },
+       "pointers": {
+        "head": 0,
+        "slow": 2,
+        "fast": 4
+       },
+       "marks": {
+        "lit": [
+         2,
+         4
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "slow steps to 7 and fast jumps two to 13; fast can't jump two more, so slow (7) ends the first half.",
+      "ko": "slow는 7로 한 칸, fast는 13으로 두 칸 갑니다. fast가 더는 두 칸을 갈 수 없으므로 slow가 선 7이 앞쪽 절반의 끝입니다."
+     },
+     "views": {
+      "clips": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 1
+        },
+        {
+         "id": 1,
+         "value": 3
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 7
+        },
+        {
+         "id": 4,
+         "value": 9
+        },
+        {
+         "id": 5,
+         "value": 11
+        },
+        {
+         "id": 6,
+         "value": 13
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": 4,
+        "4": 5,
+        "5": 6,
+        "6": null
+       },
+       "pointers": {
+        "head": 0,
+        "slow": 3,
+        "fast": 6
+       },
+       "marks": {
+        "lit": [
+         3,
+         6
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "The second half starts at slow.next: curr = 9, and prev = null.",
+      "ko": "뒤쪽 절반은 slow.next에서 시작합니다. curr = 9, prev = null입니다."
+     },
+     "views": {
+      "clips": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 1
+        },
+        {
+         "id": 1,
+         "value": 3
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 7
+        },
+        {
+         "id": 4,
+         "value": 9
+        },
+        {
+         "id": 5,
+         "value": 11
+        },
+        {
+         "id": 6,
+         "value": 13
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": 4,
+        "4": 5,
+        "5": 6,
+        "6": null
+       },
+       "pointers": {
+        "head": 0,
+        "slow": 3,
+        "curr": 4
+       },
+       "marks": {
+        "lit": [
+         4
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "slow.next = null: the arrow from 7 to 9 is cut, so the first half ends at 7.",
+      "ko": "slow.next = null: 7의 화살표를 끊어 앞쪽 절반이 7에서 끝납니다."
+     },
+     "views": {
+      "clips": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 1
+        },
+        {
+         "id": 1,
+         "value": 3
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 7
+        },
+        {
+         "id": 4,
+         "value": 9
+        },
+        {
+         "id": 5,
+         "value": 11
+        },
+        {
+         "id": 6,
+         "value": 13
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": null,
+        "4": 5,
+        "5": 6,
+        "6": null
+       },
+       "pointers": {
+        "head": 0,
+        "slow": 3,
+        "curr": 4
+       },
+       "marks": {
+        "lit": [
+         3
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         3
+        ]
+       },
+       "cut": {
+        "3": 4
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Save nxt = 11, then turn 9's arrow to prev, which is null.",
+      "ko": "nxt = 11을 기억해 두고 9의 화살표를 prev(null) 쪽으로 돌립니다."
+     },
+     "views": {
+      "clips": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 1
+        },
+        {
+         "id": 1,
+         "value": 3
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 7
+        },
+        {
+         "id": 4,
+         "value": 9
+        },
+        {
+         "id": 5,
+         "value": 11
+        },
+        {
+         "id": 6,
+         "value": 13
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": null,
+        "4": null,
+        "5": 6,
+        "6": null
+       },
+       "pointers": {
+        "head": 0,
+        "slow": 3,
+        "prev": null,
+        "curr": 4,
+        "nxt": 5
+       },
+       "marks": {
+        "lit": [
+         4
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         4
+        ]
+       },
+       "cut": {
+        "4": 5
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Step forward: prev = 9, curr = 11.",
+      "ko": "한 칸 나아가 prev = 9, curr = 11이 됩니다."
+     },
+     "views": {
+      "clips": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 1
+        },
+        {
+         "id": 1,
+         "value": 3
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 7
+        },
+        {
+         "id": 4,
+         "value": 9
+        },
+        {
+         "id": 5,
+         "value": 11
+        },
+        {
+         "id": 6,
+         "value": 13
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": null,
+        "4": null,
+        "5": 6,
+        "6": null
+       },
+       "pointers": {
+        "head": 0,
+        "slow": 3,
+        "prev": 4,
+        "curr": 5
+       },
+       "marks": {
+        "lit": [
+         4
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Save nxt = 13, then turn 11's arrow back to prev (9).",
+      "ko": "nxt = 13을 기억해 두고 11의 화살표를 prev(9) 쪽으로 돌립니다."
+     },
+     "views": {
+      "clips": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 1
+        },
+        {
+         "id": 1,
+         "value": 3
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 7
+        },
+        {
+         "id": 4,
+         "value": 9
+        },
+        {
+         "id": 5,
+         "value": 11
+        },
+        {
+         "id": 6,
+         "value": 13
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": null,
+        "4": null,
+        "5": 4,
+        "6": null
+       },
+       "pointers": {
+        "head": 0,
+        "slow": 3,
+        "prev": 4,
+        "curr": 5,
+        "nxt": 6
+       },
+       "marks": {
+        "lit": [
+         5
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         5
+        ]
+       },
+       "cut": {
+        "5": 6
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Step forward: prev = 11, curr = 13.",
+      "ko": "한 칸 나아가 prev = 11, curr = 13이 됩니다."
+     },
+     "views": {
+      "clips": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 1
+        },
+        {
+         "id": 1,
+         "value": 3
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 7
+        },
+        {
+         "id": 4,
+         "value": 9
+        },
+        {
+         "id": 5,
+         "value": 11
+        },
+        {
+         "id": 6,
+         "value": 13
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": null,
+        "4": null,
+        "5": 4,
+        "6": null
+       },
+       "pointers": {
+        "head": 0,
+        "slow": 3,
+        "prev": 5,
+        "curr": 6
+       },
+       "marks": {
+        "lit": [
+         5
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Save nxt = null (the last clip), then turn 13's arrow back to prev (11).",
+      "ko": "nxt = null을 기억해 두고 13의 화살표를 prev(11) 쪽으로 돌립니다."
+     },
+     "views": {
+      "clips": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 1
+        },
+        {
+         "id": 1,
+         "value": 3
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 7
+        },
+        {
+         "id": 4,
+         "value": 9
+        },
+        {
+         "id": 5,
+         "value": 11
+        },
+        {
+         "id": 6,
+         "value": 13
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": null,
+        "4": null,
+        "5": 4,
+        "6": 5
+       },
+       "pointers": {
+        "head": 0,
+        "slow": 3,
+        "prev": 5,
+        "curr": 6,
+        "nxt": null
+       },
+       "marks": {
+        "lit": [
+         6
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         6
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Step forward: prev = 13 and curr is null, so the second half is reversed and starts at 13.",
+      "ko": "한 칸 나아가 prev = 13, curr = null이 되어, 뒤쪽 절반이 13부터 거꾸로 이어집니다."
+     },
+     "views": {
+      "clips": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 1
+        },
+        {
+         "id": 1,
+         "value": 3
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 7
+        },
+        {
+         "id": 4,
+         "value": 9
+        },
+        {
+         "id": 5,
+         "value": 11
+        },
+        {
+         "id": 6,
+         "value": 13
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": null,
+        "4": null,
+        "5": 4,
+        "6": 5
+       },
+       "pointers": {
+        "head": 0,
+        "slow": 3,
+        "prev": 6,
+        "curr": null
+       },
+       "marks": {
+        "lit": [
+         6
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Now weave: first = head (1) runs down the first half and second = prev (13) down the reversed second half.",
+      "ko": "이제 엮습니다. first는 head(1)에서 앞쪽 절반을, second는 prev(13)에서 뒤집힌 뒤쪽 절반을 따라갑니다."
+     },
+     "views": {
+      "clips": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 1
+        },
+        {
+         "id": 1,
+         "value": 3
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 7
+        },
+        {
+         "id": 4,
+         "value": 9
+        },
+        {
+         "id": 5,
+         "value": 11
+        },
+        {
+         "id": 6,
+         "value": 13
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": null,
+        "4": null,
+        "5": 4,
+        "6": 5
+       },
+       "pointers": {
+        "head": 0,
+        "first": 0,
+        "second": 6
+       },
+       "marks": {
+        "lit": [
+         0,
+         6
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Save next1 = 3 and next2 = 11, then first.next = second: 1 now points to 13.",
+      "ko": "next1 = 3, next2 = 11로 기억해 두고, first.next = second로 1의 화살표가 13을 가리킵니다."
+     },
+     "views": {
+      "clips": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 1
+        },
+        {
+         "id": 1,
+         "value": 3
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 7
+        },
+        {
+         "id": 4,
+         "value": 9
+        },
+        {
+         "id": 5,
+         "value": 11
+        },
+        {
+         "id": 6,
+         "value": 13
+        }
+       ],
+       "next": {
+        "0": 6,
+        "1": 2,
+        "2": 3,
+        "3": null,
+        "4": null,
+        "5": 4,
+        "6": 5
+       },
+       "pointers": {
+        "head": 0,
+        "first": 0,
+        "second": 6,
+        "next1": 1,
+        "next2": 5
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         0
+        ]
+       },
+       "cut": {
+        "0": 1
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "second.next = next1: 13 now points to 3.",
+      "ko": "second.next = next1: 13의 화살표가 3을 가리킵니다."
+     },
+     "views": {
+      "clips": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 1
+        },
+        {
+         "id": 1,
+         "value": 3
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 7
+        },
+        {
+         "id": 4,
+         "value": 9
+        },
+        {
+         "id": 5,
+         "value": 11
+        },
+        {
+         "id": 6,
+         "value": 13
+        }
+       ],
+       "next": {
+        "0": 6,
+        "1": 2,
+        "2": 3,
+        "3": null,
+        "4": null,
+        "5": 4,
+        "6": 1
+       },
+       "pointers": {
+        "head": 0,
+        "first": 0,
+        "second": 6,
+        "next1": 1,
+        "next2": 5
+       },
+       "marks": {
+        "lit": [
+         6
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         6
+        ]
+       },
+       "cut": {
+        "6": 5
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "first = next1 (3), second = next2 (11).",
+      "ko": "first는 next1(3), second는 next2(11) 자리로 옮깁니다."
+     },
+     "views": {
+      "clips": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 1
+        },
+        {
+         "id": 1,
+         "value": 3
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 7
+        },
+        {
+         "id": 4,
+         "value": 9
+        },
+        {
+         "id": 5,
+         "value": 11
+        },
+        {
+         "id": 6,
+         "value": 13
+        }
+       ],
+       "next": {
+        "0": 6,
+        "1": 2,
+        "2": 3,
+        "3": null,
+        "4": null,
+        "5": 4,
+        "6": 1
+       },
+       "pointers": {
+        "head": 0,
+        "first": 1,
+        "second": 5
+       },
+       "marks": {
+        "lit": [
+         1,
+         5
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Save next1 = 5 and next2 = 9, then first.next = second: 3 now points to 11.",
+      "ko": "next1 = 5, next2 = 9로 기억해 두고, first.next = second로 3의 화살표가 11을 가리킵니다."
+     },
+     "views": {
+      "clips": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 1
+        },
+        {
+         "id": 1,
+         "value": 3
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 7
+        },
+        {
+         "id": 4,
+         "value": 9
+        },
+        {
+         "id": 5,
+         "value": 11
+        },
+        {
+         "id": 6,
+         "value": 13
+        }
+       ],
+       "next": {
+        "0": 6,
+        "1": 5,
+        "2": 3,
+        "3": null,
+        "4": null,
+        "5": 4,
+        "6": 1
+       },
+       "pointers": {
+        "head": 0,
+        "first": 1,
+        "second": 5,
+        "next1": 2,
+        "next2": 4
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         1
+        ]
+       },
+       "cut": {
+        "1": 2
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "second.next = next1: 11 now points to 5.",
+      "ko": "second.next = next1: 11의 화살표가 5를 가리킵니다."
+     },
+     "views": {
+      "clips": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 1
+        },
+        {
+         "id": 1,
+         "value": 3
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 7
+        },
+        {
+         "id": 4,
+         "value": 9
+        },
+        {
+         "id": 5,
+         "value": 11
+        },
+        {
+         "id": 6,
+         "value": 13
+        }
+       ],
+       "next": {
+        "0": 6,
+        "1": 5,
+        "2": 3,
+        "3": null,
+        "4": null,
+        "5": 2,
+        "6": 1
+       },
+       "pointers": {
+        "head": 0,
+        "first": 1,
+        "second": 5,
+        "next1": 2,
+        "next2": 4
+       },
+       "marks": {
+        "lit": [
+         5
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         5
+        ]
+       },
+       "cut": {
+        "5": 4
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "first = next1 (5), second = next2 (9).",
+      "ko": "first는 next1(5), second는 next2(9) 자리로 옮깁니다."
+     },
+     "views": {
+      "clips": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 1
+        },
+        {
+         "id": 1,
+         "value": 3
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 7
+        },
+        {
+         "id": 4,
+         "value": 9
+        },
+        {
+         "id": 5,
+         "value": 11
+        },
+        {
+         "id": 6,
+         "value": 13
+        }
+       ],
+       "next": {
+        "0": 6,
+        "1": 5,
+        "2": 3,
+        "3": null,
+        "4": null,
+        "5": 2,
+        "6": 1
+       },
+       "pointers": {
+        "head": 0,
+        "first": 2,
+        "second": 4
+       },
+       "marks": {
+        "lit": [
+         2,
+         4
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Save next1 = 7 and next2 = null, then first.next = second: 5 now points to 9.",
+      "ko": "next1 = 7, next2 = null로 기억해 두고, first.next = second로 5의 화살표가 9를 가리킵니다."
+     },
+     "views": {
+      "clips": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 1
+        },
+        {
+         "id": 1,
+         "value": 3
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 7
+        },
+        {
+         "id": 4,
+         "value": 9
+        },
+        {
+         "id": 5,
+         "value": 11
+        },
+        {
+         "id": 6,
+         "value": 13
+        }
+       ],
+       "next": {
+        "0": 6,
+        "1": 5,
+        "2": 4,
+        "3": null,
+        "4": null,
+        "5": 2,
+        "6": 1
+       },
+       "pointers": {
+        "head": 0,
+        "first": 2,
+        "second": 4,
+        "next1": 3,
+        "next2": null
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         2
+        ]
+       },
+       "cut": {
+        "2": 3
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "second.next = next1: 9 now points to 7, so the middle clip comes last.",
+      "ko": "second.next = next1: 9의 화살표가 7을 가리킵니다."
+     },
+     "views": {
+      "clips": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 1
+        },
+        {
+         "id": 1,
+         "value": 3
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 7
+        },
+        {
+         "id": 4,
+         "value": 9
+        },
+        {
+         "id": 5,
+         "value": 11
+        },
+        {
+         "id": 6,
+         "value": 13
+        }
+       ],
+       "next": {
+        "0": 6,
+        "1": 5,
+        "2": 4,
+        "3": null,
+        "4": 3,
+        "5": 2,
+        "6": 1
+       },
+       "pointers": {
+        "head": 0,
+        "first": 2,
+        "second": 4,
+        "next1": 3,
+        "next2": null
+       },
+       "marks": {
+        "lit": [
+         4
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         4
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "first = next1 (7), second = next2, which is null: the weave is done.",
+      "ko": "first = next1(7), second = next2인데 null이므로 엮기가 끝났습니다."
+     },
+     "views": {
+      "clips": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 1
+        },
+        {
+         "id": 1,
+         "value": 3
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 7
+        },
+        {
+         "id": 4,
+         "value": 9
+        },
+        {
+         "id": 5,
+         "value": 11
+        },
+        {
+         "id": 6,
+         "value": 13
+        }
+       ],
+       "next": {
+        "0": 6,
+        "1": 5,
+        "2": 4,
+        "3": null,
+        "4": 3,
+        "5": 2,
+        "6": 1
+       },
+       "pointers": {
+        "head": 0,
+        "first": 3,
+        "second": null
+       },
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "The method returns, and reading from head gives [1,13,3,11,5,9,7].",
+      "ko": "메서드가 끝나고, head부터 읽으면 [1,13,3,11,5,9,7]입니다."
+     },
+     "views": {
+      "clips": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 1
+        },
+        {
+         "id": 1,
+         "value": 3
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 7
+        },
+        {
+         "id": 4,
+         "value": 9
+        },
+        {
+         "id": 5,
+         "value": 11
+        },
+        {
+         "id": 6,
+         "value": 13
+        }
+       ],
+       "next": {
+        "0": 6,
+        "1": 5,
+        "2": 4,
+        "3": null,
+        "4": 3,
+        "5": 2,
+        "6": 1
+       },
+       "pointers": {
+        "head": 0
+       },
+       "marks": {
+        "path": [
+         0,
+         6,
+         1,
+         5,
+         2,
+         4,
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        1,
+        13,
+        3,
+        11,
+        5,
+        9,
+        7
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5,
+         6
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "clips",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       }
+      },
+      {
+       "from": {
+        "view": "clips",
+        "at": 6
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       }
+      },
+      {
+       "from": {
+        "view": "clips",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       }
+      },
+      {
+       "from": {
+        "view": "clips",
+        "at": 5
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       }
+      },
+      {
+       "from": {
+        "view": "clips",
+        "at": 2
+       },
+       "to": {
+        "view": "result",
+        "at": 4
+       }
+      },
+      {
+       "from": {
+        "view": "clips",
+        "at": 4
+       },
+       "to": {
+        "view": "result",
+        "at": 5
+       }
+      },
+      {
+       "from": {
+        "view": "clips",
+        "at": 3
+       },
+       "to": {
+        "view": "result",
+        "at": 6
+       }
+      }
+     ],
+     "answer": "[1,13,3,11,5,9,7]"
+    }
+   ],
+   "sampleInput": "[1,3,5,7,9,11,13]"
+  }
+ ]
+}

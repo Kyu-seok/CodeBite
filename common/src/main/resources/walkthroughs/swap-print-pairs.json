@@ -1,0 +1,1640 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Swap Print Pairs",
+  "ko": "인쇄 작업 짝 바꾸기"
+ },
+ "approach": {
+  "en": "A dummy node stands before the head, so every pair has a node before it. For each pair, three arrows change: first skips past second, second points back to first, and the node before points to second.",
+  "ko": "head 앞에 dummy 노드를 두어 모든 짝 앞에 노드가 하나씩 있게 합니다. 짝마다 화살표 세 개가 바뀝니다. first는 second를 건너뛰고, second는 first를 가리키고, 짝 앞의 노드는 second를 가리킵니다."
+ },
+ "views": [
+  {
+   "id": "jobs",
+   "type": "linkedlist",
+   "title": {
+    "en": "print queue from dummy",
+    "ko": "dummy부터의 인쇄 큐"
+   },
+   "empty": {
+    "en": "empty queue",
+    "ko": "빈 큐"
+   }
+  },
+  {
+   "id": "result",
+   "type": "output",
+   "title": {
+    "en": "answer",
+    "ko": "답"
+   },
+   "empty": {
+    "en": "not read yet",
+    "ko": "아직 없음"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "head = [11,22,33,44]",
+   "expected": "[22,11,44,33]",
+   "frames": [
+    {
+     "caption": {
+      "en": "4 jobs from 11 to 44. dummy goes before the head 11, and before starts at dummy.",
+      "ko": "작업 4개가 11부터 44까지 이어집니다. head 11 앞에 dummy를 두고, before는 dummy에서 시작합니다."
+     },
+     "views": {
+      "jobs": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 11
+        },
+        {
+         "id": 2,
+         "value": 22
+        },
+        {
+         "id": 3,
+         "value": 33
+        },
+        {
+         "id": 4,
+         "value": 44
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": 4,
+        "4": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "before": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "before.next and the node after it both exist: the next pair is first = 11, second = 22.",
+      "ko": "before.next와 그다음 노드가 모두 있으므로 다음 짝은 first = 11, second = 22입니다."
+     },
+     "views": {
+      "jobs": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 11
+        },
+        {
+         "id": 2,
+         "value": 22
+        },
+        {
+         "id": 3,
+         "value": 33
+        },
+        {
+         "id": 4,
+         "value": 44
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": 4,
+        "4": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "before": 0,
+        "first": 1,
+        "second": 2
+       },
+       "marks": {
+        "lit": [
+         1,
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "first.next = second.next: 11 now skips 22 and points to 33.",
+      "ko": "first.next = second.next: 11은 22를 건너뛰어 33을 가리킵니다."
+     },
+     "views": {
+      "jobs": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 11
+        },
+        {
+         "id": 2,
+         "value": 22
+        },
+        {
+         "id": 3,
+         "value": 33
+        },
+        {
+         "id": 4,
+         "value": 44
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 3,
+        "2": 3,
+        "3": 4,
+        "4": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "before": 0,
+        "first": 1,
+        "second": 2
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         1
+        ]
+       },
+       "cut": {
+        "1": 2
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "second.next = first: 22 now points back to 11.",
+      "ko": "second.next = first: 22는 이제 11을 가리킵니다."
+     },
+     "views": {
+      "jobs": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 11
+        },
+        {
+         "id": 2,
+         "value": 22
+        },
+        {
+         "id": 3,
+         "value": 33
+        },
+        {
+         "id": 4,
+         "value": 44
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 3,
+        "2": 1,
+        "3": 4,
+        "4": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "before": 0,
+        "first": 1,
+        "second": 2
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         2
+        ]
+       },
+       "cut": {
+        "2": 3
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "before.next = second: dummy now points to 22, so the pair reads 22, 11.",
+      "ko": "before.next = second: dummy의 화살표가 22를 가리키므로 이 짝은 22, 11 순서가 됩니다."
+     },
+     "views": {
+      "jobs": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 11
+        },
+        {
+         "id": 2,
+         "value": 22
+        },
+        {
+         "id": 3,
+         "value": 33
+        },
+        {
+         "id": 4,
+         "value": 44
+        }
+       ],
+       "next": {
+        "0": 2,
+        "1": 3,
+        "2": 1,
+        "3": 4,
+        "4": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "before": 0,
+        "first": 1,
+        "second": 2
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         0
+        ]
+       },
+       "cut": {
+        "0": 1
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "before = first: before steps to 11, now the second of its pair; the next pair starts at 33.",
+      "ko": "before = first: before가 이제 짝의 뒤쪽인 11로 옮깁니다. 다음 짝은 33부터 시작합니다."
+     },
+     "views": {
+      "jobs": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 11
+        },
+        {
+         "id": 2,
+         "value": 22
+        },
+        {
+         "id": 3,
+         "value": 33
+        },
+        {
+         "id": 4,
+         "value": 44
+        }
+       ],
+       "next": {
+        "0": 2,
+        "1": 3,
+        "2": 1,
+        "3": 4,
+        "4": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "before": 1,
+        "first": 1,
+        "second": 2
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "before.next and the node after it both exist: the next pair is first = 33, second = 44.",
+      "ko": "before.next와 그다음 노드가 모두 있으므로 다음 짝은 first = 33, second = 44입니다."
+     },
+     "views": {
+      "jobs": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 11
+        },
+        {
+         "id": 2,
+         "value": 22
+        },
+        {
+         "id": 3,
+         "value": 33
+        },
+        {
+         "id": 4,
+         "value": 44
+        }
+       ],
+       "next": {
+        "0": 2,
+        "1": 3,
+        "2": 1,
+        "3": 4,
+        "4": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "before": 1,
+        "first": 3,
+        "second": 4
+       },
+       "marks": {
+        "lit": [
+         3,
+         4
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "first.next = second.next: 33 now skips 44 and points to null, the end of the queue.",
+      "ko": "first.next = second.next: 33은 44를 건너뛰어 큐의 끝인 null을 가리킵니다."
+     },
+     "views": {
+      "jobs": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 11
+        },
+        {
+         "id": 2,
+         "value": 22
+        },
+        {
+         "id": 3,
+         "value": 33
+        },
+        {
+         "id": 4,
+         "value": 44
+        }
+       ],
+       "next": {
+        "0": 2,
+        "1": 3,
+        "2": 1,
+        "3": null,
+        "4": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "before": 1,
+        "first": 3,
+        "second": 4
+       },
+       "marks": {
+        "lit": [
+         3
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         3
+        ]
+       },
+       "cut": {
+        "3": 4
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "second.next = first: 44 now points back to 33.",
+      "ko": "second.next = first: 44는 이제 33을 가리킵니다."
+     },
+     "views": {
+      "jobs": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 11
+        },
+        {
+         "id": 2,
+         "value": 22
+        },
+        {
+         "id": 3,
+         "value": 33
+        },
+        {
+         "id": 4,
+         "value": 44
+        }
+       ],
+       "next": {
+        "0": 2,
+        "1": 3,
+        "2": 1,
+        "3": null,
+        "4": 3
+       },
+       "pointers": {
+        "dummy": 0,
+        "before": 1,
+        "first": 3,
+        "second": 4
+       },
+       "marks": {
+        "lit": [
+         4
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         4
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "before.next = second: 11 now points to 44, so the pair reads 44, 33.",
+      "ko": "before.next = second: 11의 화살표가 44를 가리키므로 이 짝은 44, 33 순서가 됩니다."
+     },
+     "views": {
+      "jobs": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 11
+        },
+        {
+         "id": 2,
+         "value": 22
+        },
+        {
+         "id": 3,
+         "value": 33
+        },
+        {
+         "id": 4,
+         "value": 44
+        }
+       ],
+       "next": {
+        "0": 2,
+        "1": 4,
+        "2": 1,
+        "3": null,
+        "4": 3
+       },
+       "pointers": {
+        "dummy": 0,
+        "before": 1,
+        "first": 3,
+        "second": 4
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         1
+        ]
+       },
+       "cut": {
+        "1": 3
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "before = first: before steps to 33, now the second of its pair; nothing is left after it.",
+      "ko": "before = first: before가 이제 짝의 뒤쪽인 33으로 옮깁니다. 그 뒤에는 남은 작업이 없습니다."
+     },
+     "views": {
+      "jobs": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 11
+        },
+        {
+         "id": 2,
+         "value": 22
+        },
+        {
+         "id": 3,
+         "value": 33
+        },
+        {
+         "id": 4,
+         "value": 44
+        }
+       ],
+       "next": {
+        "0": 2,
+        "1": 4,
+        "2": 1,
+        "3": null,
+        "4": 3
+       },
+       "pointers": {
+        "dummy": 0,
+        "before": 3,
+        "first": 3,
+        "second": 4
+       },
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "No full pair is left, so the loop ends. Reading from dummy.next gives [22,11,44,33].",
+      "ko": "온전한 짝이 더 없으므로 반복이 끝납니다. dummy.next부터 읽으면 [22,11,44,33]입니다."
+     },
+     "views": {
+      "jobs": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 11
+        },
+        {
+         "id": 2,
+         "value": 22
+        },
+        {
+         "id": 3,
+         "value": 33
+        },
+        {
+         "id": 4,
+         "value": 44
+        }
+       ],
+       "next": {
+        "0": 2,
+        "1": 4,
+        "2": 1,
+        "3": null,
+        "4": 3
+       },
+       "pointers": {
+        "dummy": 0
+       },
+       "marks": {
+        "path": [
+         2,
+         1,
+         4,
+         3
+        ],
+        "dim": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        22,
+        11,
+        44,
+        33
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "jobs",
+        "at": 2
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       }
+      },
+      {
+       "from": {
+        "view": "jobs",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       }
+      },
+      {
+       "from": {
+        "view": "jobs",
+        "at": 4
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       }
+      },
+      {
+       "from": {
+        "view": "jobs",
+        "at": 3
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       }
+      }
+     ],
+     "answer": "[22,11,44,33]"
+    }
+   ],
+   "sampleInput": "[11,22,33,44]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "head = [8,3]",
+   "expected": "[3,8]",
+   "frames": [
+    {
+     "caption": {
+      "en": "2 jobs from 8 to 3. dummy goes before the head 8, and before starts at dummy.",
+      "ko": "작업 2개가 8부터 3까지 이어집니다. head 8 앞에 dummy를 두고, before는 dummy에서 시작합니다."
+     },
+     "views": {
+      "jobs": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 8
+        },
+        {
+         "id": 2,
+         "value": 3
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "before": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "before.next and the node after it both exist: the next pair is first = 8, second = 3.",
+      "ko": "before.next와 그다음 노드가 모두 있으므로 다음 짝은 first = 8, second = 3입니다."
+     },
+     "views": {
+      "jobs": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 8
+        },
+        {
+         "id": 2,
+         "value": 3
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "before": 0,
+        "first": 1,
+        "second": 2
+       },
+       "marks": {
+        "lit": [
+         1,
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "first.next = second.next: 8 now skips 3 and points to null, the end of the queue.",
+      "ko": "first.next = second.next: 8은 3을 건너뛰어 큐의 끝인 null을 가리킵니다."
+     },
+     "views": {
+      "jobs": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 8
+        },
+        {
+         "id": 2,
+         "value": 3
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": null,
+        "2": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "before": 0,
+        "first": 1,
+        "second": 2
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         1
+        ]
+       },
+       "cut": {
+        "1": 2
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "second.next = first: 3 now points back to 8.",
+      "ko": "second.next = first: 3은 이제 8을 가리킵니다."
+     },
+     "views": {
+      "jobs": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 8
+        },
+        {
+         "id": 2,
+         "value": 3
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": null,
+        "2": 1
+       },
+       "pointers": {
+        "dummy": 0,
+        "before": 0,
+        "first": 1,
+        "second": 2
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "before.next = second: dummy now points to 3, so the pair reads 3, 8.",
+      "ko": "before.next = second: dummy의 화살표가 3을 가리키므로 이 짝은 3, 8 순서가 됩니다."
+     },
+     "views": {
+      "jobs": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 8
+        },
+        {
+         "id": 2,
+         "value": 3
+        }
+       ],
+       "next": {
+        "0": 2,
+        "1": null,
+        "2": 1
+       },
+       "pointers": {
+        "dummy": 0,
+        "before": 0,
+        "first": 1,
+        "second": 2
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         0
+        ]
+       },
+       "cut": {
+        "0": 1
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "before = first: before steps to 8, now the second of its pair; nothing is left after it.",
+      "ko": "before = first: before가 이제 짝의 뒤쪽인 8로 옮깁니다. 그 뒤에는 남은 작업이 없습니다."
+     },
+     "views": {
+      "jobs": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 8
+        },
+        {
+         "id": 2,
+         "value": 3
+        }
+       ],
+       "next": {
+        "0": 2,
+        "1": null,
+        "2": 1
+       },
+       "pointers": {
+        "dummy": 0,
+        "before": 1,
+        "first": 1,
+        "second": 2
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "No full pair is left, so the loop ends. Reading from dummy.next gives [3,8].",
+      "ko": "온전한 짝이 더 없으므로 반복이 끝납니다. dummy.next부터 읽으면 [3,8]입니다."
+     },
+     "views": {
+      "jobs": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 8
+        },
+        {
+         "id": 2,
+         "value": 3
+        }
+       ],
+       "next": {
+        "0": 2,
+        "1": null,
+        "2": 1
+       },
+       "pointers": {
+        "dummy": 0
+       },
+       "marks": {
+        "path": [
+         2,
+         1
+        ],
+        "dim": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        3,
+        8
+       ],
+       "marks": {
+        "path": [
+         0,
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "jobs",
+        "at": 2
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       }
+      },
+      {
+       "from": {
+        "view": "jobs",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       }
+      }
+     ],
+     "answer": "[3,8]"
+    }
+   ],
+   "sampleInput": "[8,3]"
+  },
+  {
+   "label": {
+    "en": "Example 3",
+    "ko": "예시 3"
+   },
+   "input": "head = [6,9,15]",
+   "expected": "[9,6,15]",
+   "frames": [
+    {
+     "caption": {
+      "en": "3 jobs from 6 to 15. dummy goes before the head 6, and before starts at dummy.",
+      "ko": "작업 3개가 6부터 15까지 이어집니다. head 6 앞에 dummy를 두고, before는 dummy에서 시작합니다."
+     },
+     "views": {
+      "jobs": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 6
+        },
+        {
+         "id": 2,
+         "value": 9
+        },
+        {
+         "id": 3,
+         "value": 15
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "before": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "before.next and the node after it both exist: the next pair is first = 6, second = 9.",
+      "ko": "before.next와 그다음 노드가 모두 있으므로 다음 짝은 first = 6, second = 9입니다."
+     },
+     "views": {
+      "jobs": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 6
+        },
+        {
+         "id": 2,
+         "value": 9
+        },
+        {
+         "id": 3,
+         "value": 15
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "before": 0,
+        "first": 1,
+        "second": 2
+       },
+       "marks": {
+        "lit": [
+         1,
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "first.next = second.next: 6 now skips 9 and points to 15.",
+      "ko": "first.next = second.next: 6은 9를 건너뛰어 15를 가리킵니다."
+     },
+     "views": {
+      "jobs": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 6
+        },
+        {
+         "id": 2,
+         "value": 9
+        },
+        {
+         "id": 3,
+         "value": 15
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 3,
+        "2": 3,
+        "3": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "before": 0,
+        "first": 1,
+        "second": 2
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         1
+        ]
+       },
+       "cut": {
+        "1": 2
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "second.next = first: 9 now points back to 6.",
+      "ko": "second.next = first: 9는 이제 6을 가리킵니다."
+     },
+     "views": {
+      "jobs": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 6
+        },
+        {
+         "id": 2,
+         "value": 9
+        },
+        {
+         "id": 3,
+         "value": 15
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 3,
+        "2": 1,
+        "3": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "before": 0,
+        "first": 1,
+        "second": 2
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         2
+        ]
+       },
+       "cut": {
+        "2": 3
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "before.next = second: dummy now points to 9, so the pair reads 9, 6.",
+      "ko": "before.next = second: dummy의 화살표가 9를 가리키므로 이 짝은 9, 6 순서가 됩니다."
+     },
+     "views": {
+      "jobs": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 6
+        },
+        {
+         "id": 2,
+         "value": 9
+        },
+        {
+         "id": 3,
+         "value": 15
+        }
+       ],
+       "next": {
+        "0": 2,
+        "1": 3,
+        "2": 1,
+        "3": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "before": 0,
+        "first": 1,
+        "second": 2
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         0
+        ]
+       },
+       "cut": {
+        "0": 1
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "before = first: before steps to 6, now the second of its pair; only 15 is left after it, with no partner.",
+      "ko": "before = first: before가 이제 짝의 뒤쪽인 6으로 옮깁니다. 그 뒤에는 짝이 없는 작업 15만 남았습니다."
+     },
+     "views": {
+      "jobs": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 6
+        },
+        {
+         "id": 2,
+         "value": 9
+        },
+        {
+         "id": 3,
+         "value": 15
+        }
+       ],
+       "next": {
+        "0": 2,
+        "1": 3,
+        "2": 1,
+        "3": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "before": 1,
+        "first": 1,
+        "second": 2
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "No full pair is left, so the loop ends. Reading from dummy.next gives [9,6,15].",
+      "ko": "온전한 짝이 더 없으므로 반복이 끝납니다. dummy.next부터 읽으면 [9,6,15]입니다."
+     },
+     "views": {
+      "jobs": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 6
+        },
+        {
+         "id": 2,
+         "value": 9
+        },
+        {
+         "id": 3,
+         "value": 15
+        }
+       ],
+       "next": {
+        "0": 2,
+        "1": 3,
+        "2": 1,
+        "3": null
+       },
+       "pointers": {
+        "dummy": 0
+       },
+       "marks": {
+        "path": [
+         2,
+         1,
+         3
+        ],
+        "dim": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        9,
+        6,
+        15
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "jobs",
+        "at": 2
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       }
+      },
+      {
+       "from": {
+        "view": "jobs",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       }
+      },
+      {
+       "from": {
+        "view": "jobs",
+        "at": 3
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       }
+      }
+     ],
+     "answer": "[9,6,15]"
+    }
+   ],
+   "sampleInput": "[6,9,15]"
+  }
+ ]
+}

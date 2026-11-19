@@ -1,0 +1,10635 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Merge Cafe Queues",
+  "ko": "카페 주문 큐 합치기"
+ },
+ "approach": {
+  "en": "A min-heap holds the front node of every queue, so its top is the earliest pickup left. Each step pops it, links it after tail, and pushes the node behind it in its queue, until the heap is empty.",
+  "ko": "최소 힙에 각 큐의 맨 앞 노드를 넣어 두면, 힙의 맨 위가 남은 것 중 가장 이른 픽업입니다. 매 단계 그 노드를 꺼내 tail 뒤에 잇고, 같은 큐에서 그 뒤에 있던 노드를 힙에 넣습니다. 힙이 빌 때까지 반복합니다."
+ },
+ "views": [
+  {
+   "id": "nodes",
+   "type": "linkedlist",
+   "title": {
+    "en": "dummy, then each queue's nodes",
+    "ko": "dummy와 각 큐의 노드"
+   },
+   "empty": {
+    "en": "no nodes",
+    "ko": "노드 없음"
+   }
+  },
+  {
+   "id": "heap",
+   "type": "tree",
+   "arity": 2,
+   "title": {
+    "en": "heap: the smallest front on top",
+    "ko": "힙: 맨 위가 가장 작은 앞 노드"
+   },
+   "empty": {
+    "en": "empty",
+    "ko": "비어 있음"
+   }
+  },
+  {
+   "id": "result",
+   "type": "output",
+   "title": {
+    "en": "answer",
+    "ko": "답"
+   },
+   "empty": {
+    "en": "not read yet",
+    "ko": "아직 없음"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "queues = [[2,5,8],[1,3,7],[4,6]]",
+   "expected": "[1,2,3,4,5,6,7,8]",
+   "frames": [
+    {
+     "caption": {
+      "en": "3 queues: q0 [2,5,8]; q1 [1,3,7]; q2 [4,6]. They sit in one row behind a dummy node, with tail on dummy.",
+      "ko": "큐 3개를 dummy 노드 뒤에 한 줄로 놓습니다(q0 [2,5,8]; q1 [1,3,7]; q2 [4,6]). tail은 dummy에 있습니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 8
+        },
+        {
+         "id": 4,
+         "value": 1
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 7
+        },
+        {
+         "id": 7,
+         "value": 4
+        },
+        {
+         "id": 8,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": null,
+        "1": 2,
+        "2": 3,
+        "3": null,
+        "4": 5,
+        "5": 6,
+        "6": null,
+        "7": 8,
+        "8": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "The heap list starts with each queue's front node, in queue order: 2, 1, 4, tagged with its queue.",
+      "ko": "각 큐의 맨 앞 노드를 어느 큐에서 왔는지 표시해 큐 순서대로 힙 리스트에 넣습니다: 2, 1, 4."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 8
+        },
+        {
+         "id": 4,
+         "value": 1
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 7
+        },
+        {
+         "id": 7,
+         "value": 4
+        },
+        {
+         "id": 8,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": null,
+        "1": 2,
+        "2": 3,
+        "3": null,
+        "4": 5,
+        "5": 6,
+        "6": null,
+        "7": 8,
+        "8": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 0
+       },
+       "marks": {
+        "lit": [
+         1,
+         4,
+         7
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 2
+        },
+        {
+         "id": 1,
+         "value": 1
+        },
+        {
+         "id": 2,
+         "value": 4
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q0"
+        ],
+        [
+         1,
+         "q1"
+        ],
+        [
+         2,
+         "q2"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0,
+         1,
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nodes",
+        "at": 1
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       }
+      },
+      {
+       "from": {
+        "view": "nodes",
+        "at": 4
+       },
+       "to": {
+        "view": "heap",
+        "at": 1
+       }
+      },
+      {
+       "from": {
+        "view": "nodes",
+        "at": 7
+       },
+       "to": {
+        "view": "heap",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Sift down: 2 at the top is larger than its child 1, so they swap.",
+      "ko": "아래로 내리기: 위에 있는 2가 자식 1보다 크므로 자리를 바꿉니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 8
+        },
+        {
+         "id": 4,
+         "value": 1
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 7
+        },
+        {
+         "id": 7,
+         "value": 4
+        },
+        {
+         "id": 8,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": null,
+        "1": 2,
+        "2": 3,
+        "3": null,
+        "4": 5,
+        "5": 6,
+        "6": null,
+        "7": 8,
+        "8": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 0
+       },
+       "marks": {
+        "lit": [
+         4
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 1
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 4
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q1"
+        ],
+        [
+         1,
+         "q0"
+        ],
+        [
+         2,
+         "q2"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "heap",
+        "at": 1
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 1
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "heappop: the top, 1 from q1, is the earliest front left.",
+      "ko": "heappop: 맨 위의 q1의 1이 남은 앞 노드 중 가장 이릅니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 8
+        },
+        {
+         "id": 4,
+         "value": 1
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 7
+        },
+        {
+         "id": 7,
+         "value": 4
+        },
+        {
+         "id": 8,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": null,
+        "1": 2,
+        "2": 3,
+        "3": null,
+        "4": 5,
+        "5": 6,
+        "6": null,
+        "7": 8,
+        "8": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 0
+       },
+       "marks": {
+        "lit": [
+         4
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 1
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 4
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q1"
+        ],
+        [
+         1,
+         "q0"
+        ],
+        [
+         2,
+         "q2"
+        ]
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "nodes",
+        "at": 4
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The heap's last entry, 4, fills its empty top.",
+      "ko": "힙의 마지막 항목 4가 빈 맨 위를 채웁니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 8
+        },
+        {
+         "id": 4,
+         "value": 1
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 7
+        },
+        {
+         "id": 7,
+         "value": 4
+        },
+        {
+         "id": 8,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": null,
+        "1": 2,
+        "2": 3,
+        "3": null,
+        "4": 5,
+        "5": 6,
+        "6": null,
+        "7": 8,
+        "8": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 0
+       },
+       "marks": {}
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 4
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 4
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q2"
+        ],
+        [
+         1,
+         "q0"
+        ],
+        [
+         2,
+         "q2"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 2
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Sift down: 4 at the top is larger than its child 2, so they swap.",
+      "ko": "아래로 내리기: 위에 있는 4가 자식 2보다 크므로 자리를 바꿉니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 8
+        },
+        {
+         "id": 4,
+         "value": 1
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 7
+        },
+        {
+         "id": 7,
+         "value": 4
+        },
+        {
+         "id": 8,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": null,
+        "1": 2,
+        "2": 3,
+        "3": null,
+        "4": 5,
+        "5": 6,
+        "6": null,
+        "7": 8,
+        "8": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 0
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 2
+        },
+        {
+         "id": 1,
+         "value": 4
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q0"
+        ],
+        [
+         1,
+         "q2"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "heap",
+        "at": 1
+       },
+       "value": "4"
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 1
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       },
+       "value": "2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "tail.next = 1: dummy now points to 1. tail = 1.",
+      "ko": "tail.next = 1: 이제 dummy의 화살표가 1을 가리킵니다. tail도 1로 옮깁니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 8
+        },
+        {
+         "id": 4,
+         "value": 1
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 7
+        },
+        {
+         "id": 7,
+         "value": 4
+        },
+        {
+         "id": 8,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 4,
+        "1": 2,
+        "2": 3,
+        "3": null,
+        "4": 5,
+        "5": 6,
+        "6": null,
+        "7": 8,
+        "8": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 4
+       },
+       "marks": {
+        "lit": [
+         4
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 2
+        },
+        {
+         "id": 1,
+         "value": 4
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q0"
+        ],
+        [
+         1,
+         "q2"
+        ]
+       ],
+       "nodeMarks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "1 has a next in q1, 3, so 3 goes in at the end of the heap.",
+      "ko": "q1에서 1 뒤에 3이 있으므로 힙의 맨 끝에 넣습니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 8
+        },
+        {
+         "id": 4,
+         "value": 1
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 7
+        },
+        {
+         "id": 7,
+         "value": 4
+        },
+        {
+         "id": 8,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 4,
+        "1": 2,
+        "2": 3,
+        "3": null,
+        "4": 5,
+        "5": 6,
+        "6": null,
+        "7": 8,
+        "8": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 4
+       },
+       "marks": {
+        "lit": [
+         5
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 2
+        },
+        {
+         "id": 1,
+         "value": 4
+        },
+        {
+         "id": 2,
+         "value": 3
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q0"
+        ],
+        [
+         1,
+         "q2"
+        ],
+        [
+         2,
+         "q1"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nodes",
+        "at": 5
+       },
+       "to": {
+        "view": "heap",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "heappop: the top, 2 from q0, is the earliest front left.",
+      "ko": "heappop: 맨 위의 q0의 2가 남은 앞 노드 중 가장 이릅니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 8
+        },
+        {
+         "id": 4,
+         "value": 1
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 7
+        },
+        {
+         "id": 7,
+         "value": 4
+        },
+        {
+         "id": 8,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 4,
+        "1": 2,
+        "2": 3,
+        "3": null,
+        "4": 5,
+        "5": 6,
+        "6": null,
+        "7": 8,
+        "8": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 4
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 2
+        },
+        {
+         "id": 1,
+         "value": 4
+        },
+        {
+         "id": 2,
+         "value": 3
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q0"
+        ],
+        [
+         1,
+         "q2"
+        ],
+        [
+         2,
+         "q1"
+        ]
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "nodes",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The heap's last entry, 3, fills its empty top.",
+      "ko": "힙의 마지막 항목 3이 빈 맨 위를 채웁니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 8
+        },
+        {
+         "id": 4,
+         "value": 1
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 7
+        },
+        {
+         "id": 7,
+         "value": 4
+        },
+        {
+         "id": 8,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 4,
+        "1": 2,
+        "2": 3,
+        "3": null,
+        "4": 5,
+        "5": 6,
+        "6": null,
+        "7": 8,
+        "8": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 4
+       },
+       "marks": {}
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 3
+        },
+        {
+         "id": 1,
+         "value": 4
+        },
+        {
+         "id": 2,
+         "value": 3
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q1"
+        ],
+        [
+         1,
+         "q2"
+        ],
+        [
+         2,
+         "q1"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 2
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "tail.next = 2: 1 now points to 2. tail = 2.",
+      "ko": "tail.next = 2: 이제 1의 화살표가 2를 가리킵니다. tail도 2로 옮깁니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 8
+        },
+        {
+         "id": 4,
+         "value": 1
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 7
+        },
+        {
+         "id": 7,
+         "value": 4
+        },
+        {
+         "id": 8,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 4,
+        "1": 2,
+        "2": 3,
+        "3": null,
+        "4": 1,
+        "5": 6,
+        "6": null,
+        "7": 8,
+        "8": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 1
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         4
+        ]
+       },
+       "cut": {
+        "4": 5
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 3
+        },
+        {
+         "id": 1,
+         "value": 4
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q1"
+        ],
+        [
+         1,
+         "q2"
+        ]
+       ],
+       "nodeMarks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "2 has a next in q0, 5, so 5 goes in at the end of the heap.",
+      "ko": "q0에서 2 뒤에 5가 있으므로 힙의 맨 끝에 넣습니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 8
+        },
+        {
+         "id": 4,
+         "value": 1
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 7
+        },
+        {
+         "id": 7,
+         "value": 4
+        },
+        {
+         "id": 8,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 4,
+        "1": 2,
+        "2": 3,
+        "3": null,
+        "4": 1,
+        "5": 6,
+        "6": null,
+        "7": 8,
+        "8": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 1
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 3
+        },
+        {
+         "id": 1,
+         "value": 4
+        },
+        {
+         "id": 2,
+         "value": 5
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q1"
+        ],
+        [
+         1,
+         "q2"
+        ],
+        [
+         2,
+         "q0"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nodes",
+        "at": 2
+       },
+       "to": {
+        "view": "heap",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "heappop: the top, 3 from q1, is the earliest front left.",
+      "ko": "heappop: 맨 위의 q1의 3이 남은 앞 노드 중 가장 이릅니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 8
+        },
+        {
+         "id": 4,
+         "value": 1
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 7
+        },
+        {
+         "id": 7,
+         "value": 4
+        },
+        {
+         "id": 8,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 4,
+        "1": 2,
+        "2": 3,
+        "3": null,
+        "4": 1,
+        "5": 6,
+        "6": null,
+        "7": 8,
+        "8": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 1
+       },
+       "marks": {
+        "lit": [
+         5
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 3
+        },
+        {
+         "id": 1,
+         "value": 4
+        },
+        {
+         "id": 2,
+         "value": 5
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q1"
+        ],
+        [
+         1,
+         "q2"
+        ],
+        [
+         2,
+         "q0"
+        ]
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "nodes",
+        "at": 5
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The heap's last entry, 5, fills its empty top.",
+      "ko": "힙의 마지막 항목 5가 빈 맨 위를 채웁니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 8
+        },
+        {
+         "id": 4,
+         "value": 1
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 7
+        },
+        {
+         "id": 7,
+         "value": 4
+        },
+        {
+         "id": 8,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 4,
+        "1": 2,
+        "2": 3,
+        "3": null,
+        "4": 1,
+        "5": 6,
+        "6": null,
+        "7": 8,
+        "8": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 1
+       },
+       "marks": {}
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 5
+        },
+        {
+         "id": 1,
+         "value": 4
+        },
+        {
+         "id": 2,
+         "value": 5
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q0"
+        ],
+        [
+         1,
+         "q2"
+        ],
+        [
+         2,
+         "q0"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 2
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Sift down: 5 at the top is larger than its child 4, so they swap.",
+      "ko": "아래로 내리기: 위에 있는 5가 자식 4보다 크므로 자리를 바꿉니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 8
+        },
+        {
+         "id": 4,
+         "value": 1
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 7
+        },
+        {
+         "id": 7,
+         "value": 4
+        },
+        {
+         "id": 8,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 4,
+        "1": 2,
+        "2": 3,
+        "3": null,
+        "4": 1,
+        "5": 6,
+        "6": null,
+        "7": 8,
+        "8": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 1
+       },
+       "marks": {
+        "lit": [
+         7
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 4
+        },
+        {
+         "id": 1,
+         "value": 5
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q2"
+        ],
+        [
+         1,
+         "q0"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "heap",
+        "at": 1
+       },
+       "value": "5"
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 1
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       },
+       "value": "4"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "tail.next = 3: 2 now points to 3. tail = 3.",
+      "ko": "tail.next = 3: 이제 2의 화살표가 3을 가리킵니다. tail도 3으로 옮깁니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 8
+        },
+        {
+         "id": 4,
+         "value": 1
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 7
+        },
+        {
+         "id": 7,
+         "value": 4
+        },
+        {
+         "id": 8,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 4,
+        "1": 5,
+        "2": 3,
+        "3": null,
+        "4": 1,
+        "5": 6,
+        "6": null,
+        "7": 8,
+        "8": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 5
+       },
+       "marks": {
+        "lit": [
+         5
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         1
+        ]
+       },
+       "cut": {
+        "1": 2
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 4
+        },
+        {
+         "id": 1,
+         "value": 5
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q2"
+        ],
+        [
+         1,
+         "q0"
+        ]
+       ],
+       "nodeMarks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "3 has a next in q1, 7, so 7 goes in at the end of the heap.",
+      "ko": "q1에서 3 뒤에 7이 있으므로 힙의 맨 끝에 넣습니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 8
+        },
+        {
+         "id": 4,
+         "value": 1
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 7
+        },
+        {
+         "id": 7,
+         "value": 4
+        },
+        {
+         "id": 8,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 4,
+        "1": 5,
+        "2": 3,
+        "3": null,
+        "4": 1,
+        "5": 6,
+        "6": null,
+        "7": 8,
+        "8": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 5
+       },
+       "marks": {
+        "lit": [
+         6
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 4
+        },
+        {
+         "id": 1,
+         "value": 5
+        },
+        {
+         "id": 2,
+         "value": 7
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q2"
+        ],
+        [
+         1,
+         "q0"
+        ],
+        [
+         2,
+         "q1"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nodes",
+        "at": 6
+       },
+       "to": {
+        "view": "heap",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "heappop: the top, 4 from q2, is the earliest front left.",
+      "ko": "heappop: 맨 위의 q2의 4가 남은 앞 노드 중 가장 이릅니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 8
+        },
+        {
+         "id": 4,
+         "value": 1
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 7
+        },
+        {
+         "id": 7,
+         "value": 4
+        },
+        {
+         "id": 8,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 4,
+        "1": 5,
+        "2": 3,
+        "3": null,
+        "4": 1,
+        "5": 6,
+        "6": null,
+        "7": 8,
+        "8": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 5
+       },
+       "marks": {
+        "lit": [
+         7
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 4
+        },
+        {
+         "id": 1,
+         "value": 5
+        },
+        {
+         "id": 2,
+         "value": 7
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q2"
+        ],
+        [
+         1,
+         "q0"
+        ],
+        [
+         2,
+         "q1"
+        ]
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "nodes",
+        "at": 7
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The heap's last entry, 7, fills its empty top.",
+      "ko": "힙의 마지막 항목 7이 빈 맨 위를 채웁니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 8
+        },
+        {
+         "id": 4,
+         "value": 1
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 7
+        },
+        {
+         "id": 7,
+         "value": 4
+        },
+        {
+         "id": 8,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 4,
+        "1": 5,
+        "2": 3,
+        "3": null,
+        "4": 1,
+        "5": 6,
+        "6": null,
+        "7": 8,
+        "8": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 5
+       },
+       "marks": {}
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 7
+        },
+        {
+         "id": 1,
+         "value": 5
+        },
+        {
+         "id": 2,
+         "value": 7
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q1"
+        ],
+        [
+         1,
+         "q0"
+        ],
+        [
+         2,
+         "q1"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 2
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Sift down: 7 at the top is larger than its child 5, so they swap.",
+      "ko": "아래로 내리기: 위에 있는 7이 자식 5보다 크므로 자리를 바꿉니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 8
+        },
+        {
+         "id": 4,
+         "value": 1
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 7
+        },
+        {
+         "id": 7,
+         "value": 4
+        },
+        {
+         "id": 8,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 4,
+        "1": 5,
+        "2": 3,
+        "3": null,
+        "4": 1,
+        "5": 6,
+        "6": null,
+        "7": 8,
+        "8": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 5
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 5
+        },
+        {
+         "id": 1,
+         "value": 7
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q0"
+        ],
+        [
+         1,
+         "q1"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "heap",
+        "at": 1
+       },
+       "value": "7"
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 1
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       },
+       "value": "5"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "tail.next = 4: 3 now points to 4. tail = 4.",
+      "ko": "tail.next = 4: 이제 3의 화살표가 4를 가리킵니다. tail도 4로 옮깁니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 8
+        },
+        {
+         "id": 4,
+         "value": 1
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 7
+        },
+        {
+         "id": 7,
+         "value": 4
+        },
+        {
+         "id": 8,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 4,
+        "1": 5,
+        "2": 3,
+        "3": null,
+        "4": 1,
+        "5": 7,
+        "6": null,
+        "7": 8,
+        "8": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 7
+       },
+       "marks": {
+        "lit": [
+         7
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         5
+        ]
+       },
+       "cut": {
+        "5": 6
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 5
+        },
+        {
+         "id": 1,
+         "value": 7
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q0"
+        ],
+        [
+         1,
+         "q1"
+        ]
+       ],
+       "nodeMarks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "4 has a next in q2, 6, so 6 goes in at the end of the heap.",
+      "ko": "q2에서 4 뒤에 6이 있으므로 힙의 맨 끝에 넣습니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 8
+        },
+        {
+         "id": 4,
+         "value": 1
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 7
+        },
+        {
+         "id": 7,
+         "value": 4
+        },
+        {
+         "id": 8,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 4,
+        "1": 5,
+        "2": 3,
+        "3": null,
+        "4": 1,
+        "5": 7,
+        "6": null,
+        "7": 8,
+        "8": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 7
+       },
+       "marks": {
+        "lit": [
+         8
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 5
+        },
+        {
+         "id": 1,
+         "value": 7
+        },
+        {
+         "id": 2,
+         "value": 6
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q0"
+        ],
+        [
+         1,
+         "q1"
+        ],
+        [
+         2,
+         "q2"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nodes",
+        "at": 8
+       },
+       "to": {
+        "view": "heap",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "heappop: the top, 5 from q0, is the earliest front left.",
+      "ko": "heappop: 맨 위의 q0의 5가 남은 앞 노드 중 가장 이릅니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 8
+        },
+        {
+         "id": 4,
+         "value": 1
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 7
+        },
+        {
+         "id": 7,
+         "value": 4
+        },
+        {
+         "id": 8,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 4,
+        "1": 5,
+        "2": 3,
+        "3": null,
+        "4": 1,
+        "5": 7,
+        "6": null,
+        "7": 8,
+        "8": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 7
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 5
+        },
+        {
+         "id": 1,
+         "value": 7
+        },
+        {
+         "id": 2,
+         "value": 6
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q0"
+        ],
+        [
+         1,
+         "q1"
+        ],
+        [
+         2,
+         "q2"
+        ]
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "nodes",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The heap's last entry, 6, fills its empty top.",
+      "ko": "힙의 마지막 항목 6이 빈 맨 위를 채웁니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 8
+        },
+        {
+         "id": 4,
+         "value": 1
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 7
+        },
+        {
+         "id": 7,
+         "value": 4
+        },
+        {
+         "id": 8,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 4,
+        "1": 5,
+        "2": 3,
+        "3": null,
+        "4": 1,
+        "5": 7,
+        "6": null,
+        "7": 8,
+        "8": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 7
+       },
+       "marks": {}
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 6
+        },
+        {
+         "id": 1,
+         "value": 7
+        },
+        {
+         "id": 2,
+         "value": 6
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q2"
+        ],
+        [
+         1,
+         "q1"
+        ],
+        [
+         2,
+         "q2"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 2
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "tail.next = 5: 4 now points to 5. tail = 5.",
+      "ko": "tail.next = 5: 이제 4의 화살표가 5를 가리킵니다. tail도 5로 옮깁니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 8
+        },
+        {
+         "id": 4,
+         "value": 1
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 7
+        },
+        {
+         "id": 7,
+         "value": 4
+        },
+        {
+         "id": 8,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 4,
+        "1": 5,
+        "2": 3,
+        "3": null,
+        "4": 1,
+        "5": 7,
+        "6": null,
+        "7": 2,
+        "8": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 2
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         7
+        ]
+       },
+       "cut": {
+        "7": 8
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 6
+        },
+        {
+         "id": 1,
+         "value": 7
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q2"
+        ],
+        [
+         1,
+         "q1"
+        ]
+       ],
+       "nodeMarks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "5 has a next in q0, 8, so 8 goes in at the end of the heap.",
+      "ko": "q0에서 5 뒤에 8이 있으므로 힙의 맨 끝에 넣습니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 8
+        },
+        {
+         "id": 4,
+         "value": 1
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 7
+        },
+        {
+         "id": 7,
+         "value": 4
+        },
+        {
+         "id": 8,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 4,
+        "1": 5,
+        "2": 3,
+        "3": null,
+        "4": 1,
+        "5": 7,
+        "6": null,
+        "7": 2,
+        "8": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 2
+       },
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 6
+        },
+        {
+         "id": 1,
+         "value": 7
+        },
+        {
+         "id": 2,
+         "value": 8
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q2"
+        ],
+        [
+         1,
+         "q1"
+        ],
+        [
+         2,
+         "q0"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nodes",
+        "at": 3
+       },
+       "to": {
+        "view": "heap",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "heappop: the top, 6 from q2, is the earliest front left.",
+      "ko": "heappop: 맨 위의 q2의 6이 남은 앞 노드 중 가장 이릅니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 8
+        },
+        {
+         "id": 4,
+         "value": 1
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 7
+        },
+        {
+         "id": 7,
+         "value": 4
+        },
+        {
+         "id": 8,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 4,
+        "1": 5,
+        "2": 3,
+        "3": null,
+        "4": 1,
+        "5": 7,
+        "6": null,
+        "7": 2,
+        "8": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 2
+       },
+       "marks": {
+        "lit": [
+         8
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 6
+        },
+        {
+         "id": 1,
+         "value": 7
+        },
+        {
+         "id": 2,
+         "value": 8
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q2"
+        ],
+        [
+         1,
+         "q1"
+        ],
+        [
+         2,
+         "q0"
+        ]
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "nodes",
+        "at": 8
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The heap's last entry, 8, fills its empty top.",
+      "ko": "힙의 마지막 항목 8이 빈 맨 위를 채웁니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 8
+        },
+        {
+         "id": 4,
+         "value": 1
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 7
+        },
+        {
+         "id": 7,
+         "value": 4
+        },
+        {
+         "id": 8,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 4,
+        "1": 5,
+        "2": 3,
+        "3": null,
+        "4": 1,
+        "5": 7,
+        "6": null,
+        "7": 2,
+        "8": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 2
+       },
+       "marks": {}
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 8
+        },
+        {
+         "id": 1,
+         "value": 7
+        },
+        {
+         "id": 2,
+         "value": 8
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q0"
+        ],
+        [
+         1,
+         "q1"
+        ],
+        [
+         2,
+         "q0"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 2
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Sift down: 8 at the top is larger than its child 7, so they swap.",
+      "ko": "아래로 내리기: 위에 있는 8이 자식 7보다 크므로 자리를 바꿉니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 8
+        },
+        {
+         "id": 4,
+         "value": 1
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 7
+        },
+        {
+         "id": 7,
+         "value": 4
+        },
+        {
+         "id": 8,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 4,
+        "1": 5,
+        "2": 3,
+        "3": null,
+        "4": 1,
+        "5": 7,
+        "6": null,
+        "7": 2,
+        "8": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 2
+       },
+       "marks": {
+        "lit": [
+         6
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 7
+        },
+        {
+         "id": 1,
+         "value": 8
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q1"
+        ],
+        [
+         1,
+         "q0"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "heap",
+        "at": 1
+       },
+       "value": "8"
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 1
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       },
+       "value": "7"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "tail.next = 6: 5 now points to 6. tail = 6.",
+      "ko": "tail.next = 6: 이제 5의 화살표가 6을 가리킵니다. tail도 6으로 옮깁니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 8
+        },
+        {
+         "id": 4,
+         "value": 1
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 7
+        },
+        {
+         "id": 7,
+         "value": 4
+        },
+        {
+         "id": 8,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 4,
+        "1": 5,
+        "2": 8,
+        "3": null,
+        "4": 1,
+        "5": 7,
+        "6": null,
+        "7": 2,
+        "8": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 8
+       },
+       "marks": {
+        "lit": [
+         8
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         2
+        ]
+       },
+       "cut": {
+        "2": 3
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 7
+        },
+        {
+         "id": 1,
+         "value": 8
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q1"
+        ],
+        [
+         1,
+         "q0"
+        ]
+       ],
+       "nodeMarks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "6 is the last of q2, so nothing joins the heap.",
+      "ko": "6은 q2의 마지막이라 힙에 넣을 것이 없습니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 8
+        },
+        {
+         "id": 4,
+         "value": 1
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 7
+        },
+        {
+         "id": 7,
+         "value": 4
+        },
+        {
+         "id": 8,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 4,
+        "1": 5,
+        "2": 8,
+        "3": null,
+        "4": 1,
+        "5": 7,
+        "6": null,
+        "7": 2,
+        "8": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 8
+       },
+       "marks": {
+        "lit": [
+         8
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 7
+        },
+        {
+         "id": 1,
+         "value": 8
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q1"
+        ],
+        [
+         1,
+         "q0"
+        ]
+       ],
+       "nodeMarks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "heappop: the top, 7 from q1, is the earliest front left.",
+      "ko": "heappop: 맨 위의 q1의 7이 남은 앞 노드 중 가장 이릅니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 8
+        },
+        {
+         "id": 4,
+         "value": 1
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 7
+        },
+        {
+         "id": 7,
+         "value": 4
+        },
+        {
+         "id": 8,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 4,
+        "1": 5,
+        "2": 8,
+        "3": null,
+        "4": 1,
+        "5": 7,
+        "6": null,
+        "7": 2,
+        "8": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 8
+       },
+       "marks": {
+        "lit": [
+         6
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 7
+        },
+        {
+         "id": 1,
+         "value": 8
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q1"
+        ],
+        [
+         1,
+         "q0"
+        ]
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "nodes",
+        "at": 6
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The heap's last entry, 8, fills its empty top.",
+      "ko": "힙의 마지막 항목 8이 빈 맨 위를 채웁니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 8
+        },
+        {
+         "id": 4,
+         "value": 1
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 7
+        },
+        {
+         "id": 7,
+         "value": 4
+        },
+        {
+         "id": 8,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 4,
+        "1": 5,
+        "2": 8,
+        "3": null,
+        "4": 1,
+        "5": 7,
+        "6": null,
+        "7": 2,
+        "8": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 8
+       },
+       "marks": {}
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 8
+        },
+        {
+         "id": 1,
+         "value": 8
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q0"
+        ],
+        [
+         1,
+         "q0"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 1
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "tail.next = 7: 6 now points to 7. tail = 7.",
+      "ko": "tail.next = 7: 이제 6의 화살표가 7을 가리킵니다. tail도 7로 옮깁니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 8
+        },
+        {
+         "id": 4,
+         "value": 1
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 7
+        },
+        {
+         "id": 7,
+         "value": 4
+        },
+        {
+         "id": 8,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 4,
+        "1": 5,
+        "2": 8,
+        "3": null,
+        "4": 1,
+        "5": 7,
+        "6": null,
+        "7": 2,
+        "8": 6
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 6
+       },
+       "marks": {
+        "lit": [
+         6
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         8
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 8
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "q0"
+        ]
+       ],
+       "nodeMarks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "7 is the last of q1, so nothing joins the heap.",
+      "ko": "7은 q1의 마지막이라 힙에 넣을 것이 없습니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 8
+        },
+        {
+         "id": 4,
+         "value": 1
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 7
+        },
+        {
+         "id": 7,
+         "value": 4
+        },
+        {
+         "id": 8,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 4,
+        "1": 5,
+        "2": 8,
+        "3": null,
+        "4": 1,
+        "5": 7,
+        "6": null,
+        "7": 2,
+        "8": 6
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 6
+       },
+       "marks": {
+        "lit": [
+         6
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 8
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "q0"
+        ]
+       ],
+       "nodeMarks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "heappop: the top, 8 from q0, is the earliest front left.",
+      "ko": "heappop: 맨 위의 q0의 8이 남은 앞 노드 중 가장 이릅니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 8
+        },
+        {
+         "id": 4,
+         "value": 1
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 7
+        },
+        {
+         "id": 7,
+         "value": 4
+        },
+        {
+         "id": 8,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 4,
+        "1": 5,
+        "2": 8,
+        "3": null,
+        "4": 1,
+        "5": 7,
+        "6": null,
+        "7": 2,
+        "8": 6
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 6
+       },
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 8
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "q0"
+        ]
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "nodes",
+        "at": 3
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "tail.next = 8: 7 now points to 8. tail = 8.",
+      "ko": "tail.next = 8: 이제 7의 화살표가 8을 가리킵니다. tail도 8로 옮깁니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 8
+        },
+        {
+         "id": 4,
+         "value": 1
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 7
+        },
+        {
+         "id": 7,
+         "value": 4
+        },
+        {
+         "id": 8,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 4,
+        "1": 5,
+        "2": 8,
+        "3": null,
+        "4": 1,
+        "5": 7,
+        "6": 3,
+        "7": 2,
+        "8": 6
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 3
+       },
+       "marks": {
+        "lit": [
+         3
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         6
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "The heap is empty, so every node is linked. Reading from dummy.next gives [1,2,3,4,5,6,7,8].",
+      "ko": "힙이 비었으니 모든 노드가 이어졌습니다. dummy.next부터 읽으면 [1,2,3,4,5,6,7,8]입니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 5
+        },
+        {
+         "id": 3,
+         "value": 8
+        },
+        {
+         "id": 4,
+         "value": 1
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 7
+        },
+        {
+         "id": 7,
+         "value": 4
+        },
+        {
+         "id": 8,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 4,
+        "1": 5,
+        "2": 8,
+        "3": null,
+        "4": 1,
+        "5": 7,
+        "6": 3,
+        "7": 2,
+        "8": 6
+       },
+       "pointers": {
+        "dummy": 0
+       },
+       "marks": {
+        "path": [
+         4,
+         1,
+         5,
+         7,
+         2,
+         8,
+         6,
+         3
+        ],
+        "dim": [
+         0
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      },
+      "result": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5,
+         6,
+         7
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nodes",
+        "at": 4
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       }
+      },
+      {
+       "from": {
+        "view": "nodes",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       }
+      },
+      {
+       "from": {
+        "view": "nodes",
+        "at": 5
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       }
+      },
+      {
+       "from": {
+        "view": "nodes",
+        "at": 7
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       }
+      },
+      {
+       "from": {
+        "view": "nodes",
+        "at": 2
+       },
+       "to": {
+        "view": "result",
+        "at": 4
+       }
+      },
+      {
+       "from": {
+        "view": "nodes",
+        "at": 8
+       },
+       "to": {
+        "view": "result",
+        "at": 5
+       }
+      },
+      {
+       "from": {
+        "view": "nodes",
+        "at": 6
+       },
+       "to": {
+        "view": "result",
+        "at": 6
+       }
+      },
+      {
+       "from": {
+        "view": "nodes",
+        "at": 3
+       },
+       "to": {
+        "view": "result",
+        "at": 7
+       }
+      }
+     ],
+     "answer": "[1,2,3,4,5,6,7,8]"
+    }
+   ],
+   "sampleInput": "[[2,5,8],[1,3,7],[4,6]]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "queues = [[1,3,5],[2,4,6]]",
+   "expected": "[1,2,3,4,5,6]",
+   "frames": [
+    {
+     "caption": {
+      "en": "2 queues: q0 [1,3,5]; q1 [2,4,6]. They sit in one row behind a dummy node, with tail on dummy.",
+      "ko": "큐 2개를 dummy 노드 뒤에 한 줄로 놓습니다(q0 [1,3,5]; q1 [2,4,6]). tail은 dummy에 있습니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 1
+        },
+        {
+         "id": 2,
+         "value": 3
+        },
+        {
+         "id": 3,
+         "value": 5
+        },
+        {
+         "id": 4,
+         "value": 2
+        },
+        {
+         "id": 5,
+         "value": 4
+        },
+        {
+         "id": 6,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": null,
+        "1": 2,
+        "2": 3,
+        "3": null,
+        "4": 5,
+        "5": 6,
+        "6": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "The heap list starts with each queue's front node, in queue order: 1, 2, tagged with its queue.",
+      "ko": "각 큐의 맨 앞 노드를 어느 큐에서 왔는지 표시해 큐 순서대로 힙 리스트에 넣습니다: 1, 2."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 1
+        },
+        {
+         "id": 2,
+         "value": 3
+        },
+        {
+         "id": 3,
+         "value": 5
+        },
+        {
+         "id": 4,
+         "value": 2
+        },
+        {
+         "id": 5,
+         "value": 4
+        },
+        {
+         "id": 6,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": null,
+        "1": 2,
+        "2": 3,
+        "3": null,
+        "4": 5,
+        "5": 6,
+        "6": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 0
+       },
+       "marks": {
+        "lit": [
+         1,
+         4
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 1
+        },
+        {
+         "id": 1,
+         "value": 2
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q0"
+        ],
+        [
+         1,
+         "q1"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0,
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nodes",
+        "at": 1
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       }
+      },
+      {
+       "from": {
+        "view": "nodes",
+        "at": 4
+       },
+       "to": {
+        "view": "heap",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "heappop: the top, 1 from q0, is the earliest front left.",
+      "ko": "heappop: 맨 위의 q0의 1이 남은 앞 노드 중 가장 이릅니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 1
+        },
+        {
+         "id": 2,
+         "value": 3
+        },
+        {
+         "id": 3,
+         "value": 5
+        },
+        {
+         "id": 4,
+         "value": 2
+        },
+        {
+         "id": 5,
+         "value": 4
+        },
+        {
+         "id": 6,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": null,
+        "1": 2,
+        "2": 3,
+        "3": null,
+        "4": 5,
+        "5": 6,
+        "6": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 0
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 1
+        },
+        {
+         "id": 1,
+         "value": 2
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q0"
+        ],
+        [
+         1,
+         "q1"
+        ]
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "nodes",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The heap's last entry, 2, fills its empty top.",
+      "ko": "힙의 마지막 항목 2가 빈 맨 위를 채웁니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 1
+        },
+        {
+         "id": 2,
+         "value": 3
+        },
+        {
+         "id": 3,
+         "value": 5
+        },
+        {
+         "id": 4,
+         "value": 2
+        },
+        {
+         "id": 5,
+         "value": 4
+        },
+        {
+         "id": 6,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": null,
+        "1": 2,
+        "2": 3,
+        "3": null,
+        "4": 5,
+        "5": 6,
+        "6": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 0
+       },
+       "marks": {}
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 2
+        },
+        {
+         "id": 1,
+         "value": 2
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q1"
+        ],
+        [
+         1,
+         "q1"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 1
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "tail.next = 1: dummy now points to 1. tail = 1.",
+      "ko": "tail.next = 1: 이제 dummy의 화살표가 1을 가리킵니다. tail도 1로 옮깁니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 1
+        },
+        {
+         "id": 2,
+         "value": 3
+        },
+        {
+         "id": 3,
+         "value": 5
+        },
+        {
+         "id": 4,
+         "value": 2
+        },
+        {
+         "id": 5,
+         "value": 4
+        },
+        {
+         "id": 6,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": null,
+        "4": 5,
+        "5": 6,
+        "6": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 1
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 2
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "q1"
+        ]
+       ],
+       "nodeMarks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "1 has a next in q0, 3, so 3 goes in at the end of the heap.",
+      "ko": "q0에서 1 뒤에 3이 있으므로 힙의 맨 끝에 넣습니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 1
+        },
+        {
+         "id": 2,
+         "value": 3
+        },
+        {
+         "id": 3,
+         "value": 5
+        },
+        {
+         "id": 4,
+         "value": 2
+        },
+        {
+         "id": 5,
+         "value": 4
+        },
+        {
+         "id": 6,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": null,
+        "4": 5,
+        "5": 6,
+        "6": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 1
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 2
+        },
+        {
+         "id": 1,
+         "value": 3
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q1"
+        ],
+        [
+         1,
+         "q0"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nodes",
+        "at": 2
+       },
+       "to": {
+        "view": "heap",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "heappop: the top, 2 from q1, is the earliest front left.",
+      "ko": "heappop: 맨 위의 q1의 2가 남은 앞 노드 중 가장 이릅니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 1
+        },
+        {
+         "id": 2,
+         "value": 3
+        },
+        {
+         "id": 3,
+         "value": 5
+        },
+        {
+         "id": 4,
+         "value": 2
+        },
+        {
+         "id": 5,
+         "value": 4
+        },
+        {
+         "id": 6,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": null,
+        "4": 5,
+        "5": 6,
+        "6": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 1
+       },
+       "marks": {
+        "lit": [
+         4
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 2
+        },
+        {
+         "id": 1,
+         "value": 3
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q1"
+        ],
+        [
+         1,
+         "q0"
+        ]
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "nodes",
+        "at": 4
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The heap's last entry, 3, fills its empty top.",
+      "ko": "힙의 마지막 항목 3이 빈 맨 위를 채웁니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 1
+        },
+        {
+         "id": 2,
+         "value": 3
+        },
+        {
+         "id": 3,
+         "value": 5
+        },
+        {
+         "id": 4,
+         "value": 2
+        },
+        {
+         "id": 5,
+         "value": 4
+        },
+        {
+         "id": 6,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": null,
+        "4": 5,
+        "5": 6,
+        "6": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 1
+       },
+       "marks": {}
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 3
+        },
+        {
+         "id": 1,
+         "value": 3
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q0"
+        ],
+        [
+         1,
+         "q0"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 1
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "tail.next = 2: 1 now points to 2. tail = 2.",
+      "ko": "tail.next = 2: 이제 1의 화살표가 2를 가리킵니다. tail도 2로 옮깁니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 1
+        },
+        {
+         "id": 2,
+         "value": 3
+        },
+        {
+         "id": 3,
+         "value": 5
+        },
+        {
+         "id": 4,
+         "value": 2
+        },
+        {
+         "id": 5,
+         "value": 4
+        },
+        {
+         "id": 6,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 4,
+        "2": 3,
+        "3": null,
+        "4": 5,
+        "5": 6,
+        "6": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 4
+       },
+       "marks": {
+        "lit": [
+         4
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         1
+        ]
+       },
+       "cut": {
+        "1": 2
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 3
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "q0"
+        ]
+       ],
+       "nodeMarks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "2 has a next in q1, 4, so 4 goes in at the end of the heap.",
+      "ko": "q1에서 2 뒤에 4가 있으므로 힙의 맨 끝에 넣습니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 1
+        },
+        {
+         "id": 2,
+         "value": 3
+        },
+        {
+         "id": 3,
+         "value": 5
+        },
+        {
+         "id": 4,
+         "value": 2
+        },
+        {
+         "id": 5,
+         "value": 4
+        },
+        {
+         "id": 6,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 4,
+        "2": 3,
+        "3": null,
+        "4": 5,
+        "5": 6,
+        "6": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 4
+       },
+       "marks": {
+        "lit": [
+         5
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 3
+        },
+        {
+         "id": 1,
+         "value": 4
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q0"
+        ],
+        [
+         1,
+         "q1"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nodes",
+        "at": 5
+       },
+       "to": {
+        "view": "heap",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "heappop: the top, 3 from q0, is the earliest front left.",
+      "ko": "heappop: 맨 위의 q0의 3이 남은 앞 노드 중 가장 이릅니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 1
+        },
+        {
+         "id": 2,
+         "value": 3
+        },
+        {
+         "id": 3,
+         "value": 5
+        },
+        {
+         "id": 4,
+         "value": 2
+        },
+        {
+         "id": 5,
+         "value": 4
+        },
+        {
+         "id": 6,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 4,
+        "2": 3,
+        "3": null,
+        "4": 5,
+        "5": 6,
+        "6": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 4
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 3
+        },
+        {
+         "id": 1,
+         "value": 4
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q0"
+        ],
+        [
+         1,
+         "q1"
+        ]
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "nodes",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The heap's last entry, 4, fills its empty top.",
+      "ko": "힙의 마지막 항목 4가 빈 맨 위를 채웁니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 1
+        },
+        {
+         "id": 2,
+         "value": 3
+        },
+        {
+         "id": 3,
+         "value": 5
+        },
+        {
+         "id": 4,
+         "value": 2
+        },
+        {
+         "id": 5,
+         "value": 4
+        },
+        {
+         "id": 6,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 4,
+        "2": 3,
+        "3": null,
+        "4": 5,
+        "5": 6,
+        "6": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 4
+       },
+       "marks": {}
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 4
+        },
+        {
+         "id": 1,
+         "value": 4
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q1"
+        ],
+        [
+         1,
+         "q1"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 1
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "tail.next = 3: 2 now points to 3. tail = 3.",
+      "ko": "tail.next = 3: 이제 2의 화살표가 3을 가리킵니다. tail도 3으로 옮깁니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 1
+        },
+        {
+         "id": 2,
+         "value": 3
+        },
+        {
+         "id": 3,
+         "value": 5
+        },
+        {
+         "id": 4,
+         "value": 2
+        },
+        {
+         "id": 5,
+         "value": 4
+        },
+        {
+         "id": 6,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 4,
+        "2": 3,
+        "3": null,
+        "4": 2,
+        "5": 6,
+        "6": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 2
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         4
+        ]
+       },
+       "cut": {
+        "4": 5
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 4
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "q1"
+        ]
+       ],
+       "nodeMarks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "3 has a next in q0, 5, so 5 goes in at the end of the heap.",
+      "ko": "q0에서 3 뒤에 5가 있으므로 힙의 맨 끝에 넣습니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 1
+        },
+        {
+         "id": 2,
+         "value": 3
+        },
+        {
+         "id": 3,
+         "value": 5
+        },
+        {
+         "id": 4,
+         "value": 2
+        },
+        {
+         "id": 5,
+         "value": 4
+        },
+        {
+         "id": 6,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 4,
+        "2": 3,
+        "3": null,
+        "4": 2,
+        "5": 6,
+        "6": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 2
+       },
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 4
+        },
+        {
+         "id": 1,
+         "value": 5
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q1"
+        ],
+        [
+         1,
+         "q0"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nodes",
+        "at": 3
+       },
+       "to": {
+        "view": "heap",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "heappop: the top, 4 from q1, is the earliest front left.",
+      "ko": "heappop: 맨 위의 q1의 4가 남은 앞 노드 중 가장 이릅니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 1
+        },
+        {
+         "id": 2,
+         "value": 3
+        },
+        {
+         "id": 3,
+         "value": 5
+        },
+        {
+         "id": 4,
+         "value": 2
+        },
+        {
+         "id": 5,
+         "value": 4
+        },
+        {
+         "id": 6,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 4,
+        "2": 3,
+        "3": null,
+        "4": 2,
+        "5": 6,
+        "6": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 2
+       },
+       "marks": {
+        "lit": [
+         5
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 4
+        },
+        {
+         "id": 1,
+         "value": 5
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q1"
+        ],
+        [
+         1,
+         "q0"
+        ]
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "nodes",
+        "at": 5
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The heap's last entry, 5, fills its empty top.",
+      "ko": "힙의 마지막 항목 5가 빈 맨 위를 채웁니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 1
+        },
+        {
+         "id": 2,
+         "value": 3
+        },
+        {
+         "id": 3,
+         "value": 5
+        },
+        {
+         "id": 4,
+         "value": 2
+        },
+        {
+         "id": 5,
+         "value": 4
+        },
+        {
+         "id": 6,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 4,
+        "2": 3,
+        "3": null,
+        "4": 2,
+        "5": 6,
+        "6": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 2
+       },
+       "marks": {}
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 5
+        },
+        {
+         "id": 1,
+         "value": 5
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q0"
+        ],
+        [
+         1,
+         "q0"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 1
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "tail.next = 4: 3 now points to 4. tail = 4.",
+      "ko": "tail.next = 4: 이제 3의 화살표가 4를 가리킵니다. tail도 4로 옮깁니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 1
+        },
+        {
+         "id": 2,
+         "value": 3
+        },
+        {
+         "id": 3,
+         "value": 5
+        },
+        {
+         "id": 4,
+         "value": 2
+        },
+        {
+         "id": 5,
+         "value": 4
+        },
+        {
+         "id": 6,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 4,
+        "2": 5,
+        "3": null,
+        "4": 2,
+        "5": 6,
+        "6": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 5
+       },
+       "marks": {
+        "lit": [
+         5
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         2
+        ]
+       },
+       "cut": {
+        "2": 3
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 5
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "q0"
+        ]
+       ],
+       "nodeMarks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "4 has a next in q1, 6, so 6 goes in at the end of the heap.",
+      "ko": "q1에서 4 뒤에 6이 있으므로 힙의 맨 끝에 넣습니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 1
+        },
+        {
+         "id": 2,
+         "value": 3
+        },
+        {
+         "id": 3,
+         "value": 5
+        },
+        {
+         "id": 4,
+         "value": 2
+        },
+        {
+         "id": 5,
+         "value": 4
+        },
+        {
+         "id": 6,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 4,
+        "2": 5,
+        "3": null,
+        "4": 2,
+        "5": 6,
+        "6": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 5
+       },
+       "marks": {
+        "lit": [
+         6
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 5
+        },
+        {
+         "id": 1,
+         "value": 6
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q0"
+        ],
+        [
+         1,
+         "q1"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nodes",
+        "at": 6
+       },
+       "to": {
+        "view": "heap",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "heappop: the top, 5 from q0, is the earliest front left.",
+      "ko": "heappop: 맨 위의 q0의 5가 남은 앞 노드 중 가장 이릅니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 1
+        },
+        {
+         "id": 2,
+         "value": 3
+        },
+        {
+         "id": 3,
+         "value": 5
+        },
+        {
+         "id": 4,
+         "value": 2
+        },
+        {
+         "id": 5,
+         "value": 4
+        },
+        {
+         "id": 6,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 4,
+        "2": 5,
+        "3": null,
+        "4": 2,
+        "5": 6,
+        "6": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 5
+       },
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 5
+        },
+        {
+         "id": 1,
+         "value": 6
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q0"
+        ],
+        [
+         1,
+         "q1"
+        ]
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "nodes",
+        "at": 3
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The heap's last entry, 6, fills its empty top.",
+      "ko": "힙의 마지막 항목 6이 빈 맨 위를 채웁니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 1
+        },
+        {
+         "id": 2,
+         "value": 3
+        },
+        {
+         "id": 3,
+         "value": 5
+        },
+        {
+         "id": 4,
+         "value": 2
+        },
+        {
+         "id": 5,
+         "value": 4
+        },
+        {
+         "id": 6,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 4,
+        "2": 5,
+        "3": null,
+        "4": 2,
+        "5": 6,
+        "6": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 5
+       },
+       "marks": {}
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 6
+        },
+        {
+         "id": 1,
+         "value": 6
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q1"
+        ],
+        [
+         1,
+         "q1"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 1
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "tail.next = 5: 4 now points to 5. tail = 5.",
+      "ko": "tail.next = 5: 이제 4의 화살표가 5를 가리킵니다. tail도 5로 옮깁니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 1
+        },
+        {
+         "id": 2,
+         "value": 3
+        },
+        {
+         "id": 3,
+         "value": 5
+        },
+        {
+         "id": 4,
+         "value": 2
+        },
+        {
+         "id": 5,
+         "value": 4
+        },
+        {
+         "id": 6,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 4,
+        "2": 5,
+        "3": null,
+        "4": 2,
+        "5": 3,
+        "6": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 3
+       },
+       "marks": {
+        "lit": [
+         3
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         5
+        ]
+       },
+       "cut": {
+        "5": 6
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 6
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "q1"
+        ]
+       ],
+       "nodeMarks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "5 is the last of q0, so nothing joins the heap.",
+      "ko": "5는 q0의 마지막이라 힙에 넣을 것이 없습니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 1
+        },
+        {
+         "id": 2,
+         "value": 3
+        },
+        {
+         "id": 3,
+         "value": 5
+        },
+        {
+         "id": 4,
+         "value": 2
+        },
+        {
+         "id": 5,
+         "value": 4
+        },
+        {
+         "id": 6,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 4,
+        "2": 5,
+        "3": null,
+        "4": 2,
+        "5": 3,
+        "6": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 3
+       },
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 6
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "q1"
+        ]
+       ],
+       "nodeMarks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "heappop: the top, 6 from q1, is the earliest front left.",
+      "ko": "heappop: 맨 위의 q1의 6이 남은 앞 노드 중 가장 이릅니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 1
+        },
+        {
+         "id": 2,
+         "value": 3
+        },
+        {
+         "id": 3,
+         "value": 5
+        },
+        {
+         "id": 4,
+         "value": 2
+        },
+        {
+         "id": 5,
+         "value": 4
+        },
+        {
+         "id": 6,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 4,
+        "2": 5,
+        "3": null,
+        "4": 2,
+        "5": 3,
+        "6": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 3
+       },
+       "marks": {
+        "lit": [
+         6
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 6
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "q1"
+        ]
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "nodes",
+        "at": 6
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "tail.next = 6: 5 now points to 6. tail = 6.",
+      "ko": "tail.next = 6: 이제 5의 화살표가 6을 가리킵니다. tail도 6으로 옮깁니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 1
+        },
+        {
+         "id": 2,
+         "value": 3
+        },
+        {
+         "id": 3,
+         "value": 5
+        },
+        {
+         "id": 4,
+         "value": 2
+        },
+        {
+         "id": 5,
+         "value": 4
+        },
+        {
+         "id": 6,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 4,
+        "2": 5,
+        "3": 6,
+        "4": 2,
+        "5": 3,
+        "6": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 6
+       },
+       "marks": {
+        "lit": [
+         6
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         3
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "The heap is empty, so every node is linked. Reading from dummy.next gives [1,2,3,4,5,6].",
+      "ko": "힙이 비었으니 모든 노드가 이어졌습니다. dummy.next부터 읽으면 [1,2,3,4,5,6]입니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 1
+        },
+        {
+         "id": 2,
+         "value": 3
+        },
+        {
+         "id": 3,
+         "value": 5
+        },
+        {
+         "id": 4,
+         "value": 2
+        },
+        {
+         "id": 5,
+         "value": 4
+        },
+        {
+         "id": 6,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 4,
+        "2": 5,
+        "3": 6,
+        "4": 2,
+        "5": 3,
+        "6": null
+       },
+       "pointers": {
+        "dummy": 0
+       },
+       "marks": {
+        "path": [
+         1,
+         4,
+         2,
+         5,
+         3,
+         6
+        ],
+        "dim": [
+         0
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      },
+      "result": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nodes",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       }
+      },
+      {
+       "from": {
+        "view": "nodes",
+        "at": 4
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       }
+      },
+      {
+       "from": {
+        "view": "nodes",
+        "at": 2
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       }
+      },
+      {
+       "from": {
+        "view": "nodes",
+        "at": 5
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       }
+      },
+      {
+       "from": {
+        "view": "nodes",
+        "at": 3
+       },
+       "to": {
+        "view": "result",
+        "at": 4
+       }
+      },
+      {
+       "from": {
+        "view": "nodes",
+        "at": 6
+       },
+       "to": {
+        "view": "result",
+        "at": 5
+       }
+      }
+     ],
+     "answer": "[1,2,3,4,5,6]"
+    }
+   ],
+   "sampleInput": "[[1,3,5],[2,4,6]]"
+  },
+  {
+   "label": {
+    "en": "Example 3",
+    "ko": "예시 3"
+   },
+   "input": "queues = [[1,4],[2,5],[3,6]]",
+   "expected": "[1,2,3,4,5,6]",
+   "frames": [
+    {
+     "caption": {
+      "en": "3 queues: q0 [1,4]; q1 [2,5]; q2 [3,6]. They sit in one row behind a dummy node, with tail on dummy.",
+      "ko": "큐 3개를 dummy 노드 뒤에 한 줄로 놓습니다(q0 [1,4]; q1 [2,5]; q2 [3,6]). tail은 dummy에 있습니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 1
+        },
+        {
+         "id": 2,
+         "value": 4
+        },
+        {
+         "id": 3,
+         "value": 2
+        },
+        {
+         "id": 4,
+         "value": 5
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": null,
+        "1": 2,
+        "2": null,
+        "3": 4,
+        "4": null,
+        "5": 6,
+        "6": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "The heap list starts with each queue's front node, in queue order: 1, 2, 3, tagged with its queue.",
+      "ko": "각 큐의 맨 앞 노드를 어느 큐에서 왔는지 표시해 큐 순서대로 힙 리스트에 넣습니다: 1, 2, 3."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 1
+        },
+        {
+         "id": 2,
+         "value": 4
+        },
+        {
+         "id": 3,
+         "value": 2
+        },
+        {
+         "id": 4,
+         "value": 5
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": null,
+        "1": 2,
+        "2": null,
+        "3": 4,
+        "4": null,
+        "5": 6,
+        "6": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 0
+       },
+       "marks": {
+        "lit": [
+         1,
+         3,
+         5
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 1
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 3
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q0"
+        ],
+        [
+         1,
+         "q1"
+        ],
+        [
+         2,
+         "q2"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0,
+         1,
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nodes",
+        "at": 1
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       }
+      },
+      {
+       "from": {
+        "view": "nodes",
+        "at": 3
+       },
+       "to": {
+        "view": "heap",
+        "at": 1
+       }
+      },
+      {
+       "from": {
+        "view": "nodes",
+        "at": 5
+       },
+       "to": {
+        "view": "heap",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "heappop: the top, 1 from q0, is the earliest front left.",
+      "ko": "heappop: 맨 위의 q0의 1이 남은 앞 노드 중 가장 이릅니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 1
+        },
+        {
+         "id": 2,
+         "value": 4
+        },
+        {
+         "id": 3,
+         "value": 2
+        },
+        {
+         "id": 4,
+         "value": 5
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": null,
+        "1": 2,
+        "2": null,
+        "3": 4,
+        "4": null,
+        "5": 6,
+        "6": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 0
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 1
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 3
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q0"
+        ],
+        [
+         1,
+         "q1"
+        ],
+        [
+         2,
+         "q2"
+        ]
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "nodes",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The heap's last entry, 3, fills its empty top.",
+      "ko": "힙의 마지막 항목 3이 빈 맨 위를 채웁니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 1
+        },
+        {
+         "id": 2,
+         "value": 4
+        },
+        {
+         "id": 3,
+         "value": 2
+        },
+        {
+         "id": 4,
+         "value": 5
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": null,
+        "1": 2,
+        "2": null,
+        "3": 4,
+        "4": null,
+        "5": 6,
+        "6": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 0
+       },
+       "marks": {}
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 3
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 3
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q2"
+        ],
+        [
+         1,
+         "q1"
+        ],
+        [
+         2,
+         "q2"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 2
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Sift down: 3 at the top is larger than its child 2, so they swap.",
+      "ko": "아래로 내리기: 위에 있는 3이 자식 2보다 크므로 자리를 바꿉니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 1
+        },
+        {
+         "id": 2,
+         "value": 4
+        },
+        {
+         "id": 3,
+         "value": 2
+        },
+        {
+         "id": 4,
+         "value": 5
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": null,
+        "1": 2,
+        "2": null,
+        "3": 4,
+        "4": null,
+        "5": 6,
+        "6": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 0
+       },
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 2
+        },
+        {
+         "id": 1,
+         "value": 3
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q1"
+        ],
+        [
+         1,
+         "q2"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "heap",
+        "at": 1
+       },
+       "value": "3"
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 1
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       },
+       "value": "2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "tail.next = 1: dummy now points to 1. tail = 1.",
+      "ko": "tail.next = 1: 이제 dummy의 화살표가 1을 가리킵니다. tail도 1로 옮깁니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 1
+        },
+        {
+         "id": 2,
+         "value": 4
+        },
+        {
+         "id": 3,
+         "value": 2
+        },
+        {
+         "id": 4,
+         "value": 5
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": null,
+        "3": 4,
+        "4": null,
+        "5": 6,
+        "6": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 1
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 2
+        },
+        {
+         "id": 1,
+         "value": 3
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q1"
+        ],
+        [
+         1,
+         "q2"
+        ]
+       ],
+       "nodeMarks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "1 has a next in q0, 4, so 4 goes in at the end of the heap.",
+      "ko": "q0에서 1 뒤에 4가 있으므로 힙의 맨 끝에 넣습니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 1
+        },
+        {
+         "id": 2,
+         "value": 4
+        },
+        {
+         "id": 3,
+         "value": 2
+        },
+        {
+         "id": 4,
+         "value": 5
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": null,
+        "3": 4,
+        "4": null,
+        "5": 6,
+        "6": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 1
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 2
+        },
+        {
+         "id": 1,
+         "value": 3
+        },
+        {
+         "id": 2,
+         "value": 4
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q1"
+        ],
+        [
+         1,
+         "q2"
+        ],
+        [
+         2,
+         "q0"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nodes",
+        "at": 2
+       },
+       "to": {
+        "view": "heap",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "heappop: the top, 2 from q1, is the earliest front left.",
+      "ko": "heappop: 맨 위의 q1의 2가 남은 앞 노드 중 가장 이릅니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 1
+        },
+        {
+         "id": 2,
+         "value": 4
+        },
+        {
+         "id": 3,
+         "value": 2
+        },
+        {
+         "id": 4,
+         "value": 5
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": null,
+        "3": 4,
+        "4": null,
+        "5": 6,
+        "6": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 1
+       },
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 2
+        },
+        {
+         "id": 1,
+         "value": 3
+        },
+        {
+         "id": 2,
+         "value": 4
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q1"
+        ],
+        [
+         1,
+         "q2"
+        ],
+        [
+         2,
+         "q0"
+        ]
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "nodes",
+        "at": 3
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The heap's last entry, 4, fills its empty top.",
+      "ko": "힙의 마지막 항목 4가 빈 맨 위를 채웁니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 1
+        },
+        {
+         "id": 2,
+         "value": 4
+        },
+        {
+         "id": 3,
+         "value": 2
+        },
+        {
+         "id": 4,
+         "value": 5
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": null,
+        "3": 4,
+        "4": null,
+        "5": 6,
+        "6": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 1
+       },
+       "marks": {}
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 4
+        },
+        {
+         "id": 1,
+         "value": 3
+        },
+        {
+         "id": 2,
+         "value": 4
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q0"
+        ],
+        [
+         1,
+         "q2"
+        ],
+        [
+         2,
+         "q0"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 2
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Sift down: 4 at the top is larger than its child 3, so they swap.",
+      "ko": "아래로 내리기: 위에 있는 4가 자식 3보다 크므로 자리를 바꿉니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 1
+        },
+        {
+         "id": 2,
+         "value": 4
+        },
+        {
+         "id": 3,
+         "value": 2
+        },
+        {
+         "id": 4,
+         "value": 5
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": null,
+        "3": 4,
+        "4": null,
+        "5": 6,
+        "6": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 1
+       },
+       "marks": {
+        "lit": [
+         5
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 3
+        },
+        {
+         "id": 1,
+         "value": 4
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q2"
+        ],
+        [
+         1,
+         "q0"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "heap",
+        "at": 1
+       },
+       "value": "4"
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 1
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       },
+       "value": "3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "tail.next = 2: 1 now points to 2. tail = 2.",
+      "ko": "tail.next = 2: 이제 1의 화살표가 2를 가리킵니다. tail도 2로 옮깁니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 1
+        },
+        {
+         "id": 2,
+         "value": 4
+        },
+        {
+         "id": 3,
+         "value": 2
+        },
+        {
+         "id": 4,
+         "value": 5
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 3,
+        "2": null,
+        "3": 4,
+        "4": null,
+        "5": 6,
+        "6": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 3
+       },
+       "marks": {
+        "lit": [
+         3
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         1
+        ]
+       },
+       "cut": {
+        "1": 2
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 3
+        },
+        {
+         "id": 1,
+         "value": 4
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q2"
+        ],
+        [
+         1,
+         "q0"
+        ]
+       ],
+       "nodeMarks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "2 has a next in q1, 5, so 5 goes in at the end of the heap.",
+      "ko": "q1에서 2 뒤에 5가 있으므로 힙의 맨 끝에 넣습니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 1
+        },
+        {
+         "id": 2,
+         "value": 4
+        },
+        {
+         "id": 3,
+         "value": 2
+        },
+        {
+         "id": 4,
+         "value": 5
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 3,
+        "2": null,
+        "3": 4,
+        "4": null,
+        "5": 6,
+        "6": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 3
+       },
+       "marks": {
+        "lit": [
+         4
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 3
+        },
+        {
+         "id": 1,
+         "value": 4
+        },
+        {
+         "id": 2,
+         "value": 5
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q2"
+        ],
+        [
+         1,
+         "q0"
+        ],
+        [
+         2,
+         "q1"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nodes",
+        "at": 4
+       },
+       "to": {
+        "view": "heap",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "heappop: the top, 3 from q2, is the earliest front left.",
+      "ko": "heappop: 맨 위의 q2의 3이 남은 앞 노드 중 가장 이릅니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 1
+        },
+        {
+         "id": 2,
+         "value": 4
+        },
+        {
+         "id": 3,
+         "value": 2
+        },
+        {
+         "id": 4,
+         "value": 5
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 3,
+        "2": null,
+        "3": 4,
+        "4": null,
+        "5": 6,
+        "6": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 3
+       },
+       "marks": {
+        "lit": [
+         5
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 3
+        },
+        {
+         "id": 1,
+         "value": 4
+        },
+        {
+         "id": 2,
+         "value": 5
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q2"
+        ],
+        [
+         1,
+         "q0"
+        ],
+        [
+         2,
+         "q1"
+        ]
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "nodes",
+        "at": 5
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The heap's last entry, 5, fills its empty top.",
+      "ko": "힙의 마지막 항목 5가 빈 맨 위를 채웁니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 1
+        },
+        {
+         "id": 2,
+         "value": 4
+        },
+        {
+         "id": 3,
+         "value": 2
+        },
+        {
+         "id": 4,
+         "value": 5
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 3,
+        "2": null,
+        "3": 4,
+        "4": null,
+        "5": 6,
+        "6": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 3
+       },
+       "marks": {}
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 5
+        },
+        {
+         "id": 1,
+         "value": 4
+        },
+        {
+         "id": 2,
+         "value": 5
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q1"
+        ],
+        [
+         1,
+         "q0"
+        ],
+        [
+         2,
+         "q1"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 2
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Sift down: 5 at the top is larger than its child 4, so they swap.",
+      "ko": "아래로 내리기: 위에 있는 5가 자식 4보다 크므로 자리를 바꿉니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 1
+        },
+        {
+         "id": 2,
+         "value": 4
+        },
+        {
+         "id": 3,
+         "value": 2
+        },
+        {
+         "id": 4,
+         "value": 5
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 3,
+        "2": null,
+        "3": 4,
+        "4": null,
+        "5": 6,
+        "6": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 3
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 4
+        },
+        {
+         "id": 1,
+         "value": 5
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q0"
+        ],
+        [
+         1,
+         "q1"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "heap",
+        "at": 1
+       },
+       "value": "5"
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 1
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       },
+       "value": "4"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "tail.next = 3: 2 now points to 3. tail = 3.",
+      "ko": "tail.next = 3: 이제 2의 화살표가 3을 가리킵니다. tail도 3으로 옮깁니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 1
+        },
+        {
+         "id": 2,
+         "value": 4
+        },
+        {
+         "id": 3,
+         "value": 2
+        },
+        {
+         "id": 4,
+         "value": 5
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 3,
+        "2": null,
+        "3": 5,
+        "4": null,
+        "5": 6,
+        "6": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 5
+       },
+       "marks": {
+        "lit": [
+         5
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         3
+        ]
+       },
+       "cut": {
+        "3": 4
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 4
+        },
+        {
+         "id": 1,
+         "value": 5
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q0"
+        ],
+        [
+         1,
+         "q1"
+        ]
+       ],
+       "nodeMarks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "3 has a next in q2, 6, so 6 goes in at the end of the heap.",
+      "ko": "q2에서 3 뒤에 6이 있으므로 힙의 맨 끝에 넣습니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 1
+        },
+        {
+         "id": 2,
+         "value": 4
+        },
+        {
+         "id": 3,
+         "value": 2
+        },
+        {
+         "id": 4,
+         "value": 5
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 3,
+        "2": null,
+        "3": 5,
+        "4": null,
+        "5": 6,
+        "6": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 5
+       },
+       "marks": {
+        "lit": [
+         6
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 4
+        },
+        {
+         "id": 1,
+         "value": 5
+        },
+        {
+         "id": 2,
+         "value": 6
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q0"
+        ],
+        [
+         1,
+         "q1"
+        ],
+        [
+         2,
+         "q2"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nodes",
+        "at": 6
+       },
+       "to": {
+        "view": "heap",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "heappop: the top, 4 from q0, is the earliest front left.",
+      "ko": "heappop: 맨 위의 q0의 4가 남은 앞 노드 중 가장 이릅니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 1
+        },
+        {
+         "id": 2,
+         "value": 4
+        },
+        {
+         "id": 3,
+         "value": 2
+        },
+        {
+         "id": 4,
+         "value": 5
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 3,
+        "2": null,
+        "3": 5,
+        "4": null,
+        "5": 6,
+        "6": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 5
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 4
+        },
+        {
+         "id": 1,
+         "value": 5
+        },
+        {
+         "id": 2,
+         "value": 6
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q0"
+        ],
+        [
+         1,
+         "q1"
+        ],
+        [
+         2,
+         "q2"
+        ]
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "nodes",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The heap's last entry, 6, fills its empty top.",
+      "ko": "힙의 마지막 항목 6이 빈 맨 위를 채웁니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 1
+        },
+        {
+         "id": 2,
+         "value": 4
+        },
+        {
+         "id": 3,
+         "value": 2
+        },
+        {
+         "id": 4,
+         "value": 5
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 3,
+        "2": null,
+        "3": 5,
+        "4": null,
+        "5": 6,
+        "6": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 5
+       },
+       "marks": {}
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 6
+        },
+        {
+         "id": 1,
+         "value": 5
+        },
+        {
+         "id": 2,
+         "value": 6
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q2"
+        ],
+        [
+         1,
+         "q1"
+        ],
+        [
+         2,
+         "q2"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 2
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Sift down: 6 at the top is larger than its child 5, so they swap.",
+      "ko": "아래로 내리기: 위에 있는 6이 자식 5보다 크므로 자리를 바꿉니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 1
+        },
+        {
+         "id": 2,
+         "value": 4
+        },
+        {
+         "id": 3,
+         "value": 2
+        },
+        {
+         "id": 4,
+         "value": 5
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 3,
+        "2": null,
+        "3": 5,
+        "4": null,
+        "5": 6,
+        "6": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 5
+       },
+       "marks": {
+        "lit": [
+         4
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 5
+        },
+        {
+         "id": 1,
+         "value": 6
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q1"
+        ],
+        [
+         1,
+         "q2"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "heap",
+        "at": 1
+       },
+       "value": "6"
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 1
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       },
+       "value": "5"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "tail.next = 4: 3 now points to 4. tail = 4.",
+      "ko": "tail.next = 4: 이제 3의 화살표가 4를 가리킵니다. tail도 4로 옮깁니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 1
+        },
+        {
+         "id": 2,
+         "value": 4
+        },
+        {
+         "id": 3,
+         "value": 2
+        },
+        {
+         "id": 4,
+         "value": 5
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 3,
+        "2": null,
+        "3": 5,
+        "4": null,
+        "5": 2,
+        "6": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 2
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         5
+        ]
+       },
+       "cut": {
+        "5": 6
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 5
+        },
+        {
+         "id": 1,
+         "value": 6
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q1"
+        ],
+        [
+         1,
+         "q2"
+        ]
+       ],
+       "nodeMarks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "4 is the last of q0, so nothing joins the heap.",
+      "ko": "4는 q0의 마지막이라 힙에 넣을 것이 없습니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 1
+        },
+        {
+         "id": 2,
+         "value": 4
+        },
+        {
+         "id": 3,
+         "value": 2
+        },
+        {
+         "id": 4,
+         "value": 5
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 3,
+        "2": null,
+        "3": 5,
+        "4": null,
+        "5": 2,
+        "6": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 2
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 5
+        },
+        {
+         "id": 1,
+         "value": 6
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q1"
+        ],
+        [
+         1,
+         "q2"
+        ]
+       ],
+       "nodeMarks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "heappop: the top, 5 from q1, is the earliest front left.",
+      "ko": "heappop: 맨 위의 q1의 5가 남은 앞 노드 중 가장 이릅니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 1
+        },
+        {
+         "id": 2,
+         "value": 4
+        },
+        {
+         "id": 3,
+         "value": 2
+        },
+        {
+         "id": 4,
+         "value": 5
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 3,
+        "2": null,
+        "3": 5,
+        "4": null,
+        "5": 2,
+        "6": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 2
+       },
+       "marks": {
+        "lit": [
+         4
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 5
+        },
+        {
+         "id": 1,
+         "value": 6
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q1"
+        ],
+        [
+         1,
+         "q2"
+        ]
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "nodes",
+        "at": 4
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The heap's last entry, 6, fills its empty top.",
+      "ko": "힙의 마지막 항목 6이 빈 맨 위를 채웁니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 1
+        },
+        {
+         "id": 2,
+         "value": 4
+        },
+        {
+         "id": 3,
+         "value": 2
+        },
+        {
+         "id": 4,
+         "value": 5
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 3,
+        "2": null,
+        "3": 5,
+        "4": null,
+        "5": 2,
+        "6": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 2
+       },
+       "marks": {}
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 6
+        },
+        {
+         "id": 1,
+         "value": 6
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "q2"
+        ],
+        [
+         1,
+         "q2"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 1
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "tail.next = 5: 4 now points to 5. tail = 5.",
+      "ko": "tail.next = 5: 이제 4의 화살표가 5를 가리킵니다. tail도 5로 옮깁니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 1
+        },
+        {
+         "id": 2,
+         "value": 4
+        },
+        {
+         "id": 3,
+         "value": 2
+        },
+        {
+         "id": 4,
+         "value": 5
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 3,
+        "2": 4,
+        "3": 5,
+        "4": null,
+        "5": 2,
+        "6": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 4
+       },
+       "marks": {
+        "lit": [
+         4
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         2
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 6
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "q2"
+        ]
+       ],
+       "nodeMarks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "5 is the last of q1, so nothing joins the heap.",
+      "ko": "5는 q1의 마지막이라 힙에 넣을 것이 없습니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 1
+        },
+        {
+         "id": 2,
+         "value": 4
+        },
+        {
+         "id": 3,
+         "value": 2
+        },
+        {
+         "id": 4,
+         "value": 5
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 3,
+        "2": 4,
+        "3": 5,
+        "4": null,
+        "5": 2,
+        "6": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 4
+       },
+       "marks": {
+        "lit": [
+         4
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 6
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "q2"
+        ]
+       ],
+       "nodeMarks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "heappop: the top, 6 from q2, is the earliest front left.",
+      "ko": "heappop: 맨 위의 q2의 6이 남은 앞 노드 중 가장 이릅니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 1
+        },
+        {
+         "id": 2,
+         "value": 4
+        },
+        {
+         "id": 3,
+         "value": 2
+        },
+        {
+         "id": 4,
+         "value": 5
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 3,
+        "2": 4,
+        "3": 5,
+        "4": null,
+        "5": 2,
+        "6": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 4
+       },
+       "marks": {
+        "lit": [
+         6
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 6
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "q2"
+        ]
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "nodes",
+        "at": 6
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "tail.next = 6: 5 now points to 6. tail = 6.",
+      "ko": "tail.next = 6: 이제 5의 화살표가 6을 가리킵니다. tail도 6으로 옮깁니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 1
+        },
+        {
+         "id": 2,
+         "value": 4
+        },
+        {
+         "id": 3,
+         "value": 2
+        },
+        {
+         "id": 4,
+         "value": 5
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 3,
+        "2": 4,
+        "3": 5,
+        "4": 6,
+        "5": 2,
+        "6": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 6
+       },
+       "marks": {
+        "lit": [
+         6
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         4
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "The heap is empty, so every node is linked. Reading from dummy.next gives [1,2,3,4,5,6].",
+      "ko": "힙이 비었으니 모든 노드가 이어졌습니다. dummy.next부터 읽으면 [1,2,3,4,5,6]입니다."
+     },
+     "views": {
+      "nodes": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 1
+        },
+        {
+         "id": 2,
+         "value": 4
+        },
+        {
+         "id": 3,
+         "value": 2
+        },
+        {
+         "id": 4,
+         "value": 5
+        },
+        {
+         "id": 5,
+         "value": 3
+        },
+        {
+         "id": 6,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 3,
+        "2": 4,
+        "3": 5,
+        "4": 6,
+        "5": 2,
+        "6": null
+       },
+       "pointers": {
+        "dummy": 0
+       },
+       "marks": {
+        "path": [
+         1,
+         3,
+         5,
+         2,
+         4,
+         6
+        ],
+        "dim": [
+         0
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      },
+      "result": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nodes",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       }
+      },
+      {
+       "from": {
+        "view": "nodes",
+        "at": 3
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       }
+      },
+      {
+       "from": {
+        "view": "nodes",
+        "at": 5
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       }
+      },
+      {
+       "from": {
+        "view": "nodes",
+        "at": 2
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       }
+      },
+      {
+       "from": {
+        "view": "nodes",
+        "at": 4
+       },
+       "to": {
+        "view": "result",
+        "at": 4
+       }
+      },
+      {
+       "from": {
+        "view": "nodes",
+        "at": 6
+       },
+       "to": {
+        "view": "result",
+        "at": 5
+       }
+      }
+     ],
+     "answer": "[1,2,3,4,5,6]"
+    }
+   ],
+   "sampleInput": "[[1,4],[2,5],[3,6]]"
+  }
+ ]
+}
