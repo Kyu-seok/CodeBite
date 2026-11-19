@@ -1,0 +1,9791 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "LRU Cache",
+  "ko": "LRU 캐시"
+ },
+ "approach": {
+  "en": "A hash map finds a key's node in O(1), and a doubly linked list keeps the nodes in order of use, from head (least recent) to tail (most recent). Every use unlinks the node and appends it before tail; when the cache grows past capacity, the node after head is evicted.",
+  "ko": "해시 맵으로 키의 노드를 O(1)에 찾고, 이중 연결 리스트로 노드를 사용한 순서대로 head(가장 오래됨)부터 tail(가장 최근)까지 둡니다. 사용할 때마다 노드를 떼어 tail 앞에 붙이고, 용량을 넘으면 head 바로 뒤의 노드를 제거합니다."
+ },
+ "views": [
+  {
+   "id": "list",
+   "type": "linkedlist",
+   "title": {
+    "en": "nodes as key=value, head to tail by next",
+    "ko": "key=value 노드, next를 따라 head부터 tail까지"
+   }
+  },
+  {
+   "id": "map",
+   "type": "map",
+   "title": {
+    "en": "nodes: key → node's value",
+    "ko": "nodes: 키 → 노드의 값"
+   },
+   "empty": {
+    "en": "empty",
+    "ko": "비어 있음"
+   }
+  },
+  {
+   "id": "calls",
+   "type": "table",
+   "title": {
+    "en": "calls",
+    "ko": "호출"
+   }
+  },
+  {
+   "id": "result",
+   "type": "output",
+   "title": {
+    "en": "returned",
+    "ko": "반환값"
+   }
+  },
+  {
+   "id": "state",
+   "type": "vars"
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "[\"LRUCache\",\"put\",\"put\",\"get\",\"put\",\"get\",\"put\",\"get\",\"get\",\"get\"]\n[[2],[1,10],[2,20],[1],[3,30],[2],[4,40],[1],[3],[4]]",
+   "expected": "[null,null,null,10,null,-1,null,-1,30,40]",
+   "frames": [
+    {
+     "caption": {
+      "en": "LRUCache(2): an empty map, and the sentinels head and tail linked to each other. Returns null.",
+      "ko": "LRUCache(2): 빈 맵과 서로 이어진 sentinel 노드 head, tail로 시작하고 null을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "LRUCache",
+          "2"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "put",
+          "1, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "put",
+          "2, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "get",
+          "1"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "put",
+          "3, 30"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "get",
+          "2"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "put",
+          "4, 40"
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "get",
+          "1"
+         ]
+        },
+        {
+         "label": "8",
+         "cells": [
+          "get",
+          "3"
+         ]
+        },
+        {
+         "label": "9",
+         "cells": [
+          "get",
+          "4"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ]
+       }
+      },
+      "map": {
+       "entries": [],
+       "marks": {}
+      },
+      "list": {
+       "nodes": [
+        {
+         "id": "head",
+         "value": ""
+        },
+        {
+         "id": "tail",
+         "value": ""
+        }
+       ],
+       "next": {
+        "head": "tail"
+       },
+       "pointers": {
+        "head": "head",
+        "tail": "tail"
+       },
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "capacity",
+          "ko": "capacity (용량)"
+         },
+         "value": 2
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       },
+       "value": "null"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "put(1, 10): key 1 is not in the map, so a new node 1=10 is made and the map points key 1 to it.",
+      "ko": "put(1, 10): 맵에 키 1이 없으므로 새 노드 1=10를 만들고 맵의 키 1이 그 노드를 가리킵니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "LRUCache",
+          "2"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "put",
+          "1, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "put",
+          "2, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "get",
+          "1"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "put",
+          "3, 30"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "get",
+          "2"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "put",
+          "4, 40"
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "get",
+          "1"
+         ]
+        },
+        {
+         "label": "8",
+         "cells": [
+          "get",
+          "3"
+         ]
+        },
+        {
+         "label": "9",
+         "cells": [
+          "get",
+          "4"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "map": {
+       "entries": [
+        {
+         "key": 1,
+         "value": "10"
+        }
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       },
+       "probe": {
+        "key": 1,
+        "hit": false
+       }
+      },
+      "list": {
+       "nodes": [
+        {
+         "id": "head",
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": "1=10"
+        },
+        {
+         "id": "tail",
+         "value": ""
+        }
+       ],
+       "next": {
+        "head": "tail"
+       },
+       "pointers": {
+        "head": "head",
+        "tail": "tail"
+       },
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null"
+       ],
+       "marks": {
+        "good": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "capacity",
+          "ko": "capacity (용량)"
+         },
+         "value": 2
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         1,
+         1
+        ]
+       },
+       "to": {
+        "view": "map",
+        "at": 1
+       },
+       "value": "10"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         1,
+         1
+        ]
+       },
+       "to": {
+        "view": "list",
+        "at": 1
+       },
+       "value": "1=10"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "put(1, 10) is a use, and returns null. Append 1=10 before tail: head's next is now this node and its next is tail, so it is the most recently used.",
+      "ko": "put(1, 10)도 사용이므로 null을 반환하고, 1=10 노드를 tail 앞에 붙입니다. head의 next가 이 노드, 이 노드의 next가 tail이 되어 가장 최근에 사용한 노드가 됩니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "LRUCache",
+          "2"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "put",
+          "1, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "put",
+          "2, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "get",
+          "1"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "put",
+          "3, 30"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "get",
+          "2"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "put",
+          "4, 40"
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "get",
+          "1"
+         ]
+        },
+        {
+         "label": "8",
+         "cells": [
+          "get",
+          "3"
+         ]
+        },
+        {
+         "label": "9",
+         "cells": [
+          "get",
+          "4"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "map": {
+       "entries": [
+        {
+         "key": 1,
+         "value": "10"
+        }
+       ],
+       "marks": {}
+      },
+      "list": {
+       "nodes": [
+        {
+         "id": "head",
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": "1=10"
+        },
+        {
+         "id": "tail",
+         "value": ""
+        }
+       ],
+       "next": {
+        "head": 1,
+        "1": "tail"
+       },
+       "pointers": {
+        "head": "head",
+        "tail": "tail"
+       },
+       "marks": {
+        "good": [
+         1
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         "head",
+         1
+        ]
+       },
+       "cut": {
+        "head": "tail"
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "capacity",
+          "ko": "capacity (용량)"
+         },
+         "value": 2
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       },
+       "value": "null"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "put(2, 20): key 2 is not in the map, so a new node 2=20 is made and the map points key 2 to it.",
+      "ko": "put(2, 20): 맵에 키 2가 없으므로 새 노드 2=20를 만들고 맵의 키 2가 그 노드를 가리킵니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "LRUCache",
+          "2"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "put",
+          "1, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "put",
+          "2, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "get",
+          "1"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "put",
+          "3, 30"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "get",
+          "2"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "put",
+          "4, 40"
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "get",
+          "1"
+         ]
+        },
+        {
+         "label": "8",
+         "cells": [
+          "get",
+          "3"
+         ]
+        },
+        {
+         "label": "9",
+         "cells": [
+          "get",
+          "4"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ]
+       }
+      },
+      "map": {
+       "entries": [
+        {
+         "key": 1,
+         "value": "10"
+        },
+        {
+         "key": 2,
+         "value": "20"
+        }
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       },
+       "probe": {
+        "key": 2,
+        "hit": false
+       }
+      },
+      "list": {
+       "nodes": [
+        {
+         "id": "head",
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": "1=10"
+        },
+        {
+         "id": 2,
+         "value": "2=20"
+        },
+        {
+         "id": "tail",
+         "value": ""
+        }
+       ],
+       "next": {
+        "head": 1,
+        "1": "tail"
+       },
+       "pointers": {
+        "head": "head",
+        "tail": "tail"
+       },
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "capacity",
+          "ko": "capacity (용량)"
+         },
+         "value": 2
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         2,
+         1
+        ]
+       },
+       "to": {
+        "view": "map",
+        "at": 2
+       },
+       "value": "20"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         2,
+         1
+        ]
+       },
+       "to": {
+        "view": "list",
+        "at": 2
+       },
+       "value": "2=20"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "put(2, 20) is a use, and returns null. Append 2=20 before tail: 1=10's next is now this node and its next is tail, so it is the most recently used.",
+      "ko": "put(2, 20)도 사용이므로 null을 반환하고, 2=20 노드를 tail 앞에 붙입니다. 1=10의 next가 이 노드, 이 노드의 next가 tail이 되어 가장 최근에 사용한 노드가 됩니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "LRUCache",
+          "2"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "put",
+          "1, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "put",
+          "2, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "get",
+          "1"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "put",
+          "3, 30"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "get",
+          "2"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "put",
+          "4, 40"
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "get",
+          "1"
+         ]
+        },
+        {
+         "label": "8",
+         "cells": [
+          "get",
+          "3"
+         ]
+        },
+        {
+         "label": "9",
+         "cells": [
+          "get",
+          "4"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ]
+       }
+      },
+      "map": {
+       "entries": [
+        {
+         "key": 1,
+         "value": "10"
+        },
+        {
+         "key": 2,
+         "value": "20"
+        }
+       ],
+       "marks": {}
+      },
+      "list": {
+       "nodes": [
+        {
+         "id": "head",
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": "1=10"
+        },
+        {
+         "id": 2,
+         "value": "2=20"
+        },
+        {
+         "id": "tail",
+         "value": ""
+        }
+       ],
+       "next": {
+        "head": 1,
+        "1": 2,
+        "2": "tail"
+       },
+       "pointers": {
+        "head": "head",
+        "tail": "tail"
+       },
+       "marks": {
+        "good": [
+         2
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         1,
+         2
+        ]
+       },
+       "cut": {
+        "1": "tail"
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "capacity",
+          "ko": "capacity (용량)"
+         },
+         "value": 2
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         2,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       },
+       "value": "null"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "get(1): the map finds node 1=10. Unlink it: head's next skips it to 2=20, and 2=20's prev comes back to head.",
+      "ko": "get(1): 맵에서 1=10 노드를 찾습니다. 이 노드를 떼어 내면 head의 next는 이 노드를 건너 2=20 노드를, 2=20의 prev는 head 노드를 가리킵니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "LRUCache",
+          "2"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "put",
+          "1, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "put",
+          "2, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "get",
+          "1"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "put",
+          "3, 30"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "get",
+          "2"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "put",
+          "4, 40"
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "get",
+          "1"
+         ]
+        },
+        {
+         "label": "8",
+         "cells": [
+          "get",
+          "3"
+         ]
+        },
+        {
+         "label": "9",
+         "cells": [
+          "get",
+          "4"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      },
+      "map": {
+       "entries": [
+        {
+         "key": 1,
+         "value": "10"
+        },
+        {
+         "key": 2,
+         "value": "20"
+        }
+       ],
+       "marks": {},
+       "probe": {
+        "key": 1,
+        "hit": true
+       }
+      },
+      "list": {
+       "nodes": [
+        {
+         "id": "head",
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": "1=10"
+        },
+        {
+         "id": 2,
+         "value": "2=20"
+        },
+        {
+         "id": "tail",
+         "value": ""
+        }
+       ],
+       "next": {
+        "head": 2,
+        "1": 2,
+        "2": "tail"
+       },
+       "pointers": {
+        "head": "head",
+        "tail": "tail"
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         "head"
+        ]
+       },
+       "cut": {
+        "head": 1
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "capacity",
+          "ko": "capacity (용량)"
+         },
+         "value": 2
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "get(1) is a use, and returns 10. Append 1=10 before tail: 2=20's next is now this node and its next is tail, so it is the most recently used.",
+      "ko": "get(1)도 사용이므로 10을 반환하고, 1=10 노드를 tail 앞에 붙입니다. 2=20의 next가 이 노드, 이 노드의 next가 tail이 되어 가장 최근에 사용한 노드가 됩니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "LRUCache",
+          "2"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "put",
+          "1, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "put",
+          "2, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "get",
+          "1"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "put",
+          "3, 30"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "get",
+          "2"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "put",
+          "4, 40"
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "get",
+          "1"
+         ]
+        },
+        {
+         "label": "8",
+         "cells": [
+          "get",
+          "3"
+         ]
+        },
+        {
+         "label": "9",
+         "cells": [
+          "get",
+          "4"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      },
+      "map": {
+       "entries": [
+        {
+         "key": 1,
+         "value": "10"
+        },
+        {
+         "key": 2,
+         "value": "20"
+        }
+       ],
+       "marks": {}
+      },
+      "list": {
+       "nodes": [
+        {
+         "id": "head",
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": "1=10"
+        },
+        {
+         "id": 2,
+         "value": "2=20"
+        },
+        {
+         "id": "tail",
+         "value": ""
+        }
+       ],
+       "next": {
+        "head": 2,
+        "1": "tail",
+        "2": 1
+       },
+       "pointers": {
+        "head": "head",
+        "tail": "tail"
+       },
+       "marks": {
+        "good": [
+         1
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         2,
+         1
+        ]
+       },
+       "cut": {
+        "2": "tail",
+        "1": 2
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "10"
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "capacity",
+          "ko": "capacity (용량)"
+         },
+         "value": 2
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "list",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "put(3, 30): key 3 is not in the map, so a new node 3=30 is made and the map points key 3 to it.",
+      "ko": "put(3, 30): 맵에 키 3이 없으므로 새 노드 3=30를 만들고 맵의 키 3이 그 노드를 가리킵니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "LRUCache",
+          "2"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "put",
+          "1, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "put",
+          "2, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "get",
+          "1"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "put",
+          "3, 30"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "get",
+          "2"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "put",
+          "4, 40"
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "get",
+          "1"
+         ]
+        },
+        {
+         "label": "8",
+         "cells": [
+          "get",
+          "3"
+         ]
+        },
+        {
+         "label": "9",
+         "cells": [
+          "get",
+          "4"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ]
+       }
+      },
+      "map": {
+       "entries": [
+        {
+         "key": 1,
+         "value": "10"
+        },
+        {
+         "key": 2,
+         "value": "20"
+        },
+        {
+         "key": 3,
+         "value": "30"
+        }
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       },
+       "probe": {
+        "key": 3,
+        "hit": false
+       }
+      },
+      "list": {
+       "nodes": [
+        {
+         "id": "head",
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": "1=10"
+        },
+        {
+         "id": 2,
+         "value": "2=20"
+        },
+        {
+         "id": 3,
+         "value": "3=30"
+        },
+        {
+         "id": "tail",
+         "value": ""
+        }
+       ],
+       "next": {
+        "head": 2,
+        "1": "tail",
+        "2": 1
+       },
+       "pointers": {
+        "head": "head",
+        "tail": "tail"
+       },
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "10"
+       ],
+       "marks": {
+        "good": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "capacity",
+          "ko": "capacity (용량)"
+         },
+         "value": 2
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         4,
+         1
+        ]
+       },
+       "to": {
+        "view": "map",
+        "at": 3
+       },
+       "value": "30"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         4,
+         1
+        ]
+       },
+       "to": {
+        "view": "list",
+        "at": 3
+       },
+       "value": "3=30"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "put(3, 30) is a use. Append 3=30 before tail: 1=10's next is now this node and its next is tail, so it is the most recently used.",
+      "ko": "put(3, 30)도 사용이므로 3=30 노드를 tail 앞에 붙입니다. 1=10의 next가 이 노드, 이 노드의 next가 tail이 되어 가장 최근에 사용한 노드가 됩니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "LRUCache",
+          "2"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "put",
+          "1, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "put",
+          "2, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "get",
+          "1"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "put",
+          "3, 30"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "get",
+          "2"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "put",
+          "4, 40"
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "get",
+          "1"
+         ]
+        },
+        {
+         "label": "8",
+         "cells": [
+          "get",
+          "3"
+         ]
+        },
+        {
+         "label": "9",
+         "cells": [
+          "get",
+          "4"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ]
+       }
+      },
+      "map": {
+       "entries": [
+        {
+         "key": 1,
+         "value": "10"
+        },
+        {
+         "key": 2,
+         "value": "20"
+        },
+        {
+         "key": 3,
+         "value": "30"
+        }
+       ],
+       "marks": {}
+      },
+      "list": {
+       "nodes": [
+        {
+         "id": "head",
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": "1=10"
+        },
+        {
+         "id": 2,
+         "value": "2=20"
+        },
+        {
+         "id": 3,
+         "value": "3=30"
+        },
+        {
+         "id": "tail",
+         "value": ""
+        }
+       ],
+       "next": {
+        "head": 2,
+        "1": 3,
+        "2": 1,
+        "3": "tail"
+       },
+       "pointers": {
+        "head": "head",
+        "tail": "tail"
+       },
+       "marks": {
+        "good": [
+         3
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         1,
+         3
+        ]
+       },
+       "cut": {
+        "1": "tail"
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "10"
+       ],
+       "marks": {
+        "good": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "capacity",
+          "ko": "capacity (용량)"
+         },
+         "value": 2
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "The map holds 3 keys, more than capacity 2, so head.next, 2=20, the least recently used, is unlinked and key 2 deleted from the map. Returns null.",
+      "ko": "맵의 키가 3개로 용량 2를 넘으므로, 가장 오래 사용하지 않은 head.next의 2=20 노드를 떼어 내고 맵에서 키 2를 지웁니다. null을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "LRUCache",
+          "2"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "put",
+          "1, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "put",
+          "2, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "get",
+          "1"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "put",
+          "3, 30"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "get",
+          "2"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "put",
+          "4, 40"
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "get",
+          "1"
+         ]
+        },
+        {
+         "label": "8",
+         "cells": [
+          "get",
+          "3"
+         ]
+        },
+        {
+         "label": "9",
+         "cells": [
+          "get",
+          "4"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ]
+       }
+      },
+      "map": {
+       "entries": [
+        {
+         "key": 1,
+         "value": "10"
+        },
+        {
+         "key": 2,
+         "value": "20"
+        },
+        {
+         "key": 3,
+         "value": "30"
+        }
+       ],
+       "marks": {
+        "bad": [
+         2
+        ]
+       },
+       "struck": [
+        2
+       ]
+      },
+      "list": {
+       "nodes": [
+        {
+         "id": "head",
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": "1=10"
+        },
+        {
+         "id": 2,
+         "value": "2=20"
+        },
+        {
+         "id": 3,
+         "value": "3=30"
+        },
+        {
+         "id": "tail",
+         "value": ""
+        }
+       ],
+       "next": {
+        "head": 1,
+        "1": 3,
+        "2": 1,
+        "3": "tail"
+       },
+       "pointers": {
+        "head": "head",
+        "tail": "tail"
+       },
+       "marks": {
+        "bad": [
+         2
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         "head"
+        ]
+       },
+       "cut": {
+        "head": 2
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "10",
+        "null"
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "capacity",
+          "ko": "capacity (용량)"
+         },
+         "value": 2
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "map",
+        "at": 2
+       },
+       "mark": "bad"
+      },
+      {
+       "from": {
+        "view": "list",
+        "at": 2
+       },
+       "mark": "bad"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         4,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 4
+       },
+       "value": "null"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "get(2): key 2 is not in the map, so it returns -1 and nothing moves.",
+      "ko": "get(2): 맵에 키 2가 없으므로 -1을 반환하고 아무것도 옮기지 않습니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "LRUCache",
+          "2"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "put",
+          "1, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "put",
+          "2, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "get",
+          "1"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "put",
+          "3, 30"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "get",
+          "2"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "put",
+          "4, 40"
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "get",
+          "1"
+         ]
+        },
+        {
+         "label": "8",
+         "cells": [
+          "get",
+          "3"
+         ]
+        },
+        {
+         "label": "9",
+         "cells": [
+          "get",
+          "4"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ]
+        ]
+       }
+      },
+      "map": {
+       "entries": [
+        {
+         "key": 1,
+         "value": "10"
+        },
+        {
+         "key": 3,
+         "value": "30"
+        }
+       ],
+       "marks": {},
+       "probe": {
+        "key": 2,
+        "hit": false
+       }
+      },
+      "list": {
+       "nodes": [
+        {
+         "id": "head",
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": "1=10"
+        },
+        {
+         "id": 3,
+         "value": "3=30"
+        },
+        {
+         "id": "tail",
+         "value": ""
+        }
+       ],
+       "next": {
+        "head": 1,
+        "1": 3,
+        "3": "tail"
+       },
+       "pointers": {
+        "head": "head",
+        "tail": "tail"
+       },
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "10",
+        "null",
+        "-1"
+       ],
+       "marks": {
+        "good": [
+         5
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "capacity",
+          "ko": "capacity (용량)"
+         },
+         "value": 2
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         5,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 5
+       },
+       "value": "-1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "put(4, 40): key 4 is not in the map, so a new node 4=40 is made and the map points key 4 to it.",
+      "ko": "put(4, 40): 맵에 키 4가 없으므로 새 노드 4=40를 만들고 맵의 키 4가 그 노드를 가리킵니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "LRUCache",
+          "2"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "put",
+          "1, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "put",
+          "2, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "get",
+          "1"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "put",
+          "3, 30"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "get",
+          "2"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "put",
+          "4, 40"
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "get",
+          "1"
+         ]
+        },
+        {
+         "label": "8",
+         "cells": [
+          "get",
+          "3"
+         ]
+        },
+        {
+         "label": "9",
+         "cells": [
+          "get",
+          "4"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ],
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          6,
+          0
+         ],
+         [
+          6,
+          1
+         ]
+        ]
+       }
+      },
+      "map": {
+       "entries": [
+        {
+         "key": 1,
+         "value": "10"
+        },
+        {
+         "key": 3,
+         "value": "30"
+        },
+        {
+         "key": 4,
+         "value": "40"
+        }
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       },
+       "probe": {
+        "key": 4,
+        "hit": false
+       }
+      },
+      "list": {
+       "nodes": [
+        {
+         "id": "head",
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": "1=10"
+        },
+        {
+         "id": 3,
+         "value": "3=30"
+        },
+        {
+         "id": 4,
+         "value": "4=40"
+        },
+        {
+         "id": "tail",
+         "value": ""
+        }
+       ],
+       "next": {
+        "head": 1,
+        "1": 3,
+        "3": "tail"
+       },
+       "pointers": {
+        "head": "head",
+        "tail": "tail"
+       },
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "10",
+        "null",
+        "-1"
+       ],
+       "marks": {
+        "good": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "capacity",
+          "ko": "capacity (용량)"
+         },
+         "value": 2
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         6,
+         1
+        ]
+       },
+       "to": {
+        "view": "map",
+        "at": 4
+       },
+       "value": "40"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         6,
+         1
+        ]
+       },
+       "to": {
+        "view": "list",
+        "at": 4
+       },
+       "value": "4=40"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "put(4, 40) is a use. Append 4=40 before tail: 3=30's next is now this node and its next is tail, so it is the most recently used.",
+      "ko": "put(4, 40)도 사용이므로 4=40 노드를 tail 앞에 붙입니다. 3=30의 next가 이 노드, 이 노드의 next가 tail이 되어 가장 최근에 사용한 노드가 됩니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "LRUCache",
+          "2"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "put",
+          "1, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "put",
+          "2, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "get",
+          "1"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "put",
+          "3, 30"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "get",
+          "2"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "put",
+          "4, 40"
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "get",
+          "1"
+         ]
+        },
+        {
+         "label": "8",
+         "cells": [
+          "get",
+          "3"
+         ]
+        },
+        {
+         "label": "9",
+         "cells": [
+          "get",
+          "4"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ],
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          6,
+          0
+         ],
+         [
+          6,
+          1
+         ]
+        ]
+       }
+      },
+      "map": {
+       "entries": [
+        {
+         "key": 1,
+         "value": "10"
+        },
+        {
+         "key": 3,
+         "value": "30"
+        },
+        {
+         "key": 4,
+         "value": "40"
+        }
+       ],
+       "marks": {}
+      },
+      "list": {
+       "nodes": [
+        {
+         "id": "head",
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": "1=10"
+        },
+        {
+         "id": 3,
+         "value": "3=30"
+        },
+        {
+         "id": 4,
+         "value": "4=40"
+        },
+        {
+         "id": "tail",
+         "value": ""
+        }
+       ],
+       "next": {
+        "head": 1,
+        "1": 3,
+        "3": 4,
+        "4": "tail"
+       },
+       "pointers": {
+        "head": "head",
+        "tail": "tail"
+       },
+       "marks": {
+        "good": [
+         4
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         3,
+         4
+        ]
+       },
+       "cut": {
+        "3": "tail"
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "10",
+        "null",
+        "-1"
+       ],
+       "marks": {
+        "good": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "capacity",
+          "ko": "capacity (용량)"
+         },
+         "value": 2
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "The map holds 3 keys, more than capacity 2, so head.next, 1=10, the least recently used, is unlinked and key 1 deleted from the map. Returns null.",
+      "ko": "맵의 키가 3개로 용량 2를 넘으므로, 가장 오래 사용하지 않은 head.next의 1=10 노드를 떼어 내고 맵에서 키 1을 지웁니다. null을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "LRUCache",
+          "2"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "put",
+          "1, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "put",
+          "2, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "get",
+          "1"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "put",
+          "3, 30"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "get",
+          "2"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "put",
+          "4, 40"
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "get",
+          "1"
+         ]
+        },
+        {
+         "label": "8",
+         "cells": [
+          "get",
+          "3"
+         ]
+        },
+        {
+         "label": "9",
+         "cells": [
+          "get",
+          "4"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ],
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          6,
+          0
+         ],
+         [
+          6,
+          1
+         ]
+        ]
+       }
+      },
+      "map": {
+       "entries": [
+        {
+         "key": 1,
+         "value": "10"
+        },
+        {
+         "key": 3,
+         "value": "30"
+        },
+        {
+         "key": 4,
+         "value": "40"
+        }
+       ],
+       "marks": {
+        "bad": [
+         1
+        ]
+       },
+       "struck": [
+        1
+       ]
+      },
+      "list": {
+       "nodes": [
+        {
+         "id": "head",
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": "1=10"
+        },
+        {
+         "id": 3,
+         "value": "3=30"
+        },
+        {
+         "id": 4,
+         "value": "4=40"
+        },
+        {
+         "id": "tail",
+         "value": ""
+        }
+       ],
+       "next": {
+        "head": 3,
+        "1": 3,
+        "3": 4,
+        "4": "tail"
+       },
+       "pointers": {
+        "head": "head",
+        "tail": "tail"
+       },
+       "marks": {
+        "bad": [
+         1
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         "head"
+        ]
+       },
+       "cut": {
+        "head": 1
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "10",
+        "null",
+        "-1",
+        "null"
+       ],
+       "marks": {
+        "good": [
+         6
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "capacity",
+          "ko": "capacity (용량)"
+         },
+         "value": 2
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "map",
+        "at": 1
+       },
+       "mark": "bad"
+      },
+      {
+       "from": {
+        "view": "list",
+        "at": 1
+       },
+       "mark": "bad"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         6,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 6
+       },
+       "value": "null"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "get(1): key 1 is not in the map, so it returns -1 and nothing moves.",
+      "ko": "get(1): 맵에 키 1이 없으므로 -1을 반환하고 아무것도 옮기지 않습니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "LRUCache",
+          "2"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "put",
+          "1, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "put",
+          "2, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "get",
+          "1"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "put",
+          "3, 30"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "get",
+          "2"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "put",
+          "4, 40"
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "get",
+          "1"
+         ]
+        },
+        {
+         "label": "8",
+         "cells": [
+          "get",
+          "3"
+         ]
+        },
+        {
+         "label": "9",
+         "cells": [
+          "get",
+          "4"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ],
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ],
+         [
+          6,
+          0
+         ],
+         [
+          6,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          7,
+          0
+         ],
+         [
+          7,
+          1
+         ]
+        ]
+       }
+      },
+      "map": {
+       "entries": [
+        {
+         "key": 3,
+         "value": "30"
+        },
+        {
+         "key": 4,
+         "value": "40"
+        }
+       ],
+       "marks": {},
+       "probe": {
+        "key": 1,
+        "hit": false
+       }
+      },
+      "list": {
+       "nodes": [
+        {
+         "id": "head",
+         "value": ""
+        },
+        {
+         "id": 3,
+         "value": "3=30"
+        },
+        {
+         "id": 4,
+         "value": "4=40"
+        },
+        {
+         "id": "tail",
+         "value": ""
+        }
+       ],
+       "next": {
+        "head": 3,
+        "3": 4,
+        "4": "tail"
+       },
+       "pointers": {
+        "head": "head",
+        "tail": "tail"
+       },
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "10",
+        "null",
+        "-1",
+        "null",
+        "-1"
+       ],
+       "marks": {
+        "good": [
+         7
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "capacity",
+          "ko": "capacity (용량)"
+         },
+         "value": 2
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         7,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 7
+       },
+       "value": "-1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "get(3): the map finds node 3=30. Unlink it: head's next skips it to 4=40, and 4=40's prev comes back to head.",
+      "ko": "get(3): 맵에서 3=30 노드를 찾습니다. 이 노드를 떼어 내면 head의 next는 이 노드를 건너 4=40 노드를, 4=40의 prev는 head 노드를 가리킵니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "LRUCache",
+          "2"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "put",
+          "1, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "put",
+          "2, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "get",
+          "1"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "put",
+          "3, 30"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "get",
+          "2"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "put",
+          "4, 40"
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "get",
+          "1"
+         ]
+        },
+        {
+         "label": "8",
+         "cells": [
+          "get",
+          "3"
+         ]
+        },
+        {
+         "label": "9",
+         "cells": [
+          "get",
+          "4"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ],
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ],
+         [
+          6,
+          0
+         ],
+         [
+          6,
+          1
+         ],
+         [
+          7,
+          0
+         ],
+         [
+          7,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          8,
+          0
+         ],
+         [
+          8,
+          1
+         ]
+        ]
+       }
+      },
+      "map": {
+       "entries": [
+        {
+         "key": 3,
+         "value": "30"
+        },
+        {
+         "key": 4,
+         "value": "40"
+        }
+       ],
+       "marks": {},
+       "probe": {
+        "key": 3,
+        "hit": true
+       }
+      },
+      "list": {
+       "nodes": [
+        {
+         "id": "head",
+         "value": ""
+        },
+        {
+         "id": 3,
+         "value": "3=30"
+        },
+        {
+         "id": 4,
+         "value": "4=40"
+        },
+        {
+         "id": "tail",
+         "value": ""
+        }
+       ],
+       "next": {
+        "head": 4,
+        "3": 4,
+        "4": "tail"
+       },
+       "pointers": {
+        "head": "head",
+        "tail": "tail"
+       },
+       "marks": {
+        "lit": [
+         3
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         "head"
+        ]
+       },
+       "cut": {
+        "head": 3
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "10",
+        "null",
+        "-1",
+        "null",
+        "-1"
+       ],
+       "marks": {
+        "good": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "capacity",
+          "ko": "capacity (용량)"
+         },
+         "value": 2
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "get(3) is a use, and returns 30. Append 3=30 before tail: 4=40's next is now this node and its next is tail, so it is the most recently used.",
+      "ko": "get(3)도 사용이므로 30을 반환하고, 3=30 노드를 tail 앞에 붙입니다. 4=40의 next가 이 노드, 이 노드의 next가 tail이 되어 가장 최근에 사용한 노드가 됩니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "LRUCache",
+          "2"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "put",
+          "1, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "put",
+          "2, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "get",
+          "1"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "put",
+          "3, 30"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "get",
+          "2"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "put",
+          "4, 40"
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "get",
+          "1"
+         ]
+        },
+        {
+         "label": "8",
+         "cells": [
+          "get",
+          "3"
+         ]
+        },
+        {
+         "label": "9",
+         "cells": [
+          "get",
+          "4"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ],
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ],
+         [
+          6,
+          0
+         ],
+         [
+          6,
+          1
+         ],
+         [
+          7,
+          0
+         ],
+         [
+          7,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          8,
+          0
+         ],
+         [
+          8,
+          1
+         ]
+        ]
+       }
+      },
+      "map": {
+       "entries": [
+        {
+         "key": 3,
+         "value": "30"
+        },
+        {
+         "key": 4,
+         "value": "40"
+        }
+       ],
+       "marks": {}
+      },
+      "list": {
+       "nodes": [
+        {
+         "id": "head",
+         "value": ""
+        },
+        {
+         "id": 3,
+         "value": "3=30"
+        },
+        {
+         "id": 4,
+         "value": "4=40"
+        },
+        {
+         "id": "tail",
+         "value": ""
+        }
+       ],
+       "next": {
+        "head": 4,
+        "3": "tail",
+        "4": 3
+       },
+       "pointers": {
+        "head": "head",
+        "tail": "tail"
+       },
+       "marks": {
+        "good": [
+         3
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         4,
+         3
+        ]
+       },
+       "cut": {
+        "4": "tail",
+        "3": 4
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "10",
+        "null",
+        "-1",
+        "null",
+        "-1",
+        "30"
+       ],
+       "marks": {
+        "good": [
+         8
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "capacity",
+          "ko": "capacity (용량)"
+         },
+         "value": 2
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "list",
+        "at": 3
+       },
+       "to": {
+        "view": "result",
+        "at": 8
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "get(4): the map finds node 4=40. Unlink it: head's next skips it to 3=30, and 3=30's prev comes back to head.",
+      "ko": "get(4): 맵에서 4=40 노드를 찾습니다. 이 노드를 떼어 내면 head의 next는 이 노드를 건너 3=30 노드를, 3=30의 prev는 head 노드를 가리킵니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "LRUCache",
+          "2"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "put",
+          "1, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "put",
+          "2, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "get",
+          "1"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "put",
+          "3, 30"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "get",
+          "2"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "put",
+          "4, 40"
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "get",
+          "1"
+         ]
+        },
+        {
+         "label": "8",
+         "cells": [
+          "get",
+          "3"
+         ]
+        },
+        {
+         "label": "9",
+         "cells": [
+          "get",
+          "4"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ],
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ],
+         [
+          6,
+          0
+         ],
+         [
+          6,
+          1
+         ],
+         [
+          7,
+          0
+         ],
+         [
+          7,
+          1
+         ],
+         [
+          8,
+          0
+         ],
+         [
+          8,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          9,
+          0
+         ],
+         [
+          9,
+          1
+         ]
+        ]
+       }
+      },
+      "map": {
+       "entries": [
+        {
+         "key": 3,
+         "value": "30"
+        },
+        {
+         "key": 4,
+         "value": "40"
+        }
+       ],
+       "marks": {},
+       "probe": {
+        "key": 4,
+        "hit": true
+       }
+      },
+      "list": {
+       "nodes": [
+        {
+         "id": "head",
+         "value": ""
+        },
+        {
+         "id": 3,
+         "value": "3=30"
+        },
+        {
+         "id": 4,
+         "value": "4=40"
+        },
+        {
+         "id": "tail",
+         "value": ""
+        }
+       ],
+       "next": {
+        "head": 3,
+        "3": "tail",
+        "4": 3
+       },
+       "pointers": {
+        "head": "head",
+        "tail": "tail"
+       },
+       "marks": {
+        "lit": [
+         4
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         "head"
+        ]
+       },
+       "cut": {
+        "head": 4
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "10",
+        "null",
+        "-1",
+        "null",
+        "-1",
+        "30"
+       ],
+       "marks": {
+        "good": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "capacity",
+          "ko": "capacity (용량)"
+         },
+         "value": 2
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "get(4) is a use, and returns 40. Append 4=40 before tail: 3=30's next is now this node and its next is tail, so it is the most recently used.",
+      "ko": "get(4)도 사용이므로 40을 반환하고, 4=40 노드를 tail 앞에 붙입니다. 3=30의 next가 이 노드, 이 노드의 next가 tail이 되어 가장 최근에 사용한 노드가 됩니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "LRUCache",
+          "2"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "put",
+          "1, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "put",
+          "2, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "get",
+          "1"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "put",
+          "3, 30"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "get",
+          "2"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "put",
+          "4, 40"
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "get",
+          "1"
+         ]
+        },
+        {
+         "label": "8",
+         "cells": [
+          "get",
+          "3"
+         ]
+        },
+        {
+         "label": "9",
+         "cells": [
+          "get",
+          "4"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ],
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ],
+         [
+          6,
+          0
+         ],
+         [
+          6,
+          1
+         ],
+         [
+          7,
+          0
+         ],
+         [
+          7,
+          1
+         ],
+         [
+          8,
+          0
+         ],
+         [
+          8,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          9,
+          0
+         ],
+         [
+          9,
+          1
+         ]
+        ]
+       }
+      },
+      "map": {
+       "entries": [
+        {
+         "key": 3,
+         "value": "30"
+        },
+        {
+         "key": 4,
+         "value": "40"
+        }
+       ],
+       "marks": {}
+      },
+      "list": {
+       "nodes": [
+        {
+         "id": "head",
+         "value": ""
+        },
+        {
+         "id": 3,
+         "value": "3=30"
+        },
+        {
+         "id": 4,
+         "value": "4=40"
+        },
+        {
+         "id": "tail",
+         "value": ""
+        }
+       ],
+       "next": {
+        "head": 3,
+        "3": 4,
+        "4": "tail"
+       },
+       "pointers": {
+        "head": "head",
+        "tail": "tail"
+       },
+       "marks": {
+        "good": [
+         4
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         3,
+         4
+        ]
+       },
+       "cut": {
+        "3": "tail",
+        "4": 3
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "10",
+        "null",
+        "-1",
+        "null",
+        "-1",
+        "30",
+        "40"
+       ],
+       "marks": {
+        "good": [
+         9
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "capacity",
+          "ko": "capacity (용량)"
+         },
+         "value": 2
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "list",
+        "at": 4
+       },
+       "to": {
+        "view": "result",
+        "at": 9
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every call has run. The returned values, as the Driver prints them, are [null,null,null,10,null,-1,null,-1,30,40].",
+      "ko": "모든 호출이 끝났습니다. 반환값을 Driver가 출력하는 대로 모으면 [null,null,null,10,null,-1,null,-1,30,40]입니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "LRUCache",
+          "2"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "put",
+          "1, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "put",
+          "2, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "get",
+          "1"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "put",
+          "3, 30"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "get",
+          "2"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "put",
+          "4, 40"
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "get",
+          "1"
+         ]
+        },
+        {
+         "label": "8",
+         "cells": [
+          "get",
+          "3"
+         ]
+        },
+        {
+         "label": "9",
+         "cells": [
+          "get",
+          "4"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "map": {
+       "entries": [
+        {
+         "key": 3,
+         "value": "30"
+        },
+        {
+         "key": 4,
+         "value": "40"
+        }
+       ],
+       "marks": {}
+      },
+      "list": {
+       "nodes": [
+        {
+         "id": "head",
+         "value": ""
+        },
+        {
+         "id": 3,
+         "value": "3=30"
+        },
+        {
+         "id": 4,
+         "value": "4=40"
+        },
+        {
+         "id": "tail",
+         "value": ""
+        }
+       ],
+       "next": {
+        "head": 3,
+        "3": 4,
+        "4": "tail"
+       },
+       "pointers": {
+        "head": "head",
+        "tail": "tail"
+       },
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "10",
+        "null",
+        "-1",
+        "null",
+        "-1",
+        "30",
+        "40"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5,
+         6,
+         7,
+         8,
+         9
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "capacity",
+          "ko": "capacity (용량)"
+         },
+         "value": 2
+        }
+       ]
+      }
+     },
+     "answer": "[null,null,null,10,null,-1,null,-1,30,40]"
+    }
+   ],
+   "sampleInput": "[\"LRUCache\",\"put\",\"put\",\"get\",\"put\",\"get\",\"put\",\"get\",\"get\",\"get\"]\n[[2],[1,10],[2,20],[1],[3,30],[2],[4,40],[1],[3],[4]]"
+  },
+  {
+   "label": {
+    "en": "Case 2",
+    "ko": "케이스 2"
+   },
+   "input": "[\"LRUCache\",\"put\",\"get\",\"put\",\"get\",\"get\"]\n[[1],[5,100],[5],[6,200],[5],[6]]",
+   "expected": "[null,null,100,null,-1,200]",
+   "frames": [
+    {
+     "caption": {
+      "en": "LRUCache(1): an empty map, and the sentinels head and tail linked to each other. Returns null.",
+      "ko": "LRUCache(1): 빈 맵과 서로 이어진 sentinel 노드 head, tail로 시작하고 null을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "LRUCache",
+          "1"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "put",
+          "5, 100"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "get",
+          "5"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "put",
+          "6, 200"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "get",
+          "5"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "get",
+          "6"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ]
+       }
+      },
+      "map": {
+       "entries": [],
+       "marks": {}
+      },
+      "list": {
+       "nodes": [
+        {
+         "id": "head",
+         "value": ""
+        },
+        {
+         "id": "tail",
+         "value": ""
+        }
+       ],
+       "next": {
+        "head": "tail"
+       },
+       "pointers": {
+        "head": "head",
+        "tail": "tail"
+       },
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "capacity",
+          "ko": "capacity (용량)"
+         },
+         "value": 1
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       },
+       "value": "null"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "put(5, 100): key 5 is not in the map, so a new node 5=100 is made and the map points key 5 to it.",
+      "ko": "put(5, 100): 맵에 키 5가 없으므로 새 노드 5=100를 만들고 맵의 키 5가 그 노드를 가리킵니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "LRUCache",
+          "1"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "put",
+          "5, 100"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "get",
+          "5"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "put",
+          "6, 200"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "get",
+          "5"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "get",
+          "6"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "map": {
+       "entries": [
+        {
+         "key": 5,
+         "value": "100"
+        }
+       ],
+       "marks": {
+        "good": [
+         5
+        ]
+       },
+       "probe": {
+        "key": 5,
+        "hit": false
+       }
+      },
+      "list": {
+       "nodes": [
+        {
+         "id": "head",
+         "value": ""
+        },
+        {
+         "id": 5,
+         "value": "5=100"
+        },
+        {
+         "id": "tail",
+         "value": ""
+        }
+       ],
+       "next": {
+        "head": "tail"
+       },
+       "pointers": {
+        "head": "head",
+        "tail": "tail"
+       },
+       "marks": {
+        "good": [
+         5
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null"
+       ],
+       "marks": {
+        "good": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "capacity",
+          "ko": "capacity (용량)"
+         },
+         "value": 1
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         1,
+         1
+        ]
+       },
+       "to": {
+        "view": "map",
+        "at": 5
+       },
+       "value": "100"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         1,
+         1
+        ]
+       },
+       "to": {
+        "view": "list",
+        "at": 5
+       },
+       "value": "5=100"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "put(5, 100) is a use, and returns null. Append 5=100 before tail: head's next is now this node and its next is tail, so it is the most recently used.",
+      "ko": "put(5, 100)도 사용이므로 null을 반환하고, 5=100 노드를 tail 앞에 붙입니다. head의 next가 이 노드, 이 노드의 next가 tail이 되어 가장 최근에 사용한 노드가 됩니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "LRUCache",
+          "1"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "put",
+          "5, 100"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "get",
+          "5"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "put",
+          "6, 200"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "get",
+          "5"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "get",
+          "6"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "map": {
+       "entries": [
+        {
+         "key": 5,
+         "value": "100"
+        }
+       ],
+       "marks": {}
+      },
+      "list": {
+       "nodes": [
+        {
+         "id": "head",
+         "value": ""
+        },
+        {
+         "id": 5,
+         "value": "5=100"
+        },
+        {
+         "id": "tail",
+         "value": ""
+        }
+       ],
+       "next": {
+        "head": 5,
+        "5": "tail"
+       },
+       "pointers": {
+        "head": "head",
+        "tail": "tail"
+       },
+       "marks": {
+        "good": [
+         5
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         "head",
+         5
+        ]
+       },
+       "cut": {
+        "head": "tail"
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "capacity",
+          "ko": "capacity (용량)"
+         },
+         "value": 1
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       },
+       "value": "null"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "get(5): the map finds node 5=100. Unlink it: head's next skips it to tail, and tail's prev comes back to head.",
+      "ko": "get(5): 맵에서 5=100 노드를 찾습니다. 이 노드를 떼어 내면 head의 next는 이 노드를 건너 tail 노드를, tail의 prev는 head 노드를 가리킵니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "LRUCache",
+          "1"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "put",
+          "5, 100"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "get",
+          "5"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "put",
+          "6, 200"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "get",
+          "5"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "get",
+          "6"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ]
+       }
+      },
+      "map": {
+       "entries": [
+        {
+         "key": 5,
+         "value": "100"
+        }
+       ],
+       "marks": {},
+       "probe": {
+        "key": 5,
+        "hit": true
+       }
+      },
+      "list": {
+       "nodes": [
+        {
+         "id": "head",
+         "value": ""
+        },
+        {
+         "id": 5,
+         "value": "5=100"
+        },
+        {
+         "id": "tail",
+         "value": ""
+        }
+       ],
+       "next": {
+        "head": "tail",
+        "5": "tail"
+       },
+       "pointers": {
+        "head": "head",
+        "tail": "tail"
+       },
+       "marks": {
+        "lit": [
+         5
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         "head"
+        ]
+       },
+       "cut": {
+        "head": 5
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "capacity",
+          "ko": "capacity (용량)"
+         },
+         "value": 1
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "get(5) is a use, and returns 100. Append 5=100 before tail: head's next is now this node and its next is tail, so it is the most recently used.",
+      "ko": "get(5)도 사용이므로 100을 반환하고, 5=100 노드를 tail 앞에 붙입니다. head의 next가 이 노드, 이 노드의 next가 tail이 되어 가장 최근에 사용한 노드가 됩니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "LRUCache",
+          "1"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "put",
+          "5, 100"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "get",
+          "5"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "put",
+          "6, 200"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "get",
+          "5"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "get",
+          "6"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ]
+       }
+      },
+      "map": {
+       "entries": [
+        {
+         "key": 5,
+         "value": "100"
+        }
+       ],
+       "marks": {}
+      },
+      "list": {
+       "nodes": [
+        {
+         "id": "head",
+         "value": ""
+        },
+        {
+         "id": 5,
+         "value": "5=100"
+        },
+        {
+         "id": "tail",
+         "value": ""
+        }
+       ],
+       "next": {
+        "head": 5,
+        "5": "tail"
+       },
+       "pointers": {
+        "head": "head",
+        "tail": "tail"
+       },
+       "marks": {
+        "good": [
+         5
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         "head",
+         5
+        ]
+       },
+       "cut": {
+        "head": "tail"
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "100"
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "capacity",
+          "ko": "capacity (용량)"
+         },
+         "value": 1
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "list",
+        "at": 5
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "put(6, 200): key 6 is not in the map, so a new node 6=200 is made and the map points key 6 to it.",
+      "ko": "put(6, 200): 맵에 키 6이 없으므로 새 노드 6=200를 만들고 맵의 키 6이 그 노드를 가리킵니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "LRUCache",
+          "1"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "put",
+          "5, 100"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "get",
+          "5"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "put",
+          "6, 200"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "get",
+          "5"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "get",
+          "6"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      },
+      "map": {
+       "entries": [
+        {
+         "key": 5,
+         "value": "100"
+        },
+        {
+         "key": 6,
+         "value": "200"
+        }
+       ],
+       "marks": {
+        "good": [
+         6
+        ]
+       },
+       "probe": {
+        "key": 6,
+        "hit": false
+       }
+      },
+      "list": {
+       "nodes": [
+        {
+         "id": "head",
+         "value": ""
+        },
+        {
+         "id": 5,
+         "value": "5=100"
+        },
+        {
+         "id": 6,
+         "value": "6=200"
+        },
+        {
+         "id": "tail",
+         "value": ""
+        }
+       ],
+       "next": {
+        "head": 5,
+        "5": "tail"
+       },
+       "pointers": {
+        "head": "head",
+        "tail": "tail"
+       },
+       "marks": {
+        "good": [
+         6
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "100"
+       ],
+       "marks": {
+        "good": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "capacity",
+          "ko": "capacity (용량)"
+         },
+         "value": 1
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         3,
+         1
+        ]
+       },
+       "to": {
+        "view": "map",
+        "at": 6
+       },
+       "value": "200"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         3,
+         1
+        ]
+       },
+       "to": {
+        "view": "list",
+        "at": 6
+       },
+       "value": "6=200"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "put(6, 200) is a use. Append 6=200 before tail: 5=100's next is now this node and its next is tail, so it is the most recently used.",
+      "ko": "put(6, 200)도 사용이므로 6=200 노드를 tail 앞에 붙입니다. 5=100의 next가 이 노드, 이 노드의 next가 tail이 되어 가장 최근에 사용한 노드가 됩니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "LRUCache",
+          "1"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "put",
+          "5, 100"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "get",
+          "5"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "put",
+          "6, 200"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "get",
+          "5"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "get",
+          "6"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      },
+      "map": {
+       "entries": [
+        {
+         "key": 5,
+         "value": "100"
+        },
+        {
+         "key": 6,
+         "value": "200"
+        }
+       ],
+       "marks": {}
+      },
+      "list": {
+       "nodes": [
+        {
+         "id": "head",
+         "value": ""
+        },
+        {
+         "id": 5,
+         "value": "5=100"
+        },
+        {
+         "id": 6,
+         "value": "6=200"
+        },
+        {
+         "id": "tail",
+         "value": ""
+        }
+       ],
+       "next": {
+        "head": 5,
+        "5": 6,
+        "6": "tail"
+       },
+       "pointers": {
+        "head": "head",
+        "tail": "tail"
+       },
+       "marks": {
+        "good": [
+         6
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         5,
+         6
+        ]
+       },
+       "cut": {
+        "5": "tail"
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "100"
+       ],
+       "marks": {
+        "good": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "capacity",
+          "ko": "capacity (용량)"
+         },
+         "value": 1
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "The map holds 2 keys, more than capacity 1, so head.next, 5=100, the least recently used, is unlinked and key 5 deleted from the map. Returns null.",
+      "ko": "맵의 키가 2개로 용량 1을 넘으므로, 가장 오래 사용하지 않은 head.next의 5=100 노드를 떼어 내고 맵에서 키 5를 지웁니다. null을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "LRUCache",
+          "1"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "put",
+          "5, 100"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "get",
+          "5"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "put",
+          "6, 200"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "get",
+          "5"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "get",
+          "6"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      },
+      "map": {
+       "entries": [
+        {
+         "key": 5,
+         "value": "100"
+        },
+        {
+         "key": 6,
+         "value": "200"
+        }
+       ],
+       "marks": {
+        "bad": [
+         5
+        ]
+       },
+       "struck": [
+        5
+       ]
+      },
+      "list": {
+       "nodes": [
+        {
+         "id": "head",
+         "value": ""
+        },
+        {
+         "id": 5,
+         "value": "5=100"
+        },
+        {
+         "id": 6,
+         "value": "6=200"
+        },
+        {
+         "id": "tail",
+         "value": ""
+        }
+       ],
+       "next": {
+        "head": 6,
+        "5": 6,
+        "6": "tail"
+       },
+       "pointers": {
+        "head": "head",
+        "tail": "tail"
+       },
+       "marks": {
+        "bad": [
+         5
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         "head"
+        ]
+       },
+       "cut": {
+        "head": 5
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "100",
+        "null"
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "capacity",
+          "ko": "capacity (용량)"
+         },
+         "value": 1
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "map",
+        "at": 5
+       },
+       "mark": "bad"
+      },
+      {
+       "from": {
+        "view": "list",
+        "at": 5
+       },
+       "mark": "bad"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         3,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       },
+       "value": "null"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "get(5): key 5 is not in the map, so it returns -1 and nothing moves.",
+      "ko": "get(5): 맵에 키 5가 없으므로 -1을 반환하고 아무것도 옮기지 않습니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "LRUCache",
+          "1"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "put",
+          "5, 100"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "get",
+          "5"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "put",
+          "6, 200"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "get",
+          "5"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "get",
+          "6"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ]
+       }
+      },
+      "map": {
+       "entries": [
+        {
+         "key": 6,
+         "value": "200"
+        }
+       ],
+       "marks": {},
+       "probe": {
+        "key": 5,
+        "hit": false
+       }
+      },
+      "list": {
+       "nodes": [
+        {
+         "id": "head",
+         "value": ""
+        },
+        {
+         "id": 6,
+         "value": "6=200"
+        },
+        {
+         "id": "tail",
+         "value": ""
+        }
+       ],
+       "next": {
+        "head": 6,
+        "6": "tail"
+       },
+       "pointers": {
+        "head": "head",
+        "tail": "tail"
+       },
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "100",
+        "null",
+        "-1"
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "capacity",
+          "ko": "capacity (용량)"
+         },
+         "value": 1
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         4,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 4
+       },
+       "value": "-1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "get(6): the map finds node 6=200. Unlink it: head's next skips it to tail, and tail's prev comes back to head.",
+      "ko": "get(6): 맵에서 6=200 노드를 찾습니다. 이 노드를 떼어 내면 head의 next는 이 노드를 건너 tail 노드를, tail의 prev는 head 노드를 가리킵니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "LRUCache",
+          "1"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "put",
+          "5, 100"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "get",
+          "5"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "put",
+          "6, 200"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "get",
+          "5"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "get",
+          "6"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ]
+        ]
+       }
+      },
+      "map": {
+       "entries": [
+        {
+         "key": 6,
+         "value": "200"
+        }
+       ],
+       "marks": {},
+       "probe": {
+        "key": 6,
+        "hit": true
+       }
+      },
+      "list": {
+       "nodes": [
+        {
+         "id": "head",
+         "value": ""
+        },
+        {
+         "id": 6,
+         "value": "6=200"
+        },
+        {
+         "id": "tail",
+         "value": ""
+        }
+       ],
+       "next": {
+        "head": "tail",
+        "6": "tail"
+       },
+       "pointers": {
+        "head": "head",
+        "tail": "tail"
+       },
+       "marks": {
+        "lit": [
+         6
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         "head"
+        ]
+       },
+       "cut": {
+        "head": 6
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "100",
+        "null",
+        "-1"
+       ],
+       "marks": {
+        "good": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "capacity",
+          "ko": "capacity (용량)"
+         },
+         "value": 1
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "get(6) is a use, and returns 200. Append 6=200 before tail: head's next is now this node and its next is tail, so it is the most recently used.",
+      "ko": "get(6)도 사용이므로 200을 반환하고, 6=200 노드를 tail 앞에 붙입니다. head의 next가 이 노드, 이 노드의 next가 tail이 되어 가장 최근에 사용한 노드가 됩니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "LRUCache",
+          "1"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "put",
+          "5, 100"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "get",
+          "5"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "put",
+          "6, 200"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "get",
+          "5"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "get",
+          "6"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ]
+        ]
+       }
+      },
+      "map": {
+       "entries": [
+        {
+         "key": 6,
+         "value": "200"
+        }
+       ],
+       "marks": {}
+      },
+      "list": {
+       "nodes": [
+        {
+         "id": "head",
+         "value": ""
+        },
+        {
+         "id": 6,
+         "value": "6=200"
+        },
+        {
+         "id": "tail",
+         "value": ""
+        }
+       ],
+       "next": {
+        "head": 6,
+        "6": "tail"
+       },
+       "pointers": {
+        "head": "head",
+        "tail": "tail"
+       },
+       "marks": {
+        "good": [
+         6
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         "head",
+         6
+        ]
+       },
+       "cut": {
+        "head": "tail"
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "100",
+        "null",
+        "-1",
+        "200"
+       ],
+       "marks": {
+        "good": [
+         5
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "capacity",
+          "ko": "capacity (용량)"
+         },
+         "value": 1
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "list",
+        "at": 6
+       },
+       "to": {
+        "view": "result",
+        "at": 5
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every call has run. The returned values, as the Driver prints them, are [null,null,100,null,-1,200].",
+      "ko": "모든 호출이 끝났습니다. 반환값을 Driver가 출력하는 대로 모으면 [null,null,100,null,-1,200]입니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "LRUCache",
+          "1"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "put",
+          "5, 100"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "get",
+          "5"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "put",
+          "6, 200"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "get",
+          "5"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "get",
+          "6"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "map": {
+       "entries": [
+        {
+         "key": 6,
+         "value": "200"
+        }
+       ],
+       "marks": {}
+      },
+      "list": {
+       "nodes": [
+        {
+         "id": "head",
+         "value": ""
+        },
+        {
+         "id": 6,
+         "value": "6=200"
+        },
+        {
+         "id": "tail",
+         "value": ""
+        }
+       ],
+       "next": {
+        "head": 6,
+        "6": "tail"
+       },
+       "pointers": {
+        "head": "head",
+        "tail": "tail"
+       },
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "100",
+        "null",
+        "-1",
+        "200"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "capacity",
+          "ko": "capacity (용량)"
+         },
+         "value": 1
+        }
+       ]
+      }
+     },
+     "answer": "[null,null,100,null,-1,200]"
+    }
+   ],
+   "sampleInput": "[\"LRUCache\",\"put\",\"get\",\"put\",\"get\",\"get\"]\n[[1],[5,100],[5],[6,200],[5],[6]]"
+  },
+  {
+   "label": {
+    "en": "Case 3",
+    "ko": "케이스 3"
+   },
+   "input": "[\"LRUCache\",\"put\",\"put\",\"put\",\"get\",\"get\",\"get\"]\n[[3],[1,11],[2,22],[3,33],[1],[2],[3]]",
+   "expected": "[null,null,null,null,11,22,33]",
+   "frames": [
+    {
+     "caption": {
+      "en": "LRUCache(3): an empty map, and the sentinels head and tail linked to each other. Returns null.",
+      "ko": "LRUCache(3): 빈 맵과 서로 이어진 sentinel 노드 head, tail로 시작하고 null을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "LRUCache",
+          "3"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "put",
+          "1, 11"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "put",
+          "2, 22"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "put",
+          "3, 33"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "get",
+          "1"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "get",
+          "2"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "get",
+          "3"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ]
+       }
+      },
+      "map": {
+       "entries": [],
+       "marks": {}
+      },
+      "list": {
+       "nodes": [
+        {
+         "id": "head",
+         "value": ""
+        },
+        {
+         "id": "tail",
+         "value": ""
+        }
+       ],
+       "next": {
+        "head": "tail"
+       },
+       "pointers": {
+        "head": "head",
+        "tail": "tail"
+       },
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "capacity",
+          "ko": "capacity (용량)"
+         },
+         "value": 3
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       },
+       "value": "null"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "put(1, 11): key 1 is not in the map, so a new node 1=11 is made and the map points key 1 to it.",
+      "ko": "put(1, 11): 맵에 키 1이 없으므로 새 노드 1=11를 만들고 맵의 키 1이 그 노드를 가리킵니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "LRUCache",
+          "3"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "put",
+          "1, 11"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "put",
+          "2, 22"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "put",
+          "3, 33"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "get",
+          "1"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "get",
+          "2"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "get",
+          "3"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "map": {
+       "entries": [
+        {
+         "key": 1,
+         "value": "11"
+        }
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       },
+       "probe": {
+        "key": 1,
+        "hit": false
+       }
+      },
+      "list": {
+       "nodes": [
+        {
+         "id": "head",
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": "1=11"
+        },
+        {
+         "id": "tail",
+         "value": ""
+        }
+       ],
+       "next": {
+        "head": "tail"
+       },
+       "pointers": {
+        "head": "head",
+        "tail": "tail"
+       },
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null"
+       ],
+       "marks": {
+        "good": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "capacity",
+          "ko": "capacity (용량)"
+         },
+         "value": 3
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         1,
+         1
+        ]
+       },
+       "to": {
+        "view": "map",
+        "at": 1
+       },
+       "value": "11"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         1,
+         1
+        ]
+       },
+       "to": {
+        "view": "list",
+        "at": 1
+       },
+       "value": "1=11"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "put(1, 11) is a use, and returns null. Append 1=11 before tail: head's next is now this node and its next is tail, so it is the most recently used.",
+      "ko": "put(1, 11)도 사용이므로 null을 반환하고, 1=11 노드를 tail 앞에 붙입니다. head의 next가 이 노드, 이 노드의 next가 tail이 되어 가장 최근에 사용한 노드가 됩니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "LRUCache",
+          "3"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "put",
+          "1, 11"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "put",
+          "2, 22"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "put",
+          "3, 33"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "get",
+          "1"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "get",
+          "2"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "get",
+          "3"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "map": {
+       "entries": [
+        {
+         "key": 1,
+         "value": "11"
+        }
+       ],
+       "marks": {}
+      },
+      "list": {
+       "nodes": [
+        {
+         "id": "head",
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": "1=11"
+        },
+        {
+         "id": "tail",
+         "value": ""
+        }
+       ],
+       "next": {
+        "head": 1,
+        "1": "tail"
+       },
+       "pointers": {
+        "head": "head",
+        "tail": "tail"
+       },
+       "marks": {
+        "good": [
+         1
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         "head",
+         1
+        ]
+       },
+       "cut": {
+        "head": "tail"
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "capacity",
+          "ko": "capacity (용량)"
+         },
+         "value": 3
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       },
+       "value": "null"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "put(2, 22): key 2 is not in the map, so a new node 2=22 is made and the map points key 2 to it.",
+      "ko": "put(2, 22): 맵에 키 2가 없으므로 새 노드 2=22를 만들고 맵의 키 2가 그 노드를 가리킵니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "LRUCache",
+          "3"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "put",
+          "1, 11"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "put",
+          "2, 22"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "put",
+          "3, 33"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "get",
+          "1"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "get",
+          "2"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "get",
+          "3"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ]
+       }
+      },
+      "map": {
+       "entries": [
+        {
+         "key": 1,
+         "value": "11"
+        },
+        {
+         "key": 2,
+         "value": "22"
+        }
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       },
+       "probe": {
+        "key": 2,
+        "hit": false
+       }
+      },
+      "list": {
+       "nodes": [
+        {
+         "id": "head",
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": "1=11"
+        },
+        {
+         "id": 2,
+         "value": "2=22"
+        },
+        {
+         "id": "tail",
+         "value": ""
+        }
+       ],
+       "next": {
+        "head": 1,
+        "1": "tail"
+       },
+       "pointers": {
+        "head": "head",
+        "tail": "tail"
+       },
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "capacity",
+          "ko": "capacity (용량)"
+         },
+         "value": 3
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         2,
+         1
+        ]
+       },
+       "to": {
+        "view": "map",
+        "at": 2
+       },
+       "value": "22"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         2,
+         1
+        ]
+       },
+       "to": {
+        "view": "list",
+        "at": 2
+       },
+       "value": "2=22"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "put(2, 22) is a use, and returns null. Append 2=22 before tail: 1=11's next is now this node and its next is tail, so it is the most recently used.",
+      "ko": "put(2, 22)도 사용이므로 null을 반환하고, 2=22 노드를 tail 앞에 붙입니다. 1=11의 next가 이 노드, 이 노드의 next가 tail이 되어 가장 최근에 사용한 노드가 됩니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "LRUCache",
+          "3"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "put",
+          "1, 11"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "put",
+          "2, 22"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "put",
+          "3, 33"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "get",
+          "1"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "get",
+          "2"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "get",
+          "3"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ]
+       }
+      },
+      "map": {
+       "entries": [
+        {
+         "key": 1,
+         "value": "11"
+        },
+        {
+         "key": 2,
+         "value": "22"
+        }
+       ],
+       "marks": {}
+      },
+      "list": {
+       "nodes": [
+        {
+         "id": "head",
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": "1=11"
+        },
+        {
+         "id": 2,
+         "value": "2=22"
+        },
+        {
+         "id": "tail",
+         "value": ""
+        }
+       ],
+       "next": {
+        "head": 1,
+        "1": 2,
+        "2": "tail"
+       },
+       "pointers": {
+        "head": "head",
+        "tail": "tail"
+       },
+       "marks": {
+        "good": [
+         2
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         1,
+         2
+        ]
+       },
+       "cut": {
+        "1": "tail"
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "capacity",
+          "ko": "capacity (용량)"
+         },
+         "value": 3
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         2,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       },
+       "value": "null"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "put(3, 33): key 3 is not in the map, so a new node 3=33 is made and the map points key 3 to it.",
+      "ko": "put(3, 33): 맵에 키 3이 없으므로 새 노드 3=33를 만들고 맵의 키 3이 그 노드를 가리킵니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "LRUCache",
+          "3"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "put",
+          "1, 11"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "put",
+          "2, 22"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "put",
+          "3, 33"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "get",
+          "1"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "get",
+          "2"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "get",
+          "3"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      },
+      "map": {
+       "entries": [
+        {
+         "key": 1,
+         "value": "11"
+        },
+        {
+         "key": 2,
+         "value": "22"
+        },
+        {
+         "key": 3,
+         "value": "33"
+        }
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       },
+       "probe": {
+        "key": 3,
+        "hit": false
+       }
+      },
+      "list": {
+       "nodes": [
+        {
+         "id": "head",
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": "1=11"
+        },
+        {
+         "id": 2,
+         "value": "2=22"
+        },
+        {
+         "id": 3,
+         "value": "3=33"
+        },
+        {
+         "id": "tail",
+         "value": ""
+        }
+       ],
+       "next": {
+        "head": 1,
+        "1": 2,
+        "2": "tail"
+       },
+       "pointers": {
+        "head": "head",
+        "tail": "tail"
+       },
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "capacity",
+          "ko": "capacity (용량)"
+         },
+         "value": 3
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         3,
+         1
+        ]
+       },
+       "to": {
+        "view": "map",
+        "at": 3
+       },
+       "value": "33"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         3,
+         1
+        ]
+       },
+       "to": {
+        "view": "list",
+        "at": 3
+       },
+       "value": "3=33"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "put(3, 33) is a use, and returns null. Append 3=33 before tail: 2=22's next is now this node and its next is tail, so it is the most recently used.",
+      "ko": "put(3, 33)도 사용이므로 null을 반환하고, 3=33 노드를 tail 앞에 붙입니다. 2=22의 next가 이 노드, 이 노드의 next가 tail이 되어 가장 최근에 사용한 노드가 됩니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "LRUCache",
+          "3"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "put",
+          "1, 11"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "put",
+          "2, 22"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "put",
+          "3, 33"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "get",
+          "1"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "get",
+          "2"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "get",
+          "3"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      },
+      "map": {
+       "entries": [
+        {
+         "key": 1,
+         "value": "11"
+        },
+        {
+         "key": 2,
+         "value": "22"
+        },
+        {
+         "key": 3,
+         "value": "33"
+        }
+       ],
+       "marks": {}
+      },
+      "list": {
+       "nodes": [
+        {
+         "id": "head",
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": "1=11"
+        },
+        {
+         "id": 2,
+         "value": "2=22"
+        },
+        {
+         "id": 3,
+         "value": "3=33"
+        },
+        {
+         "id": "tail",
+         "value": ""
+        }
+       ],
+       "next": {
+        "head": 1,
+        "1": 2,
+        "2": 3,
+        "3": "tail"
+       },
+       "pointers": {
+        "head": "head",
+        "tail": "tail"
+       },
+       "marks": {
+        "good": [
+         3
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         2,
+         3
+        ]
+       },
+       "cut": {
+        "2": "tail"
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "capacity",
+          "ko": "capacity (용량)"
+         },
+         "value": 3
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         3,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       },
+       "value": "null"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "get(1): the map finds node 1=11. Unlink it: head's next skips it to 2=22, and 2=22's prev comes back to head.",
+      "ko": "get(1): 맵에서 1=11 노드를 찾습니다. 이 노드를 떼어 내면 head의 next는 이 노드를 건너 2=22 노드를, 2=22의 prev는 head 노드를 가리킵니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "LRUCache",
+          "3"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "put",
+          "1, 11"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "put",
+          "2, 22"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "put",
+          "3, 33"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "get",
+          "1"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "get",
+          "2"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "get",
+          "3"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ]
+       }
+      },
+      "map": {
+       "entries": [
+        {
+         "key": 1,
+         "value": "11"
+        },
+        {
+         "key": 2,
+         "value": "22"
+        },
+        {
+         "key": 3,
+         "value": "33"
+        }
+       ],
+       "marks": {},
+       "probe": {
+        "key": 1,
+        "hit": true
+       }
+      },
+      "list": {
+       "nodes": [
+        {
+         "id": "head",
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": "1=11"
+        },
+        {
+         "id": 2,
+         "value": "2=22"
+        },
+        {
+         "id": 3,
+         "value": "3=33"
+        },
+        {
+         "id": "tail",
+         "value": ""
+        }
+       ],
+       "next": {
+        "head": 2,
+        "1": 2,
+        "2": 3,
+        "3": "tail"
+       },
+       "pointers": {
+        "head": "head",
+        "tail": "tail"
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         "head"
+        ]
+       },
+       "cut": {
+        "head": 1
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "capacity",
+          "ko": "capacity (용량)"
+         },
+         "value": 3
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "get(1) is a use, and returns 11. Append 1=11 before tail: 3=33's next is now this node and its next is tail, so it is the most recently used.",
+      "ko": "get(1)도 사용이므로 11을 반환하고, 1=11 노드를 tail 앞에 붙입니다. 3=33의 next가 이 노드, 이 노드의 next가 tail이 되어 가장 최근에 사용한 노드가 됩니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "LRUCache",
+          "3"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "put",
+          "1, 11"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "put",
+          "2, 22"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "put",
+          "3, 33"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "get",
+          "1"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "get",
+          "2"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "get",
+          "3"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ]
+       }
+      },
+      "map": {
+       "entries": [
+        {
+         "key": 1,
+         "value": "11"
+        },
+        {
+         "key": 2,
+         "value": "22"
+        },
+        {
+         "key": 3,
+         "value": "33"
+        }
+       ],
+       "marks": {}
+      },
+      "list": {
+       "nodes": [
+        {
+         "id": "head",
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": "1=11"
+        },
+        {
+         "id": 2,
+         "value": "2=22"
+        },
+        {
+         "id": 3,
+         "value": "3=33"
+        },
+        {
+         "id": "tail",
+         "value": ""
+        }
+       ],
+       "next": {
+        "head": 2,
+        "1": "tail",
+        "2": 3,
+        "3": 1
+       },
+       "pointers": {
+        "head": "head",
+        "tail": "tail"
+       },
+       "marks": {
+        "good": [
+         1
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         3,
+         1
+        ]
+       },
+       "cut": {
+        "3": "tail",
+        "1": 2
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "null",
+        "11"
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "capacity",
+          "ko": "capacity (용량)"
+         },
+         "value": 3
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "list",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 4
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "get(2): the map finds node 2=22. Unlink it: head's next skips it to 3=33, and 3=33's prev comes back to head.",
+      "ko": "get(2): 맵에서 2=22 노드를 찾습니다. 이 노드를 떼어 내면 head의 next는 이 노드를 건너 3=33 노드를, 3=33의 prev는 head 노드를 가리킵니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "LRUCache",
+          "3"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "put",
+          "1, 11"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "put",
+          "2, 22"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "put",
+          "3, 33"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "get",
+          "1"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "get",
+          "2"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "get",
+          "3"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ]
+        ]
+       }
+      },
+      "map": {
+       "entries": [
+        {
+         "key": 1,
+         "value": "11"
+        },
+        {
+         "key": 2,
+         "value": "22"
+        },
+        {
+         "key": 3,
+         "value": "33"
+        }
+       ],
+       "marks": {},
+       "probe": {
+        "key": 2,
+        "hit": true
+       }
+      },
+      "list": {
+       "nodes": [
+        {
+         "id": "head",
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": "1=11"
+        },
+        {
+         "id": 2,
+         "value": "2=22"
+        },
+        {
+         "id": 3,
+         "value": "3=33"
+        },
+        {
+         "id": "tail",
+         "value": ""
+        }
+       ],
+       "next": {
+        "head": 3,
+        "1": "tail",
+        "2": 3,
+        "3": 1
+       },
+       "pointers": {
+        "head": "head",
+        "tail": "tail"
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         "head"
+        ]
+       },
+       "cut": {
+        "head": 2
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "null",
+        "11"
+       ],
+       "marks": {
+        "good": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "capacity",
+          "ko": "capacity (용량)"
+         },
+         "value": 3
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "get(2) is a use, and returns 22. Append 2=22 before tail: 1=11's next is now this node and its next is tail, so it is the most recently used.",
+      "ko": "get(2)도 사용이므로 22를 반환하고, 2=22 노드를 tail 앞에 붙입니다. 1=11의 next가 이 노드, 이 노드의 next가 tail이 되어 가장 최근에 사용한 노드가 됩니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "LRUCache",
+          "3"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "put",
+          "1, 11"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "put",
+          "2, 22"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "put",
+          "3, 33"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "get",
+          "1"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "get",
+          "2"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "get",
+          "3"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ]
+        ]
+       }
+      },
+      "map": {
+       "entries": [
+        {
+         "key": 1,
+         "value": "11"
+        },
+        {
+         "key": 2,
+         "value": "22"
+        },
+        {
+         "key": 3,
+         "value": "33"
+        }
+       ],
+       "marks": {}
+      },
+      "list": {
+       "nodes": [
+        {
+         "id": "head",
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": "1=11"
+        },
+        {
+         "id": 2,
+         "value": "2=22"
+        },
+        {
+         "id": 3,
+         "value": "3=33"
+        },
+        {
+         "id": "tail",
+         "value": ""
+        }
+       ],
+       "next": {
+        "head": 3,
+        "1": 2,
+        "2": "tail",
+        "3": 1
+       },
+       "pointers": {
+        "head": "head",
+        "tail": "tail"
+       },
+       "marks": {
+        "good": [
+         2
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         1,
+         2
+        ]
+       },
+       "cut": {
+        "1": "tail",
+        "2": 3
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "null",
+        "11",
+        "22"
+       ],
+       "marks": {
+        "good": [
+         5
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "capacity",
+          "ko": "capacity (용량)"
+         },
+         "value": 3
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "list",
+        "at": 2
+       },
+       "to": {
+        "view": "result",
+        "at": 5
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "get(3): the map finds node 3=33. Unlink it: head's next skips it to 1=11, and 1=11's prev comes back to head.",
+      "ko": "get(3): 맵에서 3=33 노드를 찾습니다. 이 노드를 떼어 내면 head의 next는 이 노드를 건너 1=11 노드를, 1=11의 prev는 head 노드를 가리킵니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "LRUCache",
+          "3"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "put",
+          "1, 11"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "put",
+          "2, 22"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "put",
+          "3, 33"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "get",
+          "1"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "get",
+          "2"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "get",
+          "3"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ],
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          6,
+          0
+         ],
+         [
+          6,
+          1
+         ]
+        ]
+       }
+      },
+      "map": {
+       "entries": [
+        {
+         "key": 1,
+         "value": "11"
+        },
+        {
+         "key": 2,
+         "value": "22"
+        },
+        {
+         "key": 3,
+         "value": "33"
+        }
+       ],
+       "marks": {},
+       "probe": {
+        "key": 3,
+        "hit": true
+       }
+      },
+      "list": {
+       "nodes": [
+        {
+         "id": "head",
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": "1=11"
+        },
+        {
+         "id": 2,
+         "value": "2=22"
+        },
+        {
+         "id": 3,
+         "value": "3=33"
+        },
+        {
+         "id": "tail",
+         "value": ""
+        }
+       ],
+       "next": {
+        "head": 1,
+        "1": 2,
+        "2": "tail",
+        "3": 1
+       },
+       "pointers": {
+        "head": "head",
+        "tail": "tail"
+       },
+       "marks": {
+        "lit": [
+         3
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         "head"
+        ]
+       },
+       "cut": {
+        "head": 3
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "null",
+        "11",
+        "22"
+       ],
+       "marks": {
+        "good": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "capacity",
+          "ko": "capacity (용량)"
+         },
+         "value": 3
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "get(3) is a use, and returns 33. Append 3=33 before tail: 2=22's next is now this node and its next is tail, so it is the most recently used.",
+      "ko": "get(3)도 사용이므로 33을 반환하고, 3=33 노드를 tail 앞에 붙입니다. 2=22의 next가 이 노드, 이 노드의 next가 tail이 되어 가장 최근에 사용한 노드가 됩니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "LRUCache",
+          "3"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "put",
+          "1, 11"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "put",
+          "2, 22"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "put",
+          "3, 33"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "get",
+          "1"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "get",
+          "2"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "get",
+          "3"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ],
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          6,
+          0
+         ],
+         [
+          6,
+          1
+         ]
+        ]
+       }
+      },
+      "map": {
+       "entries": [
+        {
+         "key": 1,
+         "value": "11"
+        },
+        {
+         "key": 2,
+         "value": "22"
+        },
+        {
+         "key": 3,
+         "value": "33"
+        }
+       ],
+       "marks": {}
+      },
+      "list": {
+       "nodes": [
+        {
+         "id": "head",
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": "1=11"
+        },
+        {
+         "id": 2,
+         "value": "2=22"
+        },
+        {
+         "id": 3,
+         "value": "3=33"
+        },
+        {
+         "id": "tail",
+         "value": ""
+        }
+       ],
+       "next": {
+        "head": 1,
+        "1": 2,
+        "2": 3,
+        "3": "tail"
+       },
+       "pointers": {
+        "head": "head",
+        "tail": "tail"
+       },
+       "marks": {
+        "good": [
+         3
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         2,
+         3
+        ]
+       },
+       "cut": {
+        "2": "tail",
+        "3": 1
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "null",
+        "11",
+        "22",
+        "33"
+       ],
+       "marks": {
+        "good": [
+         6
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "capacity",
+          "ko": "capacity (용량)"
+         },
+         "value": 3
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "list",
+        "at": 3
+       },
+       "to": {
+        "view": "result",
+        "at": 6
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every call has run. The returned values, as the Driver prints them, are [null,null,null,null,11,22,33].",
+      "ko": "모든 호출이 끝났습니다. 반환값을 Driver가 출력하는 대로 모으면 [null,null,null,null,11,22,33]입니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "LRUCache",
+          "3"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "put",
+          "1, 11"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "put",
+          "2, 22"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "put",
+          "3, 33"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "get",
+          "1"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "get",
+          "2"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "get",
+          "3"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "map": {
+       "entries": [
+        {
+         "key": 1,
+         "value": "11"
+        },
+        {
+         "key": 2,
+         "value": "22"
+        },
+        {
+         "key": 3,
+         "value": "33"
+        }
+       ],
+       "marks": {}
+      },
+      "list": {
+       "nodes": [
+        {
+         "id": "head",
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": "1=11"
+        },
+        {
+         "id": 2,
+         "value": "2=22"
+        },
+        {
+         "id": 3,
+         "value": "3=33"
+        },
+        {
+         "id": "tail",
+         "value": ""
+        }
+       ],
+       "next": {
+        "head": 1,
+        "1": 2,
+        "2": 3,
+        "3": "tail"
+       },
+       "pointers": {
+        "head": "head",
+        "tail": "tail"
+       },
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "null",
+        "11",
+        "22",
+        "33"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5,
+         6
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "capacity",
+          "ko": "capacity (용량)"
+         },
+         "value": 3
+        }
+       ]
+      }
+     },
+     "answer": "[null,null,null,null,11,22,33]"
+    }
+   ],
+   "sampleInput": "[\"LRUCache\",\"put\",\"put\",\"put\",\"get\",\"get\",\"get\"]\n[[3],[1,11],[2,22],[3,33],[1],[2],[3]]"
+  }
+ ]
+}

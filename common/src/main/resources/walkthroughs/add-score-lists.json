@@ -1,0 +1,2576 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Add Score Lists",
+  "ko": "점수 합산 연결 리스트"
+ },
+ "approach": {
+  "en": "Add the way you would on paper, from the ones digit: each column's digits plus the carry give one digit of the sum, written into a new node at its end, and a carry of 1 for the next column when the total reaches 10. A carry left after both lists end becomes one more node.",
+  "ko": "종이에 더하듯 일의 자리부터 더합니다. 각 자리의 두 숫자와 올림을 더해 합의 한 자리를 새 노드에 적어 끝에 붙이고, 합이 10 이상이면 다음 자리로 1을 올립니다. 두 리스트가 끝난 뒤에도 올림이 남으면 노드가 하나 더 붙습니다."
+ },
+ "views": [
+  {
+   "id": "score1",
+   "type": "linkedlist",
+   "title": {
+    "en": "score1, ones digit first",
+    "ko": "score1 (일의 자리부터)"
+   }
+  },
+  {
+   "id": "score2",
+   "type": "linkedlist",
+   "title": {
+    "en": "score2, ones digit first",
+    "ko": "score2 (일의 자리부터)"
+   }
+  },
+  {
+   "id": "state",
+   "type": "vars"
+  },
+  {
+   "id": "sum",
+   "type": "linkedlist",
+   "title": {
+    "en": "sum from dummy",
+    "ko": "dummy부터의 합"
+   }
+  },
+  {
+   "id": "result",
+   "type": "output",
+   "title": {
+    "en": "answer",
+    "ko": "답"
+   },
+   "empty": {
+    "en": "not read yet",
+    "ko": "아직 없음"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "score1 = [3,1,7], score2 = [4,8]",
+   "expected": "[7,9,7]",
+   "frames": [
+    {
+     "caption": {
+      "en": "score1 spells 713 and score2 spells 84, each read from its last node back. The sum starts at a dummy node, with tail on it and carry 0.",
+      "ko": "마지막 노드부터 읽으면 score1은 713, score2는 84입니다. 합은 dummy 노드에서 시작하고, tail은 거기에, carry는 0입니다."
+     },
+     "views": {
+      "score1": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 3
+        },
+        {
+         "id": 1,
+         "value": 1
+        },
+        {
+         "id": 2,
+         "value": 7
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": null
+       },
+       "pointers": {
+        "score1": 0
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "score2": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 4
+        },
+        {
+         "id": 1,
+         "value": 8
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": null
+       },
+       "pointers": {
+        "score2": 0
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "sum": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        }
+       ],
+       "next": {
+        "0": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 0
+       },
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "carry",
+          "ko": "carry (올림)"
+         },
+         "value": 0
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Column 1: 3 + 4 + carry 0 = 7, so the digit is 7 and carry is 0. tail.next = a new node 7.",
+      "ko": "1번째 자리: 3 + 4 + carry 0 = 7, 자리 숫자는 7, carry는 0입니다. tail.next에 새 노드 7을 붙입니다."
+     },
+     "views": {
+      "score1": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 3
+        },
+        {
+         "id": 1,
+         "value": 1
+        },
+        {
+         "id": 2,
+         "value": 7
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": null
+       },
+       "pointers": {
+        "score1": 1
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "score2": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 4
+        },
+        {
+         "id": 1,
+         "value": 8
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": null
+       },
+       "pointers": {
+        "score2": 1
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "sum": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 7
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 0
+       },
+       "marks": {
+        "good": [
+         1
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "carry",
+          "ko": "carry (올림)"
+         },
+         "value": 0
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "score1",
+        "at": 0
+       },
+       "to": {
+        "view": "sum",
+        "at": 1
+       }
+      },
+      {
+       "from": {
+        "view": "score2",
+        "at": 0
+       },
+       "to": {
+        "view": "sum",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "tail = tail.next: tail moves to the new 7.",
+      "ko": "tail = tail.next: tail이 새 노드 7로 옮깁니다."
+     },
+     "views": {
+      "score1": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 3
+        },
+        {
+         "id": 1,
+         "value": 1
+        },
+        {
+         "id": 2,
+         "value": 7
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": null
+       },
+       "pointers": {
+        "score1": 1
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "score2": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 4
+        },
+        {
+         "id": 1,
+         "value": 8
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": null
+       },
+       "pointers": {
+        "score2": 1
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "sum": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 7
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 1
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "carry",
+          "ko": "carry (올림)"
+         },
+         "value": 0
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Column 2: 1 + 8 + carry 0 = 9, so the digit is 9 and carry is 0. tail.next = a new node 9.",
+      "ko": "2번째 자리: 1 + 8 + carry 0 = 9, 자리 숫자는 9, carry는 0입니다. tail.next에 새 노드 9를 붙입니다."
+     },
+     "views": {
+      "score1": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 3
+        },
+        {
+         "id": 1,
+         "value": 1
+        },
+        {
+         "id": 2,
+         "value": 7
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": null
+       },
+       "pointers": {
+        "score1": 2
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "score2": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 4
+        },
+        {
+         "id": 1,
+         "value": 8
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": null
+       },
+       "pointers": {
+        "score2": null
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "sum": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 7
+        },
+        {
+         "id": 2,
+         "value": 9
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 1
+       },
+       "marks": {
+        "good": [
+         2
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "carry",
+          "ko": "carry (올림)"
+         },
+         "value": 0
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "score1",
+        "at": 1
+       },
+       "to": {
+        "view": "sum",
+        "at": 2
+       }
+      },
+      {
+       "from": {
+        "view": "score2",
+        "at": 1
+       },
+       "to": {
+        "view": "sum",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "tail = tail.next: tail moves to the new 9.",
+      "ko": "tail = tail.next: tail이 새 노드 9로 옮깁니다."
+     },
+     "views": {
+      "score1": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 3
+        },
+        {
+         "id": 1,
+         "value": 1
+        },
+        {
+         "id": 2,
+         "value": 7
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": null
+       },
+       "pointers": {
+        "score1": 2
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "score2": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 4
+        },
+        {
+         "id": 1,
+         "value": 8
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": null
+       },
+       "pointers": {
+        "score2": null
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "sum": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 7
+        },
+        {
+         "id": 2,
+         "value": 9
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 2
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "carry",
+          "ko": "carry (올림)"
+         },
+         "value": 0
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Column 3: 7 + carry 0 = 7, so the digit is 7 and carry is 0. tail.next = a new node 7.",
+      "ko": "3번째 자리: 7 + carry 0 = 7, 자리 숫자는 7, carry는 0입니다. tail.next에 새 노드 7을 붙입니다."
+     },
+     "views": {
+      "score1": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 3
+        },
+        {
+         "id": 1,
+         "value": 1
+        },
+        {
+         "id": 2,
+         "value": 7
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": null
+       },
+       "pointers": {
+        "score1": null
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "score2": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 4
+        },
+        {
+         "id": 1,
+         "value": 8
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": null
+       },
+       "pointers": {
+        "score2": null
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "sum": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 7
+        },
+        {
+         "id": 2,
+         "value": 9
+        },
+        {
+         "id": 3,
+         "value": 7
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 2
+       },
+       "marks": {
+        "good": [
+         3
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "carry",
+          "ko": "carry (올림)"
+         },
+         "value": 0
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "score1",
+        "at": 2
+       },
+       "to": {
+        "view": "sum",
+        "at": 3
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "tail = tail.next: tail moves to the new 7.",
+      "ko": "tail = tail.next: tail이 새 노드 7로 옮깁니다."
+     },
+     "views": {
+      "score1": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 3
+        },
+        {
+         "id": 1,
+         "value": 1
+        },
+        {
+         "id": 2,
+         "value": 7
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": null
+       },
+       "pointers": {
+        "score1": null
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "score2": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 4
+        },
+        {
+         "id": 1,
+         "value": 8
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": null
+       },
+       "pointers": {
+        "score2": null
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "sum": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 7
+        },
+        {
+         "id": 2,
+         "value": 9
+        },
+        {
+         "id": 3,
+         "value": 7
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 3
+       },
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "carry",
+          "ko": "carry (올림)"
+         },
+         "value": 0
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Both lists have ended and carry is 0. 713 + 84 = 797, and reading from dummy.next gives [7,9,7].",
+      "ko": "두 리스트가 끝났고 carry도 0입니다. 713 + 84 = 797이고, dummy.next부터 읽으면 [7,9,7]입니다."
+     },
+     "views": {
+      "score1": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 3
+        },
+        {
+         "id": 1,
+         "value": 1
+        },
+        {
+         "id": 2,
+         "value": 7
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": null
+       },
+       "pointers": {
+        "score1": null
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "score2": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 4
+        },
+        {
+         "id": 1,
+         "value": 8
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": null
+       },
+       "pointers": {
+        "score2": null
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "sum": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 7
+        },
+        {
+         "id": 2,
+         "value": 9
+        },
+        {
+         "id": 3,
+         "value": 7
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 3
+       },
+       "marks": {
+        "path": [
+         1,
+         2,
+         3
+        ],
+        "dim": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        7,
+        9,
+        7
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "carry",
+          "ko": "carry (올림)"
+         },
+         "value": 0
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "sum",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       }
+      },
+      {
+       "from": {
+        "view": "sum",
+        "at": 2
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       }
+      },
+      {
+       "from": {
+        "view": "sum",
+        "at": 3
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       }
+      }
+     ],
+     "answer": "[7,9,7]"
+    }
+   ],
+   "sampleInput": "[3,1,7]\n[4,8]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "score1 = [9], score2 = [8]",
+   "expected": "[7,1]",
+   "frames": [
+    {
+     "caption": {
+      "en": "score1 spells 9 and score2 spells 8, each read from its last node back. The sum starts at a dummy node, with tail on it and carry 0.",
+      "ko": "마지막 노드부터 읽으면 score1은 9, score2는 8입니다. 합은 dummy 노드에서 시작하고, tail은 거기에, carry는 0입니다."
+     },
+     "views": {
+      "score1": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 9
+        }
+       ],
+       "next": {
+        "0": null
+       },
+       "pointers": {
+        "score1": 0
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "score2": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 8
+        }
+       ],
+       "next": {
+        "0": null
+       },
+       "pointers": {
+        "score2": 0
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "sum": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        }
+       ],
+       "next": {
+        "0": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 0
+       },
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "carry",
+          "ko": "carry (올림)"
+         },
+         "value": 0
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Column 1: 9 + 8 + carry 0 = 17, so the digit is 7 and carry is 1. tail.next = a new node 7.",
+      "ko": "1번째 자리: 9 + 8 + carry 0 = 17, 자리 숫자는 7, carry는 1입니다. tail.next에 새 노드 7을 붙입니다."
+     },
+     "views": {
+      "score1": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 9
+        }
+       ],
+       "next": {
+        "0": null
+       },
+       "pointers": {
+        "score1": null
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "score2": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 8
+        }
+       ],
+       "next": {
+        "0": null
+       },
+       "pointers": {
+        "score2": null
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "sum": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 7
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 0
+       },
+       "marks": {
+        "good": [
+         1
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "carry",
+          "ko": "carry (올림)"
+         },
+         "value": 1
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "score1",
+        "at": 0
+       },
+       "to": {
+        "view": "sum",
+        "at": 1
+       }
+      },
+      {
+       "from": {
+        "view": "score2",
+        "at": 0
+       },
+       "to": {
+        "view": "sum",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "tail = tail.next: tail moves to the new 7.",
+      "ko": "tail = tail.next: tail이 새 노드 7로 옮깁니다."
+     },
+     "views": {
+      "score1": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 9
+        }
+       ],
+       "next": {
+        "0": null
+       },
+       "pointers": {
+        "score1": null
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "score2": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 8
+        }
+       ],
+       "next": {
+        "0": null
+       },
+       "pointers": {
+        "score2": null
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "sum": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 7
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 1
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "carry",
+          "ko": "carry (올림)"
+         },
+         "value": 1
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Both lists have ended, but carry is 1: tail.next = a new node 1, and carry is 0.",
+      "ko": "두 리스트는 끝났지만 carry가 1이 남아, tail.next에 새 노드 1을 붙이고 carry는 0이 됩니다."
+     },
+     "views": {
+      "score1": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 9
+        }
+       ],
+       "next": {
+        "0": null
+       },
+       "pointers": {
+        "score1": null
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "score2": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 8
+        }
+       ],
+       "next": {
+        "0": null
+       },
+       "pointers": {
+        "score2": null
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "sum": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 7
+        },
+        {
+         "id": 2,
+         "value": 1
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 1
+       },
+       "marks": {
+        "good": [
+         2
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "carry",
+          "ko": "carry (올림)"
+         },
+         "value": 0
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "sum",
+        "at": 2
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "tail = tail.next: tail moves to the new 1.",
+      "ko": "tail = tail.next: tail이 새 노드 1로 옮깁니다."
+     },
+     "views": {
+      "score1": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 9
+        }
+       ],
+       "next": {
+        "0": null
+       },
+       "pointers": {
+        "score1": null
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "score2": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 8
+        }
+       ],
+       "next": {
+        "0": null
+       },
+       "pointers": {
+        "score2": null
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "sum": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 7
+        },
+        {
+         "id": 2,
+         "value": 1
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 2
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "carry",
+          "ko": "carry (올림)"
+         },
+         "value": 0
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Both lists have ended and carry is 0. 9 + 8 = 17, and reading from dummy.next gives [7,1].",
+      "ko": "두 리스트가 끝났고 carry도 0입니다. 9 + 8 = 17이고, dummy.next부터 읽으면 [7,1]입니다."
+     },
+     "views": {
+      "score1": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 9
+        }
+       ],
+       "next": {
+        "0": null
+       },
+       "pointers": {
+        "score1": null
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "score2": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 8
+        }
+       ],
+       "next": {
+        "0": null
+       },
+       "pointers": {
+        "score2": null
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "sum": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 7
+        },
+        {
+         "id": 2,
+         "value": 1
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 2
+       },
+       "marks": {
+        "path": [
+         1,
+         2
+        ],
+        "dim": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        7,
+        1
+       ],
+       "marks": {
+        "path": [
+         0,
+         1
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "carry",
+          "ko": "carry (올림)"
+         },
+         "value": 0
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "sum",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       }
+      },
+      {
+       "from": {
+        "view": "sum",
+        "at": 2
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       }
+      }
+     ],
+     "answer": "[7,1]"
+    }
+   ],
+   "sampleInput": "[9]\n[8]"
+  },
+  {
+   "label": {
+    "en": "Example 3",
+    "ko": "예시 3"
+   },
+   "input": "score1 = [1,8,6], score2 = [4,5]",
+   "expected": "[5,3,7]",
+   "frames": [
+    {
+     "caption": {
+      "en": "score1 spells 681 and score2 spells 54, each read from its last node back. The sum starts at a dummy node, with tail on it and carry 0.",
+      "ko": "마지막 노드부터 읽으면 score1은 681, score2는 54입니다. 합은 dummy 노드에서 시작하고, tail은 거기에, carry는 0입니다."
+     },
+     "views": {
+      "score1": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 1
+        },
+        {
+         "id": 1,
+         "value": 8
+        },
+        {
+         "id": 2,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": null
+       },
+       "pointers": {
+        "score1": 0
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "score2": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 4
+        },
+        {
+         "id": 1,
+         "value": 5
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": null
+       },
+       "pointers": {
+        "score2": 0
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "sum": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        }
+       ],
+       "next": {
+        "0": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 0
+       },
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "carry",
+          "ko": "carry (올림)"
+         },
+         "value": 0
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Column 1: 1 + 4 + carry 0 = 5, so the digit is 5 and carry is 0. tail.next = a new node 5.",
+      "ko": "1번째 자리: 1 + 4 + carry 0 = 5, 자리 숫자는 5, carry는 0입니다. tail.next에 새 노드 5를 붙입니다."
+     },
+     "views": {
+      "score1": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 1
+        },
+        {
+         "id": 1,
+         "value": 8
+        },
+        {
+         "id": 2,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": null
+       },
+       "pointers": {
+        "score1": 1
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "score2": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 4
+        },
+        {
+         "id": 1,
+         "value": 5
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": null
+       },
+       "pointers": {
+        "score2": 1
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "sum": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 5
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 0
+       },
+       "marks": {
+        "good": [
+         1
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "carry",
+          "ko": "carry (올림)"
+         },
+         "value": 0
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "score1",
+        "at": 0
+       },
+       "to": {
+        "view": "sum",
+        "at": 1
+       }
+      },
+      {
+       "from": {
+        "view": "score2",
+        "at": 0
+       },
+       "to": {
+        "view": "sum",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "tail = tail.next: tail moves to the new 5.",
+      "ko": "tail = tail.next: tail이 새 노드 5로 옮깁니다."
+     },
+     "views": {
+      "score1": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 1
+        },
+        {
+         "id": 1,
+         "value": 8
+        },
+        {
+         "id": 2,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": null
+       },
+       "pointers": {
+        "score1": 1
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "score2": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 4
+        },
+        {
+         "id": 1,
+         "value": 5
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": null
+       },
+       "pointers": {
+        "score2": 1
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "sum": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 5
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 1
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "carry",
+          "ko": "carry (올림)"
+         },
+         "value": 0
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Column 2: 8 + 5 + carry 0 = 13, so the digit is 3 and carry is 1. tail.next = a new node 3.",
+      "ko": "2번째 자리: 8 + 5 + carry 0 = 13, 자리 숫자는 3, carry는 1입니다. tail.next에 새 노드 3을 붙입니다."
+     },
+     "views": {
+      "score1": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 1
+        },
+        {
+         "id": 1,
+         "value": 8
+        },
+        {
+         "id": 2,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": null
+       },
+       "pointers": {
+        "score1": 2
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "score2": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 4
+        },
+        {
+         "id": 1,
+         "value": 5
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": null
+       },
+       "pointers": {
+        "score2": null
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "sum": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 5
+        },
+        {
+         "id": 2,
+         "value": 3
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 1
+       },
+       "marks": {
+        "good": [
+         2
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "carry",
+          "ko": "carry (올림)"
+         },
+         "value": 1
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "score1",
+        "at": 1
+       },
+       "to": {
+        "view": "sum",
+        "at": 2
+       }
+      },
+      {
+       "from": {
+        "view": "score2",
+        "at": 1
+       },
+       "to": {
+        "view": "sum",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "tail = tail.next: tail moves to the new 3.",
+      "ko": "tail = tail.next: tail이 새 노드 3으로 옮깁니다."
+     },
+     "views": {
+      "score1": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 1
+        },
+        {
+         "id": 1,
+         "value": 8
+        },
+        {
+         "id": 2,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": null
+       },
+       "pointers": {
+        "score1": 2
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "score2": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 4
+        },
+        {
+         "id": 1,
+         "value": 5
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": null
+       },
+       "pointers": {
+        "score2": null
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "sum": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 5
+        },
+        {
+         "id": 2,
+         "value": 3
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 2
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "carry",
+          "ko": "carry (올림)"
+         },
+         "value": 1
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Column 3: 6 + carry 1 = 7, so the digit is 7 and carry is 0. tail.next = a new node 7.",
+      "ko": "3번째 자리: 6 + carry 1 = 7, 자리 숫자는 7, carry는 0입니다. tail.next에 새 노드 7을 붙입니다."
+     },
+     "views": {
+      "score1": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 1
+        },
+        {
+         "id": 1,
+         "value": 8
+        },
+        {
+         "id": 2,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": null
+       },
+       "pointers": {
+        "score1": null
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "score2": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 4
+        },
+        {
+         "id": 1,
+         "value": 5
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": null
+       },
+       "pointers": {
+        "score2": null
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "sum": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 5
+        },
+        {
+         "id": 2,
+         "value": 3
+        },
+        {
+         "id": 3,
+         "value": 7
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 2
+       },
+       "marks": {
+        "good": [
+         3
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "carry",
+          "ko": "carry (올림)"
+         },
+         "value": 0
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "score1",
+        "at": 2
+       },
+       "to": {
+        "view": "sum",
+        "at": 3
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "tail = tail.next: tail moves to the new 7.",
+      "ko": "tail = tail.next: tail이 새 노드 7로 옮깁니다."
+     },
+     "views": {
+      "score1": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 1
+        },
+        {
+         "id": 1,
+         "value": 8
+        },
+        {
+         "id": 2,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": null
+       },
+       "pointers": {
+        "score1": null
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "score2": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 4
+        },
+        {
+         "id": 1,
+         "value": 5
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": null
+       },
+       "pointers": {
+        "score2": null
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "sum": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 5
+        },
+        {
+         "id": 2,
+         "value": 3
+        },
+        {
+         "id": 3,
+         "value": 7
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 3
+       },
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "carry",
+          "ko": "carry (올림)"
+         },
+         "value": 0
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Both lists have ended and carry is 0. 681 + 54 = 735, and reading from dummy.next gives [5,3,7].",
+      "ko": "두 리스트가 끝났고 carry도 0입니다. 681 + 54 = 735이고, dummy.next부터 읽으면 [5,3,7]입니다."
+     },
+     "views": {
+      "score1": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 1
+        },
+        {
+         "id": 1,
+         "value": 8
+        },
+        {
+         "id": 2,
+         "value": 6
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": null
+       },
+       "pointers": {
+        "score1": null
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "score2": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 4
+        },
+        {
+         "id": 1,
+         "value": 5
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": null
+       },
+       "pointers": {
+        "score2": null
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "sum": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 5
+        },
+        {
+         "id": 2,
+         "value": 3
+        },
+        {
+         "id": 3,
+         "value": 7
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "tail": 3
+       },
+       "marks": {
+        "path": [
+         1,
+         2,
+         3
+        ],
+        "dim": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        5,
+        3,
+        7
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "carry",
+          "ko": "carry (올림)"
+         },
+         "value": 0
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "sum",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       }
+      },
+      {
+       "from": {
+        "view": "sum",
+        "at": 2
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       }
+      },
+      {
+       "from": {
+        "view": "sum",
+        "at": 3
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       }
+      }
+     ],
+     "answer": "[5,3,7]"
+    }
+   ],
+   "sampleInput": "[1,8,6]\n[4,5]"
+  }
+ ]
+}
