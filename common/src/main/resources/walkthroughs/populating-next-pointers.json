@@ -90,7 +90,10 @@
        "tags": [
         [
          0,
-         "node"
+         {
+          "en": "node",
+          "ko": "node (현재)"
+         }
         ]
        ],
        "links": {
@@ -127,7 +130,10 @@
        "tags": [
         [
          0,
-         "node"
+         {
+          "en": "node",
+          "ko": "node (현재)"
+         }
         ]
        ],
        "links": {
@@ -172,7 +178,10 @@
        "tags": [
         [
          0,
-         "node"
+         {
+          "en": "node",
+          "ko": "node (현재)"
+         }
         ]
        ],
        "links": {
@@ -218,7 +227,10 @@
        "tags": [
         [
          1,
-         "node"
+         {
+          "en": "node",
+          "ko": "node (현재)"
+         }
         ]
        ],
        "links": {
@@ -259,7 +271,10 @@
        "tags": [
         [
          1,
-         "node"
+         {
+          "en": "node",
+          "ko": "node (현재)"
+         }
         ]
        ],
        "links": {
@@ -310,7 +325,10 @@
        "tags": [
         [
          1,
-         "node"
+         {
+          "en": "node",
+          "ko": "node (현재)"
+         }
         ]
        ],
        "links": {
@@ -364,7 +382,10 @@
        "tags": [
         [
          2,
-         "node"
+         {
+          "en": "node",
+          "ko": "node (현재)"
+         }
         ]
        ],
        "links": {
@@ -428,7 +449,10 @@
        "tags": [
         [
          2,
-         "node"
+         {
+          "en": "node",
+          "ko": "node (현재)"
+         }
         ]
        ],
        "links": {
@@ -479,7 +503,10 @@
        "tags": [
         [
          2,
-         "node"
+         {
+          "en": "node",
+          "ko": "node (현재)"
+         }
         ]
        ],
        "links": {
@@ -950,7 +977,10 @@
        "tags": [
         [
          0,
-         "node"
+         {
+          "en": "node",
+          "ko": "node (현재)"
+         }
         ]
        ],
        "links": {
@@ -987,7 +1017,10 @@
        "tags": [
         [
          0,
-         "node"
+         {
+          "en": "node",
+          "ko": "node (현재)"
+         }
         ]
        ],
        "links": {
@@ -1032,7 +1065,10 @@
        "tags": [
         [
          0,
-         "node"
+         {
+          "en": "node",
+          "ko": "node (현재)"
+         }
         ]
        ],
        "links": {

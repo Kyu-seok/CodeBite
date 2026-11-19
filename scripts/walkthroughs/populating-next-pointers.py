@@ -36,6 +36,8 @@ wt = Walkthrough(
     ],
 )
 
+NODE = {"en": "node", "ko": "node (현재)"}
+
 
 def level_of(node):
     """A linked level, from its leftmost node along next."""
@@ -84,7 +86,7 @@ def solve(values, run):
     leftmost, depth = root, 0
     while leftmost and leftmost.left:
         node = leftmost
-        tags = {node.id: "node"}
+        tags = {node.id: NODE}
         frame({"en": f"Walk level {depth} from its leftmost node {node.val} to link level {depth + 1} below it.",
                "ko": f"레벨 {depth}의 가장 왼쪽 노드 {node.val}부터 걸으며 그 아래 레벨 {depth + 1}의 노드들을 잇습니다."},
               lit=[node.id])
@@ -106,7 +108,7 @@ def solve(values, run):
                              f"{node.right.val}.next = {node.next.left.val}."},
                       lit=[node.id, node.next.id], good=[node.right.id, node.next.left.id],
                       link_marks={"lit": [["next", node.id]], "good": [["next", node.right.id]]})
-                tags = {node.next.id: "node"}
+                tags = {node.next.id: NODE}
                 frame({"en": f"node follows {node.val}.next to {node.next.val}.",
                        "ko": f"node가 {node.val}.next를 따라 다음 노드 {node.next.val}에 갑니다."},
                       lit=[node.next.id], link_marks={"lit": [["next", node.id]]},

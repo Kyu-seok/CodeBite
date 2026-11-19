@@ -161,7 +161,7 @@ for number, sample in enumerate(sample_cases(SLUG), start=1):
     if not adj:
         run = sample_run(wt, number, sample, input=f"adjList = {sample['input']}")
         run.frame({"en": "The map is empty, so node is null and there is nothing to copy: return null, written [].",
-                   "ko": "지도가 비어 있으므로 node는 null이고 복사할 것이 없습니다. null을 반환하며, 출력에는 빈 목록 []이 적힙니다."},
+                   "ko": "지도가 비어 있으므로 node는 null이고 복사할 것이 없습니다. null을 반환하며, 출력에는 빈 목록 [] 하나가 적힙니다."},
                   stack={"values": []}, answer="[]")
         continue
     edges = undirected_edges(adj)

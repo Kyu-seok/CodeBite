@@ -35,8 +35,8 @@ wt = Walkthrough(
             "empty": {"en": "empty tree", "ko": "빈 트리"}}],
 )
 
-NODE = "node"
-TAIL = "tail"
+NODE = {"en": "node", "ko": "node (현재)"}
+TAIL = {"en": "tail", "ko": "tail (끝)"}
 
 
 def solve(values, run):

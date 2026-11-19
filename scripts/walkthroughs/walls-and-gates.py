@@ -125,7 +125,7 @@ def solve(rooms, run):
     filled = [(r, c) for r in range(rows) for c in range(cols) if rooms[r][c] not in (EMPTY, -1, 0)]
     if not gates:
         frame({"en": f"With no gate, no room is reached: all {empty} stay INF (2147483647). Answer: {result}.",
-               "ko": f"문이 없으니 어떤 방에도 닿지 않아 {empty}개 모두 INF(2147483647)로 남습니다. 답은 {result}입니다."},
+               "ko": f"문이 없으니 어떤 방에도 닿지 않아 {empty}개 모두 INF 값(2147483647)으로 남습니다. 답은 {result}입니다."},
               lit=left, answer=result)
     else:
         unreached = ({"en": f", and {listed_cells(left)} stayed INF", "ko": f"고 {listed_cells(left)} 칸은 INF로 남았습니다"}
