@@ -80,7 +80,7 @@ def solve(friend_mask, run):
                      move(None, at("mask", cell(low)), value="0")])
     if count:
         why = {"en": f"mask is 0, so every 1 bit was cleared once: {count} friend{'s' if count > 1 else ''} online",
-               "ko": f"mask가 0이 되었으니 1 비트를 모두 한 번씩 껐습니다. 접속 중인 친구는 {count}명"}
+               "ko": f"mask가 0이 되었으니 1 비트를 모두 한 번씩 껐고, 접속 중인 친구는 {count}명입니다"}
     else:
         why = {"en": "mask was 0 from the start: nobody is online", "ko": "mask가 처음부터 0이라 접속 중인 친구가 없습니다"}
     frame({"en": f"{why['en']}. Answer {count}.", "ko": f"{why['ko']}. 답은 {count}입니다."},

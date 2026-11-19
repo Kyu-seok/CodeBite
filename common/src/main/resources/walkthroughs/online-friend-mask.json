@@ -568,7 +568,7 @@
     {
      "caption": {
       "en": "mask is 0, so every 1 bit was cleared once: 4 friends online. Answer 4.",
-      "ko": "mask가 0이 되었으니 1 비트를 모두 한 번씩 껐습니다. 접속 중인 친구는 4명. 답은 4입니다."
+      "ko": "mask가 0이 되었으니 1 비트를 모두 한 번씩 껐고, 접속 중인 친구는 4명입니다. 답은 4입니다."
      },
      "views": {
       "mask": {
@@ -959,7 +959,7 @@
     {
      "caption": {
       "en": "mask is 0, so every 1 bit was cleared once: 1 friend online. Answer 1.",
-      "ko": "mask가 0이 되었으니 1 비트를 모두 한 번씩 껐습니다. 접속 중인 친구는 1명. 답은 1입니다."
+      "ko": "mask가 0이 되었으니 1 비트를 모두 한 번씩 껐고, 접속 중인 친구는 1명입니다. 답은 1입니다."
      },
      "views": {
       "mask": {
@@ -9128,7 +9128,7 @@
     {
      "caption": {
       "en": "mask is 0, so every 1 bit was cleared once: 30 friends online. Answer 30.",
-      "ko": "mask가 0이 되었으니 1 비트를 모두 한 번씩 껐습니다. 접속 중인 친구는 30명. 답은 30입니다."
+      "ko": "mask가 0이 되었으니 1 비트를 모두 한 번씩 껐고, 접속 중인 친구는 30명입니다. 답은 30입니다."
      },
      "views": {
       "mask": {

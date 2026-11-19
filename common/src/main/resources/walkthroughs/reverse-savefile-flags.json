@@ -498,7 +498,7 @@
     {
      "caption": {
       "en": "Bits 0 to 2 are 0 and set nothing. Bit 3 is 1, so result's bit 31 − 3 = 28 is set: result = 268435456.",
-      "ko": "0~2번 비트는 0이라 켜는 비트가 없습니다. 3번 비트가 1이므로 result의 31 − 3 = 28번 비트를 켭니다. result = 268435456이 됩니다."
+      "ko": "0~2번 비트는 0이라 켜는 비트가 없고, 3번 비트가 1이므로 result의 31 − 3 = 28번 비트를 켭니다. result = 268435456이 됩니다."
      },
      "views": {
       "word": {
@@ -1832,7 +1832,7 @@
     {
      "caption": {
       "en": "Bit 0 is 0 and sets nothing. Bit 1 is 1, so result's bit 31 − 1 = 30 is set: result = 1073741824.",
-      "ko": "0번 비트는 0이라 켜는 비트가 없습니다. 1번 비트가 1이므로 result의 31 − 1 = 30번 비트를 켭니다. result = 1073741824가 됩니다."
+      "ko": "0번 비트는 0이라 켜는 비트가 없고, 1번 비트가 1이므로 result의 31 − 1 = 30번 비트를 켭니다. result = 1073741824가 됩니다."
      },
      "views": {
       "word": {

@@ -77,8 +77,8 @@ def solve(reading, run):
         return "true"
     frame({"en": f"{reading} is already in seen: the chain {chain} has looped without reaching 1, and it would go round "
                  "forever. Answer false.",
-           "ko": f"{josa(reading, '은는')} 이미 seen에 있습니다. {chain} 순서로 1에 닿지 못한 채 고리를 이루었으니 "
-                 "끝없이 돕니다. 답은 false입니다."},
+           "ko": f"{josa(reading, '은는')} 이미 seen에 있으므로, {chain} 순서는 1에 닿지 못하고 끝없이 도는 "
+                 "고리입니다. 답은 false입니다."},
           reading_mark="bad", seen_marks={"bad": [reading]}, probes=[probe(reading, hit=True)], answer="false")
     return "false"
 

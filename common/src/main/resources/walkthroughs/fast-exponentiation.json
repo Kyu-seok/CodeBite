@@ -43,7 +43,7 @@
     {
      "caption": {
       "en": "base = 3, exponent = 4 = 100 in binary; b below is base. result starts at 1.",
-      "ko": "base = 3, exponent = 4, 이진수로 100입니다. 아래 b는 base입니다. result는 1에서 시작합니다."
+      "ko": "base = 3, exponent = 4(이진수 100), 아래 b는 base입니다. result는 1에서 시작합니다."
      },
      "views": {
       "bits": {
@@ -731,8 +731,8 @@
    "frames": [
     {
      "caption": {
-      "en": "base = 2, exponent = -3. The bits drawn are those of |exponent| = 3 (11 in binary). result starts at 1.",
-      "ko": "base = 2, exponent = -3입니다. 그린 비트는 |exponent| = 3의 비트(이진수 11)입니다. result는 1에서 시작합니다."
+      "en": "base = 2, exponent = -3; the bits drawn are those of |exponent| = 3 (11 in binary). result starts at 1.",
+      "ko": "base = 2, exponent = -3, 그린 비트는 |exponent| = 3의 비트(이진수 11)입니다. result는 1에서 시작합니다."
      },
      "views": {
       "bits": {
@@ -797,7 +797,7 @@
     {
      "caption": {
       "en": "The exponent is negative, so base^-3 = (1/base)^3: base = 1/2, exponent = 3. b below is this new base.",
-      "ko": "지수가 음수이므로 base^-3 = (1/base)^3입니다. base = 1/2, exponent = 3로 바꿉니다. 아래 b는 이 새 base입니다."
+      "ko": "지수가 음수이므로 base^-3 = (1/base)^3, 곧 base = 1/2, exponent = 3으로 바꿉니다. 아래 b는 이 새 base입니다."
      },
      "views": {
       "bits": {
@@ -1285,8 +1285,8 @@
    "frames": [
     {
      "caption": {
-      "en": "base = 2, exponent = -2. The bits drawn are those of |exponent| = 2 (10 in binary). result starts at 1.",
-      "ko": "base = 2, exponent = -2입니다. 그린 비트는 |exponent| = 2의 비트(이진수 10)입니다. result는 1에서 시작합니다."
+      "en": "base = 2, exponent = -2; the bits drawn are those of |exponent| = 2 (10 in binary). result starts at 1.",
+      "ko": "base = 2, exponent = -2, 그린 비트는 |exponent| = 2의 비트(이진수 10)입니다. result는 1에서 시작합니다."
      },
      "views": {
       "bits": {
@@ -1351,7 +1351,7 @@
     {
      "caption": {
       "en": "The exponent is negative, so base^-2 = (1/base)^2: base = 1/2, exponent = 2. b below is this new base.",
-      "ko": "지수가 음수이므로 base^-2 = (1/base)^2입니다. base = 1/2, exponent = 2로 바꿉니다. 아래 b는 이 새 base입니다."
+      "ko": "지수가 음수이므로 base^-2 = (1/base)^2, 곧 base = 1/2, exponent = 2로 바꿉니다. 아래 b는 이 새 base입니다."
      },
      "views": {
       "bits": {

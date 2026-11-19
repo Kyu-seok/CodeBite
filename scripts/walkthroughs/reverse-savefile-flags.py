@@ -78,7 +78,7 @@ def solve(word, run):
             continue
         result |= 1 << (31 - i)
         skipped = zeros(after, i - 1)
-        lead = {"en": f"{skipped['en']} nothing. ", "ko": f"{skipped['ko']}이라 켜는 비트가 없습니다. "} if skipped else {"en": "", "ko": ""}
+        lead = {"en": f"{skipped['en']} nothing. ", "ko": f"{skipped['ko']}이라 켜는 비트가 없고, "} if skipped else {"en": "", "ko": ""}
         frame({"en": f"{lead['en']}Bit {i} is 1, so result's bit 31 − {i} = {31 - i} is set: result = {result}.",
                "ko": f"{lead['ko']}{i}번 비트가 1이므로 result의 31 − {i} = {31 - i}번 비트를 켭니다. result = {josa(result, '이가')} 됩니다."},
               lit=i, good=31 - i,

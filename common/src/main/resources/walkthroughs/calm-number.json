@@ -2868,7 +2868,7 @@
     {
      "caption": {
       "en": "4 is already in seen: the chain 4 → 16 → 37 → 58 → 89 → 145 → 42 → 20 → 4 has looped without reaching 1, and it would go round forever. Answer false.",
-      "ko": "4는 이미 seen에 있습니다. 4 → 16 → 37 → 58 → 89 → 145 → 42 → 20 → 4 순서로 1에 닿지 못한 채 고리를 이루었으니 끝없이 돕니다. 답은 false입니다."
+      "ko": "4는 이미 seen에 있으므로, 4 → 16 → 37 → 58 → 89 → 145 → 42 → 20 → 4 순서는 1에 닿지 못하고 끝없이 도는 고리입니다. 답은 false입니다."
      },
      "views": {
       "reading": {

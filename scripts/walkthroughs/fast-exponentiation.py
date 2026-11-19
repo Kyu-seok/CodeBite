@@ -15,7 +15,7 @@ from fractions import Fraction
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import josa, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough, at, move  # noqa: E402
 
 SLUG = "fast-exponentiation"
@@ -74,20 +74,20 @@ def solve(base, exponent, run):
 
     binary = format(e, "b")
     if exponent < 0:
-        frame({"en": f"base = {shown(given_base)}, exponent = {given_exp}. The bits drawn are those of |exponent| = {e} "
+        frame({"en": f"base = {shown(given_base)}, exponent = {given_exp}; the bits drawn are those of |exponent| = {e} "
                      f"({binary} in binary). result starts at 1.",
-               "ko": f"base = {shown(given_base)}, exponent = {given_exp}입니다. 그린 비트는 |exponent| = {e}의 "
+               "ko": f"base = {shown(given_base)}, exponent = {given_exp}, 그린 비트는 |exponent| = {e}의 "
                      f"비트(이진수 {binary})입니다. result는 1에서 시작합니다."})
         base, exponent = 1 / base, -exponent
         squares[0] = shown(base)
         frame({"en": f"The exponent is negative, so base^{given_exp} = (1/base)^{e}: base = {squares[0]}, exponent = {e}. "
                      f"b below is this new base.",
-               "ko": f"지수가 음수이므로 base^{given_exp} = (1/base)^{e}입니다. base = {squares[0]}, exponent = {e}로 바꿉니다. "
+               "ko": f"지수가 음수이므로 base^{given_exp} = (1/base)^{e}, 곧 base = {squares[0]}, exponent = {josa(e, '(으)로')} 바꿉니다. "
                      "아래 b는 이 새 base입니다."},
               good_sq=[0], moves=[move(None, at("squares", 0), value=f"1/{shown(given_base)}")])
     else:
         frame({"en": f"base = {shown(given_base)}, exponent = {e} = {binary} in binary; b below is base. result starts at 1.",
-               "ko": f"base = {shown(given_base)}, exponent = {e}, 이진수로 {binary}입니다. 아래 b는 base입니다. result는 1에서 시작합니다."})
+               "ko": f"base = {shown(given_base)}, exponent = {e}(이진수 {binary}), 아래 b는 base입니다. result는 1에서 시작합니다."})
     k = 0
     while exponent:
         power = f"b{str(1 << k).translate(SUPERSCRIPT)}"
