@@ -1,0 +1,1662 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Combine Bags to Match Target",
+  "ko": "봉투를 합쳐 목표 맞추기"
+ },
+ "approach": {
+  "en": "Combining takes the largest reading in each position, so taking every bag that stays within target never hurts. Skip the bags over target anywhere; the rest match target exactly when each position's target reading appears in one of them.",
+  "ko": "합치면 자리마다 가장 큰 값을 가지므로, target을 넘지 않는 봉투는 모두 골라도 손해가 없습니다. 어느 자리든 target을 넘는 봉투는 건너뛰고, 남은 봉투들 중 어딘가에 자리마다 target의 값이 있으면 정확히 target이 됩니다."
+ },
+ "views": [
+  {
+   "id": "bags",
+   "type": "table",
+   "title": {
+    "en": "bags",
+    "ko": "bags (봉투)"
+   }
+  },
+  {
+   "id": "target",
+   "type": "array",
+   "title": {
+    "en": "target",
+    "ko": "target (목표)"
+   }
+  },
+  {
+   "id": "reached",
+   "type": "array",
+   "title": {
+    "en": "reached: target's reading hit by a usable bag",
+    "ko": "reached: 쓸 수 있는 봉투가 target 값에 닿음"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "bags = [[1,2,3],[4,2,1],[1,5,3],[2,1,4]], target = [4,5,4]",
+   "expected": "true",
+   "frames": [
+    {
+     "caption": {
+      "en": "4 bags and target [4,5,4]. No position has been reached yet.",
+      "ko": "봉투가 4개이고 target은 [4,5,4]입니다. 아직 닿은 자리가 없습니다."
+     },
+     "views": {
+      "bags": {
+       "columns": [
+        "[0]",
+        "[1]",
+        "[2]"
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "bag 0",
+          "ko": "봉투 0"
+         },
+         "cells": [
+          1,
+          2,
+          3
+         ]
+        },
+        {
+         "label": {
+          "en": "bag 1",
+          "ko": "봉투 1"
+         },
+         "cells": [
+          4,
+          2,
+          1
+         ]
+        },
+        {
+         "label": {
+          "en": "bag 2",
+          "ko": "봉투 2"
+         },
+         "cells": [
+          1,
+          5,
+          3
+         ]
+        },
+        {
+         "label": {
+          "en": "bag 3",
+          "ko": "봉투 3"
+         },
+         "cells": [
+          2,
+          1,
+          4
+         ]
+        }
+       ],
+       "marks": {
+        "dim": []
+       }
+      },
+      "target": {
+       "values": [
+        4,
+        5,
+        4
+       ],
+       "marks": {}
+      },
+      "reached": {
+       "values": [
+        "✗",
+        "✗",
+        "✗"
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Bag 0, [1,2,3], stays within target, so take it, though it hits no target reading.",
+      "ko": "봉투 0 [1,2,3]: target을 넘지 않으니 고르지만, target 값에 닿는 자리는 없습니다."
+     },
+     "views": {
+      "bags": {
+       "columns": [
+        "[0]",
+        "[1]",
+        "[2]"
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "bag 0",
+          "ko": "봉투 0"
+         },
+         "cells": [
+          1,
+          2,
+          3
+         ]
+        },
+        {
+         "label": {
+          "en": "bag 1",
+          "ko": "봉투 1"
+         },
+         "cells": [
+          4,
+          2,
+          1
+         ]
+        },
+        {
+         "label": {
+          "en": "bag 2",
+          "ko": "봉투 2"
+         },
+         "cells": [
+          1,
+          5,
+          3
+         ]
+        },
+        {
+         "label": {
+          "en": "bag 3",
+          "ko": "봉투 3"
+         },
+         "cells": [
+          2,
+          1,
+          4
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "good": [],
+        "lit": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          0,
+          2
+         ]
+        ]
+       }
+      },
+      "target": {
+       "values": [
+        4,
+        5,
+        4
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "reached": {
+       "values": [
+        "✗",
+        "✗",
+        "✗"
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Bag 1, [4,2,1], stays within target, so take it: it hits target's reading in position 0.",
+      "ko": "봉투 1 [4,2,1]: target을 넘지 않으니 고릅니다. 0번 자리에서 target 값에 닿습니다."
+     },
+     "views": {
+      "bags": {
+       "columns": [
+        "[0]",
+        "[1]",
+        "[2]"
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "bag 0",
+          "ko": "봉투 0"
+         },
+         "cells": [
+          1,
+          2,
+          3
+         ]
+        },
+        {
+         "label": {
+          "en": "bag 1",
+          "ko": "봉투 1"
+         },
+         "cells": [
+          4,
+          2,
+          1
+         ]
+        },
+        {
+         "label": {
+          "en": "bag 2",
+          "ko": "봉투 2"
+         },
+         "cells": [
+          1,
+          5,
+          3
+         ]
+        },
+        {
+         "label": {
+          "en": "bag 3",
+          "ko": "봉투 3"
+         },
+         "cells": [
+          2,
+          1,
+          4
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "good": [
+         [
+          1,
+          0
+         ]
+        ],
+        "lit": [
+         [
+          1,
+          1
+         ],
+         [
+          1,
+          2
+         ]
+        ]
+       }
+      },
+      "target": {
+       "values": [
+        4,
+        5,
+        4
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "reached": {
+       "values": [
+        "✓",
+        "✗",
+        "✗"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "bags",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "to": {
+        "view": "reached",
+        "at": 0
+       },
+       "value": "✓"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Bag 2, [1,5,3], stays within target, so take it: it hits target's reading in position 1.",
+      "ko": "봉투 2 [1,5,3]: target을 넘지 않으니 고릅니다. 1번 자리에서 target 값에 닿습니다."
+     },
+     "views": {
+      "bags": {
+       "columns": [
+        "[0]",
+        "[1]",
+        "[2]"
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "bag 0",
+          "ko": "봉투 0"
+         },
+         "cells": [
+          1,
+          2,
+          3
+         ]
+        },
+        {
+         "label": {
+          "en": "bag 1",
+          "ko": "봉투 1"
+         },
+         "cells": [
+          4,
+          2,
+          1
+         ]
+        },
+        {
+         "label": {
+          "en": "bag 2",
+          "ko": "봉투 2"
+         },
+         "cells": [
+          1,
+          5,
+          3
+         ]
+        },
+        {
+         "label": {
+          "en": "bag 3",
+          "ko": "봉투 3"
+         },
+         "cells": [
+          2,
+          1,
+          4
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "good": [
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          2
+         ]
+        ]
+       }
+      },
+      "target": {
+       "values": [
+        4,
+        5,
+        4
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "reached": {
+       "values": [
+        "✓",
+        "✓",
+        "✗"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "bags",
+        "at": [
+         2,
+         1
+        ]
+       },
+       "to": {
+        "view": "reached",
+        "at": 1
+       },
+       "value": "✓"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Bag 3, [2,1,4], stays within target, so take it: it hits target's reading in position 2.",
+      "ko": "봉투 3 [2,1,4]: target을 넘지 않으니 고릅니다. 2번 자리에서 target 값에 닿습니다."
+     },
+     "views": {
+      "bags": {
+       "columns": [
+        "[0]",
+        "[1]",
+        "[2]"
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "bag 0",
+          "ko": "봉투 0"
+         },
+         "cells": [
+          1,
+          2,
+          3
+         ]
+        },
+        {
+         "label": {
+          "en": "bag 1",
+          "ko": "봉투 1"
+         },
+         "cells": [
+          4,
+          2,
+          1
+         ]
+        },
+        {
+         "label": {
+          "en": "bag 2",
+          "ko": "봉투 2"
+         },
+         "cells": [
+          1,
+          5,
+          3
+         ]
+        },
+        {
+         "label": {
+          "en": "bag 3",
+          "ko": "봉투 3"
+         },
+         "cells": [
+          2,
+          1,
+          4
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "good": [
+         [
+          3,
+          2
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      },
+      "target": {
+       "values": [
+        4,
+        5,
+        4
+       ],
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "reached": {
+       "values": [
+        "✓",
+        "✓",
+        "✓"
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "bags",
+        "at": [
+         3,
+         2
+        ]
+       },
+       "to": {
+        "view": "reached",
+        "at": 2
+       },
+       "value": "✓"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every position is reached: combining the usable bags gives exactly [4,5,4] (bags 1, 2, 3 alone already do). Answer: true.",
+      "ko": "모든 자리에 닿았습니다. 쓸 수 있는 봉투를 합치면 정확히 target [4,5,4] 값이 됩니다(봉투 1, 2, 3만으로도 됩니다). 답은 true입니다."
+     },
+     "views": {
+      "bags": {
+       "columns": [
+        "[0]",
+        "[1]",
+        "[2]"
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "bag 0",
+          "ko": "봉투 0"
+         },
+         "cells": [
+          1,
+          2,
+          3
+         ]
+        },
+        {
+         "label": {
+          "en": "bag 1",
+          "ko": "봉투 1"
+         },
+         "cells": [
+          4,
+          2,
+          1
+         ]
+        },
+        {
+         "label": {
+          "en": "bag 2",
+          "ko": "봉투 2"
+         },
+         "cells": [
+          1,
+          5,
+          3
+         ]
+        },
+        {
+         "label": {
+          "en": "bag 3",
+          "ko": "봉투 3"
+         },
+         "cells": [
+          2,
+          1,
+          4
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "path": [
+         [
+          1,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          2
+         ]
+        ]
+       }
+      },
+      "target": {
+       "values": [
+        4,
+        5,
+        4
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2
+        ]
+       }
+      },
+      "reached": {
+       "values": [
+        "✓",
+        "✓",
+        "✓"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2
+        ]
+       }
+      }
+     },
+     "answer": "true"
+    }
+   ],
+   "sampleInput": "[[1,2,3],[4,2,1],[1,5,3],[2,1,4]]\n[4,5,4]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "bags = [[1,2,3],[4,5,6]], target = [3,4,5]",
+   "expected": "false",
+   "frames": [
+    {
+     "caption": {
+      "en": "2 bags and target [3,4,5]. No position has been reached yet.",
+      "ko": "봉투가 2개이고 target은 [3,4,5]입니다. 아직 닿은 자리가 없습니다."
+     },
+     "views": {
+      "bags": {
+       "columns": [
+        "[0]",
+        "[1]",
+        "[2]"
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "bag 0",
+          "ko": "봉투 0"
+         },
+         "cells": [
+          1,
+          2,
+          3
+         ]
+        },
+        {
+         "label": {
+          "en": "bag 1",
+          "ko": "봉투 1"
+         },
+         "cells": [
+          4,
+          5,
+          6
+         ]
+        }
+       ],
+       "marks": {
+        "dim": []
+       }
+      },
+      "target": {
+       "values": [
+        3,
+        4,
+        5
+       ],
+       "marks": {}
+      },
+      "reached": {
+       "values": [
+        "✗",
+        "✗",
+        "✗"
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Bag 0, [1,2,3], stays within target, so take it, though it hits no target reading.",
+      "ko": "봉투 0 [1,2,3]: target을 넘지 않으니 고르지만, target 값에 닿는 자리는 없습니다."
+     },
+     "views": {
+      "bags": {
+       "columns": [
+        "[0]",
+        "[1]",
+        "[2]"
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "bag 0",
+          "ko": "봉투 0"
+         },
+         "cells": [
+          1,
+          2,
+          3
+         ]
+        },
+        {
+         "label": {
+          "en": "bag 1",
+          "ko": "봉투 1"
+         },
+         "cells": [
+          4,
+          5,
+          6
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "good": [],
+        "lit": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          0,
+          2
+         ]
+        ]
+       }
+      },
+      "target": {
+       "values": [
+        3,
+        4,
+        5
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "reached": {
+       "values": [
+        "✗",
+        "✗",
+        "✗"
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Bag 1, [4,5,6]: 4 in position 0 is above target's 3, so any group with it is too large there. Skip it.",
+      "ko": "봉투 1 [4,5,6]: 0번 자리의 4가 target의 3보다 커서, 이 봉투가 들어간 묶음은 그 자리가 너무 커집니다. 건너뜁니다."
+     },
+     "views": {
+      "bags": {
+       "columns": [
+        "[0]",
+        "[1]",
+        "[2]"
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "bag 0",
+          "ko": "봉투 0"
+         },
+         "cells": [
+          1,
+          2,
+          3
+         ]
+        },
+        {
+         "label": {
+          "en": "bag 1",
+          "ko": "봉투 1"
+         },
+         "cells": [
+          4,
+          5,
+          6
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "bad": [
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          1,
+          2
+         ]
+        ],
+        "lit": []
+       }
+      },
+      "target": {
+       "values": [
+        3,
+        4,
+        5
+       ],
+       "marks": {
+        "bad": [
+         0,
+         1,
+         2
+        ]
+       }
+      },
+      "reached": {
+       "values": [
+        "✗",
+        "✗",
+        "✗"
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "No usable bag reaches target in positions 0, 1, 2, so no group can match [3,4,5]. Answer: false.",
+      "ko": "0, 1, 2번 자리에서 target 값에 닿는 쓸 수 있는 봉투가 없으므로 target [3,4,5] 값을 만들 수 없습니다. 답은 false입니다."
+     },
+     "views": {
+      "bags": {
+       "columns": [
+        "[0]",
+        "[1]",
+        "[2]"
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "bag 0",
+          "ko": "봉투 0"
+         },
+         "cells": [
+          1,
+          2,
+          3
+         ]
+        },
+        {
+         "label": {
+          "en": "bag 1",
+          "ko": "봉투 1"
+         },
+         "cells": [
+          4,
+          5,
+          6
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          1,
+          2
+         ]
+        ]
+       }
+      },
+      "target": {
+       "values": [
+        3,
+        4,
+        5
+       ],
+       "marks": {
+        "bad": [
+         0,
+         1,
+         2
+        ]
+       }
+      },
+      "reached": {
+       "values": [
+        "✗",
+        "✗",
+        "✗"
+       ],
+       "marks": {
+        "bad": [
+         0,
+         1,
+         2
+        ]
+       }
+      }
+     },
+     "answer": "false"
+    }
+   ],
+   "sampleInput": "[[1,2,3],[4,5,6]]\n[3,4,5]"
+  },
+  {
+   "label": {
+    "en": "Case 3",
+    "ko": "케이스 3"
+   },
+   "input": "bags = [[1,3,2],[3,1,2],[2,2,3],[1,1,1]], target = [3,3,3]",
+   "expected": "true",
+   "frames": [
+    {
+     "caption": {
+      "en": "4 bags and target [3,3,3]. No position has been reached yet.",
+      "ko": "봉투가 4개이고 target은 [3,3,3]입니다. 아직 닿은 자리가 없습니다."
+     },
+     "views": {
+      "bags": {
+       "columns": [
+        "[0]",
+        "[1]",
+        "[2]"
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "bag 0",
+          "ko": "봉투 0"
+         },
+         "cells": [
+          1,
+          3,
+          2
+         ]
+        },
+        {
+         "label": {
+          "en": "bag 1",
+          "ko": "봉투 1"
+         },
+         "cells": [
+          3,
+          1,
+          2
+         ]
+        },
+        {
+         "label": {
+          "en": "bag 2",
+          "ko": "봉투 2"
+         },
+         "cells": [
+          2,
+          2,
+          3
+         ]
+        },
+        {
+         "label": {
+          "en": "bag 3",
+          "ko": "봉투 3"
+         },
+         "cells": [
+          1,
+          1,
+          1
+         ]
+        }
+       ],
+       "marks": {
+        "dim": []
+       }
+      },
+      "target": {
+       "values": [
+        3,
+        3,
+        3
+       ],
+       "marks": {}
+      },
+      "reached": {
+       "values": [
+        "✗",
+        "✗",
+        "✗"
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Bag 0, [1,3,2], stays within target, so take it: it hits target's reading in position 1.",
+      "ko": "봉투 0 [1,3,2]: target을 넘지 않으니 고릅니다. 1번 자리에서 target 값에 닿습니다."
+     },
+     "views": {
+      "bags": {
+       "columns": [
+        "[0]",
+        "[1]",
+        "[2]"
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "bag 0",
+          "ko": "봉투 0"
+         },
+         "cells": [
+          1,
+          3,
+          2
+         ]
+        },
+        {
+         "label": {
+          "en": "bag 1",
+          "ko": "봉투 1"
+         },
+         "cells": [
+          3,
+          1,
+          2
+         ]
+        },
+        {
+         "label": {
+          "en": "bag 2",
+          "ko": "봉투 2"
+         },
+         "cells": [
+          2,
+          2,
+          3
+         ]
+        },
+        {
+         "label": {
+          "en": "bag 3",
+          "ko": "봉투 3"
+         },
+         "cells": [
+          1,
+          1,
+          1
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "good": [
+         [
+          0,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          2
+         ]
+        ]
+       }
+      },
+      "target": {
+       "values": [
+        3,
+        3,
+        3
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "reached": {
+       "values": [
+        "✗",
+        "✓",
+        "✗"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "bags",
+        "at": [
+         0,
+         1
+        ]
+       },
+       "to": {
+        "view": "reached",
+        "at": 1
+       },
+       "value": "✓"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Bag 1, [3,1,2], stays within target, so take it: it hits target's reading in position 0.",
+      "ko": "봉투 1 [3,1,2]: target을 넘지 않으니 고릅니다. 0번 자리에서 target 값에 닿습니다."
+     },
+     "views": {
+      "bags": {
+       "columns": [
+        "[0]",
+        "[1]",
+        "[2]"
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "bag 0",
+          "ko": "봉투 0"
+         },
+         "cells": [
+          1,
+          3,
+          2
+         ]
+        },
+        {
+         "label": {
+          "en": "bag 1",
+          "ko": "봉투 1"
+         },
+         "cells": [
+          3,
+          1,
+          2
+         ]
+        },
+        {
+         "label": {
+          "en": "bag 2",
+          "ko": "봉투 2"
+         },
+         "cells": [
+          2,
+          2,
+          3
+         ]
+        },
+        {
+         "label": {
+          "en": "bag 3",
+          "ko": "봉투 3"
+         },
+         "cells": [
+          1,
+          1,
+          1
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "good": [
+         [
+          1,
+          0
+         ]
+        ],
+        "lit": [
+         [
+          1,
+          1
+         ],
+         [
+          1,
+          2
+         ]
+        ]
+       }
+      },
+      "target": {
+       "values": [
+        3,
+        3,
+        3
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "reached": {
+       "values": [
+        "✓",
+        "✓",
+        "✗"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "bags",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "to": {
+        "view": "reached",
+        "at": 0
+       },
+       "value": "✓"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Bag 2, [2,2,3], stays within target, so take it: it hits target's reading in position 2.",
+      "ko": "봉투 2 [2,2,3]: target을 넘지 않으니 고릅니다. 2번 자리에서 target 값에 닿습니다."
+     },
+     "views": {
+      "bags": {
+       "columns": [
+        "[0]",
+        "[1]",
+        "[2]"
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "bag 0",
+          "ko": "봉투 0"
+         },
+         "cells": [
+          1,
+          3,
+          2
+         ]
+        },
+        {
+         "label": {
+          "en": "bag 1",
+          "ko": "봉투 1"
+         },
+         "cells": [
+          3,
+          1,
+          2
+         ]
+        },
+        {
+         "label": {
+          "en": "bag 2",
+          "ko": "봉투 2"
+         },
+         "cells": [
+          2,
+          2,
+          3
+         ]
+        },
+        {
+         "label": {
+          "en": "bag 3",
+          "ko": "봉투 3"
+         },
+         "cells": [
+          1,
+          1,
+          1
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "good": [
+         [
+          2,
+          2
+         ]
+        ],
+        "lit": [
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ]
+       }
+      },
+      "target": {
+       "values": [
+        3,
+        3,
+        3
+       ],
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "reached": {
+       "values": [
+        "✓",
+        "✓",
+        "✓"
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "bags",
+        "at": [
+         2,
+         2
+        ]
+       },
+       "to": {
+        "view": "reached",
+        "at": 2
+       },
+       "value": "✓"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Bag 3, [1,1,1], stays within target, so take it, though it hits no target reading.",
+      "ko": "봉투 3 [1,1,1]: target을 넘지 않으니 고르지만, target 값에 닿는 자리는 없습니다."
+     },
+     "views": {
+      "bags": {
+       "columns": [
+        "[0]",
+        "[1]",
+        "[2]"
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "bag 0",
+          "ko": "봉투 0"
+         },
+         "cells": [
+          1,
+          3,
+          2
+         ]
+        },
+        {
+         "label": {
+          "en": "bag 1",
+          "ko": "봉투 1"
+         },
+         "cells": [
+          3,
+          1,
+          2
+         ]
+        },
+        {
+         "label": {
+          "en": "bag 2",
+          "ko": "봉투 2"
+         },
+         "cells": [
+          2,
+          2,
+          3
+         ]
+        },
+        {
+         "label": {
+          "en": "bag 3",
+          "ko": "봉투 3"
+         },
+         "cells": [
+          1,
+          1,
+          1
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "good": [],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          3,
+          2
+         ]
+        ]
+       }
+      },
+      "target": {
+       "values": [
+        3,
+        3,
+        3
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "reached": {
+       "values": [
+        "✓",
+        "✓",
+        "✓"
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Every position is reached: combining the usable bags gives exactly [3,3,3] (bags 0, 1, 2 alone already do). Answer: true.",
+      "ko": "모든 자리에 닿았습니다. 쓸 수 있는 봉투를 합치면 정확히 target [3,3,3] 값이 됩니다(봉투 0, 1, 2만으로도 됩니다). 답은 true입니다."
+     },
+     "views": {
+      "bags": {
+       "columns": [
+        "[0]",
+        "[1]",
+        "[2]"
+       ],
+       "rows": [
+        {
+         "label": {
+          "en": "bag 0",
+          "ko": "봉투 0"
+         },
+         "cells": [
+          1,
+          3,
+          2
+         ]
+        },
+        {
+         "label": {
+          "en": "bag 1",
+          "ko": "봉투 1"
+         },
+         "cells": [
+          3,
+          1,
+          2
+         ]
+        },
+        {
+         "label": {
+          "en": "bag 2",
+          "ko": "봉투 2"
+         },
+         "cells": [
+          2,
+          2,
+          3
+         ]
+        },
+        {
+         "label": {
+          "en": "bag 3",
+          "ko": "봉투 3"
+         },
+         "cells": [
+          1,
+          1,
+          1
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "path": [
+         [
+          1,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          2,
+          2
+         ]
+        ]
+       }
+      },
+      "target": {
+       "values": [
+        3,
+        3,
+        3
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2
+        ]
+       }
+      },
+      "reached": {
+       "values": [
+        "✓",
+        "✓",
+        "✓"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2
+        ]
+       }
+      }
+     },
+     "answer": "true"
+    }
+   ],
+   "sampleInput": "[[1,3,2],[3,1,2],[2,2,3],[1,1,1]]\n[3,3,3]"
+  }
+ ]
+}
