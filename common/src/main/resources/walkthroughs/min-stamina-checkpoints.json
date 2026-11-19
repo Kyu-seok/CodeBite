@@ -1,0 +1,1516 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Min Stamina Checkpoints",
+  "ko": "체크포인트 최소 스태미나"
+ },
+ "approach": {
+  "en": "Only two numbers carry over: the least stamina spent to stand on the checkpoint two back and one back. A checkpoint is reached from one of them, paying that checkpoint's cost, so take the cheaper.",
+  "ko": "넘겨받는 수는 둘뿐입니다: 두 칸 전과 한 칸 전 체크포인트에 서기까지 쓴 최소 스태미나. 어느 체크포인트든 그 둘 중 하나에서 그 칸의 비용을 내고 오므로, 더 싼 쪽을 고릅니다."
+ },
+ "views": [
+  {
+   "id": "cost",
+   "type": "array",
+   "title": {
+    "en": "cost, then past the end",
+    "ko": "cost (체크포인트별 비용), 그리고 끝 너머"
+   }
+  },
+  {
+   "id": "best",
+   "type": "array",
+   "title": {
+    "en": "least stamina to stand there",
+    "ko": "그 칸에 서기까지의 최소 스태미나"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "cost = [4,2,8,3,5,6]",
+   "expected": "10",
+   "frames": [
+    {
+     "caption": {
+      "en": "6 checkpoints. You start on checkpoint 0 or 1 for free, so standing on either costs 0 so far: 2 back = 0 and 1 back = 0.",
+      "ko": "체크포인트가 6개입니다. 0번이나 1번에서 공짜로 시작하므로 둘 중 어디에 서든 지금까지 0입니다: 두 칸 전 = 0, 한 칸 전 = 0."
+     },
+     "views": {
+      "cost": {
+       "values": [
+        4,
+        2,
+        8,
+        3,
+        5,
+        6,
+        ""
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {},
+       "tags": [
+        [
+         6,
+         {
+          "en": "end",
+          "ko": "끝"
+         }
+        ]
+       ],
+       "under": [],
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+       ]
+      },
+      "best": {
+       "values": [
+        0,
+        0
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "2 back",
+          "ko": "두 칸 전"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "1 back",
+          "ko": "한 칸 전"
+         }
+        ]
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Checkpoint 2 is reached from checkpoint 1 (0 + 2 = 2) or checkpoint 0 (0 + 4 = 4). The cheaper, 2, becomes 1 back, and the old 1 back, 0, becomes 2 back.",
+      "ko": "체크포인트 2에는 체크포인트 1에서(0 + 2 = 2) 또는 체크포인트 0에서(0 + 4 = 4) 옵니다. 더 싼 쪽의 2가 한 칸 전이 되고, 이전 한 칸 전 0은 두 칸 전이 됩니다."
+     },
+     "views": {
+      "cost": {
+       "values": [
+        4,
+        2,
+        8,
+        3,
+        5,
+        6,
+        ""
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "marks": {
+        "lit": [
+         1,
+         0
+        ]
+       },
+       "tags": [
+        [
+         6,
+         {
+          "en": "end",
+          "ko": "끝"
+         }
+        ]
+       ],
+       "under": [
+        [
+         1,
+         "0+2"
+        ],
+        [
+         0,
+         "0+4"
+        ]
+       ],
+       "unread": [
+        3,
+        4,
+        5,
+        6
+       ]
+      },
+      "best": {
+       "values": [
+        0,
+        2
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "2 back",
+          "ko": "두 칸 전"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "1 back",
+          "ko": "한 칸 전"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "best",
+        "at": 1
+       },
+       "to": {
+        "view": "best",
+        "at": 0
+       },
+       "value": "0"
+      },
+      {
+       "from": {
+        "view": "cost",
+        "at": 1
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "0+2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Checkpoint 3 is reached from checkpoint 2 (2 + 8 = 10) or checkpoint 1 (0 + 2 = 2). The cheaper, 2, becomes 1 back, and the old 1 back, 2, becomes 2 back.",
+      "ko": "체크포인트 3에는 체크포인트 2에서(2 + 8 = 10) 또는 체크포인트 1에서(0 + 2 = 2) 옵니다. 더 싼 쪽의 2가 한 칸 전이 되고, 이전 한 칸 전 2는 두 칸 전이 됩니다."
+     },
+     "views": {
+      "cost": {
+       "values": [
+        4,
+        2,
+        8,
+        3,
+        5,
+        6,
+        ""
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "marks": {
+        "lit": [
+         2,
+         1
+        ]
+       },
+       "tags": [
+        [
+         6,
+         {
+          "en": "end",
+          "ko": "끝"
+         }
+        ]
+       ],
+       "under": [
+        [
+         2,
+         "2+8"
+        ],
+        [
+         1,
+         "0+2"
+        ]
+       ],
+       "unread": [
+        4,
+        5,
+        6
+       ]
+      },
+      "best": {
+       "values": [
+        2,
+        2
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "2 back",
+          "ko": "두 칸 전"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "1 back",
+          "ko": "한 칸 전"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "best",
+        "at": 1
+       },
+       "to": {
+        "view": "best",
+        "at": 0
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "best",
+        "at": 0
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "0"
+      },
+      {
+       "from": {
+        "view": "cost",
+        "at": 1
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "+2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Checkpoint 4 is reached from checkpoint 3 (2 + 3 = 5) or checkpoint 2 (2 + 8 = 10). The cheaper, 5, becomes 1 back, and the old 1 back, 2, becomes 2 back.",
+      "ko": "체크포인트 4에는 체크포인트 3에서(2 + 3 = 5) 또는 체크포인트 2에서(2 + 8 = 10) 옵니다. 더 싼 쪽의 5가 한 칸 전이 되고, 이전 한 칸 전 2는 두 칸 전이 됩니다."
+     },
+     "views": {
+      "cost": {
+       "values": [
+        4,
+        2,
+        8,
+        3,
+        5,
+        6,
+        ""
+       ],
+       "pointers": {
+        "i": 4
+       },
+       "marks": {
+        "lit": [
+         3,
+         2
+        ]
+       },
+       "tags": [
+        [
+         6,
+         {
+          "en": "end",
+          "ko": "끝"
+         }
+        ]
+       ],
+       "under": [
+        [
+         3,
+         "2+3"
+        ],
+        [
+         2,
+         "2+8"
+        ]
+       ],
+       "unread": [
+        5,
+        6
+       ]
+      },
+      "best": {
+       "values": [
+        2,
+        5
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "2 back",
+          "ko": "두 칸 전"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "1 back",
+          "ko": "한 칸 전"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "best",
+        "at": 1
+       },
+       "to": {
+        "view": "best",
+        "at": 0
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "cost",
+        "at": 3
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "2+3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Checkpoint 5 is reached from checkpoint 4 (5 + 5 = 10) or checkpoint 3 (2 + 3 = 5). The cheaper, 5, becomes 1 back, and the old 1 back, 5, becomes 2 back.",
+      "ko": "체크포인트 5에는 체크포인트 4에서(5 + 5 = 10) 또는 체크포인트 3에서(2 + 3 = 5) 옵니다. 더 싼 쪽의 5가 한 칸 전이 되고, 이전 한 칸 전 5는 두 칸 전이 됩니다."
+     },
+     "views": {
+      "cost": {
+       "values": [
+        4,
+        2,
+        8,
+        3,
+        5,
+        6,
+        ""
+       ],
+       "pointers": {
+        "i": 5
+       },
+       "marks": {
+        "lit": [
+         4,
+         3
+        ]
+       },
+       "tags": [
+        [
+         6,
+         {
+          "en": "end",
+          "ko": "끝"
+         }
+        ]
+       ],
+       "under": [
+        [
+         4,
+         "5+5"
+        ],
+        [
+         3,
+         "2+3"
+        ]
+       ],
+       "unread": [
+        6
+       ]
+      },
+      "best": {
+       "values": [
+        5,
+        5
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "2 back",
+          "ko": "두 칸 전"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "1 back",
+          "ko": "한 칸 전"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "best",
+        "at": 1
+       },
+       "to": {
+        "view": "best",
+        "at": 0
+       },
+       "value": "5"
+      },
+      {
+       "from": {
+        "view": "best",
+        "at": 0
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "cost",
+        "at": 3
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "+3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Past the end is reached from checkpoint 5 (5 + 6 = 11) or checkpoint 4 (5 + 5 = 10). The cheaper, 10, becomes 1 back, and the old 1 back, 5, becomes 2 back.",
+      "ko": "끝 너머에는 체크포인트 5에서(5 + 6 = 11) 또는 체크포인트 4에서(5 + 5 = 10) 옵니다. 더 싼 쪽의 10이 한 칸 전이 되고, 이전 한 칸 전 5는 두 칸 전이 됩니다."
+     },
+     "views": {
+      "cost": {
+       "values": [
+        4,
+        2,
+        8,
+        3,
+        5,
+        6,
+        ""
+       ],
+       "pointers": {
+        "i": 6
+       },
+       "marks": {
+        "lit": [
+         5,
+         4
+        ]
+       },
+       "tags": [
+        [
+         6,
+         {
+          "en": "end",
+          "ko": "끝"
+         }
+        ]
+       ],
+       "under": [
+        [
+         5,
+         "5+6"
+        ],
+        [
+         4,
+         "5+5"
+        ]
+       ],
+       "unread": []
+      },
+      "best": {
+       "values": [
+        5,
+        10
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "2 back",
+          "ko": "두 칸 전"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "1 back",
+          "ko": "한 칸 전"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "best",
+        "at": 1
+       },
+       "to": {
+        "view": "best",
+        "at": 0
+       },
+       "value": "5"
+      },
+      {
+       "from": {
+        "view": "best",
+        "at": 0
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "5"
+      },
+      {
+       "from": {
+        "view": "cost",
+        "at": 4
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "+5"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Getting past the end takes 10: stand on checkpoints 1, 3, 4, 2 + 3 + 5 = 10.",
+      "ko": "끝을 지나가려면 10이 듭니다. 체크포인트 1, 3, 4번에 서면 2 + 3 + 5 = 10입니다."
+     },
+     "views": {
+      "cost": {
+       "values": [
+        4,
+        2,
+        8,
+        3,
+        5,
+        6,
+        ""
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "path": [
+         1,
+         3,
+         4
+        ],
+        "dim": [
+         0,
+         2,
+         5
+        ]
+       },
+       "tags": [
+        [
+         6,
+         {
+          "en": "end",
+          "ko": "끝"
+         }
+        ]
+       ],
+       "under": [],
+       "unread": []
+      },
+      "best": {
+       "values": [
+        5,
+        10
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "2 back",
+          "ko": "두 칸 전"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "1 back",
+          "ko": "한 칸 전"
+         }
+        ]
+       ],
+       "marks": {
+        "path": [
+         1
+        ]
+       }
+      }
+     },
+     "answer": "10"
+    }
+   ],
+   "sampleInput": "[4,2,8,3,5,6]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "cost = [7,1,7,1,7]",
+   "expected": "2",
+   "frames": [
+    {
+     "caption": {
+      "en": "5 checkpoints. You start on checkpoint 0 or 1 for free, so standing on either costs 0 so far: 2 back = 0 and 1 back = 0.",
+      "ko": "체크포인트가 5개입니다. 0번이나 1번에서 공짜로 시작하므로 둘 중 어디에 서든 지금까지 0입니다: 두 칸 전 = 0, 한 칸 전 = 0."
+     },
+     "views": {
+      "cost": {
+       "values": [
+        7,
+        1,
+        7,
+        1,
+        7,
+        ""
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {},
+       "tags": [
+        [
+         5,
+         {
+          "en": "end",
+          "ko": "끝"
+         }
+        ]
+       ],
+       "under": [],
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+       ]
+      },
+      "best": {
+       "values": [
+        0,
+        0
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "2 back",
+          "ko": "두 칸 전"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "1 back",
+          "ko": "한 칸 전"
+         }
+        ]
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Checkpoint 2 is reached from checkpoint 1 (0 + 1 = 1) or checkpoint 0 (0 + 7 = 7). The cheaper, 1, becomes 1 back, and the old 1 back, 0, becomes 2 back.",
+      "ko": "체크포인트 2에는 체크포인트 1에서(0 + 1 = 1) 또는 체크포인트 0에서(0 + 7 = 7) 옵니다. 더 싼 쪽의 1이 한 칸 전이 되고, 이전 한 칸 전 0은 두 칸 전이 됩니다."
+     },
+     "views": {
+      "cost": {
+       "values": [
+        7,
+        1,
+        7,
+        1,
+        7,
+        ""
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "marks": {
+        "lit": [
+         1,
+         0
+        ]
+       },
+       "tags": [
+        [
+         5,
+         {
+          "en": "end",
+          "ko": "끝"
+         }
+        ]
+       ],
+       "under": [
+        [
+         1,
+         "0+1"
+        ],
+        [
+         0,
+         "0+7"
+        ]
+       ],
+       "unread": [
+        3,
+        4,
+        5
+       ]
+      },
+      "best": {
+       "values": [
+        0,
+        1
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "2 back",
+          "ko": "두 칸 전"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "1 back",
+          "ko": "한 칸 전"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "best",
+        "at": 1
+       },
+       "to": {
+        "view": "best",
+        "at": 0
+       },
+       "value": "0"
+      },
+      {
+       "from": {
+        "view": "cost",
+        "at": 1
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "0+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Checkpoint 3 is reached from checkpoint 2 (1 + 7 = 8) or checkpoint 1 (0 + 1 = 1). The cheaper, 1, becomes 1 back, and the old 1 back, 1, becomes 2 back.",
+      "ko": "체크포인트 3에는 체크포인트 2에서(1 + 7 = 8) 또는 체크포인트 1에서(0 + 1 = 1) 옵니다. 더 싼 쪽의 1이 한 칸 전이 되고, 이전 한 칸 전 1은 두 칸 전이 됩니다."
+     },
+     "views": {
+      "cost": {
+       "values": [
+        7,
+        1,
+        7,
+        1,
+        7,
+        ""
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "marks": {
+        "lit": [
+         2,
+         1
+        ]
+       },
+       "tags": [
+        [
+         5,
+         {
+          "en": "end",
+          "ko": "끝"
+         }
+        ]
+       ],
+       "under": [
+        [
+         2,
+         "1+7"
+        ],
+        [
+         1,
+         "0+1"
+        ]
+       ],
+       "unread": [
+        4,
+        5
+       ]
+      },
+      "best": {
+       "values": [
+        1,
+        1
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "2 back",
+          "ko": "두 칸 전"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "1 back",
+          "ko": "한 칸 전"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "best",
+        "at": 1
+       },
+       "to": {
+        "view": "best",
+        "at": 0
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "best",
+        "at": 0
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "0"
+      },
+      {
+       "from": {
+        "view": "cost",
+        "at": 1
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Checkpoint 4 is reached from checkpoint 3 (1 + 1 = 2) or checkpoint 2 (1 + 7 = 8). The cheaper, 2, becomes 1 back, and the old 1 back, 1, becomes 2 back.",
+      "ko": "체크포인트 4에는 체크포인트 3에서(1 + 1 = 2) 또는 체크포인트 2에서(1 + 7 = 8) 옵니다. 더 싼 쪽의 2가 한 칸 전이 되고, 이전 한 칸 전 1은 두 칸 전이 됩니다."
+     },
+     "views": {
+      "cost": {
+       "values": [
+        7,
+        1,
+        7,
+        1,
+        7,
+        ""
+       ],
+       "pointers": {
+        "i": 4
+       },
+       "marks": {
+        "lit": [
+         3,
+         2
+        ]
+       },
+       "tags": [
+        [
+         5,
+         {
+          "en": "end",
+          "ko": "끝"
+         }
+        ]
+       ],
+       "under": [
+        [
+         3,
+         "1+1"
+        ],
+        [
+         2,
+         "1+7"
+        ]
+       ],
+       "unread": [
+        5
+       ]
+      },
+      "best": {
+       "values": [
+        1,
+        2
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "2 back",
+          "ko": "두 칸 전"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "1 back",
+          "ko": "한 칸 전"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "best",
+        "at": 1
+       },
+       "to": {
+        "view": "best",
+        "at": 0
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "cost",
+        "at": 3
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "1+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Past the end is reached from checkpoint 4 (2 + 7 = 9) or checkpoint 3 (1 + 1 = 2). The cheaper, 2, becomes 1 back, and the old 1 back, 2, becomes 2 back.",
+      "ko": "끝 너머에는 체크포인트 4에서(2 + 7 = 9) 또는 체크포인트 3에서(1 + 1 = 2) 옵니다. 더 싼 쪽의 2가 한 칸 전이 되고, 이전 한 칸 전 2는 두 칸 전이 됩니다."
+     },
+     "views": {
+      "cost": {
+       "values": [
+        7,
+        1,
+        7,
+        1,
+        7,
+        ""
+       ],
+       "pointers": {
+        "i": 5
+       },
+       "marks": {
+        "lit": [
+         4,
+         3
+        ]
+       },
+       "tags": [
+        [
+         5,
+         {
+          "en": "end",
+          "ko": "끝"
+         }
+        ]
+       ],
+       "under": [
+        [
+         4,
+         "2+7"
+        ],
+        [
+         3,
+         "1+1"
+        ]
+       ],
+       "unread": []
+      },
+      "best": {
+       "values": [
+        2,
+        2
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "2 back",
+          "ko": "두 칸 전"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "1 back",
+          "ko": "한 칸 전"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "best",
+        "at": 1
+       },
+       "to": {
+        "view": "best",
+        "at": 0
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "best",
+        "at": 0
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "cost",
+        "at": 3
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Getting past the end takes 2: stand on checkpoints 1, 3, 1 + 1 = 2.",
+      "ko": "끝을 지나가려면 2가 듭니다. 체크포인트 1, 3번에 서면 1 + 1 = 2입니다."
+     },
+     "views": {
+      "cost": {
+       "values": [
+        7,
+        1,
+        7,
+        1,
+        7,
+        ""
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "path": [
+         1,
+         3
+        ],
+        "dim": [
+         0,
+         2,
+         4
+        ]
+       },
+       "tags": [
+        [
+         5,
+         {
+          "en": "end",
+          "ko": "끝"
+         }
+        ]
+       ],
+       "under": [],
+       "unread": []
+      },
+      "best": {
+       "values": [
+        2,
+        2
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "2 back",
+          "ko": "두 칸 전"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "1 back",
+          "ko": "한 칸 전"
+         }
+        ]
+       ],
+       "marks": {
+        "path": [
+         1
+        ]
+       }
+      }
+     },
+     "answer": "2"
+    }
+   ],
+   "sampleInput": "[7,1,7,1,7]"
+  },
+  {
+   "label": {
+    "en": "Case 3",
+    "ko": "케이스 3"
+   },
+   "input": "cost = [0,0]",
+   "expected": "0",
+   "frames": [
+    {
+     "caption": {
+      "en": "2 checkpoints. You start on checkpoint 0 or 1 for free, so standing on either costs 0 so far: 2 back = 0 and 1 back = 0.",
+      "ko": "체크포인트가 2개입니다. 0번이나 1번에서 공짜로 시작하므로 둘 중 어디에 서든 지금까지 0입니다: 두 칸 전 = 0, 한 칸 전 = 0."
+     },
+     "views": {
+      "cost": {
+       "values": [
+        0,
+        0,
+        ""
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {},
+       "tags": [
+        [
+         2,
+         {
+          "en": "end",
+          "ko": "끝"
+         }
+        ]
+       ],
+       "under": [],
+       "unread": [
+        0,
+        1,
+        2
+       ]
+      },
+      "best": {
+       "values": [
+        0,
+        0
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "2 back",
+          "ko": "두 칸 전"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "1 back",
+          "ko": "한 칸 전"
+         }
+        ]
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Past the end is reached from checkpoint 1 (0 + 0 = 0) or checkpoint 0 (0 + 0 = 0). The cheaper, 0 (a tie: the first one wins), becomes 1 back, and the old 1 back, 0, becomes 2 back.",
+      "ko": "끝 너머에는 체크포인트 1에서(0 + 0 = 0) 또는 체크포인트 0에서(0 + 0 = 0) 옵니다. 더 싼 쪽(같으면 앞의 것)의 0이 한 칸 전이 되고, 이전 한 칸 전 0은 두 칸 전이 됩니다."
+     },
+     "views": {
+      "cost": {
+       "values": [
+        0,
+        0,
+        ""
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "marks": {
+        "lit": [
+         1,
+         0
+        ]
+       },
+       "tags": [
+        [
+         2,
+         {
+          "en": "end",
+          "ko": "끝"
+         }
+        ]
+       ],
+       "under": [
+        [
+         1,
+         "0+0"
+        ],
+        [
+         0,
+         "0+0"
+        ]
+       ],
+       "unread": []
+      },
+      "best": {
+       "values": [
+        0,
+        0
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "2 back",
+          "ko": "두 칸 전"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "1 back",
+          "ko": "한 칸 전"
+         }
+        ]
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "best",
+        "at": 1
+       },
+       "to": {
+        "view": "best",
+        "at": 0
+       },
+       "value": "0"
+      },
+      {
+       "from": {
+        "view": "cost",
+        "at": 1
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "0+0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Getting past the end takes 0: stand on checkpoints 1, 0 = 0.",
+      "ko": "끝을 지나가려면 0이 듭니다. 체크포인트 1번에 서면 0 = 0입니다."
+     },
+     "views": {
+      "cost": {
+       "values": [
+        0,
+        0,
+        ""
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "path": [
+         1
+        ],
+        "dim": [
+         0
+        ]
+       },
+       "tags": [
+        [
+         2,
+         {
+          "en": "end",
+          "ko": "끝"
+         }
+        ]
+       ],
+       "under": [],
+       "unread": []
+      },
+      "best": {
+       "values": [
+        0,
+        0
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "2 back",
+          "ko": "두 칸 전"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "1 back",
+          "ko": "한 칸 전"
+         }
+        ]
+       ],
+       "marks": {
+        "path": [
+         1
+        ]
+       }
+      }
+     },
+     "answer": "0"
+    }
+   ],
+   "sampleInput": "[0,0]"
+  }
+ ]
+}
