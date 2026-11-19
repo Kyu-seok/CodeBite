@@ -31,7 +31,7 @@
     {
      "caption": {
       "en": "Look for a peak among 5 readings, treating the places past either end as −∞: the range starts as the whole log, low = 0 and high = 4.",
-      "ko": "배터리 잔량 5개에서 정점을 찾습니다. 양 끝 바깥은 −∞로 칩니다. 범위는 처음에 로그 전체입니다: low = 0, high = 4."
+      "ko": "배터리 잔량 5개에서 정점을 찾습니다(양 끝 바깥은 −∞). 범위는 처음에 로그 전체입니다: low = 0, high = 4."
      },
      "views": {
       "readings": {
@@ -216,7 +216,7 @@
     {
      "caption": {
       "en": "Look for a peak among 7 readings, treating the places past either end as −∞: the range starts as the whole log, low = 0 and high = 6.",
-      "ko": "배터리 잔량 7개에서 정점을 찾습니다. 양 끝 바깥은 −∞로 칩니다. 범위는 처음에 로그 전체입니다: low = 0, high = 6."
+      "ko": "배터리 잔량 7개에서 정점을 찾습니다(양 끝 바깥은 −∞). 범위는 처음에 로그 전체입니다: low = 0, high = 6."
      },
      "views": {
       "readings": {

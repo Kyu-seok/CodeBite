@@ -58,7 +58,7 @@ def solve(readings, run):
 
     frame({"en": f"Look for a peak among {n} readings, treating the places past either end as −∞: the range "
                  f"starts as the whole log, low = 0 and high = {n - 1}.",
-           "ko": f"배터리 잔량 {n}개에서 정점을 찾습니다. 양 끝 바깥은 −∞로 칩니다. 범위는 처음에 로그 전체입니다: "
+           "ko": f"배터리 잔량 {n}개에서 정점을 찾습니다(양 끝 바깥은 −∞). 범위는 처음에 로그 전체입니다: "
                  f"low = 0, high = {n - 1}."})
     while low < high:
         mid = (low + high) // 2
