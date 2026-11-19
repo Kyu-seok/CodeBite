@@ -1,0 +1,1530 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Rebuild Tree From Traversals",
+  "ko": "순회 결과로 트리 복원"
+ },
+ "approach": {
+  "en": "Preorder lists each subtree's root first, and inorder puts that root between its left and right subtrees: take the next preorder value as the root, find it in inorder, and build the values left of it as the left subtree and those right of it as the right subtree, recursively.",
+  "ko": "전위 순회는 각 서브트리의 루트를 먼저 적고, 중위 순회는 그 루트를 왼쪽과 오른쪽 서브트리 사이에 둡니다. 전위 순회의 다음 값을 루트로 삼아 중위 순회에서 찾고, 그 왼쪽 값들로 왼쪽 서브트리를, 오른쪽 값들로 오른쪽 서브트리를 재귀적으로 만듭니다."
+ },
+ "views": [
+  {
+   "id": "preorder",
+   "type": "array",
+   "title": "preorder"
+  },
+  {
+   "id": "inorder",
+   "type": "array",
+   "title": "inorder"
+  },
+  {
+   "id": "position",
+   "type": "map",
+   "title": {
+    "en": "position (inorder index)",
+    "ko": "position (중위 인덱스)"
+   },
+   "empty": {
+    "en": "empty",
+    "ko": "비어 있음"
+   }
+  },
+  {
+   "id": "tree",
+   "type": "tree",
+   "arity": 2,
+   "title": {
+    "en": "rebuilt tree",
+    "ko": "복원한 트리"
+   },
+   "empty": {
+    "en": "nothing yet",
+    "ko": "아직 없음"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "preorder = [10,5,3,7,20,15], inorder = [3,5,7,10,15,20]",
+   "expected": "[10,5,20,3,7,15]",
+   "frames": [
+    {
+     "caption": {
+      "en": "6 values. Preorder's first value is the root; inorder will say which values hang left of it and which right.",
+      "ko": "값 6개입니다. preorder의 첫 값이 루트이고, inorder를 보면 어떤 값이 그 왼쪽에, 어떤 값이 오른쪽에 달리는지 알 수 있습니다."
+     },
+     "views": {
+      "preorder": {
+       "values": [
+        10,
+        5,
+        3,
+        7,
+        20,
+        15
+       ],
+       "pointers": {
+        "next": 0
+       },
+       "marks": {
+        "dim": []
+       }
+      },
+      "inorder": {
+       "values": [
+        3,
+        5,
+        7,
+        10,
+        15,
+        20
+       ]
+      },
+      "position": {
+       "entries": []
+      },
+      "tree": {
+       "nodes": [],
+       "edges": [],
+       "shade": []
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "First, index where each value sits in inorder, so each root's place is one lookup away.",
+      "ko": "먼저 각 값이 inorder의 몇 번 칸에 있는지 map에 적어 두어, 루트의 자리를 한 번에 찾게 합니다."
+     },
+     "views": {
+      "preorder": {
+       "values": [
+        10,
+        5,
+        3,
+        7,
+        20,
+        15
+       ],
+       "pointers": {
+        "next": 0
+       },
+       "marks": {
+        "dim": []
+       }
+      },
+      "inorder": {
+       "values": [
+        3,
+        5,
+        7,
+        10,
+        15,
+        20
+       ]
+      },
+      "position": {
+       "entries": [
+        {
+         "key": 3,
+         "value": "i=0"
+        },
+        {
+         "key": 5,
+         "value": "i=1"
+        },
+        {
+         "key": 7,
+         "value": "i=2"
+        },
+        {
+         "key": 10,
+         "value": "i=3"
+        },
+        {
+         "key": 15,
+         "value": "i=4"
+        },
+        {
+         "key": 20,
+         "value": "i=5"
+        }
+       ],
+       "marks": {
+        "good": [
+         3,
+         5,
+         7,
+         10,
+         15,
+         20
+        ]
+       }
+      },
+      "tree": {
+       "nodes": [],
+       "edges": [],
+       "shade": []
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "inorder",
+        "at": 0
+       },
+       "to": {
+        "view": "position",
+        "at": 3
+       },
+       "value": "i=0"
+      },
+      {
+       "from": {
+        "view": "inorder",
+        "at": 1
+       },
+       "to": {
+        "view": "position",
+        "at": 5
+       },
+       "value": "i=1"
+      },
+      {
+       "from": {
+        "view": "inorder",
+        "at": 2
+       },
+       "to": {
+        "view": "position",
+        "at": 7
+       },
+       "value": "i=2"
+      },
+      {
+       "from": {
+        "view": "inorder",
+        "at": 3
+       },
+       "to": {
+        "view": "position",
+        "at": 10
+       },
+       "value": "i=3"
+      },
+      {
+       "from": {
+        "view": "inorder",
+        "at": 4
+       },
+       "to": {
+        "view": "position",
+        "at": 15
+       },
+       "value": "i=4"
+      },
+      {
+       "from": {
+        "view": "inorder",
+        "at": 5
+       },
+       "to": {
+        "view": "position",
+        "at": 20
+       },
+       "value": "i=5"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The next preorder value, 10, is the root. Inorder has it at index 3. Left part: [3,5,7], right part: [15,20].",
+      "ko": "preorder의 다음 값 10이 루트입니다. inorder의 3번 칸에 있습니다. 왼쪽 부분: [3,5,7], 오른쪽 부분: [15,20]."
+     },
+     "views": {
+      "preorder": {
+       "values": [
+        10,
+        5,
+        3,
+        7,
+        20,
+        15
+       ],
+       "pointers": {
+        "next": 0
+       },
+       "marks": {
+        "dim": [],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "inorder": {
+       "values": [
+        3,
+        5,
+        7,
+        10,
+        15,
+        20
+       ],
+       "pointers": {
+        "mid": 3
+       },
+       "marks": {
+        "lit": [
+         3
+        ]
+       },
+       "spans": {
+        "range": {
+         "from": 0,
+         "to": 5,
+         "label": {
+          "en": "[0..5]",
+          "ko": "[0..5]"
+         },
+         "fade": true
+        },
+        "left": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "left",
+          "ko": "왼쪽"
+         },
+         "below": true
+        },
+        "right": {
+         "from": 4,
+         "to": 5,
+         "label": {
+          "en": "right",
+          "ko": "오른쪽"
+         },
+         "below": true
+        }
+       }
+      },
+      "position": {
+       "entries": [
+        {
+         "key": 3,
+         "value": "i=0"
+        },
+        {
+         "key": 5,
+         "value": "i=1"
+        },
+        {
+         "key": 7,
+         "value": "i=2"
+        },
+        {
+         "key": 10,
+         "value": "i=3"
+        },
+        {
+         "key": 15,
+         "value": "i=4"
+        },
+        {
+         "key": 20,
+         "value": "i=5"
+        }
+       ],
+       "probe": {
+        "key": 10,
+        "hit": true
+       }
+      },
+      "tree": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 10
+        }
+       ],
+       "edges": [],
+       "shade": [
+        0
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "preorder",
+        "at": 0
+       },
+       "to": {
+        "view": "tree",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The next preorder value, 5, is the root of 10's left subtree. Inorder has it at index 1. Left part: [3], right part: [7].",
+      "ko": "preorder의 다음 값 5는 10의 왼쪽 서브트리 루트입니다. inorder의 1번 칸에 있습니다. 왼쪽 부분: [3], 오른쪽 부분: [7]."
+     },
+     "views": {
+      "preorder": {
+       "values": [
+        10,
+        5,
+        3,
+        7,
+        20,
+        15
+       ],
+       "pointers": {
+        "next": 1
+       },
+       "marks": {
+        "dim": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "inorder": {
+       "values": [
+        3,
+        5,
+        7,
+        10,
+        15,
+        20
+       ],
+       "pointers": {
+        "mid": 1
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       },
+       "spans": {
+        "range": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "[0..2]",
+          "ko": "[0..2]"
+         },
+         "fade": true
+        },
+        "left": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "left",
+          "ko": "왼쪽"
+         },
+         "below": true
+        },
+        "right": {
+         "from": 2,
+         "to": 2,
+         "label": {
+          "en": "right",
+          "ko": "오른쪽"
+         },
+         "below": true
+        }
+       }
+      },
+      "position": {
+       "entries": [
+        {
+         "key": 3,
+         "value": "i=0"
+        },
+        {
+         "key": 5,
+         "value": "i=1"
+        },
+        {
+         "key": 7,
+         "value": "i=2"
+        },
+        {
+         "key": 10,
+         "value": "i=3"
+        },
+        {
+         "key": 15,
+         "value": "i=4"
+        },
+        {
+         "key": 20,
+         "value": "i=5"
+        }
+       ],
+       "probe": {
+        "key": 5,
+        "hit": true
+       }
+      },
+      "tree": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 10
+        },
+        {
+         "id": 1,
+         "value": 5
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "shade": [
+        0,
+        1
+       ],
+       "nodeMarks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "preorder",
+        "at": 1
+       },
+       "to": {
+        "view": "tree",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The next preorder value, 3, is the root of 5's left subtree. Inorder has it at index 0. Left part: none, right part: none.",
+      "ko": "preorder의 다음 값 3은 5의 왼쪽 서브트리 루트입니다. inorder의 0번 칸에 있습니다. 왼쪽 부분: 없음, 오른쪽 부분: 없음."
+     },
+     "views": {
+      "preorder": {
+       "values": [
+        10,
+        5,
+        3,
+        7,
+        20,
+        15
+       ],
+       "pointers": {
+        "next": 2
+       },
+       "marks": {
+        "dim": [
+         0,
+         1
+        ],
+        "lit": [
+         2
+        ]
+       }
+      },
+      "inorder": {
+       "values": [
+        3,
+        5,
+        7,
+        10,
+        15,
+        20
+       ],
+       "pointers": {
+        "mid": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       },
+       "spans": {
+        "range": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "[0..0]",
+          "ko": "[0..0]"
+         },
+         "fade": true
+        }
+       }
+      },
+      "position": {
+       "entries": [
+        {
+         "key": 3,
+         "value": "i=0"
+        },
+        {
+         "key": 5,
+         "value": "i=1"
+        },
+        {
+         "key": 7,
+         "value": "i=2"
+        },
+        {
+         "key": 10,
+         "value": "i=3"
+        },
+        {
+         "key": 15,
+         "value": "i=4"
+        },
+        {
+         "key": 20,
+         "value": "i=5"
+        }
+       ],
+       "probe": {
+        "key": 3,
+        "hit": true
+       }
+      },
+      "tree": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 10
+        },
+        {
+         "id": 1,
+         "value": 5
+        },
+        {
+         "id": 2,
+         "value": 3
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "slot": 0
+        }
+       ],
+       "shade": [
+        0,
+        1,
+        2
+       ],
+       "nodeMarks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "preorder",
+        "at": 2
+       },
+       "to": {
+        "view": "tree",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The next preorder value, 7, is the root of 5's right subtree. Inorder has it at index 2. Left part: none, right part: none.",
+      "ko": "preorder의 다음 값 7은 5의 오른쪽 서브트리 루트입니다. inorder의 2번 칸에 있습니다. 왼쪽 부분: 없음, 오른쪽 부분: 없음."
+     },
+     "views": {
+      "preorder": {
+       "values": [
+        10,
+        5,
+        3,
+        7,
+        20,
+        15
+       ],
+       "pointers": {
+        "next": 3
+       },
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2
+        ],
+        "lit": [
+         3
+        ]
+       }
+      },
+      "inorder": {
+       "values": [
+        3,
+        5,
+        7,
+        10,
+        15,
+        20
+       ],
+       "pointers": {
+        "mid": 2
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       },
+       "spans": {
+        "range": {
+         "from": 2,
+         "to": 2,
+         "label": {
+          "en": "[2..2]",
+          "ko": "[2..2]"
+         },
+         "fade": true
+        }
+       }
+      },
+      "position": {
+       "entries": [
+        {
+         "key": 3,
+         "value": "i=0"
+        },
+        {
+         "key": 5,
+         "value": "i=1"
+        },
+        {
+         "key": 7,
+         "value": "i=2"
+        },
+        {
+         "key": 10,
+         "value": "i=3"
+        },
+        {
+         "key": 15,
+         "value": "i=4"
+        },
+        {
+         "key": 20,
+         "value": "i=5"
+        }
+       ],
+       "probe": {
+        "key": 7,
+        "hit": true
+       }
+      },
+      "tree": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 10
+        },
+        {
+         "id": 1,
+         "value": 5
+        },
+        {
+         "id": 2,
+         "value": 3
+        },
+        {
+         "id": 3,
+         "value": 7
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "slot": 0
+        },
+        {
+         "from": 1,
+         "to": 3,
+         "slot": 1
+        }
+       ],
+       "shade": [
+        0,
+        1,
+        3
+       ],
+       "nodeMarks": {
+        "good": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "preorder",
+        "at": 3
+       },
+       "to": {
+        "view": "tree",
+        "at": 3
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The next preorder value, 20, is the root of 10's right subtree. Inorder has it at index 5. Left part: [15], right part: none.",
+      "ko": "preorder의 다음 값 20은 10의 오른쪽 서브트리 루트입니다. inorder의 5번 칸에 있습니다. 왼쪽 부분: [15], 오른쪽 부분: 없음."
+     },
+     "views": {
+      "preorder": {
+       "values": [
+        10,
+        5,
+        3,
+        7,
+        20,
+        15
+       ],
+       "pointers": {
+        "next": 4
+       },
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3
+        ],
+        "lit": [
+         4
+        ]
+       }
+      },
+      "inorder": {
+       "values": [
+        3,
+        5,
+        7,
+        10,
+        15,
+        20
+       ],
+       "pointers": {
+        "mid": 5
+       },
+       "marks": {
+        "lit": [
+         5
+        ]
+       },
+       "spans": {
+        "range": {
+         "from": 4,
+         "to": 5,
+         "label": {
+          "en": "[4..5]",
+          "ko": "[4..5]"
+         },
+         "fade": true
+        },
+        "left": {
+         "from": 4,
+         "to": 4,
+         "label": {
+          "en": "left",
+          "ko": "왼쪽"
+         },
+         "below": true
+        }
+       }
+      },
+      "position": {
+       "entries": [
+        {
+         "key": 3,
+         "value": "i=0"
+        },
+        {
+         "key": 5,
+         "value": "i=1"
+        },
+        {
+         "key": 7,
+         "value": "i=2"
+        },
+        {
+         "key": 10,
+         "value": "i=3"
+        },
+        {
+         "key": 15,
+         "value": "i=4"
+        },
+        {
+         "key": 20,
+         "value": "i=5"
+        }
+       ],
+       "probe": {
+        "key": 20,
+        "hit": true
+       }
+      },
+      "tree": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 10
+        },
+        {
+         "id": 1,
+         "value": 5
+        },
+        {
+         "id": 2,
+         "value": 3
+        },
+        {
+         "id": 3,
+         "value": 7
+        },
+        {
+         "id": 4,
+         "value": 20
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "slot": 0
+        },
+        {
+         "from": 1,
+         "to": 3,
+         "slot": 1
+        },
+        {
+         "from": 0,
+         "to": 4,
+         "slot": 1
+        }
+       ],
+       "shade": [
+        0,
+        4
+       ],
+       "nodeMarks": {
+        "good": [
+         4
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "preorder",
+        "at": 4
+       },
+       "to": {
+        "view": "tree",
+        "at": 4
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The next preorder value, 15, is the root of 20's left subtree. Inorder has it at index 4. Left part: none, right part: none.",
+      "ko": "preorder의 다음 값 15는 20의 왼쪽 서브트리 루트입니다. inorder의 4번 칸에 있습니다. 왼쪽 부분: 없음, 오른쪽 부분: 없음."
+     },
+     "views": {
+      "preorder": {
+       "values": [
+        10,
+        5,
+        3,
+        7,
+        20,
+        15
+       ],
+       "pointers": {
+        "next": 5
+       },
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ],
+        "lit": [
+         5
+        ]
+       }
+      },
+      "inorder": {
+       "values": [
+        3,
+        5,
+        7,
+        10,
+        15,
+        20
+       ],
+       "pointers": {
+        "mid": 4
+       },
+       "marks": {
+        "lit": [
+         4
+        ]
+       },
+       "spans": {
+        "range": {
+         "from": 4,
+         "to": 4,
+         "label": {
+          "en": "[4..4]",
+          "ko": "[4..4]"
+         },
+         "fade": true
+        }
+       }
+      },
+      "position": {
+       "entries": [
+        {
+         "key": 3,
+         "value": "i=0"
+        },
+        {
+         "key": 5,
+         "value": "i=1"
+        },
+        {
+         "key": 7,
+         "value": "i=2"
+        },
+        {
+         "key": 10,
+         "value": "i=3"
+        },
+        {
+         "key": 15,
+         "value": "i=4"
+        },
+        {
+         "key": 20,
+         "value": "i=5"
+        }
+       ],
+       "probe": {
+        "key": 15,
+        "hit": true
+       }
+      },
+      "tree": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 10
+        },
+        {
+         "id": 1,
+         "value": 5
+        },
+        {
+         "id": 2,
+         "value": 3
+        },
+        {
+         "id": 3,
+         "value": 7
+        },
+        {
+         "id": 4,
+         "value": 20
+        },
+        {
+         "id": 5,
+         "value": 15
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "slot": 0
+        },
+        {
+         "from": 1,
+         "to": 3,
+         "slot": 1
+        },
+        {
+         "from": 0,
+         "to": 4,
+         "slot": 1
+        },
+        {
+         "from": 4,
+         "to": 5,
+         "slot": 0
+        }
+       ],
+       "shade": [
+        0,
+        4,
+        5
+       ],
+       "nodeMarks": {
+        "good": [
+         5
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "preorder",
+        "at": 5
+       },
+       "to": {
+        "view": "tree",
+        "at": 5
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every preorder value is placed, each between its left and right parts of inorder: the tree reads [10,5,20,3,7,15].",
+      "ko": "preorder의 모든 값이 inorder의 왼쪽과 오른쪽 부분 사이에 자리 잡았습니다. 트리는 [10,5,20,3,7,15]입니다."
+     },
+     "views": {
+      "preorder": {
+       "values": [
+        10,
+        5,
+        3,
+        7,
+        20,
+        15
+       ],
+       "pointers": {},
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "inorder": {
+       "values": [
+        3,
+        5,
+        7,
+        10,
+        15,
+        20
+       ]
+      },
+      "position": {
+       "entries": [
+        {
+         "key": 3,
+         "value": "i=0"
+        },
+        {
+         "key": 5,
+         "value": "i=1"
+        },
+        {
+         "key": 7,
+         "value": "i=2"
+        },
+        {
+         "key": 10,
+         "value": "i=3"
+        },
+        {
+         "key": 15,
+         "value": "i=4"
+        },
+        {
+         "key": 20,
+         "value": "i=5"
+        }
+       ]
+      },
+      "tree": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 10
+        },
+        {
+         "id": 1,
+         "value": 5
+        },
+        {
+         "id": 2,
+         "value": 3
+        },
+        {
+         "id": 3,
+         "value": 7
+        },
+        {
+         "id": 4,
+         "value": 20
+        },
+        {
+         "id": 5,
+         "value": 15
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "slot": 0
+        },
+        {
+         "from": 1,
+         "to": 3,
+         "slot": 1
+        },
+        {
+         "from": 0,
+         "to": 4,
+         "slot": 1
+        },
+        {
+         "from": 4,
+         "to": 5,
+         "slot": 0
+        }
+       ],
+       "shade": [],
+       "nodeMarks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      }
+     },
+     "answer": "[10,5,20,3,7,15]"
+    }
+   ],
+   "sampleInput": "[10,5,3,7,20,15]\n[3,5,7,10,15,20]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "preorder = [42], inorder = [42]",
+   "expected": "[42]",
+   "frames": [
+    {
+     "caption": {
+      "en": "1 value. Preorder's first value is the root; inorder will say which values hang left of it and which right.",
+      "ko": "값 1개입니다. preorder의 첫 값이 루트이고, inorder를 보면 어떤 값이 그 왼쪽에, 어떤 값이 오른쪽에 달리는지 알 수 있습니다."
+     },
+     "views": {
+      "preorder": {
+       "values": [
+        42
+       ],
+       "pointers": {
+        "next": 0
+       },
+       "marks": {
+        "dim": []
+       }
+      },
+      "inorder": {
+       "values": [
+        42
+       ]
+      },
+      "position": {
+       "entries": []
+      },
+      "tree": {
+       "nodes": [],
+       "edges": [],
+       "shade": []
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "First, index where each value sits in inorder, so each root's place is one lookup away.",
+      "ko": "먼저 각 값이 inorder의 몇 번 칸에 있는지 map에 적어 두어, 루트의 자리를 한 번에 찾게 합니다."
+     },
+     "views": {
+      "preorder": {
+       "values": [
+        42
+       ],
+       "pointers": {
+        "next": 0
+       },
+       "marks": {
+        "dim": []
+       }
+      },
+      "inorder": {
+       "values": [
+        42
+       ]
+      },
+      "position": {
+       "entries": [
+        {
+         "key": 42,
+         "value": "i=0"
+        }
+       ],
+       "marks": {
+        "good": [
+         42
+        ]
+       }
+      },
+      "tree": {
+       "nodes": [],
+       "edges": [],
+       "shade": []
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "inorder",
+        "at": 0
+       },
+       "to": {
+        "view": "position",
+        "at": 42
+       },
+       "value": "i=0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The next preorder value, 42, is the root. Inorder has it at index 0. Left part: none, right part: none.",
+      "ko": "preorder의 다음 값 42가 루트입니다. inorder의 0번 칸에 있습니다. 왼쪽 부분: 없음, 오른쪽 부분: 없음."
+     },
+     "views": {
+      "preorder": {
+       "values": [
+        42
+       ],
+       "pointers": {
+        "next": 0
+       },
+       "marks": {
+        "dim": [],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "inorder": {
+       "values": [
+        42
+       ],
+       "pointers": {
+        "mid": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       },
+       "spans": {
+        "range": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "[0..0]",
+          "ko": "[0..0]"
+         },
+         "fade": true
+        }
+       }
+      },
+      "position": {
+       "entries": [
+        {
+         "key": 42,
+         "value": "i=0"
+        }
+       ],
+       "probe": {
+        "key": 42,
+        "hit": true
+       }
+      },
+      "tree": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 42
+        }
+       ],
+       "edges": [],
+       "shade": [
+        0
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "preorder",
+        "at": 0
+       },
+       "to": {
+        "view": "tree",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every preorder value is placed, each between its left and right parts of inorder: the tree reads [42].",
+      "ko": "preorder의 모든 값이 inorder의 왼쪽과 오른쪽 부분 사이에 자리 잡았습니다. 트리는 [42]입니다."
+     },
+     "views": {
+      "preorder": {
+       "values": [
+        42
+       ],
+       "pointers": {},
+       "marks": {
+        "dim": [
+         0
+        ]
+       }
+      },
+      "inorder": {
+       "values": [
+        42
+       ]
+      },
+      "position": {
+       "entries": [
+        {
+         "key": 42,
+         "value": "i=0"
+        }
+       ]
+      },
+      "tree": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 42
+        }
+       ],
+       "edges": [],
+       "shade": [],
+       "nodeMarks": {
+        "path": [
+         0
+        ]
+       }
+      }
+     },
+     "answer": "[42]"
+    }
+   ],
+   "sampleInput": "[42]\n[42]"
+  }
+ ]
+}
