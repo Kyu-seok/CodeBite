@@ -169,7 +169,7 @@ def solve(ops, args, run):
                 made.append(node)
                 frame({"en": f"put({key}, {value}): key {key} is not in the map, so a new node {key}={value} is made "
                              f"and the map points key {key} to it.",
-                       "ko": f"put({key}, {value}): 맵에 키 {josa(key, '이가')} 없으므로 새 노드 {key}={value}를 만들고 "
+                       "ko": f"put({key}, {value}): 맵에 키 {josa(key, '이가')} 없으므로 새 노드 {key}={josa(value, '을를')} 만들고 "
                              f"맵의 키 {josa(key, '이가')} 그 노드를 가리킵니다."},
                       probe={"key": key, "hit": False}, list_marks={"good": [key]}, map_marks={"good": [key]},
                       moves=[move(at("calls", [row, 1]), at("map", key), value=str(value)),

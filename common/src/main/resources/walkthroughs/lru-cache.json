@@ -228,7 +228,7 @@
     {
      "caption": {
       "en": "put(1, 10): key 1 is not in the map, so a new node 1=10 is made and the map points key 1 to it.",
-      "ko": "put(1, 10): 맵에 키 1이 없으므로 새 노드 1=10를 만들고 맵의 키 1이 그 노드를 가리킵니다."
+      "ko": "put(1, 10): 맵에 키 1이 없으므로 새 노드 1=10을 만들고 맵의 키 1이 그 노드를 가리킵니다."
      },
      "views": {
       "calls": {
@@ -635,7 +635,7 @@
     {
      "caption": {
       "en": "put(2, 20): key 2 is not in the map, so a new node 2=20 is made and the map points key 2 to it.",
-      "ko": "put(2, 20): 맵에 키 2가 없으므로 새 노드 2=20를 만들고 맵의 키 2가 그 노드를 가리킵니다."
+      "ko": "put(2, 20): 맵에 키 2가 없으므로 새 노드 2=20을 만들고 맵의 키 2가 그 노드를 가리킵니다."
      },
      "views": {
       "calls": {
@@ -1511,7 +1511,7 @@
     {
      "caption": {
       "en": "put(3, 30): key 3 is not in the map, so a new node 3=30 is made and the map points key 3 to it.",
-      "ko": "put(3, 30): 맵에 키 3이 없으므로 새 노드 3=30를 만들고 맵의 키 3이 그 노드를 가리킵니다."
+      "ko": "put(3, 30): 맵에 키 3이 없으므로 새 노드 3=30을 만들고 맵의 키 3이 그 노드를 가리킵니다."
      },
      "views": {
       "calls": {
@@ -2488,7 +2488,7 @@
     {
      "caption": {
       "en": "put(4, 40): key 4 is not in the map, so a new node 4=40 is made and the map points key 4 to it.",
-      "ko": "put(4, 40): 맵에 키 4가 없으므로 새 노드 4=40를 만들고 맵의 키 4가 그 노드를 가리킵니다."
+      "ko": "put(4, 40): 맵에 키 4가 없으므로 새 노드 4=40을 만들고 맵의 키 4가 그 노드를 가리킵니다."
      },
      "views": {
       "calls": {
@@ -4926,7 +4926,7 @@
     {
      "caption": {
       "en": "put(5, 100): key 5 is not in the map, so a new node 5=100 is made and the map points key 5 to it.",
-      "ko": "put(5, 100): 맵에 키 5가 없으므로 새 노드 5=100를 만들고 맵의 키 5가 그 노드를 가리킵니다."
+      "ko": "put(5, 100): 맵에 키 5가 없으므로 새 노드 5=100을 만들고 맵의 키 5가 그 노드를 가리킵니다."
      },
      "views": {
       "calls": {
@@ -5617,7 +5617,7 @@
     {
      "caption": {
       "en": "put(6, 200): key 6 is not in the map, so a new node 6=200 is made and the map points key 6 to it.",
-      "ko": "put(6, 200): 맵에 키 6이 없으므로 새 노드 6=200를 만들고 맵의 키 6이 그 노드를 가리킵니다."
+      "ko": "put(6, 200): 맵에 키 6이 없으므로 새 노드 6=200을 만들고 맵의 키 6이 그 노드를 가리킵니다."
      },
      "views": {
       "calls": {
@@ -7091,7 +7091,7 @@
     {
      "caption": {
       "en": "put(1, 11): key 1 is not in the map, so a new node 1=11 is made and the map points key 1 to it.",
-      "ko": "put(1, 11): 맵에 키 1이 없으므로 새 노드 1=11를 만들고 맵의 키 1이 그 노드를 가리킵니다."
+      "ko": "put(1, 11): 맵에 키 1이 없으므로 새 노드 1=11을 만들고 맵의 키 1이 그 노드를 가리킵니다."
      },
      "views": {
       "calls": {
@@ -7857,7 +7857,7 @@
     {
      "caption": {
       "en": "put(3, 33): key 3 is not in the map, so a new node 3=33 is made and the map points key 3 to it.",
-      "ko": "put(3, 33): 맵에 키 3이 없으므로 새 노드 3=33를 만들고 맵의 키 3이 그 노드를 가리킵니다."
+      "ko": "put(3, 33): 맵에 키 3이 없으므로 새 노드 3=33을 만들고 맵의 키 3이 그 노드를 가리킵니다."
      },
      "views": {
       "calls": {
