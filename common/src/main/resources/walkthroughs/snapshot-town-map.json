@@ -1,0 +1,2517 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Snapshot the Town Map",
+  "ko": "맵 스냅샷 뜨기"
+ },
+ "approach": {
+  "en": "Keep a map from each spot to its copy: a neighbor with no copy yet gets one and goes on the stack to be visited, and one that has a copy is only linked, so every spot is copied exactly once.",
+  "ko": "장소마다 복사본을 기록해 둡니다. 복사본이 아직 없는 이웃은 새로 만들어 스택에 넣어 나중에 방문하고, 이미 있는 이웃은 잇기만 하므로 모든 장소가 정확히 한 번 복사됩니다."
+ },
+ "views": [
+  {
+   "id": "town",
+   "type": "graph",
+   "directed": false,
+   "title": {
+    "en": "original map",
+    "ko": "원본 지도"
+   }
+  },
+  {
+   "id": "stack",
+   "type": "stack",
+   "title": {
+    "en": "stack: spots to visit",
+    "ko": "스택: 방문할 장소"
+   },
+   "empty": {
+    "en": "empty",
+    "ko": "비어 있음"
+   }
+  },
+  {
+   "id": "copy",
+   "type": "graph",
+   "directed": true,
+   "title": {
+    "en": "copy (faded: not made yet; arrow: in neighbors)",
+    "ko": "복사본 (흐림: 아직 없음, 화살표: neighbors에 있음)"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "adjList = [[2,3],[1,4],[1,5],[2,5],[3,4]]",
+   "expected": "[[2,3],[1,4],[1,5],[2,5],[3,4]]",
+   "frames": [
+    {
+     "caption": {
+      "en": "5 spots; node is spot 1. Copy it first and put it on the stack of spots to visit.",
+      "ko": "장소가 5개이고 node는 장소 1입니다. 먼저 이 장소를 복사하고 방문할 스택에 넣습니다."
+     },
+     "views": {
+      "town": {
+       "nodeMarks": {
+        "lit": []
+       },
+       "edgeMarks": {
+        "lit": []
+       }
+      },
+      "stack": {
+       "values": [],
+       "marks": {}
+      },
+      "copy": {
+       "edges": [],
+       "nodeMarks": {
+        "dim": [
+         1,
+         2,
+         3,
+         4,
+         5
+        ],
+        "good": []
+       },
+       "edgeMarks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "copies[1] = a new spot 1, with no neighbors yet; push spot 1.",
+      "ko": "copies[1]에 이웃이 아직 없는 새 장소 1을 만들고, 장소 1을 스택에 넣습니다."
+     },
+     "views": {
+      "town": {
+       "nodeMarks": {
+        "lit": [
+         1
+        ]
+       },
+       "edgeMarks": {
+        "lit": []
+       }
+      },
+      "stack": {
+       "values": [
+        1
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "copy": {
+       "edges": [],
+       "nodeMarks": {
+        "dim": [
+         2,
+         3,
+         4,
+         5
+        ],
+        "good": [
+         1
+        ]
+       },
+       "edgeMarks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "town",
+        "at": 1
+       },
+       "to": {
+        "view": "copy",
+        "at": 1
+       }
+      },
+      {
+       "from": {
+        "view": "town",
+        "at": 1
+       },
+       "to": {
+        "view": "stack",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Pop spot 1: link its copy to the copies of its neighbors 2, 3, in order.",
+      "ko": "장소 1을 꺼냅니다. 그 복사본을 이웃 2, 3의 복사본과 차례로 잇습니다."
+     },
+     "views": {
+      "town": {
+       "nodeMarks": {
+        "lit": [
+         1
+        ]
+       },
+       "edgeMarks": {
+        "lit": []
+       }
+      },
+      "stack": {
+       "values": [
+        1
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "copy": {
+       "edges": [],
+       "nodeMarks": {
+        "dim": [
+         2,
+         3,
+         4,
+         5
+        ],
+        "good": []
+       },
+       "edgeMarks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "stack",
+        "at": 0
+       },
+       "to": {
+        "view": "town",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Spot 2 has no copy yet: make one, and push spot 2 to visit it later.",
+      "ko": "장소 2는 아직 복사본이 없으므로 새로 만들고, 나중에 방문하도록 스택에 넣습니다."
+     },
+     "views": {
+      "town": {
+       "nodeMarks": {
+        "lit": [
+         1,
+         2
+        ]
+       },
+       "edgeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        2
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "copy": {
+       "edges": [],
+       "nodeMarks": {
+        "dim": [
+         3,
+         4,
+         5
+        ],
+        "good": [
+         2
+        ]
+       },
+       "edgeMarks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "town",
+        "at": 2
+       },
+       "to": {
+        "view": "copy",
+        "at": 2
+       }
+      },
+      {
+       "from": {
+        "view": "town",
+        "at": 2
+       },
+       "to": {
+        "view": "stack",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "copy 1's neighbors gets copy 2.",
+      "ko": "복사본 1의 neighbors에 복사본 2가 들어갑니다."
+     },
+     "views": {
+      "town": {
+       "nodeMarks": {
+        "lit": [
+         1,
+         2
+        ]
+       },
+       "edgeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        2
+       ],
+       "marks": {}
+      },
+      "copy": {
+       "edges": [
+        {
+         "from": 1,
+         "to": 2
+        }
+       ],
+       "nodeMarks": {
+        "dim": [
+         3,
+         4,
+         5
+        ],
+        "good": []
+       },
+       "edgeMarks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "town",
+        "at": [
+         1,
+         2
+        ]
+       },
+       "to": {
+        "view": "copy",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Spot 3 has no copy yet: make one, and push spot 3 to visit it later.",
+      "ko": "장소 3은 아직 복사본이 없으므로 새로 만들고, 나중에 방문하도록 스택에 넣습니다."
+     },
+     "views": {
+      "town": {
+       "nodeMarks": {
+        "lit": [
+         1,
+         3
+        ]
+       },
+       "edgeMarks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        2,
+        3
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "copy": {
+       "edges": [
+        {
+         "from": 1,
+         "to": 2
+        }
+       ],
+       "nodeMarks": {
+        "dim": [
+         4,
+         5
+        ],
+        "good": [
+         3
+        ]
+       },
+       "edgeMarks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "town",
+        "at": 3
+       },
+       "to": {
+        "view": "copy",
+        "at": 3
+       }
+      },
+      {
+       "from": {
+        "view": "town",
+        "at": 3
+       },
+       "to": {
+        "view": "stack",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "copy 1's neighbors gets copy 3.",
+      "ko": "복사본 1의 neighbors에 복사본 3이 들어갑니다."
+     },
+     "views": {
+      "town": {
+       "nodeMarks": {
+        "lit": [
+         1,
+         3
+        ]
+       },
+       "edgeMarks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        2,
+        3
+       ],
+       "marks": {}
+      },
+      "copy": {
+       "edges": [
+        {
+         "from": 1,
+         "to": 2
+        },
+        {
+         "from": 1,
+         "to": 3
+        }
+       ],
+       "nodeMarks": {
+        "dim": [
+         4,
+         5
+        ],
+        "good": []
+       },
+       "edgeMarks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "town",
+        "at": [
+         1,
+         3
+        ]
+       },
+       "to": {
+        "view": "copy",
+        "at": 3
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Pop spot 3: link its copy to the copies of its neighbors 1, 5, in order.",
+      "ko": "장소 3을 꺼냅니다. 그 복사본을 이웃 1, 5의 복사본과 차례로 잇습니다."
+     },
+     "views": {
+      "town": {
+       "nodeMarks": {
+        "lit": [
+         3
+        ]
+       },
+       "edgeMarks": {
+        "lit": []
+       }
+      },
+      "stack": {
+       "values": [
+        2,
+        3
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "copy": {
+       "edges": [
+        {
+         "from": 1,
+         "to": 2
+        },
+        {
+         "from": 1,
+         "to": 3
+        }
+       ],
+       "nodeMarks": {
+        "dim": [
+         4,
+         5
+        ],
+        "good": []
+       },
+       "edgeMarks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "stack",
+        "at": 1
+       },
+       "to": {
+        "view": "town",
+        "at": 3
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Spot 1 already has a copy, so it is only linked: copy 3's neighbors gets copy 1.",
+      "ko": "장소 1은 이미 복사본이 있어 잇기만 합니다. 복사본 3의 neighbors에 복사본 1이 들어갑니다."
+     },
+     "views": {
+      "town": {
+       "nodeMarks": {
+        "lit": [
+         3,
+         1
+        ]
+       },
+       "edgeMarks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        2
+       ],
+       "marks": {}
+      },
+      "copy": {
+       "edges": [
+        {
+         "from": 1,
+         "to": 2
+        },
+        {
+         "from": 1,
+         "to": 3
+        },
+        {
+         "from": 3,
+         "to": 1
+        }
+       ],
+       "nodeMarks": {
+        "dim": [
+         4,
+         5
+        ],
+        "good": []
+       },
+       "edgeMarks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "town",
+        "at": [
+         3,
+         1
+        ]
+       },
+       "to": {
+        "view": "copy",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Spot 5 has no copy yet: make one, and push spot 5 to visit it later.",
+      "ko": "장소 5는 아직 복사본이 없으므로 새로 만들고, 나중에 방문하도록 스택에 넣습니다."
+     },
+     "views": {
+      "town": {
+       "nodeMarks": {
+        "lit": [
+         3,
+         5
+        ]
+       },
+       "edgeMarks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        2,
+        5
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "copy": {
+       "edges": [
+        {
+         "from": 1,
+         "to": 2
+        },
+        {
+         "from": 1,
+         "to": 3
+        },
+        {
+         "from": 3,
+         "to": 1
+        }
+       ],
+       "nodeMarks": {
+        "dim": [
+         4
+        ],
+        "good": [
+         5
+        ]
+       },
+       "edgeMarks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "town",
+        "at": 5
+       },
+       "to": {
+        "view": "copy",
+        "at": 5
+       }
+      },
+      {
+       "from": {
+        "view": "town",
+        "at": 5
+       },
+       "to": {
+        "view": "stack",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "copy 3's neighbors gets copy 5.",
+      "ko": "복사본 3의 neighbors에 복사본 5가 들어갑니다."
+     },
+     "views": {
+      "town": {
+       "nodeMarks": {
+        "lit": [
+         3,
+         5
+        ]
+       },
+       "edgeMarks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        2,
+        5
+       ],
+       "marks": {}
+      },
+      "copy": {
+       "edges": [
+        {
+         "from": 1,
+         "to": 2
+        },
+        {
+         "from": 1,
+         "to": 3
+        },
+        {
+         "from": 3,
+         "to": 1
+        },
+        {
+         "from": 3,
+         "to": 5
+        }
+       ],
+       "nodeMarks": {
+        "dim": [
+         4
+        ],
+        "good": []
+       },
+       "edgeMarks": {
+        "good": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "town",
+        "at": [
+         3,
+         5
+        ]
+       },
+       "to": {
+        "view": "copy",
+        "at": 5
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Pop spot 5: link its copy to the copies of its neighbors 3, 4, in order.",
+      "ko": "장소 5를 꺼냅니다. 그 복사본을 이웃 3, 4의 복사본과 차례로 잇습니다."
+     },
+     "views": {
+      "town": {
+       "nodeMarks": {
+        "lit": [
+         5
+        ]
+       },
+       "edgeMarks": {
+        "lit": []
+       }
+      },
+      "stack": {
+       "values": [
+        2,
+        5
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "copy": {
+       "edges": [
+        {
+         "from": 1,
+         "to": 2
+        },
+        {
+         "from": 1,
+         "to": 3
+        },
+        {
+         "from": 3,
+         "to": 1
+        },
+        {
+         "from": 3,
+         "to": 5
+        }
+       ],
+       "nodeMarks": {
+        "dim": [
+         4
+        ],
+        "good": []
+       },
+       "edgeMarks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "stack",
+        "at": 1
+       },
+       "to": {
+        "view": "town",
+        "at": 5
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Spot 3 already has a copy, so it is only linked: copy 5's neighbors gets copy 3.",
+      "ko": "장소 3은 이미 복사본이 있어 잇기만 합니다. 복사본 5의 neighbors에 복사본 3이 들어갑니다."
+     },
+     "views": {
+      "town": {
+       "nodeMarks": {
+        "lit": [
+         5,
+         3
+        ]
+       },
+       "edgeMarks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        2
+       ],
+       "marks": {}
+      },
+      "copy": {
+       "edges": [
+        {
+         "from": 1,
+         "to": 2
+        },
+        {
+         "from": 1,
+         "to": 3
+        },
+        {
+         "from": 3,
+         "to": 1
+        },
+        {
+         "from": 3,
+         "to": 5
+        },
+        {
+         "from": 5,
+         "to": 3
+        }
+       ],
+       "nodeMarks": {
+        "dim": [
+         4
+        ],
+        "good": []
+       },
+       "edgeMarks": {
+        "good": [
+         4
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "town",
+        "at": [
+         5,
+         3
+        ]
+       },
+       "to": {
+        "view": "copy",
+        "at": 3
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Spot 4 has no copy yet: make one, and push spot 4 to visit it later.",
+      "ko": "장소 4는 아직 복사본이 없으므로 새로 만들고, 나중에 방문하도록 스택에 넣습니다."
+     },
+     "views": {
+      "town": {
+       "nodeMarks": {
+        "lit": [
+         5,
+         4
+        ]
+       },
+       "edgeMarks": {
+        "lit": [
+         4
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        2,
+        4
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "copy": {
+       "edges": [
+        {
+         "from": 1,
+         "to": 2
+        },
+        {
+         "from": 1,
+         "to": 3
+        },
+        {
+         "from": 3,
+         "to": 1
+        },
+        {
+         "from": 3,
+         "to": 5
+        },
+        {
+         "from": 5,
+         "to": 3
+        }
+       ],
+       "nodeMarks": {
+        "dim": [],
+        "good": [
+         4
+        ]
+       },
+       "edgeMarks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "town",
+        "at": 4
+       },
+       "to": {
+        "view": "copy",
+        "at": 4
+       }
+      },
+      {
+       "from": {
+        "view": "town",
+        "at": 4
+       },
+       "to": {
+        "view": "stack",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "copy 5's neighbors gets copy 4.",
+      "ko": "복사본 5의 neighbors에 복사본 4가 들어갑니다."
+     },
+     "views": {
+      "town": {
+       "nodeMarks": {
+        "lit": [
+         5,
+         4
+        ]
+       },
+       "edgeMarks": {
+        "lit": [
+         4
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        2,
+        4
+       ],
+       "marks": {}
+      },
+      "copy": {
+       "edges": [
+        {
+         "from": 1,
+         "to": 2
+        },
+        {
+         "from": 1,
+         "to": 3
+        },
+        {
+         "from": 3,
+         "to": 1
+        },
+        {
+         "from": 3,
+         "to": 5
+        },
+        {
+         "from": 5,
+         "to": 3
+        },
+        {
+         "from": 5,
+         "to": 4
+        }
+       ],
+       "nodeMarks": {
+        "dim": [],
+        "good": []
+       },
+       "edgeMarks": {
+        "good": [
+         5
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "town",
+        "at": [
+         5,
+         4
+        ]
+       },
+       "to": {
+        "view": "copy",
+        "at": 4
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Pop spot 4: link its copy to the copies of its neighbors 2, 5, in order.",
+      "ko": "장소 4를 꺼냅니다. 그 복사본을 이웃 2, 5의 복사본과 차례로 잇습니다."
+     },
+     "views": {
+      "town": {
+       "nodeMarks": {
+        "lit": [
+         4
+        ]
+       },
+       "edgeMarks": {
+        "lit": []
+       }
+      },
+      "stack": {
+       "values": [
+        2,
+        4
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "copy": {
+       "edges": [
+        {
+         "from": 1,
+         "to": 2
+        },
+        {
+         "from": 1,
+         "to": 3
+        },
+        {
+         "from": 3,
+         "to": 1
+        },
+        {
+         "from": 3,
+         "to": 5
+        },
+        {
+         "from": 5,
+         "to": 3
+        },
+        {
+         "from": 5,
+         "to": 4
+        }
+       ],
+       "nodeMarks": {
+        "dim": [],
+        "good": []
+       },
+       "edgeMarks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "stack",
+        "at": 1
+       },
+       "to": {
+        "view": "town",
+        "at": 4
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Spot 2 already has a copy, so it is only linked: copy 4's neighbors gets copy 2.",
+      "ko": "장소 2는 이미 복사본이 있어 잇기만 합니다. 복사본 4의 neighbors에 복사본 2가 들어갑니다."
+     },
+     "views": {
+      "town": {
+       "nodeMarks": {
+        "lit": [
+         4,
+         2
+        ]
+       },
+       "edgeMarks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        2
+       ],
+       "marks": {}
+      },
+      "copy": {
+       "edges": [
+        {
+         "from": 1,
+         "to": 2
+        },
+        {
+         "from": 1,
+         "to": 3
+        },
+        {
+         "from": 3,
+         "to": 1
+        },
+        {
+         "from": 3,
+         "to": 5
+        },
+        {
+         "from": 5,
+         "to": 3
+        },
+        {
+         "from": 5,
+         "to": 4
+        },
+        {
+         "from": 4,
+         "to": 2
+        }
+       ],
+       "nodeMarks": {
+        "dim": [],
+        "good": []
+       },
+       "edgeMarks": {
+        "good": [
+         6
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "town",
+        "at": [
+         4,
+         2
+        ]
+       },
+       "to": {
+        "view": "copy",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Spot 5 already has a copy, so it is only linked: copy 4's neighbors gets copy 5.",
+      "ko": "장소 5는 이미 복사본이 있어 잇기만 합니다. 복사본 4의 neighbors에 복사본 5가 들어갑니다."
+     },
+     "views": {
+      "town": {
+       "nodeMarks": {
+        "lit": [
+         4,
+         5
+        ]
+       },
+       "edgeMarks": {
+        "lit": [
+         4
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        2
+       ],
+       "marks": {}
+      },
+      "copy": {
+       "edges": [
+        {
+         "from": 1,
+         "to": 2
+        },
+        {
+         "from": 1,
+         "to": 3
+        },
+        {
+         "from": 3,
+         "to": 1
+        },
+        {
+         "from": 3,
+         "to": 5
+        },
+        {
+         "from": 5,
+         "to": 3
+        },
+        {
+         "from": 5,
+         "to": 4
+        },
+        {
+         "from": 4,
+         "to": 2
+        },
+        {
+         "from": 4,
+         "to": 5
+        }
+       ],
+       "nodeMarks": {
+        "dim": [],
+        "good": []
+       },
+       "edgeMarks": {
+        "good": [
+         7
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "town",
+        "at": [
+         4,
+         5
+        ]
+       },
+       "to": {
+        "view": "copy",
+        "at": 5
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Pop spot 2: link its copy to the copies of its neighbors 1, 4, in order.",
+      "ko": "장소 2를 꺼냅니다. 그 복사본을 이웃 1, 4의 복사본과 차례로 잇습니다."
+     },
+     "views": {
+      "town": {
+       "nodeMarks": {
+        "lit": [
+         2
+        ]
+       },
+       "edgeMarks": {
+        "lit": []
+       }
+      },
+      "stack": {
+       "values": [
+        2
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "copy": {
+       "edges": [
+        {
+         "from": 1,
+         "to": 2
+        },
+        {
+         "from": 1,
+         "to": 3
+        },
+        {
+         "from": 3,
+         "to": 1
+        },
+        {
+         "from": 3,
+         "to": 5
+        },
+        {
+         "from": 5,
+         "to": 3
+        },
+        {
+         "from": 5,
+         "to": 4
+        },
+        {
+         "from": 4,
+         "to": 2
+        },
+        {
+         "from": 4,
+         "to": 5
+        }
+       ],
+       "nodeMarks": {
+        "dim": [],
+        "good": []
+       },
+       "edgeMarks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "stack",
+        "at": 0
+       },
+       "to": {
+        "view": "town",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Spot 1 already has a copy, so it is only linked: copy 2's neighbors gets copy 1.",
+      "ko": "장소 1은 이미 복사본이 있어 잇기만 합니다. 복사본 2의 neighbors에 복사본 1이 들어갑니다."
+     },
+     "views": {
+      "town": {
+       "nodeMarks": {
+        "lit": [
+         2,
+         1
+        ]
+       },
+       "edgeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "stack": {
+       "values": [],
+       "marks": {}
+      },
+      "copy": {
+       "edges": [
+        {
+         "from": 1,
+         "to": 2
+        },
+        {
+         "from": 1,
+         "to": 3
+        },
+        {
+         "from": 3,
+         "to": 1
+        },
+        {
+         "from": 3,
+         "to": 5
+        },
+        {
+         "from": 5,
+         "to": 3
+        },
+        {
+         "from": 5,
+         "to": 4
+        },
+        {
+         "from": 4,
+         "to": 2
+        },
+        {
+         "from": 4,
+         "to": 5
+        },
+        {
+         "from": 2,
+         "to": 1
+        }
+       ],
+       "nodeMarks": {
+        "dim": [],
+        "good": []
+       },
+       "edgeMarks": {
+        "good": [
+         8
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "town",
+        "at": [
+         2,
+         1
+        ]
+       },
+       "to": {
+        "view": "copy",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Spot 4 already has a copy, so it is only linked: copy 2's neighbors gets copy 4.",
+      "ko": "장소 4는 이미 복사본이 있어 잇기만 합니다. 복사본 2의 neighbors에 복사본 4가 들어갑니다."
+     },
+     "views": {
+      "town": {
+       "nodeMarks": {
+        "lit": [
+         2,
+         4
+        ]
+       },
+       "edgeMarks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "stack": {
+       "values": [],
+       "marks": {}
+      },
+      "copy": {
+       "edges": [
+        {
+         "from": 1,
+         "to": 2
+        },
+        {
+         "from": 1,
+         "to": 3
+        },
+        {
+         "from": 3,
+         "to": 1
+        },
+        {
+         "from": 3,
+         "to": 5
+        },
+        {
+         "from": 5,
+         "to": 3
+        },
+        {
+         "from": 5,
+         "to": 4
+        },
+        {
+         "from": 4,
+         "to": 2
+        },
+        {
+         "from": 4,
+         "to": 5
+        },
+        {
+         "from": 2,
+         "to": 1
+        },
+        {
+         "from": 2,
+         "to": 4
+        }
+       ],
+       "nodeMarks": {
+        "dim": [],
+        "good": []
+       },
+       "edgeMarks": {
+        "good": [
+         9
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "town",
+        "at": [
+         2,
+         4
+        ]
+       },
+       "to": {
+        "view": "copy",
+        "at": 4
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The stack is empty: all 5 spots are copied, with 10 neighbor links, two for each road. Written as an adjacency list: [[2,3],[1,4],[1,5],[2,5],[3,4]].",
+      "ko": "스택이 비었습니다. 장소 5개가 모두 복사되었고 이웃 연결은 도로마다 두 개씩 10개입니다. 인접 리스트로 적으면 [[2,3],[1,4],[1,5],[2,5],[3,4]]입니다."
+     },
+     "views": {
+      "town": {
+       "nodeMarks": {
+        "lit": []
+       },
+       "edgeMarks": {
+        "lit": []
+       }
+      },
+      "stack": {
+       "values": [],
+       "marks": {}
+      },
+      "copy": {
+       "edges": [
+        {
+         "from": 1,
+         "to": 2
+        },
+        {
+         "from": 1,
+         "to": 3
+        },
+        {
+         "from": 3,
+         "to": 1
+        },
+        {
+         "from": 3,
+         "to": 5
+        },
+        {
+         "from": 5,
+         "to": 3
+        },
+        {
+         "from": 5,
+         "to": 4
+        },
+        {
+         "from": 4,
+         "to": 2
+        },
+        {
+         "from": 4,
+         "to": 5
+        },
+        {
+         "from": 2,
+         "to": 1
+        },
+        {
+         "from": 2,
+         "to": 4
+        }
+       ],
+       "nodeMarks": {
+        "dim": [],
+        "path": [
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       },
+       "edgeMarks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5,
+         6,
+         7,
+         8,
+         9
+        ]
+       }
+      }
+     },
+     "answer": "[[2,3],[1,4],[1,5],[2,5],[3,4]]"
+    }
+   ],
+   "setup": {
+    "town": {
+     "nodes": [
+      {
+       "id": 1
+      },
+      {
+       "id": 2
+      },
+      {
+       "id": 3
+      },
+      {
+       "id": 4
+      },
+      {
+       "id": 5
+      }
+     ],
+     "edges": [
+      {
+       "from": 1,
+       "to": 2
+      },
+      {
+       "from": 1,
+       "to": 3
+      },
+      {
+       "from": 2,
+       "to": 4
+      },
+      {
+       "from": 3,
+       "to": 5
+      },
+      {
+       "from": 4,
+       "to": 5
+      }
+     ]
+    },
+    "copy": {
+     "nodes": [
+      {
+       "id": 1
+      },
+      {
+       "id": 2
+      },
+      {
+       "id": 3
+      },
+      {
+       "id": 4
+      },
+      {
+       "id": 5
+      }
+     ]
+    }
+   },
+   "sampleInput": "[[2,3],[1,4],[1,5],[2,5],[3,4]]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "adjList = [[2],[1,3],[2]]",
+   "expected": "[[2],[1,3],[2]]",
+   "frames": [
+    {
+     "caption": {
+      "en": "3 spots; node is spot 1. Copy it first and put it on the stack of spots to visit.",
+      "ko": "장소가 3개이고 node는 장소 1입니다. 먼저 이 장소를 복사하고 방문할 스택에 넣습니다."
+     },
+     "views": {
+      "town": {
+       "nodeMarks": {
+        "lit": []
+       },
+       "edgeMarks": {
+        "lit": []
+       }
+      },
+      "stack": {
+       "values": [],
+       "marks": {}
+      },
+      "copy": {
+       "edges": [],
+       "nodeMarks": {
+        "dim": [
+         1,
+         2,
+         3
+        ],
+        "good": []
+       },
+       "edgeMarks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "copies[1] = a new spot 1, with no neighbors yet; push spot 1.",
+      "ko": "copies[1]에 이웃이 아직 없는 새 장소 1을 만들고, 장소 1을 스택에 넣습니다."
+     },
+     "views": {
+      "town": {
+       "nodeMarks": {
+        "lit": [
+         1
+        ]
+       },
+       "edgeMarks": {
+        "lit": []
+       }
+      },
+      "stack": {
+       "values": [
+        1
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "copy": {
+       "edges": [],
+       "nodeMarks": {
+        "dim": [
+         2,
+         3
+        ],
+        "good": [
+         1
+        ]
+       },
+       "edgeMarks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "town",
+        "at": 1
+       },
+       "to": {
+        "view": "copy",
+        "at": 1
+       }
+      },
+      {
+       "from": {
+        "view": "town",
+        "at": 1
+       },
+       "to": {
+        "view": "stack",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Pop spot 1: link its copy to the copies of its neighbors 2, in order.",
+      "ko": "장소 1을 꺼냅니다. 그 복사본을 이웃 2의 복사본과 차례로 잇습니다."
+     },
+     "views": {
+      "town": {
+       "nodeMarks": {
+        "lit": [
+         1
+        ]
+       },
+       "edgeMarks": {
+        "lit": []
+       }
+      },
+      "stack": {
+       "values": [
+        1
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "copy": {
+       "edges": [],
+       "nodeMarks": {
+        "dim": [
+         2,
+         3
+        ],
+        "good": []
+       },
+       "edgeMarks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "stack",
+        "at": 0
+       },
+       "to": {
+        "view": "town",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Spot 2 has no copy yet: make one, and push spot 2 to visit it later.",
+      "ko": "장소 2는 아직 복사본이 없으므로 새로 만들고, 나중에 방문하도록 스택에 넣습니다."
+     },
+     "views": {
+      "town": {
+       "nodeMarks": {
+        "lit": [
+         1,
+         2
+        ]
+       },
+       "edgeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        2
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "copy": {
+       "edges": [],
+       "nodeMarks": {
+        "dim": [
+         3
+        ],
+        "good": [
+         2
+        ]
+       },
+       "edgeMarks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "town",
+        "at": 2
+       },
+       "to": {
+        "view": "copy",
+        "at": 2
+       }
+      },
+      {
+       "from": {
+        "view": "town",
+        "at": 2
+       },
+       "to": {
+        "view": "stack",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "copy 1's neighbors gets copy 2.",
+      "ko": "복사본 1의 neighbors에 복사본 2가 들어갑니다."
+     },
+     "views": {
+      "town": {
+       "nodeMarks": {
+        "lit": [
+         1,
+         2
+        ]
+       },
+       "edgeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        2
+       ],
+       "marks": {}
+      },
+      "copy": {
+       "edges": [
+        {
+         "from": 1,
+         "to": 2
+        }
+       ],
+       "nodeMarks": {
+        "dim": [
+         3
+        ],
+        "good": []
+       },
+       "edgeMarks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "town",
+        "at": [
+         1,
+         2
+        ]
+       },
+       "to": {
+        "view": "copy",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Pop spot 2: link its copy to the copies of its neighbors 1, 3, in order.",
+      "ko": "장소 2를 꺼냅니다. 그 복사본을 이웃 1, 3의 복사본과 차례로 잇습니다."
+     },
+     "views": {
+      "town": {
+       "nodeMarks": {
+        "lit": [
+         2
+        ]
+       },
+       "edgeMarks": {
+        "lit": []
+       }
+      },
+      "stack": {
+       "values": [
+        2
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "copy": {
+       "edges": [
+        {
+         "from": 1,
+         "to": 2
+        }
+       ],
+       "nodeMarks": {
+        "dim": [
+         3
+        ],
+        "good": []
+       },
+       "edgeMarks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "stack",
+        "at": 0
+       },
+       "to": {
+        "view": "town",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Spot 1 already has a copy, so it is only linked: copy 2's neighbors gets copy 1.",
+      "ko": "장소 1은 이미 복사본이 있어 잇기만 합니다. 복사본 2의 neighbors에 복사본 1이 들어갑니다."
+     },
+     "views": {
+      "town": {
+       "nodeMarks": {
+        "lit": [
+         2,
+         1
+        ]
+       },
+       "edgeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "stack": {
+       "values": [],
+       "marks": {}
+      },
+      "copy": {
+       "edges": [
+        {
+         "from": 1,
+         "to": 2
+        },
+        {
+         "from": 2,
+         "to": 1
+        }
+       ],
+       "nodeMarks": {
+        "dim": [
+         3
+        ],
+        "good": []
+       },
+       "edgeMarks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "town",
+        "at": [
+         2,
+         1
+        ]
+       },
+       "to": {
+        "view": "copy",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Spot 3 has no copy yet: make one, and push spot 3 to visit it later.",
+      "ko": "장소 3은 아직 복사본이 없으므로 새로 만들고, 나중에 방문하도록 스택에 넣습니다."
+     },
+     "views": {
+      "town": {
+       "nodeMarks": {
+        "lit": [
+         2,
+         3
+        ]
+       },
+       "edgeMarks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        3
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "copy": {
+       "edges": [
+        {
+         "from": 1,
+         "to": 2
+        },
+        {
+         "from": 2,
+         "to": 1
+        }
+       ],
+       "nodeMarks": {
+        "dim": [],
+        "good": [
+         3
+        ]
+       },
+       "edgeMarks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "town",
+        "at": 3
+       },
+       "to": {
+        "view": "copy",
+        "at": 3
+       }
+      },
+      {
+       "from": {
+        "view": "town",
+        "at": 3
+       },
+       "to": {
+        "view": "stack",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "copy 2's neighbors gets copy 3.",
+      "ko": "복사본 2의 neighbors에 복사본 3이 들어갑니다."
+     },
+     "views": {
+      "town": {
+       "nodeMarks": {
+        "lit": [
+         2,
+         3
+        ]
+       },
+       "edgeMarks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        3
+       ],
+       "marks": {}
+      },
+      "copy": {
+       "edges": [
+        {
+         "from": 1,
+         "to": 2
+        },
+        {
+         "from": 2,
+         "to": 1
+        },
+        {
+         "from": 2,
+         "to": 3
+        }
+       ],
+       "nodeMarks": {
+        "dim": [],
+        "good": []
+       },
+       "edgeMarks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "town",
+        "at": [
+         2,
+         3
+        ]
+       },
+       "to": {
+        "view": "copy",
+        "at": 3
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Pop spot 3: link its copy to the copies of its neighbors 2, in order.",
+      "ko": "장소 3을 꺼냅니다. 그 복사본을 이웃 2의 복사본과 차례로 잇습니다."
+     },
+     "views": {
+      "town": {
+       "nodeMarks": {
+        "lit": [
+         3
+        ]
+       },
+       "edgeMarks": {
+        "lit": []
+       }
+      },
+      "stack": {
+       "values": [
+        3
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "copy": {
+       "edges": [
+        {
+         "from": 1,
+         "to": 2
+        },
+        {
+         "from": 2,
+         "to": 1
+        },
+        {
+         "from": 2,
+         "to": 3
+        }
+       ],
+       "nodeMarks": {
+        "dim": [],
+        "good": []
+       },
+       "edgeMarks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "stack",
+        "at": 0
+       },
+       "to": {
+        "view": "town",
+        "at": 3
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Spot 2 already has a copy, so it is only linked: copy 3's neighbors gets copy 2.",
+      "ko": "장소 2는 이미 복사본이 있어 잇기만 합니다. 복사본 3의 neighbors에 복사본 2가 들어갑니다."
+     },
+     "views": {
+      "town": {
+       "nodeMarks": {
+        "lit": [
+         3,
+         2
+        ]
+       },
+       "edgeMarks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "stack": {
+       "values": [],
+       "marks": {}
+      },
+      "copy": {
+       "edges": [
+        {
+         "from": 1,
+         "to": 2
+        },
+        {
+         "from": 2,
+         "to": 1
+        },
+        {
+         "from": 2,
+         "to": 3
+        },
+        {
+         "from": 3,
+         "to": 2
+        }
+       ],
+       "nodeMarks": {
+        "dim": [],
+        "good": []
+       },
+       "edgeMarks": {
+        "good": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "town",
+        "at": [
+         3,
+         2
+        ]
+       },
+       "to": {
+        "view": "copy",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The stack is empty: all 3 spots are copied, with 4 neighbor links, two for each road. Written as an adjacency list: [[2],[1,3],[2]].",
+      "ko": "스택이 비었습니다. 장소 3개가 모두 복사되었고 이웃 연결은 도로마다 두 개씩 4개입니다. 인접 리스트로 적으면 [[2],[1,3],[2]]입니다."
+     },
+     "views": {
+      "town": {
+       "nodeMarks": {
+        "lit": []
+       },
+       "edgeMarks": {
+        "lit": []
+       }
+      },
+      "stack": {
+       "values": [],
+       "marks": {}
+      },
+      "copy": {
+       "edges": [
+        {
+         "from": 1,
+         "to": 2
+        },
+        {
+         "from": 2,
+         "to": 1
+        },
+        {
+         "from": 2,
+         "to": 3
+        },
+        {
+         "from": 3,
+         "to": 2
+        }
+       ],
+       "nodeMarks": {
+        "dim": [],
+        "path": [
+         1,
+         2,
+         3
+        ]
+       },
+       "edgeMarks": {
+        "path": [
+         0,
+         1,
+         2,
+         3
+        ]
+       }
+      }
+     },
+     "answer": "[[2],[1,3],[2]]"
+    }
+   ],
+   "setup": {
+    "town": {
+     "nodes": [
+      {
+       "id": 1
+      },
+      {
+       "id": 2
+      },
+      {
+       "id": 3
+      }
+     ],
+     "edges": [
+      {
+       "from": 1,
+       "to": 2
+      },
+      {
+       "from": 2,
+       "to": 3
+      }
+     ]
+    },
+    "copy": {
+     "nodes": [
+      {
+       "id": 1
+      },
+      {
+       "id": 2
+      },
+      {
+       "id": 3
+      }
+     ]
+    }
+   },
+   "sampleInput": "[[2],[1,3],[2]]"
+  },
+  {
+   "label": {
+    "en": "Example 3",
+    "ko": "예시 3"
+   },
+   "input": "adjList = []",
+   "expected": "[]",
+   "frames": [
+    {
+     "caption": {
+      "en": "The map is empty, so node is null and there is nothing to copy: return null, written [].",
+      "ko": "지도가 비어 있으므로 node는 null이고 복사할 것이 없습니다. null을 반환하며 []로 적힙니다."
+     },
+     "views": {
+      "stack": {
+       "values": []
+      }
+     },
+     "answer": "[]"
+    }
+   ],
+   "sampleInput": "[]"
+  }
+ ]
+}
