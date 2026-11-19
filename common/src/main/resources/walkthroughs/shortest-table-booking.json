@@ -1,0 +1,4017 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Shortest Table Booking",
+  "ko": "가장 짧은 예약 찾기"
+ },
+ "approach": {
+  "en": "Answer the probes in time order. Before each one, add every booking that has started to a heap keyed by length, then drop the shortest while it is already over: what stays on top is the shortest booking covering the minute.",
+  "ko": "조회 시점을 시간 순으로 처리합니다. 각 시점마다 이미 시작한 예약을 길이 기준 힙에 넣고, 가장 짧은 예약이 이미 끝났으면 꺼냅니다. 그러면 힙의 맨 위가 그 분을 포함하는 가장 짧은 예약입니다."
+ },
+ "views": [
+  {
+   "id": "probes",
+   "type": "array",
+   "title": {
+    "en": "probes",
+    "ko": "probes (조회 시점)"
+   }
+  },
+  {
+   "id": "line",
+   "type": "intervals",
+   "empty": {
+    "en": "empty",
+    "ko": "비어 있음"
+   }
+  },
+  {
+   "id": "answers",
+   "type": "array",
+   "title": {
+    "en": "answers",
+    "ko": "answers (답)"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "bookings = [[2,5],[4,7],[1,9],[6,10]], probes = [3,6,9,11]",
+   "expected": "[4,4,5,-1]",
+   "frames": [
+    {
+     "caption": {
+      "en": "4 bookings sorted by start, and 4 probes, each answer starting at -1. Take the probes in time order, so a booking that starts only has to be added once.",
+      "ko": "예약 4개를 시작 순으로 정렬하고, 조회 시점 4개의 답은 모두 -1로 시작합니다. 조회 시점을 시간 순으로 처리하면 시작한 예약을 한 번씩만 넣으면 됩니다."
+     },
+     "views": {
+      "probes": {
+       "values": [
+        3,
+        6,
+        9,
+        11
+       ],
+       "pointers": {
+        "now": null
+       },
+       "marks": {
+        "dim": []
+       }
+      },
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "bookings, by start",
+          "ko": "시작 순으로 정렬한 예약"
+         },
+         "intervals": [
+          [
+           1,
+           9
+          ],
+          [
+           2,
+           5
+          ],
+          [
+           4,
+           7
+          ],
+          [
+           6,
+           10
+          ]
+         ],
+         "marks": {
+          "dim": []
+         }
+        },
+        {
+         "label": {
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
+         },
+         "intervals": [],
+         "marks": {
+          "dim": []
+         }
+        }
+       ]
+      },
+      "answers": {
+       "values": [
+        -1,
+        -1,
+        -1,
+        -1
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "The earliest probe left is minute 3, probe 0.",
+      "ko": "남은 조회 시점 중 가장 이른 것은 0번, 3분입니다."
+     },
+     "views": {
+      "probes": {
+       "values": [
+        3,
+        6,
+        9,
+        11
+       ],
+       "pointers": {
+        "now": 0
+       },
+       "marks": {
+        "dim": [],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "bookings, by start",
+          "ko": "시작 순으로 정렬한 예약"
+         },
+         "intervals": [
+          [
+           1,
+           9
+          ],
+          [
+           2,
+           5
+          ],
+          [
+           4,
+           7
+          ],
+          [
+           6,
+           10
+          ]
+         ],
+         "marks": {
+          "dim": []
+         }
+        },
+        {
+         "label": {
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
+         },
+         "intervals": [],
+         "marks": {
+          "dim": []
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 3,
+         "label": {
+          "en": "probe",
+          "ko": "조회 시점"
+         },
+         "mark": "lit"
+        }
+       ]
+      },
+      "answers": {
+       "values": [
+        -1,
+        -1,
+        -1,
+        -1
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "[1,9] starts at 1 ≤ 3: push it onto the heap with its length, 9 - 1 + 1 = 9.",
+      "ko": "[1,9] 예약은 1분에 시작해 3분 이전이므로 힙에 넣습니다. 길이는 9 - 1 + 1 = 9가 됩니다."
+     },
+     "views": {
+      "probes": {
+       "values": [
+        3,
+        6,
+        9,
+        11
+       ],
+       "pointers": {
+        "now": 0
+       },
+       "marks": {
+        "dim": [],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "bookings, by start",
+          "ko": "시작 순으로 정렬한 예약"
+         },
+         "intervals": [
+          [
+           1,
+           9
+          ],
+          [
+           2,
+           5
+          ],
+          [
+           4,
+           7
+          ],
+          [
+           6,
+           10
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0
+          ],
+          "lit": [
+           0
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
+         },
+         "intervals": [
+          [
+           1,
+           9
+          ]
+         ],
+         "marks": {
+          "dim": [],
+          "good": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 3,
+         "label": {
+          "en": "probe",
+          "ko": "조회 시점"
+         },
+         "mark": "lit"
+        }
+       ]
+      },
+      "answers": {
+       "values": [
+        -1,
+        -1,
+        -1,
+        -1
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "line",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "to": {
+        "view": "line",
+        "at": [
+         1,
+         0
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "[2,5] starts at 2 ≤ 3: push it onto the heap with its length, 5 - 2 + 1 = 4.",
+      "ko": "[2,5] 예약은 2분에 시작해 3분 이전이므로 힙에 넣습니다. 길이는 5 - 2 + 1 = 4가 됩니다."
+     },
+     "views": {
+      "probes": {
+       "values": [
+        3,
+        6,
+        9,
+        11
+       ],
+       "pointers": {
+        "now": 0
+       },
+       "marks": {
+        "dim": [],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "bookings, by start",
+          "ko": "시작 순으로 정렬한 예약"
+         },
+         "intervals": [
+          [
+           1,
+           9
+          ],
+          [
+           2,
+           5
+          ],
+          [
+           4,
+           7
+          ],
+          [
+           6,
+           10
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1
+          ],
+          "lit": [
+           1
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
+         },
+         "intervals": [
+          [
+           1,
+           9
+          ],
+          [
+           2,
+           5
+          ]
+         ],
+         "marks": {
+          "dim": [],
+          "good": [
+           1
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 3,
+         "label": {
+          "en": "probe",
+          "ko": "조회 시점"
+         },
+         "mark": "lit"
+        }
+       ]
+      },
+      "answers": {
+       "values": [
+        -1,
+        -1,
+        -1,
+        -1
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "line",
+        "at": [
+         0,
+         1
+        ]
+       },
+       "to": {
+        "view": "line",
+        "at": [
+         1,
+         1
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The top, [2,5], has started and isn't over, so it covers minute 3 and nothing on the heap is shorter: answer 4.",
+      "ko": "맨 위의 [2,5] 예약은 시작했고 아직 끝나지 않았으므로 3분을 포함하며, 힙에 이보다 짧은 예약은 없습니다. 답은 4입니다."
+     },
+     "views": {
+      "probes": {
+       "values": [
+        3,
+        6,
+        9,
+        11
+       ],
+       "pointers": {
+        "now": 0
+       },
+       "marks": {
+        "dim": [
+         0
+        ],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "bookings, by start",
+          "ko": "시작 순으로 정렬한 예약"
+         },
+         "intervals": [
+          [
+           1,
+           9
+          ],
+          [
+           2,
+           5
+          ],
+          [
+           4,
+           7
+          ],
+          [
+           6,
+           10
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
+         },
+         "intervals": [
+          [
+           1,
+           9
+          ],
+          [
+           2,
+           5
+          ]
+         ],
+         "marks": {
+          "dim": [],
+          "path": [
+           1
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 3,
+         "label": {
+          "en": "probe",
+          "ko": "조회 시점"
+         },
+         "mark": "lit"
+        }
+       ]
+      },
+      "answers": {
+       "values": [
+        4,
+        -1,
+        -1,
+        -1
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "line",
+        "at": [
+         1,
+         1
+        ]
+       },
+       "to": {
+        "view": "answers",
+        "at": 0
+       },
+       "value": "4"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The earliest probe left is minute 6, probe 1.",
+      "ko": "남은 조회 시점 중 가장 이른 것은 1번, 6분입니다."
+     },
+     "views": {
+      "probes": {
+       "values": [
+        3,
+        6,
+        9,
+        11
+       ],
+       "pointers": {
+        "now": 1
+       },
+       "marks": {
+        "dim": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "bookings, by start",
+          "ko": "시작 순으로 정렬한 예약"
+         },
+         "intervals": [
+          [
+           1,
+           9
+          ],
+          [
+           2,
+           5
+          ],
+          [
+           4,
+           7
+          ],
+          [
+           6,
+           10
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
+         },
+         "intervals": [
+          [
+           1,
+           9
+          ],
+          [
+           2,
+           5
+          ]
+         ],
+         "marks": {
+          "dim": []
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 6,
+         "label": {
+          "en": "probe",
+          "ko": "조회 시점"
+         },
+         "mark": "lit"
+        }
+       ]
+      },
+      "answers": {
+       "values": [
+        4,
+        -1,
+        -1,
+        -1
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "[4,7] starts at 4 ≤ 6: push it onto the heap with its length, 7 - 4 + 1 = 4.",
+      "ko": "[4,7] 예약은 4분에 시작해 6분 이전이므로 힙에 넣습니다. 길이는 7 - 4 + 1 = 4가 됩니다."
+     },
+     "views": {
+      "probes": {
+       "values": [
+        3,
+        6,
+        9,
+        11
+       ],
+       "pointers": {
+        "now": 1
+       },
+       "marks": {
+        "dim": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "bookings, by start",
+          "ko": "시작 순으로 정렬한 예약"
+         },
+         "intervals": [
+          [
+           1,
+           9
+          ],
+          [
+           2,
+           5
+          ],
+          [
+           4,
+           7
+          ],
+          [
+           6,
+           10
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1,
+           2
+          ],
+          "lit": [
+           2
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
+         },
+         "intervals": [
+          [
+           1,
+           9
+          ],
+          [
+           2,
+           5
+          ],
+          [
+           4,
+           7
+          ]
+         ],
+         "marks": {
+          "dim": [],
+          "good": [
+           2
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 6,
+         "label": {
+          "en": "probe",
+          "ko": "조회 시점"
+         },
+         "mark": "lit"
+        }
+       ]
+      },
+      "answers": {
+       "values": [
+        4,
+        -1,
+        -1,
+        -1
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "line",
+        "at": [
+         0,
+         2
+        ]
+       },
+       "to": {
+        "view": "line",
+        "at": [
+         1,
+         2
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "[6,10] starts at 6 ≤ 6: push it onto the heap with its length, 10 - 6 + 1 = 5.",
+      "ko": "[6,10] 예약은 6분에 시작해 6분 이전이므로 힙에 넣습니다. 길이는 10 - 6 + 1 = 5가 됩니다."
+     },
+     "views": {
+      "probes": {
+       "values": [
+        3,
+        6,
+        9,
+        11
+       ],
+       "pointers": {
+        "now": 1
+       },
+       "marks": {
+        "dim": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "bookings, by start",
+          "ko": "시작 순으로 정렬한 예약"
+         },
+         "intervals": [
+          [
+           1,
+           9
+          ],
+          [
+           2,
+           5
+          ],
+          [
+           4,
+           7
+          ],
+          [
+           6,
+           10
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1,
+           2,
+           3
+          ],
+          "lit": [
+           3
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
+         },
+         "intervals": [
+          [
+           1,
+           9
+          ],
+          [
+           2,
+           5
+          ],
+          [
+           4,
+           7
+          ],
+          [
+           6,
+           10
+          ]
+         ],
+         "marks": {
+          "dim": [],
+          "good": [
+           3
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 6,
+         "label": {
+          "en": "probe",
+          "ko": "조회 시점"
+         },
+         "mark": "lit"
+        }
+       ]
+      },
+      "answers": {
+       "values": [
+        4,
+        -1,
+        -1,
+        -1
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "line",
+        "at": [
+         0,
+         3
+        ]
+       },
+       "to": {
+        "view": "line",
+        "at": [
+         1,
+         3
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The shortest on the heap, [2,5], ended at 5 < 6: it can't cover this probe or any later one, so pop it.",
+      "ko": "힙에서 가장 짧은 [2,5] 예약은 5분에 끝나 6분보다 앞이므로 이 시점도, 이후 시점도 포함할 수 없습니다. 힙에서 꺼냅니다."
+     },
+     "views": {
+      "probes": {
+       "values": [
+        3,
+        6,
+        9,
+        11
+       ],
+       "pointers": {
+        "now": 1
+       },
+       "marks": {
+        "dim": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "bookings, by start",
+          "ko": "시작 순으로 정렬한 예약"
+         },
+         "intervals": [
+          [
+           1,
+           9
+          ],
+          [
+           2,
+           5
+          ],
+          [
+           4,
+           7
+          ],
+          [
+           6,
+           10
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1,
+           2,
+           3
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
+         },
+         "intervals": [
+          [
+           1,
+           9
+          ],
+          [
+           2,
+           5
+          ],
+          [
+           4,
+           7
+          ],
+          [
+           6,
+           10
+          ]
+         ],
+         "marks": {
+          "dim": [],
+          "bad": [
+           1
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 6,
+         "label": {
+          "en": "probe",
+          "ko": "조회 시점"
+         },
+         "mark": "lit"
+        }
+       ]
+      },
+      "answers": {
+       "values": [
+        4,
+        -1,
+        -1,
+        -1
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "line",
+        "at": [
+         1,
+         1
+        ]
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The top, [4,7], has started and isn't over, so it covers minute 6 and nothing on the heap is shorter: answer 4.",
+      "ko": "맨 위의 [4,7] 예약은 시작했고 아직 끝나지 않았으므로 6분을 포함하며, 힙에 이보다 짧은 예약은 없습니다. 답은 4입니다."
+     },
+     "views": {
+      "probes": {
+       "values": [
+        3,
+        6,
+        9,
+        11
+       ],
+       "pointers": {
+        "now": 1
+       },
+       "marks": {
+        "dim": [
+         0,
+         1
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "bookings, by start",
+          "ko": "시작 순으로 정렬한 예약"
+         },
+         "intervals": [
+          [
+           1,
+           9
+          ],
+          [
+           2,
+           5
+          ],
+          [
+           4,
+           7
+          ],
+          [
+           6,
+           10
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1,
+           2,
+           3
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
+         },
+         "intervals": [
+          [
+           1,
+           9
+          ],
+          [
+           2,
+           5
+          ],
+          [
+           4,
+           7
+          ],
+          [
+           6,
+           10
+          ]
+         ],
+         "marks": {
+          "dim": [
+           1
+          ],
+          "path": [
+           2
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 6,
+         "label": {
+          "en": "probe",
+          "ko": "조회 시점"
+         },
+         "mark": "lit"
+        }
+       ]
+      },
+      "answers": {
+       "values": [
+        4,
+        4,
+        -1,
+        -1
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "line",
+        "at": [
+         1,
+         2
+        ]
+       },
+       "to": {
+        "view": "answers",
+        "at": 1
+       },
+       "value": "4"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The earliest probe left is minute 9, probe 2.",
+      "ko": "남은 조회 시점 중 가장 이른 것은 2번, 9분입니다."
+     },
+     "views": {
+      "probes": {
+       "values": [
+        3,
+        6,
+        9,
+        11
+       ],
+       "pointers": {
+        "now": 2
+       },
+       "marks": {
+        "dim": [
+         0,
+         1
+        ],
+        "lit": [
+         2
+        ]
+       }
+      },
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "bookings, by start",
+          "ko": "시작 순으로 정렬한 예약"
+         },
+         "intervals": [
+          [
+           1,
+           9
+          ],
+          [
+           2,
+           5
+          ],
+          [
+           4,
+           7
+          ],
+          [
+           6,
+           10
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1,
+           2,
+           3
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
+         },
+         "intervals": [
+          [
+           1,
+           9
+          ],
+          [
+           2,
+           5
+          ],
+          [
+           4,
+           7
+          ],
+          [
+           6,
+           10
+          ]
+         ],
+         "marks": {
+          "dim": [
+           1
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 9,
+         "label": {
+          "en": "probe",
+          "ko": "조회 시점"
+         },
+         "mark": "lit"
+        }
+       ]
+      },
+      "answers": {
+       "values": [
+        4,
+        4,
+        -1,
+        -1
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "The shortest on the heap, [4,7], ended at 7 < 9: it can't cover this probe or any later one, so pop it.",
+      "ko": "힙에서 가장 짧은 [4,7] 예약은 7분에 끝나 9분보다 앞이므로 이 시점도, 이후 시점도 포함할 수 없습니다. 힙에서 꺼냅니다."
+     },
+     "views": {
+      "probes": {
+       "values": [
+        3,
+        6,
+        9,
+        11
+       ],
+       "pointers": {
+        "now": 2
+       },
+       "marks": {
+        "dim": [
+         0,
+         1
+        ],
+        "lit": [
+         2
+        ]
+       }
+      },
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "bookings, by start",
+          "ko": "시작 순으로 정렬한 예약"
+         },
+         "intervals": [
+          [
+           1,
+           9
+          ],
+          [
+           2,
+           5
+          ],
+          [
+           4,
+           7
+          ],
+          [
+           6,
+           10
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1,
+           2,
+           3
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
+         },
+         "intervals": [
+          [
+           1,
+           9
+          ],
+          [
+           2,
+           5
+          ],
+          [
+           4,
+           7
+          ],
+          [
+           6,
+           10
+          ]
+         ],
+         "marks": {
+          "dim": [
+           1
+          ],
+          "bad": [
+           2
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 9,
+         "label": {
+          "en": "probe",
+          "ko": "조회 시점"
+         },
+         "mark": "lit"
+        }
+       ]
+      },
+      "answers": {
+       "values": [
+        4,
+        4,
+        -1,
+        -1
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "line",
+        "at": [
+         1,
+         2
+        ]
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The top, [6,10], has started and isn't over, so it covers minute 9 and nothing on the heap is shorter: answer 5.",
+      "ko": "맨 위의 [6,10] 예약은 시작했고 아직 끝나지 않았으므로 9분을 포함하며, 힙에 이보다 짧은 예약은 없습니다. 답은 5입니다."
+     },
+     "views": {
+      "probes": {
+       "values": [
+        3,
+        6,
+        9,
+        11
+       ],
+       "pointers": {
+        "now": 2
+       },
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2
+        ],
+        "lit": [
+         2
+        ]
+       }
+      },
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "bookings, by start",
+          "ko": "시작 순으로 정렬한 예약"
+         },
+         "intervals": [
+          [
+           1,
+           9
+          ],
+          [
+           2,
+           5
+          ],
+          [
+           4,
+           7
+          ],
+          [
+           6,
+           10
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1,
+           2,
+           3
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
+         },
+         "intervals": [
+          [
+           1,
+           9
+          ],
+          [
+           2,
+           5
+          ],
+          [
+           4,
+           7
+          ],
+          [
+           6,
+           10
+          ]
+         ],
+         "marks": {
+          "dim": [
+           1,
+           2
+          ],
+          "path": [
+           3
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 9,
+         "label": {
+          "en": "probe",
+          "ko": "조회 시점"
+         },
+         "mark": "lit"
+        }
+       ]
+      },
+      "answers": {
+       "values": [
+        4,
+        4,
+        5,
+        -1
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "line",
+        "at": [
+         1,
+         3
+        ]
+       },
+       "to": {
+        "view": "answers",
+        "at": 2
+       },
+       "value": "5"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The earliest probe left is minute 11, probe 3.",
+      "ko": "남은 조회 시점 중 가장 이른 것은 3번, 11분입니다."
+     },
+     "views": {
+      "probes": {
+       "values": [
+        3,
+        6,
+        9,
+        11
+       ],
+       "pointers": {
+        "now": 3
+       },
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2
+        ],
+        "lit": [
+         3
+        ]
+       }
+      },
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "bookings, by start",
+          "ko": "시작 순으로 정렬한 예약"
+         },
+         "intervals": [
+          [
+           1,
+           9
+          ],
+          [
+           2,
+           5
+          ],
+          [
+           4,
+           7
+          ],
+          [
+           6,
+           10
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1,
+           2,
+           3
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
+         },
+         "intervals": [
+          [
+           1,
+           9
+          ],
+          [
+           2,
+           5
+          ],
+          [
+           4,
+           7
+          ],
+          [
+           6,
+           10
+          ]
+         ],
+         "marks": {
+          "dim": [
+           1,
+           2
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 11,
+         "label": {
+          "en": "probe",
+          "ko": "조회 시점"
+         },
+         "mark": "lit"
+        }
+       ]
+      },
+      "answers": {
+       "values": [
+        4,
+        4,
+        5,
+        -1
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "The shortest on the heap, [6,10], ended at 10 < 11: it can't cover this probe or any later one, so pop it.",
+      "ko": "힙에서 가장 짧은 [6,10] 예약은 10분에 끝나 11분보다 앞이므로 이 시점도, 이후 시점도 포함할 수 없습니다. 힙에서 꺼냅니다."
+     },
+     "views": {
+      "probes": {
+       "values": [
+        3,
+        6,
+        9,
+        11
+       ],
+       "pointers": {
+        "now": 3
+       },
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2
+        ],
+        "lit": [
+         3
+        ]
+       }
+      },
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "bookings, by start",
+          "ko": "시작 순으로 정렬한 예약"
+         },
+         "intervals": [
+          [
+           1,
+           9
+          ],
+          [
+           2,
+           5
+          ],
+          [
+           4,
+           7
+          ],
+          [
+           6,
+           10
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1,
+           2,
+           3
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
+         },
+         "intervals": [
+          [
+           1,
+           9
+          ],
+          [
+           2,
+           5
+          ],
+          [
+           4,
+           7
+          ],
+          [
+           6,
+           10
+          ]
+         ],
+         "marks": {
+          "dim": [
+           1,
+           2
+          ],
+          "bad": [
+           3
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 11,
+         "label": {
+          "en": "probe",
+          "ko": "조회 시점"
+         },
+         "mark": "lit"
+        }
+       ]
+      },
+      "answers": {
+       "values": [
+        4,
+        4,
+        5,
+        -1
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "line",
+        "at": [
+         1,
+         3
+        ]
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The shortest on the heap, [1,9], ended at 9 < 11: it can't cover this probe or any later one, so pop it.",
+      "ko": "힙에서 가장 짧은 [1,9] 예약은 9분에 끝나 11분보다 앞이므로 이 시점도, 이후 시점도 포함할 수 없습니다. 힙에서 꺼냅니다."
+     },
+     "views": {
+      "probes": {
+       "values": [
+        3,
+        6,
+        9,
+        11
+       ],
+       "pointers": {
+        "now": 3
+       },
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2
+        ],
+        "lit": [
+         3
+        ]
+       }
+      },
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "bookings, by start",
+          "ko": "시작 순으로 정렬한 예약"
+         },
+         "intervals": [
+          [
+           1,
+           9
+          ],
+          [
+           2,
+           5
+          ],
+          [
+           4,
+           7
+          ],
+          [
+           6,
+           10
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1,
+           2,
+           3
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
+         },
+         "intervals": [
+          [
+           1,
+           9
+          ],
+          [
+           2,
+           5
+          ],
+          [
+           4,
+           7
+          ],
+          [
+           6,
+           10
+          ]
+         ],
+         "marks": {
+          "dim": [
+           1,
+           2,
+           3
+          ],
+          "bad": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 11,
+         "label": {
+          "en": "probe",
+          "ko": "조회 시점"
+         },
+         "mark": "lit"
+        }
+       ]
+      },
+      "answers": {
+       "values": [
+        4,
+        4,
+        5,
+        -1
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "line",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The heap is empty: no booking that has started is still going at minute 11, so the answer stays -1.",
+      "ko": "힙이 비었습니다. 시작한 예약 중 11분까지 이어지는 예약이 없으므로 답은 -1 그대로입니다."
+     },
+     "views": {
+      "probes": {
+       "values": [
+        3,
+        6,
+        9,
+        11
+       ],
+       "pointers": {
+        "now": 3
+       },
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3
+        ],
+        "lit": [
+         3
+        ]
+       }
+      },
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "bookings, by start",
+          "ko": "시작 순으로 정렬한 예약"
+         },
+         "intervals": [
+          [
+           1,
+           9
+          ],
+          [
+           2,
+           5
+          ],
+          [
+           4,
+           7
+          ],
+          [
+           6,
+           10
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1,
+           2,
+           3
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
+         },
+         "intervals": [
+          [
+           1,
+           9
+          ],
+          [
+           2,
+           5
+          ],
+          [
+           4,
+           7
+          ],
+          [
+           6,
+           10
+          ]
+         ],
+         "marks": {
+          "dim": [
+           1,
+           2,
+           3,
+           0
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 11,
+         "label": {
+          "en": "probe",
+          "ko": "조회 시점"
+         },
+         "mark": "lit"
+        }
+       ]
+      },
+      "answers": {
+       "values": [
+        4,
+        4,
+        5,
+        -1
+       ],
+       "marks": {
+        "bad": [
+         3
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Every probe is answered, in the order given: [4,4,5,-1].",
+      "ko": "모든 조회 시점의 답을 원래 순서대로 구했습니다: [4,4,5,-1]."
+     },
+     "views": {
+      "probes": {
+       "values": [
+        3,
+        6,
+        9,
+        11
+       ],
+       "pointers": {
+        "now": null
+       },
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3
+        ]
+       }
+      },
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "bookings, by start",
+          "ko": "시작 순으로 정렬한 예약"
+         },
+         "intervals": [
+          [
+           1,
+           9
+          ],
+          [
+           2,
+           5
+          ],
+          [
+           4,
+           7
+          ],
+          [
+           6,
+           10
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1,
+           2,
+           3
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
+         },
+         "intervals": [
+          [
+           1,
+           9
+          ],
+          [
+           2,
+           5
+          ],
+          [
+           4,
+           7
+          ],
+          [
+           6,
+           10
+          ]
+         ],
+         "marks": {
+          "dim": [
+           1,
+           2,
+           3,
+           0
+          ]
+         }
+        }
+       ]
+      },
+      "answers": {
+       "values": [
+        4,
+        4,
+        5,
+        -1
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3
+        ]
+       }
+      }
+     },
+     "answer": "[4,4,5,-1]"
+    }
+   ],
+   "setup": {
+    "line": {
+     "domain": [
+      1,
+      11
+     ]
+    }
+   },
+   "sampleInput": "[[2,5],[4,7],[1,9],[6,10]]\n[3,6,9,11]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "bookings = [[10,12],[8,20]], probes = [9,11,25]",
+   "expected": "[13,3,-1]",
+   "frames": [
+    {
+     "caption": {
+      "en": "2 bookings sorted by start, and 3 probes, each answer starting at -1. Take the probes in time order, so a booking that starts only has to be added once.",
+      "ko": "예약 2개를 시작 순으로 정렬하고, 조회 시점 3개의 답은 모두 -1로 시작합니다. 조회 시점을 시간 순으로 처리하면 시작한 예약을 한 번씩만 넣으면 됩니다."
+     },
+     "views": {
+      "probes": {
+       "values": [
+        9,
+        11,
+        25
+       ],
+       "pointers": {
+        "now": null
+       },
+       "marks": {
+        "dim": []
+       }
+      },
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "bookings, by start",
+          "ko": "시작 순으로 정렬한 예약"
+         },
+         "intervals": [
+          [
+           8,
+           20
+          ],
+          [
+           10,
+           12
+          ]
+         ],
+         "marks": {
+          "dim": []
+         }
+        },
+        {
+         "label": {
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
+         },
+         "intervals": [],
+         "marks": {
+          "dim": []
+         }
+        }
+       ]
+      },
+      "answers": {
+       "values": [
+        -1,
+        -1,
+        -1
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "The earliest probe left is minute 9, probe 0.",
+      "ko": "남은 조회 시점 중 가장 이른 것은 0번, 9분입니다."
+     },
+     "views": {
+      "probes": {
+       "values": [
+        9,
+        11,
+        25
+       ],
+       "pointers": {
+        "now": 0
+       },
+       "marks": {
+        "dim": [],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "bookings, by start",
+          "ko": "시작 순으로 정렬한 예약"
+         },
+         "intervals": [
+          [
+           8,
+           20
+          ],
+          [
+           10,
+           12
+          ]
+         ],
+         "marks": {
+          "dim": []
+         }
+        },
+        {
+         "label": {
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
+         },
+         "intervals": [],
+         "marks": {
+          "dim": []
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 9,
+         "label": {
+          "en": "probe",
+          "ko": "조회 시점"
+         },
+         "mark": "lit"
+        }
+       ]
+      },
+      "answers": {
+       "values": [
+        -1,
+        -1,
+        -1
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "[8,20] starts at 8 ≤ 9: push it onto the heap with its length, 20 - 8 + 1 = 13.",
+      "ko": "[8,20] 예약은 8분에 시작해 9분 이전이므로 힙에 넣습니다. 길이는 20 - 8 + 1 = 13이 됩니다."
+     },
+     "views": {
+      "probes": {
+       "values": [
+        9,
+        11,
+        25
+       ],
+       "pointers": {
+        "now": 0
+       },
+       "marks": {
+        "dim": [],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "bookings, by start",
+          "ko": "시작 순으로 정렬한 예약"
+         },
+         "intervals": [
+          [
+           8,
+           20
+          ],
+          [
+           10,
+           12
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0
+          ],
+          "lit": [
+           0
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
+         },
+         "intervals": [
+          [
+           8,
+           20
+          ]
+         ],
+         "marks": {
+          "dim": [],
+          "good": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 9,
+         "label": {
+          "en": "probe",
+          "ko": "조회 시점"
+         },
+         "mark": "lit"
+        }
+       ]
+      },
+      "answers": {
+       "values": [
+        -1,
+        -1,
+        -1
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "line",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "to": {
+        "view": "line",
+        "at": [
+         1,
+         0
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The top, [8,20], has started and isn't over, so it covers minute 9 and nothing on the heap is shorter: answer 13.",
+      "ko": "맨 위의 [8,20] 예약은 시작했고 아직 끝나지 않았으므로 9분을 포함하며, 힙에 이보다 짧은 예약은 없습니다. 답은 13입니다."
+     },
+     "views": {
+      "probes": {
+       "values": [
+        9,
+        11,
+        25
+       ],
+       "pointers": {
+        "now": 0
+       },
+       "marks": {
+        "dim": [
+         0
+        ],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "bookings, by start",
+          "ko": "시작 순으로 정렬한 예약"
+         },
+         "intervals": [
+          [
+           8,
+           20
+          ],
+          [
+           10,
+           12
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
+         },
+         "intervals": [
+          [
+           8,
+           20
+          ]
+         ],
+         "marks": {
+          "dim": [],
+          "path": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 9,
+         "label": {
+          "en": "probe",
+          "ko": "조회 시점"
+         },
+         "mark": "lit"
+        }
+       ]
+      },
+      "answers": {
+       "values": [
+        13,
+        -1,
+        -1
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "line",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "to": {
+        "view": "answers",
+        "at": 0
+       },
+       "value": "13"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The earliest probe left is minute 11, probe 1.",
+      "ko": "남은 조회 시점 중 가장 이른 것은 1번, 11분입니다."
+     },
+     "views": {
+      "probes": {
+       "values": [
+        9,
+        11,
+        25
+       ],
+       "pointers": {
+        "now": 1
+       },
+       "marks": {
+        "dim": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "bookings, by start",
+          "ko": "시작 순으로 정렬한 예약"
+         },
+         "intervals": [
+          [
+           8,
+           20
+          ],
+          [
+           10,
+           12
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
+         },
+         "intervals": [
+          [
+           8,
+           20
+          ]
+         ],
+         "marks": {
+          "dim": []
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 11,
+         "label": {
+          "en": "probe",
+          "ko": "조회 시점"
+         },
+         "mark": "lit"
+        }
+       ]
+      },
+      "answers": {
+       "values": [
+        13,
+        -1,
+        -1
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "[10,12] starts at 10 ≤ 11: push it onto the heap with its length, 12 - 10 + 1 = 3.",
+      "ko": "[10,12] 예약은 10분에 시작해 11분 이전이므로 힙에 넣습니다. 길이는 12 - 10 + 1 = 3이 됩니다."
+     },
+     "views": {
+      "probes": {
+       "values": [
+        9,
+        11,
+        25
+       ],
+       "pointers": {
+        "now": 1
+       },
+       "marks": {
+        "dim": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "bookings, by start",
+          "ko": "시작 순으로 정렬한 예약"
+         },
+         "intervals": [
+          [
+           8,
+           20
+          ],
+          [
+           10,
+           12
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1
+          ],
+          "lit": [
+           1
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
+         },
+         "intervals": [
+          [
+           8,
+           20
+          ],
+          [
+           10,
+           12
+          ]
+         ],
+         "marks": {
+          "dim": [],
+          "good": [
+           1
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 11,
+         "label": {
+          "en": "probe",
+          "ko": "조회 시점"
+         },
+         "mark": "lit"
+        }
+       ]
+      },
+      "answers": {
+       "values": [
+        13,
+        -1,
+        -1
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "line",
+        "at": [
+         0,
+         1
+        ]
+       },
+       "to": {
+        "view": "line",
+        "at": [
+         1,
+         1
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The top, [10,12], has started and isn't over, so it covers minute 11 and nothing on the heap is shorter: answer 3.",
+      "ko": "맨 위의 [10,12] 예약은 시작했고 아직 끝나지 않았으므로 11분을 포함하며, 힙에 이보다 짧은 예약은 없습니다. 답은 3입니다."
+     },
+     "views": {
+      "probes": {
+       "values": [
+        9,
+        11,
+        25
+       ],
+       "pointers": {
+        "now": 1
+       },
+       "marks": {
+        "dim": [
+         0,
+         1
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "bookings, by start",
+          "ko": "시작 순으로 정렬한 예약"
+         },
+         "intervals": [
+          [
+           8,
+           20
+          ],
+          [
+           10,
+           12
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
+         },
+         "intervals": [
+          [
+           8,
+           20
+          ],
+          [
+           10,
+           12
+          ]
+         ],
+         "marks": {
+          "dim": [],
+          "path": [
+           1
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 11,
+         "label": {
+          "en": "probe",
+          "ko": "조회 시점"
+         },
+         "mark": "lit"
+        }
+       ]
+      },
+      "answers": {
+       "values": [
+        13,
+        3,
+        -1
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "line",
+        "at": [
+         1,
+         1
+        ]
+       },
+       "to": {
+        "view": "answers",
+        "at": 1
+       },
+       "value": "3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The earliest probe left is minute 25, probe 2.",
+      "ko": "남은 조회 시점 중 가장 이른 것은 2번, 25분입니다."
+     },
+     "views": {
+      "probes": {
+       "values": [
+        9,
+        11,
+        25
+       ],
+       "pointers": {
+        "now": 2
+       },
+       "marks": {
+        "dim": [
+         0,
+         1
+        ],
+        "lit": [
+         2
+        ]
+       }
+      },
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "bookings, by start",
+          "ko": "시작 순으로 정렬한 예약"
+         },
+         "intervals": [
+          [
+           8,
+           20
+          ],
+          [
+           10,
+           12
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
+         },
+         "intervals": [
+          [
+           8,
+           20
+          ],
+          [
+           10,
+           12
+          ]
+         ],
+         "marks": {
+          "dim": []
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 25,
+         "label": {
+          "en": "probe",
+          "ko": "조회 시점"
+         },
+         "mark": "lit"
+        }
+       ]
+      },
+      "answers": {
+       "values": [
+        13,
+        3,
+        -1
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "The shortest on the heap, [10,12], ended at 12 < 25: it can't cover this probe or any later one, so pop it.",
+      "ko": "힙에서 가장 짧은 [10,12] 예약은 12분에 끝나 25분보다 앞이므로 이 시점도, 이후 시점도 포함할 수 없습니다. 힙에서 꺼냅니다."
+     },
+     "views": {
+      "probes": {
+       "values": [
+        9,
+        11,
+        25
+       ],
+       "pointers": {
+        "now": 2
+       },
+       "marks": {
+        "dim": [
+         0,
+         1
+        ],
+        "lit": [
+         2
+        ]
+       }
+      },
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "bookings, by start",
+          "ko": "시작 순으로 정렬한 예약"
+         },
+         "intervals": [
+          [
+           8,
+           20
+          ],
+          [
+           10,
+           12
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
+         },
+         "intervals": [
+          [
+           8,
+           20
+          ],
+          [
+           10,
+           12
+          ]
+         ],
+         "marks": {
+          "dim": [],
+          "bad": [
+           1
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 25,
+         "label": {
+          "en": "probe",
+          "ko": "조회 시점"
+         },
+         "mark": "lit"
+        }
+       ]
+      },
+      "answers": {
+       "values": [
+        13,
+        3,
+        -1
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "line",
+        "at": [
+         1,
+         1
+        ]
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The shortest on the heap, [8,20], ended at 20 < 25: it can't cover this probe or any later one, so pop it.",
+      "ko": "힙에서 가장 짧은 [8,20] 예약은 20분에 끝나 25분보다 앞이므로 이 시점도, 이후 시점도 포함할 수 없습니다. 힙에서 꺼냅니다."
+     },
+     "views": {
+      "probes": {
+       "values": [
+        9,
+        11,
+        25
+       ],
+       "pointers": {
+        "now": 2
+       },
+       "marks": {
+        "dim": [
+         0,
+         1
+        ],
+        "lit": [
+         2
+        ]
+       }
+      },
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "bookings, by start",
+          "ko": "시작 순으로 정렬한 예약"
+         },
+         "intervals": [
+          [
+           8,
+           20
+          ],
+          [
+           10,
+           12
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
+         },
+         "intervals": [
+          [
+           8,
+           20
+          ],
+          [
+           10,
+           12
+          ]
+         ],
+         "marks": {
+          "dim": [
+           1
+          ],
+          "bad": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 25,
+         "label": {
+          "en": "probe",
+          "ko": "조회 시점"
+         },
+         "mark": "lit"
+        }
+       ]
+      },
+      "answers": {
+       "values": [
+        13,
+        3,
+        -1
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "line",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The heap is empty: no booking that has started is still going at minute 25, so the answer stays -1.",
+      "ko": "힙이 비었습니다. 시작한 예약 중 25분까지 이어지는 예약이 없으므로 답은 -1 그대로입니다."
+     },
+     "views": {
+      "probes": {
+       "values": [
+        9,
+        11,
+        25
+       ],
+       "pointers": {
+        "now": 2
+       },
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2
+        ],
+        "lit": [
+         2
+        ]
+       }
+      },
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "bookings, by start",
+          "ko": "시작 순으로 정렬한 예약"
+         },
+         "intervals": [
+          [
+           8,
+           20
+          ],
+          [
+           10,
+           12
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
+         },
+         "intervals": [
+          [
+           8,
+           20
+          ],
+          [
+           10,
+           12
+          ]
+         ],
+         "marks": {
+          "dim": [
+           1,
+           0
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 25,
+         "label": {
+          "en": "probe",
+          "ko": "조회 시점"
+         },
+         "mark": "lit"
+        }
+       ]
+      },
+      "answers": {
+       "values": [
+        13,
+        3,
+        -1
+       ],
+       "marks": {
+        "bad": [
+         2
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Every probe is answered, in the order given: [13,3,-1].",
+      "ko": "모든 조회 시점의 답을 원래 순서대로 구했습니다: [13,3,-1]."
+     },
+     "views": {
+      "probes": {
+       "values": [
+        9,
+        11,
+        25
+       ],
+       "pointers": {
+        "now": null
+       },
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2
+        ]
+       }
+      },
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "bookings, by start",
+          "ko": "시작 순으로 정렬한 예약"
+         },
+         "intervals": [
+          [
+           8,
+           20
+          ],
+          [
+           10,
+           12
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
+         },
+         "intervals": [
+          [
+           8,
+           20
+          ],
+          [
+           10,
+           12
+          ]
+         ],
+         "marks": {
+          "dim": [
+           1,
+           0
+          ]
+         }
+        }
+       ]
+      },
+      "answers": {
+       "values": [
+        13,
+        3,
+        -1
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2
+        ]
+       }
+      }
+     },
+     "answer": "[13,3,-1]"
+    }
+   ],
+   "setup": {
+    "line": {
+     "domain": [
+      8,
+      25
+     ]
+    }
+   },
+   "sampleInput": "[[10,12],[8,20]]\n[9,11,25]"
+  },
+  {
+   "label": {
+    "en": "Case 3",
+    "ko": "케이스 3"
+   },
+   "input": "bookings = [[4,4]], probes = [4,5]",
+   "expected": "[1,-1]",
+   "frames": [
+    {
+     "caption": {
+      "en": "1 bookings sorted by start, and 2 probes, each answer starting at -1. Take the probes in time order, so a booking that starts only has to be added once.",
+      "ko": "예약 1개를 시작 순으로 정렬하고, 조회 시점 2개의 답은 모두 -1로 시작합니다. 조회 시점을 시간 순으로 처리하면 시작한 예약을 한 번씩만 넣으면 됩니다."
+     },
+     "views": {
+      "probes": {
+       "values": [
+        4,
+        5
+       ],
+       "pointers": {
+        "now": null
+       },
+       "marks": {
+        "dim": []
+       }
+      },
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "bookings, by start",
+          "ko": "시작 순으로 정렬한 예약"
+         },
+         "intervals": [
+          [
+           4,
+           4
+          ]
+         ],
+         "marks": {
+          "dim": []
+         }
+        },
+        {
+         "label": {
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
+         },
+         "intervals": [],
+         "marks": {
+          "dim": []
+         }
+        }
+       ]
+      },
+      "answers": {
+       "values": [
+        -1,
+        -1
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "The earliest probe left is minute 4, probe 0.",
+      "ko": "남은 조회 시점 중 가장 이른 것은 0번, 4분입니다."
+     },
+     "views": {
+      "probes": {
+       "values": [
+        4,
+        5
+       ],
+       "pointers": {
+        "now": 0
+       },
+       "marks": {
+        "dim": [],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "bookings, by start",
+          "ko": "시작 순으로 정렬한 예약"
+         },
+         "intervals": [
+          [
+           4,
+           4
+          ]
+         ],
+         "marks": {
+          "dim": []
+         }
+        },
+        {
+         "label": {
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
+         },
+         "intervals": [],
+         "marks": {
+          "dim": []
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 4,
+         "label": {
+          "en": "probe",
+          "ko": "조회 시점"
+         },
+         "mark": "lit"
+        }
+       ]
+      },
+      "answers": {
+       "values": [
+        -1,
+        -1
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "[4,4] starts at 4 ≤ 4: push it onto the heap with its length, 4 - 4 + 1 = 1.",
+      "ko": "[4,4] 예약은 4분에 시작해 4분 이전이므로 힙에 넣습니다. 길이는 4 - 4 + 1 = 1이 됩니다."
+     },
+     "views": {
+      "probes": {
+       "values": [
+        4,
+        5
+       ],
+       "pointers": {
+        "now": 0
+       },
+       "marks": {
+        "dim": [],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "bookings, by start",
+          "ko": "시작 순으로 정렬한 예약"
+         },
+         "intervals": [
+          [
+           4,
+           4
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0
+          ],
+          "lit": [
+           0
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
+         },
+         "intervals": [
+          [
+           4,
+           4
+          ]
+         ],
+         "marks": {
+          "dim": [],
+          "good": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 4,
+         "label": {
+          "en": "probe",
+          "ko": "조회 시점"
+         },
+         "mark": "lit"
+        }
+       ]
+      },
+      "answers": {
+       "values": [
+        -1,
+        -1
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "line",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "to": {
+        "view": "line",
+        "at": [
+         1,
+         0
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The top, [4,4], has started and isn't over, so it covers minute 4 and nothing on the heap is shorter: answer 1.",
+      "ko": "맨 위의 [4,4] 예약은 시작했고 아직 끝나지 않았으므로 4분을 포함하며, 힙에 이보다 짧은 예약은 없습니다. 답은 1입니다."
+     },
+     "views": {
+      "probes": {
+       "values": [
+        4,
+        5
+       ],
+       "pointers": {
+        "now": 0
+       },
+       "marks": {
+        "dim": [
+         0
+        ],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "bookings, by start",
+          "ko": "시작 순으로 정렬한 예약"
+         },
+         "intervals": [
+          [
+           4,
+           4
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
+         },
+         "intervals": [
+          [
+           4,
+           4
+          ]
+         ],
+         "marks": {
+          "dim": [],
+          "path": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 4,
+         "label": {
+          "en": "probe",
+          "ko": "조회 시점"
+         },
+         "mark": "lit"
+        }
+       ]
+      },
+      "answers": {
+       "values": [
+        1,
+        -1
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "line",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "to": {
+        "view": "answers",
+        "at": 0
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The earliest probe left is minute 5, probe 1.",
+      "ko": "남은 조회 시점 중 가장 이른 것은 1번, 5분입니다."
+     },
+     "views": {
+      "probes": {
+       "values": [
+        4,
+        5
+       ],
+       "pointers": {
+        "now": 1
+       },
+       "marks": {
+        "dim": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "bookings, by start",
+          "ko": "시작 순으로 정렬한 예약"
+         },
+         "intervals": [
+          [
+           4,
+           4
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
+         },
+         "intervals": [
+          [
+           4,
+           4
+          ]
+         ],
+         "marks": {
+          "dim": []
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 5,
+         "label": {
+          "en": "probe",
+          "ko": "조회 시점"
+         },
+         "mark": "lit"
+        }
+       ]
+      },
+      "answers": {
+       "values": [
+        1,
+        -1
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "The shortest on the heap, [4,4], ended at 4 < 5: it can't cover this probe or any later one, so pop it.",
+      "ko": "힙에서 가장 짧은 [4,4] 예약은 4분에 끝나 5분보다 앞이므로 이 시점도, 이후 시점도 포함할 수 없습니다. 힙에서 꺼냅니다."
+     },
+     "views": {
+      "probes": {
+       "values": [
+        4,
+        5
+       ],
+       "pointers": {
+        "now": 1
+       },
+       "marks": {
+        "dim": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "bookings, by start",
+          "ko": "시작 순으로 정렬한 예약"
+         },
+         "intervals": [
+          [
+           4,
+           4
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
+         },
+         "intervals": [
+          [
+           4,
+           4
+          ]
+         ],
+         "marks": {
+          "dim": [],
+          "bad": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 5,
+         "label": {
+          "en": "probe",
+          "ko": "조회 시점"
+         },
+         "mark": "lit"
+        }
+       ]
+      },
+      "answers": {
+       "values": [
+        1,
+        -1
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "line",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The heap is empty: no booking that has started is still going at minute 5, so the answer stays -1.",
+      "ko": "힙이 비었습니다. 시작한 예약 중 5분까지 이어지는 예약이 없으므로 답은 -1 그대로입니다."
+     },
+     "views": {
+      "probes": {
+       "values": [
+        4,
+        5
+       ],
+       "pointers": {
+        "now": 1
+       },
+       "marks": {
+        "dim": [
+         0,
+         1
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "bookings, by start",
+          "ko": "시작 순으로 정렬한 예약"
+         },
+         "intervals": [
+          [
+           4,
+           4
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
+         },
+         "intervals": [
+          [
+           4,
+           4
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 5,
+         "label": {
+          "en": "probe",
+          "ko": "조회 시점"
+         },
+         "mark": "lit"
+        }
+       ]
+      },
+      "answers": {
+       "values": [
+        1,
+        -1
+       ],
+       "marks": {
+        "bad": [
+         1
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Every probe is answered, in the order given: [1,-1].",
+      "ko": "모든 조회 시점의 답을 원래 순서대로 구했습니다: [1,-1]."
+     },
+     "views": {
+      "probes": {
+       "values": [
+        4,
+        5
+       ],
+       "pointers": {
+        "now": null
+       },
+       "marks": {
+        "dim": [
+         0,
+         1
+        ]
+       }
+      },
+      "line": {
+       "groups": [
+        {
+         "label": {
+          "en": "bookings, by start",
+          "ko": "시작 순으로 정렬한 예약"
+         },
+         "intervals": [
+          [
+           4,
+           4
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0
+          ]
+         }
+        },
+        {
+         "label": {
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
+         },
+         "intervals": [
+          [
+           4,
+           4
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0
+          ]
+         }
+        }
+       ]
+      },
+      "answers": {
+       "values": [
+        1,
+        -1
+       ],
+       "marks": {
+        "path": [
+         0,
+         1
+        ]
+       }
+      }
+     },
+     "answer": "[1,-1]"
+    }
+   ],
+   "setup": {
+    "line": {
+     "domain": [
+      4,
+      5
+     ]
+    }
+   },
+   "sampleInput": "[[4,4]]\n[4,5]"
+  }
+ ]
+}
