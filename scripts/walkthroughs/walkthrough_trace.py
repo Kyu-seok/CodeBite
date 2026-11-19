@@ -125,14 +125,18 @@ def level_order_tree(values):
     return {"nodes": nodes, "edges": edges}
 
 
-def linked_list(order):
+def linked_list(order, link=None):
     """A `linkedlist` view's state from the solution's own nodes: `order` lists every node in the order to draw them
     (keep it fixed for the run, so a reversal redraws arrows, not nodes). A node's id is its place in `order` and its
-    `next` the id of the node its `next` reaches (None at the end), found by identity, so a loop back is drawn too."""
+    `next` the id of the node its `next` reaches (None at the end), found by identity, so a loop back is drawn too.
+    `link` names a second pointer each node holds (`"random"`, `"prev"`), drawn under the row as `links`."""
     def value(n):
         return n.val if hasattr(n, "val") else n.value
-    return {"nodes": [{"id": i, "value": value(n)} for i, n in enumerate(order)],
-            "next": {i: node_id(order, n.next) for i, n in enumerate(order)}}
+    state = {"nodes": [{"id": i, "value": value(n)} for i, n in enumerate(order)],
+             "next": {i: node_id(order, n.next) for i, n in enumerate(order)}}
+    if link:
+        state["links"] = {link: {i: node_id(order, getattr(n, link)) for i, n in enumerate(order)}}
+    return state
 
 
 def node_id(order, node):

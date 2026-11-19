@@ -1,0 +1,798 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Deepest Skill Chain",
+  "ko": "가장 깊은 스킬 체인"
+ },
+ "approach": {
+  "en": "A tree's depth is its root plus the deeper of its two subtrees, and an empty subtree's depth is 0: ask each child for its depth, then hand 1 + the larger one up to the parent.",
+  "ko": "트리의 깊이는 루트 하나에 두 서브트리 중 더 깊은 쪽의 깊이를 더한 값이고, 빈 서브트리의 깊이는 0입니다. 각 자식에게 깊이를 물은 뒤 1 + 더 큰 값을 부모에게 돌려줍니다."
+ },
+ "views": [
+  {
+   "id": "tree",
+   "type": "tree",
+   "arity": 2,
+   "title": {
+    "en": "root (under each node: the depth it returns)",
+    "ko": "root (노드 아래: 돌려주는 깊이)"
+   },
+   "empty": {
+    "en": "empty tree",
+    "ko": "빈 트리"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "root = [8,5,12,null,null,9,17]",
+   "expected": "3",
+   "frames": [
+    {
+     "caption": {
+      "en": "A skill tree of 5 nodes with root 8. Ask the root for its depth: it must ask its children first.",
+      "ko": "root가 8인 노드 5개짜리 스킬 트리입니다. root에게 깊이를 묻는데, root는 먼저 자식들에게 물어야 합니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": []
+       },
+       "shade": [],
+       "edgeMarks": {},
+       "tags": []
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "8 has children, so it asks its left child 5 first.",
+      "ko": "8은 자식이 있으므로 먼저 왼쪽 자식 5에게 묻습니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ],
+       "edgeMarks": {},
+       "tags": []
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "5 is a leaf: both sides are empty (0), so it returns 1 + 0 = 1.",
+      "ko": "5는 리프입니다. 양쪽이 비어 있으므로(0) 1 + 0 = 1을 돌려줍니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "good": [
+         1
+        ]
+       },
+       "shade": [
+        0
+       ],
+       "edgeMarks": {},
+       "tags": [
+        [
+         1,
+         {
+          "en": "depth 1",
+          "ko": "깊이 1"
+         }
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "12 has children, so it asks its left child 9 first.",
+      "ko": "12는 자식이 있으므로 먼저 왼쪽 자식 9에게 묻습니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         1
+        ],
+        "lit": [
+         2
+        ]
+       },
+       "shade": [
+        0,
+        2
+       ],
+       "edgeMarks": {},
+       "tags": [
+        [
+         1,
+         {
+          "en": "depth 1",
+          "ko": "깊이 1"
+         }
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "9 is a leaf: both sides are empty (0), so it returns 1 + 0 = 1.",
+      "ko": "9는 리프입니다. 양쪽이 비어 있으므로(0) 1 + 0 = 1을 돌려줍니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         1
+        ],
+        "good": [
+         5
+        ]
+       },
+       "shade": [
+        0,
+        2
+       ],
+       "edgeMarks": {},
+       "tags": [
+        [
+         1,
+         {
+          "en": "depth 1",
+          "ko": "깊이 1"
+         }
+        ],
+        [
+         5,
+         {
+          "en": "depth 1",
+          "ko": "깊이 1"
+         }
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "17 is a leaf: both sides are empty (0), so it returns 1 + 0 = 1.",
+      "ko": "17은 리프입니다. 양쪽이 비어 있으므로(0) 1 + 0 = 1을 돌려줍니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         1,
+         5
+        ],
+        "good": [
+         6
+        ]
+       },
+       "shade": [
+        0,
+        2
+       ],
+       "edgeMarks": {},
+       "tags": [
+        [
+         1,
+         {
+          "en": "depth 1",
+          "ko": "깊이 1"
+         }
+        ],
+        [
+         5,
+         {
+          "en": "depth 1",
+          "ko": "깊이 1"
+         }
+        ],
+        [
+         6,
+         {
+          "en": "depth 1",
+          "ko": "깊이 1"
+         }
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "12's left depth is 1 and its right depth is 1: it returns 1 + 1 = 2.",
+      "ko": "12의 왼쪽 깊이는 1, 오른쪽 깊이는 1입니다. 1 + 1 = 2를 돌려줍니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         1,
+         5,
+         6
+        ],
+        "good": [
+         2
+        ]
+       },
+       "shade": [
+        0
+       ],
+       "edgeMarks": {},
+       "tags": [
+        [
+         1,
+         {
+          "en": "depth 1",
+          "ko": "깊이 1"
+         }
+        ],
+        [
+         5,
+         {
+          "en": "depth 1",
+          "ko": "깊이 1"
+         }
+        ],
+        [
+         6,
+         {
+          "en": "depth 1",
+          "ko": "깊이 1"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "depth 2",
+          "ko": "깊이 2"
+         }
+        ]
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 5
+       },
+       "to": {
+        "view": "tree",
+        "at": 2
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "tree",
+        "at": 6
+       },
+       "to": {
+        "view": "tree",
+        "at": 2
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "8's left depth is 1 and its right depth is 2: it returns 1 + 2 = 3.",
+      "ko": "8의 왼쪽 깊이는 1, 오른쪽 깊이는 2입니다. 1 + 2 = 3을 돌려줍니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         1,
+         5,
+         6,
+         2
+        ],
+        "good": [
+         0
+        ]
+       },
+       "shade": [],
+       "edgeMarks": {},
+       "tags": [
+        [
+         1,
+         {
+          "en": "depth 1",
+          "ko": "깊이 1"
+         }
+        ],
+        [
+         5,
+         {
+          "en": "depth 1",
+          "ko": "깊이 1"
+         }
+        ],
+        [
+         6,
+         {
+          "en": "depth 1",
+          "ko": "깊이 1"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "depth 2",
+          "ko": "깊이 2"
+         }
+        ],
+        [
+         0,
+         {
+          "en": "depth 3",
+          "ko": "깊이 3"
+         }
+        ]
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 1
+       },
+       "to": {
+        "view": "tree",
+        "at": 0
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "tree",
+        "at": 2
+       },
+       "to": {
+        "view": "tree",
+        "at": 0
+       },
+       "value": "2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The root returns 3: the longest chain from the root down, 8 -> 12 -> 9, has 3 nodes.",
+      "ko": "root가 3을 돌려줍니다. root에서 내려가는 가장 긴 체인 8 -> 12 -> 9의 노드가 3개입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "path": [
+         0,
+         2,
+         5
+        ],
+        "dim": [
+         1,
+         6
+        ]
+       },
+       "shade": [],
+       "edgeMarks": {
+        "path": [
+         [
+          0,
+          2
+         ],
+         [
+          2,
+          5
+         ]
+        ]
+       },
+       "tags": [
+        [
+         1,
+         {
+          "en": "depth 1",
+          "ko": "깊이 1"
+         }
+        ],
+        [
+         5,
+         {
+          "en": "depth 1",
+          "ko": "깊이 1"
+         }
+        ],
+        [
+         6,
+         {
+          "en": "depth 1",
+          "ko": "깊이 1"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "depth 2",
+          "ko": "깊이 2"
+         }
+        ],
+        [
+         0,
+         {
+          "en": "depth 3",
+          "ko": "깊이 3"
+         }
+        ]
+       ]
+      }
+     },
+     "answer": "3"
+    }
+   ],
+   "setup": {
+    "tree": {
+     "nodes": [
+      {
+       "id": 0,
+       "value": 8
+      },
+      {
+       "id": 1,
+       "value": 5
+      },
+      {
+       "id": 2,
+       "value": 12
+      },
+      {
+       "id": 5,
+       "value": 9
+      },
+      {
+       "id": 6,
+       "value": 17
+      }
+     ],
+     "edges": [
+      {
+       "from": 0,
+       "to": 1,
+       "slot": 0
+      },
+      {
+       "from": 0,
+       "to": 2,
+       "slot": 1
+      },
+      {
+       "from": 2,
+       "to": 5,
+       "slot": 0
+      },
+      {
+       "from": 2,
+       "to": 6,
+       "slot": 1
+      }
+     ]
+    }
+   },
+   "sampleInput": "[8,5,12,null,null,9,17]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "root = [4,null,2,null,7]",
+   "expected": "3",
+   "frames": [
+    {
+     "caption": {
+      "en": "A skill tree of 3 nodes with root 4. Ask the root for its depth: it must ask its children first.",
+      "ko": "root가 4인 노드 3개짜리 스킬 트리입니다. root에게 깊이를 묻는데, root는 먼저 자식들에게 물어야 합니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": []
+       },
+       "shade": [],
+       "edgeMarks": {},
+       "tags": []
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "4's left side is empty (depth 0), so it asks its right child 2.",
+      "ko": "4의 왼쪽은 비어 있으므로(깊이 0) 오른쪽 자식 2에게 묻습니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ],
+       "edgeMarks": {},
+       "tags": []
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "2's left side is empty (depth 0), so it asks its right child 7.",
+      "ko": "2의 왼쪽은 비어 있으므로(깊이 0) 오른쪽 자식 7에게 묻습니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [
+         2
+        ]
+       },
+       "shade": [
+        0,
+        2
+       ],
+       "edgeMarks": {},
+       "tags": []
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "7 is a leaf: both sides are empty (0), so it returns 1 + 0 = 1.",
+      "ko": "7은 리프입니다. 양쪽이 비어 있으므로(0) 1 + 0 = 1을 돌려줍니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "good": [
+         4
+        ]
+       },
+       "shade": [
+        0,
+        2
+       ],
+       "edgeMarks": {},
+       "tags": [
+        [
+         4,
+         {
+          "en": "depth 1",
+          "ko": "깊이 1"
+         }
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "2's left depth is 0 (no child) and its right depth is 1: it returns 1 + 1 = 2.",
+      "ko": "2의 왼쪽 깊이는 0(자식 없음), 오른쪽 깊이는 1입니다. 1 + 1 = 2를 돌려줍니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         4
+        ],
+        "good": [
+         2
+        ]
+       },
+       "shade": [
+        0
+       ],
+       "edgeMarks": {},
+       "tags": [
+        [
+         4,
+         {
+          "en": "depth 1",
+          "ko": "깊이 1"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "depth 2",
+          "ko": "깊이 2"
+         }
+        ]
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 4
+       },
+       "to": {
+        "view": "tree",
+        "at": 2
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "4's left depth is 0 (no child) and its right depth is 2: it returns 1 + 2 = 3.",
+      "ko": "4의 왼쪽 깊이는 0(자식 없음), 오른쪽 깊이는 2입니다. 1 + 2 = 3을 돌려줍니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         4,
+         2
+        ],
+        "good": [
+         0
+        ]
+       },
+       "shade": [],
+       "edgeMarks": {},
+       "tags": [
+        [
+         4,
+         {
+          "en": "depth 1",
+          "ko": "깊이 1"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "depth 2",
+          "ko": "깊이 2"
+         }
+        ],
+        [
+         0,
+         {
+          "en": "depth 3",
+          "ko": "깊이 3"
+         }
+        ]
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 2
+       },
+       "to": {
+        "view": "tree",
+        "at": 0
+       },
+       "value": "2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The root returns 3: the longest chain from the root down, 4 -> 2 -> 7, has 3 nodes.",
+      "ko": "root가 3을 돌려줍니다. root에서 내려가는 가장 긴 체인 4 -> 2 -> 7의 노드가 3개입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "path": [
+         0,
+         2,
+         4
+        ],
+        "dim": []
+       },
+       "shade": [],
+       "edgeMarks": {
+        "path": [
+         [
+          0,
+          2
+         ],
+         [
+          2,
+          4
+         ]
+        ]
+       },
+       "tags": [
+        [
+         4,
+         {
+          "en": "depth 1",
+          "ko": "깊이 1"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "depth 2",
+          "ko": "깊이 2"
+         }
+        ],
+        [
+         0,
+         {
+          "en": "depth 3",
+          "ko": "깊이 3"
+         }
+        ]
+       ]
+      }
+     },
+     "answer": "3"
+    }
+   ],
+   "setup": {
+    "tree": {
+     "nodes": [
+      {
+       "id": 0,
+       "value": 4
+      },
+      {
+       "id": 2,
+       "value": 2
+      },
+      {
+       "id": 4,
+       "value": 7
+      }
+     ],
+     "edges": [
+      {
+       "from": 0,
+       "to": 2,
+       "slot": 1
+      },
+      {
+       "from": 2,
+       "to": 4,
+       "slot": 1
+      }
+     ]
+    }
+   },
+   "sampleInput": "[4,null,2,null,7]"
+  }
+ ]
+}
