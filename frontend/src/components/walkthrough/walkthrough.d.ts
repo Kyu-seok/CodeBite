@@ -130,10 +130,10 @@ export function layoutTree(nodes: TreeState['nodes'], edges: TreeState['edges'],
   arity?: number; sideways?: boolean; size?: (id: string) => { w: number; h: number }; label?: (id: string) => number;
 }): { pos: Map<string, { x: number; y: number }>; width: number; height: number };
 /** Whether a tree too wide upright for `room` goes on its side. */
+export function treeSideways(upright: { width: number }, side: { width: number }, room: number): boolean;
 /** How a tree's second link is drawn: pill edge to pill edge, a pair each way in two lanes, null to ∅ past the pill. */
 export function treeLinks(to: Record<string, Key | null>, box: (id: string) => { x: number; y: number; w: number; h: number } | null | undefined,
   opts?: { sideways?: boolean }): { from: string; to: string | null; x1: number; y1: number; x2: number; y2: number; nil?: [number, number] }[];
-export function treeSideways(upright: { width: number }, side: { width: number }, room: number): boolean;
 export function axisTicks(min: number, max: number): number[];
 export function textOf(text: Text | null | undefined, lang: string): string;
 export const MARKS: Mark[];
