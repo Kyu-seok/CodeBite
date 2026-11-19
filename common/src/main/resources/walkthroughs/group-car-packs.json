@@ -1,0 +1,1112 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Group Car Packs",
+  "ko": "자동차 팩 묶기"
+ },
+ "approach": {
+  "en": "Read the cars nearest the booth first and work out when each would arrive alone. A car that would arrive no later than the pack ahead catches it and joins it; a later one starts a new pack on the stack.",
+  "ko": "톨게이트에 가까운 차부터 읽으며 혼자 달릴 때의 도착 시간을 구합니다. 앞 팩보다 늦지 않게 도착할 차는 그 팩을 따라잡아 합류하고, 더 늦은 차는 스택에 새 팩으로 올라갑니다."
+ },
+ "views": [
+  {
+   "id": "cars",
+   "type": "array",
+   "title": {
+    "en": "cars by km, nearest the booth first",
+    "ko": "자동차 (km, 톨게이트에 가까운 순)"
+   }
+  },
+  {
+   "id": "packs",
+   "type": "stack",
+   "title": {
+    "en": "packs (arrival)",
+    "ko": "팩 (도착 시간)"
+   },
+   "empty": {
+    "en": "empty",
+    "ko": "비어 있음"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "target = 20, position = [0,3,7,14], speed = [5,3,2,1]",
+   "expected": "2",
+   "frames": [
+    {
+     "caption": {
+      "en": "4 cars head for the booth at km 20, sorted by kilometer, nearest the booth first. The stack of packs starts empty.",
+      "ko": "자동차 4대가 20km 지점의 톨게이트로 향합니다. 톨게이트에 가까운 차부터 정렬했고, 팩의 스택은 비어 있습니다."
+     },
+     "views": {
+      "cars": {
+       "values": [
+        14,
+        7,
+        3,
+        0
+       ],
+       "tags": [
+        [
+         0,
+         "1km/h"
+        ],
+        [
+         1,
+         "2km/h"
+        ],
+        [
+         2,
+         "3km/h"
+        ],
+        [
+         3,
+         "5km/h"
+        ]
+       ],
+       "pointers": {
+        "car": null
+       },
+       "under": [],
+       "unread": [],
+       "marks": {
+        "path": [],
+        "lit": []
+       }
+      },
+      "packs": {
+       "values": [],
+       "tags": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "The car at km 14 drives 1 km/h: (20 − 14) ÷ 1 = 6h to the booth, no pack is ahead of it, so it leads the first pack.",
+      "ko": "14km 지점의 차는 시속 1km로 (20 − 14) ÷ 1 = 6시간이 걸립니다. 앞에 팩이 없으므로 첫 팩을 이끕니다."
+     },
+     "views": {
+      "cars": {
+       "values": [
+        14,
+        7,
+        3,
+        0
+       ],
+       "tags": [
+        [
+         0,
+         "1km/h"
+        ],
+        [
+         1,
+         "2km/h"
+        ],
+        [
+         2,
+         "3km/h"
+        ],
+        [
+         3,
+         "5km/h"
+        ]
+       ],
+       "pointers": {
+        "car": 0
+       },
+       "under": [
+        [
+         0,
+         "6h"
+        ]
+       ],
+       "unread": [
+        1,
+        2,
+        3
+       ],
+       "marks": {
+        "path": [],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "packs": {
+       "values": [
+        "6h"
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "km 14",
+          "ko": "14km"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "cars",
+        "at": 0
+       },
+       "to": {
+        "view": "packs",
+        "at": 0
+       },
+       "value": "6h"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The car at km 7 drives 2 km/h: (20 − 7) ÷ 2 = 6.5h to the booth, later than the pack on top (6h), so it never catches it: a new pack.",
+      "ko": "7km 지점의 차는 시속 2km로 (20 − 7) ÷ 2 = 6.5시간이 걸립니다. 맨 위 팩(6시간)보다 늦게 도착하므로 따라잡지 못해 새 팩이 됩니다."
+     },
+     "views": {
+      "cars": {
+       "values": [
+        14,
+        7,
+        3,
+        0
+       ],
+       "tags": [
+        [
+         0,
+         "1km/h"
+        ],
+        [
+         1,
+         "2km/h"
+        ],
+        [
+         2,
+         "3km/h"
+        ],
+        [
+         3,
+         "5km/h"
+        ]
+       ],
+       "pointers": {
+        "car": 1
+       },
+       "under": [
+        [
+         0,
+         "6h"
+        ],
+        [
+         1,
+         "6.5h"
+        ]
+       ],
+       "unread": [
+        2,
+        3
+       ],
+       "marks": {
+        "path": [],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "packs": {
+       "values": [
+        "6h",
+        "6.5h"
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "km 14",
+          "ko": "14km"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "km 7",
+          "ko": "7km"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "cars",
+        "at": 1
+       },
+       "to": {
+        "view": "packs",
+        "at": 1
+       },
+       "value": "6.5h"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The car at km 3 drives 3 km/h: (20 − 3) ÷ 3 ≈ 5.67h, no later than the pack on top (6.5h). It catches that pack before the booth and joins it.",
+      "ko": "3km 지점의 차는 시속 3km로 (20 − 3) ÷ 3 ≈ 5.67시간이 걸려 맨 위 팩(6.5시간)보다 늦지 않습니다. 톨게이트 전에 그 팩을 따라잡아 합류합니다."
+     },
+     "views": {
+      "cars": {
+       "values": [
+        14,
+        7,
+        3,
+        0
+       ],
+       "tags": [
+        [
+         0,
+         "1km/h"
+        ],
+        [
+         1,
+         "2km/h"
+        ],
+        [
+         2,
+         "3km/h"
+        ],
+        [
+         3,
+         "5km/h"
+        ]
+       ],
+       "pointers": {
+        "car": 2
+       },
+       "under": [
+        [
+         0,
+         "6h"
+        ],
+        [
+         1,
+         "6.5h"
+        ],
+        [
+         2,
+         "5.67h"
+        ]
+       ],
+       "unread": [
+        3
+       ],
+       "marks": {
+        "path": [],
+        "lit": [
+         2
+        ]
+       }
+      },
+      "packs": {
+       "values": [
+        "6h",
+        "6.5h"
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "km 14",
+          "ko": "14km"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "km 7",
+          "ko": "7km"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "cars",
+        "at": 2
+       },
+       "to": {
+        "view": "packs",
+        "at": 1
+       },
+       "value": "5.67h"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The car at km 0 drives 5 km/h: (20 − 0) ÷ 5 = 4h, no later than the pack on top (6.5h). It catches that pack before the booth and joins it.",
+      "ko": "0km 지점의 차는 시속 5km로 (20 − 0) ÷ 5 = 4시간이 걸려 맨 위 팩(6.5시간)보다 늦지 않습니다. 톨게이트 전에 그 팩을 따라잡아 합류합니다."
+     },
+     "views": {
+      "cars": {
+       "values": [
+        14,
+        7,
+        3,
+        0
+       ],
+       "tags": [
+        [
+         0,
+         "1km/h"
+        ],
+        [
+         1,
+         "2km/h"
+        ],
+        [
+         2,
+         "3km/h"
+        ],
+        [
+         3,
+         "5km/h"
+        ]
+       ],
+       "pointers": {
+        "car": 3
+       },
+       "under": [
+        [
+         0,
+         "6h"
+        ],
+        [
+         1,
+         "6.5h"
+        ],
+        [
+         2,
+         "5.67h"
+        ],
+        [
+         3,
+         "4h"
+        ]
+       ],
+       "unread": [],
+       "marks": {
+        "path": [],
+        "lit": [
+         3
+        ]
+       }
+      },
+      "packs": {
+       "values": [
+        "6h",
+        "6.5h"
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "km 14",
+          "ko": "14km"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "km 7",
+          "ko": "7km"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "cars",
+        "at": 3
+       },
+       "to": {
+        "view": "packs",
+        "at": 1
+       },
+       "value": "4h"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every car is read: 2 packs reach the booth, one per entry on the stack.",
+      "ko": "모든 차를 읽었습니다. 스택에 남은 팩마다 하나씩, 팩 2개가 톨게이트에 도착합니다."
+     },
+     "views": {
+      "cars": {
+       "values": [
+        14,
+        7,
+        3,
+        0
+       ],
+       "tags": [
+        [
+         0,
+         "1km/h"
+        ],
+        [
+         1,
+         "2km/h"
+        ],
+        [
+         2,
+         "3km/h"
+        ],
+        [
+         3,
+         "5km/h"
+        ]
+       ],
+       "pointers": {
+        "car": null
+       },
+       "under": [
+        [
+         0,
+         "6h"
+        ],
+        [
+         1,
+         "6.5h"
+        ],
+        [
+         2,
+         "5.67h"
+        ],
+        [
+         3,
+         "4h"
+        ]
+       ],
+       "unread": [],
+       "marks": {
+        "path": [
+         0,
+         1
+        ],
+        "lit": []
+       }
+      },
+      "packs": {
+       "values": [
+        "6h",
+        "6.5h"
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "km 14",
+          "ko": "14km"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "km 7",
+          "ko": "7km"
+         }
+        ]
+       ],
+       "marks": {
+        "path": [
+         0,
+         1
+        ]
+       }
+      }
+     },
+     "answer": "2"
+    }
+   ],
+   "sampleInput": "20\n[0,3,7,14]\n[5,3,2,1]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "target = 15, position = [5], speed = [2]",
+   "expected": "1",
+   "frames": [
+    {
+     "caption": {
+      "en": "1 car head for the booth at km 15, sorted by kilometer, nearest the booth first. The stack of packs starts empty.",
+      "ko": "자동차 1대가 15km 지점의 톨게이트로 향합니다. 톨게이트에 가까운 차부터 정렬했고, 팩의 스택은 비어 있습니다."
+     },
+     "views": {
+      "cars": {
+       "values": [
+        5
+       ],
+       "tags": [
+        [
+         0,
+         "2km/h"
+        ]
+       ],
+       "pointers": {
+        "car": null
+       },
+       "under": [],
+       "unread": [],
+       "marks": {
+        "path": [],
+        "lit": []
+       }
+      },
+      "packs": {
+       "values": [],
+       "tags": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "The car at km 5 drives 2 km/h: (15 − 5) ÷ 2 = 5h to the booth, no pack is ahead of it, so it leads the first pack.",
+      "ko": "5km 지점의 차는 시속 2km로 (15 − 5) ÷ 2 = 5시간이 걸립니다. 앞에 팩이 없으므로 첫 팩을 이끕니다."
+     },
+     "views": {
+      "cars": {
+       "values": [
+        5
+       ],
+       "tags": [
+        [
+         0,
+         "2km/h"
+        ]
+       ],
+       "pointers": {
+        "car": 0
+       },
+       "under": [
+        [
+         0,
+         "5h"
+        ]
+       ],
+       "unread": [],
+       "marks": {
+        "path": [],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "packs": {
+       "values": [
+        "5h"
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "km 5",
+          "ko": "5km"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "cars",
+        "at": 0
+       },
+       "to": {
+        "view": "packs",
+        "at": 0
+       },
+       "value": "5h"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every car is read: 1 pack reaches the booth, one per entry on the stack.",
+      "ko": "모든 차를 읽었습니다. 스택에 남은 팩마다 하나씩, 팩 1개가 톨게이트에 도착합니다."
+     },
+     "views": {
+      "cars": {
+       "values": [
+        5
+       ],
+       "tags": [
+        [
+         0,
+         "2km/h"
+        ]
+       ],
+       "pointers": {
+        "car": null
+       },
+       "under": [
+        [
+         0,
+         "5h"
+        ]
+       ],
+       "unread": [],
+       "marks": {
+        "path": [
+         0
+        ],
+        "lit": []
+       }
+      },
+      "packs": {
+       "values": [
+        "5h"
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "km 5",
+          "ko": "5km"
+         }
+        ]
+       ],
+       "marks": {
+        "path": [
+         0
+        ]
+       }
+      }
+     },
+     "answer": "1"
+    }
+   ],
+   "sampleInput": "15\n[5]\n[2]"
+  },
+  {
+   "label": {
+    "en": "Case 3",
+    "ko": "케이스 3"
+   },
+   "input": "target = 100, position = [0,2,4], speed = [4,2,1]",
+   "expected": "1",
+   "frames": [
+    {
+     "caption": {
+      "en": "3 cars head for the booth at km 100, sorted by kilometer, nearest the booth first. The stack of packs starts empty.",
+      "ko": "자동차 3대가 100km 지점의 톨게이트로 향합니다. 톨게이트에 가까운 차부터 정렬했고, 팩의 스택은 비어 있습니다."
+     },
+     "views": {
+      "cars": {
+       "values": [
+        4,
+        2,
+        0
+       ],
+       "tags": [
+        [
+         0,
+         "1km/h"
+        ],
+        [
+         1,
+         "2km/h"
+        ],
+        [
+         2,
+         "4km/h"
+        ]
+       ],
+       "pointers": {
+        "car": null
+       },
+       "under": [],
+       "unread": [],
+       "marks": {
+        "path": [],
+        "lit": []
+       }
+      },
+      "packs": {
+       "values": [],
+       "tags": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "The car at km 4 drives 1 km/h: (100 − 4) ÷ 1 = 96h to the booth, no pack is ahead of it, so it leads the first pack.",
+      "ko": "4km 지점의 차는 시속 1km로 (100 − 4) ÷ 1 = 96시간이 걸립니다. 앞에 팩이 없으므로 첫 팩을 이끕니다."
+     },
+     "views": {
+      "cars": {
+       "values": [
+        4,
+        2,
+        0
+       ],
+       "tags": [
+        [
+         0,
+         "1km/h"
+        ],
+        [
+         1,
+         "2km/h"
+        ],
+        [
+         2,
+         "4km/h"
+        ]
+       ],
+       "pointers": {
+        "car": 0
+       },
+       "under": [
+        [
+         0,
+         "96h"
+        ]
+       ],
+       "unread": [
+        1,
+        2
+       ],
+       "marks": {
+        "path": [],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "packs": {
+       "values": [
+        "96h"
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "km 4",
+          "ko": "4km"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "cars",
+        "at": 0
+       },
+       "to": {
+        "view": "packs",
+        "at": 0
+       },
+       "value": "96h"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The car at km 2 drives 2 km/h: (100 − 2) ÷ 2 = 49h, no later than the pack on top (96h). It catches that pack before the booth and joins it.",
+      "ko": "2km 지점의 차는 시속 2km로 (100 − 2) ÷ 2 = 49시간이 걸려 맨 위 팩(96시간)보다 늦지 않습니다. 톨게이트 전에 그 팩을 따라잡아 합류합니다."
+     },
+     "views": {
+      "cars": {
+       "values": [
+        4,
+        2,
+        0
+       ],
+       "tags": [
+        [
+         0,
+         "1km/h"
+        ],
+        [
+         1,
+         "2km/h"
+        ],
+        [
+         2,
+         "4km/h"
+        ]
+       ],
+       "pointers": {
+        "car": 1
+       },
+       "under": [
+        [
+         0,
+         "96h"
+        ],
+        [
+         1,
+         "49h"
+        ]
+       ],
+       "unread": [
+        2
+       ],
+       "marks": {
+        "path": [],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "packs": {
+       "values": [
+        "96h"
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "km 4",
+          "ko": "4km"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "cars",
+        "at": 1
+       },
+       "to": {
+        "view": "packs",
+        "at": 0
+       },
+       "value": "49h"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The car at km 0 drives 4 km/h: (100 − 0) ÷ 4 = 25h, no later than the pack on top (96h). It catches that pack before the booth and joins it.",
+      "ko": "0km 지점의 차는 시속 4km로 (100 − 0) ÷ 4 = 25시간이 걸려 맨 위 팩(96시간)보다 늦지 않습니다. 톨게이트 전에 그 팩을 따라잡아 합류합니다."
+     },
+     "views": {
+      "cars": {
+       "values": [
+        4,
+        2,
+        0
+       ],
+       "tags": [
+        [
+         0,
+         "1km/h"
+        ],
+        [
+         1,
+         "2km/h"
+        ],
+        [
+         2,
+         "4km/h"
+        ]
+       ],
+       "pointers": {
+        "car": 2
+       },
+       "under": [
+        [
+         0,
+         "96h"
+        ],
+        [
+         1,
+         "49h"
+        ],
+        [
+         2,
+         "25h"
+        ]
+       ],
+       "unread": [],
+       "marks": {
+        "path": [],
+        "lit": [
+         2
+        ]
+       }
+      },
+      "packs": {
+       "values": [
+        "96h"
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "km 4",
+          "ko": "4km"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "cars",
+        "at": 2
+       },
+       "to": {
+        "view": "packs",
+        "at": 0
+       },
+       "value": "25h"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every car is read: 1 pack reaches the booth, one per entry on the stack.",
+      "ko": "모든 차를 읽었습니다. 스택에 남은 팩마다 하나씩, 팩 1개가 톨게이트에 도착합니다."
+     },
+     "views": {
+      "cars": {
+       "values": [
+        4,
+        2,
+        0
+       ],
+       "tags": [
+        [
+         0,
+         "1km/h"
+        ],
+        [
+         1,
+         "2km/h"
+        ],
+        [
+         2,
+         "4km/h"
+        ]
+       ],
+       "pointers": {
+        "car": null
+       },
+       "under": [
+        [
+         0,
+         "96h"
+        ],
+        [
+         1,
+         "49h"
+        ],
+        [
+         2,
+         "25h"
+        ]
+       ],
+       "unread": [],
+       "marks": {
+        "path": [
+         0
+        ],
+        "lit": []
+       }
+      },
+      "packs": {
+       "values": [
+        "96h"
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "km 4",
+          "ko": "4km"
+         }
+        ]
+       ],
+       "marks": {
+        "path": [
+         0
+        ]
+       }
+      }
+     },
+     "answer": "1"
+    }
+   ],
+   "sampleInput": "100\n[0,2,4]\n[4,2,1]"
+  }
+ ]
+}
